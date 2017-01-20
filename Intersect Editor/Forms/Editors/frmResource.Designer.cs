@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Classes
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Classes
 {
     partial class frmResource
     {
@@ -30,38 +32,38 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmResource));
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox1 = new DarkGroupBox();
             this.lstResources = new System.Windows.Forms.ListBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new DarkGroupBox();
             this.scrlAnimation = new System.Windows.Forms.HScrollBar();
             this.lblAnimation = new System.Windows.Forms.Label();
-            this.txtMaxHp = new System.Windows.Forms.TextBox();
+            this.txtMaxHp = new DarkTextBox();
             this.lblMaxHp = new System.Windows.Forms.Label();
             this.scrlSpawnDuration = new System.Windows.Forms.HScrollBar();
             this.lblSpawnDuration = new System.Windows.Forms.Label();
-            this.chkWalkableAfter = new System.Windows.Forms.CheckBox();
-            this.chkWalkableBefore = new System.Windows.Forms.CheckBox();
-            this.cmbToolType = new System.Windows.Forms.ComboBox();
+            this.chkWalkableAfter = new DarkCheckBox();
+            this.chkWalkableBefore = new DarkCheckBox();
+            this.cmbToolType = new DarkComboBox();
             this.lblToolType = new System.Windows.Forms.Label();
-            this.txtHP = new System.Windows.Forms.TextBox();
+            this.txtHP = new DarkTextBox();
             this.lblHP = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtName = new System.Windows.Forms.TextBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.grpEndTileset = new System.Windows.Forms.GroupBox();
+            this.txtName = new DarkTextBox();
+            this.groupBox3 = new DarkGroupBox();
+            this.grpEndTileset = new DarkGroupBox();
             this.picEndResource = new System.Windows.Forms.PictureBox();
-            this.grpInitialTileset = new System.Windows.Forms.GroupBox();
+            this.grpInitialTileset = new DarkGroupBox();
             this.picInitialResource = new System.Windows.Forms.PictureBox();
             this.hScrollEndTileset = new System.Windows.Forms.HScrollBar();
             this.vScrollEndTileset = new System.Windows.Forms.VScrollBar();
             this.hScrollStartTileset = new System.Windows.Forms.HScrollBar();
             this.vScrollStartTileset = new System.Windows.Forms.VScrollBar();
-            this.cmbEndSprite = new System.Windows.Forms.ComboBox();
+            this.cmbEndSprite = new DarkComboBox();
             this.lblPic2 = new System.Windows.Forms.Label();
-            this.cmbInitialSprite = new System.Windows.Forms.ComboBox();
+            this.cmbInitialSprite = new DarkComboBox();
             this.lblPic = new System.Windows.Forms.Label();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.txtDropAmount = new System.Windows.Forms.TextBox();
+            this.groupBox4 = new DarkGroupBox();
+            this.txtDropAmount = new DarkTextBox();
             this.lblDropAmount = new System.Windows.Forms.Label();
             this.scrlDropChance = new System.Windows.Forms.HScrollBar();
             this.lblDropChance = new System.Windows.Forms.Label();
@@ -71,8 +73,8 @@
             this.lblDropIndex = new System.Windows.Forms.Label();
             this.tmrRender = new System.Windows.Forms.Timer(this.components);
             this.pnlContainer = new System.Windows.Forms.Panel();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
+            this.btnCancel = new DarkButton();
+            this.btnSave = new DarkButton();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripItemNew = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -201,7 +203,6 @@
             this.chkWalkableAfter.Size = new System.Drawing.Size(185, 17);
             this.chkWalkableAfter.TabIndex = 31;
             this.chkWalkableAfter.Text = "Walkable after resource removal?";
-            this.chkWalkableAfter.UseVisualStyleBackColor = true;
             this.chkWalkableAfter.CheckedChanged += new System.EventHandler(this.chkWalkableAfter_CheckedChanged);
             // 
             // chkWalkableBefore
@@ -212,7 +213,6 @@
             this.chkWalkableBefore.Size = new System.Drawing.Size(194, 17);
             this.chkWalkableBefore.TabIndex = 30;
             this.chkWalkableBefore.Text = "Walkable before resource removal?";
-            this.chkWalkableBefore.UseVisualStyleBackColor = true;
             this.chkWalkableBefore.CheckedChanged += new System.EventHandler(this.chkWalkableBefore_CheckedChanged);
             // 
             // cmbToolType
@@ -534,7 +534,6 @@
             this.btnCancel.Size = new System.Drawing.Size(190, 27);
             this.btnCancel.TabIndex = 44;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
@@ -544,7 +543,6 @@
             this.btnSave.Size = new System.Drawing.Size(190, 27);
             this.btnSave.TabIndex = 41;
             this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // toolStrip
@@ -673,20 +671,20 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
+        private DarkGroupBox groupBox1;
         private System.Windows.Forms.ListBox lstResources;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private DarkGroupBox groupBox2;
+        private DarkGroupBox groupBox3;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtName;
-        private System.Windows.Forms.TextBox txtHP;
+        private DarkTextBox txtName;
+        private DarkTextBox txtHP;
         private System.Windows.Forms.Label lblHP;
-        private System.Windows.Forms.CheckBox chkWalkableAfter;
-        private System.Windows.Forms.CheckBox chkWalkableBefore;
-        private System.Windows.Forms.ComboBox cmbToolType;
+        private DarkCheckBox chkWalkableAfter;
+        private DarkCheckBox chkWalkableBefore;
+        private DarkComboBox cmbToolType;
         private System.Windows.Forms.Label lblToolType;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.TextBox txtDropAmount;
+        private DarkGroupBox groupBox4;
+        private DarkTextBox txtDropAmount;
         private System.Windows.Forms.Label lblDropAmount;
         private System.Windows.Forms.HScrollBar scrlDropChance;
         private System.Windows.Forms.Label lblDropChance;
@@ -694,9 +692,9 @@
         private System.Windows.Forms.Label lblDropItem;
         private System.Windows.Forms.HScrollBar scrlDropIndex;
         private System.Windows.Forms.Label lblDropIndex;
-        private System.Windows.Forms.ComboBox cmbEndSprite;
+        private DarkComboBox cmbEndSprite;
         private System.Windows.Forms.Label lblPic2;
-        private System.Windows.Forms.ComboBox cmbInitialSprite;
+        private DarkComboBox cmbInitialSprite;
         private System.Windows.Forms.Label lblPic;
         private System.Windows.Forms.HScrollBar scrlSpawnDuration;
         private System.Windows.Forms.Label lblSpawnDuration;
@@ -704,18 +702,18 @@
         private System.Windows.Forms.VScrollBar vScrollEndTileset;
         private System.Windows.Forms.HScrollBar hScrollStartTileset;
         private System.Windows.Forms.VScrollBar vScrollStartTileset;
-        private System.Windows.Forms.GroupBox grpEndTileset;
+        private DarkGroupBox grpEndTileset;
         public System.Windows.Forms.PictureBox picEndResource;
-        private System.Windows.Forms.GroupBox grpInitialTileset;
+        private DarkGroupBox grpInitialTileset;
         public System.Windows.Forms.PictureBox picInitialResource;
-        private System.Windows.Forms.TextBox txtMaxHp;
+        private DarkTextBox txtMaxHp;
         private System.Windows.Forms.Label lblMaxHp;
         private System.Windows.Forms.HScrollBar scrlAnimation;
         private System.Windows.Forms.Label lblAnimation;
         private System.Windows.Forms.Timer tmrRender;
         private System.Windows.Forms.Panel pnlContainer;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnCancel;
+        private DarkButton btnSave;
+        private DarkButton btnCancel;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton toolStripItemNew;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;

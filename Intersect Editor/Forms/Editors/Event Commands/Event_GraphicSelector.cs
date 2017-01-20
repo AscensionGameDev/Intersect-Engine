@@ -27,6 +27,7 @@ using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 using Color = System.Drawing.Color;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
@@ -63,6 +64,21 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _routeDesigner = moveRouteDesigner;
             _newRouteAction = newMoveRouteAction;
             _loading = false;
+            InitLocalization();
+        }
+
+        private void InitLocalization()
+        {
+            grpSelector.Text = Strings.Get("eventgraphic", "title");
+            lblType.Text = Strings.Get("eventgraphic", "type");
+            cmbGraphicType.Items.Clear();
+            cmbGraphicType.Items.Add(Strings.Get("eventgraphic", "graphictype0"));
+            cmbGraphicType.Items.Add(Strings.Get("eventgraphic", "graphictype1"));
+            cmbGraphicType.Items.Add(Strings.Get("eventgraphic", "graphictype2"));
+            lblGraphic.Text = Strings.Get("eventgraphic", "graphic");
+            grpPreview.Text = Strings.Get("eventgraphic", "preview");
+            btnOk.Text = Strings.Get("eventgraphic", "okay");
+            btnCancel.Text = Strings.Get("eventgraphic", "cancel");
         }
 
         private void GraphicTypeUpdated()
@@ -165,7 +181,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 pnlGraphic.Width = sourceBitmap.Width;
                 pnlGraphic.Height = sourceBitmap.Height;
                 graphics = System.Drawing.Graphics.FromImage(destBitmap);
-                graphics.Clear(Color.Black);
+                graphics.Clear(Color.FromArgb(60, 63, 65));
                 graphics.DrawImage(sourceBitmap, new System.Drawing.Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height));
                 if (cmbGraphicType.SelectedIndex == 1)
                 {

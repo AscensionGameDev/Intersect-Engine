@@ -21,9 +21,11 @@
 */
 using System;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using Intersect_Editor.Classes;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -38,6 +40,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             _currentPage = refPage;
+            InitLocalization();
             cmbItem.Items.Clear();
             cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
             cmbAction.SelectedIndex = _myCommand.Ints[0];
@@ -50,7 +53,20 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 scrlAmount.Value = _myCommand.Ints[2];
             }
-            lblAmount.Text = @"Amount: " + scrlAmount.Value;
+            lblAmount.Text = Strings.Get("eventchangeitems","amount",scrlAmount.Value);
+        }
+
+        private void InitLocalization()
+        {
+            grpChangeItems.Text = Strings.Get("eventchangeitems", "title");
+            lblAction.Text = Strings.Get("eventchangeitems", "action");
+            cmbAction.Items.Clear();
+            for (int i = 0; i < 2; i++)
+            {
+                cmbAction.Items.Add(Strings.Get("eventchangeitems", "action" + i));
+            }
+            btnSave.Text = Strings.Get("eventchangeitems", "okay");
+            btnCancel.Text = Strings.Get("eventchangeitems", "cancel");
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -75,9 +91,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _eventEditor.CancelCommandEdit();
         }
 
-        private void scrlAmount_Scroll(object sender, ScrollEventArgs e)
+        private void scrlAmount_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblAmount.Text = @"Amount: " + scrlAmount.Value;
+            lblAmount.Text = Strings.Get("eventchangeitems", "amount", scrlAmount.Value);
         }
     }
 }

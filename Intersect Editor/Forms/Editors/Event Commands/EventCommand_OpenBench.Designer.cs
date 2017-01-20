@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_OpenBench
     {
@@ -28,63 +30,71 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cmbbench = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
+            this.grpBench = new DarkUI.Controls.DarkGroupBox();
+            this.cmbbench = new DarkUI.Controls.DarkComboBox();
+            this.lblBench = new System.Windows.Forms.Label();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.grpBench.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpBench
             // 
-            this.groupBox1.Controls.Add(this.cmbbench);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnSave);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(176, 126);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Open Bench";
+            this.grpBench.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpBench.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpBench.Controls.Add(this.cmbbench);
+            this.grpBench.Controls.Add(this.lblBench);
+            this.grpBench.Controls.Add(this.btnCancel);
+            this.grpBench.Controls.Add(this.btnSave);
+            this.grpBench.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpBench.Location = new System.Drawing.Point(3, 3);
+            this.grpBench.Name = "grpBench";
+            this.grpBench.Size = new System.Drawing.Size(176, 126);
+            this.grpBench.TabIndex = 17;
+            this.grpBench.TabStop = false;
+            this.grpBench.Text = "Open Bench";
             // 
             // cmbbench
             // 
+            this.cmbbench.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbbench.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbbench.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbbench.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbbench.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbbench.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbbench.FormattingEnabled = true;
             this.cmbbench.Location = new System.Drawing.Point(47, 19);
             this.cmbbench.Name = "cmbbench";
             this.cmbbench.Size = new System.Drawing.Size(117, 21);
             this.cmbbench.TabIndex = 22;
             // 
-            // label1
+            // lblBench
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 13);
-            this.label1.TabIndex = 21;
-            this.label1.Text = "Bench:";
+            this.lblBench.AutoSize = true;
+            this.lblBench.Location = new System.Drawing.Point(4, 22);
+            this.lblBench.Name = "lblBench";
+            this.lblBench.Size = new System.Drawing.Size(41, 13);
+            this.lblBench.TabIndex = 21;
+            this.lblBench.Text = "Bench:";
             // 
             // btnCancel
             // 
             this.btnCancel.Location = new System.Drawing.Point(89, 97);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 20;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(7, 97);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // EventCommand_OpenBench
@@ -92,21 +102,22 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.groupBox1);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.Controls.Add(this.grpBench);
             this.Name = "EventCommand_OpenBench";
             this.Size = new System.Drawing.Size(182, 132);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpBench.ResumeLayout(false);
+            this.grpBench.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox cmbbench;
+        private DarkGroupBox grpBench;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
+        private System.Windows.Forms.Label lblBench;
+        private DarkComboBox cmbbench;
     }
 }

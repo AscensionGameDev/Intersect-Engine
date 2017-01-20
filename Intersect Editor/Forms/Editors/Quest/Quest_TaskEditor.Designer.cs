@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Quest
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Quest
 {
     partial class Quest_TaskEditor
     {
@@ -28,25 +30,25 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.txtStartDesc = new System.Windows.Forms.TextBox();
+            this.groupBox1 = new DarkGroupBox();
+            this.txtStartDesc = new DarkTextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.cmbConditionType = new System.Windows.Forms.ComboBox();
+            this.btnSave = new DarkButton();
+            this.cmbConditionType = new DarkComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.grpGatherItems = new System.Windows.Forms.GroupBox();
-            this.cmbItem = new System.Windows.Forms.ComboBox();
+            this.btnCancel = new DarkButton();
+            this.grpGatherItems = new DarkGroupBox();
+            this.cmbItem = new DarkComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.scrlItemQuantity = new System.Windows.Forms.HScrollBar();
             this.lblItemQuantity = new System.Windows.Forms.Label();
-            this.grpKillNpcs = new System.Windows.Forms.GroupBox();
-            this.cmbNpc = new System.Windows.Forms.ComboBox();
+            this.grpKillNpcs = new DarkGroupBox();
+            this.cmbNpc = new DarkComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.scrlNpcQuantity = new System.Windows.Forms.HScrollBar();
             this.lblNpcQuantity = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.btnEditTaskEvent = new System.Windows.Forms.Button();
+            this.btnEditTaskEvent = new DarkButton();
             this.groupBox1.SuspendLayout();
             this.grpGatherItems.SuspendLayout();
             this.grpKillNpcs.SuspendLayout();
@@ -97,7 +99,6 @@
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // cmbConditionType
@@ -130,7 +131,6 @@
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 20;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // grpGatherItems
@@ -267,7 +267,6 @@
             this.btnEditTaskEvent.Size = new System.Drawing.Size(236, 23);
             this.btnEditTaskEvent.TabIndex = 30;
             this.btnEditTaskEvent.Text = "Edit Task Completion Event";
-            this.btnEditTaskEvent.UseVisualStyleBackColor = true;
             this.btnEditTaskEvent.Click += new System.EventHandler(this.btnEditTaskEvent_Click);
             // 
             // Quest_TaskEditor
@@ -289,24 +288,24 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.ComboBox cmbConditionType;
+        private DarkGroupBox groupBox1;
+        private DarkButton btnSave;
+        private DarkComboBox cmbConditionType;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.GroupBox grpGatherItems;
+        private DarkButton btnCancel;
+        private DarkGroupBox grpGatherItems;
         private System.Windows.Forms.HScrollBar scrlItemQuantity;
-        private System.Windows.Forms.ComboBox cmbItem;
+        private DarkComboBox cmbItem;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label lblItemQuantity;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txtStartDesc;
-        private System.Windows.Forms.GroupBox grpKillNpcs;
-        private System.Windows.Forms.ComboBox cmbNpc;
+        private DarkTextBox txtStartDesc;
+        private DarkGroupBox grpKillNpcs;
+        private DarkComboBox cmbNpc;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.HScrollBar scrlNpcQuantity;
         private System.Windows.Forms.Label lblNpcQuantity;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button btnEditTaskEvent;
+        private DarkButton btnEditTaskEvent;
     }
 }

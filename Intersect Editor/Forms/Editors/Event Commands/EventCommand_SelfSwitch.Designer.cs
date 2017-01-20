@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_SelfSwitch
     {
@@ -28,38 +30,43 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cmbSetSwitchVal = new System.Windows.Forms.ComboBox();
+            this.grpSelfSwitch = new DarkUI.Controls.DarkGroupBox();
+            this.cmbSetSwitchVal = new DarkUI.Controls.DarkComboBox();
             this.label15 = new System.Windows.Forms.Label();
-            this.cmbSetSwitch = new System.Windows.Forms.ComboBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
+            this.cmbSetSwitch = new DarkUI.Controls.DarkComboBox();
+            this.lblSelfSwitch = new System.Windows.Forms.Label();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.grpSelfSwitch.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpSelfSwitch
             // 
-            this.groupBox1.Controls.Add(this.cmbSetSwitchVal);
-            this.groupBox1.Controls.Add(this.label15);
-            this.groupBox1.Controls.Add(this.cmbSetSwitch);
-            this.groupBox1.Controls.Add(this.label16);
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnSave);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(292, 82);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Set Self Switch";
+            this.grpSelfSwitch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpSelfSwitch.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpSelfSwitch.Controls.Add(this.cmbSetSwitchVal);
+            this.grpSelfSwitch.Controls.Add(this.label15);
+            this.grpSelfSwitch.Controls.Add(this.cmbSetSwitch);
+            this.grpSelfSwitch.Controls.Add(this.lblSelfSwitch);
+            this.grpSelfSwitch.Controls.Add(this.btnCancel);
+            this.grpSelfSwitch.Controls.Add(this.btnSave);
+            this.grpSelfSwitch.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpSelfSwitch.Location = new System.Drawing.Point(3, 3);
+            this.grpSelfSwitch.Name = "grpSelfSwitch";
+            this.grpSelfSwitch.Size = new System.Drawing.Size(292, 82);
+            this.grpSelfSwitch.TabIndex = 17;
+            this.grpSelfSwitch.TabStop = false;
+            this.grpSelfSwitch.Text = "Set Self Switch";
             // 
             // cmbSetSwitchVal
             // 
+            this.cmbSetSwitchVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbSetSwitchVal.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbSetSwitchVal.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSetSwitchVal.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSetSwitchVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSetSwitchVal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbSetSwitchVal.FormattingEnabled = true;
-            this.cmbSetSwitchVal.Items.AddRange(new object[] {
-            "False",
-            "True"});
             this.cmbSetSwitchVal.Location = new System.Drawing.Point(205, 19);
             this.cmbSetSwitchVal.Name = "cmbSetSwitchVal";
             this.cmbSetSwitchVal.Size = new System.Drawing.Size(71, 21);
@@ -76,45 +83,45 @@
             // 
             // cmbSetSwitch
             // 
+            this.cmbSetSwitch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbSetSwitch.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbSetSwitch.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSetSwitch.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSetSwitch.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSetSwitch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbSetSwitch.FormattingEnabled = true;
-            this.cmbSetSwitch.Items.AddRange(new object[] {
-            "A",
-            "B",
-            "C",
-            "D"});
             this.cmbSetSwitch.Location = new System.Drawing.Point(89, 19);
             this.cmbSetSwitch.Name = "cmbSetSwitch";
             this.cmbSetSwitch.Size = new System.Drawing.Size(90, 21);
             this.cmbSetSwitch.TabIndex = 22;
             // 
-            // label16
+            // lblSelfSwitch
             // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(5, 21);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(82, 13);
-            this.label16.TabIndex = 21;
-            this.label16.Text = "Set Self Switch:";
+            this.lblSelfSwitch.AutoSize = true;
+            this.lblSelfSwitch.Location = new System.Drawing.Point(5, 21);
+            this.lblSelfSwitch.Name = "lblSelfSwitch";
+            this.lblSelfSwitch.Size = new System.Drawing.Size(82, 13);
+            this.lblSelfSwitch.TabIndex = 21;
+            this.lblSelfSwitch.Text = "Set Self Switch:";
             // 
             // btnCancel
             // 
             this.btnCancel.Location = new System.Drawing.Point(89, 53);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 20;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(8, 53);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // EventCommand_SelfSwitch
@@ -122,23 +129,24 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.groupBox1);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.Controls.Add(this.grpSelfSwitch);
             this.Name = "EventCommand_SelfSwitch";
             this.Size = new System.Drawing.Size(298, 88);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpSelfSwitch.ResumeLayout(false);
+            this.grpSelfSwitch.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.ComboBox cmbSetSwitchVal;
+        private DarkGroupBox grpSelfSwitch;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
+        private DarkComboBox cmbSetSwitchVal;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.ComboBox cmbSetSwitch;
-        private System.Windows.Forms.Label label16;
+        private DarkComboBox cmbSetSwitch;
+        private System.Windows.Forms.Label lblSelfSwitch;
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_ChangeSprite
     {
@@ -28,67 +30,31 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.lblLevel = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.cmbSprite = new System.Windows.Forms.ComboBox();
+            this.grpChangeSprite = new DarkUI.Controls.DarkGroupBox();
             this.pnlPreview = new System.Windows.Forms.Panel();
-            this.groupBox1.SuspendLayout();
+            this.cmbSprite = new DarkUI.Controls.DarkComboBox();
+            this.lblSprite = new System.Windows.Forms.Label();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.grpChangeSprite.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpChangeSprite
             // 
-            this.groupBox1.Controls.Add(this.pnlPreview);
-            this.groupBox1.Controls.Add(this.cmbSprite);
-            this.groupBox1.Controls.Add(this.lblLevel);
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnSave);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(259, 126);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Change Sprite:";
-            // 
-            // lblLevel
-            // 
-            this.lblLevel.AutoSize = true;
-            this.lblLevel.Location = new System.Drawing.Point(4, 22);
-            this.lblLevel.Name = "lblLevel";
-            this.lblLevel.Size = new System.Drawing.Size(37, 13);
-            this.lblLevel.TabIndex = 21;
-            this.lblLevel.Text = "Sprite:";
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Location = new System.Drawing.Point(89, 97);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 20;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(7, 97);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 19;
-            this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // cmbSprite
-            // 
-            this.cmbSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSprite.FormattingEnabled = true;
-            this.cmbSprite.Location = new System.Drawing.Point(47, 19);
-            this.cmbSprite.Name = "cmbSprite";
-            this.cmbSprite.Size = new System.Drawing.Size(117, 21);
-            this.cmbSprite.TabIndex = 22;
-            this.cmbSprite.SelectedIndexChanged += new System.EventHandler(this.cmbSprite_SelectedIndexChanged);
+            this.grpChangeSprite.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpChangeSprite.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpChangeSprite.Controls.Add(this.pnlPreview);
+            this.grpChangeSprite.Controls.Add(this.cmbSprite);
+            this.grpChangeSprite.Controls.Add(this.lblSprite);
+            this.grpChangeSprite.Controls.Add(this.btnCancel);
+            this.grpChangeSprite.Controls.Add(this.btnSave);
+            this.grpChangeSprite.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpChangeSprite.Location = new System.Drawing.Point(3, 3);
+            this.grpChangeSprite.Name = "grpChangeSprite";
+            this.grpChangeSprite.Size = new System.Drawing.Size(259, 126);
+            this.grpChangeSprite.TabIndex = 17;
+            this.grpChangeSprite.TabStop = false;
+            this.grpChangeSprite.Text = "Change Sprite:";
             // 
             // pnlPreview
             // 
@@ -97,27 +63,72 @@
             this.pnlPreview.Size = new System.Drawing.Size(83, 101);
             this.pnlPreview.TabIndex = 23;
             // 
+            // cmbSprite
+            // 
+            this.cmbSprite.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbSprite.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbSprite.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSprite.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSprite.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbSprite.FormattingEnabled = true;
+            this.cmbSprite.Location = new System.Drawing.Point(47, 19);
+            this.cmbSprite.Name = "cmbSprite";
+            this.cmbSprite.Size = new System.Drawing.Size(117, 21);
+            this.cmbSprite.TabIndex = 22;
+            this.cmbSprite.SelectedIndexChanged += new System.EventHandler(this.cmbSprite_SelectedIndexChanged);
+            // 
+            // lblSprite
+            // 
+            this.lblSprite.AutoSize = true;
+            this.lblSprite.Location = new System.Drawing.Point(4, 22);
+            this.lblSprite.Name = "lblSprite";
+            this.lblSprite.Size = new System.Drawing.Size(37, 13);
+            this.lblSprite.TabIndex = 21;
+            this.lblSprite.Text = "Sprite:";
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(89, 97);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 20;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(7, 97);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 19;
+            this.btnSave.Text = "Ok";
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
             // EventCommand_ChangeSprite
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.groupBox1);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.Controls.Add(this.grpChangeSprite);
             this.Name = "EventCommand_ChangeSprite";
             this.Size = new System.Drawing.Size(268, 132);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpChangeSprite.ResumeLayout(false);
+            this.grpChangeSprite.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Label lblLevel;
-        private System.Windows.Forms.ComboBox cmbSprite;
+        private DarkGroupBox grpChangeSprite;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
+        private System.Windows.Forms.Label lblSprite;
+        private DarkComboBox cmbSprite;
         private System.Windows.Forms.Panel pnlPreview;
     }
 }

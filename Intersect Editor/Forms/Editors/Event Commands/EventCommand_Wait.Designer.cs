@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_Wait
     {
@@ -28,26 +30,39 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grpWait = new DarkUI.Controls.DarkGroupBox();
+            this.scrlWait = new DarkUI.Controls.DarkScrollBar();
             this.lblWait = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.scrlWait = new System.Windows.Forms.HScrollBar();
-            this.groupBox1.SuspendLayout();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.grpWait.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpWait
             // 
-            this.groupBox1.Controls.Add(this.scrlWait);
-            this.groupBox1.Controls.Add(this.lblWait);
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnSave);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(253, 100);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Wait:";
+            this.grpWait.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpWait.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpWait.Controls.Add(this.scrlWait);
+            this.grpWait.Controls.Add(this.lblWait);
+            this.grpWait.Controls.Add(this.btnCancel);
+            this.grpWait.Controls.Add(this.btnSave);
+            this.grpWait.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpWait.Location = new System.Drawing.Point(3, 3);
+            this.grpWait.Name = "grpWait";
+            this.grpWait.Size = new System.Drawing.Size(253, 100);
+            this.grpWait.TabIndex = 17;
+            this.grpWait.TabStop = false;
+            this.grpWait.Text = "Wait:";
+            // 
+            // scrlWait
+            // 
+            this.scrlWait.Location = new System.Drawing.Point(81, 20);
+            this.scrlWait.Maximum = 30000;
+            this.scrlWait.Name = "scrlWait";
+            this.scrlWait.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
+            this.scrlWait.Size = new System.Drawing.Size(166, 17);
+            this.scrlWait.TabIndex = 22;
+            this.scrlWait.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlWait_Scroll);
             // 
             // lblWait
             // 
@@ -62,51 +77,43 @@
             // 
             this.btnCancel.Location = new System.Drawing.Point(89, 71);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 20;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(7, 71);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // scrlWait
-            // 
-            this.scrlWait.Location = new System.Drawing.Point(59, 20);
-            this.scrlWait.Maximum = 30000;
-            this.scrlWait.Name = "scrlWait";
-            this.scrlWait.Size = new System.Drawing.Size(188, 17);
-            this.scrlWait.TabIndex = 22;
-            this.scrlWait.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlWait_Scroll);
             // 
             // EventCommand_Wait
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.groupBox1);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.Controls.Add(this.grpWait);
             this.Name = "EventCommand_Wait";
             this.Size = new System.Drawing.Size(259, 106);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpWait.ResumeLayout(false);
+            this.grpWait.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
+        private DarkGroupBox grpWait;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
         private System.Windows.Forms.Label lblWait;
-        private System.Windows.Forms.HScrollBar scrlWait;
+        private DarkScrollBar scrlWait;
     }
 }

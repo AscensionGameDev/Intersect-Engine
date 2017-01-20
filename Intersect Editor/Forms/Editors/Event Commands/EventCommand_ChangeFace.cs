@@ -25,6 +25,7 @@ using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -48,6 +49,15 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 cmbFace.SelectedIndex = 0;
             }
             UpdatePreview();
+            InitLocalization();
+        }
+
+        private void InitLocalization()
+        {
+            grpChangeFace.Text = Strings.Get("eventchangeface", "title");
+            lblFace.Text = Strings.Get("eventchangeface", "label");
+            btnSave.Text = Strings.Get("eventchangeface", "okay");
+            btnCancel.Text = Strings.Get("eventchangeface", "cancel");
         }
 
         private void UpdatePreview()

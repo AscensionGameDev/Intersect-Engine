@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors
 {
     partial class frmSwitchVariable
     {
@@ -29,25 +31,25 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSwitchVariable));
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.rdoGlobalVariables = new System.Windows.Forms.RadioButton();
-            this.rdoGlobalSwitches = new System.Windows.Forms.RadioButton();
-            this.rdoPlayerVariables = new System.Windows.Forms.RadioButton();
-            this.rdoPlayerSwitch = new System.Windows.Forms.RadioButton();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.btnUndo = new System.Windows.Forms.Button();
+            this.groupBox1 = new DarkGroupBox();
+            this.rdoGlobalVariables = new DarkRadioButton();
+            this.rdoGlobalSwitches = new DarkRadioButton();
+            this.rdoPlayerVariables = new DarkRadioButton();
+            this.rdoPlayerSwitch = new DarkRadioButton();
+            this.groupBox2 = new DarkGroupBox();
+            this.btnUndo = new DarkButton();
             this.lstObjects = new System.Windows.Forms.ListBox();
-            this.btnNew = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
-            this.grpEditor = new System.Windows.Forms.GroupBox();
+            this.btnNew = new DarkButton();
+            this.btnDelete = new DarkButton();
+            this.grpEditor = new DarkGroupBox();
             this.lblValue = new System.Windows.Forms.Label();
-            this.txtObjectName = new System.Windows.Forms.TextBox();
+            this.txtObjectName = new DarkTextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.lblObject = new System.Windows.Forms.Label();
-            this.cmbSwitchValue = new System.Windows.Forms.ComboBox();
-            this.txtVariableVal = new System.Windows.Forms.TextBox();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
+            this.cmbSwitchValue = new DarkComboBox();
+            this.txtVariableVal = new DarkTextBox();
+            this.btnCancel = new DarkButton();
+            this.btnSave = new DarkButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.grpEditor.SuspendLayout();
@@ -74,7 +76,6 @@
             this.rdoGlobalVariables.Size = new System.Drawing.Size(101, 17);
             this.rdoGlobalVariables.TabIndex = 3;
             this.rdoGlobalVariables.Text = "Global Variables";
-            this.rdoGlobalVariables.UseVisualStyleBackColor = true;
             this.rdoGlobalVariables.CheckedChanged += new System.EventHandler(this.rdoGlobalVariables_CheckedChanged);
             // 
             // rdoGlobalSwitches
@@ -85,7 +86,6 @@
             this.rdoGlobalSwitches.Size = new System.Drawing.Size(101, 17);
             this.rdoGlobalSwitches.TabIndex = 2;
             this.rdoGlobalSwitches.Text = "Global Switches";
-            this.rdoGlobalSwitches.UseVisualStyleBackColor = true;
             this.rdoGlobalSwitches.CheckedChanged += new System.EventHandler(this.rdoGlobalSwitches_CheckedChanged);
             // 
             // rdoPlayerVariables
@@ -96,7 +96,6 @@
             this.rdoPlayerVariables.Size = new System.Drawing.Size(100, 17);
             this.rdoPlayerVariables.TabIndex = 1;
             this.rdoPlayerVariables.Text = "Player Variables";
-            this.rdoPlayerVariables.UseVisualStyleBackColor = true;
             this.rdoPlayerVariables.CheckedChanged += new System.EventHandler(this.rdoPlayerVariables_CheckedChanged);
             // 
             // rdoPlayerSwitch
@@ -109,7 +108,6 @@
             this.rdoPlayerSwitch.TabIndex = 0;
             this.rdoPlayerSwitch.TabStop = true;
             this.rdoPlayerSwitch.Text = "Player Switches";
-            this.rdoPlayerSwitch.UseVisualStyleBackColor = true;
             this.rdoPlayerSwitch.CheckedChanged += new System.EventHandler(this.rdoPlayerSwitch_CheckedChanged);
             // 
             // groupBox2
@@ -133,7 +131,6 @@
             this.btnUndo.Size = new System.Drawing.Size(190, 27);
             this.btnUndo.TabIndex = 55;
             this.btnUndo.Text = "Undo Changes";
-            this.btnUndo.UseVisualStyleBackColor = true;
             this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
             // 
             // lstObjects
@@ -153,7 +150,6 @@
             this.btnNew.Size = new System.Drawing.Size(190, 27);
             this.btnNew.TabIndex = 53;
             this.btnNew.Text = "New";
-            this.btnNew.UseVisualStyleBackColor = true;
             this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
             // 
             // btnDelete
@@ -164,7 +160,6 @@
             this.btnDelete.Size = new System.Drawing.Size(190, 27);
             this.btnDelete.TabIndex = 52;
             this.btnDelete.Text = "Delete";
-            this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // grpEditor
@@ -247,7 +242,6 @@
             this.btnCancel.Size = new System.Drawing.Size(132, 27);
             this.btnCancel.TabIndex = 54;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
@@ -257,7 +251,6 @@
             this.btnSave.Size = new System.Drawing.Size(132, 27);
             this.btnSave.TabIndex = 51;
             this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // frmSwitchVariable
@@ -289,24 +282,24 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.RadioButton rdoGlobalVariables;
-        private System.Windows.Forms.RadioButton rdoGlobalSwitches;
-        private System.Windows.Forms.RadioButton rdoPlayerVariables;
-        private System.Windows.Forms.RadioButton rdoPlayerSwitch;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private DarkGroupBox groupBox1;
+        private DarkRadioButton rdoGlobalVariables;
+        private DarkRadioButton rdoGlobalSwitches;
+        private DarkRadioButton rdoPlayerVariables;
+        private DarkRadioButton rdoPlayerSwitch;
+        private DarkGroupBox groupBox2;
         private System.Windows.Forms.ListBox lstObjects;
-        private System.Windows.Forms.GroupBox grpEditor;
-        private System.Windows.Forms.ComboBox cmbSwitchValue;
-        private System.Windows.Forms.TextBox txtVariableVal;
+        private DarkGroupBox grpEditor;
+        private DarkComboBox cmbSwitchValue;
+        private DarkTextBox txtVariableVal;
         private System.Windows.Forms.Label lblValue;
-        private System.Windows.Forms.TextBox txtObjectName;
+        private DarkTextBox txtObjectName;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label lblObject;
-        private System.Windows.Forms.Button btnUndo;
-        private System.Windows.Forms.Button btnNew;
-        private System.Windows.Forms.Button btnDelete;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnCancel;
+        private DarkButton btnUndo;
+        private DarkButton btnNew;
+        private DarkButton btnDelete;
+        private DarkButton btnSave;
+        private DarkButton btnCancel;
     }
 }

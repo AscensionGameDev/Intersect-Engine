@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -45,6 +46,15 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _newAction = newAction;
             _routeDesigner = moveRouteDesigner;
             _myAction = action;
+            InitLocalization();
+        }
+
+        private void InitLocalization()
+        {
+            grpSetAnimation.Text = Strings.Get("eventsetanimation", "title");
+            lblAnimation.Text = Strings.Get("eventsetanimation", "label");
+            btnOkay.Text = Strings.Get("eventsetanimation", "okay");
+            btnCancel.Text = Strings.Get("eventsetanimation", "cancel");
         }
 
         private void btnOkay_Click(object sender, EventArgs e)

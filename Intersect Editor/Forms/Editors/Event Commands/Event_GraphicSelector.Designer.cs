@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class Event_GraphicSelector
     {
@@ -28,48 +30,51 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnOk = new System.Windows.Forms.Button();
-            this.cmbGraphic = new System.Windows.Forms.ComboBox();
+            this.grpSelector = new DarkUI.Controls.DarkGroupBox();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnOk = new DarkUI.Controls.DarkButton();
+            this.cmbGraphic = new DarkUI.Controls.DarkComboBox();
             this.lblGraphic = new System.Windows.Forms.Label();
-            this.cmbGraphicType = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.grpPreview = new System.Windows.Forms.GroupBox();
+            this.cmbGraphicType = new DarkUI.Controls.DarkComboBox();
+            this.lblType = new System.Windows.Forms.Label();
+            this.grpPreview = new DarkUI.Controls.DarkGroupBox();
             this.pnlGraphicContainer = new System.Windows.Forms.Panel();
             this.pnlGraphic = new System.Windows.Forms.PictureBox();
-            this.groupBox1.SuspendLayout();
+            this.grpSelector.SuspendLayout();
             this.grpPreview.SuspendLayout();
             this.pnlGraphicContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pnlGraphic)).BeginInit();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpSelector
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.grpSelector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnOk);
-            this.groupBox1.Controls.Add(this.cmbGraphic);
-            this.groupBox1.Controls.Add(this.lblGraphic);
-            this.groupBox1.Controls.Add(this.cmbGraphicType);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(613, 62);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Graphic Selector";
+            this.grpSelector.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpSelector.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpSelector.Controls.Add(this.btnCancel);
+            this.grpSelector.Controls.Add(this.btnOk);
+            this.grpSelector.Controls.Add(this.cmbGraphic);
+            this.grpSelector.Controls.Add(this.lblGraphic);
+            this.grpSelector.Controls.Add(this.cmbGraphicType);
+            this.grpSelector.Controls.Add(this.lblType);
+            this.grpSelector.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpSelector.Location = new System.Drawing.Point(3, 3);
+            this.grpSelector.Name = "grpSelector";
+            this.grpSelector.Size = new System.Drawing.Size(613, 62);
+            this.grpSelector.TabIndex = 0;
+            this.grpSelector.TabStop = false;
+            this.grpSelector.Text = "Graphic Selector";
             // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Location = new System.Drawing.Point(525, 22);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(82, 23);
             this.btnCancel.TabIndex = 5;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnOk
@@ -77,15 +82,20 @@
             this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOk.Location = new System.Drawing.Point(439, 22);
             this.btnOk.Name = "btnOk";
+            this.btnOk.Padding = new System.Windows.Forms.Padding(5);
             this.btnOk.Size = new System.Drawing.Size(82, 23);
             this.btnOk.TabIndex = 4;
             this.btnOk.Text = "Ok";
-            this.btnOk.UseVisualStyleBackColor = true;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // cmbGraphic
             // 
+            this.cmbGraphic.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbGraphic.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbGraphic.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbGraphic.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbGraphic.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbGraphic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbGraphic.FormattingEnabled = true;
             this.cmbGraphic.Location = new System.Drawing.Point(291, 24);
             this.cmbGraphic.Name = "cmbGraphic";
@@ -104,7 +114,12 @@
             // 
             // cmbGraphicType
             // 
+            this.cmbGraphicType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbGraphicType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbGraphicType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbGraphicType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbGraphicType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbGraphicType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbGraphicType.FormattingEnabled = true;
             this.cmbGraphicType.Items.AddRange(new object[] {
             "None",
@@ -116,21 +131,24 @@
             this.cmbGraphicType.TabIndex = 1;
             this.cmbGraphicType.SelectedIndexChanged += new System.EventHandler(this.cmbGraphicType_SelectedIndexChanged);
             // 
-            // label1
+            // lblType
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 26);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(77, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Graphic Type: ";
+            this.lblType.AutoSize = true;
+            this.lblType.Location = new System.Drawing.Point(6, 26);
+            this.lblType.Name = "lblType";
+            this.lblType.Size = new System.Drawing.Size(77, 13);
+            this.lblType.TabIndex = 0;
+            this.lblType.Text = "Graphic Type: ";
             // 
             // grpPreview
             // 
             this.grpPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpPreview.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpPreview.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpPreview.Controls.Add(this.pnlGraphicContainer);
+            this.grpPreview.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpPreview.Location = new System.Drawing.Point(3, 71);
             this.grpPreview.Name = "grpPreview";
             this.grpPreview.Size = new System.Drawing.Size(613, 445);
@@ -141,7 +159,7 @@
             // pnlGraphicContainer
             // 
             this.pnlGraphicContainer.AutoScroll = true;
-            this.pnlGraphicContainer.BackColor = System.Drawing.SystemColors.Control;
+            this.pnlGraphicContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.pnlGraphicContainer.Controls.Add(this.pnlGraphic);
             this.pnlGraphicContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlGraphicContainer.Location = new System.Drawing.Point(3, 16);
@@ -164,12 +182,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpPreview);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.grpSelector);
             this.Name = "Event_GraphicSelector";
             this.Size = new System.Drawing.Size(625, 519);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpSelector.ResumeLayout(false);
+            this.grpSelector.PerformLayout();
             this.grpPreview.ResumeLayout(false);
             this.pnlGraphicContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pnlGraphic)).EndInit();
@@ -179,15 +198,15 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.ComboBox cmbGraphic;
+        private DarkGroupBox grpSelector;
+        private DarkComboBox cmbGraphic;
         private System.Windows.Forms.Label lblGraphic;
-        private System.Windows.Forms.ComboBox cmbGraphicType;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.GroupBox grpPreview;
+        private DarkComboBox cmbGraphicType;
+        private System.Windows.Forms.Label lblType;
+        private DarkGroupBox grpPreview;
         private System.Windows.Forms.Panel pnlGraphicContainer;
         public System.Windows.Forms.PictureBox pnlGraphic;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnOk;
+        private DarkButton btnCancel;
+        private DarkButton btnOk;
     }
 }

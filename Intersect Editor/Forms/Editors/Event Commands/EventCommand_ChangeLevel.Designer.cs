@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_ChangeLevel
     {
@@ -28,26 +30,29 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.scrlLevel = new System.Windows.Forms.HScrollBar();
+            this.grpChangeLevel = new DarkUI.Controls.DarkGroupBox();
+            this.scrlLevel = new DarkUI.Controls.DarkScrollBar();
             this.lblLevel = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.grpChangeLevel.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpChangeLevel
             // 
-            this.groupBox1.Controls.Add(this.scrlLevel);
-            this.groupBox1.Controls.Add(this.lblLevel);
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnSave);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(259, 79);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Change Level:";
+            this.grpChangeLevel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpChangeLevel.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpChangeLevel.Controls.Add(this.scrlLevel);
+            this.grpChangeLevel.Controls.Add(this.lblLevel);
+            this.grpChangeLevel.Controls.Add(this.btnCancel);
+            this.grpChangeLevel.Controls.Add(this.btnSave);
+            this.grpChangeLevel.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpChangeLevel.Location = new System.Drawing.Point(3, 3);
+            this.grpChangeLevel.Name = "grpChangeLevel";
+            this.grpChangeLevel.Size = new System.Drawing.Size(259, 79);
+            this.grpChangeLevel.TabIndex = 17;
+            this.grpChangeLevel.TabStop = false;
+            this.grpChangeLevel.Text = "Change Level:";
             // 
             // scrlLevel
             // 
@@ -55,10 +60,11 @@
             this.scrlLevel.Maximum = 255;
             this.scrlLevel.Minimum = 1;
             this.scrlLevel.Name = "scrlLevel";
+            this.scrlLevel.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlLevel.Size = new System.Drawing.Size(149, 17);
             this.scrlLevel.TabIndex = 22;
             this.scrlLevel.Value = 1;
-            this.scrlLevel.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlExperience_Scroll);
+            this.scrlLevel.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlExperience_Scroll);
             // 
             // lblLevel
             // 
@@ -73,20 +79,20 @@
             // 
             this.btnCancel.Location = new System.Drawing.Point(89, 47);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 20;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(7, 47);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // EventCommand_ChangeLevel
@@ -94,21 +100,22 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.groupBox1);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.Controls.Add(this.grpChangeLevel);
             this.Name = "EventCommand_ChangeLevel";
             this.Size = new System.Drawing.Size(268, 88);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpChangeLevel.ResumeLayout(false);
+            this.grpChangeLevel.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
+        private DarkGroupBox grpChangeLevel;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
         private System.Windows.Forms.Label lblLevel;
-        private System.Windows.Forms.HScrollBar scrlLevel;
+        private DarkScrollBar scrlLevel;
     }
 }

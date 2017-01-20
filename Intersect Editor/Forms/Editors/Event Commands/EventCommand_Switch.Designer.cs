@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_Switch
     {
@@ -28,34 +30,37 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.rdoGlobalSwitch = new System.Windows.Forms.RadioButton();
-            this.rdoPlayerSwitch = new System.Windows.Forms.RadioButton();
-            this.cmbSetSwitchVal = new System.Windows.Forms.ComboBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.cmbSetSwitch = new System.Windows.Forms.ComboBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
+            this.grpSetSwitch = new DarkUI.Controls.DarkGroupBox();
+            this.rdoGlobalSwitch = new DarkUI.Controls.DarkRadioButton();
+            this.rdoPlayerSwitch = new DarkUI.Controls.DarkRadioButton();
+            this.cmbSetSwitchVal = new DarkUI.Controls.DarkComboBox();
+            this.lblTo = new System.Windows.Forms.Label();
+            this.cmbSetSwitch = new DarkUI.Controls.DarkComboBox();
+            this.lblSwitch = new System.Windows.Forms.Label();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.grpSetSwitch.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpSetSwitch
             // 
-            this.groupBox1.Controls.Add(this.rdoGlobalSwitch);
-            this.groupBox1.Controls.Add(this.rdoPlayerSwitch);
-            this.groupBox1.Controls.Add(this.cmbSetSwitchVal);
-            this.groupBox1.Controls.Add(this.label15);
-            this.groupBox1.Controls.Add(this.cmbSetSwitch);
-            this.groupBox1.Controls.Add(this.label16);
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnSave);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(292, 121);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Set Switch";
+            this.grpSetSwitch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpSetSwitch.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpSetSwitch.Controls.Add(this.rdoGlobalSwitch);
+            this.grpSetSwitch.Controls.Add(this.rdoPlayerSwitch);
+            this.grpSetSwitch.Controls.Add(this.cmbSetSwitchVal);
+            this.grpSetSwitch.Controls.Add(this.lblTo);
+            this.grpSetSwitch.Controls.Add(this.cmbSetSwitch);
+            this.grpSetSwitch.Controls.Add(this.lblSwitch);
+            this.grpSetSwitch.Controls.Add(this.btnCancel);
+            this.grpSetSwitch.Controls.Add(this.btnSave);
+            this.grpSetSwitch.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpSetSwitch.Location = new System.Drawing.Point(3, 3);
+            this.grpSetSwitch.Name = "grpSetSwitch";
+            this.grpSetSwitch.Size = new System.Drawing.Size(292, 121);
+            this.grpSetSwitch.TabIndex = 17;
+            this.grpSetSwitch.TabStop = false;
+            this.grpSetSwitch.Text = "Set Switch";
             // 
             // rdoGlobalSwitch
             // 
@@ -66,7 +71,6 @@
             this.rdoGlobalSwitch.TabIndex = 26;
             this.rdoGlobalSwitch.TabStop = true;
             this.rdoGlobalSwitch.Text = "Global Switch";
-            this.rdoGlobalSwitch.UseVisualStyleBackColor = true;
             this.rdoGlobalSwitch.CheckedChanged += new System.EventHandler(this.rdoGlobalSwitch_CheckedChanged);
             // 
             // rdoPlayerSwitch
@@ -79,12 +83,16 @@
             this.rdoPlayerSwitch.TabIndex = 25;
             this.rdoPlayerSwitch.TabStop = true;
             this.rdoPlayerSwitch.Text = "Player Switch";
-            this.rdoPlayerSwitch.UseVisualStyleBackColor = true;
             this.rdoPlayerSwitch.CheckedChanged += new System.EventHandler(this.rdoPlayerSwitch_CheckedChanged);
             // 
             // cmbSetSwitchVal
             // 
+            this.cmbSetSwitchVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbSetSwitchVal.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbSetSwitchVal.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSetSwitchVal.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSetSwitchVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSetSwitchVal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbSetSwitchVal.FormattingEnabled = true;
             this.cmbSetSwitchVal.Items.AddRange(new object[] {
             "False",
@@ -94,51 +102,56 @@
             this.cmbSetSwitchVal.Size = new System.Drawing.Size(71, 21);
             this.cmbSetSwitchVal.TabIndex = 24;
             // 
-            // label15
+            // lblTo
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(185, 52);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(16, 13);
-            this.label15.TabIndex = 23;
-            this.label15.Text = "to";
+            this.lblTo.AutoSize = true;
+            this.lblTo.Location = new System.Drawing.Point(185, 52);
+            this.lblTo.Name = "lblTo";
+            this.lblTo.Size = new System.Drawing.Size(16, 13);
+            this.lblTo.TabIndex = 23;
+            this.lblTo.Text = "to";
             // 
             // cmbSetSwitch
             // 
+            this.cmbSetSwitch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbSetSwitch.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbSetSwitch.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSetSwitch.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSetSwitch.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSetSwitch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbSetSwitch.FormattingEnabled = true;
             this.cmbSetSwitch.Location = new System.Drawing.Point(64, 49);
             this.cmbSetSwitch.Name = "cmbSetSwitch";
             this.cmbSetSwitch.Size = new System.Drawing.Size(115, 21);
             this.cmbSetSwitch.TabIndex = 22;
             // 
-            // label16
+            // lblSwitch
             // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(5, 51);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(61, 13);
-            this.label16.TabIndex = 21;
-            this.label16.Text = "Set Switch:";
+            this.lblSwitch.AutoSize = true;
+            this.lblSwitch.Location = new System.Drawing.Point(5, 51);
+            this.lblSwitch.Name = "lblSwitch";
+            this.lblSwitch.Size = new System.Drawing.Size(61, 13);
+            this.lblSwitch.TabIndex = 21;
+            this.lblSwitch.Text = "Set Switch:";
             // 
             // btnCancel
             // 
             this.btnCancel.Location = new System.Drawing.Point(89, 92);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 20;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(8, 92);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // EventCommand_Switch
@@ -146,25 +159,26 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.groupBox1);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.Controls.Add(this.grpSetSwitch);
             this.Name = "EventCommand_Switch";
             this.Size = new System.Drawing.Size(298, 130);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpSetSwitch.ResumeLayout(false);
+            this.grpSetSwitch.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.ComboBox cmbSetSwitchVal;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.ComboBox cmbSetSwitch;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.RadioButton rdoGlobalSwitch;
-        private System.Windows.Forms.RadioButton rdoPlayerSwitch;
+        private DarkGroupBox grpSetSwitch;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
+        private DarkComboBox cmbSetSwitchVal;
+        private System.Windows.Forms.Label lblTo;
+        private DarkComboBox cmbSetSwitch;
+        private System.Windows.Forms.Label lblSwitch;
+        private DarkRadioButton rdoGlobalSwitch;
+        private DarkRadioButton rdoPlayerSwitch;
     }
 }

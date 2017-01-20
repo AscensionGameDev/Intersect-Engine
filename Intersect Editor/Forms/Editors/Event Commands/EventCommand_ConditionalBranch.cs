@@ -21,10 +21,12 @@
 */
 using System;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using Intersect_Editor.Classes;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -40,6 +42,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             _currentPage = refPage;
+            InitLocalization();
             cmbConditionType.SelectedIndex = _myCommand.Ints[0];
             UpdateFormElements();
             switch (cmbConditionType.SelectedIndex)
@@ -65,7 +68,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 case 4: //Has Item
                     cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _myCommand.Ints[1]);
                     scrlItemQuantity.Value = _myCommand.Ints[2];
-                    lblItemQuantity.Text = @"Has at least: " + scrlItemQuantity.Value;
+                    lblItemQuantity.Text = Strings.Get("eventconditional", "hasatleast", scrlItemQuantity.Value);
                     break;
                 case 5: //Class Is
                     cmbClass.SelectedIndex = Database.GameObjectListIndex(GameObject.Class, _myCommand.Ints[1]);
@@ -76,7 +79,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 case 7: //Level is...
                     cmbLevelComparator.SelectedIndex = _myCommand.Ints[1];
                     scrlLevel.Value = _myCommand.Ints[2];
-                    lblLevel.Text = @"Level: " + scrlLevel.Value;
+                    lblLevel.Text = Strings.Get("eventconditional", "level", scrlLevel.Value);
                     break;
                 case 8: //Self Switch
                     cmbSelfSwitch.SelectedIndex = _myCommand.Ints[1];
@@ -118,6 +121,108 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             }
         }
 
+        private void InitLocalization()
+        {
+            grpConditional.Text = Strings.Get("eventconditional", "title");
+            lblType.Text = Strings.Get("eventconditional", "type");
+
+            cmbConditionType.Items.Clear();
+            for (int i = 0; i < 14; i++)
+            {
+                cmbConditionType.Items.Add(Strings.Get("eventconditional", "condition" + i));
+            }
+
+            //Player Switch
+            grpSwitch.Text = Strings.Get("eventconditional", "playerswitch");
+            lblSwitch.Text = Strings.Get("eventconditional", "switch");
+            lblSwitchIs.Text = Strings.Get("eventconditional", "switchis");
+            cmbSwitchVal.Items.Clear();
+            cmbSwitchVal.Items.Add(Strings.Get("eventconditional", "false"));
+            cmbSwitchVal.Items.Add(Strings.Get("eventconditional", "true"));
+
+            //Player Variable
+            grpPlayerVariable.Text = Strings.Get("eventconditional", "playervariable");
+            lblVariable.Text = Strings.Get("eventconditional", "variable");
+            lblComparator.Text = Strings.Get("eventconditional", "comparator");
+            lblVariableValue.Text = Strings.Get("eventconditional", "value");
+            cmbVariableMod.Items.Clear();
+            for (int i = 0; i < 6; i++)
+            {
+                cmbVariableMod.Items.Add(Strings.Get("eventconditional", "comparator" + i));
+            }
+
+            //Has Item
+            grpHasItem.Text = Strings.Get("eventconditional", "hasitem");
+            lblItemQuantity.Text = Strings.Get("eventconditional", "hasatleast", scrlItemQuantity.Value);
+            lblItem.Text = Strings.Get("eventconditional", "item");
+
+            //Class is
+            grpClass.Text = Strings.Get("eventconditional", "classis");
+            lblClass.Text = Strings.Get("eventconditional", "class");
+
+            //Knows Spell
+            grpSpell.Text = Strings.Get("eventconditional", "knowsspell");
+            lblSpell.Text = Strings.Get("eventconditional", "spell");
+
+            //Level Is
+            grpLevel.Text = Strings.Get("eventconditional", "levelis");
+            lblLevel.Text = Strings.Get("eventconditional", "level", scrlLevel.Value);
+            lblLevelComparator.Text = Strings.Get("eventconditional", "comparator");
+            cmbLevelComparator.Items.Clear();
+            for(int i = 0; i < 6; i++)
+            {
+                cmbLevelComparator.Items.Add(Strings.Get("eventconditional", "comparator" + i));
+            }
+
+            //Self Switch Is
+            grpSelfSwitch.Text = Strings.Get("eventconditional", "selfswitchis");
+            lblSelfSwitch.Text = Strings.Get("eventconditional", "selfswitch");
+            lblSelfSwitchIs.Text = Strings.Get("eventconditional", "switchis");
+            cmbSelfSwitch.Items.Clear();
+            for (int i = 0; i < 4; i++)
+            {
+                cmbSelfSwitch.Items.Add(Strings.Get("eventconditional", "selfswitch" + i));
+            }
+            cmbSelfSwitchVal.Items.Clear();
+            cmbSelfSwitchVal.Items.Add(Strings.Get("eventconditional", "false"));
+            cmbSelfSwitchVal.Items.Add(Strings.Get("eventconditional", "true"));
+
+            //Power Is
+            grpPowerIs.Text = Strings.Get("eventconditional", "poweris");
+            lblPower.Text = Strings.Get("eventconditional", "power");
+            cmbPower.Items.Clear();
+            cmbPower.Items.Add(Strings.Get("eventconditional", "power0"));
+            cmbPower.Items.Add(Strings.Get("eventconditional", "power1"));
+
+            //Time Is
+            grpTime.Text = Strings.Get("eventconditional", "time");
+            lblStartRange.Text = Strings.Get("eventconditional", "startrange");
+            lblEndRange.Text = Strings.Get("eventconditional", "endrange");
+            lblAnd.Text = Strings.Get("eventconditional", "and");
+
+            //Can Start Quest
+            grpStartQuest.Text = Strings.Get("eventconditional", "canstartquest");
+            lblStartQuest.Text = Strings.Get("eventconditional", "startquest");
+
+            //Quest In Progress
+            grpQuestInProgress.Text = Strings.Get("eventconditional", "questinprogress");
+            lblQuestProgress.Text = Strings.Get("eventconditional", "questprogress");
+            lblQuestIs.Text = Strings.Get("eventconditional", "questis");
+            cmbTaskModifier.Items.Clear();
+            for (int i = 0; i < 4; i++)
+            {
+                cmbTaskModifier.Items.Add(Strings.Get("eventconditional", "questcomparator" + i));
+            }
+            lblQuestTask.Text = Strings.Get("eventconditional", "task");
+
+            //Quest Completed
+            grpQuestCompleted.Text = Strings.Get("eventconditional", "questcompleted");
+            lblQuestCompleted.Text = Strings.Get("eventconditional", "questcompletedlabel");
+
+            btnSave.Text = Strings.Get("eventconditional", "okay");
+            btnCancel.Text = Strings.Get("eventconditional", "cancel");
+        }
+
         private void UpdateFormElements()
         {
             grpSwitch.Hide();
@@ -135,7 +240,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             switch (cmbConditionType.SelectedIndex)
             {
                 case 0: //Player Switch
-                    grpSwitch.Text = "Player Switch";
+                    grpSwitch.Text = Strings.Get("eventconditional", "playerswitch");
                     grpSwitch.Show();
                     cmbSwitch.Items.Clear();
                     cmbSwitch.Items.AddRange(Database.GetGameObjectList(GameObject.PlayerSwitch));
@@ -143,7 +248,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbSwitchVal.SelectedIndex = 0;
                     break;
                 case 1: //Player Variables
-                    grpPlayerVariable.Text = "Player Variable";
+                    grpPlayerVariable.Text = Strings.Get("eventconditional", "playervariable");
                     grpPlayerVariable.Show();
                     cmbVariable.Items.Clear();
                     cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObject.PlayerVariable));
@@ -152,7 +257,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     txtVariableVal.Text = @"0";
                     break;
                 case 2: //Global Switch
-                    grpPlayerVariable.Text = "Global Switch";
+                    grpPlayerVariable.Text = Strings.Get("eventconditional", "globalswitch");
                     grpSwitch.Show();
                     cmbSwitch.Items.Clear();
                     cmbSwitch.Items.AddRange(Database.GetGameObjectList(GameObject.ServerSwitch));
@@ -160,7 +265,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbSwitchVal.SelectedIndex = 0;
                     break;
                 case 3: //Global Variables
-                    grpPlayerVariable.Text = "Global Variable";
+                    grpPlayerVariable.Text = Strings.Get("eventconditional", "globalvariable");
                     grpPlayerVariable.Show();
                     cmbVariable.Items.Clear();
                     cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObject.ServerVariable));
@@ -191,7 +296,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpLevel.Show();
                     cmbLevelComparator.SelectedIndex = 0;
                     scrlLevel.Value = 0;
-                    lblLevel.Text = @"Level: " + scrlLevel.Value;
+                    lblLevel.Text = Strings.Get("eventconditional", "level", scrlLevel.Value);
                     break;
                 case 8: //Self Switch
                     grpSelfSwitch.Show();
@@ -209,7 +314,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     var time = new DateTime(2000, 1, 1, 0, 0, 0);
                     for (int i = 0; i < 1440; i += TimeBase.GetTimeBase().RangeInterval)
                     {
-                        var addRange = time.ToString("h:mm:ss tt") + " to ";
+                        var addRange = time.ToString("h:mm:ss tt") + " " + Strings.Get("eventconditional", "to") + " ";
                         time = time.AddMinutes(TimeBase.GetTimeBase().RangeInterval);
                         addRange += time.ToString("h:mm:ss tt");
                         cmbTime1.Items.Add(addRange);
@@ -382,14 +487,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             UpdateFormElements();
         }
 
-        private void scrlItemQuantity_Scroll(object sender, ScrollEventArgs e)
+        private void scrlItemQuantity_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblItemQuantity.Text = @"Has at least: " + scrlItemQuantity.Value;
+            lblItemQuantity.Text = Strings.Get("eventconditional", "hasatleast", scrlItemQuantity.Value);
         }
 
-        private void scrlLevel_Scroll(object sender, ScrollEventArgs e)
+        private void scrlLevel_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblLevel.Text = @"Level: " + scrlLevel.Value;
+            lblLevel.Text = Strings.Get("eventconditional", "level", scrlLevel.Value);
         }
 
         private void cmbTaskModifier_SelectedIndexChanged(object sender, EventArgs e)

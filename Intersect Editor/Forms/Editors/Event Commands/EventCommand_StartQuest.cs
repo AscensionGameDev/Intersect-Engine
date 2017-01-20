@@ -25,6 +25,7 @@ using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -39,10 +40,20 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _currentPage = page;
             _eventEditor = editor;
+            InitLocalization();
             cmbQuests.Items.Clear();
             cmbQuests.Items.AddRange(Database.GetGameObjectList(GameObject.Quest));
             cmbQuests.SelectedIndex = Database.GameObjectListIndex(GameObject.Quest, refCommand.Ints[0]);
             chkShowOfferWindow.Checked = Convert.ToBoolean(refCommand.Ints[1]);
+        }
+
+        private void InitLocalization()
+        {
+            grpStartQuest.Text = Strings.Get("eventstartquest", "title");
+            lblQuest.Text = Strings.Get("eventstartquest", "label");
+            chkShowOfferWindow.Text = Strings.Get("eventstartquest", "showwindow");
+            btnSave.Text = Strings.Get("eventstartquest", "okay");
+            btnCancel.Text = Strings.Get("eventstartquest", "cancel");
         }
 
         private void btnSave_Click(object sender, EventArgs e)

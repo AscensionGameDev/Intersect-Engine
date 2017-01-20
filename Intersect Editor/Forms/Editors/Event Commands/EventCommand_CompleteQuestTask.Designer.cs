@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_CompleteQuestTask
     {
@@ -28,69 +30,48 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cmbQuests = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
+            this.grpCompleteTask = new DarkUI.Controls.DarkGroupBox();
+            this.cmbQuestTask = new DarkUI.Controls.DarkComboBox();
             this.lblTask = new System.Windows.Forms.Label();
-            this.cmbQuestTask = new System.Windows.Forms.ComboBox();
-            this.groupBox1.SuspendLayout();
+            this.cmbQuests = new DarkUI.Controls.DarkComboBox();
+            this.lblQuest = new System.Windows.Forms.Label();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.grpCompleteTask.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpCompleteTask
             // 
-            this.groupBox1.Controls.Add(this.cmbQuestTask);
-            this.groupBox1.Controls.Add(this.lblTask);
-            this.groupBox1.Controls.Add(this.cmbQuests);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnSave);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(176, 126);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Complete Quest Task";
+            this.grpCompleteTask.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpCompleteTask.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpCompleteTask.Controls.Add(this.cmbQuestTask);
+            this.grpCompleteTask.Controls.Add(this.lblTask);
+            this.grpCompleteTask.Controls.Add(this.cmbQuests);
+            this.grpCompleteTask.Controls.Add(this.lblQuest);
+            this.grpCompleteTask.Controls.Add(this.btnCancel);
+            this.grpCompleteTask.Controls.Add(this.btnSave);
+            this.grpCompleteTask.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpCompleteTask.Location = new System.Drawing.Point(3, 3);
+            this.grpCompleteTask.Name = "grpCompleteTask";
+            this.grpCompleteTask.Size = new System.Drawing.Size(176, 126);
+            this.grpCompleteTask.TabIndex = 17;
+            this.grpCompleteTask.TabStop = false;
+            this.grpCompleteTask.Text = "Complete Quest Task";
             // 
-            // cmbQuests
+            // cmbQuestTask
             // 
-            this.cmbQuests.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbQuests.FormattingEnabled = true;
-            this.cmbQuests.Location = new System.Drawing.Point(47, 19);
-            this.cmbQuests.Name = "cmbQuests";
-            this.cmbQuests.Size = new System.Drawing.Size(117, 21);
-            this.cmbQuests.TabIndex = 22;
-            this.cmbQuests.SelectedIndexChanged += new System.EventHandler(this.cmbQuests_SelectedIndexChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 13);
-            this.label1.TabIndex = 21;
-            this.label1.Text = "Quest:";
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Location = new System.Drawing.Point(89, 97);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 20;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(7, 97);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 19;
-            this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.cmbQuestTask.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbQuestTask.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbQuestTask.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbQuestTask.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbQuestTask.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbQuestTask.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbQuestTask.FormattingEnabled = true;
+            this.cmbQuestTask.Location = new System.Drawing.Point(47, 47);
+            this.cmbQuestTask.Name = "cmbQuestTask";
+            this.cmbQuestTask.Size = new System.Drawing.Size(117, 21);
+            this.cmbQuestTask.TabIndex = 24;
+            this.cmbQuestTask.Visible = false;
             // 
             // lblTask
             // 
@@ -102,38 +83,73 @@
             this.lblTask.Text = "Task:";
             this.lblTask.Visible = false;
             // 
-            // cmbQuestTask
+            // cmbQuests
             // 
-            this.cmbQuestTask.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbQuestTask.FormattingEnabled = true;
-            this.cmbQuestTask.Location = new System.Drawing.Point(47, 47);
-            this.cmbQuestTask.Name = "cmbQuestTask";
-            this.cmbQuestTask.Size = new System.Drawing.Size(117, 21);
-            this.cmbQuestTask.TabIndex = 24;
-            this.cmbQuestTask.Visible = false;
+            this.cmbQuests.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbQuests.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbQuests.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbQuests.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbQuests.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbQuests.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbQuests.FormattingEnabled = true;
+            this.cmbQuests.Location = new System.Drawing.Point(47, 19);
+            this.cmbQuests.Name = "cmbQuests";
+            this.cmbQuests.Size = new System.Drawing.Size(117, 21);
+            this.cmbQuests.TabIndex = 22;
+            this.cmbQuests.SelectedIndexChanged += new System.EventHandler(this.cmbQuests_SelectedIndexChanged);
+            // 
+            // lblQuest
+            // 
+            this.lblQuest.AutoSize = true;
+            this.lblQuest.Location = new System.Drawing.Point(4, 22);
+            this.lblQuest.Name = "lblQuest";
+            this.lblQuest.Size = new System.Drawing.Size(38, 13);
+            this.lblQuest.TabIndex = 21;
+            this.lblQuest.Text = "Quest:";
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(89, 97);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 20;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(7, 97);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 19;
+            this.btnSave.Text = "Ok";
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // EventCommand_CompleteQuestTask
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.groupBox1);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.Controls.Add(this.grpCompleteTask);
             this.Name = "EventCommand_CompleteQuestTask";
             this.Size = new System.Drawing.Size(182, 132);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpCompleteTask.ResumeLayout(false);
+            this.grpCompleteTask.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox cmbQuests;
-        private System.Windows.Forms.ComboBox cmbQuestTask;
+        private DarkGroupBox grpCompleteTask;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
+        private System.Windows.Forms.Label lblQuest;
+        private DarkComboBox cmbQuests;
+        private DarkComboBox cmbQuestTask;
         private System.Windows.Forms.Label lblTask;
     }
 }

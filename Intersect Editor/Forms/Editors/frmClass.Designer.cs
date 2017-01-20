@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms
 {
     partial class frmClass
     {
@@ -29,20 +31,20 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmClass));
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox1 = new DarkGroupBox();
             this.lstClasses = new System.Windows.Forms.ListBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.txtDropAmount = new System.Windows.Forms.TextBox();
+            this.groupBox4 = new DarkGroupBox();
+            this.txtDropAmount = new DarkTextBox();
             this.lblDropAmount = new System.Windows.Forms.Label();
             this.scrlDropItem = new System.Windows.Forms.HScrollBar();
             this.lblDropItem = new System.Windows.Forms.Label();
             this.scrlDropIndex = new System.Windows.Forms.HScrollBar();
             this.lblDropIndex = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new DarkGroupBox();
             this.lblPoints = new System.Windows.Forms.Label();
             this.scrlPoints = new System.Windows.Forms.HScrollBar();
-            this.txtMana = new System.Windows.Forms.TextBox();
-            this.txtHP = new System.Windows.Forms.TextBox();
+            this.txtMana = new DarkTextBox();
+            this.txtHP = new DarkTextBox();
             this.lblMana = new System.Windows.Forms.Label();
             this.lblHP = new System.Windows.Forms.Label();
             this.lblSpd = new System.Windows.Forms.Label();
@@ -55,30 +57,30 @@
             this.scrlMR = new System.Windows.Forms.HScrollBar();
             this.scrlMag = new System.Windows.Forms.HScrollBar();
             this.scrlStr = new System.Windows.Forms.HScrollBar();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.chkLocked = new System.Windows.Forms.CheckBox();
+            this.groupBox2 = new DarkGroupBox();
+            this.chkLocked = new DarkCheckBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtName = new System.Windows.Forms.TextBox();
-            this.btnRemove = new System.Windows.Forms.Button();
-            this.btnAdd = new System.Windows.Forms.Button();
-            this.rbFemale = new System.Windows.Forms.RadioButton();
-            this.rbMale = new System.Windows.Forms.RadioButton();
+            this.txtName = new DarkTextBox();
+            this.btnRemove = new DarkButton();
+            this.btnAdd = new DarkButton();
+            this.rbFemale = new DarkRadioButton();
+            this.rbMale = new DarkRadioButton();
             this.lstSprites = new System.Windows.Forms.ListBox();
-            this.cmbSprite = new System.Windows.Forms.ComboBox();
+            this.cmbSprite = new DarkComboBox();
             this.lblPic = new System.Windows.Forms.Label();
             this.picSprite = new System.Windows.Forms.PictureBox();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.groupBox6 = new DarkGroupBox();
             this.lblLevel = new System.Windows.Forms.Label();
             this.scrlLevel = new System.Windows.Forms.HScrollBar();
             this.lblSpellNum = new System.Windows.Forms.Label();
             this.scrlSpell = new System.Windows.Forms.HScrollBar();
-            this.btnRemoveSpell = new System.Windows.Forms.Button();
-            this.btnAddSpell = new System.Windows.Forms.Button();
+            this.btnRemoveSpell = new DarkButton();
+            this.btnAddSpell = new DarkButton();
             this.lstSpells = new System.Windows.Forms.ListBox();
-            this.grpWarp = new System.Windows.Forms.GroupBox();
-            this.btnVisualMapSelector = new System.Windows.Forms.Button();
-            this.cmbWarpMap = new System.Windows.Forms.ComboBox();
-            this.cmbDirection = new System.Windows.Forms.ComboBox();
+            this.grpWarp = new DarkGroupBox();
+            this.btnVisualMapSelector = new DarkButton();
+            this.cmbWarpMap = new DarkComboBox();
+            this.cmbDirection = new DarkComboBox();
             this.label23 = new System.Windows.Forms.Label();
             this.lblY = new System.Windows.Forms.Label();
             this.lblX = new System.Windows.Forms.Label();
@@ -86,35 +88,35 @@
             this.scrlX = new System.Windows.Forms.HScrollBar();
             this.scrlY = new System.Windows.Forms.HScrollBar();
             this.pnlContainer = new System.Windows.Forms.Panel();
-            this.groupBox11 = new System.Windows.Forms.GroupBox();
-            this.cmbScalingStat = new System.Windows.Forms.ComboBox();
+            this.groupBox11 = new DarkGroupBox();
+            this.cmbScalingStat = new DarkComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.lblScaling = new System.Windows.Forms.Label();
             this.scrlScaling = new System.Windows.Forms.HScrollBar();
-            this.cmbDamageType = new System.Windows.Forms.ComboBox();
+            this.cmbDamageType = new DarkComboBox();
             this.label11 = new System.Windows.Forms.Label();
             this.lblCritChance = new System.Windows.Forms.Label();
             this.scrlCritChance = new System.Windows.Forms.HScrollBar();
-            this.cmbAttackAnimation = new System.Windows.Forms.ComboBox();
+            this.cmbAttackAnimation = new DarkComboBox();
             this.lblAttackAnimation = new System.Windows.Forms.Label();
             this.lblDamage = new System.Windows.Forms.Label();
             this.scrlDamage = new System.Windows.Forms.HScrollBar();
-            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.groupBox10 = new DarkGroupBox();
             this.scrlMpRegen = new System.Windows.Forms.HScrollBar();
             this.scrlHpRegen = new System.Windows.Forms.HScrollBar();
             this.lblHpRegen = new System.Windows.Forms.Label();
             this.lblManaRegen = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.groupBox8 = new DarkGroupBox();
             this.scrlExpIncrease = new System.Windows.Forms.HScrollBar();
             this.lblExpIncrease = new System.Windows.Forms.Label();
-            this.txtBaseExp = new System.Windows.Forms.TextBox();
+            this.txtBaseExp = new DarkTextBox();
             this.label12 = new System.Windows.Forms.Label();
-            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.groupBox9 = new DarkGroupBox();
             this.scrlMpIncrease = new System.Windows.Forms.HScrollBar();
-            this.rdoPercentageIncrease = new System.Windows.Forms.RadioButton();
+            this.rdoPercentageIncrease = new DarkRadioButton();
             this.scrlHpIncrease = new System.Windows.Forms.HScrollBar();
-            this.rdoStaticIncrease = new System.Windows.Forms.RadioButton();
+            this.rdoStaticIncrease = new DarkRadioButton();
             this.lblPointsIncrease = new System.Windows.Forms.Label();
             this.lblHpIncrease = new System.Windows.Forms.Label();
             this.scrlPointsIncrease = new System.Windows.Forms.HScrollBar();
@@ -129,14 +131,14 @@
             this.scrlSpeedIncrease = new System.Windows.Forms.HScrollBar();
             this.lblMagicIncrease = new System.Windows.Forms.Label();
             this.scrlMagicResistIncrease = new System.Windows.Forms.HScrollBar();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.groupBox5 = new DarkGroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.picFace = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.cmbFace = new System.Windows.Forms.ComboBox();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
+            this.cmbFace = new DarkComboBox();
+            this.groupBox7 = new DarkGroupBox();
+            this.btnCancel = new DarkButton();
+            this.btnSave = new DarkButton();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripItemNew = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -472,7 +474,6 @@
             this.chkLocked.Size = new System.Drawing.Size(62, 17);
             this.chkLocked.TabIndex = 14;
             this.chkLocked.Text = "Locked";
-            this.chkLocked.UseVisualStyleBackColor = true;
             this.chkLocked.CheckedChanged += new System.EventHandler(this.chkLocked_CheckedChanged);
             // 
             // label1
@@ -502,7 +503,6 @@
             this.btnRemove.Size = new System.Drawing.Size(44, 19);
             this.btnRemove.TabIndex = 21;
             this.btnRemove.Text = "-";
-            this.btnRemove.UseVisualStyleBackColor = true;
             this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
             // 
             // btnAdd
@@ -513,7 +513,6 @@
             this.btnAdd.Size = new System.Drawing.Size(43, 19);
             this.btnAdd.TabIndex = 20;
             this.btnAdd.Text = "+";
-            this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
             // rbFemale
@@ -525,7 +524,6 @@
             this.rbFemale.Size = new System.Drawing.Size(59, 17);
             this.rbFemale.TabIndex = 19;
             this.rbFemale.Text = "Female";
-            this.rbFemale.UseVisualStyleBackColor = true;
             this.rbFemale.Click += new System.EventHandler(this.rbFemale_Click);
             // 
             // rbMale
@@ -539,7 +537,6 @@
             this.rbMale.TabIndex = 18;
             this.rbMale.TabStop = true;
             this.rbMale.Text = "Male";
-            this.rbMale.UseVisualStyleBackColor = true;
             this.rbMale.Click += new System.EventHandler(this.rbMale_Click);
             // 
             // lstSprites
@@ -652,7 +649,6 @@
             this.btnRemoveSpell.Size = new System.Drawing.Size(111, 21);
             this.btnRemoveSpell.TabIndex = 21;
             this.btnRemoveSpell.Text = "Remove";
-            this.btnRemoveSpell.UseVisualStyleBackColor = true;
             this.btnRemoveSpell.Click += new System.EventHandler(this.btnRemoveSpell_Click);
             // 
             // btnAddSpell
@@ -663,7 +659,6 @@
             this.btnAddSpell.Size = new System.Drawing.Size(111, 21);
             this.btnAddSpell.TabIndex = 20;
             this.btnAddSpell.Text = "Add";
-            this.btnAddSpell.UseVisualStyleBackColor = true;
             this.btnAddSpell.Click += new System.EventHandler(this.btnAddSpell_Click);
             // 
             // lstSpells
@@ -704,7 +699,6 @@
             this.btnVisualMapSelector.Size = new System.Drawing.Size(172, 25);
             this.btnVisualMapSelector.TabIndex = 24;
             this.btnVisualMapSelector.Text = "Open Visual Interface";
-            this.btnVisualMapSelector.UseVisualStyleBackColor = true;
             this.btnVisualMapSelector.Click += new System.EventHandler(this.btnVisualMapSelector_Click);
             // 
             // cmbWarpMap
@@ -1110,7 +1104,6 @@
             this.rdoPercentageIncrease.Size = new System.Drawing.Size(80, 17);
             this.rdoPercentageIncrease.TabIndex = 1;
             this.rdoPercentageIncrease.Text = "Percentage";
-            this.rdoPercentageIncrease.UseVisualStyleBackColor = true;
             this.rdoPercentageIncrease.CheckedChanged += new System.EventHandler(this.rdoPercentageIncrease_CheckedChanged);
             // 
             // scrlHpIncrease
@@ -1133,7 +1126,6 @@
             this.rdoStaticIncrease.TabIndex = 0;
             this.rdoStaticIncrease.TabStop = true;
             this.rdoStaticIncrease.Text = "Static";
-            this.rdoStaticIncrease.UseVisualStyleBackColor = true;
             this.rdoStaticIncrease.CheckedChanged += new System.EventHandler(this.rdoStaticIncrease_CheckedChanged);
             // 
             // lblPointsIncrease
@@ -1358,7 +1350,6 @@
             this.btnCancel.Size = new System.Drawing.Size(127, 32);
             this.btnCancel.TabIndex = 32;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
@@ -1369,7 +1360,6 @@
             this.btnSave.Size = new System.Drawing.Size(127, 32);
             this.btnSave.TabIndex = 29;
             this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // toolStrip
@@ -1513,18 +1503,18 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
+        private DarkGroupBox groupBox1;
         private System.Windows.Forms.ListBox lstClasses;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.TextBox txtDropAmount;
+        private DarkGroupBox groupBox4;
+        private DarkTextBox txtDropAmount;
         private System.Windows.Forms.Label lblDropAmount;
         private System.Windows.Forms.HScrollBar scrlDropItem;
         private System.Windows.Forms.Label lblDropItem;
         private System.Windows.Forms.HScrollBar scrlDropIndex;
         private System.Windows.Forms.Label lblDropIndex;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.TextBox txtMana;
-        private System.Windows.Forms.TextBox txtHP;
+        private DarkGroupBox groupBox3;
+        private DarkTextBox txtMana;
+        private DarkTextBox txtHP;
         private System.Windows.Forms.Label lblMana;
         private System.Windows.Forms.Label lblHP;
         private System.Windows.Forms.Label lblSpd;
@@ -1537,31 +1527,31 @@
         private System.Windows.Forms.HScrollBar scrlMR;
         private System.Windows.Forms.HScrollBar scrlMag;
         private System.Windows.Forms.HScrollBar scrlStr;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private DarkGroupBox groupBox2;
         private System.Windows.Forms.ListBox lstSprites;
-        private System.Windows.Forms.ComboBox cmbSprite;
+        private DarkComboBox cmbSprite;
         private System.Windows.Forms.Label lblPic;
         private System.Windows.Forms.PictureBox picSprite;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtName;
-        private System.Windows.Forms.Button btnRemove;
-        private System.Windows.Forms.Button btnAdd;
-        private System.Windows.Forms.RadioButton rbFemale;
-        private System.Windows.Forms.RadioButton rbMale;
-        private System.Windows.Forms.GroupBox groupBox6;
+        private DarkTextBox txtName;
+        private DarkButton btnRemove;
+        private DarkButton btnAdd;
+        private DarkRadioButton rbFemale;
+        private DarkRadioButton rbMale;
+        private DarkGroupBox groupBox6;
         private System.Windows.Forms.Label lblLevel;
         private System.Windows.Forms.HScrollBar scrlLevel;
         private System.Windows.Forms.Label lblSpellNum;
         private System.Windows.Forms.HScrollBar scrlSpell;
-        private System.Windows.Forms.Button btnRemoveSpell;
-        private System.Windows.Forms.Button btnAddSpell;
+        private DarkButton btnRemoveSpell;
+        private DarkButton btnAddSpell;
         private System.Windows.Forms.ListBox lstSpells;
         private System.Windows.Forms.Label lblPoints;
         private System.Windows.Forms.HScrollBar scrlPoints;
-        private System.Windows.Forms.GroupBox grpWarp;
-        private System.Windows.Forms.Button btnVisualMapSelector;
-        private System.Windows.Forms.ComboBox cmbWarpMap;
-        private System.Windows.Forms.ComboBox cmbDirection;
+        private DarkGroupBox grpWarp;
+        private DarkButton btnVisualMapSelector;
+        private DarkComboBox cmbWarpMap;
+        private DarkComboBox cmbDirection;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.Label lblY;
         private System.Windows.Forms.Label lblX;
@@ -1569,31 +1559,31 @@
         public System.Windows.Forms.HScrollBar scrlX;
         public System.Windows.Forms.HScrollBar scrlY;
         private System.Windows.Forms.Panel pnlContainer;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.GroupBox groupBox5;
+        private DarkButton btnSave;
+        private DarkButton btnCancel;
+        private DarkGroupBox groupBox5;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.PictureBox picFace;
-        private System.Windows.Forms.ComboBox cmbFace;
-        private System.Windows.Forms.GroupBox groupBox7;
+        private DarkComboBox cmbFace;
+        private DarkGroupBox groupBox7;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.CheckBox chkLocked;
-        private System.Windows.Forms.GroupBox groupBox10;
+        private DarkCheckBox chkLocked;
+        private DarkGroupBox groupBox10;
         private System.Windows.Forms.HScrollBar scrlMpRegen;
         private System.Windows.Forms.HScrollBar scrlHpRegen;
         private System.Windows.Forms.Label lblHpRegen;
         private System.Windows.Forms.Label lblManaRegen;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.GroupBox groupBox8;
+        private DarkGroupBox groupBox8;
         private System.Windows.Forms.HScrollBar scrlExpIncrease;
         private System.Windows.Forms.Label lblExpIncrease;
-        private System.Windows.Forms.TextBox txtBaseExp;
+        private DarkTextBox txtBaseExp;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.GroupBox groupBox9;
+        private DarkGroupBox groupBox9;
         private System.Windows.Forms.HScrollBar scrlMpIncrease;
-        private System.Windows.Forms.RadioButton rdoPercentageIncrease;
+        private DarkRadioButton rdoPercentageIncrease;
         private System.Windows.Forms.HScrollBar scrlHpIncrease;
-        private System.Windows.Forms.RadioButton rdoStaticIncrease;
+        private DarkRadioButton rdoStaticIncrease;
         private System.Windows.Forms.Label lblPointsIncrease;
         private System.Windows.Forms.Label lblHpIncrease;
         private System.Windows.Forms.HScrollBar scrlPointsIncrease;
@@ -1617,16 +1607,16 @@
         public System.Windows.Forms.ToolStripButton toolStripItemPaste;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         public System.Windows.Forms.ToolStripButton toolStripItemUndo;
-        private System.Windows.Forms.GroupBox groupBox11;
-        private System.Windows.Forms.ComboBox cmbScalingStat;
+        private DarkGroupBox groupBox11;
+        private DarkComboBox cmbScalingStat;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label lblScaling;
         private System.Windows.Forms.HScrollBar scrlScaling;
-        private System.Windows.Forms.ComboBox cmbDamageType;
+        private DarkComboBox cmbDamageType;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label lblCritChance;
         private System.Windows.Forms.HScrollBar scrlCritChance;
-        private System.Windows.Forms.ComboBox cmbAttackAnimation;
+        private DarkComboBox cmbAttackAnimation;
         private System.Windows.Forms.Label lblAttackAnimation;
         private System.Windows.Forms.Label lblDamage;
         private System.Windows.Forms.HScrollBar scrlDamage;

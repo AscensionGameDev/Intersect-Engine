@@ -25,6 +25,7 @@ using Intersect_Editor.Classes;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -39,6 +40,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             _loading = true;
+            InitLocalization();
             if (_myCommand.Ints[0] == (int) SwitchVariableTypes.ServerSwitch)
             {
                 rdoGlobalSwitch.Checked = true;
@@ -46,6 +48,20 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _loading = false;
             InitEditor();
 
+        }
+
+        private void InitLocalization()
+        {
+            grpSetSwitch.Text = Strings.Get("eventsetswitch", "title");
+            lblSwitch.Text = Strings.Get("eventsetswitch", "label");
+            rdoGlobalSwitch.Text = Strings.Get("eventsetswitch", "global");
+            rdoPlayerSwitch.Text = Strings.Get("eventsetswitch", "player");
+            lblTo.Text = Strings.Get("eventsetswitch", "to");
+            cmbSetSwitchVal.Items.Clear();
+            cmbSetSwitchVal.Items.Add(Strings.Get("eventsetswitch", "false"));
+            cmbSetSwitchVal.Items.Add(Strings.Get("eventsetswitch", "true"));
+            btnSave.Text = Strings.Get("eventsetswitch", "okay");
+            btnCancel.Text = Strings.Get("eventsetswitch", "cancel");
         }
 
         private void InitEditor()

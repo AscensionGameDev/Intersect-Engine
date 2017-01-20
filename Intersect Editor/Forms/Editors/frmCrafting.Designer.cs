@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors
 {
     partial class frmCrafting
     {
@@ -29,25 +31,25 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmCrafting));
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnCancel = new DarkButton();
+            this.btnSave = new DarkButton();
+            this.groupBox1 = new DarkGroupBox();
             this.lstCrafts = new System.Windows.Forms.ListBox();
             this.pnlContainer = new System.Windows.Forms.Panel();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new DarkGroupBox();
             this.lstCompositions = new System.Windows.Forms.ListBox();
-            this.btnNewComposition = new System.Windows.Forms.Button();
-            this.btnDeleteCraft = new System.Windows.Forms.Button();
-            this.grpCraft = new System.Windows.Forms.GroupBox();
+            this.btnNewComposition = new DarkButton();
+            this.btnDeleteCraft = new DarkButton();
+            this.grpCraft = new DarkGroupBox();
             this.lblItem = new System.Windows.Forms.Label();
             this.scrlItem = new System.Windows.Forms.HScrollBar();
             this.lblName = new System.Windows.Forms.Label();
-            this.txtName = new System.Windows.Forms.TextBox();
+            this.txtName = new DarkTextBox();
             this.lblSpeed = new System.Windows.Forms.Label();
             this.scrlSpeed = new System.Windows.Forms.HScrollBar();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.btnRemove = new System.Windows.Forms.Button();
-            this.btnAdd = new System.Windows.Forms.Button();
+            this.groupBox5 = new DarkGroupBox();
+            this.btnRemove = new DarkButton();
+            this.btnAdd = new DarkButton();
             this.lblIngredient = new System.Windows.Forms.Label();
             this.scrlIngredient = new System.Windows.Forms.HScrollBar();
             this.lstIngredients = new System.Windows.Forms.ListBox();
@@ -62,8 +64,8 @@
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.btnDupIngredient = new System.Windows.Forms.Button();
-            this.btnDupCraft = new System.Windows.Forms.Button();
+            this.btnDupIngredient = new DarkButton();
+            this.btnDupCraft = new DarkButton();
             this.groupBox1.SuspendLayout();
             this.pnlContainer.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -80,7 +82,6 @@
             this.btnCancel.Size = new System.Drawing.Size(172, 27);
             this.btnCancel.TabIndex = 24;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
@@ -90,7 +91,6 @@
             this.btnSave.Size = new System.Drawing.Size(169, 27);
             this.btnSave.TabIndex = 23;
             this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // groupBox1
@@ -155,7 +155,6 @@
             this.btnNewComposition.Size = new System.Drawing.Size(190, 27);
             this.btnNewComposition.TabIndex = 20;
             this.btnNewComposition.Text = "New";
-            this.btnNewComposition.UseVisualStyleBackColor = true;
             this.btnNewComposition.Click += new System.EventHandler(this.btnNewComposition_Click);
             // 
             // btnDeleteCraft
@@ -166,7 +165,6 @@
             this.btnDeleteCraft.Size = new System.Drawing.Size(190, 27);
             this.btnDeleteCraft.TabIndex = 19;
             this.btnDeleteCraft.Text = "Delete";
-            this.btnDeleteCraft.UseVisualStyleBackColor = true;
             this.btnDeleteCraft.Click += new System.EventHandler(this.btnDeleteCraft_Click);
             // 
             // grpCraft
@@ -267,7 +265,6 @@
             this.btnRemove.Size = new System.Drawing.Size(75, 23);
             this.btnRemove.TabIndex = 38;
             this.btnRemove.Text = "Remove";
-            this.btnRemove.UseVisualStyleBackColor = true;
             this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
             // 
             // btnAdd
@@ -277,7 +274,6 @@
             this.btnAdd.Size = new System.Drawing.Size(75, 23);
             this.btnAdd.TabIndex = 37;
             this.btnAdd.Text = "Add";
-            this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
             // lblIngredient
@@ -426,7 +422,6 @@
             this.btnDupIngredient.Size = new System.Drawing.Size(75, 23);
             this.btnDupIngredient.TabIndex = 39;
             this.btnDupIngredient.Text = "Duplicate";
-            this.btnDupIngredient.UseVisualStyleBackColor = true;
             this.btnDupIngredient.Click += new System.EventHandler(this.btnDupIngredient_Click);
             // 
             // btnDupCraft
@@ -437,7 +432,6 @@
             this.btnDupCraft.Size = new System.Drawing.Size(190, 27);
             this.btnDupCraft.TabIndex = 21;
             this.btnDupCraft.Text = "Duplicate";
-            this.btnDupCraft.UseVisualStyleBackColor = true;
             this.btnDupCraft.Click += new System.EventHandler(this.btnDupCraft_Click);
             // 
             // frmCrafting
@@ -473,30 +467,30 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
+        private DarkGroupBox groupBox1;
         private System.Windows.Forms.ListBox lstCrafts;
         private System.Windows.Forms.Panel pnlContainer;
-        private System.Windows.Forms.GroupBox grpCraft;
+        private DarkGroupBox grpCraft;
         private System.Windows.Forms.Label lblItem;
         private System.Windows.Forms.HScrollBar scrlItem;
         private System.Windows.Forms.Label lblName;
-        private System.Windows.Forms.TextBox txtName;
+        private DarkTextBox txtName;
         private System.Windows.Forms.Label lblSpeed;
         private System.Windows.Forms.HScrollBar scrlSpeed;
-        private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.Button btnRemove;
-        private System.Windows.Forms.Button btnAdd;
+        private DarkGroupBox groupBox5;
+        private DarkButton btnRemove;
+        private DarkButton btnAdd;
         private System.Windows.Forms.Label lblIngredient;
         private System.Windows.Forms.HScrollBar scrlIngredient;
         private System.Windows.Forms.ListBox lstIngredients;
         private System.Windows.Forms.Label lblQuantity;
         private System.Windows.Forms.HScrollBar scrlQuantity;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private DarkGroupBox groupBox2;
         private System.Windows.Forms.ListBox lstCompositions;
-        private System.Windows.Forms.Button btnNewComposition;
-        private System.Windows.Forms.Button btnDeleteCraft;
+        private DarkButton btnNewComposition;
+        private DarkButton btnDeleteCraft;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton toolStripItemNew;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
@@ -506,7 +500,7 @@
         public System.Windows.Forms.ToolStripButton toolStripItemPaste;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         public System.Windows.Forms.ToolStripButton toolStripItemUndo;
-        private System.Windows.Forms.Button btnDupCraft;
-        private System.Windows.Forms.Button btnDupIngredient;
+        private DarkButton btnDupCraft;
+        private DarkButton btnDupIngredient;
     }
 }

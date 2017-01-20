@@ -21,7 +21,9 @@
 */
 using System;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -34,8 +36,17 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitializeComponent();
             _myCommand = refCommand;
             _eventEditor = editor;
+            InitLocalization();
             scrlWait.Value = _myCommand.Ints[0];
-            lblWait.Text = @"Wait " + scrlWait.Value + @"ms";
+            lblWait.Text = Strings.Get("eventwait", "label", scrlWait.Value);
+        }
+
+        private void InitLocalization()
+        {
+            grpWait.Text = Strings.Get("eventwait", "title");
+            lblWait.Text = Strings.Get("eventwait", "label", scrlWait.Value);
+            btnSave.Text = Strings.Get("eventwait", "okay");
+            btnCancel.Text = Strings.Get("eventwait", "cancel");
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -49,9 +60,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _eventEditor.CancelCommandEdit();
         }
 
-        private void scrlWait_Scroll(object sender, ScrollEventArgs e)
+        private void scrlWait_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblWait.Text = @"Wait " + scrlWait.Value + @"ms";
+            lblWait.Text = Strings.Get("eventwait", "label", scrlWait.Value);
         }
     }
 }

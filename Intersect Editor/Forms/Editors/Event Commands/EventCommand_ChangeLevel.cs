@@ -21,8 +21,10 @@
 */
 using System;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -38,7 +40,15 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             if (_myCommand.Ints[0] <= 0 || _myCommand.Ints[0] > Options.MaxLevel) _myCommand.Ints[0] = 1;
             scrlLevel.Value = _myCommand.Ints[0];
             scrlLevel.Maximum = Options.MaxLevel;
-            lblLevel.Text = @"Set Level: " + scrlLevel.Value;
+            InitLocalization();
+        }
+
+        private void InitLocalization()
+        {
+            grpChangeLevel.Text = Strings.Get("eventchangelevel", "title");
+            lblLevel.Text = Strings.Get("eventchangelevel", "label", scrlLevel.Value);
+            btnSave.Text = Strings.Get("eventchangelevel", "okay");
+            btnCancel.Text = Strings.Get("eventchangelevel", "cancel");
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -52,9 +62,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _eventEditor.CancelCommandEdit();
         }
 
-        private void scrlExperience_Scroll(object sender, ScrollEventArgs e)
+        private void scrlExperience_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblLevel.Text = @"Set Level: " + scrlLevel.Value;
+            lblLevel.Text = Strings.Get("eventchangelevel", "label", scrlLevel.Value);
         }
     }
 }

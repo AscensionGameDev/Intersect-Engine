@@ -25,6 +25,7 @@ using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -39,6 +40,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             _currentPage = refPage;
+            InitLocalization();
             txtShowOptions.Text = _myCommand.Strs[0];
             txtShowOptionsOpt1.Text = _myCommand.Strs[1];
             txtShowOptionsOpt2.Text = _myCommand.Strs[2];
@@ -56,6 +58,20 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 cmbFace.SelectedIndex = 0;
             }
             UpdateFacePreview();
+        }
+
+        private void InitLocalization()
+        {
+            grpOptions.Text = Strings.Get("eventshowoptions", "title");
+            lblText.Text = Strings.Get("eventshowoptions", "text");
+            lblFace.Text = Strings.Get("eventshowoptions", "face");
+            lblCommands.Text = Strings.Get("eventshowoptions", "commands");
+            lblOpt1.Text = Strings.Get("eventshowoptions", "option1");
+            lblOpt2.Text = Strings.Get("eventshowoptions", "option2");
+            lblOpt3.Text = Strings.Get("eventshowoptions", "option3");
+            lblOpt4.Text = Strings.Get("eventshowoptions", "option4");
+            btnSave.Text = Strings.Get("eventshowoptions", "okay");
+            btnCancel.Text = Strings.Get("eventshowoptions", "cancel");
         }
 
         private void UpdateFacePreview()

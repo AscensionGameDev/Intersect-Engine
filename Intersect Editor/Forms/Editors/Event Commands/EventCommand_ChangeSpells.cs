@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -38,10 +39,25 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             _currentPage = refPage;
+            InitLocalization();
             cmbSpell.Items.Clear();
             cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
             cmbAction.SelectedIndex = _myCommand.Ints[0];
             cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell,_myCommand.Ints[1]);
+        }
+
+        private void InitLocalization()
+        {
+            grpChangeSpells.Text = Strings.Get("eventchangespells", "title");
+            cmbAction.Items.Clear();
+            for (int i = 0; i < 2; i++)
+            {
+                cmbAction.Items.Add(Strings.Get("eventchangespells", "action" + i));
+            }
+            lblAction.Text = Strings.Get("eventchangespells", "action");
+            lblSpell.Text = Strings.Get("eventchangespells", "spell");
+            btnSave.Text = Strings.Get("eventchangespells", "okay");
+            btnCancel.Text = Strings.Get("eventchangespells", "cancel");
         }
 
         private void btnSave_Click(object sender, EventArgs e)

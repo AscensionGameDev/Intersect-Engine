@@ -322,6 +322,751 @@
 		<string id="revision">Revision: {00}</string>
 		<string id="fps">FPS: {00}</string>
 	</MainForm>
+	<EventEditor>
+		<string id="title">Event Editor - Event #{00}: {01}</string>
+		
+		<string id="general">General</string>
+		<string id="name">Name:</string>
+		<string id="global">Global Event</string>
+		
+		<string id="pageoptions">Page Options</string>
+		<string id="newpage">New Page</string>
+		<string id="copypage">Copy Page</string>
+		<string id="pastepage">Paste Page</string>
+		<string id="deletepage">Delete Page</string>
+		<string id="clearpage">Clear Page</string>
+		
+		<string id="conditions">Conditions</string>
+		<string id="addcondition">+</string>
+		<string id="removecondition">-</string>
+		
+		<string id="entityoptions">Entity Options</string>
+		<string id="eventpreview">Preview</string>
+		<string id="animation">Animation</string>
+		
+		<string id="movement">Movement</string>
+		<string id="movementtype">Type:</string>
+		<string id="setroute">Set Route...</string>
+		<string id="movetype0">None</string>
+		<string id="movetype1">Random</string>
+		<string id="movetype2">Move Route</string>
+		<string id="speed">Speed:</string>
+		<string id="speed0">Slowest</string>
+		<string id="speed1">Slower</string>
+		<string id="speed2">Normal</string>
+		<string id="speed3">Faster</string>
+		<string id="speed4">Fastest</string>
+		
+		<string id="frequency">Freq:</string>
+		<string id="frequency0">Not Very Often</string>
+		<string id="frequency1">Not Often</string>
+		<string id="frequency2">Normal</string>
+		<string id="frequency3">Often</string>
+		<string id="frequency4">Very Often</string>
+		
+		<string id="layer">Layer:</string>
+		<string id="layer0">Below Player</string>
+		<string id="layer1">Same as Player</string>
+		<string id="layer2">Above Player</string>
+		
+		<string id="inspector">Entity Inspector Options</string>
+		<string id="disableinspector">Disable Inspector</string>
+		<string id="inspectordesc">Inspector Description:</string>
+		<string id="face">Face:</string>
+		
+		<string id="extras">Extras:</string>
+		<string id="passable">Passable</string>
+		<string id="hidename">Hide Name</string>
+		<string id="directionfix">Dir Fix</string>
+		<string id="walkinganim">Walking Anim</string>
+		<string id="interactionfreeze">Interaction Freeze</string>
+		
+		<string id="trigger">Trigger</string>
+		<string id="trigger0">Action Button</string>
+		<string id="trigger1">Player Touch</string>
+		<string id="trigger2">Autorun</string>
+		<string id="trigger3">Projectile Hit</string>
+		
+		<string id="projectile">Projectile:</string>
+		
+		
+		<string id="commontrigger0">None</string>
+		<string id="commontrigger1">Login</string>
+		<string id="commontrigger2">Level Up</string>
+		
+		<string id="commandlist">Commands:</string>
+		<string id="addcommand">Add Commands</string>
+		
+		<string id="insertcommand">Insert</string>
+		<string id="editcommand">Edit</string>
+		<string id="deletecommand">Delete</string>
+
+		<string id="save">Save</string>
+		<string id="cancel">Cancel</string>
+		
+		<string id="savecaption">Save Event?</string>
+		<string id="savedialogue">Do you want to save changes to this event?</string>
+	</EventEditor>
+	<EventCommandList>
+		<string id="invalid">Invalid Command</string>
+		<string id="unknown">Unknown Command</string>
+		<string id="linestart">@> </string>
+		<string id="whenoption">When [{00}]</string>
+		<string id="endoptions">End Options</string>
+		
+		<string id="conditionalelse">Else</string>
+		<string id="conditionalend">End Branch</string>
+		
+		<string id="spellsucceeded">Spell Taught/Removed Successfully</string>
+		<string id="spellfailed">Spell Not Taught/Moved (Already Knew/Spellbook full/Didn't Know)</string>
+		<string id="endspell">End Spell Change</string>
+		
+		<string id="itemschanged">Item(s) Given/Taken Successfully</string>
+		<string id="itemnotchanged">Item(s) Not Given/Taken (Doesn't have/Inventory full)</string>
+		<string id="enditemchange">End Item Change</string>
+		
+		<string id="queststarted">Quest Accepted/Started Successfully</string>
+		<string id="questnotstarted">Quest Declined or Failed to Start (Reqs not met, already started, etc)</string>
+		<string id="endstartquest">End Start Quest</string>
+		
+		<string id="showtext">Show Text: {00}</string>
+		<string id="showoptions">Show Options: {00}</string>
+		
+		<string id="chatboxtext">Show Chatbox Text [Channel: {00}, Color: {01}] - {02}</string>
+		<string id="chatplayer">Player</string>
+		<string id="chatlocal">Local</string>
+		<string id="chatglobal">Global</string>
+		
+		<string id="playerswitch">Set Player Switch {00} to {01}</string>
+		<string id="globalswitch">Set Global Switch {00} to {01}</string>
+		<string id="true">True</string>
+		<string id="false">False</string>
+		
+		<string id="playervariable">Set Player Variable {00} ({01})</string>
+		<string id="globalvariable">Set Global Variable {00} ({01})</string>
+		<string id="setvariable">Set to {00}</string>
+		<string id="addvariable">Add {00}</string>
+		<string id="subtractvariable">Subtract {00}</string>
+		<string id="randvariable">Random Number {00} to {01}</string>
+		
+		<string id="selfswitch">Set Self Switch {00} to {01}</string>
+		<string id="selfswitch0">A</string>
+		<string id="selfswitch1">B</string>
+		<string id="selfswitch2">C</string>
+		<string id="selfswitch3">D</string>
+		
+		<string id="conditionalbranch">Conditional Branch: [{00}]</string>
+		<string id="exitevent">Exit Event Processing</string>
+		<string id="label">Label: {00}</string>
+		<string id="gotolabel">Go to Label {00}</string>
+		<string id="commonevent">Start Common Event: {00}</string>
+		<string id="restorehp">Restore Player HP</string>
+		<string id="restoremp">Restore Player MP</string>
+		<string id="levelup">Level Up Player</string>
+		<string id="giveexp">Give Player {00} Experience</string>
+		<string id="setlevel">Set Player Level To: {00}</string>
+		<string id="changespells">Change Player Spells [{00}]</string>
+		<string id="teach">Teach: Spell {00}</string>
+		<string id="forget">Remove: Spell {00}</string>
+		<string id="changeitems">Change Player Items [{00}]</string>
+		<string id="give">Give: Item {00}</string>
+		<string id="take">Take: Item {00}</string>
+		<string id="setsprite">Set Player Sprite to {00}</string>
+		<string id="setface">Set Player Face to {00}</string>
+		<string id="setgender">Set Player Gender to {00}</string>
+		<string id="male">Male</string>
+		<string id="female">Female</string>
+		<string id="setaccess">Set Player Access to {00}</string>
+		<string id="regularuser">Regulator User</string>
+		<string id="moderator">Moderator</string>
+		<string id="admin">Owner/Developer</string>
+		<string id="unknownrole">Unknown Access</string>
+		<string id="warp">Warp Player [Map: {00} X: {01} Y: {02} Dir: {03}]</string>
+		<string id="mapnotfound">NOT FOUND</string>
+		<string id="moveroute">Set Move Route for {00}</string>
+		<string id="waitforroute">Wait for Move Route Completion of {00}</string>
+		<string id="moverouteevent">Event #{00} {01}</string>
+		<string id="deletedevent">Deleted Event!</string>
+		<string id="holdplayer">Hold Player</string>
+		<string id="releaseplayer">Release Player</string>
+		<string id="spawnnpc">Spawn Npc {00} {01}</string>
+		<string id="spawnonmap">[On Map {00} X: {01} Y: {02} Dir: {03}]</string>
+		<string id="spawnonplayer">On Player [X Offset: {00} Y Offset: {01} Dir: {02}]</string>
+		<string id="spawnonevent">On Event #{00} {01} [X Offset: {02} Y Offset: {03} Dir: {04}]</string>
+		<string id="despawnnpcs">Despawn NPCs</string>
+		<string id="playanimation">Play Animation {00} {01}</string>
+		<string id="animationonmap">[On Map {00} X: {01} Y: {02} Dir: {03}]</string>
+		<string id="animationonplayer">On Player [X Offset: {00} Y Offset: {01} {02}]</string>
+		<string id="animationonevent">On Event #{00} {01} [X Offset: {02} Y Offset: {03} {04}]</string>
+		<string id="animationrelativedir">Spawn Relative To Direction</string>
+		<string id="animationrotatedir">Rotate Relative To Direction</string>
+		<string id="animationrelativerotate">Spawn And Rotate Relative To Direction</string>
+		<string id="playbgm">Play BGM [File: {00}]</string>
+		<string id="fadeoutbgm">Fadeout BGM</string>
+		<string id="playsound">Play Sound [File: {00}]</string>
+		<string id="stopsounds">Stop Sounds</string>
+		<string id="wait">Wait {00}ms</string>
+		<string id="openbank">Open Bank</string>
+		<string id="openshop">Open Shop [{00}]</string>
+		<string id="opencrafting">Open Crafting Bench [{00}]</string>
+		<string id="setclass">Set Class [{00}]</string>
+		<string id="startquest">Start Quest [{00}, {01}]</string>
+		<string id="forcedstart">Forced Start</string>
+		<string id="showoffer">Show Offer Window</string>
+		<string id="completetask">Complete Quest Task [Quest: {00}, Task: {01}]</string>
+		<string id="taskundefined">Undefined</string>
+		<string id="endquest">End Quest [{00}, {01}]</string>
+		<string id="runcompletionevent">Running Completion Event</string>
+		<string id="skipcompletionevent">Without Running Completion Event</string>
+		
+		<string id="notcommon">Cannot use this command in common events.</string>	
+		<string id="notcommoncaption">Common Event Warning!</string>
+	</EventCommandList>
+	<EventConditionDesc>
+		<string id="true">True</string>
+		<string id="false">False</string>
+		<string id="selfswitch0">A</string>
+		<string id="selfswitch1">B</string>
+		<string id="selfswitch2">C</string>
+		<string id="selfswitch3">D</string>
+		<string id="equal">is equal to {00}</string>
+		<string id="greaterequal">is greater than or equal to {00}</string>
+		<string id="lessthanequal">is less than or equal to {00}</string>
+		<string id="greater">is greather than {00}</string>
+		<string id="lessthan">is less than {00}</string>
+		<string id="notequal">does not equal {00}</string>
+		<string id="modadmin">Mod or Admin</string>
+		<string id="admin">Admin</string>
+		<string id="timeinvalid">invalid</string>
+		
+		<string id="playerswitch">Player Switch {00} is {01}</string>
+		<string id="playervariable">Player Variable {00} {01}</string>
+		<string id="globalswitch">Global Switch {00} is {01}</string>
+		<string id="globalvariable">Global Variable {00} {01}</string>
+		<string id="hasitem">Player has at least {00} of Item {01}</string>
+		<string id="class">Player's class is {00}</string>
+		<string id="knowsspell">Player knows Spell {00}</string>
+		<string id="level">Player's level {00}</string>
+		<string id="selfswitch">Self Switch {00} is {01}</string>
+		<string id="power">Player's Power is {00}</string>
+		<string id="time">Time is between {00} and {01}</string>
+		<string id="startquest">Can Start Quest: {00}</string>
+		<string id="questinprogress">Quest In Progress: {00} {01}</string>
+		<string id="beforetask">, Before Task: {00}</string>
+		<string id="aftertask">, After Task: {00}</string>
+		<string id="ontask">, On Task: {00}</string>
+		<string id="onanytask">, On Any Task</string>
+		<string id="questcompleted">Quest is Completed: {00}</string>
+		<string id="playerdeath">Player Death</string>
+		<string id="nonpcsonmap">No NPCs on the map</string>
+	</EventConditionDesc>
+	<EventGraphic>
+		<string id="title">Graphic Selector</string>
+		<string id="type">Graphic Type:</string>
+		<string id="graphictype0">None</string>
+		<string id="graphictype1">Sprite</string>
+		<string id="graphictype2">Tileset</string>
+		<string id="graphic">Graphic:</string>
+		<string id="preview">Graphic Preview</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventGraphic>
+	<EventMoveRoute>
+		<string id="title">Move Route</string>
+		<string id="thisevent">[THIS EVENT]</string>
+		<string id="commands">Commands</string>
+		
+		<string id="move">Move</string>
+		<string id="moveup">Move Up</string>
+		<string id="movedown">Move Down</string>
+		<string id="moveleft">Move Left</string>
+		<string id="moveright">Move Right</string>
+		<string id="moverandomly">Move Randomly</string>
+		<string id="movetowardplayer">Move Toward Player</string>
+		<string id="moveawayfromplayer">Move Away From Player</string>
+		<string id="stepforward">Step Forward</string>
+		<string id="stepbackward">Step Backward</string>
+		
+		<string id="turn">Turn</string>
+		<string id="faceup">Face Up</string>
+		<string id="facedown">Face Down</string>
+		<string id="faceleft">Face Left</string>
+		<string id="faceright">Face Right</string>
+		<string id="turn90clockwise">Turn 90* Clockwise</string>
+		<string id="turn90counterclockwise">Turn 90* Counter Clockwise</string>
+		<string id="turn180">Turn 180*</string>
+		<string id="turnrandomly">Turn Randomly</string>
+		<string id="turntowardplayer">Turn Toward Player</string>
+		<string id="turnawayfromplayer">Turn Away From Player</string>
+		
+		<string id="setspeed">Set Speed</string>
+		<string id="slowest">Slowest</string>
+		<string id="slower">Slower</string>
+		<string id="speednormal">Normal</string>
+		<string id="faster">Faster</string>
+		<string id="fastest">Fastest</string>
+		
+		<string id="setmovementfrequency">Set Movement Frequency</string>
+		<string id="lowest">Lowest</string>
+		<string id="lower">Lower</string>
+		<string id="frequencynormal">Normal</string>
+		<string id="higher">Higher</string>
+		<string id="highest">Highest</string>
+		
+		<string id="setattribute">Set Attribute</string>
+		<string id="walkinganimon">Walking Animation: On</string>
+		<string id="walkinganimoff">Walking Animation: Off</string>
+		<string id="directionfixon">Direction Fix: On</string>
+		<string id="directionfixoff">Direction Fix: Off</string>
+		<string id="walkthroughon">Walkthrough: On</string>
+		<string id="walkthroughoff">Walkthrough: Off</string>
+		<string id="showname">Show Name</string>
+		<string id="hidename">Hide Name</string>
+		<string id="setplayerbelow">Set Layer: Below Player</string>
+		<string id="setplayersame">Set Layer: Same as Player</string>
+		<string id="setplayerabove">Set Layer: Above Player</string>
+		
+		<string id="etc">Etc</string>
+		<string id="wait100">Wait 100ms</string>
+		<string id="wait500">Wait 500ms</string>
+		<string id="wait1000">Wait 1000ms</string>
+		<string id="setgraphic">Set Graphic...</string>
+		<string id="setanimation">Set Animation...</string>
+		
+		<string id="ignoreblocked">Ignore if Blocked</string>
+		<string id="repeatroute">Repeat Route</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventMoveRoute>
+	<EventSetAnimation>
+		<string id="title">Set Animation</string>
+		<string id="label">Animation:</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventSetAnimation>
+	<EventChangeFace>
+		<string id="title">Change Face</string>
+		<string id="label">Face:</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventChangeFace>
+	<EventChangeGender>
+		<string id="title">Change Gender</string>
+		<string id="label">Gender:</string>
+		<string id="gender0">Male</string>
+		<string id="gender1">Female</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventChangeGender>
+	<EventChangeItems>
+		<string id="title">Change Player Items</string>
+		<string id="action">Action:</string>
+		<string id="action0">Give</string>
+		<string id="action1">Take</string>
+		<string id="item">Item:</string>
+		<string id="amount">Amount: {00}</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventChangeItems>
+	<EventChangeLevel>
+		<string id="title">Change Level</string>
+		<string id="label">Set Level: {00}</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventChangeLevel>
+	<EventChangeSpells>
+		<string id="title">Change Player Spells</string>
+		<string id="action">Action: </string>
+		<string id="action0">Add</string>
+		<string id="action1">Remove</string>
+		<string id="spell">Spell: </string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventChangeSpells>
+	<EventChangeSprite>
+		<string id="title">Change Sprite</string>
+		<string id="label">Sprite:</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventChangeSprite>
+	<EventChatboxText>
+		<string id="title">Add Chatbox Text</string>
+		<string id="text">Text:</string>
+		<string id="color">Color:</string>
+		<string id="channel">Channel:</string>
+		<string id="channel0">Player</string>
+		<string id="channel1">Local</string>
+		<string id="channel2">Global</string>
+		<string id="commands">Chat Commands</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventChatboxText>
+	<EventCompleteQuestTask>
+		<string id="title">Complete Quest Task</string>
+		<string id="quest">Quest:</string>
+		<string id="task">Task:</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventCompleteQuestTask>
+	<EventConditional>
+		<string id="title">Conditional</string>
+		<string id="type">Condition Type:</string>
+		<string id="condition0">Player Switch is...</string>
+		<string id="condition1">Player Variable is...</string>
+		<string id="condition2">Global Switch is...</string>
+		<string id="condition3">Global Variable is...</string>
+		<string id="condition4">Has item...</string>
+		<string id="condition5">Class is...</string>
+		<string id="condition6">Knows spell...</string>
+		<string id="condition7">Level is....</string>
+		<string id="condition8">Self Switch is....</string>
+		<string id="condition9">Power level is....</string>
+		<string id="condition10">Time is between....</string>
+		<string id="condition11">Can Start Quest....</string>
+		<string id="condition12">Quest In Progress....</string>
+		<string id="condition13">Quest Completed....</string>
+		
+		<!-- Shared Options -->
+		<string id="true">True</string>
+		<string id="false">False</string>
+		<string id="comparator">Comparator:</string>
+		<string id="comparator0">Equal To</string>
+		<string id="comparator1">Greater Than or Equal To</string>
+		<string id="comparator2">Less Than or Equal To</string>
+		<string id="comparator3">Greater Than</string>
+		<string id="comparator4">Less Than</string>
+		<string id="comparator5">Does Not Equal</string>
+		<string id="switchis">Is</string>
+		
+		<!-- Globals/Player Switch Is -->
+		<string id="playerswitch">Player Switch</string>
+		<string id="globalswitch">Global Switch</string>
+		<string id="switch">Switch:</string>
+		
+		<!-- Global/Player Variable Is -->
+		<string id="playervariable">Player Variable</string>
+		<string id="globalvariable">Global Variable</string>
+		<string id="variable">Variable:</string>
+		<string id="value">Value:</string>
+		
+		<!--Has Item -->
+		<string id="hasitem">Has Item</string>
+		<string id="hasatleast">Has at least: {00}</string>
+		<string id="item">Item:</string>
+		
+		<!-- Class Is -->
+		<string id="classis">Class Is</string>
+		<string id="class">Class:</string>
+		
+		<!-- Knows Spell -->
+		<string id="knowsspell">Knows Spell</string>
+		<string id="spell">Spell:</string>
+		
+		<!-- Level Is -->
+		<string id="levelis">Level Is</string>
+		<string id="level">Level: {00}</string>
+		
+		<!-- Self Switch Is -->
+		<string id="selfswitchis">Self Switch Is</string>
+		<string id="selfswitch">Self Switch:</string>
+		<string id="selfswitch0">A</string>
+		<string id="selfswitch1">B</string>
+		<string id="selfswitch2">C</string>
+		<string id="selfswitch3">D</string>
+		
+		<!-- Power Is -->
+		<string id="poweris">Power Is</string>
+		<string id="power">Power:</string>
+		<string id="power0">Mod or Admin</string>
+		<string id="power1">Admin</string>
+		
+		<!-- Time is between -->
+		<string id="time">Time is between:</string>
+		<string id="startrange">Start Range:</string>
+		<string id="endrange">End Range:</string>
+		<string id="and">And</string>
+		<string id="to">to</string>
+		
+		<!-- Can Start Quest -->
+		<string id="canstartquest">Can Start Quest</string>
+		<string id="startquest">Quest:</string>
+		
+		<!-- Quest In Progress -->
+		<string id="questinprogress">Quest In Progress</string>
+		<string id="questprogress">Quest:</string>
+		<string id="questis">Is:</string>
+		<string id="questcomparator0">On Any Task</string>
+		<string id="questcomparator1">Before Task...</string>
+		<string id="questcomparator2">After Task...</string>
+		<string id="questcomparator3">On Task...</string>
+		<string id="task">Task:</string>
+		
+		<!-- Quest Completed -->
+		<string id="questcompleted">Quest Completed</string>
+		<string id="questcompletedlabel">Quest:</string>
+		
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventConditional>
+	<EventEndQuest>
+		<string id="title">End Quest</string>
+		<string id="label">Quest:</string>
+		<string id="skipcompletion">Do not run completion event?</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventEndQuest>
+	<EventGiveExperience>
+		<string id="title">Give Experience</string>
+		<string id="label">Give {00} Experience:</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventGiveExperience>
+	<EventLabel>
+		<string id="title">Label</string>
+		<string id="label">Label:</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventLabel>
+	<EventGoToLabel>
+		<string id="title">Go To Label</string>
+		<string id="label">Label:</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventGoToLabel>
+	<EventOpenBench>
+		<string id="title">Open Bench</string>
+		<string id="label">Bench:</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventOpenBench>
+	<EventOpenShop>
+		<string id="title">Open Shop</string>
+		<string id="label">Shop:</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventOpenShop>
+	<EventShowOptions>
+		<string id="title">Show Options</string>
+		<string id="text">Text:</string>
+		<string id="face">Face:</string>
+		<string id="option1">Option 1</string>
+		<string id="option2">Option 2</string>
+		<string id="option3">Option 3</string>
+		<string id="option4">Option 4</string>
+		<string id="commands">Chat Commands</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventShowOptions>
+	<EventPlayAnimation>
+		<string id="title">Play Animation</string>
+		<string id="animation">Animation:</string>
+		<string id="spawntype">Spawn Type:</string>
+		<string id="spawntype0">Specific Tile</string>
+		<string id="spawntype1">On/Around Entity</string>
+		
+		<string id="this">[THIS EVENT]</string>
+		<string id="player">Player</string>
+		
+		<string id="entity">Entity:</string>
+		<string id="relativelocation">Relative Location:</string>
+		<string id="spawnrelative">Spawn Relative to Direction</string>
+		<string id="rotaterelative">Rotate Relative to Direction</string>
+		
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventPlayAnimation>
+	<EventSpawnNpc>
+		<string id="title">Play Animation</string>
+		<string id="npc">Animation:</string>
+		<string id="spawntype">Spawn Type:</string>
+		<string id="spawntype0">Specific Tile</string>
+		<string id="spawntype1">On/Around Entity</string>
+		
+		<string id="this">[THIS EVENT]</string>
+		<string id="player">Player</string>
+		
+		<string id="entity">Entity:</string>
+		<string id="relativelocation">Relative Location:</string>
+		<string id="spawnrelative">Relative to Entity Direction</string>
+		
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventSpawnNpc>
+	<EventPlayBGM>
+		<string id="title">Play BGM</string>
+		<string id="label">BGM:</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventPlayBGM>
+	<EventPlayBGS>
+		<string id="title">Play BGS</string>
+		<string id="label">Sound:</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventPlayBGS>
+	<EventSelfSwitch>
+		<string id="title">Set Self Switch</string>
+		<string id="label">Set Self Switch:</string>
+		<string id="selfswitch0">A</string>
+		<string id="selfswitch1">B</string>
+		<string id="selfswitch2">C</string>
+		<string id="selfswitch3">D</string>
+		<string id="true">True</string>
+		<string id="false">False</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventSelfSwitch>
+	<EventSetAccess>
+		<string id="title">Set Access</string>
+		<string id="label">Access:</string>
+		<string id="access0">Regular User</string>
+		<string id="access1">In-Game Moderator</string>
+		<string id="access2">Owner/Designer (Allows editor access)</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventSetAccess>
+	<EventSetClass>
+		<string id="title">Set Class</string>
+		<string id="label">Class:</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventSetClass>
+	<EventStartCommonEvent>
+		<string id="title">Start Common Event</string>
+		<string id="label">Common Event:</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventStartCommonEvent>
+	<EventStartQuest>
+		<string id="title">Start Quest</string>
+		<string id="label">Quest:</string>
+		<string id="showwindow">Show Offer Window?</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventStartQuest>
+	<EventSetSwitch>
+		<string id="title">Set Switch</string>
+		<string id="label">Set Switch:</string>
+		<string id="player">Player Switch</string>
+		<string id="global">Global Switch</string>
+		<string id="to">to</string>
+		<string id="true">True</string>
+		<string id="false">False</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventSetSwitch>
+	<EventShowText>
+		<string id="title">Show Text</string>
+		<string id="text">Text:</string>
+		<string id="face">Face:</string>
+		<string id="commands">Chat Commands</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventShowText>
+	<EventSetVariable>
+		<string id="title">Set Variable</string>
+		<string id="label">Variable:</string>
+		<string id="player">Player Variable</string>
+		<string id="global">Global Variable</string>
+		<string id="set">Set</string>
+		<string id="add">Add</string>
+		<string id="subtract">Subtract</string>
+		<string id="random">Random</string>
+		<string id="randomlow">Low:</string>
+		<string id="randomhigh">High:</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventSetVariable>
+	<EventWait>
+		<string id="title">Wait</string>
+		<string id="label">Wait: {00}ms</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventWait>
+	<EventWaitForRouteCompletion>
+		<string id="title">Wait for Move Route Completion</string>
+		<string id="label">Entity:</string>
+		<string id="this">[THIS EVENT]</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventWaitForRouteCompletion>
+	<EventWarp>
+		<string id="title">Warp</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</EventWarp>
+	<EventCommands>
+		<string id="dialogue">Dialogue</string>
+		<string id="showtext">Show Text</string>
+		<string id="showoptions">Show Options</string>
+		<string id="addchatboxtext">Add Chatbox Text</string>
+		
+		<string id="logicflow">Logic Flow</string>
+		<string id="setswitch">Set Switch</string>
+		<string id="setvariable">Set Variable</string>
+		<string id="setselfswitch">Set Self Switch</string>
+		<string id="conditionalbranch">Conditional Branch</string>
+		<string id="exiteventprocess">Exit Event Process</string>
+		<string id="label">Label</string>
+		<string id="gotolabel">Go To Label</string>
+		<string id="startcommonevent">Start Common Event</string>
+		
+		<string id="playercontrol">Player Control</string>
+		<string id="restorehp">Restore HP</string>
+		<string id="restoremp">Restore MP</string>
+		<string id="levelup">Level Up</string>
+		<string id="giveexperience">Give Experience</string>
+		<string id="changelevel">Change Level</string>
+		<string id="changespells">Change Spells</string>
+		<string id="changeitems">Change Items</string>
+		<string id="changesprite">Change Sprite</string>
+		<string id="changeface">Change Face</string>
+		<string id="changegender">Change Gender</string>
+		<string id="setaccess">Set Access</string>
+		<string id="changeclass">Change Class</string>
+		
+		<string id="movement">Movement</string>
+		<string id="warpplayer">Warp Player</string>
+		<string id="setmoveroute">Set Move Route</string>
+		<string id="waitmoveroute">Wait for Route Completion</string>
+		<string id="holdplayer">Hold Player</string>
+		<string id="releaseplayer">Release Player</string>
+		<string id="spawnnpc">Spawn NPC</string>
+		<string id="despawnnpcs">Despawn NPC</string>
+		
+		<string id="specialeffects">Special Effects</string>
+		<string id="playanimation">Play Animation</string>
+		<string id="playbgm">Play BGM</string>
+		<string id="fadeoutbgm">Fadeout BGM</string>
+		<string id="playsound">Play Sound</string>
+		<string id="stopsounds">Stop Sounds</string>
+		
+		<string id="questcontrol">Quest Control</string>
+		<string id="startquest">Start Quest</string>
+		<string id="completequesttask">Complete Quest Task</string>
+		<string id="endquest">End Quest</string>
+		
+		<string id="etc">Etc</string>
+		<string id="wait">Wait...</string>
+		
+		<string id="shopandbank">Shop and Bank</string>
+		<string id="openbank">Open Bank</string>
+		<string id="openshop">Open Shop</string>
+		<string id="opencraftingstation">Open Crafting Station</string>
+	</EventCommands>
+	<Colors>
+		<string id="0">Black</string>
+		<string id="1">White</string>
+		<string id="2">Blue</string>
+		<string id="3">Red</string>
+		<string id="4">Green</string>
+		<string id="5">Yellow</string>
+		<string id="6">Orange</string>
+		<string id="7">Purple</string>
+		<string id="8">Gray</string>
+		<string id="9">Cyan</string>
+		<string id="10">Pink</string>
+	</Colors>
 	<Errors>
 		<string id="disconnected">Disconnected!</string>
 		<string id="disconnectedclosing">You have lost connection to the server. The editor will now close.</string>

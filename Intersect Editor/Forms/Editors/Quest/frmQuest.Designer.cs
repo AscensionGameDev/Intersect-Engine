@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms
 {
     partial class frmQuest
     {
@@ -29,43 +31,43 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmQuest));
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox1 = new DarkGroupBox();
             this.lstQuests = new System.Windows.Forms.ListBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.chkLogAfterComplete = new System.Windows.Forms.CheckBox();
-            this.chkLogBeforeOffer = new System.Windows.Forms.CheckBox();
-            this.txtBeforeDesc = new System.Windows.Forms.TextBox();
+            this.groupBox2 = new DarkGroupBox();
+            this.groupBox7 = new DarkGroupBox();
+            this.chkLogAfterComplete = new DarkCheckBox();
+            this.chkLogBeforeOffer = new DarkCheckBox();
+            this.txtBeforeDesc = new DarkTextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.txtInProgressDesc = new System.Windows.Forms.TextBox();
+            this.txtInProgressDesc = new DarkTextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.txtEndDesc = new System.Windows.Forms.TextBox();
+            this.txtEndDesc = new DarkTextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.txtStartDesc = new System.Windows.Forms.TextBox();
+            this.txtStartDesc = new DarkTextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.txtName = new System.Windows.Forms.TextBox();
+            this.txtName = new DarkTextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.chkQuittable = new System.Windows.Forms.CheckBox();
-            this.chkRepeatable = new System.Windows.Forms.CheckBox();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.btnShiftTaskDown = new System.Windows.Forms.Button();
-            this.btnShiftTaskUp = new System.Windows.Forms.Button();
-            this.btnRemoveTask = new System.Windows.Forms.Button();
+            this.groupBox5 = new DarkGroupBox();
+            this.chkQuittable = new DarkCheckBox();
+            this.chkRepeatable = new DarkCheckBox();
+            this.groupBox6 = new DarkGroupBox();
+            this.btnShiftTaskDown = new DarkButton();
+            this.btnShiftTaskUp = new DarkButton();
+            this.btnRemoveTask = new DarkButton();
             this.lstTasks = new System.Windows.Forms.ListBox();
-            this.btnAddTask = new System.Windows.Forms.Button();
+            this.btnAddTask = new DarkButton();
             this.pnlContainer = new System.Windows.Forms.Panel();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.btnEditCompletionEvent = new System.Windows.Forms.Button();
-            this.btnEditStartEvent = new System.Windows.Forms.Button();
+            this.groupBox4 = new DarkGroupBox();
+            this.btnEditCompletionEvent = new DarkButton();
+            this.btnEditStartEvent = new DarkButton();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.btnRemoveRequirement = new System.Windows.Forms.Button();
-            this.btnAddRequirement = new System.Windows.Forms.Button();
+            this.groupBox3 = new DarkGroupBox();
+            this.btnRemoveRequirement = new DarkButton();
+            this.btnAddRequirement = new DarkButton();
             this.lstRequirements = new System.Windows.Forms.ListBox();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
+            this.btnCancel = new DarkButton();
+            this.btnSave = new DarkButton();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripItemNew = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -146,7 +148,6 @@
             this.chkLogAfterComplete.Size = new System.Drawing.Size(223, 17);
             this.chkLogAfterComplete.TabIndex = 31;
             this.chkLogAfterComplete.Text = "Show in quest log after completing quest?";
-            this.chkLogAfterComplete.UseVisualStyleBackColor = true;
             this.chkLogAfterComplete.CheckedChanged += new System.EventHandler(this.chkLogAfterComplete_CheckedChanged);
             // 
             // chkLogBeforeOffer
@@ -157,7 +158,6 @@
             this.chkLogBeforeOffer.Size = new System.Drawing.Size(228, 17);
             this.chkLogBeforeOffer.TabIndex = 30;
             this.chkLogBeforeOffer.Text = "Show in quest log before accepting quest?";
-            this.chkLogBeforeOffer.UseVisualStyleBackColor = true;
             this.chkLogBeforeOffer.CheckedChanged += new System.EventHandler(this.chkLogBeforeOffer_CheckedChanged);
             // 
             // txtBeforeDesc
@@ -274,7 +274,6 @@
             this.chkQuittable.Size = new System.Drawing.Size(104, 17);
             this.chkQuittable.TabIndex = 31;
             this.chkQuittable.Text = "Can Quit Quest?";
-            this.chkQuittable.UseVisualStyleBackColor = true;
             this.chkQuittable.CheckedChanged += new System.EventHandler(this.chkQuittable_CheckedChanged);
             // 
             // chkRepeatable
@@ -285,7 +284,6 @@
             this.chkRepeatable.Size = new System.Drawing.Size(118, 17);
             this.chkRepeatable.TabIndex = 30;
             this.chkRepeatable.Text = "Quest Repeatable?";
-            this.chkRepeatable.UseVisualStyleBackColor = true;
             this.chkRepeatable.CheckedChanged += new System.EventHandler(this.chkRepeatable_CheckedChanged);
             // 
             // groupBox6
@@ -310,7 +308,6 @@
             this.btnShiftTaskDown.Size = new System.Drawing.Size(25, 33);
             this.btnShiftTaskDown.TabIndex = 7;
             this.btnShiftTaskDown.Text = "↓";
-            this.btnShiftTaskDown.UseVisualStyleBackColor = true;
             this.btnShiftTaskDown.Click += new System.EventHandler(this.btnShiftTaskDown_Click);
             // 
             // btnShiftTaskUp
@@ -321,7 +318,6 @@
             this.btnShiftTaskUp.Size = new System.Drawing.Size(25, 33);
             this.btnShiftTaskUp.TabIndex = 6;
             this.btnShiftTaskUp.Text = "↑";
-            this.btnShiftTaskUp.UseVisualStyleBackColor = true;
             this.btnShiftTaskUp.Click += new System.EventHandler(this.btnShiftTaskUp_Click);
             // 
             // btnRemoveTask
@@ -331,7 +327,6 @@
             this.btnRemoveTask.Size = new System.Drawing.Size(123, 23);
             this.btnRemoveTask.TabIndex = 5;
             this.btnRemoveTask.Text = "Remove Task";
-            this.btnRemoveTask.UseVisualStyleBackColor = true;
             this.btnRemoveTask.Click += new System.EventHandler(this.btnRemoveTask_Click);
             // 
             // lstTasks
@@ -352,7 +347,6 @@
             this.btnAddTask.Size = new System.Drawing.Size(123, 23);
             this.btnAddTask.TabIndex = 4;
             this.btnAddTask.Text = "Add Task";
-            this.btnAddTask.UseVisualStyleBackColor = true;
             this.btnAddTask.Click += new System.EventHandler(this.btnAddTask_Click);
             // 
             // pnlContainer
@@ -387,7 +381,6 @@
             this.btnEditCompletionEvent.Size = new System.Drawing.Size(152, 23);
             this.btnEditCompletionEvent.TabIndex = 3;
             this.btnEditCompletionEvent.Text = "Edit Quest Completion Event";
-            this.btnEditCompletionEvent.UseVisualStyleBackColor = true;
             this.btnEditCompletionEvent.Click += new System.EventHandler(this.btnEditCompletionEvent_Click);
             // 
             // btnEditStartEvent
@@ -397,7 +390,6 @@
             this.btnEditStartEvent.Size = new System.Drawing.Size(152, 23);
             this.btnEditStartEvent.TabIndex = 2;
             this.btnEditStartEvent.Text = "Edit Quest Start Event";
-            this.btnEditStartEvent.UseVisualStyleBackColor = true;
             this.btnEditStartEvent.Click += new System.EventHandler(this.btnEditStartEvent_Click);
             // 
             // label4
@@ -437,7 +429,6 @@
             this.btnRemoveRequirement.Size = new System.Drawing.Size(123, 23);
             this.btnRemoveRequirement.TabIndex = 2;
             this.btnRemoveRequirement.Text = "Remove Requirement";
-            this.btnRemoveRequirement.UseVisualStyleBackColor = true;
             this.btnRemoveRequirement.Click += new System.EventHandler(this.btnRemoveRequirement_Click);
             // 
             // btnAddRequirement
@@ -447,7 +438,6 @@
             this.btnAddRequirement.Size = new System.Drawing.Size(123, 23);
             this.btnAddRequirement.TabIndex = 1;
             this.btnAddRequirement.Text = "Add Requirement";
-            this.btnAddRequirement.UseVisualStyleBackColor = true;
             this.btnAddRequirement.Click += new System.EventHandler(this.btnAddRequirement_Click);
             // 
             // lstRequirements
@@ -470,7 +460,6 @@
             this.btnCancel.Size = new System.Drawing.Size(190, 27);
             this.btnCancel.TabIndex = 39;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
@@ -480,7 +469,6 @@
             this.btnSave.Size = new System.Drawing.Size(190, 27);
             this.btnSave.TabIndex = 36;
             this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // toolStrip
@@ -608,42 +596,42 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
+        private DarkGroupBox groupBox1;
         private System.Windows.Forms.ListBox lstQuests;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox txtName;
+        private DarkGroupBox groupBox2;
+        private DarkTextBox txtName;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.TextBox txtEndDesc;
+        private DarkGroupBox groupBox6;
+        private DarkTextBox txtEndDesc;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox txtStartDesc;
+        private DarkTextBox txtStartDesc;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel pnlContainer;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Button btnRemoveRequirement;
-        private System.Windows.Forms.Button btnAddRequirement;
+        private DarkButton btnSave;
+        private DarkButton btnCancel;
+        private DarkGroupBox groupBox3;
+        private DarkButton btnRemoveRequirement;
+        private DarkButton btnAddRequirement;
         private System.Windows.Forms.ListBox lstRequirements;
-        private System.Windows.Forms.CheckBox chkRepeatable;
-        private System.Windows.Forms.CheckBox chkQuittable;
-        private System.Windows.Forms.Button btnShiftTaskDown;
-        private System.Windows.Forms.Button btnShiftTaskUp;
-        private System.Windows.Forms.Button btnRemoveTask;
+        private DarkCheckBox chkRepeatable;
+        private DarkCheckBox chkQuittable;
+        private DarkButton btnShiftTaskDown;
+        private DarkButton btnShiftTaskUp;
+        private DarkButton btnRemoveTask;
         private System.Windows.Forms.ListBox lstTasks;
-        private System.Windows.Forms.Button btnAddTask;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.Button btnEditCompletionEvent;
-        private System.Windows.Forms.Button btnEditStartEvent;
+        private DarkButton btnAddTask;
+        private DarkGroupBox groupBox4;
+        private DarkButton btnEditCompletionEvent;
+        private DarkButton btnEditStartEvent;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox txtInProgressDesc;
+        private DarkTextBox txtInProgressDesc;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.GroupBox groupBox7;
-        private System.Windows.Forms.CheckBox chkLogAfterComplete;
-        private System.Windows.Forms.CheckBox chkLogBeforeOffer;
-        private System.Windows.Forms.TextBox txtBeforeDesc;
+        private DarkGroupBox groupBox5;
+        private DarkGroupBox groupBox7;
+        private DarkCheckBox chkLogAfterComplete;
+        private DarkCheckBox chkLogBeforeOffer;
+        private DarkTextBox txtBeforeDesc;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;

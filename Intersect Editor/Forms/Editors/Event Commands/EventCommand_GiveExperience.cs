@@ -21,7 +21,9 @@
 */
 using System;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -34,8 +36,17 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitializeComponent();
             _myCommand = refCommand;
             _eventEditor = editor;
+            InitLocalization();
             scrlExperience.Value = _myCommand.Ints[0];
-            lblExperience.Text = @"Give " + scrlExperience.Value + @" Experience";
+            lblExperience.Text = Strings.Get("eventgiveexperience", "label", scrlExperience.Value);
+        }
+
+        private void InitLocalization()
+        {
+            grpGiveExperience.Text = Strings.Get("eventgiveexperience", "title");
+            lblExperience.Text = Strings.Get("eventgiveexperience", "label", scrlExperience.Value);
+            btnSave.Text = Strings.Get("eventgiveexperience", "okay");
+            btnCancel.Text = Strings.Get("eventgiveexperience", "cancel");
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -49,9 +60,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _eventEditor.CancelCommandEdit();
         }
 
-        private void scrlExperience_Scroll(object sender, ScrollEventArgs e)
+        private void scrlExperience_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblExperience.Text = @"Give " + scrlExperience.Value + @" Experience";
+            lblExperience.Text = Strings.Get("eventgiveexperience", "label", scrlExperience.Value);
         }
     }
 }

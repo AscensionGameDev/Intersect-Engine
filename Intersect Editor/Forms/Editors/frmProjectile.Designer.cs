@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Classes
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Classes
 {
     partial class frmProjectile
     {
@@ -29,44 +31,44 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmProjectile));
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox1 = new DarkGroupBox();
             this.lstProjectiles = new System.Windows.Forms.ListBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new DarkGroupBox();
             this.picSpawns = new System.Windows.Forms.PictureBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new DarkGroupBox();
             this.lblKnockback = new System.Windows.Forms.Label();
             this.scrlKnockback = new System.Windows.Forms.HScrollBar();
             this.lblAmount = new System.Windows.Forms.Label();
             this.scrlAmount = new System.Windows.Forms.HScrollBar();
-            this.chkGrapple = new System.Windows.Forms.CheckBox();
+            this.chkGrapple = new DarkCheckBox();
             this.lblSpell = new System.Windows.Forms.Label();
             this.scrlSpell = new System.Windows.Forms.HScrollBar();
-            this.chkHoming = new System.Windows.Forms.CheckBox();
+            this.chkHoming = new DarkCheckBox();
             this.lblName = new System.Windows.Forms.Label();
-            this.txtName = new System.Windows.Forms.TextBox();
+            this.txtName = new DarkTextBox();
             this.lblRange = new System.Windows.Forms.Label();
             this.scrlRange = new System.Windows.Forms.HScrollBar();
             this.lblSpawn = new System.Windows.Forms.Label();
             this.lblSpeed = new System.Windows.Forms.Label();
             this.scrlSpawn = new System.Windows.Forms.HScrollBar();
             this.scrlSpeed = new System.Windows.Forms.HScrollBar();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.btnRemove = new System.Windows.Forms.Button();
-            this.btnAdd = new System.Windows.Forms.Button();
-            this.chkRotation = new System.Windows.Forms.CheckBox();
+            this.groupBox5 = new DarkGroupBox();
+            this.btnRemove = new DarkButton();
+            this.btnAdd = new DarkButton();
+            this.chkRotation = new DarkCheckBox();
             this.lblAnimation = new System.Windows.Forms.Label();
             this.scrlAnimation = new System.Windows.Forms.HScrollBar();
             this.lstAnimations = new System.Windows.Forms.ListBox();
             this.lblSpawnRange = new System.Windows.Forms.Label();
             this.scrlSpawnRange = new System.Windows.Forms.HScrollBar();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.chkIgnoreInactiveResources = new System.Windows.Forms.CheckBox();
-            this.chkIgnoreZDimensionBlocks = new System.Windows.Forms.CheckBox();
-            this.chkIgnoreMapBlocks = new System.Windows.Forms.CheckBox();
-            this.chkIgnoreActiveResources = new System.Windows.Forms.CheckBox();
+            this.groupBox4 = new DarkGroupBox();
+            this.chkIgnoreInactiveResources = new DarkCheckBox();
+            this.chkIgnoreZDimensionBlocks = new DarkCheckBox();
+            this.chkIgnoreMapBlocks = new DarkCheckBox();
+            this.chkIgnoreActiveResources = new DarkCheckBox();
             this.pnlContainer = new System.Windows.Forms.Panel();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
+            this.btnCancel = new DarkButton();
+            this.btnSave = new DarkButton();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripItemNew = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -195,7 +197,6 @@
             this.chkGrapple.Size = new System.Drawing.Size(90, 17);
             this.chkGrapple.TabIndex = 36;
             this.chkGrapple.Text = "Graple hook?";
-            this.chkGrapple.UseVisualStyleBackColor = true;
             this.chkGrapple.CheckedChanged += new System.EventHandler(this.chkGrapple_CheckedChanged);
             // 
             // lblSpell
@@ -226,7 +227,6 @@
             this.chkHoming.Size = new System.Drawing.Size(68, 17);
             this.chkHoming.TabIndex = 8;
             this.chkHoming.Text = "Homing?";
-            this.chkHoming.UseVisualStyleBackColor = true;
             this.chkHoming.Visible = false;
             this.chkHoming.CheckedChanged += new System.EventHandler(this.chkHoming_CheckedChanged);
             // 
@@ -331,7 +331,6 @@
             this.btnRemove.Size = new System.Drawing.Size(75, 23);
             this.btnRemove.TabIndex = 38;
             this.btnRemove.Text = "Remove";
-            this.btnRemove.UseVisualStyleBackColor = true;
             this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
             // 
             // btnAdd
@@ -341,7 +340,6 @@
             this.btnAdd.Size = new System.Drawing.Size(75, 23);
             this.btnAdd.TabIndex = 37;
             this.btnAdd.Text = "Add";
-            this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
             // chkRotation
@@ -352,7 +350,6 @@
             this.chkRotation.Size = new System.Drawing.Size(138, 17);
             this.chkRotation.TabIndex = 36;
             this.chkRotation.Text = "Auto Rotate Animation?";
-            this.chkRotation.UseVisualStyleBackColor = true;
             this.chkRotation.CheckedChanged += new System.EventHandler(this.chkRotation_CheckedChanged);
             // 
             // lblAnimation
@@ -427,7 +424,6 @@
             this.chkIgnoreInactiveResources.Size = new System.Drawing.Size(118, 17);
             this.chkIgnoreInactiveResources.TabIndex = 38;
             this.chkIgnoreInactiveResources.Text = "Inactive Resources";
-            this.chkIgnoreInactiveResources.UseVisualStyleBackColor = true;
             this.chkIgnoreInactiveResources.CheckedChanged += new System.EventHandler(this.chkIgnoreInactiveResources_CheckedChanged);
             // 
             // chkIgnoreZDimensionBlocks
@@ -438,7 +434,6 @@
             this.chkIgnoreZDimensionBlocks.Size = new System.Drawing.Size(120, 17);
             this.chkIgnoreZDimensionBlocks.TabIndex = 37;
             this.chkIgnoreZDimensionBlocks.Text = "Z-Dimension Blocks";
-            this.chkIgnoreZDimensionBlocks.UseVisualStyleBackColor = true;
             this.chkIgnoreZDimensionBlocks.CheckedChanged += new System.EventHandler(this.chkIgnoreZDimensionBlocks_CheckedChanged);
             // 
             // chkIgnoreMapBlocks
@@ -449,7 +444,6 @@
             this.chkIgnoreMapBlocks.Size = new System.Drawing.Size(82, 17);
             this.chkIgnoreMapBlocks.TabIndex = 33;
             this.chkIgnoreMapBlocks.Text = "Map Blocks";
-            this.chkIgnoreMapBlocks.UseVisualStyleBackColor = true;
             this.chkIgnoreMapBlocks.CheckedChanged += new System.EventHandler(this.chkIgnoreMapBlocks_CheckedChanged);
             // 
             // chkIgnoreActiveResources
@@ -460,7 +454,6 @@
             this.chkIgnoreActiveResources.Size = new System.Drawing.Size(110, 17);
             this.chkIgnoreActiveResources.TabIndex = 36;
             this.chkIgnoreActiveResources.Text = "Active Resources";
-            this.chkIgnoreActiveResources.UseVisualStyleBackColor = true;
             this.chkIgnoreActiveResources.CheckedChanged += new System.EventHandler(this.chkIgnoreActiveResources_CheckedChanged);
             // 
             // pnlContainer
@@ -483,7 +476,6 @@
             this.btnCancel.Size = new System.Drawing.Size(190, 27);
             this.btnCancel.TabIndex = 34;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
@@ -493,7 +485,6 @@
             this.btnSave.Size = new System.Drawing.Size(190, 27);
             this.btnSave.TabIndex = 31;
             this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // toolStrip
@@ -619,11 +610,11 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
+        private DarkGroupBox groupBox1;
         private System.Windows.Forms.ListBox lstProjectiles;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private DarkGroupBox groupBox2;
         public System.Windows.Forms.PictureBox picSpawns;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private DarkGroupBox groupBox3;
         private System.Windows.Forms.Label lblRange;
         private System.Windows.Forms.HScrollBar scrlRange;
         private System.Windows.Forms.Label lblSpawn;
@@ -631,30 +622,30 @@
         private System.Windows.Forms.HScrollBar scrlSpawn;
         private System.Windows.Forms.HScrollBar scrlSpeed;
         private System.Windows.Forms.Label lblName;
-        private System.Windows.Forms.TextBox txtName;
+        private DarkTextBox txtName;
         private System.Windows.Forms.Label lblSpell;
         private System.Windows.Forms.HScrollBar scrlSpell;
-        private System.Windows.Forms.CheckBox chkHoming;
-        private System.Windows.Forms.CheckBox chkGrapple;
-        private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.CheckBox chkRotation;
+        private DarkCheckBox chkHoming;
+        private DarkCheckBox chkGrapple;
+        private DarkGroupBox groupBox5;
+        private DarkCheckBox chkRotation;
         private System.Windows.Forms.Label lblAnimation;
         private System.Windows.Forms.HScrollBar scrlAnimation;
         private System.Windows.Forms.ListBox lstAnimations;
         private System.Windows.Forms.Label lblSpawnRange;
         private System.Windows.Forms.HScrollBar scrlSpawnRange;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.CheckBox chkIgnoreInactiveResources;
-        private System.Windows.Forms.CheckBox chkIgnoreZDimensionBlocks;
-        private System.Windows.Forms.CheckBox chkIgnoreMapBlocks;
-        private System.Windows.Forms.CheckBox chkIgnoreActiveResources;
-        private System.Windows.Forms.Button btnRemove;
-        private System.Windows.Forms.Button btnAdd;
+        private DarkGroupBox groupBox4;
+        private DarkCheckBox chkIgnoreInactiveResources;
+        private DarkCheckBox chkIgnoreZDimensionBlocks;
+        private DarkCheckBox chkIgnoreMapBlocks;
+        private DarkCheckBox chkIgnoreActiveResources;
+        private DarkButton btnRemove;
+        private DarkButton btnAdd;
         private System.Windows.Forms.Label lblAmount;
         private System.Windows.Forms.HScrollBar scrlAmount;
         private System.Windows.Forms.Panel pnlContainer;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnCancel;
+        private DarkButton btnSave;
+        private DarkButton btnCancel;
         private System.Windows.Forms.Label lblKnockback;
         private System.Windows.Forms.HScrollBar scrlKnockback;
         private System.Windows.Forms.ToolStrip toolStrip;

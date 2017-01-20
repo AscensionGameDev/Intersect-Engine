@@ -25,6 +25,7 @@ using Intersect_Editor.Classes;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
@@ -40,6 +41,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             _loading = true;
+            InitLocalization();
             if (_myCommand.Ints[0] == (int) SwitchVariableTypes.ServerVariable)
             {
                 rdoGlobalVariable.Checked = true;
@@ -50,6 +52,23 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             }
             _loading = false;
             InitEditor();
+        }
+
+        private void InitLocalization()
+        {
+            grpSetVariable.Text = Strings.Get("eventsetvariable", "title");
+            grpVariableSelection.Text = Strings.Get("eventsetvariable", "label");
+            lblVariable.Text = Strings.Get("eventsetvariable", "label");
+            rdoGlobalVariable.Text = Strings.Get("eventsetvariable", "global");
+            rdoPlayerVariable.Text = Strings.Get("eventsetvariable", "player");
+            optSet.Text = Strings.Get("eventsetvariable", "set");
+            optAdd.Text = Strings.Get("eventsetvariable", "add");
+            optSubtract.Text = Strings.Get("eventsetvariable", "subtract");
+            optRandom.Text = Strings.Get("eventsetvariable", "random");
+            lblRandomLow.Text = Strings.Get("eventsetvariable", "randomlow");
+            lblRandomHigh.Text = Strings.Get("eventsetvariable", "randomhigh");
+            btnSave.Text = Strings.Get("eventsetvariable", "okay");
+            btnCancel.Text = Strings.Get("eventsetvariable", "cancel");
         }
 
         private void InitEditor()

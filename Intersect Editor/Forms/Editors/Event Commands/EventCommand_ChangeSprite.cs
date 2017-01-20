@@ -25,6 +25,7 @@ using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -37,6 +38,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitializeComponent();
             _myCommand = refCommand;
             _eventEditor = editor;
+            InitLocalization();
             cmbSprite.Items.Clear();
             cmbSprite.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
             if (cmbSprite.Items.IndexOf(_myCommand.Strs[0]) > -1)
@@ -48,6 +50,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 cmbSprite.SelectedIndex = 0;
             }
             UpdatePreview();
+        }
+
+        private void InitLocalization()
+        {
+            grpChangeSprite.Text = Strings.Get("eventchangesprite", "title");
+            lblSprite.Text = Strings.Get("eventchangesprite", "label");
+            btnSave.Text = Strings.Get("eventchangesprite", "okay");
+            btnCancel.Text = Strings.Get("eventchangesprite", "cancel");
         }
 
         private void UpdatePreview()

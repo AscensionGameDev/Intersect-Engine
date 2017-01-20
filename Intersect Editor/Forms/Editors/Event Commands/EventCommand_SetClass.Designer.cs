@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_SetClass
     {
@@ -28,63 +30,71 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cmbClass = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
+            this.grpSetClass = new DarkUI.Controls.DarkGroupBox();
+            this.cmbClass = new DarkUI.Controls.DarkComboBox();
+            this.lblClass = new System.Windows.Forms.Label();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.grpSetClass.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpSetClass
             // 
-            this.groupBox1.Controls.Add(this.cmbClass);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnSave);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(176, 126);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Set Class";
+            this.grpSetClass.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpSetClass.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpSetClass.Controls.Add(this.cmbClass);
+            this.grpSetClass.Controls.Add(this.lblClass);
+            this.grpSetClass.Controls.Add(this.btnCancel);
+            this.grpSetClass.Controls.Add(this.btnSave);
+            this.grpSetClass.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpSetClass.Location = new System.Drawing.Point(3, 3);
+            this.grpSetClass.Name = "grpSetClass";
+            this.grpSetClass.Size = new System.Drawing.Size(176, 126);
+            this.grpSetClass.TabIndex = 17;
+            this.grpSetClass.TabStop = false;
+            this.grpSetClass.Text = "Set Class";
             // 
             // cmbClass
             // 
+            this.cmbClass.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbClass.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbClass.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbClass.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbClass.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbClass.FormattingEnabled = true;
             this.cmbClass.Location = new System.Drawing.Point(47, 19);
             this.cmbClass.Name = "cmbClass";
             this.cmbClass.Size = new System.Drawing.Size(117, 21);
             this.cmbClass.TabIndex = 22;
             // 
-            // label1
+            // lblClass
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 21;
-            this.label1.Text = "Class:";
+            this.lblClass.AutoSize = true;
+            this.lblClass.Location = new System.Drawing.Point(4, 22);
+            this.lblClass.Name = "lblClass";
+            this.lblClass.Size = new System.Drawing.Size(35, 13);
+            this.lblClass.TabIndex = 21;
+            this.lblClass.Text = "Class:";
             // 
             // btnCancel
             // 
             this.btnCancel.Location = new System.Drawing.Point(89, 97);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 20;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(7, 97);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // EventCommand_SetClass
@@ -92,21 +102,22 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.groupBox1);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.Controls.Add(this.grpSetClass);
             this.Name = "EventCommand_SetClass";
             this.Size = new System.Drawing.Size(182, 132);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpSetClass.ResumeLayout(false);
+            this.grpSetClass.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox cmbClass;
+        private DarkGroupBox grpSetClass;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
+        private System.Windows.Forms.Label lblClass;
+        private DarkComboBox cmbClass;
     }
 }

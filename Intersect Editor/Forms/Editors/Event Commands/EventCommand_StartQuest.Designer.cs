@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_StartQuest
     {
@@ -28,66 +30,31 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cmbQuests = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.chkShowOfferWindow = new System.Windows.Forms.CheckBox();
-            this.groupBox1.SuspendLayout();
+            this.grpStartQuest = new DarkUI.Controls.DarkGroupBox();
+            this.chkShowOfferWindow = new DarkUI.Controls.DarkCheckBox();
+            this.cmbQuests = new DarkUI.Controls.DarkComboBox();
+            this.lblQuest = new System.Windows.Forms.Label();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.grpStartQuest.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpStartQuest
             // 
-            this.groupBox1.Controls.Add(this.chkShowOfferWindow);
-            this.groupBox1.Controls.Add(this.cmbQuests);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnSave);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(176, 126);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Start Quest";
-            // 
-            // cmbQuests
-            // 
-            this.cmbQuests.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbQuests.FormattingEnabled = true;
-            this.cmbQuests.Location = new System.Drawing.Point(47, 19);
-            this.cmbQuests.Name = "cmbQuests";
-            this.cmbQuests.Size = new System.Drawing.Size(117, 21);
-            this.cmbQuests.TabIndex = 22;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 13);
-            this.label1.TabIndex = 21;
-            this.label1.Text = "Quest:";
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Location = new System.Drawing.Point(89, 97);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 20;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(7, 97);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 19;
-            this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.grpStartQuest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpStartQuest.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpStartQuest.Controls.Add(this.chkShowOfferWindow);
+            this.grpStartQuest.Controls.Add(this.cmbQuests);
+            this.grpStartQuest.Controls.Add(this.lblQuest);
+            this.grpStartQuest.Controls.Add(this.btnCancel);
+            this.grpStartQuest.Controls.Add(this.btnSave);
+            this.grpStartQuest.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpStartQuest.Location = new System.Drawing.Point(3, 3);
+            this.grpStartQuest.Name = "grpStartQuest";
+            this.grpStartQuest.Size = new System.Drawing.Size(176, 126);
+            this.grpStartQuest.TabIndex = 17;
+            this.grpStartQuest.TabStop = false;
+            this.grpStartQuest.Text = "Start Quest";
             // 
             // chkShowOfferWindow
             // 
@@ -97,29 +64,72 @@
             this.chkShowOfferWindow.Size = new System.Drawing.Size(127, 17);
             this.chkShowOfferWindow.TabIndex = 23;
             this.chkShowOfferWindow.Text = "Show Offer Window?";
-            this.chkShowOfferWindow.UseVisualStyleBackColor = true;
+            // 
+            // cmbQuests
+            // 
+            this.cmbQuests.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbQuests.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbQuests.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbQuests.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbQuests.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbQuests.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbQuests.FormattingEnabled = true;
+            this.cmbQuests.Location = new System.Drawing.Point(47, 19);
+            this.cmbQuests.Name = "cmbQuests";
+            this.cmbQuests.Size = new System.Drawing.Size(117, 21);
+            this.cmbQuests.TabIndex = 22;
+            // 
+            // lblQuest
+            // 
+            this.lblQuest.AutoSize = true;
+            this.lblQuest.Location = new System.Drawing.Point(4, 22);
+            this.lblQuest.Name = "lblQuest";
+            this.lblQuest.Size = new System.Drawing.Size(38, 13);
+            this.lblQuest.TabIndex = 21;
+            this.lblQuest.Text = "Quest:";
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(89, 97);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 20;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(7, 97);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 19;
+            this.btnSave.Text = "Ok";
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // EventCommand_StartQuest
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.groupBox1);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.Controls.Add(this.grpStartQuest);
             this.Name = "EventCommand_StartQuest";
             this.Size = new System.Drawing.Size(182, 132);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpStartQuest.ResumeLayout(false);
+            this.grpStartQuest.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox cmbQuests;
-        private System.Windows.Forms.CheckBox chkShowOfferWindow;
+        private DarkGroupBox grpStartQuest;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
+        private System.Windows.Forms.Label lblQuest;
+        private DarkComboBox cmbQuests;
+        private DarkCheckBox chkShowOfferWindow;
     }
 }

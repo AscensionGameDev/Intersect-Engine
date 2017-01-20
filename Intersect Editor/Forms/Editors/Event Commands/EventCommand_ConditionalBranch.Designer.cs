@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_ConditionalBranch
     {
@@ -28,114 +30,120 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.grpQuestInProgress = new System.Windows.Forms.GroupBox();
-            this.label20 = new System.Windows.Forms.Label();
-            this.cmbQuestTask = new System.Windows.Forms.ComboBox();
-            this.cmbTaskModifier = new System.Windows.Forms.ComboBox();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.cmbQuestInProgress = new System.Windows.Forms.ComboBox();
-            this.grpQuestCompleted = new System.Windows.Forms.GroupBox();
-            this.label21 = new System.Windows.Forms.Label();
-            this.cmbCompletedQuest = new System.Windows.Forms.ComboBox();
-            this.grpStartQuest = new System.Windows.Forms.GroupBox();
-            this.label18 = new System.Windows.Forms.Label();
-            this.cmbStartQuest = new System.Windows.Forms.ComboBox();
-            this.grpTime = new System.Windows.Forms.GroupBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.cmbTime2 = new System.Windows.Forms.ComboBox();
-            this.cmbTime1 = new System.Windows.Forms.ComboBox();
-            this.label14 = new System.Windows.Forms.Label();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.cmbConditionType = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.grpLevel = new System.Windows.Forms.GroupBox();
-            this.scrlLevel = new System.Windows.Forms.HScrollBar();
+            this.grpConditional = new DarkUI.Controls.DarkGroupBox();
+            this.grpQuestInProgress = new DarkUI.Controls.DarkGroupBox();
+            this.lblQuestTask = new System.Windows.Forms.Label();
+            this.cmbQuestTask = new DarkUI.Controls.DarkComboBox();
+            this.cmbTaskModifier = new DarkUI.Controls.DarkComboBox();
+            this.lblQuestIs = new System.Windows.Forms.Label();
+            this.lblQuestProgress = new System.Windows.Forms.Label();
+            this.cmbQuestInProgress = new DarkUI.Controls.DarkComboBox();
+            this.grpStartQuest = new DarkUI.Controls.DarkGroupBox();
+            this.lblStartQuest = new System.Windows.Forms.Label();
+            this.cmbStartQuest = new DarkUI.Controls.DarkComboBox();
+            this.grpTime = new DarkUI.Controls.DarkGroupBox();
+            this.lblEndRange = new System.Windows.Forms.Label();
+            this.lblStartRange = new System.Windows.Forms.Label();
+            this.cmbTime2 = new DarkUI.Controls.DarkComboBox();
+            this.cmbTime1 = new DarkUI.Controls.DarkComboBox();
+            this.lblAnd = new System.Windows.Forms.Label();
+            this.grpPowerIs = new DarkUI.Controls.DarkGroupBox();
+            this.cmbPower = new DarkUI.Controls.DarkComboBox();
+            this.lblPower = new System.Windows.Forms.Label();
+            this.grpSelfSwitch = new DarkUI.Controls.DarkGroupBox();
+            this.cmbSelfSwitchVal = new DarkUI.Controls.DarkComboBox();
+            this.lblSelfSwitchIs = new System.Windows.Forms.Label();
+            this.cmbSelfSwitch = new DarkUI.Controls.DarkComboBox();
+            this.lblSelfSwitch = new System.Windows.Forms.Label();
+            this.grpLevel = new DarkUI.Controls.DarkGroupBox();
+            this.scrlLevel = new DarkUI.Controls.DarkScrollBar();
             this.lblLevel = new System.Windows.Forms.Label();
-            this.cmbLevelComparator = new System.Windows.Forms.ComboBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.grpClass = new System.Windows.Forms.GroupBox();
-            this.cmbClass = new System.Windows.Forms.ComboBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.grpSpell = new System.Windows.Forms.GroupBox();
-            this.cmbSpell = new System.Windows.Forms.ComboBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.grpHasItem = new System.Windows.Forms.GroupBox();
-            this.scrlItemQuantity = new System.Windows.Forms.HScrollBar();
-            this.cmbItem = new System.Windows.Forms.ComboBox();
-            this.label8 = new System.Windows.Forms.Label();
+            this.cmbLevelComparator = new DarkUI.Controls.DarkComboBox();
+            this.lblLevelComparator = new System.Windows.Forms.Label();
+            this.grpSpell = new DarkUI.Controls.DarkGroupBox();
+            this.cmbSpell = new DarkUI.Controls.DarkComboBox();
+            this.lblSpell = new System.Windows.Forms.Label();
+            this.grpClass = new DarkUI.Controls.DarkGroupBox();
+            this.cmbClass = new DarkUI.Controls.DarkComboBox();
+            this.lblClass = new System.Windows.Forms.Label();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.cmbConditionType = new DarkUI.Controls.DarkComboBox();
+            this.lblType = new System.Windows.Forms.Label();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.grpHasItem = new DarkUI.Controls.DarkGroupBox();
+            this.scrlItemQuantity = new DarkUI.Controls.DarkScrollBar();
+            this.cmbItem = new DarkUI.Controls.DarkComboBox();
+            this.lblItem = new System.Windows.Forms.Label();
             this.lblItemQuantity = new System.Windows.Forms.Label();
-            this.grpPowerIs = new System.Windows.Forms.GroupBox();
-            this.cmbPower = new System.Windows.Forms.ComboBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.grpPlayerVariable = new System.Windows.Forms.GroupBox();
-            this.txtVariableVal = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.cmbVariableMod = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.cmbVariable = new System.Windows.Forms.ComboBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.grpSwitch = new System.Windows.Forms.GroupBox();
-            this.cmbSwitchVal = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.cmbSwitch = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.grpSelfSwitch = new System.Windows.Forms.GroupBox();
-            this.cmbSelfSwitchVal = new System.Windows.Forms.ComboBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.cmbSelfSwitch = new System.Windows.Forms.ComboBox();
-            this.label12 = new System.Windows.Forms.Label();
-            this.groupBox1.SuspendLayout();
+            this.grpSwitch = new DarkUI.Controls.DarkGroupBox();
+            this.cmbSwitchVal = new DarkUI.Controls.DarkComboBox();
+            this.lblSwitchIs = new System.Windows.Forms.Label();
+            this.cmbSwitch = new DarkUI.Controls.DarkComboBox();
+            this.lblSwitch = new System.Windows.Forms.Label();
+            this.grpPlayerVariable = new DarkUI.Controls.DarkGroupBox();
+            this.txtVariableVal = new DarkUI.Controls.DarkTextBox();
+            this.lblVariableValue = new System.Windows.Forms.Label();
+            this.cmbVariableMod = new DarkUI.Controls.DarkComboBox();
+            this.lblComparator = new System.Windows.Forms.Label();
+            this.cmbVariable = new DarkUI.Controls.DarkComboBox();
+            this.lblVariable = new System.Windows.Forms.Label();
+            this.grpQuestCompleted = new DarkUI.Controls.DarkGroupBox();
+            this.lblQuestCompleted = new System.Windows.Forms.Label();
+            this.cmbCompletedQuest = new DarkUI.Controls.DarkComboBox();
+            this.grpConditional.SuspendLayout();
             this.grpQuestInProgress.SuspendLayout();
-            this.grpQuestCompleted.SuspendLayout();
             this.grpStartQuest.SuspendLayout();
             this.grpTime.SuspendLayout();
-            this.grpLevel.SuspendLayout();
-            this.grpClass.SuspendLayout();
-            this.grpSpell.SuspendLayout();
-            this.grpHasItem.SuspendLayout();
             this.grpPowerIs.SuspendLayout();
-            this.grpPlayerVariable.SuspendLayout();
-            this.grpSwitch.SuspendLayout();
             this.grpSelfSwitch.SuspendLayout();
+            this.grpLevel.SuspendLayout();
+            this.grpSpell.SuspendLayout();
+            this.grpClass.SuspendLayout();
+            this.grpHasItem.SuspendLayout();
+            this.grpSwitch.SuspendLayout();
+            this.grpPlayerVariable.SuspendLayout();
+            this.grpQuestCompleted.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpConditional
             // 
-            this.groupBox1.Controls.Add(this.grpQuestInProgress);
-            this.groupBox1.Controls.Add(this.grpQuestCompleted);
-            this.groupBox1.Controls.Add(this.grpStartQuest);
-            this.groupBox1.Controls.Add(this.grpTime);
-            this.groupBox1.Controls.Add(this.btnSave);
-            this.groupBox1.Controls.Add(this.cmbConditionType);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.grpLevel);
-            this.groupBox1.Controls.Add(this.grpClass);
-            this.groupBox1.Controls.Add(this.grpSpell);
-            this.groupBox1.Controls.Add(this.grpHasItem);
-            this.groupBox1.Controls.Add(this.grpPowerIs);
-            this.groupBox1.Controls.Add(this.grpPlayerVariable);
-            this.groupBox1.Controls.Add(this.grpSwitch);
-            this.groupBox1.Controls.Add(this.grpSelfSwitch);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(256, 202);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Conditional";
+            this.grpConditional.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpConditional.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpConditional.Controls.Add(this.grpQuestCompleted);
+            this.grpConditional.Controls.Add(this.grpQuestInProgress);
+            this.grpConditional.Controls.Add(this.grpStartQuest);
+            this.grpConditional.Controls.Add(this.grpTime);
+            this.grpConditional.Controls.Add(this.grpPowerIs);
+            this.grpConditional.Controls.Add(this.grpSelfSwitch);
+            this.grpConditional.Controls.Add(this.grpLevel);
+            this.grpConditional.Controls.Add(this.grpSpell);
+            this.grpConditional.Controls.Add(this.grpClass);
+            this.grpConditional.Controls.Add(this.btnSave);
+            this.grpConditional.Controls.Add(this.cmbConditionType);
+            this.grpConditional.Controls.Add(this.lblType);
+            this.grpConditional.Controls.Add(this.btnCancel);
+            this.grpConditional.Controls.Add(this.grpHasItem);
+            this.grpConditional.Controls.Add(this.grpSwitch);
+            this.grpConditional.Controls.Add(this.grpPlayerVariable);
+            this.grpConditional.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpConditional.Location = new System.Drawing.Point(3, 3);
+            this.grpConditional.Name = "grpConditional";
+            this.grpConditional.Size = new System.Drawing.Size(256, 202);
+            this.grpConditional.TabIndex = 17;
+            this.grpConditional.TabStop = false;
+            this.grpConditional.Text = "Conditional";
             // 
             // grpQuestInProgress
             // 
-            this.grpQuestInProgress.Controls.Add(this.label20);
+            this.grpQuestInProgress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpQuestInProgress.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpQuestInProgress.Controls.Add(this.lblQuestTask);
             this.grpQuestInProgress.Controls.Add(this.cmbQuestTask);
             this.grpQuestInProgress.Controls.Add(this.cmbTaskModifier);
-            this.grpQuestInProgress.Controls.Add(this.label19);
-            this.grpQuestInProgress.Controls.Add(this.label17);
+            this.grpQuestInProgress.Controls.Add(this.lblQuestIs);
+            this.grpQuestInProgress.Controls.Add(this.lblQuestProgress);
             this.grpQuestInProgress.Controls.Add(this.cmbQuestInProgress);
+            this.grpQuestInProgress.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpQuestInProgress.Location = new System.Drawing.Point(8, 40);
             this.grpQuestInProgress.Name = "grpQuestInProgress";
             this.grpQuestInProgress.Size = new System.Drawing.Size(236, 122);
@@ -144,27 +152,25 @@
             this.grpQuestInProgress.Text = "Quest In Progress:";
             this.grpQuestInProgress.Visible = false;
             // 
-            // label20
+            // lblQuestTask
             // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(6, 86);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(34, 13);
-            this.label20.TabIndex = 9;
-            this.label20.Text = "Task:";
+            this.lblQuestTask.AutoSize = true;
+            this.lblQuestTask.Location = new System.Drawing.Point(6, 86);
+            this.lblQuestTask.Name = "lblQuestTask";
+            this.lblQuestTask.Size = new System.Drawing.Size(34, 13);
+            this.lblQuestTask.TabIndex = 9;
+            this.lblQuestTask.Text = "Task:";
             // 
             // cmbQuestTask
             // 
+            this.cmbQuestTask.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbQuestTask.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbQuestTask.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbQuestTask.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbQuestTask.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbQuestTask.Enabled = false;
+            this.cmbQuestTask.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbQuestTask.FormattingEnabled = true;
-            this.cmbQuestTask.Items.AddRange(new object[] {
-            "Equal To",
-            "Greater Than or Equal To",
-            "Less Than or Equal To",
-            "Greater Than",
-            "Less Than",
-            "Does Not Equal"});
             this.cmbQuestTask.Location = new System.Drawing.Point(92, 83);
             this.cmbQuestTask.Name = "cmbQuestTask";
             this.cmbQuestTask.Size = new System.Drawing.Size(138, 21);
@@ -172,95 +178,59 @@
             // 
             // cmbTaskModifier
             // 
+            this.cmbTaskModifier.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbTaskModifier.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbTaskModifier.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbTaskModifier.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbTaskModifier.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTaskModifier.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbTaskModifier.FormattingEnabled = true;
-            this.cmbTaskModifier.Items.AddRange(new object[] {
-            "On Any Task",
-            "Before Task...",
-            "After Task...",
-            "On Task..."});
             this.cmbTaskModifier.Location = new System.Drawing.Point(92, 50);
             this.cmbTaskModifier.Name = "cmbTaskModifier";
             this.cmbTaskModifier.Size = new System.Drawing.Size(138, 21);
             this.cmbTaskModifier.TabIndex = 7;
             this.cmbTaskModifier.SelectedIndexChanged += new System.EventHandler(this.cmbTaskModifier_SelectedIndexChanged);
             // 
-            // label19
+            // lblQuestIs
             // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(6, 52);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(18, 13);
-            this.label19.TabIndex = 6;
-            this.label19.Text = "Is:";
+            this.lblQuestIs.AutoSize = true;
+            this.lblQuestIs.Location = new System.Drawing.Point(6, 52);
+            this.lblQuestIs.Name = "lblQuestIs";
+            this.lblQuestIs.Size = new System.Drawing.Size(18, 13);
+            this.lblQuestIs.TabIndex = 6;
+            this.lblQuestIs.Text = "Is:";
             // 
-            // label17
+            // lblQuestProgress
             // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(6, 21);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(38, 13);
-            this.label17.TabIndex = 5;
-            this.label17.Text = "Quest:";
+            this.lblQuestProgress.AutoSize = true;
+            this.lblQuestProgress.Location = new System.Drawing.Point(6, 21);
+            this.lblQuestProgress.Name = "lblQuestProgress";
+            this.lblQuestProgress.Size = new System.Drawing.Size(38, 13);
+            this.lblQuestProgress.TabIndex = 5;
+            this.lblQuestProgress.Text = "Quest:";
             // 
             // cmbQuestInProgress
             // 
+            this.cmbQuestInProgress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbQuestInProgress.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbQuestInProgress.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbQuestInProgress.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbQuestInProgress.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbQuestInProgress.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbQuestInProgress.FormattingEnabled = true;
-            this.cmbQuestInProgress.Items.AddRange(new object[] {
-            "Equal To",
-            "Greater Than or Equal To",
-            "Less Than or Equal To",
-            "Greater Than",
-            "Less Than",
-            "Does Not Equal"});
             this.cmbQuestInProgress.Location = new System.Drawing.Point(92, 18);
             this.cmbQuestInProgress.Name = "cmbQuestInProgress";
             this.cmbQuestInProgress.Size = new System.Drawing.Size(138, 21);
             this.cmbQuestInProgress.TabIndex = 3;
             this.cmbQuestInProgress.SelectedIndexChanged += new System.EventHandler(this.cmbQuestInProgress_SelectedIndexChanged);
             // 
-            // grpQuestCompleted
-            // 
-            this.grpQuestCompleted.Controls.Add(this.label21);
-            this.grpQuestCompleted.Controls.Add(this.cmbCompletedQuest);
-            this.grpQuestCompleted.Location = new System.Drawing.Point(9, 40);
-            this.grpQuestCompleted.Name = "grpQuestCompleted";
-            this.grpQuestCompleted.Size = new System.Drawing.Size(236, 71);
-            this.grpQuestCompleted.TabIndex = 32;
-            this.grpQuestCompleted.TabStop = false;
-            this.grpQuestCompleted.Text = "Quest Completed:";
-            this.grpQuestCompleted.Visible = false;
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(6, 21);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(38, 13);
-            this.label21.TabIndex = 5;
-            this.label21.Text = "Quest:";
-            // 
-            // cmbCompletedQuest
-            // 
-            this.cmbCompletedQuest.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbCompletedQuest.FormattingEnabled = true;
-            this.cmbCompletedQuest.Items.AddRange(new object[] {
-            "Equal To",
-            "Greater Than or Equal To",
-            "Less Than or Equal To",
-            "Greater Than",
-            "Less Than",
-            "Does Not Equal"});
-            this.cmbCompletedQuest.Location = new System.Drawing.Point(92, 18);
-            this.cmbCompletedQuest.Name = "cmbCompletedQuest";
-            this.cmbCompletedQuest.Size = new System.Drawing.Size(138, 21);
-            this.cmbCompletedQuest.TabIndex = 3;
-            // 
             // grpStartQuest
             // 
-            this.grpStartQuest.Controls.Add(this.label18);
+            this.grpStartQuest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpStartQuest.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpStartQuest.Controls.Add(this.lblStartQuest);
             this.grpStartQuest.Controls.Add(this.cmbStartQuest);
+            this.grpStartQuest.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpStartQuest.Location = new System.Drawing.Point(9, 40);
             this.grpStartQuest.Name = "grpStartQuest";
             this.grpStartQuest.Size = new System.Drawing.Size(236, 71);
@@ -269,26 +239,24 @@
             this.grpStartQuest.Text = "Can Start Quest:";
             this.grpStartQuest.Visible = false;
             // 
-            // label18
+            // lblStartQuest
             // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(6, 21);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(38, 13);
-            this.label18.TabIndex = 5;
-            this.label18.Text = "Quest:";
+            this.lblStartQuest.AutoSize = true;
+            this.lblStartQuest.Location = new System.Drawing.Point(6, 21);
+            this.lblStartQuest.Name = "lblStartQuest";
+            this.lblStartQuest.Size = new System.Drawing.Size(38, 13);
+            this.lblStartQuest.TabIndex = 5;
+            this.lblStartQuest.Text = "Quest:";
             // 
             // cmbStartQuest
             // 
+            this.cmbStartQuest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbStartQuest.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbStartQuest.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbStartQuest.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbStartQuest.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbStartQuest.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbStartQuest.FormattingEnabled = true;
-            this.cmbStartQuest.Items.AddRange(new object[] {
-            "Equal To",
-            "Greater Than or Equal To",
-            "Less Than or Equal To",
-            "Greater Than",
-            "Less Than",
-            "Does Not Equal"});
             this.cmbStartQuest.Location = new System.Drawing.Point(92, 18);
             this.cmbStartQuest.Name = "cmbStartQuest";
             this.cmbStartQuest.Size = new System.Drawing.Size(138, 21);
@@ -296,11 +264,14 @@
             // 
             // grpTime
             // 
-            this.grpTime.Controls.Add(this.label16);
-            this.grpTime.Controls.Add(this.label13);
+            this.grpTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpTime.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpTime.Controls.Add(this.lblEndRange);
+            this.grpTime.Controls.Add(this.lblStartRange);
             this.grpTime.Controls.Add(this.cmbTime2);
             this.grpTime.Controls.Add(this.cmbTime1);
-            this.grpTime.Controls.Add(this.label14);
+            this.grpTime.Controls.Add(this.lblAnd);
+            this.grpTime.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpTime.Location = new System.Drawing.Point(10, 40);
             this.grpTime.Name = "grpTime";
             this.grpTime.Size = new System.Drawing.Size(236, 105);
@@ -309,35 +280,33 @@
             this.grpTime.Text = "Time is between:";
             this.grpTime.Visible = false;
             // 
-            // label16
+            // lblEndRange
             // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(9, 73);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(64, 13);
-            this.label16.TabIndex = 6;
-            this.label16.Text = "End Range:";
+            this.lblEndRange.AutoSize = true;
+            this.lblEndRange.Location = new System.Drawing.Point(9, 73);
+            this.lblEndRange.Name = "lblEndRange";
+            this.lblEndRange.Size = new System.Drawing.Size(64, 13);
+            this.lblEndRange.TabIndex = 6;
+            this.lblEndRange.Text = "End Range:";
             // 
-            // label13
+            // lblStartRange
             // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(6, 21);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(67, 13);
-            this.label13.TabIndex = 5;
-            this.label13.Text = "Start Range:";
+            this.lblStartRange.AutoSize = true;
+            this.lblStartRange.Location = new System.Drawing.Point(6, 21);
+            this.lblStartRange.Name = "lblStartRange";
+            this.lblStartRange.Size = new System.Drawing.Size(67, 13);
+            this.lblStartRange.TabIndex = 5;
+            this.lblStartRange.Text = "Start Range:";
             // 
             // cmbTime2
             // 
+            this.cmbTime2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbTime2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbTime2.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbTime2.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbTime2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTime2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbTime2.FormattingEnabled = true;
-            this.cmbTime2.Items.AddRange(new object[] {
-            "Equal To",
-            "Greater Than or Equal To",
-            "Less Than or Equal To",
-            "Greater Than",
-            "Less Than",
-            "Does Not Equal"});
             this.cmbTime2.Location = new System.Drawing.Point(92, 70);
             this.cmbTime2.Name = "cmbTime2";
             this.cmbTime2.Size = new System.Drawing.Size(138, 21);
@@ -345,42 +314,276 @@
             // 
             // cmbTime1
             // 
+            this.cmbTime1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbTime1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbTime1.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbTime1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbTime1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTime1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbTime1.FormattingEnabled = true;
-            this.cmbTime1.Items.AddRange(new object[] {
-            "Equal To",
-            "Greater Than or Equal To",
-            "Less Than or Equal To",
-            "Greater Than",
-            "Less Than",
-            "Does Not Equal"});
             this.cmbTime1.Location = new System.Drawing.Point(92, 18);
             this.cmbTime1.Name = "cmbTime1";
             this.cmbTime1.Size = new System.Drawing.Size(138, 21);
             this.cmbTime1.TabIndex = 3;
             // 
-            // label14
+            // lblAnd
             // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(100, 49);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(26, 13);
-            this.label14.TabIndex = 2;
-            this.label14.Text = "And";
+            this.lblAnd.AutoSize = true;
+            this.lblAnd.Location = new System.Drawing.Point(100, 49);
+            this.lblAnd.Name = "lblAnd";
+            this.lblAnd.Size = new System.Drawing.Size(26, 13);
+            this.lblAnd.TabIndex = 2;
+            this.lblAnd.Text = "And";
+            // 
+            // grpPowerIs
+            // 
+            this.grpPowerIs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpPowerIs.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpPowerIs.Controls.Add(this.cmbPower);
+            this.grpPowerIs.Controls.Add(this.lblPower);
+            this.grpPowerIs.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpPowerIs.Location = new System.Drawing.Point(9, 41);
+            this.grpPowerIs.Name = "grpPowerIs";
+            this.grpPowerIs.Size = new System.Drawing.Size(236, 51);
+            this.grpPowerIs.TabIndex = 25;
+            this.grpPowerIs.TabStop = false;
+            this.grpPowerIs.Text = "Power Is...";
+            // 
+            // cmbPower
+            // 
+            this.cmbPower.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbPower.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbPower.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbPower.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbPower.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPower.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbPower.FormattingEnabled = true;
+            this.cmbPower.Location = new System.Drawing.Point(79, 17);
+            this.cmbPower.Name = "cmbPower";
+            this.cmbPower.Size = new System.Drawing.Size(141, 21);
+            this.cmbPower.TabIndex = 1;
+            // 
+            // lblPower
+            // 
+            this.lblPower.AutoSize = true;
+            this.lblPower.Location = new System.Drawing.Point(7, 20);
+            this.lblPower.Name = "lblPower";
+            this.lblPower.Size = new System.Drawing.Size(40, 13);
+            this.lblPower.TabIndex = 0;
+            this.lblPower.Text = "Power:";
+            // 
+            // grpSelfSwitch
+            // 
+            this.grpSelfSwitch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpSelfSwitch.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpSelfSwitch.Controls.Add(this.cmbSelfSwitchVal);
+            this.grpSelfSwitch.Controls.Add(this.lblSelfSwitchIs);
+            this.grpSelfSwitch.Controls.Add(this.cmbSelfSwitch);
+            this.grpSelfSwitch.Controls.Add(this.lblSelfSwitch);
+            this.grpSelfSwitch.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpSelfSwitch.Location = new System.Drawing.Point(9, 40);
+            this.grpSelfSwitch.Name = "grpSelfSwitch";
+            this.grpSelfSwitch.Size = new System.Drawing.Size(236, 89);
+            this.grpSelfSwitch.TabIndex = 29;
+            this.grpSelfSwitch.TabStop = false;
+            this.grpSelfSwitch.Text = "Self Switch";
+            // 
+            // cmbSelfSwitchVal
+            // 
+            this.cmbSelfSwitchVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbSelfSwitchVal.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbSelfSwitchVal.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSelfSwitchVal.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbSelfSwitchVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSelfSwitchVal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbSelfSwitchVal.FormattingEnabled = true;
+            this.cmbSelfSwitchVal.Location = new System.Drawing.Point(79, 52);
+            this.cmbSelfSwitchVal.Name = "cmbSelfSwitchVal";
+            this.cmbSelfSwitchVal.Size = new System.Drawing.Size(141, 21);
+            this.cmbSelfSwitchVal.TabIndex = 3;
+            // 
+            // lblSelfSwitchIs
+            // 
+            this.lblSelfSwitchIs.AutoSize = true;
+            this.lblSelfSwitchIs.Location = new System.Drawing.Point(10, 55);
+            this.lblSelfSwitchIs.Name = "lblSelfSwitchIs";
+            this.lblSelfSwitchIs.Size = new System.Drawing.Size(21, 13);
+            this.lblSelfSwitchIs.TabIndex = 2;
+            this.lblSelfSwitchIs.Text = "Is: ";
+            // 
+            // cmbSelfSwitch
+            // 
+            this.cmbSelfSwitch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbSelfSwitch.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbSelfSwitch.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSelfSwitch.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbSelfSwitch.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSelfSwitch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbSelfSwitch.FormattingEnabled = true;
+            this.cmbSelfSwitch.Location = new System.Drawing.Point(79, 17);
+            this.cmbSelfSwitch.Name = "cmbSelfSwitch";
+            this.cmbSelfSwitch.Size = new System.Drawing.Size(141, 21);
+            this.cmbSelfSwitch.TabIndex = 1;
+            // 
+            // lblSelfSwitch
+            // 
+            this.lblSelfSwitch.AutoSize = true;
+            this.lblSelfSwitch.Location = new System.Drawing.Point(7, 20);
+            this.lblSelfSwitch.Name = "lblSelfSwitch";
+            this.lblSelfSwitch.Size = new System.Drawing.Size(66, 13);
+            this.lblSelfSwitch.TabIndex = 0;
+            this.lblSelfSwitch.Text = "Self Switch: ";
+            // 
+            // grpLevel
+            // 
+            this.grpLevel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpLevel.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpLevel.Controls.Add(this.scrlLevel);
+            this.grpLevel.Controls.Add(this.lblLevel);
+            this.grpLevel.Controls.Add(this.cmbLevelComparator);
+            this.grpLevel.Controls.Add(this.lblLevelComparator);
+            this.grpLevel.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpLevel.Location = new System.Drawing.Point(9, 40);
+            this.grpLevel.Name = "grpLevel";
+            this.grpLevel.Size = new System.Drawing.Size(236, 77);
+            this.grpLevel.TabIndex = 28;
+            this.grpLevel.TabStop = false;
+            this.grpLevel.Text = "Level is";
+            // 
+            // scrlLevel
+            // 
+            this.scrlLevel.Location = new System.Drawing.Point(79, 49);
+            this.scrlLevel.Maximum = 32000;
+            this.scrlLevel.Name = "scrlLevel";
+            this.scrlLevel.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
+            this.scrlLevel.Size = new System.Drawing.Size(151, 17);
+            this.scrlLevel.TabIndex = 5;
+            this.scrlLevel.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlLevel_Scroll);
+            // 
+            // lblLevel
+            // 
+            this.lblLevel.AutoSize = true;
+            this.lblLevel.Location = new System.Drawing.Point(10, 54);
+            this.lblLevel.Name = "lblLevel";
+            this.lblLevel.Size = new System.Drawing.Size(45, 13);
+            this.lblLevel.TabIndex = 4;
+            this.lblLevel.Text = "Level: 1";
+            // 
+            // cmbLevelComparator
+            // 
+            this.cmbLevelComparator.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbLevelComparator.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbLevelComparator.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbLevelComparator.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbLevelComparator.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbLevelComparator.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbLevelComparator.FormattingEnabled = true;
+            this.cmbLevelComparator.Location = new System.Drawing.Point(79, 18);
+            this.cmbLevelComparator.Name = "cmbLevelComparator";
+            this.cmbLevelComparator.Size = new System.Drawing.Size(151, 21);
+            this.cmbLevelComparator.TabIndex = 3;
+            // 
+            // lblLevelComparator
+            // 
+            this.lblLevelComparator.AutoSize = true;
+            this.lblLevelComparator.Location = new System.Drawing.Point(7, 20);
+            this.lblLevelComparator.Name = "lblLevelComparator";
+            this.lblLevelComparator.Size = new System.Drawing.Size(64, 13);
+            this.lblLevelComparator.TabIndex = 2;
+            this.lblLevelComparator.Text = "Comparator:";
+            // 
+            // grpSpell
+            // 
+            this.grpSpell.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpSpell.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpSpell.Controls.Add(this.cmbSpell);
+            this.grpSpell.Controls.Add(this.lblSpell);
+            this.grpSpell.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpSpell.Location = new System.Drawing.Point(9, 40);
+            this.grpSpell.Name = "grpSpell";
+            this.grpSpell.Size = new System.Drawing.Size(236, 52);
+            this.grpSpell.TabIndex = 26;
+            this.grpSpell.TabStop = false;
+            this.grpSpell.Text = "Knows Spell";
+            // 
+            // cmbSpell
+            // 
+            this.cmbSpell.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbSpell.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbSpell.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSpell.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbSpell.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSpell.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbSpell.FormattingEnabled = true;
+            this.cmbSpell.Location = new System.Drawing.Point(79, 18);
+            this.cmbSpell.Name = "cmbSpell";
+            this.cmbSpell.Size = new System.Drawing.Size(151, 21);
+            this.cmbSpell.TabIndex = 3;
+            // 
+            // lblSpell
+            // 
+            this.lblSpell.AutoSize = true;
+            this.lblSpell.Location = new System.Drawing.Point(7, 20);
+            this.lblSpell.Name = "lblSpell";
+            this.lblSpell.Size = new System.Drawing.Size(33, 13);
+            this.lblSpell.TabIndex = 2;
+            this.lblSpell.Text = "Spell:";
+            // 
+            // grpClass
+            // 
+            this.grpClass.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpClass.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpClass.Controls.Add(this.cmbClass);
+            this.grpClass.Controls.Add(this.lblClass);
+            this.grpClass.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpClass.Location = new System.Drawing.Point(9, 40);
+            this.grpClass.Name = "grpClass";
+            this.grpClass.Size = new System.Drawing.Size(236, 52);
+            this.grpClass.TabIndex = 27;
+            this.grpClass.TabStop = false;
+            this.grpClass.Text = "Class is";
+            // 
+            // cmbClass
+            // 
+            this.cmbClass.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbClass.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbClass.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbClass.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbClass.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbClass.FormattingEnabled = true;
+            this.cmbClass.Location = new System.Drawing.Point(79, 18);
+            this.cmbClass.Name = "cmbClass";
+            this.cmbClass.Size = new System.Drawing.Size(151, 21);
+            this.cmbClass.TabIndex = 3;
+            // 
+            // lblClass
+            // 
+            this.lblClass.AutoSize = true;
+            this.lblClass.Location = new System.Drawing.Point(7, 20);
+            this.lblClass.Name = "lblClass";
+            this.lblClass.Size = new System.Drawing.Size(35, 13);
+            this.lblClass.TabIndex = 2;
+            this.lblClass.Text = "Class:";
             // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(9, 168);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // cmbConditionType
             // 
+            this.cmbConditionType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbConditionType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbConditionType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbConditionType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbConditionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbConditionType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbConditionType.FormattingEnabled = true;
             this.cmbConditionType.Items.AddRange(new object[] {
             "Player Switch is...",
@@ -405,159 +608,34 @@
             this.cmbConditionType.TabIndex = 22;
             this.cmbConditionType.SelectedIndexChanged += new System.EventHandler(this.cmbConditionType_SelectedIndexChanged);
             // 
-            // label1
+            // lblType
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(81, 13);
-            this.label1.TabIndex = 21;
-            this.label1.Text = "Condition Type:";
+            this.lblType.AutoSize = true;
+            this.lblType.Location = new System.Drawing.Point(6, 16);
+            this.lblType.Name = "lblType";
+            this.lblType.Size = new System.Drawing.Size(81, 13);
+            this.lblType.TabIndex = 21;
+            this.lblType.Text = "Condition Type:";
             // 
             // btnCancel
             // 
             this.btnCancel.Location = new System.Drawing.Point(90, 168);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 20;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // grpLevel
-            // 
-            this.grpLevel.Controls.Add(this.scrlLevel);
-            this.grpLevel.Controls.Add(this.lblLevel);
-            this.grpLevel.Controls.Add(this.cmbLevelComparator);
-            this.grpLevel.Controls.Add(this.label10);
-            this.grpLevel.Location = new System.Drawing.Point(9, 40);
-            this.grpLevel.Name = "grpLevel";
-            this.grpLevel.Size = new System.Drawing.Size(236, 77);
-            this.grpLevel.TabIndex = 28;
-            this.grpLevel.TabStop = false;
-            this.grpLevel.Text = "Level is";
-            // 
-            // scrlLevel
-            // 
-            this.scrlLevel.Location = new System.Drawing.Point(79, 49);
-            this.scrlLevel.Maximum = 32000;
-            this.scrlLevel.Name = "scrlLevel";
-            this.scrlLevel.Size = new System.Drawing.Size(151, 17);
-            this.scrlLevel.TabIndex = 5;
-            this.scrlLevel.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLevel_Scroll);
-            // 
-            // lblLevel
-            // 
-            this.lblLevel.AutoSize = true;
-            this.lblLevel.Location = new System.Drawing.Point(10, 54);
-            this.lblLevel.Name = "lblLevel";
-            this.lblLevel.Size = new System.Drawing.Size(45, 13);
-            this.lblLevel.TabIndex = 4;
-            this.lblLevel.Text = "Level: 1";
-            // 
-            // cmbLevelComparator
-            // 
-            this.cmbLevelComparator.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbLevelComparator.FormattingEnabled = true;
-            this.cmbLevelComparator.Items.AddRange(new object[] {
-            "Equal To",
-            "Greater Than or Equal To",
-            "Less Than or Equal To",
-            "Greater Than",
-            "Less Than",
-            "Does Not Equal"});
-            this.cmbLevelComparator.Location = new System.Drawing.Point(79, 18);
-            this.cmbLevelComparator.Name = "cmbLevelComparator";
-            this.cmbLevelComparator.Size = new System.Drawing.Size(151, 21);
-            this.cmbLevelComparator.TabIndex = 3;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(7, 20);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(64, 13);
-            this.label10.TabIndex = 2;
-            this.label10.Text = "Comparator:";
-            // 
-            // grpClass
-            // 
-            this.grpClass.Controls.Add(this.cmbClass);
-            this.grpClass.Controls.Add(this.label9);
-            this.grpClass.Location = new System.Drawing.Point(9, 40);
-            this.grpClass.Name = "grpClass";
-            this.grpClass.Size = new System.Drawing.Size(236, 52);
-            this.grpClass.TabIndex = 27;
-            this.grpClass.TabStop = false;
-            this.grpClass.Text = "Class is";
-            // 
-            // cmbClass
-            // 
-            this.cmbClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbClass.FormattingEnabled = true;
-            this.cmbClass.Items.AddRange(new object[] {
-            "Equal To",
-            "Greater Than or Equal To",
-            "Less Than or Equal To",
-            "Greater Than",
-            "Less Than",
-            "Does Not Equal"});
-            this.cmbClass.Location = new System.Drawing.Point(79, 18);
-            this.cmbClass.Name = "cmbClass";
-            this.cmbClass.Size = new System.Drawing.Size(151, 21);
-            this.cmbClass.TabIndex = 3;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(7, 20);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(35, 13);
-            this.label9.TabIndex = 2;
-            this.label9.Text = "Class:";
-            // 
-            // grpSpell
-            // 
-            this.grpSpell.Controls.Add(this.cmbSpell);
-            this.grpSpell.Controls.Add(this.label7);
-            this.grpSpell.Location = new System.Drawing.Point(9, 40);
-            this.grpSpell.Name = "grpSpell";
-            this.grpSpell.Size = new System.Drawing.Size(236, 52);
-            this.grpSpell.TabIndex = 26;
-            this.grpSpell.TabStop = false;
-            this.grpSpell.Text = "Knows Spell";
-            // 
-            // cmbSpell
-            // 
-            this.cmbSpell.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSpell.FormattingEnabled = true;
-            this.cmbSpell.Items.AddRange(new object[] {
-            "Equal To",
-            "Greater Than or Equal To",
-            "Less Than or Equal To",
-            "Greater Than",
-            "Less Than",
-            "Does Not Equal"});
-            this.cmbSpell.Location = new System.Drawing.Point(79, 18);
-            this.cmbSpell.Name = "cmbSpell";
-            this.cmbSpell.Size = new System.Drawing.Size(151, 21);
-            this.cmbSpell.TabIndex = 3;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(7, 20);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(33, 13);
-            this.label7.TabIndex = 2;
-            this.label7.Text = "Spell:";
             // 
             // grpHasItem
             // 
+            this.grpHasItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpHasItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpHasItem.Controls.Add(this.scrlItemQuantity);
             this.grpHasItem.Controls.Add(this.cmbItem);
-            this.grpHasItem.Controls.Add(this.label8);
+            this.grpHasItem.Controls.Add(this.lblItem);
             this.grpHasItem.Controls.Add(this.lblItemQuantity);
+            this.grpHasItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpHasItem.Location = new System.Drawing.Point(9, 40);
             this.grpHasItem.Name = "grpHasItem";
             this.grpHasItem.Size = new System.Drawing.Size(236, 83);
@@ -571,35 +649,34 @@
             this.scrlItemQuantity.Maximum = 32000;
             this.scrlItemQuantity.Minimum = 1;
             this.scrlItemQuantity.Name = "scrlItemQuantity";
+            this.scrlItemQuantity.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlItemQuantity.Size = new System.Drawing.Size(116, 17);
             this.scrlItemQuantity.TabIndex = 4;
             this.scrlItemQuantity.Value = 1;
-            this.scrlItemQuantity.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlItemQuantity_Scroll);
+            this.scrlItemQuantity.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlItemQuantity_Scroll);
             // 
             // cmbItem
             // 
+            this.cmbItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbItem.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbItem.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbItem.FormattingEnabled = true;
-            this.cmbItem.Items.AddRange(new object[] {
-            "Equal To",
-            "Greater Than or Equal To",
-            "Less Than or Equal To",
-            "Greater Than",
-            "Less Than",
-            "Does Not Equal"});
             this.cmbItem.Location = new System.Drawing.Point(104, 52);
             this.cmbItem.Name = "cmbItem";
             this.cmbItem.Size = new System.Drawing.Size(116, 21);
             this.cmbItem.TabIndex = 3;
             // 
-            // label8
+            // lblItem
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(7, 55);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(30, 13);
-            this.label8.TabIndex = 2;
-            this.label8.Text = "Item:";
+            this.lblItem.AutoSize = true;
+            this.lblItem.Location = new System.Drawing.Point(7, 55);
+            this.lblItem.Name = "lblItem";
+            this.lblItem.Size = new System.Drawing.Size(30, 13);
+            this.lblItem.TabIndex = 2;
+            this.lblItem.Text = "Item:";
             // 
             // lblItemQuantity
             // 
@@ -610,46 +687,82 @@
             this.lblItemQuantity.TabIndex = 0;
             this.lblItemQuantity.Text = "Has at least: 1";
             // 
-            // grpPowerIs
+            // grpSwitch
             // 
-            this.grpPowerIs.Controls.Add(this.cmbPower);
-            this.grpPowerIs.Controls.Add(this.label15);
-            this.grpPowerIs.Location = new System.Drawing.Point(9, 41);
-            this.grpPowerIs.Name = "grpPowerIs";
-            this.grpPowerIs.Size = new System.Drawing.Size(236, 51);
-            this.grpPowerIs.TabIndex = 25;
-            this.grpPowerIs.TabStop = false;
-            this.grpPowerIs.Text = "Power Is...";
+            this.grpSwitch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpSwitch.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpSwitch.Controls.Add(this.cmbSwitchVal);
+            this.grpSwitch.Controls.Add(this.lblSwitchIs);
+            this.grpSwitch.Controls.Add(this.cmbSwitch);
+            this.grpSwitch.Controls.Add(this.lblSwitch);
+            this.grpSwitch.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpSwitch.Location = new System.Drawing.Point(9, 40);
+            this.grpSwitch.Name = "grpSwitch";
+            this.grpSwitch.Size = new System.Drawing.Size(236, 89);
+            this.grpSwitch.TabIndex = 23;
+            this.grpSwitch.TabStop = false;
+            this.grpSwitch.Text = "Player Switch";
             // 
-            // cmbPower
+            // cmbSwitchVal
             // 
-            this.cmbPower.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbPower.FormattingEnabled = true;
-            this.cmbPower.Items.AddRange(new object[] {
-            "Mod or Admin",
-            "Only Admin"});
-            this.cmbPower.Location = new System.Drawing.Point(79, 17);
-            this.cmbPower.Name = "cmbPower";
-            this.cmbPower.Size = new System.Drawing.Size(141, 21);
-            this.cmbPower.TabIndex = 1;
+            this.cmbSwitchVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbSwitchVal.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbSwitchVal.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSwitchVal.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbSwitchVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSwitchVal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbSwitchVal.FormattingEnabled = true;
+            this.cmbSwitchVal.Items.AddRange(new object[] {
+            "False",
+            "True"});
+            this.cmbSwitchVal.Location = new System.Drawing.Point(79, 52);
+            this.cmbSwitchVal.Name = "cmbSwitchVal";
+            this.cmbSwitchVal.Size = new System.Drawing.Size(141, 21);
+            this.cmbSwitchVal.TabIndex = 3;
             // 
-            // label15
+            // lblSwitchIs
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(7, 20);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(40, 13);
-            this.label15.TabIndex = 0;
-            this.label15.Text = "Power:";
+            this.lblSwitchIs.AutoSize = true;
+            this.lblSwitchIs.Location = new System.Drawing.Point(10, 55);
+            this.lblSwitchIs.Name = "lblSwitchIs";
+            this.lblSwitchIs.Size = new System.Drawing.Size(21, 13);
+            this.lblSwitchIs.TabIndex = 2;
+            this.lblSwitchIs.Text = "Is: ";
+            // 
+            // cmbSwitch
+            // 
+            this.cmbSwitch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbSwitch.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbSwitch.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSwitch.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbSwitch.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSwitch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbSwitch.FormattingEnabled = true;
+            this.cmbSwitch.Location = new System.Drawing.Point(79, 17);
+            this.cmbSwitch.Name = "cmbSwitch";
+            this.cmbSwitch.Size = new System.Drawing.Size(141, 21);
+            this.cmbSwitch.TabIndex = 1;
+            // 
+            // lblSwitch
+            // 
+            this.lblSwitch.AutoSize = true;
+            this.lblSwitch.Location = new System.Drawing.Point(7, 20);
+            this.lblSwitch.Name = "lblSwitch";
+            this.lblSwitch.Size = new System.Drawing.Size(45, 13);
+            this.lblSwitch.TabIndex = 0;
+            this.lblSwitch.Text = "Switch: ";
             // 
             // grpPlayerVariable
             // 
+            this.grpPlayerVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpPlayerVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpPlayerVariable.Controls.Add(this.txtVariableVal);
-            this.grpPlayerVariable.Controls.Add(this.label6);
+            this.grpPlayerVariable.Controls.Add(this.lblVariableValue);
             this.grpPlayerVariable.Controls.Add(this.cmbVariableMod);
-            this.grpPlayerVariable.Controls.Add(this.label4);
+            this.grpPlayerVariable.Controls.Add(this.lblComparator);
             this.grpPlayerVariable.Controls.Add(this.cmbVariable);
-            this.grpPlayerVariable.Controls.Add(this.label5);
+            this.grpPlayerVariable.Controls.Add(this.lblVariable);
+            this.grpPlayerVariable.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpPlayerVariable.Location = new System.Drawing.Point(9, 40);
             this.grpPlayerVariable.Name = "grpPlayerVariable";
             this.grpPlayerVariable.Size = new System.Drawing.Size(236, 122);
@@ -659,23 +772,31 @@
             // 
             // txtVariableVal
             // 
+            this.txtVariableVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtVariableVal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtVariableVal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtVariableVal.Location = new System.Drawing.Point(79, 89);
             this.txtVariableVal.Name = "txtVariableVal";
             this.txtVariableVal.Size = new System.Drawing.Size(141, 20);
             this.txtVariableVal.TabIndex = 5;
             // 
-            // label6
+            // lblVariableValue
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(7, 92);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(37, 13);
-            this.label6.TabIndex = 4;
-            this.label6.Text = "Value:";
+            this.lblVariableValue.AutoSize = true;
+            this.lblVariableValue.Location = new System.Drawing.Point(7, 92);
+            this.lblVariableValue.Name = "lblVariableValue";
+            this.lblVariableValue.Size = new System.Drawing.Size(37, 13);
+            this.lblVariableValue.TabIndex = 4;
+            this.lblVariableValue.Text = "Value:";
             // 
             // cmbVariableMod
             // 
+            this.cmbVariableMod.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbVariableMod.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbVariableMod.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbVariableMod.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbVariableMod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbVariableMod.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbVariableMod.FormattingEnabled = true;
             this.cmbVariableMod.Items.AddRange(new object[] {
             "Equal To",
@@ -689,241 +810,176 @@
             this.cmbVariableMod.Size = new System.Drawing.Size(141, 21);
             this.cmbVariableMod.TabIndex = 3;
             // 
-            // label4
+            // lblComparator
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(7, 55);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(61, 13);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Comparator";
+            this.lblComparator.AutoSize = true;
+            this.lblComparator.Location = new System.Drawing.Point(7, 55);
+            this.lblComparator.Name = "lblComparator";
+            this.lblComparator.Size = new System.Drawing.Size(61, 13);
+            this.lblComparator.TabIndex = 2;
+            this.lblComparator.Text = "Comparator";
             // 
             // cmbVariable
             // 
+            this.cmbVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbVariable.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbVariable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbVariable.FormattingEnabled = true;
             this.cmbVariable.Location = new System.Drawing.Point(79, 17);
             this.cmbVariable.Name = "cmbVariable";
             this.cmbVariable.Size = new System.Drawing.Size(141, 21);
             this.cmbVariable.TabIndex = 1;
             // 
-            // label5
+            // lblVariable
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(7, 20);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(45, 13);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Variable";
+            this.lblVariable.AutoSize = true;
+            this.lblVariable.Location = new System.Drawing.Point(7, 20);
+            this.lblVariable.Name = "lblVariable";
+            this.lblVariable.Size = new System.Drawing.Size(45, 13);
+            this.lblVariable.TabIndex = 0;
+            this.lblVariable.Text = "Variable";
             // 
-            // grpSwitch
+            // grpQuestCompleted
             // 
-            this.grpSwitch.Controls.Add(this.cmbSwitchVal);
-            this.grpSwitch.Controls.Add(this.label3);
-            this.grpSwitch.Controls.Add(this.cmbSwitch);
-            this.grpSwitch.Controls.Add(this.label2);
-            this.grpSwitch.Location = new System.Drawing.Point(9, 40);
-            this.grpSwitch.Name = "grpSwitch";
-            this.grpSwitch.Size = new System.Drawing.Size(236, 89);
-            this.grpSwitch.TabIndex = 23;
-            this.grpSwitch.TabStop = false;
-            this.grpSwitch.Text = "Player Switch";
+            this.grpQuestCompleted.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpQuestCompleted.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpQuestCompleted.Controls.Add(this.lblQuestCompleted);
+            this.grpQuestCompleted.Controls.Add(this.cmbCompletedQuest);
+            this.grpQuestCompleted.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpQuestCompleted.Location = new System.Drawing.Point(9, 40);
+            this.grpQuestCompleted.Name = "grpQuestCompleted";
+            this.grpQuestCompleted.Size = new System.Drawing.Size(236, 71);
+            this.grpQuestCompleted.TabIndex = 32;
+            this.grpQuestCompleted.TabStop = false;
+            this.grpQuestCompleted.Text = "Quest Completed:";
+            this.grpQuestCompleted.Visible = false;
             // 
-            // cmbSwitchVal
+            // lblQuestCompleted
             // 
-            this.cmbSwitchVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSwitchVal.FormattingEnabled = true;
-            this.cmbSwitchVal.Items.AddRange(new object[] {
-            "False",
-            "True"});
-            this.cmbSwitchVal.Location = new System.Drawing.Point(79, 52);
-            this.cmbSwitchVal.Name = "cmbSwitchVal";
-            this.cmbSwitchVal.Size = new System.Drawing.Size(141, 21);
-            this.cmbSwitchVal.TabIndex = 3;
+            this.lblQuestCompleted.AutoSize = true;
+            this.lblQuestCompleted.Location = new System.Drawing.Point(6, 21);
+            this.lblQuestCompleted.Name = "lblQuestCompleted";
+            this.lblQuestCompleted.Size = new System.Drawing.Size(38, 13);
+            this.lblQuestCompleted.TabIndex = 5;
+            this.lblQuestCompleted.Text = "Quest:";
             // 
-            // label3
+            // cmbCompletedQuest
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 55);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(21, 13);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Is: ";
-            // 
-            // cmbSwitch
-            // 
-            this.cmbSwitch.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSwitch.FormattingEnabled = true;
-            this.cmbSwitch.Location = new System.Drawing.Point(79, 17);
-            this.cmbSwitch.Name = "cmbSwitch";
-            this.cmbSwitch.Size = new System.Drawing.Size(141, 21);
-            this.cmbSwitch.TabIndex = 1;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(7, 20);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(45, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Switch: ";
-            // 
-            // grpSelfSwitch
-            // 
-            this.grpSelfSwitch.Controls.Add(this.cmbSelfSwitchVal);
-            this.grpSelfSwitch.Controls.Add(this.label11);
-            this.grpSelfSwitch.Controls.Add(this.cmbSelfSwitch);
-            this.grpSelfSwitch.Controls.Add(this.label12);
-            this.grpSelfSwitch.Location = new System.Drawing.Point(9, 40);
-            this.grpSelfSwitch.Name = "grpSelfSwitch";
-            this.grpSelfSwitch.Size = new System.Drawing.Size(236, 89);
-            this.grpSelfSwitch.TabIndex = 29;
-            this.grpSelfSwitch.TabStop = false;
-            this.grpSelfSwitch.Text = "Self Switch";
-            // 
-            // cmbSelfSwitchVal
-            // 
-            this.cmbSelfSwitchVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSelfSwitchVal.FormattingEnabled = true;
-            this.cmbSelfSwitchVal.Items.AddRange(new object[] {
-            "False",
-            "True"});
-            this.cmbSelfSwitchVal.Location = new System.Drawing.Point(79, 52);
-            this.cmbSelfSwitchVal.Name = "cmbSelfSwitchVal";
-            this.cmbSelfSwitchVal.Size = new System.Drawing.Size(141, 21);
-            this.cmbSelfSwitchVal.TabIndex = 3;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(10, 55);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(21, 13);
-            this.label11.TabIndex = 2;
-            this.label11.Text = "Is: ";
-            // 
-            // cmbSelfSwitch
-            // 
-            this.cmbSelfSwitch.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSelfSwitch.FormattingEnabled = true;
-            this.cmbSelfSwitch.Items.AddRange(new object[] {
-            "A",
-            "B",
-            "C",
-            "D"});
-            this.cmbSelfSwitch.Location = new System.Drawing.Point(79, 17);
-            this.cmbSelfSwitch.Name = "cmbSelfSwitch";
-            this.cmbSelfSwitch.Size = new System.Drawing.Size(141, 21);
-            this.cmbSelfSwitch.TabIndex = 1;
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(7, 20);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(66, 13);
-            this.label12.TabIndex = 0;
-            this.label12.Text = "Self Switch: ";
+            this.cmbCompletedQuest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbCompletedQuest.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbCompletedQuest.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbCompletedQuest.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbCompletedQuest.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCompletedQuest.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbCompletedQuest.FormattingEnabled = true;
+            this.cmbCompletedQuest.Location = new System.Drawing.Point(92, 18);
+            this.cmbCompletedQuest.Name = "cmbCompletedQuest";
+            this.cmbCompletedQuest.Size = new System.Drawing.Size(138, 21);
+            this.cmbCompletedQuest.TabIndex = 3;
             // 
             // EventCommand_ConditionalBranch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.groupBox1);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.Controls.Add(this.grpConditional);
             this.Name = "EventCommand_ConditionalBranch";
             this.Size = new System.Drawing.Size(267, 208);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpConditional.ResumeLayout(false);
+            this.grpConditional.PerformLayout();
             this.grpQuestInProgress.ResumeLayout(false);
             this.grpQuestInProgress.PerformLayout();
-            this.grpQuestCompleted.ResumeLayout(false);
-            this.grpQuestCompleted.PerformLayout();
             this.grpStartQuest.ResumeLayout(false);
             this.grpStartQuest.PerformLayout();
             this.grpTime.ResumeLayout(false);
             this.grpTime.PerformLayout();
-            this.grpLevel.ResumeLayout(false);
-            this.grpLevel.PerformLayout();
-            this.grpClass.ResumeLayout(false);
-            this.grpClass.PerformLayout();
-            this.grpSpell.ResumeLayout(false);
-            this.grpSpell.PerformLayout();
-            this.grpHasItem.ResumeLayout(false);
-            this.grpHasItem.PerformLayout();
             this.grpPowerIs.ResumeLayout(false);
             this.grpPowerIs.PerformLayout();
-            this.grpPlayerVariable.ResumeLayout(false);
-            this.grpPlayerVariable.PerformLayout();
-            this.grpSwitch.ResumeLayout(false);
-            this.grpSwitch.PerformLayout();
             this.grpSelfSwitch.ResumeLayout(false);
             this.grpSelfSwitch.PerformLayout();
+            this.grpLevel.ResumeLayout(false);
+            this.grpLevel.PerformLayout();
+            this.grpSpell.ResumeLayout(false);
+            this.grpSpell.PerformLayout();
+            this.grpClass.ResumeLayout(false);
+            this.grpClass.PerformLayout();
+            this.grpHasItem.ResumeLayout(false);
+            this.grpHasItem.PerformLayout();
+            this.grpSwitch.ResumeLayout(false);
+            this.grpSwitch.PerformLayout();
+            this.grpPlayerVariable.ResumeLayout(false);
+            this.grpPlayerVariable.PerformLayout();
+            this.grpQuestCompleted.ResumeLayout(false);
+            this.grpQuestCompleted.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.GroupBox grpSwitch;
-        private System.Windows.Forms.ComboBox cmbSwitchVal;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox cmbSwitch;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox cmbConditionType;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.GroupBox grpPlayerVariable;
-        private System.Windows.Forms.ComboBox cmbVariableMod;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox cmbVariable;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox txtVariableVal;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.GroupBox grpHasItem;
-        private System.Windows.Forms.HScrollBar scrlItemQuantity;
-        private System.Windows.Forms.ComboBox cmbItem;
-        private System.Windows.Forms.Label label8;
+        private DarkGroupBox grpConditional;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
+        private DarkGroupBox grpSwitch;
+        private DarkComboBox cmbSwitchVal;
+        private System.Windows.Forms.Label lblSwitchIs;
+        private DarkComboBox cmbSwitch;
+        private System.Windows.Forms.Label lblSwitch;
+        private DarkComboBox cmbConditionType;
+        private System.Windows.Forms.Label lblType;
+        private DarkGroupBox grpPlayerVariable;
+        private DarkComboBox cmbVariableMod;
+        private System.Windows.Forms.Label lblComparator;
+        private DarkComboBox cmbVariable;
+        private System.Windows.Forms.Label lblVariable;
+        private DarkTextBox txtVariableVal;
+        private System.Windows.Forms.Label lblVariableValue;
+        private DarkGroupBox grpHasItem;
+        private DarkScrollBar scrlItemQuantity;
+        private DarkComboBox cmbItem;
+        private System.Windows.Forms.Label lblItem;
         private System.Windows.Forms.Label lblItemQuantity;
-        private System.Windows.Forms.GroupBox grpSpell;
-        private System.Windows.Forms.ComboBox cmbSpell;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.GroupBox grpClass;
-        private System.Windows.Forms.ComboBox cmbClass;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.GroupBox grpLevel;
-        private System.Windows.Forms.HScrollBar scrlLevel;
+        private DarkGroupBox grpSpell;
+        private DarkComboBox cmbSpell;
+        private System.Windows.Forms.Label lblSpell;
+        private DarkGroupBox grpClass;
+        private DarkComboBox cmbClass;
+        private System.Windows.Forms.Label lblClass;
+        private DarkGroupBox grpLevel;
+        private DarkScrollBar scrlLevel;
         private System.Windows.Forms.Label lblLevel;
-        private System.Windows.Forms.ComboBox cmbLevelComparator;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.GroupBox grpSelfSwitch;
-        private System.Windows.Forms.ComboBox cmbSelfSwitchVal;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.ComboBox cmbSelfSwitch;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.GroupBox grpPowerIs;
-        private System.Windows.Forms.ComboBox cmbPower;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.GroupBox grpTime;
-        private System.Windows.Forms.ComboBox cmbTime2;
-        private System.Windows.Forms.ComboBox cmbTime1;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.GroupBox grpQuestInProgress;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.ComboBox cmbQuestTask;
-        private System.Windows.Forms.ComboBox cmbTaskModifier;
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.ComboBox cmbQuestInProgress;
-        private System.Windows.Forms.GroupBox grpStartQuest;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.ComboBox cmbStartQuest;
-        private System.Windows.Forms.GroupBox grpQuestCompleted;
-        private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.ComboBox cmbCompletedQuest;
+        private DarkComboBox cmbLevelComparator;
+        private System.Windows.Forms.Label lblLevelComparator;
+        private DarkGroupBox grpSelfSwitch;
+        private DarkComboBox cmbSelfSwitchVal;
+        private System.Windows.Forms.Label lblSelfSwitchIs;
+        private DarkComboBox cmbSelfSwitch;
+        private System.Windows.Forms.Label lblSelfSwitch;
+        private DarkGroupBox grpPowerIs;
+        private DarkComboBox cmbPower;
+        private System.Windows.Forms.Label lblPower;
+        private DarkGroupBox grpTime;
+        private DarkComboBox cmbTime2;
+        private DarkComboBox cmbTime1;
+        private System.Windows.Forms.Label lblAnd;
+        private System.Windows.Forms.Label lblEndRange;
+        private System.Windows.Forms.Label lblStartRange;
+        private DarkGroupBox grpQuestInProgress;
+        private System.Windows.Forms.Label lblQuestTask;
+        private DarkComboBox cmbQuestTask;
+        private DarkComboBox cmbTaskModifier;
+        private System.Windows.Forms.Label lblQuestIs;
+        private System.Windows.Forms.Label lblQuestProgress;
+        private DarkComboBox cmbQuestInProgress;
+        private DarkGroupBox grpStartQuest;
+        private System.Windows.Forms.Label lblStartQuest;
+        private DarkComboBox cmbStartQuest;
+        private DarkGroupBox grpQuestCompleted;
+        private System.Windows.Forms.Label lblQuestCompleted;
+        private DarkComboBox cmbCompletedQuest;
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_ChangeFace
     {
@@ -28,28 +30,31 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grpChangeFace = new DarkUI.Controls.DarkGroupBox();
             this.pnlPreview = new System.Windows.Forms.Panel();
-            this.cmbFace = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
+            this.cmbFace = new DarkUI.Controls.DarkComboBox();
+            this.lblFace = new System.Windows.Forms.Label();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.grpChangeFace.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpChangeFace
             // 
-            this.groupBox1.Controls.Add(this.pnlPreview);
-            this.groupBox1.Controls.Add(this.cmbFace);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnSave);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(259, 126);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Change Face:";
+            this.grpChangeFace.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpChangeFace.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpChangeFace.Controls.Add(this.pnlPreview);
+            this.grpChangeFace.Controls.Add(this.cmbFace);
+            this.grpChangeFace.Controls.Add(this.lblFace);
+            this.grpChangeFace.Controls.Add(this.btnCancel);
+            this.grpChangeFace.Controls.Add(this.btnSave);
+            this.grpChangeFace.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpChangeFace.Location = new System.Drawing.Point(3, 3);
+            this.grpChangeFace.Name = "grpChangeFace";
+            this.grpChangeFace.Size = new System.Drawing.Size(259, 126);
+            this.grpChangeFace.TabIndex = 17;
+            this.grpChangeFace.TabStop = false;
+            this.grpChangeFace.Text = "Change Face:";
             // 
             // pnlPreview
             // 
@@ -60,7 +65,12 @@
             // 
             // cmbFace
             // 
+            this.cmbFace.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbFace.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbFace.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbFace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbFace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFace.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbFace.FormattingEnabled = true;
             this.cmbFace.Location = new System.Drawing.Point(47, 19);
             this.cmbFace.Name = "cmbFace";
@@ -68,33 +78,33 @@
             this.cmbFace.TabIndex = 22;
             this.cmbFace.SelectedIndexChanged += new System.EventHandler(this.cmbSprite_SelectedIndexChanged);
             // 
-            // label1
+            // lblFace
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(34, 13);
-            this.label1.TabIndex = 21;
-            this.label1.Text = "Face:";
+            this.lblFace.AutoSize = true;
+            this.lblFace.Location = new System.Drawing.Point(4, 22);
+            this.lblFace.Name = "lblFace";
+            this.lblFace.Size = new System.Drawing.Size(34, 13);
+            this.lblFace.TabIndex = 21;
+            this.lblFace.Text = "Face:";
             // 
             // btnCancel
             // 
             this.btnCancel.Location = new System.Drawing.Point(89, 97);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 20;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(7, 97);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // EventCommand_ChangeFace
@@ -102,22 +112,23 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.groupBox1);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.Controls.Add(this.grpChangeFace);
             this.Name = "EventCommand_ChangeFace";
             this.Size = new System.Drawing.Size(268, 132);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpChangeFace.ResumeLayout(false);
+            this.grpChangeFace.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox cmbFace;
+        private DarkGroupBox grpChangeFace;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
+        private System.Windows.Forms.Label lblFace;
+        private DarkComboBox cmbFace;
         private System.Windows.Forms.Panel pnlPreview;
     }
 }

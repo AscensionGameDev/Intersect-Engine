@@ -29,6 +29,7 @@ using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Forms.DockingElements;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Classes
 {
@@ -138,33 +139,7 @@ namespace Intersect_Editor.Classes
 
         public static string GetColorName(Color.ChatColor color)
         {
-            switch (color)
-            {
-                case Color.ChatColor.Black:
-                    return "Black";
-                case Color.ChatColor.White:
-                    return "White";
-                case Color.ChatColor.Blue:
-                    return "Blue";
-                case Color.ChatColor.Red:
-                    return "Red";
-                case Color.ChatColor.Green:
-                    return "Green";
-                case Color.ChatColor.Yellow:
-                    return "Yellow";
-                case Color.ChatColor.Orange:
-                    return "Orange";
-                case Color.ChatColor.Purple:
-                    return "Purple";
-                case Color.ChatColor.Gray:
-                    return "Gray";
-                case Color.ChatColor.Cyan:
-                    return "Cyan";
-                case Color.ChatColor.Pink:
-                    return "Pink";
-                default:
-                    return "No Color";
-            }
+            return Strings.Get("colors", ((int) color).ToString());
         }
 
         public static string GetStatName(int statnum)

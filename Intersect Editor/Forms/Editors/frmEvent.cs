@@ -35,6 +35,7 @@ using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect_Library.Localization;
 using Color = System.Drawing.Color;
 
 namespace Intersect_Editor.Forms
@@ -66,6 +67,7 @@ namespace Intersect_Editor.Forms
         {
             grpNewCommands.BringToFront();
             grpCreateCommands.BringToFront();
+            InitLocalization();
             lstCommands.ExpandAll();
         }
         /// <summary>
@@ -79,7 +81,7 @@ namespace Intersect_Editor.Forms
                 e.Cancel = true;
                 return;
             }
-            if (DarkMessageBox.ShowWarning(@"Do you want to save changes to this event?", @"Save Event?", DarkDialogButton.YesNo) == DialogResult.Yes)
+            if (DarkMessageBox.ShowWarning(Strings.Get("eventeditor","savedialogue"), Strings.Get("eventeditor", "savecaption"), DarkDialogButton.YesNo) == DialogResult.Yes)
             {
                 btnSave_Click(null, null);
             }
@@ -95,6 +97,81 @@ namespace Intersect_Editor.Forms
         private void FrmEvent_VisibleChanged(object sender, EventArgs e)
         {
             //btnCancel_Click(null, null);
+        }
+        private void InitLocalization()
+        {
+            grpGeneral.Text = Strings.Get("eventeditor", "general");
+            lblName.Text = Strings.Get("eventeditor", "name");
+            chkIsGlobal.Text = Strings.Get("eventeditor", "global");
+
+            grpPageOptions.Text = Strings.Get("eventeditor", "pageoptions");
+            btnNewPage.Text = Strings.Get("eventeditor", "newpage");
+            btnCopyPage.Text = Strings.Get("eventeditor", "copypage");
+            btnPastePage.Text = Strings.Get("eventeditor", "pastepage");
+            btnDeletePage.Text = Strings.Get("eventeditor", "deletepage");
+            btnClearPage.Text = Strings.Get("eventeditor", "clearpage");
+
+            grpEventConditions.Text = Strings.Get("eventeditor", "conditions");
+            btnAddCondition.Text = Strings.Get("eventeditor", "addcondition");
+            btnRemoveCondition.Text = Strings.Get("eventeditor", "removecondition");
+
+            grpEntityOptions.Text = Strings.Get("eventeditor", "entityoptions");
+            grpPreview.Text = Strings.Get("eventeditor", "eventpreview");
+            lblAnimation.Text = Strings.Get("eventeditor", "animation");
+
+            grpMovement.Text = Strings.Get("eventeditor", "movement");
+            lblType.Text = Strings.Get("eventeditor", "movementtype");
+            cmbMoveType.Items.Clear();
+            for (int i = 0; i < 3; i++)
+            {
+                cmbMoveType.Items.Add(Strings.Get("eventeditor", "movetype" + i));
+            }
+            btnSetRoute.Text = Strings.Get("eventeditor", "setroute");
+            lblSpeed.Text = Strings.Get("eventeditor", "speed");
+            cmbEventSpeed.Items.Clear();
+            for (int i = 0; i < 5; i++)
+            {
+                cmbEventSpeed.Items.Add(Strings.Get("eventeditor", "speed" + i));
+            }
+            lblFreq.Text = Strings.Get("eventeditor", "frequency");
+            cmbEventFreq.Items.Clear();
+            for (int i = 0; i < 5; i++)
+            {
+                cmbEventFreq.Items.Add(Strings.Get("eventeditor", "frequency" + i));
+            }
+            lblLayer.Text = Strings.Get("eventeditor", "layer");
+            cmbLayering.Items.Clear();
+            for (int i = 0; i < 3; i++)
+            {
+                cmbLayering.Items.Add(Strings.Get("eventeditor", "layer" + i));
+            }
+            grpInspector.Text = Strings.Get("eventeditor", "inspector");
+            chkDisableInspector.Text = Strings.Get("eventeditor", "disableinspector");
+            lblInspectorDesc.Text = Strings.Get("eventeditor", "inspectordesc");
+            lblFace.Text = Strings.Get("eventeditor", "face");
+            grpExtra.Text = Strings.Get("eventeditor", "extras");
+            chkWalkThrough.Text = Strings.Get("eventeditor", "passable");
+            chkHideName.Text = Strings.Get("eventeditor", "hidename");
+            chkDirectionFix.Text = Strings.Get("eventeditor", "directionfix");
+            chkWalkingAnimation.Text = Strings.Get("eventeditor", "walkinganim");
+            chkInteractionFreeze.Text = Strings.Get("eventeditor", "interactionfreeze");
+            grpTriggers.Text = Strings.Get("eventeditor", "trigger");
+            grpNewCommands.Text = Strings.Get("eventeditor", "addcommand");
+            grpEventCommands.Text = Strings.Get("eventeditor", "commandlist");
+            btnInsert.Text = Strings.Get("eventeditor", "insertcommand");
+            btnEdit.Text = Strings.Get("eventeditor", "editcommand");
+            btnDelete.Text = Strings.Get("eventeditor", "deletecommand");
+            btnSave.Text = Strings.Get("eventeditor", "save");
+            btnCancel.Text = Strings.Get("eventeditor", "cancel");
+
+            for (int i = 0; i < lstCommands.Nodes.Count; i++)
+            {
+                lstCommands.Nodes[i].Text = Strings.Get("eventcommands", lstCommands.Nodes[i].Name);
+                for (int x = 0; x < lstCommands.Nodes[i].Nodes.Count; x++)
+                {
+                    lstCommands.Nodes[i].Nodes[x].Text = Strings.Get("eventcommands", lstCommands.Nodes[i].Nodes[x].Name);
+                }
+            }
         }
         #endregion
 
@@ -124,18 +201,18 @@ namespace Intersect_Editor.Forms
             {
                 grpEntityOptions.Hide();
                 cmbTrigger.Items.Clear();
-                cmbTrigger.Items.Add("None");
-                cmbTrigger.Items.Add("Login");
-                cmbTrigger.Items.Add("Level Up");
+                for (int i = 0; i < 3; i++)
+                {
+                    cmbTrigger.Items.Add(Strings.Get("eventeditor", "commontrigger" + i));
+                }
             }
             else
             {
                 cmbTrigger.Items.Clear();
-                cmbTrigger.Items.Add("Action Button");
-                cmbTrigger.Items.Add("Player Touch");
-                cmbTrigger.Items.Add("Autorun");
-                //Disabled until we implement it
-                //cmbTrigger.Items.Add("Projectile Hit");
+                for (int i = 0; i < 3; i++) //Change the 3 to 4 when on projectile hit is done
+                {
+                    cmbTrigger.Items.Add(Strings.Get("eventeditor", "trigger" + i));
+                }
                 cmbTriggerVal.Items.Clear();
                 cmbTriggerVal.Items.Add("None");
                 cmbTriggerVal.Items.AddRange(Database.GetGameObjectList(GameObject.Projectile));
@@ -151,7 +228,7 @@ namespace Intersect_Editor.Forms
         /// <param name="pageNum">The index of the page to load.</param>
         public void LoadPage(int pageNum)
         {
-            this.Text = @"Event Editor - Event #" + MyEvent.MyIndex + @": " + txtEventname.Text;
+            this.Text = Strings.Get("eventeditor", "title",MyEvent.MyIndex,txtEventname.Text);
             CurrentPageIndex = pageNum;
             CurrentPage = MyEvent.MyPages[pageNum];
             for (int i = 0; i < _pageTabs.Count; i++)
@@ -186,7 +263,7 @@ namespace Intersect_Editor.Forms
                 if (cmbTrigger.SelectedIndex == (int) EventPage.EventTriggers.ProjectileHit)
                 {
                     lblTriggerVal.Show();
-                    lblTriggerVal.Text = "Projectile: ";
+                    lblTriggerVal.Text = Strings.Get("eventeditor","projectile");
                     cmbTriggerVal.Show();
                     cmbTriggerVal.SelectedIndex =
                         Database.GameObjectListIndex(GameObject.Projectile, CurrentPage.TriggerVal) + 1;
@@ -200,7 +277,7 @@ namespace Intersect_Editor.Forms
             }
             cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, CurrentPage.Animation) + 1;
             chkHideName.Checked = Convert.ToBoolean(CurrentPage.HideName);
-            chkDisablePreview.Checked = Convert.ToBoolean(CurrentPage.DisablePreview);
+            chkDisableInspector.Checked = Convert.ToBoolean(CurrentPage.DisablePreview);
             chkDirectionFix.Checked = Convert.ToBoolean(CurrentPage.DirectionFix);
             chkWalkingAnimation.Checked = Convert.ToBoolean(CurrentPage.WalkingAnimation);
             chkInteractionFreeze.Checked = Convert.ToBoolean(CurrentPage.InteractionFreeze);
@@ -269,7 +346,7 @@ namespace Intersect_Editor.Forms
                     switch (commandList.Commands[i].Type)
                     {
                         case EventCommandType.ShowOptions:
-                            lstEventCommands.Items.Add(indent + "@> " + GetCommandText(commandList.Commands[i]));
+                            lstEventCommands.Items.Add(indent + Strings.Get("eventcommandlist","linestart") + GetCommandText(commandList.Commands[i]));
                             clp = new CommandListProperties
                             {
                                 Editable = true,
@@ -282,7 +359,7 @@ namespace Intersect_Editor.Forms
                             for (var x = 1; x < 5; x++)
                             {
                                 if (commandList.Commands[i].Strs[x].Trim().Length <= 0) continue;
-                                lstEventCommands.Items.Add(indent + "      : When [" + Truncate(commandList.Commands[i].Strs[x], 20) + "]");
+                                lstEventCommands.Items.Add(indent + "      : " + Strings.Get("eventcommandlist", "whenoption",Truncate(commandList.Commands[i].Strs[x], 20)));
                                 clp = new CommandListProperties
                                 {
                                     Editable = false,
@@ -294,7 +371,7 @@ namespace Intersect_Editor.Forms
                                 _commandProperties.Add(clp);
                                 PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[x - 1]], indent + "          ");
                             }
-                            lstEventCommands.Items.Add(indent + "      : End Options");
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.Get("eventcommandlist", "endoptions"));
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -307,7 +384,7 @@ namespace Intersect_Editor.Forms
                             _commandProperties.Add(clp);
                             break;
                         case EventCommandType.ConditionalBranch:
-                            lstEventCommands.Items.Add(indent + "@> " + GetCommandText(commandList.Commands[i]));
+                            lstEventCommands.Items.Add(indent + Strings.Get("eventcommandlist","linestart") + GetCommandText(commandList.Commands[i]));
                             clp = new CommandListProperties
                             {
                                 Editable = true,
@@ -320,7 +397,7 @@ namespace Intersect_Editor.Forms
 
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[4]], indent + "          ");
 
-                            lstEventCommands.Items.Add(indent + "      : Else");
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.Get("eventcommandlist", "conditionalelse"));
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -333,7 +410,7 @@ namespace Intersect_Editor.Forms
 
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[5]], indent + "          ");
 
-                            lstEventCommands.Items.Add(indent + "      : End Branch");
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.Get("eventcommandlist", "conditionalend"));
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -346,7 +423,7 @@ namespace Intersect_Editor.Forms
                             _commandProperties.Add(clp);
                             break;
                         case EventCommandType.ChangeSpells:
-                            lstEventCommands.Items.Add(indent + "@> " + GetCommandText(commandList.Commands[i]));
+                            lstEventCommands.Items.Add(indent + Strings.Get("eventcommandlist","linestart") + GetCommandText(commandList.Commands[i]));
                             clp = new CommandListProperties
                             {
                                 Editable = true,
@@ -358,7 +435,7 @@ namespace Intersect_Editor.Forms
                             _commandProperties.Add(clp);
 
                             //When the spell was successfully taught:
-                            lstEventCommands.Items.Add(indent + "      : Spell Taught/Removed Successfully");
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.Get("eventcommandlist", "spellsucceeded"));
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -371,7 +448,7 @@ namespace Intersect_Editor.Forms
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[4]], indent + "          ");
 
                             //When the spell failed to be taught:
-                            lstEventCommands.Items.Add(indent + "      : Spell Not Taught/Removed (Already Knew/Spellbook full/Didn't know)");
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.Get("eventcommandlist", "spellfailed"));
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -384,7 +461,7 @@ namespace Intersect_Editor.Forms
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[5]], indent + "          ");
 
 
-                            lstEventCommands.Items.Add(indent + "      : End Spell Change");
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.Get("eventcommandlist", "endspell"));
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -397,7 +474,7 @@ namespace Intersect_Editor.Forms
                             _commandProperties.Add(clp);
                             break;
                         case EventCommandType.ChangeItems:
-                            lstEventCommands.Items.Add(indent + "@> " + GetCommandText(commandList.Commands[i]));
+                            lstEventCommands.Items.Add(indent + Strings.Get("eventcommandlist","linestart") + GetCommandText(commandList.Commands[i]));
                             clp = new CommandListProperties
                             {
                                 Editable = true,
@@ -409,7 +486,7 @@ namespace Intersect_Editor.Forms
                             _commandProperties.Add(clp);
 
                             //When the item(s) were successfully given/taken:
-                            lstEventCommands.Items.Add(indent + "      : Item(s) Given/Taken Successfully");
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.Get("eventcommandlist", "itemschanged"));
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -422,7 +499,7 @@ namespace Intersect_Editor.Forms
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[4]], indent + "          ");
 
                             //When the items failed to be given/taken:
-                            lstEventCommands.Items.Add(indent + "      : Item(s) Not Given/Taken (Doesn't have/Inventory full)");
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.Get("eventcommandlist", "itemnotchanged"));
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -435,7 +512,7 @@ namespace Intersect_Editor.Forms
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[5]], indent + "          ");
 
 
-                            lstEventCommands.Items.Add(indent + "      : End Item Change");
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.Get("eventcommandlist", "enditemchange"));
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -449,7 +526,7 @@ namespace Intersect_Editor.Forms
                             break;
 
                         case EventCommandType.StartQuest:
-                            lstEventCommands.Items.Add(indent + "@> " + GetCommandText(commandList.Commands[i]));
+                            lstEventCommands.Items.Add(indent + Strings.Get("eventcommandlist","linestart") + GetCommandText(commandList.Commands[i]));
                             clp = new CommandListProperties
                             {
                                 Editable = true,
@@ -461,7 +538,7 @@ namespace Intersect_Editor.Forms
                             _commandProperties.Add(clp);
 
                             //When the quest is accepted/started successfully:
-                            lstEventCommands.Items.Add(indent + "      : Quest Accepted/Started Successfully");
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.Get("eventcommandlist", "queststarted"));
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -474,7 +551,7 @@ namespace Intersect_Editor.Forms
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[4]], indent + "          ");
 
                             //When the quest was declined or requirements not met:
-                            lstEventCommands.Items.Add(indent + "      : Quest Declined or Failed to Start (Reqs not met, already started, etc)");
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.Get("eventcommandlist", "questnotstarted"));
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -487,7 +564,7 @@ namespace Intersect_Editor.Forms
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[5]], indent + "          ");
 
 
-                            lstEventCommands.Items.Add(indent + "      : End Start Quest");
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.Get("eventcommandlist", "endstartquest"));
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -500,7 +577,7 @@ namespace Intersect_Editor.Forms
                             _commandProperties.Add(clp);
                             break;
                         default:
-                            lstEventCommands.Items.Add(indent + "@> " + GetCommandText(commandList.Commands[i]));
+                            lstEventCommands.Items.Add(indent + Strings.Get("eventcommandlist","linestart") + GetCommandText(commandList.Commands[i]));
                             clp = new CommandListProperties
                             {
                                 Editable = true,
@@ -514,7 +591,7 @@ namespace Intersect_Editor.Forms
                     }
                 }
             }
-            lstEventCommands.Items.Add(indent + "@> ");
+            lstEventCommands.Items.Add(indent + Strings.Get("eventcommandlist","linestart"));
             clp = new CommandListProperties { Editable = true, MyIndex = -1, MyList = commandList };
             _commandProperties.Add(clp);
         }
@@ -530,192 +607,185 @@ namespace Intersect_Editor.Forms
             switch (command.Type)
             {
                 case EventCommandType.ShowText:
-                    return "Show Text: " + Truncate(command.Strs[0], 30);
+                    return Strings.Get("eventcommandlist","showtext", Truncate(command.Strs[0], 30));
                 case EventCommandType.ShowOptions:
-                    return "Show Options: " + Truncate(command.Strs[0], 30);
+                    return Strings.Get("eventcommandlist", "showoptions", Truncate(command.Strs[0], 30));
                 case EventCommandType.AddChatboxText:
-                    output = "Show Chatbox Text [Channel: ";
+                    var channel = "";
                     switch (command.Ints[0])
                     {
                         case 0:
-                            output += "Player";
+                            channel += Strings.Get("eventcommandlist", "chatplayer");
                             break;
                         case 1:
-                            output += "Local";
+                            channel += Strings.Get("eventcommandlist", "chatlocal");
                             break;
                         case 2:
-                            output += "Global";
+                            channel += Strings.Get("eventcommandlist", "chatglobal");
                             break;
                     }
-                    output += ", Color: " + command.Strs[1] + "] - ";
-                    output += Truncate(command.Strs[0], 20);
-                    return output;
+                    return Strings.Get("eventcommandlist", "chatboxtext",channel,command.Strs[1], Truncate(command.Strs[0], 20));
                 case EventCommandType.SetSwitch:
+                    var value = "";
+                    value = Strings.Get("eventcommandlist", "false");
+                    if (Convert.ToBoolean(command.Ints[2]))
+                    {
+                        value = Strings.Get("eventcommandlist", "true");
+                    }
                     if (command.Ints[0] == (int)SwitchVariableTypes.PlayerSwitch)
                     {
-                        return "Set Player Switch " + PlayerSwitchBase.GetName(command.Ints[1]) + " to " + Convert.ToBoolean(command.Ints[2]);
+                        return Strings.Get("eventcommandlist", "playerswitch", PlayerSwitchBase.GetName(command.Ints[1]), value);
                     }
                     else if (command.Ints[0] == (int)SwitchVariableTypes.ServerSwitch)
                     {
-                        return "Set Global Switch " + ServerSwitchBase.GetName(command.Ints[1]) + " to " + Convert.ToBoolean(command.Ints[2]);
+                        return Strings.Get("eventcommandlist", "globalswitch", ServerSwitchBase.GetName(command.Ints[1]),value);
                     }
                     else
                     {
-                        return "Invalid Command";
+                        return Strings.Get("eventcommandlist", "invalid");
                     }
                 case EventCommandType.SetVariable:
-                    if (command.Ints[0] == (int)SwitchVariableTypes.PlayerVariable)
-                    {
-                        output = "Set Player Variable " + PlayerVariableBase.GetName(command.Ints[1]) + " (";
-                    }
-                    else if (command.Ints[0] == (int)SwitchVariableTypes.ServerVariable)
-                    {
-                        output = "Set Global Variable " + ServerVariableBase.GetName(command.Ints[1]) + " (";
-                    }
-                    else
-                    {
-                        return "Invalid Command";
-                    }
+                    var varvalue = "";
                     switch (command.Ints[2])
                     {
                         case 0:
-                            output += "Set to " + command.Ints[3];
+                            varvalue = Strings.Get("eventcommandlist", "setvariable", command.Ints[3]);
                             break;
                         case 1:
-                            output += "Add " + command.Ints[3];
+                            varvalue = Strings.Get("eventcommandlist", "addvariable", command.Ints[3]);
                             break;
 
                         case 2:
-                            output += "Subtract " + command.Ints[3];
+                            varvalue = Strings.Get("eventcommandlist", "subtractvariable",command.Ints[3]);
                             break;
 
                         case 3:
-                            output += "Random Number " + command.Ints[3] + " to " + command.Ints[4] + "]";
+                            varvalue = Strings.Get("eventcommandlist", "randvariable", command.Ints[3], command.Ints[4]);
                             break;
                     }
-                    output += ")";
-                    return output;
+                    if (command.Ints[0] == (int)SwitchVariableTypes.PlayerVariable)
+                    {
+                        return Strings.Get("eventcommandlist", "playervariable", PlayerVariableBase.GetName(command.Ints[1]),varvalue);
+                    }
+                    else if (command.Ints[0] == (int)SwitchVariableTypes.ServerVariable)
+                    {
+                        return Strings.Get("eventcommandlist", "globalvariable", ServerVariableBase.GetName(command.Ints[1]), varvalue);
+                    }
+                    else
+                    {
+                        return Strings.Get("eventcommandlist", "invalid");
+                    }
                 case EventCommandType.SetSelfSwitch:
-                    return "Set Self Switch " + (char)('A' + command.Ints[0]) + " to " + Convert.ToBoolean(command.Ints[1]);
+                    var selfvalue = "";
+                    selfvalue = Strings.Get("eventcommandlist", "false");
+                    if (Convert.ToBoolean(command.Ints[1]))
+                    {
+                        selfvalue = Strings.Get("eventcommandlist", "true");
+                    }
+                    return Strings.Get("eventcommandlist", "selfswitch", Strings.Get("eventcommandlist", "selfswitch" + command.Ints[0]), selfvalue);
                 case EventCommandType.ConditionalBranch:
-                    return "Conditional Branch: [" + command.GetConditionalDesc() + "]";
+                    return Strings.Get("eventcommandlist", "conditionalbranch", command.GetConditionalDesc());
                 case EventCommandType.ExitEventProcess:
-                    return "Exit event processing";
+                    return Strings.Get("eventcommandlist", "exitevent");
                 case EventCommandType.Label:
-                    return "Label: " + command.Strs[0];
+                    return Strings.Get("eventcommandlist", "label", command.Strs[0]);
                 case EventCommandType.GoToLabel:
-                    return "Go to Label: " + command.Strs[0];
+                    return Strings.Get("eventcommandlist", "gotolabel", command.Strs[0]);
                 case EventCommandType.StartCommonEvent:
-                    return "Start Common Event: " + EventBase.GetName(command.Ints[0]);
+                    return Strings.Get("eventcommandlist", "commonevent",EventBase.GetName(command.Ints[0]));
                 case EventCommandType.RestoreHp:
-                    return "Restore Player HP";
+                    return Strings.Get("eventcommandlist", "restorehp");
                 case EventCommandType.RestoreMp:
-                    return "Restore Player MP";
+                    return Strings.Get("eventcommandlist", "restoremp");
                 case EventCommandType.LevelUp:
-                    return "Level up Player";
+                    return Strings.Get("eventcommandlist", "levelup");
                 case EventCommandType.GiveExperience:
-                    return "Give player " + command.Ints[0] + " experience.";
+                    return Strings.Get("eventcommandlist", "giveexp", command.Ints[0]);
                 case EventCommandType.ChangeLevel:
-                    return "Set player level to: " + command.Ints[0];
+                    return Strings.Get("eventcommandlist", "setlevel",command.Ints[0]);
                 case EventCommandType.ChangeSpells:
-                    output = "Change Player Spells [";
                     if (command.Ints[0] == 0)
                     {
-                        output += "Teach: ";
+                        return Strings.Get("eventcommandlist", "changespells",
+                            Strings.Get("eventcommandlist", "teach", SpellBase.GetName(command.Ints[1])));
                     }
                     else
                     {
-                        output += "Remove: ";
+                        return Strings.Get("eventcommandlist", "changespells",
+                            Strings.Get("eventcommandlist", "forget", SpellBase.GetName(command.Ints[1])));
                     }
-                    output += "Spell " + SpellBase.GetName(command.Ints[1]) + "]";
-                    return output;
                 case EventCommandType.ChangeItems:
-                    output = "Change Player Items [";
                     if (command.Ints[0] == 0)
                     {
-                        output += "Give: ";
+                        return Strings.Get("eventcommandlist", "changeitems",
+                            Strings.Get("eventcommandlist", "give", ItemBase.GetName(command.Ints[1])));
                     }
                     else
                     {
-                        output += "Take: ";
+                        return Strings.Get("eventcommandlist", "changeitems",
+                            Strings.Get("eventcommandlist", "take", ItemBase.GetName(command.Ints[1])));
                     }
-                    output += "Item " + ItemBase.GetName(command.Ints[1]) + "]";
-                    return output;
                 case EventCommandType.ChangeSprite:
-                    return "Set Player Sprite to " + command.Strs[0];
+                    return Strings.Get("eventcommandlist", "setsprite", command.Strs[0]);
                 case EventCommandType.ChangeFace:
-                    return "Set Player Face to " + command.Strs[0];
+                    return Strings.Get("eventcommandlist", "setface", command.Strs[0]);
                 case EventCommandType.ChangeGender:
                     if (command.Ints[0] == 0)
                     {
-                        return "Set Player Gender to Male";
+                        return Strings.Get("eventcommandlist", "setgender", Strings.Get("eventcommandlist", "male"));
                     }
                     else
                     {
-                        return "Set Player Gender to Female";
+                        return Strings.Get("eventcommandlist", "setgender", Strings.Get("eventcommandlist", "female"));
                     }
                 case EventCommandType.SetAccess:
                     switch (command.Ints[0])
                     {
                         case 0:
-                            return "Set Player Access to a Regular User";
+                            return Strings.Get("eventcommandlist", "setaccess",
+                                Strings.Get("eventcommandlist", "regularuser"));
                         case 1:
-                            return "Set Player Access to a In-Game Moderator";
+                            return Strings.Get("eventcommandlist", "setaccess",
+                                Strings.Get("eventcommandlist", "moderator"));
                         case 2:
-                            return "Set Player Access to a Owner/Developer";
+                            return Strings.Get("eventcommandlist", "setaccess",
+                                Strings.Get("eventcommandlist", "admin"));
                     }
-                    return "Set Player Access: Unknown Access";
+                    return Strings.Get("eventcommandlist", "setaccess",
+                                Strings.Get("eventcommandlist", "unknownrole"));
                 case EventCommandType.WarpPlayer:
-                    output = "Warp Player [Map: ";
+                    var mapName = Strings.Get("eventcommandlist","mapnotfound");
                     for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                     {
                         if (MapList.GetOrderedMaps()[i].MapNum == command.Ints[0])
                         {
-                            output += "#" + command.Ints[0] + " " + MapList.GetOrderedMaps()[i].Name + " X: " +
-                                      command.Ints[1] + " Y: " + command.Ints[2] + " Dir: ";
-                            switch (command.Ints[3])
-                            {
-                                case 0:
-                                    return output + "Retain Direction]";
-                                case 1:
-                                    return output + "Up]";
-                                case 2:
-                                    return output + "Down]";
-                                case 3:
-                                    return output + "Left]";
-                                case 4:
-                                    return output + "Right]";
-                            }
-                            break;
+                            mapName = MapList.GetOrderedMaps()[i].Name;
                         }
                     }
-                    return output + "NOT FOUND]";
+                    return Strings.Get("eventcommandlist", "warp", mapName,command.Ints[1], command.Ints[2],Strings.Get("directions", (command.Ints[3] - 1).ToString()));
                 case EventCommandType.SetMoveRoute:
-                    output += "Set Move Route for ";
                     if (MyMap.Events.ContainsKey(command.Route.Target))
                     {
-                        return output + "Event #" + (command.Route.Target) + " " + MyMap.Events[command.Route.Target].MyName;
+                        return Strings.Get("eventcommandlist", "moveroute", Strings.Get("eventcommandlist", "moverouteevent", (command.Route.Target), MyMap.Events[command.Route.Target].MyName));
                     }
                     else
                     {
-                        return output + "Deleted Event!";
+                        return Strings.Get("eventcommandlist", "moveroute", Strings.Get("eventcommandlist", "deletedevent"));
                     }
                 case EventCommandType.WaitForRouteCompletion:
-                    output += "Wait for Move Route Completion of ";
                     if (MyMap.Events.ContainsKey(command.Ints[0]))
                     {
-                        return output + "Event #" + (command.Ints[0]) + " " + MyMap.Events[command.Ints[0]].MyName;
+                        return Strings.Get("eventcommandlist", "waitforroute", Strings.Get("eventcommandlist", "moverouteevent", (command.Ints[0]), MyMap.Events[command.Ints[0]].MyName));
                     }
                     else
                     {
-                        return output + "Deleted Event!";
+                        return Strings.Get("eventcommandlist", "waitforroute", Strings.Get("eventcommandlist", "deletedevent"));
                     }
                 case EventCommandType.HoldPlayer:
-                    return "Hold Player";
+                    return Strings.Get("eventcommandlist", "holdplayer");
                 case EventCommandType.ReleasePlayer:
-                    return "Release Player";
+                    return Strings.Get("eventcommandlist", "releaseplayer");
                 case EventCommandType.SpawnNpc:
-                    output += "Spawn Npc " + NpcBase.GetName(command.Ints[0]) + " ";
                     switch (command.Ints[1])
                     {
                         case 0: //On Map/Tile Selection
@@ -723,43 +793,40 @@ namespace Intersect_Editor.Forms
                             {
                                 if (MapList.GetOrderedMaps()[i].MapNum == command.Ints[2])
                                 {
-                                    output += "[On Map #" + command.Ints[2] + " " + MapList.GetOrderedMaps()[i].Name + " X: " +
-                                              command.Ints[3] + " Y: " + command.Ints[4] + " Dir: ";
-                                    switch (command.Ints[5])
-                                    {
-                                        case 0:
-                                            return output + "Up]";
-                                        case 1:
-                                            return output + "Down]";
-                                        case 2:
-                                            return output + "Left]";
-                                        case 3:
-                                            return output + "Right]";
-                                    }
-                                    break;
+                                    return Strings.Get("eventcommandlist", "spawnnpc", NpcBase.GetName(command.Ints[0]), Strings.Get("eventcommandlist", "spawnonmap", MapList.GetOrderedMaps()[i].Name, command.Ints[3], command.Ints[4], Strings.Get("directions", command.Ints[5].ToString())));
                                 }
                             }
-                            break;
+                            return Strings.Get("eventcommandlist", "spawnnpc", NpcBase.GetName(command.Ints[0]), Strings.Get("eventcommandlist", "spawnonmap", Strings.Get("eventcommandlist","mapnotfound"), command.Ints[3], command.Ints[4], Strings.Get("directions", command.Ints[5].ToString())));
                         case 1: //On/Around Entity
+                            var retain = Strings.Get("eventcommandlist", "false");
+                            if (Convert.ToBoolean(command.Ints[5])) retain = Strings.Get("eventcommandlist", "true");
                             if (command.Ints[2] == -1)
                             {
-                                return output += "On Player" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4] + " Retain Direction: " + Convert.ToBoolean(command.Ints[5]).ToString() + "]";
+                                return Strings.Get("eventcommandlist", "spawnnpc", NpcBase.GetName(command.Ints[0]),
+                                    Strings.Get("eventcommandlist", "spawnonplayer", command.Ints[3], command.Ints[4],
+                                        retain));
                             }
                             else
                             {
                                 if (MyMap.Events.ContainsKey(command.Ints[2]))
                                 {
-                                    return output + "On Event #" + (command.Ints[2] + 1) + " " + MyMap.Events[command.Ints[2]].MyName + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4] + " Retain Direction: " + Convert.ToBoolean(command.Ints[5]).ToString() + "]";
+                                    return Strings.Get("eventcommandlist", "spawnnpc", NpcBase.GetName(command.Ints[0]),
+                                        Strings.Get("eventcommandlist", "spawnonevent", command.Ints[2] + 1,
+                                            MyMap.Events[command.Ints[2]].MyName, command.Ints[3], command.Ints[4],
+                                            retain));
                                 }
                                 else
                                 {
-                                    return output + "On Deleted Event!" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4] + " Retain Direction: " + Convert.ToBoolean(command.Ints[5]).ToString() + "]";
+                                    return Strings.Get("eventcommandlist", "spawnnpc", NpcBase.GetName(command.Ints[0]),
+                                        Strings.Get("eventcommandlist", "spawnonevent", command.Ints[2] + 1,
+                                            Strings.Get("eventcommandlist", "deletedevent"), command.Ints[3],
+                                            command.Ints[4], retain));
                                 }
                             }
                     }
                     return output;
                 case EventCommandType.DespawnNpc:
-                    return "Despawn NPC's";
+                    return Strings.Get("eventcommandlist", "despawnnpcs");
                 case EventCommandType.PlayAnimation:
                     output += "Play Animation " + AnimationBase.GetName(command.Ints[0]) + " ";
                     switch (command.Ints[1])
@@ -769,110 +836,112 @@ namespace Intersect_Editor.Forms
                             {
                                 if (MapList.GetOrderedMaps()[i].MapNum == command.Ints[2])
                                 {
-                                    output += "[On Map #" + command.Ints[2] + " " + MapList.GetOrderedMaps()[i].Name + " X: " +
-                                              command.Ints[3] + " Y: " + command.Ints[4] + " Dir: ";
-                                    switch (command.Ints[5])
-                                    {
-                                        case 0:
-                                            return output + "Up]";
-                                        case 1:
-                                            return output + "Down]";
-                                        case 2:
-                                            return output + "Left]";
-                                        case 3:
-                                            return output + "Right]";
-                                    }
-                                    break;
+                                    return Strings.Get("eventcommandlist", "playanimation",
+                                        AnimationBase.GetName(command.Ints[0]),
+                                        Strings.Get("eventcommandlist", "animationonmap",
+                                            MapList.GetOrderedMaps()[i].Name, command.Ints[3], command.Ints[4],
+                                            Strings.Get("directions", command.Ints[5].ToString())));
                                 }
                             }
-                            break;
+                            return Strings.Get("eventcommandlist", "playanimation",
+                                       AnimationBase.GetName(command.Ints[0]),
+                                       Strings.Get("eventcommandlist", "animationonmap",
+                                           Strings.Get("eventcommandlist", "mapnotfound"), command.Ints[3], command.Ints[4],
+                                           Strings.Get("directions", command.Ints[5].ToString())));
                         case 1: //On/Around Entity
+                            var spawnOpt = "";
+                            switch (command.Ints[5])
+                            {
+                                //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                                case 1:
+                                    spawnOpt = Strings.Get("eventcommandlist", "animationrelativedir");
+                                    break;
+                                case 2:
+                                    spawnOpt = Strings.Get("eventcommandlist", "animationrotatedir");
+                                    break;
+                                case 3:
+                                    spawnOpt = Strings.Get("eventcommandlist", "animationrelativerotate");
+                                    break;
+                            }
                             if (command.Ints[2] == -1)
                             {
-                                output += "On Player" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4];
+                                return Strings.Get("eventcommandlist", "playanimation",
+                                    AnimationBase.GetName(command.Ints[0]),
+                                    Strings.Get("eventcommandlist", "animationonplayer", command.Ints[3],
+                                        command.Ints[4], spawnOpt));
                             }
                             else
                             {
                                 if (MyMap.Events.ContainsKey(command.Ints[2]))
                                 {
-                                    output += "On Event #" + (command.Ints[2] + 1) + " " + MyMap.Events[command.Ints[2]].MyName + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4];
+                                    return Strings.Get("eventcommandlist", "playanimation",
+                                    AnimationBase.GetName(command.Ints[0]),
+                                    Strings.Get("eventcommandlist", "animationonevent", (command.Ints[2] + 1), MyMap.Events[command.Ints[2]].MyName, command.Ints[3],
+                                        command.Ints[4], spawnOpt));
                                 }
                                 else
                                 {
-                                    output += "On Deleted Event!" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4];
+                                    return Strings.Get("eventcommandlist", "playanimation",
+                                    AnimationBase.GetName(command.Ints[0]),
+                                    Strings.Get("eventcommandlist", "animationonevent", (command.Ints[2] + 1), Strings.Get("eventcommandlist","deletedevent"), command.Ints[3],
+                                        command.Ints[4], spawnOpt));
                                 }
                             }
-                            switch (command.Ints[5])
-                            {
-                                //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
-                                case 1:
-                                    output += " (Spawn Relative To Direction)";
-                                    break;
-                                case 2:
-                                    output += " (Rotate Relative To Direction)";
-                                    break;
-                                case 3:
-                                    output += " (Spawn and Rotate Relative To Direction)";
-                                    break;
-                            }
-                            output += "]";
-                            return output;
                     }
                     return output;
                 case EventCommandType.PlayBgm:
-                    return "Play BGM [File: " + command.Strs[0] + "]";
+                    return Strings.Get("eventcommandlist", "playbgm", command.Strs[0]);
                 case EventCommandType.FadeoutBgm:
-                    return "Fadeout BGM";
+                    return Strings.Get("eventcommandlist", "fadeoutbgm");
                 case EventCommandType.PlaySound:
-                    return "Play Sound [File: " + command.Strs[0] + "]";
+                    return Strings.Get("eventcommandlist", "playsound",command.Strs[0]);
                 case EventCommandType.StopSounds:
-                    return "Stop Sounds";
+                    return Strings.Get("eventcommandlist", "stopsounds");
                 case EventCommandType.Wait:
-                    return "Wait " + command.Ints[0] + "ms";
+                    return Strings.Get("eventcommandlist", "wait",command.Ints[0]);
                 case EventCommandType.OpenBank:
-                    return "Open Bank";
+                    return Strings.Get("eventcommandlist", "openbank");
                 case EventCommandType.OpenShop:
-                    return "Open Shop [" + ShopBase.GetName(command.Ints[0]) + "]";
+                    return Strings.Get("eventcommandlist", "openshop",ShopBase.GetName(command.Ints[0]));
                 case EventCommandType.OpenCraftingBench:
-                    return "Open Crafting Bench [" + BenchBase.GetName(command.Ints[0]) + "]";
+                    return Strings.Get("eventcommandlist", "opencrafting", BenchBase.GetName(command.Ints[0]));
                 case EventCommandType.SetClass:
-                    return "Set Class [" + ClassBase.GetName(command.Ints[0]) + "]";
+                    return Strings.Get("eventcommandlist", "setclass",ClassBase.GetName(command.Ints[0]));
                 case EventCommandType.StartQuest:
                     if (command.Ints[1] == 0)
                     {
-                        return "Start Quest [" + QuestBase.GetName(command.Ints[0]) + ", Forced Start]";
+                        return Strings.Get("eventcommandlist", "startquest", QuestBase.GetName(command.Ints[0]),
+                            Strings.Get("eventcommandlist", "forcedstart"));
                     }
                     else
                     {
-                        return "Start Quest [" + QuestBase.GetName(command.Ints[0]) + ", Show Offer Window]";
+                        return Strings.Get("eventcommandlist", "startquest", QuestBase.GetName(command.Ints[0]),
+                            Strings.Get("eventcommandlist", "showoffer"));
                     }
                 case EventCommandType.CompleteQuestTask:
                     var quest = QuestBase.GetQuest(command.Ints[0]);
-                    if (quest == null)
+                    if (quest != null)
                     {
-                        return "Complete Quest Task [Quest: " + "Deleted]";
-                    }
-                    //Try to find task
-                    foreach (var task in quest.Tasks)
-                    {
-                        if (task.Id == command.Ints[1])
+                        //Try to find task
+                        foreach (var task in quest.Tasks)
                         {
-                            return "Complete Quest Task [Quest: " + QuestBase.GetName(command.Ints[0]) + ", Task: " +
-                                   task.GetTaskString() + "]";
+                            if (task.Id == command.Ints[1])
+                            {
+                                return Strings.Get("eventcommandlist", "completetask", QuestBase.GetName(command.Ints[0]), task.GetTaskString());
+                            }
                         }
                     }
-                    return "Complete Quest Task [Quest: " + QuestBase.GetName(command.Ints[0]) + ", Task: Undefined]";
+                    return Strings.Get("eventcommandlist", "completetask", QuestBase.GetName(command.Ints[0]), Strings.Get("eventcommandlist", "taskundefined"));
                 case EventCommandType.EndQuest:
                     if (command.Ints[1] == 0)
                     {
-                        return "End Quest [" + QuestBase.GetName(command.Ints[0]) + ", Running Completion Event]";
+                        return Strings.Get("eventcommandlist", "endquest", QuestBase.GetName(command.Ints[0]),
+                            Strings.Get("eventcommandlist", "runcompletionevent"));
                     }
-                    else
-                    {
-                        return "End Quest [" + QuestBase.GetName(command.Ints[0]) + ", Without Running Completion Event]";
-                    }
+                    return Strings.Get("eventcommandlist", "endquest", QuestBase.GetName(command.Ints[0]),
+                           Strings.Get("eventcommandlist", "skipcompletionevent"));
                 default:
-                    return "Unknown Command";
+                    return Strings.Get("eventcommandlist", "unknown");
             }
         }
 
@@ -1152,7 +1221,7 @@ namespace Intersect_Editor.Forms
         private void txtEventname_TextChanged(object sender, EventArgs e)
         {
             MyEvent.MyName = txtEventname.Text;
-            this.Text = @"Event Editor - Event #" + MyEvent.MyIndex + @": " + txtEventname.Text;
+            this.Text = Strings.Get("eventeditor", "title", MyEvent.MyIndex, txtEventname.Text);
         }
 
         #region "Movement Options"
@@ -1205,7 +1274,7 @@ namespace Intersect_Editor.Forms
                 {
                     cmbTriggerVal.Show();
                     lblTriggerVal.Show();
-                    lblTriggerVal.Text = "Projectile: ";
+                    lblTriggerVal.Text = Strings.Get("eventeditor","projectile");
                     cmbTriggerVal.SelectedIndex = 0;
                 }
             }
@@ -1235,8 +1304,8 @@ namespace Intersect_Editor.Forms
         }
         private void chkDisablePreview_CheckedChanged(object sender, EventArgs e)
         {
-            CurrentPage.DisablePreview = Convert.ToInt32(chkDisablePreview.Checked);
-            if (chkDisablePreview.Checked)
+            CurrentPage.DisablePreview = Convert.ToInt32(chkDisableInspector.Checked);
+            if (chkDisableInspector.Checked)
             {
                 cmbPreviewFace.Enabled = false;
                 txtDesc.Enabled = false;
@@ -1610,7 +1679,7 @@ namespace Intersect_Editor.Forms
             if ((tmpCommand.Type == EventCommandType.SetMoveRoute ||
                 tmpCommand.Type == EventCommandType.WaitForRouteCompletion) && MyEvent.CommonEvent)
             {
-                MessageBox.Show("Cannot use this command in common events.");
+                DarkMessageBox.ShowWarning(Strings.Get("eventcommandlist","notcommon"),Strings.Get("eventcommandlist","notcommoncaption"));
                 EnableButtons();
                 return;
             }

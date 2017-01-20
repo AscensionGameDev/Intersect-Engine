@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_ChangeSpells
     {
@@ -28,34 +30,65 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cmbAction = new System.Windows.Forms.ComboBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.cmbSpell = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.groupBox1.SuspendLayout();
+            this.grpChangeSpells = new DarkUI.Controls.DarkGroupBox();
+            this.cmbSpell = new DarkUI.Controls.DarkComboBox();
+            this.lblSpell = new System.Windows.Forms.Label();
+            this.cmbAction = new DarkUI.Controls.DarkComboBox();
+            this.lblAction = new System.Windows.Forms.Label();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.grpChangeSpells.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpChangeSpells
             // 
-            this.groupBox1.Controls.Add(this.cmbSpell);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.cmbAction);
-            this.groupBox1.Controls.Add(this.label16);
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnSave);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(193, 112);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Change Player Spells:";
+            this.grpChangeSpells.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpChangeSpells.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpChangeSpells.Controls.Add(this.cmbSpell);
+            this.grpChangeSpells.Controls.Add(this.lblSpell);
+            this.grpChangeSpells.Controls.Add(this.cmbAction);
+            this.grpChangeSpells.Controls.Add(this.lblAction);
+            this.grpChangeSpells.Controls.Add(this.btnCancel);
+            this.grpChangeSpells.Controls.Add(this.btnSave);
+            this.grpChangeSpells.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpChangeSpells.Location = new System.Drawing.Point(3, 3);
+            this.grpChangeSpells.Name = "grpChangeSpells";
+            this.grpChangeSpells.Size = new System.Drawing.Size(193, 112);
+            this.grpChangeSpells.TabIndex = 17;
+            this.grpChangeSpells.TabStop = false;
+            this.grpChangeSpells.Text = "Change Player Spells:";
+            // 
+            // cmbSpell
+            // 
+            this.cmbSpell.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbSpell.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbSpell.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSpell.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbSpell.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSpell.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbSpell.FormattingEnabled = true;
+            this.cmbSpell.Location = new System.Drawing.Point(64, 46);
+            this.cmbSpell.Name = "cmbSpell";
+            this.cmbSpell.Size = new System.Drawing.Size(115, 21);
+            this.cmbSpell.TabIndex = 24;
+            // 
+            // lblSpell
+            // 
+            this.lblSpell.AutoSize = true;
+            this.lblSpell.Location = new System.Drawing.Point(5, 48);
+            this.lblSpell.Name = "lblSpell";
+            this.lblSpell.Size = new System.Drawing.Size(33, 13);
+            this.lblSpell.TabIndex = 23;
+            this.lblSpell.Text = "Spell:";
             // 
             // cmbAction
             // 
+            this.cmbAction.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbAction.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbAction.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbAction.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAction.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbAction.FormattingEnabled = true;
             this.cmbAction.Items.AddRange(new object[] {
             "Add",
@@ -65,78 +98,58 @@
             this.cmbAction.Size = new System.Drawing.Size(115, 21);
             this.cmbAction.TabIndex = 22;
             // 
-            // label16
+            // lblAction
             // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(5, 21);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(40, 13);
-            this.label16.TabIndex = 21;
-            this.label16.Text = "Action:";
+            this.lblAction.AutoSize = true;
+            this.lblAction.Location = new System.Drawing.Point(5, 21);
+            this.lblAction.Name = "lblAction";
+            this.lblAction.Size = new System.Drawing.Size(40, 13);
+            this.lblAction.TabIndex = 21;
+            this.lblAction.Text = "Action:";
             // 
             // btnCancel
             // 
             this.btnCancel.Location = new System.Drawing.Point(89, 83);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 20;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(8, 83);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // cmbSpell
-            // 
-            this.cmbSpell.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSpell.FormattingEnabled = true;
-            this.cmbSpell.Items.AddRange(new object[] {
-            "Add",
-            "Remove"});
-            this.cmbSpell.Location = new System.Drawing.Point(64, 46);
-            this.cmbSpell.Name = "cmbSpell";
-            this.cmbSpell.Size = new System.Drawing.Size(115, 21);
-            this.cmbSpell.TabIndex = 24;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(5, 48);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(33, 13);
-            this.label1.TabIndex = 23;
-            this.label1.Text = "Spell:";
-            // 
-            // EventCommand_ChangeSpell
+            // EventCommand_ChangeSpells
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.groupBox1);
-            this.Name = "EventCommand_ChangeSpell";
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.Controls.Add(this.grpChangeSpells);
+            this.Name = "EventCommand_ChangeSpells";
             this.Size = new System.Drawing.Size(205, 118);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpChangeSpells.ResumeLayout(false);
+            this.grpChangeSpells.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.ComboBox cmbAction;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.ComboBox cmbSpell;
-        private System.Windows.Forms.Label label1;
+        private DarkGroupBox grpChangeSpells;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
+        private DarkComboBox cmbAction;
+        private System.Windows.Forms.Label lblAction;
+        private DarkComboBox cmbSpell;
+        private System.Windows.Forms.Label lblSpell;
     }
 }

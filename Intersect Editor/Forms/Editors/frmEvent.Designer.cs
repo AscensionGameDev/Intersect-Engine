@@ -126,35 +126,35 @@ namespace Intersect_Editor.Forms
             treeNode48,
             treeNode49});
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmEvent));
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblName = new System.Windows.Forms.Label();
             this.txtEventname = new DarkUI.Controls.DarkTextBox();
             this.grpEntityOptions = new DarkUI.Controls.DarkGroupBox();
-            this.groupBox3 = new DarkUI.Controls.DarkGroupBox();
+            this.grpExtra = new DarkUI.Controls.DarkGroupBox();
             this.chkInteractionFreeze = new DarkUI.Controls.DarkCheckBox();
             this.chkWalkingAnimation = new DarkUI.Controls.DarkCheckBox();
             this.chkDirectionFix = new DarkUI.Controls.DarkCheckBox();
             this.chkHideName = new DarkUI.Controls.DarkCheckBox();
             this.chkWalkThrough = new DarkUI.Controls.DarkCheckBox();
-            this.groupBox1 = new DarkUI.Controls.DarkGroupBox();
+            this.grpInspector = new DarkUI.Controls.DarkGroupBox();
             this.pnlFacePreview = new System.Windows.Forms.Panel();
-            this.label5 = new System.Windows.Forms.Label();
+            this.lblInspectorDesc = new System.Windows.Forms.Label();
             this.txtDesc = new DarkUI.Controls.DarkTextBox();
-            this.chkDisablePreview = new DarkUI.Controls.DarkCheckBox();
+            this.chkDisableInspector = new DarkUI.Controls.DarkCheckBox();
             this.cmbPreviewFace = new DarkUI.Controls.DarkComboBox();
-            this.label25 = new System.Windows.Forms.Label();
-            this.groupBox6 = new DarkUI.Controls.DarkGroupBox();
-            this.label6 = new System.Windows.Forms.Label();
+            this.lblFace = new System.Windows.Forms.Label();
+            this.grpPreview = new DarkUI.Controls.DarkGroupBox();
+            this.lblAnimation = new System.Windows.Forms.Label();
             this.cmbAnimation = new DarkUI.Controls.DarkComboBox();
             this.pnlPreview = new System.Windows.Forms.Panel();
-            this.groupBox2 = new DarkUI.Controls.DarkGroupBox();
-            this.label8 = new System.Windows.Forms.Label();
+            this.grpMovement = new DarkUI.Controls.DarkGroupBox();
+            this.lblLayer = new System.Windows.Forms.Label();
             this.cmbLayering = new DarkUI.Controls.DarkComboBox();
             this.cmbEventFreq = new DarkUI.Controls.DarkComboBox();
             this.cmbEventSpeed = new DarkUI.Controls.DarkComboBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblFreq = new System.Windows.Forms.Label();
+            this.lblSpeed = new System.Windows.Forms.Label();
             this.btnSetRoute = new DarkUI.Controls.DarkButton();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lblType = new System.Windows.Forms.Label();
             this.cmbMoveType = new DarkUI.Controls.DarkComboBox();
             this.grpTriggers = new DarkUI.Controls.DarkGroupBox();
             this.lblTriggerVal = new System.Windows.Forms.Label();
@@ -182,7 +182,7 @@ namespace Intersect_Editor.Forms
             this.btnPastePage = new DarkUI.Controls.DarkButton();
             this.btnCopyPage = new DarkUI.Controls.DarkButton();
             this.btnNewPage = new DarkUI.Controls.DarkButton();
-            this.groupBox7 = new DarkUI.Controls.DarkGroupBox();
+            this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
             this.chkIsGlobal = new DarkUI.Controls.DarkCheckBox();
             this.pnlTabsContainer = new System.Windows.Forms.Panel();
             this.pnlTabs = new System.Windows.Forms.Panel();
@@ -190,28 +190,28 @@ namespace Intersect_Editor.Forms
             this.btnTabsLeft = new DarkUI.Controls.DarkButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.grpEntityOptions.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            this.groupBox6.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.grpExtra.SuspendLayout();
+            this.grpInspector.SuspendLayout();
+            this.grpPreview.SuspendLayout();
+            this.grpMovement.SuspendLayout();
             this.grpTriggers.SuspendLayout();
             this.grpEventConditions.SuspendLayout();
             this.grpNewCommands.SuspendLayout();
             this.grpEventCommands.SuspendLayout();
             this.commandMenu.SuspendLayout();
             this.grpPageOptions.SuspendLayout();
-            this.groupBox7.SuspendLayout();
+            this.grpGeneral.SuspendLayout();
             this.pnlTabsContainer.SuspendLayout();
             this.SuspendLayout();
             // 
-            // label1
+            // lblName
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Name:";
+            this.lblName.AutoSize = true;
+            this.lblName.Location = new System.Drawing.Point(6, 22);
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(38, 13);
+            this.lblName.TabIndex = 1;
+            this.lblName.Text = "Name:";
             // 
             // txtEventname
             // 
@@ -228,11 +228,10 @@ namespace Intersect_Editor.Forms
             // 
             this.grpEntityOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpEntityOptions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpEntityOptions.Controls.Add(this.groupBox3);
-            this.grpEntityOptions.Controls.Add(this.groupBox1);
-            this.grpEntityOptions.Controls.Add(this.groupBox6);
-            this.grpEntityOptions.Controls.Add(this.groupBox2);
-            this.grpEntityOptions.Controls.Add(this.grpTriggers);
+            this.grpEntityOptions.Controls.Add(this.grpExtra);
+            this.grpEntityOptions.Controls.Add(this.grpInspector);
+            this.grpEntityOptions.Controls.Add(this.grpPreview);
+            this.grpEntityOptions.Controls.Add(this.grpMovement);
             this.grpEntityOptions.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEntityOptions.Location = new System.Drawing.Point(21, 170);
             this.grpEntityOptions.Name = "grpEntityOptions";
@@ -241,22 +240,22 @@ namespace Intersect_Editor.Forms
             this.grpEntityOptions.TabStop = false;
             this.grpEntityOptions.Text = "Entity Options";
             // 
-            // groupBox3
+            // grpExtra
             // 
-            this.groupBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox3.Controls.Add(this.chkInteractionFreeze);
-            this.groupBox3.Controls.Add(this.chkWalkingAnimation);
-            this.groupBox3.Controls.Add(this.chkDirectionFix);
-            this.groupBox3.Controls.Add(this.chkHideName);
-            this.groupBox3.Controls.Add(this.chkWalkThrough);
-            this.groupBox3.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox3.Location = new System.Drawing.Point(6, 297);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(315, 64);
-            this.groupBox3.TabIndex = 9;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Extra";
+            this.grpExtra.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpExtra.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpExtra.Controls.Add(this.chkInteractionFreeze);
+            this.grpExtra.Controls.Add(this.chkWalkingAnimation);
+            this.grpExtra.Controls.Add(this.chkDirectionFix);
+            this.grpExtra.Controls.Add(this.chkHideName);
+            this.grpExtra.Controls.Add(this.chkWalkThrough);
+            this.grpExtra.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpExtra.Location = new System.Drawing.Point(6, 297);
+            this.grpExtra.Name = "grpExtra";
+            this.grpExtra.Size = new System.Drawing.Size(315, 64);
+            this.grpExtra.TabIndex = 9;
+            this.grpExtra.TabStop = false;
+            this.grpExtra.Text = "Extra";
             // 
             // chkInteractionFreeze
             // 
@@ -308,23 +307,23 @@ namespace Intersect_Editor.Forms
             this.chkWalkThrough.Text = "Passable";
             this.chkWalkThrough.CheckedChanged += new System.EventHandler(this.chkWalkThrough_CheckedChanged);
             // 
-            // groupBox1
+            // grpInspector
             // 
-            this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox1.Controls.Add(this.pnlFacePreview);
-            this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.txtDesc);
-            this.groupBox1.Controls.Add(this.chkDisablePreview);
-            this.groupBox1.Controls.Add(this.cmbPreviewFace);
-            this.groupBox1.Controls.Add(this.label25);
-            this.groupBox1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox1.Location = new System.Drawing.Point(6, 179);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(316, 117);
-            this.groupBox1.TabIndex = 7;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Entity Inspector Options";
+            this.grpInspector.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpInspector.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpInspector.Controls.Add(this.pnlFacePreview);
+            this.grpInspector.Controls.Add(this.lblInspectorDesc);
+            this.grpInspector.Controls.Add(this.txtDesc);
+            this.grpInspector.Controls.Add(this.chkDisableInspector);
+            this.grpInspector.Controls.Add(this.cmbPreviewFace);
+            this.grpInspector.Controls.Add(this.lblFace);
+            this.grpInspector.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpInspector.Location = new System.Drawing.Point(6, 179);
+            this.grpInspector.Name = "grpInspector";
+            this.grpInspector.Size = new System.Drawing.Size(316, 117);
+            this.grpInspector.TabIndex = 7;
+            this.grpInspector.TabStop = false;
+            this.grpInspector.Text = "Entity Inspector Options";
             // 
             // pnlFacePreview
             // 
@@ -334,13 +333,13 @@ namespace Intersect_Editor.Forms
             this.pnlFacePreview.Size = new System.Drawing.Size(64, 64);
             this.pnlFacePreview.TabIndex = 12;
             // 
-            // label5
+            // lblInspectorDesc
             // 
-            this.label5.Location = new System.Drawing.Point(79, 42);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(112, 19);
-            this.label5.TabIndex = 11;
-            this.label5.Text = "Inspector Description:";
+            this.lblInspectorDesc.Location = new System.Drawing.Point(79, 42);
+            this.lblInspectorDesc.Name = "lblInspectorDesc";
+            this.lblInspectorDesc.Size = new System.Drawing.Size(112, 19);
+            this.lblInspectorDesc.TabIndex = 11;
+            this.lblInspectorDesc.Text = "Inspector Description:";
             // 
             // txtDesc
             // 
@@ -354,14 +353,14 @@ namespace Intersect_Editor.Forms
             this.txtDesc.TabIndex = 0;
             this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
             // 
-            // chkDisablePreview
+            // chkDisableInspector
             // 
-            this.chkDisablePreview.Location = new System.Drawing.Point(204, 15);
-            this.chkDisablePreview.Name = "chkDisablePreview";
-            this.chkDisablePreview.Size = new System.Drawing.Size(107, 21);
-            this.chkDisablePreview.TabIndex = 4;
-            this.chkDisablePreview.Text = "Disable Inspector";
-            this.chkDisablePreview.CheckedChanged += new System.EventHandler(this.chkDisablePreview_CheckedChanged);
+            this.chkDisableInspector.Location = new System.Drawing.Point(204, 15);
+            this.chkDisableInspector.Name = "chkDisableInspector";
+            this.chkDisableInspector.Size = new System.Drawing.Size(107, 21);
+            this.chkDisableInspector.TabIndex = 4;
+            this.chkDisableInspector.Text = "Disable Inspector";
+            this.chkDisableInspector.CheckedChanged += new System.EventHandler(this.chkDisablePreview_CheckedChanged);
             // 
             // cmbPreviewFace
             // 
@@ -372,44 +371,44 @@ namespace Intersect_Editor.Forms
             this.cmbPreviewFace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPreviewFace.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbPreviewFace.FormattingEnabled = true;
-            this.cmbPreviewFace.Location = new System.Drawing.Point(79, 15);
+            this.cmbPreviewFace.Location = new System.Drawing.Point(46, 15);
             this.cmbPreviewFace.Name = "cmbPreviewFace";
-            this.cmbPreviewFace.Size = new System.Drawing.Size(81, 21);
+            this.cmbPreviewFace.Size = new System.Drawing.Size(114, 21);
             this.cmbPreviewFace.TabIndex = 10;
             this.cmbPreviewFace.SelectedIndexChanged += new System.EventHandler(this.cmbPreviewFace_SelectedIndexChanged);
             // 
-            // label25
+            // lblFace
             // 
-            this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(6, 18);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(75, 13);
-            this.label25.TabIndex = 9;
-            this.label25.Text = "Preview Face:";
+            this.lblFace.AutoSize = true;
+            this.lblFace.Location = new System.Drawing.Point(6, 18);
+            this.lblFace.Name = "lblFace";
+            this.lblFace.Size = new System.Drawing.Size(34, 13);
+            this.lblFace.TabIndex = 9;
+            this.lblFace.Text = "Face:";
             // 
-            // groupBox6
+            // grpPreview
             // 
-            this.groupBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox6.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox6.Controls.Add(this.label6);
-            this.groupBox6.Controls.Add(this.cmbAnimation);
-            this.groupBox6.Controls.Add(this.pnlPreview);
-            this.groupBox6.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox6.Location = new System.Drawing.Point(6, 13);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(160, 163);
-            this.groupBox6.TabIndex = 10;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Preview";
+            this.grpPreview.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpPreview.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpPreview.Controls.Add(this.lblAnimation);
+            this.grpPreview.Controls.Add(this.cmbAnimation);
+            this.grpPreview.Controls.Add(this.pnlPreview);
+            this.grpPreview.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpPreview.Location = new System.Drawing.Point(6, 13);
+            this.grpPreview.Name = "grpPreview";
+            this.grpPreview.Size = new System.Drawing.Size(160, 163);
+            this.grpPreview.TabIndex = 10;
+            this.grpPreview.TabStop = false;
+            this.grpPreview.Text = "Preview";
             // 
-            // label6
+            // lblAnimation
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(4, 116);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(56, 13);
-            this.label6.TabIndex = 2;
-            this.label6.Text = "Animation:";
+            this.lblAnimation.AutoSize = true;
+            this.lblAnimation.Location = new System.Drawing.Point(4, 116);
+            this.lblAnimation.Name = "lblAnimation";
+            this.lblAnimation.Size = new System.Drawing.Size(56, 13);
+            this.lblAnimation.TabIndex = 2;
+            this.lblAnimation.Text = "Animation:";
             // 
             // cmbAnimation
             // 
@@ -436,35 +435,35 @@ namespace Intersect_Editor.Forms
             this.pnlPreview.TabIndex = 0;
             this.pnlPreview.DoubleClick += new System.EventHandler(this.pnlPreview_DoubleClick);
             // 
-            // groupBox2
+            // grpMovement
             // 
-            this.groupBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox2.Controls.Add(this.label8);
-            this.groupBox2.Controls.Add(this.cmbLayering);
-            this.groupBox2.Controls.Add(this.cmbEventFreq);
-            this.groupBox2.Controls.Add(this.cmbEventSpeed);
-            this.groupBox2.Controls.Add(this.label4);
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.btnSetRoute);
-            this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Controls.Add(this.cmbMoveType);
-            this.groupBox2.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox2.Location = new System.Drawing.Point(169, 13);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(154, 163);
-            this.groupBox2.TabIndex = 8;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Movement";
+            this.grpMovement.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpMovement.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpMovement.Controls.Add(this.lblLayer);
+            this.grpMovement.Controls.Add(this.cmbLayering);
+            this.grpMovement.Controls.Add(this.cmbEventFreq);
+            this.grpMovement.Controls.Add(this.cmbEventSpeed);
+            this.grpMovement.Controls.Add(this.lblFreq);
+            this.grpMovement.Controls.Add(this.lblSpeed);
+            this.grpMovement.Controls.Add(this.btnSetRoute);
+            this.grpMovement.Controls.Add(this.lblType);
+            this.grpMovement.Controls.Add(this.cmbMoveType);
+            this.grpMovement.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpMovement.Location = new System.Drawing.Point(169, 13);
+            this.grpMovement.Name = "grpMovement";
+            this.grpMovement.Size = new System.Drawing.Size(154, 163);
+            this.grpMovement.TabIndex = 8;
+            this.grpMovement.TabStop = false;
+            this.grpMovement.Text = "Movement";
             // 
-            // label8
+            // lblLayer
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(6, 134);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(36, 13);
-            this.label8.TabIndex = 7;
-            this.label8.Text = "Layer:";
+            this.lblLayer.AutoSize = true;
+            this.lblLayer.Location = new System.Drawing.Point(6, 134);
+            this.lblLayer.Name = "lblLayer";
+            this.lblLayer.Size = new System.Drawing.Size(36, 13);
+            this.lblLayer.TabIndex = 7;
+            this.lblLayer.Text = "Layer:";
             // 
             // cmbLayering
             // 
@@ -527,24 +526,24 @@ namespace Intersect_Editor.Forms
             this.cmbEventSpeed.TabIndex = 5;
             this.cmbEventSpeed.SelectedIndexChanged += new System.EventHandler(this.cmbEventSpeed_SelectedIndexChanged);
             // 
-            // label4
+            // lblFreq
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 107);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(31, 13);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Freq:";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
+            this.lblFreq.AutoSize = true;
+            this.lblFreq.Location = new System.Drawing.Point(6, 107);
+            this.lblFreq.Name = "lblFreq";
+            this.lblFreq.Size = new System.Drawing.Size(31, 13);
+            this.lblFreq.TabIndex = 4;
+            this.lblFreq.Text = "Freq:";
+            this.lblFreq.Click += new System.EventHandler(this.label4_Click);
             // 
-            // label3
+            // lblSpeed
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 80);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(41, 13);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Speed:";
+            this.lblSpeed.AutoSize = true;
+            this.lblSpeed.Location = new System.Drawing.Point(6, 80);
+            this.lblSpeed.Name = "lblSpeed";
+            this.lblSpeed.Size = new System.Drawing.Size(41, 13);
+            this.lblSpeed.TabIndex = 3;
+            this.lblSpeed.Text = "Speed:";
             // 
             // btnSetRoute
             // 
@@ -557,14 +556,14 @@ namespace Intersect_Editor.Forms
             this.btnSetRoute.Text = "Set Route....";
             this.btnSetRoute.Click += new System.EventHandler(this.btnSetRoute_Click);
             // 
-            // label2
+            // lblType
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 22);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(34, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Type:";
+            this.lblType.AutoSize = true;
+            this.lblType.Location = new System.Drawing.Point(6, 22);
+            this.lblType.Name = "lblType";
+            this.lblType.Size = new System.Drawing.Size(34, 13);
+            this.lblType.TabIndex = 1;
+            this.lblType.Text = "Type:";
             // 
             // cmbMoveType
             // 
@@ -593,7 +592,7 @@ namespace Intersect_Editor.Forms
             this.grpTriggers.Controls.Add(this.cmbTriggerVal);
             this.grpTriggers.Controls.Add(this.cmbTrigger);
             this.grpTriggers.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpTriggers.Location = new System.Drawing.Point(6, 364);
+            this.grpTriggers.Location = new System.Drawing.Point(25, 535);
             this.grpTriggers.Name = "grpTriggers";
             this.grpTriggers.Size = new System.Drawing.Size(317, 35);
             this.grpTriggers.TabIndex = 21;
@@ -819,7 +818,7 @@ namespace Intersect_Editor.Forms
             treeNode32.Name = "spawnnpc";
             treeNode32.Tag = "28";
             treeNode32.Text = "Spawn NPC";
-            treeNode33.Name = "despawnnpc";
+            treeNode33.Name = "despawnnpcs";
             treeNode33.Tag = "39";
             treeNode33.Text = "Despawn NPC";
             treeNode34.Name = "movement";
@@ -866,7 +865,7 @@ namespace Intersect_Editor.Forms
             treeNode49.Name = "opencraftingstation";
             treeNode49.Tag = "37";
             treeNode49.Text = "Open Crafting Station";
-            treeNode50.Name = "Shop and Bank";
+            treeNode50.Name = "shopandbank";
             treeNode50.Text = "Shop and Bank";
             this.lstCommands.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode4,
@@ -946,16 +945,19 @@ namespace Intersect_Editor.Forms
             // 
             // commandMenu
             // 
+            this.commandMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.commandMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.commandMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnInsert,
             this.btnEdit,
             this.btnDelete});
             this.commandMenu.Name = "commandMenu";
+            this.commandMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.commandMenu.Size = new System.Drawing.Size(108, 70);
             // 
             // btnInsert
             // 
+            this.btnInsert.ForeColor = System.Drawing.Color.Gainsboro;
             this.btnInsert.Name = "btnInsert";
             this.btnInsert.Size = new System.Drawing.Size(107, 22);
             this.btnInsert.Text = "Insert";
@@ -963,6 +965,7 @@ namespace Intersect_Editor.Forms
             // 
             // btnEdit
             // 
+            this.btnEdit.ForeColor = System.Drawing.Color.Gainsboro;
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(107, 22);
             this.btnEdit.Text = "Edit";
@@ -970,6 +973,7 @@ namespace Intersect_Editor.Forms
             // 
             // btnDelete
             // 
+            this.btnDelete.ForeColor = System.Drawing.Color.Gainsboro;
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(107, 22);
             this.btnDelete.Text = "Delete";
@@ -1043,20 +1047,20 @@ namespace Intersect_Editor.Forms
             this.btnNewPage.Text = "New Page";
             this.btnNewPage.Click += new System.EventHandler(this.btnNewPage_Click);
             // 
-            // groupBox7
+            // grpGeneral
             // 
-            this.groupBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox7.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox7.Controls.Add(this.chkIsGlobal);
-            this.groupBox7.Controls.Add(this.label1);
-            this.groupBox7.Controls.Add(this.txtEventname);
-            this.groupBox7.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox7.Location = new System.Drawing.Point(12, 5);
-            this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(295, 49);
-            this.groupBox7.TabIndex = 18;
-            this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "General";
+            this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGeneral.Controls.Add(this.chkIsGlobal);
+            this.grpGeneral.Controls.Add(this.lblName);
+            this.grpGeneral.Controls.Add(this.txtEventname);
+            this.grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpGeneral.Location = new System.Drawing.Point(12, 5);
+            this.grpGeneral.Name = "grpGeneral";
+            this.grpGeneral.Size = new System.Drawing.Size(295, 49);
+            this.grpGeneral.TabIndex = 18;
+            this.grpGeneral.TabStop = false;
+            this.grpGeneral.Text = "General";
             // 
             // chkIsGlobal
             // 
@@ -1120,12 +1124,13 @@ namespace Intersect_Editor.Forms
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(835, 622);
+            this.Controls.Add(this.grpTriggers);
             this.Controls.Add(this.btnTabsRight);
             this.Controls.Add(this.btnTabsLeft);
             this.Controls.Add(this.grpEntityOptions);
             this.Controls.Add(this.grpEventConditions);
             this.Controls.Add(this.grpPageOptions);
-            this.Controls.Add(this.groupBox7);
+            this.Controls.Add(this.grpGeneral);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.pnlTabsContainer);
@@ -1145,14 +1150,14 @@ namespace Intersect_Editor.Forms
             this.VisibleChanged += new System.EventHandler(this.FrmEvent_VisibleChanged);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmEvent_KeyDown);
             this.grpEntityOptions.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.grpExtra.ResumeLayout(false);
+            this.grpExtra.PerformLayout();
+            this.grpInspector.ResumeLayout(false);
+            this.grpInspector.PerformLayout();
+            this.grpPreview.ResumeLayout(false);
+            this.grpPreview.PerformLayout();
+            this.grpMovement.ResumeLayout(false);
+            this.grpMovement.PerformLayout();
             this.grpTriggers.ResumeLayout(false);
             this.grpTriggers.PerformLayout();
             this.grpEventConditions.ResumeLayout(false);
@@ -1161,8 +1166,8 @@ namespace Intersect_Editor.Forms
             this.grpEventCommands.ResumeLayout(false);
             this.commandMenu.ResumeLayout(false);
             this.grpPageOptions.ResumeLayout(false);
-            this.groupBox7.ResumeLayout(false);
-            this.groupBox7.PerformLayout();
+            this.grpGeneral.ResumeLayout(false);
+            this.grpGeneral.PerformLayout();
             this.pnlTabsContainer.ResumeLayout(false);
             this.pnlTabsContainer.PerformLayout();
             this.ResumeLayout(false);
@@ -1171,22 +1176,22 @@ namespace Intersect_Editor.Forms
 
         #endregion
 
-        private Label label1;
+        private Label lblName;
         private DarkTextBox txtEventname;
         private DarkGroupBox grpEventCommands;
         private ListBox lstEventCommands;
         private DarkGroupBox grpEventConditions;
-        private DarkGroupBox groupBox3;
-        private DarkGroupBox groupBox2;
-        private DarkGroupBox groupBox1;
+        private DarkGroupBox grpExtra;
+        private DarkGroupBox grpMovement;
+        private DarkGroupBox grpInspector;
         private DarkButton btnSave;
         private DarkButton btnCancel;
         private DarkComboBox cmbEventFreq;
         private DarkComboBox cmbEventSpeed;
-        private Label label4;
-        private Label label3;
+        private Label lblFreq;
+        private Label lblSpeed;
         private DarkButton btnSetRoute;
-        private Label label2;
+        private Label lblType;
         private DarkComboBox cmbMoveType;
         private DarkComboBox cmbTrigger;
         private DarkComboBox cmbLayering;
@@ -1198,11 +1203,11 @@ namespace Intersect_Editor.Forms
         private ToolStripMenuItem btnEdit;
         private ToolStripMenuItem btnDelete;
         private DarkCheckBox chkHideName;
-        private DarkCheckBox chkDisablePreview;
+        private DarkCheckBox chkDisableInspector;
         private DarkComboBox cmbPreviewFace;
-        private Label label25;
+        private Label lblFace;
         private DarkTextBox txtDesc;
-        private DarkGroupBox groupBox6;
+        private DarkGroupBox grpPreview;
         private DarkGroupBox grpPageOptions;
         private DarkButton btnNewPage;
         private DarkButton btnCopyPage;
@@ -1210,7 +1215,7 @@ namespace Intersect_Editor.Forms
         private DarkButton btnDeletePage;
         private DarkButton btnClearPage;
         private DarkGroupBox grpEntityOptions;
-        private Label label5;
+        private Label lblInspectorDesc;
         private Panel pnlPreview;
         private Panel pnlFacePreview;
         private DarkCheckBox chkWalkingAnimation;
@@ -1218,11 +1223,11 @@ namespace Intersect_Editor.Forms
         private DarkButton btnRemoveCondition;
         private DarkButton btnAddCondition;
         private ListBox lstConditions;
-        private DarkGroupBox groupBox7;
-        private Label label6;
+        private DarkGroupBox grpGeneral;
+        private Label lblAnimation;
         private DarkComboBox cmbAnimation;
         private DarkCheckBox chkIsGlobal;
-        private Label label8;
+        private Label lblLayer;
         private Label lblCloseCommands;
         private DarkCheckBox chkInteractionFreeze;
         private Label lblTriggerVal;

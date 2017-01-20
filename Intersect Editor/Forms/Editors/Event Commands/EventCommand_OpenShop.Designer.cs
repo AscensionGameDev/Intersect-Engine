@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_OpenShop
     {
@@ -28,63 +30,71 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cmbShop = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
+            this.grpShop = new DarkUI.Controls.DarkGroupBox();
+            this.cmbShop = new DarkUI.Controls.DarkComboBox();
+            this.lblShop = new System.Windows.Forms.Label();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.grpShop.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpShop
             // 
-            this.groupBox1.Controls.Add(this.cmbShop);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnSave);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(176, 126);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Open Shop";
+            this.grpShop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpShop.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpShop.Controls.Add(this.cmbShop);
+            this.grpShop.Controls.Add(this.lblShop);
+            this.grpShop.Controls.Add(this.btnCancel);
+            this.grpShop.Controls.Add(this.btnSave);
+            this.grpShop.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpShop.Location = new System.Drawing.Point(3, 3);
+            this.grpShop.Name = "grpShop";
+            this.grpShop.Size = new System.Drawing.Size(176, 126);
+            this.grpShop.TabIndex = 17;
+            this.grpShop.TabStop = false;
+            this.grpShop.Text = "Open Shop";
             // 
             // cmbShop
             // 
+            this.cmbShop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbShop.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbShop.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbShop.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbShop.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbShop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbShop.FormattingEnabled = true;
             this.cmbShop.Location = new System.Drawing.Point(47, 19);
             this.cmbShop.Name = "cmbShop";
             this.cmbShop.Size = new System.Drawing.Size(117, 21);
             this.cmbShop.TabIndex = 22;
             // 
-            // label1
+            // lblShop
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 21;
-            this.label1.Text = "Shop:";
+            this.lblShop.AutoSize = true;
+            this.lblShop.Location = new System.Drawing.Point(4, 22);
+            this.lblShop.Name = "lblShop";
+            this.lblShop.Size = new System.Drawing.Size(35, 13);
+            this.lblShop.TabIndex = 21;
+            this.lblShop.Text = "Shop:";
             // 
             // btnCancel
             // 
             this.btnCancel.Location = new System.Drawing.Point(89, 97);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 20;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(7, 97);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // EventCommand_OpenShop
@@ -92,21 +102,22 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.groupBox1);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.Controls.Add(this.grpShop);
             this.Name = "EventCommand_OpenShop";
             this.Size = new System.Drawing.Size(182, 132);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpShop.ResumeLayout(false);
+            this.grpShop.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox cmbShop;
+        private DarkGroupBox grpShop;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
+        private System.Windows.Forms.Label lblShop;
+        private DarkComboBox cmbShop;
     }
 }

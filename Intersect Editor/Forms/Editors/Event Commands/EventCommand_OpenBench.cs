@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -36,9 +37,18 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitializeComponent();
             _myCommand = refCommand;
             _eventEditor = editor;
+            InitLocalization();
             cmbbench.Items.Clear();
             cmbbench.Items.AddRange(Database.GetGameObjectList(GameObject.Bench));
             cmbbench.SelectedIndex = Database.GameObjectListIndex(GameObject.Bench, _myCommand.Ints[0]);
+        }
+
+        private void InitLocalization()
+        {
+            grpBench.Text = Strings.Get("eventopenbench", "title");
+            lblBench.Text = Strings.Get("eventopenbench", "label");
+            btnSave.Text = Strings.Get("eventopenbench", "okay");
+            btnCancel.Text = Strings.Get("eventopenbench", "cancel");
         }
 
         private void btnSave_Click(object sender, EventArgs e)

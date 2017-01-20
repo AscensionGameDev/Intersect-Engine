@@ -23,11 +23,13 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using Intersect_Editor.Classes;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect_Library.Localization;
 using Color = System.Drawing.Color;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
@@ -47,6 +49,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _eventEditor = eventEditor;
             _editingEvent = currentEvent;
             _currentMap = currentMap;
+            InitLocalization();
             cmbNpc.Items.Clear();
             cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
             cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Npc, _myCommand.Ints[0]);
@@ -58,8 +61,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     //Fill in the map cmb
                     scrlX.Value = _myCommand.Ints[3];
                     scrlY.Value = _myCommand.Ints[4];
-                    lblX.Text = @"X: " + scrlX.Value;
-                    lblY.Text = @"Y: " + scrlY.Value;
+                    lblX.Text = Strings.Get("warping", "x", scrlX.Value);
+                    lblY.Text = Strings.Get("warping", "y", scrlY.Value);
                     cmbDirection.SelectedIndex = _myCommand.Ints[5];
                     break;
                 case 1: //On/Around Entity Spawn
@@ -69,6 +72,37 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     UpdateSpawnPreview();
                     break;
             }
+        }
+
+        private void InitLocalization()
+        {
+            grpSpawnNpc.Text = Strings.Get("eventspawnnpc", "title");
+            lblNpc.Text = Strings.Get("eventspawnnpc", "npc");
+            lblSpawnType.Text = Strings.Get("eventspawnnpc", "spawntype");
+            cmbConditionType.Items.Clear();
+            cmbConditionType.Items.Add(Strings.Get("eventspawnnpc", "spawntype0"));
+            cmbConditionType.Items.Add(Strings.Get("eventspawnnpc", "spawntype1"));
+
+            grpTileSpawn.Text = Strings.Get("eventspawnnpc", "spawntype0");
+            grpEntitySpawn.Text = Strings.Get("eventspawnnpc", "spawntype1");
+
+            lblMap.Text = Strings.Get("warping", "map", "");
+            lblX.Text = Strings.Get("warping", "x", scrlX.Value);
+            lblY.Text = Strings.Get("warping", "y", scrlY.Value);
+            lblMap.Text = Strings.Get("warping", "direction", "");
+            cmbDirection.Items.Clear();
+            for (int i = 0; i < 4; i++)
+            {
+                cmbDirection.Items.Add(Strings.Get("directions", i.ToString()));
+            }
+            btnVisual.Text = Strings.Get("warping", "visual");
+
+            lblEntity.Text = Strings.Get("eventspawnnpc", "entity");
+            lblRelativeLocation.Text = Strings.Get("eventspawnnpc", "relativelocation");
+            chkDirRelative.Text = Strings.Get("eventspawnnpc", "spawnrelative");
+
+            btnSave.Text = Strings.Get("eventspawnnpc", "okay");
+            btnCancel.Text = Strings.Get("eventspawnnpc", "cancel");
         }
 
         private void UpdateFormElements()
@@ -96,14 +130,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 case 1: //On/Around Entity Spawn
                     grpEntitySpawn.Show();
                     cmbEntities.Items.Clear();
-                    cmbEntities.Items.Add("Player");
+                    cmbEntities.Items.Add(Strings.Get("eventspawnnpc", "player"));
                     cmbEntities.SelectedIndex = 0;
 
                     if (!_editingEvent.CommonEvent)
                     {
                         foreach (var evt in _currentMap.Events)
                         {
-                            cmbEntities.Items.Add(evt.Key == _editingEvent.MyIndex ? "[THIS EVENT] " : "" + evt.Value.MyName);
+                            cmbEntities.Items.Add(evt.Key == _editingEvent.MyIndex ? Strings.Get("eventspawnnpc", "this") + " " : "" + evt.Value.MyName);
                             if (_myCommand.Ints[2] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
                         }
                     }
@@ -172,14 +206,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             UpdateFormElements();
         }
 
-        private void scrlX_Scroll(object sender, ScrollEventArgs e)
+        private void scrlX_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblX.Text = @"X: " + scrlX.Value;
+            lblX.Text = Strings.Get("warping", "x", scrlX.Value);
         }
 
-        private void scrlY_Scroll(object sender, ScrollEventArgs e)
+        private void scrlY_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblY.Text = @"Y: " + scrlY.Value;
+            lblY.Text = Strings.Get("warping", "y", scrlY.Value);
         }
 
         private void btnVisual_Click(object sender, EventArgs e)
@@ -199,8 +233,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 }
                 scrlX.Value = frmWarpSelection.GetX();
                 scrlY.Value = frmWarpSelection.GetY();
-                lblX.Text = @"X: " + scrlX.Value;
-                lblY.Text = @"Y: " + scrlY.Value;
+                lblX.Text = Strings.Get("warping", "x", scrlX.Value);
+                lblY.Text = Strings.Get("warping", "y", scrlY.Value);
             }
         }
 

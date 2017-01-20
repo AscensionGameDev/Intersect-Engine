@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class Event_MoveRouteAnimationSelector
     {
@@ -28,85 +30,94 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cmbAnimation = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnOkay = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
+            this.grpSetAnimation = new DarkUI.Controls.DarkGroupBox();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnOkay = new DarkUI.Controls.DarkButton();
+            this.lblAnimation = new System.Windows.Forms.Label();
+            this.cmbAnimation = new DarkUI.Controls.DarkComboBox();
+            this.grpSetAnimation.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpSetAnimation
             // 
-            this.groupBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnOkay);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.cmbAnimation);
-            this.groupBox1.Location = new System.Drawing.Point(4, 4);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(197, 96);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Set Animation";
+            this.grpSetAnimation.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.grpSetAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpSetAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpSetAnimation.Controls.Add(this.btnCancel);
+            this.grpSetAnimation.Controls.Add(this.btnOkay);
+            this.grpSetAnimation.Controls.Add(this.lblAnimation);
+            this.grpSetAnimation.Controls.Add(this.cmbAnimation);
+            this.grpSetAnimation.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpSetAnimation.Location = new System.Drawing.Point(4, 4);
+            this.grpSetAnimation.Name = "grpSetAnimation";
+            this.grpSetAnimation.Size = new System.Drawing.Size(197, 96);
+            this.grpSetAnimation.TabIndex = 0;
+            this.grpSetAnimation.TabStop = false;
+            this.grpSetAnimation.Text = "Set Animation";
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(116, 55);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 3;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnOkay
+            // 
+            this.btnOkay.Location = new System.Drawing.Point(9, 55);
+            this.btnOkay.Name = "btnOkay";
+            this.btnOkay.Padding = new System.Windows.Forms.Padding(5);
+            this.btnOkay.Size = new System.Drawing.Size(75, 23);
+            this.btnOkay.TabIndex = 2;
+            this.btnOkay.Text = "Ok";
+            this.btnOkay.Click += new System.EventHandler(this.btnOkay_Click);
+            // 
+            // lblAnimation
+            // 
+            this.lblAnimation.AutoSize = true;
+            this.lblAnimation.Location = new System.Drawing.Point(6, 22);
+            this.lblAnimation.Name = "lblAnimation";
+            this.lblAnimation.Size = new System.Drawing.Size(56, 13);
+            this.lblAnimation.TabIndex = 1;
+            this.lblAnimation.Text = "Animation:";
             // 
             // cmbAnimation
             // 
+            this.cmbAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbAnimation.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbAnimation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbAnimation.FormattingEnabled = true;
             this.cmbAnimation.Location = new System.Drawing.Point(68, 19);
             this.cmbAnimation.Name = "cmbAnimation";
             this.cmbAnimation.Size = new System.Drawing.Size(123, 21);
             this.cmbAnimation.TabIndex = 0;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Animation:";
-            // 
-            // btnOkay
-            // 
-            this.btnOkay.Location = new System.Drawing.Point(9, 55);
-            this.btnOkay.Name = "btnOkay";
-            this.btnOkay.Size = new System.Drawing.Size(75, 23);
-            this.btnOkay.TabIndex = 2;
-            this.btnOkay.Text = "Ok";
-            this.btnOkay.UseVisualStyleBackColor = true;
-            this.btnOkay.Click += new System.EventHandler(this.btnOkay_Click);
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Location = new System.Drawing.Point(116, 55);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 3;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
             // Event_MoveRouteAnimationSelector
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.groupBox1);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.Controls.Add(this.grpSetAnimation);
             this.Name = "Event_MoveRouteAnimationSelector";
             this.Size = new System.Drawing.Size(204, 105);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpSetAnimation.ResumeLayout(false);
+            this.grpSetAnimation.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnOkay;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox cmbAnimation;
+        private DarkGroupBox grpSetAnimation;
+        private DarkButton btnCancel;
+        private DarkButton btnOkay;
+        private System.Windows.Forms.Label lblAnimation;
+        private DarkComboBox cmbAnimation;
     }
 }

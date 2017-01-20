@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms
 {
     partial class frmAnimation
     {
@@ -30,22 +32,22 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmAnimation));
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox1 = new DarkGroupBox();
             this.lstAnimations = new System.Windows.Forms.ListBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.btnSwap = new System.Windows.Forms.Button();
+            this.groupBox2 = new DarkGroupBox();
+            this.btnSwap = new DarkButton();
             this.scrlDarkness = new System.Windows.Forms.HScrollBar();
             this.labelDarkness = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.cmbSound = new System.Windows.Forms.ComboBox();
+            this.cmbSound = new DarkComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtName = new System.Windows.Forms.TextBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
-            this.btnLowerClone = new System.Windows.Forms.Button();
+            this.txtName = new DarkTextBox();
+            this.groupBox3 = new DarkGroupBox();
+            this.groupBox8 = new DarkGroupBox();
+            this.btnLowerClone = new DarkButton();
             this.lightEditorLower = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.btnPlayLower = new System.Windows.Forms.Button();
+            this.groupBox5 = new DarkGroupBox();
+            this.btnPlayLower = new DarkButton();
             this.scrlLowerFrame = new System.Windows.Forms.HScrollBar();
             this.lblLowerFrame = new System.Windows.Forms.Label();
             this.scrlLowerLoopCount = new System.Windows.Forms.HScrollBar();
@@ -58,17 +60,17 @@
             this.scrlLowerHorizontalFrames = new System.Windows.Forms.HScrollBar();
             this.lblLowerVerticalFrames = new System.Windows.Forms.Label();
             this.lblLowerHorizontalFrames = new System.Windows.Forms.Label();
-            this.cmbLowerGraphic = new System.Windows.Forms.ComboBox();
+            this.cmbLowerGraphic = new DarkComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.picLowerAnimation = new System.Windows.Forms.PictureBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.btnPlayUpper = new System.Windows.Forms.Button();
+            this.groupBox4 = new DarkGroupBox();
+            this.groupBox6 = new DarkGroupBox();
+            this.btnPlayUpper = new DarkButton();
             this.scrlUpperFrame = new System.Windows.Forms.HScrollBar();
             this.lblUpperFrame = new System.Windows.Forms.Label();
             this.scrlUpperLoopCount = new System.Windows.Forms.HScrollBar();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.btnUpperClone = new System.Windows.Forms.Button();
+            this.groupBox7 = new DarkGroupBox();
+            this.btnUpperClone = new DarkButton();
             this.lightEditorUpper = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.lblUpperLoopCount = new System.Windows.Forms.Label();
             this.scrlUpperFrameDuration = new System.Windows.Forms.HScrollBar();
@@ -79,13 +81,13 @@
             this.scrlUpperHorizontalFrames = new System.Windows.Forms.HScrollBar();
             this.lblUpperVerticalFrames = new System.Windows.Forms.Label();
             this.lblUpperHorizontalFrames = new System.Windows.Forms.Label();
-            this.cmbUpperGraphic = new System.Windows.Forms.ComboBox();
+            this.cmbUpperGraphic = new DarkComboBox();
             this.label14 = new System.Windows.Forms.Label();
             this.picUpperAnimation = new System.Windows.Forms.PictureBox();
             this.tmrUpperAnimation = new System.Windows.Forms.Timer(this.components);
             this.tmrLowerAnimation = new System.Windows.Forms.Timer(this.components);
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
+            this.btnCancel = new DarkButton();
+            this.btnSave = new DarkButton();
             this.pnlContainer = new System.Windows.Forms.Panel();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripItemNew = new System.Windows.Forms.ToolStripButton();
@@ -153,7 +155,6 @@
             this.btnSwap.Size = new System.Drawing.Size(149, 23);
             this.btnSwap.TabIndex = 6;
             this.btnSwap.Text = "Swap Upper/Lower";
-            this.btnSwap.UseVisualStyleBackColor = true;
             this.btnSwap.Click += new System.EventHandler(this.btnSwap_Click);
             // 
             // scrlDarkness
@@ -254,7 +255,6 @@
             this.btnLowerClone.Size = new System.Drawing.Size(163, 23);
             this.btnLowerClone.TabIndex = 16;
             this.btnLowerClone.Text = "Clone From Previous";
-            this.btnLowerClone.UseVisualStyleBackColor = true;
             this.btnLowerClone.Click += new System.EventHandler(this.btnLowerClone_Click);
             // 
             // lightEditorLower
@@ -284,7 +284,6 @@
             this.btnPlayLower.Size = new System.Drawing.Size(197, 23);
             this.btnPlayLower.TabIndex = 16;
             this.btnPlayLower.Text = "Play Lower Animation";
-            this.btnPlayLower.UseVisualStyleBackColor = true;
             this.btnPlayLower.Click += new System.EventHandler(this.btnPlayLower_Click);
             // 
             // scrlLowerFrame
@@ -482,7 +481,6 @@
             this.btnPlayUpper.Size = new System.Drawing.Size(197, 23);
             this.btnPlayUpper.TabIndex = 16;
             this.btnPlayUpper.Text = "Play Upper Animation";
-            this.btnPlayUpper.UseVisualStyleBackColor = true;
             this.btnPlayUpper.Click += new System.EventHandler(this.btnPlayUpper_Click);
             // 
             // scrlUpperFrame
@@ -534,7 +532,6 @@
             this.btnUpperClone.Size = new System.Drawing.Size(163, 23);
             this.btnUpperClone.TabIndex = 17;
             this.btnUpperClone.Text = "Clone From Previous";
-            this.btnUpperClone.UseVisualStyleBackColor = true;
             this.btnUpperClone.Click += new System.EventHandler(this.btnUpperClone_Click);
             // 
             // lightEditorUpper
@@ -684,7 +681,6 @@
             this.btnCancel.Size = new System.Drawing.Size(190, 27);
             this.btnCancel.TabIndex = 9;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
@@ -694,7 +690,6 @@
             this.btnSave.Size = new System.Drawing.Size(190, 27);
             this.btnSave.TabIndex = 6;
             this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // pnlContainer
@@ -839,14 +834,14 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
+        private DarkGroupBox groupBox1;
         private System.Windows.Forms.ListBox lstAnimations;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private DarkGroupBox groupBox2;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox cmbSound;
+        private DarkComboBox cmbSound;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtName;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private DarkTextBox txtName;
+        private DarkGroupBox groupBox3;
         private System.Windows.Forms.HScrollBar scrlLowerLoopCount;
         private System.Windows.Forms.Label lblLowerLoopCount;
         private System.Windows.Forms.HScrollBar scrlLowerFrameDuration;
@@ -857,10 +852,10 @@
         private System.Windows.Forms.HScrollBar scrlLowerHorizontalFrames;
         private System.Windows.Forms.Label lblLowerVerticalFrames;
         private System.Windows.Forms.Label lblLowerHorizontalFrames;
-        private System.Windows.Forms.ComboBox cmbLowerGraphic;
+        private DarkComboBox cmbLowerGraphic;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.PictureBox picLowerAnimation;
-        private System.Windows.Forms.GroupBox groupBox4;
+        private DarkGroupBox groupBox4;
         private System.Windows.Forms.HScrollBar scrlUpperLoopCount;
         private System.Windows.Forms.Label lblUpperLoopCount;
         private System.Windows.Forms.HScrollBar scrlUpperFrameDuration;
@@ -871,30 +866,30 @@
         private System.Windows.Forms.HScrollBar scrlUpperHorizontalFrames;
         private System.Windows.Forms.Label lblUpperVerticalFrames;
         private System.Windows.Forms.Label lblUpperHorizontalFrames;
-        private System.Windows.Forms.ComboBox cmbUpperGraphic;
+        private DarkComboBox cmbUpperGraphic;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.PictureBox picUpperAnimation;
         private System.Windows.Forms.Timer tmrUpperAnimation;
         private System.Windows.Forms.Timer tmrLowerAnimation;
-        private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.Button btnPlayLower;
+        private DarkGroupBox groupBox5;
+        private DarkButton btnPlayLower;
         private System.Windows.Forms.HScrollBar scrlLowerFrame;
         private System.Windows.Forms.Label lblLowerFrame;
-        private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.Button btnPlayUpper;
+        private DarkGroupBox groupBox6;
+        private DarkButton btnPlayUpper;
         private System.Windows.Forms.HScrollBar scrlUpperFrame;
         private System.Windows.Forms.Label lblUpperFrame;
-        private System.Windows.Forms.GroupBox groupBox7;
+        private DarkGroupBox groupBox7;
         private Controls.LightEditorCtrl lightEditorUpper;
-        private System.Windows.Forms.GroupBox groupBox8;
-        private System.Windows.Forms.Button btnLowerClone;
-        private System.Windows.Forms.Button btnUpperClone;
+        private DarkGroupBox groupBox8;
+        private DarkButton btnLowerClone;
+        private DarkButton btnUpperClone;
         public Controls.LightEditorCtrl lightEditorLower;
         private System.Windows.Forms.HScrollBar scrlDarkness;
         private System.Windows.Forms.Label labelDarkness;
-        private System.Windows.Forms.Button btnSwap;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnCancel;
+        private DarkButton btnSwap;
+        private DarkButton btnSave;
+        private DarkButton btnCancel;
         private System.Windows.Forms.Panel pnlContainer;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton toolStripItemNew;

@@ -25,6 +25,7 @@ using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -37,6 +38,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitializeComponent();
             _myCommand = refCommand;
             _eventEditor = editor;
+            InitLocalization();
             txtShowText.Text = _myCommand.Strs[0];
             cmbFace.Items.Clear();
             cmbFace.Items.Add("None");
@@ -50,6 +52,16 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 cmbFace.SelectedIndex = 0;
             }
             UpdateFacePreview();
+        }
+
+        private void InitLocalization()
+        {
+            grpShowText.Text = Strings.Get("eventshowtext", "title");
+            lblText.Text = Strings.Get("eventshowtext", "text");
+            lblFace.Text = Strings.Get("eventshowtext", "face");
+            lblCommands.Text = Strings.Get("eventshowtext", "commands");
+            btnSave.Text = Strings.Get("eventshowtext", "okay");
+            btnCancel.Text = Strings.Get("eventshowtext", "cancel");
         }
 
         private void UpdateFacePreview()

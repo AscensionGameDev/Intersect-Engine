@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors
 {
     partial class frmTime
     {
@@ -31,21 +33,21 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTime));
             this.lstTimes = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.grpRangeOptions = new System.Windows.Forms.GroupBox();
+            this.grpRangeOptions = new DarkGroupBox();
             this.scrlAlpha = new System.Windows.Forms.HScrollBar();
             this.lblBrightness = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.pnlColor = new System.Windows.Forms.Panel();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new DarkGroupBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.txtTimeRate = new System.Windows.Forms.TextBox();
+            this.txtTimeRate = new DarkTextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.cmbIntervals = new System.Windows.Forms.ComboBox();
-            this.chkSync = new System.Windows.Forms.CheckBox();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
+            this.cmbIntervals = new DarkComboBox();
+            this.chkSync = new DarkCheckBox();
+            this.btnCancel = new DarkButton();
+            this.btnSave = new DarkButton();
             this.clrSelector = new System.Windows.Forms.ColorDialog();
             this.grpRangeOptions.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -212,7 +214,6 @@
             this.chkSync.Size = new System.Drawing.Size(109, 17);
             this.chkSync.TabIndex = 0;
             this.chkSync.Text = "Sync With Server";
-            this.chkSync.UseVisualStyleBackColor = true;
             this.chkSync.CheckedChanged += new System.EventHandler(this.chkSync_CheckedChanged);
             // 
             // btnCancel
@@ -223,7 +224,6 @@
             this.btnCancel.Size = new System.Drawing.Size(114, 27);
             this.btnCancel.TabIndex = 51;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
@@ -233,7 +233,6 @@
             this.btnSave.Size = new System.Drawing.Size(114, 27);
             this.btnSave.TabIndex = 50;
             this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // frmTime
@@ -264,17 +263,17 @@
 
         private System.Windows.Forms.ListBox lstTimes;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.GroupBox grpRangeOptions;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private DarkGroupBox grpRangeOptions;
+        private DarkGroupBox groupBox3;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox cmbIntervals;
-        private System.Windows.Forms.CheckBox chkSync;
+        private DarkComboBox cmbIntervals;
+        private DarkCheckBox chkSync;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox txtTimeRate;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
+        private DarkTextBox txtTimeRate;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
         private System.Windows.Forms.HScrollBar scrlAlpha;
         private System.Windows.Forms.Label lblBrightness;
         private System.Windows.Forms.Label label6;

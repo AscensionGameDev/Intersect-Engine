@@ -30,37 +30,37 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new DarkUI.Controls.DarkGroupBox();
+            this.grpShowText = new DarkUI.Controls.DarkGroupBox();
             this.lblCommands = new System.Windows.Forms.Label();
             this.pnlFace = new System.Windows.Forms.Panel();
-            this.cmbFace = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.txtShowText = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
+            this.cmbFace = new DarkUI.Controls.DarkComboBox();
+            this.lblFace = new System.Windows.Forms.Label();
+            this.txtShowText = new DarkUI.Controls.DarkTextBox();
+            this.lblText = new System.Windows.Forms.Label();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.grpShowText.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpShowText
             // 
-            this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.groupBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox1.Controls.Add(this.lblCommands);
-            this.groupBox1.Controls.Add(this.pnlFace);
-            this.groupBox1.Controls.Add(this.cmbFace);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.txtShowText);
-            this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnSave);
-            this.groupBox1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(259, 281);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Show Text";
+            this.grpShowText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpShowText.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpShowText.Controls.Add(this.lblCommands);
+            this.grpShowText.Controls.Add(this.pnlFace);
+            this.grpShowText.Controls.Add(this.cmbFace);
+            this.grpShowText.Controls.Add(this.lblFace);
+            this.grpShowText.Controls.Add(this.txtShowText);
+            this.grpShowText.Controls.Add(this.lblText);
+            this.grpShowText.Controls.Add(this.btnCancel);
+            this.grpShowText.Controls.Add(this.btnSave);
+            this.grpShowText.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpShowText.Location = new System.Drawing.Point(3, 3);
+            this.grpShowText.Name = "grpShowText";
+            this.grpShowText.Size = new System.Drawing.Size(259, 281);
+            this.grpShowText.TabIndex = 17;
+            this.grpShowText.TabStop = false;
+            this.grpShowText.Text = "Show Text";
             // 
             // lblCommands
             // 
@@ -86,7 +86,12 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             // 
             // cmbFace
             // 
+            this.cmbFace.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbFace.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbFace.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbFace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbFace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFace.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbFace.FormattingEnabled = true;
             this.cmbFace.Location = new System.Drawing.Point(9, 157);
             this.cmbFace.Name = "cmbFace";
@@ -94,17 +99,20 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbFace.TabIndex = 24;
             this.cmbFace.SelectedIndexChanged += new System.EventHandler(this.cmbFace_SelectedIndexChanged);
             // 
-            // label1
+            // lblFace
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 141);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(34, 13);
-            this.label1.TabIndex = 23;
-            this.label1.Text = "Face:";
+            this.lblFace.AutoSize = true;
+            this.lblFace.Location = new System.Drawing.Point(6, 141);
+            this.lblFace.Name = "lblFace";
+            this.lblFace.Size = new System.Drawing.Size(34, 13);
+            this.lblFace.TabIndex = 23;
+            this.lblFace.Text = "Face:";
             // 
             // txtShowText
             // 
+            this.txtShowText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtShowText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtShowText.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtShowText.Location = new System.Drawing.Point(7, 38);
             this.txtShowText.Multiline = true;
             this.txtShowText.Name = "txtShowText";
@@ -112,33 +120,33 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.txtShowText.Size = new System.Drawing.Size(234, 100);
             this.txtShowText.TabIndex = 22;
             // 
-            // label5
+            // lblText
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(4, 22);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(31, 13);
-            this.label5.TabIndex = 21;
-            this.label5.Text = "Text:";
+            this.lblText.AutoSize = true;
+            this.lblText.Location = new System.Drawing.Point(4, 22);
+            this.lblText.Name = "lblText";
+            this.lblText.Size = new System.Drawing.Size(31, 13);
+            this.lblText.TabIndex = 21;
+            this.lblText.Text = "Text:";
             // 
             // btnCancel
             // 
             this.btnCancel.Location = new System.Drawing.Point(89, 252);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 20;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(7, 252);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // EventCommand_Text
@@ -147,25 +155,25 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.grpShowText);
             this.Name = "EventCommand_Text";
             this.Size = new System.Drawing.Size(268, 287);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpShowText.ResumeLayout(false);
+            this.grpShowText.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private DarkGroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.TextBox txtShowText;
-        private System.Windows.Forms.Label label5;
+        private DarkGroupBox grpShowText;
+        private DarkButton btnCancel;
+        private DarkButton btnSave;
+        private DarkTextBox txtShowText;
+        private System.Windows.Forms.Label lblText;
         private System.Windows.Forms.Panel pnlFace;
-        private System.Windows.Forms.ComboBox cmbFace;
-        private System.Windows.Forms.Label label1;
+        private DarkComboBox cmbFace;
+        private System.Windows.Forms.Label lblFace;
         private System.Windows.Forms.Label lblCommands;
     }
 }

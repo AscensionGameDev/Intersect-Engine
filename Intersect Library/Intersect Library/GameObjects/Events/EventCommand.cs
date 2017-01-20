@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect_Library.Localization;
 
 namespace Intersect_Library.GameObjects.Events
 {
@@ -54,104 +55,104 @@ namespace Intersect_Library.GameObjects.Events
             switch (Ints[0])
             {
                 case 0: //Player Switch
-                    return "Player Switch " + PlayerSwitchBase.GetName(Ints[1]) + " is " + Convert.ToBoolean(Ints[2]);
+                    var pValue = Strings.Get("eventconditiondesc", "false");
+                    if (Convert.ToBoolean(Ints[2])) pValue = Strings.Get("eventconditiondesc", "true");
+                    return Strings.Get("eventconditiondesc","playerswitch", PlayerSwitchBase.GetName(Ints[1]), pValue);
                 case 1: //Player Variables
-                    output = "Player Variable " + PlayerVariableBase.GetName(Ints[1]);
+                    var pVar = "";
                     switch (Ints[2])
                     {
                         case 0:
-                            output += " is equal to ";
+                            pVar = Strings.Get("eventconditiondesc", "equal",Ints[3]);
                             break;
                         case 1:
-                            output += " is greater than or equal to ";
+                            pVar = Strings.Get("eventconditiondesc", "greaterequal", Ints[3]);
                             break;
                         case 2:
-                            output += " is less than or equal to ";
+                            pVar = Strings.Get("eventconditiondesc", "lessthanequal", Ints[3]);
                             break;
                         case 3:
-                            output += " is greater than ";
+                            pVar = Strings.Get("eventconditiondesc", "greater", Ints[3]);
                             break;
                         case 4:
-                            output += " is less than ";
+                            pVar = Strings.Get("eventconditiondesc", "lessthan", Ints[3]);
                             break;
                         case 5:
-                            output += " does not equal ";
+                            pVar = Strings.Get("eventconditiondesc", "notequal", Ints[3]);
                             break;
                     }
-                    output += Ints[3];
-                    return output;
+                    return Strings.Get("eventconditiondesc", "playervariable", PlayerVariableBase.GetName(Ints[1]), pVar);
                 case 2: //Global Switch
-                    return "Global Switch " + ServerSwitchBase.GetName(Ints[1]) + " is " + Convert.ToBoolean(Ints[2]);
+                    var gValue = Strings.Get("eventconditiondesc", "false");
+                    if (Convert.ToBoolean(Ints[2])) gValue = Strings.Get("eventconditiondesc", "true");
+                    return Strings.Get("eventconditiondesc", "globalswitch", ServerSwitchBase.GetName(Ints[1]), gValue);
                 case 3: //Global Variables
-                    output = "Global Variable " + ServerVariableBase.GetName(Ints[1]);
+                    var gVar = "";
                     switch (Ints[2])
                     {
                         case 0:
-                            output += " is equal to ";
+                            gVar = Strings.Get("eventconditiondesc", "equal", Ints[3]);
                             break;
                         case 1:
-                            output += " is greater than or equal to ";
+                            gVar = Strings.Get("eventconditiondesc", "greaterequal", Ints[3]);
                             break;
                         case 2:
-                            output += " is less than or equal to ";
+                            gVar = Strings.Get("eventconditiondesc", "lessthanequal", Ints[3]);
                             break;
                         case 3:
-                            output += " is greater than ";
+                            gVar = Strings.Get("eventconditiondesc", "greater", Ints[3]);
                             break;
                         case 4:
-                            output += " is less than ";
+                            gVar = Strings.Get("eventconditiondesc", "lessthan", Ints[3]);
                             break;
                         case 5:
-                            output += " does not equal ";
+                            gVar = Strings.Get("eventconditiondesc", "notequal", Ints[3]);
                             break;
                     }
-                    output += Ints[3];
-                    return output;
+                    return Strings.Get("eventconditiondesc", "globalvariable", ServerVariableBase.GetName(Ints[1]), gVar);
                 case 4: //Has Item
-                    return "Player has at least " + Ints[2] + " of Item " + ItemBase.GetName(Ints[1]);
+                    return Strings.Get("eventconditiondesc", "hasitem", Ints[2], ItemBase.GetName(Ints[1]));
                 case 5: //Class Is
-                    return "Player's class is " + ClassBase.GetName(Ints[1]);
+                    return Strings.Get("eventconditiondesc", "class", ClassBase.GetName(Ints[1]));
                 case 6: //Knows spell
-                    return "Player knows Spell " + SpellBase.GetName(Ints[1]);
+                    return Strings.Get("eventconditiondesc", "knowsspell", SpellBase.GetName(Ints[1]));
                 case 7: //Level is
-                    output = "Player's level";
+                    var pLvl = "";
                     switch (Ints[1])
                     {
                         case 0:
-                            output += " is equal to ";
+                            pLvl = Strings.Get("eventconditiondesc", "equal", Ints[2]);
                             break;
                         case 1:
-                            output += " is greater than or equal to ";
+                            pLvl = Strings.Get("eventconditiondesc", "greaterequal", Ints[2]);
                             break;
                         case 2:
-                            output += " is less than or equal to ";
+                            pLvl = Strings.Get("eventconditiondesc", "lessthanequal", Ints[2]);
                             break;
                         case 3:
-                            output += " is greater than ";
+                            pLvl = Strings.Get("eventconditiondesc", "greater", Ints[2]);
                             break;
                         case 4:
-                            output += " is less than ";
+                            pLvl = Strings.Get("eventconditiondesc", "lessthan", Ints[2]);
                             break;
                         case 5:
-                            output += " does not equal ";
+                            pLvl = Strings.Get("eventconditiondesc", "notequal", Ints[2]);
                             break;
                     }
-                    output += Ints[2];
-                    return output;
+                    return Strings.Get("eventconditiondesc", "level", pLvl);
                 case 8: //Self Switch
-                    return "Self Switch " + (char)('A' + Ints[1]) + " is " + Convert.ToBoolean(Ints[2]);
+                    var sValue = Strings.Get("eventconditiondesc", "false");
+                    if (Convert.ToBoolean(Ints[2])) sValue = Strings.Get("eventconditiondesc", "true");
+                    return Strings.Get("eventconditiondesc", "selfswitch", Strings.Get("eventconditiondesc", "selfswitch" + Ints[1]), sValue);
                 case 9: //Power is
-                    output = "Player's Power is";
-                    switch (Ints[1])
+                    if (Ints[1] == 0)
                     {
-                        case 0:
-                            output += " Mod or Admin";
-                            break;
-                        case 1:
-                            output += " Admin";
-                            break;
+                        return Strings.Get("eventconditiondesc", "power", Strings.Get("eventconditiondesc","modadmin"));
                     }
-                    return output;
+                    else
+                    {
+                        return Strings.Get("eventconditiondesc", "power", Strings.Get("eventconditiondesc", "admin"));
+                    }
                 case 10: //Time is between
                     var timeRanges = new List<string>();
                     var time = new DateTime(2000, 1, 1, 0, 0, 0);
@@ -162,26 +163,27 @@ namespace Intersect_Library.GameObjects.Events
                         addRange += time.ToString("h:mm:ss tt");
                         timeRanges.Add(addRange);
                     }
-                    output = "Time is between ";
+                    var time1 = "";
+                    var time2 = "";
                     if (Ints[1] > -1 && Ints[1] < timeRanges.Count)
                     {
-                        output += timeRanges[Ints[1]] + " and";
+                        time1 = timeRanges[Ints[1]];
                     }
                     else
                     {
-                        output += "invalid and";
+                        time1 = Strings.Get("eventconditiondesc", "timeinvalid");
                     }
                     if (Ints[2] > -1 && Ints[2] < timeRanges.Count)
                     {
-                        output += timeRanges[Ints[2]];
+                        time2 = timeRanges[Ints[2]];
                     }
                     else
                     {
-                        output += "invalid";
+                        time2= Strings.Get("eventconditiondesc", "timeinvalid");
                     }
-                    return output;
+                    return Strings.Get("eventconditiondesc", "time", time1, time2);
                 case 11: //Can Start Quest...
-                    return "Can Start Quest: " + QuestBase.GetName(Ints[1]) + "";
+                    return Strings.Get("eventconditiondesc", "startquest", QuestBase.GetName(Ints[1]));
                 case 12: //Quest In Progress...
                     var quest = QuestBase.GetQuest(Ints[1]);
                     if (quest != null)
@@ -197,22 +199,22 @@ namespace Intersect_Library.GameObjects.Events
                         switch (Ints[2])
                         {
                             case 1:
-                                return "Quest In Progress: " + QuestBase.GetName(Ints[1]) + ", Before Task: " + task.GetTaskString();
+                                return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]), Strings.Get("eventconditiondesc","beforetask",task.GetTaskString()));
                             case 2:
-                                return "Quest In Progress: " + QuestBase.GetName(Ints[1]) + ", After Task: " + task.GetTaskString();
+                                return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]), Strings.Get("eventconditiondesc", "aftertask", task.GetTaskString()));
                             case 3:
-                                return "Quest In Progress: " + QuestBase.GetName(Ints[1]) + ", On Task: " + task.GetTaskString();
+                                return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]), Strings.Get("eventconditiondesc", "ontask", task.GetTaskString()));
                             default:
-                                return "Quest In Progress: " + QuestBase.GetName(Ints[1]) + ", On Any Task";
+                                return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]), Strings.Get("eventconditiondesc", "onanytask"));
                         }
                     }
-                    return "Quest In Progress: Deleted Quest";
+                    return Strings.Get("eventconditiondesc","questinprogress",QuestBase.GetName(Ints[1]));
                 case 13: //Quest Completed
-                    return "Quest is Completed: " + QuestBase.GetName(Ints[1]);
+                    return Strings.Get("eventconditiondesc", "questcompleted", QuestBase.GetName(Ints[1]));
                 case 14: //Player death
-                    return "Player death";
+                    return Strings.Get("eventconditiondesc", "playerdeath");
                 case 15: //No NPCs on map
-                    return "No NPCs on the map";
+                    return Strings.Get("eventconditiondesc", "nonpcsonmap");
             }
             return "";
         }

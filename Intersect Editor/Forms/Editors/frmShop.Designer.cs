@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors
 {
     partial class frmShop
     {
@@ -29,38 +31,38 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmShop));
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox1 = new DarkGroupBox();
             this.lstShops = new System.Windows.Forms.ListBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.cmbDefaultCurrency = new System.Windows.Forms.ComboBox();
+            this.groupBox2 = new DarkGroupBox();
+            this.cmbDefaultCurrency = new DarkComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtName = new System.Windows.Forms.TextBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.cmbSellFor = new System.Windows.Forms.ComboBox();
+            this.txtName = new DarkTextBox();
+            this.groupBox3 = new DarkGroupBox();
+            this.cmbSellFor = new DarkComboBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.txtSellCost = new System.Windows.Forms.TextBox();
+            this.txtSellCost = new DarkTextBox();
             this.lblChargeRate = new System.Windows.Forms.Label();
-            this.btnDelSoldItem = new System.Windows.Forms.Button();
-            this.btnAddSoldItem = new System.Windows.Forms.Button();
-            this.cmbAddSoldItem = new System.Windows.Forms.ComboBox();
+            this.btnDelSoldItem = new DarkButton();
+            this.btnAddSoldItem = new DarkButton();
+            this.cmbAddSoldItem = new DarkComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.lstSoldItems = new System.Windows.Forms.ListBox();
-            this.grpItemsBought = new System.Windows.Forms.GroupBox();
-            this.cmbBuyFor = new System.Windows.Forms.ComboBox();
+            this.grpItemsBought = new DarkGroupBox();
+            this.cmbBuyFor = new DarkComboBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.txtBuyAmount = new System.Windows.Forms.TextBox();
+            this.txtBuyAmount = new DarkTextBox();
             this.lblBuyRate = new System.Windows.Forms.Label();
-            this.btnDelBoughtItem = new System.Windows.Forms.Button();
-            this.btnAddBoughtItem = new System.Windows.Forms.Button();
-            this.cmbAddBoughtItem = new System.Windows.Forms.ComboBox();
+            this.btnDelBoughtItem = new DarkButton();
+            this.btnAddBoughtItem = new DarkButton();
+            this.cmbAddBoughtItem = new DarkComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.lstBoughtItems = new System.Windows.Forms.ListBox();
-            this.rdoBuyBlacklist = new System.Windows.Forms.RadioButton();
-            this.rdoBuyWhitelist = new System.Windows.Forms.RadioButton();
+            this.rdoBuyBlacklist = new DarkRadioButton();
+            this.rdoBuyWhitelist = new DarkRadioButton();
             this.pnlContainer = new System.Windows.Forms.Panel();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
+            this.btnCancel = new DarkButton();
+            this.btnSave = new DarkButton();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripItemNew = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -206,7 +208,6 @@
             this.btnDelSoldItem.Size = new System.Drawing.Size(117, 23);
             this.btnDelSoldItem.TabIndex = 4;
             this.btnDelSoldItem.Text = "Remove Selected";
-            this.btnDelSoldItem.UseVisualStyleBackColor = true;
             this.btnDelSoldItem.Click += new System.EventHandler(this.btnDelSoldItem_Click);
             // 
             // btnAddSoldItem
@@ -216,7 +217,6 @@
             this.btnAddSoldItem.Size = new System.Drawing.Size(117, 23);
             this.btnAddSoldItem.TabIndex = 3;
             this.btnAddSoldItem.Text = "Add Selected";
-            this.btnAddSoldItem.UseVisualStyleBackColor = true;
             this.btnAddSoldItem.Click += new System.EventHandler(this.btnAddSoldItem_Click);
             // 
             // cmbAddSoldItem
@@ -306,7 +306,6 @@
             this.btnDelBoughtItem.Size = new System.Drawing.Size(117, 23);
             this.btnDelBoughtItem.TabIndex = 6;
             this.btnDelBoughtItem.Text = "Remove Selected";
-            this.btnDelBoughtItem.UseVisualStyleBackColor = true;
             this.btnDelBoughtItem.Click += new System.EventHandler(this.btnDelBoughtItem_Click);
             // 
             // btnAddBoughtItem
@@ -316,7 +315,6 @@
             this.btnAddBoughtItem.Size = new System.Drawing.Size(117, 23);
             this.btnAddBoughtItem.TabIndex = 5;
             this.btnAddBoughtItem.Text = "Add Selected";
-            this.btnAddBoughtItem.UseVisualStyleBackColor = true;
             this.btnAddBoughtItem.Click += new System.EventHandler(this.btnAddBoughtItem_Click);
             // 
             // cmbAddBoughtItem
@@ -353,7 +351,6 @@
             this.rdoBuyBlacklist.Size = new System.Drawing.Size(64, 17);
             this.rdoBuyBlacklist.TabIndex = 1;
             this.rdoBuyBlacklist.Text = "Blacklist";
-            this.rdoBuyBlacklist.UseVisualStyleBackColor = true;
             this.rdoBuyBlacklist.CheckedChanged += new System.EventHandler(this.rdoBuyBlacklist_CheckedChanged);
             // 
             // rdoBuyWhitelist
@@ -366,7 +363,6 @@
             this.rdoBuyWhitelist.TabIndex = 0;
             this.rdoBuyWhitelist.TabStop = true;
             this.rdoBuyWhitelist.Text = "Whitelist";
-            this.rdoBuyWhitelist.UseVisualStyleBackColor = true;
             this.rdoBuyWhitelist.CheckedChanged += new System.EventHandler(this.rdoBuyWhitelist_CheckedChanged);
             // 
             // pnlContainer
@@ -388,7 +384,6 @@
             this.btnCancel.Size = new System.Drawing.Size(190, 27);
             this.btnCancel.TabIndex = 49;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
@@ -398,7 +393,6 @@
             this.btnSave.Size = new System.Drawing.Size(190, 27);
             this.btnSave.TabIndex = 46;
             this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // toolStrip
@@ -523,38 +517,38 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
+        private DarkGroupBox groupBox1;
         private System.Windows.Forms.ListBox lstShops;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private DarkGroupBox groupBox2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtName;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private DarkTextBox txtName;
+        private DarkGroupBox groupBox3;
         private System.Windows.Forms.ListBox lstSoldItems;
-        private System.Windows.Forms.GroupBox grpItemsBought;
+        private DarkGroupBox grpItemsBought;
         private System.Windows.Forms.ListBox lstBoughtItems;
-        private System.Windows.Forms.RadioButton rdoBuyBlacklist;
-        private System.Windows.Forms.RadioButton rdoBuyWhitelist;
-        private System.Windows.Forms.Button btnDelSoldItem;
-        private System.Windows.Forms.Button btnAddSoldItem;
-        private System.Windows.Forms.ComboBox cmbAddSoldItem;
+        private DarkRadioButton rdoBuyBlacklist;
+        private DarkRadioButton rdoBuyWhitelist;
+        private DarkButton btnDelSoldItem;
+        private DarkButton btnAddSoldItem;
+        private DarkComboBox cmbAddSoldItem;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button btnDelBoughtItem;
-        private System.Windows.Forms.Button btnAddBoughtItem;
-        private System.Windows.Forms.ComboBox cmbAddBoughtItem;
+        private DarkButton btnDelBoughtItem;
+        private DarkButton btnAddBoughtItem;
+        private DarkComboBox cmbAddBoughtItem;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblBuyRate;
         private System.Windows.Forms.Label lblChargeRate;
-        private System.Windows.Forms.ComboBox cmbDefaultCurrency;
+        private DarkComboBox cmbDefaultCurrency;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox cmbSellFor;
+        private DarkComboBox cmbSellFor;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox txtSellCost;
-        private System.Windows.Forms.ComboBox cmbBuyFor;
+        private DarkTextBox txtSellCost;
+        private DarkComboBox cmbBuyFor;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox txtBuyAmount;
+        private DarkTextBox txtBuyAmount;
         private System.Windows.Forms.Panel pnlContainer;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnCancel;
+        private DarkButton btnSave;
+        private DarkButton btnCancel;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton toolStripItemNew;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;

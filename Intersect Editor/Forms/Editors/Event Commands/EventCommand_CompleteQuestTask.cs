@@ -26,6 +26,7 @@ using Intersect_Editor.Classes.Core;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -38,9 +39,19 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitializeComponent();
             _myCommand = refCommand;
             _eventEditor = editor;
+            InitLocalization();
             cmbQuests.Items.Clear();
             cmbQuests.Items.AddRange(Database.GetGameObjectList(GameObject.Quest));
             cmbQuests.SelectedIndex = Database.GameObjectListIndex(GameObject.Quest, refCommand.Ints[0]);
+        }
+
+        private void InitLocalization()
+        {
+            grpCompleteTask.Text = Strings.Get("eventcompletequesttask", "title");
+            lblQuest.Text = Strings.Get("eventcompletequesttask", "quest");
+            lblTask.Text = Strings.Get("eventcompletequesttask", "task");
+            btnSave.Text = Strings.Get("eventcompletequesttask", "okay");
+            btnCancel.Text = Strings.Get("eventcompletequesttask", "cancel");
         }
 
         private void btnSave_Click(object sender, EventArgs e)

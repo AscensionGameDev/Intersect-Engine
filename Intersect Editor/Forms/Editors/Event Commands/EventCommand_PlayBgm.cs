@@ -23,6 +23,7 @@ using System;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -35,6 +36,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitializeComponent();
             _myCommand = refCommand;
             _eventEditor = editor;
+            InitLocalization();
             cmbBgm.Items.Clear();
             cmbBgm.Items.Add("None");
             cmbBgm.Items.AddRange(GameContentManager.GetMusicNames());
@@ -46,6 +48,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 cmbBgm.SelectedIndex = 0;
             }
+        }
+
+        private void InitLocalization()
+        {
+            grpBGM.Text = Strings.Get("eventplaybgm", "title");
+            lblBGM.Text = Strings.Get("eventplaybgm", "label");
+            btnSave.Text = Strings.Get("eventplaybgm", "okay");
+            btnCancel.Text = Strings.Get("eventplaybgm", "cancel");
         }
 
         private void btnSave_Click(object sender, EventArgs e)
