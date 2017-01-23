@@ -31,27 +31,27 @@ namespace Intersect_Editor.Forms.Editors
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmCommonEvent));
-            this.groupBox1 = new DarkUI.Controls.DarkGroupBox();
+            this.grpCommonEvents = new DarkUI.Controls.DarkGroupBox();
             this.btnNew = new DarkUI.Controls.DarkButton();
             this.btnDelete = new DarkUI.Controls.DarkButton();
             this.lstCommonEvents = new System.Windows.Forms.ListBox();
-            this.groupBox1.SuspendLayout();
+            this.grpCommonEvents.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpCommonEvents
             // 
-            this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox1.Controls.Add(this.btnNew);
-            this.groupBox1.Controls.Add(this.btnDelete);
-            this.groupBox1.Controls.Add(this.lstCommonEvents);
-            this.groupBox1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(203, 508);
-            this.groupBox1.TabIndex = 16;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Common Events";
+            this.grpCommonEvents.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpCommonEvents.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpCommonEvents.Controls.Add(this.btnNew);
+            this.grpCommonEvents.Controls.Add(this.btnDelete);
+            this.grpCommonEvents.Controls.Add(this.lstCommonEvents);
+            this.grpCommonEvents.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpCommonEvents.Location = new System.Drawing.Point(12, 12);
+            this.grpCommonEvents.Name = "grpCommonEvents";
+            this.grpCommonEvents.Size = new System.Drawing.Size(203, 508);
+            this.grpCommonEvents.TabIndex = 16;
+            this.grpCommonEvents.TabStop = false;
+            this.grpCommonEvents.Text = "Common Events";
             // 
             // btnNew
             // 
@@ -94,21 +94,21 @@ namespace Intersect_Editor.Forms.Editors
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(226, 525);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.grpCommonEvents);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "frmCommonEvent";
             this.Text = "Common Event Editor";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmCommonEvent_FormClosed);
-            this.groupBox1.ResumeLayout(false);
+            this.grpCommonEvents.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private DarkGroupBox groupBox1;
+        private DarkGroupBox grpCommonEvents;
         private System.Windows.Forms.ListBox lstCommonEvents;
         private DarkButton btnNew;
         private DarkButton btnDelete;

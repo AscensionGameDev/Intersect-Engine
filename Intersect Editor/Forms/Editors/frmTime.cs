@@ -10,8 +10,10 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using Intersect_Editor.Classes;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 using Microsoft.Xna.Framework;
 
 namespace Intersect_Editor.Forms.Editors
@@ -24,6 +26,28 @@ namespace Intersect_Editor.Forms.Editors
         public frmTime()
         {
             InitializeComponent();
+            InitLocalization();
+        }
+
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("timeeditor", "title");
+            lblTimes.Text = Strings.Get("timeeditor", "times");
+            grpSettings.Text = Strings.Get("timeeditor", "settings");
+            lblIntervals.Text = Strings.Get("timeeditor", "intervals");
+            cmbIntervals.Items.Clear();
+            for (int i = 0; i < 12; i++)
+            {
+                cmbIntervals.Items.Add(Strings.Get("timeeditor", "interval" + i));
+            }
+            chkSync.Text = Strings.Get("timeeditor", "sync");
+            lblRate.Text = Strings.Get("timeeditor", "rate");
+            lblRateSuffix.Text = Strings.Get("timeeditor", "ratesuffix");
+            lblRateDesc.Text = Strings.Get("timeeditor", "ratedesc");
+            grpRangeOptions.Text = Strings.Get("timeeditor", "overlay");
+            lblColorDesc.Text = Strings.Get("timeeditor", "colorpaneldesc");
+            btnSave.Text = Strings.Get("timeeditor", "save");
+            btnCancel.Text = Strings.Get("timeeditor", "cancel");
         }
 
         public void InitEditor(TimeBase time)
@@ -63,7 +87,7 @@ namespace Intersect_Editor.Forms.Editors
             var time = new DateTime(2000, 1, 1, 0,0,0);
             for (int i = 0; i < 1440; i += duration)
             {
-                var addRange = time.ToString("h:mm:ss tt") + " to ";
+                var addRange = time.ToString("h:mm:ss tt") + " " + Strings.Get("timeeditor", "to") + " ";
                 time = time.AddMinutes(duration);
                 addRange += time.ToString("h:mm:ss tt");
                 lstTimes.Items.Add(addRange);
@@ -94,9 +118,9 @@ namespace Intersect_Editor.Forms.Editors
             e.Graphics.DrawImage(tileBackbuffer, new System.Drawing.Point(0, 0));
         }
 
-        private void scrlAlpha_Scroll(object sender, ScrollEventArgs e)
+        private void scrlAlpha_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblBrightness.Text = "Brightness: " + (100- scrlAlpha.Value).ToString();
+            lblBrightness.Text = Strings.Get("timeeditor", "brightness", (100- scrlAlpha.Value).ToString());
             myTime.RangeColors[lstTimes.SelectedIndex].A = (byte)(scrlAlpha.Value/100f*255f);
             pnlColor.Refresh();
         }
@@ -112,7 +136,7 @@ namespace Intersect_Editor.Forms.Editors
             pnlColor.BackColor = System.Drawing.Color.FromArgb(255, myTime.RangeColors[lstTimes.SelectedIndex].R, myTime.RangeColors[lstTimes.SelectedIndex].G,
                 myTime.RangeColors[lstTimes.SelectedIndex].B);
             scrlAlpha.Value = (byte) (((myTime.RangeColors[lstTimes.SelectedIndex].A)/255f)*100f);
-            lblBrightness.Text = "Brightness: " + (100 - scrlAlpha.Value).ToString();
+            lblBrightness.Text = Strings.Get("timeeditor", "brightness", (100 - scrlAlpha.Value).ToString());
             pnlColor.Refresh();
             EditorGraphics.LightColor = myTime.RangeColors[lstTimes.SelectedIndex];
         }

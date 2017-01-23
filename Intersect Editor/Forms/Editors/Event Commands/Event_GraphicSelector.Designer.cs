@@ -90,7 +90,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             // 
             // cmbGraphic
             // 
-            this.cmbGraphic.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbGraphic.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbGraphic.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbGraphic.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbGraphic.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -114,7 +114,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             // 
             // cmbGraphicType
             // 
-            this.cmbGraphicType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbGraphicType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbGraphicType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbGraphicType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbGraphicType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;

@@ -272,8 +272,9 @@ namespace Intersect_Editor.Forms
             frm.Size = new Size(0, 0);
             frm.AutoSize = true;
             frm.ControlBox = false;
-            frm.FormBorderStyle = FormBorderStyle.FixedSingle;
+            frm.FormBorderStyle = FormBorderStyle.FixedDialog;
             frm.StartPosition = FormStartPosition.CenterParent;
+            frm.BackColor = cmdWindow.BackColor;
             cmdWindow.BringToFront();
             frm.ShowDialog();
             if (!cmdWindow.Cancelled)
@@ -457,6 +458,11 @@ namespace Intersect_Editor.Forms
                     toolStripItemNew_Click(null, null);
                 }
             }
+        }
+
+        private void lstTasks_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

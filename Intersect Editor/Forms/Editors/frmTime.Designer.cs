@@ -32,51 +32,58 @@ namespace Intersect_Editor.Forms.Editors
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTime));
             this.lstTimes = new System.Windows.Forms.ListBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.grpRangeOptions = new DarkGroupBox();
-            this.scrlAlpha = new System.Windows.Forms.HScrollBar();
+            this.lblTimes = new System.Windows.Forms.Label();
+            this.grpRangeOptions = new DarkUI.Controls.DarkGroupBox();
+            this.scrlAlpha = new DarkUI.Controls.DarkScrollBar();
             this.lblBrightness = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
+            this.lblColorDesc = new System.Windows.Forms.Label();
             this.pnlColor = new System.Windows.Forms.Panel();
-            this.groupBox3 = new DarkGroupBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.txtTimeRate = new DarkTextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.cmbIntervals = new DarkComboBox();
-            this.chkSync = new DarkCheckBox();
-            this.btnCancel = new DarkButton();
-            this.btnSave = new DarkButton();
+            this.grpSettings = new DarkUI.Controls.DarkGroupBox();
+            this.lblRateDesc = new System.Windows.Forms.Label();
+            this.lblRateSuffix = new System.Windows.Forms.Label();
+            this.txtTimeRate = new DarkUI.Controls.DarkTextBox();
+            this.lblRate = new System.Windows.Forms.Label();
+            this.lblIntervals = new System.Windows.Forms.Label();
+            this.cmbIntervals = new DarkUI.Controls.DarkComboBox();
+            this.chkSync = new DarkUI.Controls.DarkCheckBox();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
             this.clrSelector = new System.Windows.Forms.ColorDialog();
             this.grpRangeOptions.SuspendLayout();
-            this.groupBox3.SuspendLayout();
+            this.grpSettings.SuspendLayout();
             this.SuspendLayout();
             // 
             // lstTimes
             // 
+            this.lstTimes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstTimes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstTimes.ForeColor = System.Drawing.Color.Gainsboro;
             this.lstTimes.FormattingEnabled = true;
             this.lstTimes.Location = new System.Drawing.Point(14, 25);
             this.lstTimes.Name = "lstTimes";
-            this.lstTimes.Size = new System.Drawing.Size(221, 277);
+            this.lstTimes.Size = new System.Drawing.Size(221, 275);
             this.lstTimes.TabIndex = 0;
             this.lstTimes.SelectedIndexChanged += new System.EventHandler(this.lstTimes_SelectedIndexChanged);
             // 
-            // label1
+            // lblTimes
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(11, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(64, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Time of Day";
+            this.lblTimes.AutoSize = true;
+            this.lblTimes.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lblTimes.Location = new System.Drawing.Point(11, 9);
+            this.lblTimes.Name = "lblTimes";
+            this.lblTimes.Size = new System.Drawing.Size(64, 13);
+            this.lblTimes.TabIndex = 1;
+            this.lblTimes.Text = "Time of Day";
             // 
             // grpRangeOptions
             // 
+            this.grpRangeOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpRangeOptions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpRangeOptions.Controls.Add(this.scrlAlpha);
             this.grpRangeOptions.Controls.Add(this.lblBrightness);
-            this.grpRangeOptions.Controls.Add(this.label6);
+            this.grpRangeOptions.Controls.Add(this.lblColorDesc);
             this.grpRangeOptions.Controls.Add(this.pnlColor);
+            this.grpRangeOptions.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpRangeOptions.Location = new System.Drawing.Point(249, 206);
             this.grpRangeOptions.Name = "grpRangeOptions";
             this.grpRangeOptions.Size = new System.Drawing.Size(268, 98);
@@ -87,12 +94,12 @@ namespace Intersect_Editor.Forms.Editors
             // 
             // scrlAlpha
             // 
-            this.scrlAlpha.LargeChange = 1;
             this.scrlAlpha.Location = new System.Drawing.Point(141, 26);
             this.scrlAlpha.Name = "scrlAlpha";
+            this.scrlAlpha.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlAlpha.Size = new System.Drawing.Size(118, 17);
             this.scrlAlpha.TabIndex = 3;
-            this.scrlAlpha.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlAlpha_Scroll);
+            this.scrlAlpha.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlAlpha_Scroll);
             // 
             // lblBrightness
             // 
@@ -103,13 +110,13 @@ namespace Intersect_Editor.Forms.Editors
             this.lblBrightness.TabIndex = 2;
             this.lblBrightness.Text = "Brightness: 100";
             // 
-            // label6
+            // lblColorDesc
             // 
-            this.label6.Location = new System.Drawing.Point(9, 59);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(253, 30);
-            this.label6.TabIndex = 1;
-            this.label6.Text = "Double click the panel above to change the overlay color.";
+            this.lblColorDesc.Location = new System.Drawing.Point(9, 59);
+            this.lblColorDesc.Name = "lblColorDesc";
+            this.lblColorDesc.Size = new System.Drawing.Size(253, 30);
+            this.lblColorDesc.TabIndex = 1;
+            this.lblColorDesc.Text = "Double click the panel above to change the overlay color.";
             // 
             // pnlColor
             // 
@@ -122,70 +129,81 @@ namespace Intersect_Editor.Forms.Editors
             this.pnlColor.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlColor_Paint);
             this.pnlColor.DoubleClick += new System.EventHandler(this.pnlColor_DoubleClick);
             // 
-            // groupBox3
+            // grpSettings
             // 
-            this.groupBox3.Controls.Add(this.label5);
-            this.groupBox3.Controls.Add(this.label4);
-            this.groupBox3.Controls.Add(this.txtTimeRate);
-            this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Controls.Add(this.label2);
-            this.groupBox3.Controls.Add(this.cmbIntervals);
-            this.groupBox3.Controls.Add(this.chkSync);
-            this.groupBox3.Location = new System.Drawing.Point(249, 25);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(268, 175);
-            this.groupBox3.TabIndex = 3;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Time Settings";
+            this.grpSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpSettings.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpSettings.Controls.Add(this.lblRateDesc);
+            this.grpSettings.Controls.Add(this.lblRateSuffix);
+            this.grpSettings.Controls.Add(this.txtTimeRate);
+            this.grpSettings.Controls.Add(this.lblRate);
+            this.grpSettings.Controls.Add(this.lblIntervals);
+            this.grpSettings.Controls.Add(this.cmbIntervals);
+            this.grpSettings.Controls.Add(this.chkSync);
+            this.grpSettings.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpSettings.Location = new System.Drawing.Point(249, 25);
+            this.grpSettings.Name = "grpSettings";
+            this.grpSettings.Size = new System.Drawing.Size(268, 175);
+            this.grpSettings.TabIndex = 3;
+            this.grpSettings.TabStop = false;
+            this.grpSettings.Text = "Time Settings";
             // 
-            // label5
+            // lblRateDesc
             // 
-            this.label5.Location = new System.Drawing.Point(9, 100);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(218, 67);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "Enter 1 for normal rate of time.\r\nValues larger than one for faster days. \r\nValue" +
+            this.lblRateDesc.Location = new System.Drawing.Point(9, 100);
+            this.lblRateDesc.Name = "lblRateDesc";
+            this.lblRateDesc.Size = new System.Drawing.Size(218, 67);
+            this.lblRateDesc.TabIndex = 6;
+            this.lblRateDesc.Text = "Enter 1 for normal rate of time.\r\nValues larger than one for faster days. \r\nValue" +
     "s between 0 and 1 for longer days. \r\nNegative values for time to flow backwards." +
     "";
             // 
-            // label4
+            // lblRateSuffix
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(120, 68);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(48, 13);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "x Normal";
+            this.lblRateSuffix.AutoSize = true;
+            this.lblRateSuffix.Location = new System.Drawing.Point(120, 68);
+            this.lblRateSuffix.Name = "lblRateSuffix";
+            this.lblRateSuffix.Size = new System.Drawing.Size(48, 13);
+            this.lblRateSuffix.TabIndex = 5;
+            this.lblRateSuffix.Text = "x Normal";
             // 
             // txtTimeRate
             // 
+            this.txtTimeRate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtTimeRate.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtTimeRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtTimeRate.Location = new System.Drawing.Point(71, 65);
             this.txtTimeRate.Name = "txtTimeRate";
             this.txtTimeRate.Size = new System.Drawing.Size(47, 20);
             this.txtTimeRate.TabIndex = 4;
             this.txtTimeRate.TextChanged += new System.EventHandler(this.txtTimeRate_TextChanged);
             // 
-            // label3
+            // lblRate
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(9, 68);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(59, 13);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Time Rate:";
+            this.lblRate.AutoSize = true;
+            this.lblRate.Location = new System.Drawing.Point(9, 68);
+            this.lblRate.Name = "lblRate";
+            this.lblRate.Size = new System.Drawing.Size(59, 13);
+            this.lblRate.TabIndex = 3;
+            this.lblRate.Text = "Time Rate:";
             // 
-            // label2
+            // lblIntervals
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 20);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(50, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Intervals:";
+            this.lblIntervals.AutoSize = true;
+            this.lblIntervals.Location = new System.Drawing.Point(6, 20);
+            this.lblIntervals.Name = "lblIntervals";
+            this.lblIntervals.Size = new System.Drawing.Size(50, 13);
+            this.lblIntervals.TabIndex = 2;
+            this.lblIntervals.Text = "Intervals:";
             // 
             // cmbIntervals
             // 
+            this.cmbIntervals.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbIntervals.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbIntervals.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbIntervals.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbIntervals.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbIntervals.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbIntervals.FormattingEnabled = true;
             this.cmbIntervals.Items.AddRange(new object[] {
             "24 hours",
@@ -221,6 +239,7 @@ namespace Intersect_Editor.Forms.Editors
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Location = new System.Drawing.Point(403, 310);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(114, 27);
             this.btnCancel.TabIndex = 51;
             this.btnCancel.Text = "Cancel";
@@ -230,6 +249,7 @@ namespace Intersect_Editor.Forms.Editors
             // 
             this.btnSave.Location = new System.Drawing.Point(283, 310);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(114, 27);
             this.btnSave.TabIndex = 50;
             this.btnSave.Text = "Save";
@@ -239,21 +259,22 @@ namespace Intersect_Editor.Forms.Editors
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(529, 347);
             this.ControlBox = false;
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.grpSettings);
             this.Controls.Add(this.grpRangeOptions);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblTimes);
             this.Controls.Add(this.lstTimes);
             this.DoubleBuffered = true;
             this.Name = "frmTime";
             this.Text = "Time Editor (Day/Night Settings)";
             this.grpRangeOptions.ResumeLayout(false);
             this.grpRangeOptions.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
+            this.grpSettings.ResumeLayout(false);
+            this.grpSettings.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -262,21 +283,21 @@ namespace Intersect_Editor.Forms.Editors
         #endregion
 
         private System.Windows.Forms.ListBox lstTimes;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblTimes;
         private DarkGroupBox grpRangeOptions;
-        private DarkGroupBox groupBox3;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
+        private DarkGroupBox grpSettings;
+        private System.Windows.Forms.Label lblRate;
+        private System.Windows.Forms.Label lblIntervals;
         private DarkComboBox cmbIntervals;
         private DarkCheckBox chkSync;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label lblRateDesc;
+        private System.Windows.Forms.Label lblRateSuffix;
         private DarkTextBox txtTimeRate;
         private DarkButton btnCancel;
         private DarkButton btnSave;
-        private System.Windows.Forms.HScrollBar scrlAlpha;
+        private DarkScrollBar scrlAlpha;
         private System.Windows.Forms.Label lblBrightness;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label lblColorDesc;
         private System.Windows.Forms.Panel pnlColor;
         private System.Windows.Forms.ColorDialog clrSelector;
     }

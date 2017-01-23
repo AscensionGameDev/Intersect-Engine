@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors
 {
@@ -32,8 +33,17 @@ namespace Intersect_Editor.Forms.Editors
         public frmCommonEvent()
         {
             InitializeComponent();
+            InitLocalization();
             ListCommonEvents();
             PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
+        }
+
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("commoneventeditor", "title");
+            grpCommonEvents.Text = Strings.Get("commoneventeditor", "events");
+            btnNew.Text = Strings.Get("commoneventeditor", "new");
+            btnDelete.Text = Strings.Get("commoneventeditor", "delete");
         }
 
         private void GameObjectUpdatedDelegate(GameObject type)

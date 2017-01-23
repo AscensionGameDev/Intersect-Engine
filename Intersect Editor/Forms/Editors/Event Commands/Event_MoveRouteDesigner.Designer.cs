@@ -239,7 +239,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             // 
             // cmbTarget
             // 
-            this.cmbTarget.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbTarget.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbTarget.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbTarget.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbTarget.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;

@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
@@ -373,19 +374,19 @@ namespace Intersect_Editor.Forms
             else { picSpell.BackgroundImage = null; }
         }
 
-        private void scrlCastDuration_Scroll(object sender, ScrollEventArgs e)
+        private void scrlCastDuration_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.CastDuration = scrlCastDuration.Value;
             lblCastDuration.Text = "Cast Time (secs): " + ((double)scrlCastDuration.Value / 10);
         }
 
-        private void scrlCooldownDuration_Scroll(object sender, ScrollEventArgs e)
+        private void scrlCooldownDuration_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.CooldownDuration = scrlCooldownDuration.Value;
             lblCooldownDuration.Text = "Cooldown (secs): " + ((double)scrlCooldownDuration.Value / 10);
         }
 
-        private void scrlCastAnimation_Scroll(object sender, ScrollEventArgs e)
+        private void scrlCastAnimation_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (scrlCastAnimation.Value == -1)
             {
@@ -399,7 +400,7 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void scrlHitAnimation_Scroll(object sender, ScrollEventArgs e)
+        private void scrlHitAnimation_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (scrlHitAnimation.Value == -1)
             {
@@ -413,37 +414,37 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void scrlAttackReq_Scroll(object sender, ScrollEventArgs e)
+        private void scrlAttackReq_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.StatReq[(int)Stats.Attack] = scrlAttackReq.Value;
             lblAttackReq.Text = "Attack: " + scrlAttackReq.Value;
         }
 
-        private void scrlDefenseReq_Scroll(object sender, ScrollEventArgs e)
+        private void scrlDefenseReq_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.StatReq[(int)Stats.Defense] = scrlDefenseReq.Value;
             lblDefenseReq.Text = "Defense: " + scrlDefenseReq.Value;
         }
 
-        private void scrlSpeedReq_Scroll(object sender, ScrollEventArgs e)
+        private void scrlSpeedReq_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.StatReq[(int)Stats.Speed] = scrlSpeedReq.Value;
             lblSpeedReq.Text = "Speed: " + scrlSpeedReq.Value;
         }
 
-        private void scrlAbilityPwrReq_Scroll(object sender, ScrollEventArgs e)
+        private void scrlAbilityPwrReq_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.StatReq[(int)Stats.AbilityPower] = scrlAbilityPwrReq.Value;
             lblAbilityPwrReq.Text = "Ability Pwr: " + scrlAbilityPwrReq.Value;
         }
 
-        private void scrlMagicResistReq_Scroll(object sender, ScrollEventArgs e)
+        private void scrlMagicResistReq_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.StatReq[(int)Stats.MagicResist] = scrlMagicResistReq.Value;
             lblMagicResistReq.Text = "Magic Resist: " + scrlMagicResistReq.Value;
         }
 
-        private void scrlLevelReq_Scroll(object sender, ScrollEventArgs e)
+        private void scrlLevelReq_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.LevelReq = scrlLevelReq.Value;
             lblLevelReq.Text = "Level: " + scrlLevelReq.Value;
@@ -455,13 +456,13 @@ namespace Intersect_Editor.Forms
             UpdateTargetTypePanel();
         }
 
-        private void scrlCastRange_Scroll(object sender, ScrollEventArgs e)
+        private void scrlCastRange_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.CastRange = scrlCastRange.Value;
             lblCastRange.Text = "Cast Range: " + scrlCastRange.Value;
         }
 
-        private void scrlHitRadius_Scroll(object sender, ScrollEventArgs e)
+        private void scrlHitRadius_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.HitRadius = scrlHitRadius.Value;
             lblHitRadius.Text = "Hit Radius: " + scrlHitRadius.Value;
@@ -472,7 +473,7 @@ namespace Intersect_Editor.Forms
             _editorItem.Data1 = Convert.ToInt32(chkHOTDOT.Checked);
         }
 
-        private void scrlBuffDuration_Scroll(object sender, ScrollEventArgs e)
+        private void scrlBuffDuration_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.Data2 = scrlBuffDuration.Value;
             lblBuffDuration.Text = "Duration: " + ((double)scrlBuffDuration.Value / 10) + "s";
@@ -485,19 +486,19 @@ namespace Intersect_Editor.Forms
             _editorItem.Data1 = x;
         }
 
-        private void scrlWarpX_Scroll(object sender, ScrollEventArgs e)
+        private void scrlWarpX_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.Data2 = scrlWarpX.Value;
             lblWarpX.Text = "X: " + scrlWarpX.Value;
         }
 
-        private void scrlWarpY_Scroll(object sender, ScrollEventArgs e)
+        private void scrlWarpY_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.Data3 = scrlWarpY.Value;
             lblWarpY.Text = "Y: " + scrlWarpY.Value;
         }
 
-        private void scrlWarpDir_Scroll(object sender, ScrollEventArgs e)
+        private void scrlWarpDir_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.Data4 = scrlWarpDir.Value;
             lblWarpDir.Text = "Dir: " + Globals.IntToDir(_editorItem.Data4);
@@ -543,13 +544,13 @@ namespace Intersect_Editor.Forms
             Globals.CurrentEditor = -1;
         }
 
-        private void scrlRange_Scroll(object sender, ScrollEventArgs e)
+        private void scrlRange_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblRange.Text = "Range: " + scrlRange.Value;
             _editorItem.CastRange = scrlRange.Value;
         }
 
-        private void scrlProjectile_Scroll(object sender, ScrollEventArgs e)
+        private void scrlProjectile_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (scrlProjectile.Value == -1)
             {
@@ -563,7 +564,7 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void scrlTick_Scroll(object sender, ScrollEventArgs e)
+        private void scrlTick_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.Data4 = scrlTick.Value;
             lblTick.Text = "Tick: " + ((double)scrlTick.Value / 10) + "s";
@@ -606,7 +607,7 @@ namespace Intersect_Editor.Forms
             else { picSprite.BackgroundImage = null; }
         }
 
-        private void scrlEvent_Scroll(object sender, ScrollEventArgs e)
+        private void scrlEvent_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (scrlEvent.Value == -1)
             {
@@ -719,13 +720,13 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void scrlHPCost_Scroll(object sender, ScrollEventArgs e)
+        private void scrlHPCost_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblHPCost.Text = "HP Cost: " + scrlHPCost.Value;
             _editorItem.VitalCost[(int) Vitals.Health] = scrlHPCost.Value;
         }
 
-        private void scrlManaCost_Scroll(object sender, ScrollEventArgs e)
+        private void scrlManaCost_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblMPCost.Text = "Mana Cost: " + scrlManaCost.Value;
             _editorItem.VitalCost[(int)Vitals.Mana] = scrlManaCost.Value;
@@ -736,55 +737,55 @@ namespace Intersect_Editor.Forms
             _editorItem.Friendly = Convert.ToInt32(chkFriendly.Checked);
         }
 
-        private void scrlHPDamage_Scroll(object sender, ScrollEventArgs e)
+        private void scrlHPDamage_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblHPDamage.Text = "HP Damage: " + scrlHPDamage.Value;
             _editorItem.VitalDiff[(int)Vitals.Health] = scrlHPDamage.Value;
         }
 
-        private void scrlManaDamage_Scroll(object sender, ScrollEventArgs e)
+        private void scrlManaDamage_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblManaDamage.Text = "Mana Damage: " + scrlManaDamage.Value;
             _editorItem.VitalDiff[(int)Vitals.Mana] = scrlManaDamage.Value;
         }
 
-        private void scrlCritChance_Scroll(object sender, ScrollEventArgs e)
+        private void scrlCritChance_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblCritChance.Text = "Crit Chance: " + scrlCritChance.Value + "%";
             _editorItem.CritChance = scrlCritChance.Value;
         }
 
-        private void scrlAttack_Scroll(object sender, ScrollEventArgs e)
+        private void scrlAttack_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblAttack.Text = "Attack: " + scrlAttack.Value;
             _editorItem.StatDiff[(int) Stats.Attack] = scrlAttack.Value;
         }
 
-        private void scrlDefense_Scroll(object sender, ScrollEventArgs e)
+        private void scrlDefense_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblDefense.Text = "Defense: " + scrlDefense.Value;
             _editorItem.StatDiff[(int)Stats.Defense] = scrlDefense.Value;
         }
 
-        private void scrlSpeed_Scroll(object sender, ScrollEventArgs e)
+        private void scrlSpeed_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblSpeed.Text = "Speed: " + scrlSpeed.Value;
             _editorItem.StatDiff[(int)Stats.Speed] = scrlSpeed.Value;
         }
 
-        private void scrlAbilityPwr_Scroll(object sender, ScrollEventArgs e)
+        private void scrlAbilityPwr_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblAbilityPwr.Text = "Ability Pwr: " + scrlAbilityPwr.Value;
             _editorItem.StatDiff[(int)Stats.AbilityPower] = scrlAbilityPwr.Value;
         }
 
-        private void scrlMagicResist_Scroll(object sender, ScrollEventArgs e)
+        private void scrlMagicResist_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblMagicResist.Text = "Magic Resist: " + scrlMagicResist.Value;
             _editorItem.StatDiff[(int)Stats.MagicResist] = scrlMagicResist.Value;
         }
 
-        private void scrlScaling_Scroll(object sender, ScrollEventArgs e)
+        private void scrlScaling_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblScaling.Text = "Scaling Amount: x" + ((double)scrlScaling.Value / 100f);
             _editorItem.Scaling = scrlScaling.Value;

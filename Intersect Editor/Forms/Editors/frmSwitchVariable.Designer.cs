@@ -31,42 +31,45 @@ namespace Intersect_Editor.Forms.Editors
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSwitchVariable));
-            this.groupBox1 = new DarkGroupBox();
-            this.rdoGlobalVariables = new DarkRadioButton();
-            this.rdoGlobalSwitches = new DarkRadioButton();
-            this.rdoPlayerVariables = new DarkRadioButton();
-            this.rdoPlayerSwitch = new DarkRadioButton();
-            this.groupBox2 = new DarkGroupBox();
-            this.btnUndo = new DarkButton();
+            this.grpTypes = new DarkUI.Controls.DarkGroupBox();
+            this.rdoGlobalVariables = new DarkUI.Controls.DarkRadioButton();
+            this.rdoGlobalSwitches = new DarkUI.Controls.DarkRadioButton();
+            this.rdoPlayerVariables = new DarkUI.Controls.DarkRadioButton();
+            this.rdoPlayerSwitch = new DarkUI.Controls.DarkRadioButton();
+            this.grpList = new DarkUI.Controls.DarkGroupBox();
+            this.btnUndo = new DarkUI.Controls.DarkButton();
             this.lstObjects = new System.Windows.Forms.ListBox();
-            this.btnNew = new DarkButton();
-            this.btnDelete = new DarkButton();
-            this.grpEditor = new DarkGroupBox();
+            this.btnNew = new DarkUI.Controls.DarkButton();
+            this.btnDelete = new DarkUI.Controls.DarkButton();
+            this.grpEditor = new DarkUI.Controls.DarkGroupBox();
             this.lblValue = new System.Windows.Forms.Label();
-            this.txtObjectName = new DarkTextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.txtObjectName = new DarkUI.Controls.DarkTextBox();
+            this.lblName = new System.Windows.Forms.Label();
             this.lblObject = new System.Windows.Forms.Label();
-            this.cmbSwitchValue = new DarkComboBox();
-            this.txtVariableVal = new DarkTextBox();
-            this.btnCancel = new DarkButton();
-            this.btnSave = new DarkButton();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.cmbSwitchValue = new DarkUI.Controls.DarkComboBox();
+            this.txtVariableVal = new DarkUI.Controls.DarkTextBox();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.grpTypes.SuspendLayout();
+            this.grpList.SuspendLayout();
             this.grpEditor.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpTypes
             // 
-            this.groupBox1.Controls.Add(this.rdoGlobalVariables);
-            this.groupBox1.Controls.Add(this.rdoGlobalSwitches);
-            this.groupBox1.Controls.Add(this.rdoPlayerVariables);
-            this.groupBox1.Controls.Add(this.rdoPlayerSwitch);
-            this.groupBox1.Location = new System.Drawing.Point(13, 13);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(490, 53);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Switch or Variable Type";
+            this.grpTypes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpTypes.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpTypes.Controls.Add(this.rdoGlobalVariables);
+            this.grpTypes.Controls.Add(this.rdoGlobalSwitches);
+            this.grpTypes.Controls.Add(this.rdoPlayerVariables);
+            this.grpTypes.Controls.Add(this.rdoPlayerSwitch);
+            this.grpTypes.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpTypes.Location = new System.Drawing.Point(13, 13);
+            this.grpTypes.Name = "grpTypes";
+            this.grpTypes.Size = new System.Drawing.Size(490, 53);
+            this.grpTypes.TabIndex = 0;
+            this.grpTypes.TabStop = false;
+            this.grpTypes.Text = "Switch or Variable Type";
             // 
             // rdoGlobalVariables
             // 
@@ -110,24 +113,28 @@ namespace Intersect_Editor.Forms.Editors
             this.rdoPlayerSwitch.Text = "Player Switches";
             this.rdoPlayerSwitch.CheckedChanged += new System.EventHandler(this.rdoPlayerSwitch_CheckedChanged);
             // 
-            // groupBox2
+            // grpList
             // 
-            this.groupBox2.Controls.Add(this.btnUndo);
-            this.groupBox2.Controls.Add(this.lstObjects);
-            this.groupBox2.Controls.Add(this.btnNew);
-            this.groupBox2.Controls.Add(this.btnDelete);
-            this.groupBox2.Location = new System.Drawing.Point(13, 73);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(200, 469);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Switch/Variable List";
+            this.grpList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpList.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpList.Controls.Add(this.btnUndo);
+            this.grpList.Controls.Add(this.lstObjects);
+            this.grpList.Controls.Add(this.btnNew);
+            this.grpList.Controls.Add(this.btnDelete);
+            this.grpList.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpList.Location = new System.Drawing.Point(13, 73);
+            this.grpList.Name = "grpList";
+            this.grpList.Size = new System.Drawing.Size(200, 469);
+            this.grpList.TabIndex = 1;
+            this.grpList.TabStop = false;
+            this.grpList.Text = "Switch/Variable List";
             // 
             // btnUndo
             // 
             this.btnUndo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnUndo.Location = new System.Drawing.Point(7, 431);
             this.btnUndo.Name = "btnUndo";
+            this.btnUndo.Padding = new System.Windows.Forms.Padding(5);
             this.btnUndo.Size = new System.Drawing.Size(190, 27);
             this.btnUndo.TabIndex = 55;
             this.btnUndo.Text = "Undo Changes";
@@ -135,10 +142,13 @@ namespace Intersect_Editor.Forms.Editors
             // 
             // lstObjects
             // 
+            this.lstObjects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstObjects.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstObjects.ForeColor = System.Drawing.Color.Gainsboro;
             this.lstObjects.FormattingEnabled = true;
             this.lstObjects.Location = new System.Drawing.Point(7, 20);
             this.lstObjects.Name = "lstObjects";
-            this.lstObjects.Size = new System.Drawing.Size(187, 329);
+            this.lstObjects.Size = new System.Drawing.Size(187, 327);
             this.lstObjects.TabIndex = 0;
             this.lstObjects.Click += new System.EventHandler(this.lstObjects_Click);
             // 
@@ -147,6 +157,7 @@ namespace Intersect_Editor.Forms.Editors
             this.btnNew.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnNew.Location = new System.Drawing.Point(7, 365);
             this.btnNew.Name = "btnNew";
+            this.btnNew.Padding = new System.Windows.Forms.Padding(5);
             this.btnNew.Size = new System.Drawing.Size(190, 27);
             this.btnNew.TabIndex = 53;
             this.btnNew.Text = "New";
@@ -157,6 +168,7 @@ namespace Intersect_Editor.Forms.Editors
             this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnDelete.Location = new System.Drawing.Point(8, 398);
             this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Padding = new System.Windows.Forms.Padding(5);
             this.btnDelete.Size = new System.Drawing.Size(190, 27);
             this.btnDelete.TabIndex = 52;
             this.btnDelete.Text = "Delete";
@@ -164,12 +176,15 @@ namespace Intersect_Editor.Forms.Editors
             // 
             // grpEditor
             // 
+            this.grpEditor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpEditor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpEditor.Controls.Add(this.lblValue);
             this.grpEditor.Controls.Add(this.txtObjectName);
-            this.grpEditor.Controls.Add(this.label2);
+            this.grpEditor.Controls.Add(this.lblName);
             this.grpEditor.Controls.Add(this.lblObject);
             this.grpEditor.Controls.Add(this.cmbSwitchValue);
             this.grpEditor.Controls.Add(this.txtVariableVal);
+            this.grpEditor.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEditor.Location = new System.Drawing.Point(219, 73);
             this.grpEditor.Name = "grpEditor";
             this.grpEditor.Size = new System.Drawing.Size(284, 111);
@@ -189,20 +204,23 @@ namespace Intersect_Editor.Forms.Editors
             // 
             // txtObjectName
             // 
+            this.txtObjectName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtObjectName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtObjectName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtObjectName.Location = new System.Drawing.Point(54, 40);
             this.txtObjectName.Name = "txtObjectName";
             this.txtObjectName.Size = new System.Drawing.Size(224, 20);
             this.txtObjectName.TabIndex = 2;
             this.txtObjectName.TextChanged += new System.EventHandler(this.txtObjectName_TextChanged);
             // 
-            // label2
+            // lblName
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 43);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(38, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Name:";
+            this.lblName.AutoSize = true;
+            this.lblName.Location = new System.Drawing.Point(10, 43);
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(38, 13);
+            this.lblName.TabIndex = 1;
+            this.lblName.Text = "Name:";
             // 
             // lblObject
             // 
@@ -215,7 +233,12 @@ namespace Intersect_Editor.Forms.Editors
             // 
             // cmbSwitchValue
             // 
+            this.cmbSwitchValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbSwitchValue.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbSwitchValue.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSwitchValue.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSwitchValue.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSwitchValue.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbSwitchValue.FormattingEnabled = true;
             this.cmbSwitchValue.Items.AddRange(new object[] {
             "False",
@@ -228,6 +251,9 @@ namespace Intersect_Editor.Forms.Editors
             // 
             // txtVariableVal
             // 
+            this.txtVariableVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtVariableVal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtVariableVal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtVariableVal.Location = new System.Drawing.Point(54, 66);
             this.txtVariableVal.Name = "txtVariableVal";
             this.txtVariableVal.Size = new System.Drawing.Size(224, 20);
@@ -239,6 +265,7 @@ namespace Intersect_Editor.Forms.Editors
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Location = new System.Drawing.Point(371, 515);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(132, 27);
             this.btnCancel.TabIndex = 54;
             this.btnCancel.Text = "Cancel";
@@ -248,6 +275,7 @@ namespace Intersect_Editor.Forms.Editors
             // 
             this.btnSave.Location = new System.Drawing.Point(233, 515);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(132, 27);
             this.btnSave.TabIndex = 51;
             this.btnSave.Text = "Save";
@@ -258,22 +286,23 @@ namespace Intersect_Editor.Forms.Editors
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(515, 554);
             this.ControlBox = false;
-            this.Controls.Add(this.grpEditor);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.grpList);
+            this.Controls.Add(this.grpTypes);
+            this.Controls.Add(this.grpEditor);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "frmSwitchVariable";
             this.Text = "Switch and Variable Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmSwitchVariable_FormClosing);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
+            this.grpTypes.ResumeLayout(false);
+            this.grpTypes.PerformLayout();
+            this.grpList.ResumeLayout(false);
             this.grpEditor.ResumeLayout(false);
             this.grpEditor.PerformLayout();
             this.ResumeLayout(false);
@@ -282,19 +311,19 @@ namespace Intersect_Editor.Forms.Editors
 
         #endregion
 
-        private DarkGroupBox groupBox1;
+        private DarkGroupBox grpTypes;
         private DarkRadioButton rdoGlobalVariables;
         private DarkRadioButton rdoGlobalSwitches;
         private DarkRadioButton rdoPlayerVariables;
         private DarkRadioButton rdoPlayerSwitch;
-        private DarkGroupBox groupBox2;
+        private DarkGroupBox grpList;
         private System.Windows.Forms.ListBox lstObjects;
         private DarkGroupBox grpEditor;
         private DarkComboBox cmbSwitchValue;
         private DarkTextBox txtVariableVal;
         private System.Windows.Forms.Label lblValue;
         private DarkTextBox txtObjectName;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblName;
         private System.Windows.Forms.Label lblObject;
         private DarkButton btnUndo;
         private DarkButton btnNew;

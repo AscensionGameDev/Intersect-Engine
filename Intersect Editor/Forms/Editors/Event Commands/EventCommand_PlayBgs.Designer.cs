@@ -56,7 +56,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             // 
             // cmbSound
             // 
-            this.cmbSound.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbSound.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbSound.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSound.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbSound.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;

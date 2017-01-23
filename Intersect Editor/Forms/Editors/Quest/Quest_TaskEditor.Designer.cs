@@ -30,25 +30,25 @@ namespace Intersect_Editor.Forms.Editors.Quest
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new DarkGroupBox();
-            this.txtStartDesc = new DarkTextBox();
+            this.groupBox1 = new DarkUI.Controls.DarkGroupBox();
+            this.btnEditTaskEvent = new DarkUI.Controls.DarkButton();
+            this.txtStartDesc = new DarkUI.Controls.DarkTextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.btnSave = new DarkButton();
-            this.cmbConditionType = new DarkComboBox();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.cmbConditionType = new DarkUI.Controls.DarkComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnCancel = new DarkButton();
-            this.grpGatherItems = new DarkGroupBox();
-            this.cmbItem = new DarkComboBox();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.grpGatherItems = new DarkUI.Controls.DarkGroupBox();
+            this.cmbItem = new DarkUI.Controls.DarkComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.scrlItemQuantity = new System.Windows.Forms.HScrollBar();
             this.lblItemQuantity = new System.Windows.Forms.Label();
-            this.grpKillNpcs = new DarkGroupBox();
-            this.cmbNpc = new DarkComboBox();
+            this.grpKillNpcs = new DarkUI.Controls.DarkGroupBox();
+            this.cmbNpc = new DarkUI.Controls.DarkComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.scrlNpcQuantity = new System.Windows.Forms.HScrollBar();
             this.lblNpcQuantity = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.btnEditTaskEvent = new DarkButton();
             this.groupBox1.SuspendLayout();
             this.grpGatherItems.SuspendLayout();
             this.grpKillNpcs.SuspendLayout();
@@ -56,6 +56,8 @@ namespace Intersect_Editor.Forms.Editors.Quest
             // 
             // groupBox1
             // 
+            this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.groupBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.groupBox1.Controls.Add(this.btnEditTaskEvent);
             this.groupBox1.Controls.Add(this.txtStartDesc);
             this.groupBox1.Controls.Add(this.label2);
@@ -66,6 +68,7 @@ namespace Intersect_Editor.Forms.Editors.Quest
             this.groupBox1.Controls.Add(this.grpGatherItems);
             this.groupBox1.Controls.Add(this.grpKillNpcs);
             this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox1.Location = new System.Drawing.Point(-1, 2);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(256, 261);
@@ -73,9 +76,22 @@ namespace Intersect_Editor.Forms.Editors.Quest
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Task Editor";
             // 
+            // btnEditTaskEvent
+            // 
+            this.btnEditTaskEvent.Location = new System.Drawing.Point(10, 202);
+            this.btnEditTaskEvent.Name = "btnEditTaskEvent";
+            this.btnEditTaskEvent.Padding = new System.Windows.Forms.Padding(5);
+            this.btnEditTaskEvent.Size = new System.Drawing.Size(236, 23);
+            this.btnEditTaskEvent.TabIndex = 30;
+            this.btnEditTaskEvent.Text = "Edit Task Completion Event";
+            this.btnEditTaskEvent.Click += new System.EventHandler(this.btnEditTaskEvent_Click);
+            // 
             // txtStartDesc
             // 
             this.txtStartDesc.AcceptsReturn = true;
+            this.txtStartDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtStartDesc.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtStartDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtStartDesc.Location = new System.Drawing.Point(88, 40);
             this.txtStartDesc.Multiline = true;
             this.txtStartDesc.Name = "txtStartDesc";
@@ -96,6 +112,7 @@ namespace Intersect_Editor.Forms.Editors.Quest
             // 
             this.btnSave.Location = new System.Drawing.Point(10, 231);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
@@ -103,7 +120,12 @@ namespace Intersect_Editor.Forms.Editors.Quest
             // 
             // cmbConditionType
             // 
+            this.cmbConditionType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbConditionType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbConditionType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbConditionType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbConditionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbConditionType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbConditionType.FormattingEnabled = true;
             this.cmbConditionType.Items.AddRange(new object[] {
             "Event Driven",
@@ -128,6 +150,7 @@ namespace Intersect_Editor.Forms.Editors.Quest
             // 
             this.btnCancel.Location = new System.Drawing.Point(91, 231);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 20;
             this.btnCancel.Text = "Cancel";
@@ -135,10 +158,13 @@ namespace Intersect_Editor.Forms.Editors.Quest
             // 
             // grpGatherItems
             // 
+            this.grpGatherItems.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpGatherItems.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpGatherItems.Controls.Add(this.cmbItem);
             this.grpGatherItems.Controls.Add(this.label8);
             this.grpGatherItems.Controls.Add(this.scrlItemQuantity);
             this.grpGatherItems.Controls.Add(this.lblItemQuantity);
+            this.grpGatherItems.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpGatherItems.Location = new System.Drawing.Point(9, 112);
             this.grpGatherItems.Name = "grpGatherItems";
             this.grpGatherItems.Size = new System.Drawing.Size(236, 83);
@@ -149,7 +175,12 @@ namespace Intersect_Editor.Forms.Editors.Quest
             // 
             // cmbItem
             // 
+            this.cmbItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbItem.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbItem.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbItem.FormattingEnabled = true;
             this.cmbItem.Items.AddRange(new object[] {
             "Equal To",
@@ -194,10 +225,13 @@ namespace Intersect_Editor.Forms.Editors.Quest
             // 
             // grpKillNpcs
             // 
+            this.grpKillNpcs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpKillNpcs.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpKillNpcs.Controls.Add(this.cmbNpc);
             this.grpKillNpcs.Controls.Add(this.label3);
             this.grpKillNpcs.Controls.Add(this.scrlNpcQuantity);
             this.grpKillNpcs.Controls.Add(this.lblNpcQuantity);
+            this.grpKillNpcs.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpKillNpcs.Location = new System.Drawing.Point(10, 110);
             this.grpKillNpcs.Name = "grpKillNpcs";
             this.grpKillNpcs.Size = new System.Drawing.Size(236, 83);
@@ -208,7 +242,12 @@ namespace Intersect_Editor.Forms.Editors.Quest
             // 
             // cmbNpc
             // 
+            this.cmbNpc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbNpc.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbNpc.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbNpc.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbNpc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbNpc.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbNpc.FormattingEnabled = true;
             this.cmbNpc.Items.AddRange(new object[] {
             "Equal To",
@@ -260,19 +299,11 @@ namespace Intersect_Editor.Forms.Editors.Quest
             this.label5.Text = "Event Driven: The description should lead the player to an event. The event will " +
     "then complete the task using the complete quest task command.";
             // 
-            // btnEditTaskEvent
-            // 
-            this.btnEditTaskEvent.Location = new System.Drawing.Point(10, 202);
-            this.btnEditTaskEvent.Name = "btnEditTaskEvent";
-            this.btnEditTaskEvent.Size = new System.Drawing.Size(236, 23);
-            this.btnEditTaskEvent.TabIndex = 30;
-            this.btnEditTaskEvent.Text = "Edit Task Completion Event";
-            this.btnEditTaskEvent.Click += new System.EventHandler(this.btnEditTaskEvent_Click);
-            // 
             // Quest_TaskEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.groupBox1);
             this.Name = "Quest_TaskEditor";
             this.Size = new System.Drawing.Size(255, 267);

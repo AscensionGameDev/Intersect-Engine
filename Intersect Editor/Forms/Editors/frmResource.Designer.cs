@@ -32,38 +32,38 @@ namespace Intersect_Editor.Classes
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmResource));
-            this.groupBox1 = new DarkGroupBox();
+            this.groupBox1 = new DarkUI.Controls.DarkGroupBox();
             this.lstResources = new System.Windows.Forms.ListBox();
-            this.groupBox2 = new DarkGroupBox();
+            this.groupBox2 = new DarkUI.Controls.DarkGroupBox();
             this.scrlAnimation = new System.Windows.Forms.HScrollBar();
             this.lblAnimation = new System.Windows.Forms.Label();
-            this.txtMaxHp = new DarkTextBox();
+            this.txtMaxHp = new DarkUI.Controls.DarkTextBox();
             this.lblMaxHp = new System.Windows.Forms.Label();
             this.scrlSpawnDuration = new System.Windows.Forms.HScrollBar();
             this.lblSpawnDuration = new System.Windows.Forms.Label();
-            this.chkWalkableAfter = new DarkCheckBox();
-            this.chkWalkableBefore = new DarkCheckBox();
-            this.cmbToolType = new DarkComboBox();
+            this.chkWalkableAfter = new DarkUI.Controls.DarkCheckBox();
+            this.chkWalkableBefore = new DarkUI.Controls.DarkCheckBox();
+            this.cmbToolType = new DarkUI.Controls.DarkComboBox();
             this.lblToolType = new System.Windows.Forms.Label();
-            this.txtHP = new DarkTextBox();
+            this.txtHP = new DarkUI.Controls.DarkTextBox();
             this.lblHP = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtName = new DarkTextBox();
-            this.groupBox3 = new DarkGroupBox();
-            this.grpEndTileset = new DarkGroupBox();
+            this.txtName = new DarkUI.Controls.DarkTextBox();
+            this.groupBox3 = new DarkUI.Controls.DarkGroupBox();
+            this.grpEndTileset = new DarkUI.Controls.DarkGroupBox();
             this.picEndResource = new System.Windows.Forms.PictureBox();
-            this.grpInitialTileset = new DarkGroupBox();
+            this.grpInitialTileset = new DarkUI.Controls.DarkGroupBox();
             this.picInitialResource = new System.Windows.Forms.PictureBox();
             this.hScrollEndTileset = new System.Windows.Forms.HScrollBar();
             this.vScrollEndTileset = new System.Windows.Forms.VScrollBar();
             this.hScrollStartTileset = new System.Windows.Forms.HScrollBar();
             this.vScrollStartTileset = new System.Windows.Forms.VScrollBar();
-            this.cmbEndSprite = new DarkComboBox();
+            this.cmbEndSprite = new DarkUI.Controls.DarkComboBox();
             this.lblPic2 = new System.Windows.Forms.Label();
-            this.cmbInitialSprite = new DarkComboBox();
+            this.cmbInitialSprite = new DarkUI.Controls.DarkComboBox();
             this.lblPic = new System.Windows.Forms.Label();
-            this.groupBox4 = new DarkGroupBox();
-            this.txtDropAmount = new DarkTextBox();
+            this.groupBox4 = new DarkUI.Controls.DarkGroupBox();
+            this.txtDropAmount = new DarkUI.Controls.DarkTextBox();
             this.lblDropAmount = new System.Windows.Forms.Label();
             this.scrlDropChance = new System.Windows.Forms.HScrollBar();
             this.lblDropChance = new System.Windows.Forms.Label();
@@ -73,9 +73,9 @@ namespace Intersect_Editor.Classes
             this.lblDropIndex = new System.Windows.Forms.Label();
             this.tmrRender = new System.Windows.Forms.Timer(this.components);
             this.pnlContainer = new System.Windows.Forms.Panel();
-            this.btnCancel = new DarkButton();
-            this.btnSave = new DarkButton();
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.toolStrip = new DarkUI.Controls.DarkToolStrip();
             this.toolStripItemNew = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemDelete = new System.Windows.Forms.ToolStripButton();
@@ -98,7 +98,10 @@ namespace Intersect_Editor.Classes
             // 
             // groupBox1
             // 
+            this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.groupBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.groupBox1.Controls.Add(this.lstResources);
+            this.groupBox1.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox1.Location = new System.Drawing.Point(12, 39);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(203, 437);
@@ -108,16 +111,21 @@ namespace Intersect_Editor.Classes
             // 
             // lstResources
             // 
+            this.lstResources.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstResources.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstResources.ForeColor = System.Drawing.Color.Gainsboro;
             this.lstResources.FormattingEnabled = true;
             this.lstResources.Location = new System.Drawing.Point(6, 19);
             this.lstResources.Name = "lstResources";
-            this.lstResources.Size = new System.Drawing.Size(191, 407);
+            this.lstResources.Size = new System.Drawing.Size(191, 405);
             this.lstResources.TabIndex = 1;
             this.lstResources.Click += new System.EventHandler(this.lstResources_Click);
             this.lstResources.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
             // groupBox2
             // 
+            this.groupBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.groupBox2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.groupBox2.Controls.Add(this.scrlAnimation);
             this.groupBox2.Controls.Add(this.lblAnimation);
             this.groupBox2.Controls.Add(this.txtMaxHp);
@@ -132,6 +140,7 @@ namespace Intersect_Editor.Classes
             this.groupBox2.Controls.Add(this.lblHP);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.txtName);
+            this.groupBox2.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox2.Location = new System.Drawing.Point(0, 0);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(223, 264);
@@ -162,6 +171,9 @@ namespace Intersect_Editor.Classes
             // 
             // txtMaxHp
             // 
+            this.txtMaxHp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtMaxHp.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtMaxHp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtMaxHp.Location = new System.Drawing.Point(75, 103);
             this.txtMaxHp.Name = "txtMaxHp";
             this.txtMaxHp.Size = new System.Drawing.Size(135, 20);
@@ -217,7 +229,12 @@ namespace Intersect_Editor.Classes
             // 
             // cmbToolType
             // 
+            this.cmbToolType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbToolType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbToolType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbToolType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbToolType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbToolType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbToolType.FormattingEnabled = true;
             this.cmbToolType.Location = new System.Drawing.Point(75, 46);
             this.cmbToolType.Name = "cmbToolType";
@@ -236,6 +253,9 @@ namespace Intersect_Editor.Classes
             // 
             // txtHP
             // 
+            this.txtHP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtHP.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtHP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtHP.Location = new System.Drawing.Point(75, 77);
             this.txtHP.Name = "txtHP";
             this.txtHP.Size = new System.Drawing.Size(135, 20);
@@ -262,6 +282,9 @@ namespace Intersect_Editor.Classes
             // 
             // txtName
             // 
+            this.txtName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtName.Location = new System.Drawing.Point(75, 20);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(135, 20);
@@ -270,6 +293,8 @@ namespace Intersect_Editor.Classes
             // 
             // groupBox3
             // 
+            this.groupBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.groupBox3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.groupBox3.Controls.Add(this.grpEndTileset);
             this.groupBox3.Controls.Add(this.grpInitialTileset);
             this.groupBox3.Controls.Add(this.hScrollEndTileset);
@@ -280,6 +305,7 @@ namespace Intersect_Editor.Classes
             this.groupBox3.Controls.Add(this.lblPic2);
             this.groupBox3.Controls.Add(this.cmbInitialSprite);
             this.groupBox3.Controls.Add(this.lblPic);
+            this.groupBox3.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox3.Location = new System.Drawing.Point(229, 0);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(476, 437);
@@ -291,7 +317,10 @@ namespace Intersect_Editor.Classes
             // 
             this.grpEndTileset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.grpEndTileset.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpEndTileset.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpEndTileset.Controls.Add(this.picEndResource);
+            this.grpEndTileset.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEndTileset.Location = new System.Drawing.Point(248, 62);
             this.grpEndTileset.Name = "grpEndTileset";
             this.grpEndTileset.Size = new System.Drawing.Size(195, 341);
@@ -310,7 +339,10 @@ namespace Intersect_Editor.Classes
             // 
             this.grpInitialTileset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.grpInitialTileset.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpInitialTileset.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpInitialTileset.Controls.Add(this.picInitialResource);
+            this.grpInitialTileset.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpInitialTileset.Location = new System.Drawing.Point(13, 62);
             this.grpInitialTileset.Name = "grpInitialTileset";
             this.grpInitialTileset.Size = new System.Drawing.Size(195, 341);
@@ -375,7 +407,12 @@ namespace Intersect_Editor.Classes
             // 
             // cmbEndSprite
             // 
+            this.cmbEndSprite.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbEndSprite.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbEndSprite.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbEndSprite.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbEndSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbEndSprite.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbEndSprite.FormattingEnabled = true;
             this.cmbEndSprite.Items.AddRange(new object[] {
             "None"});
@@ -396,7 +433,12 @@ namespace Intersect_Editor.Classes
             // 
             // cmbInitialSprite
             // 
+            this.cmbInitialSprite.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbInitialSprite.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbInitialSprite.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbInitialSprite.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbInitialSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbInitialSprite.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbInitialSprite.FormattingEnabled = true;
             this.cmbInitialSprite.Items.AddRange(new object[] {
             "None"});
@@ -417,7 +459,8 @@ namespace Intersect_Editor.Classes
             // 
             // groupBox4
             // 
-            this.groupBox4.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.groupBox4.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.groupBox4.Controls.Add(this.txtDropAmount);
             this.groupBox4.Controls.Add(this.lblDropAmount);
             this.groupBox4.Controls.Add(this.scrlDropChance);
@@ -426,6 +469,7 @@ namespace Intersect_Editor.Classes
             this.groupBox4.Controls.Add(this.lblDropItem);
             this.groupBox4.Controls.Add(this.scrlDropIndex);
             this.groupBox4.Controls.Add(this.lblDropIndex);
+            this.groupBox4.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox4.Location = new System.Drawing.Point(3, 270);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(220, 167);
@@ -435,6 +479,9 @@ namespace Intersect_Editor.Classes
             // 
             // txtDropAmount
             // 
+            this.txtDropAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtDropAmount.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtDropAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtDropAmount.Location = new System.Drawing.Point(9, 99);
             this.txtDropAmount.Name = "txtDropAmount";
             this.txtDropAmount.Size = new System.Drawing.Size(197, 20);
@@ -531,6 +578,7 @@ namespace Intersect_Editor.Classes
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Location = new System.Drawing.Point(736, 482);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(190, 27);
             this.btnCancel.TabIndex = 44;
             this.btnCancel.Text = "Cancel";
@@ -540,6 +588,7 @@ namespace Intersect_Editor.Classes
             // 
             this.btnSave.Location = new System.Drawing.Point(540, 482);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(190, 27);
             this.btnSave.TabIndex = 41;
             this.btnSave.Text = "Save";
@@ -547,6 +596,9 @@ namespace Intersect_Editor.Classes
             // 
             // toolStrip
             // 
+            this.toolStrip.AutoSize = false;
+            this.toolStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.toolStrip.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripItemNew,
             this.toolStripSeparator1,
@@ -558,6 +610,7 @@ namespace Intersect_Editor.Classes
             this.toolStripItemUndo});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
+            this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
             this.toolStrip.Size = new System.Drawing.Size(936, 25);
             this.toolStrip.TabIndex = 47;
             this.toolStrip.Text = "toolStrip1";
@@ -565,6 +618,7 @@ namespace Intersect_Editor.Classes
             // toolStripItemNew
             // 
             this.toolStripItemNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripItemNew.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolStripItemNew.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemNew.Image")));
             this.toolStripItemNew.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripItemNew.Name = "toolStripItemNew";
@@ -574,6 +628,8 @@ namespace Intersect_Editor.Classes
             // 
             // toolStripSeparator1
             // 
+            this.toolStripSeparator1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.toolStripSeparator1.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
@@ -581,6 +637,7 @@ namespace Intersect_Editor.Classes
             // 
             this.toolStripItemDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripItemDelete.Enabled = false;
+            this.toolStripItemDelete.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolStripItemDelete.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemDelete.Image")));
             this.toolStripItemDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripItemDelete.Name = "toolStripItemDelete";
@@ -590,6 +647,8 @@ namespace Intersect_Editor.Classes
             // 
             // toolStripSeparator2
             // 
+            this.toolStripSeparator2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.toolStripSeparator2.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
@@ -597,6 +656,7 @@ namespace Intersect_Editor.Classes
             // 
             this.toolStripItemCopy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripItemCopy.Enabled = false;
+            this.toolStripItemCopy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolStripItemCopy.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemCopy.Image")));
             this.toolStripItemCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripItemCopy.Name = "toolStripItemCopy";
@@ -608,6 +668,7 @@ namespace Intersect_Editor.Classes
             // 
             this.toolStripItemPaste.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripItemPaste.Enabled = false;
+            this.toolStripItemPaste.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolStripItemPaste.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemPaste.Image")));
             this.toolStripItemPaste.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripItemPaste.Name = "toolStripItemPaste";
@@ -617,6 +678,8 @@ namespace Intersect_Editor.Classes
             // 
             // toolStripSeparator3
             // 
+            this.toolStripSeparator3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.toolStripSeparator3.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
@@ -624,6 +687,7 @@ namespace Intersect_Editor.Classes
             // 
             this.toolStripItemUndo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripItemUndo.Enabled = false;
+            this.toolStripItemUndo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolStripItemUndo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemUndo.Image")));
             this.toolStripItemUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripItemUndo.Name = "toolStripItemUndo";
@@ -636,6 +700,7 @@ namespace Intersect_Editor.Classes
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(936, 514);
             this.ControlBox = false;
             this.Controls.Add(this.toolStrip);
@@ -665,7 +730,6 @@ namespace Intersect_Editor.Classes
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -714,7 +778,7 @@ namespace Intersect_Editor.Classes
         private System.Windows.Forms.Panel pnlContainer;
         private DarkButton btnSave;
         private DarkButton btnCancel;
-        private System.Windows.Forms.ToolStrip toolStrip;
+        private DarkToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton toolStripItemNew;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton toolStripItemDelete;
