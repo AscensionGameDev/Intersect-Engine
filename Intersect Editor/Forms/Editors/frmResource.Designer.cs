@@ -50,14 +50,8 @@ namespace Intersect_Editor.Classes
             this.label1 = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.groupBox3 = new DarkUI.Controls.DarkGroupBox();
-            this.grpEndTileset = new DarkUI.Controls.DarkGroupBox();
             this.picEndResource = new System.Windows.Forms.PictureBox();
-            this.grpInitialTileset = new DarkUI.Controls.DarkGroupBox();
             this.picInitialResource = new System.Windows.Forms.PictureBox();
-            this.hScrollEndTileset = new System.Windows.Forms.HScrollBar();
-            this.vScrollEndTileset = new System.Windows.Forms.VScrollBar();
-            this.hScrollStartTileset = new System.Windows.Forms.HScrollBar();
-            this.vScrollStartTileset = new System.Windows.Forms.VScrollBar();
             this.cmbEndSprite = new DarkUI.Controls.DarkComboBox();
             this.lblPic2 = new System.Windows.Forms.Label();
             this.cmbInitialSprite = new DarkUI.Controls.DarkComboBox();
@@ -84,16 +78,18 @@ namespace Intersect_Editor.Classes
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.initalGraphicContainer = new System.Windows.Forms.Panel();
+            this.exhaustedGraphicContainer = new System.Windows.Forms.Panel();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.grpEndTileset.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picEndResource)).BeginInit();
-            this.grpInitialTileset.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picInitialResource)).BeginInit();
             this.groupBox4.SuspendLayout();
             this.pnlContainer.SuspendLayout();
             this.toolStrip.SuspendLayout();
+            this.initalGraphicContainer.SuspendLayout();
+            this.exhaustedGraphicContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -235,6 +231,7 @@ namespace Intersect_Editor.Classes
             this.cmbToolType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbToolType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbToolType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbToolType.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbToolType.FormattingEnabled = true;
             this.cmbToolType.Location = new System.Drawing.Point(75, 46);
             this.cmbToolType.Name = "cmbToolType";
@@ -295,12 +292,8 @@ namespace Intersect_Editor.Classes
             // 
             this.groupBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.groupBox3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox3.Controls.Add(this.grpEndTileset);
-            this.groupBox3.Controls.Add(this.grpInitialTileset);
-            this.groupBox3.Controls.Add(this.hScrollEndTileset);
-            this.groupBox3.Controls.Add(this.vScrollEndTileset);
-            this.groupBox3.Controls.Add(this.hScrollStartTileset);
-            this.groupBox3.Controls.Add(this.vScrollStartTileset);
+            this.groupBox3.Controls.Add(this.exhaustedGraphicContainer);
+            this.groupBox3.Controls.Add(this.initalGraphicContainer);
             this.groupBox3.Controls.Add(this.cmbEndSprite);
             this.groupBox3.Controls.Add(this.lblPic2);
             this.groupBox3.Controls.Add(this.cmbInitialSprite);
@@ -313,97 +306,21 @@ namespace Intersect_Editor.Classes
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Graphics";
             // 
-            // grpEndTileset
-            // 
-            this.grpEndTileset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.grpEndTileset.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpEndTileset.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpEndTileset.Controls.Add(this.picEndResource);
-            this.grpEndTileset.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpEndTileset.Location = new System.Drawing.Point(248, 62);
-            this.grpEndTileset.Name = "grpEndTileset";
-            this.grpEndTileset.Size = new System.Drawing.Size(195, 341);
-            this.grpEndTileset.TabIndex = 23;
-            this.grpEndTileset.TabStop = false;
-            // 
             // picEndResource
             // 
             this.picEndResource.Location = new System.Drawing.Point(0, 0);
             this.picEndResource.Name = "picEndResource";
-            this.picEndResource.Size = new System.Drawing.Size(195, 341);
+            this.picEndResource.Size = new System.Drawing.Size(182, 290);
             this.picEndResource.TabIndex = 2;
             this.picEndResource.TabStop = false;
-            // 
-            // grpInitialTileset
-            // 
-            this.grpInitialTileset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.grpInitialTileset.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpInitialTileset.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpInitialTileset.Controls.Add(this.picInitialResource);
-            this.grpInitialTileset.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpInitialTileset.Location = new System.Drawing.Point(13, 62);
-            this.grpInitialTileset.Name = "grpInitialTileset";
-            this.grpInitialTileset.Size = new System.Drawing.Size(195, 341);
-            this.grpInitialTileset.TabIndex = 22;
-            this.grpInitialTileset.TabStop = false;
             // 
             // picInitialResource
             // 
             this.picInitialResource.Location = new System.Drawing.Point(0, 0);
             this.picInitialResource.Name = "picInitialResource";
-            this.picInitialResource.Size = new System.Drawing.Size(195, 341);
+            this.picInitialResource.Size = new System.Drawing.Size(180, 290);
             this.picInitialResource.TabIndex = 2;
             this.picInitialResource.TabStop = false;
-            // 
-            // hScrollEndTileset
-            // 
-            this.hScrollEndTileset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.hScrollEndTileset.LargeChange = 1;
-            this.hScrollEndTileset.Location = new System.Drawing.Point(248, 406);
-            this.hScrollEndTileset.MaximumSize = new System.Drawing.Size(960, 17);
-            this.hScrollEndTileset.Name = "hScrollEndTileset";
-            this.hScrollEndTileset.Size = new System.Drawing.Size(199, 17);
-            this.hScrollEndTileset.TabIndex = 21;
-            this.hScrollEndTileset.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollEndTileset_Scroll);
-            // 
-            // vScrollEndTileset
-            // 
-            this.vScrollEndTileset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.vScrollEndTileset.LargeChange = 1;
-            this.vScrollEndTileset.Location = new System.Drawing.Point(451, 59);
-            this.vScrollEndTileset.MaximumSize = new System.Drawing.Size(17, 960);
-            this.vScrollEndTileset.Name = "vScrollEndTileset";
-            this.vScrollEndTileset.Size = new System.Drawing.Size(17, 344);
-            this.vScrollEndTileset.TabIndex = 20;
-            this.vScrollEndTileset.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollEndTileset_Scroll);
-            // 
-            // hScrollStartTileset
-            // 
-            this.hScrollStartTileset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.hScrollStartTileset.LargeChange = 1;
-            this.hScrollStartTileset.Location = new System.Drawing.Point(13, 406);
-            this.hScrollStartTileset.MaximumSize = new System.Drawing.Size(960, 17);
-            this.hScrollStartTileset.Name = "hScrollStartTileset";
-            this.hScrollStartTileset.Size = new System.Drawing.Size(199, 17);
-            this.hScrollStartTileset.TabIndex = 19;
-            this.hScrollStartTileset.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollStartTileset_Scroll);
-            // 
-            // vScrollStartTileset
-            // 
-            this.vScrollStartTileset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.vScrollStartTileset.LargeChange = 1;
-            this.vScrollStartTileset.Location = new System.Drawing.Point(216, 59);
-            this.vScrollStartTileset.MaximumSize = new System.Drawing.Size(17, 960);
-            this.vScrollStartTileset.Name = "vScrollStartTileset";
-            this.vScrollStartTileset.Size = new System.Drawing.Size(17, 344);
-            this.vScrollStartTileset.TabIndex = 18;
-            this.vScrollStartTileset.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollStartTileset_Scroll);
             // 
             // cmbEndSprite
             // 
@@ -413,6 +330,7 @@ namespace Intersect_Editor.Classes
             this.cmbEndSprite.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbEndSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbEndSprite.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbEndSprite.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbEndSprite.FormattingEnabled = true;
             this.cmbEndSprite.Items.AddRange(new object[] {
             "None"});
@@ -439,6 +357,7 @@ namespace Intersect_Editor.Classes
             this.cmbInitialSprite.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbInitialSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbInitialSprite.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbInitialSprite.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbInitialSprite.FormattingEnabled = true;
             this.cmbInitialSprite.Items.AddRange(new object[] {
             "None"});
@@ -695,6 +614,24 @@ namespace Intersect_Editor.Classes
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
+            // initalGraphicContainer
+            // 
+            this.initalGraphicContainer.AutoScroll = true;
+            this.initalGraphicContainer.Controls.Add(this.picInitialResource);
+            this.initalGraphicContainer.Location = new System.Drawing.Point(13, 62);
+            this.initalGraphicContainer.Name = "initalGraphicContainer";
+            this.initalGraphicContainer.Size = new System.Drawing.Size(219, 341);
+            this.initalGraphicContainer.TabIndex = 24;
+            // 
+            // exhaustedGraphicContainer
+            // 
+            this.exhaustedGraphicContainer.AutoScroll = true;
+            this.exhaustedGraphicContainer.Controls.Add(this.picEndResource);
+            this.exhaustedGraphicContainer.Location = new System.Drawing.Point(248, 62);
+            this.exhaustedGraphicContainer.Name = "exhaustedGraphicContainer";
+            this.exhaustedGraphicContainer.Size = new System.Drawing.Size(219, 341);
+            this.exhaustedGraphicContainer.TabIndex = 25;
+            // 
             // frmResource
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -720,15 +657,15 @@ namespace Intersect_Editor.Classes
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            this.grpEndTileset.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picEndResource)).EndInit();
-            this.grpInitialTileset.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picInitialResource)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.pnlContainer.ResumeLayout(false);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
+            this.initalGraphicContainer.ResumeLayout(false);
+            this.exhaustedGraphicContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -762,13 +699,7 @@ namespace Intersect_Editor.Classes
         private System.Windows.Forms.Label lblPic;
         private System.Windows.Forms.HScrollBar scrlSpawnDuration;
         private System.Windows.Forms.Label lblSpawnDuration;
-        private System.Windows.Forms.HScrollBar hScrollEndTileset;
-        private System.Windows.Forms.VScrollBar vScrollEndTileset;
-        private System.Windows.Forms.HScrollBar hScrollStartTileset;
-        private System.Windows.Forms.VScrollBar vScrollStartTileset;
-        private DarkGroupBox grpEndTileset;
         public System.Windows.Forms.PictureBox picEndResource;
-        private DarkGroupBox grpInitialTileset;
         public System.Windows.Forms.PictureBox picInitialResource;
         private DarkTextBox txtMaxHp;
         private System.Windows.Forms.Label lblMaxHp;
@@ -787,5 +718,7 @@ namespace Intersect_Editor.Classes
         public System.Windows.Forms.ToolStripButton toolStripItemPaste;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         public System.Windows.Forms.ToolStripButton toolStripItemUndo;
+        private System.Windows.Forms.Panel exhaustedGraphicContainer;
+        private System.Windows.Forms.Panel initalGraphicContainer;
     }
 }

@@ -124,8 +124,6 @@ namespace Intersect_Editor.Classes
             cmbToolType.Items.Clear();
             cmbToolType.Items.Add("None");
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
-            UpdateInitialScrollBars();
-            UpdateFinalScrollBars();
         }
 
         private void UpdateEditor()
@@ -252,7 +250,6 @@ namespace Intersect_Editor.Classes
                     picInitialResource.Width = _initialTileset.Width;
                     picInitialResource.Height = _initialTileset.Height;
                     _initialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
-                    UpdateInitialScrollBars();
                 }
                 else
                 {
@@ -278,7 +275,6 @@ namespace Intersect_Editor.Classes
                     picEndResource.Width = _endTileset.Width;
                     picEndResource.Height = _endTileset.Height;
                     _endBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
-                    UpdateFinalScrollBars();
                 }
                 else
                 {
@@ -320,88 +316,6 @@ namespace Intersect_Editor.Classes
             gfx = picEndResource.CreateGraphics();
             gfx.DrawImageUnscaled(_endBitmap, new System.Drawing.Point(0, 0));
             gfx.Dispose();
-        }
-
-        private void UpdateInitialScrollBars()
-        {
-            vScrollStartTileset.Minimum = 0;
-            vScrollStartTileset.Maximum = 1;
-            vScrollStartTileset.Value = 0;
-            vScrollStartTileset.Minimum = 0;
-            vScrollStartTileset.Maximum = 1;
-            vScrollStartTileset.Value = 0;
-            picInitialResource.Left = 0;
-            picInitialResource.Top = 0;
-
-            if (picInitialResource.Width > grpInitialTileset.Width)
-            {
-                hScrollStartTileset.Enabled = true;
-                hScrollStartTileset.Maximum = picInitialResource.Width - grpInitialTileset.Width;
-            }
-            else
-            {
-                hScrollStartTileset.Enabled = false;
-            }
-            if (picInitialResource.Height > grpInitialTileset.Height)
-            {
-                vScrollStartTileset.Enabled = true;
-                vScrollStartTileset.Maximum = picInitialResource.Height - grpInitialTileset.Height;
-            }
-            else
-            {
-                vScrollStartTileset.Enabled = false;
-            }
-        }
-
-        private void UpdateFinalScrollBars()
-        {
-            vScrollEndTileset.Minimum = 0;
-            vScrollEndTileset.Maximum = 1;
-            vScrollEndTileset.Value = 0;
-            vScrollEndTileset.Minimum = 0;
-            vScrollEndTileset.Maximum = 1;
-            vScrollEndTileset.Value = 0;
-            picEndResource.Left = 0;
-            picEndResource.Top = 0;
-
-            if (picEndResource.Width > grpEndTileset.Width)
-            {
-                hScrollEndTileset.Enabled = true;
-                hScrollEndTileset.Maximum = picEndResource.Width - grpEndTileset.Width;
-            }
-            else
-            {
-                hScrollEndTileset.Enabled = false;
-            }
-            if (picEndResource.Height > grpEndTileset.Height)
-            {
-                vScrollEndTileset.Enabled = true;
-                vScrollEndTileset.Maximum = picEndResource.Height - grpEndTileset.Height;
-            }
-            else
-            {
-                vScrollEndTileset.Enabled = false;
-            }
-        }
-
-        private void hScrollStartTileset_Scroll(object sender, ScrollEventArgs e)
-        {
-            picInitialResource.Left = -hScrollStartTileset.Value;
-        }
-
-        private void hScrollEndTileset_Scroll(object sender, ScrollEventArgs e)
-        {
-            picEndResource.Left = -hScrollEndTileset.Value;
-        }
-
-        private void vScrollStartTileset_Scroll(object sender, ScrollEventArgs e)
-        {
-            picInitialResource.Top = -vScrollStartTileset.Value;
-        }
-
-        private void vScrollEndTileset_Scroll(object sender, ScrollEventArgs e)
-        {
-            picEndResource.Top = -vScrollEndTileset.Value;
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
