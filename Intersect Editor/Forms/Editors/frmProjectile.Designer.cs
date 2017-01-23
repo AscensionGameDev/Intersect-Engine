@@ -37,30 +37,30 @@ namespace Intersect_Editor.Classes
             this.picSpawns = new System.Windows.Forms.PictureBox();
             this.groupBox3 = new DarkUI.Controls.DarkGroupBox();
             this.lblKnockback = new System.Windows.Forms.Label();
-            this.scrlKnockback = new System.Windows.Forms.HScrollBar();
+            this.scrlKnockback = new DarkScrollBar();
             this.lblAmount = new System.Windows.Forms.Label();
-            this.scrlAmount = new System.Windows.Forms.HScrollBar();
+            this.scrlAmount = new DarkScrollBar();
             this.chkGrapple = new DarkUI.Controls.DarkCheckBox();
             this.lblSpell = new System.Windows.Forms.Label();
-            this.scrlSpell = new System.Windows.Forms.HScrollBar();
+            this.scrlSpell = new DarkScrollBar();
             this.chkHoming = new DarkUI.Controls.DarkCheckBox();
             this.lblName = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.lblRange = new System.Windows.Forms.Label();
-            this.scrlRange = new System.Windows.Forms.HScrollBar();
+            this.scrlRange = new DarkScrollBar();
             this.lblSpawn = new System.Windows.Forms.Label();
             this.lblSpeed = new System.Windows.Forms.Label();
-            this.scrlSpawn = new System.Windows.Forms.HScrollBar();
-            this.scrlSpeed = new System.Windows.Forms.HScrollBar();
+            this.scrlSpawn = new DarkScrollBar();
+            this.scrlSpeed = new DarkScrollBar();
             this.groupBox5 = new DarkUI.Controls.DarkGroupBox();
             this.btnRemove = new DarkUI.Controls.DarkButton();
             this.btnAdd = new DarkUI.Controls.DarkButton();
             this.chkRotation = new DarkUI.Controls.DarkCheckBox();
             this.lblAnimation = new System.Windows.Forms.Label();
-            this.scrlAnimation = new System.Windows.Forms.HScrollBar();
+            this.scrlAnimation = new DarkScrollBar();
             this.lstAnimations = new System.Windows.Forms.ListBox();
             this.lblSpawnRange = new System.Windows.Forms.Label();
-            this.scrlSpawnRange = new System.Windows.Forms.HScrollBar();
+            this.scrlSpawnRange = new DarkScrollBar();
             this.groupBox4 = new DarkUI.Controls.DarkGroupBox();
             this.chkIgnoreInactiveResources = new DarkUI.Controls.DarkCheckBox();
             this.chkIgnoreZDimensionBlocks = new DarkUI.Controls.DarkCheckBox();
@@ -175,12 +175,13 @@ namespace Intersect_Editor.Classes
             // 
             // scrlKnockback
             // 
-            this.scrlKnockback.LargeChange = 1;
+            
             this.scrlKnockback.Location = new System.Drawing.Point(15, 209);
             this.scrlKnockback.Name = "scrlKnockback";
             this.scrlKnockback.Size = new System.Drawing.Size(160, 17);
             this.scrlKnockback.TabIndex = 39;
-            this.scrlKnockback.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlKnockback_Scroll);
+            this.scrlKnockback.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlKnockback_Scroll);
+            this.scrlKnockback.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblAmount
             // 
@@ -199,7 +200,8 @@ namespace Intersect_Editor.Classes
             this.scrlAmount.Size = new System.Drawing.Size(160, 17);
             this.scrlAmount.TabIndex = 37;
             this.scrlAmount.Value = 1;
-            this.scrlAmount.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlAmount_Scroll);
+            this.scrlAmount.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlAmount_Scroll);
+            this.scrlAmount.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // chkGrapple
             // 
@@ -222,14 +224,15 @@ namespace Intersect_Editor.Classes
             // 
             // scrlSpell
             // 
-            this.scrlSpell.LargeChange = 1;
+            
             this.scrlSpell.Location = new System.Drawing.Point(16, 180);
             this.scrlSpell.Minimum = -1;
             this.scrlSpell.Name = "scrlSpell";
             this.scrlSpell.Size = new System.Drawing.Size(160, 17);
             this.scrlSpell.TabIndex = 23;
             this.scrlSpell.Value = -1;
-            this.scrlSpell.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpell_Scroll);
+            this.scrlSpell.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlSpell_Scroll);
+            this.scrlSpell.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // chkHoming
             // 
@@ -273,14 +276,15 @@ namespace Intersect_Editor.Classes
             // 
             // scrlRange
             // 
-            this.scrlRange.LargeChange = 1;
+            
             this.scrlRange.Location = new System.Drawing.Point(15, 150);
             this.scrlRange.Minimum = 1;
             this.scrlRange.Name = "scrlRange";
             this.scrlRange.Size = new System.Drawing.Size(160, 17);
             this.scrlRange.TabIndex = 6;
             this.scrlRange.Value = 1;
-            this.scrlRange.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlRange_Scroll);
+            this.scrlRange.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlRange_Scroll);
+            this.scrlRange.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblSpawn
             // 
@@ -309,7 +313,8 @@ namespace Intersect_Editor.Classes
             this.scrlSpawn.Size = new System.Drawing.Size(160, 17);
             this.scrlSpawn.TabIndex = 1;
             this.scrlSpawn.Value = 1;
-            this.scrlSpawn.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpawn_Scroll);
+            this.scrlSpawn.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlSpawn_Scroll);
+            this.scrlSpawn.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // scrlSpeed
             // 
@@ -320,7 +325,8 @@ namespace Intersect_Editor.Classes
             this.scrlSpeed.Size = new System.Drawing.Size(160, 17);
             this.scrlSpeed.TabIndex = 0;
             this.scrlSpeed.Value = 1;
-            this.scrlSpeed.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpeed_Scroll);
+            this.scrlSpeed.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlSpeed_Scroll);
+            this.scrlSpeed.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // groupBox5
             // 
@@ -383,14 +389,15 @@ namespace Intersect_Editor.Classes
             // 
             // scrlAnimation
             // 
-            this.scrlAnimation.LargeChange = 1;
+            
             this.scrlAnimation.Location = new System.Drawing.Point(12, 173);
             this.scrlAnimation.Maximum = 5000;
             this.scrlAnimation.Minimum = -1;
             this.scrlAnimation.Name = "scrlAnimation";
             this.scrlAnimation.Size = new System.Drawing.Size(251, 17);
             this.scrlAnimation.TabIndex = 30;
-            this.scrlAnimation.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlAnimation_Scroll);
+            this.scrlAnimation.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlAnimation_Scroll);
+            this.scrlAnimation.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lstAnimations
             // 
@@ -417,14 +424,15 @@ namespace Intersect_Editor.Classes
             // 
             // scrlSpawnRange
             // 
-            this.scrlSpawnRange.LargeChange = 1;
+            
             this.scrlSpawnRange.Location = new System.Drawing.Point(12, 219);
             this.scrlSpawnRange.Minimum = 1;
             this.scrlSpawnRange.Name = "scrlSpawnRange";
             this.scrlSpawnRange.Size = new System.Drawing.Size(251, 17);
             this.scrlSpawnRange.TabIndex = 27;
             this.scrlSpawnRange.Value = 1;
-            this.scrlSpawnRange.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpawnRange_Scroll);
+            this.scrlSpawnRange.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlSpawnRange_Scroll);
+            this.scrlSpawnRange.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // groupBox4
             // 
@@ -659,24 +667,24 @@ namespace Intersect_Editor.Classes
         public System.Windows.Forms.PictureBox picSpawns;
         private DarkGroupBox groupBox3;
         private System.Windows.Forms.Label lblRange;
-        private System.Windows.Forms.HScrollBar scrlRange;
+        private DarkScrollBar scrlRange;
         private System.Windows.Forms.Label lblSpawn;
         private System.Windows.Forms.Label lblSpeed;
-        private System.Windows.Forms.HScrollBar scrlSpawn;
-        private System.Windows.Forms.HScrollBar scrlSpeed;
+        private DarkScrollBar scrlSpawn;
+        private DarkScrollBar scrlSpeed;
         private System.Windows.Forms.Label lblName;
         private DarkTextBox txtName;
         private System.Windows.Forms.Label lblSpell;
-        private System.Windows.Forms.HScrollBar scrlSpell;
+        private DarkScrollBar scrlSpell;
         private DarkCheckBox chkHoming;
         private DarkCheckBox chkGrapple;
         private DarkGroupBox groupBox5;
         private DarkCheckBox chkRotation;
         private System.Windows.Forms.Label lblAnimation;
-        private System.Windows.Forms.HScrollBar scrlAnimation;
+        private DarkScrollBar scrlAnimation;
         private System.Windows.Forms.ListBox lstAnimations;
         private System.Windows.Forms.Label lblSpawnRange;
-        private System.Windows.Forms.HScrollBar scrlSpawnRange;
+        private DarkScrollBar scrlSpawnRange;
         private DarkGroupBox groupBox4;
         private DarkCheckBox chkIgnoreInactiveResources;
         private DarkCheckBox chkIgnoreZDimensionBlocks;
@@ -685,12 +693,12 @@ namespace Intersect_Editor.Classes
         private DarkButton btnRemove;
         private DarkButton btnAdd;
         private System.Windows.Forms.Label lblAmount;
-        private System.Windows.Forms.HScrollBar scrlAmount;
+        private DarkScrollBar scrlAmount;
         private System.Windows.Forms.Panel pnlContainer;
         private DarkButton btnSave;
         private DarkButton btnCancel;
         private System.Windows.Forms.Label lblKnockback;
-        private System.Windows.Forms.HScrollBar scrlKnockback;
+        private DarkScrollBar scrlKnockback;
         private DarkToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton toolStripItemNew;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;

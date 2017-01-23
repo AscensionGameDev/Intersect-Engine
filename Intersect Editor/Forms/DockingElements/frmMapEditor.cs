@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Classes.Maps;
@@ -1440,7 +1441,7 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void pnlMapContainer_Scroll(object sender, ScrollEventArgs e)
+        private void pnlMapContainer_Scroll(object sender, ScrollValueEventArgs e)
         {
             EditorLoop.RunFrame();
         }

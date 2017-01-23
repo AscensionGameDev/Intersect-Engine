@@ -21,6 +21,7 @@
 */
 using System;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using Intersect_Editor.Classes;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
@@ -117,12 +118,12 @@ namespace Intersect_Editor.Forms.Editors.Quest
             UpdateFormElements();
         }
 
-        private void scrlItemQuantity_Scroll(object sender, ScrollEventArgs e)
+        private void scrlItemQuantity_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblItemQuantity.Text = "Amount: " + scrlItemQuantity.Value;
         }
 
-        private void scrlNpcQuantity_Scroll(object sender, ScrollEventArgs e)
+        private void scrlNpcQuantity_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblNpcQuantity.Text = "Amount: " + scrlNpcQuantity.Value;
         }

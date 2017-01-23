@@ -204,6 +204,7 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbIntervals.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbIntervals.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbIntervals.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbIntervals.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbIntervals.FormattingEnabled = true;
             this.cmbIntervals.Items.AddRange(new object[] {
             "24 hours",

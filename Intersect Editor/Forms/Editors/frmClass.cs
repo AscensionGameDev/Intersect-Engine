@@ -29,6 +29,7 @@ using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps.MapList;
 using System.IO;
+using DarkUI.Controls;
 
 namespace Intersect_Editor.Forms
 {
@@ -106,48 +107,48 @@ namespace Intersect_Editor.Forms
             _editorItem.BaseVital[(int)Vitals.Mana] = x;
         }
 
-        private void scrlStr_Scroll(object sender, ScrollEventArgs e)
+        private void scrlStr_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblStr.Text = @"Strength: " + scrlStr.Value;
             _editorItem.BaseStat[(int)Stats.Attack] = scrlStr.Value;
         }
 
-        private void scrlMag_Scroll(object sender, ScrollEventArgs e)
+        private void scrlMag_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblMag.Text = @"Magic: " + scrlMag.Value;
             _editorItem.BaseStat[(int)Stats.AbilityPower] = scrlMag.Value;
         }
 
-        private void scrlDef_Scroll(object sender, ScrollEventArgs e)
+        private void scrlDef_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblDef.Text = @"Armor: " + scrlDef.Value;
             _editorItem.BaseStat[(int)Stats.Defense] = scrlDef.Value;
         }
 
-        private void scrlMR_Scroll(object sender, ScrollEventArgs e)
+        private void scrlMR_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblMR.Text = @"Magic Resist: " + scrlMR.Value;
             _editorItem.BaseStat[(int)Stats.MagicResist] = scrlMR.Value;
         }
 
-        private void scrlSpd_Scroll(object sender, ScrollEventArgs e)
+        private void scrlSpd_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
             _editorItem.BaseStat[(int)Stats.Speed] = scrlSpd.Value;
         }
 
-        private void scrlPoints_Scroll(object sender, ScrollEventArgs e)
+        private void scrlPoints_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblPoints.Text = @"Points: " + scrlPoints.Value;
             _editorItem.BasePoints = scrlPoints.Value;
         }
 
-        private void scrlDropIndex_Scroll(object sender, ScrollEventArgs e)
+        private void scrlDropIndex_Scroll(object sender, ScrollValueEventArgs e)
         {
             UpdateDropValues();
         }
 
-        private void scrlDropItem_Scroll(object sender, ScrollEventArgs e)
+        private void scrlDropItem_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (scrlDropItem.Value > -1)
             {
@@ -204,7 +205,7 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void scrlSpell_Scroll(object sender, ScrollEventArgs e)
+        private void scrlSpell_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (scrlSpell.Value > -1)
             {
@@ -234,7 +235,7 @@ namespace Intersect_Editor.Forms
             if (keepIndex) lstSprites.SelectedIndex = n;
         }
 
-        private void scrlLevel_Scroll(object sender, ScrollEventArgs e)
+        private void scrlLevel_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (lstSpells.SelectedIndex >= 0)
             {
@@ -650,13 +651,13 @@ namespace Intersect_Editor.Forms
             _editorItem.SpawnMap = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum;
         }
 
-        private void scrlX_Scroll(object sender, ScrollEventArgs e)
+        private void scrlX_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblX.Text = @"X: " + scrlX.Value;
             _editorItem.SpawnX = scrlX.Value;
         }
 
-        private void scrlY_Scroll(object sender, ScrollEventArgs e)
+        private void scrlY_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblY.Text = @"Y: " + scrlY.Value;
             _editorItem.SpawnY = scrlY.Value;
@@ -700,19 +701,19 @@ namespace Intersect_Editor.Forms
             _editorItem.Locked = Convert.ToInt32(chkLocked.Checked);
         }
 
-        private void scrlHpRegen_Scroll(object sender, ScrollEventArgs e)
+        private void scrlHpRegen_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.VitalRegen[(int) Vitals.Health] = scrlHpRegen.Value;
             lblHpRegen.Text = "HP Regen: " + _editorItem.VitalRegen[(int) Vitals.Health] + "%";
         }
 
-        private void scrlMpRegen_Scroll(object sender, ScrollEventArgs e)
+        private void scrlMpRegen_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.VitalRegen[(int)Vitals.Mana] = scrlMpRegen.Value;
             lblManaRegen.Text = "Mana Regen: " + _editorItem.VitalRegen[(int)Vitals.Mana] + "%";
         }
 
-        private void scrlExpIncrease_Scroll(object sender, ScrollEventArgs e)
+        private void scrlExpIncrease_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.ExpIncrease = scrlExpIncrease.Value;
             lblExpIncrease.Text = "Exp Increase (Per Lvl): " + _editorItem.ExpIncrease + "%";
@@ -781,49 +782,49 @@ namespace Intersect_Editor.Forms
             UpdateIncreases();
         }
 
-        private void scrlHpIncrease_Scroll(object sender, ScrollEventArgs e)
+        private void scrlHpIncrease_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.VitalIncrease[(int) Vitals.Health] = scrlHpIncrease.Value;
             UpdateIncreases();
         }
 
-        private void scrlMpIncrease_Scroll(object sender, ScrollEventArgs e)
+        private void scrlMpIncrease_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.VitalIncrease[(int)Vitals.Mana] = scrlMpIncrease.Value;
             UpdateIncreases();
         }
 
-        private void scrlStrengthIncrease_Scroll(object sender, ScrollEventArgs e)
+        private void scrlStrengthIncrease_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.StatIncrease[(int)Stats.Attack] = scrlStrengthIncrease.Value;
             UpdateIncreases();
         }
 
-        private void scrlMagicIncrease_Scroll(object sender, ScrollEventArgs e)
+        private void scrlMagicIncrease_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.StatIncrease[(int)Stats.AbilityPower] = scrlMagicIncrease.Value;
             UpdateIncreases();
         }
 
-        private void scrlArmorIncrease_Scroll(object sender, ScrollEventArgs e)
+        private void scrlArmorIncrease_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.StatIncrease[(int)Stats.Defense] = scrlArmorIncrease.Value;
             UpdateIncreases();
         }
 
-        private void scrlSpeedIncrease_Scroll(object sender, ScrollEventArgs e)
+        private void scrlSpeedIncrease_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.StatIncrease[(int)Stats.Speed] = scrlSpeedIncrease.Value;
             UpdateIncreases();
         }
 
-        private void scrlMagicResistIncrease_Scroll(object sender, ScrollEventArgs e)
+        private void scrlMagicResistIncrease_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.StatIncrease[(int)Stats.MagicResist] = scrlMagicResistIncrease.Value;
             UpdateIncreases();
         }
 
-        private void scrlPointsIncrease_Scroll(object sender, ScrollEventArgs e)
+        private void scrlPointsIncrease_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.PointIncrease = scrlPointsIncrease.Value;
             UpdateIncreases();
@@ -928,13 +929,13 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void scrlDamage_Scroll(object sender, ScrollEventArgs e)
+        private void scrlDamage_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblDamage.Text = "Base Damage: " + scrlDamage.Value;
             _editorItem.Damage = scrlDamage.Value;
         }
 
-        private void scrlCritChance_Scroll(object sender, ScrollEventArgs e)
+        private void scrlCritChance_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblCritChance.Text = "Crit Chance: " + scrlCritChance.Value + "%";
             _editorItem.CritChance = scrlCritChance.Value;
@@ -945,7 +946,7 @@ namespace Intersect_Editor.Forms
             _editorItem.AttackAnimation = Database.GameObjectIdFromList(GameObject.Animation, cmbAttackAnimation.SelectedIndex - 1);
         }
 
-        private void scrlScaling_Scroll(object sender, ScrollEventArgs e)
+        private void scrlScaling_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblScaling.Text = "Scaling Amount: x" + ((double)scrlScaling.Value / 100f);
             _editorItem.Scaling = scrlScaling.Value;

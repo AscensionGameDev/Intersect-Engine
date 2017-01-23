@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
+using DarkUI.Controls;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 
@@ -394,25 +395,25 @@ namespace Intersect_Editor.Classes
             lstProjectiles.Items[Database.GameObjectListIndex(GameObject.Projectile,_editorItem.GetId())] = txtName.Text;
         }
 
-        private void scrlAnimation_Scroll(object sender, ScrollEventArgs e)
+        private void scrlAnimation_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.Animations[lstAnimations.SelectedIndex].Animation = Database.GameObjectIdFromList(GameObject.Animation, scrlAnimation.Value);
             updateAnimations();
         }
 
-        private void scrlSpeed_Scroll(object sender, ScrollEventArgs e)
+        private void scrlSpeed_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblSpeed.Text = "Speed: " + scrlSpeed.Value + "ms";
             _editorItem.Speed = scrlSpeed.Value;
         }
 
-        private void scrlSpawn_Scroll(object sender, ScrollEventArgs e)
+        private void scrlSpawn_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblSpawn.Text = "Spawn Delay: " + scrlSpawn.Value + "ms";
             _editorItem.Delay = scrlSpawn.Value;
         }
 
-        private void scrlRange_Scroll(object sender, ScrollEventArgs e)
+        private void scrlRange_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblRange.Text = "Range: " + scrlRange.Value;
             _editorItem.Range = scrlRange.Value;
@@ -448,7 +449,7 @@ namespace Intersect_Editor.Classes
             Render();
         }
 
-        private void scrlSpell_Scroll(object sender, ScrollEventArgs e)
+        private void scrlSpell_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (scrlSpell.Value == -1)
             {
@@ -507,7 +508,7 @@ namespace Intersect_Editor.Classes
             }
         }
 
-        private void scrlSpawnRange_Scroll(object sender, ScrollEventArgs e)
+        private void scrlSpawnRange_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.Animations[lstAnimations.SelectedIndex].SpawnRange = scrlSpawnRange.Value;
             updateAnimations();
@@ -521,14 +522,14 @@ namespace Intersect_Editor.Classes
             }
         }
 
-        private void scrlAmount_Scroll(object sender, ScrollEventArgs e)
+        private void scrlAmount_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblAmount.Text = "Quantity: " + scrlAmount.Value;
             _editorItem.Quantity = scrlAmount.Value;
             updateAnimations();
         }
 
-        private void scrlKnockback_Scroll(object sender, ScrollEventArgs e)
+        private void scrlKnockback_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblKnockback.Text = "Knockback: " + scrlKnockback.Value;
             _editorItem.Knockback = scrlKnockback.Value;

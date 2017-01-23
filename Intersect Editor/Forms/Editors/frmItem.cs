@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library;
@@ -490,7 +491,7 @@ namespace Intersect_Editor.Forms
             lblEffectPercent.Text = "Effect Amount: " + _editorItem.Data3 + "%";
         }
 
-        private void scrlEvent_Scroll(object sender, ScrollEventArgs e)
+        private void scrlEvent_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (scrlEvent.Value > -1)
             {
@@ -625,13 +626,13 @@ namespace Intersect_Editor.Forms
 
         }
 
-        private void scrlDamage_Scroll(object sender, ScrollEventArgs e)
+        private void scrlDamage_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblDamage.Text = "Base Damage: " + scrlDamage.Value;
             _editorItem.Damage = scrlDamage.Value;
         }
 
-        private void scrlCritChance_Scroll(object sender, ScrollEventArgs e)
+        private void scrlCritChance_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblCritChance.Text = "Crit Chance: " + scrlCritChance.Value + "%";
             _editorItem.CritChance = scrlCritChance.Value;
@@ -647,7 +648,7 @@ namespace Intersect_Editor.Forms
             _editorItem.ScalingStat = cmbScalingStat.SelectedIndex;
         }
 
-        private void scrlScaling_Scroll(object sender, ScrollEventArgs e)
+        private void scrlScaling_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblScaling.Text = "Scaling Amount: x" + ((double) scrlScaling.Value/100f);
             _editorItem.Scaling = scrlScaling.Value;

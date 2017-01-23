@@ -30,6 +30,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Editor.Classes.Core;
@@ -193,7 +194,7 @@ namespace Intersect_Editor.Forms.Editors
             }
         }
 
-        private void scrlItem_Scroll(object sender, ScrollEventArgs e)
+        private void scrlItem_Scroll(object sender, ScrollValueEventArgs e)
         {
             _currentCraft.Item = Database.GameObjectIdFromList(GameObject.Item, scrlItem.Value);
 
@@ -218,7 +219,7 @@ namespace Intersect_Editor.Forms.Editors
             }
         }
 
-        private void scrlSpeed_Scroll(object sender, ScrollEventArgs e)
+        private void scrlSpeed_Scroll(object sender, ScrollValueEventArgs e)
         {
             _currentCraft.Time = scrlSpeed.Value;
             lblSpeed.Text = "Time: " + scrlSpeed.Value + "ms";
@@ -230,7 +231,7 @@ namespace Intersect_Editor.Forms.Editors
 
         }
 
-        private void scrlIngredient_Scroll(object sender, ScrollEventArgs e)
+        private void scrlIngredient_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (lstIngredients.SelectedIndex > -1)
             {
@@ -254,7 +255,7 @@ namespace Intersect_Editor.Forms.Editors
             }
         }
 
-        private void scrlQuantity_Scroll(object sender, ScrollEventArgs e)
+        private void scrlQuantity_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (lstIngredients.SelectedIndex > -1)
             {

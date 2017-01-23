@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
@@ -219,33 +220,33 @@ namespace Intersect_Editor.Forms
             _editorItem.LowerAnimSprite = cmbLowerGraphic.Text;
         }
 
-        private void scrlLowerHorizontalFrames_Scroll(object sender, ScrollEventArgs e)
+        private void scrlLowerHorizontalFrames_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.LowerAnimXFrames = scrlLowerHorizontalFrames.Value;
             lblLowerHorizontalFrames.Text = "Graphic Horizontal Frames: " + scrlLowerHorizontalFrames.Value;
         }
 
-        private void scrlLowerVerticalFrames_Scroll(object sender, ScrollEventArgs e)
+        private void scrlLowerVerticalFrames_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.LowerAnimYFrames = scrlLowerVerticalFrames.Value;
             lblLowerVerticalFrames.Text = "Graphic Vertical Frames: " + scrlLowerVerticalFrames.Value;
         }
 
-        private void scrlLowerFrameCount_Scroll(object sender, ScrollEventArgs e)
+        private void scrlLowerFrameCount_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.LowerAnimFrameCount = scrlLowerFrameCount.Value;
             lblLowerFrameCount.Text = "Graphic Frame Count: " + scrlLowerFrameCount.Value;
             UpdateLowerFrames();
         }
 
-        private void scrlLowerFrameDuration_Scroll(object sender, ScrollEventArgs e)
+        private void scrlLowerFrameDuration_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.LowerAnimFrameSpeed = scrlLowerFrameDuration.Value;
             lblLowerFrameDuration.Text = "Frame Duration (ms): " + scrlLowerFrameDuration.Value;
             tmrLowerAnimation.Interval = scrlLowerFrameDuration.Value;
         }
 
-        private void scrlLowerLoopCount_Scroll(object sender, ScrollEventArgs e)
+        private void scrlLowerLoopCount_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.LowerAnimLoopCount = scrlLowerLoopCount.Value;
             lblLowerLoopCount.Text = "Loop Count: " + scrlLowerLoopCount.Value;
@@ -256,33 +257,33 @@ namespace Intersect_Editor.Forms
             _editorItem.UpperAnimSprite = cmbUpperGraphic.Text;
         }
 
-        private void scrlUpperHorizontalFrames_Scroll(object sender, ScrollEventArgs e)
+        private void scrlUpperHorizontalFrames_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.UpperAnimXFrames = scrlUpperHorizontalFrames.Value;
             lblUpperHorizontalFrames.Text = "Graphic Horizontal Frames: " + scrlUpperHorizontalFrames.Value;
         }
 
-        private void scrlUpperVerticalFrames_Scroll(object sender, ScrollEventArgs e)
+        private void scrlUpperVerticalFrames_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.UpperAnimYFrames = scrlUpperVerticalFrames.Value;
             lblUpperVerticalFrames.Text = "Graphic Vertical Frames: " + scrlUpperVerticalFrames.Value;
         }
 
-        private void scrlUpperFrameCount_Scroll(object sender, ScrollEventArgs e)
+        private void scrlUpperFrameCount_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.UpperAnimFrameCount = scrlUpperFrameCount.Value;
             lblUpperFrameCount.Text = "Graphic Frame Count: " + scrlUpperFrameCount.Value;
             UpdateUpperFrames();
         }
 
-        private void scrlUpperFrameDuration_Scroll(object sender, ScrollEventArgs e)
+        private void scrlUpperFrameDuration_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.UpperAnimFrameSpeed = scrlUpperFrameDuration.Value;
             lblUpperFrameDuration.Text = "Frame Duration (ms): " + scrlUpperFrameDuration.Value;
             tmrUpperAnimation.Interval = scrlUpperFrameDuration.Value;
         }
 
-        private void scrlUpperLoopCount_Scroll(object sender, ScrollEventArgs e)
+        private void scrlUpperLoopCount_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.UpperAnimLoopCount = scrlUpperLoopCount.Value;
             lblUpperLoopCount.Text = "Loop Count: " + scrlUpperLoopCount.Value;
@@ -455,7 +456,7 @@ namespace Intersect_Editor.Forms
             Globals.CurrentEditor = -1;
         }
 
-        private void scrlLowerFrame_Scroll(object sender, ScrollEventArgs e)
+        private void scrlLowerFrame_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblLowerFrame.Text = @"Frame: " + scrlLowerFrame.Value;
             LoadLowerLight();
@@ -474,7 +475,7 @@ namespace Intersect_Editor.Forms
             lightEditorUpper.LoadEditor(_editorItem.UpperLights[scrlUpperFrame.Value - 1]);
         }
 
-        private void scrlUpperFrame_Scroll(object sender, ScrollEventArgs e)
+        private void scrlUpperFrame_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblUpperFrame.Text = @"Frame: " + scrlUpperFrame.Value;
             LoadUpperLight();
@@ -527,7 +528,7 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void scrlDarkness_Scroll(object sender, ScrollEventArgs e)
+        private void scrlDarkness_Scroll(object sender, ScrollValueEventArgs e)
         {
             labelDarkness.Text = "Simulate Darkness: " + scrlDarkness.Value;
         }

@@ -36,17 +36,17 @@ namespace Intersect_Editor.Forms
             this.lblDef = new System.Windows.Forms.Label();
             this.lblMag = new System.Windows.Forms.Label();
             this.lblStr = new System.Windows.Forms.Label();
-            this.scrlSpd = new System.Windows.Forms.HScrollBar();
-            this.scrlMR = new System.Windows.Forms.HScrollBar();
-            this.scrlDef = new System.Windows.Forms.HScrollBar();
-            this.scrlMag = new System.Windows.Forms.HScrollBar();
+            this.scrlSpd = new DarkScrollBar();
+            this.scrlMR = new DarkScrollBar();
+            this.scrlDef = new DarkScrollBar();
+            this.scrlMag = new DarkScrollBar();
             this.groupBox1 = new DarkUI.Controls.DarkGroupBox();
             this.lstNpcs = new System.Windows.Forms.ListBox();
             this.groupBox2 = new DarkUI.Controls.DarkGroupBox();
-            this.scrlSightRange = new System.Windows.Forms.HScrollBar();
+            this.scrlSightRange = new DarkScrollBar();
             this.lblSightRange = new System.Windows.Forms.Label();
             this.cmbSprite = new DarkUI.Controls.DarkComboBox();
-            this.scrlSpawnDuration = new System.Windows.Forms.HScrollBar();
+            this.scrlSpawnDuration = new DarkScrollBar();
             this.lblSpawnDuration = new System.Windows.Forms.Label();
             this.lblPic = new System.Windows.Forms.Label();
             this.picNpc = new System.Windows.Forms.PictureBox();
@@ -61,32 +61,32 @@ namespace Intersect_Editor.Forms
             this.lblMana = new System.Windows.Forms.Label();
             this.lblHP = new System.Windows.Forms.Label();
             this.lblExp = new System.Windows.Forms.Label();
-            this.scrlStr = new System.Windows.Forms.HScrollBar();
+            this.scrlStr = new DarkScrollBar();
             this.groupBox4 = new DarkUI.Controls.DarkGroupBox();
             this.txtDropAmount = new DarkUI.Controls.DarkTextBox();
             this.lblDropAmount = new System.Windows.Forms.Label();
-            this.scrlDropChance = new System.Windows.Forms.HScrollBar();
+            this.scrlDropChance = new DarkScrollBar();
             this.lblDropChance = new System.Windows.Forms.Label();
-            this.scrlDropItem = new System.Windows.Forms.HScrollBar();
+            this.scrlDropItem = new DarkScrollBar();
             this.lblDropItem = new System.Windows.Forms.Label();
-            this.scrlDropIndex = new System.Windows.Forms.HScrollBar();
+            this.scrlDropIndex = new DarkScrollBar();
             this.lblDropIndex = new System.Windows.Forms.Label();
             this.pnlContainer = new System.Windows.Forms.Panel();
             this.groupBox7 = new DarkUI.Controls.DarkGroupBox();
             this.cmbScalingStat = new DarkUI.Controls.DarkComboBox();
             this.label12 = new System.Windows.Forms.Label();
             this.lblScaling = new System.Windows.Forms.Label();
-            this.scrlScaling = new System.Windows.Forms.HScrollBar();
+            this.scrlScaling = new DarkScrollBar();
             this.cmbDamageType = new DarkUI.Controls.DarkComboBox();
             this.label11 = new System.Windows.Forms.Label();
             this.lblCritChance = new System.Windows.Forms.Label();
-            this.scrlCritChance = new System.Windows.Forms.HScrollBar();
+            this.scrlCritChance = new DarkScrollBar();
             this.cmbAttackAnimation = new DarkUI.Controls.DarkComboBox();
             this.lblAttackAnimation = new System.Windows.Forms.Label();
             this.lblDamage = new System.Windows.Forms.Label();
-            this.scrlDamage = new System.Windows.Forms.HScrollBar();
+            this.scrlDamage = new DarkScrollBar();
             this.groupBox6 = new DarkUI.Controls.DarkGroupBox();
-            this.scrlNPC = new System.Windows.Forms.HScrollBar();
+            this.scrlNPC = new DarkScrollBar();
             this.lblNPC = new System.Windows.Forms.Label();
             this.btnRemoveAggro = new DarkUI.Controls.DarkButton();
             this.btnAddAggro = new DarkUI.Controls.DarkButton();
@@ -96,7 +96,7 @@ namespace Intersect_Editor.Forms
             this.groupBox5 = new DarkUI.Controls.DarkGroupBox();
             this.cmbFreq = new DarkUI.Controls.DarkComboBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.scrlSpell = new System.Windows.Forms.HScrollBar();
+            this.scrlSpell = new DarkScrollBar();
             this.lblSpell = new System.Windows.Forms.Label();
             this.btnRemove = new DarkUI.Controls.DarkButton();
             this.btnAdd = new DarkUI.Controls.DarkButton();
@@ -171,43 +171,47 @@ namespace Intersect_Editor.Forms
             // 
             // scrlSpd
             // 
-            this.scrlSpd.LargeChange = 1;
+            
             this.scrlSpd.Location = new System.Drawing.Point(13, 162);
             this.scrlSpd.Maximum = 255;
             this.scrlSpd.Name = "scrlSpd";
             this.scrlSpd.Size = new System.Drawing.Size(80, 17);
             this.scrlSpd.TabIndex = 3;
-            this.scrlSpd.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpd_Scroll);
+            this.scrlSpd.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlSpd_Scroll);
+            this.scrlSpd.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // scrlMR
             // 
-            this.scrlMR.LargeChange = 1;
+            
             this.scrlMR.Location = new System.Drawing.Point(127, 122);
             this.scrlMR.Maximum = 255;
             this.scrlMR.Name = "scrlMR";
             this.scrlMR.Size = new System.Drawing.Size(80, 17);
             this.scrlMR.TabIndex = 2;
-            this.scrlMR.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlMR_Scroll);
+            this.scrlMR.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlMR_Scroll);
+            this.scrlMR.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // scrlDef
             // 
-            this.scrlDef.LargeChange = 1;
+            
             this.scrlDef.Location = new System.Drawing.Point(13, 122);
             this.scrlDef.Maximum = 255;
             this.scrlDef.Name = "scrlDef";
             this.scrlDef.Size = new System.Drawing.Size(80, 17);
             this.scrlDef.TabIndex = 4;
-            this.scrlDef.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlDef_Scroll);
+            this.scrlDef.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlDef_Scroll);
+            this.scrlDef.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // scrlMag
             // 
-            this.scrlMag.LargeChange = 1;
+            
             this.scrlMag.Location = new System.Drawing.Point(127, 83);
             this.scrlMag.Maximum = 255;
             this.scrlMag.Name = "scrlMag";
             this.scrlMag.Size = new System.Drawing.Size(80, 17);
             this.scrlMag.TabIndex = 1;
-            this.scrlMag.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlMag_Scroll);
+            this.scrlMag.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlMag_Scroll);
+            this.scrlMag.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // groupBox1
             // 
@@ -260,13 +264,14 @@ namespace Intersect_Editor.Forms
             // 
             // scrlSightRange
             // 
-            this.scrlSightRange.LargeChange = 1;
+            
             this.scrlSightRange.Location = new System.Drawing.Point(6, 188);
             this.scrlSightRange.Maximum = 20;
             this.scrlSightRange.Name = "scrlSightRange";
             this.scrlSightRange.Size = new System.Drawing.Size(186, 18);
             this.scrlSightRange.TabIndex = 13;
-            this.scrlSightRange.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSightRange_Scroll);
+            this.scrlSightRange.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlSightRange_Scroll);
+            this.scrlSightRange.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblSightRange
             // 
@@ -301,7 +306,8 @@ namespace Intersect_Editor.Forms
             this.scrlSpawnDuration.Name = "scrlSpawnDuration";
             this.scrlSpawnDuration.Size = new System.Drawing.Size(186, 18);
             this.scrlSpawnDuration.TabIndex = 8;
-            this.scrlSpawnDuration.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpawnDuration_Scroll);
+            this.scrlSpawnDuration.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlSpawnDuration_Scroll);
+            this.scrlSpawnDuration.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblSpawnDuration
             // 
@@ -469,13 +475,14 @@ namespace Intersect_Editor.Forms
             // 
             // scrlStr
             // 
-            this.scrlStr.LargeChange = 1;
+            
             this.scrlStr.Location = new System.Drawing.Point(13, 83);
             this.scrlStr.Maximum = 255;
             this.scrlStr.Name = "scrlStr";
             this.scrlStr.Size = new System.Drawing.Size(80, 17);
             this.scrlStr.TabIndex = 0;
-            this.scrlStr.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlStr_Scroll);
+            this.scrlStr.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlStr_Scroll);
+            this.scrlStr.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // groupBox4
             // 
@@ -519,12 +526,13 @@ namespace Intersect_Editor.Forms
             // 
             // scrlDropChance
             // 
-            this.scrlDropChance.LargeChange = 1;
+            
             this.scrlDropChance.Location = new System.Drawing.Point(6, 135);
             this.scrlDropChance.Name = "scrlDropChance";
             this.scrlDropChance.Size = new System.Drawing.Size(198, 18);
             this.scrlDropChance.TabIndex = 14;
-            this.scrlDropChance.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlDropChance_Scroll);
+            this.scrlDropChance.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlDropChance_Scroll);
+            this.scrlDropChance.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblDropChance
             // 
@@ -537,14 +545,15 @@ namespace Intersect_Editor.Forms
             // 
             // scrlDropItem
             // 
-            this.scrlDropItem.LargeChange = 1;
+            
             this.scrlDropItem.Location = new System.Drawing.Point(6, 64);
             this.scrlDropItem.Maximum = 3600;
             this.scrlDropItem.Minimum = -1;
             this.scrlDropItem.Name = "scrlDropItem";
             this.scrlDropItem.Size = new System.Drawing.Size(198, 18);
             this.scrlDropItem.TabIndex = 12;
-            this.scrlDropItem.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlDropItem_Scroll);
+            this.scrlDropItem.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlDropItem_Scroll);
+            this.scrlDropItem.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblDropItem
             // 
@@ -557,13 +566,14 @@ namespace Intersect_Editor.Forms
             // 
             // scrlDropIndex
             // 
-            this.scrlDropIndex.LargeChange = 1;
+            
             this.scrlDropIndex.Location = new System.Drawing.Point(6, 31);
             this.scrlDropIndex.Maximum = 9;
             this.scrlDropIndex.Name = "scrlDropIndex";
             this.scrlDropIndex.Size = new System.Drawing.Size(198, 18);
             this.scrlDropIndex.TabIndex = 10;
-            this.scrlDropIndex.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlDropIndex_Scroll);
+            this.scrlDropIndex.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlDropIndex_Scroll);
+            this.scrlDropIndex.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblDropIndex
             // 
@@ -647,13 +657,14 @@ namespace Intersect_Editor.Forms
             // 
             // scrlScaling
             // 
-            this.scrlScaling.LargeChange = 1;
+            
             this.scrlScaling.Location = new System.Drawing.Point(12, 192);
             this.scrlScaling.Maximum = 10000;
             this.scrlScaling.Name = "scrlScaling";
             this.scrlScaling.Size = new System.Drawing.Size(192, 17);
             this.scrlScaling.TabIndex = 55;
-            this.scrlScaling.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlScaling_Scroll);
+            this.scrlScaling.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlScaling_Scroll);
+            this.scrlScaling.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // cmbDamageType
             // 
@@ -694,12 +705,13 @@ namespace Intersect_Editor.Forms
             // 
             // scrlCritChance
             // 
-            this.scrlCritChance.LargeChange = 1;
+            
             this.scrlCritChance.Location = new System.Drawing.Point(12, 72);
             this.scrlCritChance.Name = "scrlCritChance";
             this.scrlCritChance.Size = new System.Drawing.Size(192, 17);
             this.scrlCritChance.TabIndex = 51;
-            this.scrlCritChance.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlCritChance_Scroll);
+            this.scrlCritChance.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlCritChance_Scroll);
+            this.scrlCritChance.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // cmbAttackAnimation
             // 
@@ -736,13 +748,14 @@ namespace Intersect_Editor.Forms
             // 
             // scrlDamage
             // 
-            this.scrlDamage.LargeChange = 1;
+            
             this.scrlDamage.Location = new System.Drawing.Point(12, 32);
             this.scrlDamage.Maximum = 10000;
             this.scrlDamage.Name = "scrlDamage";
             this.scrlDamage.Size = new System.Drawing.Size(192, 17);
             this.scrlDamage.TabIndex = 47;
-            this.scrlDamage.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlDamage_Scroll);
+            this.scrlDamage.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlDamage_Scroll);
+            this.scrlDamage.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // groupBox6
             // 
@@ -765,7 +778,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlNPC
             // 
-            this.scrlNPC.LargeChange = 1;
+            
             this.scrlNPC.Location = new System.Drawing.Point(8, 90);
             this.scrlNPC.Maximum = 1000;
             this.scrlNPC.Minimum = -1;
@@ -773,7 +786,8 @@ namespace Intersect_Editor.Forms
             this.scrlNPC.Size = new System.Drawing.Size(192, 18);
             this.scrlNPC.TabIndex = 45;
             this.scrlNPC.Value = -1;
-            this.scrlNPC.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlNPC_Scroll);
+            this.scrlNPC.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlNPC_Scroll);
+            this.scrlNPC.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblNPC
             // 
@@ -889,7 +903,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlSpell
             // 
-            this.scrlSpell.LargeChange = 1;
+            
             this.scrlSpell.Location = new System.Drawing.Point(13, 108);
             this.scrlSpell.Maximum = 1000;
             this.scrlSpell.Minimum = -1;
@@ -897,7 +911,8 @@ namespace Intersect_Editor.Forms
             this.scrlSpell.Size = new System.Drawing.Size(179, 18);
             this.scrlSpell.TabIndex = 40;
             this.scrlSpell.Value = -1;
-            this.scrlSpell.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpell_Scroll);
+            this.scrlSpell.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlSpell_Scroll);
+            this.scrlSpell.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblSpell
             // 
@@ -1114,15 +1129,15 @@ namespace Intersect_Editor.Forms
         private System.Windows.Forms.Label lblDef;
         private System.Windows.Forms.Label lblMag;
         private System.Windows.Forms.Label lblStr;
-        private System.Windows.Forms.HScrollBar scrlSpd;
-        private System.Windows.Forms.HScrollBar scrlMR;
-        private System.Windows.Forms.HScrollBar scrlDef;
-        private System.Windows.Forms.HScrollBar scrlMag;
+        private DarkScrollBar scrlSpd;
+        private DarkScrollBar scrlMR;
+        private DarkScrollBar scrlDef;
+        private DarkScrollBar scrlMag;
         private DarkGroupBox groupBox1;
         private System.Windows.Forms.ListBox lstNpcs;
         private DarkGroupBox groupBox2;
         private DarkComboBox cmbSprite;
-        private System.Windows.Forms.HScrollBar scrlSpawnDuration;
+        private DarkScrollBar scrlSpawnDuration;
         private System.Windows.Forms.Label lblSpawnDuration;
         private System.Windows.Forms.Label lblPic;
         private System.Windows.Forms.PictureBox picNpc;
@@ -1131,22 +1146,22 @@ namespace Intersect_Editor.Forms
         private System.Windows.Forms.Label label1;
         private DarkTextBox txtName;
         private DarkGroupBox groupBox3;
-        private System.Windows.Forms.HScrollBar scrlStr;
+        private DarkScrollBar scrlStr;
         private System.Windows.Forms.Label lblMana;
         private System.Windows.Forms.Label lblHP;
         private System.Windows.Forms.Label lblExp;
-        private System.Windows.Forms.HScrollBar scrlSightRange;
+        private DarkScrollBar scrlSightRange;
         private System.Windows.Forms.Label lblSightRange;
         private DarkTextBox txtExp;
         private DarkTextBox txtMana;
         private DarkTextBox txtHP;
         private DarkGroupBox groupBox4;
         private System.Windows.Forms.Label lblDropAmount;
-        private System.Windows.Forms.HScrollBar scrlDropChance;
+        private DarkScrollBar scrlDropChance;
         private System.Windows.Forms.Label lblDropChance;
-        private System.Windows.Forms.HScrollBar scrlDropItem;
+        private DarkScrollBar scrlDropItem;
         private System.Windows.Forms.Label lblDropItem;
-        private System.Windows.Forms.HScrollBar scrlDropIndex;
+        private DarkScrollBar scrlDropIndex;
         private System.Windows.Forms.Label lblDropIndex;
         private DarkTextBox txtDropAmount;
         private System.Windows.Forms.Panel pnlContainer;
@@ -1156,12 +1171,12 @@ namespace Intersect_Editor.Forms
         private DarkButton btnRemove;
         private DarkButton btnAdd;
         private System.Windows.Forms.ListBox lstSpells;
-        private System.Windows.Forms.HScrollBar scrlSpell;
+        private DarkScrollBar scrlSpell;
         private System.Windows.Forms.Label lblSpell;
         private DarkComboBox cmbFreq;
         private System.Windows.Forms.Label label4;
         private DarkGroupBox groupBox6;
-        private System.Windows.Forms.HScrollBar scrlNPC;
+        private DarkScrollBar scrlNPC;
         private System.Windows.Forms.Label lblNPC;
         private DarkButton btnRemoveAggro;
         private DarkButton btnAddAggro;
@@ -1181,14 +1196,14 @@ namespace Intersect_Editor.Forms
         private DarkComboBox cmbScalingStat;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label lblScaling;
-        private System.Windows.Forms.HScrollBar scrlScaling;
+        private DarkScrollBar scrlScaling;
         private DarkComboBox cmbDamageType;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label lblCritChance;
-        private System.Windows.Forms.HScrollBar scrlCritChance;
+        private DarkScrollBar scrlCritChance;
         private DarkComboBox cmbAttackAnimation;
         private System.Windows.Forms.Label lblAttackAnimation;
         private System.Windows.Forms.Label lblDamage;
-        private System.Windows.Forms.HScrollBar scrlDamage;
+        private DarkScrollBar scrlDamage;
     }
 }

@@ -43,20 +43,20 @@ namespace Intersect_Editor.Forms.Editors
             this.btnDeleteCraft = new DarkUI.Controls.DarkButton();
             this.grpCraft = new DarkUI.Controls.DarkGroupBox();
             this.lblItem = new System.Windows.Forms.Label();
-            this.scrlItem = new System.Windows.Forms.HScrollBar();
+            this.scrlItem = new DarkScrollBar();
             this.lblName = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.lblSpeed = new System.Windows.Forms.Label();
-            this.scrlSpeed = new System.Windows.Forms.HScrollBar();
+            this.scrlSpeed = new DarkScrollBar();
             this.groupBox5 = new DarkUI.Controls.DarkGroupBox();
             this.btnDupIngredient = new DarkUI.Controls.DarkButton();
             this.btnRemove = new DarkUI.Controls.DarkButton();
             this.btnAdd = new DarkUI.Controls.DarkButton();
             this.lblIngredient = new System.Windows.Forms.Label();
-            this.scrlIngredient = new System.Windows.Forms.HScrollBar();
+            this.scrlIngredient = new DarkScrollBar();
             this.lstIngredients = new System.Windows.Forms.ListBox();
             this.lblQuantity = new System.Windows.Forms.Label();
-            this.scrlQuantity = new System.Windows.Forms.HScrollBar();
+            this.scrlQuantity = new DarkScrollBar();
             this.toolStrip = new DarkUI.Controls.DarkToolStrip();
             this.toolStripItemNew = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -224,7 +224,7 @@ namespace Intersect_Editor.Forms.Editors
             // 
             // scrlItem
             // 
-            this.scrlItem.LargeChange = 1;
+            
             this.scrlItem.Location = new System.Drawing.Point(16, 55);
             this.scrlItem.Maximum = 5000;
             this.scrlItem.Minimum = -1;
@@ -232,7 +232,8 @@ namespace Intersect_Editor.Forms.Editors
             this.scrlItem.Size = new System.Drawing.Size(247, 17);
             this.scrlItem.TabIndex = 32;
             this.scrlItem.Value = -1;
-            this.scrlItem.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlItem_Scroll);
+            this.scrlItem.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlItem_Scroll);
+            this.scrlItem.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblName
             // 
@@ -272,7 +273,8 @@ namespace Intersect_Editor.Forms.Editors
             this.scrlSpeed.Size = new System.Drawing.Size(248, 17);
             this.scrlSpeed.TabIndex = 0;
             this.scrlSpeed.Value = 1;
-            this.scrlSpeed.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpeed_Scroll);
+            this.scrlSpeed.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlSpeed_Scroll);
+            this.scrlSpeed.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // groupBox5
             // 
@@ -335,7 +337,7 @@ namespace Intersect_Editor.Forms.Editors
             // 
             // scrlIngredient
             // 
-            this.scrlIngredient.LargeChange = 1;
+            
             this.scrlIngredient.Location = new System.Drawing.Point(12, 154);
             this.scrlIngredient.Maximum = 5000;
             this.scrlIngredient.Minimum = -1;
@@ -343,7 +345,8 @@ namespace Intersect_Editor.Forms.Editors
             this.scrlIngredient.Size = new System.Drawing.Size(251, 17);
             this.scrlIngredient.TabIndex = 30;
             this.scrlIngredient.Value = -1;
-            this.scrlIngredient.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlIngredient_Scroll);
+            this.scrlIngredient.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlIngredient_Scroll);
+            this.scrlIngredient.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lstIngredients
             // 
@@ -371,14 +374,15 @@ namespace Intersect_Editor.Forms.Editors
             // 
             // scrlQuantity
             // 
-            this.scrlQuantity.LargeChange = 1;
+            
             this.scrlQuantity.Location = new System.Drawing.Point(12, 184);
             this.scrlQuantity.Minimum = 1;
             this.scrlQuantity.Name = "scrlQuantity";
             this.scrlQuantity.Size = new System.Drawing.Size(251, 17);
             this.scrlQuantity.TabIndex = 27;
             this.scrlQuantity.Value = 1;
-            this.scrlQuantity.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlQuantity_Scroll);
+            this.scrlQuantity.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlQuantity_Scroll);
+            this.scrlQuantity.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // toolStrip
             // 
@@ -521,19 +525,19 @@ namespace Intersect_Editor.Forms.Editors
         private System.Windows.Forms.Panel pnlContainer;
         private DarkGroupBox grpCraft;
         private System.Windows.Forms.Label lblItem;
-        private System.Windows.Forms.HScrollBar scrlItem;
+        private DarkScrollBar scrlItem;
         private System.Windows.Forms.Label lblName;
         private DarkTextBox txtName;
         private System.Windows.Forms.Label lblSpeed;
-        private System.Windows.Forms.HScrollBar scrlSpeed;
+        private DarkScrollBar scrlSpeed;
         private DarkGroupBox groupBox5;
         private DarkButton btnRemove;
         private DarkButton btnAdd;
         private System.Windows.Forms.Label lblIngredient;
-        private System.Windows.Forms.HScrollBar scrlIngredient;
+        private DarkScrollBar scrlIngredient;
         private System.Windows.Forms.ListBox lstIngredients;
         private System.Windows.Forms.Label lblQuantity;
-        private System.Windows.Forms.HScrollBar scrlQuantity;
+        private DarkScrollBar scrlQuantity;
         private DarkGroupBox groupBox2;
         private System.Windows.Forms.ListBox lstCompositions;
         private DarkButton btnNewComposition;

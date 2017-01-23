@@ -41,12 +41,12 @@ namespace Intersect_Editor.Forms.Editors.Quest
             this.grpGatherItems = new DarkUI.Controls.DarkGroupBox();
             this.cmbItem = new DarkUI.Controls.DarkComboBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.scrlItemQuantity = new System.Windows.Forms.HScrollBar();
+            this.scrlItemQuantity = new DarkScrollBar();
             this.lblItemQuantity = new System.Windows.Forms.Label();
             this.grpKillNpcs = new DarkUI.Controls.DarkGroupBox();
             this.cmbNpc = new DarkUI.Controls.DarkComboBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.scrlNpcQuantity = new System.Windows.Forms.HScrollBar();
+            this.scrlNpcQuantity = new DarkScrollBar();
             this.lblNpcQuantity = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
@@ -212,7 +212,8 @@ namespace Intersect_Editor.Forms.Editors.Quest
             this.scrlItemQuantity.Size = new System.Drawing.Size(116, 17);
             this.scrlItemQuantity.TabIndex = 4;
             this.scrlItemQuantity.Value = 1;
-            this.scrlItemQuantity.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlItemQuantity_Scroll);
+            this.scrlItemQuantity.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlItemQuantity_Scroll);
+            this.scrlItemQuantity.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblItemQuantity
             // 
@@ -279,7 +280,8 @@ namespace Intersect_Editor.Forms.Editors.Quest
             this.scrlNpcQuantity.Size = new System.Drawing.Size(116, 17);
             this.scrlNpcQuantity.TabIndex = 4;
             this.scrlNpcQuantity.Value = 1;
-            this.scrlNpcQuantity.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlNpcQuantity_Scroll);
+            this.scrlNpcQuantity.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlNpcQuantity_Scroll);
+            this.scrlNpcQuantity.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblNpcQuantity
             // 
@@ -325,7 +327,7 @@ namespace Intersect_Editor.Forms.Editors.Quest
         private System.Windows.Forms.Label label1;
         private DarkButton btnCancel;
         private DarkGroupBox grpGatherItems;
-        private System.Windows.Forms.HScrollBar scrlItemQuantity;
+        private DarkScrollBar scrlItemQuantity;
         private DarkComboBox cmbItem;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label lblItemQuantity;
@@ -334,7 +336,7 @@ namespace Intersect_Editor.Forms.Editors.Quest
         private DarkGroupBox grpKillNpcs;
         private DarkComboBox cmbNpc;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.HScrollBar scrlNpcQuantity;
+        private DarkScrollBar scrlNpcQuantity;
         private System.Windows.Forms.Label lblNpcQuantity;
         private System.Windows.Forms.Label label5;
         private DarkButton btnEditTaskEvent;

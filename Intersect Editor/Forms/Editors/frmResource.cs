@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
+using DarkUI.Controls;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
@@ -186,12 +187,12 @@ namespace Intersect_Editor.Classes
             lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";
         }
 
-        private void scrlDropIndex_Scroll(object sender, ScrollEventArgs e)
+        private void scrlDropIndex_Scroll(object sender, ScrollValueEventArgs e)
         {
             UpdateDropValues();
         }
 
-        private void scrlDropItem_Scroll(object sender, ScrollEventArgs e)
+        private void scrlDropItem_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (scrlDropItem.Value == -1)
             {
@@ -212,13 +213,13 @@ namespace Intersect_Editor.Classes
             _editorItem.Drops[scrlDropIndex.Value - 1].Amount = x;
         }
 
-        private void scrlDropChance_Scroll(object sender, ScrollEventArgs e)
+        private void scrlDropChance_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.Drops[scrlDropIndex.Value - 1].Chance = scrlDropChance.Value;
             lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";
         }
 
-        private void scrlSpawnDuration_Scroll(object sender, ScrollEventArgs e)
+        private void scrlSpawnDuration_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
             _editorItem.SpawnDuration = scrlSpawnDuration.Value;
@@ -339,7 +340,7 @@ namespace Intersect_Editor.Classes
             _editorItem.MaxHP = x;
         }
 
-        private void scrlAnimation_Scroll(object sender, ScrollEventArgs e)
+        private void scrlAnimation_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (scrlAnimation.Value >= 0)
             {

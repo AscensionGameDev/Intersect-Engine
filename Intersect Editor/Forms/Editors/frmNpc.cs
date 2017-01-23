@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
@@ -246,13 +247,13 @@ namespace Intersect_Editor.Forms
             DrawNpcSprite();
         }
 
-        private void scrlSpawnDuration_Scroll(object sender, ScrollEventArgs e)
+        private void scrlSpawnDuration_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
             _editorItem.SpawnDuration = scrlSpawnDuration.Value;
         }
 
-        private void scrlSightRange_Scroll(object sender, ScrollEventArgs e)
+        private void scrlSightRange_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblSightRange.Text = @"Sight Range: " + scrlSightRange.Value;
             _editorItem.SightRange = scrlSightRange.Value;
@@ -331,7 +332,7 @@ namespace Intersect_Editor.Forms
             _editorItem.Drops[scrlDropIndex.Value].Amount = x;
         }
 
-        private void scrlDropItem_Scroll(object sender, ScrollEventArgs e)
+        private void scrlDropItem_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (scrlDropItem.Value == -1)
             {
@@ -366,13 +367,13 @@ namespace Intersect_Editor.Forms
             lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";
         }
 
-        private void scrlDropChance_Scroll(object sender, ScrollEventArgs e)
+        private void scrlDropChance_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.Drops[scrlDropIndex.Value].Chance = scrlDropChance.Value;
             lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";
         }
 
-        private void scrlDropIndex_Scroll(object sender, ScrollEventArgs e)
+        private void scrlDropIndex_Scroll(object sender, ScrollValueEventArgs e)
         {
             UpdateDropValues();
         }
@@ -398,7 +399,7 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void scrlSpell_Scroll(object sender, ScrollEventArgs e)
+        private void scrlSpell_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (scrlSpell.Value > -1)
             {
@@ -461,7 +462,7 @@ namespace Intersect_Editor.Forms
             _editorItem.AttackAllies = chkAttackAllies.Checked;
         }
 
-        private void scrlNPC_Scroll(object sender, ScrollEventArgs e)
+        private void scrlNPC_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (scrlNPC.Value > -1)
             {
@@ -600,13 +601,13 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void scrlDamage_Scroll(object sender, ScrollEventArgs e)
+        private void scrlDamage_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblDamage.Text = "Base Damage: " + scrlDamage.Value;
             _editorItem.Damage = scrlDamage.Value;
         }
 
-        private void scrlCritChance_Scroll(object sender, ScrollEventArgs e)
+        private void scrlCritChance_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblCritChance.Text = "Crit Chance: " + scrlCritChance.Value + "%";
             _editorItem.CritChance = scrlCritChance.Value;
@@ -617,7 +618,7 @@ namespace Intersect_Editor.Forms
             _editorItem.AttackAnimation = Database.GameObjectIdFromList(GameObject.Animation, cmbAttackAnimation.SelectedIndex - 1);
         }
 
-        private void scrlScaling_Scroll(object sender, ScrollEventArgs e)
+        private void scrlScaling_Scroll(object sender, ScrollValueEventArgs e)
         {
             lblScaling.Text = "Scaling Amount: x" + ((double)scrlScaling.Value / 100f);
             _editorItem.Scaling = scrlScaling.Value;
