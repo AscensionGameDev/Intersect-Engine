@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms
+﻿using System.Windows.Forms;
+
+namespace Intersect_Editor.Forms
 {
     partial class frmMapEditor
     {
@@ -47,8 +49,7 @@
             this.pnlMapContainer.Name = "pnlMapContainer";
             this.pnlMapContainer.Size = new System.Drawing.Size(204, 101);
             this.pnlMapContainer.TabIndex = 1;
-            this.pnlMapContainer.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.pnlMapContainer_Scroll);
-            this.pnlMapContainer.ScrollOrientation = DarkScrollOrientation.Horizontal;
+            this.pnlMapContainer.Scroll += new ScrollEventHandler(this.pnlMapContainer_Scroll);
             this.pnlMapContainer.Resize += new System.EventHandler(this.pnlMapContainer_Resize);
             // 
             // picMap

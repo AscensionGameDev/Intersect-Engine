@@ -1441,7 +1441,7 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void pnlMapContainer_Scroll(object sender, ScrollValueEventArgs e)
+        private void pnlMapContainer_Scroll(object sender, ScrollEventArgs e)
         {
             EditorLoop.RunFrame();
         }
