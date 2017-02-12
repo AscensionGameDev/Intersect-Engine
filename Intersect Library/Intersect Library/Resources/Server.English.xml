@@ -170,10 +170,9 @@
 	<Items>
 		<string id="statreq">You do not possess the correct combat stats to use this item.</string>
 		<string id="stunned">You cannot use this item whilst stunned.</string>
-		<string id="levelreq">You are not a high enough level to use this item.</string>
-		<string id="classreq">You do not meet the class requirement to use this item.</string>
-		<string id="genderreq">You do not meet the gender requirement to use this item.</string>
+		<string id="dynamicreq">You do not meet the requirements to use this item!</string>
 		<string id="cannotuse">You cannot use this item!</string>
+		<string id="notenough">Not enough {00}s!</string>
 		<string id="notimplemented">Use of this item type is not yet implemented.</string>
 	</Items>
 	<Shops>
@@ -241,6 +240,8 @@
 		<string id="lowmana">Not enough mana.</string>
 		<string id="stunblocking">You are stunned and can't block.</string>
 		<string id="stunattacking">You are stunned and can't attack.</string>
+		<string id="dynamicreq">You do not meet the requirements to cast the spell!</string>
+		<string id="resourcereqs">You do not meet the requirements to harvest this resource!</string>
 	</Combat>
 	<Mapping>
 		<string id="newfolder">New Folder</string>

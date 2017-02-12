@@ -30,6 +30,7 @@ using System.IO;
 using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect_Editor.Classes.Core;
+using Intersect_Editor.Forms.Editors;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
@@ -112,8 +113,7 @@ namespace Intersect_Editor.Forms
             btnClearPage.Text = Strings.Get("eventeditor", "clearpage");
 
             grpEventConditions.Text = Strings.Get("eventeditor", "conditions");
-            btnAddCondition.Text = Strings.Get("eventeditor", "addcondition");
-            btnRemoveCondition.Text = Strings.Get("eventeditor", "removecondition");
+            btnEditConditions.Text = Strings.Get("eventeditor", "editconditions");
 
             grpEntityOptions.Text = Strings.Get("eventeditor", "entityoptions");
             grpPreview.Text = Strings.Get("eventeditor", "eventpreview");
@@ -283,7 +283,6 @@ namespace Intersect_Editor.Forms
             chkInteractionFreeze.Checked = Convert.ToBoolean(CurrentPage.InteractionFreeze);
             txtDesc.Text = CurrentPage.Desc;
             ListPageCommands();
-            ListPageConditions();
             UpdateEventPreview();
             EnableButtons();
         }
@@ -1127,7 +1126,6 @@ namespace Intersect_Editor.Forms
                 //Remove the only control which should be the last editing window
             }
             ListPageCommands();
-            ListPageConditions();
             EnableButtons();
         }
 
@@ -1448,38 +1446,6 @@ namespace Intersect_Editor.Forms
             UpdateEventPreview();
         }
 
-        private void ListPageConditions()
-        {
-            lstConditions.Items.Clear();
-            for (int i = 0; i < CurrentPage.Conditions.Count(); i++)
-            {
-                lstConditions.Items.Add((i + 1) + ". " + CurrentPage.Conditions[i].GetConditionalDesc());
-            }
-        }
-
-        private void btnAddCondition_Click(object sender, EventArgs e)
-        {
-            if (!grpCreateCommands.Visible && !grpNewCommands.Visible)
-            {
-                EventCommand newCondition = new EventCommand();
-                newCondition.Type = EventCommandType.ConditionalBranch;
-                CurrentPage.Conditions.Add(newCondition);
-                OpenEditCommand(newCondition);
-            }
-        }
-
-        private void btnRemoveCondition_Click(object sender, EventArgs e)
-        {
-            if (!grpCreateCommands.Visible)
-            {
-                if (lstConditions.SelectedIndex > -1)
-                {
-                    CurrentPage.Conditions.RemoveAt(lstConditions.SelectedIndex);
-                    ListPageConditions();
-                }
-            }
-        }
-
         private void btnNewPage_Click(object sender, EventArgs e)
         {
             MyEvent.MyPages.Add(new EventPage());
@@ -1693,6 +1659,12 @@ namespace Intersect_Editor.Forms
             }
             OpenEditCommand(tmpCommand);
             _isEdit = false;
+        }
+
+        private void btnEditConditions_Click(object sender, EventArgs e)
+        {
+            var editForm = new frmDynamicRequirements(CurrentPage.ConditionLists);
+            editForm.ShowDialog();
         }
     }
 

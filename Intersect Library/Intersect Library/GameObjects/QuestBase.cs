@@ -22,6 +22,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Intersect_Library.GameObjects.Conditions;
 using Intersect_Library.GameObjects.Events;
 
 namespace Intersect_Library.GameObjects
@@ -60,8 +61,7 @@ namespace Intersect_Library.GameObjects
         public byte LogAfterComplete = 0;
 
         //Requirements
-        //I am cheating here and using event commands as conditional branches instead of having a lot of duplicate code.
-        public List<EventCommand> Requirements = new List<EventCommand>();
+        public ConditionLists Requirements = new ConditionLists();
 
         //Tasks
         public int NextTaskID = 0;
@@ -91,14 +91,7 @@ namespace Intersect_Library.GameObjects
             LogBeforeOffer = myBuffer.ReadByte();
             LogAfterComplete = myBuffer.ReadByte();
 
-            var RequirementCount = myBuffer.ReadInteger();
-            Requirements.Clear();
-            for (int i = 0; i < RequirementCount; i++)
-            {
-                var cmd = new EventCommand();
-                cmd.Load(myBuffer);
-                Requirements.Add(cmd);
-            }
+            Requirements.Load(myBuffer);
 
             NextTaskID = myBuffer.ReadInteger();
             var MaxTasks = myBuffer.ReadInteger();
@@ -140,11 +133,7 @@ namespace Intersect_Library.GameObjects
             myBuffer.WriteByte(LogBeforeOffer);
             myBuffer.WriteByte(LogAfterComplete);
 
-            myBuffer.WriteInteger(Requirements.Count);
-            for (int i = 0; i < Requirements.Count; i++)
-            {
-                Requirements[i].Save(myBuffer);
-            }
+            Requirements.Save(myBuffer);
 
             myBuffer.WriteInteger(NextTaskID);
             myBuffer.WriteInteger(Tasks.Count);

@@ -26,6 +26,7 @@ using System.Windows.Forms;
 using DarkUI.Controls;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Core;
+using Intersect_Editor.Forms.Editors;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
@@ -99,18 +100,11 @@ namespace Intersect_Editor.Forms
 
         private void frmItem_Load(object sender, EventArgs e)
         {
-            int i = 0;
             cmbPic.Items.Clear();
             cmbPic.Items.Add("None");
 
             string[] itemnames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Item);
             cmbPic.Items.AddRange(itemnames);
-
-            i = 0;
-
-            cmbClass.Items.Clear();
-            cmbClass.Items.Add("None");
-            cmbClass.Items.AddRange(Database.GetGameObjectList(GameObject.Class));
 
             cmbAttackAnimation.Items.Clear();
             cmbAttackAnimation.Items.Add("None");
@@ -128,7 +122,7 @@ namespace Intersect_Editor.Forms
             cmbFemalePaperdoll.Items.Clear();
             cmbFemalePaperdoll.Items.Add("None");
             string[] paperdollnames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Paperdoll);
-            for (i = 0; i < paperdollnames.Length; i++)
+            for (var i = 0; i < paperdollnames.Length; i++)
             {
                 cmbMalePaperdoll.Items.Add(paperdollnames[i]);
                 cmbFemalePaperdoll.Items.Add(paperdollnames[i]);
@@ -166,13 +160,6 @@ namespace Intersect_Editor.Forms
                 cmbType.SelectedIndex = _editorItem.ItemType;
                 cmbPic.SelectedIndex = cmbPic.FindString(_editorItem.Pic);
                 scrlPrice.Value = _editorItem.Price;
-                scrlLevelReq.Value = _editorItem.LevelReq;
-                cmbClass.SelectedIndex = Database.GameObjectListIndex(GameObject.Class,_editorItem.ClassReq) + 1;
-                scrlAttackReq.Value = _editorItem.StatsReq[0];
-                scrlAbilityPowerReq.Value = _editorItem.StatsReq[1];
-                scrlDefenseReq.Value = _editorItem.StatsReq[2];
-                scrlMagicResistReq.Value = _editorItem.StatsReq[3];
-                scrlSpeedReq.Value = _editorItem.StatsReq[4];
                 scrlAttack.Value = _editorItem.StatsGiven[0];
                 scrlAbilityPower.Value = _editorItem.StatsGiven[1];
                 scrlDefense.Value = _editorItem.StatsGiven[2];
@@ -192,7 +179,6 @@ namespace Intersect_Editor.Forms
                 cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
                 cmbToolType.SelectedIndex = _editorItem.Tool + 1;
                 cmbAttackAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.AttackAnimation) + 1;
-                cmbGender.SelectedIndex = _editorItem.GenderReq;
                 if (_editorItem.ItemType == (int)ItemTypes.Equipment) cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
                 scrlEffectAmount.Value = _editorItem.Data3;
                 chk2Hand.Checked = Convert.ToBoolean(_editorItem.Data4);
@@ -256,12 +242,6 @@ namespace Intersect_Editor.Forms
         {
             lblInterval.Text = @"Interval: " + scrlInterval.Value;
             _editorItem.Data2 = scrlInterval.Value;
-        }
-
-        private void scrlLevel_Scroll(object sender, EventArgs e)
-        {
-            lblLevelReq.Text = @"Level: " + scrlLevelReq.Value;
-            _editorItem.LevelReq = scrlLevelReq.Value;
         }
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
@@ -343,41 +323,6 @@ namespace Intersect_Editor.Forms
                 _editorItem.Animation = -1;
                 lblAnim.Text = "Animation: None";
             }
-        }
-
-        private void scrlAttackReq_Scroll(object sender, EventArgs e)
-        {
-            lblAttackReq.Text = @"Attack: " + scrlAttackReq.Value;
-            _editorItem.StatsReq[0] = scrlAttackReq.Value;
-        }
-
-        private void scrlAbilityPowerReq_Scroll(object sender, EventArgs e)
-        {
-            lblAbilityPowerReq.Text = @"Ability Pwr: " + scrlAbilityPowerReq.Value;
-            _editorItem.StatsReq[1] = scrlAbilityPowerReq.Value;
-        }
-
-        private void scrlDefenseReq_Scroll(object sender, EventArgs e)
-        {
-            lblDefenseReq.Text = @"Defense: " + scrlDefenseReq.Value;
-            _editorItem.StatsReq[2] = scrlDefenseReq.Value;
-        }
-
-        private void scrlMagicResistReq_Scroll(object sender, EventArgs e)
-        {
-            lblMagicResistReq.Text = @"Magic Resist: " + scrlMagicResistReq.Value;
-            _editorItem.StatsReq[3] = scrlMagicResistReq.Value;
-        }
-
-        private void scrlSpeedReq_Scroll(object sender, EventArgs e)
-        {
-            lblSpeedReq.Text = @"Speed: " + scrlSpeedReq.Value;
-            _editorItem.StatsReq[4] = scrlSpeedReq.Value;
-        }
-
-        private void cmbClass_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            _editorItem.ClassReq = Database.GameObjectIdFromList(GameObject.Class,cmbClass.SelectedIndex-1);
         }
 
         private void scrlSpell_Scroll(object sender, EventArgs e)
@@ -503,11 +448,6 @@ namespace Intersect_Editor.Forms
                 _editorItem.Data1 = -1;
                 lblEvent.Text = "Event: None";
             }
-        }
-
-        private void cmbGender_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            _editorItem.GenderReq = cmbGender.SelectedIndex;
         }
 
         private void cmbFemalePaperdoll_SelectedIndexChanged(object sender, EventArgs e)
@@ -659,34 +599,10 @@ namespace Intersect_Editor.Forms
             _editorItem.Projectile = Database.GameObjectIdFromList(GameObject.Projectile, cmbProjectile.SelectedIndex - 1);
         }
 
-        private void lblCritChance_Click(object sender, EventArgs e)
+        private void btnEditRequirements_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void label11_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label12_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void lblScaling_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void lblAttackAnimation_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void lblDamage_Click(object sender, EventArgs e)
-        {
-
+            var frm = new frmDynamicRequirements(_editorItem.UseReqs);
+            frm.ShowDialog();
         }
     }
 }

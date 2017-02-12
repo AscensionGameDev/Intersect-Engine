@@ -63,9 +63,6 @@ namespace Intersect_Editor.Forms
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox3 = new DarkUI.Controls.DarkGroupBox();
-            this.btnRemoveRequirement = new DarkUI.Controls.DarkButton();
-            this.btnAddRequirement = new DarkUI.Controls.DarkButton();
-            this.lstRequirements = new System.Windows.Forms.ListBox();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.toolStrip = new DarkUI.Controls.DarkToolStrip();
@@ -77,6 +74,7 @@ namespace Intersect_Editor.Forms
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.btnEditRequirements = new DarkUI.Controls.DarkButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox7.SuspendLayout();
@@ -374,7 +372,6 @@ namespace Intersect_Editor.Forms
             this.lstTasks.Name = "lstTasks";
             this.lstTasks.Size = new System.Drawing.Size(434, 132);
             this.lstTasks.TabIndex = 3;
-            this.lstTasks.SelectedIndexChanged += new System.EventHandler(this.lstTasks_SelectedIndexChanged);
             this.lstTasks.DoubleClick += new System.EventHandler(this.lstTasks_DoubleClick);
             // 
             // btnAddTask
@@ -457,50 +454,14 @@ namespace Intersect_Editor.Forms
             // 
             this.groupBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.groupBox3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox3.Controls.Add(this.btnRemoveRequirement);
-            this.groupBox3.Controls.Add(this.btnAddRequirement);
-            this.groupBox3.Controls.Add(this.lstRequirements);
+            this.groupBox3.Controls.Add(this.btnEditRequirements);
             this.groupBox3.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox3.Location = new System.Drawing.Point(0, 168);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(271, 201);
+            this.groupBox3.Size = new System.Drawing.Size(271, 52);
             this.groupBox3.TabIndex = 20;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Quest Requirements";
-            // 
-            // btnRemoveRequirement
-            // 
-            this.btnRemoveRequirement.Location = new System.Drawing.Point(135, 172);
-            this.btnRemoveRequirement.Name = "btnRemoveRequirement";
-            this.btnRemoveRequirement.Padding = new System.Windows.Forms.Padding(5);
-            this.btnRemoveRequirement.Size = new System.Drawing.Size(123, 23);
-            this.btnRemoveRequirement.TabIndex = 2;
-            this.btnRemoveRequirement.Text = "Remove Requirement";
-            this.btnRemoveRequirement.Click += new System.EventHandler(this.btnRemoveRequirement_Click);
-            // 
-            // btnAddRequirement
-            // 
-            this.btnAddRequirement.Location = new System.Drawing.Point(6, 172);
-            this.btnAddRequirement.Name = "btnAddRequirement";
-            this.btnAddRequirement.Padding = new System.Windows.Forms.Padding(5);
-            this.btnAddRequirement.Size = new System.Drawing.Size(123, 23);
-            this.btnAddRequirement.TabIndex = 1;
-            this.btnAddRequirement.Text = "Add Requirement";
-            this.btnAddRequirement.Click += new System.EventHandler(this.btnAddRequirement_Click);
-            // 
-            // lstRequirements
-            // 
-            this.lstRequirements.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstRequirements.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lstRequirements.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstRequirements.FormattingEnabled = true;
-            this.lstRequirements.HorizontalScrollbar = true;
-            this.lstRequirements.Location = new System.Drawing.Point(6, 17);
-            this.lstRequirements.Name = "lstRequirements";
-            this.lstRequirements.Size = new System.Drawing.Size(252, 132);
-            this.lstRequirements.TabIndex = 0;
-            this.lstRequirements.SelectedIndexChanged += new System.EventHandler(this.lstRequirements_SelectedIndexChanged);
-            this.lstRequirements.DoubleClick += new System.EventHandler(this.lstRequirements_DoubleClick);
             // 
             // btnCancel
             // 
@@ -624,6 +585,16 @@ namespace Intersect_Editor.Forms
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
+            // btnEditRequirements
+            // 
+            this.btnEditRequirements.Location = new System.Drawing.Point(10, 20);
+            this.btnEditRequirements.Name = "btnEditRequirements";
+            this.btnEditRequirements.Padding = new System.Windows.Forms.Padding(5);
+            this.btnEditRequirements.Size = new System.Drawing.Size(255, 23);
+            this.btnEditRequirements.TabIndex = 0;
+            this.btnEditRequirements.Text = "Edit Quest Requirements";
+            this.btnEditRequirements.Click += new System.EventHandler(this.btnEditRequirements_Click);
+            // 
             // frmQuest
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -677,9 +648,6 @@ namespace Intersect_Editor.Forms
         private DarkButton btnSave;
         private DarkButton btnCancel;
         private DarkGroupBox groupBox3;
-        private DarkButton btnRemoveRequirement;
-        private DarkButton btnAddRequirement;
-        private System.Windows.Forms.ListBox lstRequirements;
         private DarkCheckBox chkRepeatable;
         private DarkCheckBox chkQuittable;
         private DarkButton btnShiftTaskDown;
@@ -709,5 +677,6 @@ namespace Intersect_Editor.Forms
         public System.Windows.Forms.ToolStripButton toolStripItemPaste;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         public System.Windows.Forms.ToolStripButton toolStripItemUndo;
+        private DarkButton btnEditRequirements;
     }
 }

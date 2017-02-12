@@ -493,6 +493,12 @@ namespace Intersect_Server.Classes.Entities
                 if (((Resource)enemy).IsDead) return;
                 // Check that a resource is actually required.
                 var resource = ((Resource)enemy).MyBase;
+                //Check Dynamic Requirements
+                if (!EventInstance.MeetsConditionLists(resource.HarvestingReqs, this, null))
+                {
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "resourcereqs"));
+                    return;
+                }
                 if (resource.Tool > -1 && resource.Tool < Options.ToolTypes.Count)
                 {
                     if (weapon == null || resource.Tool != weapon.Tool)
@@ -761,17 +767,7 @@ namespace Intersect_Server.Classes.Entities
             var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
             if (itemBase != null)
             {
-                //Check if caster does not have the correct combat stats, if not exit now.
-                for (var n = 0; n < (int)Stats.StatCount; n++)
-                {
-                    if (Stat[n].Value() < itemBase.StatsReq[n])
-                    {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("items","statreq"));
-                        return;
-                    }
-                }
-
-                //Check if the caster is silenced or stunned
+                //Check if the user is silenced or stunned
                 for (var n = 0; n < Status.Count; n++)
                 {
                     if (Status[n].Type == (int)StatusTypes.Stun)
@@ -781,24 +777,12 @@ namespace Intersect_Server.Classes.Entities
                     }
                 }
 
-                if (Level < itemBase.LevelReq)
+                if (!EventInstance.MeetsConditionLists(itemBase.UseReqs,this,null))
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("items","levelreq"));
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("items","dynamicreq"));
                     return;
                 }
-
-                if (itemBase.ClassReq > 0 && itemBase.ClassReq != Class)
-                {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("items","classreq"));
-                    return;
-                }
-
-                if (itemBase.GenderReq - 1 != -1 && itemBase.GenderReq - 1 != Gender)
-                {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("items","genderreq"));
-                    return;
-                }
-
+                
                 switch (itemBase.ItemType)
                 {
                     case (int)ItemTypes.None:
@@ -1882,14 +1866,11 @@ namespace Intersect_Server.Classes.Entities
             if (SpellBase.Get(spellNum) != null)
             {
                 var spell = SpellBase.GetSpell(spellNum);
-                //Check if caster does not have the correct combat stats, if not exit now.
-                for (var n = 0; n < (int)Stats.StatCount; n++)
+
+                if (!EventInstance.MeetsConditionLists(spell.CastingReqs, this, null))
                 {
-                    if (Stat[n].Value() < spell.StatReq[n])
-                    {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat","statreq"));
-                        return;
-                    }
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "dynamicreq"));
+                    return;
                 }
 
                 //Check if the caster is silenced or stunned
@@ -1905,12 +1886,6 @@ namespace Intersect_Server.Classes.Entities
                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "stunned"));
                         return;
                     }
-                }
-
-                if (Level < spell.LevelReq)
-                {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "levelreq"));
-                    return;
                 }
 
                 if (target == -1 && ((spell.SpellType == (int)SpellTypes.CombatSpell && spell.TargetType == (int)SpellTargetTypes.Single) || spell.SpellType == (int)SpellTypes.WarpTo))
@@ -2072,13 +2047,7 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
             //So the quest isn't started or we can repeat it.. let's make sure that we meet requirements.
-            foreach (var requirement in quest.Requirements)
-            {
-                if (!EventInstance.MeetsConditions(requirement, this, null))
-                {
-                    return false;
-                }
-            }
+            if (!EventInstance.MeetsConditionLists(quest.Requirements, this, null)) return false;
             if (quest.Tasks.Count == 0)
             {
                 return false;

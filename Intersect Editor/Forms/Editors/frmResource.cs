@@ -26,6 +26,7 @@ using System.Drawing;
 using System.IO;
 using DarkUI.Controls;
 using Intersect_Editor.Classes.Core;
+using Intersect_Editor.Forms.Editors;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 
@@ -461,6 +462,12 @@ namespace Intersect_Editor.Classes
                     toolStripItemNew_Click(null, null);
                 }
             }
+        }
+
+        private void btnRequirements_Click(object sender, EventArgs e)
+        {
+            var frm = new frmDynamicRequirements(_editorItem.HarvestingReqs);
+            frm.ShowDialog();
         }
     }
 }

@@ -125,21 +125,6 @@ namespace Intersect_Client.Classes.UI.Game
                 itemReqs.AddText(Strings.Get("spelldesc", "vital1cost", spell.VitalCost[(int)Vitals.Mana]), spellName.TextColor);
                 itemReqs.AddLineBreak();
             }
-            if (spell.LevelReq > 0)
-            {
-                requirements = true;
-                itemReqs.AddText(Strings.Get("spelldesc", "levelreq",spell.LevelReq), spellName.TextColor);
-                itemReqs.AddLineBreak();
-            }
-            for (int i = 0; i < Options.MaxStats; i++)
-            {
-                if (spell.StatReq[i] > 0)
-                {
-                    requirements = true;
-                    itemReqs.AddText(Strings.Get("combat", "stat" + i) + ": " + spell.StatReq[i], spellName.TextColor);
-                    itemReqs.AddLineBreak();
-                }
-            }
             if (requirements == true)
             {
                 itemReqs.SizeToChildren(false, true);

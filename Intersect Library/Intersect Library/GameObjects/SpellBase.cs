@@ -22,6 +22,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Intersect_Library.GameObjects.Conditions;
 
 namespace Intersect_Library.GameObjects
 {
@@ -62,8 +63,7 @@ namespace Intersect_Library.GameObjects
         public int Friendly;
 
         //Requirements
-        public int LevelReq = 0;
-        public int[] StatReq = new int[(int)Stats.StatCount];
+        public ConditionLists CastingReqs = new ConditionLists();
 
         //Heal/Damage
         public int[] VitalDiff = new int[(int)Vitals.VitalCount];
@@ -109,11 +109,7 @@ namespace Intersect_Library.GameObjects
                 VitalCost[i] = myBuffer.ReadInteger();
             }
 
-            LevelReq = myBuffer.ReadInteger();
-            for (int i = 0; i < (int)Stats.StatCount; i++)
-            {
-                StatReq[i] = myBuffer.ReadInteger();
-            }
+            CastingReqs.Load(myBuffer);
 
             for (int i = 0; i < (int)Vitals.VitalCount; i++)
             {
@@ -165,12 +161,7 @@ namespace Intersect_Library.GameObjects
                 myBuffer.WriteInteger(VitalCost[i]);
             }
 
-            myBuffer.WriteInteger(LevelReq);
-
-            for (int i = 0; i < (int)Stats.StatCount; i++)
-            {
-                myBuffer.WriteInteger(StatReq[i]);
-            }
+            CastingReqs.Save(myBuffer);
 
             for (int i = 0; i < (int)Vitals.VitalCount; i++)
             {

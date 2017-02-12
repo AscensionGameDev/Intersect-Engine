@@ -116,7 +116,7 @@ namespace Intersect_Library.GameObjects.Events
                     return Strings.Get("eventconditiondesc", "class", ClassBase.GetName(Ints[1]));
                 case 6: //Knows spell
                     return Strings.Get("eventconditiondesc", "knowsspell", SpellBase.GetName(Ints[1]));
-                case 7: //Level is
+                case 7: //Level or Stat is
                     var pLvl = "";
                     switch (Ints[1])
                     {
@@ -139,7 +139,17 @@ namespace Intersect_Library.GameObjects.Events
                             pLvl = Strings.Get("eventconditiondesc", "notequal", Ints[2]);
                             break;
                     }
-                    return Strings.Get("eventconditiondesc", "level", pLvl);
+                    var lvlorstat = "";
+                    switch (Ints[3])
+                    {
+                        case 0:
+                            lvlorstat = Strings.Get("eventconditiondesc", "level");
+                            break;
+                        default:
+                            lvlorstat = Strings.Get("combat", "stat" + (Ints[3]-1));
+                            break;
+                    }
+                    return Strings.Get("eventconditiondesc", "levelorstat", lvlorstat, pLvl);
                 case 8: //Self Switch
                     var sValue = Strings.Get("eventconditiondesc", "false");
                     if (Convert.ToBoolean(Ints[2])) sValue = Strings.Get("eventconditiondesc", "true");
@@ -215,6 +225,8 @@ namespace Intersect_Library.GameObjects.Events
                     return Strings.Get("eventconditiondesc", "playerdeath");
                 case 15: //No NPCs on map
                     return Strings.Get("eventconditiondesc", "nonpcsonmap");
+                case 16: //Gender Is
+                    return Strings.Get("eventconditiondesc", "gender", (Ints[1] == 0 ? Strings.Get("eventconditiondesc", "male") : Strings.Get("eventconditiondesc", "female")));
             }
             return "";
         }

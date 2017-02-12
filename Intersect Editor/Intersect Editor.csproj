@@ -340,6 +340,12 @@
     <Compile Include="Forms\Editors\frmCrafting.Designer.cs">
       <DependentUpon>frmCrafting.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Editors\frmDynamicRequirements.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\frmDynamicRequirements.Designer.cs">
+      <DependentUpon>frmDynamicRequirements.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\frmEvent.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -635,6 +641,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmCrafting.resx">
       <DependentUpon>frmCrafting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\frmDynamicRequirements.resx">
+      <DependentUpon>frmDynamicRequirements.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmEvent.resx">
       <DependentUpon>frmEvent.cs</DependentUpon>

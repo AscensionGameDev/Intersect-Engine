@@ -126,55 +126,12 @@ namespace Intersect_Client.Classes.UI.Game
                 y += itemDesc.Height + 8;
                 int y1 = y;
 
-                bool requirements = false;
-                if (item.ItemType != (int)ItemTypes.Currency && item.ItemType != (int)ItemTypes.None)
-                {
-                    //Check for requirements
-                    RichLabel itemReqs = new RichLabel(_descWindow);
-                    itemReqs.Width = 120;
-                    itemReqs.AddText(Strings.Get("itemdesc", "prereq"), IntersectClientExtras.GenericClasses.Color.White);
-                    itemReqs.AddLineBreak();
-                    itemReqs.SetPosition(_descWindow.Padding.Left + 4, y);
-                    if (item.LevelReq > 0)
-                    {
-                        requirements = true;
-                        itemReqs.AddText(Strings.Get("itemdesc", "level", item.LevelReq), IntersectClientExtras.GenericClasses.Color.White);
-                        itemReqs.AddLineBreak();
-                    }
-                    for (int i = 0; i < Options.MaxStats; i++)
-                    {
-                        if (item.StatsReq[i] > 0)
-                        {
-                            requirements = true;
-                            itemReqs.AddText(Strings.Get("combat","stat" + i) + ": " + item.StatsReq[i], IntersectClientExtras.GenericClasses.Color.White);
-                            itemReqs.AddLineBreak();
-                        }
-                    }
-                    if (requirements == true)
-                    {
-                        itemReqs.SizeToChildren(false, true);
-                        y1 += itemReqs.Height + 4;
-                    }
-                    else
-                    {
-                        itemReqs.IsHidden = true;
-                    }
-                }
-
                 string stats = "";
                 if (item.ItemType == (int)ItemTypes.Equipment)
                 {
                     RichLabel itemStats = new RichLabel(_descWindow);
-                    if (requirements != true)
-                    {
-                        itemStats.SetPosition(_descWindow.Padding.Left + 4, y);
-                        itemStats.Width = 240;
-                    }
-                    else
-                    {
-                        itemStats.SetPosition(_descWindow.Padding.Left + 120, y);
-                        itemStats.Width = 120;
-                    }
+                    itemStats.SetPosition(_descWindow.Padding.Left + 4, y);
+                    itemStats.Width = 240;
                     stats = Strings.Get("itemdesc","bonuses");
                     itemStats.AddText(stats, IntersectClientExtras.GenericClasses.Color.White);
                     itemStats.AddLineBreak();

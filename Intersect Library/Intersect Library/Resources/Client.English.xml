@@ -173,7 +173,6 @@
 		<string id="2hand">2H</string>
 		<string id="desc">Desc: {00}</string>
 		<string id="prereq">Prerequisites:</string>
-		<string id="level">Level: {00}</string>
 		<string id="bonuses">Stat Bonuses:</string>
 		<string id="damage">Base Damage: {00}</string>
 		<string id="effect">Bonus Effect: {00}% {01}</string>
@@ -239,7 +238,6 @@
 		<string id="prereqs">Prerequisites:</string>
 		<string id="vital0cost">HP Cost: {00}</string>
 		<string id="vital1cost">MP Cost: {00}</string>
-		<string id="levelreq">Level: {00}</string>
 		<string id="effects">Effects:</string>
 		<string id="effect1">Silences Target</string>
 		<string id="effect2">Stuns Target</string>

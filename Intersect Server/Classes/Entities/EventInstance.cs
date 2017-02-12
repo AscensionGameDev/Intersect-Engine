@@ -25,6 +25,7 @@ using System.Linq;
 using System.Text;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
+using Intersect_Library.GameObjects.Conditions;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Library.Localization;
 using Intersect_Server.Classes.Core;
@@ -227,17 +228,39 @@ namespace Intersect_Server.Classes.Entities
 
         public bool CanSpawnPage(int pageIndex, EventBase eventStruct)
         {
-            for (int i = 0; i < eventStruct.MyPages[pageIndex].Conditions.Count; i++)
+            return EventInstance.MeetsConditionLists(eventStruct.MyPages[pageIndex].ConditionLists, MyPlayer, this);
+        }
+
+        public static bool MeetsConditionLists(ConditionLists lists, Player MyPlayer, EventInstance EventInstance, bool SingleList = true)
+        {
+            if (lists.Lists.Count == 0) return true; //If no condition lists then this passes
+            for (int i = 0; i < lists.Lists.Count; i++)
             {
-                if (!MeetsConditions(eventStruct.MyPages[pageIndex].Conditions[i], MyPlayer,this))
+                if (!MeetsConditionList(lists.Lists[i], MyPlayer, EventInstance)) //Checks to see if all conditions in this list are met
                 {
-                    return false;
+                    if (!SingleList) return false; //If not.. and we need all lists to pass then return false
                 }
+                else
+                {
+                    if (SingleList) return true; //If all conditions are met.. and we only need a single list to pass then return true
+                }
+            }
+            //There were condition lists. If single list was true then we failed every single list and should return false.
+            if (SingleList) return false;
+            //If single list was false (meaning we needed to pass all lists) then we've made it.. return true.
+            return true;
+        }
+
+        public static bool MeetsConditionList(ConditionList list, Player MyPlayer, EventInstance EventInstance)
+        {
+            for (int i = 0; i < list.Conditions.Count; i++)
+            {
+                if (!MeetsCondition(list.Conditions[i], MyPlayer, EventInstance)) return false;
             }
             return true;
         }
 
-        public static bool MeetsConditions(EventCommand conditionCommand, Player MyPlayer, EventInstance EventInstance)
+        public static bool MeetsCondition(EventCommand conditionCommand, Player MyPlayer, EventInstance EventInstance)
         {
             //For instance use PageInstance
             switch (conditionCommand.Ints[0])
@@ -340,26 +363,35 @@ namespace Intersect_Server.Classes.Entities
                         return true;
                     }
                     break;
-                case 7: //Level is
+                case 7: //Level or Stat is
+                    var lvlStat = 0;
+                    if (conditionCommand.Ints[3] == 0)
+                    {
+                        lvlStat = MyPlayer.Level;
+                    }
+                    else
+                    {
+                        lvlStat = MyPlayer.Stat[conditionCommand.Ints[3] - 1].Value();
+                    }
                     switch (conditionCommand.Ints[1])
                     {
                         case 0:
-                            if (MyPlayer.Level == conditionCommand.Ints[2]) return true;
+                            if (lvlStat == conditionCommand.Ints[2]) return true;
                             break;
                         case 1:
-                            if (MyPlayer.Level >= conditionCommand.Ints[2]) return true;
+                            if (lvlStat >= conditionCommand.Ints[2]) return true;
                             break;
                         case 2:
-                            if (MyPlayer.Level <= conditionCommand.Ints[2]) return true;
+                            if (lvlStat <= conditionCommand.Ints[2]) return true;
                             break;
                         case 3:
-                            if (MyPlayer.Level > conditionCommand.Ints[2]) return true;
+                            if (lvlStat > conditionCommand.Ints[2]) return true;
                             break;
                         case 4:
-                            if (MyPlayer.Level < conditionCommand.Ints[2]) return true;
+                            if (lvlStat < conditionCommand.Ints[2]) return true;
                             break;
                         case 5:
-                            if (MyPlayer.Level != conditionCommand.Ints[2]) return true;
+                            if (lvlStat != conditionCommand.Ints[2]) return true;
                             break;
                     }
                     break;
@@ -596,7 +628,7 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.ConditionalBranch:
-                    if (MeetsConditions(command, MyPlayer, this))
+                    if (MeetsCondition(command, MyPlayer, this))
                     {
                         var tmpStack = new CommandInstance(CallStack.Peek().Page)
                         {

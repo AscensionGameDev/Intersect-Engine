@@ -76,10 +76,11 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 case 6: //Knows spell
                     cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell, _myCommand.Ints[1]);
                     break;
-                case 7: //Level is...
+                case 7: //Level or Stat is...
                     cmbLevelComparator.SelectedIndex = _myCommand.Ints[1];
                     scrlLevel.Value = _myCommand.Ints[2];
-                    lblLevel.Text = Strings.Get("eventconditional", "level", scrlLevel.Value);
+                    cmbLevelStat.SelectedIndex = _myCommand.Ints[3];
+                    lblLvlStatValue.Text = Strings.Get("eventconditional", "levelstatvalue", scrlLevel.Value);
                     break;
                 case 8: //Self Switch
                     cmbSelfSwitch.SelectedIndex = _myCommand.Ints[1];
@@ -118,6 +119,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 case 13: //Quest Completed
                     cmbCompletedQuest.SelectedIndex = Database.GameObjectListIndex(GameObject.Quest, _myCommand.Ints[1]);
                     break;
+                case 14: //Player death...
+                    break;
+                case 15: //No NPC's on map
+                    break;
+                case 16: //Gender Is
+                    cmbGender.SelectedIndex = _myCommand.Ints[1];
+                    break;
             }
         }
 
@@ -127,7 +135,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             lblType.Text = Strings.Get("eventconditional", "type");
 
             cmbConditionType.Items.Clear();
-            for (int i = 0; i < 14; i++)
+            for (int i = 0; i < 17; i++)
             {
                 cmbConditionType.Items.Add(Strings.Get("eventconditional", "condition" + i));
             }
@@ -164,10 +172,17 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             grpSpell.Text = Strings.Get("eventconditional", "knowsspell");
             lblSpell.Text = Strings.Get("eventconditional", "spell");
 
-            //Level Is
-            grpLevel.Text = Strings.Get("eventconditional", "levelis");
-            lblLevel.Text = Strings.Get("eventconditional", "level", scrlLevel.Value);
+            //Level or Stat is
+            grpLevelStat.Text = Strings.Get("eventconditional", "levelorstat");
+            lblLvlStatValue.Text = Strings.Get("eventconditional", "levelstatvalue", scrlLevel.Value);
             lblLevelComparator.Text = Strings.Get("eventconditional", "comparator");
+            lblLevelOrStat.Text = Strings.Get("eventconditional", "levelstatitem");
+            cmbLevelStat.Items.Clear();
+            cmbLevelStat.Items.Add(Strings.Get("eventconditional", "level"));
+            for (int i = 0; i < Options.MaxStats; i++)
+            {
+                cmbLevelStat.Items.Add(Strings.Get("combat", "stat" + i));
+            }
             cmbLevelComparator.Items.Clear();
             for(int i = 0; i < 6; i++)
             {
@@ -219,6 +234,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             grpQuestCompleted.Text = Strings.Get("eventconditional", "questcompleted");
             lblQuestCompleted.Text = Strings.Get("eventconditional", "questcompletedlabel");
 
+            //Gender is
+            grpGender.Text = Strings.Get("eventconditional", "genderis");
+            lblGender.Text = Strings.Get("eventconditional", "gender");
+            cmbGender.Items.Clear();
+            cmbGender.Items.Add(Strings.Get("eventconditional", "male"));
+            cmbGender.Items.Add(Strings.Get("eventconditional", "female"));
+
             btnSave.Text = Strings.Get("eventconditional", "okay");
             btnCancel.Text = Strings.Get("eventconditional", "cancel");
         }
@@ -230,13 +252,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             grpHasItem.Hide();
             grpSpell.Hide();
             grpClass.Hide();
-            grpLevel.Hide();
+            grpLevelStat.Hide();
             grpSelfSwitch.Hide();
             grpPowerIs.Hide();
             grpTime.Hide();
             grpStartQuest.Hide();
             grpQuestInProgress.Hide();
             grpQuestCompleted.Hide();
+            grpGender.Hide();
             switch (cmbConditionType.SelectedIndex)
             {
                 case 0: //Player Switch
@@ -292,11 +315,12 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
                     if (cmbSpell.Items.Count > 0) cmbSpell.SelectedIndex = 0;
                     break;
-                case 7: //Level is...
-                    grpLevel.Show();
+                case 7: //Level or Stat is...
+                    grpLevelStat.Show();
                     cmbLevelComparator.SelectedIndex = 0;
+                    cmbLevelStat.SelectedIndex = 0;
                     scrlLevel.Value = 0;
-                    lblLevel.Text = Strings.Get("eventconditional", "level", scrlLevel.Value);
+                    lblLvlStatValue.Text = Strings.Get("eventconditional", "levelstatvalue", scrlLevel.Value);
                     break;
                 case 8: //Self Switch
                     grpSelfSwitch.Show();
@@ -346,27 +370,16 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     break;
                 case 15: //No NPC's on map
                     break;
+                case 16: //Gender Is
+                    grpGender.Show();
+                    cmbGender.SelectedIndex = 0;
+                    break;
             }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             int n;
-            if (_currentPage != null)
-            {
-                if (_currentPage.Conditions.IndexOf(_myCommand) == -1)
-                {
-                    if (_myCommand.Ints[4] == 0)
-                        // command.Ints[4 & 5] are reserved for referencing which command list the true/false braches follow
-                    {
-                        for (var i = 0; i < 2; i++)
-                        {
-                            _currentPage.CommandLists.Add(new CommandList());
-                            _myCommand.Ints[4 + i] = _currentPage.CommandLists.Count - 1;
-                        }
-                    }
-                }
-            }
 
             _myCommand.Ints[0] = cmbConditionType.SelectedIndex;
             switch (_myCommand.Ints[0])
@@ -413,9 +426,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 case 6: //Knows spell
                     _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Spell, cmbSpell.SelectedIndex);
                     break;
-                case 7: //Level is
+                case 7: //Level or Stat is
                     _myCommand.Ints[1] = cmbLevelComparator.SelectedIndex;
                     _myCommand.Ints[2] = scrlLevel.Value;
+                    _myCommand.Ints[3] = cmbLevelStat.SelectedIndex;
                     break;
                 case 8: //Self Switch
                     _myCommand.Ints[1] = cmbSelfSwitch.SelectedIndex;
@@ -453,6 +467,11 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     break;
                 case 14: //Player death...
                     break;
+                case 15: //No NPC's on map
+                    break;
+                case 16: //Gender Is
+                    _myCommand.Ints[1] = cmbGender.SelectedIndex;
+                    break;
             }
             if (_eventEditor != null)
             {
@@ -468,15 +487,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         {
             if (_currentPage != null)
             {
-                if (_currentPage.Conditions.IndexOf(_myCommand) > -1)
-                {
-                    _currentPage.Conditions.Remove(_myCommand);
-                    _eventEditor.CancelCommandEdit(false,true);
-                }
-                else
-                {
-                    _eventEditor.CancelCommandEdit();
-                }
+                _eventEditor.CancelCommandEdit();
             }
             Cancelled = true;
             if (ParentForm != null) ParentForm.Close();
@@ -494,7 +505,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void scrlLevel_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblLevel.Text = Strings.Get("eventconditional", "level", scrlLevel.Value);
+            lblLvlStatValue.Text = Strings.Get("eventconditional", "levelstatvalue", scrlLevel.Value);
         }
 
         private void cmbTaskModifier_SelectedIndexChanged(object sender, EventArgs e)

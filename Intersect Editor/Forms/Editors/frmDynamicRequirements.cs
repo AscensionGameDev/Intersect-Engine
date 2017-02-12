@@ -1,0 +1,176 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Intersect_Editor.Forms.Editors.Event_Commands;
+using Intersect_Library.GameObjects.Conditions;
+using Intersect_Library.GameObjects.Events;
+
+namespace Intersect_Editor.Forms.Editors
+{
+    public partial class frmDynamicRequirements : Form
+    {
+        private ConditionLists _sourceLists;
+        private ConditionLists _edittingLists;
+        private ConditionList _sourceList;
+        private ConditionList _edittingList;
+        public frmDynamicRequirements(ConditionLists lists)
+        {
+            InitializeComponent();
+            _sourceLists = lists;
+            _edittingLists = new ConditionLists(lists.Data());
+            UpdateLists();
+        }
+
+        private void UpdateLists()
+        {
+            grpConditionLists.Show();
+            grpConditionList.Hide();
+            lstConditionLists.Items.Clear();
+            for (int i = 0; i < _edittingLists.Lists.Count; i++)
+            {
+                lstConditionLists.Items.Add(_edittingLists.Lists[i].Name);
+            }
+        }
+
+        private void UpdateConditions(ConditionList list)
+        {
+            grpConditionLists.Hide();
+            grpConditionList.Show();
+            lstConditions.Items.Clear();
+            if (list != _edittingList)
+            {
+                _sourceList = list;
+                _edittingList = new ConditionList(_sourceList.Data());
+            }
+            txtListName.Text = list.Name;
+            for (int i = 0; i < list.Conditions.Count; i++)
+            {
+                lstConditions.Items.Add(list.Conditions[i].GetConditionalDesc());
+            }
+        }
+
+        private void lstConditionLists_DoubleClick(object sender, EventArgs e)
+        {
+            if (lstConditionLists.SelectedIndex > -1)
+            {
+                UpdateConditions(_edittingLists.Lists[lstConditionLists.SelectedIndex]);
+            }
+        }
+
+        private void btnAddList_Click(object sender, EventArgs e)
+        {
+            var newList = new ConditionList();
+            _edittingLists.Lists.Add(newList);
+            UpdateConditions(newList);
+        }
+
+        private void btnRemoveList_Click(object sender, EventArgs e)
+        {
+            if (lstConditionLists.SelectedIndex > -1)
+            {
+                _edittingLists.Lists.RemoveAt(lstConditionLists.SelectedIndex);
+                UpdateLists();
+            }
+        }
+
+        private void txtListName_TextChanged(object sender, EventArgs e)
+        {
+            if (txtListName.Text.Trim().Length > 0)
+            {
+                _edittingList.Name = txtListName.Text;
+            }
+        }
+
+        private void lstConditions_DoubleClick(object sender, EventArgs e)
+        {
+            if (lstConditions.SelectedIndex > -1)
+            {
+                if (OpenConditionEditor(_edittingList.Conditions[lstConditions.SelectedIndex]))
+                {
+                    UpdateConditions(_edittingList);
+                }
+            }
+        }
+
+        private void btnAddCondition_Click(object sender, EventArgs e)
+        {
+            var evtCommand = new EventCommand();
+            evtCommand.Type = EventCommandType.ConditionalBranch;
+            if (OpenConditionEditor(evtCommand))
+            {
+                _edittingList.Conditions.Add(evtCommand);
+                UpdateConditions(_edittingList);
+            }
+        }
+
+        private bool OpenConditionEditor(EventCommand cmd)
+        {
+            var cmdWindow = new EventCommand_ConditionalBranch(cmd, null, null);
+            var frm = new Form
+            {
+                Text = "Add/Edit Condition"
+            };
+            frm.FormBorderStyle = FormBorderStyle.FixedSingle;
+            frm.Controls.Add(cmdWindow);
+            frm.Size = new Size(0, 0);
+            frm.AutoSize = true;
+            frm.ControlBox = false;
+            frm.StartPosition = FormStartPosition.CenterParent;
+            cmdWindow.BringToFront();
+            frm.BackColor = cmdWindow.BackColor;
+            frm.ShowDialog();
+            if (!cmdWindow.Cancelled)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private void btnRemoveCondition_Click(object sender, EventArgs e)
+        {
+            if (lstConditions.SelectedIndex > -1)
+            {
+                _edittingList.Conditions.RemoveAt(lstConditions.SelectedIndex);
+                UpdateConditions(_edittingList);
+            }
+        }
+
+        private void btnConditionsOkay_Click(object sender, EventArgs e)
+        {
+            _sourceList.Load(_edittingList.Data());
+            UpdateLists();
+        }
+
+        private void btnConditionsCancel_Click(object sender, EventArgs e)
+        {
+            UpdateLists();
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            _sourceLists.Load(_edittingLists.Data());
+            this.Close();
+        }
+
+        private void lstConditionLists_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete) btnRemoveList_Click(null, null);
+        }
+
+        private void lstConditions_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete) btnRemoveCondition_Click(null,null);
+        }
+    }
+}

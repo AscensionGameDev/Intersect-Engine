@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Forms.Editors;
 using Intersect_Editor.Forms.Editors.Event_Commands;
 using Intersect_Editor.Forms.Editors.Quest;
 using Intersect_Library;
@@ -122,8 +123,7 @@ namespace Intersect_Editor.Forms
                 chkQuittable.Checked = Convert.ToBoolean(_editorItem.Quitable);
                 chkLogBeforeOffer.Checked = Convert.ToBoolean(_editorItem.LogBeforeOffer);
                 chkLogAfterComplete.Checked = Convert.ToBoolean(_editorItem.LogAfterComplete);
-
-                ListQuestRequirements();
+                
                 ListQuestTasks();
 
                 if (_changed.IndexOf(_editorItem) == -1)
@@ -153,70 +153,6 @@ namespace Intersect_Editor.Forms
         private void txtEndDesc_TextChanged(object sender, EventArgs e)
         {
             _editorItem.EndDesc = txtEndDesc.Text;
-        }
-
-        private void btnAddRequirement_Click(object sender, EventArgs e)
-        {
-            var evtCommand = new EventCommand();
-            evtCommand.Type = EventCommandType.ConditionalBranch;
-            if (OpenRequirementEditor(evtCommand))
-            {
-                _editorItem.Requirements.Add(evtCommand);
-                ListQuestRequirements();
-            }
-        }
-
-        
-
-        private bool OpenRequirementEditor(EventCommand cmd)
-        {
-            var cmdWindow = new EventCommand_ConditionalBranch(cmd, null, null);
-            var frm = new Form
-            {
-                Text = "Add/Edit Quest Requirement"
-            };
-            frm.Controls.Add(cmdWindow);
-            frm.Size = new Size(0, 0);
-            frm.AutoSize = true;
-            frm.ControlBox = false;
-            frm.FormBorderStyle = FormBorderStyle.FixedSingle;
-            frm.StartPosition = FormStartPosition.CenterParent;
-            cmdWindow.BringToFront();
-            frm.ShowDialog();
-            if (!cmdWindow.Cancelled)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        private void btnRemoveRequirement_Click(object sender, EventArgs e)
-        {
-            if (lstRequirements.SelectedIndex > -1 && _editorItem.Requirements.Count > lstRequirements.SelectedIndex)
-            {
-                _editorItem.Requirements.RemoveAt(lstRequirements.SelectedIndex);
-                ListQuestRequirements();
-            }
-        }
-
-        private void ListQuestRequirements()
-        {
-            lstRequirements.Items.Clear();
-            foreach (var cmd in _editorItem.Requirements)
-            {
-                lstRequirements.Items.Add(cmd.GetConditionalDesc());
-            }
-        }
-
-        private void lstRequirements_DoubleClick(object sender, EventArgs e)
-        {
-            if (lstRequirements.SelectedIndex > -1 && _editorItem.Requirements.Count > lstRequirements.SelectedIndex)
-            {
-                if (OpenRequirementEditor(_editorItem.Requirements[lstRequirements.SelectedIndex]))
-                {
-                    ListQuestRequirements();
-                }
-            }
         }
 
         private void btnEditStartEvent_Click(object sender, EventArgs e)
@@ -341,11 +277,6 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void lstRequirements_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void txtBeforeDesc_TextChanged(object sender, EventArgs e)
         {
             _editorItem.BeforeDesc = txtBeforeDesc.Text;
@@ -460,9 +391,10 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void lstTasks_SelectedIndexChanged(object sender, EventArgs e)
+        private void btnEditRequirements_Click(object sender, EventArgs e)
         {
-
+            var frm = new frmDynamicRequirements(_editorItem.Requirements);
+            frm.ShowDialog();
         }
     }
 }

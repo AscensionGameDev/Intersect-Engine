@@ -22,6 +22,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Intersect_Library.GameObjects.Conditions;
 
 namespace Intersect_Library.GameObjects
 {
@@ -38,12 +39,9 @@ namespace Intersect_Library.GameObjects
         public int Price;
         public int Bound;
         public int Animation;
-        public int ClassReq = -1;
-        public int LevelReq;
         public int Projectile = -1;
-        public int[] StatsReq;
+        public ConditionLists UseReqs = new ConditionLists();
         public int[] StatsGiven;
-        public int GenderReq;
         public int StatGrowth;
         public int Damage;
         public int CritChance;
@@ -63,7 +61,6 @@ namespace Intersect_Library.GameObjects
         public ItemBase(int id) : base(id)
         {
             Speed = 10; // Set to 10 by default.
-            StatsReq = new int[Options.MaxStats];
             StatsGiven = new int[Options.MaxStats];
         }
 
@@ -78,15 +75,13 @@ namespace Intersect_Library.GameObjects
             Price = myBuffer.ReadInteger();
             Bound = myBuffer.ReadInteger();
             Animation = myBuffer.ReadInteger();
-            ClassReq = myBuffer.ReadInteger();
-            LevelReq = myBuffer.ReadInteger();
-            GenderReq = myBuffer.ReadInteger();
             Projectile = myBuffer.ReadInteger();
             AttackAnimation = myBuffer.ReadInteger();
 
+            UseReqs.Load(myBuffer);
+
             for (var i = 0; i < Options.MaxStats; i++)
             {
-                StatsReq[i] = myBuffer.ReadInteger();
                 StatsGiven[i] = myBuffer.ReadInteger();
             }
 
@@ -116,15 +111,13 @@ namespace Intersect_Library.GameObjects
             myBuffer.WriteInteger(Price);
             myBuffer.WriteInteger(Bound);
             myBuffer.WriteInteger(Animation);
-            myBuffer.WriteInteger(ClassReq);
-            myBuffer.WriteInteger(LevelReq);
-            myBuffer.WriteInteger(GenderReq);
             myBuffer.WriteInteger(Projectile);
             myBuffer.WriteInteger(AttackAnimation);
 
+            UseReqs.Save(myBuffer);
+
             for (var i = 0; i < Options.MaxStats; i++)
             {
-                myBuffer.WriteInteger(StatsReq[i]);
                 myBuffer.WriteInteger(StatsGiven[i]);
             }
 

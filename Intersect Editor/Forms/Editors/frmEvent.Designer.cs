@@ -161,9 +161,7 @@ namespace Intersect_Editor.Forms
             this.cmbTriggerVal = new DarkUI.Controls.DarkComboBox();
             this.cmbTrigger = new DarkUI.Controls.DarkComboBox();
             this.grpEventConditions = new DarkUI.Controls.DarkGroupBox();
-            this.btnRemoveCondition = new DarkUI.Controls.DarkButton();
-            this.btnAddCondition = new DarkUI.Controls.DarkButton();
-            this.lstConditions = new System.Windows.Forms.ListBox();
+            this.btnEditConditions = new DarkUI.Controls.DarkButton();
             this.grpNewCommands = new DarkUI.Controls.DarkGroupBox();
             this.lblCloseCommands = new System.Windows.Forms.Label();
             this.lstCommands = new System.Windows.Forms.TreeView();
@@ -233,9 +231,9 @@ namespace Intersect_Editor.Forms
             this.grpEntityOptions.Controls.Add(this.grpPreview);
             this.grpEntityOptions.Controls.Add(this.grpMovement);
             this.grpEntityOptions.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpEntityOptions.Location = new System.Drawing.Point(21, 170);
+            this.grpEntityOptions.Location = new System.Drawing.Point(21, 150);
             this.grpEntityOptions.Name = "grpEntityOptions";
-            this.grpEntityOptions.Size = new System.Drawing.Size(326, 403);
+            this.grpEntityOptions.Size = new System.Drawing.Size(326, 423);
             this.grpEntityOptions.TabIndex = 12;
             this.grpEntityOptions.TabStop = false;
             this.grpEntityOptions.Text = "Entity Options";
@@ -370,6 +368,7 @@ namespace Intersect_Editor.Forms
             this.cmbPreviewFace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbPreviewFace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPreviewFace.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbPreviewFace.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbPreviewFace.FormattingEnabled = true;
             this.cmbPreviewFace.Location = new System.Drawing.Point(46, 15);
             this.cmbPreviewFace.Name = "cmbPreviewFace";
@@ -418,6 +417,7 @@ namespace Intersect_Editor.Forms
             this.cmbAnimation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbAnimation.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbAnimation.FormattingEnabled = true;
             this.cmbAnimation.Location = new System.Drawing.Point(20, 132);
             this.cmbAnimation.Name = "cmbAnimation";
@@ -473,6 +473,7 @@ namespace Intersect_Editor.Forms
             this.cmbLayering.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbLayering.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbLayering.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbLayering.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbLayering.FormattingEnabled = true;
             this.cmbLayering.Items.AddRange(new object[] {
             "Below Player",
@@ -492,6 +493,7 @@ namespace Intersect_Editor.Forms
             this.cmbEventFreq.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbEventFreq.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbEventFreq.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbEventFreq.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbEventFreq.FormattingEnabled = true;
             this.cmbEventFreq.Items.AddRange(new object[] {
             "Not Very Often",
@@ -513,6 +515,7 @@ namespace Intersect_Editor.Forms
             this.cmbEventSpeed.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbEventSpeed.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbEventSpeed.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbEventSpeed.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbEventSpeed.FormattingEnabled = true;
             this.cmbEventSpeed.Items.AddRange(new object[] {
             "Slowest",
@@ -573,6 +576,7 @@ namespace Intersect_Editor.Forms
             this.cmbMoveType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbMoveType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbMoveType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbMoveType.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbMoveType.FormattingEnabled = true;
             this.cmbMoveType.Items.AddRange(new object[] {
             "None",
@@ -592,9 +596,9 @@ namespace Intersect_Editor.Forms
             this.grpTriggers.Controls.Add(this.cmbTriggerVal);
             this.grpTriggers.Controls.Add(this.cmbTrigger);
             this.grpTriggers.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpTriggers.Location = new System.Drawing.Point(25, 535);
+            this.grpTriggers.Location = new System.Drawing.Point(25, 517);
             this.grpTriggers.Name = "grpTriggers";
-            this.grpTriggers.Size = new System.Drawing.Size(317, 35);
+            this.grpTriggers.Size = new System.Drawing.Size(317, 44);
             this.grpTriggers.TabIndex = 21;
             this.grpTriggers.TabStop = false;
             this.grpTriggers.Text = "Trigger";
@@ -602,7 +606,7 @@ namespace Intersect_Editor.Forms
             // lblTriggerVal
             // 
             this.lblTriggerVal.AutoSize = true;
-            this.lblTriggerVal.Location = new System.Drawing.Point(174, 14);
+            this.lblTriggerVal.Location = new System.Drawing.Point(174, 17);
             this.lblTriggerVal.Name = "lblTriggerVal";
             this.lblTriggerVal.Size = new System.Drawing.Size(53, 13);
             this.lblTriggerVal.TabIndex = 10;
@@ -617,10 +621,11 @@ namespace Intersect_Editor.Forms
             this.cmbTriggerVal.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbTriggerVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbTriggerVal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbTriggerVal.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbTriggerVal.FormattingEnabled = true;
             this.cmbTriggerVal.Items.AddRange(new object[] {
             "None"});
-            this.cmbTriggerVal.Location = new System.Drawing.Point(230, 10);
+            this.cmbTriggerVal.Location = new System.Drawing.Point(230, 13);
             this.cmbTriggerVal.Name = "cmbTriggerVal";
             this.cmbTriggerVal.Size = new System.Drawing.Size(81, 21);
             this.cmbTriggerVal.TabIndex = 9;
@@ -634,13 +639,14 @@ namespace Intersect_Editor.Forms
             this.cmbTrigger.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbTrigger.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbTrigger.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbTrigger.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbTrigger.FormattingEnabled = true;
             this.cmbTrigger.Items.AddRange(new object[] {
             "Action Button",
             "Player Touch",
             "Autorun",
             "Projectile Hit"});
-            this.cmbTrigger.Location = new System.Drawing.Point(62, 10);
+            this.cmbTrigger.Location = new System.Drawing.Point(62, 13);
             this.cmbTrigger.Name = "cmbTrigger";
             this.cmbTrigger.Size = new System.Drawing.Size(101, 21);
             this.cmbTrigger.TabIndex = 2;
@@ -650,47 +656,24 @@ namespace Intersect_Editor.Forms
             // 
             this.grpEventConditions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpEventConditions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpEventConditions.Controls.Add(this.btnRemoveCondition);
-            this.grpEventConditions.Controls.Add(this.btnAddCondition);
-            this.grpEventConditions.Controls.Add(this.lstConditions);
+            this.grpEventConditions.Controls.Add(this.btnEditConditions);
             this.grpEventConditions.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEventConditions.Location = new System.Drawing.Point(21, 89);
             this.grpEventConditions.Name = "grpEventConditions";
-            this.grpEventConditions.Size = new System.Drawing.Size(326, 78);
+            this.grpEventConditions.Size = new System.Drawing.Size(326, 55);
             this.grpEventConditions.TabIndex = 5;
             this.grpEventConditions.TabStop = false;
             this.grpEventConditions.Text = "Conditions";
             // 
-            // btnRemoveCondition
+            // btnEditConditions
             // 
-            this.btnRemoveCondition.Location = new System.Drawing.Point(292, 46);
-            this.btnRemoveCondition.Name = "btnRemoveCondition";
-            this.btnRemoveCondition.Padding = new System.Windows.Forms.Padding(5);
-            this.btnRemoveCondition.Size = new System.Drawing.Size(29, 23);
-            this.btnRemoveCondition.TabIndex = 2;
-            this.btnRemoveCondition.Text = "-";
-            this.btnRemoveCondition.Click += new System.EventHandler(this.btnRemoveCondition_Click);
-            // 
-            // btnAddCondition
-            // 
-            this.btnAddCondition.Location = new System.Drawing.Point(292, 17);
-            this.btnAddCondition.Name = "btnAddCondition";
-            this.btnAddCondition.Padding = new System.Windows.Forms.Padding(5);
-            this.btnAddCondition.Size = new System.Drawing.Size(29, 23);
-            this.btnAddCondition.TabIndex = 1;
-            this.btnAddCondition.Text = "+";
-            this.btnAddCondition.Click += new System.EventHandler(this.btnAddCondition_Click);
-            // 
-            // lstConditions
-            // 
-            this.lstConditions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstConditions.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lstConditions.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstConditions.FormattingEnabled = true;
-            this.lstConditions.Location = new System.Drawing.Point(6, 17);
-            this.lstConditions.Name = "lstConditions";
-            this.lstConditions.Size = new System.Drawing.Size(282, 54);
-            this.lstConditions.TabIndex = 0;
+            this.btnEditConditions.Location = new System.Drawing.Point(7, 20);
+            this.btnEditConditions.Name = "btnEditConditions";
+            this.btnEditConditions.Padding = new System.Windows.Forms.Padding(5);
+            this.btnEditConditions.Size = new System.Drawing.Size(304, 23);
+            this.btnEditConditions.TabIndex = 0;
+            this.btnEditConditions.Text = "Spawn/Execution Conditions";
+            this.btnEditConditions.Click += new System.EventHandler(this.btnEditConditions_Click);
             // 
             // grpNewCommands
             // 
@@ -1143,6 +1126,7 @@ namespace Intersect_Editor.Forms
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "FrmEvent";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Event Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmEvent_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmEvent_FormClosed);
@@ -1220,9 +1204,6 @@ namespace Intersect_Editor.Forms
         private Panel pnlFacePreview;
         private DarkCheckBox chkWalkingAnimation;
         private DarkCheckBox chkDirectionFix;
-        private DarkButton btnRemoveCondition;
-        private DarkButton btnAddCondition;
-        private ListBox lstConditions;
         private DarkGroupBox grpGeneral;
         private Label lblAnimation;
         private DarkComboBox cmbAnimation;
@@ -1239,5 +1220,6 @@ namespace Intersect_Editor.Forms
         private DarkButton btnTabsRight;
         private Panel pnlTabs;
         private TreeView lstCommands;
+        private DarkButton btnEditConditions;
     }
 }

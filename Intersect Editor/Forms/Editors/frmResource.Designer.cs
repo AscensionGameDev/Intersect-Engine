@@ -35,11 +35,11 @@ namespace Intersect_Editor.Classes
             this.groupBox1 = new DarkUI.Controls.DarkGroupBox();
             this.lstResources = new System.Windows.Forms.ListBox();
             this.groupBox2 = new DarkUI.Controls.DarkGroupBox();
-            this.scrlAnimation = new DarkScrollBar();
+            this.scrlAnimation = new DarkUI.Controls.DarkScrollBar();
             this.lblAnimation = new System.Windows.Forms.Label();
             this.txtMaxHp = new DarkUI.Controls.DarkTextBox();
             this.lblMaxHp = new System.Windows.Forms.Label();
-            this.scrlSpawnDuration = new DarkScrollBar();
+            this.scrlSpawnDuration = new DarkUI.Controls.DarkScrollBar();
             this.lblSpawnDuration = new System.Windows.Forms.Label();
             this.chkWalkableAfter = new DarkUI.Controls.DarkCheckBox();
             this.chkWalkableBefore = new DarkUI.Controls.DarkCheckBox();
@@ -50,7 +50,9 @@ namespace Intersect_Editor.Classes
             this.label1 = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.groupBox3 = new DarkUI.Controls.DarkGroupBox();
+            this.exhaustedGraphicContainer = new System.Windows.Forms.Panel();
             this.picEndResource = new System.Windows.Forms.PictureBox();
+            this.initalGraphicContainer = new System.Windows.Forms.Panel();
             this.picInitialResource = new System.Windows.Forms.PictureBox();
             this.cmbEndSprite = new DarkUI.Controls.DarkComboBox();
             this.lblPic2 = new System.Windows.Forms.Label();
@@ -59,11 +61,11 @@ namespace Intersect_Editor.Classes
             this.groupBox4 = new DarkUI.Controls.DarkGroupBox();
             this.txtDropAmount = new DarkUI.Controls.DarkTextBox();
             this.lblDropAmount = new System.Windows.Forms.Label();
-            this.scrlDropChance = new DarkScrollBar();
+            this.scrlDropChance = new DarkUI.Controls.DarkScrollBar();
             this.lblDropChance = new System.Windows.Forms.Label();
-            this.scrlDropItem = new DarkScrollBar();
+            this.scrlDropItem = new DarkUI.Controls.DarkScrollBar();
             this.lblDropItem = new System.Windows.Forms.Label();
-            this.scrlDropIndex = new DarkScrollBar();
+            this.scrlDropIndex = new DarkUI.Controls.DarkScrollBar();
             this.lblDropIndex = new System.Windows.Forms.Label();
             this.tmrRender = new System.Windows.Forms.Timer(this.components);
             this.pnlContainer = new System.Windows.Forms.Panel();
@@ -78,18 +80,17 @@ namespace Intersect_Editor.Classes
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.initalGraphicContainer = new System.Windows.Forms.Panel();
-            this.exhaustedGraphicContainer = new System.Windows.Forms.Panel();
+            this.btnRequirements = new DarkUI.Controls.DarkButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.exhaustedGraphicContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picEndResource)).BeginInit();
+            this.initalGraphicContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picInitialResource)).BeginInit();
             this.groupBox4.SuspendLayout();
             this.pnlContainer.SuspendLayout();
             this.toolStrip.SuspendLayout();
-            this.initalGraphicContainer.SuspendLayout();
-            this.exhaustedGraphicContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -122,6 +123,7 @@ namespace Intersect_Editor.Classes
             // 
             this.groupBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.groupBox2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.groupBox2.Controls.Add(this.btnRequirements);
             this.groupBox2.Controls.Add(this.scrlAnimation);
             this.groupBox2.Controls.Add(this.lblAnimation);
             this.groupBox2.Controls.Add(this.txtMaxHp);
@@ -146,16 +148,15 @@ namespace Intersect_Editor.Classes
             // 
             // scrlAnimation
             // 
-            
             this.scrlAnimation.Location = new System.Drawing.Point(9, 186);
             this.scrlAnimation.Maximum = 3600;
             this.scrlAnimation.Minimum = -1;
             this.scrlAnimation.Name = "scrlAnimation";
+            this.scrlAnimation.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlAnimation.Size = new System.Drawing.Size(201, 18);
             this.scrlAnimation.TabIndex = 37;
             this.scrlAnimation.Value = -1;
             this.scrlAnimation.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlAnimation_Scroll);
-            this.scrlAnimation.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblAnimation
             // 
@@ -191,10 +192,10 @@ namespace Intersect_Editor.Classes
             this.scrlSpawnDuration.Location = new System.Drawing.Point(9, 151);
             this.scrlSpawnDuration.Maximum = 3600;
             this.scrlSpawnDuration.Name = "scrlSpawnDuration";
+            this.scrlSpawnDuration.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlSpawnDuration.Size = new System.Drawing.Size(201, 18);
             this.scrlSpawnDuration.TabIndex = 33;
             this.scrlSpawnDuration.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlSpawnDuration_Scroll);
-            this.scrlSpawnDuration.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblSpawnDuration
             // 
@@ -207,20 +208,18 @@ namespace Intersect_Editor.Classes
             // 
             // chkWalkableAfter
             // 
-            this.chkWalkableAfter.AutoSize = true;
             this.chkWalkableAfter.Location = new System.Drawing.Point(6, 240);
             this.chkWalkableAfter.Name = "chkWalkableAfter";
-            this.chkWalkableAfter.Size = new System.Drawing.Size(185, 17);
+            this.chkWalkableAfter.Size = new System.Drawing.Size(211, 17);
             this.chkWalkableAfter.TabIndex = 31;
             this.chkWalkableAfter.Text = "Walkable after resource removal?";
             this.chkWalkableAfter.CheckedChanged += new System.EventHandler(this.chkWalkableAfter_CheckedChanged);
             // 
             // chkWalkableBefore
             // 
-            this.chkWalkableBefore.AutoSize = true;
             this.chkWalkableBefore.Location = new System.Drawing.Point(6, 217);
             this.chkWalkableBefore.Name = "chkWalkableBefore";
-            this.chkWalkableBefore.Size = new System.Drawing.Size(194, 17);
+            this.chkWalkableBefore.Size = new System.Drawing.Size(211, 17);
             this.chkWalkableBefore.TabIndex = 30;
             this.chkWalkableBefore.Text = "Walkable before resource removal?";
             this.chkWalkableBefore.CheckedChanged += new System.EventHandler(this.chkWalkableBefore_CheckedChanged);
@@ -308,6 +307,15 @@ namespace Intersect_Editor.Classes
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Graphics";
             // 
+            // exhaustedGraphicContainer
+            // 
+            this.exhaustedGraphicContainer.AutoScroll = true;
+            this.exhaustedGraphicContainer.Controls.Add(this.picEndResource);
+            this.exhaustedGraphicContainer.Location = new System.Drawing.Point(248, 62);
+            this.exhaustedGraphicContainer.Name = "exhaustedGraphicContainer";
+            this.exhaustedGraphicContainer.Size = new System.Drawing.Size(219, 341);
+            this.exhaustedGraphicContainer.TabIndex = 25;
+            // 
             // picEndResource
             // 
             this.picEndResource.Location = new System.Drawing.Point(0, 0);
@@ -315,6 +323,15 @@ namespace Intersect_Editor.Classes
             this.picEndResource.Size = new System.Drawing.Size(182, 290);
             this.picEndResource.TabIndex = 2;
             this.picEndResource.TabStop = false;
+            // 
+            // initalGraphicContainer
+            // 
+            this.initalGraphicContainer.AutoScroll = true;
+            this.initalGraphicContainer.Controls.Add(this.picInitialResource);
+            this.initalGraphicContainer.Location = new System.Drawing.Point(13, 62);
+            this.initalGraphicContainer.Name = "initalGraphicContainer";
+            this.initalGraphicContainer.Size = new System.Drawing.Size(219, 341);
+            this.initalGraphicContainer.TabIndex = 24;
             // 
             // picInitialResource
             // 
@@ -420,13 +437,12 @@ namespace Intersect_Editor.Classes
             // 
             // scrlDropChance
             // 
-            
             this.scrlDropChance.Location = new System.Drawing.Point(6, 135);
             this.scrlDropChance.Name = "scrlDropChance";
+            this.scrlDropChance.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlDropChance.Size = new System.Drawing.Size(200, 18);
             this.scrlDropChance.TabIndex = 14;
             this.scrlDropChance.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlDropChance_Scroll);
-            this.scrlDropChance.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblDropChance
             // 
@@ -439,15 +455,14 @@ namespace Intersect_Editor.Classes
             // 
             // scrlDropItem
             // 
-            
             this.scrlDropItem.Location = new System.Drawing.Point(6, 64);
             this.scrlDropItem.Maximum = 3600;
             this.scrlDropItem.Minimum = -1;
             this.scrlDropItem.Name = "scrlDropItem";
+            this.scrlDropItem.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlDropItem.Size = new System.Drawing.Size(201, 18);
             this.scrlDropItem.TabIndex = 12;
             this.scrlDropItem.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlDropItem_Scroll);
-            this.scrlDropItem.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblDropItem
             // 
@@ -460,16 +475,15 @@ namespace Intersect_Editor.Classes
             // 
             // scrlDropIndex
             // 
-            
             this.scrlDropIndex.Location = new System.Drawing.Point(6, 31);
             this.scrlDropIndex.Maximum = 10;
             this.scrlDropIndex.Minimum = 1;
             this.scrlDropIndex.Name = "scrlDropIndex";
+            this.scrlDropIndex.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlDropIndex.Size = new System.Drawing.Size(200, 18);
             this.scrlDropIndex.TabIndex = 10;
             this.scrlDropIndex.Value = 1;
             this.scrlDropIndex.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlDropIndex_Scroll);
-            this.scrlDropIndex.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblDropIndex
             // 
@@ -619,23 +633,15 @@ namespace Intersect_Editor.Classes
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // initalGraphicContainer
+            // btnRequirements
             // 
-            this.initalGraphicContainer.AutoScroll = true;
-            this.initalGraphicContainer.Controls.Add(this.picInitialResource);
-            this.initalGraphicContainer.Location = new System.Drawing.Point(13, 62);
-            this.initalGraphicContainer.Name = "initalGraphicContainer";
-            this.initalGraphicContainer.Size = new System.Drawing.Size(219, 341);
-            this.initalGraphicContainer.TabIndex = 24;
-            // 
-            // exhaustedGraphicContainer
-            // 
-            this.exhaustedGraphicContainer.AutoScroll = true;
-            this.exhaustedGraphicContainer.Controls.Add(this.picEndResource);
-            this.exhaustedGraphicContainer.Location = new System.Drawing.Point(248, 62);
-            this.exhaustedGraphicContainer.Name = "exhaustedGraphicContainer";
-            this.exhaustedGraphicContainer.Size = new System.Drawing.Size(219, 341);
-            this.exhaustedGraphicContainer.TabIndex = 25;
+            this.btnRequirements.Location = new System.Drawing.Point(0, 122);
+            this.btnRequirements.Name = "btnRequirements";
+            this.btnRequirements.Padding = new System.Windows.Forms.Padding(5);
+            this.btnRequirements.Size = new System.Drawing.Size(183, 23);
+            this.btnRequirements.TabIndex = 38;
+            this.btnRequirements.Text = "Harvesting Requirements";
+            this.btnRequirements.Click += new System.EventHandler(this.btnRequirements_Click);
             // 
             // frmResource
             // 
@@ -662,15 +668,15 @@ namespace Intersect_Editor.Classes
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.exhaustedGraphicContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picEndResource)).EndInit();
+            this.initalGraphicContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picInitialResource)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.pnlContainer.ResumeLayout(false);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            this.initalGraphicContainer.ResumeLayout(false);
-            this.exhaustedGraphicContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -725,5 +731,6 @@ namespace Intersect_Editor.Classes
         public System.Windows.Forms.ToolStripButton toolStripItemUndo;
         private System.Windows.Forms.Panel exhaustedGraphicContainer;
         private System.Windows.Forms.Panel initalGraphicContainer;
+        private DarkButton btnRequirements;
     }
 }

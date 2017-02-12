@@ -736,14 +736,8 @@ namespace Intersect_Server.Classes.Entities
 
         public bool ShouldDespawn()
         {
-            //Should despawn if conditions are not met OR an earlier page can page
-            for (int i = 0; i < MyPage.Conditions.Count; i++)
-            {
-                if (!EventInstance.MeetsConditions(MyPage.Conditions[i], MyEventIndex.MyPlayer, MyEventIndex))
-                {
-                    return true;
-                }
-            }
+            //Should despawn if conditions are not met OR an earlier page can spawn
+            if (!EventInstance.MeetsConditionLists(MyPage.ConditionLists, MyEventIndex.MyPlayer, MyEventIndex)) return true;
             for (int i = 0; i < BaseEvent.MyPages.Count; i++)
             {
                 if (MyEventIndex.CanSpawnPage(i, BaseEvent))

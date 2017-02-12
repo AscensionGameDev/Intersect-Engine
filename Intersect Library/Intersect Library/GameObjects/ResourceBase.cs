@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Intersect_Library.GameObjects.Conditions;
 
 namespace Intersect_Library.GameObjects
 {
@@ -41,6 +42,8 @@ namespace Intersect_Library.GameObjects
         public int Animation = 0;
         public bool WalkableBefore = false;
         public bool WalkableAfter = false;
+
+        public ConditionLists HarvestingReqs = new ConditionLists();
 
         // Graphics
         public string InitialGraphic = "None";
@@ -80,6 +83,8 @@ namespace Intersect_Library.GameObjects
                 Drops[i].Chance = myBuffer.ReadInteger();
             }
 
+            HarvestingReqs.Load(myBuffer);
+
             myBuffer.Dispose();
         }
 
@@ -103,6 +108,8 @@ namespace Intersect_Library.GameObjects
                 myBuffer.WriteInteger(Drops[i].Amount);
                 myBuffer.WriteInteger(Drops[i].Chance);
             }
+
+            HarvestingReqs.Save(myBuffer);
 
             return myBuffer.ToArray();
         }

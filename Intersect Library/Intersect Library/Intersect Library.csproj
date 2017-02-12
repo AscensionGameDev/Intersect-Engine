@@ -46,6 +46,8 @@
     <Compile Include="GameObjects\AnimationBase.cs" />
     <Compile Include="GameObjects\ClassBase.cs" />
     <Compile Include="GameObjects\BenchBase.cs" />
+    <Compile Include="GameObjects\Conditions\ConditionList.cs" />
+    <Compile Include="GameObjects\Conditions\ConditionLists.cs" />
     <Compile Include="GameObjects\DatabaseObject.cs" />
     <Compile Include="GameObjects\Events\Enums.cs" />
     <Compile Include="GameObjects\Events\EventCommand.cs" />
@@ -103,13 +105,13 @@
     <None Include="Resources\Migrator.English.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Server.English.xml" />
+    <None Include="Resources\Editor.English.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Client.English.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Editor.English.xml" />
+    <None Include="Resources\Server.English.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

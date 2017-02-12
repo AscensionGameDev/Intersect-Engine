@@ -27,6 +27,7 @@ using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using Intersect_Editor.Classes.Core;
+using Intersect_Editor.Forms.Editors;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
@@ -164,19 +165,6 @@ namespace Intersect_Editor.Forms
                 {
                     lblHitAnimation.Text = "Hit Animation: " + AnimationBase.GetName(_editorItem.HitAnimation);
                 }
-
-                scrlAttackReq.Value = _editorItem.StatReq[(int) Stats.Attack];
-                lblAttackReq.Text = "Attack: " + scrlAttackReq.Value;
-                scrlDefenseReq.Value = _editorItem.StatReq[(int) Stats.Defense];
-                lblDefenseReq.Text = "Defense: " + scrlDefenseReq.Value;
-                scrlAbilityPwrReq.Value = _editorItem.StatReq[(int) Stats.AbilityPower];
-                lblAbilityPwrReq.Text = "Ability Pwr: " + scrlAbilityPwrReq.Value;
-                scrlMagicResistReq.Value = _editorItem.StatReq[(int) Stats.MagicResist];
-                lblMagicResistReq.Text = "Magic Resist: " + scrlMagicResistReq.Value;
-                scrlSpeedReq.Value = _editorItem.StatReq[(int) Stats.Speed];
-                lblSpeedReq.Text = "Speed: " + scrlSpeedReq.Value;
-                scrlLevelReq.Value = _editorItem.LevelReq;
-                lblLevelReq.Text = "Level: " + scrlLevelReq.Value;
 
                 cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Pic);
                 if (cmbSprite.SelectedIndex > 0)
@@ -412,42 +400,6 @@ namespace Intersect_Editor.Forms
                 _editorItem.HitAnimation = Database.GameObjectIdFromList(GameObject.Animation, scrlHitAnimation.Value);
                 lblHitAnimation.Text = "Hit Animation: " + AnimationBase.GetName(_editorItem.HitAnimation);
             }
-        }
-
-        private void scrlAttackReq_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.StatReq[(int)Stats.Attack] = scrlAttackReq.Value;
-            lblAttackReq.Text = "Attack: " + scrlAttackReq.Value;
-        }
-
-        private void scrlDefenseReq_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.StatReq[(int)Stats.Defense] = scrlDefenseReq.Value;
-            lblDefenseReq.Text = "Defense: " + scrlDefenseReq.Value;
-        }
-
-        private void scrlSpeedReq_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.StatReq[(int)Stats.Speed] = scrlSpeedReq.Value;
-            lblSpeedReq.Text = "Speed: " + scrlSpeedReq.Value;
-        }
-
-        private void scrlAbilityPwrReq_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.StatReq[(int)Stats.AbilityPower] = scrlAbilityPwrReq.Value;
-            lblAbilityPwrReq.Text = "Ability Pwr: " + scrlAbilityPwrReq.Value;
-        }
-
-        private void scrlMagicResistReq_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.StatReq[(int)Stats.MagicResist] = scrlMagicResistReq.Value;
-            lblMagicResistReq.Text = "Magic Resist: " + scrlMagicResistReq.Value;
-        }
-
-        private void scrlLevelReq_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.LevelReq = scrlLevelReq.Value;
-            lblLevelReq.Text = "Level: " + scrlLevelReq.Value;
         }
 
         private void cmbTargetType_SelectedIndexChanged(object sender, EventArgs e)
@@ -799,6 +751,12 @@ namespace Intersect_Editor.Forms
         private void cmbScalingStat_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.ScalingStat = cmbScalingStat.SelectedIndex;
+        }
+
+        private void btnDynamicRequirements_Click(object sender, EventArgs e)
+        {
+            var frm = new frmDynamicRequirements(_editorItem.CastingReqs);
+            frm.ShowDialog();
         }
     }
 }

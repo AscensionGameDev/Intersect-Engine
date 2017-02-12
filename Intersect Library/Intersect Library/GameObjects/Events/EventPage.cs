@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Intersect_Library.GameObjects.Conditions;
 
 namespace Intersect_Library.GameObjects.Events
 {
@@ -22,7 +23,7 @@ namespace Intersect_Library.GameObjects.Events
         public int Animation = -1;
         public int InteractionFreeze;
         public List<CommandList> CommandLists = new List<CommandList>();
-        public List<EventCommand> Conditions = new List<EventCommand>();
+        public ConditionLists ConditionLists = new ConditionLists();
 
         public EventPage()
         {
@@ -60,12 +61,7 @@ namespace Intersect_Library.GameObjects.Events
             {
                 CommandLists.Add(new CommandList(curBuffer));
             }
-            x = curBuffer.ReadInteger();
-            for (var i = 0; i < x; i++)
-            {
-                Conditions.Add(new EventCommand());
-                Conditions[i].Load(curBuffer);
-            }
+            ConditionLists.Load(curBuffer);
         }
 
         public void WriteBytes(ByteBuffer myBuffer)
@@ -92,11 +88,7 @@ namespace Intersect_Library.GameObjects.Events
             {
                 commandList.WriteBytes(myBuffer);
             }
-            myBuffer.WriteInteger(Conditions.Count);
-            foreach (var condition in Conditions)
-            {
-                condition.Save(myBuffer);
-            }
+            ConditionLists.Save(myBuffer);
         }
 
         public enum EventTriggers

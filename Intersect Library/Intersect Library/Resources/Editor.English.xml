@@ -37,6 +37,16 @@
 		<string id="2">Left</string>
 		<string id="3">Right</string>
 	</Directions>
+	<Combat>
+		<string id="exp">Experience</string>
+		<string id="vital0">Health</string>
+		<string id="vital1">Mana</string>
+		<string id="stat0">Attack</string>
+		<string id="stat1">Ability Power</string>
+		<string id="stat2">Defense</string>
+		<string id="stat3">Magic Resist</string>
+		<string id="stat4">Speed</string>
+	</Combat>
 	<Warping>
 		<string id="map">Map: {00}</string>
 		<string id="x">X: {00}</string>
@@ -322,6 +332,72 @@
 		<string id="revision">Revision: {00}</string>
 		<string id="fps">FPS: {00}</string>
 	</MainForm>
+	<SwitchVariableEditor>
+		<string id="title">Switch and Variable Editor</string>
+		<string id="type">Switch or Variable Type</string>
+		<string id="list">Switch/Variable List</string>
+		
+		<string id="playerswitches">Player Switches</string>
+		<string id="playervariables">Player Variables</string>
+		<string id="globalswitches">Global Switches</string>
+		<string id="globalvariables">Global Variables</string>
+		
+		<string id="editor">Switch and Variable Editor</string>
+		<string id="playerswitch">Player Switch</string>
+		<string id="playervariable">Player Variable</string>
+		<string id="globalswitch">Server Switch</string>
+		<string id="globalvariable">Server Variable</string>
+		
+		<string id="name">Name:</string>
+		<string id="value">Value:</string>
+		<string id="true">True</string>
+		<string id="false">False</string>
+		
+		<string id="delete">Are you sure you want to delete this switch/variable? This action cannot be reverted!</string>
+		<string id="deletecaption">Delete?</string>
+		<string id="new">New</string>
+		<string id="delete">Delete</string>
+		<string id="undo">Undo Changes</string>
+		<string id="save">Save</string>
+		<string id="cancel">Cancel</string>
+	</SwitchVariableEditor>
+	<TimeEditor>
+		<string id="title">Time Editor (Day/Night Settings)</string>
+		<string id="times">Time of Day</string>
+		<string id="to">t</string>
+		<string id="settings">Time Settings</string>
+		<string id="intervals">Invervals:</string>
+		<string id="interval0">24 hours</string>
+		<string id="interval1">12 hours</string>
+		<string id="interval2">8 hours</string>
+		<string id="interval3">6 hours</string>
+		<string id="interval4">4 hours</string>
+		<string id="interval5">3 hours</string>
+		<string id="interval6">2 hours</string>
+		<string id="interval7">1 hour</string>
+		<string id="interval8">45 minutes</string>
+		<string id="interval9">30 minutes</string>
+		<string id="interval10">15 minutes</string>
+		<string id="interval11">10 minutes</string>
+		<string id="sync">Sync With Server</string>
+		<string id="rate">Time Rate:</string>
+		<string id="ratesuffix">x Normal</string>
+		<string id="ratedesc">Enter 1 for normal rate of time.
+Values larger than one for faster days. 
+Values between 0 and 1 for longer days. 
+Negative values for time to flow backwards.</string>
+		<string id="overlay">Range Overlay</string>
+		<string id="brightness">Brightness: {00}%</string>
+		<string id="colorpaneldesc">Double click the panel above to change the overlay color.</string>
+		<string id="save">Save</string>
+		<string id="cancel">Cancel</string>
+	</TimeEditor>
+	<CommonEventEditor>
+		<string id="title">Common Event Editor</string>
+		<string id="events">Common Events</string>
+		<string id="new">New</string>
+		<string id="delete">Delete</string>
+	</CommonEventEditor>
 	<EventEditor>
 		<string id="title">Event Editor - Event #{00}: {01}</string>
 		
@@ -337,8 +413,7 @@
 		<string id="clearpage">Clear Page</string>
 		
 		<string id="conditions">Conditions</string>
-		<string id="addcondition">+</string>
-		<string id="removecondition">-</string>
+		<string id="editconditions">Spawn/Execution Conditions</string>
 		
 		<string id="entityoptions">Entity Options</string>
 		<string id="eventpreview">Preview</string>
@@ -525,6 +600,7 @@
 	<EventConditionDesc>
 		<string id="true">True</string>
 		<string id="false">False</string>
+		<string id="level">Level</string>
 		<string id="selfswitch0">A</string>
 		<string id="selfswitch1">B</string>
 		<string id="selfswitch2">C</string>
@@ -538,6 +614,8 @@
 		<string id="modadmin">Mod or Admin</string>
 		<string id="admin">Admin</string>
 		<string id="timeinvalid">invalid</string>
+		<string id="male">Male</string>
+		<string id="female">Female</string>
 		
 		<string id="playerswitch">Player Switch {00} is {01}</string>
 		<string id="playervariable">Player Variable {00} {01}</string>
@@ -546,7 +624,7 @@
 		<string id="hasitem">Player has at least {00} of Item {01}</string>
 		<string id="class">Player's class is {00}</string>
 		<string id="knowsspell">Player knows Spell {00}</string>
-		<string id="level">Player's level {00}</string>
+		<string id="levelorstat">{00} {01}</string>
 		<string id="selfswitch">Self Switch {00} is {01}</string>
 		<string id="power">Player's Power is {00}</string>
 		<string id="time">Time is between {00} and {01}</string>
@@ -559,6 +637,7 @@
 		<string id="questcompleted">Quest is Completed: {00}</string>
 		<string id="playerdeath">Player Death</string>
 		<string id="nonpcsonmap">No NPCs on the map</string>
+		<string id="gender">Player's Gender is {00}</string>
 	</EventConditionDesc>
 	<EventGraphic>
 		<string id="title">Graphic Selector</string>
@@ -718,13 +797,16 @@
 		<string id="condition4">Has item...</string>
 		<string id="condition5">Class is...</string>
 		<string id="condition6">Knows spell...</string>
-		<string id="condition7">Level is....</string>
+		<string id="condition7">Level or Stat is....</string>
 		<string id="condition8">Self Switch is....</string>
 		<string id="condition9">Power level is....</string>
 		<string id="condition10">Time is between....</string>
 		<string id="condition11">Can Start Quest....</string>
 		<string id="condition12">Quest In Progress....</string>
 		<string id="condition13">Quest Completed....</string>
+		<string id="condition14">Player Death</string>
+		<string id="condition15">No NPCs on Map</string>
+		<string id="condition16">Gender Is...</string>
 		
 		<!-- Shared Options -->
 		<string id="true">True</string>
@@ -762,9 +844,11 @@
 		<string id="knowsspell">Knows Spell</string>
 		<string id="spell">Spell:</string>
 		
-		<!-- Level Is -->
-		<string id="levelis">Level Is</string>
-		<string id="level">Level: {00}</string>
+		<!-- Level or Stat Is -->
+		<string id="levelorstat">Level or Stat Is....</string>
+		<string id="levelstatitem">Level or Stat:</string>
+		<string id="level">Level</string>
+		<string id="levelstatvalue">Value: {00}</string>
 		
 		<!-- Self Switch Is -->
 		<string id="selfswitchis">Self Switch Is</string>
@@ -804,6 +888,12 @@
 		<!-- Quest Completed -->
 		<string id="questcompleted">Quest Completed</string>
 		<string id="questcompletedlabel">Quest:</string>
+		
+		<!-- Gender Is -->
+		<string id="genderis">Gender Is..</string>
+		<string id="gender">Gender:</string>
+		<string id="male">Male</string>
+		<string id="female">Female</string>
 		
 		<string id="okay">Ok</string>
 		<string id="cancel">Cancel</string>

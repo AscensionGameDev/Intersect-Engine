@@ -33,6 +33,7 @@ namespace Intersect_Editor.Forms
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSpell));
             this.pnlContainer = new System.Windows.Forms.Panel();
             this.groupBox2 = new DarkUI.Controls.DarkGroupBox();
+            this.btnDynamicRequirements = new DarkUI.Controls.DarkButton();
             this.label6 = new System.Windows.Forms.Label();
             this.txtDesc = new DarkUI.Controls.DarkTextBox();
             this.scrlHitAnimation = new DarkUI.Controls.DarkScrollBar();
@@ -65,18 +66,6 @@ namespace Intersect_Editor.Forms
             this.scrlProjectile = new DarkUI.Controls.DarkScrollBar();
             this.scrlCastRange = new DarkUI.Controls.DarkScrollBar();
             this.groupBox3 = new DarkUI.Controls.DarkGroupBox();
-            this.lblLevelReq = new System.Windows.Forms.Label();
-            this.scrlLevelReq = new DarkUI.Controls.DarkScrollBar();
-            this.lblSpeedReq = new System.Windows.Forms.Label();
-            this.lblMagicResistReq = new System.Windows.Forms.Label();
-            this.lblDefenseReq = new System.Windows.Forms.Label();
-            this.lblAbilityPwrReq = new System.Windows.Forms.Label();
-            this.lblAttackReq = new System.Windows.Forms.Label();
-            this.scrlDefenseReq = new DarkUI.Controls.DarkScrollBar();
-            this.scrlSpeedReq = new DarkUI.Controls.DarkScrollBar();
-            this.scrlMagicResistReq = new DarkUI.Controls.DarkScrollBar();
-            this.scrlAbilityPwrReq = new DarkUI.Controls.DarkScrollBar();
-            this.scrlAttackReq = new DarkUI.Controls.DarkScrollBar();
             this.grpBuffDebuff = new DarkUI.Controls.DarkGroupBox();
             this.darkGroupBox5 = new DarkUI.Controls.DarkGroupBox();
             this.chkHOTDOT = new DarkUI.Controls.DarkCheckBox();
@@ -173,14 +162,14 @@ namespace Intersect_Editor.Forms
             // pnlContainer
             // 
             this.pnlContainer.AutoScroll = true;
+            this.pnlContainer.Controls.Add(this.grpBuffDebuff);
             this.pnlContainer.Controls.Add(this.groupBox2);
             this.pnlContainer.Controls.Add(this.groupBox4);
             this.pnlContainer.Controls.Add(this.grpTargetInfo);
             this.pnlContainer.Controls.Add(this.groupBox3);
-            this.pnlContainer.Controls.Add(this.grpBuffDebuff);
             this.pnlContainer.Controls.Add(this.grpDash);
-            this.pnlContainer.Controls.Add(this.grpEvent);
             this.pnlContainer.Controls.Add(this.grpWarp);
+            this.pnlContainer.Controls.Add(this.grpEvent);
             this.pnlContainer.Location = new System.Drawing.Point(221, 40);
             this.pnlContainer.Name = "pnlContainer";
             this.pnlContainer.Size = new System.Drawing.Size(460, 473);
@@ -207,10 +196,20 @@ namespace Intersect_Editor.Forms
             this.groupBox2.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox2.Location = new System.Drawing.Point(2, 0);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(207, 294);
+            this.groupBox2.Size = new System.Drawing.Size(207, 268);
             this.groupBox2.TabIndex = 17;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "General";
+            // 
+            // btnDynamicRequirements
+            // 
+            this.btnDynamicRequirements.Location = new System.Drawing.Point(11, 18);
+            this.btnDynamicRequirements.Name = "btnDynamicRequirements";
+            this.btnDynamicRequirements.Padding = new System.Windows.Forms.Padding(5);
+            this.btnDynamicRequirements.Size = new System.Drawing.Size(208, 23);
+            this.btnDynamicRequirements.TabIndex = 20;
+            this.btnDynamicRequirements.Text = "Casting Requirements";
+            this.btnDynamicRequirements.Click += new System.EventHandler(this.btnDynamicRequirements_Click);
             // 
             // label6
             // 
@@ -229,13 +228,13 @@ namespace Intersect_Editor.Forms
             this.txtDesc.Location = new System.Drawing.Point(60, 117);
             this.txtDesc.Multiline = true;
             this.txtDesc.Name = "txtDesc";
-            this.txtDesc.Size = new System.Drawing.Size(135, 80);
+            this.txtDesc.Size = new System.Drawing.Size(135, 61);
             this.txtDesc.TabIndex = 18;
             this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
             // 
             // scrlHitAnimation
             // 
-            this.scrlHitAnimation.Location = new System.Drawing.Point(6, 265);
+            this.scrlHitAnimation.Location = new System.Drawing.Point(6, 239);
             this.scrlHitAnimation.Maximum = 6000;
             this.scrlHitAnimation.Minimum = -1;
             this.scrlHitAnimation.Name = "scrlHitAnimation";
@@ -248,7 +247,7 @@ namespace Intersect_Editor.Forms
             // lblHitAnimation
             // 
             this.lblHitAnimation.AutoSize = true;
-            this.lblHitAnimation.Location = new System.Drawing.Point(6, 250);
+            this.lblHitAnimation.Location = new System.Drawing.Point(6, 224);
             this.lblHitAnimation.Name = "lblHitAnimation";
             this.lblHitAnimation.Size = new System.Drawing.Size(101, 13);
             this.lblHitAnimation.TabIndex = 16;
@@ -256,7 +255,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlCastAnimation
             // 
-            this.scrlCastAnimation.Location = new System.Drawing.Point(6, 219);
+            this.scrlCastAnimation.Location = new System.Drawing.Point(6, 199);
             this.scrlCastAnimation.Maximum = 600;
             this.scrlCastAnimation.Minimum = -1;
             this.scrlCastAnimation.Name = "scrlCastAnimation";
@@ -269,7 +268,7 @@ namespace Intersect_Editor.Forms
             // lblCastAnimation
             // 
             this.lblCastAnimation.AutoSize = true;
-            this.lblCastAnimation.Location = new System.Drawing.Point(6, 206);
+            this.lblCastAnimation.Location = new System.Drawing.Point(6, 186);
             this.lblCastAnimation.Name = "lblCastAnimation";
             this.lblCastAnimation.Size = new System.Drawing.Size(109, 13);
             this.lblCastAnimation.TabIndex = 14;
@@ -375,7 +374,7 @@ namespace Intersect_Editor.Forms
             this.groupBox4.Controls.Add(this.lblCooldownDuration);
             this.groupBox4.Controls.Add(this.scrlCastDuration);
             this.groupBox4.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox4.Location = new System.Drawing.Point(2, 295);
+            this.groupBox4.Location = new System.Drawing.Point(2, 273);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(438, 104);
             this.groupBox4.TabIndex = 36;
@@ -473,9 +472,9 @@ namespace Intersect_Editor.Forms
             this.grpTargetInfo.Controls.Add(this.scrlProjectile);
             this.grpTargetInfo.Controls.Add(this.scrlCastRange);
             this.grpTargetInfo.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpTargetInfo.Location = new System.Drawing.Point(215, 149);
+            this.grpTargetInfo.Location = new System.Drawing.Point(215, 58);
             this.grpTargetInfo.Name = "grpTargetInfo";
-            this.grpTargetInfo.Size = new System.Drawing.Size(225, 145);
+            this.grpTargetInfo.Size = new System.Drawing.Size(225, 141);
             this.grpTargetInfo.TabIndex = 19;
             this.grpTargetInfo.TabStop = false;
             this.grpTargetInfo.Text = "Targetting Info";
@@ -574,139 +573,14 @@ namespace Intersect_Editor.Forms
             // 
             this.groupBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.groupBox3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox3.Controls.Add(this.lblLevelReq);
-            this.groupBox3.Controls.Add(this.scrlLevelReq);
-            this.groupBox3.Controls.Add(this.lblSpeedReq);
-            this.groupBox3.Controls.Add(this.lblMagicResistReq);
-            this.groupBox3.Controls.Add(this.lblDefenseReq);
-            this.groupBox3.Controls.Add(this.lblAbilityPwrReq);
-            this.groupBox3.Controls.Add(this.lblAttackReq);
-            this.groupBox3.Controls.Add(this.scrlDefenseReq);
-            this.groupBox3.Controls.Add(this.scrlSpeedReq);
-            this.groupBox3.Controls.Add(this.scrlMagicResistReq);
-            this.groupBox3.Controls.Add(this.scrlAbilityPwrReq);
-            this.groupBox3.Controls.Add(this.scrlAttackReq);
+            this.groupBox3.Controls.Add(this.btnDynamicRequirements);
             this.groupBox3.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox3.Location = new System.Drawing.Point(215, 0);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(226, 143);
+            this.groupBox3.Size = new System.Drawing.Size(226, 52);
             this.groupBox3.TabIndex = 18;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Casting Requirements";
-            // 
-            // lblLevelReq
-            // 
-            this.lblLevelReq.AutoSize = true;
-            this.lblLevelReq.Location = new System.Drawing.Point(120, 103);
-            this.lblLevelReq.Name = "lblLevelReq";
-            this.lblLevelReq.Size = new System.Drawing.Size(45, 13);
-            this.lblLevelReq.TabIndex = 13;
-            this.lblLevelReq.Text = "Level: 0";
-            // 
-            // scrlLevelReq
-            // 
-            this.scrlLevelReq.Location = new System.Drawing.Point(123, 116);
-            this.scrlLevelReq.Maximum = 255;
-            this.scrlLevelReq.Name = "scrlLevelReq";
-            this.scrlLevelReq.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlLevelReq.Size = new System.Drawing.Size(80, 17);
-            this.scrlLevelReq.TabIndex = 12;
-            this.scrlLevelReq.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlLevelReq_Scroll);
-            // 
-            // lblSpeedReq
-            // 
-            this.lblSpeedReq.AutoSize = true;
-            this.lblSpeedReq.Location = new System.Drawing.Point(6, 103);
-            this.lblSpeedReq.Name = "lblSpeedReq";
-            this.lblSpeedReq.Size = new System.Drawing.Size(50, 13);
-            this.lblSpeedReq.TabIndex = 9;
-            this.lblSpeedReq.Text = "Speed: 0";
-            // 
-            // lblMagicResistReq
-            // 
-            this.lblMagicResistReq.AutoSize = true;
-            this.lblMagicResistReq.Location = new System.Drawing.Point(120, 62);
-            this.lblMagicResistReq.Name = "lblMagicResistReq";
-            this.lblMagicResistReq.Size = new System.Drawing.Size(80, 13);
-            this.lblMagicResistReq.TabIndex = 8;
-            this.lblMagicResistReq.Text = "Magic Resist: 0";
-            // 
-            // lblDefenseReq
-            // 
-            this.lblDefenseReq.AutoSize = true;
-            this.lblDefenseReq.Location = new System.Drawing.Point(6, 62);
-            this.lblDefenseReq.Name = "lblDefenseReq";
-            this.lblDefenseReq.Size = new System.Drawing.Size(59, 13);
-            this.lblDefenseReq.TabIndex = 7;
-            this.lblDefenseReq.Text = "Defense: 0";
-            // 
-            // lblAbilityPwrReq
-            // 
-            this.lblAbilityPwrReq.AutoSize = true;
-            this.lblAbilityPwrReq.Location = new System.Drawing.Point(120, 16);
-            this.lblAbilityPwrReq.Name = "lblAbilityPwrReq";
-            this.lblAbilityPwrReq.Size = new System.Drawing.Size(67, 13);
-            this.lblAbilityPwrReq.TabIndex = 6;
-            this.lblAbilityPwrReq.Text = "Ability Pwr: 0";
-            // 
-            // lblAttackReq
-            // 
-            this.lblAttackReq.AutoSize = true;
-            this.lblAttackReq.Location = new System.Drawing.Point(6, 16);
-            this.lblAttackReq.Name = "lblAttackReq";
-            this.lblAttackReq.Size = new System.Drawing.Size(50, 13);
-            this.lblAttackReq.TabIndex = 5;
-            this.lblAttackReq.Text = "Attack: 0";
-            // 
-            // scrlDefenseReq
-            // 
-            this.scrlDefenseReq.Location = new System.Drawing.Point(9, 77);
-            this.scrlDefenseReq.Maximum = 255;
-            this.scrlDefenseReq.Name = "scrlDefenseReq";
-            this.scrlDefenseReq.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlDefenseReq.Size = new System.Drawing.Size(80, 17);
-            this.scrlDefenseReq.TabIndex = 4;
-            this.scrlDefenseReq.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlDefenseReq_Scroll);
-            // 
-            // scrlSpeedReq
-            // 
-            this.scrlSpeedReq.Location = new System.Drawing.Point(9, 116);
-            this.scrlSpeedReq.Maximum = 255;
-            this.scrlSpeedReq.Name = "scrlSpeedReq";
-            this.scrlSpeedReq.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlSpeedReq.Size = new System.Drawing.Size(80, 17);
-            this.scrlSpeedReq.TabIndex = 3;
-            this.scrlSpeedReq.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlSpeedReq_Scroll);
-            // 
-            // scrlMagicResistReq
-            // 
-            this.scrlMagicResistReq.Location = new System.Drawing.Point(123, 77);
-            this.scrlMagicResistReq.Maximum = 255;
-            this.scrlMagicResistReq.Name = "scrlMagicResistReq";
-            this.scrlMagicResistReq.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlMagicResistReq.Size = new System.Drawing.Size(80, 17);
-            this.scrlMagicResistReq.TabIndex = 2;
-            this.scrlMagicResistReq.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlMagicResistReq_Scroll);
-            // 
-            // scrlAbilityPwrReq
-            // 
-            this.scrlAbilityPwrReq.Location = new System.Drawing.Point(123, 35);
-            this.scrlAbilityPwrReq.Maximum = 255;
-            this.scrlAbilityPwrReq.Name = "scrlAbilityPwrReq";
-            this.scrlAbilityPwrReq.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlAbilityPwrReq.Size = new System.Drawing.Size(80, 17);
-            this.scrlAbilityPwrReq.TabIndex = 1;
-            this.scrlAbilityPwrReq.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlAbilityPwrReq_Scroll);
-            // 
-            // scrlAttackReq
-            // 
-            this.scrlAttackReq.Location = new System.Drawing.Point(9, 35);
-            this.scrlAttackReq.Maximum = 255;
-            this.scrlAttackReq.Name = "scrlAttackReq";
-            this.scrlAttackReq.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlAttackReq.Size = new System.Drawing.Size(80, 17);
-            this.scrlAttackReq.TabIndex = 0;
-            this.scrlAttackReq.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlAttackReq_Scroll);
             // 
             // grpBuffDebuff
             // 
@@ -718,7 +592,7 @@ namespace Intersect_Editor.Forms
             this.grpBuffDebuff.Controls.Add(this.darkGroupBox2);
             this.grpBuffDebuff.Controls.Add(this.darkGroupBox1);
             this.grpBuffDebuff.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpBuffDebuff.Location = new System.Drawing.Point(0, 409);
+            this.grpBuffDebuff.Location = new System.Drawing.Point(0, 377);
             this.grpBuffDebuff.Name = "grpBuffDebuff";
             this.grpBuffDebuff.Size = new System.Drawing.Size(440, 390);
             this.grpBuffDebuff.TabIndex = 39;
@@ -1186,7 +1060,7 @@ namespace Intersect_Editor.Forms
             this.grpDash.Controls.Add(this.lblRange);
             this.grpDash.Controls.Add(this.scrlRange);
             this.grpDash.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpDash.Location = new System.Drawing.Point(-4, 409);
+            this.grpDash.Location = new System.Drawing.Point(-4, 377);
             this.grpDash.Name = "grpDash";
             this.grpDash.Size = new System.Drawing.Size(200, 181);
             this.grpDash.TabIndex = 38;
@@ -1276,7 +1150,7 @@ namespace Intersect_Editor.Forms
             this.grpEvent.Controls.Add(this.scrlEvent);
             this.grpEvent.Controls.Add(this.lblEvent);
             this.grpEvent.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpEvent.Location = new System.Drawing.Point(6, 409);
+            this.grpEvent.Location = new System.Drawing.Point(6, 377);
             this.grpEvent.Name = "grpEvent";
             this.grpEvent.Size = new System.Drawing.Size(200, 67);
             this.grpEvent.TabIndex = 40;
@@ -1317,7 +1191,7 @@ namespace Intersect_Editor.Forms
             this.grpWarp.Controls.Add(this.txtWarpChunk);
             this.grpWarp.Controls.Add(this.label16);
             this.grpWarp.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpWarp.Location = new System.Drawing.Point(2, 409);
+            this.grpWarp.Location = new System.Drawing.Point(2, 378);
             this.grpWarp.Name = "grpWarp";
             this.grpWarp.Size = new System.Drawing.Size(200, 170);
             this.grpWarp.TabIndex = 35;
@@ -1580,7 +1454,6 @@ namespace Intersect_Editor.Forms
             this.grpTargetInfo.ResumeLayout(false);
             this.grpTargetInfo.PerformLayout();
             this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.grpBuffDebuff.ResumeLayout(false);
             this.darkGroupBox5.ResumeLayout(false);
             this.darkGroupBox5.PerformLayout();
@@ -1623,24 +1496,12 @@ namespace Intersect_Editor.Forms
         private System.Windows.Forms.Label label1;
         private DarkTextBox txtName;
         private DarkGroupBox groupBox3;
-        private System.Windows.Forms.Label lblSpeedReq;
-        private System.Windows.Forms.Label lblMagicResistReq;
-        private System.Windows.Forms.Label lblDefenseReq;
-        private System.Windows.Forms.Label lblAbilityPwrReq;
-        private System.Windows.Forms.Label lblAttackReq;
-        private DarkScrollBar scrlDefenseReq;
-        private DarkScrollBar scrlSpeedReq;
-        private DarkScrollBar scrlMagicResistReq;
-        private DarkScrollBar scrlAbilityPwrReq;
-        private DarkScrollBar scrlAttackReq;
         private DarkScrollBar scrlHitAnimation;
         private System.Windows.Forms.Label lblHitAnimation;
         private DarkScrollBar scrlCastAnimation;
         private System.Windows.Forms.Label lblCastAnimation;
         private System.Windows.Forms.Label label2;
         private DarkComboBox cmbType;
-        private System.Windows.Forms.Label lblLevelReq;
-        private DarkScrollBar scrlLevelReq;
         private DarkGroupBox grpTargetInfo;
         private DarkScrollBar scrlHitRadius;
         private System.Windows.Forms.Label lblHitRadius;
@@ -1728,5 +1589,6 @@ namespace Intersect_Editor.Forms
         private DarkUI.Controls.DarkCheckBox chkFriendly;
         private DarkComboBox cmbScalingStat;
         private System.Windows.Forms.Label label3;
+        private DarkButton btnDynamicRequirements;
     }
 }
