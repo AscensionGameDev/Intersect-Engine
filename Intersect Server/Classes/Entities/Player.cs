@@ -1907,6 +1907,20 @@ namespace Intersect_Server.Classes.Entities
                     }
                 }
 
+                //Check if the caster has the right ammunition if a projectile
+                if (spell.SpellType == (int)SpellTargetTypes.Projectile && spell.Projectile > -1)
+                {
+                    var projectileBase = ProjectileBase.GetProjectile(spell.Projectile);
+                    if (projectileBase.Ammo > -1)
+                    {
+                        if (FindItem(projectileBase.Ammo, projectileBase.AmmoRequired) == -1)
+                        {
+                            PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "notenough", ItemBase.GetName(projectileBase.Ammo)), Color.Red);
+                            return;
+                        }
+                    }
+                }
+
                 if (Level < spell.LevelReq)
                 {
                     PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "levelreq"));
@@ -1931,6 +1945,16 @@ namespace Intersect_Server.Classes.Entities
                                 Vital[(int)Vitals.Health] = Vital[(int)Vitals.Health] - spell.VitalCost[(int)Vitals.Health];
                                 CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
                                 SpellCastSlot = spellSlot;
+
+                                //Check if the caster has the right ammunition if a projectile
+                                if (spell.SpellType == (int)SpellTargetTypes.Projectile && spell.Projectile > -1)
+                                {
+                                    var projectileBase = ProjectileBase.GetProjectile(spell.Projectile);
+                                    if (projectileBase.Ammo > -1)
+                                    {
+                                        TakeItem(FindItem(projectileBase.Ammo, projectileBase.AmmoRequired), projectileBase.AmmoRequired);
+                                    }
+                                }
 
                                 if (spell.CastAnimation > -1)
                                 {

@@ -48,6 +48,8 @@ namespace Intersect_Library.GameObjects
         public bool IgnoreExhaustedResources = false;
         public bool Homing = false;
         public bool GrappleHook = false;
+        public int Ammo = -1;
+        public int AmmoRequired = 1;
         public Location[,] SpawnLocations = new Location[SpawnLocationsWidth, SpawnLocationsHeight];
         public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
 
@@ -80,6 +82,8 @@ namespace Intersect_Library.GameObjects
             IgnoreZDimension = Convert.ToBoolean(myBuffer.ReadInteger());
             Homing = Convert.ToBoolean(myBuffer.ReadInteger());
             GrappleHook = Convert.ToBoolean(myBuffer.ReadInteger());
+            Ammo = myBuffer.ReadInteger();
+            AmmoRequired = myBuffer.ReadInteger();
 
             for (var x = 0; x < SpawnLocationsWidth; x++)
             {
@@ -125,6 +129,8 @@ namespace Intersect_Library.GameObjects
             myBuffer.WriteInteger(Convert.ToInt32(IgnoreZDimension));
             myBuffer.WriteInteger(Convert.ToInt32(Homing));
             myBuffer.WriteInteger(Convert.ToInt32(GrappleHook));
+            myBuffer.WriteInteger(Ammo);
+            myBuffer.WriteInteger(AmmoRequired);
 
             for (var x = 0; x < SpawnLocationsWidth; x++)
             {

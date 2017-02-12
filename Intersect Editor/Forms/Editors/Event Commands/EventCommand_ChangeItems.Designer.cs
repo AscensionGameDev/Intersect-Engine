@@ -31,7 +31,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void InitializeComponent()
         {
             this.grpChangeItems = new DarkUI.Controls.DarkGroupBox();
-            this.scrlAmount = new DarkScrollBar();
+            this.scrlAmount = new DarkUI.Controls.DarkScrollBar();
             this.lblAmount = new System.Windows.Forms.Label();
             this.cmbItem = new DarkUI.Controls.DarkComboBox();
             this.lblItem = new System.Windows.Forms.Label();
@@ -68,11 +68,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.scrlAmount.Maximum = 32000;
             this.scrlAmount.Minimum = 1;
             this.scrlAmount.Name = "scrlAmount";
+            this.scrlAmount.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlAmount.Size = new System.Drawing.Size(97, 17);
             this.scrlAmount.TabIndex = 26;
             this.scrlAmount.Value = 1;
-            this.scrlAmount.ScrollOrientation = DarkScrollOrientation.Horizontal;
-            this.scrlAmount.ValueChanged += this.scrlAmount_Scroll;
             // 
             // lblAmount
             // 
@@ -91,6 +90,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbItem.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbItem.FormattingEnabled = true;
             this.cmbItem.Location = new System.Drawing.Point(64, 46);
             this.cmbItem.Name = "cmbItem";
@@ -114,6 +114,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbAction.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbAction.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbAction.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbAction.FormattingEnabled = true;
             this.cmbAction.Items.AddRange(new object[] {
             "Give",

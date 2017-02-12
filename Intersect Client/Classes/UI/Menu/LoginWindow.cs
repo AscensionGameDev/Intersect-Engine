@@ -137,7 +137,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _passwordTextbox.TextColorOverride = new Color(255, 220, 220, 220);
 
             //Login Save Pass Checkbox
-            _savePassChk = new LabeledCheckBox(_menuPanel) { Text = Strings.Get("login", "savepassword") };
+            _savePassChk = new LabeledCheckBox(_menuPanel) { Text = Strings.Get("login", "savepass") };
             _savePassChk.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 20));
             _savePassChk.SetSize(300, 36);
             _savePassChk.SetPosition(_passwordBackground.X + 24,_passwordBackground.Bottom + 16);

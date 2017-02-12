@@ -125,6 +125,11 @@ namespace Intersect_Editor.Classes
         {
             _directionGrid = new Bitmap("resources/misc/directions.png");
             scrlAnimation.Maximum = AnimationBase.ObjectCount() - 1;
+
+            cmbItem.Items.Clear();
+            cmbItem.Items.Add("None.");
+            cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
+
             UpdateEditor();
         }
 
@@ -154,6 +159,8 @@ namespace Intersect_Editor.Classes
                 chkIgnoreZDimensionBlocks.Checked = _editorItem.IgnoreZDimension;
                 chkHoming.Checked = _editorItem.Homing;
                 chkGrapple.Checked = _editorItem.GrappleHook;
+                cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _editorItem.Ammo) + 1;
+                scrlConsume.Value = _editorItem.AmmoRequired;
 
                 if (scrlAnimation.Value == -1)
                 {
@@ -178,8 +185,9 @@ namespace Intersect_Editor.Classes
                 lblAmount.Text = "Quantity: " + scrlAmount.Value;
                 lblRange.Text = "Range: " + scrlRange.Value;
                 lblKnockback.Text = "Knockback: " + scrlKnockback.Value;
+                lblConsume.Text = "Amount: " + scrlConsume.Value;
 
-                if(lstAnimations.SelectedIndex < 0) { lstAnimations.SelectedIndex = 0; }
+                if (lstAnimations.SelectedIndex < 0) { lstAnimations.SelectedIndex = 0; }
                 updateAnimationData(0);
                 lstAnimations.SelectedIndex = 0;
 
@@ -632,6 +640,17 @@ namespace Intersect_Editor.Classes
                     toolStripItemNew_Click(null, null);
                 }
             }
+        }
+
+        private void cmbItem_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.Ammo = Database.GameObjectIdFromList(GameObject.Item, cmbItem.SelectedIndex - 1);
+        }
+
+        private void scrlConsume_Click(object sender, EventArgs e)
+        {
+            lblConsume.Text = "Amount: " + scrlConsume.Value;
+            _editorItem.AmmoRequired = scrlConsume.Value;
         }
     }
 }
