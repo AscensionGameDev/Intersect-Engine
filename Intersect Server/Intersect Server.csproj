@@ -149,10 +149,10 @@
   <ItemGroup>
     <Content Include="Icon.ico" />
     <Content Include="x64\Mono.Data.Sqlite.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\sqlite3.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\Mono.Data.Sqlite.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

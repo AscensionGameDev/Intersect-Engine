@@ -750,6 +750,19 @@ namespace Intersect_Server.Classes.Networking
                                 .Projectile);
                     if (projectileBase != null)
                     {
+                        if (projectileBase.Ammo > -1)
+                        {
+                            int item = client.Entity.FindItem(projectileBase.Ammo, projectileBase.AmmoRequired);
+                            if (item == -1)
+                            {
+                                PacketSender.SendPlayerMsg(client, Strings.Get("items", "notenough", ItemBase.GetName(projectileBase.Ammo)), Color.Red);
+                                return;
+                            }
+                            else
+                            {
+                                client.Entity.TakeItem(item, projectileBase.AmmoRequired);
+                            }
+                        }
                         MapInstance.GetMap(client.Entity.CurrentMap)
                             .SpawnMapProjectile(client.Entity, projectileBase,null, ItemBase.GetItem(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum), client.Entity.CurrentMap,
                                 client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ,
@@ -831,11 +844,11 @@ namespace Intersect_Server.Classes.Networking
                 PacketSender.SendLoginError(client, Strings.Get("account", "invalidname"));
                 return;
             }
-            if (!FieldChecking.IsEmail(email))
+            /*if (!FieldChecking.IsEmail(email))
             {
                 PacketSender.SendLoginError(client, Strings.Get("account", "invalidemail"));
                 return;
-            }
+            }*/
             if (Database.AccountExists(username))
             {
                 PacketSender.SendLoginError(client, Strings.Get("account","exists"));

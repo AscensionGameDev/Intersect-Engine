@@ -632,7 +632,7 @@ namespace Intersect_Editor.Classes
             this.toolStripItemUndo.Size = new System.Drawing.Size(23, 22);
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
-            // 
+            //
             // btnRequirements
             // 
             this.btnRequirements.Location = new System.Drawing.Point(0, 122);
@@ -642,7 +642,7 @@ namespace Intersect_Editor.Classes
             this.btnRequirements.TabIndex = 38;
             this.btnRequirements.Text = "Harvesting Requirements";
             this.btnRequirements.Click += new System.EventHandler(this.btnRequirements_Click);
-            // 
+            //
             // frmResource
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
