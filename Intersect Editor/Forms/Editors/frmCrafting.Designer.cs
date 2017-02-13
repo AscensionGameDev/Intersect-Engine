@@ -42,21 +42,21 @@ namespace Intersect_Editor.Forms.Editors
             this.btnNewComposition = new DarkUI.Controls.DarkButton();
             this.btnDeleteCraft = new DarkUI.Controls.DarkButton();
             this.grpCraft = new DarkUI.Controls.DarkGroupBox();
+            this.cmbResult = new DarkUI.Controls.DarkComboBox();
             this.lblItem = new System.Windows.Forms.Label();
-            this.scrlItem = new DarkScrollBar();
             this.lblName = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.lblSpeed = new System.Windows.Forms.Label();
-            this.scrlSpeed = new DarkScrollBar();
+            this.scrlSpeed = new DarkUI.Controls.DarkScrollBar();
             this.groupBox5 = new DarkUI.Controls.DarkGroupBox();
+            this.cmbIngredient = new DarkUI.Controls.DarkComboBox();
             this.btnDupIngredient = new DarkUI.Controls.DarkButton();
             this.btnRemove = new DarkUI.Controls.DarkButton();
             this.btnAdd = new DarkUI.Controls.DarkButton();
             this.lblIngredient = new System.Windows.Forms.Label();
-            this.scrlIngredient = new DarkScrollBar();
             this.lstIngredients = new System.Windows.Forms.ListBox();
             this.lblQuantity = new System.Windows.Forms.Label();
-            this.scrlQuantity = new DarkScrollBar();
+            this.scrlQuantity = new DarkUI.Controls.DarkScrollBar();
             this.toolStrip = new DarkUI.Controls.DarkToolStrip();
             this.toolStripItemNew = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -198,8 +198,8 @@ namespace Intersect_Editor.Forms.Editors
             // 
             this.grpCraft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpCraft.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpCraft.Controls.Add(this.cmbResult);
             this.grpCraft.Controls.Add(this.lblItem);
-            this.grpCraft.Controls.Add(this.scrlItem);
             this.grpCraft.Controls.Add(this.lblName);
             this.grpCraft.Controls.Add(this.txtName);
             this.grpCraft.Controls.Add(this.lblSpeed);
@@ -207,33 +207,36 @@ namespace Intersect_Editor.Forms.Editors
             this.grpCraft.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpCraft.Location = new System.Drawing.Point(212, 3);
             this.grpCraft.Name = "grpCraft";
-            this.grpCraft.Size = new System.Drawing.Size(273, 113);
+            this.grpCraft.Size = new System.Drawing.Size(273, 144);
             this.grpCraft.TabIndex = 31;
             this.grpCraft.TabStop = false;
             this.grpCraft.Text = "General";
             this.grpCraft.Visible = false;
             // 
+            // cmbResult
+            // 
+            this.cmbResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbResult.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbResult.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbResult.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbResult.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbResult.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbResult.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbResult.FormattingEnabled = true;
+            this.cmbResult.Location = new System.Drawing.Point(16, 68);
+            this.cmbResult.Name = "cmbResult";
+            this.cmbResult.Size = new System.Drawing.Size(247, 21);
+            this.cmbResult.TabIndex = 34;
+            this.cmbResult.SelectedIndexChanged += new System.EventHandler(this.cmbResult_SelectedIndexChanged);
+            // 
             // lblItem
             // 
             this.lblItem.AutoSize = true;
-            this.lblItem.Location = new System.Drawing.Point(10, 42);
+            this.lblItem.Location = new System.Drawing.Point(13, 51);
             this.lblItem.Name = "lblItem";
-            this.lblItem.Size = new System.Drawing.Size(59, 13);
+            this.lblItem.Size = new System.Drawing.Size(30, 13);
             this.lblItem.TabIndex = 33;
-            this.lblItem.Text = "Item: None";
-            // 
-            // scrlItem
-            // 
-            
-            this.scrlItem.Location = new System.Drawing.Point(16, 55);
-            this.scrlItem.Maximum = 5000;
-            this.scrlItem.Minimum = -1;
-            this.scrlItem.Name = "scrlItem";
-            this.scrlItem.Size = new System.Drawing.Size(247, 17);
-            this.scrlItem.TabIndex = 32;
-            this.scrlItem.Value = -1;
-            this.scrlItem.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlItem_Scroll);
-            this.scrlItem.ScrollOrientation = DarkScrollOrientation.Horizontal;
+            this.lblItem.Text = "Item:";
             // 
             // lblName
             // 
@@ -258,7 +261,7 @@ namespace Intersect_Editor.Forms.Editors
             // lblSpeed
             // 
             this.lblSpeed.AutoSize = true;
-            this.lblSpeed.Location = new System.Drawing.Point(10, 72);
+            this.lblSpeed.Location = new System.Drawing.Point(10, 100);
             this.lblSpeed.Name = "lblSpeed";
             this.lblSpeed.Size = new System.Drawing.Size(55, 13);
             this.lblSpeed.TabIndex = 3;
@@ -266,35 +269,51 @@ namespace Intersect_Editor.Forms.Editors
             // 
             // scrlSpeed
             // 
-            this.scrlSpeed.Location = new System.Drawing.Point(15, 85);
+            this.scrlSpeed.Location = new System.Drawing.Point(15, 113);
             this.scrlSpeed.Maximum = 5000;
             this.scrlSpeed.Minimum = 1;
             this.scrlSpeed.Name = "scrlSpeed";
+            this.scrlSpeed.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlSpeed.Size = new System.Drawing.Size(248, 17);
             this.scrlSpeed.TabIndex = 0;
             this.scrlSpeed.Value = 1;
             this.scrlSpeed.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlSpeed_Scroll);
-            this.scrlSpeed.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // groupBox5
             // 
             this.groupBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.groupBox5.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.groupBox5.Controls.Add(this.cmbIngredient);
             this.groupBox5.Controls.Add(this.btnDupIngredient);
             this.groupBox5.Controls.Add(this.btnRemove);
             this.groupBox5.Controls.Add(this.btnAdd);
             this.groupBox5.Controls.Add(this.lblIngredient);
-            this.groupBox5.Controls.Add(this.scrlIngredient);
             this.groupBox5.Controls.Add(this.lstIngredients);
             this.groupBox5.Controls.Add(this.lblQuantity);
             this.groupBox5.Controls.Add(this.scrlQuantity);
             this.groupBox5.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox5.Location = new System.Drawing.Point(212, 122);
+            this.groupBox5.Location = new System.Drawing.Point(212, 153);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(273, 242);
             this.groupBox5.TabIndex = 30;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Ingredients";
+            // 
+            // cmbIngredient
+            // 
+            this.cmbIngredient.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbIngredient.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbIngredient.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbIngredient.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbIngredient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbIngredient.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbIngredient.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbIngredient.FormattingEnabled = true;
+            this.cmbIngredient.Location = new System.Drawing.Point(13, 145);
+            this.cmbIngredient.Name = "cmbIngredient";
+            this.cmbIngredient.Size = new System.Drawing.Size(250, 21);
+            this.cmbIngredient.TabIndex = 40;
+            this.cmbIngredient.SelectedIndexChanged += new System.EventHandler(this.cmbIngredient_SelectedIndexChanged);
             // 
             // btnDupIngredient
             // 
@@ -329,24 +348,11 @@ namespace Intersect_Editor.Forms.Editors
             // lblIngredient
             // 
             this.lblIngredient.AutoSize = true;
-            this.lblIngredient.Location = new System.Drawing.Point(9, 141);
+            this.lblIngredient.Location = new System.Drawing.Point(9, 128);
             this.lblIngredient.Name = "lblIngredient";
-            this.lblIngredient.Size = new System.Drawing.Size(59, 13);
+            this.lblIngredient.Size = new System.Drawing.Size(30, 13);
             this.lblIngredient.TabIndex = 31;
-            this.lblIngredient.Text = "Item: None";
-            // 
-            // scrlIngredient
-            // 
-            
-            this.scrlIngredient.Location = new System.Drawing.Point(12, 154);
-            this.scrlIngredient.Maximum = 5000;
-            this.scrlIngredient.Minimum = -1;
-            this.scrlIngredient.Name = "scrlIngredient";
-            this.scrlIngredient.Size = new System.Drawing.Size(251, 17);
-            this.scrlIngredient.TabIndex = 30;
-            this.scrlIngredient.Value = -1;
-            this.scrlIngredient.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlIngredient_Scroll);
-            this.scrlIngredient.ScrollOrientation = DarkScrollOrientation.Horizontal;
+            this.lblIngredient.Text = "Item:";
             // 
             // lstIngredients
             // 
@@ -356,9 +362,9 @@ namespace Intersect_Editor.Forms.Editors
             this.lstIngredients.FormattingEnabled = true;
             this.lstIngredients.Items.AddRange(new object[] {
             "Ingredient: None x1"});
-            this.lstIngredients.Location = new System.Drawing.Point(12, 17);
+            this.lstIngredients.Location = new System.Drawing.Point(16, 19);
             this.lstIngredients.Name = "lstIngredients";
-            this.lstIngredients.Size = new System.Drawing.Size(251, 119);
+            this.lstIngredients.Size = new System.Drawing.Size(251, 106);
             this.lstIngredients.TabIndex = 29;
             this.lstIngredients.Click += new System.EventHandler(this.lstIngredients_Click);
             this.lstIngredients.SelectedIndexChanged += new System.EventHandler(this.lstIngredients_SelectedIndexChanged);
@@ -374,15 +380,14 @@ namespace Intersect_Editor.Forms.Editors
             // 
             // scrlQuantity
             // 
-            
             this.scrlQuantity.Location = new System.Drawing.Point(12, 184);
             this.scrlQuantity.Minimum = 1;
             this.scrlQuantity.Name = "scrlQuantity";
+            this.scrlQuantity.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlQuantity.Size = new System.Drawing.Size(251, 17);
             this.scrlQuantity.TabIndex = 27;
             this.scrlQuantity.Value = 1;
             this.scrlQuantity.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlQuantity_Scroll);
-            this.scrlQuantity.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // toolStrip
             // 
@@ -525,7 +530,6 @@ namespace Intersect_Editor.Forms.Editors
         private System.Windows.Forms.Panel pnlContainer;
         private DarkGroupBox grpCraft;
         private System.Windows.Forms.Label lblItem;
-        private DarkScrollBar scrlItem;
         private System.Windows.Forms.Label lblName;
         private DarkTextBox txtName;
         private System.Windows.Forms.Label lblSpeed;
@@ -534,7 +538,6 @@ namespace Intersect_Editor.Forms.Editors
         private DarkButton btnRemove;
         private DarkButton btnAdd;
         private System.Windows.Forms.Label lblIngredient;
-        private DarkScrollBar scrlIngredient;
         private System.Windows.Forms.ListBox lstIngredients;
         private System.Windows.Forms.Label lblQuantity;
         private DarkScrollBar scrlQuantity;
@@ -553,5 +556,7 @@ namespace Intersect_Editor.Forms.Editors
         public System.Windows.Forms.ToolStripButton toolStripItemUndo;
         private DarkButton btnDupCraft;
         private DarkButton btnDupIngredient;
+        private DarkComboBox cmbResult;
+        private DarkComboBox cmbIngredient;
     }
 }

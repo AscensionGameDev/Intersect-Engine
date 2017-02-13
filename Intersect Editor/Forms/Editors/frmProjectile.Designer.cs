@@ -53,11 +53,11 @@ namespace Intersect_Editor.Classes
             this.scrlSpawn = new DarkUI.Controls.DarkScrollBar();
             this.scrlSpeed = new DarkUI.Controls.DarkScrollBar();
             this.groupBox5 = new DarkUI.Controls.DarkGroupBox();
+            this.cmbAnimation = new DarkUI.Controls.DarkComboBox();
             this.btnRemove = new DarkUI.Controls.DarkButton();
             this.btnAdd = new DarkUI.Controls.DarkButton();
             this.chkRotation = new DarkUI.Controls.DarkCheckBox();
             this.lblAnimation = new System.Windows.Forms.Label();
-            this.scrlAnimation = new DarkUI.Controls.DarkScrollBar();
             this.lstAnimations = new System.Windows.Forms.ListBox();
             this.lblSpawnRange = new System.Windows.Forms.Label();
             this.scrlSpawnRange = new DarkUI.Controls.DarkScrollBar();
@@ -335,11 +335,11 @@ namespace Intersect_Editor.Classes
             // 
             this.groupBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.groupBox5.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.groupBox5.Controls.Add(this.cmbAnimation);
             this.groupBox5.Controls.Add(this.btnRemove);
             this.groupBox5.Controls.Add(this.btnAdd);
             this.groupBox5.Controls.Add(this.chkRotation);
             this.groupBox5.Controls.Add(this.lblAnimation);
-            this.groupBox5.Controls.Add(this.scrlAnimation);
             this.groupBox5.Controls.Add(this.lstAnimations);
             this.groupBox5.Controls.Add(this.lblSpawnRange);
             this.groupBox5.Controls.Add(this.scrlSpawnRange);
@@ -350,6 +350,22 @@ namespace Intersect_Editor.Classes
             this.groupBox5.TabIndex = 27;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Animations";
+            // 
+            // cmbAnimation
+            // 
+            this.cmbAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbAnimation.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbAnimation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbAnimation.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbAnimation.FormattingEnabled = true;
+            this.cmbAnimation.Location = new System.Drawing.Point(71, 139);
+            this.cmbAnimation.Name = "cmbAnimation";
+            this.cmbAnimation.Size = new System.Drawing.Size(192, 21);
+            this.cmbAnimation.TabIndex = 39;
+            this.cmbAnimation.SelectedIndexChanged += new System.EventHandler(this.cmbAnimation_SelectedIndexChanged);
             // 
             // btnRemove
             // 
@@ -386,20 +402,9 @@ namespace Intersect_Editor.Classes
             this.lblAnimation.AutoSize = true;
             this.lblAnimation.Location = new System.Drawing.Point(9, 139);
             this.lblAnimation.Name = "lblAnimation";
-            this.lblAnimation.Size = new System.Drawing.Size(85, 13);
+            this.lblAnimation.Size = new System.Drawing.Size(56, 13);
             this.lblAnimation.TabIndex = 31;
-            this.lblAnimation.Text = "Animation: None";
-            // 
-            // scrlAnimation
-            // 
-            this.scrlAnimation.Location = new System.Drawing.Point(12, 150);
-            this.scrlAnimation.Maximum = 5000;
-            this.scrlAnimation.Minimum = -1;
-            this.scrlAnimation.Name = "scrlAnimation";
-            this.scrlAnimation.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlAnimation.Size = new System.Drawing.Size(251, 17);
-            this.scrlAnimation.TabIndex = 30;
-            this.scrlAnimation.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlAnimation_Scroll);
+            this.lblAnimation.Text = "Animation:";
             // 
             // lstAnimations
             // 
@@ -746,7 +751,6 @@ namespace Intersect_Editor.Classes
         private DarkGroupBox groupBox5;
         private DarkCheckBox chkRotation;
         private System.Windows.Forms.Label lblAnimation;
-        private DarkScrollBar scrlAnimation;
         private System.Windows.Forms.ListBox lstAnimations;
         private System.Windows.Forms.Label lblSpawnRange;
         private DarkScrollBar scrlSpawnRange;
@@ -778,5 +782,6 @@ namespace Intersect_Editor.Classes
         private DarkScrollBar scrlConsume;
         private DarkComboBox cmbItem;
         private System.Windows.Forms.Label lblItem;
+        private DarkComboBox cmbAnimation;
     }
 }

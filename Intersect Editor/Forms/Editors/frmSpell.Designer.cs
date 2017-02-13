@@ -32,40 +32,6 @@ namespace Intersect_Editor.Forms
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSpell));
             this.pnlContainer = new System.Windows.Forms.Panel();
-            this.groupBox2 = new DarkUI.Controls.DarkGroupBox();
-            this.btnDynamicRequirements = new DarkUI.Controls.DarkButton();
-            this.label6 = new System.Windows.Forms.Label();
-            this.txtDesc = new DarkUI.Controls.DarkTextBox();
-            this.scrlHitAnimation = new DarkUI.Controls.DarkScrollBar();
-            this.lblHitAnimation = new System.Windows.Forms.Label();
-            this.scrlCastAnimation = new DarkUI.Controls.DarkScrollBar();
-            this.lblCastAnimation = new System.Windows.Forms.Label();
-            this.cmbSprite = new DarkUI.Controls.DarkComboBox();
-            this.lblPic = new System.Windows.Forms.Label();
-            this.picSpell = new System.Windows.Forms.PictureBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.cmbType = new DarkUI.Controls.DarkComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.txtName = new DarkUI.Controls.DarkTextBox();
-            this.groupBox4 = new DarkUI.Controls.DarkGroupBox();
-            this.scrlManaCost = new DarkUI.Controls.DarkScrollBar();
-            this.scrlHPCost = new DarkUI.Controls.DarkScrollBar();
-            this.lblMPCost = new System.Windows.Forms.Label();
-            this.lblHPCost = new System.Windows.Forms.Label();
-            this.scrlCooldownDuration = new DarkUI.Controls.DarkScrollBar();
-            this.lblCastDuration = new System.Windows.Forms.Label();
-            this.lblCooldownDuration = new System.Windows.Forms.Label();
-            this.scrlCastDuration = new DarkUI.Controls.DarkScrollBar();
-            this.grpTargetInfo = new DarkUI.Controls.DarkGroupBox();
-            this.lblProjectile = new System.Windows.Forms.Label();
-            this.scrlHitRadius = new DarkUI.Controls.DarkScrollBar();
-            this.lblHitRadius = new System.Windows.Forms.Label();
-            this.cmbTargetType = new DarkUI.Controls.DarkComboBox();
-            this.lblCastRange = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.scrlProjectile = new DarkUI.Controls.DarkScrollBar();
-            this.scrlCastRange = new DarkUI.Controls.DarkScrollBar();
-            this.groupBox3 = new DarkUI.Controls.DarkGroupBox();
             this.grpBuffDebuff = new DarkUI.Controls.DarkGroupBox();
             this.darkGroupBox5 = new DarkUI.Controls.DarkGroupBox();
             this.chkHOTDOT = new DarkUI.Controls.DarkCheckBox();
@@ -105,6 +71,40 @@ namespace Intersect_Editor.Forms
             this.scrlManaDamage = new DarkUI.Controls.DarkScrollBar();
             this.lblManaDamage = new System.Windows.Forms.Label();
             this.scrlHPDamage = new DarkUI.Controls.DarkScrollBar();
+            this.groupBox2 = new DarkUI.Controls.DarkGroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtDesc = new DarkUI.Controls.DarkTextBox();
+            this.scrlHitAnimation = new DarkUI.Controls.DarkScrollBar();
+            this.lblHitAnimation = new System.Windows.Forms.Label();
+            this.scrlCastAnimation = new DarkUI.Controls.DarkScrollBar();
+            this.lblCastAnimation = new System.Windows.Forms.Label();
+            this.cmbSprite = new DarkUI.Controls.DarkComboBox();
+            this.lblPic = new System.Windows.Forms.Label();
+            this.picSpell = new System.Windows.Forms.PictureBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cmbType = new DarkUI.Controls.DarkComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtName = new DarkUI.Controls.DarkTextBox();
+            this.groupBox4 = new DarkUI.Controls.DarkGroupBox();
+            this.scrlManaCost = new DarkUI.Controls.DarkScrollBar();
+            this.scrlHPCost = new DarkUI.Controls.DarkScrollBar();
+            this.lblMPCost = new System.Windows.Forms.Label();
+            this.lblHPCost = new System.Windows.Forms.Label();
+            this.scrlCooldownDuration = new DarkUI.Controls.DarkScrollBar();
+            this.lblCastDuration = new System.Windows.Forms.Label();
+            this.lblCooldownDuration = new System.Windows.Forms.Label();
+            this.scrlCastDuration = new DarkUI.Controls.DarkScrollBar();
+            this.grpTargetInfo = new DarkUI.Controls.DarkGroupBox();
+            this.lblProjectile = new System.Windows.Forms.Label();
+            this.scrlHitRadius = new DarkUI.Controls.DarkScrollBar();
+            this.lblHitRadius = new System.Windows.Forms.Label();
+            this.cmbTargetType = new DarkUI.Controls.DarkComboBox();
+            this.lblCastRange = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.scrlProjectile = new DarkUI.Controls.DarkScrollBar();
+            this.scrlCastRange = new DarkUI.Controls.DarkScrollBar();
+            this.groupBox3 = new DarkUI.Controls.DarkGroupBox();
+            this.btnDynamicRequirements = new DarkUI.Controls.DarkButton();
             this.grpDash = new DarkUI.Controls.DarkGroupBox();
             this.groupBox5 = new DarkUI.Controls.DarkGroupBox();
             this.chkIgnoreInactiveResources = new DarkUI.Controls.DarkCheckBox();
@@ -113,9 +113,6 @@ namespace Intersect_Editor.Forms
             this.chkIgnoreActiveResources = new DarkUI.Controls.DarkCheckBox();
             this.lblRange = new System.Windows.Forms.Label();
             this.scrlRange = new DarkUI.Controls.DarkScrollBar();
-            this.grpEvent = new DarkUI.Controls.DarkGroupBox();
-            this.scrlEvent = new DarkUI.Controls.DarkScrollBar();
-            this.lblEvent = new System.Windows.Forms.Label();
             this.grpWarp = new DarkUI.Controls.DarkGroupBox();
             this.lblWarpDir = new System.Windows.Forms.Label();
             this.lblWarpX = new System.Windows.Forms.Label();
@@ -125,6 +122,9 @@ namespace Intersect_Editor.Forms
             this.scrlWarpY = new DarkUI.Controls.DarkScrollBar();
             this.txtWarpChunk = new DarkUI.Controls.DarkTextBox();
             this.label16 = new System.Windows.Forms.Label();
+            this.grpEvent = new DarkUI.Controls.DarkGroupBox();
+            this.scrlEvent = new DarkUI.Controls.DarkScrollBar();
+            this.lblEvent = new System.Windows.Forms.Label();
             this.toolStrip = new DarkUI.Controls.DarkToolStrip();
             this.toolStripItemNew = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -138,12 +138,8 @@ namespace Intersect_Editor.Forms
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.groupBox1 = new DarkUI.Controls.DarkGroupBox();
             this.lstSpells = new System.Windows.Forms.ListBox();
+            this.darkNumericUpDown1 = new DarkUI.Controls.DarkNumericUpDown();
             this.pnlContainer.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picSpell)).BeginInit();
-            this.groupBox4.SuspendLayout();
-            this.grpTargetInfo.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.grpBuffDebuff.SuspendLayout();
             this.darkGroupBox5.SuspendLayout();
             this.darkGroupBox4.SuspendLayout();
@@ -151,17 +147,24 @@ namespace Intersect_Editor.Forms
             this.darkGroupBox3.SuspendLayout();
             this.darkGroupBox2.SuspendLayout();
             this.darkGroupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picSpell)).BeginInit();
+            this.groupBox4.SuspendLayout();
+            this.grpTargetInfo.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.grpDash.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            this.grpEvent.SuspendLayout();
             this.grpWarp.SuspendLayout();
+            this.grpEvent.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.darkNumericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // pnlContainer
             // 
             this.pnlContainer.AutoScroll = true;
+            this.pnlContainer.Controls.Add(this.darkNumericUpDown1);
             this.pnlContainer.Controls.Add(this.grpBuffDebuff);
             this.pnlContainer.Controls.Add(this.groupBox2);
             this.pnlContainer.Controls.Add(this.groupBox4);
@@ -175,412 +178,6 @@ namespace Intersect_Editor.Forms
             this.pnlContainer.Size = new System.Drawing.Size(460, 473);
             this.pnlContainer.TabIndex = 41;
             this.pnlContainer.Visible = false;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox2.Controls.Add(this.label6);
-            this.groupBox2.Controls.Add(this.txtDesc);
-            this.groupBox2.Controls.Add(this.scrlHitAnimation);
-            this.groupBox2.Controls.Add(this.lblHitAnimation);
-            this.groupBox2.Controls.Add(this.scrlCastAnimation);
-            this.groupBox2.Controls.Add(this.lblCastAnimation);
-            this.groupBox2.Controls.Add(this.cmbSprite);
-            this.groupBox2.Controls.Add(this.lblPic);
-            this.groupBox2.Controls.Add(this.picSpell);
-            this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Controls.Add(this.cmbType);
-            this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.txtName);
-            this.groupBox2.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox2.Location = new System.Drawing.Point(2, 0);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(207, 268);
-            this.groupBox2.TabIndex = 17;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "General";
-            // 
-            // btnDynamicRequirements
-            // 
-            this.btnDynamicRequirements.Location = new System.Drawing.Point(11, 18);
-            this.btnDynamicRequirements.Name = "btnDynamicRequirements";
-            this.btnDynamicRequirements.Padding = new System.Windows.Forms.Padding(5);
-            this.btnDynamicRequirements.Size = new System.Drawing.Size(208, 23);
-            this.btnDynamicRequirements.TabIndex = 20;
-            this.btnDynamicRequirements.Text = "Casting Requirements";
-            this.btnDynamicRequirements.Click += new System.EventHandler(this.btnDynamicRequirements_Click);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 118);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(35, 13);
-            this.label6.TabIndex = 19;
-            this.label6.Text = "Desc:";
-            // 
-            // txtDesc
-            // 
-            this.txtDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtDesc.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtDesc.Location = new System.Drawing.Point(60, 117);
-            this.txtDesc.Multiline = true;
-            this.txtDesc.Name = "txtDesc";
-            this.txtDesc.Size = new System.Drawing.Size(135, 61);
-            this.txtDesc.TabIndex = 18;
-            this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
-            // 
-            // scrlHitAnimation
-            // 
-            this.scrlHitAnimation.Location = new System.Drawing.Point(6, 239);
-            this.scrlHitAnimation.Maximum = 6000;
-            this.scrlHitAnimation.Minimum = -1;
-            this.scrlHitAnimation.Name = "scrlHitAnimation";
-            this.scrlHitAnimation.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlHitAnimation.Size = new System.Drawing.Size(186, 18);
-            this.scrlHitAnimation.TabIndex = 17;
-            this.scrlHitAnimation.Value = -1;
-            this.scrlHitAnimation.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlHitAnimation_Scroll);
-            // 
-            // lblHitAnimation
-            // 
-            this.lblHitAnimation.AutoSize = true;
-            this.lblHitAnimation.Location = new System.Drawing.Point(6, 224);
-            this.lblHitAnimation.Name = "lblHitAnimation";
-            this.lblHitAnimation.Size = new System.Drawing.Size(101, 13);
-            this.lblHitAnimation.TabIndex = 16;
-            this.lblHitAnimation.Text = "Hit Animation: None";
-            // 
-            // scrlCastAnimation
-            // 
-            this.scrlCastAnimation.Location = new System.Drawing.Point(6, 199);
-            this.scrlCastAnimation.Maximum = 600;
-            this.scrlCastAnimation.Minimum = -1;
-            this.scrlCastAnimation.Name = "scrlCastAnimation";
-            this.scrlCastAnimation.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlCastAnimation.Size = new System.Drawing.Size(186, 18);
-            this.scrlCastAnimation.TabIndex = 15;
-            this.scrlCastAnimation.Value = -1;
-            this.scrlCastAnimation.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlCastAnimation_Scroll);
-            // 
-            // lblCastAnimation
-            // 
-            this.lblCastAnimation.AutoSize = true;
-            this.lblCastAnimation.Location = new System.Drawing.Point(6, 186);
-            this.lblCastAnimation.Name = "lblCastAnimation";
-            this.lblCastAnimation.Size = new System.Drawing.Size(109, 13);
-            this.lblCastAnimation.TabIndex = 14;
-            this.lblCastAnimation.Text = "Cast Animation: None";
-            // 
-            // cmbSprite
-            // 
-            this.cmbSprite.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbSprite.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbSprite.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbSprite.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSprite.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbSprite.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbSprite.FormattingEnabled = true;
-            this.cmbSprite.Items.AddRange(new object[] {
-            "None"});
-            this.cmbSprite.Location = new System.Drawing.Point(60, 90);
-            this.cmbSprite.Name = "cmbSprite";
-            this.cmbSprite.Size = new System.Drawing.Size(135, 21);
-            this.cmbSprite.TabIndex = 11;
-            this.cmbSprite.SelectedIndexChanged += new System.EventHandler(this.cmbSprite_SelectedIndexChanged);
-            // 
-            // lblPic
-            // 
-            this.lblPic.AutoSize = true;
-            this.lblPic.Location = new System.Drawing.Point(57, 74);
-            this.lblPic.Name = "lblPic";
-            this.lblPic.Size = new System.Drawing.Size(31, 13);
-            this.lblPic.TabIndex = 6;
-            this.lblPic.Text = "Icon:";
-            // 
-            // picSpell
-            // 
-            this.picSpell.BackColor = System.Drawing.Color.Black;
-            this.picSpell.Location = new System.Drawing.Point(9, 79);
-            this.picSpell.Name = "picSpell";
-            this.picSpell.Size = new System.Drawing.Size(32, 32);
-            this.picSpell.TabIndex = 4;
-            this.picSpell.TabStop = false;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(34, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Type:";
-            // 
-            // cmbType
-            // 
-            this.cmbType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbType.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbType.FormattingEnabled = true;
-            this.cmbType.Items.AddRange(new object[] {
-            "Combat Spell",
-            "Warp to Map",
-            "Warp to Target",
-            "Dash",
-            "Event"});
-            this.cmbType.Location = new System.Drawing.Point(60, 45);
-            this.cmbType.Name = "cmbType";
-            this.cmbType.Size = new System.Drawing.Size(135, 21);
-            this.cmbType.TabIndex = 2;
-            this.cmbType.SelectedIndexChanged += new System.EventHandler(this.cmbType_SelectedIndexChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Name:";
-            // 
-            // txtName
-            // 
-            this.txtName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtName.Location = new System.Drawing.Point(60, 19);
-            this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(135, 20);
-            this.txtName.TabIndex = 0;
-            this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox4.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox4.Controls.Add(this.scrlManaCost);
-            this.groupBox4.Controls.Add(this.scrlHPCost);
-            this.groupBox4.Controls.Add(this.lblMPCost);
-            this.groupBox4.Controls.Add(this.lblHPCost);
-            this.groupBox4.Controls.Add(this.scrlCooldownDuration);
-            this.groupBox4.Controls.Add(this.lblCastDuration);
-            this.groupBox4.Controls.Add(this.lblCooldownDuration);
-            this.groupBox4.Controls.Add(this.scrlCastDuration);
-            this.groupBox4.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox4.Location = new System.Drawing.Point(2, 273);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(438, 104);
-            this.groupBox4.TabIndex = 36;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Spell Cost:";
-            // 
-            // scrlManaCost
-            // 
-            this.scrlManaCost.Location = new System.Drawing.Point(9, 70);
-            this.scrlManaCost.Maximum = 10000;
-            this.scrlManaCost.Minimum = -10000;
-            this.scrlManaCost.Name = "scrlManaCost";
-            this.scrlManaCost.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlManaCost.Size = new System.Drawing.Size(186, 18);
-            this.scrlManaCost.TabIndex = 24;
-            this.scrlManaCost.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlManaCost_Scroll);
-            // 
-            // scrlHPCost
-            // 
-            this.scrlHPCost.Location = new System.Drawing.Point(9, 29);
-            this.scrlHPCost.Maximum = 10000;
-            this.scrlHPCost.Minimum = -10000;
-            this.scrlHPCost.Name = "scrlHPCost";
-            this.scrlHPCost.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlHPCost.Size = new System.Drawing.Size(186, 18);
-            this.scrlHPCost.TabIndex = 20;
-            this.scrlHPCost.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlHPCost_Scroll);
-            // 
-            // lblMPCost
-            // 
-            this.lblMPCost.AutoSize = true;
-            this.lblMPCost.Location = new System.Drawing.Point(6, 55);
-            this.lblMPCost.Name = "lblMPCost";
-            this.lblMPCost.Size = new System.Drawing.Size(70, 13);
-            this.lblMPCost.TabIndex = 23;
-            this.lblMPCost.Text = "Mana Cost: 0";
-            // 
-            // lblHPCost
-            // 
-            this.lblHPCost.AutoSize = true;
-            this.lblHPCost.Location = new System.Drawing.Point(6, 16);
-            this.lblHPCost.Name = "lblHPCost";
-            this.lblHPCost.Size = new System.Drawing.Size(58, 13);
-            this.lblHPCost.TabIndex = 22;
-            this.lblHPCost.Text = "HP Cost: 0";
-            // 
-            // scrlCooldownDuration
-            // 
-            this.scrlCooldownDuration.Location = new System.Drawing.Point(219, 70);
-            this.scrlCooldownDuration.Maximum = 6000;
-            this.scrlCooldownDuration.Name = "scrlCooldownDuration";
-            this.scrlCooldownDuration.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlCooldownDuration.Size = new System.Drawing.Size(209, 18);
-            this.scrlCooldownDuration.TabIndex = 13;
-            this.scrlCooldownDuration.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlCooldownDuration_Scroll);
-            // 
-            // lblCastDuration
-            // 
-            this.lblCastDuration.AutoSize = true;
-            this.lblCastDuration.Location = new System.Drawing.Point(219, 16);
-            this.lblCastDuration.Name = "lblCastDuration";
-            this.lblCastDuration.Size = new System.Drawing.Size(106, 13);
-            this.lblCastDuration.TabIndex = 7;
-            this.lblCastDuration.Text = "Cast Time (secs): 0.0";
-            // 
-            // lblCooldownDuration
-            // 
-            this.lblCooldownDuration.AutoSize = true;
-            this.lblCooldownDuration.Location = new System.Drawing.Point(219, 55);
-            this.lblCooldownDuration.Name = "lblCooldownDuration";
-            this.lblCooldownDuration.Size = new System.Drawing.Size(109, 13);
-            this.lblCooldownDuration.TabIndex = 12;
-            this.lblCooldownDuration.Text = "Cooldown (secs): 0.0 ";
-            // 
-            // scrlCastDuration
-            // 
-            this.scrlCastDuration.Location = new System.Drawing.Point(219, 29);
-            this.scrlCastDuration.Maximum = 600;
-            this.scrlCastDuration.Name = "scrlCastDuration";
-            this.scrlCastDuration.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlCastDuration.Size = new System.Drawing.Size(209, 18);
-            this.scrlCastDuration.TabIndex = 8;
-            this.scrlCastDuration.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlCastDuration_Scroll);
-            // 
-            // grpTargetInfo
-            // 
-            this.grpTargetInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpTargetInfo.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpTargetInfo.Controls.Add(this.lblProjectile);
-            this.grpTargetInfo.Controls.Add(this.scrlHitRadius);
-            this.grpTargetInfo.Controls.Add(this.lblHitRadius);
-            this.grpTargetInfo.Controls.Add(this.cmbTargetType);
-            this.grpTargetInfo.Controls.Add(this.lblCastRange);
-            this.grpTargetInfo.Controls.Add(this.label4);
-            this.grpTargetInfo.Controls.Add(this.scrlProjectile);
-            this.grpTargetInfo.Controls.Add(this.scrlCastRange);
-            this.grpTargetInfo.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpTargetInfo.Location = new System.Drawing.Point(215, 58);
-            this.grpTargetInfo.Name = "grpTargetInfo";
-            this.grpTargetInfo.Size = new System.Drawing.Size(225, 141);
-            this.grpTargetInfo.TabIndex = 19;
-            this.grpTargetInfo.TabStop = false;
-            this.grpTargetInfo.Text = "Targetting Info";
-            this.grpTargetInfo.Visible = false;
-            // 
-            // lblProjectile
-            // 
-            this.lblProjectile.AutoSize = true;
-            this.lblProjectile.Location = new System.Drawing.Point(6, 59);
-            this.lblProjectile.Name = "lblProjectile";
-            this.lblProjectile.Size = new System.Drawing.Size(91, 13);
-            this.lblProjectile.TabIndex = 18;
-            this.lblProjectile.Text = "Projectile: 0 None";
-            // 
-            // scrlHitRadius
-            // 
-            this.scrlHitRadius.Location = new System.Drawing.Point(6, 115);
-            this.scrlHitRadius.Maximum = 20;
-            this.scrlHitRadius.Name = "scrlHitRadius";
-            this.scrlHitRadius.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlHitRadius.Size = new System.Drawing.Size(209, 18);
-            this.scrlHitRadius.TabIndex = 17;
-            this.scrlHitRadius.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlHitRadius_Scroll);
-            // 
-            // lblHitRadius
-            // 
-            this.lblHitRadius.AutoSize = true;
-            this.lblHitRadius.Location = new System.Drawing.Point(6, 102);
-            this.lblHitRadius.Name = "lblHitRadius";
-            this.lblHitRadius.Size = new System.Drawing.Size(68, 13);
-            this.lblHitRadius.TabIndex = 16;
-            this.lblHitRadius.Text = "Hit Radius: 0";
-            // 
-            // cmbTargetType
-            // 
-            this.cmbTargetType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbTargetType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbTargetType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbTargetType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbTargetType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbTargetType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbTargetType.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbTargetType.FormattingEnabled = true;
-            this.cmbTargetType.Items.AddRange(new object[] {
-            "Self",
-            "Single Target (includes self)",
-            "AOE",
-            "Linear (projectile)"});
-            this.cmbTargetType.Location = new System.Drawing.Point(9, 32);
-            this.cmbTargetType.Name = "cmbTargetType";
-            this.cmbTargetType.Size = new System.Drawing.Size(206, 21);
-            this.cmbTargetType.TabIndex = 15;
-            this.cmbTargetType.SelectedIndexChanged += new System.EventHandler(this.cmbTargetType_SelectedIndexChanged);
-            // 
-            // lblCastRange
-            // 
-            this.lblCastRange.AutoSize = true;
-            this.lblCastRange.Location = new System.Drawing.Point(6, 60);
-            this.lblCastRange.Name = "lblCastRange";
-            this.lblCastRange.Size = new System.Drawing.Size(75, 13);
-            this.lblCastRange.TabIndex = 13;
-            this.lblCastRange.Text = "Cast Range: 0";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 16);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(68, 13);
-            this.label4.TabIndex = 12;
-            this.label4.Text = "Target Type:";
-            // 
-            // scrlProjectile
-            // 
-            this.scrlProjectile.Location = new System.Drawing.Point(6, 72);
-            this.scrlProjectile.Maximum = 20;
-            this.scrlProjectile.Minimum = -1;
-            this.scrlProjectile.Name = "scrlProjectile";
-            this.scrlProjectile.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlProjectile.Size = new System.Drawing.Size(209, 18);
-            this.scrlProjectile.TabIndex = 19;
-            this.scrlProjectile.Value = -1;
-            this.scrlProjectile.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlProjectile_Scroll);
-            // 
-            // scrlCastRange
-            // 
-            this.scrlCastRange.Location = new System.Drawing.Point(6, 73);
-            this.scrlCastRange.Maximum = 20;
-            this.scrlCastRange.Name = "scrlCastRange";
-            this.scrlCastRange.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlCastRange.Size = new System.Drawing.Size(209, 18);
-            this.scrlCastRange.TabIndex = 14;
-            this.scrlCastRange.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlCastRange_Scroll);
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox3.Controls.Add(this.btnDynamicRequirements);
-            this.groupBox3.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox3.Location = new System.Drawing.Point(215, 0);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(226, 52);
-            this.groupBox3.TabIndex = 18;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Casting Requirements";
             // 
             // grpBuffDebuff
             // 
@@ -1052,6 +649,412 @@ namespace Intersect_Editor.Forms
             this.scrlHPDamage.TabIndex = 45;
             this.scrlHPDamage.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlHPDamage_Scroll);
             // 
+            // groupBox2
+            // 
+            this.groupBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.groupBox2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Controls.Add(this.txtDesc);
+            this.groupBox2.Controls.Add(this.scrlHitAnimation);
+            this.groupBox2.Controls.Add(this.lblHitAnimation);
+            this.groupBox2.Controls.Add(this.scrlCastAnimation);
+            this.groupBox2.Controls.Add(this.lblCastAnimation);
+            this.groupBox2.Controls.Add(this.cmbSprite);
+            this.groupBox2.Controls.Add(this.lblPic);
+            this.groupBox2.Controls.Add(this.picSpell);
+            this.groupBox2.Controls.Add(this.label2);
+            this.groupBox2.Controls.Add(this.cmbType);
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.txtName);
+            this.groupBox2.ForeColor = System.Drawing.Color.Gainsboro;
+            this.groupBox2.Location = new System.Drawing.Point(2, 0);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(207, 268);
+            this.groupBox2.TabIndex = 17;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "General";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 118);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(35, 13);
+            this.label6.TabIndex = 19;
+            this.label6.Text = "Desc:";
+            // 
+            // txtDesc
+            // 
+            this.txtDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtDesc.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtDesc.Location = new System.Drawing.Point(60, 117);
+            this.txtDesc.Multiline = true;
+            this.txtDesc.Name = "txtDesc";
+            this.txtDesc.Size = new System.Drawing.Size(135, 61);
+            this.txtDesc.TabIndex = 18;
+            this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
+            // 
+            // scrlHitAnimation
+            // 
+            this.scrlHitAnimation.Location = new System.Drawing.Point(6, 239);
+            this.scrlHitAnimation.Maximum = 6000;
+            this.scrlHitAnimation.Minimum = -1;
+            this.scrlHitAnimation.Name = "scrlHitAnimation";
+            this.scrlHitAnimation.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
+            this.scrlHitAnimation.Size = new System.Drawing.Size(186, 18);
+            this.scrlHitAnimation.TabIndex = 17;
+            this.scrlHitAnimation.Value = -1;
+            this.scrlHitAnimation.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlHitAnimation_Scroll);
+            // 
+            // lblHitAnimation
+            // 
+            this.lblHitAnimation.AutoSize = true;
+            this.lblHitAnimation.Location = new System.Drawing.Point(6, 224);
+            this.lblHitAnimation.Name = "lblHitAnimation";
+            this.lblHitAnimation.Size = new System.Drawing.Size(101, 13);
+            this.lblHitAnimation.TabIndex = 16;
+            this.lblHitAnimation.Text = "Hit Animation: None";
+            // 
+            // scrlCastAnimation
+            // 
+            this.scrlCastAnimation.Location = new System.Drawing.Point(6, 199);
+            this.scrlCastAnimation.Maximum = 600;
+            this.scrlCastAnimation.Minimum = -1;
+            this.scrlCastAnimation.Name = "scrlCastAnimation";
+            this.scrlCastAnimation.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
+            this.scrlCastAnimation.Size = new System.Drawing.Size(186, 18);
+            this.scrlCastAnimation.TabIndex = 15;
+            this.scrlCastAnimation.Value = -1;
+            this.scrlCastAnimation.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlCastAnimation_Scroll);
+            // 
+            // lblCastAnimation
+            // 
+            this.lblCastAnimation.AutoSize = true;
+            this.lblCastAnimation.Location = new System.Drawing.Point(6, 186);
+            this.lblCastAnimation.Name = "lblCastAnimation";
+            this.lblCastAnimation.Size = new System.Drawing.Size(109, 13);
+            this.lblCastAnimation.TabIndex = 14;
+            this.lblCastAnimation.Text = "Cast Animation: None";
+            // 
+            // cmbSprite
+            // 
+            this.cmbSprite.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbSprite.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbSprite.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSprite.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSprite.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbSprite.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbSprite.FormattingEnabled = true;
+            this.cmbSprite.Items.AddRange(new object[] {
+            "None"});
+            this.cmbSprite.Location = new System.Drawing.Point(60, 90);
+            this.cmbSprite.Name = "cmbSprite";
+            this.cmbSprite.Size = new System.Drawing.Size(135, 21);
+            this.cmbSprite.TabIndex = 11;
+            this.cmbSprite.SelectedIndexChanged += new System.EventHandler(this.cmbSprite_SelectedIndexChanged);
+            // 
+            // lblPic
+            // 
+            this.lblPic.AutoSize = true;
+            this.lblPic.Location = new System.Drawing.Point(57, 74);
+            this.lblPic.Name = "lblPic";
+            this.lblPic.Size = new System.Drawing.Size(31, 13);
+            this.lblPic.TabIndex = 6;
+            this.lblPic.Text = "Icon:";
+            // 
+            // picSpell
+            // 
+            this.picSpell.BackColor = System.Drawing.Color.Black;
+            this.picSpell.Location = new System.Drawing.Point(9, 79);
+            this.picSpell.Name = "picSpell";
+            this.picSpell.Size = new System.Drawing.Size(32, 32);
+            this.picSpell.TabIndex = 4;
+            this.picSpell.TabStop = false;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 48);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(34, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Type:";
+            // 
+            // cmbType
+            // 
+            this.cmbType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbType.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbType.FormattingEnabled = true;
+            this.cmbType.Items.AddRange(new object[] {
+            "Combat Spell",
+            "Warp to Map",
+            "Warp to Target",
+            "Dash",
+            "Event"});
+            this.cmbType.Location = new System.Drawing.Point(60, 45);
+            this.cmbType.Name = "cmbType";
+            this.cmbType.Size = new System.Drawing.Size(135, 21);
+            this.cmbType.TabIndex = 2;
+            this.cmbType.SelectedIndexChanged += new System.EventHandler(this.cmbType_SelectedIndexChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(38, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Name:";
+            // 
+            // txtName
+            // 
+            this.txtName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtName.Location = new System.Drawing.Point(60, 19);
+            this.txtName.Name = "txtName";
+            this.txtName.Size = new System.Drawing.Size(135, 20);
+            this.txtName.TabIndex = 0;
+            this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.groupBox4.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.groupBox4.Controls.Add(this.scrlManaCost);
+            this.groupBox4.Controls.Add(this.scrlHPCost);
+            this.groupBox4.Controls.Add(this.lblMPCost);
+            this.groupBox4.Controls.Add(this.lblHPCost);
+            this.groupBox4.Controls.Add(this.scrlCooldownDuration);
+            this.groupBox4.Controls.Add(this.lblCastDuration);
+            this.groupBox4.Controls.Add(this.lblCooldownDuration);
+            this.groupBox4.Controls.Add(this.scrlCastDuration);
+            this.groupBox4.ForeColor = System.Drawing.Color.Gainsboro;
+            this.groupBox4.Location = new System.Drawing.Point(2, 273);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(438, 104);
+            this.groupBox4.TabIndex = 36;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Spell Cost:";
+            // 
+            // scrlManaCost
+            // 
+            this.scrlManaCost.Location = new System.Drawing.Point(9, 70);
+            this.scrlManaCost.Maximum = 10000;
+            this.scrlManaCost.Minimum = -10000;
+            this.scrlManaCost.Name = "scrlManaCost";
+            this.scrlManaCost.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
+            this.scrlManaCost.Size = new System.Drawing.Size(186, 18);
+            this.scrlManaCost.TabIndex = 24;
+            this.scrlManaCost.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlManaCost_Scroll);
+            // 
+            // scrlHPCost
+            // 
+            this.scrlHPCost.Location = new System.Drawing.Point(9, 29);
+            this.scrlHPCost.Maximum = 10000;
+            this.scrlHPCost.Minimum = -10000;
+            this.scrlHPCost.Name = "scrlHPCost";
+            this.scrlHPCost.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
+            this.scrlHPCost.Size = new System.Drawing.Size(186, 18);
+            this.scrlHPCost.TabIndex = 20;
+            this.scrlHPCost.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlHPCost_Scroll);
+            // 
+            // lblMPCost
+            // 
+            this.lblMPCost.AutoSize = true;
+            this.lblMPCost.Location = new System.Drawing.Point(6, 55);
+            this.lblMPCost.Name = "lblMPCost";
+            this.lblMPCost.Size = new System.Drawing.Size(70, 13);
+            this.lblMPCost.TabIndex = 23;
+            this.lblMPCost.Text = "Mana Cost: 0";
+            // 
+            // lblHPCost
+            // 
+            this.lblHPCost.AutoSize = true;
+            this.lblHPCost.Location = new System.Drawing.Point(6, 16);
+            this.lblHPCost.Name = "lblHPCost";
+            this.lblHPCost.Size = new System.Drawing.Size(58, 13);
+            this.lblHPCost.TabIndex = 22;
+            this.lblHPCost.Text = "HP Cost: 0";
+            // 
+            // scrlCooldownDuration
+            // 
+            this.scrlCooldownDuration.Location = new System.Drawing.Point(219, 70);
+            this.scrlCooldownDuration.Maximum = 6000;
+            this.scrlCooldownDuration.Name = "scrlCooldownDuration";
+            this.scrlCooldownDuration.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
+            this.scrlCooldownDuration.Size = new System.Drawing.Size(209, 18);
+            this.scrlCooldownDuration.TabIndex = 13;
+            this.scrlCooldownDuration.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlCooldownDuration_Scroll);
+            // 
+            // lblCastDuration
+            // 
+            this.lblCastDuration.AutoSize = true;
+            this.lblCastDuration.Location = new System.Drawing.Point(219, 16);
+            this.lblCastDuration.Name = "lblCastDuration";
+            this.lblCastDuration.Size = new System.Drawing.Size(106, 13);
+            this.lblCastDuration.TabIndex = 7;
+            this.lblCastDuration.Text = "Cast Time (secs): 0.0";
+            // 
+            // lblCooldownDuration
+            // 
+            this.lblCooldownDuration.AutoSize = true;
+            this.lblCooldownDuration.Location = new System.Drawing.Point(219, 55);
+            this.lblCooldownDuration.Name = "lblCooldownDuration";
+            this.lblCooldownDuration.Size = new System.Drawing.Size(109, 13);
+            this.lblCooldownDuration.TabIndex = 12;
+            this.lblCooldownDuration.Text = "Cooldown (secs): 0.0 ";
+            // 
+            // scrlCastDuration
+            // 
+            this.scrlCastDuration.Location = new System.Drawing.Point(219, 29);
+            this.scrlCastDuration.Maximum = 600;
+            this.scrlCastDuration.Name = "scrlCastDuration";
+            this.scrlCastDuration.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
+            this.scrlCastDuration.Size = new System.Drawing.Size(209, 18);
+            this.scrlCastDuration.TabIndex = 8;
+            this.scrlCastDuration.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlCastDuration_Scroll);
+            // 
+            // grpTargetInfo
+            // 
+            this.grpTargetInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpTargetInfo.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpTargetInfo.Controls.Add(this.lblProjectile);
+            this.grpTargetInfo.Controls.Add(this.scrlHitRadius);
+            this.grpTargetInfo.Controls.Add(this.lblHitRadius);
+            this.grpTargetInfo.Controls.Add(this.cmbTargetType);
+            this.grpTargetInfo.Controls.Add(this.lblCastRange);
+            this.grpTargetInfo.Controls.Add(this.label4);
+            this.grpTargetInfo.Controls.Add(this.scrlProjectile);
+            this.grpTargetInfo.Controls.Add(this.scrlCastRange);
+            this.grpTargetInfo.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpTargetInfo.Location = new System.Drawing.Point(215, 58);
+            this.grpTargetInfo.Name = "grpTargetInfo";
+            this.grpTargetInfo.Size = new System.Drawing.Size(225, 141);
+            this.grpTargetInfo.TabIndex = 19;
+            this.grpTargetInfo.TabStop = false;
+            this.grpTargetInfo.Text = "Targetting Info";
+            this.grpTargetInfo.Visible = false;
+            // 
+            // lblProjectile
+            // 
+            this.lblProjectile.AutoSize = true;
+            this.lblProjectile.Location = new System.Drawing.Point(6, 59);
+            this.lblProjectile.Name = "lblProjectile";
+            this.lblProjectile.Size = new System.Drawing.Size(91, 13);
+            this.lblProjectile.TabIndex = 18;
+            this.lblProjectile.Text = "Projectile: 0 None";
+            // 
+            // scrlHitRadius
+            // 
+            this.scrlHitRadius.Location = new System.Drawing.Point(6, 115);
+            this.scrlHitRadius.Maximum = 20;
+            this.scrlHitRadius.Name = "scrlHitRadius";
+            this.scrlHitRadius.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
+            this.scrlHitRadius.Size = new System.Drawing.Size(209, 18);
+            this.scrlHitRadius.TabIndex = 17;
+            this.scrlHitRadius.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlHitRadius_Scroll);
+            // 
+            // lblHitRadius
+            // 
+            this.lblHitRadius.AutoSize = true;
+            this.lblHitRadius.Location = new System.Drawing.Point(6, 102);
+            this.lblHitRadius.Name = "lblHitRadius";
+            this.lblHitRadius.Size = new System.Drawing.Size(68, 13);
+            this.lblHitRadius.TabIndex = 16;
+            this.lblHitRadius.Text = "Hit Radius: 0";
+            // 
+            // cmbTargetType
+            // 
+            this.cmbTargetType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbTargetType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbTargetType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbTargetType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbTargetType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTargetType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbTargetType.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbTargetType.FormattingEnabled = true;
+            this.cmbTargetType.Items.AddRange(new object[] {
+            "Self",
+            "Single Target (includes self)",
+            "AOE",
+            "Linear (projectile)"});
+            this.cmbTargetType.Location = new System.Drawing.Point(9, 32);
+            this.cmbTargetType.Name = "cmbTargetType";
+            this.cmbTargetType.Size = new System.Drawing.Size(206, 21);
+            this.cmbTargetType.TabIndex = 15;
+            this.cmbTargetType.SelectedIndexChanged += new System.EventHandler(this.cmbTargetType_SelectedIndexChanged);
+            // 
+            // lblCastRange
+            // 
+            this.lblCastRange.AutoSize = true;
+            this.lblCastRange.Location = new System.Drawing.Point(6, 60);
+            this.lblCastRange.Name = "lblCastRange";
+            this.lblCastRange.Size = new System.Drawing.Size(75, 13);
+            this.lblCastRange.TabIndex = 13;
+            this.lblCastRange.Text = "Cast Range: 0";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 16);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(68, 13);
+            this.label4.TabIndex = 12;
+            this.label4.Text = "Target Type:";
+            // 
+            // scrlProjectile
+            // 
+            this.scrlProjectile.Location = new System.Drawing.Point(6, 72);
+            this.scrlProjectile.Maximum = 20;
+            this.scrlProjectile.Minimum = -1;
+            this.scrlProjectile.Name = "scrlProjectile";
+            this.scrlProjectile.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
+            this.scrlProjectile.Size = new System.Drawing.Size(209, 18);
+            this.scrlProjectile.TabIndex = 19;
+            this.scrlProjectile.Value = -1;
+            this.scrlProjectile.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlProjectile_Scroll);
+            // 
+            // scrlCastRange
+            // 
+            this.scrlCastRange.Location = new System.Drawing.Point(6, 73);
+            this.scrlCastRange.Maximum = 20;
+            this.scrlCastRange.Name = "scrlCastRange";
+            this.scrlCastRange.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
+            this.scrlCastRange.Size = new System.Drawing.Size(209, 18);
+            this.scrlCastRange.TabIndex = 14;
+            this.scrlCastRange.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlCastRange_Scroll);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.groupBox3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.groupBox3.Controls.Add(this.btnDynamicRequirements);
+            this.groupBox3.ForeColor = System.Drawing.Color.Gainsboro;
+            this.groupBox3.Location = new System.Drawing.Point(215, 0);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(226, 52);
+            this.groupBox3.TabIndex = 18;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Casting Requirements";
+            // 
+            // btnDynamicRequirements
+            // 
+            this.btnDynamicRequirements.Location = new System.Drawing.Point(11, 18);
+            this.btnDynamicRequirements.Name = "btnDynamicRequirements";
+            this.btnDynamicRequirements.Padding = new System.Windows.Forms.Padding(5);
+            this.btnDynamicRequirements.Size = new System.Drawing.Size(208, 23);
+            this.btnDynamicRequirements.TabIndex = 20;
+            this.btnDynamicRequirements.Text = "Casting Requirements";
+            this.btnDynamicRequirements.Click += new System.EventHandler(this.btnDynamicRequirements_Click);
+            // 
             // grpDash
             // 
             this.grpDash.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
@@ -1142,41 +1145,6 @@ namespace Intersect_Editor.Forms
             this.scrlRange.Size = new System.Drawing.Size(168, 18);
             this.scrlRange.TabIndex = 39;
             this.scrlRange.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlRange_Scroll);
-            // 
-            // grpEvent
-            // 
-            this.grpEvent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpEvent.Controls.Add(this.scrlEvent);
-            this.grpEvent.Controls.Add(this.lblEvent);
-            this.grpEvent.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpEvent.Location = new System.Drawing.Point(6, 377);
-            this.grpEvent.Name = "grpEvent";
-            this.grpEvent.Size = new System.Drawing.Size(200, 67);
-            this.grpEvent.TabIndex = 40;
-            this.grpEvent.TabStop = false;
-            this.grpEvent.Text = "Event";
-            this.grpEvent.Visible = false;
-            // 
-            // scrlEvent
-            // 
-            this.scrlEvent.Location = new System.Drawing.Point(8, 36);
-            this.scrlEvent.Minimum = -1;
-            this.scrlEvent.Name = "scrlEvent";
-            this.scrlEvent.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlEvent.Size = new System.Drawing.Size(186, 18);
-            this.scrlEvent.TabIndex = 17;
-            this.scrlEvent.Value = -1;
-            this.scrlEvent.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlEvent_Scroll);
-            // 
-            // lblEvent
-            // 
-            this.lblEvent.AutoSize = true;
-            this.lblEvent.Location = new System.Drawing.Point(8, 23);
-            this.lblEvent.Name = "lblEvent";
-            this.lblEvent.Size = new System.Drawing.Size(67, 13);
-            this.lblEvent.TabIndex = 16;
-            this.lblEvent.Text = "Event: None";
             // 
             // grpWarp
             // 
@@ -1275,6 +1243,41 @@ namespace Intersect_Editor.Forms
             this.label16.Size = new System.Drawing.Size(41, 13);
             this.label16.TabIndex = 32;
             this.label16.Text = "Chunk:";
+            // 
+            // grpEvent
+            // 
+            this.grpEvent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpEvent.Controls.Add(this.scrlEvent);
+            this.grpEvent.Controls.Add(this.lblEvent);
+            this.grpEvent.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpEvent.Location = new System.Drawing.Point(6, 377);
+            this.grpEvent.Name = "grpEvent";
+            this.grpEvent.Size = new System.Drawing.Size(200, 67);
+            this.grpEvent.TabIndex = 40;
+            this.grpEvent.TabStop = false;
+            this.grpEvent.Text = "Event";
+            this.grpEvent.Visible = false;
+            // 
+            // scrlEvent
+            // 
+            this.scrlEvent.Location = new System.Drawing.Point(8, 36);
+            this.scrlEvent.Minimum = -1;
+            this.scrlEvent.Name = "scrlEvent";
+            this.scrlEvent.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
+            this.scrlEvent.Size = new System.Drawing.Size(186, 18);
+            this.scrlEvent.TabIndex = 17;
+            this.scrlEvent.Value = -1;
+            this.scrlEvent.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlEvent_Scroll);
+            // 
+            // lblEvent
+            // 
+            this.lblEvent.AutoSize = true;
+            this.lblEvent.Location = new System.Drawing.Point(8, 23);
+            this.lblEvent.Name = "lblEvent";
+            this.lblEvent.Size = new System.Drawing.Size(67, 13);
+            this.lblEvent.TabIndex = 16;
+            this.lblEvent.Text = "Event: None";
             // 
             // toolStrip
             // 
@@ -1424,6 +1427,15 @@ namespace Intersect_Editor.Forms
             this.lstSpells.Click += new System.EventHandler(this.lstSpells_Click);
             this.lstSpells.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
+            // darkNumericUpDown1
+            // 
+            this.darkNumericUpDown1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.darkNumericUpDown1.ForeColor = System.Drawing.Color.Gainsboro;
+            this.darkNumericUpDown1.Location = new System.Drawing.Point(252, 224);
+            this.darkNumericUpDown1.Name = "darkNumericUpDown1";
+            this.darkNumericUpDown1.Size = new System.Drawing.Size(120, 20);
+            this.darkNumericUpDown1.TabIndex = 2;
+            // 
             // frmSpell
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1446,14 +1458,6 @@ namespace Intersect_Editor.Forms
             this.Load += new System.EventHandler(this.frmSpell_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);
             this.pnlContainer.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picSpell)).EndInit();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
-            this.grpTargetInfo.ResumeLayout(false);
-            this.grpTargetInfo.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
             this.grpBuffDebuff.ResumeLayout(false);
             this.darkGroupBox5.ResumeLayout(false);
             this.darkGroupBox5.PerformLayout();
@@ -1466,17 +1470,26 @@ namespace Intersect_Editor.Forms
             this.darkGroupBox2.PerformLayout();
             this.darkGroupBox1.ResumeLayout(false);
             this.darkGroupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picSpell)).EndInit();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            this.grpTargetInfo.ResumeLayout(false);
+            this.grpTargetInfo.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
             this.grpDash.ResumeLayout(false);
             this.grpDash.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
-            this.grpEvent.ResumeLayout(false);
-            this.grpEvent.PerformLayout();
             this.grpWarp.ResumeLayout(false);
             this.grpWarp.PerformLayout();
+            this.grpEvent.ResumeLayout(false);
+            this.grpEvent.PerformLayout();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.darkNumericUpDown1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1590,5 +1603,6 @@ namespace Intersect_Editor.Forms
         private DarkComboBox cmbScalingStat;
         private System.Windows.Forms.Label label3;
         private DarkButton btnDynamicRequirements;
+        private DarkNumericUpDown darkNumericUpDown1;
     }
 }

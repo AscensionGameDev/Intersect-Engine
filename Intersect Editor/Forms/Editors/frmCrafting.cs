@@ -52,8 +52,12 @@ namespace Intersect_Editor.Forms.Editors
             PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstCrafts.LostFocus += itemList_FocusChanged;
             lstCrafts.GotFocus += itemList_FocusChanged;
-            scrlItem.Maximum = ItemBase.ObjectCount() - 1;
-            scrlIngredient.Maximum = ItemBase.ObjectCount() - 1;
+            cmbResult.Items.Clear();
+            cmbResult.Items.Add("None");
+            cmbResult.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
+            cmbIngredient.Items.Clear();
+            cmbIngredient.Items.Add("None");
+            cmbIngredient.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
         }
 
         private void GameObjectUpdatedDelegate(GameObject type)
@@ -74,8 +78,6 @@ namespace Intersect_Editor.Forms.Editors
         {
             lstCrafts.Items.Clear();
             lstCrafts.Items.AddRange(Database.GetGameObjectList(GameObject.Bench));
-            scrlIngredient.Maximum = ItemBase.ObjectCount() - 1;
-            scrlItem.Maximum = ItemBase.ObjectCount() - 1;
         }
 
         private void lstCrafts_Click(object sender, EventArgs e)
@@ -125,18 +127,9 @@ namespace Intersect_Editor.Forms.Editors
                 _currentCraft = _editorItem.Crafts[lstCompositions.SelectedIndex];
 
                 scrlSpeed.Value = _currentCraft.Time;
-                scrlItem.Value = Database.GameObjectListIndex(GameObject.Item, _currentCraft.Item);
+                cmbResult.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _currentCraft.Item) + 1;
 
                 lblSpeed.Text = "Time: " + scrlSpeed.Value + "ms";
-
-                if (scrlItem.Value > -1)
-                {
-                    lblItem.Text = "Item: " + ItemBase.GetName(_currentCraft.Item);
-                }
-                else
-                {
-                    lblItem.Text = "Item: None";
-                }
 
                 if (lstCrafts.SelectedIndex < 0)
                 {
@@ -144,7 +137,7 @@ namespace Intersect_Editor.Forms.Editors
                 }
 
                 lstIngredients.Items.Clear();
-                scrlIngredient.Hide();
+                cmbIngredient.Hide();
                 scrlQuantity.Hide();
                 lblQuantity.Hide();
                 lblIngredient.Hide();
@@ -163,20 +156,10 @@ namespace Intersect_Editor.Forms.Editors
                 if (lstIngredients.Items.Count > 0)
                 {
                     lstIngredients.SelectedIndex = 0;
-                    scrlIngredient.Value = Database.GameObjectListIndex(GameObject.Item,
-                        _currentCraft.Ingredients[lstIngredients.SelectedIndex].Item);
+                    cmbIngredient.SelectedIndex = Database.GameObjectListIndex(GameObject.Item,
+                        _currentCraft.Ingredients[lstIngredients.SelectedIndex].Item) + 1;
                     scrlQuantity.Value = _currentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity;
                     lblQuantity.Text = "Quantity x" + scrlQuantity.Value;
-
-                    if (scrlIngredient.Value > -1)
-                    {
-                        lblIngredient.Text = "Item: " +
-                                             ItemBase.GetName(_currentCraft.Ingredients[lstIngredients.SelectedIndex].Item);
-                    }
-                    else
-                    {
-                        lblIngredient.Text = "Item: None";
-                    }
                 }
             }
             else
@@ -194,31 +177,6 @@ namespace Intersect_Editor.Forms.Editors
             }
         }
 
-        private void scrlItem_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _currentCraft.Item = Database.GameObjectIdFromList(GameObject.Item, scrlItem.Value);
-
-            if (scrlItem.Value > -1)
-            {
-                lblItem.Text = "Item: " + ItemBase.GetName(_currentCraft.Item);
-            }
-            else
-            {
-                lblItem.Text = "Item: None";
-            }
-            if (lstCompositions.SelectedIndex > -1)
-            {
-                if (scrlItem.Value > -1)
-                {
-                    lstCompositions.Items[lstCompositions.SelectedIndex] = ItemBase.GetName(_currentCraft.Item);
-                }
-                else
-                {
-                    lstCompositions.Items[lstCompositions.SelectedIndex] = "None";
-                }
-            }
-        }
-
         private void scrlSpeed_Scroll(object sender, ScrollValueEventArgs e)
         {
             _currentCraft.Time = scrlSpeed.Value;
@@ -231,37 +189,13 @@ namespace Intersect_Editor.Forms.Editors
 
         }
 
-        private void scrlIngredient_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            if (lstIngredients.SelectedIndex > -1)
-            {
-                _currentCraft.Ingredients[lstIngredients.SelectedIndex].Item =
-                    Database.GameObjectIdFromList(GameObject.Item, scrlIngredient.Value);
-                if (scrlIngredient.Value > -1)
-                {
-                    lblIngredient.Text = "Item: " +
-                                         ItemBase.GetName(_currentCraft.Ingredients[lstIngredients.SelectedIndex].Item);
-                    lstIngredients.Items[lstIngredients.SelectedIndex] = "Ingredient: " +
-                                                                         ItemBase.GetName(
-                                                                             _currentCraft.Ingredients[
-                                                                                 lstIngredients.SelectedIndex].Item) +
-                                                                         " x" + scrlQuantity.Value;
-                }
-                else
-                {
-                    lblIngredient.Text = "Item: None";
-                    lstIngredients.Items[lstIngredients.SelectedIndex] = "Ingredient: None x" + scrlQuantity.Value;
-                }
-            }
-        }
-
         private void scrlQuantity_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (lstIngredients.SelectedIndex > -1)
             {
                 _currentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity = scrlQuantity.Value;
                 lblQuantity.Text = "Quantity x" + scrlQuantity.Value;
-                if (scrlIngredient.Value > -1)
+                if (cmbIngredient.SelectedIndex > 0)
                 {
                     lstIngredients.Items[lstIngredients.SelectedIndex] = "Ingredient: " +
                                                                          ItemBase.GetName(
@@ -448,28 +382,18 @@ namespace Intersect_Editor.Forms.Editors
         {
             if (lstIngredients.SelectedIndex > -1)
             {
-                scrlIngredient.Show();
+                cmbIngredient.Show();
                 scrlQuantity.Show();
                 lblQuantity.Show();
                 lblIngredient.Show();
-                scrlIngredient.Value = Database.GameObjectListIndex(GameObject.Item,
-                    _currentCraft.Ingredients[lstIngredients.SelectedIndex].Item);
+                cmbIngredient.SelectedIndex = Database.GameObjectListIndex(GameObject.Item,
+                    _currentCraft.Ingredients[lstIngredients.SelectedIndex].Item) + 1;
                 scrlQuantity.Value = _currentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity;
                 lblQuantity.Text = "Quantity x" + scrlQuantity.Value;
-
-                if (scrlIngredient.Value > -1)
-                {
-                    lblIngredient.Text = "Item: " +
-                                         ItemBase.GetName(_currentCraft.Ingredients[lstIngredients.SelectedIndex].Item);
-                }
-                else
-                {
-                    lblIngredient.Text = "Item: None";
-                }
             }
             else
             {
-                scrlIngredient.Hide();
+                cmbIngredient.Hide();
                 scrlQuantity.Hide();
                 lblQuantity.Hide();
                 lblIngredient.Hide();
@@ -495,6 +419,44 @@ namespace Intersect_Editor.Forms.Editors
                 craft.Load(bf);
                 _editorItem.Crafts.Insert(lstCrafts.SelectedIndex,craft);
                 UpdateEditor();
+            }
+        }
+
+        private void cmbResult_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _currentCraft.Item = Database.GameObjectIdFromList(GameObject.Item, cmbResult.SelectedIndex -1);
+
+            if (lstCompositions.SelectedIndex > -1)
+            {
+                if (cmbResult.SelectedIndex > 0)
+                {
+                    lstCompositions.Items[lstCompositions.SelectedIndex] = ItemBase.GetName(_currentCraft.Item);
+                }
+                else
+                {
+                    lstCompositions.Items[lstCompositions.SelectedIndex] = "None";
+                }
+            }
+        }
+
+        private void cmbIngredient_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstIngredients.SelectedIndex > -1)
+            {
+                _currentCraft.Ingredients[lstIngredients.SelectedIndex].Item =
+                    Database.GameObjectIdFromList(GameObject.Item, cmbIngredient.SelectedIndex -1);
+                if (cmbIngredient.SelectedIndex > 0)
+                {
+                    lstIngredients.Items[lstIngredients.SelectedIndex] = "Ingredient: " +
+                                                                         ItemBase.GetName(
+                                                                             _currentCraft.Ingredients[
+                                                                                 lstIngredients.SelectedIndex].Item) +
+                                                                         " x" + scrlQuantity.Value;
+                }
+                else
+                {
+                    lstIngredients.Items[lstIngredients.SelectedIndex] = "Ingredient: None x" + scrlQuantity.Value;
+                }
             }
         }
     }

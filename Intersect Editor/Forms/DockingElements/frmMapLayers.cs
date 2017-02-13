@@ -681,7 +681,7 @@ namespace Intersect_Editor.Forms
             lblMap.Text = Strings.Get("warping", "map","");
             lblX.Text = Strings.Get("warping", "x", scrlX.Value);
             lblY.Text = Strings.Get("warping", "y", scrlY.Value);
-            lblWarpDir.Text = Strings.Get("warping", "dir", "");
+            lblWarpDir.Text = Strings.Get("warping", "direction", "");
             cmbDirection.Items.Clear();
             for (int i = -1; i < 4; i++)
             {

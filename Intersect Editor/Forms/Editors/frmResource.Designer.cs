@@ -35,7 +35,8 @@ namespace Intersect_Editor.Classes
             this.groupBox1 = new DarkUI.Controls.DarkGroupBox();
             this.lstResources = new System.Windows.Forms.ListBox();
             this.groupBox2 = new DarkUI.Controls.DarkGroupBox();
-            this.scrlAnimation = new DarkUI.Controls.DarkScrollBar();
+            this.cmbAnimation = new DarkUI.Controls.DarkComboBox();
+            this.btnRequirements = new DarkUI.Controls.DarkButton();
             this.lblAnimation = new System.Windows.Forms.Label();
             this.txtMaxHp = new DarkUI.Controls.DarkTextBox();
             this.lblMaxHp = new System.Windows.Forms.Label();
@@ -59,11 +60,11 @@ namespace Intersect_Editor.Classes
             this.cmbInitialSprite = new DarkUI.Controls.DarkComboBox();
             this.lblPic = new System.Windows.Forms.Label();
             this.groupBox4 = new DarkUI.Controls.DarkGroupBox();
+            this.cmbItem = new DarkUI.Controls.DarkComboBox();
             this.txtDropAmount = new DarkUI.Controls.DarkTextBox();
             this.lblDropAmount = new System.Windows.Forms.Label();
             this.scrlDropChance = new DarkUI.Controls.DarkScrollBar();
             this.lblDropChance = new System.Windows.Forms.Label();
-            this.scrlDropItem = new DarkUI.Controls.DarkScrollBar();
             this.lblDropItem = new System.Windows.Forms.Label();
             this.scrlDropIndex = new DarkUI.Controls.DarkScrollBar();
             this.lblDropIndex = new System.Windows.Forms.Label();
@@ -80,7 +81,6 @@ namespace Intersect_Editor.Classes
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.btnRequirements = new DarkUI.Controls.DarkButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -123,8 +123,8 @@ namespace Intersect_Editor.Classes
             // 
             this.groupBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.groupBox2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.groupBox2.Controls.Add(this.cmbAnimation);
             this.groupBox2.Controls.Add(this.btnRequirements);
-            this.groupBox2.Controls.Add(this.scrlAnimation);
             this.groupBox2.Controls.Add(this.lblAnimation);
             this.groupBox2.Controls.Add(this.txtMaxHp);
             this.groupBox2.Controls.Add(this.lblMaxHp);
@@ -146,26 +146,40 @@ namespace Intersect_Editor.Classes
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "General";
             // 
-            // scrlAnimation
+            // cmbAnimation
             // 
-            this.scrlAnimation.Location = new System.Drawing.Point(9, 186);
-            this.scrlAnimation.Maximum = 3600;
-            this.scrlAnimation.Minimum = -1;
-            this.scrlAnimation.Name = "scrlAnimation";
-            this.scrlAnimation.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlAnimation.Size = new System.Drawing.Size(201, 18);
-            this.scrlAnimation.TabIndex = 37;
-            this.scrlAnimation.Value = -1;
-            this.scrlAnimation.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlAnimation_Scroll);
+            this.cmbAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbAnimation.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbAnimation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbAnimation.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbAnimation.FormattingEnabled = true;
+            this.cmbAnimation.Location = new System.Drawing.Point(9, 190);
+            this.cmbAnimation.Name = "cmbAnimation";
+            this.cmbAnimation.Size = new System.Drawing.Size(201, 21);
+            this.cmbAnimation.TabIndex = 39;
+            this.cmbAnimation.SelectedIndexChanged += new System.EventHandler(this.cmbAnimation_SelectedIndexChanged);
+            // 
+            // btnRequirements
+            // 
+            this.btnRequirements.Location = new System.Drawing.Point(0, 122);
+            this.btnRequirements.Name = "btnRequirements";
+            this.btnRequirements.Padding = new System.Windows.Forms.Padding(5);
+            this.btnRequirements.Size = new System.Drawing.Size(183, 23);
+            this.btnRequirements.TabIndex = 38;
+            this.btnRequirements.Text = "Harvesting Requirements";
+            this.btnRequirements.Click += new System.EventHandler(this.btnRequirements_Click);
             // 
             // lblAnimation
             // 
             this.lblAnimation.AutoSize = true;
             this.lblAnimation.Location = new System.Drawing.Point(6, 173);
             this.lblAnimation.Name = "lblAnimation";
-            this.lblAnimation.Size = new System.Drawing.Size(94, 13);
+            this.lblAnimation.Size = new System.Drawing.Size(56, 13);
             this.lblAnimation.TabIndex = 36;
-            this.lblAnimation.Text = "Animation: 0 None";
+            this.lblAnimation.Text = "Animation:";
             // 
             // txtMaxHp
             // 
@@ -399,11 +413,11 @@ namespace Intersect_Editor.Classes
             // 
             this.groupBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.groupBox4.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.groupBox4.Controls.Add(this.cmbItem);
             this.groupBox4.Controls.Add(this.txtDropAmount);
             this.groupBox4.Controls.Add(this.lblDropAmount);
             this.groupBox4.Controls.Add(this.scrlDropChance);
             this.groupBox4.Controls.Add(this.lblDropChance);
-            this.groupBox4.Controls.Add(this.scrlDropItem);
             this.groupBox4.Controls.Add(this.lblDropItem);
             this.groupBox4.Controls.Add(this.scrlDropIndex);
             this.groupBox4.Controls.Add(this.lblDropIndex);
@@ -414,6 +428,22 @@ namespace Intersect_Editor.Classes
             this.groupBox4.TabIndex = 17;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Drops";
+            // 
+            // cmbItem
+            // 
+            this.cmbItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbItem.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbItem.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbItem.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbItem.FormattingEnabled = true;
+            this.cmbItem.Location = new System.Drawing.Point(39, 52);
+            this.cmbItem.Name = "cmbItem";
+            this.cmbItem.Size = new System.Drawing.Size(167, 21);
+            this.cmbItem.TabIndex = 17;
+            this.cmbItem.SelectedIndexChanged += new System.EventHandler(this.cmbItem_SelectedIndexChanged);
             // 
             // txtDropAmount
             // 
@@ -453,25 +483,14 @@ namespace Intersect_Editor.Classes
             this.lblDropChance.TabIndex = 13;
             this.lblDropChance.Text = "Chance (0/100):";
             // 
-            // scrlDropItem
-            // 
-            this.scrlDropItem.Location = new System.Drawing.Point(6, 64);
-            this.scrlDropItem.Maximum = 3600;
-            this.scrlDropItem.Minimum = -1;
-            this.scrlDropItem.Name = "scrlDropItem";
-            this.scrlDropItem.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlDropItem.Size = new System.Drawing.Size(201, 18);
-            this.scrlDropItem.TabIndex = 12;
-            this.scrlDropItem.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlDropItem_Scroll);
-            // 
             // lblDropItem
             // 
             this.lblDropItem.AutoSize = true;
             this.lblDropItem.Location = new System.Drawing.Point(6, 49);
             this.lblDropItem.Name = "lblDropItem";
-            this.lblDropItem.Size = new System.Drawing.Size(59, 13);
+            this.lblDropItem.Size = new System.Drawing.Size(27, 13);
             this.lblDropItem.TabIndex = 11;
-            this.lblDropItem.Text = "Item: None";
+            this.lblDropItem.Text = "Item";
             // 
             // scrlDropIndex
             // 
@@ -632,17 +651,7 @@ namespace Intersect_Editor.Classes
             this.toolStripItemUndo.Size = new System.Drawing.Size(23, 22);
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
-            //
-            // btnRequirements
             // 
-            this.btnRequirements.Location = new System.Drawing.Point(0, 122);
-            this.btnRequirements.Name = "btnRequirements";
-            this.btnRequirements.Padding = new System.Windows.Forms.Padding(5);
-            this.btnRequirements.Size = new System.Drawing.Size(183, 23);
-            this.btnRequirements.TabIndex = 38;
-            this.btnRequirements.Text = "Harvesting Requirements";
-            this.btnRequirements.Click += new System.EventHandler(this.btnRequirements_Click);
-            //
             // frmResource
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -700,7 +709,6 @@ namespace Intersect_Editor.Classes
         private System.Windows.Forms.Label lblDropAmount;
         private DarkScrollBar scrlDropChance;
         private System.Windows.Forms.Label lblDropChance;
-        private DarkScrollBar scrlDropItem;
         private System.Windows.Forms.Label lblDropItem;
         private DarkScrollBar scrlDropIndex;
         private System.Windows.Forms.Label lblDropIndex;
@@ -714,7 +722,6 @@ namespace Intersect_Editor.Classes
         public System.Windows.Forms.PictureBox picInitialResource;
         private DarkTextBox txtMaxHp;
         private System.Windows.Forms.Label lblMaxHp;
-        private DarkScrollBar scrlAnimation;
         private System.Windows.Forms.Label lblAnimation;
         private System.Windows.Forms.Timer tmrRender;
         private System.Windows.Forms.Panel pnlContainer;
@@ -732,5 +739,7 @@ namespace Intersect_Editor.Classes
         private System.Windows.Forms.Panel exhaustedGraphicContainer;
         private System.Windows.Forms.Panel initalGraphicContainer;
         private DarkButton btnRequirements;
+        private DarkComboBox cmbAnimation;
+        private DarkComboBox cmbItem;
     }
 }

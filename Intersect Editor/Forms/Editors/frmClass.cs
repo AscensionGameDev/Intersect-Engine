@@ -148,20 +148,6 @@ namespace Intersect_Editor.Forms
             UpdateDropValues();
         }
 
-        private void scrlDropItem_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            if (scrlDropItem.Value > -1)
-            {
-                _editorItem.Items[scrlDropIndex.Value].ItemNum = Database.GameObjectIdFromList(GameObject.Item,scrlDropItem.Value);
-                lblDropItem.Text = @"Item " + ItemBase.GetName(_editorItem.Items[scrlDropIndex.Value].ItemNum);
-            }
-            else
-            {
-                _editorItem.Items[scrlDropIndex.Value].ItemNum = -1;
-                lblDropItem.Text = @"Item None";
-            }
-        }
-
         private void txtDropAmount_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
@@ -173,17 +159,7 @@ namespace Intersect_Editor.Forms
         {
             int index = scrlDropIndex.Value;
             lblDropIndex.Text = "Item Index: " + (index + 1);
-            scrlDropItem.Value = Database.GameObjectListIndex(GameObject.Item,_editorItem.Items[index].ItemNum);
-            if (scrlDropItem.Value > -1)
-            {
-                _editorItem.Items[scrlDropIndex.Value].ItemNum = Database.GameObjectIdFromList(GameObject.Item, scrlDropItem.Value);
-                lblDropItem.Text = @"Item " + ItemBase.GetName(_editorItem.Items[scrlDropIndex.Value].ItemNum);
-            }
-            else
-            {
-                _editorItem.Items[scrlDropIndex.Value].ItemNum = -1;
-                lblDropItem.Text = @"Item None";
-            }
+            cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item,_editorItem.Items[index].ItemNum) + 1;
             txtDropAmount.Text = _editorItem.Items[index].Amount.ToString();
         }
 
@@ -191,36 +167,6 @@ namespace Intersect_Editor.Forms
         {
             _editorItem.Name = txtName.Text;
             lstClasses.Items[Database.GameObjectListIndex(GameObject.Class,_editorItem.GetId())] = txtName.Text;
-        }
-
-        private void lstSpells_Click(object sender, EventArgs e)
-        {
-            if (lstSpells.Items.Count > 0)
-            {
-                scrlSpell.Value = Database.GameObjectListIndex(GameObject.Spell,_editorItem.Spells[lstSpells.SelectedIndex].SpellNum);
-                scrlLevel.Value = _editorItem.Spells[lstSpells.SelectedIndex].Level;
-                lblSpellNum.Text = @"Spell: " +
-                                   SpellBase.GetName(_editorItem.Spells[lstSpells.SelectedIndex].SpellNum);
-                lblLevel.Text = @"Level: " + scrlLevel.Value;
-            }
-        }
-
-        private void scrlSpell_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            if (scrlSpell.Value > -1)
-            {
-                if (lstSpells.SelectedIndex >= 0)
-                {
-                    _editorItem.Spells[lstSpells.SelectedIndex].SpellNum = Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value);
-
-                   UpdateSpellList();
-                }
-                lblSpellNum.Text = @"Spell: " + SpellBase.GetName(Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value));
-            }
-            else
-            {
-                lblSpellNum.Text = @"Spell: None";
-            }
         }
 
         private void UpdateSpellList(bool keepIndex = true)
@@ -232,7 +178,7 @@ namespace Intersect_Editor.Forms
             {
                 lstSpells.Items.Add(Convert.ToString(i + 1) + ") " + SpellBase.GetName(_editorItem.Spells[i].SpellNum) + " - lvl: " + _editorItem.Spells[i].Level);
             }
-            if (keepIndex) lstSprites.SelectedIndex = n;
+            if (keepIndex) lstSpells.SelectedIndex = n;
         }
 
         private void scrlLevel_Scroll(object sender, ScrollValueEventArgs e)
@@ -250,7 +196,7 @@ namespace Intersect_Editor.Forms
         {
             var n = new ClassSpell();
 
-            n.SpellNum = Database.GameObjectIdFromList(GameObject.Spell,scrlSpell.Value);
+            n.SpellNum = Database.GameObjectIdFromList(GameObject.Spell,cmbSpell.SelectedIndex);
             n.Level = scrlLevel.Value;
 
             _editorItem.Spells.Add(n);
@@ -326,17 +272,16 @@ namespace Intersect_Editor.Forms
                 if (lstSpells.Items.Count > 0)
                 {
                     lstSpells.SelectedIndex = 0;
-                    scrlSpell.Value = Database.GameObjectListIndex(GameObject.Spell, _editorItem.Spells[lstSpells.SelectedIndex].SpellNum);
+                    cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell, _editorItem.Spells[lstSpells.SelectedIndex].SpellNum);
                     scrlLevel.Value = _editorItem.Spells[lstSpells.SelectedIndex].Level;
                 }
                 else
                 {
-                    scrlSpell.Value = -1;
+                    cmbSpell.SelectedIndex = -1;
                     scrlLevel.Value = 0;
                 }
 
-                scrlSpell.Value = -1;
-                lblSpellNum.Text = @"Spell: None";
+                cmbSpell.SelectedIndex = -1;
                 lblLevel.Text = @"Level: " + scrlLevel.Value;
 
                 // Add the sprites
@@ -413,8 +358,11 @@ namespace Intersect_Editor.Forms
             cmbFace.Items.Clear();
             cmbFace.Items.Add("None");
             cmbFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
-            scrlDropItem.Maximum = ItemBase.ObjectCount() - 1;
-            scrlSpell.Maximum = SpellBase.ObjectCount() - 1;
+            cmbItem.Items.Clear();
+            cmbItem.Items.Add("None");
+            cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
+            cmbSpell.Items.Clear();
+            cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
             scrlLevel.Maximum = Options.MaxLevel;
             cmbAttackAnimation.Items.Clear();
             cmbAttackAnimation.Items.Add("None");
@@ -960,6 +908,33 @@ namespace Intersect_Editor.Forms
         private void cmbScalingStat_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.ScalingStat = cmbScalingStat.SelectedIndex;
+        }
+
+        private void cmbSpell_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstSpells.SelectedIndex > -1)
+            {
+                _editorItem.Spells[lstSpells.SelectedIndex].SpellNum = Database.GameObjectIdFromList(GameObject.Spell,
+                    cmbSpell.SelectedIndex);
+                UpdateSpellList();
+            }
+        }
+
+        private void cmbItem_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.Items[scrlDropIndex.Value].ItemNum = Database.GameObjectIdFromList(GameObject.Item, cmbItem.SelectedIndex -1);
+        }
+
+        private void lstSpells_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstSpells.SelectedIndex > -1)
+            {
+                cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell, _editorItem.Spells[lstSpells.SelectedIndex].SpellNum);
+                scrlLevel.Value = _editorItem.Spells[lstSpells.SelectedIndex].Level;
+                lblSpellNum.Text = @"Spell: " +
+                                   SpellBase.GetName(_editorItem.Spells[lstSpells.SelectedIndex].SpellNum);
+                lblLevel.Text = @"Level: " + scrlLevel.Value;
+            }
         }
     }
 }

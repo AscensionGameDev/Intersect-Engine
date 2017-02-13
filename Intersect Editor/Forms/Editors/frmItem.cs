@@ -115,8 +115,15 @@ namespace Intersect_Editor.Forms
                 cmbScalingStat.Items.Add(Globals.GetStatName(x));
             }
 
-            scrlSpell.Maximum = SpellBase.ObjectCount() - 1;
-            scrlAnim.Maximum = AnimationBase.ObjectCount()-1;
+            cmbAnimation.Items.Clear();
+            cmbAnimation.Items.Add("None");
+            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbTeachSpell.Items.Clear();
+            cmbTeachSpell.Items.Add("None");
+            cmbTeachSpell.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
+            cmbEvent.Items.Clear();
+            cmbEvent.Items.Add("None");
+            cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObject.CommonEvent));
             cmbMalePaperdoll.Items.Clear();
             cmbMalePaperdoll.Items.Add("None");
             cmbFemalePaperdoll.Items.Clear();
@@ -222,8 +229,7 @@ namespace Intersect_Editor.Forms
 
                 //External References
                 cmbProjectile.SelectedIndex = Database.GameObjectListIndex(GameObject.Projectile, _editorItem.Projectile) + 1;
-                scrlAnim.Value = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation);
-                scrlAnim_Scroll(null, null);
+                cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation) + 1;
 
                 if (_changed.IndexOf(_editorItem) == -1)
                 {
@@ -251,9 +257,6 @@ namespace Intersect_Editor.Forms
             gbEquipment.Visible = false;
             grpEvent.Visible = false;
 
-            scrlSpell.Maximum = Database.GetGameObjectList(GameObject.Spell).Length - 1;
-            scrlEvent.Maximum = Database.GetGameObjectList(GameObject.CommonEvent).Length - 1;
-
             if (_editorItem.ItemType != cmbType.SelectedIndex)
             {
                 _editorItem.Damage = 0;
@@ -272,14 +275,12 @@ namespace Intersect_Editor.Forms
             }
             else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Spell"))
             {
-                scrlSpell.Value = Database.GameObjectListIndex(GameObject.Spell,_editorItem.Data1);
-                scrlSpell_Scroll(null, null);
+                cmbTeachSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell,_editorItem.Data1) + 1;
                 gbSpell.Visible = true;
             }
             else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Event"))
             {
-                scrlEvent.Value = Database.GameObjectListIndex(GameObject.CommonEvent,_editorItem.Data1);
-                scrlEvent_Scroll(null, null);
+                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObject.CommonEvent,_editorItem.Data1) + 1;
                 grpEvent.Visible = true;
             }
             else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Equipment"))
@@ -309,34 +310,6 @@ namespace Intersect_Editor.Forms
         {
             lblPrice.Text = @"Price: " + scrlPrice.Value;
             _editorItem.Price = scrlPrice.Value;
-        }
-
-        private void scrlAnim_Scroll(object sender, EventArgs e)
-        {
-            if (scrlAnim.Value > -1)
-            {
-                _editorItem.Animation = Database.GameObjectIdFromList(GameObject.Animation, scrlAnim.Value);
-                lblAnim.Text = "Animation: " + AnimationBase.GetName(_editorItem.Animation);
-            }
-            else
-            {
-                _editorItem.Animation = -1;
-                lblAnim.Text = "Animation: None";
-            }
-        }
-
-        private void scrlSpell_Scroll(object sender, EventArgs e)
-        {
-            if (scrlSpell.Value > -1)
-            {
-                _editorItem.Data1 = Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value);
-                lblSpell.Text = "Spell: " + SpellBase.GetName(_editorItem.Data1);
-            }
-            else
-            {
-                _editorItem.Data1 = -1;
-                lblSpell.Text = "Spell: None";
-            }
         }
 
         private void cmbConsume_SelectedIndexChanged(object sender, EventArgs e)
@@ -434,20 +407,6 @@ namespace Intersect_Editor.Forms
         {
             _editorItem.Data3 = scrlEffectAmount.Value;
             lblEffectPercent.Text = "Effect Amount: " + _editorItem.Data3 + "%";
-        }
-
-        private void scrlEvent_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            if (scrlEvent.Value > -1)
-            {
-                _editorItem.Data1 = Database.GameObjectIdFromList(GameObject.CommonEvent, scrlEvent.Value);
-                lblEvent.Text = "Event: " + EventBase.GetName(_editorItem.Data1);
-            }
-            else
-            {
-                _editorItem.Data1 = -1;
-                lblEvent.Text = "Event: None";
-            }
         }
 
         private void cmbFemalePaperdoll_SelectedIndexChanged(object sender, EventArgs e)
@@ -603,6 +562,21 @@ namespace Intersect_Editor.Forms
         {
             var frm = new frmDynamicRequirements(_editorItem.UseReqs);
             frm.ShowDialog();
+        }
+
+        private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.Animation = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex -1);
+        }
+
+        private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.Data1 = Database.GameObjectIdFromList(GameObject.CommonEvent, cmbEvent.SelectedIndex - 1);
+        }
+
+        private void cmbTeachSpell_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.Data1 = Database.GameObjectIdFromList(GameObject.Spell, cmbTeachSpell.SelectedIndex - 1);
         }
     }
 }

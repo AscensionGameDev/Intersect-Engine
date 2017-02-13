@@ -184,6 +184,7 @@ namespace Intersect_Editor.Forms
             this.cmbAutotile.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbAutotile.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbAutotile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbAutotile.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbAutotile.FormattingEnabled = true;
             this.cmbAutotile.Items.AddRange(new object[] {
             "Normal",
@@ -206,6 +207,7 @@ namespace Intersect_Editor.Forms
             this.cmbTilesets.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbTilesets.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbTilesets.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbTilesets.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbTilesets.FormattingEnabled = true;
             this.cmbTilesets.Location = new System.Drawing.Point(84, 36);
             this.cmbTilesets.Name = "cmbTilesets";
@@ -385,6 +387,7 @@ namespace Intersect_Editor.Forms
             this.cmbResourceAttribute.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbResourceAttribute.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbResourceAttribute.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbResourceAttribute.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbResourceAttribute.FormattingEnabled = true;
             this.cmbResourceAttribute.Location = new System.Drawing.Point(17, 36);
             this.cmbResourceAttribute.Name = "cmbResourceAttribute";
@@ -425,6 +428,7 @@ namespace Intersect_Editor.Forms
             this.cmbItemAttribute.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbItemAttribute.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbItemAttribute.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbItemAttribute.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbItemAttribute.FormattingEnabled = true;
             this.cmbItemAttribute.Location = new System.Drawing.Point(16, 32);
             this.cmbItemAttribute.Name = "cmbItemAttribute";
@@ -501,6 +505,7 @@ namespace Intersect_Editor.Forms
             this.cmbWarpMap.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbWarpMap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbWarpMap.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbWarpMap.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbWarpMap.FormattingEnabled = true;
             this.cmbWarpMap.Location = new System.Drawing.Point(17, 30);
             this.cmbWarpMap.Name = "cmbWarpMap";
@@ -515,6 +520,7 @@ namespace Intersect_Editor.Forms
             this.cmbDirection.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbDirection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbDirection.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbDirection.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbDirection.FormattingEnabled = true;
             this.cmbDirection.Items.AddRange(new object[] {
             "Retain Direction",
@@ -709,6 +715,7 @@ namespace Intersect_Editor.Forms
             this.cmbMapAttributeSound.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbMapAttributeSound.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbMapAttributeSound.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbMapAttributeSound.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbMapAttributeSound.FormattingEnabled = true;
             this.cmbMapAttributeSound.Location = new System.Drawing.Point(16, 30);
             this.cmbMapAttributeSound.Name = "cmbMapAttributeSound";
@@ -768,6 +775,7 @@ namespace Intersect_Editor.Forms
             this.cmbSlideDir.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSlideDir.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSlideDir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbSlideDir.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSlideDir.FormattingEnabled = true;
             this.cmbSlideDir.Items.AddRange(new object[] {
             "Retain Direction",
@@ -813,6 +821,7 @@ namespace Intersect_Editor.Forms
             this.cmbAnimationAttribute.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbAnimationAttribute.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbAnimationAttribute.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbAnimationAttribute.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbAnimationAttribute.FormattingEnabled = true;
             this.cmbAnimationAttribute.Location = new System.Drawing.Point(17, 36);
             this.cmbAnimationAttribute.Name = "cmbAnimationAttribute";
@@ -890,6 +899,7 @@ namespace Intersect_Editor.Forms
             this.cmbNpc.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbNpc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbNpc.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbNpc.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbNpc.FormattingEnabled = true;
             this.cmbNpc.Location = new System.Drawing.Point(6, 18);
             this.cmbNpc.Name = "cmbNpc";
@@ -921,6 +931,7 @@ namespace Intersect_Editor.Forms
             this.cmbDir.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbDir.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbDir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbDir.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbDir.FormattingEnabled = true;
             this.cmbDir.Items.AddRange(new object[] {
             "Random",
@@ -1034,11 +1045,11 @@ namespace Intersect_Editor.Forms
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.pnlAttributes);
+            this.panel1.Controls.Add(this.pnlNpcs);
             this.panel1.Controls.Add(this.pnlTiles);
             this.panel1.Controls.Add(this.pnlEvents);
             this.panel1.Controls.Add(this.pnlLights);
-            this.panel1.Controls.Add(this.pnlAttributes);
-            this.panel1.Controls.Add(this.pnlNpcs);
             this.panel1.Location = new System.Drawing.Point(8, 34);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(278, 424);

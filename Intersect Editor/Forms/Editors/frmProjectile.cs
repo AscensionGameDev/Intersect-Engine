@@ -124,7 +124,9 @@ namespace Intersect_Editor.Classes
         private void frmProjectile_Load(object sender, EventArgs e)
         {
             _directionGrid = new Bitmap("resources/misc/directions.png");
-            scrlAnimation.Maximum = AnimationBase.ObjectCount() - 1;
+            cmbAnimation.Items.Clear();
+            cmbAnimation.Items.Add("None");
+            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
 
             cmbItem.Items.Clear();
             cmbItem.Items.Add("None.");
@@ -162,16 +164,7 @@ namespace Intersect_Editor.Classes
                 cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _editorItem.Ammo) + 1;
                 scrlConsume.Value = _editorItem.AmmoRequired;
 
-                if (scrlAnimation.Value == -1)
-                {
-                    lblAnimation.Text = "Animation: None";
-                }
-                else
-                {
-                    lblAnimation.Text = "Animation: " +
-                                        AnimationBase.GetName(Database.GameObjectListIndex(GameObject.Animation,
-                                            scrlAnimation.Value));
-                }
+                
                 if (scrlSpell.Value == -1)
                 {
                     lblSpell.Text = "Collision Spell: None";
@@ -208,7 +201,7 @@ namespace Intersect_Editor.Classes
         private void updateAnimationData(int index)
         {
             updateAnimations(true);
-            scrlAnimation.Value = Database.GameObjectListIndex(GameObject.Animation,_editorItem.Animations[index].Animation);
+            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animations[index].Animation) + 1;
             scrlSpawnRange.Value = Math.Min(_editorItem.Animations[index].SpawnRange,scrlSpawnRange.Maximum);
             chkRotation.Checked = _editorItem.Animations[index].AutoRotate;
             updateAnimations(true);
@@ -249,17 +242,6 @@ namespace Intersect_Editor.Classes
             }
             lstAnimations.SelectedIndex = selectedIndex;
             if (lstAnimations.SelectedIndex < 0) { lstAnimations.SelectedIndex = 0; }
-
-            if (scrlAnimation.Value == -1)
-            {
-                lblAnimation.Text = "Animation: None";
-            }
-            else
-            {
-                lblAnimation.Text = "Animation: " +
-                                    AnimationBase.GetName(Database.GameObjectIdFromList(GameObject.Animation,
-                                        scrlAnimation.Value));
-            }
 
             if (lstAnimations.SelectedIndex > 0)
             {
@@ -401,12 +383,6 @@ namespace Intersect_Editor.Classes
         {
             _editorItem.Name = txtName.Text;
             lstProjectiles.Items[Database.GameObjectListIndex(GameObject.Projectile,_editorItem.GetId())] = txtName.Text;
-        }
-
-        private void scrlAnimation_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.Animations[lstAnimations.SelectedIndex].Animation = Database.GameObjectIdFromList(GameObject.Animation, scrlAnimation.Value);
-            updateAnimations();
         }
 
         private void scrlSpeed_Scroll(object sender, ScrollValueEventArgs e)
@@ -651,6 +627,12 @@ namespace Intersect_Editor.Classes
         {
             lblConsume.Text = "Amount: " + scrlConsume.Value;
             _editorItem.AmmoRequired = scrlConsume.Value;
+        }
+
+        private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.Animations[lstAnimations.SelectedIndex].Animation = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex -1);
+            updateAnimations();
         }
     }
 }

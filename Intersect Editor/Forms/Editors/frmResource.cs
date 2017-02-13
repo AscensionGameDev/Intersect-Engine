@@ -115,7 +115,12 @@ namespace Intersect_Editor.Classes
                 cmbInitialSprite.Items.Add(resources[i]);
                 cmbEndSprite.Items.Add(resources[i]);
             }
-            scrlDropItem.Maximum = ItemBase.ObjectCount() - 1;
+            cmbAnimation.Items.Clear();
+            cmbAnimation.Items.Add("None");
+            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbItem.Items.Clear();
+            cmbItem.Items.Add("None");
+            cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
             UpdateEditor();
         }
 
@@ -137,18 +142,10 @@ namespace Intersect_Editor.Classes
                 txtName.Text = _editorItem.Name;
                 cmbToolType.SelectedIndex = _editorItem.Tool + 1;
                 scrlSpawnDuration.Value = _editorItem.SpawnDuration;
-                scrlAnimation.Value = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation);
+                cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation) + 1;
                 txtHP.Text = _editorItem.MinHP.ToString();
                 txtMaxHp.Text = _editorItem.MaxHP.ToString();
                 lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
-                if (scrlAnimation.Value == -1)
-                {
-                    lblAnimation.Text = @"Animation: None";
-                }
-                else
-                {
-                    lblAnimation.Text = @"Animation: " + AnimationBase.GetName(_editorItem.Animation);
-                }
                 chkWalkableBefore.Checked = _editorItem.WalkableBefore;
                 chkWalkableAfter.Checked = _editorItem.WalkableAfter;
                 cmbInitialSprite.SelectedIndex =
@@ -174,15 +171,7 @@ namespace Intersect_Editor.Classes
         {
             int index = scrlDropIndex.Value - 1;
             lblDropIndex.Text = "Drop: " + (index + 1);
-            scrlDropItem.Value = Database.GameObjectListIndex(GameObject.Item,_editorItem.Drops[index].ItemNum);
-            if (scrlDropItem.Value == -1)
-            {
-                lblDropItem.Text = @"Item None";
-            }
-            else
-            {
-                lblDropItem.Text = @"Item " + ItemBase.GetName(Database.GameObjectIdFromList(GameObject.Item, scrlDropItem.Value));
-            }
+            cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _editorItem.Drops[index].ItemNum) + 1;
             txtDropAmount.Text = _editorItem.Drops[index].Amount.ToString();
             scrlDropChance.Value = _editorItem.Drops[index].Chance;
             lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";
@@ -191,20 +180,6 @@ namespace Intersect_Editor.Classes
         private void scrlDropIndex_Scroll(object sender, ScrollValueEventArgs e)
         {
             UpdateDropValues();
-        }
-
-        private void scrlDropItem_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            if (scrlDropItem.Value == -1)
-            {
-                lblDropItem.Text = @"Item None";
-            }
-            else
-            {
-                lblDropItem.Text = @"Item " + ItemBase.GetName(Database.GameObjectIdFromList(GameObject.Item, scrlDropItem.Value));
-            }
-            _editorItem.Drops[scrlDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObject.Item,
-                scrlDropItem.Value);
         }
 
         private void txtDropAmount_TextChanged(object sender, EventArgs e)
@@ -341,20 +316,6 @@ namespace Intersect_Editor.Classes
             _editorItem.MaxHP = x;
         }
 
-        private void scrlAnimation_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            if (scrlAnimation.Value >= 0)
-            {
-                _editorItem.Animation = Database.GameObjectIdFromList(GameObject.Animation,scrlAnimation.Value);
-                lblAnimation.Text = "Animation: " + AnimationBase.GetName(_editorItem.Animation);
-            }
-            else
-            {
-                _editorItem.Animation = -1;
-                lblAnimation.Text = "Animation: None";
-            }
-        }
-
         private void frmResource_FormClosed(object sender, FormClosedEventArgs e)
         {
             Globals.CurrentEditor = -1;
@@ -468,6 +429,17 @@ namespace Intersect_Editor.Classes
         {
             var frm = new frmDynamicRequirements(_editorItem.HarvestingReqs);
             frm.ShowDialog();
+        }
+
+        private void cmbItem_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.Drops[scrlDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObject.Item,
+                cmbItem.SelectedIndex -1);
+        }
+
+        private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.Animation = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex -1);
         }
     }
 }
