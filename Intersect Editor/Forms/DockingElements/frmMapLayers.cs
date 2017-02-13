@@ -359,7 +359,7 @@ namespace Intersect_Editor.Forms
             {
                 tmpMap.Attributes[x, y].value = (int)MapAttributes.Item;
                 tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObject.Item,cmbItemAttribute.SelectedIndex);
-                tmpMap.Attributes[x, y].data2 = scrlMaxItemVal.Value;
+                tmpMap.Attributes[x, y].data2 = (int)nudItemQuantity.Value;
             }
             else if (rbZDimension.Checked == true)
             {
@@ -382,7 +382,7 @@ namespace Intersect_Editor.Forms
             else if (rbSound.Checked == true)
             {
                 tmpMap.Attributes[x, y].value = (int)MapAttributes.Sound;
-                tmpMap.Attributes[x, y].data1 = scrlSoundDistance.Value;
+                tmpMap.Attributes[x, y].data1 = (int)nudSoundDistance.Value;
                 tmpMap.Attributes[x, y].data2 = 0;
                 tmpMap.Attributes[x, y].data3 = 0;
                 tmpMap.Attributes[x, y].data4 = cmbMapAttributeSound.Text;
@@ -423,16 +423,6 @@ namespace Intersect_Editor.Forms
                 return true;
             }
             return false;
-        }
-        //Item Attribute
-        private void scrlMaxItemVal_ValueChanged(object sender, ScrollValueEventArgs e)
-        {
-            lblMaxItemAmount.Text = Strings.Get("attributes", "quantity", scrlMaxItemVal.Value);
-        }
-        //Sound Attribute
-        private void scrlSoundDistance_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblSoundDistance.Text = Strings.Get("attributes", "distance", scrlSoundDistance.Value);
         }
 
         public void RefreshNpcList()
@@ -649,12 +639,12 @@ namespace Intersect_Editor.Forms
             //Map Sound
             grpSound.Text = Strings.Get("attributes", "mapsound");
             lblMapSound.Text = Strings.Get("attributes", "sound");
-            lblSoundDistance.Text = Strings.Get("attributes", "distance", scrlSoundDistance.Value);
+            lblSoundDistance.Text = Strings.Get("attributes", "distance");
 
             //Map Item
             grpItem.Text = Strings.Get("attributes", "itemspawn");
             lblMapItem.Text = Strings.Get("attributes", "item");
-            lblMaxItemAmount.Text = Strings.Get("attributes", "quantity", scrlMaxItemVal.Value);
+            lblMaxItemAmount.Text = Strings.Get("attributes", "quantity");
 
             //Z-Dimension
             grpZDimension.Text = Strings.Get("attributes", "zdimension");

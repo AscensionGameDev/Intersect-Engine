@@ -41,16 +41,21 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.lblRandomHigh = new System.Windows.Forms.Label();
             this.optSet = new DarkUI.Controls.DarkRadioButton();
             this.lblRandomLow = new System.Windows.Forms.Label();
-            this.txtSet = new DarkUI.Controls.DarkTextBox();
-            this.txtRandomHigh = new DarkUI.Controls.DarkTextBox();
             this.optAdd = new DarkUI.Controls.DarkRadioButton();
-            this.txtRandomLow = new DarkUI.Controls.DarkTextBox();
-            this.txtAdd = new DarkUI.Controls.DarkTextBox();
             this.optRandom = new DarkUI.Controls.DarkRadioButton();
             this.optSubtract = new DarkUI.Controls.DarkRadioButton();
-            this.txtSubtract = new DarkUI.Controls.DarkTextBox();
+            this.nudSet = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudAdd = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudSubtract = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudLow = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudHigh = new DarkUI.Controls.DarkNumericUpDown();
             this.grpSetVariable.SuspendLayout();
             this.grpVariableSelection.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSet)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdd)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSubtract)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLow)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHigh)).BeginInit();
             this.SuspendLayout();
             // 
             // grpSetVariable
@@ -116,19 +121,19 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             // 
             this.grpVariableSelection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpVariableSelection.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpVariableSelection.Controls.Add(this.nudHigh);
+            this.grpVariableSelection.Controls.Add(this.nudLow);
+            this.grpVariableSelection.Controls.Add(this.nudSubtract);
+            this.grpVariableSelection.Controls.Add(this.nudAdd);
+            this.grpVariableSelection.Controls.Add(this.nudSet);
             this.grpVariableSelection.Controls.Add(this.cmbVariable);
             this.grpVariableSelection.Controls.Add(this.lblVariable);
             this.grpVariableSelection.Controls.Add(this.lblRandomHigh);
             this.grpVariableSelection.Controls.Add(this.optSet);
             this.grpVariableSelection.Controls.Add(this.lblRandomLow);
-            this.grpVariableSelection.Controls.Add(this.txtSet);
-            this.grpVariableSelection.Controls.Add(this.txtRandomHigh);
             this.grpVariableSelection.Controls.Add(this.optAdd);
-            this.grpVariableSelection.Controls.Add(this.txtRandomLow);
-            this.grpVariableSelection.Controls.Add(this.txtAdd);
             this.grpVariableSelection.Controls.Add(this.optRandom);
             this.grpVariableSelection.Controls.Add(this.optSubtract);
-            this.grpVariableSelection.Controls.Add(this.txtSubtract);
             this.grpVariableSelection.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpVariableSelection.Location = new System.Drawing.Point(3, 43);
             this.grpVariableSelection.Name = "grpVariableSelection";
@@ -145,6 +150,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbVariable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbVariable.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbVariable.FormattingEnabled = true;
             this.cmbVariable.Location = new System.Drawing.Point(63, 16);
             this.cmbVariable.Name = "cmbVariable";
@@ -188,29 +194,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.lblRandomLow.TabIndex = 33;
             this.lblRandomLow.Text = "Low";
             // 
-            // txtSet
-            // 
-            this.txtSet.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtSet.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtSet.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtSet.Location = new System.Drawing.Point(109, 43);
-            this.txtSet.Name = "txtSet";
-            this.txtSet.Size = new System.Drawing.Size(82, 20);
-            this.txtSet.TabIndex = 31;
-            this.txtSet.Text = "0";
-            // 
-            // txtRandomHigh
-            // 
-            this.txtRandomHigh.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtRandomHigh.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtRandomHigh.Enabled = false;
-            this.txtRandomHigh.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtRandomHigh.Location = new System.Drawing.Point(109, 148);
-            this.txtRandomHigh.Name = "txtRandomHigh";
-            this.txtRandomHigh.Size = new System.Drawing.Size(82, 20);
-            this.txtRandomHigh.TabIndex = 27;
-            this.txtRandomHigh.Text = "0";
-            // 
             // optAdd
             // 
             this.optAdd.AutoSize = true;
@@ -220,30 +203,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.optAdd.TabIndex = 25;
             this.optAdd.Text = "Add";
             this.optAdd.CheckedChanged += new System.EventHandler(this.optAdd_CheckedChanged);
-            // 
-            // txtRandomLow
-            // 
-            this.txtRandomLow.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtRandomLow.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtRandomLow.Enabled = false;
-            this.txtRandomLow.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtRandomLow.Location = new System.Drawing.Point(109, 121);
-            this.txtRandomLow.Name = "txtRandomLow";
-            this.txtRandomLow.Size = new System.Drawing.Size(82, 20);
-            this.txtRandomLow.TabIndex = 28;
-            this.txtRandomLow.Text = "0";
-            // 
-            // txtAdd
-            // 
-            this.txtAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtAdd.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtAdd.Enabled = false;
-            this.txtAdd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtAdd.Location = new System.Drawing.Point(109, 69);
-            this.txtAdd.Name = "txtAdd";
-            this.txtAdd.Size = new System.Drawing.Size(82, 20);
-            this.txtAdd.TabIndex = 30;
-            this.txtAdd.Text = "0";
             // 
             // optRandom
             // 
@@ -265,17 +224,100 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.optSubtract.Text = "Subtract";
             this.optSubtract.CheckedChanged += new System.EventHandler(this.optSubtract_CheckedChanged);
             // 
-            // txtSubtract
+            // nudSet
             // 
-            this.txtSubtract.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtSubtract.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtSubtract.Enabled = false;
-            this.txtSubtract.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtSubtract.Location = new System.Drawing.Point(109, 95);
-            this.txtSubtract.Name = "txtSubtract";
-            this.txtSubtract.Size = new System.Drawing.Size(82, 20);
-            this.txtSubtract.TabIndex = 29;
-            this.txtSubtract.Text = "0";
+            this.nudSet.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudSet.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudSet.Location = new System.Drawing.Point(109, 44);
+            this.nudSet.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.nudSet.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.nudSet.Name = "nudSet";
+            this.nudSet.Size = new System.Drawing.Size(82, 20);
+            this.nudSet.TabIndex = 34;
+            // 
+            // nudAdd
+            // 
+            this.nudAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudAdd.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudAdd.Location = new System.Drawing.Point(109, 70);
+            this.nudAdd.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.nudAdd.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.nudAdd.Name = "nudAdd";
+            this.nudAdd.Size = new System.Drawing.Size(82, 20);
+            this.nudAdd.TabIndex = 35;
+            // 
+            // nudSubtract
+            // 
+            this.nudSubtract.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudSubtract.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudSubtract.Location = new System.Drawing.Point(109, 98);
+            this.nudSubtract.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.nudSubtract.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.nudSubtract.Name = "nudSubtract";
+            this.nudSubtract.Size = new System.Drawing.Size(82, 20);
+            this.nudSubtract.TabIndex = 36;
+            // 
+            // nudLow
+            // 
+            this.nudLow.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudLow.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudLow.Location = new System.Drawing.Point(109, 124);
+            this.nudLow.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.nudLow.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.nudLow.Name = "nudLow";
+            this.nudLow.Size = new System.Drawing.Size(82, 20);
+            this.nudLow.TabIndex = 37;
+            // 
+            // nudHigh
+            // 
+            this.nudHigh.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudHigh.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudHigh.Location = new System.Drawing.Point(109, 151);
+            this.nudHigh.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.nudHigh.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.nudHigh.Name = "nudHigh";
+            this.nudHigh.Size = new System.Drawing.Size(82, 20);
+            this.nudHigh.TabIndex = 38;
             // 
             // EventCommand_Variable
             // 
@@ -290,6 +332,11 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.grpSetVariable.PerformLayout();
             this.grpVariableSelection.ResumeLayout(false);
             this.grpVariableSelection.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSet)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdd)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSubtract)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLow)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHigh)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -301,19 +348,19 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private DarkButton btnSave;
         internal System.Windows.Forms.Label lblRandomHigh;
         internal System.Windows.Forms.Label lblRandomLow;
-        internal DarkTextBox txtRandomHigh;
-        internal DarkTextBox txtRandomLow;
         internal DarkRadioButton optRandom;
-        internal DarkTextBox txtSubtract;
         internal DarkRadioButton optSubtract;
-        internal DarkTextBox txtAdd;
         internal DarkRadioButton optAdd;
-        internal DarkTextBox txtSet;
         internal DarkRadioButton optSet;
         internal DarkComboBox cmbVariable;
         internal System.Windows.Forms.Label lblVariable;
         private DarkRadioButton rdoGlobalVariable;
         private DarkRadioButton rdoPlayerVariable;
         private DarkGroupBox grpVariableSelection;
+        private DarkNumericUpDown nudHigh;
+        private DarkNumericUpDown nudLow;
+        private DarkNumericUpDown nudSubtract;
+        private DarkNumericUpDown nudAdd;
+        private DarkNumericUpDown nudSet;
     }
 }

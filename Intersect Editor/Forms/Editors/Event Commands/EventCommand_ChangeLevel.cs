@@ -38,33 +38,28 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             if (_myCommand.Ints[0] <= 0 || _myCommand.Ints[0] > Options.MaxLevel) _myCommand.Ints[0] = 1;
-            scrlLevel.Value = _myCommand.Ints[0];
-            scrlLevel.Maximum = Options.MaxLevel;
+            nudLevel.Maximum = Options.MaxLevel;
+            nudLevel.Value = _myCommand.Ints[0];
             InitLocalization();
         }
 
         private void InitLocalization()
         {
             grpChangeLevel.Text = Strings.Get("eventchangelevel", "title");
-            lblLevel.Text = Strings.Get("eventchangelevel", "label", scrlLevel.Value);
+            lblLevel.Text = Strings.Get("eventchangelevel", "label");
             btnSave.Text = Strings.Get("eventchangelevel", "okay");
             btnCancel.Text = Strings.Get("eventchangelevel", "cancel");
         }
-
+        
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = scrlLevel.Value;
+            _myCommand.Ints[0] = (int)nudLevel.Value;
             _eventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
             _eventEditor.CancelCommandEdit();
-        }
-
-        private void scrlExperience_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblLevel.Text = Strings.Get("eventchangelevel", "label", scrlLevel.Value);
         }
     }
 }

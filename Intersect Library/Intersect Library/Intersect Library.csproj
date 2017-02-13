@@ -105,10 +105,10 @@
     <None Include="Resources\Migrator.English.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Editor.English.xml" />
+    <None Include="Resources\Client.English.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Client.English.xml" />
+    <None Include="Resources\Editor.English.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Server.English.xml" />

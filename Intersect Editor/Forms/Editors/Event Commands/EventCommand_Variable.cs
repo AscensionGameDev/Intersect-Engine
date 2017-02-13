@@ -89,20 +89,20 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 case 0:
                     optSet.Checked = true;
-                    txtSet.Text = _myCommand.Ints[3].ToString();
+                    nudSet.Value = _myCommand.Ints[3];
                     break;
                 case 1:
                     optAdd.Checked = true;
-                    txtAdd.Text = _myCommand.Ints[3].ToString();
+                    nudAdd.Value = _myCommand.Ints[3];
                     break;
                 case 2:
                     optSubtract.Checked = true;
-                    txtSubtract.Text = _myCommand.Ints[3].ToString();
+                    nudSubtract.Value = _myCommand.Ints[3];
                     break;
                 case 3:
                     optRandom.Checked = true;
-                    txtRandomLow.Text = _myCommand.Ints[3].ToString();
-                    txtRandomHigh.Text = _myCommand.Ints[4].ToString();
+                    nudLow.Value = _myCommand.Ints[3];
+                    nudHigh.Value = _myCommand.Ints[4];
                     break;
             }
             UpdateFormElements();
@@ -110,11 +110,11 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void UpdateFormElements()
         {
-            txtSet.Enabled = optSet.Checked;
-            txtAdd.Enabled = optAdd.Checked;
-            txtSubtract.Enabled = optSubtract.Checked;
-            txtRandomLow.Enabled = optRandom.Checked;
-            txtRandomHigh.Enabled = optRandom.Checked;
+            nudSet.Enabled = optSet.Checked;
+            nudAdd.Enabled = optAdd.Checked;
+            nudSubtract.Enabled = optSubtract.Checked;
+            nudLow.Enabled = optRandom.Checked;
+            nudHigh.Enabled = optRandom.Checked;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -135,58 +135,23 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             if (optSet.Checked)
             {
                 _myCommand.Ints[2] = 0;
-                if (int.TryParse(txtSet.Text, out n))
-                {
-                    _myCommand.Ints[3] = n;
-                }
-                else
-                {
-                    _myCommand.Ints[3] = 0;
-                }
+                _myCommand.Ints[3] = (int)nudSet.Value;
             }
             else if (optAdd.Checked)
             {
                 _myCommand.Ints[2] = 1;
-                if (int.TryParse(txtAdd.Text, out n))
-                {
-                    _myCommand.Ints[3] = n;
-                }
-                else
-                {
-                    _myCommand.Ints[3] = 0;
-                }
+                _myCommand.Ints[3] = (int) nudAdd.Value;
             }
             else if (optSubtract.Checked)
             {
                 _myCommand.Ints[2] = 2;
-                if (int.TryParse(txtSubtract.Text, out n))
-                {
-                    _myCommand.Ints[3] = n;
-                }
-                else
-                {
-                    _myCommand.Ints[3] = 0;
-                }
+                _myCommand.Ints[3] = (int) nudSubtract.Value;
             }
             else if (optRandom.Checked)
             {
                 _myCommand.Ints[2] = 3;
-                if (int.TryParse(txtRandomLow.Text, out n))
-                {
-                    _myCommand.Ints[3] = n;
-                }
-                else
-                {
-                    _myCommand.Ints[3] = 0;
-                }
-                if (int.TryParse(txtRandomHigh.Text, out n))
-                {
-                    _myCommand.Ints[4] = n;
-                }
-                else
-                {
-                    _myCommand.Ints[4] = 0;
-                }
+                _myCommand.Ints[3] = (int) nudLow.Value;
+                _myCommand.Ints[4] = (int) nudHigh.Value;
                 if (_myCommand.Ints[4] < _myCommand.Ints[3])
                 {
                     n = _myCommand.Ints[3];
@@ -227,7 +192,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitEditor();
             if (!_loading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
             if (!_loading) optSet.Checked = true;
-            if (!_loading) txtSet.Text = "0";
+            if (!_loading) nudSet.Value = 0;
         }
 
         private void rdoGlobalVariable_CheckedChanged(object sender, EventArgs e)
@@ -235,7 +200,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitEditor();
             if (!_loading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
             if (!_loading) optSet.Checked = true;
-            if (!_loading) txtSet.Text = "0";
+            if (!_loading) nudSet.Value = 0;
         }
     }
 }

@@ -67,8 +67,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     break;
                 case 4: //Has Item
                     cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _myCommand.Ints[1]);
-                    scrlItemQuantity.Value = _myCommand.Ints[2];
-                    lblItemQuantity.Text = Strings.Get("eventconditional", "hasatleast", scrlItemQuantity.Value);
+                    nudItemAmount.Value = _myCommand.Ints[2];
                     break;
                 case 5: //Class Is
                     cmbClass.SelectedIndex = Database.GameObjectListIndex(GameObject.Class, _myCommand.Ints[1]);
@@ -78,9 +77,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     break;
                 case 7: //Level or Stat is...
                     cmbLevelComparator.SelectedIndex = _myCommand.Ints[1];
-                    scrlLevel.Value = _myCommand.Ints[2];
+                    nudLevelStatValue.Value = _myCommand.Ints[2];
                     cmbLevelStat.SelectedIndex = _myCommand.Ints[3];
-                    lblLvlStatValue.Text = Strings.Get("eventconditional", "levelstatvalue", scrlLevel.Value);
                     break;
                 case 8: //Self Switch
                     cmbSelfSwitch.SelectedIndex = _myCommand.Ints[1];
@@ -161,7 +159,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
             //Has Item
             grpHasItem.Text = Strings.Get("eventconditional", "hasitem");
-            lblItemQuantity.Text = Strings.Get("eventconditional", "hasatleast", scrlItemQuantity.Value);
+            lblItemQuantity.Text = Strings.Get("eventconditional", "hasatleast");
             lblItem.Text = Strings.Get("eventconditional", "item");
 
             //Class is
@@ -174,7 +172,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
             //Level or Stat is
             grpLevelStat.Text = Strings.Get("eventconditional", "levelorstat");
-            lblLvlStatValue.Text = Strings.Get("eventconditional", "levelstatvalue", scrlLevel.Value);
+            lblLvlStatValue.Text = Strings.Get("eventconditional", "levelstatvalue");
             lblLevelComparator.Text = Strings.Get("eventconditional", "comparator");
             lblLevelOrStat.Text = Strings.Get("eventconditional", "levelstatitem");
             cmbLevelStat.Items.Clear();
@@ -301,7 +299,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbItem.Items.Clear();
                     cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
                     if (cmbItem.Items.Count > 0) cmbItem.SelectedIndex = 0;
-                    scrlItemQuantity.Value = 1;
+                    nudItemAmount.Value = 1;
                     break;
                 case 5: //Class is
                     grpClass.Show();
@@ -319,8 +317,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpLevelStat.Show();
                     cmbLevelComparator.SelectedIndex = 0;
                     cmbLevelStat.SelectedIndex = 0;
-                    scrlLevel.Value = 0;
-                    lblLvlStatValue.Text = Strings.Get("eventconditional", "levelstatvalue", scrlLevel.Value);
+                    nudLevelStatValue.Value = 0;
                     break;
                 case 8: //Self Switch
                     grpSelfSwitch.Show();
@@ -418,7 +415,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     break;
                 case 4: //Has Item
                     _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Item, cmbItem.SelectedIndex);
-                    _myCommand.Ints[2] = scrlItemQuantity.Value;
+                    _myCommand.Ints[2] = (int)nudItemAmount.Value;
                     break;
                 case 5: //Class Is
                     _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Class, cmbClass.SelectedIndex);
@@ -428,7 +425,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     break;
                 case 7: //Level or Stat is
                     _myCommand.Ints[1] = cmbLevelComparator.SelectedIndex;
-                    _myCommand.Ints[2] = scrlLevel.Value;
+                    _myCommand.Ints[2] = (int)nudLevelStatValue.Value;
                     _myCommand.Ints[3] = cmbLevelStat.SelectedIndex;
                     break;
                 case 8: //Self Switch
@@ -496,16 +493,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void cmbConditionType_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateFormElements();
-        }
-
-        private void scrlItemQuantity_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblItemQuantity.Text = Strings.Get("eventconditional", "hasatleast", scrlItemQuantity.Value);
-        }
-
-        private void scrlLevel_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblLvlStatValue.Text = Strings.Get("eventconditional", "levelstatvalue", scrlLevel.Value);
         }
 
         private void cmbTaskModifier_SelectedIndexChanged(object sender, EventArgs e)

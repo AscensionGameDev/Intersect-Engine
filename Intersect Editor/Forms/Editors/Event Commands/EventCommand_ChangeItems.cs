@@ -47,13 +47,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item,_myCommand.Ints[1]);
             if (_myCommand.Ints[2] < 1)
             {
-                scrlAmount.Value = 1;
+                nudGiveTakeAmount.Value = 1;
             }
             else
             {
-                scrlAmount.Value = _myCommand.Ints[2];
+                nudGiveTakeAmount.Value = _myCommand.Ints[2];
             }
-            lblAmount.Text = Strings.Get("eventchangeitems","amount",scrlAmount.Value);
+            lblAmount.Text = Strings.Get("eventchangeitems","amount");
         }
 
         private void InitLocalization()
@@ -73,7 +73,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         {
             _myCommand.Ints[0] = cmbAction.SelectedIndex;
             _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Item,cmbItem.SelectedIndex);
-            _myCommand.Ints[2] = scrlAmount.Value;
+            _myCommand.Ints[2] = (int)nudGiveTakeAmount.Value;
             if (_myCommand.Ints[4] == 0)
             // command.Ints[4, and 5] are reserved for when the action succeeds or fails
             {
@@ -89,11 +89,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void btnCancel_Click(object sender, EventArgs e)
         {
             _eventEditor.CancelCommandEdit();
-        }
-
-        private void scrlAmount_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblAmount.Text = Strings.Get("eventchangeitems", "amount", scrlAmount.Value);
         }
     }
 }

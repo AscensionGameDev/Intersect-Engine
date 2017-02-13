@@ -31,18 +31,19 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void InitializeComponent()
         {
             this.grpGiveExperience = new DarkUI.Controls.DarkGroupBox();
-            this.scrlExperience = new DarkUI.Controls.DarkScrollBar();
             this.lblExperience = new System.Windows.Forms.Label();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
+            this.nudExperience = new DarkUI.Controls.DarkNumericUpDown();
             this.grpGiveExperience.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudExperience)).BeginInit();
             this.SuspendLayout();
             // 
             // grpGiveExperience
             // 
             this.grpGiveExperience.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpGiveExperience.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpGiveExperience.Controls.Add(this.scrlExperience);
+            this.grpGiveExperience.Controls.Add(this.nudExperience);
             this.grpGiveExperience.Controls.Add(this.lblExperience);
             this.grpGiveExperience.Controls.Add(this.btnCancel);
             this.grpGiveExperience.Controls.Add(this.btnSave);
@@ -54,24 +55,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.grpGiveExperience.TabStop = false;
             this.grpGiveExperience.Text = "Give Experience:";
             // 
-            // scrlExperience
-            // 
-            this.scrlExperience.Location = new System.Drawing.Point(107, 22);
-            this.scrlExperience.Maximum = 32000;
-            this.scrlExperience.Name = "scrlExperience";
-            this.scrlExperience.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlExperience.Size = new System.Drawing.Size(149, 17);
-            this.scrlExperience.TabIndex = 22;
-            this.scrlExperience.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlExperience_Scroll);
-            // 
             // lblExperience
             // 
             this.lblExperience.AutoSize = true;
             this.lblExperience.Location = new System.Drawing.Point(4, 22);
             this.lblExperience.Name = "lblExperience";
-            this.lblExperience.Size = new System.Drawing.Size(100, 13);
+            this.lblExperience.Size = new System.Drawing.Size(91, 13);
             this.lblExperience.TabIndex = 21;
-            this.lblExperience.Text = "Give 0 Experience: ";
+            this.lblExperience.Text = "Give Experience: ";
             // 
             // btnCancel
             // 
@@ -93,6 +84,20 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.btnSave.Text = "Ok";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // nudExperience
+            // 
+            this.nudExperience.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudExperience.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudExperience.Location = new System.Drawing.Point(112, 20);
+            this.nudExperience.Maximum = new decimal(new int[] {
+            100000000,
+            0,
+            0,
+            0});
+            this.nudExperience.Name = "nudExperience";
+            this.nudExperience.Size = new System.Drawing.Size(141, 20);
+            this.nudExperience.TabIndex = 22;
+            // 
             // EventCommand_GiveExperience
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -104,6 +109,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.Size = new System.Drawing.Size(268, 88);
             this.grpGiveExperience.ResumeLayout(false);
             this.grpGiveExperience.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudExperience)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -114,6 +120,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private DarkButton btnCancel;
         private DarkButton btnSave;
         private System.Windows.Forms.Label lblExperience;
-        private DarkScrollBar scrlExperience;
+        private DarkNumericUpDown nudExperience;
     }
 }

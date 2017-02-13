@@ -31,18 +31,19 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void InitializeComponent()
         {
             this.grpChangeLevel = new DarkUI.Controls.DarkGroupBox();
-            this.scrlLevel = new DarkUI.Controls.DarkScrollBar();
             this.lblLevel = new System.Windows.Forms.Label();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
+            this.nudLevel = new DarkUI.Controls.DarkNumericUpDown();
             this.grpChangeLevel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLevel)).BeginInit();
             this.SuspendLayout();
             // 
             // grpChangeLevel
             // 
             this.grpChangeLevel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpChangeLevel.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpChangeLevel.Controls.Add(this.scrlLevel);
+            this.grpChangeLevel.Controls.Add(this.nudLevel);
             this.grpChangeLevel.Controls.Add(this.lblLevel);
             this.grpChangeLevel.Controls.Add(this.btnCancel);
             this.grpChangeLevel.Controls.Add(this.btnSave);
@@ -54,26 +55,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.grpChangeLevel.TabStop = false;
             this.grpChangeLevel.Text = "Change Level:";
             // 
-            // scrlLevel
-            // 
-            this.scrlLevel.Location = new System.Drawing.Point(107, 22);
-            this.scrlLevel.Maximum = 255;
-            this.scrlLevel.Minimum = 1;
-            this.scrlLevel.Name = "scrlLevel";
-            this.scrlLevel.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlLevel.Size = new System.Drawing.Size(149, 17);
-            this.scrlLevel.TabIndex = 22;
-            this.scrlLevel.Value = 1;
-            this.scrlLevel.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlExperience_Scroll);
-            // 
             // lblLevel
             // 
             this.lblLevel.AutoSize = true;
             this.lblLevel.Location = new System.Drawing.Point(4, 22);
             this.lblLevel.Name = "lblLevel";
-            this.lblLevel.Size = new System.Drawing.Size(64, 13);
+            this.lblLevel.Size = new System.Drawing.Size(55, 13);
             this.lblLevel.TabIndex = 21;
-            this.lblLevel.Text = "Set Level: 1";
+            this.lblLevel.Text = "Set Level:";
             // 
             // btnCancel
             // 
@@ -95,6 +84,25 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.btnSave.Text = "Ok";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // nudLevel
+            // 
+            this.nudLevel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudLevel.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudLevel.Location = new System.Drawing.Point(89, 20);
+            this.nudLevel.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudLevel.Name = "nudLevel";
+            this.nudLevel.Size = new System.Drawing.Size(164, 20);
+            this.nudLevel.TabIndex = 22;
+            this.nudLevel.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
             // EventCommand_ChangeLevel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -106,6 +114,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.Size = new System.Drawing.Size(268, 88);
             this.grpChangeLevel.ResumeLayout(false);
             this.grpChangeLevel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLevel)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -116,6 +125,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private DarkButton btnCancel;
         private DarkButton btnSave;
         private System.Windows.Forms.Label lblLevel;
-        private DarkScrollBar scrlLevel;
+        private DarkNumericUpDown nudLevel;
     }
 }

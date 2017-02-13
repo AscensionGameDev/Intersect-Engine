@@ -37,32 +37,26 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             InitLocalization();
-            scrlExperience.Value = _myCommand.Ints[0];
-            lblExperience.Text = Strings.Get("eventgiveexperience", "label", scrlExperience.Value);
+            nudExperience.Value = _myCommand.Ints[0];
         }
 
         private void InitLocalization()
         {
             grpGiveExperience.Text = Strings.Get("eventgiveexperience", "title");
-            lblExperience.Text = Strings.Get("eventgiveexperience", "label", scrlExperience.Value);
+            lblExperience.Text = Strings.Get("eventgiveexperience", "label");
             btnSave.Text = Strings.Get("eventgiveexperience", "okay");
             btnCancel.Text = Strings.Get("eventgiveexperience", "cancel");
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = scrlExperience.Value;
+            _myCommand.Ints[0] = (int)nudExperience.Value;
             _eventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
             _eventEditor.CancelCommandEdit();
-        }
-
-        private void scrlExperience_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblExperience.Text = Strings.Get("eventgiveexperience", "label", scrlExperience.Value);
         }
     }
 }

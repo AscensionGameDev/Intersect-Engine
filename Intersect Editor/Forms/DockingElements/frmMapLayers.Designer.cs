@@ -54,10 +54,10 @@ namespace Intersect_Editor.Forms
             this.cmbResourceAttribute = new DarkUI.Controls.DarkComboBox();
             this.lblResource = new System.Windows.Forms.Label();
             this.grpItem = new DarkUI.Controls.DarkGroupBox();
+            this.nudItemQuantity = new DarkUI.Controls.DarkNumericUpDown();
             this.cmbItemAttribute = new DarkUI.Controls.DarkComboBox();
             this.lblMaxItemAmount = new System.Windows.Forms.Label();
             this.lblMapItem = new System.Windows.Forms.Label();
-            this.scrlMaxItemVal = new DarkUI.Controls.DarkScrollBar();
             this.grpWarp = new DarkUI.Controls.DarkGroupBox();
             this.nudWarpY = new DarkUI.Controls.DarkNumericUpDown();
             this.nudWarpX = new DarkUI.Controls.DarkNumericUpDown();
@@ -81,7 +81,6 @@ namespace Intersect_Editor.Forms
             this.cmbMapAttributeSound = new DarkUI.Controls.DarkComboBox();
             this.lblSoundDistance = new System.Windows.Forms.Label();
             this.lblMapSound = new System.Windows.Forms.Label();
-            this.scrlSoundDistance = new DarkUI.Controls.DarkScrollBar();
             this.grpSlide = new DarkUI.Controls.DarkGroupBox();
             this.cmbSlideDir = new DarkUI.Controls.DarkComboBox();
             this.lblSlideDir = new System.Windows.Forms.Label();
@@ -119,9 +118,11 @@ namespace Intersect_Editor.Forms
             this.pnlEvents = new System.Windows.Forms.Panel();
             this.pnlLights = new System.Windows.Forms.Panel();
             this.lightEditor = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
+            this.nudSoundDistance = new DarkUI.Controls.DarkNumericUpDown();
             this.grpResource.SuspendLayout();
             this.grpZResource.SuspendLayout();
             this.grpItem.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudItemQuantity)).BeginInit();
             this.grpWarp.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudWarpY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWarpX)).BeginInit();
@@ -146,6 +147,7 @@ namespace Intersect_Editor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
             this.pnlEvents.SuspendLayout();
             this.pnlLights.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSoundDistance)).BeginInit();
             this.SuspendLayout();
             // 
             // lblLayer
@@ -409,10 +411,10 @@ namespace Intersect_Editor.Forms
             // 
             this.grpItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpItem.Controls.Add(this.nudItemQuantity);
             this.grpItem.Controls.Add(this.cmbItemAttribute);
             this.grpItem.Controls.Add(this.lblMaxItemAmount);
             this.grpItem.Controls.Add(this.lblMapItem);
-            this.grpItem.Controls.Add(this.scrlMaxItemVal);
             this.grpItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpItem.Location = new System.Drawing.Point(6, 202);
             this.grpItem.Name = "grpItem";
@@ -421,6 +423,20 @@ namespace Intersect_Editor.Forms
             this.grpItem.TabStop = false;
             this.grpItem.Text = "Map Item";
             this.grpItem.Visible = false;
+            // 
+            // nudItemQuantity
+            // 
+            this.nudItemQuantity.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudItemQuantity.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudItemQuantity.Location = new System.Drawing.Point(16, 72);
+            this.nudItemQuantity.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.nudItemQuantity.Name = "nudItemQuantity";
+            this.nudItemQuantity.Size = new System.Drawing.Size(219, 20);
+            this.nudItemQuantity.TabIndex = 10;
             // 
             // cmbItemAttribute
             // 
@@ -442,9 +458,9 @@ namespace Intersect_Editor.Forms
             this.lblMaxItemAmount.AutoSize = true;
             this.lblMaxItemAmount.Location = new System.Drawing.Point(13, 54);
             this.lblMaxItemAmount.Name = "lblMaxItemAmount";
-            this.lblMaxItemAmount.Size = new System.Drawing.Size(63, 13);
+            this.lblMaxItemAmount.Size = new System.Drawing.Size(49, 13);
             this.lblMaxItemAmount.TabIndex = 8;
-            this.lblMaxItemAmount.Text = "Quantity: x1";
+            this.lblMaxItemAmount.Text = "Quantity:";
             // 
             // lblMapItem
             // 
@@ -454,18 +470,6 @@ namespace Intersect_Editor.Forms
             this.lblMapItem.Size = new System.Drawing.Size(30, 13);
             this.lblMapItem.TabIndex = 7;
             this.lblMapItem.Text = "Item:";
-            // 
-            // scrlMaxItemVal
-            // 
-            this.scrlMaxItemVal.Location = new System.Drawing.Point(16, 70);
-            this.scrlMaxItemVal.Maximum = 1000;
-            this.scrlMaxItemVal.Minimum = 1;
-            this.scrlMaxItemVal.Name = "scrlMaxItemVal";
-            this.scrlMaxItemVal.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlMaxItemVal.Size = new System.Drawing.Size(219, 18);
-            this.scrlMaxItemVal.TabIndex = 6;
-            this.scrlMaxItemVal.Value = 1;
-            this.scrlMaxItemVal.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlMaxItemVal_ValueChanged);
             // 
             // grpWarp
             // 
@@ -696,10 +700,10 @@ namespace Intersect_Editor.Forms
             // 
             this.grpSound.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpSound.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpSound.Controls.Add(this.nudSoundDistance);
             this.grpSound.Controls.Add(this.cmbMapAttributeSound);
             this.grpSound.Controls.Add(this.lblSoundDistance);
             this.grpSound.Controls.Add(this.lblMapSound);
-            this.grpSound.Controls.Add(this.scrlSoundDistance);
             this.grpSound.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpSound.Location = new System.Drawing.Point(6, 202);
             this.grpSound.Name = "grpSound";
@@ -729,9 +733,9 @@ namespace Intersect_Editor.Forms
             this.lblSoundDistance.AutoSize = true;
             this.lblSoundDistance.Location = new System.Drawing.Point(13, 54);
             this.lblSoundDistance.Name = "lblSoundDistance";
-            this.lblSoundDistance.Size = new System.Drawing.Size(92, 13);
+            this.lblSoundDistance.Size = new System.Drawing.Size(95, 13);
             this.lblSoundDistance.TabIndex = 8;
-            this.lblSoundDistance.Text = "Distance: 1 Tile(s)";
+            this.lblSoundDistance.Text = "Distance (In Tiles):";
             // 
             // lblMapSound
             // 
@@ -741,18 +745,6 @@ namespace Intersect_Editor.Forms
             this.lblMapSound.Size = new System.Drawing.Size(41, 13);
             this.lblMapSound.TabIndex = 7;
             this.lblMapSound.Text = "Sound:";
-            // 
-            // scrlSoundDistance
-            // 
-            this.scrlSoundDistance.Location = new System.Drawing.Point(16, 76);
-            this.scrlSoundDistance.Maximum = 15;
-            this.scrlSoundDistance.Minimum = 1;
-            this.scrlSoundDistance.Name = "scrlSoundDistance";
-            this.scrlSoundDistance.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlSoundDistance.Size = new System.Drawing.Size(219, 17);
-            this.scrlSoundDistance.TabIndex = 6;
-            this.scrlSoundDistance.Value = 1;
-            this.scrlSoundDistance.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlSoundDistance_Scroll);
             // 
             // grpSlide
             // 
@@ -1069,13 +1061,13 @@ namespace Intersect_Editor.Forms
             this.pnlAttributes.Controls.Add(this.rbNPCAvoid);
             this.pnlAttributes.Controls.Add(this.rbZDimension);
             this.pnlAttributes.Controls.Add(this.rbItem);
-            this.pnlAttributes.Controls.Add(this.grpWarp);
             this.pnlAttributes.Controls.Add(this.grpItem);
             this.pnlAttributes.Controls.Add(this.grpResource);
             this.pnlAttributes.Controls.Add(this.grpAnimation);
             this.pnlAttributes.Controls.Add(this.grpSlide);
             this.pnlAttributes.Controls.Add(this.grpSound);
             this.pnlAttributes.Controls.Add(this.grpZDimension);
+            this.pnlAttributes.Controls.Add(this.grpWarp);
             this.pnlAttributes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlAttributes.Location = new System.Drawing.Point(0, 0);
             this.pnlAttributes.Name = "pnlAttributes";
@@ -1215,6 +1207,15 @@ namespace Intersect_Editor.Forms
             this.lightEditor.Visible = false;
             this.lightEditor.Load += new System.EventHandler(this.lightEditor_Load);
             // 
+            // nudSoundDistance
+            // 
+            this.nudSoundDistance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudSoundDistance.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudSoundDistance.Location = new System.Drawing.Point(16, 72);
+            this.nudSoundDistance.Name = "nudSoundDistance";
+            this.nudSoundDistance.Size = new System.Drawing.Size(219, 20);
+            this.nudSoundDistance.TabIndex = 10;
+            // 
             // frmMapLayers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1246,6 +1247,7 @@ namespace Intersect_Editor.Forms
             this.grpZResource.PerformLayout();
             this.grpItem.ResumeLayout(false);
             this.grpItem.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudItemQuantity)).EndInit();
             this.grpWarp.ResumeLayout(false);
             this.grpWarp.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudWarpY)).EndInit();
@@ -1280,6 +1282,7 @@ namespace Intersect_Editor.Forms
             this.pnlEvents.ResumeLayout(false);
             this.pnlEvents.PerformLayout();
             this.pnlLights.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nudSoundDistance)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1303,11 +1306,9 @@ namespace Intersect_Editor.Forms
         public DarkComboBox cmbMapAttributeSound;
         private System.Windows.Forms.Label lblSoundDistance;
         private System.Windows.Forms.Label lblMapSound;
-        private DarkScrollBar scrlSoundDistance;
         private DarkGroupBox grpItem;
         private System.Windows.Forms.Label lblMaxItemAmount;
         private System.Windows.Forms.Label lblMapItem;
-        private DarkScrollBar scrlMaxItemVal;
         private DarkGroupBox grpWarp;
         private System.Windows.Forms.Label lblY;
         private System.Windows.Forms.Label lblX;
@@ -1372,5 +1373,7 @@ namespace Intersect_Editor.Forms
         private PictureBox picGround;
         private DarkNumericUpDown nudWarpY;
         private DarkNumericUpDown nudWarpX;
+        private DarkNumericUpDown nudItemQuantity;
+        private DarkNumericUpDown nudSoundDistance;
     }
 }

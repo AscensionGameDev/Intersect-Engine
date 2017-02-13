@@ -54,15 +54,15 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation,_myCommand.Ints[0]);
             cmbConditionType.SelectedIndex =  _myCommand.Ints[1];
+            nudWarpX.Maximum = Options.MapWidth;
+            nudWarpY.Maximum = Options.MapHeight;
             UpdateFormElements();
             switch (cmbConditionType.SelectedIndex)
             {
                 case 0: //Tile spawn
                     //Fill in the map cmb
-                    scrlX.Value = _myCommand.Ints[3];
-                    scrlY.Value = _myCommand.Ints[4];
-                    lblX.Text = Strings.Get("warping", "x", scrlX.Value);
-                    lblY.Text = Strings.Get("warping", "y", scrlY.Value);
+                    nudWarpX.Value = _myCommand.Ints[3];
+                    nudWarpY.Value = _myCommand.Ints[4];
                     cmbDirection.SelectedIndex = _myCommand.Ints[5];
                     break;
                 case 1: //On/Around Entity Spawn
@@ -100,8 +100,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             grpEntitySpawn.Text = Strings.Get("eventplayanimation", "spawntype1");
 
             lblMap.Text = Strings.Get("warping", "map", "");
-            lblX.Text = Strings.Get("warping", "x", scrlX.Value);
-            lblY.Text = Strings.Get("warping", "y", scrlY.Value);
+            lblX.Text = Strings.Get("warping", "x", "");
+            lblY.Text = Strings.Get("warping", "y","");
             lblDir.Text = Strings.Get("warping", "direction", "");
             cmbDirection.Items.Clear();
             for (int i = 0; i < 4; i++)
@@ -190,8 +190,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 case 0: //Tile Spawn
                     _myCommand.Ints[2] = MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum;
-                    _myCommand.Ints[3] = scrlX.Value;
-                    _myCommand.Ints[4] = scrlY.Value;
+                    _myCommand.Ints[3] = (int)nudWarpX.Value;
+                    _myCommand.Ints[4] = (int)nudWarpY.Value;
                     _myCommand.Ints[5] = cmbDirection.SelectedIndex;
                     break;
                 case 1: //On/Around Entity Spawn
@@ -237,20 +237,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             UpdateFormElements();
         }
 
-        private void scrlX_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblX.Text = Strings.Get("warping", "x", scrlX.Value);
-        }
-
-        private void scrlY_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblY.Text = Strings.Get("warping", "y", scrlY.Value);
-        }
-
         private void btnVisual_Click(object sender, EventArgs e)
         {
             frmWarpSelection frmWarpSelection = new frmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum, scrlX.Value, scrlY.Value);
+            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum, (int)nudWarpX.Value, (int)nudWarpY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
@@ -262,10 +252,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                         break;
                     }
                 }
-                scrlX.Value = frmWarpSelection.GetX();
-                scrlY.Value = frmWarpSelection.GetY();
-                lblX.Text = Strings.Get("warping", "x", scrlX.Value);
-                lblY.Text = Strings.Get("warping", "y", scrlY.Value);
+                nudWarpX.Value = frmWarpSelection.GetX();
+                nudWarpY.Value = frmWarpSelection.GetY();
             }
         }
 

@@ -31,7 +31,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void InitializeComponent()
         {
             this.grpChangeItems = new DarkUI.Controls.DarkGroupBox();
-            this.scrlAmount = new DarkUI.Controls.DarkScrollBar();
             this.lblAmount = new System.Windows.Forms.Label();
             this.cmbItem = new DarkUI.Controls.DarkComboBox();
             this.lblItem = new System.Windows.Forms.Label();
@@ -39,14 +38,16 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.lblAction = new System.Windows.Forms.Label();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
+            this.nudGiveTakeAmount = new DarkUI.Controls.DarkNumericUpDown();
             this.grpChangeItems.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudGiveTakeAmount)).BeginInit();
             this.SuspendLayout();
             // 
             // grpChangeItems
             // 
             this.grpChangeItems.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpChangeItems.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpChangeItems.Controls.Add(this.scrlAmount);
+            this.grpChangeItems.Controls.Add(this.nudGiveTakeAmount);
             this.grpChangeItems.Controls.Add(this.lblAmount);
             this.grpChangeItems.Controls.Add(this.cmbItem);
             this.grpChangeItems.Controls.Add(this.lblItem);
@@ -62,25 +63,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.grpChangeItems.TabStop = false;
             this.grpChangeItems.Text = "Change Player Items:";
             // 
-            // scrlAmount
-            // 
-            this.scrlAmount.Location = new System.Drawing.Point(82, 73);
-            this.scrlAmount.Maximum = 32000;
-            this.scrlAmount.Minimum = 1;
-            this.scrlAmount.Name = "scrlAmount";
-            this.scrlAmount.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlAmount.Size = new System.Drawing.Size(97, 17);
-            this.scrlAmount.TabIndex = 26;
-            this.scrlAmount.Value = 1;
-            // 
             // lblAmount
             // 
             this.lblAmount.AutoSize = true;
             this.lblAmount.Location = new System.Drawing.Point(5, 73);
             this.lblAmount.Name = "lblAmount";
-            this.lblAmount.Size = new System.Drawing.Size(55, 13);
+            this.lblAmount.Size = new System.Drawing.Size(46, 13);
             this.lblAmount.TabIndex = 25;
-            this.lblAmount.Text = "Amount: 1";
+            this.lblAmount.Text = "Amount:";
             // 
             // cmbItem
             // 
@@ -153,6 +143,30 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.btnSave.Text = "Ok";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // nudGiveTakeAmount
+            // 
+            this.nudGiveTakeAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudGiveTakeAmount.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudGiveTakeAmount.Location = new System.Drawing.Point(64, 73);
+            this.nudGiveTakeAmount.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.nudGiveTakeAmount.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudGiveTakeAmount.Name = "nudGiveTakeAmount";
+            this.nudGiveTakeAmount.Size = new System.Drawing.Size(115, 20);
+            this.nudGiveTakeAmount.TabIndex = 26;
+            this.nudGiveTakeAmount.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
             // EventCommand_ChangeItems
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -164,6 +178,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.Size = new System.Drawing.Size(205, 139);
             this.grpChangeItems.ResumeLayout(false);
             this.grpChangeItems.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudGiveTakeAmount)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -177,7 +192,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private System.Windows.Forms.Label lblAction;
         private DarkComboBox cmbItem;
         private System.Windows.Forms.Label lblItem;
-        private DarkScrollBar scrlAmount;
         private System.Windows.Forms.Label lblAmount;
+        private DarkNumericUpDown nudGiveTakeAmount;
     }
 }
