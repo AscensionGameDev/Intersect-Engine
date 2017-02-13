@@ -36,7 +36,7 @@ namespace Intersect_Editor.Forms
             this.lstAnimations = new System.Windows.Forms.ListBox();
             this.groupBox2 = new DarkUI.Controls.DarkGroupBox();
             this.btnSwap = new DarkUI.Controls.DarkButton();
-            this.scrlDarkness = new DarkScrollBar();
+            this.scrlDarkness = new DarkUI.Controls.DarkScrollBar();
             this.labelDarkness = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.cmbSound = new DarkUI.Controls.DarkComboBox();
@@ -45,19 +45,18 @@ namespace Intersect_Editor.Forms
             this.groupBox3 = new DarkUI.Controls.DarkGroupBox();
             this.groupBox8 = new DarkUI.Controls.DarkGroupBox();
             this.btnLowerClone = new DarkUI.Controls.DarkButton();
-            this.lightEditorLower = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.groupBox5 = new DarkUI.Controls.DarkGroupBox();
             this.btnPlayLower = new DarkUI.Controls.DarkButton();
-            this.scrlLowerFrame = new DarkScrollBar();
+            this.scrlLowerFrame = new DarkUI.Controls.DarkScrollBar();
             this.lblLowerFrame = new System.Windows.Forms.Label();
-            this.scrlLowerLoopCount = new DarkScrollBar();
+            this.scrlLowerLoopCount = new DarkUI.Controls.DarkScrollBar();
             this.lblLowerLoopCount = new System.Windows.Forms.Label();
-            this.scrlLowerFrameDuration = new DarkScrollBar();
+            this.scrlLowerFrameDuration = new DarkUI.Controls.DarkScrollBar();
             this.lblLowerFrameDuration = new System.Windows.Forms.Label();
-            this.scrlLowerFrameCount = new DarkScrollBar();
+            this.scrlLowerFrameCount = new DarkUI.Controls.DarkScrollBar();
             this.lblLowerFrameCount = new System.Windows.Forms.Label();
-            this.scrlLowerVerticalFrames = new DarkScrollBar();
-            this.scrlLowerHorizontalFrames = new DarkScrollBar();
+            this.scrlLowerVerticalFrames = new DarkUI.Controls.DarkScrollBar();
+            this.scrlLowerHorizontalFrames = new DarkUI.Controls.DarkScrollBar();
             this.lblLowerVerticalFrames = new System.Windows.Forms.Label();
             this.lblLowerHorizontalFrames = new System.Windows.Forms.Label();
             this.cmbLowerGraphic = new DarkUI.Controls.DarkComboBox();
@@ -66,19 +65,18 @@ namespace Intersect_Editor.Forms
             this.groupBox4 = new DarkUI.Controls.DarkGroupBox();
             this.groupBox6 = new DarkUI.Controls.DarkGroupBox();
             this.btnPlayUpper = new DarkUI.Controls.DarkButton();
-            this.scrlUpperFrame = new DarkScrollBar();
+            this.scrlUpperFrame = new DarkUI.Controls.DarkScrollBar();
             this.lblUpperFrame = new System.Windows.Forms.Label();
-            this.scrlUpperLoopCount = new DarkScrollBar();
+            this.scrlUpperLoopCount = new DarkUI.Controls.DarkScrollBar();
             this.groupBox7 = new DarkUI.Controls.DarkGroupBox();
             this.btnUpperClone = new DarkUI.Controls.DarkButton();
-            this.lightEditorUpper = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.lblUpperLoopCount = new System.Windows.Forms.Label();
-            this.scrlUpperFrameDuration = new DarkScrollBar();
+            this.scrlUpperFrameDuration = new DarkUI.Controls.DarkScrollBar();
             this.lblUpperFrameDuration = new System.Windows.Forms.Label();
-            this.scrlUpperFrameCount = new DarkScrollBar();
+            this.scrlUpperFrameCount = new DarkUI.Controls.DarkScrollBar();
             this.lblUpperFrameCount = new System.Windows.Forms.Label();
-            this.scrlUpperVerticalFrames = new DarkScrollBar();
-            this.scrlUpperHorizontalFrames = new DarkScrollBar();
+            this.scrlUpperVerticalFrames = new DarkUI.Controls.DarkScrollBar();
+            this.scrlUpperHorizontalFrames = new DarkUI.Controls.DarkScrollBar();
             this.lblUpperVerticalFrames = new System.Windows.Forms.Label();
             this.lblUpperHorizontalFrames = new System.Windows.Forms.Label();
             this.cmbUpperGraphic = new DarkUI.Controls.DarkComboBox();
@@ -98,6 +96,8 @@ namespace Intersect_Editor.Forms
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.lightEditorUpper = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
+            this.lightEditorLower = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -169,13 +169,12 @@ namespace Intersect_Editor.Forms
             // 
             // scrlDarkness
             // 
-            
             this.scrlDarkness.Location = new System.Drawing.Point(551, 19);
             this.scrlDarkness.Name = "scrlDarkness";
+            this.scrlDarkness.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlDarkness.Size = new System.Drawing.Size(218, 17);
             this.scrlDarkness.TabIndex = 5;
             this.scrlDarkness.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlDarkness_Scroll);
-            this.scrlDarkness.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // labelDarkness
             // 
@@ -203,6 +202,7 @@ namespace Intersect_Editor.Forms
             this.cmbSound.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSound.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSound.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbSound.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSound.FormattingEnabled = true;
             this.cmbSound.Items.AddRange(new object[] {
             "None"});
@@ -268,7 +268,7 @@ namespace Intersect_Editor.Forms
             this.groupBox8.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox8.Location = new System.Drawing.Point(213, 93);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(265, 353);
+            this.groupBox8.Size = new System.Drawing.Size(265, 319);
             this.groupBox8.TabIndex = 20;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Frame Options";
@@ -282,14 +282,6 @@ namespace Intersect_Editor.Forms
             this.btnLowerClone.TabIndex = 16;
             this.btnLowerClone.Text = "Clone From Previous";
             this.btnLowerClone.Click += new System.EventHandler(this.btnLowerClone_Click);
-            // 
-            // lightEditorLower
-            // 
-            this.lightEditorLower.Location = new System.Drawing.Point(6, 28);
-            this.lightEditorLower.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.lightEditorLower.Name = "lightEditorLower";
-            this.lightEditorLower.Size = new System.Drawing.Size(253, 323);
-            this.lightEditorLower.TabIndex = 15;
             // 
             // groupBox5
             // 
@@ -318,16 +310,15 @@ namespace Intersect_Editor.Forms
             // 
             // scrlLowerFrame
             // 
-            
             this.scrlLowerFrame.Location = new System.Drawing.Point(57, 16);
             this.scrlLowerFrame.Maximum = 1;
             this.scrlLowerFrame.Minimum = 1;
             this.scrlLowerFrame.Name = "scrlLowerFrame";
+            this.scrlLowerFrame.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlLowerFrame.Size = new System.Drawing.Size(197, 17);
             this.scrlLowerFrame.TabIndex = 15;
             this.scrlLowerFrame.Value = 1;
             this.scrlLowerFrame.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlLowerFrame_Scroll);
-            this.scrlLowerFrame.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblLowerFrame
             // 
@@ -340,14 +331,13 @@ namespace Intersect_Editor.Forms
             // 
             // scrlLowerLoopCount
             // 
-            
             this.scrlLowerLoopCount.Location = new System.Drawing.Point(7, 395);
             this.scrlLowerLoopCount.Maximum = 10;
             this.scrlLowerLoopCount.Name = "scrlLowerLoopCount";
+            this.scrlLowerLoopCount.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlLowerLoopCount.Size = new System.Drawing.Size(197, 17);
             this.scrlLowerLoopCount.TabIndex = 13;
             this.scrlLowerLoopCount.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlLowerLoopCount_Scroll);
-            this.scrlLowerLoopCount.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblLowerLoopCount
             // 
@@ -360,16 +350,15 @@ namespace Intersect_Editor.Forms
             // 
             // scrlLowerFrameDuration
             // 
-            
             this.scrlLowerFrameDuration.Location = new System.Drawing.Point(7, 363);
             this.scrlLowerFrameDuration.Maximum = 2000;
             this.scrlLowerFrameDuration.Minimum = 10;
             this.scrlLowerFrameDuration.Name = "scrlLowerFrameDuration";
+            this.scrlLowerFrameDuration.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlLowerFrameDuration.Size = new System.Drawing.Size(197, 17);
             this.scrlLowerFrameDuration.TabIndex = 11;
             this.scrlLowerFrameDuration.Value = 10;
             this.scrlLowerFrameDuration.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlLowerFrameDuration_Scroll);
-            this.scrlLowerFrameDuration.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblLowerFrameDuration
             // 
@@ -382,15 +371,14 @@ namespace Intersect_Editor.Forms
             // 
             // scrlLowerFrameCount
             // 
-            
             this.scrlLowerFrameCount.Location = new System.Drawing.Point(7, 330);
             this.scrlLowerFrameCount.Minimum = 1;
             this.scrlLowerFrameCount.Name = "scrlLowerFrameCount";
+            this.scrlLowerFrameCount.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlLowerFrameCount.Size = new System.Drawing.Size(197, 17);
             this.scrlLowerFrameCount.TabIndex = 9;
             this.scrlLowerFrameCount.Value = 1;
             this.scrlLowerFrameCount.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlLowerFrameCount_Scroll);
-            this.scrlLowerFrameCount.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblLowerFrameCount
             // 
@@ -403,29 +391,27 @@ namespace Intersect_Editor.Forms
             // 
             // scrlLowerVerticalFrames
             // 
-            
             this.scrlLowerVerticalFrames.Location = new System.Drawing.Point(7, 296);
             this.scrlLowerVerticalFrames.Maximum = 20;
             this.scrlLowerVerticalFrames.Minimum = 1;
             this.scrlLowerVerticalFrames.Name = "scrlLowerVerticalFrames";
+            this.scrlLowerVerticalFrames.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlLowerVerticalFrames.Size = new System.Drawing.Size(197, 17);
             this.scrlLowerVerticalFrames.TabIndex = 7;
             this.scrlLowerVerticalFrames.Value = 1;
             this.scrlLowerVerticalFrames.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlLowerVerticalFrames_Scroll);
-            this.scrlLowerVerticalFrames.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // scrlLowerHorizontalFrames
             // 
-            
             this.scrlLowerHorizontalFrames.Location = new System.Drawing.Point(7, 260);
             this.scrlLowerHorizontalFrames.Maximum = 20;
             this.scrlLowerHorizontalFrames.Minimum = 1;
             this.scrlLowerHorizontalFrames.Name = "scrlLowerHorizontalFrames";
+            this.scrlLowerHorizontalFrames.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlLowerHorizontalFrames.Size = new System.Drawing.Size(197, 17);
             this.scrlLowerHorizontalFrames.TabIndex = 6;
             this.scrlLowerHorizontalFrames.Value = 1;
             this.scrlLowerHorizontalFrames.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlLowerHorizontalFrames_Scroll);
-            this.scrlLowerHorizontalFrames.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblLowerVerticalFrames
             // 
@@ -453,6 +439,7 @@ namespace Intersect_Editor.Forms
             this.cmbLowerGraphic.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbLowerGraphic.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbLowerGraphic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbLowerGraphic.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbLowerGraphic.FormattingEnabled = true;
             this.cmbLowerGraphic.Items.AddRange(new object[] {
             "None"});
@@ -533,16 +520,15 @@ namespace Intersect_Editor.Forms
             // 
             // scrlUpperFrame
             // 
-            
             this.scrlUpperFrame.Location = new System.Drawing.Point(57, 16);
             this.scrlUpperFrame.Maximum = 1;
             this.scrlUpperFrame.Minimum = 1;
             this.scrlUpperFrame.Name = "scrlUpperFrame";
+            this.scrlUpperFrame.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlUpperFrame.Size = new System.Drawing.Size(197, 17);
             this.scrlUpperFrame.TabIndex = 15;
             this.scrlUpperFrame.Value = 1;
             this.scrlUpperFrame.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlUpperFrame_Scroll);
-            this.scrlUpperFrame.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblUpperFrame
             // 
@@ -555,14 +541,13 @@ namespace Intersect_Editor.Forms
             // 
             // scrlUpperLoopCount
             // 
-            
             this.scrlUpperLoopCount.Location = new System.Drawing.Point(6, 395);
             this.scrlUpperLoopCount.Maximum = 10;
             this.scrlUpperLoopCount.Name = "scrlUpperLoopCount";
+            this.scrlUpperLoopCount.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlUpperLoopCount.Size = new System.Drawing.Size(197, 17);
             this.scrlUpperLoopCount.TabIndex = 25;
             this.scrlUpperLoopCount.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlUpperLoopCount_Scroll);
-            this.scrlUpperLoopCount.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // groupBox7
             // 
@@ -573,7 +558,7 @@ namespace Intersect_Editor.Forms
             this.groupBox7.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox7.Location = new System.Drawing.Point(212, 93);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(265, 353);
+            this.groupBox7.Size = new System.Drawing.Size(265, 319);
             this.groupBox7.TabIndex = 19;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Frame Options";
@@ -588,14 +573,6 @@ namespace Intersect_Editor.Forms
             this.btnUpperClone.Text = "Clone From Previous";
             this.btnUpperClone.Click += new System.EventHandler(this.btnUpperClone_Click);
             // 
-            // lightEditorUpper
-            // 
-            this.lightEditorUpper.Location = new System.Drawing.Point(6, 28);
-            this.lightEditorUpper.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.lightEditorUpper.Name = "lightEditorUpper";
-            this.lightEditorUpper.Size = new System.Drawing.Size(253, 323);
-            this.lightEditorUpper.TabIndex = 15;
-            // 
             // lblUpperLoopCount
             // 
             this.lblUpperLoopCount.AutoSize = true;
@@ -607,16 +584,15 @@ namespace Intersect_Editor.Forms
             // 
             // scrlUpperFrameDuration
             // 
-            
             this.scrlUpperFrameDuration.Location = new System.Drawing.Point(6, 363);
             this.scrlUpperFrameDuration.Maximum = 2000;
             this.scrlUpperFrameDuration.Minimum = 10;
             this.scrlUpperFrameDuration.Name = "scrlUpperFrameDuration";
+            this.scrlUpperFrameDuration.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlUpperFrameDuration.Size = new System.Drawing.Size(197, 17);
             this.scrlUpperFrameDuration.TabIndex = 23;
             this.scrlUpperFrameDuration.Value = 10;
             this.scrlUpperFrameDuration.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlUpperFrameDuration_Scroll);
-            this.scrlUpperFrameDuration.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblUpperFrameDuration
             // 
@@ -629,15 +605,14 @@ namespace Intersect_Editor.Forms
             // 
             // scrlUpperFrameCount
             // 
-            
             this.scrlUpperFrameCount.Location = new System.Drawing.Point(6, 330);
             this.scrlUpperFrameCount.Minimum = 1;
             this.scrlUpperFrameCount.Name = "scrlUpperFrameCount";
+            this.scrlUpperFrameCount.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlUpperFrameCount.Size = new System.Drawing.Size(197, 17);
             this.scrlUpperFrameCount.TabIndex = 21;
             this.scrlUpperFrameCount.Value = 1;
             this.scrlUpperFrameCount.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlUpperFrameCount_Scroll);
-            this.scrlUpperFrameCount.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblUpperFrameCount
             // 
@@ -650,29 +625,27 @@ namespace Intersect_Editor.Forms
             // 
             // scrlUpperVerticalFrames
             // 
-            
             this.scrlUpperVerticalFrames.Location = new System.Drawing.Point(6, 296);
             this.scrlUpperVerticalFrames.Maximum = 20;
             this.scrlUpperVerticalFrames.Minimum = 1;
             this.scrlUpperVerticalFrames.Name = "scrlUpperVerticalFrames";
+            this.scrlUpperVerticalFrames.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlUpperVerticalFrames.Size = new System.Drawing.Size(197, 17);
             this.scrlUpperVerticalFrames.TabIndex = 19;
             this.scrlUpperVerticalFrames.Value = 1;
             this.scrlUpperVerticalFrames.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlUpperVerticalFrames_Scroll);
-            this.scrlUpperVerticalFrames.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // scrlUpperHorizontalFrames
             // 
-            
             this.scrlUpperHorizontalFrames.Location = new System.Drawing.Point(6, 260);
             this.scrlUpperHorizontalFrames.Maximum = 20;
             this.scrlUpperHorizontalFrames.Minimum = 1;
             this.scrlUpperHorizontalFrames.Name = "scrlUpperHorizontalFrames";
+            this.scrlUpperHorizontalFrames.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlUpperHorizontalFrames.Size = new System.Drawing.Size(197, 17);
             this.scrlUpperHorizontalFrames.TabIndex = 18;
             this.scrlUpperHorizontalFrames.Value = 1;
             this.scrlUpperHorizontalFrames.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlUpperHorizontalFrames_Scroll);
-            this.scrlUpperHorizontalFrames.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // lblUpperVerticalFrames
             // 
@@ -700,6 +673,7 @@ namespace Intersect_Editor.Forms
             this.cmbUpperGraphic.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbUpperGraphic.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbUpperGraphic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbUpperGraphic.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbUpperGraphic.FormattingEnabled = true;
             this.cmbUpperGraphic.Items.AddRange(new object[] {
             "None"});
@@ -868,6 +842,22 @@ namespace Intersect_Editor.Forms
             this.toolStripItemUndo.Size = new System.Drawing.Size(23, 22);
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
+            // 
+            // lightEditorUpper
+            // 
+            this.lightEditorUpper.Location = new System.Drawing.Point(6, 28);
+            this.lightEditorUpper.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.lightEditorUpper.Name = "lightEditorUpper";
+            this.lightEditorUpper.Size = new System.Drawing.Size(253, 274);
+            this.lightEditorUpper.TabIndex = 15;
+            // 
+            // lightEditorLower
+            // 
+            this.lightEditorLower.Location = new System.Drawing.Point(6, 28);
+            this.lightEditorLower.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.lightEditorLower.Name = "lightEditorLower";
+            this.lightEditorLower.Size = new System.Drawing.Size(253, 274);
+            this.lightEditorLower.TabIndex = 15;
             // 
             // frmAnimation
             // 
