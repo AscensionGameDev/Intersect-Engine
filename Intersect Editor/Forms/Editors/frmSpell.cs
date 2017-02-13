@@ -31,6 +31,7 @@ using Intersect_Editor.Forms.Editors;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.GameObjects.Maps.MapList;
 
 
 namespace Intersect_Editor.Forms
@@ -97,10 +98,17 @@ namespace Intersect_Editor.Forms
 
         private void frmSpell_Load(object sender, EventArgs e)
         {
-            scrlProjectile.Maximum = ProjectileBase.ObjectCount() - 1;
-            scrlCastAnimation.Maximum = AnimationBase.ObjectCount() - 1;
-            scrlHitAnimation.Maximum = AnimationBase.ObjectCount() - 1;
-            scrlEvent.Maximum = EventBase.ObjectCount() - 1;
+            cmbProjectile.Items.Clear();
+            cmbProjectile.Items.AddRange(Database.GetGameObjectList(GameObject.Projectile));
+            cmbCastAnimation.Items.Clear();
+            cmbCastAnimation.Items.Add("None");
+            cmbCastAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbHitAnimation.Items.Clear();
+            cmbHitAnimation.Items.Add("None");
+            cmbHitAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbEvent.Items.Clear();
+            cmbEvent.Items.Add("None");
+            cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObject.CommonEvent));
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add("None");
             string[] spellNames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Spell);
@@ -115,6 +123,14 @@ namespace Intersect_Editor.Forms
             {
                 cmbTransform.Items.Add(spriteNames[i]);
             }
+            nudWarpX.Maximum = (int) Options.MapWidth;
+            nudWarpY.Maximum = (int) Options.MapHeight;
+            cmbWarpMap.Items.Clear();
+            for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+            {
+                cmbWarpMap.Items.Add(MapList.GetOrderedMaps()[i].Name);
+            }
+            cmbWarpMap.SelectedIndex = 0;
             UpdateEditor();
         }
 
@@ -145,26 +161,8 @@ namespace Intersect_Editor.Forms
                 scrlCooldownDuration.Value = _editorItem.CooldownDuration;
                 lblCooldownDuration.Text = "Cooldown (secs): " + ((double) scrlCooldownDuration.Value/10);
 
-                scrlCastAnimation.Value = Database.GameObjectListIndex(GameObject.Animation, _editorItem.CastAnimation);
-                if (scrlCastAnimation.Value == -1)
-                {
-                    lblCastAnimation.Text = "Cast Animation: None";
-                }
-                else
-                {
-                    lblCastAnimation.Text = "Cast Animation: " + AnimationBase.GetName(_editorItem.CastAnimation);
-                }
-
-
-                scrlHitAnimation.Value = Database.GameObjectListIndex(GameObject.Animation, _editorItem.HitAnimation);
-                if (scrlHitAnimation.Value == -1)
-                {
-                    lblHitAnimation.Text = "Hit Animation: None";
-                }
-                else
-                {
-                    lblHitAnimation.Text = "Hit Animation: " + AnimationBase.GetName(_editorItem.HitAnimation);
-                }
+                cmbCastAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.CastAnimation) + 1;
+                cmbHitAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.HitAnimation) + 1;
 
                 cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Pic);
                 if (cmbSprite.SelectedIndex > 0)
@@ -244,13 +242,17 @@ namespace Intersect_Editor.Forms
             else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Warp to Map"))
             {
                 grpWarp.Show();
-                txtWarpChunk.Text = _editorItem.Data1.ToString();
-                scrlWarpX.Value = _editorItem.Data2;
-                lblWarpX.Text = "X: " + scrlWarpX.Value;
-                scrlWarpY.Value = _editorItem.Data3;
-                lblWarpY.Text = "Y: " + scrlWarpY.Value;
-                scrlWarpDir.Value = _editorItem.Data4;
-                lblWarpDir.Text = "Dir: " + Globals.IntToDir(_editorItem.Data4);
+                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                {
+                    if (MapList.GetOrderedMaps()[i].MapNum == _editorItem.Data1)
+                    {
+                        cmbWarpMap.SelectedIndex = i;
+                        break;
+                    }
+                }
+                nudWarpX.Value = _editorItem.Data2;
+                nudWarpY.Value = _editorItem.Data3;
+                cmbDirection.SelectedIndex = _editorItem.Data4;
             }
             else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Warp to Target"))
             {
@@ -272,15 +274,7 @@ namespace Intersect_Editor.Forms
             else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Event"))
             {
                 grpEvent.Show();
-                scrlEvent.Value = Database.GameObjectListIndex(GameObject.CommonEvent,_editorItem.Data1);
-                if (scrlEvent.Value == -1)
-                {
-                    lblEvent.Text = "Event: None";
-                }
-                else
-                {
-                    lblEvent.Text = "Event: " + EventBase.GetName(_editorItem.Data1);
-                }
+                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObject.CommonEvent,_editorItem.Data1) + 1;
             }
         }
 
@@ -291,7 +285,7 @@ namespace Intersect_Editor.Forms
             lblCastRange.Hide();
             scrlCastRange.Hide();
             lblProjectile.Hide();
-            scrlProjectile.Hide();
+            cmbProjectile.Hide();
             if (cmbTargetType.SelectedIndex == cmbTargetType.Items.IndexOf("Single Target (includes self)"))
             {
                 lblCastRange.Show();
@@ -323,16 +317,8 @@ namespace Intersect_Editor.Forms
             if (cmbTargetType.SelectedIndex == cmbTargetType.Items.IndexOf("Linear (projectile)"))
             {
                 lblProjectile.Show();
-                scrlProjectile.Show();
-                scrlProjectile.Value = Database.GameObjectListIndex(GameObject.Projectile,_editorItem.Projectile);
-                if (scrlProjectile.Value == -1)
-                {
-                    lblProjectile.Text = "Projectile: None";
-                }
-                else
-                {
-                    lblProjectile.Text = "Projectile: " + ProjectileBase.GetName(_editorItem.Projectile);
-                }
+                cmbProjectile.Show();
+                cmbProjectile.SelectedIndex = Database.GameObjectListIndex(GameObject.Projectile,_editorItem.Projectile);
             }
         }
 
@@ -374,34 +360,6 @@ namespace Intersect_Editor.Forms
             lblCooldownDuration.Text = "Cooldown (secs): " + ((double)scrlCooldownDuration.Value / 10);
         }
 
-        private void scrlCastAnimation_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            if (scrlCastAnimation.Value == -1)
-            {
-                _editorItem.CastAnimation = -1;
-                lblCastAnimation.Text = "Cast Animation: None";
-            }
-            else
-            {
-                _editorItem.CastAnimation = Database.GameObjectIdFromList(GameObject.Animation,scrlCastAnimation.Value);
-                lblCastAnimation.Text = "Cast Animation: " + AnimationBase.GetName(_editorItem.CastAnimation);
-            }
-        }
-
-        private void scrlHitAnimation_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            if (scrlHitAnimation.Value == -1)
-            {
-                _editorItem.HitAnimation = -1;
-                lblHitAnimation.Text = "Hit Animation: None";
-            }
-            else
-            {
-                _editorItem.HitAnimation = Database.GameObjectIdFromList(GameObject.Animation, scrlHitAnimation.Value);
-                lblHitAnimation.Text = "Hit Animation: " + AnimationBase.GetName(_editorItem.HitAnimation);
-            }
-        }
-
         private void cmbTargetType_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.TargetType = cmbTargetType.SelectedIndex;
@@ -429,31 +387,6 @@ namespace Intersect_Editor.Forms
         {
             _editorItem.Data2 = scrlBuffDuration.Value;
             lblBuffDuration.Text = "Duration: " + ((double)scrlBuffDuration.Value / 10) + "s";
-        }
-
-        private void txtWarpChunk_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtWarpChunk.Text, out x);
-            _editorItem.Data1 = x;
-        }
-
-        private void scrlWarpX_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.Data2 = scrlWarpX.Value;
-            lblWarpX.Text = "X: " + scrlWarpX.Value;
-        }
-
-        private void scrlWarpY_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.Data3 = scrlWarpY.Value;
-            lblWarpY.Text = "Y: " + scrlWarpY.Value;
-        }
-
-        private void scrlWarpDir_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.Data4 = scrlWarpDir.Value;
-            lblWarpDir.Text = "Dir: " + Globals.IntToDir(_editorItem.Data4);
         }
 
         private void txtDesc_TextChanged(object sender, EventArgs e)
@@ -502,20 +435,6 @@ namespace Intersect_Editor.Forms
             _editorItem.CastRange = scrlRange.Value;
         }
 
-        private void scrlProjectile_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            if (scrlProjectile.Value == -1)
-            {
-                _editorItem.Projectile = -1;
-                lblProjectile.Text = "Projectile: None";
-            }
-            else
-            {
-                _editorItem.Projectile = Database.GameObjectIdFromList(GameObject.Projectile,scrlProjectile.Value);
-                lblProjectile.Text = "Projectile: " + ProjectileBase.GetName(_editorItem.Projectile);
-            }
-        }
-
         private void scrlTick_Scroll(object sender, ScrollValueEventArgs e)
         {
             _editorItem.Data4 = scrlTick.Value;
@@ -557,20 +476,6 @@ namespace Intersect_Editor.Forms
                 picSprite.BackgroundImage = bmp;
             }
             else { picSprite.BackgroundImage = null; }
-        }
-
-        private void scrlEvent_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            if (scrlEvent.Value == -1)
-            {
-                _editorItem.Data1 = -1;
-                lblEvent.Text = "Event: None";
-            }
-            else
-            {
-                _editorItem.Data1 = Database.GameObjectIdFromList(GameObject.CommonEvent,scrlEvent.Value);
-                lblEvent.Text = "Event: " + EventBase.GetName(_editorItem.Data1);
-            }
         }
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
@@ -757,6 +662,69 @@ namespace Intersect_Editor.Forms
         {
             var frm = new frmDynamicRequirements(_editorItem.CastingReqs);
             frm.ShowDialog();
+        }
+
+        private void cmbCastAnimation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.CastAnimation = Database.GameObjectIdFromList(GameObject.Animation, cmbCastAnimation.SelectedIndex - 1);
+        }
+
+        private void cmbHitAnimation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.HitAnimation = Database.GameObjectIdFromList(GameObject.Animation, cmbHitAnimation.SelectedIndex - 1);
+        }
+
+        private void cmbProjectile_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.Projectile = Database.GameObjectIdFromList(GameObject.Projectile, cmbProjectile.SelectedIndex);
+        }
+
+        private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.Data1 = Database.GameObjectIdFromList(GameObject.CommonEvent, cmbEvent.SelectedIndex - 1);
+        }
+
+        private void btnVisualMapSelector_Click(object sender, EventArgs e)
+        {
+            frmWarpSelection frmWarpSelection = new frmWarpSelection();
+            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum, (int)nudWarpX.Value, (int)nudWarpY.Value);
+            frmWarpSelection.ShowDialog();
+            if (frmWarpSelection.GetResult())
+            {
+                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                {
+                    if (MapList.GetOrderedMaps()[i].MapNum == frmWarpSelection.GetMap())
+                    {
+                        cmbWarpMap.SelectedIndex = i;
+                        break;
+                    }
+                }
+                nudWarpX.Value = frmWarpSelection.GetX();
+                nudWarpY.Value = frmWarpSelection.GetY();
+            }
+        }
+
+        private void cmbWarpMap_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbWarpMap.SelectedIndex > -1 && _editorItem != null)
+            {
+                _editorItem.Data1 = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum;
+            }
+        }
+
+        private void nudWarpX_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Data2 = (int)nudWarpX.Value;
+        }
+
+        private void nudWarpY_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Data3 = (int) nudWarpY.Value;
+        }
+
+        private void cmbDirection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.Data4 = cmbDirection.SelectedIndex;
         }
     }
 }

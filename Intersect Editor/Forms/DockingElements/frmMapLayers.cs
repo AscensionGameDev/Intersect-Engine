@@ -296,6 +296,8 @@ namespace Intersect_Editor.Forms
         {
             hideAttributeMenus();
             grpWarp.Visible = true;
+            nudWarpX.Maximum = Options.MapWidth;
+            nudWarpY.Maximum = Options.MapHeight;
             cmbWarpMap.Items.Clear();
             for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
             {
@@ -373,8 +375,8 @@ namespace Intersect_Editor.Forms
             {
                 tmpMap.Attributes[x, y].value = (int)MapAttributes.Warp;
                 tmpMap.Attributes[x, y].data1 = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum;
-                tmpMap.Attributes[x, y].data2 = scrlX.Value;
-                tmpMap.Attributes[x, y].data3 = scrlY.Value;
+                tmpMap.Attributes[x, y].data2 = (int)nudWarpX.Value;
+                tmpMap.Attributes[x, y].data3 = (int)nudWarpY.Value;
                 tmpMap.Attributes[x, y].data4 = (cmbDirection.SelectedIndex - 1).ToString();
             }
             else if (rbSound.Checked == true)
@@ -426,15 +428,6 @@ namespace Intersect_Editor.Forms
         private void scrlMaxItemVal_ValueChanged(object sender, ScrollValueEventArgs e)
         {
             lblMaxItemAmount.Text = Strings.Get("attributes", "quantity", scrlMaxItemVal.Value);
-        }
-        //Warp Attribute
-        private void scrlX_ValueChanged(object sender, ScrollValueEventArgs e)
-        {
-            lblX.Text = Strings.Get("warping", "x", scrlX.Value);
-        }
-        private void scrlY_ValueChanged(object sender, ScrollValueEventArgs e)
-        {
-            lblY.Text = Strings.Get("warping", "y", scrlY.Value);
         }
         //Sound Attribute
         private void scrlSoundDistance_Scroll(object sender, ScrollValueEventArgs e)
@@ -573,7 +566,7 @@ namespace Intersect_Editor.Forms
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
             frmWarpSelection frmWarpSelection = new frmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum, scrlX.Value, scrlY.Value);
+            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum, (int)nudWarpX.Value, (int)nudWarpY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
@@ -585,10 +578,8 @@ namespace Intersect_Editor.Forms
                         break;
                     }
                 }
-                scrlX.Value = frmWarpSelection.GetX();
-                scrlY.Value = frmWarpSelection.GetY();
-                lblX.Text = Strings.Get("warping", "x", scrlX.Value);
-                lblY.Text = Strings.Get("warping", "y", scrlY.Value);
+                nudWarpX.Value = frmWarpSelection.GetX();
+                nudWarpY.Value = frmWarpSelection.GetY();
             }
         }
 
@@ -679,8 +670,8 @@ namespace Intersect_Editor.Forms
             //Warp
             grpWarp.Text = Strings.Get("attributes", "warp");
             lblMap.Text = Strings.Get("warping", "map","");
-            lblX.Text = Strings.Get("warping", "x", scrlX.Value);
-            lblY.Text = Strings.Get("warping", "y", scrlY.Value);
+            lblX.Text = Strings.Get("warping", "x", "");
+            lblY.Text = Strings.Get("warping", "y", "");
             lblWarpDir.Text = Strings.Get("warping", "direction", "");
             cmbDirection.Items.Clear();
             for (int i = -1; i < 4; i++)

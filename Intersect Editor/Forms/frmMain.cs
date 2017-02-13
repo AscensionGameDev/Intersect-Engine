@@ -86,9 +86,6 @@ namespace Intersect_Editor.Forms
         }
         private void frmMain_Load(object sender, EventArgs e)
         {
-            // Set form object properties based on constants to prevent user inputting invalid options.
-            InitFormObjects();
-
             //Init Delegates
             EditorDelegate = TryOpenEditorMethod;
             DisconnectDelegate = HandleServerDisconnect;
@@ -259,11 +256,6 @@ namespace Intersect_Editor.Forms
                     }
                 }
             }
-        }
-        private void InitFormObjects()
-        {
-            Globals.MapLayersWindow.scrlX.Maximum = Options.MapWidth;
-            Globals.MapLayersWindow.scrlY.Maximum = Options.MapHeight;
         }
         private void InitMapProperties()
         {
