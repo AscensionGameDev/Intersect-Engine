@@ -889,6 +889,9 @@ namespace Intersect_Server.Classes.Entities
                             }
                         }
                         break;
+                    case (int)ItemTypes.Bag:
+                        
+                        break;
                     default:
                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("items","notimplemented"));
                         break;

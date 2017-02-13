@@ -217,6 +217,7 @@ namespace Intersect_Library
         Currency = 3,
         Spell = 4,
         Event = 5,
+        Bag = 6,
     }
 
     public enum SpellTypes

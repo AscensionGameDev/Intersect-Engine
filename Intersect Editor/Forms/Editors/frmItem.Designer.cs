@@ -1064,6 +1064,7 @@ namespace Intersect_Editor.Forms
             // pnlContainer
             // 
             this.pnlContainer.AutoScroll = true;
+            this.pnlContainer.Controls.Add(this.gbBags);
             this.pnlContainer.Controls.Add(this.groupBox2);
             this.pnlContainer.Controls.Add(this.groupBox3);
             this.pnlContainer.Controls.Add(this.gbSpell);
@@ -1184,10 +1185,10 @@ namespace Intersect_Editor.Forms
             this.gbBags.Controls.Add(this.scrlBag);
             this.gbBags.Controls.Add(this.lblBag);
             this.gbBags.ForeColor = System.Drawing.Color.Gainsboro;
-            this.gbBags.Location = new System.Drawing.Point(220, 269);
+            this.gbBags.Location = new System.Drawing.Point(0, 236);
             this.gbBags.Name = "gbBags";
             this.gbBags.Size = new System.Drawing.Size(222, 67);
-            this.gbBags.TabIndex = 43;
+            this.gbBags.TabIndex = 44;
             this.gbBags.TabStop = false;
             this.gbBags.Text = "Bag:";
             this.gbBags.Visible = false;
@@ -1201,7 +1202,6 @@ namespace Intersect_Editor.Forms
             this.scrlBag.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlBag.Size = new System.Drawing.Size(198, 17);
             this.scrlBag.TabIndex = 10;
-            this.scrlBag.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlBag_ValueChanged);
             // 
             // lblBag
             // 
@@ -1220,7 +1220,6 @@ namespace Intersect_Editor.Forms
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(686, 517);
             this.ControlBox = false;
-            this.Controls.Add(this.gbBags);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
