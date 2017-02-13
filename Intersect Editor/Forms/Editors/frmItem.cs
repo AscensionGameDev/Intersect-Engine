@@ -256,6 +256,7 @@ namespace Intersect_Editor.Forms
             gbSpell.Visible = false;
             gbEquipment.Visible = false;
             grpEvent.Visible = false;
+            gbBags.Visible = false;
 
             if (_editorItem.ItemType != cmbType.SelectedIndex)
             {
@@ -288,6 +289,13 @@ namespace Intersect_Editor.Forms
                 gbEquipment.Visible = true;
                 cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
                 cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
+            }
+            else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Bag"))
+            {
+                if (_editorItem.Data1 < 1) { _editorItem.Data1 = 1; } //Cant have no space or negative space.
+                gbBags.Visible = true;
+                scrlBag.Value = _editorItem.Data1;
+                lblBag.Text = "Bag Slots: " + scrlBag.Value;
             }
 
             _editorItem.ItemType = cmbType.SelectedIndex;
@@ -577,6 +585,12 @@ namespace Intersect_Editor.Forms
         private void cmbTeachSpell_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Data1 = Database.GameObjectIdFromList(GameObject.Spell, cmbTeachSpell.SelectedIndex - 1);
+        }
+
+        private void scrlBag_ValueChanged(object sender, ScrollValueEventArgs e)
+        {
+            _editorItem.Data1 = scrlBag.Value;
+            lblBag.Text = "Bag Slots: " + scrlBag.Value;
         }
     }
 }

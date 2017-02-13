@@ -118,6 +118,9 @@ namespace Intersect_Editor.Forms
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.gbBags = new DarkUI.Controls.DarkGroupBox();
+            this.scrlBag = new DarkUI.Controls.DarkScrollBar();
+            this.lblBag = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picItem)).BeginInit();
@@ -132,6 +135,7 @@ namespace Intersect_Editor.Forms
             this.grpEvent.SuspendLayout();
             this.pnlContainer.SuspendLayout();
             this.toolStrip.SuspendLayout();
+            this.gbBags.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -330,7 +334,8 @@ namespace Intersect_Editor.Forms
             "Consumable",
             "Currency",
             "Spell",
-            "Event"});
+            "Event",
+            "Bag"});
             this.cmbType.Location = new System.Drawing.Point(60, 46);
             this.cmbType.Name = "cmbType";
             this.cmbType.Size = new System.Drawing.Size(135, 21);
@@ -1172,6 +1177,41 @@ namespace Intersect_Editor.Forms
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
+            // gbBags
+            // 
+            this.gbBags.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.gbBags.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.gbBags.Controls.Add(this.scrlBag);
+            this.gbBags.Controls.Add(this.lblBag);
+            this.gbBags.ForeColor = System.Drawing.Color.Gainsboro;
+            this.gbBags.Location = new System.Drawing.Point(220, 269);
+            this.gbBags.Name = "gbBags";
+            this.gbBags.Size = new System.Drawing.Size(222, 67);
+            this.gbBags.TabIndex = 43;
+            this.gbBags.TabStop = false;
+            this.gbBags.Text = "Bag:";
+            this.gbBags.Visible = false;
+            // 
+            // scrlBag
+            // 
+            this.scrlBag.Location = new System.Drawing.Point(12, 38);
+            this.scrlBag.Maximum = 35;
+            this.scrlBag.Minimum = 1;
+            this.scrlBag.Name = "scrlBag";
+            this.scrlBag.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
+            this.scrlBag.Size = new System.Drawing.Size(198, 17);
+            this.scrlBag.TabIndex = 10;
+            this.scrlBag.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlBag_ValueChanged);
+            // 
+            // lblBag
+            // 
+            this.lblBag.AutoSize = true;
+            this.lblBag.Location = new System.Drawing.Point(8, 25);
+            this.lblBag.Name = "lblBag";
+            this.lblBag.Size = new System.Drawing.Size(64, 13);
+            this.lblBag.TabIndex = 11;
+            this.lblBag.Text = "Bag Slots: 1";
+            // 
             // FrmItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1180,6 +1220,7 @@ namespace Intersect_Editor.Forms
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(686, 517);
             this.ControlBox = false;
+            this.Controls.Add(this.gbBags);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
@@ -1214,6 +1255,8 @@ namespace Intersect_Editor.Forms
             this.pnlContainer.ResumeLayout(false);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
+            this.gbBags.ResumeLayout(false);
+            this.gbBags.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1304,5 +1347,8 @@ namespace Intersect_Editor.Forms
         private DarkComboBox cmbAnimation;
         private DarkComboBox cmbTeachSpell;
         private DarkComboBox cmbEvent;
+        private DarkGroupBox gbBags;
+        private DarkScrollBar scrlBag;
+        private Label lblBag;
     }
 }
