@@ -256,6 +256,15 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.EntityZDimension:
                         HandleEntityZDimension(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.OpenBag:
+                        HandleOpenBag(bf.ReadBytes(bf.Length()));
+                        break;
+                    case ServerPackets.CloseBag:
+                        HandleCloseBag(bf.ReadBytes(bf.Length()));
+                        break;
+                    case ServerPackets.BagUpdate:
+                        HandleBagUpdate(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -1537,6 +1546,39 @@ namespace Intersect_Client.Classes.Networking
             if (Globals.Entities.ContainsKey(index))
             {
                 Globals.Entities[index].CurrentZ = bf.ReadInteger();
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleOpenBag(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var slots = bf.ReadInteger();
+            Globals.Bag = new ItemInstance[slots];
+            Gui.GameUI.NotifyOpenBag();
+            bf.Dispose();
+        }
+
+        private static void HandleCloseBag(byte[] packet)
+        {
+            Gui.GameUI.NotifyCloseBag();
+        }
+
+        private static void HandleBagUpdate(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int slot = bf.ReadInteger();
+            int active = bf.ReadInteger();
+            if (active == 0)
+            {
+                Globals.Bag[slot] = null;
+            }
+            else
+            {
+                Globals.Bag[slot] = new ItemInstance();
+                Globals.Bag[slot].Load(bf);
             }
             bf.Dispose();
         }

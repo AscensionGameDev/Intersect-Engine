@@ -11,7 +11,7 @@ namespace Intersect_Server.Classes.Maps
         public int AttributeSpawnY = -1;
         public long DespawnTime;
 
-        public MapItemInstance(int itemNum, int itemVal) : base(itemNum, itemVal)
+        public MapItemInstance(int itemNum, int itemVal, int bagId) : base(itemNum, itemVal, bagId)
         {
 
         }

@@ -83,6 +83,7 @@
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\UI\ErrorMessageHandler.cs" />
     <Compile Include="Classes\UI\Game\AdminWindow.cs" />
+    <Compile Include="Classes\UI\Game\BagWindow.cs" />
     <Compile Include="Classes\UI\Game\BankWindow.cs" />
     <Compile Include="Classes\UI\Game\BanMuteBox.cs" />
     <Compile Include="Classes\UI\Game\CharacterWindow.cs" />

@@ -459,5 +459,39 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteInteger((int)((InputBox)sender).Slot);
             GameNetwork.SendPacket(bf.ToArray());
         }
+
+        public static void SendStoreBagItem(int slot, int amount)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.StoreBagItem);
+            bf.WriteInteger(slot);
+            bf.WriteInteger(amount);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendRetreiveBagItem(int slot, int amount)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.RetreiveBagItem);
+            bf.WriteInteger(slot);
+            bf.WriteInteger(amount);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendCloseBag()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.CloseBag);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendMoveBagItems(int slot1, int slot2)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.MoveBagItem);
+            bf.WriteInteger(slot1);
+            bf.WriteInteger(slot2);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
     }
 }

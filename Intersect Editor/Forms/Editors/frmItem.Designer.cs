@@ -109,6 +109,9 @@ namespace Intersect_Editor.Forms
             this.cmbEvent = new DarkUI.Controls.DarkComboBox();
             this.lblEvent = new System.Windows.Forms.Label();
             this.pnlContainer = new System.Windows.Forms.Panel();
+            this.gbBags = new DarkUI.Controls.DarkGroupBox();
+            this.scrlBag = new DarkUI.Controls.DarkScrollBar();
+            this.lblBag = new System.Windows.Forms.Label();
             this.toolStrip = new DarkUI.Controls.DarkToolStrip();
             this.toolStripItemNew = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -118,9 +121,6 @@ namespace Intersect_Editor.Forms
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.gbBags = new DarkUI.Controls.DarkGroupBox();
-            this.scrlBag = new DarkUI.Controls.DarkScrollBar();
-            this.lblBag = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picItem)).BeginInit();
@@ -134,8 +134,8 @@ namespace Intersect_Editor.Forms
             this.gbSpell.SuspendLayout();
             this.grpEvent.SuspendLayout();
             this.pnlContainer.SuspendLayout();
-            this.toolStrip.SuspendLayout();
             this.gbBags.SuspendLayout();
+            this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -1077,6 +1077,41 @@ namespace Intersect_Editor.Forms
             this.pnlContainer.TabIndex = 43;
             this.pnlContainer.Visible = false;
             // 
+            // gbBags
+            // 
+            this.gbBags.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.gbBags.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.gbBags.Controls.Add(this.scrlBag);
+            this.gbBags.Controls.Add(this.lblBag);
+            this.gbBags.ForeColor = System.Drawing.Color.Gainsboro;
+            this.gbBags.Location = new System.Drawing.Point(0, 236);
+            this.gbBags.Name = "gbBags";
+            this.gbBags.Size = new System.Drawing.Size(222, 67);
+            this.gbBags.TabIndex = 44;
+            this.gbBags.TabStop = false;
+            this.gbBags.Text = "Bag:";
+            this.gbBags.Visible = false;
+            // 
+            // scrlBag
+            // 
+            this.scrlBag.Location = new System.Drawing.Point(12, 38);
+            this.scrlBag.Maximum = 35;
+            this.scrlBag.Minimum = 1;
+            this.scrlBag.Name = "scrlBag";
+            this.scrlBag.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
+            this.scrlBag.Size = new System.Drawing.Size(198, 17);
+            this.scrlBag.TabIndex = 10;
+            this.scrlBag.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlBag_ValueChanged);
+            // 
+            // lblBag
+            // 
+            this.lblBag.AutoSize = true;
+            this.lblBag.Location = new System.Drawing.Point(8, 25);
+            this.lblBag.Name = "lblBag";
+            this.lblBag.Size = new System.Drawing.Size(64, 13);
+            this.lblBag.TabIndex = 11;
+            this.lblBag.Text = "Bag Slots: 1";
+            // 
             // toolStrip
             // 
             this.toolStrip.AutoSize = false;
@@ -1178,40 +1213,6 @@ namespace Intersect_Editor.Forms
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // gbBags
-            // 
-            this.gbBags.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.gbBags.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.gbBags.Controls.Add(this.scrlBag);
-            this.gbBags.Controls.Add(this.lblBag);
-            this.gbBags.ForeColor = System.Drawing.Color.Gainsboro;
-            this.gbBags.Location = new System.Drawing.Point(0, 236);
-            this.gbBags.Name = "gbBags";
-            this.gbBags.Size = new System.Drawing.Size(222, 67);
-            this.gbBags.TabIndex = 44;
-            this.gbBags.TabStop = false;
-            this.gbBags.Text = "Bag:";
-            this.gbBags.Visible = false;
-            // 
-            // scrlBag
-            // 
-            this.scrlBag.Location = new System.Drawing.Point(12, 38);
-            this.scrlBag.Maximum = 35;
-            this.scrlBag.Minimum = 1;
-            this.scrlBag.Name = "scrlBag";
-            this.scrlBag.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlBag.Size = new System.Drawing.Size(198, 17);
-            this.scrlBag.TabIndex = 10;
-            // 
-            // lblBag
-            // 
-            this.lblBag.AutoSize = true;
-            this.lblBag.Location = new System.Drawing.Point(8, 25);
-            this.lblBag.Name = "lblBag";
-            this.lblBag.Size = new System.Drawing.Size(64, 13);
-            this.lblBag.TabIndex = 11;
-            this.lblBag.Text = "Bag Slots: 1";
-            // 
             // FrmItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1252,10 +1253,10 @@ namespace Intersect_Editor.Forms
             this.grpEvent.ResumeLayout(false);
             this.grpEvent.PerformLayout();
             this.pnlContainer.ResumeLayout(false);
-            this.toolStrip.ResumeLayout(false);
-            this.toolStrip.PerformLayout();
             this.gbBags.ResumeLayout(false);
             this.gbBags.PerformLayout();
+            this.toolStrip.ResumeLayout(false);
+            this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
 
         }

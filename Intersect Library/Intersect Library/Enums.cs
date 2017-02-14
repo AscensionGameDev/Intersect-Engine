@@ -114,6 +114,10 @@ namespace Intersect_Library
         TradeRequestDecline,
         AddTilesets,
         EnterMap,
+        StoreBagItem,
+        RetreiveBagItem,
+        MoveBagItem,
+        CloseBag,
     }
 
     public enum ServerPackets
@@ -184,6 +188,9 @@ namespace Intersect_Library
         NPCAggression,
         PlayerDeath,
         EntityZDimension,
+        OpenBag,
+        CloseBag,
+        BagUpdate,
     }
 
     public enum MapZones

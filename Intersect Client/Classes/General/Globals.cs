@@ -109,6 +109,10 @@ namespace Intersect_Client.Classes.General
         public static ItemInstance[] Bank = new ItemInstance[Options.MaxBankSlots];
         public static bool InBank = false;
 
+        //Bag
+        public static ItemInstance[] Bag = null;
+        public static bool InBag = false;
+
         //Crafting station
         public static bool InCraft = false;
 
