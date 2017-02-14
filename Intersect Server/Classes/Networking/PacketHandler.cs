@@ -856,11 +856,11 @@ namespace Intersect_Server.Classes.Networking
                 PacketSender.SendLoginError(client, Strings.Get("account", "invalidname"));
                 return;
             }
-            /*if (!FieldChecking.IsEmail(email))
+            if (!FieldChecking.IsEmail(email))
             {
                 PacketSender.SendLoginError(client, Strings.Get("account", "invalidemail"));
                 return;
-            }*/
+            }
             if (Database.AccountExists(username))
             {
                 PacketSender.SendLoginError(client, Strings.Get("account","exists"));

@@ -55,6 +55,13 @@
 		<string id="withdrawitem">Withdraw Item</string>
 		<string id="withdrawitemprompt">How many/much {00} would you like to withdraw?</string>
 	</Bank>
+	<Bags>
+		<string id="title">Bag</string>
+		<string id="storeitem">Store Item</string>
+		<string id="storeitemprompt">How many/much {00} would you like to store?</string>
+		<string id="retreiveitem">Retreive Item</string>
+		<string id="retreiveitemprompt">How many/much {00} would you like to retreive?</string>
+	</Bags>
 	<BanMute>
 		<string id="reason">Reason:</string>
 		<string id="duration">Duration:</string>
@@ -170,6 +177,7 @@
 		<string id="itemtype3">Currency</string>
 		<string id="itemtype4">Spell</string>
 		<string id="itemtype5">Special</string>
+		<string id="itemtype6">Bag</string>
 		<string id="2hand">2H</string>
 		<string id="desc">Desc: {00}</string>
 		<string id="prereq">Prerequisites:</string>
@@ -310,7 +318,7 @@
 		<string id="cancelled">Download was Cancelled!</string>
 	</Resources>
 	<Regex>
-		<string id="email">^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|([a-zA-Z]+[\w-]+\.)+[a-zA-Z]{2,4})$</string>
+		<string id="email">^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|([a-zA-Z]+[\w-]+\.)+[a-zA-Z]{2,4})$</string>
 		<string id="username">^[a-zA-Z0-9]{2,20}$</string>
 		<string id="password">^[a-zA-Z0-9]{4,20}$</string>
 	</Regex>

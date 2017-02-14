@@ -241,18 +241,18 @@ namespace Intersect_Client.Classes.UI.Menu
                     {
                         if (FieldChecking.IsValidPass(_passwordTextbox.Text))
                         {
-                            //if (FieldChecking.IsEmail(_emailTextbox.Text))
-                            //{
+                            if (FieldChecking.IsEmail(_emailTextbox.Text))
+                            {
                                 GameFade.FadeOut();
                                 Hide();
                                 PacketSender.SendCreateAccount(_usernameTextbox.Text, _passwordTextbox.Text,
                                     _emailTextbox.Text);
                                 Globals.WaitingOnServer = true;
-                            //}
-                            //else
-                            //{
-                            //    Gui.MsgboxErrors.Add(Strings.Get("registration", "emailinvalid"));
-                            //}
+                            }
+                            else
+                            {
+                                Gui.MsgboxErrors.Add(Strings.Get("registration", "emailinvalid"));
+                            }
                         }
                         else
                         {
