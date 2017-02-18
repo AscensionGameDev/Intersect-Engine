@@ -118,6 +118,7 @@ namespace Intersect_Editor.Forms
             this.reportBugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip = new DarkUI.Controls.DarkMenuStrip();
+            this.externalToolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.menuStrip.SuspendLayout();
@@ -200,7 +201,6 @@ namespace Intersect_Editor.Forms
             this.dockLeft.Size = new System.Drawing.Size(1186, 596);
             this.dockLeft.SupportDeeplyNestedContent = true;
             this.dockLeft.TabIndex = 7;
-            this.dockLeft.Theme = new VS2015DarkTheme();
             // 
             // toolStripBtnNewMap
             // 
@@ -942,6 +942,7 @@ namespace Intersect_Editor.Forms
             this.editToolStripMenuItem,
             this.viewToolStripMenuItem,
             this.contentEditorsToolStripMenuItem,
+            this.externalToolsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -949,6 +950,14 @@ namespace Intersect_Editor.Forms
             this.menuStrip.Size = new System.Drawing.Size(1186, 24);
             this.menuStrip.TabIndex = 1;
             this.menuStrip.Text = "menuStrip1";
+            // 
+            // externalToolsToolStripMenuItem
+            // 
+            this.externalToolsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.externalToolsToolStripMenuItem.Name = "externalToolsToolStripMenuItem";
+            this.externalToolsToolStripMenuItem.Size = new System.Drawing.Size(91, 20);
+            this.externalToolsToolStripMenuItem.Text = "External Tools";
+            this.externalToolsToolStripMenuItem.Visible = false;
             // 
             // frmMain
             // 
@@ -1065,5 +1074,6 @@ namespace Intersect_Editor.Forms
         private ToolStripMenuItem reportBugToolStripMenuItem;
         private ToolStripMenuItem aboutToolStripMenuItem;
         private DarkMenuStrip menuStrip;
+        private ToolStripMenuItem externalToolsToolStripMenuItem;
     }
 }

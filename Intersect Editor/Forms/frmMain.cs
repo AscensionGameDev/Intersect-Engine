@@ -73,6 +73,7 @@ namespace Intersect_Editor.Forms
         public frmMain()
         {
             InitializeComponent();
+            dockLeft.Theme = new VS2015DarkTheme();
             Globals.MapListWindow = new frmMapList();
             Globals.MapListWindow.Show(dockLeft, DockState.DockRight);
             Globals.MapLayersWindow = new frmMapLayers();
@@ -97,6 +98,7 @@ namespace Intersect_Editor.Forms
             //Init Map Properties
             InitMapProperties();
             InitLocalization();
+            InitExternalTools();
             Show();
 
             //Init Forms with RenderTargets
@@ -165,6 +167,8 @@ namespace Intersect_Editor.Forms
             switchVariableEditorToolStripMenuItem.Text = Strings.Get("mainform", "switchvariableeditor");
             timeEditorToolStripMenuItem.Text = Strings.Get("mainform", "timeeditor");
 
+            externalToolsToolStripMenuItem.Text = Strings.Get("mainform", "externaltools");
+
             helpToolStripMenuItem.Text = Strings.Get("mainform", "help");
             postQuestionToolStripMenuItem.Text = Strings.Get("mainform", "postquestion");
             toolStripButtonQuestion.Text = Strings.Get("mainform", "postquestion");
@@ -180,6 +184,37 @@ namespace Intersect_Editor.Forms
             toolStripTimeButton.Text = Strings.Get("mainform", "lighting");
             toolStripBtnScreenshot.Text = Strings.Get("mainform", "screenshot");
             toolStripBtnRun.Text = Strings.Get("mainform", "run");
+        }
+
+        private void InitExternalTools()
+        {
+            var foundTools = false;
+            if (Directory.Exists(Strings.Get("mainform", "toolsdir")))
+            {
+                var childDirs = Directory.GetDirectories("tools");
+                for (int i = 0; i < childDirs.Length; i++)
+                {
+                    var executables = Directory.GetFiles(childDirs[i], "*.exe");
+                    for (int x = 0; x < executables.Length; x++)
+                    {
+                        var item = externalToolsToolStripMenuItem.DropDownItems.Add(executables[x].Replace(childDirs[i], "").Replace(".exe","").Replace(Path.DirectorySeparatorChar.ToString(),""));
+                        item.Tag = executables[x];
+                        item.Click += externalToolItem_Click;
+                        foundTools = true;
+                    }
+                }
+            }
+            externalToolsToolStripMenuItem.Visible = foundTools;
+        }
+
+        private void externalToolItem_Click(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty((string)((ToolStripItem) sender).Tag))
+            {
+                var psi = new ProcessStartInfo(Path.GetFileName((string)((ToolStripItem)sender).Tag));
+                psi.WorkingDirectory = Path.GetDirectoryName((string)((ToolStripItem)sender).Tag);
+                Process.Start(psi);
+            }
         }
 
         private void FrmMain_KeyDown(object sender, KeyEventArgs e)

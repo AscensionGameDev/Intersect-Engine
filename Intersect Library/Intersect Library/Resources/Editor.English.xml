@@ -315,6 +315,8 @@
 		<string id="spelleditor">Spell Editor</string>
 		<string id="switchvariableeditor">Switch and Variable Editor</string>
 		<string id="timeeditor">Time Editor</string>
+		<string id="externaltools">External Tools</string>
+		<string id="toolsdir">tools</string>
 		<string id="help">Help</string>
 		<string id="postquestion">Post Question</string>
 		<string id="reportbug">Report Bug</string>
