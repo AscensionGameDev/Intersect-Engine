@@ -109,6 +109,7 @@
     <Compile Include="Classes\General\Formulas.cs" />
     <Compile Include="Classes\General\ServerOptions.cs" />
     <Compile Include="Classes\General\ServerTime.cs" />
+    <Compile Include="Classes\Items\BagInstance.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Classes\Maps\MapItemInstance.cs" />

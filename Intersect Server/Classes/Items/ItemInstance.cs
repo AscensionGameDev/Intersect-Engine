@@ -32,16 +32,19 @@ namespace Intersect_Server.Classes.Items
         public int ItemNum = -1;
         public int ItemVal = 0;
         public int[] StatBoost = new int[(int)Stats.StatCount];
+        public int BagId = -1;
+        public BagInstance BagInstance = null;
 
         public ItemInstance()
         {
             
         }
 
-        public ItemInstance(int itemNum, int itemVal)
+        public ItemInstance(int itemNum, int itemVal, int bagId)
         {
             ItemNum = itemNum;
             ItemVal = itemVal;
+            BagId = bagId;
             if (ItemBase.GetItem(ItemNum) != null)
             {
                 if (ItemBase.GetItem(ItemNum).ItemType == (int) ItemTypes.Equipment)
@@ -71,10 +74,11 @@ namespace Intersect_Server.Classes.Items
 
         public ItemInstance Clone()
         {
-            ItemInstance newItem = new ItemInstance(ItemNum,ItemVal);
+            ItemInstance newItem = new ItemInstance(ItemNum,ItemVal, BagId);
             for (int i = 0; i < (int)Stats.StatCount; i++){
                 newItem.StatBoost[i] = StatBoost[i];
             }
+            if (BagInstance != null) newItem.BagInstance = BagInstance.Clone();
             return newItem;
         }
     }

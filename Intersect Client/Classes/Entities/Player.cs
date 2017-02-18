@@ -270,6 +270,52 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
+        //Bag
+        public void TryStoreBagItem(int index)
+        {
+            if (ItemBase.GetItem(Inventory[index].ItemNum) != null)
+            {
+                if (Inventory[index].ItemVal > 1)
+                {
+                    InputBox iBox = new InputBox(Strings.Get("bags", "storeitem"), Strings.Get("bags", "storeitemprompt", ItemBase.GetItem(Inventory[index].ItemNum).Name), true, StoreBagItemInputBoxOkay, null, index, true);
+                }
+                else
+                {
+                    PacketSender.SendStoreBagItem(index, 1);
+                }
+            }
+        }
+        private void StoreBagItemInputBoxOkay(Object sender, EventArgs e)
+        {
+            int value = (int)((InputBox)sender).Value;
+            if (value > 0)
+            {
+                PacketSender.SendStoreBagItem(((InputBox)sender).Slot, value);
+            }
+        }
+        public void TryRetreiveBagItem(int index)
+        {
+            if (Globals.Bag[index] != null && ItemBase.GetItem(Globals.Bag[index].ItemNum) != null)
+            {
+                if (Globals.Bag[index].ItemVal > 1)
+                {
+                    InputBox iBox = new InputBox(Strings.Get("bags", "retreiveitem"), Strings.Get("bags", "retreiveitemprompt", ItemBase.GetItem(Globals.Bag[index].ItemNum).Name), true, RetreiveBagItemInputBoxOkay, null, index, true);
+                }
+                else
+                {
+                    PacketSender.SendRetreiveBagItem(index, 1);
+                }
+            }
+        }
+        private void RetreiveBagItemInputBoxOkay(Object sender, EventArgs e)
+        {
+            int value = (int)((InputBox)sender).Value;
+            if (value > 0)
+            {
+                PacketSender.SendRetreiveBagItem(((InputBox)sender).Slot, value);
+            }
+        }
+
         //Trade
         public void TryTradeItem(int index)
         {

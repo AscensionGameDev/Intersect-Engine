@@ -133,12 +133,8 @@ namespace Intersect_Client.Classes.UI.Game
                     if (item != null)
                     {
                         Items[i].pnl.IsHidden = false;
-
-                        if (item.Stackable > 0 && (item.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                            item.ItemType == (int)ItemTypes.Currency ||
-                            item.ItemType == (int)ItemTypes.None ||
-                            item.ItemType == (int)ItemTypes.Spell))
-                            {
+                        if (item.IsStackable())
+                        {
                             _values[i].IsHidden = false;
                             _values[i].Text = Globals.Bank[i].ItemVal.ToString();
                         }
@@ -254,7 +250,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            Globals.Me.TryDropItem(_mySlot);
+
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)

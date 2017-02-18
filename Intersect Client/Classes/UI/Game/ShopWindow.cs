@@ -183,10 +183,7 @@ namespace Intersect_Client.Classes.UI.Game
             var item = ItemBase.GetItem(Globals.GameShop.SellingItems[_mySlot].ItemNum);
             if (item != null)
             {
-                if (item.Stackable > 0 && (item.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                    item.ItemType == (int)ItemTypes.Currency ||
-                    item.ItemType == (int)ItemTypes.None ||
-                    item.ItemType == (int)ItemTypes.Spell))
+                if (item.IsStackable())
                 {
                     InputBox iBox = new InputBox(Strings.Get("shop","buyitem"), Strings.Get("shop", "buyitemprompt", item.Name), true, BuyItemInputBoxOkay, null, _mySlot, true);
                 }

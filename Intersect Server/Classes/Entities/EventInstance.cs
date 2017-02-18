@@ -755,7 +755,7 @@ namespace Intersect_Server.Classes.Entities
                     success = false;
                     if (command.Ints[0] == 0)//Try to give item
                     {
-                        success = MyPlayer.TryGiveItem(new ItemInstance(command.Ints[1], command.Ints[2]));
+                        success = MyPlayer.TryGiveItem(new ItemInstance(command.Ints[1], command.Ints[2],-1));
                     }
                     else
                     {

@@ -38,6 +38,7 @@ namespace Intersect_Client.Classes.UI.Game
         private DebugMenu _debugMenu;
         private ShopWindow _shopWindow;
         private BankWindow _bankWindow;
+        private BagWindow _bagWindow;
         private QuestOfferWindow _questOfferWindow;
         private CraftingBenchWindow _CraftingBenchWindow;
         private TradingWindow _TradingWindow;
@@ -47,6 +48,8 @@ namespace Intersect_Client.Classes.UI.Game
         private bool _shouldCloseShop = false;
         private bool _shouldOpenBank = false;
         private bool _shouldCloseBank = false;
+        private bool _shouldOpenBag = false;
+        private bool _shouldCloseBag = false;
         private bool _shouldOpenCraftingBench = false;
         private bool _shouldCloseCraftingBench = false;
         private bool _shouldUpdateQuestLog = true;
@@ -136,6 +139,23 @@ namespace Intersect_Client.Classes.UI.Game
             _bankWindow = new BankWindow(GameCanvas);
             _shouldOpenBank = false;
             Globals.InBank = true;
+        }
+
+        //Bag
+        public void NotifyOpenBag()
+        {
+            _shouldOpenBag = true;
+        }
+        public void NotifyCloseBag()
+        {
+            _shouldCloseBag = true;
+        }
+        public void OpenBag()
+        {
+            if(_bagWindow != null) _bagWindow.Close();
+            _bagWindow = new BagWindow(GameCanvas);
+            _shouldOpenBag = false;
+            Globals.InBag = true;
         }
 
         //Crafting
@@ -273,6 +293,24 @@ namespace Intersect_Client.Classes.UI.Game
                 }
             }
             _shouldCloseBank = false;
+
+            //Bag Update
+            if (_shouldOpenBag) OpenBag();
+            if (_bagWindow != null)
+            {
+                if (!_bagWindow.IsVisible() || _shouldCloseBag)
+                {
+                    PacketSender.SendCloseBag();
+                    _bagWindow.Close();
+                    _bagWindow = null;
+                    Globals.InBag = false;
+                }
+                else
+                {
+                    _bagWindow.Update();
+                }
+            }
+            _shouldCloseBag = false;
 
             //Crafting station update
             if (_shouldOpenCraftingBench) OpenCraftingBench();

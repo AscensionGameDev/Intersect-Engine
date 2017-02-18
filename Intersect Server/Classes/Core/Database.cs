@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Intersect_Library;
@@ -116,6 +117,7 @@ namespace Intersect_Server.Classes.Core
         private const string CHAR_INV_ITEM_NUM = "itemnum";
         private const string CHAR_INV_ITEM_VAL = "itemval";
         private const string CHAR_INV_ITEM_STATS = "itemstats";
+        private const string CHAR_INV_ITEM_BAG_ID = "item_bag_id";
 
         //Char Spells Table Constants
         private const string CHAR_SPELL_TABLE = "char_spells";
@@ -138,6 +140,7 @@ namespace Intersect_Server.Classes.Core
         private const string CHAR_BANK_ITEM_NUM = "itemnum";
         private const string CHAR_BANK_ITEM_VAL = "itemval";
         private const string CHAR_BANK_ITEM_STATS = "itemstats";
+        private const string CHAR_BANK_ITEM_BAG_ID = "item_bag_id";
 
         //Char Switches Table Constants
         private const string CHAR_SWITCHES_TABLE = "char_switches";
@@ -171,6 +174,20 @@ namespace Intersect_Server.Classes.Core
         //Time of Day Table Constants
         private const string TIME_TABLE = "time";
         private const string TIME_DATA = "data";
+
+        //Bag Table Constants
+        private const string BAGS_TABLE = "bags";
+        private const string BAG_ID = "bag_id";
+        private const string BAG_SLOT_COUNT = "slot_count";
+
+        //Bag Items Table Constants
+        private const string BAG_ITEMS_TABLE = "bag_items";
+        private const string BAG_ITEM_CONTAINER_ID = "bag_id";
+        private const string BAG_ITEM_SLOT = "slot";
+        private const string BAG_ITEM_NUM = "itemnum";
+        private const string BAG_ITEM_VAL = "itemval";
+        private const string BAG_ITEM_STATS = "itemstats";
+        private const string BAG_ITEM_BAG_ID = "item_bag_id";
 
         public static object MapGridLock = new Object();
         public static List<MapGrid> MapGrids = new List<MapGrid>();
@@ -233,7 +250,8 @@ namespace Intersect_Server.Classes.Core
             CreateBansTable();
             CreateMutesTable();
             CreateLogsTable();
-            
+            CreateBagsTable();
+            CreateBagItemsTable();
         }
         private static void CreateInfoTable()
         {
@@ -351,6 +369,7 @@ namespace Intersect_Server.Classes.Core
                 + CHAR_INV_ITEM_NUM + " INTEGER,"
                 + CHAR_INV_ITEM_VAL + " INTEGER,"
                 + CHAR_INV_ITEM_STATS + " TEXT,"
+                + CHAR_INV_ITEM_BAG_ID + " INTEGER,"
                 + " unique(`" + CHAR_INV_CHAR_ID + "`,`" + CHAR_INV_SLOT + "`)"
                 + ");";
             using (var createCommand = _dbConnection.CreateCommand())
@@ -397,6 +416,7 @@ namespace Intersect_Server.Classes.Core
                 + CHAR_BANK_ITEM_NUM + " INTEGER,"
                 + CHAR_BANK_ITEM_VAL + " INTEGER,"
                 + CHAR_BANK_ITEM_STATS + " TEXT,"
+                + CHAR_BANK_ITEM_BAG_ID + " INTEGER,"
                 + " unique('" + CHAR_BANK_CHAR_ID + "','" + CHAR_BANK_SLOT + "')"
                 + ");";
             using (var createCommand = _dbConnection.CreateCommand())
@@ -448,6 +468,36 @@ namespace Intersect_Server.Classes.Core
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
+        }
+        private static void CreateBagsTable()
+        {
+            var cmd = "CREATE TABLE " + BAGS_TABLE + " ("
+                + BAG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + BAG_SLOT_COUNT + " INTEGER"
+                + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+        private static void CreateBagItemsTable()
+        {
+            var cmd = "CREATE TABLE " + BAG_ITEMS_TABLE + " ("
+                + BAG_ITEM_CONTAINER_ID + " INTEGER,"
+                + BAG_ITEM_SLOT + " INTEGER,"
+                + BAG_ITEM_NUM + " INTEGER,"
+                + BAG_ITEM_VAL + " INTEGER,"
+                + BAG_ITEM_STATS + " TEXT,"
+                + BAG_ITEM_BAG_ID + " TEXT,"
+                + " unique('" + BAG_ITEM_CONTAINER_ID + "','" + BAG_ITEM_SLOT + "')"
+                + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+            CreateBag(1); //This is to bypass an issue where we use itemVal to store the bag identifier (we are terrible!)
         }
         private static void CreateGameObjectTables()
         {
@@ -819,149 +869,14 @@ namespace Intersect_Server.Classes.Core
                 PacketSender.SendPlayerMsg(player.MyClient, Strings.Get("player","saved"));
             return (rowId);
         }
-
-        public static void AddMute(Client player, int duration, string reason, string muter, string ip)
-        {
-            
-            var query = "INSERT OR REPLACE into " + MUTE_TABLE + " (" + MUTE_ID + "," +
-                            MUTE_TIME + "," + MUTE_USER + "," + MUTE_IP + "," + MUTE_DURATION + "," +
-                            MUTE_REASON + "," + MUTE_MUTER + ")" + " VALUES " + " (@" +
-                            MUTE_ID + ",@" + MUTE_TIME + ",@" + MUTE_USER + ",@" + MUTE_IP + ",@" +
-                            MUTE_DURATION + ",@" + MUTE_REASON + ",@" + MUTE_MUTER + ");";
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
-            {
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_ID, player.MyId));
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_TIME, DateTime.UtcNow.ToBinary()));
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, player.MyAccount));
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_IP, ip));
-                DateTime t = DateTime.UtcNow.AddDays(duration);
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_DURATION, t.ToBinary()));
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_REASON, reason));
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_MUTER, muter));
-                cmd.ExecuteNonQuery();
-            }
-            
-        }
-
-        public static void DeleteMute(string account)
-        {
-            
-            var insertQuery = "DELETE FROM " + MUTE_TABLE + " WHERE " + MUTE_USER + "=@" + MUTE_USER + ";";
-            using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
-            {
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, account));
-                cmd.ExecuteNonQuery();
-            }
-            
-        }
-
-        public static string CheckMute(string account, string ip)
-        {
-            
-            var query = "SELECT " + MUTE_DURATION + "," + MUTE_TIME + "," + MUTE_MUTER + "," + MUTE_REASON +
-                    " from " + MUTE_TABLE + " WHERE (LOWER(" + MUTE_USER + ")=@" + MUTE_USER + " OR " + MUTE_IP + "=@" + MUTE_IP + ")" + ";";
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
-            {
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, account.ToLower().Trim()));
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_IP, ip.Trim()));
-                var dataReader = cmd.ExecuteReader();
-                if (dataReader.HasRows && dataReader.Read())
-                {
-                    DateTime duration = DateTime.FromBinary(Convert.ToInt64(dataReader[MUTE_DURATION]));
-                    DateTime banStart = DateTime.FromBinary(Convert.ToInt64(dataReader[MUTE_TIME]));
-                    string banner = Convert.ToString(dataReader[MUTE_MUTER]);
-                    string reason = Convert.ToString(dataReader[MUTE_REASON]);
-                    if (duration.CompareTo(DateTime.Today) <= 0) //Check that enough time has passed
-                    {
-                        
-                        DeleteMute(account);
-                        return null;
-                    }
-                    else
-                    {
-                        return Strings.Get("account", "mutestatus", banStart, banner, duration, reason);
-                    }
-                }
-                
-                return null;
-            }
-        }
-
-        public static void AddBan(Client player, int duration, string reason, string banner, string ip)
-        {
-            
-            var query = "INSERT OR REPLACE into " + BAN_TABLE + " (" + BAN_ID + "," +
-                            BAN_TIME + "," + BAN_USER + "," + BAN_IP + "," + BAN_DURATION + "," +
-                            BAN_REASON + "," + BAN_BANNER + ")" + " VALUES " + " (@" +
-                            BAN_ID + ",@" + BAN_TIME + ",@" + BAN_USER + ",@" + BAN_IP + ",@" +
-                            BAN_DURATION + ",@" + BAN_REASON + ",@" + BAN_BANNER + ");";
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
-            {
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_ID, player.MyId));
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_TIME, DateTime.UtcNow.ToBinary()));
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, player.MyAccount));
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_IP, ip));
-                DateTime t = DateTime.UtcNow.AddDays(duration);
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_DURATION, t.ToBinary()));
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_REASON, reason));
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_BANNER, banner));
-                cmd.ExecuteNonQuery();
-            }
-            
-        }
-
-        public static void DeleteBan(string account)
-        {
-            
-            var insertQuery = "DELETE FROM " + BAN_TABLE + " WHERE " + BAN_USER + "=@" + BAN_USER + ";";
-            using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
-            {
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, account));
-                cmd.ExecuteNonQuery();
-            }
-            
-        }
-
-        public static string CheckBan(string account, string ip)
-        {
-            
-            var query = "SELECT " + BAN_DURATION + "," + BAN_TIME + "," + BAN_BANNER + "," + BAN_REASON +
-                    " from " + BAN_TABLE + " WHERE (LOWER(" + BAN_USER + ")=@" + BAN_USER + " OR " + BAN_IP + "=@" + BAN_IP + ")" + ";";
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
-            {
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, account.ToLower().Trim()));
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_IP, ip.Trim()));
-                var dataReader = cmd.ExecuteReader();
-                if (dataReader.HasRows && dataReader.Read())
-                {
-                    DateTime duration = DateTime.FromBinary(Convert.ToInt64(dataReader[BAN_DURATION]));
-                    DateTime banStart = DateTime.FromBinary(Convert.ToInt64(dataReader[BAN_TIME]));
-                    string banner = Convert.ToString(dataReader[BAN_BANNER]);
-                    string reason = Convert.ToString(dataReader[BAN_REASON]);
-                    if (duration.CompareTo(DateTime.Today) <= 0) //Check that enough time has passed
-                    {
-                        
-                        DeleteBan(account);
-                        return null;
-                    }
-                    else
-                    {
-                        return Strings.Get("account", "banstatus", banStart, banner, duration, reason);
-                    }
-                }
-                
-                return null;
-            }
-        }
-
         private static void SaveCharacterInventory(Player player )
         {
             for (int i = 0; i < Options.MaxInvItems; i++)
             {
                 var query = "INSERT OR REPLACE into " + CHAR_INV_TABLE + " (" + CHAR_INV_CHAR_ID + "," +
                             CHAR_INV_SLOT + "," + CHAR_INV_ITEM_NUM + "," + CHAR_INV_ITEM_VAL + "," +
-                            CHAR_INV_ITEM_STATS + ")" + " VALUES " + " (@" + CHAR_INV_CHAR_ID + ",@" + CHAR_INV_SLOT +
-                            ",@" + CHAR_INV_ITEM_NUM + ",@" + CHAR_INV_ITEM_VAL + ",@" + CHAR_INV_ITEM_STATS + ")";
+                            CHAR_INV_ITEM_STATS + "," + CHAR_INV_ITEM_BAG_ID + ")" + " VALUES " + " (@" + CHAR_INV_CHAR_ID + ",@" + CHAR_INV_SLOT +
+                            ",@" + CHAR_INV_ITEM_NUM + ",@" + CHAR_INV_ITEM_VAL + ",@" + CHAR_INV_ITEM_STATS + ",@" + CHAR_INV_ITEM_BAG_ID + ")";
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_CHAR_ID, player.MyId));
@@ -974,6 +889,7 @@ namespace Intersect_Server.Classes.Core
                         stats += player.Inventory[i].StatBoost[x] + ",";
                     }
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_ITEM_STATS, stats));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_ITEM_BAG_ID, player.Inventory[i].BagId));
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -1005,9 +921,9 @@ namespace Intersect_Server.Classes.Core
             {
                 var query = "INSERT OR REPLACE into " + CHAR_BANK_TABLE + " (" + CHAR_BANK_CHAR_ID + "," +
                             CHAR_BANK_SLOT + "," + CHAR_BANK_ITEM_NUM + "," + CHAR_BANK_ITEM_VAL + "," +
-                            CHAR_BANK_ITEM_STATS + ")" + " VALUES " + " (@" + CHAR_BANK_CHAR_ID + ",@" +
+                            CHAR_BANK_ITEM_STATS + "," + CHAR_BANK_ITEM_BAG_ID + ")" + " VALUES " + " (@" + CHAR_BANK_CHAR_ID + ",@" +
                             CHAR_BANK_SLOT + ",@" + CHAR_BANK_ITEM_NUM + ",@" + CHAR_BANK_ITEM_VAL + ",@" +
-                            CHAR_BANK_ITEM_STATS + ");";
+                            CHAR_BANK_ITEM_STATS + ",@" + CHAR_BANK_ITEM_BAG_ID + ");";
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_CHAR_ID, player.MyId));
@@ -1022,6 +938,7 @@ namespace Intersect_Server.Classes.Core
                             stats += player.Bank[i].StatBoost[x] + ",";
                         }
                         cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_ITEM_STATS, stats));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_ITEM_BAG_ID, player.Bank[i].BagId));
                     }
                     else
                     {
@@ -1033,6 +950,7 @@ namespace Intersect_Server.Classes.Core
                             stats += "-1,";
                         }
                         cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_ITEM_STATS, stats));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_ITEM_BAG_ID, -1));
                     }
                     cmd.ExecuteNonQuery();
                 }
@@ -1218,6 +1136,7 @@ namespace Intersect_Server.Classes.Core
                                     player.Inventory[slot].StatBoost[i] = 0;
                                 }
                             }
+                            player.Inventory[slot].BagId = Convert.ToInt32(dataReader[CHAR_INV_ITEM_BAG_ID]);
                         }
                     }
                 }
@@ -1296,6 +1215,7 @@ namespace Intersect_Server.Classes.Core
                                     player.Bank[slot].StatBoost[i] = 0;
                                 }
                             }
+                            player.Bank[slot].BagId = Convert.ToInt32(dataReader[CHAR_BANK_ITEM_BAG_ID]);
                         }
                     }
                 }
@@ -1429,6 +1349,254 @@ namespace Intersect_Server.Classes.Core
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        //Bags
+        public static int CreateBag(int slotCount)
+        {
+            var insertQuery = "INSERT into " + BAGS_TABLE + " (" + BAG_SLOT_COUNT +  ")" + "VALUES (@" + BAG_SLOT_COUNT + ");";
+            using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + BAG_SLOT_COUNT, slotCount));
+                cmd.ExecuteNonQuery();
+            }
+            var rowId = GetLastInsertRowId();
+            return (int)(rowId);
+        }
+        public static void LoadBag(ItemInstance bagItem)
+        {
+            var commaSep = new char[1];
+            commaSep[0] = ',';
+            //Query the Bags table to get the number of slots...
+            var query = "SELECT * from " + BAGS_TABLE + " WHERE " + BAG_ID + " =@" + BAG_ID + ";";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + BAG_ID, bagItem.BagId));
+                var dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    var slots = Convert.ToInt32(dataReader[BAG_SLOT_COUNT]);
+                    bagItem.BagInstance = new BagInstance(slots);
+                }
+            }
+            if (bagItem.BagInstance != null)
+            {
+                //Then query the bag items table to get all the item data...
+                query = "SELECT * from " + BAG_ITEMS_TABLE + " WHERE " + BAG_ITEM_CONTAINER_ID + " = @" + BAG_ITEM_CONTAINER_ID + ";";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_CONTAINER_ID, bagItem.BagId));
+                    var dataReader = cmd.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        var slot = Convert.ToInt32(dataReader[BAG_ITEM_SLOT]);
+                        if (slot >= 0 && slot < bagItem.BagInstance.Slots)
+                        {
+                            bagItem.BagInstance.Items[slot].ItemNum = Convert.ToInt32(dataReader[BAG_ITEM_NUM]);
+                            bagItem.BagInstance.Items[slot].ItemVal = Convert.ToInt32(dataReader[BAG_ITEM_VAL]);
+                            var statBoostStr = dataReader[BAG_ITEM_STATS].ToString();
+                            var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            for (int i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                            {
+                                bagItem.BagInstance.Items[slot].StatBoost[i] = Int32.Parse(stats[i]);
+                            }
+                            if (ItemBase.GetItem(bagItem.BagInstance.Items[slot].ItemNum) == null)
+                            {
+                                bagItem.BagInstance.Items[slot].ItemNum = -1;
+                                bagItem.BagInstance.Items[slot].ItemVal = 0;
+                                for (int i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                                {
+                                    bagItem.BagInstance.Items[slot].StatBoost[i] = 0;
+                                }
+                            }
+                            bagItem.BagInstance.Items[slot].BagId = Convert.ToInt32(dataReader[BAG_ITEM_BAG_ID]);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static bool BagEmpty(int bagId)
+        {
+            var bagItem = new ItemInstance(-1,0,bagId);
+            LoadBag(bagItem);
+            for (int i = 0; i < bagItem.BagInstance.Slots; i++)
+            {
+                if (bagItem.BagInstance.Items[i] != null)
+                {
+                    var item = ItemBase.GetItem(bagItem.BagInstance.Items[i].ItemNum);
+                    if (item != null)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        public static void SaveBagItem(int bagId, int slot, ItemInstance bagItem)
+        {
+            var query = "INSERT OR REPLACE into " + BAG_ITEMS_TABLE + " (" + BAG_ITEM_CONTAINER_ID + "," + BAG_ITEM_SLOT + "," + BAG_ITEM_NUM + "," +
+                            BAG_ITEM_VAL + "," + BAG_ITEM_STATS + "," + BAG_ITEM_BAG_ID + ")" + " VALUES " + " (@" +
+                            BAG_ITEM_CONTAINER_ID + ",@" + BAG_ITEM_SLOT + ",@" + BAG_ITEM_NUM + ",@" + BAG_ITEM_VAL + ",@" + BAG_ITEM_STATS + ",@" + BAG_ITEM_BAG_ID + ");";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_CONTAINER_ID, bagId));
+                cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_SLOT, slot));
+                if (bagItem != null)
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_NUM, bagItem.ItemNum));
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_VAL, bagItem.ItemVal));
+                    var stats = "";
+                    for (int x = 0; x < bagItem.StatBoost.Length; x++)
+                    {
+                        stats += bagItem.StatBoost[x] + ",";
+                    }
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_STATS, stats));
+                }
+                else
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_NUM, -1));
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_VAL, -1));
+                    var stats = "";
+                    for (int x = 0; x < Options.MaxStats; x++)
+                    {
+                        stats +=  "0,";
+                    }
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_STATS, stats));
+                }
+                cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_BAG_ID, bagId));
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        //Bans and Mutes
+        public static void AddMute(Client player, int duration, string reason, string muter, string ip)
+        {
+
+            var query = "INSERT OR REPLACE into " + MUTE_TABLE + " (" + MUTE_ID + "," +
+                            MUTE_TIME + "," + MUTE_USER + "," + MUTE_IP + "," + MUTE_DURATION + "," +
+                            MUTE_REASON + "," + MUTE_MUTER + ")" + " VALUES " + " (@" +
+                            MUTE_ID + ",@" + MUTE_TIME + ",@" + MUTE_USER + ",@" + MUTE_IP + ",@" +
+                            MUTE_DURATION + ",@" + MUTE_REASON + ",@" + MUTE_MUTER + ");";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_ID, player.MyId));
+                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_TIME, DateTime.UtcNow.ToBinary()));
+                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, player.MyAccount));
+                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_IP, ip));
+                DateTime t = DateTime.UtcNow.AddDays(duration);
+                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_DURATION, t.ToBinary()));
+                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_REASON, reason));
+                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_MUTER, muter));
+                cmd.ExecuteNonQuery();
+            }
+
+        }
+        public static void DeleteMute(string account)
+        {
+
+            var insertQuery = "DELETE FROM " + MUTE_TABLE + " WHERE " + MUTE_USER + "=@" + MUTE_USER + ";";
+            using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, account));
+                cmd.ExecuteNonQuery();
+            }
+
+        }
+        public static string CheckMute(string account, string ip)
+        {
+
+            var query = "SELECT " + MUTE_DURATION + "," + MUTE_TIME + "," + MUTE_MUTER + "," + MUTE_REASON +
+                    " from " + MUTE_TABLE + " WHERE (LOWER(" + MUTE_USER + ")=@" + MUTE_USER + " OR " + MUTE_IP + "=@" + MUTE_IP + ")" + ";";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, account.ToLower().Trim()));
+                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_IP, ip.Trim()));
+                var dataReader = cmd.ExecuteReader();
+                if (dataReader.HasRows && dataReader.Read())
+                {
+                    DateTime duration = DateTime.FromBinary(Convert.ToInt64(dataReader[MUTE_DURATION]));
+                    DateTime banStart = DateTime.FromBinary(Convert.ToInt64(dataReader[MUTE_TIME]));
+                    string banner = Convert.ToString(dataReader[MUTE_MUTER]);
+                    string reason = Convert.ToString(dataReader[MUTE_REASON]);
+                    if (duration.CompareTo(DateTime.Today) <= 0) //Check that enough time has passed
+                    {
+
+                        DeleteMute(account);
+                        return null;
+                    }
+                    else
+                    {
+                        return Strings.Get("account", "mutestatus", banStart, banner, duration, reason);
+                    }
+                }
+
+                return null;
+            }
+        }
+        public static void AddBan(Client player, int duration, string reason, string banner, string ip)
+        {
+
+            var query = "INSERT OR REPLACE into " + BAN_TABLE + " (" + BAN_ID + "," +
+                            BAN_TIME + "," + BAN_USER + "," + BAN_IP + "," + BAN_DURATION + "," +
+                            BAN_REASON + "," + BAN_BANNER + ")" + " VALUES " + " (@" +
+                            BAN_ID + ",@" + BAN_TIME + ",@" + BAN_USER + ",@" + BAN_IP + ",@" +
+                            BAN_DURATION + ",@" + BAN_REASON + ",@" + BAN_BANNER + ");";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + BAN_ID, player.MyId));
+                cmd.Parameters.Add(new SqliteParameter("@" + BAN_TIME, DateTime.UtcNow.ToBinary()));
+                cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, player.MyAccount));
+                cmd.Parameters.Add(new SqliteParameter("@" + BAN_IP, ip));
+                DateTime t = DateTime.UtcNow.AddDays(duration);
+                cmd.Parameters.Add(new SqliteParameter("@" + BAN_DURATION, t.ToBinary()));
+                cmd.Parameters.Add(new SqliteParameter("@" + BAN_REASON, reason));
+                cmd.Parameters.Add(new SqliteParameter("@" + BAN_BANNER, banner));
+                cmd.ExecuteNonQuery();
+            }
+
+        }
+        public static void DeleteBan(string account)
+        {
+
+            var insertQuery = "DELETE FROM " + BAN_TABLE + " WHERE " + BAN_USER + "=@" + BAN_USER + ";";
+            using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, account));
+                cmd.ExecuteNonQuery();
+            }
+
+        }
+        public static string CheckBan(string account, string ip)
+        {
+
+            var query = "SELECT " + BAN_DURATION + "," + BAN_TIME + "," + BAN_BANNER + "," + BAN_REASON +
+                    " from " + BAN_TABLE + " WHERE (LOWER(" + BAN_USER + ")=@" + BAN_USER + " OR " + BAN_IP + "=@" + BAN_IP + ")" + ";";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, account.ToLower().Trim()));
+                cmd.Parameters.Add(new SqliteParameter("@" + BAN_IP, ip.Trim()));
+                var dataReader = cmd.ExecuteReader();
+                if (dataReader.HasRows && dataReader.Read())
+                {
+                    DateTime duration = DateTime.FromBinary(Convert.ToInt64(dataReader[BAN_DURATION]));
+                    DateTime banStart = DateTime.FromBinary(Convert.ToInt64(dataReader[BAN_TIME]));
+                    string banner = Convert.ToString(dataReader[BAN_BANNER]);
+                    string reason = Convert.ToString(dataReader[BAN_REASON]);
+                    if (duration.CompareTo(DateTime.Today) <= 0) //Check that enough time has passed
+                    {
+
+                        DeleteBan(account);
+                        return null;
+                    }
+                    else
+                    {
+                        return Strings.Get("account", "banstatus", banStart, banner, duration, reason);
+                    }
+                }
+
+                return null;
             }
         }
 

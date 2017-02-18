@@ -1165,7 +1165,7 @@ namespace Intersect_Editor.Forms
             this.gbBags.TabStop = false;
             this.gbBags.Text = "Bag:";
             this.gbBags.Visible = false;
-            // 
+            //
             // nudBag
             // 
             this.nudBag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
@@ -1300,7 +1300,7 @@ namespace Intersect_Editor.Forms
             this.toolStripItemUndo.Size = new System.Drawing.Size(23, 22);
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
-            // 
+            //
             // darkGroupBox2
             // 
             this.darkGroupBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
@@ -1334,7 +1334,7 @@ namespace Intersect_Editor.Forms
             this.chkStackable.TabIndex = 27;
             this.chkStackable.Text = "Stackable?";
             this.chkStackable.CheckedChanged += new System.EventHandler(this.chkStackable_CheckedChanged);
-            // 
+            //
             // FrmItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);

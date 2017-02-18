@@ -159,6 +159,15 @@ namespace Intersect_Library.GameObjects
             return "Deleted";
         }
 
+        public bool IsStackable()
+        {
+            //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+            return (ItemType == (int) ItemTypes.Consumable ||
+                    ItemType == (int) ItemTypes.Currency ||
+                    ItemType == (int) ItemTypes.None ||
+                    ItemType == (int) ItemTypes.Spell) && Stackable > 0;
+        }
+
         public override byte[] GetData()
         {
             return ItemData();

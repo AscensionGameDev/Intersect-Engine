@@ -192,7 +192,7 @@ namespace Intersect_Server.Classes.Maps
             var itemBase = ItemBase.GetItem(item.ItemNum);
             if (itemBase != null)
             {
-                MapItems.Add(new MapItemInstance(item.ItemNum, item.ItemVal));
+                MapItems.Add(new MapItemInstance(item.ItemNum, item.ItemVal, item.BagId));
                 MapItems[MapItems.Count - 1].X = x;
                 MapItems[MapItems.Count - 1].Y = y;
                 MapItems[MapItems.Count - 1].DespawnTime = Globals.System.GetTimeMs() + ServerOptions.ItemDespawnTime;
@@ -216,7 +216,7 @@ namespace Intersect_Server.Classes.Maps
             var item = ItemBase.GetItem(Attributes[x, y].data1);
             if (item != null)
             {
-                MapItems.Add(new MapItemInstance(Attributes[x, y].data1, Attributes[x, y].data2));
+                MapItems.Add(new MapItemInstance(Attributes[x, y].data1, Attributes[x, y].data2, -1));
                 MapItems[MapItems.Count - 1].X = x;
                 MapItems[MapItems.Count - 1].Y = y;
                 MapItems[MapItems.Count - 1].DespawnTime = -1;
@@ -438,7 +438,7 @@ namespace Intersect_Server.Classes.Maps
                 {
                     if (Globals.Rand.Next(1, 101) <= npcBase.Drops[n].Chance)
                     {
-                        Globals.Entities[index].Inventory.Add(new ItemInstance(npcBase.Drops[n].ItemNum, npcBase.Drops[n].Amount));
+                        Globals.Entities[index].Inventory.Add(new ItemInstance(npcBase.Drops[n].ItemNum, npcBase.Drops[n].Amount, -1));
                     }
                 }
 

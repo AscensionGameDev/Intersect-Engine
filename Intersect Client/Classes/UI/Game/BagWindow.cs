@@ -24,7 +24,6 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-
 using System;
 using System.Collections.Generic;
 using IntersectClientExtras.File_Management;
@@ -48,45 +47,46 @@ using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
-    public class InventoryWindow
+    public class BagWindow
     {
         private static int ItemXPadding = 4;
         private static int ItemYPadding = 4;
         //Controls
-        private WindowControl _inventoryWindow;
+        private WindowControl _bagWindow;
         private ScrollControl _itemContainer;
 
         //Location
         public int X;
         public int Y;
 
-        //Item List
-        public List<InventoryItem> Items = new List<InventoryItem>();
+        public List<BagItem> Items = new List<BagItem>();
         private List<Label> _values = new List<Label>();
 
         //Init
-        public InventoryWindow(Canvas _gameCanvas)
+        public BagWindow(Canvas _gameCanvas)
         {
-            _inventoryWindow = new WindowControl(_gameCanvas, Strings.Get("inventory","title"));
-            _inventoryWindow.SetSize(228, 320);
-            _inventoryWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 210, GameGraphics.Renderer.GetScreenHeight() - 500);
-            _inventoryWindow.DisableResizing();
-            _inventoryWindow.Margin = Margin.Zero;
-            _inventoryWindow.Padding = new Padding(8, 5, 9, 11);
-            _inventoryWindow.IsHidden = true;
+            _bagWindow = new WindowControl(_gameCanvas, Strings.Get("bags", "title"));
+            _bagWindow.SetSize(190,282);
+            _bagWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 200, GameGraphics.Renderer.GetScreenHeight() / 2 - 200);
+            _bagWindow.DisableResizing();
+            _bagWindow.Margin = Margin.Zero;
+            _bagWindow.Padding = new Padding(8, 5, 9, 11);
+            X = _bagWindow.X;
+            Y = _bagWindow.Y;
+            Gui.InputBlockingElements.Add(_bagWindow);
 
-            _inventoryWindow.SetTitleBarHeight(24);
-            _inventoryWindow.SetCloseButtonSize(20,20);
-            _inventoryWindow.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inventoryactive.png"), WindowControl.ControlState.Active);
-            _inventoryWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"), Button.ControlState.Normal);
-            _inventoryWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"), Button.ControlState.Hovered);
-            _inventoryWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"), Button.ControlState.Clicked);
-            _inventoryWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont,14));
-            _inventoryWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
+            _bagWindow.SetTitleBarHeight(24);
+            _bagWindow.SetCloseButtonSize(20, 20);
+            _bagWindow.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "bagactive.png"), WindowControl.ControlState.Active);
+            _bagWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"), Button.ControlState.Normal);
+            _bagWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"), Button.ControlState.Hovered);
+            _bagWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"), Button.ControlState.Clicked);
+            _bagWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
+            _bagWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
-            _itemContainer = new ScrollControl(_inventoryWindow);
+            _itemContainer = new ScrollControl(_bagWindow);
             _itemContainer.SetPosition(0, 0);
-            _itemContainer.SetSize(_inventoryWindow.Width - _inventoryWindow.Padding.Left - _inventoryWindow.Padding.Right, _inventoryWindow.Height -24 - _inventoryWindow.Padding.Top - _inventoryWindow.Padding.Bottom);
+            _itemContainer.SetSize(_bagWindow.Width - _bagWindow.Padding.Left - _bagWindow.Padding.Right, _bagWindow.Height - 24 - _bagWindow.Padding.Top - _bagWindow.Padding.Bottom);
             _itemContainer.EnableScroll(false, true);
             _itemContainer.AutoHideBars = false;
 
@@ -107,34 +107,50 @@ namespace Intersect_Client.Classes.UI.Game
             InitItemContainer();
         }
 
-        //Methods
+        public void Close()
+        {
+            _bagWindow.Close();
+        }
+        public bool IsVisible()
+        {
+            return !_bagWindow.IsHidden;
+        }
+        public void Hide()
+        {
+            _bagWindow.IsHidden = true;
+        }
+
         public void Update()
         {
-            if (_inventoryWindow.IsHidden == true) { return; }
-            X = _inventoryWindow.X;
-            Y = _inventoryWindow.Y;
-            for (int i = 0; i < Options.MaxInvItems; i++)
+            if (_bagWindow.IsHidden == true || Globals.Bag == null) { return; }
+            X = _bagWindow.X;
+            Y = _bagWindow.Y;
+            for (int i = 0; i < Globals.Bag.Length; i++)
             {
-                var item = ItemBase.GetItem(Globals.Me.Inventory[i].ItemNum);
-                if (item != null)
+                if (Globals.Bag[i] != null && Globals.Bag[i].ItemNum > -1)
                 {
-                    Items[i].pnl.IsHidden = false;
-                    if (item.IsStackable())
+                    var item = ItemBase.GetItem(Globals.Bag[i].ItemNum);
+                    if (item != null)
                     {
-                        _values[i].IsHidden = false;
-                        _values[i].Text = Globals.Me.Inventory[i].ItemVal.ToString();
-                    }
-                    else
-                    {
-                        _values[i].IsHidden = true;
-                    }
+                        Items[i].pnl.IsHidden = false;
 
-                    if (Items[i].IsDragging)
-                    {
-                        Items[i].pnl.IsHidden = true;
-                        _values[i].IsHidden = true;
+                        if (item.IsStackable())
+                        {
+                            _values[i].IsHidden = false;
+                            _values[i].Text = Globals.Bag[i].ItemVal.ToString();
+                        }
+                        else
+                        {
+                            _values[i].IsHidden = true;
+                        }
+
+                        if (Items[i].IsDragging)
+                        {
+                            Items[i].pnl.IsHidden = true;
+                            _values[i].IsHidden = true;
+                        }
+                        Items[i].Update();
                     }
-                    Items[i].Update();
                 }
                 else
                 {
@@ -143,18 +159,17 @@ namespace Intersect_Client.Classes.UI.Game
                 }
             }
         }
+
         private void InitItemContainer()
         {
-
-            for (int i = 0; i < Options.MaxInvItems; i++)
+            for (int i = 0; i < Globals.Bag.Length; i++)
             {
-                Items.Add(new InventoryItem(this, i));
+                Items.Add(new BagItem(this, i));
                 Items[i].container = new ImagePanel(_itemContainer);
-                Items[i].container.SetSize(34,34);
+                Items[i].container.SetSize(34, 34);
                 Items[i].container.SetPosition((i % (_itemContainer.Width / (34 + ItemXPadding))) * (34 + ItemXPadding) + ItemXPadding, (i / (_itemContainer.Width / (34 + ItemXPadding))) * (34 + ItemYPadding) + ItemYPadding);
-                Items[i].container.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,"inventoryitem.png");
+                Items[i].container.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "bagitem.png");
                 Items[i].Setup();
-                Items[i].pnl.Clicked += InventoryWindow_Clicked;
 
                 _values.Add(new Label(_itemContainer));
                 _values[i].Text = "";
@@ -164,40 +179,23 @@ namespace Intersect_Client.Classes.UI.Game
             }
         }
 
-        void InventoryWindow_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-
-        }
-        public void Show()
-        {
-            _inventoryWindow.IsHidden = false;
-        }
-        public bool IsVisible()
-        {
-            return !_inventoryWindow.IsHidden;
-        }
-        public void Hide()
-        {
-            _inventoryWindow.IsHidden = true;
-        }
         public FloatRect RenderBounds()
         {
             FloatRect rect = new FloatRect();
-            rect.X = _inventoryWindow.LocalPosToCanvas(new Point(0, 0)).X - ItemXPadding / 2;
-            rect.Y = _inventoryWindow.LocalPosToCanvas(new Point(0, 0)).Y - ItemYPadding / 2;
-            rect.Width = _inventoryWindow.Width + ItemXPadding;
-            rect.Height = _inventoryWindow.Height + ItemYPadding;
+            rect.X = _bagWindow.LocalPosToCanvas(new Point(0, 0)).X - ItemXPadding / 2;
+            rect.Y = _bagWindow.LocalPosToCanvas(new Point(0, 0)).Y - ItemYPadding / 2;
+            rect.Width = _bagWindow.Width + ItemXPadding;
+            rect.Height = _bagWindow.Height + ItemYPadding;
             return rect;
         }
     }
 
-    public class InventoryItem
+    public class BagItem
     {
         private static int ItemXPadding = 4;
         private static int ItemYPadding = 4;
         public ImagePanel container;
         public ImagePanel pnl;
-        public ImagePanel equipPanel;
         private ItemDescWindow _descWindow;
 
         //Mouse Event Variables
@@ -213,16 +211,15 @@ namespace Intersect_Client.Classes.UI.Game
 
         //Slot info
         private int _mySlot;
-        private bool _isEquipped;
         private int _currentItem = -2;
 
         //Drag/Drop References
-        private InventoryWindow _inventoryWindow;
- 
+        private BagWindow _bagWindow;
 
-        public InventoryItem(InventoryWindow inventoryWindow, int index)
+
+        public BagItem(BagWindow bagWindow, int index)
         {
-            _inventoryWindow = inventoryWindow;
+            _bagWindow = bagWindow;
             _mySlot = index;
         }
 
@@ -237,30 +234,13 @@ namespace Intersect_Client.Classes.UI.Game
             pnl.RightClicked += pnl_RightClicked;
             pnl.DoubleClicked += Pnl_DoubleClicked;
             pnl.Clicked += pnl_Clicked;
-            equipPanel = new ImagePanel(pnl);
-            equipPanel.SetSize(2, 2);
-            equipPanel.RenderColor = Color.Red;
-            equipPanel.SetPosition(26, 2);
-            equipPanel.Texture = GameGraphics.Renderer.GetWhiteTexture();
         }
 
         private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
-            if (Globals.GameShop != null)
+            if (Globals.InBag)
             {
-                Globals.Me.TrySellItem(_mySlot);
-            }
-            else if (Globals.InBank)
-            {
-                Globals.Me.TryDepositItem(_mySlot);
-            }
-            else if (Globals.InBag)
-            {
-                Globals.Me.TryStoreBagItem(_mySlot);
-            }
-            else if (Globals.InTrade)
-            {
-                Globals.Me.TryTradeItem(_mySlot);
+                Globals.Me.TryRetreiveBagItem(_mySlot);
             }
         }
 
@@ -271,7 +251,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            Globals.Me.TryDropItem(_mySlot);
+            
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -286,53 +266,11 @@ namespace Intersect_Client.Classes.UI.Game
         {
             MouseOver = true;
             CanDrag = true;
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)){ CanDrag = false; return; }
+            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)) { CanDrag = false; return; }
             if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
-            if (Globals.GameShop == null)
+            if (Globals.Bag[_mySlot] != null)
             {
-                _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum, Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 255, _inventoryWindow.Y, Globals.Me.Inventory[_mySlot].StatBoost);
-            }
-            else
-            {
-                int foundItem = -1;
-                for (int i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
-                {
-                    if (Globals.GameShop.BuyingItems[i].ItemNum == Globals.Me.Inventory[_mySlot].ItemNum)
-                    {
-                        foundItem = i;
-                        break;
-                    }
-                }
-                if ((foundItem > -1 && Globals.GameShop.BuyingWhitelist) || (foundItem == -1 && !Globals.GameShop.BuyingWhitelist))
-                {
-                    if (foundItem > -1)
-                    {
-                        var hoveredItem = ItemBase.GetItem(Globals.GameShop.BuyingItems[foundItem].CostItemNum);
-                        if (hoveredItem != null)
-                        {
-                            _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
-                                Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y,
-                                Globals.Me.Inventory[_mySlot].StatBoost, "",
-                                Strings.Get("shop","sellsfor",Globals.GameShop.BuyingItems[foundItem].CostItemVal,hoveredItem.Name));
-                        }
-                    }
-                    else
-                    {
-                        var hoveredItem = ItemBase.GetItem(Globals.GameShop.BuyingItems[foundItem].ItemNum);
-                        var costItem = ItemBase.GetItem(Globals.GameShop.DefaultCurrency);
-                        if (hoveredItem != null && costItem != null)
-                        {
-                            _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
-                                Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y,
-                                Globals.Me.Inventory[_mySlot].StatBoost, "",
-                                Strings.Get("shop", "sellsfor", hoveredItem.Price, costItem.Name));
-                        }
-                    }
-                }
-                else
-                {
-                    _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum, Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 255, _inventoryWindow.Y, Globals.Me.Inventory[_mySlot].StatBoost, "", "Shop Will Not Buy This Item");
-                }
+                _descWindow = new ItemDescWindow(Globals.Bag[_mySlot].ItemNum, Globals.Bag[_mySlot].ItemVal, _bagWindow.X - 255, _bagWindow.Y, Globals.Bag[_mySlot].StatBoost);
             }
         }
 
@@ -348,23 +286,13 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Update()
         {
-            bool equipped = false;
-            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+            if (Globals.Bag[_mySlot].ItemNum != _currentItem)
             {
-                if (Globals.Me.Equipment[i] == _mySlot)
-                {
-                    equipped = true;
-                }
-            }
-            if (Globals.Me.Inventory[_mySlot].ItemNum != _currentItem || equipped != _isEquipped)
-            {
-                _currentItem = Globals.Me.Inventory[_mySlot].ItemNum;
-                _isEquipped = equipped;
-                equipPanel.IsHidden = !_isEquipped;
-                var item = ItemBase.GetItem(Globals.Me.Inventory[_mySlot].ItemNum);
+                _currentItem = Globals.Bag[_mySlot].ItemNum;
+                var item = ItemBase.GetItem(Globals.Bag[_mySlot].ItemNum);
                 if (item != null)
                 {
-                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,item.Pic);
+                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
                     if (itemTex != null)
                     {
                         pnl.Texture = itemTex;
@@ -396,7 +324,7 @@ namespace Intersect_Client.Classes.UI.Game
                         MouseY = -1;
                         if (Globals.System.GetTimeMS() < ClickTime)
                         {
-                            Globals.Me.TryUseItem(_mySlot);
+                            //Globals.Me.TryUseItem(_mySlot);
                             ClickTime = 0;
                         }
                     }
@@ -430,21 +358,21 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     //Drug the item and now we stopped
                     IsDragging = false;
-                    FloatRect dragRect = new FloatRect(dragIcon.x - ItemXPadding / 2, dragIcon.y - ItemYPadding / 2, ItemXPadding/2 + 32, ItemYPadding / 2 + 32);
+                    FloatRect dragRect = new FloatRect(dragIcon.x - ItemXPadding / 2, dragIcon.y - ItemYPadding / 2, ItemXPadding / 2 + 32, ItemYPadding / 2 + 32);
 
-                    float  bestIntersect = 0;
+                    float bestIntersect = 0;
                     int bestIntersectIndex = -1;
                     //So we picked up an item and then dropped it. Lets see where we dropped it to.
                     //Check inventory first.
-                    if (_inventoryWindow.RenderBounds().IntersectsWith(dragRect))
+                    if (_bagWindow.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (int i = 0; i < Options.MaxInvItems; i++)
+                        for (int i = 0; i < Globals.Bag.Length; i++)
                         {
-                            if (_inventoryWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
+                            if (_bagWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
-                                if (FloatRect.Intersect(_inventoryWindow.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(_inventoryWindow.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
+                                if (FloatRect.Intersect(_bagWindow.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(_bagWindow.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
                                 {
-                                    bestIntersect = FloatRect.Intersect(_inventoryWindow.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(_inventoryWindow.Items[i].RenderBounds(), dragRect).Height;
+                                    bestIntersect = FloatRect.Intersect(_bagWindow.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(_bagWindow.Items[i].RenderBounds(), dragRect).Height;
                                     bestIntersectIndex = i;
                                 }
                             }
@@ -454,30 +382,10 @@ namespace Intersect_Client.Classes.UI.Game
                             if (_mySlot != bestIntersectIndex)
                             {
                                 //Try to swap....
-                                PacketSender.SendSwapItems(bestIntersectIndex, _mySlot);
-                                Globals.Me.SwapItems(bestIntersectIndex, _mySlot);
+                                PacketSender.SendMoveBagItems(bestIntersectIndex, _mySlot);
                             }
                         }
                     }
-                    else if (Gui.GameUI.Hotbar.RenderBounds().IntersectsWith(dragRect))
-                    {
-                        for (int i = 0; i < Options.MaxHotbar; i++)
-                        {
-                            if (Gui.GameUI.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
-                            {
-                                if (FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
-                                {
-                                    bestIntersect = FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Height;
-                                    bestIntersectIndex = i;
-                                }
-                            }
-                        }
-                        if (bestIntersectIndex > -1)
-                        {
-                            Globals.Me.AddToHotbar(bestIntersectIndex, 0, _mySlot);
-                        }
-                    }
-
                     dragIcon.Dispose();
                 }
             }

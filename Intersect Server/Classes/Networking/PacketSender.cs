@@ -1557,5 +1557,44 @@ namespace Intersect_Server.Classes.Networking
             SendDataToProximity(Globals.Entities[index].CurrentMap, bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendOpenBag(Client client, int slots, BagInstance bag)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.OpenBag);
+            bf.WriteInteger(slots);
+            client.SendPacket(bf.ToArray());
+            for (int i = 0; i < slots; i++)
+            {
+                SendBagUpdate(client, i, bag.Items[i]);
+            }
+            bf.Dispose();
+        }
+
+        public static void SendBagUpdate(Client client, int slot, ItemInstance item)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.BagUpdate);
+            bf.WriteInteger(slot);
+            if (item == null || item.ItemNum < 0 || item.ItemVal <= 0)
+            {
+                bf.WriteInteger(0);
+            }
+            else
+            {
+                bf.WriteInteger(1);
+                bf.WriteBytes(item.Data());
+            }
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendCloseBag(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.CloseBag);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
     }
 }

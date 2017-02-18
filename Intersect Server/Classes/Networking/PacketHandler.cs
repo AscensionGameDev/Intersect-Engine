@@ -251,6 +251,18 @@ namespace Intersect_Server.Classes.Networking
                 case ClientPackets.EnterMap:
                     HandleEnterMap(client, packet);
                     break;
+                case ClientPackets.CloseBag:
+                    HandleCloseBag(client, packet);
+                    break;
+                case ClientPackets.StoreBagItem:
+                    HandleStoreBagItem(client, packet);
+                    break;
+                case ClientPackets.RetreiveBagItem:
+                    HandleRetreiveBagItem(client, packet);
+                    break;
+                case ClientPackets.MoveBagItem:
+                    HandleMoveBagItem(client, packet);
+                    break;
                 default:
                     break;
             }
@@ -930,7 +942,7 @@ namespace Intersect_Server.Classes.Networking
 
                 for (int i = 0; i < Options.MaxNpcDrops; i++)
                 {
-                    ItemInstance TempItem = new ItemInstance(classBase.Items[i].ItemNum, classBase.Items[i].Amount);
+                    ItemInstance TempItem = new ItemInstance(classBase.Items[i].ItemNum, classBase.Items[i].Amount, -1);
                     player.TryGiveItem(TempItem, false);
                 }
                 Task.Run(() => Database.SaveCharacter(client.Entity, true));
@@ -2135,6 +2147,41 @@ namespace Intersect_Server.Classes.Networking
             }
 
 
+            bf.Dispose();
+        }
+
+        private static void HandleCloseBag(Client client, byte[] packet)
+        {
+            client.Entity.CloseBag();
+        }
+
+        private static void HandleStoreBagItem(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var slot = bf.ReadInteger();
+            var amount = bf.ReadInteger();
+            client.Entity.StoreBagItem(slot, amount);
+            bf.Dispose();
+        }
+
+        private static void HandleRetreiveBagItem(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var slot = bf.ReadInteger();
+            var amount = bf.ReadInteger();
+            client.Entity.RetreiveBagItem(slot, amount);
+            bf.Dispose();
+        }
+
+        private static void HandleMoveBagItem(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var item1 = bf.ReadInteger();
+            var item2 = bf.ReadInteger();
+            client.Entity.SwapBagItems(item1, item2);
             bf.Dispose();
         }
     }
