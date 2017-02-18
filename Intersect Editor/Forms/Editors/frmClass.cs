@@ -30,6 +30,8 @@ using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps.MapList;
 using System.IO;
 using DarkUI.Controls;
+using DarkUI.Forms;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -93,38 +95,17 @@ namespace Intersect_Editor.Forms
             UpdateEditor();
         }
 
-        private void txtHP_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtHP.Text, out x);
-            _editorItem.BaseVital[(int)Vitals.Health] = x;
-        }
-
-        private void txtMana_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtMana.Text, out x);
-            _editorItem.BaseVital[(int)Vitals.Mana] = x;
-        }
-
         private void scrlDropIndex_Scroll(object sender, ScrollValueEventArgs e)
         {
             UpdateDropValues();
         }
 
-        private void txtDropAmount_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtDropAmount.Text, out x);
-            _editorItem.Items[scrlDropIndex.Value].Amount = x;
-        }
-
         private void UpdateDropValues()
         {
             int index = scrlDropIndex.Value;
-            lblDropIndex.Text = "Item Index: " + (index + 1);
+            lblDropIndex.Text = Strings.Get("classeditor", "itemindex", index + 1);
             cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item,_editorItem.Items[index].ItemNum) + 1;
-            txtDropAmount.Text = _editorItem.Items[index].Amount.ToString();
+            nudItemAmount.Value = _editorItem.Items[index].Amount;
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
@@ -140,7 +121,8 @@ namespace Intersect_Editor.Forms
             lstSpells.Items.Clear();
             for (int i = 0; i < _editorItem.Spells.Count; i++)
             {
-                lstSpells.Items.Add(Convert.ToString(i + 1) + ") " + SpellBase.GetName(_editorItem.Spells[i].SpellNum) + " - lvl: " + _editorItem.Spells[i].Level);
+                lstSpells.Items.Add(Strings.Get("classeditor", "spellitem", i + 1,
+                    SpellBase.GetName(_editorItem.Spells[i].SpellNum), _editorItem.Spells[i].Level));
             }
             if (keepIndex) lstSpells.SelectedIndex = n;
         }
@@ -177,13 +159,13 @@ namespace Intersect_Editor.Forms
             {
                 pnlContainer.Show();
                 txtName.Text = _editorItem.Name;
-                nudStr.Value = _editorItem.BaseStat[(int) Stats.Attack];
+                nudAttack.Value = _editorItem.BaseStat[(int) Stats.Attack];
                 nudMag.Value = _editorItem.BaseStat[(int) Stats.AbilityPower];
                 nudDef.Value = _editorItem.BaseStat[(int) Stats.Defense];
                 nudMR.Value = _editorItem.BaseStat[(int) Stats.MagicResist];
                 nudSpd.Value = _editorItem.BaseStat[(int) Stats.Speed];
-                txtHP.Text = _editorItem.BaseVital[(int) Vitals.Health].ToString();
-                txtMana.Text = _editorItem.BaseVital[(int) Vitals.Mana].ToString();
+                nudBaseHP.Value = _editorItem.BaseVital[(int) Vitals.Health];
+                nudBaseMana.Value = _editorItem.BaseVital[(int) Vitals.Mana];
                 nudPoints.Value = _editorItem.BasePoints;
                 chkLocked.Checked = Convert.ToBoolean(_editorItem.Locked);
 
@@ -200,7 +182,7 @@ namespace Intersect_Editor.Forms
                 nudMpRegen.Value = _editorItem.VitalRegen[(int) Vitals.Mana];
 
                 //Exp
-                txtBaseExp.Text = _editorItem.BaseExp.ToString();
+                nudBaseExp.Value = _editorItem.BaseExp;
                 nudExpIncrease.Value = _editorItem.ExpIncrease;
 
                 //Stat Increases
@@ -223,21 +205,7 @@ namespace Intersect_Editor.Forms
 
                 cmbSpell.SelectedIndex = -1;
 
-                // Add the sprites
-                lstSprites.Items.Clear();
-                for (int i = 0; i < _editorItem.Sprites.Count; i++)
-                {
-                    if (_editorItem.Sprites[i].Gender == 0)
-                    {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " +
-                                             _editorItem.Sprites[i].Sprite + " - M");
-                    }
-                    else
-                    {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " +
-                                             _editorItem.Sprites[i].Sprite + " - F");
-                    }
-                }
+                RefreshSpriteList(false);
 
                 // Don't select if there are no Spells, to avoid crashes.
                 if (lstSprites.Items.Count > 0)
@@ -309,7 +277,98 @@ namespace Intersect_Editor.Forms
             {
                 cmbScalingStat.Items.Add(Globals.GetStatName(x));
             }
+            InitLocalization();
             UpdateEditor();
+        }
+
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("classeditor", "title");
+            toolStripItemNew.Text = Strings.Get("classeditor", "new");
+            toolStripItemDelete.Text = Strings.Get("classeditor", "delete");
+            toolStripItemCopy.Text = Strings.Get("classeditor", "copy");
+            toolStripItemPaste.Text = Strings.Get("classeditor", "paste");
+            toolStripItemUndo.Text = Strings.Get("classeditor", "undo");
+
+            grpClasses.Text = Strings.Get("classeditor", "classes");
+
+            grpGeneral.Text = Strings.Get("classeditor", "general");
+            lblName.Text = Strings.Get("classeditor", "name");
+            chkLocked.Text = Strings.Get("classeditor", "locked");
+
+            grpSpawnPoint.Text = Strings.Get("classeditor", "spawnpoint");
+            lblMap.Text = Strings.Get("warping", "map", "");
+            lblX.Text = Strings.Get("warping", "x", "");
+            lblY.Text = Strings.Get("warping", "y");
+            lblDir.Text = Strings.Get("warping", "direction", "");
+            btnVisualMapSelector.Text = Strings.Get("warping", "visual");
+
+            grpSprite.Text = Strings.Get("classeditor", "spriteface");
+            lblSpriteOptions.Text = Strings.Get("classeditor", "spriteoptions");
+            btnAdd.Text = Strings.Get("classeditor", "addicon");
+            btnRemove.Text = Strings.Get("classeditor", "removeicon");
+            grpGender.Text = Strings.Get("classeditor", "gender");
+            rbMale.Text = Strings.Get("classeditor", "male");
+            rbFemale.Text = Strings.Get("classeditor", "female");
+            lblSprite.Text = Strings.Get("classeditor", "sprite");
+            lblFace.Text = Strings.Get("classeditor", "face");
+
+            grpItems.Text = Strings.Get("classeditor", "items");
+            lblDropIndex.Text = Strings.Get("classeditor", "itemindex", scrlDropIndex.Value + 1);
+            lblDropItem.Text = Strings.Get("classeditor", "item");
+            lblDropAmount.Text = Strings.Get("classeditor", "amount");
+
+            grpBaseStats.Text = Strings.Get("classeditor", "basestats");
+            lblHP.Text = Strings.Get("classeditor", "basehp");
+            lblMana.Text = Strings.Get("classeditor", "basemp");
+            lblAttack.Text = Strings.Get("classeditor", "baseattack");
+            lblDef.Text = Strings.Get("classeditor", "basearmor");
+            lblSpd.Text = Strings.Get("classeditor", "basespeed");
+            lblMag.Text = Strings.Get("classeditor", "baseabilitypower");
+            lblMR.Text = Strings.Get("classeditor", "basemagicresist");
+            lblPoints.Text = Strings.Get("classeditor", "basepoints");
+
+            grpSpells.Text = Strings.Get("classeditor", "learntspells");
+            lblSpellNum.Text = Strings.Get("classeditor", "spell");
+            lblLevel.Text = Strings.Get("classeditor", "spelllevel");
+            btnAddSpell.Text = Strings.Get("classeditor", "addspell");
+            btnRemoveSpell.Text = Strings.Get("classeditor", "removespell");
+
+            grpRegen.Text = Strings.Get("classeditor", "regen");
+            lblHpRegen.Text = Strings.Get("classeditor", "hpregen");
+            lblManaRegen.Text = Strings.Get("classeditor", "mpregen");
+            lblRegenHint.Text = Strings.Get("classeditor", "regenhint");
+
+            grpCombat.Text = Strings.Get("classeditor", "combat");
+            lblDamage.Text = Strings.Get("classeditor", "basedamage");
+            lblCritChance.Text = Strings.Get("classeditor", "critchance");
+            lblDamageType.Text = Strings.Get("classeditor", "damagetype");
+            cmbDamageType.Items.Clear();
+            for (int i = 0; i < 3; i++)
+            {
+                cmbDamageType.Items.Add(Strings.Get("classeditor", "damagetype" + i));
+            }
+            lblScalingStat.Text = Strings.Get("classeditor", "scalingstat");
+            lblScalingAmount.Text = Strings.Get("classeditor", "scalingamount");
+            lblAttackAnimation.Text = Strings.Get("classeditor", "attackanimation");
+
+            grpLeveling.Text = Strings.Get("classeditor", "leveling");
+            lblBaseExp.Text = Strings.Get("classeditor", "levelexp");
+            lblExpIncrease.Text = Strings.Get("classeditor", "levelexpscale");
+            grpLevelBoosts.Text = Strings.Get("classeditor", "levelboosts");
+            rdoStaticIncrease.Text = Strings.Get("classeditor", "staticboost");
+            rdoPercentageIncrease.Text = Strings.Get("classeditor", "percentageboost");
+            lblHpIncrease.Text = Strings.Get("classeditor", "hpboost", rdoStaticIncrease.Checked ? "" : Strings.Get("classeditor","boostpercent"));
+            lblMpIncrease.Text = Strings.Get("classeditor", "mpboost", rdoStaticIncrease.Checked ? "" : Strings.Get("classeditor", "boostpercent"));
+            lblStrengthIncrease.Text = Strings.Get("classeditor", "attackboost", rdoStaticIncrease.Checked ? "" : Strings.Get("classeditor", "boostpercent"));
+            lblArmorIncrease.Text = Strings.Get("classeditor", "armorboost", rdoStaticIncrease.Checked ? "" : Strings.Get("classeditor", "boostpercent"));
+            lblSpeedIncrease.Text = Strings.Get("classeditor", "speedboost", rdoStaticIncrease.Checked ? "" : Strings.Get("classeditor", "boostpercent"));
+            lblMagicIncrease.Text = Strings.Get("classeditor", "abilitypowerboost", rdoStaticIncrease.Checked ? "" : Strings.Get("classeditor", "boostpercent"));
+            lblMagicResistIncrease.Text = Strings.Get("classeditor", "magicresistboost", rdoStaticIncrease.Checked ? "" : Strings.Get("classeditor", "boostpercent"));
+            lblPointsIncrease.Text = Strings.Get("classeditor", "pointsboost");
+
+            btnSave.Text = Strings.Get("classeditor", "save");
+            btnCancel.Text = Strings.Get("classeditor", "cancel");
         }
 
         public void InitEditor()
@@ -350,21 +409,7 @@ namespace Intersect_Editor.Forms
             {
                 _editorItem.Sprites[lstSprites.SelectedIndex].Gender = 0;
 
-                // Refresh List
-                n = lstSprites.SelectedIndex;
-                lstSprites.Items.Clear();
-                for (int i = 0; i < _editorItem.Sprites.Count; i++)
-                {
-                    if (_editorItem.Sprites[i].Gender == 0)
-                    {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - M");
-                    }
-                    else
-                    {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - F");
-                    }
-                }
-                lstSprites.SelectedIndex = n;
+                RefreshSpriteList();
             }
         }
 
@@ -376,21 +421,7 @@ namespace Intersect_Editor.Forms
             {
                 _editorItem.Sprites[lstSprites.SelectedIndex].Gender = 1;
 
-                // Refresh List
-                n = lstSprites.SelectedIndex;
-                lstSprites.Items.Clear();
-                for (int i = 0; i < _editorItem.Sprites.Count; i++)
-                {
-                    if (_editorItem.Sprites[i].Gender == 0)
-                    {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - M");
-                    }
-                    else
-                    {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - F");
-                    }
-                }
-                lstSprites.SelectedIndex = n;
+                RefreshSpriteList();
             }
         }
 
@@ -402,23 +433,28 @@ namespace Intersect_Editor.Forms
             {
                 _editorItem.Sprites[lstSprites.SelectedIndex].Sprite = cmbSprite.Text;
 
-                // Refresh List
-                n = lstSprites.SelectedIndex;
-                lstSprites.Items.Clear();
-                for (int i = 0; i < _editorItem.Sprites.Count; i++)
-                {
-                    if (_editorItem.Sprites[i].Gender == 0)
-                    {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - M");
-                    }
-                    else
-                    {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - F");
-                    }
-                }
-                lstSprites.SelectedIndex = n;
+                RefreshSpriteList();
             }
             DrawSprite();
+        }
+
+        private void RefreshSpriteList(bool saveSpot = true)
+        {
+            // Refresh List
+            var n = lstSprites.SelectedIndex;
+            lstSprites.Items.Clear();
+            for (int i = 0; i < _editorItem.Sprites.Count; i++)
+            {
+                if (_editorItem.Sprites[i].Gender == 0)
+                {
+                    lstSprites.Items.Add(Strings.Get("classeditor", "spriteitemmale", i + 1,_editorItem.Sprites[i].Sprite));
+                }
+                else
+                {
+                    lstSprites.Items.Add(Strings.Get("classeditor", "spriteitemfemale", i + 1, _editorItem.Sprites[i].Sprite));
+                }
+            }
+            if (saveSpot) lstSprites.SelectedIndex = n;
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -433,11 +469,11 @@ namespace Intersect_Editor.Forms
 
             if (n.Gender == 0)
             {
-                lstSprites.Items.Add(Convert.ToString(_editorItem.Sprites.Count) + ") " + n.Sprite + " - M");
+                lstSprites.Items.Add(Strings.Get("classeditor", "spriteitemmale", _editorItem.Sprites.Count, n.Sprite));
             }
             else
             {
-                lstSprites.Items.Add(Convert.ToString(_editorItem.Sprites.Count) + ") " + n.Sprite + " - F");
+                lstSprites.Items.Add(Strings.Get("classeditor", "spriteitemfemale", _editorItem.Sprites.Count, n.Sprite));
             }
 
             lstSprites.SelectedIndex = lstSprites.Items.Count - 1;
@@ -450,19 +486,7 @@ namespace Intersect_Editor.Forms
             _editorItem.Sprites.RemoveAt(lstSprites.SelectedIndex);
             lstSprites.Items.RemoveAt(lstSprites.SelectedIndex);
 
-            // Refresh List
-            lstSprites.Items.Clear();
-            for (int i = 0; i < _editorItem.Sprites.Count; i++)
-            {
-                if (_editorItem.Sprites[i].Gender == 0)
-                {
-                    lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - M");
-                }
-                else
-                {
-                    lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - F");
-                }
-            }
+            RefreshSpriteList(false);
 
             if (lstSprites.Items.Count > 0)
             {
@@ -542,27 +566,11 @@ namespace Intersect_Editor.Forms
 
         private void cmbFace_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int n = 0;
-
             if (lstSprites.SelectedIndex >= 0)
             {
                 _editorItem.Sprites[lstSprites.SelectedIndex].Face = cmbFace.Text;
 
-                // Refresh List
-                n = lstSprites.SelectedIndex;
-                lstSprites.Items.Clear();
-                for (int i = 0; i < _editorItem.Sprites.Count; i++)
-                {
-                    if (_editorItem.Sprites[i].Gender == 0)
-                    {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - M");
-                    }
-                    else
-                    {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - F");
-                    }
-                }
-                lstSprites.SelectedIndex = n;
+                RefreshSpriteList();
             }
             DrawSprite();
         }
@@ -570,13 +578,6 @@ namespace Intersect_Editor.Forms
         private void chkLocked_CheckedChanged(object sender, EventArgs e)
         {
             _editorItem.Locked = Convert.ToInt32(chkLocked.Checked);
-        }
-
-        private void txtBaseExp_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtBaseExp.Text, out x);
-            _editorItem.BaseExp = x;
         }
 
         private void UpdateIncreases()
@@ -604,8 +605,6 @@ namespace Intersect_Editor.Forms
 
             nudHpIncrease.Value = Math.Min(nudHpIncrease.Maximum,_editorItem.VitalIncrease[(int)Vitals.Health]);
             nudMpIncrease.Value = Math.Min(nudMpIncrease.Maximum,_editorItem.VitalIncrease[(int)Vitals.Mana]);
-            lblHpIncrease.Text = "Max Hp (+ %):";
-            lblMpIncrease.Text = "Max Mp (+ %):";
 
             nudStrengthIncrease.Value = Math.Min(nudStrengthIncrease.Maximum, _editorItem.StatIncrease[(int) Stats.Attack]);
             nudArmorIncrease.Value = Math.Min(nudArmorIncrease.Maximum, _editorItem.StatIncrease[(int)Stats.Defense]);
@@ -613,11 +612,13 @@ namespace Intersect_Editor.Forms
             nudMagicResistIncrease.Value = Math.Min(nudMagicResistIncrease.Maximum, _editorItem.StatIncrease[(int)Stats.MagicResist]);
             nudSpeedIncrease.Value = Math.Min(nudSpeedIncrease.Maximum, _editorItem.StatIncrease[(int)Stats.Speed]);
 
-            lblStrengthIncrease.Text = "Strength (+ %):";
-            lblArmorIncrease.Text = "Armor (+ %):";
-            lblMagicIncrease.Text = "Magic (+ %):";
-            lblMagicResistIncrease.Text = "Magic Resist (+ %):";
-            lblSpeedIncrease.Text = "Move Speed (+ %):";
+            lblHpIncrease.Text = Strings.Get("classeditor", "hpboost", rdoStaticIncrease.Checked ? "" : Strings.Get("classeditor", "boostpercent"));
+            lblMpIncrease.Text = Strings.Get("classeditor", "mpboost", rdoStaticIncrease.Checked ? "" : Strings.Get("classeditor", "boostpercent"));
+            lblStrengthIncrease.Text = Strings.Get("classeditor", "attackboost", rdoStaticIncrease.Checked ? "" : Strings.Get("classeditor", "boostpercent"));
+            lblArmorIncrease.Text = Strings.Get("classeditor", "armorboost", rdoStaticIncrease.Checked ? "" : Strings.Get("classeditor", "boostpercent"));
+            lblSpeedIncrease.Text = Strings.Get("classeditor", "speedboost", rdoStaticIncrease.Checked ? "" : Strings.Get("classeditor", "boostpercent"));
+            lblMagicIncrease.Text = Strings.Get("classeditor", "abilitypowerboost", rdoStaticIncrease.Checked ? "" : Strings.Get("classeditor", "boostpercent"));
+            lblMagicResistIncrease.Text = Strings.Get("classeditor", "magicresistboost", rdoStaticIncrease.Checked ? "" : Strings.Get("classeditor", "boostpercent"));
 
             nudPointsIncrease.Value = _editorItem.PointIncrease;
         }
@@ -643,9 +644,8 @@ namespace Intersect_Editor.Forms
         {
             if (_editorItem != null && lstClasses.Focused)
             {
-                if (
-                    MessageBox.Show("Are you sure you want to delete this game object? This action cannot be reverted!",
-                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("classeditor", "deleteprompt"),
+                        Strings.Get("classeditor", "deletetitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -674,8 +674,8 @@ namespace Intersect_Editor.Forms
         {
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
-                if (MessageBox.Show("Are you sure you want to undo changes made to this game object? This action cannot be reverted!",
-                        "Undo Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("classeditor","undoprompt"),
+                        Strings.Get("classeditor","undotitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();
@@ -789,7 +789,7 @@ namespace Intersect_Editor.Forms
 
         private void nudStr_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.BaseStat[(int)Stats.Attack] = (int)nudStr.Value;
+            _editorItem.BaseStat[(int)Stats.Attack] = (int)nudAttack.Value;
         }
 
         private void nudMag_ValueChanged(object sender, EventArgs e)
@@ -898,6 +898,26 @@ namespace Intersect_Editor.Forms
         {
             _editorItem.PointIncrease = (int)nudPointsIncrease.Value;
             UpdateIncreases();
+        }
+
+        private void nudItemAmount_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Items[scrlDropIndex.Value].Amount = (int)nudItemAmount.Value;
+        }
+
+        private void nudBaseExp_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.BaseExp = (int) nudBaseExp.Value;
+        }
+
+        private void nudBaseHP_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.BaseVital[(int)Vitals.Health] = (int)nudBaseHP.Value;
+        }
+
+        private void nudBaseMana_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.BaseVital[(int)Vitals.Mana] = (int)nudBaseMana.Value;
         }
     }
 }

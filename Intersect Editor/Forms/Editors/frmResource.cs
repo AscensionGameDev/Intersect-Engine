@@ -423,7 +423,7 @@ namespace Intersect_Editor.Classes
 
         private void btnRequirements_Click(object sender, EventArgs e)
         {
-            var frm = new frmDynamicRequirements(_editorItem.HarvestingReqs);
+            var frm = new frmDynamicRequirements(_editorItem.HarvestingReqs, RequirementType.Resource);
             frm.ShowDialog();
         }
 

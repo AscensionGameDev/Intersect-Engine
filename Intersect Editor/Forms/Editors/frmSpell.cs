@@ -540,7 +540,7 @@ namespace Intersect_Editor.Forms
 
         private void btnDynamicRequirements_Click(object sender, EventArgs e)
         {
-            var frm = new frmDynamicRequirements(_editorItem.CastingReqs);
+            var frm = new frmDynamicRequirements(_editorItem.CastingReqs, RequirementType.Spell);
             frm.ShowDialog();
         }
 

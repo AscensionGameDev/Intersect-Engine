@@ -489,7 +489,7 @@ namespace Intersect_Editor.Forms
 
         private void btnEditRequirements_Click(object sender, EventArgs e)
         {
-            var frm = new frmDynamicRequirements(_editorItem.UseReqs);
+            var frm = new frmDynamicRequirements(_editorItem.UseReqs, RequirementType.Item );
             frm.ShowDialog();
         }
 

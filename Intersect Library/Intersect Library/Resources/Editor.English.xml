@@ -332,6 +332,171 @@
 		<string id="revision">Revision: {00}</string>
 		<string id="fps">FPS: {00}</string>
 	</MainForm>
+	<AnimationEditor>
+		<string id="title">Animation Editor</string>
+		<string id="new">New Animation</string>
+		<string id="delete">Delete Animation</string>
+		<string id="copy">Copy Animation</string>
+		<string id="paste">Paste Animation</string>
+		<string id="undo">Undo Changes</string>
+		
+		<string id="deletetitle">Delete Animation</string>
+		<string id="deleteprompt">Are you sure you want to delete this animation? This action cannot be reverted!</string>
+		<string id="undotitle">Undo Changes</string>
+		<string id="undoprompt">Are you sure you want to undo changes made to this animation? This action cannot be reverted!</string>
+		
+		<string id="animations">Animations</string>
+		
+		<string id="general">General</string>
+		<string id="name">Name:</string>
+		<string id="sound">Sound:</string>
+		<string id="simulatedarkness">Simulate Darkness: {00}</string>
+		<string id="swap">Swap Upper/Lower</string>
+		
+		<string id="lowergroup">Lower Layer (Below Target) </string>
+		<string id="lowergraphic">Graphic:</string>
+		<string id="lowerhorizontalframes">Graphic Horizontal Frames:</string>
+		<string id="lowerverticalframes">Graphic Vertical Frames:</string>
+		<string id="lowerframecount">Graphic Frame Count:</string>
+		<string id="lowerframeduration">Frame Duration (ms):</string>
+		<string id="lowerloopcount">Loop Count:</string>
+		<string id="lowerplayback">Playback</string>
+		<string id="lowerframe">Frame: {00}</string>
+		<string id="lowerplay">Play Lower Animation</string>
+		<string id="lowerstop">Stop Upper Animation</string>
+		<string id="lowerframeoptions">Frame Options</string>
+		<string id="lowerclone">Clone From Previous</string>
+		
+		<string id="uppergroup">Upper Layer (Above Target) </string>
+		<string id="uppergraphic">Graphic:</string>
+		<string id="upperhorizontalframes">Graphic Horizontal Frames:</string>
+		<string id="upperverticalframes">Graphic Vertical Frames:</string>
+		<string id="upperframecount">Graphic Frame Count:</string>
+		<string id="upperframeduration">Frame Duration (ms):</string>
+		<string id="upperloopcount">Loop Count:</string>
+		<string id="upperplayback">Playback</string>
+		<string id="upperframe">Frame: {00}</string>
+		<string id="upperplay">Play Upper Animation</string>
+		<string id="upperstop">Stop Upper Animation</string>
+		<string id="upperframeoptions">Frame Options</string>
+		<string id="upperclone">Clone From Previous</string>
+		
+		<string id="save">Save</string>
+		<string id="cancel">Cancel</string>
+	</AnimationEditor>
+	<ClassEditor>
+		<string id="title">Class Editor</string>
+		<string id="new">New Class</string>
+		<string id="delete">Delete Class</string>
+		<string id="copy">Copy Class</string>
+		<string id="paste">Paste Class</string>
+		<string id="undo">Undo Changes</string>
+		
+		<string id="deletetitle">Delete Class</string>
+		<string id="deleteprompt">Are you sure you want to delete this class? This action cannot be reverted!</string>
+		<string id="undotitle">Undo Changes</string>
+		<string id="undoprompt">Are you sure you want to undo changes made to this class? This action cannot be reverted!</string>
+		
+		<string id="classes">Classes</string>
+		
+		<string id="general">General</string>
+		<string id="name">Name:</string>
+		<string id="locked">Locked</string>
+		
+		<string id="spawnpoint">Spawn Point</string>
+		
+		<string id="spriteface">Sprite and Face</string>
+		<string id="spriteoptions">Options:</string>
+		<string id="spriteitemmale">{00}. {01} - M</string>
+		<string id="spriteitemfemale">{00}. {01} - F</string>
+		<string id="gender">Gender</string>
+		<string id="male">Male</string>
+		<string id="female">Female</string>
+		<string id="addicon">+</string>
+		<string id="removeicon">-</string>
+		<string id="sprite">Sprite:</string>
+		<string id="face">Face:</string>
+		
+		<string id="items">Starting Items</string>
+		<string id="itemindex">Item Index: {00}</string>
+		<string id="item">Item:</string>
+		<string id="amount">Amount:</string>
+		
+		
+		<string id="basestats">Base Stats:</string>
+		<string id="basehp">HP:</string>
+		<string id="basemp">Mana:</string>
+		<string id="baseattack">Attack:</string>
+		<string id="basearmor">Armor:</string>
+		<string id="basespeed">Speed:</string>
+		<string id="baseabilitypower">Ability Pwr:</string>
+		<string id="basemagicresist">Magic Resist:</string>
+		<string id="basepoints">Points:</string>
+		
+		<string id="learntspells">Spells</string>
+		<string id="spell">Spell:</string>
+		<string id="spellitem">{00}. {01} - Level: {02}</string>
+		<string id="spelllevel">Level:</string>
+		<string id="addspell">Add</string>
+		<string id="removespell">Remove</string>
+		
+		<string id="regen">Regen</string>
+		<string id="hpregen">HP (%);</string>
+		<string id="mpregen">MP (%):</string>
+		<string id="regenhint">% of HP/Mana to restore per tick.
+
+Tick timer saved in server config.xml.</string>
+
+		<string id="combat">Combat (Unarmed)</string>
+		<string id="basedamage">Base Damage:</string>
+		<string id="critchance">Crit Chance (%):</string>
+		<string id="damagetype">Damage Type:</string>
+		<string id="damagetype0">Physical</string>
+		<string id="damagetype1">Magic</string>
+		<string id="damagetype2">True</string>
+		<string id="scalingstat">Scaling Stat:</string>
+		<string id="scalingamount">Scaling Amount:</string>
+		<string id="attackanimation">Attack Animation:</string>
+		
+		<string id="leveling">Leveling Up</string>
+		<string id="levelexp">Base Exp to Level:</string>
+		<string id="levelexpscale">Exp Increase (Per Level %):</string>
+		<string id="levelboosts">Level Up Boosts</string>
+		<string id="staticboost">Static</string>
+		<string id="percentageboost">Percentage</string>
+		<string id="hpboost">Max HP (+{00}):</string>
+		<string id="mpboost">Max MP (+{00}):</string>
+		<string id="attackboost">Attack (+{00}):</string>
+		<string id="armorboost">Armor (+{00}):</string>
+		<string id="speedboost">Speed (+{00}):</string>
+		<string id="abilitypowerboost">Ability Pwr (+{00}):</string>
+		<string id="magicresistboost">Magic Resist (+{00}):</string>
+		<string id="pointsboost">Points (+):</string>
+		<string id="boostpercent"> %</string>
+		
+		<string id="save">Save</string>
+		<string id="cancel">Cancel</string>
+	</ClassEditor>
+	<DynamicRequirements>
+		<string id="title">Dynamic Requirements</string>
+		<string id="conditionlists">Condition Lists</string>
+		<string id="addlist">Add List</string>
+		<string id="removelist">Remove List</string>
+		<string id="savelists">Save</string>
+		<string id="cancellists">Cancel</string>
+		<string id="conditionlist">Condition List</string>
+		<string id="listname">Name:</string>
+		<string id="addcondition">Add Condition</string>
+		<string id="removecondition">Remove Condition</string>
+		<string id="saveconditions">Okay</string>
+		<string id="cancelconditions">Cancel</string>
+		<string id="instructionsitem">Below are condition lists. If conditions are met on any of the lists then the player can use the item.</string>
+		<string id="instructionsresource">Below are condition lists. If conditions are met on any of the lists then the player can harvest the resource.</string>
+		<string id="instructionsspell">Below are condition lists. If conditions are met on any of the lists then the player can use cast the spell.</string>
+		<string id="instructionsquest">Below are condition lists. If conditions are met on any of the lists then the player can start the quest.</string>
+		<string id="instructionsevent">Below are condition lists. If conditions are met on any of the lists then the event can spawn/run.</string>
+		<string id="conditioneditor">Add/Edit Condition</string>
+	</DynamicRequirements>
 	<SwitchVariableEditor>
 		<string id="title">Switch and Variable Editor</string>
 		<string id="type">Switch or Variable Type</string>
@@ -562,6 +727,7 @@ Negative values for time to flow backwards.</string>
 		<string id="mapnotfound">NOT FOUND</string>
 		<string id="moveroute">Set Move Route for {00}</string>
 		<string id="waitforroute">Wait for Move Route Completion of {00}</string>
+		<string id="moverouteplayer">Player</string>
 		<string id="moverouteevent">Event #{00} {01}</string>
 		<string id="deletedevent">Deleted Event!</string>
 		<string id="holdplayer">Hold Player</string>
@@ -655,6 +821,7 @@ Negative values for time to flow backwards.</string>
 	<EventMoveRoute>
 		<string id="title">Move Route</string>
 		<string id="thisevent">[THIS EVENT]</string>
+		<string id="player">Player</string>
 		<string id="commands">Commands</string>
 		
 		<string id="move">Move</string>

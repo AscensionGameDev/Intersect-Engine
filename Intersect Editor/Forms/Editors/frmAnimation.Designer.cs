@@ -32,50 +32,57 @@ namespace Intersect_Editor.Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmAnimation));
-            this.groupBox1 = new DarkUI.Controls.DarkGroupBox();
+            this.grpAnimations = new DarkUI.Controls.DarkGroupBox();
             this.lstAnimations = new System.Windows.Forms.ListBox();
-            this.groupBox2 = new DarkUI.Controls.DarkGroupBox();
+            this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
             this.btnSwap = new DarkUI.Controls.DarkButton();
             this.scrlDarkness = new DarkUI.Controls.DarkScrollBar();
             this.labelDarkness = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lblSound = new System.Windows.Forms.Label();
             this.cmbSound = new DarkUI.Controls.DarkComboBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblName = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
-            this.groupBox3 = new DarkUI.Controls.DarkGroupBox();
-            this.groupBox8 = new DarkUI.Controls.DarkGroupBox();
+            this.grpLower = new DarkUI.Controls.DarkGroupBox();
+            this.nudLowerLoopCount = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudLowerFrameDuration = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudLowerFrameCount = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudLowerVerticalFrames = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudLowerHorizontalFrames = new DarkUI.Controls.DarkNumericUpDown();
+            this.grpLowerFrameOpts = new DarkUI.Controls.DarkGroupBox();
             this.btnLowerClone = new DarkUI.Controls.DarkButton();
-            this.groupBox5 = new DarkUI.Controls.DarkGroupBox();
+            this.lightEditorLower = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
+            this.grpLowerPlayback = new DarkUI.Controls.DarkGroupBox();
             this.btnPlayLower = new DarkUI.Controls.DarkButton();
             this.scrlLowerFrame = new DarkUI.Controls.DarkScrollBar();
             this.lblLowerFrame = new System.Windows.Forms.Label();
             this.lblLowerLoopCount = new System.Windows.Forms.Label();
             this.lblLowerFrameDuration = new System.Windows.Forms.Label();
             this.lblLowerFrameCount = new System.Windows.Forms.Label();
-            this.lblLowerLoopCount = new System.Windows.Forms.Label();
-            this.lblLowerFrameDuration = new System.Windows.Forms.Label();
-            this.lblLowerFrameCount = new System.Windows.Forms.Label();
             this.lblLowerVerticalFrames = new System.Windows.Forms.Label();
             this.lblLowerHorizontalFrames = new System.Windows.Forms.Label();
             this.cmbLowerGraphic = new DarkUI.Controls.DarkComboBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblLowerGraphic = new System.Windows.Forms.Label();
             this.picLowerAnimation = new System.Windows.Forms.PictureBox();
-            this.groupBox4 = new DarkUI.Controls.DarkGroupBox();
-            this.groupBox6 = new DarkUI.Controls.DarkGroupBox();
+            this.grpUpper = new DarkUI.Controls.DarkGroupBox();
+            this.nudUpperLoopCount = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudUpperFrameDuration = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudUpperFrameCount = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudUpperVerticalFrames = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudUpperHorizontalFrames = new DarkUI.Controls.DarkNumericUpDown();
+            this.grpUpperPlayback = new DarkUI.Controls.DarkGroupBox();
             this.btnPlayUpper = new DarkUI.Controls.DarkButton();
             this.scrlUpperFrame = new DarkUI.Controls.DarkScrollBar();
             this.lblUpperFrame = new System.Windows.Forms.Label();
-            this.groupBox7 = new DarkUI.Controls.DarkGroupBox();
+            this.grpUpperFrameOpts = new DarkUI.Controls.DarkGroupBox();
             this.btnUpperClone = new DarkUI.Controls.DarkButton();
+            this.lightEditorUpper = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.lblUpperLoopCount = new System.Windows.Forms.Label();
-            this.lblUpperFrameDuration = new System.Windows.Forms.Label();
-            this.lblUpperFrameCount = new System.Windows.Forms.Label();
             this.lblUpperFrameDuration = new System.Windows.Forms.Label();
             this.lblUpperFrameCount = new System.Windows.Forms.Label();
             this.lblUpperVerticalFrames = new System.Windows.Forms.Label();
             this.lblUpperHorizontalFrames = new System.Windows.Forms.Label();
             this.cmbUpperGraphic = new DarkUI.Controls.DarkComboBox();
-            this.label14 = new System.Windows.Forms.Label();
+            this.lblUpperGraphic = new System.Windows.Forms.Label();
             this.picUpperAnimation = new System.Windows.Forms.PictureBox();
             this.tmrUpperAnimation = new System.Windows.Forms.Timer(this.components);
             this.tmrLowerAnimation = new System.Windows.Forms.Timer(this.components);
@@ -91,54 +98,42 @@ namespace Intersect_Editor.Forms
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.nudLowerHorizontalFrames = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudLowerVerticalFrames = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudLowerFrameCount = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudLowerFrameDuration = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudLowerLoopCount = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudUpperHorizontalFrames = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudUpperVerticalFrames = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudUpperFrameCount = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudUpperFrameDuration = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudUpperLoopCount = new DarkUI.Controls.DarkNumericUpDown();
-            this.lightEditorUpper = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
-            this.lightEditorLower = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.groupBox8.SuspendLayout();
-            this.groupBox5.SuspendLayout();
+            this.grpAnimations.SuspendLayout();
+            this.grpGeneral.SuspendLayout();
+            this.grpLower.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLowerLoopCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLowerFrameDuration)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLowerFrameCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLowerVerticalFrames)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLowerHorizontalFrames)).BeginInit();
+            this.grpLowerFrameOpts.SuspendLayout();
+            this.grpLowerPlayback.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLowerAnimation)).BeginInit();
-            this.groupBox4.SuspendLayout();
-            this.groupBox6.SuspendLayout();
-            this.groupBox7.SuspendLayout();
+            this.grpUpper.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudUpperLoopCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudUpperFrameDuration)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudUpperFrameCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudUpperVerticalFrames)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudUpperHorizontalFrames)).BeginInit();
+            this.grpUpperPlayback.SuspendLayout();
+            this.grpUpperFrameOpts.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picUpperAnimation)).BeginInit();
             this.pnlContainer.SuspendLayout();
             this.toolStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudLowerHorizontalFrames)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudLowerVerticalFrames)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudLowerFrameCount)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudLowerFrameDuration)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudLowerLoopCount)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudUpperHorizontalFrames)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudUpperVerticalFrames)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudUpperFrameCount)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudUpperFrameDuration)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudUpperLoopCount)).BeginInit();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpAnimations
             // 
-            this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox1.Controls.Add(this.lstAnimations);
-            this.groupBox1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox1.Location = new System.Drawing.Point(3, 28);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(203, 537);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Animations";
+            this.grpAnimations.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpAnimations.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpAnimations.Controls.Add(this.lstAnimations);
+            this.grpAnimations.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpAnimations.Location = new System.Drawing.Point(3, 28);
+            this.grpAnimations.Name = "grpAnimations";
+            this.grpAnimations.Size = new System.Drawing.Size(203, 537);
+            this.grpAnimations.TabIndex = 17;
+            this.grpAnimations.TabStop = false;
+            this.grpAnimations.Text = "Animations";
             // 
             // lstAnimations
             // 
@@ -153,24 +148,24 @@ namespace Intersect_Editor.Forms
             this.lstAnimations.Click += new System.EventHandler(this.lstAnimations_Click);
             this.lstAnimations.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
-            // groupBox2
+            // grpGeneral
             // 
-            this.groupBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox2.Controls.Add(this.btnSwap);
-            this.groupBox2.Controls.Add(this.scrlDarkness);
-            this.groupBox2.Controls.Add(this.labelDarkness);
-            this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Controls.Add(this.cmbSound);
-            this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.txtName);
-            this.groupBox2.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox2.Location = new System.Drawing.Point(1, 1);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(988, 76);
-            this.groupBox2.TabIndex = 18;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "General";
+            this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGeneral.Controls.Add(this.btnSwap);
+            this.grpGeneral.Controls.Add(this.scrlDarkness);
+            this.grpGeneral.Controls.Add(this.labelDarkness);
+            this.grpGeneral.Controls.Add(this.lblSound);
+            this.grpGeneral.Controls.Add(this.cmbSound);
+            this.grpGeneral.Controls.Add(this.lblName);
+            this.grpGeneral.Controls.Add(this.txtName);
+            this.grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpGeneral.Location = new System.Drawing.Point(1, 1);
+            this.grpGeneral.Name = "grpGeneral";
+            this.grpGeneral.Size = new System.Drawing.Size(988, 76);
+            this.grpGeneral.TabIndex = 18;
+            this.grpGeneral.TabStop = false;
+            this.grpGeneral.Text = "General";
             // 
             // btnSwap
             // 
@@ -200,14 +195,14 @@ namespace Intersect_Editor.Forms
             this.labelDarkness.TabIndex = 4;
             this.labelDarkness.Text = "Simulate Darkness: 0";
             // 
-            // label2
+            // lblSound
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(4, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(41, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Sound:";
+            this.lblSound.AutoSize = true;
+            this.lblSound.Location = new System.Drawing.Point(4, 48);
+            this.lblSound.Name = "lblSound";
+            this.lblSound.Size = new System.Drawing.Size(41, 13);
+            this.lblSound.TabIndex = 3;
+            this.lblSound.Text = "Sound:";
             // 
             // cmbSound
             // 
@@ -227,14 +222,14 @@ namespace Intersect_Editor.Forms
             this.cmbSound.TabIndex = 2;
             this.cmbSound.SelectedIndexChanged += new System.EventHandler(this.cmbSound_SelectedIndexChanged);
             // 
-            // label1
+            // lblName
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Name:";
+            this.lblName.AutoSize = true;
+            this.lblName.Location = new System.Drawing.Point(6, 20);
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(38, 13);
+            this.lblName.TabIndex = 1;
+            this.lblName.Text = "Name:";
             // 
             // txtName
             // 
@@ -247,46 +242,161 @@ namespace Intersect_Editor.Forms
             this.txtName.TabIndex = 0;
             this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
             // 
-            // groupBox3
+            // grpLower
             // 
-            this.groupBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox3.Controls.Add(this.nudLowerLoopCount);
-            this.groupBox3.Controls.Add(this.nudLowerFrameDuration);
-            this.groupBox3.Controls.Add(this.nudLowerFrameCount);
-            this.groupBox3.Controls.Add(this.nudLowerVerticalFrames);
-            this.groupBox3.Controls.Add(this.nudLowerHorizontalFrames);
-            this.groupBox3.Controls.Add(this.groupBox8);
-            this.groupBox3.Controls.Add(this.groupBox5);
-            this.groupBox3.Controls.Add(this.lblLowerLoopCount);
-            this.groupBox3.Controls.Add(this.lblLowerFrameDuration);
-            this.groupBox3.Controls.Add(this.lblLowerFrameCount);
-            this.groupBox3.Controls.Add(this.lblLowerVerticalFrames);
-            this.groupBox3.Controls.Add(this.lblLowerHorizontalFrames);
-            this.groupBox3.Controls.Add(this.cmbLowerGraphic);
-            this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Controls.Add(this.picLowerAnimation);
-            this.groupBox3.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox3.Location = new System.Drawing.Point(1, 84);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(484, 454);
-            this.groupBox3.TabIndex = 19;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Lower Layer (Below Target)";
+            this.grpLower.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpLower.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpLower.Controls.Add(this.nudLowerLoopCount);
+            this.grpLower.Controls.Add(this.nudLowerFrameDuration);
+            this.grpLower.Controls.Add(this.nudLowerFrameCount);
+            this.grpLower.Controls.Add(this.nudLowerVerticalFrames);
+            this.grpLower.Controls.Add(this.nudLowerHorizontalFrames);
+            this.grpLower.Controls.Add(this.grpLowerFrameOpts);
+            this.grpLower.Controls.Add(this.grpLowerPlayback);
+            this.grpLower.Controls.Add(this.lblLowerLoopCount);
+            this.grpLower.Controls.Add(this.lblLowerFrameDuration);
+            this.grpLower.Controls.Add(this.lblLowerFrameCount);
+            this.grpLower.Controls.Add(this.lblLowerVerticalFrames);
+            this.grpLower.Controls.Add(this.lblLowerHorizontalFrames);
+            this.grpLower.Controls.Add(this.cmbLowerGraphic);
+            this.grpLower.Controls.Add(this.lblLowerGraphic);
+            this.grpLower.Controls.Add(this.picLowerAnimation);
+            this.grpLower.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpLower.Location = new System.Drawing.Point(1, 84);
+            this.grpLower.Name = "grpLower";
+            this.grpLower.Size = new System.Drawing.Size(484, 454);
+            this.grpLower.TabIndex = 19;
+            this.grpLower.TabStop = false;
+            this.grpLower.Text = "Lower Layer (Below Target)";
             // 
-            // groupBox8
+            // nudLowerLoopCount
             // 
-            this.groupBox8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox8.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox8.Controls.Add(this.btnLowerClone);
-            this.groupBox8.Controls.Add(this.lightEditorLower);
-            this.groupBox8.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox8.Location = new System.Drawing.Point(213, 93);
-            this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(265, 319);
-            this.groupBox8.TabIndex = 20;
-            this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Frame Options";
+            this.nudLowerLoopCount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudLowerLoopCount.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudLowerLoopCount.Location = new System.Drawing.Point(9, 398);
+            this.nudLowerLoopCount.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudLowerLoopCount.Name = "nudLowerLoopCount";
+            this.nudLowerLoopCount.Size = new System.Drawing.Size(194, 20);
+            this.nudLowerLoopCount.TabIndex = 25;
+            this.nudLowerLoopCount.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudLowerLoopCount.ValueChanged += new System.EventHandler(this.nudLowerLoopCount_ValueChanged);
+            // 
+            // nudLowerFrameDuration
+            // 
+            this.nudLowerFrameDuration.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudLowerFrameDuration.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudLowerFrameDuration.Location = new System.Drawing.Point(10, 363);
+            this.nudLowerFrameDuration.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.nudLowerFrameDuration.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudLowerFrameDuration.Name = "nudLowerFrameDuration";
+            this.nudLowerFrameDuration.Size = new System.Drawing.Size(194, 20);
+            this.nudLowerFrameDuration.TabIndex = 24;
+            this.nudLowerFrameDuration.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudLowerFrameDuration.ValueChanged += new System.EventHandler(this.nudLowerFrameDuration_ValueChanged);
+            // 
+            // nudLowerFrameCount
+            // 
+            this.nudLowerFrameCount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudLowerFrameCount.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudLowerFrameCount.Location = new System.Drawing.Point(10, 330);
+            this.nudLowerFrameCount.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudLowerFrameCount.Name = "nudLowerFrameCount";
+            this.nudLowerFrameCount.Size = new System.Drawing.Size(194, 20);
+            this.nudLowerFrameCount.TabIndex = 23;
+            this.nudLowerFrameCount.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudLowerFrameCount.ValueChanged += new System.EventHandler(this.nudLowerFrameCount_ValueChanged);
+            // 
+            // nudLowerVerticalFrames
+            // 
+            this.nudLowerVerticalFrames.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudLowerVerticalFrames.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudLowerVerticalFrames.Location = new System.Drawing.Point(10, 296);
+            this.nudLowerVerticalFrames.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.nudLowerVerticalFrames.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudLowerVerticalFrames.Name = "nudLowerVerticalFrames";
+            this.nudLowerVerticalFrames.Size = new System.Drawing.Size(194, 20);
+            this.nudLowerVerticalFrames.TabIndex = 22;
+            this.nudLowerVerticalFrames.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudLowerVerticalFrames.ValueChanged += new System.EventHandler(this.nudLowerVerticalFrames_ValueChanged);
+            // 
+            // nudLowerHorizontalFrames
+            // 
+            this.nudLowerHorizontalFrames.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudLowerHorizontalFrames.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudLowerHorizontalFrames.Location = new System.Drawing.Point(10, 260);
+            this.nudLowerHorizontalFrames.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.nudLowerHorizontalFrames.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudLowerHorizontalFrames.Name = "nudLowerHorizontalFrames";
+            this.nudLowerHorizontalFrames.Size = new System.Drawing.Size(194, 20);
+            this.nudLowerHorizontalFrames.TabIndex = 21;
+            this.nudLowerHorizontalFrames.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudLowerHorizontalFrames.ValueChanged += new System.EventHandler(this.nudLowerHorizontalFrames_ValueChanged);
+            // 
+            // grpLowerFrameOpts
+            // 
+            this.grpLowerFrameOpts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpLowerFrameOpts.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpLowerFrameOpts.Controls.Add(this.btnLowerClone);
+            this.grpLowerFrameOpts.Controls.Add(this.lightEditorLower);
+            this.grpLowerFrameOpts.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpLowerFrameOpts.Location = new System.Drawing.Point(213, 93);
+            this.grpLowerFrameOpts.Name = "grpLowerFrameOpts";
+            this.grpLowerFrameOpts.Size = new System.Drawing.Size(265, 319);
+            this.grpLowerFrameOpts.TabIndex = 20;
+            this.grpLowerFrameOpts.TabStop = false;
+            this.grpLowerFrameOpts.Text = "Frame Options";
             // 
             // btnLowerClone
             // 
@@ -298,20 +408,28 @@ namespace Intersect_Editor.Forms
             this.btnLowerClone.Text = "Clone From Previous";
             this.btnLowerClone.Click += new System.EventHandler(this.btnLowerClone_Click);
             // 
-            // groupBox5
+            // lightEditorLower
             // 
-            this.groupBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox5.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox5.Controls.Add(this.btnPlayLower);
-            this.groupBox5.Controls.Add(this.scrlLowerFrame);
-            this.groupBox5.Controls.Add(this.lblLowerFrame);
-            this.groupBox5.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox5.Location = new System.Drawing.Point(213, 19);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(265, 68);
-            this.groupBox5.TabIndex = 16;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Playback";
+            this.lightEditorLower.Location = new System.Drawing.Point(6, 28);
+            this.lightEditorLower.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.lightEditorLower.Name = "lightEditorLower";
+            this.lightEditorLower.Size = new System.Drawing.Size(253, 274);
+            this.lightEditorLower.TabIndex = 15;
+            // 
+            // grpLowerPlayback
+            // 
+            this.grpLowerPlayback.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpLowerPlayback.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpLowerPlayback.Controls.Add(this.btnPlayLower);
+            this.grpLowerPlayback.Controls.Add(this.scrlLowerFrame);
+            this.grpLowerPlayback.Controls.Add(this.lblLowerFrame);
+            this.grpLowerPlayback.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpLowerPlayback.Location = new System.Drawing.Point(213, 19);
+            this.grpLowerPlayback.Name = "grpLowerPlayback";
+            this.grpLowerPlayback.Size = new System.Drawing.Size(265, 68);
+            this.grpLowerPlayback.TabIndex = 16;
+            this.grpLowerPlayback.TabStop = false;
+            this.grpLowerPlayback.Text = "Playback";
             // 
             // btnPlayLower
             // 
@@ -407,14 +525,14 @@ namespace Intersect_Editor.Forms
             this.cmbLowerGraphic.TabIndex = 3;
             this.cmbLowerGraphic.SelectedIndexChanged += new System.EventHandler(this.cmbLowerGraphic_SelectedIndexChanged);
             // 
-            // label3
+            // lblLowerGraphic
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(7, 226);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(50, 13);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "Graphic: ";
+            this.lblLowerGraphic.AutoSize = true;
+            this.lblLowerGraphic.Location = new System.Drawing.Point(7, 226);
+            this.lblLowerGraphic.Name = "lblLowerGraphic";
+            this.lblLowerGraphic.Size = new System.Drawing.Size(50, 13);
+            this.lblLowerGraphic.TabIndex = 1;
+            this.lblLowerGraphic.Text = "Graphic: ";
             // 
             // picLowerAnimation
             // 
@@ -424,47 +542,162 @@ namespace Intersect_Editor.Forms
             this.picLowerAnimation.TabIndex = 0;
             this.picLowerAnimation.TabStop = false;
             // 
-            // groupBox4
+            // grpUpper
             // 
-            this.groupBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox4.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox4.Controls.Add(this.nudUpperLoopCount);
-            this.groupBox4.Controls.Add(this.nudUpperFrameDuration);
-            this.groupBox4.Controls.Add(this.nudUpperFrameCount);
-            this.groupBox4.Controls.Add(this.nudUpperVerticalFrames);
-            this.groupBox4.Controls.Add(this.nudUpperHorizontalFrames);
-            this.groupBox4.Controls.Add(this.groupBox6);
-            this.groupBox4.Controls.Add(this.groupBox7);
-            this.groupBox4.Controls.Add(this.lblUpperLoopCount);
-            this.groupBox4.Controls.Add(this.lblUpperFrameDuration);
-            this.groupBox4.Controls.Add(this.lblUpperFrameCount);
-            this.groupBox4.Controls.Add(this.lblUpperVerticalFrames);
-            this.groupBox4.Controls.Add(this.lblUpperHorizontalFrames);
-            this.groupBox4.Controls.Add(this.cmbUpperGraphic);
-            this.groupBox4.Controls.Add(this.label14);
-            this.groupBox4.Controls.Add(this.picUpperAnimation);
-            this.groupBox4.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox4.Location = new System.Drawing.Point(504, 84);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(485, 454);
-            this.groupBox4.TabIndex = 20;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Upper Layer (Above Target)";
+            this.grpUpper.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpUpper.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpUpper.Controls.Add(this.nudUpperLoopCount);
+            this.grpUpper.Controls.Add(this.nudUpperFrameDuration);
+            this.grpUpper.Controls.Add(this.nudUpperFrameCount);
+            this.grpUpper.Controls.Add(this.nudUpperVerticalFrames);
+            this.grpUpper.Controls.Add(this.nudUpperHorizontalFrames);
+            this.grpUpper.Controls.Add(this.grpUpperPlayback);
+            this.grpUpper.Controls.Add(this.grpUpperFrameOpts);
+            this.grpUpper.Controls.Add(this.lblUpperLoopCount);
+            this.grpUpper.Controls.Add(this.lblUpperFrameDuration);
+            this.grpUpper.Controls.Add(this.lblUpperFrameCount);
+            this.grpUpper.Controls.Add(this.lblUpperVerticalFrames);
+            this.grpUpper.Controls.Add(this.lblUpperHorizontalFrames);
+            this.grpUpper.Controls.Add(this.cmbUpperGraphic);
+            this.grpUpper.Controls.Add(this.lblUpperGraphic);
+            this.grpUpper.Controls.Add(this.picUpperAnimation);
+            this.grpUpper.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpUpper.Location = new System.Drawing.Point(504, 84);
+            this.grpUpper.Name = "grpUpper";
+            this.grpUpper.Size = new System.Drawing.Size(485, 454);
+            this.grpUpper.TabIndex = 20;
+            this.grpUpper.TabStop = false;
+            this.grpUpper.Text = "Upper Layer (Above Target)";
             // 
-            // groupBox6
+            // nudUpperLoopCount
             // 
-            this.groupBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox6.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox6.Controls.Add(this.btnPlayUpper);
-            this.groupBox6.Controls.Add(this.scrlUpperFrame);
-            this.groupBox6.Controls.Add(this.lblUpperFrame);
-            this.groupBox6.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox6.Location = new System.Drawing.Point(212, 19);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(265, 68);
-            this.groupBox6.TabIndex = 18;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Playback";
+            this.nudUpperLoopCount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudUpperLoopCount.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudUpperLoopCount.Location = new System.Drawing.Point(6, 398);
+            this.nudUpperLoopCount.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudUpperLoopCount.Name = "nudUpperLoopCount";
+            this.nudUpperLoopCount.Size = new System.Drawing.Size(194, 20);
+            this.nudUpperLoopCount.TabIndex = 30;
+            this.nudUpperLoopCount.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudUpperLoopCount.ValueChanged += new System.EventHandler(this.nudUpperLoopCount_ValueChanged);
+            // 
+            // nudUpperFrameDuration
+            // 
+            this.nudUpperFrameDuration.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudUpperFrameDuration.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudUpperFrameDuration.Location = new System.Drawing.Point(6, 363);
+            this.nudUpperFrameDuration.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.nudUpperFrameDuration.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudUpperFrameDuration.Name = "nudUpperFrameDuration";
+            this.nudUpperFrameDuration.Size = new System.Drawing.Size(194, 20);
+            this.nudUpperFrameDuration.TabIndex = 29;
+            this.nudUpperFrameDuration.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudUpperFrameDuration.ValueChanged += new System.EventHandler(this.nudUpperFrameDuration_ValueChanged);
+            // 
+            // nudUpperFrameCount
+            // 
+            this.nudUpperFrameCount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudUpperFrameCount.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudUpperFrameCount.Location = new System.Drawing.Point(6, 330);
+            this.nudUpperFrameCount.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudUpperFrameCount.Name = "nudUpperFrameCount";
+            this.nudUpperFrameCount.Size = new System.Drawing.Size(194, 20);
+            this.nudUpperFrameCount.TabIndex = 28;
+            this.nudUpperFrameCount.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudUpperFrameCount.ValueChanged += new System.EventHandler(this.nudUpperFrameCount_ValueChanged);
+            // 
+            // nudUpperVerticalFrames
+            // 
+            this.nudUpperVerticalFrames.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudUpperVerticalFrames.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudUpperVerticalFrames.Location = new System.Drawing.Point(6, 296);
+            this.nudUpperVerticalFrames.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.nudUpperVerticalFrames.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudUpperVerticalFrames.Name = "nudUpperVerticalFrames";
+            this.nudUpperVerticalFrames.Size = new System.Drawing.Size(194, 20);
+            this.nudUpperVerticalFrames.TabIndex = 27;
+            this.nudUpperVerticalFrames.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudUpperVerticalFrames.ValueChanged += new System.EventHandler(this.nudUpperVerticalFrames_ValueChanged);
+            // 
+            // nudUpperHorizontalFrames
+            // 
+            this.nudUpperHorizontalFrames.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudUpperHorizontalFrames.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudUpperHorizontalFrames.Location = new System.Drawing.Point(6, 263);
+            this.nudUpperHorizontalFrames.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.nudUpperHorizontalFrames.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudUpperHorizontalFrames.Name = "nudUpperHorizontalFrames";
+            this.nudUpperHorizontalFrames.Size = new System.Drawing.Size(194, 20);
+            this.nudUpperHorizontalFrames.TabIndex = 26;
+            this.nudUpperHorizontalFrames.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudUpperHorizontalFrames.ValueChanged += new System.EventHandler(this.nudUpperHorizontalFrames_ValueChanged);
+            // 
+            // grpUpperPlayback
+            // 
+            this.grpUpperPlayback.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpUpperPlayback.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpUpperPlayback.Controls.Add(this.btnPlayUpper);
+            this.grpUpperPlayback.Controls.Add(this.scrlUpperFrame);
+            this.grpUpperPlayback.Controls.Add(this.lblUpperFrame);
+            this.grpUpperPlayback.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpUpperPlayback.Location = new System.Drawing.Point(212, 19);
+            this.grpUpperPlayback.Name = "grpUpperPlayback";
+            this.grpUpperPlayback.Size = new System.Drawing.Size(265, 68);
+            this.grpUpperPlayback.TabIndex = 18;
+            this.grpUpperPlayback.TabStop = false;
+            this.grpUpperPlayback.Text = "Playback";
             // 
             // btnPlayUpper
             // 
@@ -497,19 +730,19 @@ namespace Intersect_Editor.Forms
             this.lblUpperFrame.TabIndex = 14;
             this.lblUpperFrame.Text = "Frame: 1";
             // 
-            // groupBox7
+            // grpUpperFrameOpts
             // 
-            this.groupBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox7.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox7.Controls.Add(this.btnUpperClone);
-            this.groupBox7.Controls.Add(this.lightEditorUpper);
-            this.groupBox7.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox7.Location = new System.Drawing.Point(212, 93);
-            this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(265, 319);
-            this.groupBox7.TabIndex = 19;
-            this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "Frame Options";
+            this.grpUpperFrameOpts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpUpperFrameOpts.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpUpperFrameOpts.Controls.Add(this.btnUpperClone);
+            this.grpUpperFrameOpts.Controls.Add(this.lightEditorUpper);
+            this.grpUpperFrameOpts.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpUpperFrameOpts.Location = new System.Drawing.Point(212, 93);
+            this.grpUpperFrameOpts.Name = "grpUpperFrameOpts";
+            this.grpUpperFrameOpts.Size = new System.Drawing.Size(265, 319);
+            this.grpUpperFrameOpts.TabIndex = 19;
+            this.grpUpperFrameOpts.TabStop = false;
+            this.grpUpperFrameOpts.Text = "Frame Options";
             // 
             // btnUpperClone
             // 
@@ -520,6 +753,14 @@ namespace Intersect_Editor.Forms
             this.btnUpperClone.TabIndex = 17;
             this.btnUpperClone.Text = "Clone From Previous";
             this.btnUpperClone.Click += new System.EventHandler(this.btnUpperClone_Click);
+            // 
+            // lightEditorUpper
+            // 
+            this.lightEditorUpper.Location = new System.Drawing.Point(6, 28);
+            this.lightEditorUpper.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.lightEditorUpper.Name = "lightEditorUpper";
+            this.lightEditorUpper.Size = new System.Drawing.Size(253, 274);
+            this.lightEditorUpper.TabIndex = 15;
             // 
             // lblUpperLoopCount
             // 
@@ -584,14 +825,14 @@ namespace Intersect_Editor.Forms
             this.cmbUpperGraphic.TabIndex = 15;
             this.cmbUpperGraphic.SelectedIndexChanged += new System.EventHandler(this.cmbUpperGraphic_SelectedIndexChanged);
             // 
-            // label14
+            // lblUpperGraphic
             // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(6, 226);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(50, 13);
-            this.label14.TabIndex = 14;
-            this.label14.Text = "Graphic: ";
+            this.lblUpperGraphic.AutoSize = true;
+            this.lblUpperGraphic.Location = new System.Drawing.Point(6, 226);
+            this.lblUpperGraphic.Name = "lblUpperGraphic";
+            this.lblUpperGraphic.Size = new System.Drawing.Size(50, 13);
+            this.lblUpperGraphic.TabIndex = 14;
+            this.lblUpperGraphic.Text = "Graphic: ";
             // 
             // picUpperAnimation
             // 
@@ -634,9 +875,9 @@ namespace Intersect_Editor.Forms
             // 
             // pnlContainer
             // 
-            this.pnlContainer.Controls.Add(this.groupBox4);
-            this.pnlContainer.Controls.Add(this.groupBox2);
-            this.pnlContainer.Controls.Add(this.groupBox3);
+            this.pnlContainer.Controls.Add(this.grpUpper);
+            this.pnlContainer.Controls.Add(this.grpGeneral);
+            this.pnlContainer.Controls.Add(this.grpLower);
             this.pnlContainer.Location = new System.Drawing.Point(216, 28);
             this.pnlContainer.Name = "pnlContainer";
             this.pnlContainer.Size = new System.Drawing.Size(988, 537);
@@ -744,251 +985,6 @@ namespace Intersect_Editor.Forms
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // nudLowerHorizontalFrames
-            // 
-            this.nudLowerHorizontalFrames.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudLowerHorizontalFrames.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudLowerHorizontalFrames.Location = new System.Drawing.Point(10, 260);
-            this.nudLowerHorizontalFrames.Maximum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-            this.nudLowerHorizontalFrames.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudLowerHorizontalFrames.Name = "nudLowerHorizontalFrames";
-            this.nudLowerHorizontalFrames.Size = new System.Drawing.Size(194, 20);
-            this.nudLowerHorizontalFrames.TabIndex = 21;
-            this.nudLowerHorizontalFrames.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudLowerHorizontalFrames.ValueChanged += new System.EventHandler(this.nudLowerHorizontalFrames_ValueChanged);
-            // 
-            // nudLowerVerticalFrames
-            // 
-            this.nudLowerVerticalFrames.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudLowerVerticalFrames.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudLowerVerticalFrames.Location = new System.Drawing.Point(10, 296);
-            this.nudLowerVerticalFrames.Maximum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-            this.nudLowerVerticalFrames.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudLowerVerticalFrames.Name = "nudLowerVerticalFrames";
-            this.nudLowerVerticalFrames.Size = new System.Drawing.Size(194, 20);
-            this.nudLowerVerticalFrames.TabIndex = 22;
-            this.nudLowerVerticalFrames.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudLowerVerticalFrames.ValueChanged += new System.EventHandler(this.nudLowerVerticalFrames_ValueChanged);
-            // 
-            // nudLowerFrameCount
-            // 
-            this.nudLowerFrameCount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudLowerFrameCount.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudLowerFrameCount.Location = new System.Drawing.Point(10, 330);
-            this.nudLowerFrameCount.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudLowerFrameCount.Name = "nudLowerFrameCount";
-            this.nudLowerFrameCount.Size = new System.Drawing.Size(194, 20);
-            this.nudLowerFrameCount.TabIndex = 23;
-            this.nudLowerFrameCount.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudLowerFrameCount.ValueChanged += new System.EventHandler(this.nudLowerFrameCount_ValueChanged);
-            // 
-            // nudLowerFrameDuration
-            // 
-            this.nudLowerFrameDuration.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudLowerFrameDuration.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudLowerFrameDuration.Location = new System.Drawing.Point(10, 363);
-            this.nudLowerFrameDuration.Maximum = new decimal(new int[] {
-            20000,
-            0,
-            0,
-            0});
-            this.nudLowerFrameDuration.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudLowerFrameDuration.Name = "nudLowerFrameDuration";
-            this.nudLowerFrameDuration.Size = new System.Drawing.Size(194, 20);
-            this.nudLowerFrameDuration.TabIndex = 24;
-            this.nudLowerFrameDuration.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.nudLowerFrameDuration.ValueChanged += new System.EventHandler(this.nudLowerFrameDuration_ValueChanged);
-            // 
-            // nudLowerLoopCount
-            // 
-            this.nudLowerLoopCount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudLowerLoopCount.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudLowerLoopCount.Location = new System.Drawing.Point(9, 398);
-            this.nudLowerLoopCount.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.nudLowerLoopCount.Name = "nudLowerLoopCount";
-            this.nudLowerLoopCount.Size = new System.Drawing.Size(194, 20);
-            this.nudLowerLoopCount.TabIndex = 25;
-            this.nudLowerLoopCount.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.nudLowerLoopCount.ValueChanged += new System.EventHandler(this.nudLowerLoopCount_ValueChanged);
-            // 
-            // nudUpperHorizontalFrames
-            // 
-            this.nudUpperHorizontalFrames.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudUpperHorizontalFrames.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudUpperHorizontalFrames.Location = new System.Drawing.Point(6, 263);
-            this.nudUpperHorizontalFrames.Maximum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-            this.nudUpperHorizontalFrames.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudUpperHorizontalFrames.Name = "nudUpperHorizontalFrames";
-            this.nudUpperHorizontalFrames.Size = new System.Drawing.Size(194, 20);
-            this.nudUpperHorizontalFrames.TabIndex = 26;
-            this.nudUpperHorizontalFrames.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudUpperHorizontalFrames.ValueChanged += new System.EventHandler(this.nudUpperHorizontalFrames_ValueChanged);
-            // 
-            // nudUpperVerticalFrames
-            // 
-            this.nudUpperVerticalFrames.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudUpperVerticalFrames.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudUpperVerticalFrames.Location = new System.Drawing.Point(6, 296);
-            this.nudUpperVerticalFrames.Maximum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-            this.nudUpperVerticalFrames.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudUpperVerticalFrames.Name = "nudUpperVerticalFrames";
-            this.nudUpperVerticalFrames.Size = new System.Drawing.Size(194, 20);
-            this.nudUpperVerticalFrames.TabIndex = 27;
-            this.nudUpperVerticalFrames.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudUpperVerticalFrames.ValueChanged += new System.EventHandler(this.nudUpperVerticalFrames_ValueChanged);
-            // 
-            // nudUpperFrameCount
-            // 
-            this.nudUpperFrameCount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudUpperFrameCount.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudUpperFrameCount.Location = new System.Drawing.Point(6, 330);
-            this.nudUpperFrameCount.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudUpperFrameCount.Name = "nudUpperFrameCount";
-            this.nudUpperFrameCount.Size = new System.Drawing.Size(194, 20);
-            this.nudUpperFrameCount.TabIndex = 28;
-            this.nudUpperFrameCount.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudUpperFrameCount.ValueChanged += new System.EventHandler(this.nudUpperFrameCount_ValueChanged);
-            // 
-            // nudUpperFrameDuration
-            // 
-            this.nudUpperFrameDuration.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudUpperFrameDuration.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudUpperFrameDuration.Location = new System.Drawing.Point(6, 363);
-            this.nudUpperFrameDuration.Maximum = new decimal(new int[] {
-            20000,
-            0,
-            0,
-            0});
-            this.nudUpperFrameDuration.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudUpperFrameDuration.Name = "nudUpperFrameDuration";
-            this.nudUpperFrameDuration.Size = new System.Drawing.Size(194, 20);
-            this.nudUpperFrameDuration.TabIndex = 29;
-            this.nudUpperFrameDuration.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.nudUpperFrameDuration.ValueChanged += new System.EventHandler(this.nudUpperFrameDuration_ValueChanged);
-            // 
-            // nudUpperLoopCount
-            // 
-            this.nudUpperLoopCount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudUpperLoopCount.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudUpperLoopCount.Location = new System.Drawing.Point(6, 398);
-            this.nudUpperLoopCount.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.nudUpperLoopCount.Name = "nudUpperLoopCount";
-            this.nudUpperLoopCount.Size = new System.Drawing.Size(194, 20);
-            this.nudUpperLoopCount.TabIndex = 30;
-            this.nudUpperLoopCount.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.nudUpperLoopCount.ValueChanged += new System.EventHandler(this.nudUpperLoopCount_ValueChanged);
-            // lightEditorUpper
-            // 
-            this.lightEditorUpper.Location = new System.Drawing.Point(6, 28);
-            this.lightEditorUpper.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.lightEditorUpper.Name = "lightEditorUpper";
-            this.lightEditorUpper.Size = new System.Drawing.Size(253, 274);
-            this.lightEditorUpper.TabIndex = 15;
-            // 
-            // lightEditorLower
-            // 
-            this.lightEditorLower.Location = new System.Drawing.Point(6, 28);
-            this.lightEditorLower.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.lightEditorLower.Name = "lightEditorLower";
-            this.lightEditorLower.Size = new System.Drawing.Size(253, 274);
-            this.lightEditorLower.TabIndex = 15;
-            // 
             // frmAnimation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -999,7 +995,7 @@ namespace Intersect_Editor.Forms
             this.ControlBox = false;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.grpAnimations);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.pnlContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -1010,78 +1006,78 @@ namespace Intersect_Editor.Forms
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmAnimation_FormClosed);
             this.Load += new System.EventHandler(this.frmAnimation_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            this.groupBox8.ResumeLayout(false);
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
+            this.grpAnimations.ResumeLayout(false);
+            this.grpGeneral.ResumeLayout(false);
+            this.grpGeneral.PerformLayout();
+            this.grpLower.ResumeLayout(false);
+            this.grpLower.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLowerLoopCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLowerFrameDuration)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLowerFrameCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLowerVerticalFrames)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLowerHorizontalFrames)).EndInit();
+            this.grpLowerFrameOpts.ResumeLayout(false);
+            this.grpLowerPlayback.ResumeLayout(false);
+            this.grpLowerPlayback.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLowerAnimation)).EndInit();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
-            this.groupBox7.ResumeLayout(false);
+            this.grpUpper.ResumeLayout(false);
+            this.grpUpper.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudUpperLoopCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudUpperFrameDuration)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudUpperFrameCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudUpperVerticalFrames)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudUpperHorizontalFrames)).EndInit();
+            this.grpUpperPlayback.ResumeLayout(false);
+            this.grpUpperPlayback.PerformLayout();
+            this.grpUpperFrameOpts.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picUpperAnimation)).EndInit();
             this.pnlContainer.ResumeLayout(false);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudLowerHorizontalFrames)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudLowerVerticalFrames)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudLowerFrameCount)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudLowerFrameDuration)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudLowerLoopCount)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudUpperHorizontalFrames)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudUpperVerticalFrames)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudUpperFrameCount)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudUpperFrameDuration)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudUpperLoopCount)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private DarkGroupBox groupBox1;
+        private DarkGroupBox grpAnimations;
         private System.Windows.Forms.ListBox lstAnimations;
-        private DarkGroupBox groupBox2;
-        private System.Windows.Forms.Label label2;
+        private DarkGroupBox grpGeneral;
+        private System.Windows.Forms.Label lblSound;
         private DarkComboBox cmbSound;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblName;
         private DarkTextBox txtName;
-        private DarkGroupBox groupBox3;
+        private DarkGroupBox grpLower;
         private System.Windows.Forms.Label lblLowerLoopCount;
         private System.Windows.Forms.Label lblLowerFrameDuration;
         private System.Windows.Forms.Label lblLowerFrameCount;
         private System.Windows.Forms.Label lblLowerVerticalFrames;
         private System.Windows.Forms.Label lblLowerHorizontalFrames;
         private DarkComboBox cmbLowerGraphic;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblLowerGraphic;
         private System.Windows.Forms.PictureBox picLowerAnimation;
-        private DarkGroupBox groupBox4;
+        private DarkGroupBox grpUpper;
         private System.Windows.Forms.Label lblUpperLoopCount;
         private System.Windows.Forms.Label lblUpperFrameDuration;
         private System.Windows.Forms.Label lblUpperFrameCount;
         private System.Windows.Forms.Label lblUpperVerticalFrames;
         private System.Windows.Forms.Label lblUpperHorizontalFrames;
         private DarkComboBox cmbUpperGraphic;
-        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label lblUpperGraphic;
         private System.Windows.Forms.PictureBox picUpperAnimation;
         private System.Windows.Forms.Timer tmrUpperAnimation;
         private System.Windows.Forms.Timer tmrLowerAnimation;
-        private DarkGroupBox groupBox5;
+        private DarkGroupBox grpLowerPlayback;
         private DarkButton btnPlayLower;
         private DarkScrollBar scrlLowerFrame;
         private System.Windows.Forms.Label lblLowerFrame;
-        private DarkGroupBox groupBox6;
+        private DarkGroupBox grpUpperPlayback;
         private DarkButton btnPlayUpper;
         private DarkScrollBar scrlUpperFrame;
         private System.Windows.Forms.Label lblUpperFrame;
-        private DarkGroupBox groupBox7;
+        private DarkGroupBox grpUpperFrameOpts;
         private Controls.LightEditorCtrl lightEditorUpper;
-        private DarkGroupBox groupBox8;
+        private DarkGroupBox grpLowerFrameOpts;
         private DarkButton btnLowerClone;
         private DarkButton btnUpperClone;
         public Controls.LightEditorCtrl lightEditorLower;

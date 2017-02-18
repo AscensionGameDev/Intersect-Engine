@@ -1663,7 +1663,7 @@ namespace Intersect_Editor.Forms
 
         private void btnEditConditions_Click(object sender, EventArgs e)
         {
-            var editForm = new frmDynamicRequirements(CurrentPage.ConditionLists);
+            var editForm = new frmDynamicRequirements(CurrentPage.ConditionLists, RequirementType.Event);
             editForm.ShowDialog();
         }
     }

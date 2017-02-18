@@ -10,21 +10,67 @@ using System.Windows.Forms;
 using Intersect_Editor.Forms.Editors.Event_Commands;
 using Intersect_Library.GameObjects.Conditions;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors
 {
+    public enum RequirementType
+    {
+        Item,
+        Resource,
+        Spell,
+        Event,
+        Quest
+    }
     public partial class frmDynamicRequirements : Form
     {
         private ConditionLists _sourceLists;
         private ConditionLists _edittingLists;
         private ConditionList _sourceList;
         private ConditionList _edittingList;
-        public frmDynamicRequirements(ConditionLists lists)
+        public frmDynamicRequirements(ConditionLists lists, RequirementType type)
         {
             InitializeComponent();
             _sourceLists = lists;
             _edittingLists = new ConditionLists(lists.Data());
             UpdateLists();
+            InitLocalization(type);
+        }
+
+        private void InitLocalization(RequirementType type)
+        {
+            this.Text = Strings.Get("dynamicrequirements", "title");
+            grpConditionLists.Text = Strings.Get("dynamicrequirements", "conditionlists");
+            switch (type)
+            {
+                case RequirementType.Item:
+                    lblInstructions.Text = Strings.Get("dynamicrequirements", "instructionsitem");
+                    break;
+                case RequirementType.Resource:
+                    lblInstructions.Text = Strings.Get("dynamicrequirements", "instructionsresource");
+                    break;
+                case RequirementType.Spell:
+                    lblInstructions.Text = Strings.Get("dynamicrequirements", "instructionsspell");
+                    break;
+                case RequirementType.Event:
+                    lblInstructions.Text = Strings.Get("dynamicrequirements", "instructionsevent");
+                    break;
+                case RequirementType.Quest:
+                    lblInstructions.Text = Strings.Get("dynamicrequirements", "instructionsquest");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+            btnAddList.Text = Strings.Get("dynamicrequirements", "addlist");
+            btnRemoveList.Text = Strings.Get("dynamicrequirements", "removelist");
+            btnSave.Text = Strings.Get("dynamicrequirements", "savelists");
+            btnCancel.Text = Strings.Get("dynamicrequirements", "cancellists");
+            grpConditionList.Text = Strings.Get("dynamicrequirements", "conditionlist");
+            lblListName.Text = Strings.Get("dynamicrequirements", "listname");
+            btnAddCondition.Text = Strings.Get("dynamicrequirements", "addcondition");
+            btnRemoveCondition.Text = Strings.Get("dynamicrequirements", "removecondition");
+            btnConditionsOkay.Text = Strings.Get("dynamicrequirements", "saveconditions");
+            btnConditionsCancel.Text = Strings.Get("dynamicrequirements", "cancelconditions");
         }
 
         private void UpdateLists()
@@ -114,7 +160,7 @@ namespace Intersect_Editor.Forms.Editors
             var cmdWindow = new EventCommand_ConditionalBranch(cmd, null, null);
             var frm = new Form
             {
-                Text = "Add/Edit Condition"
+                Text = Strings.Get("dynamicrequirements","conditioneditor")
             };
             frm.FormBorderStyle = FormBorderStyle.FixedSingle;
             frm.Controls.Add(cmdWindow);
@@ -170,7 +216,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void lstConditions_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete) btnRemoveCondition_Click(null,null);
+            if (e.KeyCode == Keys.Delete) btnRemoveCondition_Click(null, null);
         }
     }
 }
