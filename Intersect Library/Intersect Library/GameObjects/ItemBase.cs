@@ -38,6 +38,7 @@ namespace Intersect_Library.GameObjects
         public string Pic = "";
         public int Price;
         public int Bound;
+        public int Stackable;
         public int Animation;
         public int Projectile = -1;
         public ConditionLists UseReqs = new ConditionLists();
@@ -74,6 +75,7 @@ namespace Intersect_Library.GameObjects
             Pic = myBuffer.ReadString();
             Price = myBuffer.ReadInteger();
             Bound = myBuffer.ReadInteger();
+            Stackable = myBuffer.ReadInteger();
             Animation = myBuffer.ReadInteger();
             Projectile = myBuffer.ReadInteger();
             AttackAnimation = myBuffer.ReadInteger();
@@ -110,6 +112,7 @@ namespace Intersect_Library.GameObjects
             myBuffer.WriteString(Pic);
             myBuffer.WriteInteger(Price);
             myBuffer.WriteInteger(Bound);
+            myBuffer.WriteInteger(Stackable);
             myBuffer.WriteInteger(Animation);
             myBuffer.WriteInteger(Projectile);
             myBuffer.WriteInteger(AttackAnimation);

@@ -132,6 +132,10 @@ namespace Intersect_Editor.Classes
             cmbItem.Items.Add("None.");
             cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
 
+            cmbSpell.Items.Clear();
+            cmbSpell.Items.Add("None.");
+            cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
+
             UpdateEditor();
         }
 
@@ -139,7 +143,6 @@ namespace Intersect_Editor.Classes
         {
             lstProjectiles.Items.Clear();
             lstProjectiles.Items.AddRange(Database.GetGameObjectList(GameObject.Projectile));
-            scrlSpell.Maximum = SpellBase.ObjectCount() - 1;
         }
 
         private void UpdateEditor()
@@ -149,12 +152,12 @@ namespace Intersect_Editor.Classes
                 pnlContainer.Show();
 
                 txtName.Text = _editorItem.Name;
-                scrlSpeed.Value = _editorItem.Speed;
-                scrlSpawn.Value = _editorItem.Delay;
-                scrlAmount.Value = _editorItem.Quantity;
-                scrlRange.Value = _editorItem.Range;
-                scrlSpell.Value = Database.GameObjectListIndex(GameObject.Spell, _editorItem.Spell);
-                scrlKnockback.Value = _editorItem.Knockback;
+                nudSpeed.Value = _editorItem.Speed;
+                nudSpawn.Value = _editorItem.Delay;
+                nudAmount.Value = _editorItem.Quantity;
+                nudRange.Value = _editorItem.Range;
+                cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell, _editorItem.Spell) + 1;
+                nudKnockback.Value = _editorItem.Knockback;
                 chkIgnoreMapBlocks.Checked = _editorItem.IgnoreMapBlocks;
                 chkIgnoreActiveResources.Checked = _editorItem.IgnoreActiveResources;
                 chkIgnoreInactiveResources.Checked = _editorItem.IgnoreExhaustedResources;
@@ -162,23 +165,7 @@ namespace Intersect_Editor.Classes
                 chkHoming.Checked = _editorItem.Homing;
                 chkGrapple.Checked = _editorItem.GrappleHook;
                 cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _editorItem.Ammo) + 1;
-                scrlConsume.Value = _editorItem.AmmoRequired;
-
-                
-                if (scrlSpell.Value == -1)
-                {
-                    lblSpell.Text = "Collision Spell: None";
-                }
-                else
-                {
-                    lblSpell.Text = "Collision Spell: " + SpellBase.GetName(_editorItem.Spell);
-                }
-                lblSpeed.Text = "Speed: " + scrlSpeed.Value + "ms";
-                lblSpawn.Text = "Spawn Delay: " + scrlSpawn.Value + "ms";
-                lblAmount.Text = "Quantity: " + scrlAmount.Value;
-                lblRange.Text = "Range: " + scrlRange.Value;
-                lblKnockback.Text = "Knockback: " + scrlKnockback.Value;
-                lblConsume.Text = "Amount: " + scrlConsume.Value;
+                nudConsume.Value = _editorItem.AmmoRequired;
 
                 if (lstAnimations.SelectedIndex < 0) { lstAnimations.SelectedIndex = 0; }
                 updateAnimationData(0);
@@ -219,8 +206,8 @@ namespace Intersect_Editor.Classes
             }
 
             //Update the spawn range maximum
-            if (scrlAmount.Value < scrlSpawnRange.Value) { scrlSpawnRange.Value = scrlAmount.Value; }
-            scrlSpawnRange.Maximum = scrlAmount.Value;
+            if (nudAmount.Value < scrlSpawnRange.Value) { scrlSpawnRange.Value = (int)nudAmount.Value; }
+            scrlSpawnRange.Maximum = (int)nudAmount.Value;
 
             //Save the index
             if (SaveIndex == true) { selectedIndex = lstAnimations.SelectedIndex; }
@@ -385,24 +372,6 @@ namespace Intersect_Editor.Classes
             lstProjectiles.Items[Database.GameObjectListIndex(GameObject.Projectile,_editorItem.GetId())] = txtName.Text;
         }
 
-        private void scrlSpeed_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblSpeed.Text = "Speed: " + scrlSpeed.Value + "ms";
-            _editorItem.Speed = scrlSpeed.Value;
-        }
-
-        private void scrlSpawn_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblSpawn.Text = "Spawn Delay: " + scrlSpawn.Value + "ms";
-            _editorItem.Delay = scrlSpawn.Value;
-        }
-
-        private void scrlRange_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblRange.Text = "Range: " + scrlRange.Value;
-            _editorItem.Range = scrlRange.Value;
-        }
-
         private void chkHoming_CheckedChanged(object sender, EventArgs e)
         {
             _editorItem.Homing = chkHoming.Checked;
@@ -431,20 +400,6 @@ namespace Intersect_Editor.Classes
             _editorItem.SpawnLocations[(int)x, (int)y].Directions[FindDirection((int)i, (int)j)] = !_editorItem.SpawnLocations[(int)x, (int)y].Directions[FindDirection((int)i, (int)j)];
 
             Render();
-        }
-
-        private void scrlSpell_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            if (scrlSpell.Value == -1)
-            {
-                _editorItem.Spell = -1;
-                lblSpell.Text = "Collision Spell: None";
-            }
-            else
-            {
-                _editorItem.Spell = Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value);
-                lblSpell.Text = "Collision Spell: " + SpellBase.GetName(_editorItem.Spell);
-            }
         }
 
         private void chkIgnoreMapBlocks_CheckedChanged(object sender, EventArgs e)
@@ -504,19 +459,6 @@ namespace Intersect_Editor.Classes
             {
                 updateAnimationData(lstAnimations.SelectedIndex);
             }
-        }
-
-        private void scrlAmount_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblAmount.Text = "Quantity: " + scrlAmount.Value;
-            _editorItem.Quantity = scrlAmount.Value;
-            updateAnimations();
-        }
-
-        private void scrlKnockback_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblKnockback.Text = "Knockback: " + scrlKnockback.Value;
-            _editorItem.Knockback = scrlKnockback.Value;
         }
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
@@ -623,16 +565,53 @@ namespace Intersect_Editor.Classes
             _editorItem.Ammo = Database.GameObjectIdFromList(GameObject.Item, cmbItem.SelectedIndex - 1);
         }
 
-        private void scrlConsume_Click(object sender, EventArgs e)
-        {
-            lblConsume.Text = "Amount: " + scrlConsume.Value;
-            _editorItem.AmmoRequired = scrlConsume.Value;
-        }
-
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Animations[lstAnimations.SelectedIndex].Animation = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex -1);
             updateAnimations();
+        }
+
+        private void nudSpeed_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Speed = (int)nudSpeed.Value;
+        }
+
+        private void nudSpawnDelay_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Delay = (int)nudSpawn.Value;
+        }
+
+        private void nudAmount_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Quantity = (int)nudAmount.Value;
+            updateAnimations();
+        }
+
+        private void nudRange_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Range = (int)nudRange.Value;
+        }
+
+        private void nudKnockback_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Knockback = (int)nudKnockback.Value;
+        }
+
+        private void nudConsume_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.AmmoRequired = (int)nudConsume.Value;
+        }
+
+        private void cmbSpell_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbSpell.SelectedIndex > 0)
+            {
+                _editorItem.Spell = Database.GameObjectIdFromList(GameObject.Spell, cmbSpell.SelectedIndex - 1);
+            }
+            else
+            {
+                _editorItem.Spell = -1;
+            }
         }
     }
 }

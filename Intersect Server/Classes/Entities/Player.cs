@@ -647,11 +647,10 @@ namespace Intersect_Server.Classes.Entities
             var itemBase = ItemBase.GetItem(item.ItemNum);
             if (itemBase != null)
             {
-                if (itemBase.ItemType == (int)ItemTypes.Consumable ||
-                    //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                    itemBase.ItemType == (int)ItemTypes.Currency ||
-                    itemBase.ItemType == (int)ItemTypes.None ||
-                    itemBase.ItemType == (int)ItemTypes.Spell)
+                if (itemBase.Stackable > 0 && (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                            itemBase.ItemType == (int)ItemTypes.Currency ||
+                            itemBase.ItemType == (int)ItemTypes.None ||
+                            itemBase.ItemType == (int)ItemTypes.Spell))
                 {
                     for (int i = 0; i < Options.MaxInvItems; i++)
                     {
@@ -731,10 +730,15 @@ namespace Intersect_Server.Classes.Entities
             var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
             if (itemBase != null)
             {
-                if (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                if (itemBase.Bound > 0)
+                {
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "bound"), Color.Red);
+                    return;
+                }
+                if (itemBase.Stackable > 0 && (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
                             itemBase.ItemType == (int)ItemTypes.Currency ||
                             itemBase.ItemType == (int)ItemTypes.None ||
-                            itemBase.ItemType == (int)ItemTypes.Spell)
+                            itemBase.ItemType == (int)ItemTypes.Spell))
                 {
                     if (amount >= Inventory[slot].ItemVal)
                     {
@@ -906,10 +910,10 @@ namespace Intersect_Server.Classes.Entities
             var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
             if (itemBase != null)
             {
-                if (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                if (itemBase.Stackable > 0 && (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
                             itemBase.ItemType == (int)ItemTypes.Currency ||
                             itemBase.ItemType == (int)ItemTypes.None ||
-                            itemBase.ItemType == (int)ItemTypes.Spell)
+                            itemBase.ItemType == (int)ItemTypes.Spell))
                 {
                     if (amount > Inventory[slot].ItemVal)
                     {
@@ -1019,6 +1023,11 @@ namespace Intersect_Server.Classes.Entities
                 var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
                 if (itemBase != null)
                 {
+                    if (itemBase.Bound > 0)
+                    {
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("shops", "bound"), Color.Red);
+                        return;
+                    }
                     for (int i = 0; i < shop.BuyingItems.Count; i++)
                     {
                         if (shop.BuyingItems[i].ItemNum == sellItemNum)
@@ -1050,11 +1059,10 @@ namespace Intersect_Server.Classes.Entities
                         }
                     }
 
-                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
-                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                        itemBase.ItemType == (int)ItemTypes.Currency ||
-                        itemBase.ItemType == (int)ItemTypes.None ||
-                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    if (itemBase.Stackable > 0 && (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                                itemBase.ItemType == (int)ItemTypes.Currency ||
+                                itemBase.ItemType == (int)ItemTypes.None ||
+                                itemBase.ItemType == (int)ItemTypes.Spell))
                     {
                         if (amount >= Inventory[slot].ItemVal)
                         {
@@ -1102,11 +1110,10 @@ namespace Intersect_Server.Classes.Entities
                     if (itemBase != null)
                     {
                         buyItemNum = shop.SellingItems[slot].ItemNum;
-                        if (itemBase.ItemType == (int)ItemTypes.Consumable ||
-                            //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                            itemBase.ItemType == (int)ItemTypes.Currency ||
-                            itemBase.ItemType == (int)ItemTypes.None ||
-                            itemBase.ItemType == (int)ItemTypes.Spell)
+                        if (itemBase.Stackable > 0 && (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                                    itemBase.ItemType == (int)ItemTypes.Currency ||
+                                    itemBase.ItemType == (int)ItemTypes.None ||
+                                    itemBase.ItemType == (int)ItemTypes.Spell))
                         {
                             buyItemAmt = Math.Max(1, amount);
                         }
@@ -1247,11 +1254,10 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (Inventory[slot].ItemNum > -1)
                 {
-                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
-                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                        itemBase.ItemType == (int)ItemTypes.Currency ||
-                        itemBase.ItemType == (int)ItemTypes.None ||
-                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    if (itemBase.Stackable > 0 && (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                                itemBase.ItemType == (int)ItemTypes.Currency ||
+                                itemBase.ItemType == (int)ItemTypes.None ||
+                                itemBase.ItemType == (int)ItemTypes.Spell))
                     {
                         if (amount >= Inventory[slot].ItemVal)
                         {
@@ -1263,11 +1269,10 @@ namespace Intersect_Server.Classes.Entities
                         amount = 1;
                     }
                     //Find a spot in the bank for it!
-                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
-                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                        itemBase.ItemType == (int)ItemTypes.Currency ||
-                        itemBase.ItemType == (int)ItemTypes.None ||
-                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    if (itemBase.Stackable > 0 && (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                                itemBase.ItemType == (int)ItemTypes.Currency ||
+                                itemBase.ItemType == (int)ItemTypes.None ||
+                                itemBase.ItemType == (int)ItemTypes.Spell))
                     {
                         for (int i = 0; i < Options.MaxBankSlots; i++)
                         {
@@ -1330,11 +1335,10 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (Bank[slot] != null && Bank[slot].ItemNum > -1)
                 {
-                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
-                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                        itemBase.ItemType == (int)ItemTypes.Currency ||
-                        itemBase.ItemType == (int)ItemTypes.None ||
-                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    if (itemBase.Stackable > 0 && (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                                itemBase.ItemType == (int)ItemTypes.Currency ||
+                                itemBase.ItemType == (int)ItemTypes.None ||
+                                itemBase.ItemType == (int)ItemTypes.Spell))
                     {
                         if (amount >= Bank[slot].ItemVal)
                         {
@@ -1346,11 +1350,10 @@ namespace Intersect_Server.Classes.Entities
                         amount = 1;
                     }
                     //Find a spot in the inventory for it!
-                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
-                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                        itemBase.ItemType == (int)ItemTypes.Currency ||
-                        itemBase.ItemType == (int)ItemTypes.None ||
-                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    if (itemBase.Stackable > 0 && (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                                itemBase.ItemType == (int)ItemTypes.Currency ||
+                                itemBase.ItemType == (int)ItemTypes.None ||
+                                itemBase.ItemType == (int)ItemTypes.Spell))
                     {
                         for (int i = 0; i < Options.MaxInvItems; i++)
                         {
@@ -1459,11 +1462,10 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (Inventory[slot].ItemNum > -1)
                 {
-                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
-                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                        itemBase.ItemType == (int)ItemTypes.Currency ||
-                        itemBase.ItemType == (int)ItemTypes.None ||
-                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    if (itemBase.Stackable > 0 && (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                                itemBase.ItemType == (int)ItemTypes.Currency ||
+                                itemBase.ItemType == (int)ItemTypes.None ||
+                                itemBase.ItemType == (int)ItemTypes.Spell))
                     {
                         if (amount >= Inventory[slot].ItemVal)
                         {
@@ -1475,11 +1477,10 @@ namespace Intersect_Server.Classes.Entities
                         amount = 1;
                     }
                     //Find a spot in the trade for it!
-                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
-                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                        itemBase.ItemType == (int)ItemTypes.Currency ||
-                        itemBase.ItemType == (int)ItemTypes.None ||
-                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    if (itemBase.Stackable > 0 && (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                                itemBase.ItemType == (int)ItemTypes.Currency ||
+                                itemBase.ItemType == (int)ItemTypes.None ||
+                                itemBase.ItemType == (int)ItemTypes.Spell))
                     {
                         for (int i = 0; i < Options.MaxInvItems; i++)
                         {
@@ -1544,11 +1545,10 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (Trade[slot] != null && Trade[slot].ItemNum > -1)
                 {
-                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
-                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                        itemBase.ItemType == (int)ItemTypes.Currency ||
-                        itemBase.ItemType == (int)ItemTypes.None ||
-                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    if (itemBase.Stackable > 0 && (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                                itemBase.ItemType == (int)ItemTypes.Currency ||
+                                itemBase.ItemType == (int)ItemTypes.None ||
+                                itemBase.ItemType == (int)ItemTypes.Spell))
                     {
                         if (amount >= Trade[slot].ItemVal)
                         {
@@ -1560,11 +1560,10 @@ namespace Intersect_Server.Classes.Entities
                         amount = 1;
                     }
                     //Find a spot in the inventory for it!
-                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
-                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                        itemBase.ItemType == (int)ItemTypes.Currency ||
-                        itemBase.ItemType == (int)ItemTypes.None ||
-                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    if (itemBase.Stackable > 0 && (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                                itemBase.ItemType == (int)ItemTypes.Currency ||
+                                itemBase.ItemType == (int)ItemTypes.None ||
+                                itemBase.ItemType == (int)ItemTypes.Spell))
                     {
                         for (int i = 0; i < Options.MaxInvItems; i++)
                         {

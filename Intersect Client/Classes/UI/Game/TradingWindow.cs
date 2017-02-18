@@ -158,10 +158,10 @@ namespace Intersect_Client.Classes.UI.Game
                         {
                             _tradeSegment[n].Items[i].pnl.IsHidden = false;
 
-                            if (item.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                            if (item.Stackable > 0 && (item.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
                                 item.ItemType == (int)ItemTypes.Currency ||
                                 item.ItemType == (int)ItemTypes.None ||
-                                item.ItemType == (int)ItemTypes.Spell)
+                                item.ItemType == (int)ItemTypes.Spell))
                             {
                                 _tradeSegment[n].Values[i].IsHidden = false;
                                 _tradeSegment[n].Values[i].Text = Globals.Trade[n, i].ItemVal.ToString();

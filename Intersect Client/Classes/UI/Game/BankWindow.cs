@@ -134,11 +134,11 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         Items[i].pnl.IsHidden = false;
 
-                        if (item.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                        if (item.Stackable > 0 && (item.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
                             item.ItemType == (int)ItemTypes.Currency ||
                             item.ItemType == (int)ItemTypes.None ||
-                            item.ItemType == (int)ItemTypes.Spell)
-                        {
+                            item.ItemType == (int)ItemTypes.Spell))
+                            {
                             _values[i].IsHidden = false;
                             _values[i].Text = Globals.Bank[i].ItemVal.ToString();
                         }

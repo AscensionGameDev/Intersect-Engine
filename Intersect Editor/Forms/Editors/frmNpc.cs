@@ -129,33 +129,23 @@ namespace Intersect_Editor.Forms
                 txtName.Text = _editorItem.Name;
                 cmbBehavior.SelectedIndex = _editorItem.Behavior;
                 cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Sprite);
-                scrlSightRange.Value = _editorItem.SightRange;
-                scrlSpawnDuration.Value = _editorItem.SpawnDuration;
-                scrlStr.Value = _editorItem.Stat[(int) Stats.Attack];
-                scrlMag.Value = _editorItem.Stat[(int) Stats.AbilityPower];
-                scrlDef.Value = _editorItem.Stat[(int) Stats.Defense];
-                scrlMR.Value = _editorItem.Stat[(int) Stats.MagicResist];
-                scrlSpd.Value = _editorItem.Stat[(int) Stats.Speed];
+                nudSightRange.Value = _editorItem.SightRange;
+                nudSpawnDuration.Value = _editorItem.SpawnDuration;
+                nudStr.Value = _editorItem.Stat[(int) Stats.Attack];
+                nudMag.Value = _editorItem.Stat[(int) Stats.AbilityPower];
+                nudDef.Value = _editorItem.Stat[(int) Stats.Defense];
+                nudMR.Value = _editorItem.Stat[(int) Stats.MagicResist];
+                nudSpd.Value = _editorItem.Stat[(int) Stats.Speed];
                 txtHP.Text = _editorItem.MaxVital[(int) Vitals.Health].ToString();
                 txtMana.Text = _editorItem.MaxVital[(int) Vitals.Mana].ToString();
                 txtExp.Text = _editorItem.Experience.ToString();
-                lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
-                lblSightRange.Text = @"Sight Range: " + scrlSightRange.Value;
-                lblStr.Text = @"Strength: " + scrlStr.Value;
-                lblMag.Text = @"Magic: " + scrlMag.Value;
-                lblDef.Text = @"Armor: " + scrlDef.Value;
-                lblMR.Text = @"Magic Resist: " + scrlMR.Value;
-                lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
                 chkAttackAllies.Checked = _editorItem.AttackAllies;
                 chkEnabled.Checked = _editorItem.NpcVsNpcEnabled;
 
                 //Combat
-                scrlDamage.Value = _editorItem.Damage;
-                scrlDamage_Scroll(null, null);
-                scrlCritChance.Value = _editorItem.CritChance;
-                scrlCritChance_Scroll(null, null);
-                scrlScaling.Value = _editorItem.Scaling;
-                scrlScaling_Scroll(null, null);
+                nudDamage.Value = _editorItem.Damage;
+                nudCritChance.Value = _editorItem.CritChance;
+                nudScaling.Value = _editorItem.Scaling / 100;
                 cmbDamageType.SelectedIndex = _editorItem.DamageType;
                 cmbScalingStat.SelectedIndex = _editorItem.ScalingStat;
                 cmbAttackAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.AttackAnimation) + 1;
@@ -234,48 +224,6 @@ namespace Intersect_Editor.Forms
             DrawNpcSprite();
         }
 
-        private void scrlSpawnDuration_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
-            _editorItem.SpawnDuration = scrlSpawnDuration.Value;
-        }
-
-        private void scrlSightRange_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblSightRange.Text = @"Sight Range: " + scrlSightRange.Value;
-            _editorItem.SightRange = scrlSightRange.Value;
-        }
-
-        private void scrlStr_Scroll(object sender, EventArgs e)
-        {
-            lblStr.Text = @"Strength: " + scrlStr.Value;
-            _editorItem.Stat[(int)Stats.Attack] = scrlStr.Value;
-        }
-
-        private void scrlMag_Scroll(object sender, EventArgs e)
-        {
-            lblMag.Text = @"Magic: " + scrlMag.Value;
-            _editorItem.Stat[(int)Stats.AbilityPower] = scrlMag.Value;
-        }
-
-        private void scrlDef_Scroll(object sender, EventArgs e)
-        {
-            lblDef.Text = @"Armor: " + scrlDef.Value;
-            _editorItem.Stat[(int)Stats.Defense] = scrlDef.Value;
-        }
-
-        private void scrlMR_Scroll(object sender, EventArgs e)
-        {
-            lblMR.Text = @"Magic Resist: " + scrlMR.Value;
-            _editorItem.Stat[(int)Stats.MagicResist] = scrlMR.Value;
-        }
-
-        private void scrlSpd_Scroll(object sender, EventArgs e)
-        {
-            lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
-            _editorItem.Stat[(int)Stats.Speed] = scrlSpd.Value;
-        }
-
         private void txtHP_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
@@ -325,14 +273,7 @@ namespace Intersect_Editor.Forms
             lblDropIndex.Text = "Drop: " + (index + 1);
             cmbDropItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _editorItem.Drops[index].ItemNum) + 1;
             txtDropAmount.Text = _editorItem.Drops[index].Amount.ToString();
-            scrlDropChance.Value = _editorItem.Drops[index].Chance;
-            lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";
-        }
-
-        private void scrlDropChance_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.Drops[scrlDropIndex.Value].Chance = scrlDropChance.Value;
-            lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";
+            nudDropChance.Value = _editorItem.Drops[index].Chance;
         }
 
         private void scrlDropIndex_Scroll(object sender, ScrollValueEventArgs e)
@@ -380,11 +321,6 @@ namespace Intersect_Editor.Forms
         private void chkAttackAllies_CheckedChanged(object sender, EventArgs e)
         {
             _editorItem.AttackAllies = chkAttackAllies.Checked;
-        }
-
-        private void lstAggro_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void btnAddAggro_Click(object sender, EventArgs e)
@@ -513,27 +449,9 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void scrlDamage_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblDamage.Text = "Base Damage: " + scrlDamage.Value;
-            _editorItem.Damage = scrlDamage.Value;
-        }
-
-        private void scrlCritChance_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblCritChance.Text = "Crit Chance: " + scrlCritChance.Value + "%";
-            _editorItem.CritChance = scrlCritChance.Value;
-        }
-
         private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.AttackAnimation = Database.GameObjectIdFromList(GameObject.Animation, cmbAttackAnimation.SelectedIndex - 1);
-        }
-
-        private void scrlScaling_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblScaling.Text = "Scaling Amount: x" + ((double)scrlScaling.Value / 100f);
-            _editorItem.Scaling = scrlScaling.Value;
         }
 
         private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
@@ -576,8 +494,59 @@ namespace Intersect_Editor.Forms
             lstSpells.SelectedIndex = n;
         }
 
-        private void cmbHostileNPC_SelectedIndexChanged(object sender, EventArgs e)
+        private void nudScaling_ValueChanged(object sender, EventArgs e)
         {
+            _editorItem.Scaling = (int)nudScaling.Value * 100;
+        }
+
+        private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.SpawnDuration = (int)nudSpawnDuration.Value;
+        }
+
+        private void nudSightRange_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.SightRange = (int)nudSightRange.Value;
+        }
+
+        private void nudStr_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Stat[(int)Stats.Attack] = (int)nudStr.Value;
+        }
+
+        private void nudMag_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Stat[(int)Stats.AbilityPower] = (int)nudMag.Value;
+        }
+
+        private void nudDef_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Stat[(int)Stats.Defense] = (int)nudDef.Value;
+        }
+
+        private void nudMR_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Stat[(int)Stats.MagicResist] = (int)nudMR.Value;
+        }
+
+        private void nudSpd_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Stat[(int)Stats.Speed] = (int)nudSpd.Value;
+        }
+
+        private void nudDamage_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Damage = (int)nudDamage.Value;
+        }
+
+        private void nudCritChance_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.CritChance = (int)nudCritChance.Value;
+        }
+
+        private void nudDropChance_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Drops[scrlDropIndex.Value].Chance = (int)nudDropChance.Value;
         }
     }
 }

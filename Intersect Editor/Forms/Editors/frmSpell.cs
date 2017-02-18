@@ -155,11 +155,8 @@ namespace Intersect_Editor.Forms
                 txtDesc.Text = _editorItem.Desc;
                 cmbType.SelectedIndex = _editorItem.SpellType;
 
-                scrlCastDuration.Value = _editorItem.CastDuration;
-                lblCastDuration.Text = "Cast Time (secs): " + ((double) scrlCastDuration.Value/10);
-
-                scrlCooldownDuration.Value = _editorItem.CooldownDuration;
-                lblCooldownDuration.Text = "Cooldown (secs): " + ((double) scrlCooldownDuration.Value/10);
+                nudCastDuration.Value = _editorItem.CastDuration * 100;
+                nudCooldownDuration.Value = _editorItem.CooldownDuration * 100;
 
                 cmbCastAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.CastAnimation) + 1;
                 cmbHitAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.HitAnimation) + 1;
@@ -173,8 +170,8 @@ namespace Intersect_Editor.Forms
                 {
                     picSpell.BackgroundImage = null;
                 }
-                scrlHPCost.Value = _editorItem.VitalCost[(int) Vitals.Health];
-                scrlManaCost.Value = _editorItem.VitalCost[(int) Vitals.Mana];
+                nudHPCost.Value = _editorItem.VitalCost[(int) Vitals.Health];
+                nudMpCost.Value = _editorItem.VitalCost[(int) Vitals.Mana];
                 
 
                 UpdateSpellTypePanels();
@@ -207,34 +204,23 @@ namespace Intersect_Editor.Forms
                 cmbTargetType.SelectedIndex = _editorItem.TargetType;
                 UpdateTargetTypePanel();
 
-                scrlHPDamage.Value = _editorItem.VitalDiff[(int) Vitals.Health];
-                scrlHPDamage_Scroll(null,null);
-                scrlManaDamage.Value = _editorItem.VitalDiff[(int) Vitals.Mana];
-                scrlManaDamage_Scroll(null,null);
-                scrlAttack.Value = _editorItem.StatDiff[(int)Stats.Attack];
-                scrlAttack_Scroll(null, null);
-                scrlDefense.Value = _editorItem.StatDiff[(int)Stats.Defense];
-                scrlDefense_Scroll(null,null);
-                scrlSpeed.Value = _editorItem.StatDiff[(int)Stats.Speed];
-                scrlSpeed_Scroll(null, null);
-                scrlAbilityPwr.Value = _editorItem.StatDiff[(int)Stats.AbilityPower];
-                scrlAbilityPwr_Scroll(null,null);
-                scrlMagicResist.Value = _editorItem.StatDiff[(int)Stats.MagicResist];
-                scrlMagicResist_Scroll(null, null);
+                nudHPDamage.Value = _editorItem.VitalDiff[(int) Vitals.Health];
+                nudMPDamage.Value = _editorItem.VitalDiff[(int) Vitals.Mana];
+                nudStr.Value = _editorItem.StatDiff[(int)Stats.Attack];
+                nudDef.Value = _editorItem.StatDiff[(int)Stats.Defense];
+                nudSpd.Value = _editorItem.StatDiff[(int)Stats.Speed];
+                nudMag.Value = _editorItem.StatDiff[(int)Stats.AbilityPower];
+                nudMR.Value = _editorItem.StatDiff[(int)Stats.MagicResist];
 
                 chkFriendly.Checked = Convert.ToBoolean(_editorItem.Friendly);
                 cmbDamageType.SelectedIndex = _editorItem.DamageType;
                 cmbScalingStat.SelectedIndex = _editorItem.ScalingStat;
-                scrlScaling.Value = _editorItem.Scaling;
-                scrlScaling_Scroll(null,null);
-                scrlCritChance.Value = _editorItem.CritChance;
-                scrlCritChance_Scroll(null,null);
+                nudScaling.Value = _editorItem.Scaling;
+                nudCritChance.Value = _editorItem.CritChance;
 
                 chkHOTDOT.Checked = Convert.ToBoolean(_editorItem.Data1);
-                scrlBuffDuration.Value = _editorItem.Data2;
-                lblBuffDuration.Text = "Duration: " + ((double)scrlBuffDuration.Value / 10) + "s";
-                scrlTick.Value = Math.Max(0,_editorItem.Data4);
-                lblTick.Text = "Tick: " + ((double)scrlTick.Value / 10) + "s";
+                nudBuffDuration.Value = _editorItem.Data2 * 100;
+                nudTick.Value = _editorItem.Data4 * 100;
                 cmbExtraEffect.SelectedIndex = _editorItem.Data3;
                 cmbExtraEffect_SelectedIndexChanged(null, null);
 
@@ -281,38 +267,34 @@ namespace Intersect_Editor.Forms
         private void UpdateTargetTypePanel()
         {
             lblHitRadius.Hide();
-            scrlHitRadius.Hide();
+            nudHitRadius.Hide();
             lblCastRange.Hide();
-            scrlCastRange.Hide();
+            nudCastRange.Hide();
             lblProjectile.Hide();
             cmbProjectile.Hide();
             if (cmbTargetType.SelectedIndex == cmbTargetType.Items.IndexOf("Single Target (includes self)"))
             {
                 lblCastRange.Show();
-                scrlCastRange.Show();
-                scrlCastRange.Value = _editorItem.CastRange;
-                lblCastRange.Text = "Cast Range: " + scrlCastRange.Value;
+                nudCastRange.Show();
+                nudCastRange.Value = _editorItem.CastRange;
                 if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Combat Spell"))
                 {
                     lblHitRadius.Show();
-                    scrlHitRadius.Show();
-                    scrlHitRadius.Value = _editorItem.HitRadius;
-                    lblHitRadius.Text = "Hit Radius: " + scrlHitRadius.Value;
+                    nudHitRadius.Show();
+                    nudHitRadius.Value = _editorItem.HitRadius;
                 }
             }
             if (cmbTargetType.SelectedIndex == cmbTargetType.Items.IndexOf("AOE") && cmbType.SelectedIndex == cmbType.Items.IndexOf("Combat Spell"))
             {
                 lblHitRadius.Show();
-                scrlHitRadius.Show();
-                scrlHitRadius.Value = _editorItem.HitRadius;
-                lblHitRadius.Text = "Hit Radius: " + scrlHitRadius.Value;
+                nudHitRadius.Show();
+                nudHitRadius.Value = _editorItem.HitRadius;
             }
                 if (cmbTargetType.SelectedIndex < cmbTargetType.Items.IndexOf("Self"))
             {
                 lblCastRange.Show();
-                scrlCastRange.Show();
-                scrlCastRange.Value = _editorItem.CastRange;
-                lblCastRange.Text = "Cast Range: " + scrlCastRange.Value;
+                nudCastRange.Show();
+                nudCastRange.Value = _editorItem.CastRange;
             }
             if (cmbTargetType.SelectedIndex == cmbTargetType.Items.IndexOf("Linear (projectile)"))
             {
@@ -348,45 +330,15 @@ namespace Intersect_Editor.Forms
             else { picSpell.BackgroundImage = null; }
         }
 
-        private void scrlCastDuration_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.CastDuration = scrlCastDuration.Value;
-            lblCastDuration.Text = "Cast Time (secs): " + ((double)scrlCastDuration.Value / 10);
-        }
-
-        private void scrlCooldownDuration_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.CooldownDuration = scrlCooldownDuration.Value;
-            lblCooldownDuration.Text = "Cooldown (secs): " + ((double)scrlCooldownDuration.Value / 10);
-        }
-
         private void cmbTargetType_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.TargetType = cmbTargetType.SelectedIndex;
             UpdateTargetTypePanel();
         }
 
-        private void scrlCastRange_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.CastRange = scrlCastRange.Value;
-            lblCastRange.Text = "Cast Range: " + scrlCastRange.Value;
-        }
-
-        private void scrlHitRadius_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.HitRadius = scrlHitRadius.Value;
-            lblHitRadius.Text = "Hit Radius: " + scrlHitRadius.Value;
-        }
-
         private void chkHOTDOT_CheckedChanged(object sender, EventArgs e)
         {
             _editorItem.Data1 = Convert.ToInt32(chkHOTDOT.Checked);
-        }
-
-        private void scrlBuffDuration_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.Data2 = scrlBuffDuration.Value;
-            lblBuffDuration.Text = "Duration: " + ((double)scrlBuffDuration.Value / 10) + "s";
         }
 
         private void txtDesc_TextChanged(object sender, EventArgs e)
@@ -433,12 +385,6 @@ namespace Intersect_Editor.Forms
         {
             lblRange.Text = "Range: " + scrlRange.Value;
             _editorItem.CastRange = scrlRange.Value;
-        }
-
-        private void scrlTick_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            _editorItem.Data4 = scrlTick.Value;
-            lblTick.Text = "Tick: " + ((double)scrlTick.Value / 10) + "s";
         }
 
         private void chkIgnoreMapBlocks_CheckedChanged(object sender, EventArgs e)
@@ -577,75 +523,9 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void scrlHPCost_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblHPCost.Text = "HP Cost: " + scrlHPCost.Value;
-            _editorItem.VitalCost[(int) Vitals.Health] = scrlHPCost.Value;
-        }
-
-        private void scrlManaCost_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblMPCost.Text = "Mana Cost: " + scrlManaCost.Value;
-            _editorItem.VitalCost[(int)Vitals.Mana] = scrlManaCost.Value;
-        }
-
         private void chkFriendly_CheckedChanged(object sender, EventArgs e)
         {
             _editorItem.Friendly = Convert.ToInt32(chkFriendly.Checked);
-        }
-
-        private void scrlHPDamage_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblHPDamage.Text = "HP Damage: " + scrlHPDamage.Value;
-            _editorItem.VitalDiff[(int)Vitals.Health] = scrlHPDamage.Value;
-        }
-
-        private void scrlManaDamage_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblManaDamage.Text = "Mana Damage: " + scrlManaDamage.Value;
-            _editorItem.VitalDiff[(int)Vitals.Mana] = scrlManaDamage.Value;
-        }
-
-        private void scrlCritChance_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblCritChance.Text = "Crit Chance: " + scrlCritChance.Value + "%";
-            _editorItem.CritChance = scrlCritChance.Value;
-        }
-
-        private void scrlAttack_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblAttack.Text = "Attack: " + scrlAttack.Value;
-            _editorItem.StatDiff[(int) Stats.Attack] = scrlAttack.Value;
-        }
-
-        private void scrlDefense_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblDefense.Text = "Defense: " + scrlDefense.Value;
-            _editorItem.StatDiff[(int)Stats.Defense] = scrlDefense.Value;
-        }
-
-        private void scrlSpeed_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblSpeed.Text = "Speed: " + scrlSpeed.Value;
-            _editorItem.StatDiff[(int)Stats.Speed] = scrlSpeed.Value;
-        }
-
-        private void scrlAbilityPwr_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblAbilityPwr.Text = "Ability Pwr: " + scrlAbilityPwr.Value;
-            _editorItem.StatDiff[(int)Stats.AbilityPower] = scrlAbilityPwr.Value;
-        }
-
-        private void scrlMagicResist_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblMagicResist.Text = "Magic Resist: " + scrlMagicResist.Value;
-            _editorItem.StatDiff[(int)Stats.MagicResist] = scrlMagicResist.Value;
-        }
-
-        private void scrlScaling_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblScaling.Text = "Scaling Amount: x" + ((double)scrlScaling.Value / 100f);
-            _editorItem.Scaling = scrlScaling.Value;
         }
 
         private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
@@ -725,6 +605,91 @@ namespace Intersect_Editor.Forms
         private void cmbDirection_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Data4 = cmbDirection.SelectedIndex;
+        }
+
+        private void nudCastDuration_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.CastDuration = (int)nudCastDuration.Value / 100;
+        }
+
+        private void nudCooldownDuration_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.CooldownDuration = (int)nudCooldownDuration.Value / 100;
+        }
+
+        private void nudHitRadius_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.HitRadius = (int)nudHitRadius.Value;
+        }
+
+        private void nudHPCost_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.VitalCost[(int)Vitals.Health] = (int)nudHPCost.Value;
+        }
+
+        private void nudMpCost_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.VitalCost[(int)Vitals.Mana] = (int)nudMpCost.Value;
+        }
+
+        private void nudHPDamage_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.VitalDiff[(int)Vitals.Health] = (int)nudHPDamage.Value;
+        }
+
+        private void nudMPDamage_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.VitalDiff[(int)Vitals.Mana] = (int)nudMPDamage.Value;
+        }
+
+        private void nudStr_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.StatDiff[(int)Stats.Attack] = (int)nudStr.Value;
+        }
+
+        private void nudMag_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.StatDiff[(int)Stats.AbilityPower] = (int)nudMag.Value;
+        }
+
+        private void nudDef_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.StatDiff[(int)Stats.Defense] = (int)nudDef.Value;
+        }
+
+        private void nudMR_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.StatDiff[(int)Stats.MagicResist] = (int)nudMR.Value;
+        }
+
+        private void nudSpd_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.StatDiff[(int)Stats.Speed] = (int)nudSpd.Value;
+        }
+
+        private void nudBuffDuration_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Data2 = (int)nudBuffDuration.Value / 100;
+        }
+
+        private void nudTick_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Data4 = (int)nudTick.Value / 100;
+        }
+
+        private void nudCritChance_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.CritChance = (int)nudCritChance.Value;
+        }
+
+        private void nudScaling_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Scaling = (int)nudScaling.Value;
+        }
+
+        private void nudCastRange_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.CastRange = (int)nudCastRange.Value;
         }
     }
 }

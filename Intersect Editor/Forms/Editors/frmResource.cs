@@ -141,11 +141,10 @@ namespace Intersect_Editor.Classes
 
                 txtName.Text = _editorItem.Name;
                 cmbToolType.SelectedIndex = _editorItem.Tool + 1;
-                scrlSpawnDuration.Value = _editorItem.SpawnDuration;
+                nudSpawnDuration.Value = _editorItem.SpawnDuration;
                 cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation) + 1;
                 txtHP.Text = _editorItem.MinHP.ToString();
                 txtMaxHp.Text = _editorItem.MaxHP.ToString();
-                lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
                 chkWalkableBefore.Checked = _editorItem.WalkableBefore;
                 chkWalkableAfter.Checked = _editorItem.WalkableAfter;
                 cmbInitialSprite.SelectedIndex =
@@ -173,8 +172,7 @@ namespace Intersect_Editor.Classes
             lblDropIndex.Text = "Drop: " + (index + 1);
             cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _editorItem.Drops[index].ItemNum) + 1;
             txtDropAmount.Text = _editorItem.Drops[index].Amount.ToString();
-            scrlDropChance.Value = _editorItem.Drops[index].Chance;
-            lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";
+            nudDropChance.Value = _editorItem.Drops[index].Chance;
         }
 
         private void scrlDropIndex_Scroll(object sender, ScrollValueEventArgs e)
@@ -189,16 +187,14 @@ namespace Intersect_Editor.Classes
             _editorItem.Drops[scrlDropIndex.Value - 1].Amount = x;
         }
 
-        private void scrlDropChance_Scroll(object sender, ScrollValueEventArgs e)
+        private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value - 1].Chance = scrlDropChance.Value;
-            lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";
+            _editorItem.SpawnDuration = (int)nudSpawnDuration.Value;
         }
 
-        private void scrlSpawnDuration_Scroll(object sender, ScrollValueEventArgs e)
+        private void nudDropChance_ValueChanged(object sender, EventArgs e)
         {
-            lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
-            _editorItem.SpawnDuration = scrlSpawnDuration.Value;
+            _editorItem.Drops[scrlDropIndex.Value - 1].Chance = (int)nudDropChance.Value;
         }
 
         private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)

@@ -45,11 +45,13 @@ namespace Intersect_Editor.Forms
             this.groupBox3 = new DarkUI.Controls.DarkGroupBox();
             this.groupBox8 = new DarkUI.Controls.DarkGroupBox();
             this.btnLowerClone = new DarkUI.Controls.DarkButton();
-            this.lightEditorLower = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.groupBox5 = new DarkUI.Controls.DarkGroupBox();
             this.btnPlayLower = new DarkUI.Controls.DarkButton();
             this.scrlLowerFrame = new DarkUI.Controls.DarkScrollBar();
             this.lblLowerFrame = new System.Windows.Forms.Label();
+            this.lblLowerLoopCount = new System.Windows.Forms.Label();
+            this.lblLowerFrameDuration = new System.Windows.Forms.Label();
+            this.lblLowerFrameCount = new System.Windows.Forms.Label();
             this.lblLowerLoopCount = new System.Windows.Forms.Label();
             this.lblLowerFrameDuration = new System.Windows.Forms.Label();
             this.lblLowerFrameCount = new System.Windows.Forms.Label();
@@ -65,8 +67,9 @@ namespace Intersect_Editor.Forms
             this.lblUpperFrame = new System.Windows.Forms.Label();
             this.groupBox7 = new DarkUI.Controls.DarkGroupBox();
             this.btnUpperClone = new DarkUI.Controls.DarkButton();
-            this.lightEditorUpper = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.lblUpperLoopCount = new System.Windows.Forms.Label();
+            this.lblUpperFrameDuration = new System.Windows.Forms.Label();
+            this.lblUpperFrameCount = new System.Windows.Forms.Label();
             this.lblUpperFrameDuration = new System.Windows.Forms.Label();
             this.lblUpperFrameCount = new System.Windows.Forms.Label();
             this.lblUpperVerticalFrames = new System.Windows.Forms.Label();
@@ -98,6 +101,8 @@ namespace Intersect_Editor.Forms
             this.nudUpperFrameCount = new DarkUI.Controls.DarkNumericUpDown();
             this.nudUpperFrameDuration = new DarkUI.Controls.DarkNumericUpDown();
             this.nudUpperLoopCount = new DarkUI.Controls.DarkNumericUpDown();
+            this.lightEditorUpper = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
+            this.lightEditorLower = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -278,7 +283,7 @@ namespace Intersect_Editor.Forms
             this.groupBox8.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox8.Location = new System.Drawing.Point(213, 93);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(265, 353);
+            this.groupBox8.Size = new System.Drawing.Size(265, 319);
             this.groupBox8.TabIndex = 20;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Frame Options";
@@ -292,14 +297,6 @@ namespace Intersect_Editor.Forms
             this.btnLowerClone.TabIndex = 16;
             this.btnLowerClone.Text = "Clone From Previous";
             this.btnLowerClone.Click += new System.EventHandler(this.btnLowerClone_Click);
-            // 
-            // lightEditorLower
-            // 
-            this.lightEditorLower.Location = new System.Drawing.Point(6, 28);
-            this.lightEditorLower.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.lightEditorLower.Name = "lightEditorLower";
-            this.lightEditorLower.Size = new System.Drawing.Size(253, 323);
-            this.lightEditorLower.TabIndex = 15;
             // 
             // groupBox5
             // 
@@ -509,7 +506,7 @@ namespace Intersect_Editor.Forms
             this.groupBox7.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox7.Location = new System.Drawing.Point(212, 93);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(265, 353);
+            this.groupBox7.Size = new System.Drawing.Size(265, 319);
             this.groupBox7.TabIndex = 19;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Frame Options";
@@ -523,14 +520,6 @@ namespace Intersect_Editor.Forms
             this.btnUpperClone.TabIndex = 17;
             this.btnUpperClone.Text = "Clone From Previous";
             this.btnUpperClone.Click += new System.EventHandler(this.btnUpperClone_Click);
-            // 
-            // lightEditorUpper
-            // 
-            this.lightEditorUpper.Location = new System.Drawing.Point(6, 28);
-            this.lightEditorUpper.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.lightEditorUpper.Name = "lightEditorUpper";
-            this.lightEditorUpper.Size = new System.Drawing.Size(253, 323);
-            this.lightEditorUpper.TabIndex = 15;
             // 
             // lblUpperLoopCount
             // 
@@ -984,6 +973,21 @@ namespace Intersect_Editor.Forms
             0,
             0});
             this.nudUpperLoopCount.ValueChanged += new System.EventHandler(this.nudUpperLoopCount_ValueChanged);
+            // lightEditorUpper
+            // 
+            this.lightEditorUpper.Location = new System.Drawing.Point(6, 28);
+            this.lightEditorUpper.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.lightEditorUpper.Name = "lightEditorUpper";
+            this.lightEditorUpper.Size = new System.Drawing.Size(253, 274);
+            this.lightEditorUpper.TabIndex = 15;
+            // 
+            // lightEditorLower
+            // 
+            this.lightEditorLower.Location = new System.Drawing.Point(6, 28);
+            this.lightEditorLower.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.lightEditorLower.Name = "lightEditorLower";
+            this.lightEditorLower.Size = new System.Drawing.Size(253, 274);
+            this.lightEditorLower.TabIndex = 15;
             // 
             // frmAnimation
             // 

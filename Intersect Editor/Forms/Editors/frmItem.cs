@@ -166,19 +166,18 @@ namespace Intersect_Editor.Forms
                 txtDesc.Text = _editorItem.Desc;
                 cmbType.SelectedIndex = _editorItem.ItemType;
                 cmbPic.SelectedIndex = cmbPic.FindString(_editorItem.Pic);
-                scrlPrice.Value = _editorItem.Price;
-                scrlAttack.Value = _editorItem.StatsGiven[0];
-                scrlAbilityPower.Value = _editorItem.StatsGiven[1];
-                scrlDefense.Value = _editorItem.StatsGiven[2];
-                scrlMagicResist.Value = _editorItem.StatsGiven[3];
-                scrlSpeed.Value = _editorItem.StatsGiven[4];
-                scrlDamage.Value = _editorItem.Damage;
-                scrlDamage_Scroll(null,null);
-                scrlCritChance.Value = _editorItem.CritChance;
-                scrlCritChance_Scroll(null,null);
-                scrlScaling.Value = _editorItem.Scaling;
-                scrlScaling_Scroll(null,null);
-                scrlRange.Value = _editorItem.StatGrowth;
+                nudPrice.Value = _editorItem.Price;
+                nudStr.Value = _editorItem.StatsGiven[0];
+                nudMag.Value = _editorItem.StatsGiven[1];
+                nudDef.Value = _editorItem.StatsGiven[2];
+                nudMR.Value = _editorItem.StatsGiven[3];
+                nudSpd.Value = _editorItem.StatsGiven[4];
+                nudDamage.Value = _editorItem.Damage;
+                nudCritChance.Value = _editorItem.CritChance;
+                nudScaling.Value = _editorItem.Scaling;
+                nudRange.Value = _editorItem.StatGrowth;
+                chkBound.Checked = Convert.ToBoolean(_editorItem.Bound);
+                chkStackable.Checked = Convert.ToBoolean(_editorItem.Stackable);
                 if (_editorItem.Data1 < -1 || _editorItem.Data1 >= cmbEquipmentSlot.Items.Count)
                 {
                     _editorItem.Data1 = 0;
@@ -187,14 +186,14 @@ namespace Intersect_Editor.Forms
                 cmbToolType.SelectedIndex = _editorItem.Tool + 1;
                 cmbAttackAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.AttackAnimation) + 1;
                 if (_editorItem.ItemType == (int)ItemTypes.Equipment) cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
-                scrlEffectAmount.Value = _editorItem.Data3;
+                nudEffectPercent.Value = _editorItem.Data3;
                 chk2Hand.Checked = Convert.ToBoolean(_editorItem.Data4);
                 cmbMalePaperdoll.SelectedIndex = cmbMalePaperdoll.FindString(_editorItem.MalePaperdoll);
                 cmbFemalePaperdoll.SelectedIndex = cmbFemalePaperdoll.FindString(_editorItem.FemalePaperdoll);
                 if (_editorItem.ItemType == (int)ItemTypes.Consumable)
                 {
                     cmbConsume.SelectedIndex = _editorItem.Data1;
-                    scrlInterval.Value = _editorItem.Data2;
+                    nudInterval.Value = _editorItem.Data2;
                 }
                 if (cmbPic.SelectedIndex > 0)
                 {
@@ -244,12 +243,6 @@ namespace Intersect_Editor.Forms
             UpdateToolStripItems();
         }
 
-        private void scrlInterval_Scroll(object sender, EventArgs e)
-        {
-            lblInterval.Text = @"Interval: " + scrlInterval.Value;
-            _editorItem.Data2 = scrlInterval.Value;
-        }
-
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
         {
             gbConsumable.Visible = false;
@@ -271,7 +264,7 @@ namespace Intersect_Editor.Forms
             if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Consumable"))
             {
                 cmbConsume.SelectedIndex = _editorItem.Data1;
-                scrlInterval.Value = _editorItem.Data2;
+                nudInterval.Value = _editorItem.Data2;
                 gbConsumable.Visible = true;
             }
             else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Spell"))
@@ -294,8 +287,7 @@ namespace Intersect_Editor.Forms
             {
                 if (_editorItem.Data1 < 1) { _editorItem.Data1 = 1; } //Cant have no space or negative space.
                 gbBags.Visible = true;
-                scrlBag.Value = _editorItem.Data1;
-                lblBag.Text = "Bag Slots: " + scrlBag.Value;
+                nudBag.Value = _editorItem.Data1;
             }
 
             _editorItem.ItemType = cmbType.SelectedIndex;
@@ -314,51 +306,9 @@ namespace Intersect_Editor.Forms
             else { picItem.BackgroundImage = null; }
         }
 
-        private void scrlPrice_Scroll(object sender, EventArgs e)
-        {
-            lblPrice.Text = @"Price: " + scrlPrice.Value;
-            _editorItem.Price = scrlPrice.Value;
-        }
-
         private void cmbConsume_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Data1 = cmbConsume.SelectedIndex;
-        }
-
-        private void scrlAttack_Scroll(object sender, EventArgs e)
-        {
-            lblAttack.Text = @"Attack: " + scrlAttack.Value;
-            _editorItem.StatsGiven[0] = scrlAttack.Value;
-        }
-
-        private void scrlAbilityPower_Scroll(object sender, EventArgs e)
-        {
-            lblAbilityPower.Text = @"Ability Pwr: " + scrlAbilityPower.Value;
-            _editorItem.StatsGiven[1] = scrlAbilityPower.Value;
-        }
-
-        private void scrlDefense_Scroll(object sender, EventArgs e)
-        {
-            lblDefense.Text = @"Defense: " + scrlDefense.Value;
-            _editorItem.StatsGiven[2] = scrlDefense.Value;
-        }
-
-        private void scrlMagicResist_Scroll(object sender, EventArgs e)
-        {
-            lblMagicResist.Text = @"Magic Resist: " + scrlMagicResist.Value;
-            _editorItem.StatsGiven[3] = scrlMagicResist.Value;
-        }
-
-        private void scrlSpeed_Scroll(object sender, EventArgs e)
-        {
-            lblSpeed.Text = @"Speed: " + scrlSpeed.Value;
-            _editorItem.StatsGiven[4] = scrlSpeed.Value;
-        }
-
-        private void scrlRange_Scroll(object sender, EventArgs e)
-        {
-            lblRange.Text = @"Stat Bonus Range: +- " + scrlRange.Value;
-            _editorItem.StatGrowth = scrlRange.Value;
         }
 
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)
@@ -409,12 +359,6 @@ namespace Intersect_Editor.Forms
         private void FrmItem_FormClosed(object sender, FormClosedEventArgs e)
         {
             Globals.CurrentEditor = -1;
-        }
-
-        private void scrlEffectAmount_ValueChanged(object sender, EventArgs e)
-        {
-            _editorItem.Data3 = scrlEffectAmount.Value;
-            lblEffectPercent.Text = "Effect Amount: " + _editorItem.Data3 + "%";
         }
 
         private void cmbFemalePaperdoll_SelectedIndexChanged(object sender, EventArgs e)
@@ -528,23 +472,6 @@ namespace Intersect_Editor.Forms
             _editorItem.AttackAnimation = Database.GameObjectIdFromList(GameObject.Animation, cmbAttackAnimation.SelectedIndex - 1);
         }
 
-        private void lblEffectPercent_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void scrlDamage_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblDamage.Text = "Base Damage: " + scrlDamage.Value;
-            _editorItem.Damage = scrlDamage.Value;
-        }
-
-        private void scrlCritChance_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblCritChance.Text = "Crit Chance: " + scrlCritChance.Value + "%";
-            _editorItem.CritChance = scrlCritChance.Value;
-        }
-
         private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.DamageType = cmbDamageType.SelectedIndex;
@@ -553,12 +480,6 @@ namespace Intersect_Editor.Forms
         private void cmbScalingStat_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.ScalingStat = cmbScalingStat.SelectedIndex;
-        }
-
-        private void scrlScaling_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            lblScaling.Text = "Scaling Amount: x" + ((double) scrlScaling.Value/100f);
-            _editorItem.Scaling = scrlScaling.Value;
         }
 
         private void cmbProjectile_SelectedIndexChanged(object sender, EventArgs e)
@@ -587,10 +508,79 @@ namespace Intersect_Editor.Forms
             _editorItem.Data1 = Database.GameObjectIdFromList(GameObject.Spell, cmbTeachSpell.SelectedIndex - 1);
         }
 
-        private void scrlBag_ValueChanged(object sender, ScrollValueEventArgs e)
+        private void nudPrice_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Data1 = scrlBag.Value;
-            lblBag.Text = "Bag Slots: " + scrlBag.Value;
+            _editorItem.Price = (int)nudPrice.Value;
+        }
+
+        private void nudScaling_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Scaling = (int)nudScaling.Value;
+        }
+
+        private void nudDamage_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Damage = (int)nudDamage.Value;
+        }
+
+        private void nudCritChance_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.CritChance = (int)nudCritChance.Value;
+        }
+
+        private void nudEffectPercent_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Data3 = (int)nudEffectPercent.Value;
+        }
+
+        private void nudRange_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.StatGrowth = (int)nudRange.Value;
+        }
+
+        private void nudStr_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.StatsGiven[0] = (int)nudStr.Value;
+        }
+
+        private void nudMag_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.StatsGiven[1] = (int)nudMag.Value;
+        }
+
+        private void nudDef_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.StatsGiven[2] = (int)nudDef.Value;
+        }
+
+        private void nudMR_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.StatsGiven[3] = (int)nudMR.Value;
+        }
+
+        private void nudSpd_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.StatsGiven[4] = (int)nudSpd.Value;
+        }
+
+        private void nudBag_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Data1 = (int)nudBag.Value;
+        }
+
+        private void nudInterval_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Data2 =(int)nudInterval.Value;
+        }
+
+        private void chkBound_CheckedChanged(object sender, EventArgs e)
+        {
+            _editorItem.Bound = Convert.ToInt32(chkBound.Checked);
+        }
+
+        private void chkStackable_CheckedChanged(object sender, EventArgs e)
+        {
+            _editorItem.Stackable = Convert.ToInt32(chkStackable.Checked);
         }
     }
 }
