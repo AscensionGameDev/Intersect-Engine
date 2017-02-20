@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Intersect_Library;
 using Intersect_Library.Localization;
 using Intersect_Server.Classes.Core;
+using Intersect_Library.GameObjects.Events;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
@@ -145,19 +146,11 @@ namespace Intersect_Server.Classes.Networking
                         //Update trade
                         _myClient.Entity.CancelTrade();
 
-                        //Clear Event spawned NPC's.
-                        var entities = _myClient.Entity.SpawnedNpcs.ToArray();
-                        for (int i = 0; i < entities.Length; i++)
+                        //Search for logout activated events and run them
+                        foreach (var evt in EventBase.GetObjects())
                         {
-                            if (entities[i] != null && entities[i].GetType() == typeof(Npc))
-                            {
-                                if (((Npc)entities[i]).Despawnable == true)
-                                {
-                                    ((Npc)entities[i]).Die(false);
-                                }
-                            }
+                            _myClient.Entity.StartCommonEvent(evt.Value, (int)EventPage.CommonEventTriggers.LeaveGame);
                         }
-                        _myClient.Entity.SpawnedNpcs.Clear();
 
                         PacketSender.SendEntityLeave(_myClient.Entity.MyIndex, (int) EntityTypes.Player,
                             Globals.Entities[_entityIndex].CurrentMap);

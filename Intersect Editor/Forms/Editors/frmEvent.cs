@@ -201,7 +201,7 @@ namespace Intersect_Editor.Forms
             {
                 grpEntityOptions.Hide();
                 cmbTrigger.Items.Clear();
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 4; i++)
                 {
                     cmbTrigger.Items.Add(Strings.Get("eventeditor", "commontrigger" + i));
                 }

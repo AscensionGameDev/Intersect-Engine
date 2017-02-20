@@ -104,6 +104,7 @@ namespace Intersect_Library.GameObjects.Events
             None,
             JoinGame,
             LevelUp,
+            LeaveGame,
             Autorun,
         }
     }
