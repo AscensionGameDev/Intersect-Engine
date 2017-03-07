@@ -78,6 +78,7 @@ namespace Intersect_Editor.Forms
             this.rbBlock1 = new DarkUI.Controls.DarkRadioButton();
             this.rbBlockNone = new DarkUI.Controls.DarkRadioButton();
             this.grpSound = new DarkUI.Controls.DarkGroupBox();
+            this.nudSoundDistance = new DarkUI.Controls.DarkNumericUpDown();
             this.cmbMapAttributeSound = new DarkUI.Controls.DarkComboBox();
             this.lblSoundDistance = new System.Windows.Forms.Label();
             this.lblMapSound = new System.Windows.Forms.Label();
@@ -113,12 +114,11 @@ namespace Intersect_Editor.Forms
             this.picMask2 = new System.Windows.Forms.PictureBox();
             this.picMask = new System.Windows.Forms.PictureBox();
             this.picGround = new System.Windows.Forms.PictureBox();
-            this.pnlTilesetContainer = new Intersect_Editor.Forms.Controls.AutoDragPanel();
-            this.picTileset = new System.Windows.Forms.PictureBox();
             this.pnlEvents = new System.Windows.Forms.Panel();
             this.pnlLights = new System.Windows.Forms.Panel();
+            this.pnlTilesetContainer = new Intersect_Editor.Forms.Controls.AutoDragPanel();
+            this.picTileset = new System.Windows.Forms.PictureBox();
             this.lightEditor = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
-            this.nudSoundDistance = new DarkUI.Controls.DarkNumericUpDown();
             this.grpResource.SuspendLayout();
             this.grpZResource.SuspendLayout();
             this.grpItem.SuspendLayout();
@@ -130,6 +130,7 @@ namespace Intersect_Editor.Forms
             this.grpGateway.SuspendLayout();
             this.grpDimBlock.SuspendLayout();
             this.grpSound.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSoundDistance)).BeginInit();
             this.grpSlide.SuspendLayout();
             this.grpAnimation.SuspendLayout();
             this.grpNpcList.SuspendLayout();
@@ -143,11 +144,10 @@ namespace Intersect_Editor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.picMask2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMask)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picGround)).BeginInit();
-            this.pnlTilesetContainer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
             this.pnlEvents.SuspendLayout();
             this.pnlLights.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSoundDistance)).BeginInit();
+            this.pnlTilesetContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
             this.SuspendLayout();
             // 
             // lblLayer
@@ -713,6 +713,15 @@ namespace Intersect_Editor.Forms
             this.grpSound.Text = "Map Sound";
             this.grpSound.Visible = false;
             // 
+            // nudSoundDistance
+            // 
+            this.nudSoundDistance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudSoundDistance.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudSoundDistance.Location = new System.Drawing.Point(16, 72);
+            this.nudSoundDistance.Name = "nudSoundDistance";
+            this.nudSoundDistance.Size = new System.Drawing.Size(219, 20);
+            this.nudSoundDistance.TabIndex = 10;
+            // 
             // cmbMapAttributeSound
             // 
             this.cmbMapAttributeSound.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
@@ -1039,11 +1048,11 @@ namespace Intersect_Editor.Forms
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.pnlAttributes);
-            this.panel1.Controls.Add(this.pnlNpcs);
             this.panel1.Controls.Add(this.pnlTiles);
             this.panel1.Controls.Add(this.pnlEvents);
             this.panel1.Controls.Add(this.pnlLights);
+            this.panel1.Controls.Add(this.pnlAttributes);
+            this.panel1.Controls.Add(this.pnlNpcs);
             this.panel1.Location = new System.Drawing.Point(8, 34);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(278, 424);
@@ -1154,30 +1163,6 @@ namespace Intersect_Editor.Forms
             this.picGround.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picMapLayer_MouseClick);
             this.picGround.MouseHover += new System.EventHandler(this.picMapLayer_MouseHover);
             // 
-            // pnlTilesetContainer
-            // 
-            this.pnlTilesetContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlTilesetContainer.AutoScroll = true;
-            this.pnlTilesetContainer.BackColor = System.Drawing.SystemColors.Control;
-            this.pnlTilesetContainer.Controls.Add(this.picTileset);
-            this.pnlTilesetContainer.Location = new System.Drawing.Point(9, 96);
-            this.pnlTilesetContainer.Name = "pnlTilesetContainer";
-            this.pnlTilesetContainer.Size = new System.Drawing.Size(264, 318);
-            this.pnlTilesetContainer.TabIndex = 19;
-            // 
-            // picTileset
-            // 
-            this.picTileset.Location = new System.Drawing.Point(0, 0);
-            this.picTileset.Name = "picTileset";
-            this.picTileset.Size = new System.Drawing.Size(167, 148);
-            this.picTileset.TabIndex = 2;
-            this.picTileset.TabStop = false;
-            this.picTileset.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseDown);
-            this.picTileset.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseMove);
-            this.picTileset.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseUp);
-            // 
             // pnlEvents
             // 
             this.pnlEvents.Controls.Add(this.lblEventInstructions);
@@ -1197,6 +1182,30 @@ namespace Intersect_Editor.Forms
             this.pnlLights.Size = new System.Drawing.Size(276, 422);
             this.pnlLights.TabIndex = 1;
             // 
+            // pnlTilesetContainer
+            // 
+            this.pnlTilesetContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlTilesetContainer.AutoScroll = true;
+            this.pnlTilesetContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.pnlTilesetContainer.Controls.Add(this.picTileset);
+            this.pnlTilesetContainer.Location = new System.Drawing.Point(9, 96);
+            this.pnlTilesetContainer.Name = "pnlTilesetContainer";
+            this.pnlTilesetContainer.Size = new System.Drawing.Size(264, 318);
+            this.pnlTilesetContainer.TabIndex = 19;
+            // 
+            // picTileset
+            // 
+            this.picTileset.Location = new System.Drawing.Point(0, 0);
+            this.picTileset.Name = "picTileset";
+            this.picTileset.Size = new System.Drawing.Size(167, 148);
+            this.picTileset.TabIndex = 2;
+            this.picTileset.TabStop = false;
+            this.picTileset.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseDown);
+            this.picTileset.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseMove);
+            this.picTileset.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseUp);
+            // 
             // lightEditor
             // 
             this.lightEditor.ForeColor = System.Drawing.Color.Gainsboro;
@@ -1206,15 +1215,6 @@ namespace Intersect_Editor.Forms
             this.lightEditor.TabIndex = 2;
             this.lightEditor.Visible = false;
             this.lightEditor.Load += new System.EventHandler(this.lightEditor_Load);
-            // 
-            // nudSoundDistance
-            // 
-            this.nudSoundDistance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudSoundDistance.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudSoundDistance.Location = new System.Drawing.Point(16, 72);
-            this.nudSoundDistance.Name = "nudSoundDistance";
-            this.nudSoundDistance.Size = new System.Drawing.Size(219, 20);
-            this.nudSoundDistance.TabIndex = 10;
             // 
             // frmMapLayers
             // 
@@ -1259,6 +1259,7 @@ namespace Intersect_Editor.Forms
             this.grpDimBlock.PerformLayout();
             this.grpSound.ResumeLayout(false);
             this.grpSound.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSoundDistance)).EndInit();
             this.grpSlide.ResumeLayout(false);
             this.grpSlide.PerformLayout();
             this.grpAnimation.ResumeLayout(false);
@@ -1277,12 +1278,11 @@ namespace Intersect_Editor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.picMask2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMask)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picGround)).EndInit();
-            this.pnlTilesetContainer.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).EndInit();
             this.pnlEvents.ResumeLayout(false);
             this.pnlEvents.PerformLayout();
             this.pnlLights.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.nudSoundDistance)).EndInit();
+            this.pnlTilesetContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).EndInit();
             this.ResumeLayout(false);
 
         }

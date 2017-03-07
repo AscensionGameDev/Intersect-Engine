@@ -23,9 +23,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using DarkUI.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 
 
 namespace Intersect_Editor.Forms.Editors
@@ -53,34 +55,6 @@ namespace Intersect_Editor.Forms.Editors
                 {
                     _editorItem = null;
                     UpdateEditor();
-                }
-            }
-        }
-
-        private void btnNew_Click(object sender, EventArgs e)
-        {
-            PacketSender.SendCreateObject(GameObject.Shop);
-        }
-
-        private void btnUndo_Click(object sender, EventArgs e)
-        {
-            if (_changed.Contains(_editorItem) && _editorItem != null)
-            {
-                _editorItem.RestoreBackup();
-                UpdateEditor();
-            }
-        }
-
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            if (_editorItem != null)
-            {
-                if (
-                    MessageBox.Show(
-                        "Are you sure you want to delete this game object? This action cannot be reverted!",
-                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    PacketSender.SendDeleteObject(_editorItem);
                 }
             }
         }
@@ -143,7 +117,41 @@ namespace Intersect_Editor.Forms.Editors
             if (cmbAddSoldItem.Items.Count > 0) cmbAddSoldItem.SelectedIndex = 0;
             if (cmbBuyFor.Items.Count > 0) cmbBuyFor.SelectedIndex = 0;
             if (cmbSellFor.Items.Count > 0) cmbSellFor.SelectedIndex = 0;
+            InitLocalization();
             UpdateEditor();
+        }
+
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("shopeditor", "title");
+            toolStripItemNew.Text = Strings.Get("shopeditor", "new");
+            toolStripItemDelete.Text = Strings.Get("shopeditor", "delete");
+            toolStripItemCopy.Text = Strings.Get("shopeditor", "copy");
+            toolStripItemPaste.Text = Strings.Get("shopeditor", "paste");
+            toolStripItemUndo.Text = Strings.Get("shopeditor", "undo");
+
+            grpGeneral.Text = Strings.Get("shopeditor", "general");
+            lblName.Text = Strings.Get("shopeditor", "name");
+            lblDefaultCurrency.Text = Strings.Get("shopeditor", "defaultcurrency");
+
+            grpItemsSold.Text = Strings.Get("shopeditor", "itemssold");
+            lblAddSoldItem.Text = Strings.Get("shopeditor", "addlabel");
+            lblSellFor.Text = Strings.Get("shopeditor", "sellfor");
+            lblSellCost.Text = Strings.Get("shopeditor", "sellcost");
+            btnAddSoldItem.Text = Strings.Get("shopeditor", "addsolditem");
+            btnDelSoldItem.Text = Strings.Get("shopeditor", "removesolditem");
+
+            grpItemsBought.Text = Strings.Get("shopeditor", "itemsboughtwhitelist");
+            rdoBuyWhitelist.Text = Strings.Get("shopeditor", "whitelist");
+            rdoBuyBlacklist.Text = Strings.Get("shopeditor", "blacklist");
+            lblItemBought.Text = Strings.Get("shopeditor", "addboughtitem");
+            lblBuyFor.Text = Strings.Get("shopeditor", "buyfor");
+            lblBuyAmount.Text = Strings.Get("shopeditor", "buycost");
+            btnAddBoughtItem.Text = Strings.Get("shopeditor", "addboughtitem");
+            btnDelBoughtItem.Text = Strings.Get("shopeditor", "removeboughtitem");
+
+            btnSave.Text = Strings.Get("shopeditor", "save");
+            btnCancel.Text = Strings.Get("shopeditor", "cancel");
         }
 
         private void UpdateEditor()
@@ -183,14 +191,14 @@ namespace Intersect_Editor.Forms.Editors
             if (rdoBuyWhitelist.Checked)
             {
                 cmbBuyFor.Enabled = true;
-                txtBuyAmount.Enabled = true;
-                grpItemsBought.Text = "Items Bought (Whitelist - Buy Listed Items)";
+                nudBuyAmount.Enabled = true;
+                grpItemsBought.Text = Strings.Get("shopeditor","itemsboughtwhitelist");
             }
             else
             {
                 cmbBuyFor.Enabled = false;
-                txtBuyAmount.Enabled = false;
-                grpItemsBought.Text = "Items Bought (Blacklist - Buy All But Listed Items)";
+                nudBuyAmount.Enabled = false;
+                grpItemsBought.Text = Strings.Get("shopeditor", "itemsboughtblacklist");
             }
         }
 
@@ -253,8 +261,7 @@ namespace Intersect_Editor.Forms.Editors
         private void btnAddSoldItem_Click(object sender, EventArgs e)
         {
             bool addedItem = false;
-            int cost = 0;
-            int.TryParse(txtSellCost.Text, out cost);
+            int cost = (int)nudSellCost.Value;
             ShopItem newItem = new ShopItem(ItemBase.GetObjects().Keys.ToList()[cmbAddSoldItem.SelectedIndex]
                 , ItemBase.GetObjects().Keys.ToList()[cmbSellFor.SelectedIndex],cost);
             for (int i = 0; i < _editorItem.SellingItems.Count; i++)
@@ -282,8 +289,7 @@ namespace Intersect_Editor.Forms.Editors
         private void btnAddBoughtItem_Click(object sender, EventArgs e)
         {
             bool addedItem = false;
-            int cost = 0;
-            int.TryParse(txtBuyAmount.Text, out cost);
+            int cost = (int) nudBuyAmount.Value;
             ShopItem newItem = new ShopItem(ItemBase.GetObjects().Keys.ToList()[cmbAddBoughtItem.SelectedIndex],
                 ItemBase.GetObjects().Keys.ToList()[cmbBuyFor.SelectedIndex],cost);
             for (int i = 0; i < _editorItem.BuyingItems.Count; i++)
@@ -322,9 +328,8 @@ namespace Intersect_Editor.Forms.Editors
         {
             if (_editorItem != null && lstShops.Focused)
             {
-                if (
-                    MessageBox.Show("Are you sure you want to delete this game object? This action cannot be reverted!",
-                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("shopeditor", "deleteprompt"),
+                        Strings.Get("shopeditor", "deletetitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -353,8 +358,8 @@ namespace Intersect_Editor.Forms.Editors
         {
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
-                if (MessageBox.Show("Are you sure you want to undo changes made to this game object? This action cannot be reverted!",
-                        "Undo Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("shopeditor", "undoprompt"),
+                        Strings.Get("shopeditor", "undotitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();

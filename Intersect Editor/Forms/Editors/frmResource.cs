@@ -25,10 +25,12 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
 using DarkUI.Controls;
+using DarkUI.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Forms.Editors;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 
 
 namespace Intersect_Editor.Classes
@@ -121,7 +123,44 @@ namespace Intersect_Editor.Classes
             cmbItem.Items.Clear();
             cmbItem.Items.Add("None");
             cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
+            InitLocalization();
             UpdateEditor();
+        }
+
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("resourceeditor", "title");
+            toolStripItemNew.Text = Strings.Get("resourceeditor", "new");
+            toolStripItemDelete.Text = Strings.Get("resourceeditor", "delete");
+            toolStripItemCopy.Text = Strings.Get("resourceeditor", "copy");
+            toolStripItemPaste.Text = Strings.Get("resourceeditor", "paste");
+            toolStripItemUndo.Text = Strings.Get("resourceeditor", "undo");
+
+            grpResources.Text = Strings.Get("resourceeditor", "resources");
+
+            grpGeneral.Text = Strings.Get("resourceeditor", "general");
+            lblName.Text = Strings.Get("resourceeditor", "name");
+            lblToolType.Text = Strings.Get("resourceeditor", "tooltype");
+            lblHP.Text = Strings.Get("resourceeditor", "minhp");
+            lblMaxHp.Text = Strings.Get("resourceeditor", "maxhp");
+            lblSpawnDuration.Text = Strings.Get("resourceeditor", "spawnduration");
+            lblAnimation.Text = Strings.Get("resourceeditor", "animation");
+            chkWalkableBefore.Text = Strings.Get("resourceeditor", "walkablebefore");
+            chkWalkableAfter.Text = Strings.Get("resourceeditor", "walkableafter");
+            btnRequirements.Text = Strings.Get("resourceeditor", "requirements");
+
+            grpDrops.Text = Strings.Get("resourceeditor", "drops");
+            lblDropIndex.Text = Strings.Get("resourceeditor", "dropindex", scrlDropIndex.Value);
+            lblDropItem.Text = Strings.Get("resourceeditor", "dropitem");
+            lblDropAmount.Text = Strings.Get("resourceeditor", "dropamount");
+            lblDropChance.Text = Strings.Get("resourceeditor", "dropchance");
+
+            grpGraphics.Text = Strings.Get("resourceeditor", "graphics");
+            lblPic.Text = Strings.Get("resourceeditor", "initialgraphic");
+            lblPic2.Text = Strings.Get("resourceeditor", "exhaustedgraphic");
+
+            btnSave.Text = Strings.Get("resourceeditor", "save");
+            btnCancel.Text = Strings.Get("resourceeditor", "cancel");
         }
 
         public void InitEditor()
@@ -143,8 +182,8 @@ namespace Intersect_Editor.Classes
                 cmbToolType.SelectedIndex = _editorItem.Tool + 1;
                 nudSpawnDuration.Value = _editorItem.SpawnDuration;
                 cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation) + 1;
-                txtHP.Text = _editorItem.MinHP.ToString();
-                txtMaxHp.Text = _editorItem.MaxHP.ToString();
+                nudMinHp.Value = _editorItem.MinHP;
+                nudMaxHp.Value = _editorItem.MaxHP;
                 chkWalkableBefore.Checked = _editorItem.WalkableBefore;
                 chkWalkableAfter.Checked = _editorItem.WalkableAfter;
                 cmbInitialSprite.SelectedIndex =
@@ -169,22 +208,15 @@ namespace Intersect_Editor.Classes
         private void UpdateDropValues()
         {
             int index = scrlDropIndex.Value - 1;
-            lblDropIndex.Text = "Drop: " + (index + 1);
+            lblDropIndex.Text = Strings.Get("resourceeditor", "dropindex", index + 1);
             cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _editorItem.Drops[index].ItemNum) + 1;
-            txtDropAmount.Text = _editorItem.Drops[index].Amount.ToString();
+            nudDropAmount.Value = _editorItem.Drops[index].Amount;
             nudDropChance.Value = _editorItem.Drops[index].Chance;
         }
 
         private void scrlDropIndex_Scroll(object sender, ScrollValueEventArgs e)
         {
             UpdateDropValues();
-        }
-
-        private void txtDropAmount_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtDropAmount.Text, out x);
-            _editorItem.Drops[scrlDropIndex.Value - 1].Amount = x;
         }
 
         private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)
@@ -295,21 +327,6 @@ namespace Intersect_Editor.Classes
         {
             _editorItem.Name = txtName.Text;
             lstResources.Items[lstResources.SelectedIndex] = txtName.Text;
-
-        }
-
-        private void txtHP_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtHP.Text, out x);
-            _editorItem.MinHP = x;
-        }
-
-        private void txtMaxHp_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtMaxHp.Text, out x);
-            _editorItem.MaxHP = x;
         }
 
         private void frmResource_FormClosed(object sender, FormClosedEventArgs e)
@@ -331,9 +348,8 @@ namespace Intersect_Editor.Classes
         {
             if (_editorItem != null && lstResources.Focused)
             {
-                if (
-                    MessageBox.Show("Are you sure you want to delete this game object? This action cannot be reverted!",
-                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("resourceeditor", "deleteprompt"),
+                        Strings.Get("resourceeditor", "deletetitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -362,8 +378,8 @@ namespace Intersect_Editor.Classes
         {
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
-                if (MessageBox.Show("Are you sure you want to undo changes made to this game object? This action cannot be reverted!",
-                        "Undo Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("resourceeditor", "undoprompt"),
+                        Strings.Get("resourceeditor", "undotitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();
@@ -436,6 +452,21 @@ namespace Intersect_Editor.Classes
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Animation = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex -1);
+        }
+
+        private void nudDropAmount_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Drops[scrlDropIndex.Value - 1].Amount = (int) nudDropAmount.Value;
+        }
+
+        private void nudMinHp_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.MinHP = (int)nudMinHp.Value;
+        }
+
+        private void nudMaxHp_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.MinHP = (int)nudMaxHp.Value;
         }
     }
 }

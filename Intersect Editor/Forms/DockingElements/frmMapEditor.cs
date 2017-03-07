@@ -1463,5 +1463,10 @@ namespace Intersect_Editor.Forms
         {
 
         }
+
+        private void picMap_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

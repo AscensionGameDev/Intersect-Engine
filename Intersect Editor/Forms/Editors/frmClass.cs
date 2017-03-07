@@ -301,6 +301,11 @@ namespace Intersect_Editor.Forms
             lblX.Text = Strings.Get("warping", "x", "");
             lblY.Text = Strings.Get("warping", "y");
             lblDir.Text = Strings.Get("warping", "direction", "");
+            cmbDirection.Items.Clear();
+            for (int i = 0; i < 4; i++)
+            {
+                cmbDirection.Items.Add(Strings.Get("directions", i.ToString()));
+            }
             btnVisualMapSelector.Text = Strings.Get("warping", "visual");
 
             grpSprite.Text = Strings.Get("classeditor", "spriteface");

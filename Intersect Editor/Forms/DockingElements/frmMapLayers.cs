@@ -587,6 +587,7 @@ namespace Intersect_Editor.Forms
             CreateSwapChain();
             picTileset.MouseDown += pnlTilesetContainer.AutoDragPanel_MouseDown;
             picTileset.MouseUp += pnlTilesetContainer.AutoDragPanel_MouseUp;
+            pnlTiles.BringToFront();
             InitLocalization();
         }
 

@@ -85,6 +85,7 @@ namespace Intersect_Editor.Forms
             Globals.MapGridWindowNew = new frmMapGrid();
             Globals.MapGridWindowNew.Show(dockLeft,DockState.Document);
         }
+
         private void frmMain_Load(object sender, EventArgs e)
         {
             //Init Delegates

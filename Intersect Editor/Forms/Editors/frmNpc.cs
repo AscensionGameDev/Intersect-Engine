@@ -25,9 +25,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using DarkUI.Controls;
+using DarkUI.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -111,7 +113,82 @@ namespace Intersect_Editor.Forms
             {
                 cmbScalingStat.Items.Add(Globals.GetStatName(x));
             }
+            InitLocalization();
             UpdateEditor();
+        }
+
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("npceditor", "title");
+            toolStripItemNew.Text = Strings.Get("npceditor", "new");
+            toolStripItemDelete.Text = Strings.Get("npceditor", "delete");
+            toolStripItemCopy.Text = Strings.Get("npceditor", "copy");
+            toolStripItemPaste.Text = Strings.Get("npceditor", "paste");
+            toolStripItemUndo.Text = Strings.Get("npceditor", "undo");
+
+            grpNpcs.Text = Strings.Get("npceditor", "npcs");
+
+            grpGeneral.Text = Strings.Get("npceditor", "general");
+            lblName.Text = Strings.Get("npceditor", "name");
+            lblBehavior.Text = Strings.Get("npceditor", "behavior");
+            cmbBehavior.Items.Clear();
+            for (int i = 0; i < 4; i++)
+            {
+                cmbBehavior.Items.Add(Strings.Get("npceditor", "behavior" + i));
+            }
+            lblPic.Text = Strings.Get("npceditor", "sprite");
+            lblSpawnDuration.Text = Strings.Get("npceditor", "spawnduration");
+            lblSightRange.Text = Strings.Get("npceditor", "sightrange");
+
+            grpStats.Text = Strings.Get("npceditor", "stats");
+            lblHP.Text = Strings.Get("npceditor", "hp");
+            lblMana.Text = Strings.Get("npceditor", "mana");
+            lblStr.Text = Strings.Get("npceditor", "attack");
+            lblDef.Text = Strings.Get("npceditor", "defense");
+            lblSpd.Text = Strings.Get("npceditor", "speed");
+            lblMag.Text = Strings.Get("npceditor", "abilitypower");
+            lblMR.Text = Strings.Get("npceditor", "magicresist");
+            lblExp.Text = Strings.Get("npceditor", "exp");
+
+            grpSpells.Text = Strings.Get("npceditor", "spells");
+            lblSpell.Text = Strings.Get("npceditor", "spell");
+            btnAdd.Text = Strings.Get("npceditor", "addspell");
+            btnRemove.Text = Strings.Get("npceditor", "removespell");
+            lblFreq.Text = Strings.Get("npceditor", "frequency");
+            cmbFreq.Items.Clear();
+            for (int i = 0; i < 5; i++)
+            {
+                cmbFreq.Items.Add(Strings.Get("npceditor", "frequency" + i));
+            }
+
+            grpNpcVsNpc.Text = Strings.Get("npceditor", "npcvsnpc");
+            chkEnabled.Text = Strings.Get("npceditor", "enabled");
+            chkAttackAllies.Text = Strings.Get("npceditor", "attackallies");
+            lblNPC.Text = Strings.Get("npceditor", "npc");
+            btnAddAggro.Text = Strings.Get("npceditor", "addhostility");
+            btnRemoveAggro.Text = Strings.Get("npceditor", "removehostility");
+
+            grpDrops.Text = Strings.Get("npceditor", "drops");
+            lblDropIndex.Text = Strings.Get("npceditor", "dropindex", (scrlDropIndex.Value + 1));
+            lblDropItem.Text = Strings.Get("npceditor", "dropitem");
+            lblDropAmount.Text = Strings.Get("npceditor", "dropamount");
+            lblDropChance.Text = Strings.Get("npceditor", "dropchance");
+
+            grpCombat.Text = Strings.Get("npceditor", "combat");
+            lblDamage.Text = Strings.Get("npceditor", "basedamage");
+            lblCritChance.Text = Strings.Get("npceditor", "critchance");
+            lblDamageType.Text = Strings.Get("npceditor", "damagetype");
+            cmbDamageType.Items.Clear();
+            for (int i = 0; i < 3; i++)
+            {
+                cmbDamageType.Items.Add(Strings.Get("npceditor", "damagetype" + i));
+            }
+            lblScalingStat.Text = Strings.Get("npceditor", "scalingstat");
+            lblScaling.Text = Strings.Get("npceditor", "scalingamount");
+            lblAttackAnimation.Text = Strings.Get("npceditor", "attackanimation");
+
+            btnSave.Text = Strings.Get("npceditor", "save");
+            btnCancel.Text = Strings.Get("npceditor", "cancel");
         }
 
         public void InitEditor()
@@ -136,9 +213,9 @@ namespace Intersect_Editor.Forms
                 nudDef.Value = _editorItem.Stat[(int) Stats.Defense];
                 nudMR.Value = _editorItem.Stat[(int) Stats.MagicResist];
                 nudSpd.Value = _editorItem.Stat[(int) Stats.Speed];
-                txtHP.Text = _editorItem.MaxVital[(int) Vitals.Health].ToString();
-                txtMana.Text = _editorItem.MaxVital[(int) Vitals.Mana].ToString();
-                txtExp.Text = _editorItem.Experience.ToString();
+                nudHp.Value = _editorItem.MaxVital[(int) Vitals.Health];
+                nudMana.Value = _editorItem.MaxVital[(int) Vitals.Mana];
+                nudExp.Value = _editorItem.Experience;
                 chkAttackAllies.Checked = _editorItem.AttackAllies;
                 chkEnabled.Checked = _editorItem.NpcVsNpcEnabled;
 
@@ -156,11 +233,11 @@ namespace Intersect_Editor.Forms
                 {
                     if (_editorItem.Spells[i] != -1)
                     {
-                        lstSpells.Items.Add("Spell: " + SpellBase.GetName(_editorItem.Spells[i]));
+                        lstSpells.Items.Add(SpellBase.GetName(_editorItem.Spells[i]));
                     }
                     else
                     {
-                        lstSpells.Items.Add("Spell: 0 None");
+                        lstSpells.Items.Add("None");
                     }
                 }
                 if (lstSpells.Items.Count > 0)
@@ -176,11 +253,11 @@ namespace Intersect_Editor.Forms
                 {
                     if (_editorItem.AggroList[i] != -1)
                     {
-                        lstAggro.Items.Add("NPC: " + NpcBase.GetName(_editorItem.AggroList[i]));
+                        lstAggro.Items.Add(NpcBase.GetName(_editorItem.AggroList[i]));
                     }
                     else
                     {
-                        lstAggro.Items.Add("NPC: None");
+                        lstAggro.Items.Add("None");
                     }
                 }
 
@@ -224,27 +301,6 @@ namespace Intersect_Editor.Forms
             DrawNpcSprite();
         }
 
-        private void txtHP_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtHP.Text, out x);
-            _editorItem.MaxVital[(int)Vitals.Health] = x;
-        }
-
-        private void txtMana_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtMana.Text, out x);
-            _editorItem.MaxVital[(int)Vitals.Mana] = x;
-        }
-
-        private void txtExp_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtExp.Text, out x);
-            _editorItem.Experience  = x;
-        }
-
         private void DrawNpcSprite()
         {
             var picSpriteBmp = new Bitmap(picNpc.Width, picNpc.Height);
@@ -260,19 +316,12 @@ namespace Intersect_Editor.Forms
             picNpc.BackgroundImage = picSpriteBmp;
         }
 
-        private void txtDropAmount_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtDropAmount.Text, out x);
-            _editorItem.Drops[scrlDropIndex.Value].Amount = x;
-        }
-
         private void UpdateDropValues()
         {
             int index = scrlDropIndex.Value;
-            lblDropIndex.Text = "Drop: " + (index + 1);
+            lblDropIndex.Text = Strings.Get("npceditor", "dropindex", (scrlDropIndex.Value + 1));
             cmbDropItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _editorItem.Drops[index].ItemNum) + 1;
-            txtDropAmount.Text = _editorItem.Drops[index].Amount.ToString();
+            nudDropAmount.Value = _editorItem.Drops[index].Amount;
             nudDropChance.Value = _editorItem.Drops[index].Chance;
         }
 
@@ -293,7 +342,7 @@ namespace Intersect_Editor.Forms
             lstSpells.Items.Clear();
             for (int i = 0; i < _editorItem.Spells.Count; i++)
             {
-                lstSpells.Items.Add("Spell: " + SpellBase.GetName(_editorItem.Spells[i]));
+                lstSpells.Items.Add(SpellBase.GetName(_editorItem.Spells[i]));
             }
             lstSpells.SelectedIndex = n;
         }
@@ -331,11 +380,11 @@ namespace Intersect_Editor.Forms
             {
                 if (_editorItem.AggroList[i] != -1)
                 {
-                    lstAggro.Items.Add("NPC: " + NpcBase.GetName(_editorItem.AggroList[i]));
+                    lstAggro.Items.Add(NpcBase.GetName(_editorItem.AggroList[i]));
                 }
                 else
                 {
-                    lstAggro.Items.Add("NPC: None");
+                    lstAggro.Items.Add("None");
                 }
             }
         }
@@ -359,9 +408,8 @@ namespace Intersect_Editor.Forms
         {
             if (_editorItem != null && lstNpcs.Focused)
             {
-                if (
-                    MessageBox.Show("Are you sure you want to delete this game object? This action cannot be reverted!",
-                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("npceditor", "deleteprompt"),
+                        Strings.Get("npceditor", "deletetitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -390,8 +438,8 @@ namespace Intersect_Editor.Forms
         {
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
-                if (MessageBox.Show("Are you sure you want to undo changes made to this game object? This action cannot be reverted!",
-                        "Undo Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("npceditor", "undoprompt"),
+                        Strings.Get("npceditor", "undotitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();
@@ -489,7 +537,7 @@ namespace Intersect_Editor.Forms
             lstSpells.Items.Clear();
             for (int i = 0; i < _editorItem.Spells.Count; i++)
             {
-                lstSpells.Items.Add("Spell: " + SpellBase.GetName(_editorItem.Spells[i]));
+                lstSpells.Items.Add(SpellBase.GetName(_editorItem.Spells[i]));
             }
             lstSpells.SelectedIndex = n;
         }
@@ -547,6 +595,26 @@ namespace Intersect_Editor.Forms
         private void nudDropChance_ValueChanged(object sender, EventArgs e)
         {
             _editorItem.Drops[scrlDropIndex.Value].Chance = (int)nudDropChance.Value;
+        }
+
+        private void nudHp_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.MaxVital[(int) Vitals.Health] = (int) nudHp.Value;
+        }
+
+        private void nudMana_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.MaxVital[(int) Vitals.Mana] = (int) nudMana.Value;
+        }
+
+        private void nudExp_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Experience = (int)nudExp.Value;
+        }
+
+        private void nudDropAmount_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Drops[scrlDropIndex.Value].Amount = (int) nudDropAmount.Value;
         }
     }
 }

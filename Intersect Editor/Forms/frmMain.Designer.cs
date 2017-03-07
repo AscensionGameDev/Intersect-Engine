@@ -35,7 +35,6 @@ namespace Intersect_Editor.Forms
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
-            this.vS2012LightTheme1 = new WeifenLuo.WinFormsUI.Docking.VS2015DarkTheme();
             this.statusStrip1 = new DarkUI.Controls.DarkStatusStrip();
             this.toolStripLabelCoords = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
@@ -991,7 +990,6 @@ namespace Intersect_Editor.Forms
 
         #endregion
         private System.Windows.Forms.ToolStripMenuItem hihiToolStripMenuItem;
-        private WeifenLuo.WinFormsUI.Docking.VS2015DarkTheme vS2012LightTheme1;
         private DarkStatusStrip statusStrip1;
         public ToolStripStatusLabel toolStripLabelCoords;
         private ToolStripSeparator toolStripSeparator7;

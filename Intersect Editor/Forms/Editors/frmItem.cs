@@ -24,12 +24,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Controls;
+using DarkUI.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Forms.Editors;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 
 namespace Intersect_Editor.Forms
@@ -134,8 +136,92 @@ namespace Intersect_Editor.Forms
                 cmbMalePaperdoll.Items.Add(paperdollnames[i]);
                 cmbFemalePaperdoll.Items.Add(paperdollnames[i]);
             }
-
+            InitLocalization();
             UpdateEditor();
+        }
+
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("itemeditor", "title");
+            toolStripItemNew.Text = Strings.Get("itemeditor", "new");
+            toolStripItemDelete.Text = Strings.Get("itemeditor", "delete");
+            toolStripItemCopy.Text = Strings.Get("itemeditor", "copy");
+            toolStripItemPaste.Text = Strings.Get("itemeditor", "paste");
+            toolStripItemUndo.Text = Strings.Get("itemeditor", "undo");
+
+            grpItems.Text = Strings.Get("itemeditor", "items");
+            grpGeneral.Text = Strings.Get("itemeditor", "general");
+            lblName.Text = Strings.Get("itemeditor", "name");
+            lblType.Text = Strings.Get("itemeditor", "type");
+            cmbType.Items.Clear();
+            for (int i = 0; i < 7; i++)
+            {
+                cmbType.Items.Add(Strings.Get("itemeditor", "type" + i));
+            }
+            lblDesc.Text = Strings.Get("itemeditor", "description");
+            lblPic.Text = Strings.Get("itemeditor", "picture");
+            lblPrice.Text = Strings.Get("itemeditor", "price");
+            lblAnim.Text = Strings.Get("itemeditor", "animation");
+            chkBound.Text = Strings.Get("itemeditor", "bound");
+            chkStackable.Text = Strings.Get("itemeditor", "stackable");
+            btnEditRequirements.Text = Strings.Get("itemeditor", "requirements");
+
+            grpEquipment.Text = Strings.Get("itemeditor", "equipment");
+            lblEquipmentSlot.Text = Strings.Get("itemeditor", "slot");
+            grpStatBonuses.Text = Strings.Get("itemeditor", "bonuses");
+            lblStr.Text = Strings.Get("itemeditor", "attackbonus");
+            lblDef.Text = Strings.Get("itemeditor", "defensebonus");
+            lblSpd.Text = Strings.Get("itemeditor", "speedbonus");
+            lblMag.Text = Strings.Get("itemeditor", "abilitypowerbonus");
+            lblMR.Text = Strings.Get("itemeditor", "magicresistbonus");
+            lblRange.Text = Strings.Get("itemeditor", "bonusrange");
+            lblBonusEffect.Text = Strings.Get("itemeditor", "bonuseffect");
+            lblEffectPercent.Text = Strings.Get("itemeditor", "bonusamount");
+            cmbEquipmentBonus.Items.Clear();
+            for (int i = 0; i < 3; i++)
+            {
+                Strings.Get("itemeditor", "bonuseffect" + i);
+            }
+
+            grpWeaponProperties.Text = Strings.Get("itemeditor", "weaponproperties");
+            chk2Hand.Text = Strings.Get("itemeditor", "twohanded");
+            lblDamage.Text = Strings.Get("itemeditor", "basedamage");
+            lblCritChance.Text = Strings.Get("itemeditor", "critchance");
+            lblDamageType.Text = Strings.Get("itemeditor", "damagetype");
+            cmbDamageType.Items.Clear();
+            for (int i = 0; i < 3; i++)
+            {
+                cmbDamageType.Items.Add(Strings.Get("itemeditor", "damagetype" + i));
+            }
+            lblScalingStat.Text = Strings.Get("itemeditor", "scalingstat");
+            lblScalingAmount.Text = Strings.Get("itemeditor", "scalingamount");
+            lblAttackAnimation.Text = Strings.Get("itemeditor", "attackanimation");
+            lblProjectile.Text = Strings.Get("itemeditor", "projectile");
+            lblToolType.Text = Strings.Get("itemeditor", "tooltype");
+
+            lblMalePaperdoll.Text = Strings.Get("itemeditor", "malepaperdoll");
+            lblFemalePaperdoll.Text = Strings.Get("itemeditor", "femalepaperdoll");
+
+            grpBags.Text = Strings.Get("itemeditor", "bagpanel");
+            lblBag.Text = Strings.Get("itemeditor", "bagslots");
+
+            grpSpell.Text = Strings.Get("itemeditor", "spellpanel");
+            lblSpell.Text = Strings.Get("itemeditor", "spell");
+
+            grpEvent.Text = Strings.Get("itemeditor", "eventpanel");
+            lblEvent.Text = Strings.Get("itemeditor", "event");
+
+            grpConsumable.Text = Strings.Get("itemeditor", "consumablepanel");
+            lblVital.Text = Strings.Get("itemeditor", "vital");
+            lblInterval.Text = Strings.Get("itemeditor", "consumeinterval");
+            cmbConsume.Items.Clear();
+            for (int i = 0; i < 2; i++)
+            {
+                cmbConsume.Items.Add(Strings.Get("combat", "vital" + i));
+            }
+
+            btnSave.Text = Strings.Get("itemeditor", "save");
+            btnCancel.Text = Strings.Get("itemeditor", "cancel");
         }
 
         public void InitEditor()
@@ -148,9 +234,10 @@ namespace Intersect_Editor.Forms
             cmbToolType.Items.Add("None");
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
             cmbEquipmentBonus.Items.Clear();
-            cmbEquipmentBonus.Items.Add("None");
-            cmbEquipmentBonus.Items.Add("Cooldown Reduction");
-            cmbEquipmentBonus.Items.Add("Life Steal");
+            for (int i = 0; i < 3; i++)
+            {
+                cmbEquipmentBonus.Items.Add(Strings.Get("itemeditor", "bonuseffect" + i));
+            }
             cmbProjectile.Items.Clear();
             cmbProjectile.Items.Add("None");
             cmbProjectile.Items.AddRange(Database.GetGameObjectList(GameObject.Projectile));
@@ -245,11 +332,11 @@ namespace Intersect_Editor.Forms
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            gbConsumable.Visible = false;
-            gbSpell.Visible = false;
-            gbEquipment.Visible = false;
+            grpConsumable.Visible = false;
+            grpSpell.Visible = false;
+            grpEquipment.Visible = false;
             grpEvent.Visible = false;
-            gbBags.Visible = false;
+            grpBags.Visible = false;
 
             if (_editorItem.ItemType != cmbType.SelectedIndex)
             {
@@ -261,32 +348,32 @@ namespace Intersect_Editor.Forms
                 _editorItem.Data4 = 0;
             }
 
-            if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Consumable"))
+            if (cmbType.SelectedIndex == (int)ItemTypes.Consumable)
             {
                 cmbConsume.SelectedIndex = _editorItem.Data1;
                 nudInterval.Value = _editorItem.Data2;
-                gbConsumable.Visible = true;
+                grpConsumable.Visible = true;
             }
-            else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Spell"))
+            else if (cmbType.SelectedIndex == (int)ItemTypes.Spell)
             {
                 cmbTeachSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell,_editorItem.Data1) + 1;
-                gbSpell.Visible = true;
+                grpSpell.Visible = true;
             }
-            else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Event"))
+            else if (cmbType.SelectedIndex == (int)ItemTypes.Event)
             {
                 cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObject.CommonEvent,_editorItem.Data1) + 1;
                 grpEvent.Visible = true;
             }
-            else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Equipment"))
+            else if (cmbType.SelectedIndex == (int)ItemTypes.Equipment)
             {
-                gbEquipment.Visible = true;
+                grpEquipment.Visible = true;
                 cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
                 cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
             }
-            else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Bag"))
+            else if (cmbType.SelectedIndex == (int)ItemTypes.Bag)
             {
                 if (_editorItem.Data1 < 1) { _editorItem.Data1 = 1; } //Cant have no space or negative space.
-                gbBags.Visible = true;
+                grpBags.Visible = true;
                 nudBag.Value = _editorItem.Data1;
             }
 
@@ -377,9 +464,8 @@ namespace Intersect_Editor.Forms
         {
             if (_editorItem != null && lstItems.Focused)
             {
-                if (
-                    MessageBox.Show("Are you sure you want to delete this game object? This action cannot be reverted!",
-                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("itemeditor", "deleteprompt"),
+                        Strings.Get("itemeditor", "deletetitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -408,8 +494,8 @@ namespace Intersect_Editor.Forms
         {
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
-                if (MessageBox.Show("Are you sure you want to undo changes made to this game object? This action cannot be reverted!",
-                        "Undo Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("itemeditor", "undoprompt"),
+                        Strings.Get("itemeditor", "undotitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();

@@ -64,6 +64,7 @@ namespace Intersect_Editor.Forms
             InitializeComponent();
             _currentMap = currentMap;
         }
+
         private void frmEvent_Load(object sender, EventArgs e)
         {
             grpNewCommands.BringToFront();

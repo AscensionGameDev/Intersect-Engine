@@ -477,6 +477,43 @@ Tick timer saved in server config.xml.</string>
 		<string id="save">Save</string>
 		<string id="cancel">Cancel</string>
 	</ClassEditor>
+	<CraftingEditor>
+		<string id="title">Crafting Bench Editor</string>
+		<string id="new">New Bench</string>
+		<string id="delete">Delete Bench</string>
+		<string id="copy">Copy Bench</string>
+		<string id="paste">Paste Bench</string>
+		<string id="undo">Undo Changes</string>
+		
+		<string id="deletetitle">Delete Bench</string>
+		<string id="deleteprompt">Are you sure you want to delete this bench? This action cannot be reverted!</string>
+		<string id="undotitle">Undo Changes</string>
+		<string id="undoprompt">Are you sure you want to undo changes made to this bench? This action cannot be reverted!</string>
+		
+		<string id="benches">Benches</string>
+		
+		<string id="crafts">Crafts</string>
+		<string id="newcraft">New</string>
+		<string id="deletecraft">Delete</string>
+		<string id="duplicatecraft">Duplicate</string>
+		
+		<string id="general">General</string>
+		<string id="name">Name:</string>
+		<string id="item">Item:</string>
+		<string id="time">Time (ms):</string>
+		
+		<string id="ingredients">Ingredients</string>
+		<string id="ingredientitem">Item:</string>
+		<string id="ingredientquantity">Quantity:</string>
+		<string id="newingredient">New</string>
+		<string id="deleteingredient">Delete</string>
+		<string id="duplicateingredient">Duplicate</string>
+		<string id="ingredientlistitem">Ingredient: {00} x{01}</string>
+		<string id="ingredientnone">None</string>
+		
+		<string id="save">Save</string>
+		<string id="cancel">Cancel</string>
+	</CraftingEditor>
 	<DynamicRequirements>
 		<string id="title">Dynamic Requirements</string>
 		<string id="conditionlists">Condition Lists</string>
@@ -497,6 +534,390 @@ Tick timer saved in server config.xml.</string>
 		<string id="instructionsevent">Below are condition lists. If conditions are met on any of the lists then the event can spawn/run.</string>
 		<string id="conditioneditor">Add/Edit Condition</string>
 	</DynamicRequirements>
+	<ItemEditor>
+		<string id="title">Item Editor</string>
+		<string id="new">New Item</string>
+		<string id="delete">Delete Item</string>
+		<string id="copy">Copy Item</string>
+		<string id="paste">Paste Item</string>
+		<string id="undo">Undo Changes</string>
+		
+		<string id="deletetitle">Delete Item</string>
+		<string id="deleteprompt">Are you sure you want to delete this item? This action cannot be reverted!</string>
+		<string id="undotitle">Undo Changes</string>
+		<string id="undoprompt">Are you sure you want to undo changes made to this item? This action cannot be reverted!</string>
+		
+		<string id="items">Items</string>
+		
+		<string id="general">General</string>
+		<string id="name">Name:</string>
+		<string id="type">Type:</string>
+		<string id="type0">None</string>
+		<string id="type1">Equipment</string>
+		<string id="type2">Consumable</string>
+		<string id="type3">Currency</string>
+		<string id="type4">Spell</string>
+		<string id="type5">Event</string>
+		<string id="type6">Bag</string>
+		<string id="description">Desc:</string>
+		<string id="picture">Pic:</string>
+		<string id="price">Price:</string>
+		<string id="animation">Animation:</string>
+		<string id="bound">Bound?</string>
+		<string id="stackable">Stackable?</string>
+		<string id="requirements">Edit Usage Requirements</string>
+		
+		<string id="equipment">Equipment</string>
+		<string id="slot">Equipment Slot:</string>
+		
+		<string id="bonuses">Stat Bonuses</string>
+		<string id="attackbonus">Attack:</string>
+		<string id="defensebonus">Defense:</string>
+		<string id="speedbonus">Speed:</string>
+		<string id="abilitypowerbonus">Ability Pwr:</string>
+		<string id="magicresistbonus">Magic Resist:</string>
+		<string id="bonusrange">Stat Bonus Range (+-):</string>
+		
+		<string id="bonuseffect">Bonus Effect:</string>
+		<string id="bonuseffect0">None</string>
+		<string id="bonuseffect1">Cooldown Reduction</string>
+		<string id="bonuseffect2">Life Steal</string>
+		<string id="bonusamount">Effect Amount (%):</string>
+		
+		<string id="weaponproperties">Weapon Properties</string>
+		<string id="twohanded">2 Hand</string>
+		<string id="basedamage">Base Damage:</string>
+		<string id="critchance">Crit Chance (%):</string>
+		<string id="damagetype">Damage Type:</string>
+		<string id="damagetype0">Physical</string>
+		<string id="damagetype1">Magic</string>
+		<string id="damagetype2">True</string>
+		<string id="scalingstat">Scaling Stat:</string>
+		<string id="scalingamount">Scaling Amount:</string>
+		<string id="attackanimation">Attack Animation:</string>
+		<string id="projectile">Projectile:</string>
+		<string id="tooltype">Tool Type:</string>
+		
+		<string id="malepaperdoll">Male Paperdoll:</string>
+		<string id="femalepaperdoll">Female Paperdoll:</string>
+		
+		<string id="bagpanel">Bag:</string>
+		<string id="bagslots">Bag Slots:</string>
+		
+		<string id="spellpanel">Spell</string>
+		<string id="spell">Spell:</string>
+		
+		<string id="eventpanel">Event</string>
+		<string id="event">Event:</string>
+		
+		<string id="consumeablepanel">Consumable</string>
+		<string id="vital">Vital:</string>
+		<string id="consumeinterval">Interval:</string>
+		
+		<string id="save">Save</string>
+		<string id="cancel">Cancel</string>
+	</ItemEditor>
+	<NpcEditor>
+		<string id="title">Npc Editor</string>
+		<string id="new">New Npc</string>
+		<string id="delete">Delete Npc</string>
+		<string id="copy">Copy Npc</string>
+		<string id="paste">Paste Npc</string>
+		<string id="undo">Undo Changes</string>
+		
+		<string id="deletetitle">Delete Item</string>
+		<string id="deleteprompt">Are you sure you want to delete this npc? This action cannot be reverted!</string>
+		<string id="undotitle">Undo Changes</string>
+		<string id="undoprompt">Are you sure you want to undo changes made to this npc? This action cannot be reverted!</string>
+		
+		<string id="npcs">Npcs</string>
+		
+		<string id="general">General</string>
+		<string id="name">Name:</string>
+		<string id="behavior">Behavior:</string>
+		<string id="behavior0">Attack when Attacked</string>
+		<string id="behavior1">Attack on Sight</string>
+		<string id="behavior2">Friendly</string>
+		<string id="behavior3">Guard</string>
+		<string id="sprite">Sprite</string>
+		<string id="spawnduration">Spawn Duration:</string>
+		<string id="sightrange">Sight Range:</string>
+		
+		<string id="stats">Stats:</string>
+		<string id="hp">HP:</string>
+		<string id="mana">Mana:</string>
+		<string id="attack">Attack:</string>
+		<string id="defense">Defense:</string>
+		<string id="speed">Speed:</string>
+		<string id="abilitypower">Ability Pwr:</string>
+		<string id="magicresist">Magic Resist:</string>
+		<string id="exp">Exp:</string>
+		
+		<string id="spells">Spells</string>
+		<string id="spell">Spell:</string>
+		<string id="addspell">Add</string>
+		<string id="removespell">Remove</string>
+		<string id="frequency">Freq:</string>
+		<string id="frequency0">Not Very Often</string>
+		<string id="frequency1">Not Often</string>
+		<string id="frequency2">Normal</string>
+		<string id="frequency3">Often</string>
+		<string id="frequency4">Very Often</string>
+		
+		<string id="npcvsnpc">NPC vs NPC Combat/Hostility  </string>
+		<string id="enabled">Enabled?</string>
+		<string id="attackallies">Attack Allies?</string>
+		<string id="npc">NPC:</string>
+		<string id="addhostility">Add</string>
+		<string id="removehostility">Remove</string>
+
+		<string id="drops">Drops</string>
+		<string id="dropindex">Drop Index: {00}</string>
+		<string id="dropitem">Item:</string>
+		<string id="dropamount">Drop Amount:</string>
+		<string id="dropchance">Drop Chance (%):</string>
+		
+		<string id="combat">Combat</string>
+		<string id="basedamage">Base Damage:</string>
+		<string id="critchance">Crit Chance (%):</string>
+		<string id="damagetype">Damage Type:</string>
+		<string id="damagetype0">Physical</string>
+		<string id="damagetype1">Magic</string>
+		<string id="damagetype2">True</string>
+		<string id="scalingstat">Scaling Stat:</string>
+		<string id="scalingamount">Scaling Amount:</string>
+		<string id="attackanimation">Attack Animation:</string>
+		
+		<string id="save">Save</string>
+		<string id="cancel">Cancel</string>
+	</NpcEditor>
+	<ProjectileEditor>
+		<string id="title">Projectile Editor</string>
+		<string id="new">New Projectile</string>
+		<string id="delete">Delete Projectile</string>
+		<string id="copy">Copy Projectile</string>
+		<string id="paste">Paste Projectile</string>
+		<string id="undo">Undo Changes</string>
+		
+		<string id="deletetitle">Delete Projectile</string>
+		<string id="deleteprompt">Are you sure you want to delete this projectile? This action cannot be reverted!</string>
+		<string id="undotitle">Undo Changes</string>
+		<string id="undoprompt">Are you sure you want to undo changes made to this projectile? This action cannot be reverted!</string>
+		
+		<string id="projectiles">Projectiles</string>
+		
+		<string id="properties">Properties</string>
+		<string id="name">Name:</string>
+		<string id="speed">Speed (ms):</string>
+		<string id="spawndelay">Spawn Delay (ms):</string>
+		<string id="quantity">Quantity:</string>
+		<string id="range">Range:</string>
+		<string id="knockback">Knockback:</string>
+		<string id="spell">Collision Spell:</string>
+		<string id="grapple">Grapple hook?</string>
+		<string id="homing">Homing?</string>
+		
+		<string id="spawns">Projectile Spawns</string>
+		
+		<string id="animations">Animations</string>
+		<string id="animationline">[Spawn Range: {00} - {01}]  Animation: {02}</string>
+		<string id="animation">Animation:</string>
+		<string id="spawnrange">Spawn Range: {00} - {01}</string>
+		<string id="autorotate">Auto Rotate Animation?</string>
+		<string id="addanimation">Add</string>
+		<string id="removeanimation">Remove</string>
+		
+		<string id="collisions">Ignore Collision:</string>
+		<string id="ignoreblocks">Map Blocks</string>
+		<string id="ignoreactiveresources">Active Resources</string>
+		<string id="ignoreinactiveresources">Inactive Resources</string>
+		<string id="ignorezdimension">Z-Dimension Blocks</string>
+		
+		<string id="ammo">Ammunition Requirements:</string>
+		<string id="ammoitem">Item:</string>
+		<string id="ammoamount">Amount:</string>
+		
+		<string id="save">Save</string>
+		<string id="cancel">Cancel</string>
+	</ProjectileEditor>
+	<ResourceEditor>
+		<string id="title">Resource Editor</string>
+		<string id="new">New Resource</string>
+		<string id="delete">Delete Resource</string>
+		<string id="copy">Copy Resource</string>
+		<string id="paste">Paste Resource</string>
+		<string id="undo">Undo Changes</string>
+		
+		<string id="deletetitle">Delete Item</string>
+		<string id="deleteprompt">Are you sure you want to delete this resource? This action cannot be reverted!</string>
+		<string id="undotitle">Undo Changes</string>
+		<string id="undoprompt">Are you sure you want to undo changes made to this resource? This action cannot be reverted!</string>
+		
+		<string id="resources">Resources</string>
+		
+		<string id="general">General</string>
+		<string id="name">Name:</string>
+		<string id="tooltype">Tool Type:</string>
+		<string id="minhp">Min HP:</string>
+		<string id="maxhp">Max HP:</string>
+		<string id="spawnduration">Spawn Duration:</string>
+		<string id="animation">Animation:</string>
+		<string id="walkablebefore">Walkable before resource removal?</string>
+		<string id="walkableafter">Walkable after resource removal?</string>
+		<string id="requirements">Harvesting Requirements</string>
+		
+		<string id="drops">Drops</string>
+		<string id="dropindex">Drop Index: {00}</string>
+		<string id="dropitem">Item:</string>
+		<string id="dropamount">Amount:</string>
+		<string id="dropchance">Chance (%):)</string>
+		
+		<string id="graphics">Graphics</string>
+		<string id="initialgraphic">Initial Graphic:</string>
+		<string id="exhaustedgraphic">Exhausted Graphic:</string>
+		
+		<string id="save">Save</string>
+		<string id="cancel">Cancel</string>
+	</ResourceEditor>
+	<ShopEditor>
+		<string id="title">Shop Editor</string>
+		<string id="new">New Shop</string>
+		<string id="delete">Delete Shop</string>
+		<string id="copy">Copy Shop</string>
+		<string id="paste">Paste Shop</string>
+		<string id="undo">Undo Changes</string>
+		
+		<string id="deletetitle">Delete Item</string>
+		<string id="deleteprompt">Are you sure you want to delete this shop? This action cannot be reverted!</string>
+		<string id="undotitle">Undo Changes</string>
+		<string id="undoprompt">Are you sure you want to undo changes made to this shop? This action cannot be reverted!</string>
+		
+		<string id="shops">Shops</string>
+		
+		<string id="general">General</string>
+		<string id="name">Name:</string>
+		<string id="defaultcurrency">Default Currency:</string>
+		
+		<string id="itemssold">Items Sold</string>
+		<string id="addlabel">Add Item to be Sold:</string>
+		<string id="sellfor">Sell for:</string>
+		<string id="sellcost">Sell Cost:</string>
+		<string id="addsolditem">Add Selected</string>
+		<string id="removesolditem">Remove Selected</string>
+		
+		<string id="itemsboughtwhitelist">Items Bought (Whitelist - Buy Listed Items)  </string>
+		<string id="itemsboughtblacklist">Items Bought (Blacklist - Don't Buy Listed Items)  </string>
+		<string id="whitelist">Whitelist</string>
+		<string id="blacklist">Blacklist</string>
+		<string id="addboughtitem">Add Item:</string>
+		<string id="buyfor">Buy For:</string>
+		<string id="buycost">Sell Amount:</string>
+		<string id="addboughtitem">Add Selected</string>
+		<string id="removeboughtitem">Remove Selected</string>
+		
+		<string id="save">Save</string>
+		<string id="cancel">Cancel</string>
+	</ShopEditor>
+	<SpellEditor>
+		<string id="title">Spell Editor</string>
+		<string id="new">New Spell</string>
+		<string id="delete">Delete Spell</string>
+		<string id="copy">Copy Spell</string>
+		<string id="paste">Paste Spell</string>
+		<string id="undo">Undo Changes</string>
+		
+		<string id="deletetitle">Delete Spell</string>
+		<string id="deleteprompt">Are you sure you want to delete this spell? This action cannot be reverted!</string>
+		<string id="undotitle">Undo Changes</string>
+		<string id="undoprompt">Are you sure you want to undo changes made to this spell? This action cannot be reverted!</string>
+		
+		<string id="spells">Spells</string>
+		
+		<string id="general">General</string>
+		<string id="name">Name:</string>
+		<string id="type">Type:</string>
+		<string id="type0">Combat Spell</string>
+		<string id="type1">Warp to Map</string>
+		<string id="type2">Warp to Target</string>
+		<string id="type3">Dash</string>
+		<string id="type4">Event</string>
+		<string id="icon">Icon:</string>
+		<string id="description">Desc:</string>
+		<string id="castanimation">Cast Animation:</string>
+		<string id="hitanimation">Hit Animation:</string>
+		
+		<string id="requirements">Casting Requirements</string>
+		<string id="requirementsbutton">Edit Casting Requirements</string>
+		
+		<string id="cost">Spell Cost:</string>
+		<string id="hpcost">HP Cost:</string>
+		<string id="manacost">Mana Cost:</string>
+		<string id="casttime">Cast Time (ms):</string>
+		<string id="cooldown">Cooldown (ms):</string>
+		
+		<string id="targetting">Targetting Info</string>
+		<string id="targettype">Target Type:</string>
+		<string id="targettype0">Self</string>
+		<string id="targettype1">Single Target (includes self)</string>
+		<string id="targettype2">AOE</string>
+		<string id="targettype3">Linear (projectile)</string>
+		<string id="projectile">Projectile:</string>
+		<string id="castrange">Cast Range (tiles):</string>
+		<string id="hitradius">Hit Radius:</string>
+		
+		<string id="dash">Dash</string>
+		<string id="dashrange">Dash Range (tiles): {00}</string>
+		<string id="dashcollisions">Ignore Collision:</string>
+		<string id="ignoreblocks">Map Blocks</string>
+		<string id="ignoreactiveresources">Active Resources</string>
+		<string id="ignoreinactiveresources">Inactive Resources</string>
+		<string id="ignorezdimension">Z-Dimension Blocks</string>
+		
+		<string id="warptomap">Warp Caster:</string>
+		
+		<string id="event">Event</string>
+		<string id="eventlabel">Event:</string>
+		
+		<string id="combatspell">Combat Spell</string>
+		<string id="damagegroup">Damage</string>
+		<string id="friendly">Friendly</string>
+		<string id="hpdamage">HP Damage:</string>
+		<string id="mpdamage">Mana Damage:</string>
+		<string id="critchance">Crit Chance (%):</string>
+		<string id="damagetype">Damage Type:</string>
+		<string id="damagetype0">Physical</string>
+		<string id="damagetype1">Magic</string>
+		<string id="damagetype2">True</string>
+		<string id="scalingstat">Scaling Stat:</string>
+		<string id="scalingamount">Scaling Amount:</string>
+		
+		<string id="hotdot">Heal/Damage Over Time</string>
+		<string id="ishotdot">HOT/DOT?</string>
+		<string id="hotdottick">Tick (ms):</string>
+		
+		<string id="stats">Stat Modifiers</string>
+		<string id="attack">Attack:</string>
+		<string id="defense">Defense:</string>
+		<string id="speed">Speed:</string>
+		<string id="abilitypower">Ability Pwr:</string>
+		<string id="magicresist">Magic Resist:</string>
+		
+		<string id="boostduration">Stat Boost/Effect Duration</string>
+		<string id="duration6">Stat Boost/Effect Duration</string>
+		<string id="effectgroup">Effect</string>
+		<string id="effectlabel">Extra Effect:</string>
+		<string id="effect0">None</string>
+		<string id="effect1">Silence</string>
+		<string id="effect2">Stun</string>
+		<string id="effect3">Snare</string>
+		<string id="effect4">Bind</string>
+		<string id="effect5">Stealth</string>
+		<string id="effect6">Transform</string>
+		<string id="transformsprite">Sprite:</string>
+		
+		<string id="save">Save</string>
+		<string id="cancel">Cancel</string>
+	</SpellEditor>
 	<SwitchVariableEditor>
 		<string id="title">Switch and Variable Editor</string>
 		<string id="type">Switch or Variable Type</string>
@@ -1135,8 +1556,8 @@ Negative values for time to flow backwards.</string>
 		<string id="cancel">Cancel</string>
 	</EventPlayAnimation>
 	<EventSpawnNpc>
-		<string id="title">Play Animation</string>
-		<string id="npc">Animation:</string>
+		<string id="title">Spawn Npc</string>
+		<string id="npc">NPC:</string>
 		<string id="spawntype">Spawn Type:</string>
 		<string id="spawntype0">Specific Tile</string>
 		<string id="spawntype1">On/Around Entity</string>

@@ -26,12 +26,14 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Controls;
+using DarkUI.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Forms.Editors;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect_Library.Localization;
 
 
 namespace Intersect_Editor.Forms
@@ -131,7 +133,116 @@ namespace Intersect_Editor.Forms
                 cmbWarpMap.Items.Add(MapList.GetOrderedMaps()[i].Name);
             }
             cmbWarpMap.SelectedIndex = 0;
+            InitLocalization();
             UpdateEditor();
+        }
+
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("spelleditor", "title");
+            toolStripItemNew.Text = Strings.Get("spelleditor", "new");
+            toolStripItemDelete.Text = Strings.Get("spelleditor", "delete");
+            toolStripItemCopy.Text = Strings.Get("spelleditor", "copy");
+            toolStripItemPaste.Text = Strings.Get("spelleditor", "paste");
+            toolStripItemUndo.Text = Strings.Get("spelleditor", "undo");
+
+            grpSpells.Text = Strings.Get("spelleditor", "npcs");
+
+            grpGeneral.Text = Strings.Get("spelleditor", "general");
+            lblName.Text = Strings.Get("spelleditor", "name");
+            lblType.Text = Strings.Get("spelleditor", "type");
+            cmbType.Items.Clear();
+            for (int i = 0; i < 5; i++)
+            {
+                cmbType.Items.Add(Strings.Get("spelleditor", "type" + i));
+            }
+            lblIcon.Text = Strings.Get("spelleditor", "icon");
+            lblDesc.Text = Strings.Get("spelleditor", "description");
+            lblCastAnimation.Text = Strings.Get("spelleditor", "castanimation");
+            lblHitAnimation.Text = Strings.Get("spelleditor", "hitanimation");
+
+            grpRequirements.Text = Strings.Get("spelleditor", "requirements");
+            btnDynamicRequirements.Text = Strings.Get("spelleditor", "requirementsbutton");
+
+            grpSpellCost.Text = Strings.Get("spelleditor", "cost");
+            lblHPCost.Text = Strings.Get("spelleditor", "hpcost");
+            lblMPCost.Text = Strings.Get("spelleditor", "mpcost");
+            lblCastDuration.Text = Strings.Get("spelleditor", "casttime");
+            lblCooldownDuration.Text = Strings.Get("spelleditor", "cooldown");
+
+            grpTargetInfo.Text = Strings.Get("spelleditor", "targetting");
+            lblTargetType.Text = Strings.Get("spelleditor", "targettype");
+            cmbTargetType.Items.Clear();
+            for (int i = 0; i < 4; i++)
+            {
+                cmbTargetType.Items.Add(Strings.Get("spelleditor", "targettype" + i));
+            }
+            lblCastRange.Text = Strings.Get("spelleditor", "castrange");
+            lblProjectile.Text = Strings.Get("spelleditor", "projectile");
+            lblHitRadius.Text = Strings.Get("spelleditor", "hitradius");
+
+            grpCombat.Text = Strings.Get("spelleditor", "combatspell");
+            grpDamage.Text = Strings.Get("spelleditor", "combat");
+            lblCritChance.Text = Strings.Get("spelleditor", "critchance");
+            lblDamageType.Text = Strings.Get("spelleditor", "damagetype");
+            lblHPDamage.Text = Strings.Get("spelleditor", "hpdamage");
+            lblManaDamage.Text = Strings.Get("spelleditor", "mpdamage");
+            chkFriendly.Text = Strings.Get("spelleditor", "friendly");
+            cmbDamageType.Items.Clear();
+            for (int i = 0; i < 3; i++)
+            {
+                cmbDamageType.Items.Add(Strings.Get("spelleditor", "damagetype" + i));
+            }
+            lblScalingStat.Text = Strings.Get("spelleditor", "scalingstat");
+            lblScaling.Text = Strings.Get("spelleditor", "scalingamount");
+
+            grpHotDot.Text = Strings.Get("spelleditor", "hotdot");
+            chkHOTDOT.Text = Strings.Get("spelleditor", "ishotdot");
+            lblTick.Text = Strings.Get("spelleditor", "hotdottick");
+
+            grpStats.Text = Strings.Get("spelleditor", "stats");
+            lblStr.Text = Strings.Get("spelleditor", "attack");
+            lblDef.Text = Strings.Get("spelleditor", "defense");
+            lblSpd.Text = Strings.Get("spelleditor", "speed");
+            lblMag.Text = Strings.Get("spelleditor", "abilitypower");
+            lblMR.Text = Strings.Get("spelleditor", "magicresist");
+
+            grpEffectDuration.Text = Strings.Get("spelleditor", "boostduration");
+            lblBuffDuration.Text = Strings.Get("spelleditor", "duration");
+            grpEffect.Text = Strings.Get("spelleditor", "effectgroup");
+            lblEffect.Text = Strings.Get("spelleditor", "effectlabel");
+            cmbExtraEffect.Items.Clear();
+            for (int i = 0; i < 7; i++)
+            {
+                cmbExtraEffect.Items.Add(Strings.Get("spelleditor", "effect" + i));
+            }
+            lblSprite.Text = Strings.Get("spelleditor", "transformsprite");
+
+            grpDash.Text = Strings.Get("spelleditor", "dash");
+            lblRange.Text = Strings.Get("spelleditor", "dashrange", scrlRange.Value);
+            grpDashCollisions.Text = Strings.Get("spelleditor", "dashcollisions");
+            chkIgnoreMapBlocks.Text = Strings.Get("spelleditor", "ignoreblocks");
+            chkIgnoreActiveResources.Text = Strings.Get("spelleditor", "ignoreactiveresources");
+            chkIgnoreInactiveResources.Text = Strings.Get("spelleditor", "ignoreinactiveresources");
+            chkIgnoreZDimensionBlocks.Text = Strings.Get("spelleditor", "ignorezdimension");
+
+            grpWarp.Text = Strings.Get("spelleditor", "warptomap");
+            lblMap.Text = Strings.Get("warping", "map", "");
+            lblX.Text = Strings.Get("warping", "x", "");
+            lblY.Text = Strings.Get("warping", "y");
+            lblWarpDir.Text = Strings.Get("warping", "direction", "");
+            cmbDirection.Items.Clear();
+            for (int i = -1; i < 4; i++)
+            {
+                cmbDirection.Items.Add(Strings.Get("directions", i.ToString()));
+            }
+            btnVisualMapSelector.Text = Strings.Get("warping", "visual");
+
+            grpEvent.Text = Strings.Get("spelleditor", "event");
+            lblEvent.Text = Strings.Get("spelleditor", "eventlabel");
+
+            btnSave.Text = Strings.Get("spelleditor", "save");
+            btnCancel.Text = Strings.Get("spelleditor", "cancel");
         }
 
         public void InitEditor()
@@ -191,16 +302,16 @@ namespace Intersect_Editor.Forms
         private void UpdateSpellTypePanels()
         {
             grpTargetInfo.Hide();
-            grpBuffDebuff.Hide();
+            grpCombat.Hide();
             grpWarp.Hide();
             grpDash.Hide();
             grpEvent.Hide();
             cmbTargetType.Enabled = true;
 
-            if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Combat Spell"))
+            if (cmbType.SelectedIndex == (int)SpellTypes.CombatSpell)
             {
                 grpTargetInfo.Show();
-                grpBuffDebuff.Show();
+                grpCombat.Show();
                 cmbTargetType.SelectedIndex = _editorItem.TargetType;
                 UpdateTargetTypePanel();
 
@@ -225,7 +336,7 @@ namespace Intersect_Editor.Forms
                 cmbExtraEffect_SelectedIndexChanged(null, null);
 
             }
-            else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Warp to Map"))
+            else if (cmbType.SelectedIndex == (int)SpellTypes.Warp)
             {
                 grpWarp.Show();
                 for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
@@ -240,24 +351,24 @@ namespace Intersect_Editor.Forms
                 nudWarpY.Value = _editorItem.Data3;
                 cmbDirection.SelectedIndex = _editorItem.Data4;
             }
-            else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Warp to Target"))
+            else if (cmbType.SelectedIndex == (int)SpellTypes.WarpTo)
             {
                 grpTargetInfo.Show();
-                cmbTargetType.SelectedIndex = cmbTargetType.Items.IndexOf("Single Target (includes self)");
+                cmbTargetType.SelectedIndex = (int)SpellTargetTypes.Single;
                 cmbTargetType.Enabled = false;
                 UpdateTargetTypePanel();
             }
-            else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Dash"))
+            else if (cmbType.SelectedIndex == (int)SpellTypes.Dash)
             {
                 grpDash.Show();
                 scrlRange.Value = _editorItem.CastRange;
-                lblRange.Text = "Range: " + scrlRange.Value;
+                lblRange.Text = Strings.Get("spelleditor", "dashrange", scrlRange.Value);
                 chkIgnoreMapBlocks.Checked = Convert.ToBoolean(_editorItem.Data1);
                 chkIgnoreActiveResources.Checked = Convert.ToBoolean(_editorItem.Data2);
                 chkIgnoreInactiveResources.Checked = Convert.ToBoolean(_editorItem.Data3);
                 chkIgnoreZDimensionBlocks.Checked = Convert.ToBoolean(_editorItem.Data4);
             }
-            else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Event"))
+            else if (cmbType.SelectedIndex == (int)SpellTypes.Event)
             {
                 grpEvent.Show();
                 cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObject.CommonEvent,_editorItem.Data1) + 1;
@@ -272,31 +383,31 @@ namespace Intersect_Editor.Forms
             nudCastRange.Hide();
             lblProjectile.Hide();
             cmbProjectile.Hide();
-            if (cmbTargetType.SelectedIndex == cmbTargetType.Items.IndexOf("Single Target (includes self)"))
+            if (cmbTargetType.SelectedIndex == (int)SpellTargetTypes.Single)
             {
                 lblCastRange.Show();
                 nudCastRange.Show();
                 nudCastRange.Value = _editorItem.CastRange;
-                if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Combat Spell"))
+                if (cmbType.SelectedIndex == (int)SpellTypes.CombatSpell)
                 {
                     lblHitRadius.Show();
                     nudHitRadius.Show();
                     nudHitRadius.Value = _editorItem.HitRadius;
                 }
             }
-            if (cmbTargetType.SelectedIndex == cmbTargetType.Items.IndexOf("AOE") && cmbType.SelectedIndex == cmbType.Items.IndexOf("Combat Spell"))
+            if (cmbTargetType.SelectedIndex == (int)SpellTargetTypes.AoE && cmbType.SelectedIndex == (int)SpellTypes.CombatSpell)
             {
                 lblHitRadius.Show();
                 nudHitRadius.Show();
                 nudHitRadius.Value = _editorItem.HitRadius;
             }
-                if (cmbTargetType.SelectedIndex < cmbTargetType.Items.IndexOf("Self"))
+            if (cmbTargetType.SelectedIndex < (int)SpellTargetTypes.Self)
             {
                 lblCastRange.Show();
                 nudCastRange.Show();
                 nudCastRange.Value = _editorItem.CastRange;
             }
-            if (cmbTargetType.SelectedIndex == cmbTargetType.Items.IndexOf("Linear (projectile)"))
+            if (cmbTargetType.SelectedIndex == (int)SpellTargetTypes.Projectile)
             {
                 lblProjectile.Show();
                 cmbProjectile.Show();
@@ -354,7 +465,7 @@ namespace Intersect_Editor.Forms
             cmbTransform.Visible = false;
             picSprite.Visible = false;
 
-            if (cmbExtraEffect.SelectedIndex == cmbExtraEffect.Items.IndexOf("Transform"))
+            if (cmbExtraEffect.SelectedIndex == 6) //Transform
             {
                 lblSprite.Visible = true;
                 cmbTransform.Visible = true;
@@ -383,7 +494,7 @@ namespace Intersect_Editor.Forms
 
         private void scrlRange_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblRange.Text = "Range: " + scrlRange.Value;
+            lblRange.Text = Strings.Get("spelleditor", "dashrange", scrlRange.Value);
             _editorItem.CastRange = scrlRange.Value;
         }
 
@@ -433,9 +544,8 @@ namespace Intersect_Editor.Forms
         {
             if (_editorItem != null && lstSpells.Focused)
             {
-                if (
-                    MessageBox.Show("Are you sure you want to delete this game object? This action cannot be reverted!",
-                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("spelleditor", "deleteprompt"),
+                        Strings.Get("spelleditor", "deletetitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -464,8 +574,8 @@ namespace Intersect_Editor.Forms
         {
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
-                if (MessageBox.Show("Are you sure you want to undo changes made to this game object? This action cannot be reverted!",
-                        "Undo Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("spelleditor", "undoprompt"),
+                        Strings.Get("spelleditor", "undotitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();

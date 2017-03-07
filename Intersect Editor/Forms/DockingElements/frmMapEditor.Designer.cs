@@ -43,24 +43,26 @@ namespace Intersect_Editor.Forms
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlMapContainer.AutoScroll = true;
+            this.pnlMapContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.pnlMapContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlMapContainer.Controls.Add(this.picMap);
             this.pnlMapContainer.Location = new System.Drawing.Point(0, 0);
             this.pnlMapContainer.Name = "pnlMapContainer";
             this.pnlMapContainer.Size = new System.Drawing.Size(204, 101);
             this.pnlMapContainer.TabIndex = 1;
-            this.pnlMapContainer.Scroll += new ScrollEventHandler(this.pnlMapContainer_Scroll);
+            this.pnlMapContainer.Scroll += new System.Windows.Forms.ScrollEventHandler(this.pnlMapContainer_Scroll);
             this.pnlMapContainer.Resize += new System.EventHandler(this.pnlMapContainer_Resize);
             // 
             // picMap
             // 
-            this.picMap.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.picMap.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.picMap.Location = new System.Drawing.Point(0, 0);
             this.picMap.Name = "picMap";
             this.picMap.Size = new System.Drawing.Size(107, 62);
             this.picMap.TabIndex = 2;
             this.picMap.TabStop = false;
             this.picMap.Visible = false;
+            this.picMap.Paint += new System.Windows.Forms.PaintEventHandler(this.picMap_Paint);
             this.picMap.DoubleClick += new System.EventHandler(this.picMap_DoubleClick);
             this.picMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseDown);
             this.picMap.MouseEnter += new System.EventHandler(this.picMap_MouseEnter);
@@ -77,6 +79,7 @@ namespace Intersect_Editor.Forms
             this.CloseButtonVisible = false;
             this.Controls.Add(this.pnlMapContainer);
             this.DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
+            this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
