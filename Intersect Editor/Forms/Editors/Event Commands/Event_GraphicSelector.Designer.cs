@@ -122,7 +122,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbGraphicType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbGraphicType.FormattingEnabled = true;
             this.cmbGraphicType.Items.AddRange(new object[] {
-            Strings.Get("general","none"),
+            "None",
             "Sprite",
             "Tileset"});
             this.cmbGraphicType.Location = new System.Drawing.Point(89, 23);

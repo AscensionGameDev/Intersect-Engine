@@ -318,8 +318,7 @@ namespace Intersect_Editor.Forms
             this.cmbPic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbPic.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbPic.FormattingEnabled = true;
-            this.cmbPic.Items.AddRange(new object[] {
-            Strings.Get("general","none")});
+            this.cmbPic.Items.AddRange(new object[] { "None" });
             this.cmbPic.Location = new System.Drawing.Point(262, 31);
             this.cmbPic.Name = "cmbPic";
             this.cmbPic.Size = new System.Drawing.Size(171, 21);
@@ -381,7 +380,7 @@ namespace Intersect_Editor.Forms
             this.cmbType.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbType.FormattingEnabled = true;
             this.cmbType.Items.AddRange(new object[] {
-            Strings.Get("general","none"),
+            "None",
             "Equipment",
             "Consumable",
             "Currency",
@@ -629,8 +628,7 @@ namespace Intersect_Editor.Forms
             this.cmbFemalePaperdoll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbFemalePaperdoll.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbFemalePaperdoll.FormattingEnabled = true;
-            this.cmbFemalePaperdoll.Items.AddRange(new object[] {
-            Strings.Get("general","none")});
+            this.cmbFemalePaperdoll.Items.AddRange(new object[] { "None" });
             this.cmbFemalePaperdoll.Location = new System.Drawing.Point(222, 379);
             this.cmbFemalePaperdoll.Name = "cmbFemalePaperdoll";
             this.cmbFemalePaperdoll.Size = new System.Drawing.Size(168, 21);
@@ -724,8 +722,7 @@ namespace Intersect_Editor.Forms
             this.cmbMalePaperdoll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbMalePaperdoll.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbMalePaperdoll.FormattingEnabled = true;
-            this.cmbMalePaperdoll.Items.AddRange(new object[] {
-            Strings.Get("general","none")});
+            this.cmbMalePaperdoll.Items.AddRange(new object[] { "None" });
             this.cmbMalePaperdoll.Location = new System.Drawing.Point(12, 379);
             this.cmbMalePaperdoll.Name = "cmbMalePaperdoll";
             this.cmbMalePaperdoll.Size = new System.Drawing.Size(168, 21);

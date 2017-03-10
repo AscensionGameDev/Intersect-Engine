@@ -1,4 +1,5 @@
 ﻿using DarkUI.Controls;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -214,8 +215,7 @@ namespace Intersect_Editor.Forms
             this.cmbSound.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbSound.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSound.FormattingEnabled = true;
-            this.cmbSound.Items.AddRange(new object[] {
-            Strings.Get("general","none")});
+            this.cmbSound.Items.AddRange(new object[] {"None"});
             this.cmbSound.Location = new System.Drawing.Point(60, 45);
             this.cmbSound.Name = "cmbSound";
             this.cmbSound.Size = new System.Drawing.Size(368, 21);

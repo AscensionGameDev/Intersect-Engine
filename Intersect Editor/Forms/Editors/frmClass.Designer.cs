@@ -671,8 +671,7 @@ namespace Intersect_Editor.Forms
             this.cmbSprite.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbSprite.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSprite.FormattingEnabled = true;
-            this.cmbSprite.Items.AddRange(new object[] {
-            Strings.Get("general","none")});
+            this.cmbSprite.Items.AddRange(new object[] {"None"});
             this.cmbSprite.Location = new System.Drawing.Point(272, 31);
             this.cmbSprite.Margin = new System.Windows.Forms.Padding(2);
             this.cmbSprite.Name = "cmbSprite";
@@ -1572,8 +1571,7 @@ namespace Intersect_Editor.Forms
             this.cmbFace.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbFace.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbFace.FormattingEnabled = true;
-            this.cmbFace.Items.AddRange(new object[] {
-            Strings.Get("general","none")});
+            this.cmbFace.Items.AddRange(new object[] {"None"});
             this.cmbFace.Location = new System.Drawing.Point(293, 89);
             this.cmbFace.Margin = new System.Windows.Forms.Padding(2);
             this.cmbFace.Name = "cmbFace";

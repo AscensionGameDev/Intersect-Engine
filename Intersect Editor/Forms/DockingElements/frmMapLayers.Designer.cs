@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using DarkUI.Controls;
 using Intersect_Editor.Forms.Controls;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -694,7 +695,7 @@ namespace Intersect_Editor.Forms
             this.rbBlockNone.Size = new System.Drawing.Size(51, 17);
             this.rbBlockNone.TabIndex = 13;
             this.rbBlockNone.TabStop = true;
-            this.rbBlockNone.Text = Strings.Get("general","none");
+            this.rbBlockNone.Text = "None";
             // 
             // grpSound
             // 

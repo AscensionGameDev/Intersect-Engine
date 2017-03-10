@@ -96,7 +96,7 @@ namespace Intersect_Editor.Classes.Maps
         [CustomCategory("audio"),
         CustomDescription("musicdesc"),
         CustomDisplayName("music"),
-        DefaultValueAttribute(Strings.Get("general","none")),
+        DefaultValueAttribute("None"),
         TypeConverter(typeof(MapMusicProperty)),
         Browsable(true)]
         public string Music
@@ -126,7 +126,7 @@ namespace Intersect_Editor.Classes.Maps
         [CustomCategory("audio"),
         CustomDescription("sounddesc"),
         CustomDisplayName("sound"),
-        DefaultValueAttribute(Strings.Get("general","none")),
+        DefaultValueAttribute("None"),
         TypeConverter(typeof(MapSoundProperty)),
         Browsable(true)]
         public string Sound
@@ -342,7 +342,7 @@ namespace Intersect_Editor.Classes.Maps
         [CustomCategory("fog"),
         CustomDescription("fogdesc"),
         CustomDisplayName("fog"),
-        DefaultValueAttribute(Strings.Get("general","none")),
+        DefaultValueAttribute("None"),
         TypeConverter(typeof(MapFogProperty)),
         Browsable(true)]
         public string Fog
@@ -426,7 +426,7 @@ namespace Intersect_Editor.Classes.Maps
         [CustomCategory("misc"),
         CustomDescription("panoramadesc"),
         CustomDisplayName("panorama"),
-        DefaultValueAttribute(Strings.Get("general","none")),
+        DefaultValueAttribute("None"),
         TypeConverter(typeof(MapImageProperty)),
         Browsable(true)]
         public string Panorama
@@ -456,7 +456,7 @@ namespace Intersect_Editor.Classes.Maps
         [CustomCategory("misc"),
         CustomDescription("overlaygraphicdesc"),
         CustomDisplayName("overlaygraphic"),
-        DefaultValueAttribute(Strings.Get("general","none")),
+        DefaultValueAttribute("None"),
         TypeConverter(typeof(MapImageProperty)),
         Browsable(true)]
         public string OverlayGraphic

@@ -11,6 +11,7 @@ using Intersect_Editor.Classes.General;
 using Intersect_Editor.Classes.Maps;
 using Intersect_Editor.Forms;
 using Intersect_Library;
+using Intersect_Library.Localization;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps;
 using Microsoft.Xna.Framework;
