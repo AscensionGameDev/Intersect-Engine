@@ -21,6 +21,10 @@
 		<string id="version">v{00}</string>
 		<string id="site">Click here to visit the Ascension Game Dev community for support, updates and more!</string>
 	</About>
+	<General>
+	  <!-- Used everywhere. Sounds on map, resource graphics, panoramas, item types, etc. English is None or No Selection. Choose whatever fits best in your language. Try to keep this the same across the client, editor, and server language files as well. -->
+		<string id="none">None</string>
+	</General>
 	<Options>
 		<string id="title">Options</string>
 		<string id="generaltab">General</string>
@@ -139,6 +143,9 @@
 		
 		<string id="zonetype">Zone Type</string>
 		<string id="zonedesc">The type of map this is.</string>
+		<string id="zone0">Normal</string>
+		<string id="zone1">Safe</string>
+		<string id="zone2">Arena</string>
 		
 		<string id="music">Music</string>
 		<string id="musicdesc">Looping background music for this map.</string>
@@ -237,7 +244,7 @@
 		
 		<!-- Map Sound -->
 		<string id="sound">Sound:</string>
-		<string id="distance">Distance: {00} Tile(s)</string>
+		<string id="distance">Distance (In Tiles):</string>
 		
 		<!-- Resource (Uses Z-Dimension Translations) -->
 		<string id="resource">Resource:</string>
@@ -315,6 +322,8 @@
 		<string id="spelleditor">Spell Editor</string>
 		<string id="switchvariableeditor">Switch and Variable Editor</string>
 		<string id="timeeditor">Time Editor</string>
+		<string id="externaltools">External Tools</string>
+		<string id="toolsdir">tools</string>
 		<string id="help">Help</string>
 		<string id="postquestion">Post Question</string>
 		<string id="reportbug">Report Bug</string>
@@ -939,7 +948,7 @@ Tick timer saved in server config.xml.</string>
 		<string id="true">True</string>
 		<string id="false">False</string>
 		
-		<string id="delete">Are you sure you want to delete this switch/variable? This action cannot be reverted!</string>
+		<string id="deleteprompt">Are you sure you want to delete this switch/variable? This action cannot be reverted!</string>
 		<string id="deletecaption">Delete?</string>
 		<string id="new">New</string>
 		<string id="delete">Delete</string>
@@ -999,8 +1008,7 @@ Negative values for time to flow backwards.</string>
 		<string id="clearpage">Clear Page</string>
 		
 		<string id="conditions">Conditions</string>
-		<string id="addcondition">+</string>
-		<string id="removecondition">-</string>
+		<string id="editconditions">Spawn/Execution Conditions</string>
 		
 		<string id="entityoptions">Entity Options</string>
 		<string id="eventpreview">Preview</string>
@@ -1055,7 +1063,6 @@ Negative values for time to flow backwards.</string>
 		<string id="commontrigger0">None</string>
 		<string id="commontrigger1">Login</string>
 		<string id="commontrigger2">Level Up</string>
-		<string id="commontrigger3">Exit Game</string>
 		
 		<string id="commandlist">Commands:</string>
 		<string id="addcommand">Add Commands</string>
@@ -1291,9 +1298,9 @@ Negative values for time to flow backwards.</string>
 		<string id="walkthroughoff">Walkthrough: Off</string>
 		<string id="showname">Show Name</string>
 		<string id="hidename">Hide Name</string>
-		<string id="setplayerbelow">Set Layer: Below Player</string>
-		<string id="setplayersame">Set Layer: Same as Player</string>
-		<string id="setplayerabove">Set Layer: Above Player</string>
+		<string id="setlayerbelow">Set Layer: Below Player</string>
+		<string id="setlayersame">Set Layer: Same as Player</string>
+		<string id="setlayerabove">Set Layer: Above Player</string>
 		
 		<string id="etc">Etc</string>
 		<string id="wait100">Wait 100ms</string>
@@ -1333,13 +1340,13 @@ Negative values for time to flow backwards.</string>
 		<string id="action0">Give</string>
 		<string id="action1">Take</string>
 		<string id="item">Item:</string>
-		<string id="amount">Amount: {00}</string>
+		<string id="amount">Amount:</string>
 		<string id="okay">Ok</string>
 		<string id="cancel">Cancel</string>
 	</EventChangeItems>
 	<EventChangeLevel>
 		<string id="title">Change Level</string>
-		<string id="label">Set Level: {00}</string>
+		<string id="label">Set Level:</string>
 		<string id="okay">Ok</string>
 		<string id="cancel">Cancel</string>
 	</EventChangeLevel>
@@ -1423,7 +1430,7 @@ Negative values for time to flow backwards.</string>
 		
 		<!--Has Item -->
 		<string id="hasitem">Has Item</string>
-		<string id="hasatleast">Has at least: {00}</string>
+		<string id="hasatleast">Has at least:</string>
 		<string id="item">Item:</string>
 		
 		<!-- Class Is -->
@@ -1438,7 +1445,7 @@ Negative values for time to flow backwards.</string>
 		<string id="levelorstat">Level or Stat Is....</string>
 		<string id="levelstatitem">Level or Stat:</string>
 		<string id="level">Level</string>
-		<string id="levelstatvalue">Value: {00}</string>
+		<string id="levelstatvalue">Value:</string>
 		
 		<!-- Self Switch Is -->
 		<string id="selfswitchis">Self Switch Is</string>
@@ -1497,7 +1504,7 @@ Negative values for time to flow backwards.</string>
 	</EventEndQuest>
 	<EventGiveExperience>
 		<string id="title">Give Experience</string>
-		<string id="label">Give {00} Experience:</string>
+		<string id="label">Give Experience:</string>
 		<string id="okay">Ok</string>
 		<string id="cancel">Cancel</string>
 	</EventGiveExperience>
@@ -1666,6 +1673,7 @@ Negative values for time to flow backwards.</string>
 	<EventWaitForRouteCompletion>
 		<string id="title">Wait for Move Route Completion</string>
 		<string id="label">Entity:</string>
+		<string id="player">Player</string>
 		<string id="this">[THIS EVENT]</string>
 		<string id="okay">Ok</string>
 		<string id="cancel">Cancel</string>

@@ -650,7 +650,7 @@ namespace Intersect_Editor.Forms
             this.rbGatewayNone.Size = new System.Drawing.Size(51, 17);
             this.rbGatewayNone.TabIndex = 10;
             this.rbGatewayNone.TabStop = true;
-            this.rbGatewayNone.Text = "None";
+            this.rbGatewayNone.Text = Strings.Get("general","none");
             // 
             // grpDimBlock
             // 
@@ -694,7 +694,7 @@ namespace Intersect_Editor.Forms
             this.rbBlockNone.Size = new System.Drawing.Size(51, 17);
             this.rbBlockNone.TabIndex = 13;
             this.rbBlockNone.TabStop = true;
-            this.rbBlockNone.Text = "None";
+            this.rbBlockNone.Text = Strings.Get("general","none");
             // 
             // grpSound
             // 

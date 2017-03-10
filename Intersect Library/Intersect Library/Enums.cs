@@ -191,12 +191,14 @@ namespace Intersect_Library
         OpenBag,
         CloseBag,
         BagUpdate,
+        MoveRouteToggle,
     }
 
     public enum MapZones
     {
         Normal = 0,
-        Safe = 1
+        Safe,
+        Arena
     }
 
     public enum Stats

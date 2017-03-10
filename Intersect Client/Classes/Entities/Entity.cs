@@ -496,22 +496,22 @@ namespace Intersect_Client.Classes.Entities
                 if (sprite == MySprite)
                 {
                     //Draw the equipment/paperdolls
-                    for (int z = 0; z < Options.PaperdollOrder.Count; z++)
+                    for (int z = 0; z < Options.PaperdollOrder[Dir].Count; z++)
                     {
-                        if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z]) > -1)
+                        if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z]) > -1)
                         {
-                            if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] > -1 && (this != Globals.Me || Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] < Options.MaxInvItems))
+                            if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])] > -1 && (this != Globals.Me || Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])] < Options.MaxInvItems))
                             {
                                 var itemNum = -1;
                                 if (this == Globals.Me)
                                 {
                                     itemNum =
-                                        Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]]
+                                        Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])]]
                                             .ItemNum;
                                 }
                                 else
                                 {
-                                    itemNum = Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])];
+                                    itemNum = Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])];
                                 }
                                 if (ItemBase.GetItem(itemNum) != null)
                                 {

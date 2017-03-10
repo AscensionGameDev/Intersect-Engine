@@ -311,7 +311,7 @@ namespace Intersect_Editor.Forms
             hideAttributeMenus();
             grpSound.Visible = true;
             cmbMapAttributeSound.Items.Clear();
-            cmbMapAttributeSound.Items.Add("None");
+            cmbMapAttributeSound.Items.Add(Strings.Get("general","none"));
             cmbMapAttributeSound.Items.AddRange(GameContentManager.GetSoundNames());
             cmbMapAttributeSound.SelectedIndex = 0;
         }
@@ -560,6 +560,11 @@ namespace Intersect_Editor.Forms
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
+                cmbWarpMap.Items.Clear();
+                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                {
+                    cmbWarpMap.Items.Add(MapList.GetOrderedMaps()[i].Name);
+                }
                 for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
                     if (MapList.GetOrderedMaps()[i].MapNum == frmWarpSelection.GetMap())

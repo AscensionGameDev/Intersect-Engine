@@ -258,19 +258,19 @@ namespace Intersect_Editor.Forms
         private void frmClass_Load(object sender, EventArgs e)
         {
             cmbSprite.Items.Clear();
-            cmbSprite.Items.Add("None");
+            cmbSprite.Items.Add(Strings.Get("general","none"));
             cmbSprite.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
             cmbFace.Items.Clear();
-            cmbFace.Items.Add("None");
+            cmbFace.Items.Add(Strings.Get("general","none"));
             cmbFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
             cmbItem.Items.Clear();
-            cmbItem.Items.Add("None");
+            cmbItem.Items.Add(Strings.Get("general","none"));
             cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
             cmbSpell.Items.Clear();
             cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
             nudLevel.Maximum = Options.MaxLevel;
             cmbAttackAnimation.Items.Clear();
-            cmbAttackAnimation.Items.Add("None");
+            cmbAttackAnimation.Items.Add(Strings.Get("general","none"));
             cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             cmbScalingStat.Items.Clear();
             for (int x = 0; x < Options.MaxStats; x++)
@@ -466,8 +466,8 @@ namespace Intersect_Editor.Forms
         {
             var n = new ClassSprite();
 
-            n.Sprite = "None";
-            n.Face = "None";
+            n.Sprite = Strings.Get("general","none");
+            n.Face = Strings.Get("general","none");
             n.Gender = 0;
 
             _editorItem.Sprites.Add(n);

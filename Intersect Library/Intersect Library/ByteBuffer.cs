@@ -68,6 +68,10 @@ namespace Intersect_Library
             _buff.Add(input);
             _wasUpdated = true;
         }
+        public void WriteBoolean(bool input)
+        {
+            WriteByte(Convert.ToByte(input));
+        }
         public void WriteShort(short input)
         {
             _buff.AddRange(BitConverter.GetBytes(input));
@@ -124,6 +128,14 @@ namespace Intersect_Library
                 }
             }
             return ret;
+        }
+        public bool ReadBoolean()
+        {
+            return Convert.ToBoolean(ReadByte(true));
+        }
+        public bool ReadBoolean(bool peek)
+        {
+            return Convert.ToBoolean(ReadByte(peek));
         }
         public byte ReadByte()
         {

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Intersect_Library;
+using Intersect_Library.Localization;
 
 namespace Intersect_Server.Classes.General
 {
@@ -21,7 +23,7 @@ namespace Intersect_Server.Classes.General
         //Options File
         public static bool LoadOptions()
         {
-            
+
             if (!File.Exists("resources/config.xml"))
             {
                 var settings = new XmlWriterSettings { Indent = true };
@@ -31,13 +33,7 @@ namespace Intersect_Server.Classes.General
                 writer.WriteStartElement("Config");
                 writer.WriteElementString("Language", "English");
                 writer.WriteElementString("GameName", "Intersect");
-                writer.WriteElementString("MOTD", "Welcome to Intersect!");
                 writer.WriteElementString("ServerPort", "4500");
-
-                writer.WriteStartElement("GameObjects");
-                writer.WriteComment("You can increase these if you want, but you shouldn't unless you need to.");
-                writer.WriteElementString("MaxNpcDrops", "10");
-                writer.WriteEndElement();
 
                 writer.WriteStartElement("Player");
                 writer.WriteElementString("MaxStat", "255");
@@ -45,6 +41,13 @@ namespace Intersect_Server.Classes.General
                 writer.WriteElementString("MaxInventory", "35");
                 writer.WriteElementString("MaxSpells", "35");
                 writer.WriteElementString("MaxBank", "100");
+                writer.WriteEndElement();
+
+                writer.WriteStartElement("Passability");
+                writer.WriteComment("Trigger player passability based on map moralites. True = Passable, False = Blocked");
+                writer.WriteElementString("Normal", "False");
+                writer.WriteElementString("Safe", "True");
+                writer.WriteElementString("Arena", "False");
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("Equipment");
@@ -116,12 +119,8 @@ namespace Intersect_Server.Classes.General
 
                     //General Options
                     Options.Language = GetXmlStr(options, "//Config/Language", true);
-                    Options.GameName = GetXmlStr(options, "//Config/GameName",false);
-                    Options.MOTD = GetXmlStr(options, "//Config/MOTD", false);
+                    Options.GameName = GetXmlStr(options, "//Config/GameName", false);
                     Options.ServerPort = GetXmlInt(options, "//Config/ServerPort");
-
-                    //Game Objects
-                    Options.MaxNpcDrops = GetXmlInt(options, "//Config/GameObjects/MaxNpcDrops");
 
                     //Player Options
                     Options.MaxStatValue = GetXmlInt(options, "//Config/Player/MaxStat");
@@ -129,6 +128,10 @@ namespace Intersect_Server.Classes.General
                     Options.MaxInvItems = GetXmlInt(options, "//Config/Player/MaxInventory");
                     Options.MaxPlayerSkills = GetXmlInt(options, "//Config/Player/MaxSpells");
                     Options.MaxBankSlots = GetXmlInt(options, "//Config/Player/MaxBank");
+
+                    Options.PlayerPassable[(int)MapZones.Normal] = Convert.ToBoolean(GetXmlStr(options, "//Config/Passability/Normal", true));
+                    Options.PlayerPassable[(int)MapZones.Safe] = Convert.ToBoolean(GetXmlStr(options, "//Config/Passability/Safe", true));
+                    Options.PlayerPassable[(int)MapZones.Arena] = Convert.ToBoolean(GetXmlStr(options, "//Config/Passability/Arena", true));
 
                     //Equipment
                     int slot = 0;
@@ -157,27 +160,49 @@ namespace Intersect_Server.Classes.General
                     }
 
                     //Paperdoll
-                    slot = 0;
-                    while (!string.IsNullOrEmpty(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)))
+                    for (int i = 0; i < Enum.GetNames(typeof(Directions)).Length; i++)
                     {
-                        if (Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)) > -1)
+                        slot = 0;
+                        Options.PaperdollOrder[i] = new List<string>();
+                        var dir = "Up";
+                        switch ((Directions)i)
                         {
-                            if (Options.PaperdollOrder.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)) > -1)
+                            case Directions.Up:
+                                dir = "Up";
+                                break;
+                            case Directions.Down:
+                                dir = "Down";
+                                break;
+                            case Directions.Left:
+                                dir = "Left";
+                                break;
+                            case Directions.Right:
+                                dir = "Right";
+                                break;
+                        }
+                        var path = "//Config/Paperdoll/" + dir + "/Slot" + slot;
+                        while (!string.IsNullOrEmpty(GetXmlStr(options, path, false)))
+                        {
+                            if (Options.EquipmentSlots.IndexOf(GetXmlStr(options, path, false)) > -1)
                             {
-                                Console.WriteLine("Tried to add the same piece of equipment to the paperdoll render order twice, this is not permitted.  (Path: " + "//Config/Paperdoll/Slot" + slot + ")");
-                                return false;
+                                if (Options.PaperdollOrder[i].IndexOf(GetXmlStr(options, path, false)) > -1)
+                                {
+                                    Console.WriteLine("Tried to add the same piece of equipment to the paperdoll render order twice, this is not permitted.  (Path: " + path + ")");
+                                    return false;
+                                }
+                                else
+                                {
+                                    Options.PaperdollOrder[i].Add(GetXmlStr(options, path, false));
+                                }
                             }
                             else
                             {
-                                Options.PaperdollOrder.Add(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false));
+                                Console.WriteLine("Tried to add a paperdoll for a piece of equipment that does not exist!  (Path: " + path + ")");
+                                return false;
                             }
+                            slot++;
+                            path = "//Config/Paperdoll/" + dir + "/Slot" + slot;
                         }
-                        else
-                        {
-                            Console.WriteLine("Tried to add a paperdoll for a piece of equipment that does not exist!  (Path: " + "//Config/Paperdoll/Slot" + slot + ")");
-                            return false;
-                        }
-                        slot++;
                     }
 
                     //Tool Types
@@ -251,6 +276,12 @@ namespace Intersect_Server.Classes.General
             bf.WriteInteger(Options.MaxPlayerSkills);
             bf.WriteInteger(Options.MaxBankSlots);
 
+            //Passability
+            for (int i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
+            {
+                bf.WriteBoolean(Options.PlayerPassable[i]);
+            }
+
             //Equipment
             bf.WriteInteger(Options.EquipmentSlots.Count);
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
@@ -261,10 +292,13 @@ namespace Intersect_Server.Classes.General
             bf.WriteInteger(Options.ShieldIndex);
 
             //Paperdoll
-            bf.WriteInteger(Options.PaperdollOrder.Count);
-            for (int i = 0; i < Options.PaperdollOrder.Count; i++)
+            for (int i = 0; i < Options.PaperdollOrder.Length; i++)
             {
-                bf.WriteString(Options.PaperdollOrder[i]);
+                bf.WriteInteger(Options.PaperdollOrder[i].Count);
+                for (int x = 0; x < Options.PaperdollOrder[i].Count; x++)
+                {
+                    bf.WriteString(Options.PaperdollOrder[i][x]);
+                }
             }
 
             //Tool Types

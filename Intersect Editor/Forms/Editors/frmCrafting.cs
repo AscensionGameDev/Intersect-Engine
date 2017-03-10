@@ -55,10 +55,10 @@ namespace Intersect_Editor.Forms.Editors
             lstCrafts.LostFocus += itemList_FocusChanged;
             lstCrafts.GotFocus += itemList_FocusChanged;
             cmbResult.Items.Clear();
-            cmbResult.Items.Add("None");
+            cmbResult.Items.Add(Strings.Get("general","none"));
             cmbResult.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
             cmbIngredient.Items.Clear();
-            cmbIngredient.Items.Add("None");
+            cmbIngredient.Items.Add(Strings.Get("general","none"));
             cmbIngredient.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
         }
 
@@ -201,7 +201,7 @@ namespace Intersect_Editor.Forms.Editors
         private void btnAdd_Click(object sender, EventArgs e)
         {
             _currentCraft.Ingredients.Add(new CraftIngredient(-1, 1));
-            lstIngredients.Items.Add("None");
+            lstIngredients.Items.Add(Strings.Get("general","none"));
             lstIngredients.SelectedIndex = lstIngredients.Items.Count - 1;
         }
 
@@ -249,7 +249,7 @@ namespace Intersect_Editor.Forms.Editors
         private void btnNewCraft_Click(object sender, EventArgs e)
         {
             _editorItem.Crafts.Add(new Craft());
-            lstCompositions.Items.Add("None");
+            lstCompositions.Items.Add(Strings.Get("general","none"));
         }
 
         private void btnDeleteCraft_Click(object sender, EventArgs e)
@@ -420,7 +420,7 @@ namespace Intersect_Editor.Forms.Editors
                 }
                 else
                 {
-                    lstCompositions.Items[lstCompositions.SelectedIndex] = "None";
+                    lstCompositions.Items[lstCompositions.SelectedIndex] = Strings.Get("general","none");
                 }
             }
         }

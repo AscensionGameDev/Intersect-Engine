@@ -34,6 +34,7 @@ using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
 using Intersect_Server.Classes.Spells;
 using Attribute = Intersect_Library.GameObjects.Maps.Attribute;
+using Intersect_Library.GameObjects.Events;
 
 namespace Intersect_Server.Classes.Entities
 {
@@ -93,6 +94,9 @@ namespace Intersect_Server.Classes.Entities
 
         public long AttackTimer = 0;
         public bool Blocking = false;
+
+        public EventMoveRoute MoveRoute = null;
+        public EventPageInstance MoveRouteSetter = null;
 
         //Initialization
         public Entity(int index)
@@ -230,6 +234,7 @@ namespace Intersect_Server.Classes.Entities
                 return -5; //Out of Bounds
             }
 
+            var targetMap = MapInstance.GetMap(tile.GetMap());
             var mapEntities = MapInstance.GetMap(tile.GetMap()).GetEntities();
             for (int i = 0; i < mapEntities.Count; i++)
             {
@@ -240,7 +245,9 @@ namespace Intersect_Server.Classes.Entities
                     CollisionIndex = en.MyIndex;
                     if (en.GetType() == typeof(Player))
                     {
-                        return (int)EntityTypes.Player;
+                        //Check if this target player is passable....
+                        if (!Options.PlayerPassable[(int)targetMap.ZoneType])
+                            return (int)EntityTypes.Player;
                     }
                     else if (en.GetType() == typeof(Npc))
                     {
@@ -264,6 +271,188 @@ namespace Intersect_Server.Classes.Entities
 
             return -1;
         }
+        protected virtual bool ProcessMoveRoute(Client client)
+        {
+            var moved = false;
+            int lookDir = 0, moveDir = 0;
+            if (MoveRoute.ActionIndex < MoveRoute.Actions.Count)
+            {
+                switch (MoveRoute.Actions[MoveRoute.ActionIndex].Type)
+                {
+                    case MoveRouteEnum.MoveUp:
+                        if (CanMove((int)Directions.Up) == -1)
+                        {
+                            Move((int)Directions.Up, client,false,true);
+                            moved = true;
+                        }
+                        break;
+                    case MoveRouteEnum.MoveDown:
+                        if (CanMove((int)Directions.Down) == -1)
+                        {
+                            Move((int)Directions.Down, client, false, true);
+                            moved = true;
+                        }
+                        break;
+                    case MoveRouteEnum.MoveLeft:
+                        if (CanMove((int)Directions.Left) == -1)
+                        {
+                            Move((int)Directions.Left, client, false, true);
+                            moved = true;
+                        }
+                        break;
+                    case MoveRouteEnum.MoveRight:
+                        if (CanMove((int)Directions.Right) == -1)
+                        {
+                            Move((int)Directions.Right, client, false, true);
+                            moved = true;
+                        }
+                        break;
+                    case MoveRouteEnum.MoveRandomly:
+                        var dir = Globals.Rand.Next(0, 4);
+                        if (CanMove(dir) == -1)
+                        {
+                            Move(dir, client);
+                            moved = true;
+                        }
+                        break;
+                    case MoveRouteEnum.StepForward:
+                        if (CanMove(Dir) > -1)
+                        {
+                            Move(Dir, client);
+                            moved = true;
+                        }
+                        break;
+                    case MoveRouteEnum.StepBack:
+                        switch (Dir)
+                        {
+                            case (int)Directions.Up:
+                                moveDir = (int)Directions.Down;
+                                break;
+                            case (int)Directions.Down:
+                                moveDir = (int)Directions.Up;
+                                break;
+                            case (int)Directions.Left:
+                                moveDir = (int)Directions.Right;
+                                break;
+                            case (int)Directions.Right:
+                                moveDir = (int)Directions.Left;
+                                break;
+                        }
+                        if (CanMove(moveDir) > -1)
+                        {
+                            Move(moveDir, client);
+                            moved = true;
+                        }
+                        break;
+                    case MoveRouteEnum.FaceUp:
+                        ChangeDir((int)Directions.Up);
+                        moved = true;
+                        break;
+                    case MoveRouteEnum.FaceDown:
+                        ChangeDir((int)Directions.Down);
+                        moved = true;
+                        break;
+                    case MoveRouteEnum.FaceLeft:
+                        ChangeDir((int)Directions.Left);
+                        moved = true;
+                        break;
+                    case MoveRouteEnum.FaceRight:
+                        ChangeDir((int)Directions.Right);
+                        moved = true;
+                        break;
+                    case MoveRouteEnum.Turn90Clockwise:
+                        switch (Dir)
+                        {
+                            case (int)Directions.Up:
+                                lookDir = (int)Directions.Right;
+                                break;
+                            case (int)Directions.Down:
+                                lookDir = (int)Directions.Left;
+                                break;
+                            case (int)Directions.Left:
+                                lookDir = (int)Directions.Down;
+                                break;
+                            case (int)Directions.Right:
+                                lookDir = (int)Directions.Up;
+                                break;
+                        }
+                        ChangeDir(lookDir);
+                        moved = true;
+                        break;
+                    case MoveRouteEnum.Turn90CounterClockwise:
+                        switch (Dir)
+                        {
+                            case (int)Directions.Up:
+                                lookDir = (int)Directions.Left;
+                                break;
+                            case (int)Directions.Down:
+                                lookDir = (int)Directions.Right;
+                                break;
+                            case (int)Directions.Left:
+                                lookDir = (int)Directions.Up;
+                                break;
+                            case (int)Directions.Right:
+                                lookDir = (int)Directions.Down;
+                                break;
+                        }
+                        ChangeDir(lookDir);
+                        moved = true;
+                        break;
+                    case MoveRouteEnum.Turn180:
+                        switch (Dir)
+                        {
+                            case (int)Directions.Up:
+                                lookDir = (int)Directions.Down;
+                                break;
+                            case (int)Directions.Down:
+                                lookDir = (int)Directions.Up;
+                                break;
+                            case (int)Directions.Left:
+                                lookDir = (int)Directions.Right;
+                                break;
+                            case (int)Directions.Right:
+                                lookDir = (int)Directions.Left;
+                                break;
+                        }
+                        ChangeDir(lookDir);
+                        moved = true;
+                        break;
+                    case MoveRouteEnum.TurnRandomly:
+                        ChangeDir(Globals.Rand.Next(0, 4));
+                        moved = true;
+                        break;
+                    case MoveRouteEnum.Wait100:
+                        MoveTimer = Globals.System.GetTimeMs() + 100;
+                        moved = true;
+                        break;
+                    case MoveRouteEnum.Wait500:
+                        MoveTimer = Globals.System.GetTimeMs() + 500;
+                        moved = true;
+                        break;
+                    case MoveRouteEnum.Wait1000:
+                        MoveTimer = Globals.System.GetTimeMs() + 1000;
+                        moved = true;
+                        break;
+                    default:
+                        //Gonna end up returning false because command not found
+                        return false;
+                }
+                if (moved || MoveRoute.IgnoreIfBlocked)
+                {
+                    MoveRoute.ActionIndex++;
+                    if (MoveRoute.ActionIndex >= MoveRoute.Actions.Count)
+                    {
+                        if (MoveRoute.RepeatRoute) MoveRoute.ActionIndex = 0;
+                        MoveRoute.Complete = true;
+                    }
+                }
+                if (MoveTimer < Globals.System.GetTimeMs())
+                {
+                    MoveTimer = Globals.System.GetTimeMs() + (long)GetMovementTime();
+                }
+            }
+            return true;
+        }
 
         //Returns the amount of time required to traverse 1 tile
         public virtual float GetMovementTime()
@@ -279,7 +468,7 @@ namespace Intersect_Server.Classes.Entities
             return EntityTypes.GlobalEntity;
         }
 
-        public virtual void Move(int moveDir, Client client, bool DontUpdate = false)
+        public virtual void Move(int moveDir, Client client, bool DontUpdate = false, bool correction = false)
         {
             var xOffset = 0;
             var yOffset = 0;
@@ -337,16 +526,16 @@ namespace Intersect_Server.Classes.Entities
                         {
                             if (client != null)
                             {
-                                PacketSender.SendEntityMoveTo(client, this);
+                                PacketSender.SendEntityMoveTo(client, this,correction);
                             }
                             else
                             {
-                                PacketSender.SendEntityMove(this);
+                                PacketSender.SendEntityMove(this,correction);
                             }
                         }
                         else
                         {
-                            PacketSender.SendEntityMove(this);
+                            PacketSender.SendEntityMove(this,correction);
                         }
                         MoveTimer = Globals.System.GetTimeMs() + (long) GetMovementTime();
                     }
@@ -519,11 +708,11 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (this.GetType() == typeof(Player) && enemy.GetType() == typeof(Player))
                 {
-                    if (MapInstance.GetMap(CurrentMap).ZoneType == 1)
+                    if (MapInstance.GetMap(CurrentMap).ZoneType == MapZones.Safe)
                     {
                         return;
                     }
-                    if (MapInstance.GetMap(enemy.CurrentMap).ZoneType == 1)
+                    if (MapInstance.GetMap(enemy.CurrentMap).ZoneType == MapZones.Safe)
                     {
                         return;
                     }
@@ -576,11 +765,11 @@ namespace Intersect_Server.Classes.Entities
                     //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
                     if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
                     {
-                        if (MapInstance.GetMap(CurrentMap).ZoneType == 1)
+                        if (MapInstance.GetMap(CurrentMap).ZoneType == MapZones.Safe)
                         {
                             return;
                         }
-                        if (MapInstance.GetMap(enemy.CurrentMap).ZoneType == 1)
+                        if (MapInstance.GetMap(enemy.CurrentMap).ZoneType == MapZones.Safe)
                         {
                             return;
                         }

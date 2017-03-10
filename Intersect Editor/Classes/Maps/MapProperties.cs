@@ -77,12 +77,18 @@ namespace Intersect_Editor.Classes.Maps
         {
             get
             {
-                return ((MapZones)_myMap.ZoneType).ToString();
+                return Strings.Get("mapproperties","zone" + (int)_myMap.ZoneType);
             }
             set
             {
                 Globals.MapEditorWindow.PrepUndoState();
-                _myMap.ZoneType = (byte)(int)Enum.Parse(typeof(MapZones), value);
+                for (byte i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
+                {
+                    if (Strings.Get("mapproperties", "zone" + i) == value)
+                    {
+                        _myMap.ZoneType = (MapZones)i;
+                    }
+                }
                 Globals.MapEditorWindow.AddUndoState();
             }
         }
@@ -90,7 +96,7 @@ namespace Intersect_Editor.Classes.Maps
         [CustomCategory("audio"),
         CustomDescription("musicdesc"),
         CustomDisplayName("music"),
-        DefaultValueAttribute("None"),
+        DefaultValueAttribute(Strings.Get("general","none")),
         TypeConverter(typeof(MapMusicProperty)),
         Browsable(true)]
         public string Music
@@ -98,11 +104,11 @@ namespace Intersect_Editor.Classes.Maps
             get
             {
                 List<string> MusicList = new List<string>();
-                MusicList.Add("None");
+                MusicList.Add(Strings.Get("general","none"));
                 MusicList.AddRange(GameContentManager.GetMusicNames());
                 if (MusicList.IndexOf(_myMap.Music) <= -1)
                 {
-                    _myMap.Music = "None";
+                    _myMap.Music = Strings.Get("general","none");
                 }
                 return _myMap.Music;
             }
@@ -120,7 +126,7 @@ namespace Intersect_Editor.Classes.Maps
         [CustomCategory("audio"),
         CustomDescription("sounddesc"),
         CustomDisplayName("sound"),
-        DefaultValueAttribute("None"),
+        DefaultValueAttribute(Strings.Get("general","none")),
         TypeConverter(typeof(MapSoundProperty)),
         Browsable(true)]
         public string Sound
@@ -128,11 +134,11 @@ namespace Intersect_Editor.Classes.Maps
             get
             {
                 List<string> SoundList = new List<string>();
-                SoundList.Add("None");
+                SoundList.Add(Strings.Get("general","none"));
                 SoundList.AddRange(GameContentManager.GetSoundNames());
                 if (SoundList.IndexOf(_myMap.Sound) <= -1)
                 {
-                    _myMap.Sound = "None";
+                    _myMap.Sound = Strings.Get("general","none");
                 }
                 return _myMap.Sound;
             }
@@ -336,7 +342,7 @@ namespace Intersect_Editor.Classes.Maps
         [CustomCategory("fog"),
         CustomDescription("fogdesc"),
         CustomDisplayName("fog"),
-        DefaultValueAttribute("None"),
+        DefaultValueAttribute(Strings.Get("general","none")),
         TypeConverter(typeof(MapFogProperty)),
         Browsable(true)]
         public string Fog
@@ -344,11 +350,11 @@ namespace Intersect_Editor.Classes.Maps
             get
             {
                 List<string> FogList = new List<string>();
-                FogList.Add("None");
+                FogList.Add(Strings.Get("general","none"));
                 FogList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Fog));
                 if (FogList.IndexOf(_myMap.Fog) <= -1)
                 {
-                    _myMap.Fog = "None";
+                    _myMap.Fog = Strings.Get("general","none");
                 }
                 return _myMap.Fog;
             }
@@ -420,7 +426,7 @@ namespace Intersect_Editor.Classes.Maps
         [CustomCategory("misc"),
         CustomDescription("panoramadesc"),
         CustomDisplayName("panorama"),
-        DefaultValueAttribute("None"),
+        DefaultValueAttribute(Strings.Get("general","none")),
         TypeConverter(typeof(MapImageProperty)),
         Browsable(true)]
         public string Panorama
@@ -428,11 +434,11 @@ namespace Intersect_Editor.Classes.Maps
             get
             {
                 List<string> ImageList = new List<string>();
-                ImageList.Add("None");
+                ImageList.Add(Strings.Get("general","none"));
                 ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
                 if (ImageList.IndexOf(_myMap.Panorama) <= -1)
                 {
-                    _myMap.Panorama = "None";
+                    _myMap.Panorama = Strings.Get("general","none");
                 }
                 return _myMap.Panorama;
             }
@@ -450,7 +456,7 @@ namespace Intersect_Editor.Classes.Maps
         [CustomCategory("misc"),
         CustomDescription("overlaygraphicdesc"),
         CustomDisplayName("overlaygraphic"),
-        DefaultValueAttribute("None"),
+        DefaultValueAttribute(Strings.Get("general","none")),
         TypeConverter(typeof(MapImageProperty)),
         Browsable(true)]
         public string OverlayGraphic
@@ -458,11 +464,11 @@ namespace Intersect_Editor.Classes.Maps
             get
             {
                 List<string> ImageList = new List<string>();
-                ImageList.Add("None");
+                ImageList.Add(Strings.Get("general","none"));
                 ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
                 if (ImageList.IndexOf(_myMap.OverlayGraphic) <= -1)
                 {
-                    _myMap.Panorama = "None";
+                    _myMap.Panorama = Strings.Get("general","none");
                 }
                 return _myMap.OverlayGraphic;
             }
@@ -497,7 +503,7 @@ namespace Intersect_Editor.Classes.Maps
                GetStandardValues(ITypeDescriptorContext context)
         {
             List<string> MusicList = new List<string>();
-            MusicList.Add("None");
+            MusicList.Add(Strings.Get("general","none"));
             MusicList.AddRange(GameContentManager.GetMusicNames());
             return new StandardValuesCollection(MusicList.ToArray());
         }
@@ -522,7 +528,7 @@ namespace Intersect_Editor.Classes.Maps
                GetStandardValues(ITypeDescriptorContext context)
         {
             List<string> SoundList = new List<string>();
-            SoundList.Add("None");
+            SoundList.Add(Strings.Get("general","none"));
             SoundList.AddRange(GameContentManager.GetSoundNames());
             return new StandardValuesCollection(SoundList.ToArray());
         }
@@ -547,7 +553,7 @@ namespace Intersect_Editor.Classes.Maps
                GetStandardValues(ITypeDescriptorContext context)
         {
             List<string> FogList = new List<string>();
-            FogList.Add("None");
+            FogList.Add(Strings.Get("general","none"));
             FogList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Fog));
             return new StandardValuesCollection(FogList.ToArray());
         }
@@ -572,7 +578,7 @@ namespace Intersect_Editor.Classes.Maps
                GetStandardValues(ITypeDescriptorContext context)
         {
             List<string> ImageList = new List<string>();
-            ImageList.Add("None");
+            ImageList.Add(Strings.Get("general","none"));
             ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
             return new StandardValuesCollection(ImageList.ToArray());
         }

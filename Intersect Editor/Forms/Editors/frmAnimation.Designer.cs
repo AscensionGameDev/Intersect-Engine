@@ -215,7 +215,7 @@ namespace Intersect_Editor.Forms
             this.cmbSound.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSound.FormattingEnabled = true;
             this.cmbSound.Items.AddRange(new object[] {
-            "None"});
+            Strings.Get("general","none")});
             this.cmbSound.Location = new System.Drawing.Point(60, 45);
             this.cmbSound.Name = "cmbSound";
             this.cmbSound.Size = new System.Drawing.Size(368, 21);
@@ -518,7 +518,7 @@ namespace Intersect_Editor.Forms
             this.cmbLowerGraphic.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbLowerGraphic.FormattingEnabled = true;
             this.cmbLowerGraphic.Items.AddRange(new object[] {
-            "None"});
+            Strings.Get("general","none")});
             this.cmbLowerGraphic.Location = new System.Drawing.Point(54, 223);
             this.cmbLowerGraphic.Name = "cmbLowerGraphic";
             this.cmbLowerGraphic.Size = new System.Drawing.Size(149, 21);
@@ -818,7 +818,7 @@ namespace Intersect_Editor.Forms
             this.cmbUpperGraphic.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbUpperGraphic.FormattingEnabled = true;
             this.cmbUpperGraphic.Items.AddRange(new object[] {
-            "None"});
+            Strings.Get("general","none")});
             this.cmbUpperGraphic.Location = new System.Drawing.Point(57, 223);
             this.cmbUpperGraphic.Name = "cmbUpperGraphic";
             this.cmbUpperGraphic.Size = new System.Drawing.Size(143, 21);

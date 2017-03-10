@@ -99,7 +99,7 @@ namespace Intersect_Editor.Classes
         {
             _directionGrid = new Bitmap("resources/misc/directions.png");
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add("None");
+            cmbAnimation.Items.Add(Strings.Get("general","none"));
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
 
             cmbItem.Items.Clear();
@@ -242,7 +242,7 @@ namespace Intersect_Editor.Classes
                 }
                 else
                 {
-                    lstAnimations.Items.Add(Strings.Get("projectileeditor", "animationline", n, _editorItem.Animations[i].SpawnRange, "None"));
+                    lstAnimations.Items.Add(Strings.Get("projectileeditor", "animationline", n, _editorItem.Animations[i].SpawnRange, Strings.Get("general","none")));
                 }
                 n = _editorItem.Animations[i].SpawnRange + 1;
             }

@@ -112,17 +112,17 @@ namespace Intersect_Editor.Forms
         {
             //Animation Sound
             cmbSound.Items.Clear();
-            cmbSound.Items.Add("None");
+            cmbSound.Items.Add(Strings.Get("general","none"));
             cmbSound.Items.AddRange(GameContentManager.GetSoundNames());
 
             //Lower Animation Graphic
             cmbLowerGraphic.Items.Clear();
-            cmbLowerGraphic.Items.Add("None");
+            cmbLowerGraphic.Items.Add(Strings.Get("general","none"));
             cmbLowerGraphic.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Animation));
 
             //Upper Animation Graphic
             cmbUpperGraphic.Items.Clear();
-            cmbUpperGraphic.Items.Add("None");
+            cmbUpperGraphic.Items.Add(Strings.Get("general","none"));
             cmbUpperGraphic.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Animation));
 
             lowerWindow = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(),picLowerAnimation.Handle, picLowerAnimation.Width, picLowerAnimation.Height);

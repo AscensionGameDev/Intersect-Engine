@@ -265,6 +265,9 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.BagUpdate:
                         HandleBagUpdate(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.MoveRouteToggle:
+                        HandleMoveRouteToggle(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -1580,6 +1583,14 @@ namespace Intersect_Client.Classes.Networking
                 Globals.Bag[slot] = new ItemInstance();
                 Globals.Bag[slot].Load(bf);
             }
+            bf.Dispose();
+        }
+
+        private static void HandleMoveRouteToggle(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            Globals.MoveRouteActive = bf.ReadBoolean();
             bf.Dispose();
         }
     }

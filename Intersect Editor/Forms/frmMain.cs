@@ -835,7 +835,6 @@ namespace Intersect_Editor.Forms
                 {
                     var screenshotTexture = EditorGraphics.ScreenShotMap();
                     screenshotTexture.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
-                    fs.Close();
                 }
             }
         }
@@ -910,7 +909,7 @@ namespace Intersect_Editor.Forms
             toolStripTimeButton.DropDownItems.Clear();
             var time = new DateTime(2000, 1, 1, 0, 0, 0);
             var x = 0;
-            ToolStripDropDownButton btn = new ToolStripDropDownButton("None");
+            ToolStripDropDownButton btn = new ToolStripDropDownButton(Strings.Get("general","none"));
             btn.Tag = null;
             btn.Click += TimeDropdownButton_Click;
             toolStripTimeButton.DropDownItems.Add(btn);

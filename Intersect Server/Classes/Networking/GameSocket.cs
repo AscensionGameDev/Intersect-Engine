@@ -108,7 +108,7 @@ namespace Intersect_Server.Classes.Networking
 
         public virtual void Update()
         {
-            if (_connectionTimeout > -1 && _connectionTimeout < Globals.System.GetTimeMs())
+            if (_connectionTimeout > -1 && _connectionTimeout < Globals.System.GetTimeMs() && !System.Diagnostics.Debugger.IsAttached)
             {
                 HandleDisconnect();
             }

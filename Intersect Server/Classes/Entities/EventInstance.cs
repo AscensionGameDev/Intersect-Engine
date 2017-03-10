@@ -124,23 +124,34 @@ namespace Intersect_Server.Classes.Entities
                             CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                         while (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.None)
                         {
-                            if (CallStack.Peek().WaitingForRoute > -1)
+                            if (CallStack.Peek().WaitingForRoute > -2)
                             {
-                                //Check if the exist exists && if the move route is completed.
-                                for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
+                                if (CallStack.Peek().WaitingForRoute == -1)
                                 {
-                                    if (MyPlayer.MyEvents[i] == null) continue;
-                                    if (MyPlayer.MyEvents[i].MapNum == CallStack.Peek().WaitingForRouteMap &&
-                                        MyPlayer.MyEvents[i].BaseEvent.MyIndex == CallStack.Peek().WaitingForRoute)
+                                    if (MyPlayer.MoveRoute == null || (MyPlayer.MoveRoute.Complete && MyPlayer.MoveTimer < Globals.System.GetTimeMs()))
                                     {
-                                        if (MyPlayer.MyEvents[i].PageInstance == null) break;
-                                        if (!MyPlayer.MyEvents[i].PageInstance.MoveRoute.Complete) break;
-                                        CallStack.Peek().WaitingForRoute = -1;
+                                        CallStack.Peek().WaitingForRoute = -2;
                                         CallStack.Peek().WaitingForRouteMap = -1;
-                                        break;
                                     }
                                 }
-                                if (CallStack.Peek().WaitingForRoute > -1) break;
+                                else
+                                {
+                                    //Check if the exist exists && if the move route is completed.
+                                    for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
+                                    {
+                                        if (MyPlayer.MyEvents[i] == null) continue;
+                                        if (MyPlayer.MyEvents[i].MapNum == CallStack.Peek().WaitingForRouteMap &&
+                                            MyPlayer.MyEvents[i].BaseEvent.MyIndex == CallStack.Peek().WaitingForRoute)
+                                        {
+                                            if (MyPlayer.MyEvents[i].PageInstance == null) break;
+                                            if (!MyPlayer.MyEvents[i].PageInstance.MoveRoute.Complete) break;
+                                            CallStack.Peek().WaitingForRoute = -2;
+                                            CallStack.Peek().WaitingForRouteMap = -1;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (CallStack.Peek().WaitingForRoute > -2) break;
                             }
                             else
                             {
@@ -819,36 +830,57 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetMoveRoute:
-                    for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
+                    if (CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
+                                CallStack.Peek().CommandIndex].Route.Target == -1)
                     {
-                        if (MyPlayer.MyEvents[i] == null) continue;
-                        if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
-                            CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
-                                CallStack.Peek().CommandIndex].Route.Target)
+                        MyClient.Entity.MoveRoute = new EventMoveRoute();
+                        MyClient.Entity.MoveRouteSetter = PageInstance;
+                        MyClient.Entity.MoveRoute.CopyFrom(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                                            .Commands[CallStack.Peek().CommandIndex].Route);
+                        PacketSender.SendMoveRouteToggle(MyClient, true);
+                    }
+                    else
+                    {
+                        for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
                         {
-                            if (MyPlayer.MyEvents[i].PageInstance != null)
+                            if (MyPlayer.MyEvents[i] == null) continue;
+                            if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
+                                CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
+                                    CallStack.Peek().CommandIndex].Route.Target)
                             {
-                                MyPlayer.MyEvents[i].PageInstance.MoveRoute.CopyFrom(
-                                    CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
-                                        .Commands[
-                                            CallStack.Peek().CommandIndex].Route);
-                                MyPlayer.MyEvents[i].PageInstance.MovementType = 2;
+                                if (MyPlayer.MyEvents[i].PageInstance != null)
+                                {
+                                    MyPlayer.MyEvents[i].PageInstance.MoveRoute.CopyFrom(
+                                        CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                                            .Commands[
+                                                CallStack.Peek().CommandIndex].Route);
+                                    MyPlayer.MyEvents[i].PageInstance.MovementType = 2;
+                                }
                             }
                         }
                     }
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.WaitForRouteCompletion:
-                    for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
+                    if (CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
+                                CallStack.Peek().CommandIndex].Ints[0] == -1)
                     {
-                        if (MyPlayer.MyEvents[i] == null) continue;
-                        if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
-                            CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
-                                CallStack.Peek().CommandIndex].Ints[0])
+                        CallStack.Peek().WaitingForRoute = -1;
+                        CallStack.Peek().WaitingForRouteMap = -1;
+                    }
+                    else
+                    {
+                        for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
                         {
-                            CallStack.Peek().WaitingForRoute = MyPlayer.MyEvents[i].BaseEvent.MyIndex;
-                            CallStack.Peek().WaitingForRouteMap = MyPlayer.MyEvents[i].MapNum;
-                            break;
+                            if (MyPlayer.MyEvents[i] == null) continue;
+                            if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
+                                CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
+                                    CallStack.Peek().CommandIndex].Ints[0])
+                            {
+                                CallStack.Peek().WaitingForRoute = MyPlayer.MyEvents[i].BaseEvent.MyIndex;
+                                CallStack.Peek().WaitingForRouteMap = MyPlayer.MyEvents[i].MapNum;
+                                break;
+                            }
                         }
                     }
                     CallStack.Peek().CommandIndex++;
@@ -1252,7 +1284,7 @@ namespace Intersect_Server.Classes.Entities
         public int CommandIndex;
         public EventResponse WaitingForResponse = EventResponse.None;
         public int ResponseIndex = -1;
-        public int WaitingForRoute = -1;
+        public int WaitingForRoute = -2;
         public int WaitingForRouteMap;
 
         public enum EventResponse

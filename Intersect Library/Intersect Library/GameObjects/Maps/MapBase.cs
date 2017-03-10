@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Library.GameObjects.Maps
 {
@@ -33,11 +34,11 @@ namespace Intersect_Library.GameObjects.Maps
         public List<ResourceSpawn> ResourceSpawns { get; set; } = new List<ResourceSpawn>();
 
         //Properties
-        public string Music { get; set; } = "None";
-        public string Sound { get; set; } = "None";
+        public string Music { get; set; } = Strings.Get("general","none");
+        public string Sound { get; set; } = Strings.Get("general","none");
         public bool IsIndoors { get; set; }
-        public string Panorama { get; set; } = "None";
-        public string Fog { get; set; } = "None";
+        public string Panorama { get; set; } = Strings.Get("general","none");
+        public string Fog { get; set; } = Strings.Get("general","none");
         public int FogXSpeed { get; set; } = 0;
         public int FogYSpeed { get; set; } = 0;
         public int FogTransparency { get; set; } = 0;
@@ -46,12 +47,12 @@ namespace Intersect_Library.GameObjects.Maps
         public int BHue { get; set; } = 0;
         public int AHue { get; set; } = 0;
         public int Brightness { get; set; } = 100;
-        public byte ZoneType { get; set; } = 0; //Everything goes, 1 is safe, add more later
+        public MapZones ZoneType { get; set; } = MapZones.Normal;
         public int PlayerLightSize { get; set; } = 300;
         public byte PlayerLightIntensity { get; set; } = 255;
         public float PlayerLightExpand { get; set; } = 0f;
         public Color PlayerLightColor { get; set; } = Color.White;
-        public string OverlayGraphic { get; set; } = "None";
+        public string OverlayGraphic { get; set; } = Strings.Get("general","none");
 
         //SyncLock
         protected Object _mapLock = new Object();
@@ -156,7 +157,7 @@ namespace Intersect_Library.GameObjects.Maps
                 BHue = bf.ReadInteger();
                 AHue = bf.ReadInteger();
                 Brightness = bf.ReadInteger();
-                ZoneType = bf.ReadByte();
+                ZoneType = (MapZones)bf.ReadByte();
                 OverlayGraphic = bf.ReadString();
                 PlayerLightSize = bf.ReadInteger();
                 PlayerLightExpand = (float)bf.ReadDouble();
@@ -256,7 +257,7 @@ namespace Intersect_Library.GameObjects.Maps
             bf.WriteInteger(BHue);
             bf.WriteInteger(AHue);
             bf.WriteInteger(Brightness);
-            bf.WriteByte(ZoneType);
+            bf.WriteByte((byte)ZoneType);
             bf.WriteString(OverlayGraphic);
             bf.WriteInteger(PlayerLightSize);
             bf.WriteDouble(PlayerLightExpand);

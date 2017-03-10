@@ -95,7 +95,7 @@ namespace Intersect_Client.Classes.Entities
         {
             bool returnval = base.Update();
             HandleInput();
-            if (Globals.EventHolds.Count == 0 && Globals.GameShop == null && Globals.InBank == false && Globals.InCraft == false && Globals.InTrade == false && !Gui.HasInputFocus())
+            if (Globals.EventHolds.Count == 0 && !Globals.MoveRouteActive && Globals.GameShop == null && Globals.InBank == false && Globals.InCraft == false && Globals.InTrade == false && !Gui.HasInputFocus())
             {
                 if (this == Globals.Me && base.IsMoving == false)
                 {
@@ -954,6 +954,12 @@ namespace Intersect_Client.Classes.Entities
                                             continue;
                                         }
                                     }
+                                }
+                                else if (en.Value.GetType() == typeof(Player))
+                                {
+                                    //Return the entity key as this should block the player.  Only exception is if the MapZone this entity is on is passable.
+                                    var entityMap = MapInstance.GetMap(en.Value.CurrentMap);
+                                    if (Options.PlayerPassable[(int)entityMap.ZoneType]) continue;
                                 }
                                 return en.Key;
                             }

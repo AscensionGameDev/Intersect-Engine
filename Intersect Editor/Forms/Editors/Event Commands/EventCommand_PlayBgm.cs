@@ -38,7 +38,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _eventEditor = editor;
             InitLocalization();
             cmbBgm.Items.Clear();
-            cmbBgm.Items.Add("None");
+            cmbBgm.Items.Add(Strings.Get("general","none"));
             cmbBgm.Items.AddRange(GameContentManager.GetMusicNames());
             if (cmbBgm.Items.IndexOf(_myCommand.Strs[0]) > -1)
             {

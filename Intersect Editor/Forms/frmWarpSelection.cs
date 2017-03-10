@@ -168,7 +168,6 @@ namespace Intersect_Editor.Forms
                         {
                             var screenshotTexture = EditorGraphics.ScreenShotMap();
                             screenshotTexture.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                            ms.Close();
 
                             Database.SaveMapCache(_currentMap, MapInstance.GetMap(_currentMap).Revision, ms.ToArray());
                         }

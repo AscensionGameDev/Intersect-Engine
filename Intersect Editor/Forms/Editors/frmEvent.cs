@@ -193,10 +193,10 @@ namespace Intersect_Editor.Forms
                 grpTriggers.Hide();
             }
             cmbPreviewFace.Items.Clear();
-            cmbPreviewFace.Items.Add("None");
+            cmbPreviewFace.Items.Add(Strings.Get("general","none"));
             cmbPreviewFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add("None");
+            cmbAnimation.Items.Add(Strings.Get("general","none"));
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             if (MyEvent.CommonEvent)
             {
@@ -215,7 +215,7 @@ namespace Intersect_Editor.Forms
                     cmbTrigger.Items.Add(Strings.Get("eventeditor", "trigger" + i));
                 }
                 cmbTriggerVal.Items.Clear();
-                cmbTriggerVal.Items.Add("None");
+                cmbTriggerVal.Items.Add(Strings.Get("general","none"));
                 cmbTriggerVal.Items.AddRange(Database.GetGameObjectList(GameObject.Projectile));
             }
             chkIsGlobal.Checked = Convert.ToBoolean(MyEvent.IsGlobal);
@@ -764,16 +764,26 @@ namespace Intersect_Editor.Forms
                     }
                     return Strings.Get("eventcommandlist", "warp", mapName,command.Ints[1], command.Ints[2],Strings.Get("directions", (command.Ints[3] - 1).ToString()));
                 case EventCommandType.SetMoveRoute:
-                    if (MyMap.Events.ContainsKey(command.Route.Target))
+                    if (command.Route.Target == -1)
                     {
-                        return Strings.Get("eventcommandlist", "moveroute", Strings.Get("eventcommandlist", "moverouteevent", (command.Route.Target), MyMap.Events[command.Route.Target].MyName));
+                        return Strings.Get("eventcommandlist", "moveroute", Strings.Get("eventcommandlist", "moverouteplayer"));
                     }
                     else
                     {
-                        return Strings.Get("eventcommandlist", "moveroute", Strings.Get("eventcommandlist", "deletedevent"));
+                        if (MyMap.Events.ContainsKey(command.Route.Target))
+                        {
+                            return Strings.Get("eventcommandlist", "moveroute", Strings.Get("eventcommandlist", "moverouteevent", (command.Route.Target), MyMap.Events[command.Route.Target].MyName));
+                        }
+                        else
+                        {
+                            return Strings.Get("eventcommandlist", "moveroute", Strings.Get("eventcommandlist", "deletedevent"));
+                        }
                     }
                 case EventCommandType.WaitForRouteCompletion:
-                    if (MyMap.Events.ContainsKey(command.Ints[0]))
+                    if (command.Ints[0] == -1)
+                    {
+                        return Strings.Get("eventcommandlist", "waitforroute", Strings.Get("eventcommandlist", "moverouteplayer"));
+                    }else if (MyMap.Events.ContainsKey(command.Ints[0]))
                     {
                         return Strings.Get("eventcommandlist", "waitforroute", Strings.Get("eventcommandlist", "moverouteevent", (command.Ints[0]), MyMap.Events[command.Ints[0]].MyName));
                     }
@@ -1649,6 +1659,10 @@ namespace Intersect_Editor.Forms
                 DarkMessageBox.ShowWarning(Strings.Get("eventcommandlist","notcommon"),Strings.Get("eventcommandlist","notcommoncaption"));
                 EnableButtons();
                 return;
+            }
+            if (tmpCommand.Type == EventCommandType.WaitForRouteCompletion)
+            {
+                tmpCommand.Ints[0] = -1;
             }
             if (_isInsert)
             {

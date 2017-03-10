@@ -14,6 +14,7 @@ using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps;
 using Options = Intersect_Library.Options;
 using Color = IntersectClientExtras.GenericClasses.Color;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.Maps
 {
@@ -109,7 +110,7 @@ namespace Intersect_Client.Classes.Maps
             if (isLocal)
             {
                 _lastUpdateTime = Globals.System.GetTimeMS() + 10000;
-                if (BackgroundSound == null && Sound != "None" && Sound != "")
+                if (BackgroundSound == null && Sound != Strings.Get("general", "none") && Sound != "")
                 {
                     BackgroundSound = GameAudio.AddMapSound(Sound, -1, -1, MyMapNum, true, 10);
                 }
@@ -246,7 +247,7 @@ namespace Intersect_Client.Classes.Maps
                     {
                         if (Attributes[x, y].value == (int) MapAttributes.Sound)
                         {
-                            if (Attributes[x, y].data4 != "None" && Attributes[x, y].data4 != "")
+                            if (Attributes[x, y].data4 != Strings.Get("general", "none") && Attributes[x, y].data4 != "")
                             {
                                 AttributeSounds.Add(GameAudio.AddMapSound(Attributes[x, y].data4, x, y, MyMapNum, true, Attributes[x, y].data1));
                             }

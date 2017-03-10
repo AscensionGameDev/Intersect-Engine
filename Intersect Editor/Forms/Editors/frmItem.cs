@@ -103,13 +103,13 @@ namespace Intersect_Editor.Forms
         private void frmItem_Load(object sender, EventArgs e)
         {
             cmbPic.Items.Clear();
-            cmbPic.Items.Add("None");
+            cmbPic.Items.Add(Strings.Get("general","none"));
 
             string[] itemnames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Item);
             cmbPic.Items.AddRange(itemnames);
 
             cmbAttackAnimation.Items.Clear();
-            cmbAttackAnimation.Items.Add("None");
+            cmbAttackAnimation.Items.Add(Strings.Get("general","none"));
             cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             cmbScalingStat.Items.Clear();
             for (int x = 0; x < Options.MaxStats; x++)
@@ -118,18 +118,18 @@ namespace Intersect_Editor.Forms
             }
 
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add("None");
+            cmbAnimation.Items.Add(Strings.Get("general","none"));
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             cmbTeachSpell.Items.Clear();
-            cmbTeachSpell.Items.Add("None");
+            cmbTeachSpell.Items.Add(Strings.Get("general","none"));
             cmbTeachSpell.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
             cmbEvent.Items.Clear();
-            cmbEvent.Items.Add("None");
+            cmbEvent.Items.Add(Strings.Get("general","none"));
             cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObject.CommonEvent));
             cmbMalePaperdoll.Items.Clear();
-            cmbMalePaperdoll.Items.Add("None");
+            cmbMalePaperdoll.Items.Add(Strings.Get("general","none"));
             cmbFemalePaperdoll.Items.Clear();
-            cmbFemalePaperdoll.Items.Add("None");
+            cmbFemalePaperdoll.Items.Add(Strings.Get("general","none"));
             string[] paperdollnames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Paperdoll);
             for (var i = 0; i < paperdollnames.Length; i++)
             {
@@ -231,7 +231,7 @@ namespace Intersect_Editor.Forms
             cmbEquipmentSlot.Items.Clear();
             cmbEquipmentSlot.Items.AddRange(Options.EquipmentSlots.ToArray());
             cmbToolType.Items.Clear();
-            cmbToolType.Items.Add("None");
+            cmbToolType.Items.Add(Strings.Get("general","none"));
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
             cmbEquipmentBonus.Items.Clear();
             for (int i = 0; i < 3; i++)
@@ -239,7 +239,7 @@ namespace Intersect_Editor.Forms
                 cmbEquipmentBonus.Items.Add(Strings.Get("itemeditor", "bonuseffect" + i));
             }
             cmbProjectile.Items.Clear();
-            cmbProjectile.Items.Add("None");
+            cmbProjectile.Items.Add(Strings.Get("general","none"));
             cmbProjectile.Items.AddRange(Database.GetGameObjectList(GameObject.Projectile));
         }
 

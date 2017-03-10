@@ -104,6 +104,10 @@
 		<string id="true">true</string>
 		<string id="false">false</string>
 	</Commands>
+	<General>
+	  <!-- Used everywhere. Sounds on map, resource graphics, panoramas, item types, etc. English is None or No Selection. Choose whatever fits best in your language. Try to keep this the same across the client, editor, and server language files as well. -->
+		<string id="none">None</string>
+	</General>
 	<Database>
 		<string id="outofdate">Database is out of date! Version: {00} Expected Version: {01}. Please run the included migration tool!</string>
 		<string id="usingsqlite">Using SQLite database for account and data storage.</string>
@@ -173,7 +177,6 @@
 		<string id="dynamicreq">You do not meet the requirements to use this item!</string>
 		<string id="cannotuse">You cannot use this item!</string>
 		<string id="notenough">Not enough {00}s!</string>
-		<string id="bound">You cannot drop this item.</string>
 		<string id="notimplemented">Use of this item type is not yet implemented.</string>
 	</Items>
 	<Shops>

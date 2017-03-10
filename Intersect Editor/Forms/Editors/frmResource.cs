@@ -109,8 +109,8 @@ namespace Intersect_Editor.Classes
             _endBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
             cmbInitialSprite.Items.Clear();
             cmbEndSprite.Items.Clear();
-            cmbInitialSprite.Items.Add("None");
-            cmbEndSprite.Items.Add("None");
+            cmbInitialSprite.Items.Add(Strings.Get("general","none"));
+            cmbEndSprite.Items.Add(Strings.Get("general","none"));
             string[] resources = GameContentManager.GetTextureNames(GameContentManager.TextureType.Resource);
             for (int i = 0; i < resources.Length; i++)
             {
@@ -118,10 +118,10 @@ namespace Intersect_Editor.Classes
                 cmbEndSprite.Items.Add(resources[i]);
             }
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add("None");
+            cmbAnimation.Items.Add(Strings.Get("general","none"));
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             cmbItem.Items.Clear();
-            cmbItem.Items.Add("None");
+            cmbItem.Items.Add(Strings.Get("general","none"));
             cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
             InitLocalization();
             UpdateEditor();
@@ -168,7 +168,7 @@ namespace Intersect_Editor.Classes
             lstResources.Items.Clear();
             lstResources.Items.AddRange(Database.GetGameObjectList(GameObject.Resource));
             cmbToolType.Items.Clear();
-            cmbToolType.Items.Add("None");
+            cmbToolType.Items.Add(Strings.Get("general","none"));
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
         }
 
@@ -263,7 +263,7 @@ namespace Intersect_Editor.Classes
             }
             else
             {
-                _editorItem.InitialGraphic = "None";
+                _editorItem.InitialGraphic = Strings.Get("general","none");
                 _initialTileset = null;
             }
             Render();
@@ -288,7 +288,7 @@ namespace Intersect_Editor.Classes
             }
             else
             {
-                _editorItem.EndGraphic = "None";
+                _editorItem.EndGraphic = Strings.Get("general","none");
                 _endTileset = null;
             }
             Render();

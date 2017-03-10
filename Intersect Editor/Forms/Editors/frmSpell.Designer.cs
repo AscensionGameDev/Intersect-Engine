@@ -303,7 +303,7 @@ namespace Intersect_Editor.Forms
             this.cmbSprite.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSprite.FormattingEnabled = true;
             this.cmbSprite.Items.AddRange(new object[] {
-            "None"});
+            Strings.Get("general","none")});
             this.cmbSprite.Location = new System.Drawing.Point(60, 90);
             this.cmbSprite.Name = "cmbSprite";
             this.cmbSprite.Size = new System.Drawing.Size(135, 21);
@@ -792,7 +792,7 @@ namespace Intersect_Editor.Forms
             this.cmbExtraEffect.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbExtraEffect.FormattingEnabled = true;
             this.cmbExtraEffect.Items.AddRange(new object[] {
-            "None",
+            Strings.Get("general","none"),
             "Silence",
             "Stun",
             "Snare",
@@ -826,7 +826,7 @@ namespace Intersect_Editor.Forms
             this.cmbTransform.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbTransform.FormattingEnabled = true;
             this.cmbTransform.Items.AddRange(new object[] {
-            "None"});
+            Strings.Get("general","none")});
             this.cmbTransform.Location = new System.Drawing.Point(137, 31);
             this.cmbTransform.Name = "cmbTransform";
             this.cmbTransform.Size = new System.Drawing.Size(80, 21);

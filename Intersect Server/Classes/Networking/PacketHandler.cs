@@ -394,7 +394,7 @@ namespace Intersect_Server.Classes.Networking
                 return;
             }
             bf.Dispose();
-            if (Globals.Entities[index].CanMove(dir) == -1 || Globals.Entities[index].CanMove(dir) == -4)
+            if ((Globals.Entities[index].CanMove(dir) == -1 || Globals.Entities[index].CanMove(dir) == -4) && client.Entity.MoveRoute == null)
             {
                 Globals.Entities[index].Move(dir, client, false);
                 if (Globals.Entities[index].MoveTimer > Globals.System.GetTimeMs())

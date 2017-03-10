@@ -926,7 +926,7 @@ namespace Intersect_Editor.Classes
                             var resource = ResourceBase.GetResource(tmpMap.Attributes[x, y].data1);
                             if (resource != null)
                             {
-                                if (resource.Name != "" & resource.InitialGraphic != "None")
+                                if (resource.Name != "" & resource.InitialGraphic != Strings.Get("general","none"))
                                 {
                                     Texture2D res = GetTexture(TextureType.Resource, resource.InitialGraphic);
                                     if (res != null)

@@ -103,23 +103,23 @@ namespace Intersect_Editor.Forms
             cmbProjectile.Items.Clear();
             cmbProjectile.Items.AddRange(Database.GetGameObjectList(GameObject.Projectile));
             cmbCastAnimation.Items.Clear();
-            cmbCastAnimation.Items.Add("None");
+            cmbCastAnimation.Items.Add(Strings.Get("general","none"));
             cmbCastAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             cmbHitAnimation.Items.Clear();
-            cmbHitAnimation.Items.Add("None");
+            cmbHitAnimation.Items.Add(Strings.Get("general","none"));
             cmbHitAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             cmbEvent.Items.Clear();
-            cmbEvent.Items.Add("None");
+            cmbEvent.Items.Add(Strings.Get("general","none"));
             cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObject.CommonEvent));
             cmbSprite.Items.Clear();
-            cmbSprite.Items.Add("None");
+            cmbSprite.Items.Add(Strings.Get("general","none"));
             string[] spellNames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Spell);
             for (int i = 0; i < spellNames.Length; i++)
             {
                 cmbSprite.Items.Add(spellNames[i]);
             }
             cmbTransform.Items.Clear();
-            cmbTransform.Items.Add("None");
+            cmbTransform.Items.Add(Strings.Get("general","none"));
             string[] spriteNames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity);
             for (int i = 0; i < spriteNames.Length; i++)
             {

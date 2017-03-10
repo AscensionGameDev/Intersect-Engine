@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Intersect_Library.GameObjects.Conditions;
+using Intersect_Library.Localization;
 
 namespace Intersect_Library.GameObjects
 {
@@ -46,8 +47,8 @@ namespace Intersect_Library.GameObjects
         public ConditionLists HarvestingReqs = new ConditionLists();
 
         // Graphics
-        public string InitialGraphic = "None";
-        public string EndGraphic = "None";
+        public string InitialGraphic = Strings.Get("general","none");
+        public string EndGraphic = Strings.Get("general","none");
 
         // Drops
         public List<ResourceDrop> Drops = new List<ResourceDrop>();

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.CodeDom;
+using System.Collections.Generic;
 
 namespace Intersect_Library
 {
@@ -7,7 +9,6 @@ namespace Intersect_Library
         //Game Settings
         public static string Language = "English";
         public static string GameName = "Intersect";
-        public static string MOTD = "Welcome to Intersect!";
         public static int ServerPort = 4500;
 
         //Maxes
@@ -22,11 +23,14 @@ namespace Intersect_Library
         public static int MaxPlayerSkills = 35;
         public static int MaxBankSlots = 100;
 
+        //Passability Based on MapZones
+        public static bool[] PlayerPassable = new bool[Enum.GetNames(typeof(MapZones)).Length];
+
         //Equipment
         public static int WeaponIndex = -1;
         public static int ShieldIndex = -1;
         public static List<string> EquipmentSlots = new List<string>();
-        public static List<string> PaperdollOrder = new List<string>();
+        public static List<string>[] PaperdollOrder = new List<string>[Enum.GetNames(typeof(Directions)).Length];
         public static List<string> ToolTypes = new List<string>();
         public static List<string> StatusActionMsgs = new List<string> {"NONE!", "SILENCED!", "STUNNED!", "SNARED!", "BLINDED!", "STEALTH!", "TRANSFORMED!"};
 
@@ -62,6 +66,11 @@ namespace Intersect_Library
             MaxPlayerSkills = bf.ReadInteger();
             MaxBankSlots = bf.ReadInteger();
 
+            for (int i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
+            {
+                PlayerPassable[i] = bf.ReadBoolean();
+            }
+
             //Equipment
             int count = bf.ReadInteger();
             for (int i = 0; i < count; i++)
@@ -72,10 +81,14 @@ namespace Intersect_Library
             ShieldIndex = bf.ReadInteger();
 
             //Paperdoll
-            count = bf.ReadInteger();
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < PaperdollOrder.Length; i++)
             {
-                PaperdollOrder.Add(bf.ReadString());
+                PaperdollOrder[i] = new List<string>();
+                count = bf.ReadInteger();
+                for (int x = 0; x < count; x++)
+                {
+                    PaperdollOrder[i].Add(bf.ReadString());
+                }
             }
 
             //Tool Types

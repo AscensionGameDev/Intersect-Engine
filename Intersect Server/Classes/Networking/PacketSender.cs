@@ -564,7 +564,7 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendEntityMove(Entity en, int correction = 0)
+        public static void SendEntityMove(Entity en, bool correction = false)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EntityMove);
@@ -574,12 +574,12 @@ namespace Intersect_Server.Classes.Networking
             bf.WriteInteger(en.CurrentX);
             bf.WriteInteger(en.CurrentY);
             bf.WriteInteger(en.Dir);
-            bf.WriteInteger(correction);
+            bf.WriteInteger(Convert.ToInt32(correction));
             SendDataToProximity(en.CurrentMap, bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendEntityMoveTo(Client client, Entity en, int correction = 0)
+        public static void SendEntityMoveTo(Client client, Entity en, bool correction = false)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EntityMove);
@@ -589,7 +589,7 @@ namespace Intersect_Server.Classes.Networking
             bf.WriteInteger(en.CurrentX);
             bf.WriteInteger(en.CurrentY);
             bf.WriteInteger(en.Dir);
-            bf.WriteInteger(correction);
+            bf.WriteInteger(Convert.ToInt32(correction));
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
         }
@@ -1594,6 +1594,15 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.CloseBag);
             client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendMoveRouteToggle(Client client, bool routeOn)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.MoveRouteToggle);
+            bf.WriteBoolean(routeOn);
+            SendDataTo(client, bf.ToArray());
             bf.Dispose();
         }
     }

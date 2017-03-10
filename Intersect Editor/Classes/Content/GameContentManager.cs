@@ -484,7 +484,7 @@ namespace Intersect_Editor.Classes.Core
     {
         public GraphicsDevice GraphicsDevice { get; private set; }
 
-        // Not used:
+        // Not used but required that these be here:
         public event EventHandler<EventArgs> DeviceCreated;
         public event EventHandler<EventArgs> DeviceDisposing;
         public event EventHandler<EventArgs> DeviceReset;

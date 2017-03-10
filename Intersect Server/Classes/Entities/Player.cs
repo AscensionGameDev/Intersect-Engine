@@ -127,6 +127,40 @@ namespace Intersect_Server.Classes.Entities
             }
 
             base.Update();
+
+            //If we have a move route then let's process it....
+            if (MoveRoute != null && MoveTimer < Globals.System.GetTimeMs())
+            {
+                //Check to see if the event instance is still active for us... if not then let's remove this route
+                for (var i = 0; i < MyEvents.Count; i++)
+                {
+                    var evt = MyEvents[i];
+                    if (MyEvents[i] != null && MyEvents[i].PageInstance == MoveRouteSetter)
+                    {
+                        if (MoveRoute.ActionIndex < MoveRoute.Actions.Count)
+                        {
+                            ProcessMoveRoute(MyClient);
+                        }
+                        else
+                        {
+                            if (MoveRoute.Complete && !MoveRoute.RepeatRoute)
+                            {
+                                MoveRoute = null;
+                                MoveRouteSetter = null;
+                                PacketSender.SendMoveRouteToggle(MyClient, false);
+                            }
+                        }
+                        break;
+                    }
+                    else if (i == MyEvents.Count -1)
+                    {
+                        MoveRoute = null;
+                        MoveRouteSetter = null;
+                        PacketSender.SendMoveRouteToggle(MyClient, false);
+                    }
+                }
+            }
+
             //If we switched maps, lets update the maps
             if (LastMapEntered != CurrentMap)
             {
@@ -2776,12 +2810,12 @@ namespace Intersect_Server.Classes.Entities
             return base.CanMove(moveDir);
         }
 
-        public override void Move(int moveDir, Client client, bool DontUpdate = false)
+        public override void Move(int moveDir, Client client, bool DontUpdate = false, bool correction = false)
         {
             int index = MyIndex;
             int oldMap = CurrentMap;
             client = MyClient;
-            base.Move(moveDir, client, DontUpdate);
+            base.Move(moveDir, client, DontUpdate, correction);
             // Check for a warp, if so warp the player.
             var attribute = MapInstance.GetMap(Globals.Entities[index].CurrentMap).Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
             if (attribute != null && attribute.value == (int)MapAttributes.Warp)

@@ -126,15 +126,16 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             treeNode48,
             treeNode49,
             treeNode50});
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Event_MoveRouteDesigner));
             this.grpMoveRoute = new DarkUI.Controls.DarkGroupBox();
             this.btnOkay = new DarkUI.Controls.DarkButton();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.grpCommands = new DarkUI.Controls.DarkGroupBox();
+            this.lstCommands = new System.Windows.Forms.TreeView();
             this.chkRepeatRoute = new DarkUI.Controls.DarkCheckBox();
             this.chkIgnoreIfBlocked = new DarkUI.Controls.DarkCheckBox();
             this.lstActions = new System.Windows.Forms.ListBox();
             this.cmbTarget = new DarkUI.Controls.DarkComboBox();
-            this.lstCommands = new System.Windows.Forms.TreeView();
             this.grpMoveRoute.SuspendLayout();
             this.grpCommands.SuspendLayout();
             this.SuspendLayout();
@@ -199,60 +200,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.grpCommands.TabStop = false;
             this.grpCommands.Text = "Commands";
             // 
-            // chkRepeatRoute
-            // 
-            this.chkRepeatRoute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkRepeatRoute.AutoSize = true;
-            this.chkRepeatRoute.Location = new System.Drawing.Point(7, 457);
-            this.chkRepeatRoute.Name = "chkRepeatRoute";
-            this.chkRepeatRoute.Size = new System.Drawing.Size(93, 17);
-            this.chkRepeatRoute.TabIndex = 3;
-            this.chkRepeatRoute.Text = "Repeat Route";
-            this.chkRepeatRoute.CheckedChanged += new System.EventHandler(this.chkRepeatRoute_CheckedChanged);
-            // 
-            // chkIgnoreIfBlocked
-            // 
-            this.chkIgnoreIfBlocked.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkIgnoreIfBlocked.AutoSize = true;
-            this.chkIgnoreIfBlocked.Location = new System.Drawing.Point(7, 434);
-            this.chkIgnoreIfBlocked.Name = "chkIgnoreIfBlocked";
-            this.chkIgnoreIfBlocked.Size = new System.Drawing.Size(106, 17);
-            this.chkIgnoreIfBlocked.TabIndex = 2;
-            this.chkIgnoreIfBlocked.Text = "Ignore if Blocked";
-            this.chkIgnoreIfBlocked.CheckedChanged += new System.EventHandler(this.chkIgnoreIfBlocked_CheckedChanged);
-            // 
-            // lstActions
-            // 
-            this.lstActions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.lstActions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstActions.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lstActions.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstActions.FormattingEnabled = true;
-            this.lstActions.Location = new System.Drawing.Point(7, 47);
-            this.lstActions.Name = "lstActions";
-            this.lstActions.Size = new System.Drawing.Size(190, 379);
-            this.lstActions.TabIndex = 1;
-            this.lstActions.DoubleClick += new System.EventHandler(this.lstActions_DoubleClick);
-            this.lstActions.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstActions_KeyDown);
-            this.lstActions.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lstActions_MouseDown);
-            // 
-            // cmbTarget
-            // 
-            this.cmbTarget.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbTarget.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbTarget.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbTarget.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbTarget.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbTarget.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbTarget.FormattingEnabled = true;
-            this.cmbTarget.Items.AddRange(new object[] {
-            "Self"});
-            this.cmbTarget.Location = new System.Drawing.Point(7, 20);
-            this.cmbTarget.Name = "cmbTarget";
-            this.cmbTarget.Size = new System.Drawing.Size(191, 21);
-            this.cmbTarget.TabIndex = 0;
-            // 
             // lstCommands
             // 
             this.lstCommands.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -314,7 +261,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             treeNode17.Name = "turn180";
             treeNode17.Tag = "16";
             treeNode17.Text = "Turn 180*";
-            treeNode18.Name = "turnrandom";
+            treeNode18.Name = "turnrandomly";
             treeNode18.Tag = "17";
             treeNode18.Text = "Turn Randomly";
             treeNode19.Name = "turntowardplayer";
@@ -421,6 +368,68 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.lstCommands.Size = new System.Drawing.Size(297, 383);
             this.lstCommands.TabIndex = 1;
             this.lstCommands.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstCommands_NodeMouseDoubleClick);
+            // 
+            // chkRepeatRoute
+            // 
+            this.chkRepeatRoute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkRepeatRoute.AutoSize = true;
+            this.chkRepeatRoute.Location = new System.Drawing.Point(7, 457);
+            this.chkRepeatRoute.Name = "chkRepeatRoute";
+            this.chkRepeatRoute.Size = new System.Drawing.Size(93, 17);
+            this.chkRepeatRoute.TabIndex = 3;
+            this.chkRepeatRoute.Text = "Repeat Route";
+            this.chkRepeatRoute.CheckedChanged += new System.EventHandler(this.chkRepeatRoute_CheckedChanged);
+            // 
+            // chkIgnoreIfBlocked
+            // 
+            this.chkIgnoreIfBlocked.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkIgnoreIfBlocked.AutoSize = true;
+            this.chkIgnoreIfBlocked.Location = new System.Drawing.Point(7, 434);
+            this.chkIgnoreIfBlocked.Name = "chkIgnoreIfBlocked";
+            this.chkIgnoreIfBlocked.Size = new System.Drawing.Size(106, 17);
+            this.chkIgnoreIfBlocked.TabIndex = 2;
+            this.chkIgnoreIfBlocked.Text = "Ignore if Blocked";
+            this.chkIgnoreIfBlocked.CheckedChanged += new System.EventHandler(this.chkIgnoreIfBlocked_CheckedChanged);
+            // 
+            // lstActions
+            // 
+            this.lstActions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.lstActions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstActions.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstActions.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lstActions.FormattingEnabled = true;
+            this.lstActions.Location = new System.Drawing.Point(7, 47);
+            this.lstActions.Name = "lstActions";
+            this.lstActions.Size = new System.Drawing.Size(190, 379);
+            this.lstActions.TabIndex = 1;
+            this.lstActions.DoubleClick += new System.EventHandler(this.lstActions_DoubleClick);
+            this.lstActions.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstActions_KeyDown);
+            this.lstActions.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lstActions_MouseDown);
+            // 
+            // cmbTarget
+            // 
+            this.cmbTarget.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbTarget.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbTarget.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbTarget.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbTarget.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbTarget.ButtonIcon")));
+            this.cmbTarget.DrawDropdownHoverOutline = false;
+            this.cmbTarget.DrawFocusRectangle = false;
+            this.cmbTarget.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbTarget.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTarget.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbTarget.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbTarget.FormattingEnabled = true;
+            this.cmbTarget.Items.AddRange(new object[] {
+            "Self"});
+            this.cmbTarget.Location = new System.Drawing.Point(7, 20);
+            this.cmbTarget.Name = "cmbTarget";
+            this.cmbTarget.Size = new System.Drawing.Size(191, 21);
+            this.cmbTarget.TabIndex = 0;
+            this.cmbTarget.Text = null;
+            this.cmbTarget.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbTarget.SelectedIndexChanged += new System.EventHandler(this.cmbTarget_SelectedIndexChanged);
             // 
             // Event_MoveRouteDesigner
             // 

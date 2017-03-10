@@ -238,7 +238,7 @@ namespace Intersect_Editor.Forms
             this.cmbSprite.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSprite.FormattingEnabled = true;
             this.cmbSprite.Items.AddRange(new object[] {
-            "None"});
+            Strings.Get("general","none")});
             this.cmbSprite.Location = new System.Drawing.Point(79, 90);
             this.cmbSprite.Name = "cmbSprite";
             this.cmbSprite.Size = new System.Drawing.Size(116, 21);

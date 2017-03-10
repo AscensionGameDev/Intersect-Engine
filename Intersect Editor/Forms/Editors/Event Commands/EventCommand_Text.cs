@@ -41,7 +41,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitLocalization();
             txtShowText.Text = _myCommand.Strs[0];
             cmbFace.Items.Clear();
-            cmbFace.Items.Add("None");
+            cmbFace.Items.Add(Strings.Get("general","none"));
             cmbFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
             if (cmbFace.Items.IndexOf(_myCommand.Strs[1]) > -1)
             {

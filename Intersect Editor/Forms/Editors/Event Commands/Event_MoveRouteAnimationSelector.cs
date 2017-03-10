@@ -37,7 +37,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         {
             InitializeComponent();
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add("None");
+            cmbAnimation.Items.Add(Strings.Get("general","none"));
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             if (!newAction)
             {

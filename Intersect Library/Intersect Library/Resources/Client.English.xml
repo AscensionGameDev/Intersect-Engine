@@ -3,6 +3,10 @@
 	<Main>
 		<string id="gamename">Intersect Client</string>
 	</Main>
+	<General>
+	  <!-- Used everywhere. Sounds on map, resource graphics, panoramas, item types, etc. English is None or No Selection. Choose whatever fits best in your language. Try to keep this the same across the client, editor, and server language files as well. -->
+		<string id="none">None</string>
+	</General>
 	<Combat>
 		<string id="exp">Experience</string>
 		<string id="vital0">Health</string>

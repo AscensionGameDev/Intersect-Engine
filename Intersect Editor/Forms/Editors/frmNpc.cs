@@ -96,17 +96,17 @@ namespace Intersect_Editor.Forms
         private void frmNpc_Load(object sender, EventArgs e)
         {
             cmbSprite.Items.Clear();
-            cmbSprite.Items.Add("None");
+            cmbSprite.Items.Add(Strings.Get("general","none"));
             cmbSprite.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
             cmbSpell.Items.Clear();
             cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
             cmbHostileNPC.Items.Clear();
             cmbHostileNPC.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
             cmbDropItem.Items.Clear();
-            cmbDropItem.Items.Add("None");
+            cmbDropItem.Items.Add(Strings.Get("general","none"));
             cmbDropItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
             cmbAttackAnimation.Items.Clear();
-            cmbAttackAnimation.Items.Add("None");
+            cmbAttackAnimation.Items.Add(Strings.Get("general","none"));
             cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             cmbScalingStat.Items.Clear();
             for (int x = 0; x < Options.MaxStats; x++)
@@ -237,7 +237,7 @@ namespace Intersect_Editor.Forms
                     }
                     else
                     {
-                        lstSpells.Items.Add("None");
+                        lstSpells.Items.Add(Strings.Get("general","none"));
                     }
                 }
                 if (lstSpells.Items.Count > 0)
@@ -257,7 +257,7 @@ namespace Intersect_Editor.Forms
                     }
                     else
                     {
-                        lstAggro.Items.Add("None");
+                        lstAggro.Items.Add(Strings.Get("general","none"));
                     }
                 }
 
@@ -384,7 +384,7 @@ namespace Intersect_Editor.Forms
                 }
                 else
                 {
-                    lstAggro.Items.Add("None");
+                    lstAggro.Items.Add(Strings.Get("general","none"));
                 }
             }
         }

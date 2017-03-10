@@ -47,10 +47,12 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             cmbEntities.Items.Clear();
             if (!_editingEvent.CommonEvent)
             {
+                cmbEntities.Items.Add(Strings.Get("eventwaitforroutecompletion", "player"));
+                if (_editingCommand.Ints[0] == -1) cmbEntities.SelectedIndex = -1;
                 foreach (var evt in _currentMap.Events)
                 {
                     cmbEntities.Items.Add(evt.Key == _editingEvent.MyIndex ? Strings.Get("eventwaitforroutecompletion", "this")+ " " : "" + evt.Value.MyName);
-                    if (_editingCommand.Ints[0] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
+                    if (_editingCommand.Ints[0] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count-1;
                 }
             }
             if (cmbEntities.SelectedIndex == -1 && cmbEntities.Items.Count > 0)
@@ -74,7 +76,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         {
             if (!_editingEvent.CommonEvent)
             {
-                _editingCommand.Ints[0] = _currentMap.Events.Keys.ToList()[cmbEntities.SelectedIndex];
+                if (cmbEntities.SelectedIndex == 0)
+                {
+                    _editingCommand.Ints[0] = -1;
+                }
+                else
+                {
+                    _editingCommand.Ints[0] = _currentMap.Events.Keys.ToList()[cmbEntities.SelectedIndex-1];
+                }
             }
             _eventEditor.FinishCommandEdit();
         }

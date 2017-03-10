@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.Localization;
+using System.Collections.Generic;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -37,9 +38,15 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private EventCommand _editingCommand;
         private MapBase _currentMap;
         private MoveRouteAction _lastAddedAction;
+        private List<TreeNode> _origItems = new List<TreeNode>();
         public Event_MoveRouteDesigner(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent, EventMoveRoute editingRoute, EventCommand editingCommand = null)
         {
             InitializeComponent();
+
+            foreach (var item in lstCommands.Nodes)
+            {
+                _origItems.Add((TreeNode)((TreeNode)item).Clone());
+            }
 
             //Grab event editor reference
             _eventEditor = eventEditor;
@@ -59,12 +66,17 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             cmbTarget.Items.Clear();
             if (!_editingEvent.CommonEvent)
             {
+                if (_editingCommand != null)
+                {
+                    cmbTarget.Items.Add(Strings.Get("eventmoveroute", "player"));
+                    if (_editingCommand.Route.Target == -1) cmbTarget.SelectedIndex = 0;
+                }
                 foreach (var evt in _currentMap.Events)
                 {
                     cmbTarget.Items.Add(evt.Key == _editingEvent.MyIndex ? Strings.Get("eventmoveroute", "thisevent") : "" + evt.Value.MyName);
                     if (_editingCommand != null)
                     {
-                        if (_editingCommand.Ints[0] == evt.Key) cmbTarget.SelectedIndex = cmbTarget.Items.Count - 1;
+                        if (_editingCommand.Route.Target == evt.Key) cmbTarget.SelectedIndex = cmbTarget.Items.Count;
                     }
                     else
                     {
@@ -110,7 +122,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 {
                     for (int x = 0; x < lstCommands.Nodes[i].Nodes.Count; x++)
                     {
-                        if (Convert.ToInt32(lstCommands.Nodes[i].Nodes[x].Tag) == (int) action.Type)
+                        if (Convert.ToInt32(lstCommands.Nodes[i].Nodes[x].Tag) == (int)action.Type)
                         {
                             lstActions.Items.Add(Strings.Get("eventmoveroute", lstCommands.Nodes[i].Nodes[x].Name));
                         }
@@ -146,7 +158,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 if (_tmpMoveRoute.Actions[lstActions.SelectedIndex].Type == MoveRouteEnum.SetGraphic)
                 {
                     //Open the graphic editor....
-                    Event_GraphicSelector graphicSelector = new Event_GraphicSelector(_tmpMoveRoute.Actions[lstActions.SelectedIndex].Graphic, _eventEditor,this,false);
+                    Event_GraphicSelector graphicSelector = new Event_GraphicSelector(_tmpMoveRoute.Actions[lstActions.SelectedIndex].Graphic, _eventEditor, this, false);
                     _eventEditor.Controls.Add(graphicSelector);
                     graphicSelector.BringToFront();
                     graphicSelector.Size = this.ClientSize;
@@ -189,7 +201,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 if (!_editingEvent.CommonEvent)
                 {
-                    _editingRoute.Target = _currentMap.Events.Keys.ToList()[cmbTarget.SelectedIndex];
+                    if (cmbTarget.SelectedIndex == 0)
+                    {
+                        _editingRoute.Target = -1;
+                    }
+                    else
+                    {
+                        _editingRoute.Target = _currentMap.Events.Keys.ToList()[cmbTarget.SelectedIndex - 1];
+                    }
                 }
                 _eventEditor.FinishCommandEdit(true);
             }
@@ -245,6 +264,42 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             }
             _lastAddedAction = action;
             ListMoveRoute();
+        }
+
+        private void cmbTarget_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            lstCommands.Nodes.Clear();
+            lstCommands.Nodes.AddRange(_origItems.ToArray());
+            lstCommands.ExpandAll();
+            if (!_editingEvent.CommonEvent && _editingCommand != null && cmbTarget.SelectedIndex == 0)
+            {
+                var hideNodes = new string[]{ "movetowardplayer", "moveawayfromplayer", "turntowardplayer", "turnawayfromplayer", "setspeed", "setmovementfrequency", "setattribute", "setgraphic", "setanimation" };
+                var nodesToRemove = new List<TreeNode>();
+                foreach (var parentNode in lstCommands.Nodes)
+                {
+                    if (parentNode != null)
+                    {
+                        if (hideNodes.Contains(((TreeNode)parentNode).Name))
+                        {
+                            nodesToRemove.Add(((TreeNode)parentNode));
+                        }
+                        foreach (var childNode in ((TreeNode)parentNode).Nodes)
+                        {
+                            if (childNode != null)
+                            {
+                                if (hideNodes.Contains(((TreeNode)childNode).Name))
+                                {
+                                    nodesToRemove.Add((TreeNode)childNode);
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var node in nodesToRemove)
+                {
+                    node.Remove();
+                }
+            }
         }
     }
 }

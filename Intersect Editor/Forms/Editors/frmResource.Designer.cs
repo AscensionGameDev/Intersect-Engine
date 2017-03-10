@@ -384,7 +384,7 @@ namespace Intersect_Editor.Classes
             this.cmbEndSprite.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbEndSprite.FormattingEnabled = true;
             this.cmbEndSprite.Items.AddRange(new object[] {
-            "None"});
+            Strings.Get("general","none")});
             this.cmbEndSprite.Location = new System.Drawing.Point(248, 32);
             this.cmbEndSprite.Name = "cmbEndSprite";
             this.cmbEndSprite.Size = new System.Drawing.Size(196, 21);
@@ -411,7 +411,7 @@ namespace Intersect_Editor.Classes
             this.cmbInitialSprite.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbInitialSprite.FormattingEnabled = true;
             this.cmbInitialSprite.Items.AddRange(new object[] {
-            "None"});
+            Strings.Get("general","none")});
             this.cmbInitialSprite.Location = new System.Drawing.Point(13, 32);
             this.cmbInitialSprite.Name = "cmbInitialSprite";
             this.cmbInitialSprite.Size = new System.Drawing.Size(195, 21);

@@ -579,7 +579,7 @@ namespace Intersect_Editor.Forms
             this.cmbMoveType.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbMoveType.FormattingEnabled = true;
             this.cmbMoveType.Items.AddRange(new object[] {
-            "None",
+            Strings.Get("general","none"),
             "Random",
             "Move Route"});
             this.cmbMoveType.Location = new System.Drawing.Point(48, 19);
@@ -624,7 +624,7 @@ namespace Intersect_Editor.Forms
             this.cmbTriggerVal.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbTriggerVal.FormattingEnabled = true;
             this.cmbTriggerVal.Items.AddRange(new object[] {
-            "None"});
+            Strings.Get("general","none")});
             this.cmbTriggerVal.Location = new System.Drawing.Point(230, 13);
             this.cmbTriggerVal.Name = "cmbTriggerVal";
             this.cmbTriggerVal.Size = new System.Drawing.Size(81, 21);
