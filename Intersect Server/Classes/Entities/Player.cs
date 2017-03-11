@@ -2170,7 +2170,7 @@ namespace Intersect_Server.Classes.Entities
                 }
 
                 //Check for range of a single target spell
-                if (spell.TargetType == (int)SpellTargetTypes.Single)
+                if (spell.TargetType == (int)SpellTargetTypes.Single && Globals.Entities[Target] != this)
                 {
                     if (!InRangeOf(Globals.Entities[Target], spell.CastRange))
                     {

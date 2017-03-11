@@ -51,7 +51,7 @@ namespace Intersect_Client.Classes.Entities
 
         public bool NoClip = false;
 
-        public int _targetIndex;
+        public int _targetIndex = -1;
         public int _targetType;
         private EntityBox _targetBox;
         private ItemDescWindow _itemTargetBox;
