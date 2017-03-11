@@ -2169,6 +2169,16 @@ namespace Intersect_Server.Classes.Entities
                     return;
                 }
 
+                //Check for range of a single target spell
+                if (spell.TargetType == (int)SpellTargetTypes.Single)
+                {
+                    if (!InRangeOf(Globals.Entities[Target], spell.CastRange))
+                    {
+                        PacketSender.SendActionMsg(MyIndex, Strings.Get("combat", "targetoutsiderange"), new Color(255, 255, 0, 0));
+                        return;
+                    }
+                }
+
                 if (spell.VitalCost[(int)Vitals.Mana] <= Vital[(int)Vitals.Mana])
                 {
                     if (spell.VitalCost[(int)Vitals.Health] <= Vital[(int)Vitals.Health])

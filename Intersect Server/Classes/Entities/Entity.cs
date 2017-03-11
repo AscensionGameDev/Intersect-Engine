@@ -1033,7 +1033,14 @@ namespace Intersect_Server.Classes.Entities
                                 TryAttack(this, spellBase);
                                 break;
                             case (int)SpellTargetTypes.Single:
-                                HandleAoESpell(SpellNum, spellBase.CastRange, CurrentMap, CurrentX, CurrentY, Target);
+                                if (spellBase.HitRadius > 0) //Single target spells with AoE hit radius'
+                                {
+                                    HandleAoESpell(SpellNum, spellBase.HitRadius, Globals.Entities[Target].CurrentMap, Globals.Entities[Target].CurrentX, Globals.Entities[Target].CurrentY);
+                                }
+                                else
+                                {
+                                    TryAttack(Globals.Entities[Target], spellBase);
+                                }
                                 break;
                             case (int)SpellTargetTypes.AoE:
                                 HandleAoESpell(SpellNum, spellBase.HitRadius, CurrentMap, CurrentX, CurrentY);
@@ -1135,16 +1142,7 @@ namespace Intersect_Server.Classes.Entities
                                         //Warp or attack.
                                         if (spellBase.SpellType == (int) SpellTypes.CombatSpell)
                                         {
-                                            if (target > -1 && spellBase.HitRadius > -1)
-                                                //Single target spells with AoE hit radius'
-                                            {
-                                                HandleAoESpell(SpellNum, spellBase.HitRadius, t.CurrentMap, t.CurrentX,
-                                                    t.CurrentY);
-                                            }
-                                            else
-                                            {
-                                                TryAttack(t, spellBase);
-                                            }
+                                            TryAttack(t, spellBase);
                                             if (target > -1) return;
                                         }
                                         else
