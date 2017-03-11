@@ -303,9 +303,6 @@ namespace Intersect_Client.Classes.UI.Game
         //Slot info
         CraftIngredient _ingredient;
 
-        //Stat boost
-        private int[] StatBoost = new int[(int)Stats.StatCount];
-
         //References
         private CraftingBenchWindow _craftingBenchWindow;
 
@@ -327,10 +324,6 @@ namespace Intersect_Client.Classes.UI.Game
 
             if (item != null)
             {
-                for (int i = 0; i < (int)Stats.StatCount; i++)
-                {
-                    StatBoost[i] = item.StatsGiven[i];
-                }
                 GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
                 if (itemTex != null)
                 {
@@ -369,7 +362,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
             if (_ingredient != null)
             {
-                _descWindow = new ItemDescWindow(_ingredient.Item, _ingredient.Quantity, _craftingBenchWindow.X - 255, _craftingBenchWindow.Y, StatBoost);
+                _descWindow = new ItemDescWindow(_ingredient.Item, _ingredient.Quantity, _craftingBenchWindow.X - 255, _craftingBenchWindow.Y, new int[(int)Stats.StatCount]);
             }
         }
     }

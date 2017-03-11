@@ -160,6 +160,7 @@
 		<string id="adminsetpower">Only admins can set power!</string>
 		<string id="changeownpower">You cannot alter your own power!</string>
 		<string id="notarget">You need to select a valid target.</string>
+		<string id="targetoutsiderange">Target not in range.</string>
 	</Player>
 	<Quests>
 		<string id="started">Quest Started: {00}!</string>
