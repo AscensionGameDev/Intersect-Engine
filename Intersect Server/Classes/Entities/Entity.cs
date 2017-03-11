@@ -813,6 +813,26 @@ namespace Intersect_Server.Classes.Entities
         public virtual void TryAttack(Entity enemy, int baseDamage, DamageType damageType, Stats scalingStat, int scaling, int critChance, double critMultiplier, List<KeyValuePair<int,int>> deadAnimations, List<KeyValuePair<int, int>> aliveAnimations)
         {
             if ((AttackTimer > Globals.System.GetTimeMs() || Blocking)) return;
+
+            //Check for parties and safe zones, friendly fire off (unless its healing)
+            if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
+            {
+                if (((Player)this).InParty((Player)enemy) == true) return;
+            }
+
+            //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
+            if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
+            {
+                if (MapInstance.GetMap(CurrentMap).ZoneType == MapZones.Safe)
+                {
+                    return;
+                }
+                if (MapInstance.GetMap(enemy.CurrentMap).ZoneType == MapZones.Safe)
+                {
+                    return;
+                }
+            }
+
             AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
             //Check if the attacker is blinded.
             if (IsOneBlockAway(enemy))
