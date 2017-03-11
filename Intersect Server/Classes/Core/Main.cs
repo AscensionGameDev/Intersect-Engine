@@ -172,17 +172,20 @@ namespace Intersect_Server.Classes
                             {
                                 for (int i = 0; i < Globals.Clients.Count; i++)
                                 {
-                                    string user = Globals.Clients[i].Entity.MyName.ToLower();
-                                    if (user == commandsplit[1].ToLower())
+                                    if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                     {
-                                        PacketSender.SendGlobalMsg(Strings.Get("player", "serverkicked",
-                                            Globals.Clients[i].Entity.MyName));
-                                        Console.WriteLine(@"    " +
-                                                          Strings.Get("player", "serverkicked",
-                                                              Globals.Clients[i].Entity.MyName));
-                                        Globals.Clients[i].Disconnect(); //Kick em'
-                                        userFound = true;
-                                        break;
+                                        string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                        if (user == commandsplit[1].ToLower())
+                                        {
+                                            PacketSender.SendGlobalMsg(Strings.Get("player", "serverkicked",
+                                                Globals.Clients[i].Entity.MyName));
+                                            Console.WriteLine(@"    " +
+                                                              Strings.Get("player", "serverkicked",
+                                                                  Globals.Clients[i].Entity.MyName));
+                                            Globals.Clients[i].Disconnect(); //Kick em'
+                                            userFound = true;
+                                            break;
+                                        }
                                     }
                                 }
                                 if (userFound == false)
@@ -242,25 +245,28 @@ namespace Intersect_Server.Classes
                                 {
                                     for (int i = 0; i < Globals.Clients.Count; i++)
                                     {
-                                        string user = Globals.Clients[i].Entity.MyName.ToLower();
-                                        if (user == commandsplit[1].ToLower())
+                                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                         {
-                                            string reason = "";
-                                            for (int n = 4; n < commandsplit.Length; n++)
+                                            string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                            if (user == commandsplit[1].ToLower())
                                             {
-                                                reason += commandsplit[n] + " ";
+                                                string reason = "";
+                                                for (int n = 4; n < commandsplit.Length; n++)
+                                                {
+                                                    reason += commandsplit[n] + " ";
+                                                }
+                                                if (commandsplit[3] == Strings.Get("commands", "true"))
+                                                {
+                                                    ip = Globals.Clients[i].GetIP();
+                                                }
+                                                Database.AddBan(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason,
+                                                    Strings.Get("commands", "banuser"), ip);
+                                                PacketSender.SendGlobalMsg(Strings.Get("account", "banned", Globals.Clients[i].Entity.MyName));
+                                                Console.WriteLine(@"    " + Strings.Get("account", "banned", Globals.Clients[i].Entity.MyName));
+                                                Globals.Clients[i].Disconnect(); //Kick em'
+                                                userFound = true;
+                                                break;
                                             }
-                                            if (commandsplit[3] == Strings.Get("commands", "true"))
-                                            {
-                                                ip = Globals.Clients[i].GetIP();
-                                            }
-                                            Database.AddBan(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason,
-                                                Strings.Get("commands", "banuser"), ip);
-                                            PacketSender.SendGlobalMsg(Strings.Get("account", "banned", Globals.Clients[i].Entity.MyName));
-                                            Console.WriteLine(@"    " + Strings.Get("account", "banned", Globals.Clients[i].Entity.MyName));
-                                            Globals.Clients[i].Disconnect(); //Kick em'
-                                            userFound = true;
-                                            break;
                                         }
                                     }
                                     if (userFound == false)
@@ -295,16 +301,19 @@ namespace Intersect_Server.Classes
                             {
                                 for (int i = 0; i < Globals.Clients.Count; i++)
                                 {
-                                    string user = Globals.Clients[i].Entity.MyName.ToLower();
-                                    if (user == commandsplit[1].ToLower())
+                                    if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                     {
-                                        Database.DeleteMute(Globals.Clients[i].MyAccount);
-                                        Globals.Clients[i].Muted = false;
-                                        Globals.Clients[i].MuteReason = "";
-                                        PacketSender.SendGlobalMsg(Strings.Get("account", "unmuted", Globals.Clients[i].Entity.MyName));
-                                        Console.WriteLine(@"    " + Strings.Get("account", "unmuted", Globals.Clients[i].Entity.MyName));
-                                        userFound = true;
-                                        break;
+                                        string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                        if (user == commandsplit[1].ToLower())
+                                        {
+                                            Database.DeleteMute(Globals.Clients[i].MyAccount);
+                                            Globals.Clients[i].Muted = false;
+                                            Globals.Clients[i].MuteReason = "";
+                                            PacketSender.SendGlobalMsg(Strings.Get("account", "unmuted", Globals.Clients[i].Entity.MyName));
+                                            Console.WriteLine(@"    " + Strings.Get("account", "unmuted", Globals.Clients[i].Entity.MyName));
+                                            userFound = true;
+                                            break;
+                                        }
                                     }
                                 }
                                 if (userFound == false)
@@ -335,25 +344,28 @@ namespace Intersect_Server.Classes
                                 {
                                     for (int i = 0; i < Globals.Clients.Count; i++)
                                     {
-                                        string user = Globals.Clients[i].Entity.MyName.ToLower();
-                                        if (user == commandsplit[1].ToLower())
+                                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                         {
-                                            string reason = "";
-                                            for (int n = 4; n < commandsplit.Length; n++)
+                                            string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                            if (user == commandsplit[1].ToLower())
                                             {
-                                                reason += commandsplit[n] + " ";
+                                                string reason = "";
+                                                for (int n = 4; n < commandsplit.Length; n++)
+                                                {
+                                                    reason += commandsplit[n] + " ";
+                                                }
+                                                if (commandsplit[3] == Strings.Get("commands", "true"))
+                                                {
+                                                    ip = Globals.Clients[i].GetIP();
+                                                }
+                                                Database.AddMute(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason, Strings.Get("commands", "muteuser"), ip);
+                                                Globals.Clients[i].Muted = true; //Cut out their tongues!
+                                                Globals.Clients[i].MuteReason = Database.CheckMute(Globals.Clients[i].MyAccount, Globals.Clients[i].GetIP());
+                                                PacketSender.SendGlobalMsg(Strings.Get("account", "muted", Globals.Clients[i].Entity.MyName));
+                                                Console.WriteLine(@"    " + Strings.Get("account", "muted", Globals.Clients[i].Entity.MyName));
+                                                userFound = true;
+                                                break;
                                             }
-                                            if (commandsplit[3] == Strings.Get("commands", "true"))
-                                            {
-                                                ip = Globals.Clients[i].GetIP();
-                                            }
-                                            Database.AddMute(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason, Strings.Get("commands", "muteuser"), ip);
-                                            Globals.Clients[i].Muted = true; //Cut out their tongues!
-                                            Globals.Clients[i].MuteReason = Database.CheckMute(Globals.Clients[i].MyAccount, Globals.Clients[i].GetIP());
-                                            PacketSender.SendGlobalMsg(Strings.Get("account", "muted", Globals.Clients[i].Entity.MyName));
-                                            Console.WriteLine(@"    " + Strings.Get("account", "muted", Globals.Clients[i].Entity.MyName));
-                                            userFound = true;
-                                            break;
                                         }
                                     }
                                     if (userFound == false)

@@ -28,11 +28,11 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             switch (cmbConditionType.SelectedIndex)
             {
                 case 0: //Player Switch
-                    cmbSwitch.SelectedIndex = Database.GameObjectListIndex(GameObject.PlayerSwitch,_myCommand.Ints[1]);
+                    cmbSwitch.SelectedIndex = Database.GameObjectListIndex(GameObject.PlayerSwitch, _myCommand.Ints[1]);
                     cmbSwitchVal.SelectedIndex = _myCommand.Ints[2];
                     break;
                 case 1: //Player Variable
-                    cmbVariable.SelectedIndex = Database.GameObjectListIndex(GameObject.PlayerVariable,_myCommand.Ints[1]);
+                    cmbVariable.SelectedIndex = Database.GameObjectListIndex(GameObject.PlayerVariable, _myCommand.Ints[1]);
                     cmbVariableMod.SelectedIndex = _myCommand.Ints[2];
                     txtVariableVal.Text = _myCommand.Ints[3].ToString();
                     break;
@@ -68,7 +68,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbPower.SelectedIndex = _myCommand.Ints[1];
                     break;
                 case 10: //Time is between
-                    cmbTime1.SelectedIndex = Math.Min(_myCommand.Ints[1],cmbTime1.Items.Count-1);
+                    cmbTime1.SelectedIndex = Math.Min(_myCommand.Ints[1], cmbTime1.Items.Count - 1);
                     cmbTime2.SelectedIndex = Math.Min(_myCommand.Ints[2], cmbTime2.Items.Count - 1);
                     break;
                 case 11: //Can Start Quest
@@ -162,7 +162,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 cmbLevelStat.Items.Add(Strings.Get("combat", "stat" + i));
             }
             cmbLevelComparator.Items.Clear();
-            for(int i = 0; i < 6; i++)
+            for (int i = 0; i < 6; i++)
             {
                 cmbLevelComparator.Items.Add(Strings.Get("eventconditional", "comparator" + i));
             }
@@ -358,11 +358,24 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         {
             int n;
 
+            if (_currentPage != null)
+            {
+                if (_myCommand.Ints[4] == 0)
+                // command.Ints[4 & 5] are reserved for referencing which command list the true/false braches follow
+                {
+                    for (var i = 0; i < 2; i++)
+                    {
+                        _currentPage.CommandLists.Add(new CommandList());
+                        _myCommand.Ints[4 + i] = _currentPage.CommandLists.Count - 1;
+                    }
+                }
+            }
+
             _myCommand.Ints[0] = cmbConditionType.SelectedIndex;
             switch (_myCommand.Ints[0])
             {
                 case 0: //Player Switch
-                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.PlayerSwitch,cmbSwitch.SelectedIndex);
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.PlayerSwitch, cmbSwitch.SelectedIndex);
                     _myCommand.Ints[2] = cmbSwitchVal.SelectedIndex;
                     break;
                 case 1: //Player Variable
@@ -379,7 +392,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     break;
                 case 2: //Global Switch
                     _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.ServerSwitch, cmbSwitch.SelectedIndex);
-                    _myCommand.Ints[2] =  cmbSwitchVal.SelectedIndex;
+                    _myCommand.Ints[2] = cmbSwitchVal.SelectedIndex;
                     break;
                 case 3: //Global Variable
                     _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.ServerVariable, cmbVariable.SelectedIndex);
