@@ -670,11 +670,11 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendEntityAttack(int entityIndex, int type, int map, int attackTime)
+        public static void SendEntityAttack(Entity en, int type, int map, int attackTime)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EntityAttack);
-            bf.WriteLong(entityIndex);
+            bf.WriteLong(en.MyIndex);
             bf.WriteInteger(type);
             bf.WriteInteger(map);
             bf.WriteInteger(attackTime);
@@ -1267,34 +1267,33 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendEntityDash(int index, int endMap, int endX, int endY, int dashTime,int direction)
+        public static void SendEntityDash(Entity en, int endMap, int endX, int endY, int dashTime,int direction)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EntityDash);
-            bf.WriteLong(index);
+            bf.WriteLong(en.MyIndex);
             bf.WriteInteger(endMap);
             bf.WriteInteger(endX);
             bf.WriteInteger(endY);
             bf.WriteInteger(dashTime);
             bf.WriteInteger(direction);
-            SendDataToProximity(Globals.Entities[index].CurrentMap, bf.ToArray());
+            SendDataToProximity(en.CurrentMap, bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendActionMsg(int index, string message, Color color)
+        public static void SendActionMsg(Entity en, string message, Color color)
         {
-            if (index > Globals.Entities.Count || Globals.Entities[index] == null) return;
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.ActionMsg);
-            bf.WriteInteger(Globals.Entities[index].CurrentMap);
-            bf.WriteInteger(Globals.Entities[index].CurrentX);
-            bf.WriteInteger(Globals.Entities[index].CurrentY);
+            bf.WriteInteger(en.CurrentMap);
+            bf.WriteInteger(en.CurrentX);
+            bf.WriteInteger(en.CurrentY);
             bf.WriteString(message);
             bf.WriteByte(color.A);
             bf.WriteByte(color.R);
             bf.WriteByte(color.G);
             bf.WriteByte(color.B);
-            SendDataToProximity(Globals.Entities[index].CurrentMap, bf.ToArray());
+            SendDataToProximity(en.CurrentMap, bf.ToArray());
             bf.Dispose();
         }
 

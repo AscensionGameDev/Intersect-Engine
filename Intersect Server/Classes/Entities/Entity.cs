@@ -624,13 +624,13 @@ namespace Intersect_Server.Classes.Entities
                 if (blocking == 1 && !Blocking && AttackTimer < Globals.System.GetTimeMs())
                 {
                     Blocking = true;
-                    PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, -1);
+                    PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, CurrentMap, -1);
                 }
                 else if (blocking == 0 && Blocking)
                 {
                     Blocking = false;
                     AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
-                    PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, 0);
+                    PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, CurrentMap, 0);
                 }
             }
         }
@@ -660,22 +660,22 @@ namespace Intersect_Server.Classes.Entities
 
                 if (enemy.Dir == (int)Directions.Left && d == (int)Directions.Right)
                 {
-                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
                     return;
                 }
                 else if (enemy.Dir == (int)Directions.Right && d == (int)Directions.Left)
                 {
-                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
                     return;
                 }
                 else if (enemy.Dir == (int)Directions.Up && d == (int)Directions.Down)
                 {
-                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
                     return;
                 }
                 else if (enemy.Dir == (int)Directions.Down && d == (int)Directions.Up)
                 {
-                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
                     return;
                 }
             }
@@ -780,7 +780,7 @@ namespace Intersect_Server.Classes.Entities
                     enemy.Status.Add(new StatusInstance(enemy.MyIndex,
                         spellBase.Data3, (spellBase.Data2 * 100),
                         spellBase.Data5));
-                    PacketSender.SendActionMsg(enemy.MyIndex, Options.StatusActionMsgs[spellBase.Data3], new Color(255, 255, 255, 0));
+                    PacketSender.SendActionMsg(enemy, Options.StatusActionMsgs[spellBase.Data3], new Color(255, 255, 255, 0));
                 }
 
                 //Handle DoT/HoT spells]
@@ -841,8 +841,8 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (Status[n].Type == (int)StatusTypes.Stun || Status[n].Type == (int)StatusTypes.Blind)
                     {
-                        PacketSender.SendActionMsg(MyIndex, Strings.Get("combat", "miss"), new Color(255, 255, 255, 255));
-                        PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
+                        PacketSender.SendActionMsg(this, Strings.Get("combat", "miss"), new Color(255, 255, 255, 255));
+                        PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
                         return;
                     }
                 }
@@ -904,7 +904,7 @@ namespace Intersect_Server.Classes.Entities
             }
             else
             {
-                PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "critical"), new Color(255, 255, 255, 0));
+                PacketSender.SendActionMsg(enemy, Strings.Get("combat", "critical"), new Color(255, 255, 255, 0));
             }
 
             //Calculate Damages
@@ -917,19 +917,19 @@ namespace Intersect_Server.Classes.Entities
                     switch (damageType)
                     {
                         case DamageType.Physical:
-                            PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "removesymbol") + (int)baseDamage, new Color(255, 255, 0, 0));
+                            PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int)baseDamage, new Color(255, 255, 0, 0));
                             break;
                         case DamageType.Magic:
-                            PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "removesymbol") + (int)baseDamage, new Color(255, 255, 0, 255));
+                            PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int)baseDamage, new Color(255, 255, 0, 255));
                             break;
                         case DamageType.True:
-                            PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "removesymbol") + (int)baseDamage, new Color(255, 255, 255, 255));
+                            PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int)baseDamage, new Color(255, 255, 255, 255));
                             break;
                     }
                 }
                 else
                 {
-                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "addsymbol") + (int)baseDamage, new Color(255, 0, 255, 0));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int)baseDamage, new Color(255, 0, 255, 0));
                 }
             }
             if (secondaryDamage != 0)
@@ -940,11 +940,11 @@ namespace Intersect_Server.Classes.Entities
                 {
                     //If we took damage lets reset our combat timer
                     CombatTimer = Globals.System.GetTimeMs() + 5000;
-                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "removesymbol") + (int)baseDamage, new Color(255, 255, 127, 80));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int)baseDamage, new Color(255, 255, 127, 80));
                 }
                 else
                 {
-                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "addsymbol") + (int)baseDamage, new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int)baseDamage, new Color(255, 0, 0, 255));
                 }
             }
            
@@ -1072,7 +1072,7 @@ namespace Intersect_Server.Classes.Entities
                         }
                         break;
                     case (int)SpellTypes.Dash:
-                        PacketSender.SendActionMsg(MyIndex, Strings.Get("combat","dash"), new Color(255, 0, 0, 255));
+                        PacketSender.SendActionMsg(this, Strings.Get("combat","dash"), new Color(255, 0, 0, 255));
                         var dash = new DashInstance(this, spellBase.CastRange, Dir, Convert.ToBoolean(spellBase.Data1), Convert.ToBoolean(spellBase.Data2), Convert.ToBoolean(spellBase.Data3), Convert.ToBoolean(spellBase.Data4));
                         break;
                     case (int)SpellTypes.Event:
@@ -1569,7 +1569,7 @@ namespace Intersect_Server.Classes.Entities
                 return;
             } //Remove dash instance if no where to dash
             TransmittionTimer = Globals.System.GetTimeMs() + (long)((float)Options.MaxDashSpeed / (float)Range);
-            PacketSender.SendEntityDash(en.MyIndex, en.CurrentMap,en.CurrentX,en.CurrentY, (int)(Options.MaxDashSpeed * (Range/10f)), Direction==Facing? Direction:-Facing);
+            PacketSender.SendEntityDash(en, en.CurrentMap,en.CurrentX,en.CurrentY, (int)(Options.MaxDashSpeed * (Range/10f)), Direction==Facing? Direction:-Facing);
             en.MoveTimer = Globals.System.GetTimeMs() + Options.MaxDashSpeed;
         }
 

@@ -390,7 +390,7 @@ namespace Intersect_Server.Classes.Entities
             }
 
             PacketSender.SendPlayerMsg(MyClient, Strings.Get("player", "levelup", Level), Color.Cyan, MyName);
-            PacketSender.SendActionMsg(MyIndex, Strings.Get("combat", "levelup"), new Color(255, 0, 255, 0));
+            PacketSender.SendActionMsg(this, Strings.Get("combat", "levelup"), new Color(255, 0, 255, 0));
             if (StatPoints > 0)
             {
                 PacketSender.SendPlayerMsg(MyClient, Strings.Get("player", "statpoints", StatPoints), Color.Cyan, MyName);
@@ -557,7 +557,7 @@ namespace Intersect_Server.Classes.Entities
                     100, 10, Options.CritMultiplier, deadAnimations, aliveAnimations);
                 }
             }
-            PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
+            PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
         }
         public override bool CanAttack(Entity en, SpellBase spell)
         {
@@ -809,11 +809,11 @@ namespace Intersect_Server.Classes.Entities
                                 AddVital(Vitals.Health, itemBase.Data2);
                                 if (s == Strings.Get("combat", "addsymbol"))
                                 {
-                                    PacketSender.SendActionMsg(MyIndex, s + itemBase.Data2.ToString(), Color.Green);
+                                    PacketSender.SendActionMsg(this, s + itemBase.Data2.ToString(), Color.Green);
                                 }
                                 else
                                 {
-                                    PacketSender.SendActionMsg(MyIndex, s + itemBase.Data2.ToString(), Color.Red);
+                                    PacketSender.SendActionMsg(this, s + itemBase.Data2.ToString(), Color.Red);
                                     if (Vital[(int)Vitals.Health] <= 0) //Add a death handler for poison.
                                     {
                                         Die();
@@ -822,11 +822,11 @@ namespace Intersect_Server.Classes.Entities
                                 break;
                             case 1: //Mana
                                 AddVital(Vitals.Mana, itemBase.Data2);
-                                PacketSender.SendActionMsg(MyIndex, s + itemBase.Data2.ToString(), Color.Blue);
+                                PacketSender.SendActionMsg(this, s + itemBase.Data2.ToString(), Color.Blue);
                                 break;
                             case 2: //Exp
                                 GiveExperience(itemBase.Data2);
-                                PacketSender.SendActionMsg(MyIndex, s + itemBase.Data2.ToString(), Color.White);
+                                PacketSender.SendActionMsg(this, s + itemBase.Data2.ToString(), Color.White);
                                 break;
                             default:
                                 break;
@@ -2165,7 +2165,7 @@ namespace Intersect_Server.Classes.Entities
 
                 if (target == -1 && ((spell.SpellType == (int)SpellTypes.CombatSpell && spell.TargetType == (int)SpellTargetTypes.Single) || spell.SpellType == (int)SpellTypes.WarpTo))
                 {
-                    PacketSender.SendActionMsg(MyIndex, Strings.Get("combat", "notarget"), new Color(255, 255, 0, 0));
+                    PacketSender.SendActionMsg(this, Strings.Get("combat", "notarget"), new Color(255, 255, 0, 0));
                     return;
                 }
 
@@ -2174,7 +2174,7 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (!InRangeOf(Globals.Entities[Target], spell.CastRange))
                     {
-                        PacketSender.SendActionMsg(MyIndex, Strings.Get("combat", "targetoutsiderange"), new Color(255, 255, 0, 0));
+                        PacketSender.SendActionMsg(this, Strings.Get("combat", "targetoutsiderange"), new Color(255, 255, 0, 0));
                         return;
                     }
                 }

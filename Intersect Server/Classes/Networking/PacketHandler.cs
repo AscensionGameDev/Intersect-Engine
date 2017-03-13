@@ -28,6 +28,8 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
 
+            if (client == null || packet == null || packet.Length == 0) return;
+
             //Compressed?
             if (bf.ReadByte() == 1)
             {
@@ -722,7 +724,7 @@ namespace Intersect_Server.Classes.Networking
                 }
                 if (client.Entity.Status[n].Type == (int)StatusTypes.Blind)
                 {
-                    PacketSender.SendActionMsg(client.EntityIndex, Strings.Get("combat", "miss"), new Color(255, 255, 255, 255));
+                    PacketSender.SendActionMsg(client.Entity, Strings.Get("combat", "miss"), new Color(255, 255, 255, 255));
                     bf.Dispose();
                     return;
                 }

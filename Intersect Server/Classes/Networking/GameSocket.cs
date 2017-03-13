@@ -80,6 +80,7 @@ namespace Intersect_Server.Classes.Networking
         protected void TryHandleData()
         {
             int packetLen;
+            if (_myClient == null) return;
             lock (_bufferLock)
             {
                 while (_myBuffer.Length() >= 4)
