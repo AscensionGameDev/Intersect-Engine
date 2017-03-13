@@ -133,7 +133,7 @@ namespace Intersect_Server.Classes.Entities
 
             base.TryAttack(enemy, MyBase.Damage == 0 ? 1 : MyBase.Damage, (DamageType)MyBase.DamageType, (Stats)MyBase.ScalingStat,
                     MyBase.Scaling, MyBase.CritChance, Options.CritMultiplier,deadAnimations,aliveAnimations);
-            PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
+            PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
         }
 
 

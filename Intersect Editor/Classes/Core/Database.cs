@@ -441,12 +441,19 @@ namespace Intersect_Editor.Classes
 
         public static byte[] LoadMapCacheRaw(int id, int revision)
         {
-            var query = "SELECT * from " + MAP_CACHE_TABLE + " WHERE " + MAP_CACHE_ID + "=@" + MAP_CACHE_ID + " AND "
-                + MAP_CACHE_REVISION + "=@" + MAP_CACHE_REVISION + ";";
+            var query = "SELECT * from " + MAP_CACHE_TABLE + " WHERE " + MAP_CACHE_ID + "=@" + MAP_CACHE_ID;
+            if (revision > -1)
+            {
+                query += " AND " + MAP_CACHE_REVISION + "=@" + MAP_CACHE_REVISION;
+            }
+            
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id.ToString()));
-                cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_REVISION, revision.ToString()));
+                if (revision > -1)
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_REVISION, revision.ToString()));
+                }
                 var dataReader = cmd.ExecuteReader();
                 while (dataReader.Read())
                 {
@@ -477,6 +484,17 @@ namespace Intersect_Editor.Classes
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_DATA, null));
                 }
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static void ClearMapCache (int id)
+        {
+            var query = "UPDATE " + MAP_CACHE_TABLE + " SET " + MAP_CACHE_DATA + " = @" + MAP_CACHE_DATA + " WHERE " + MAP_CACHE_ID + " = @" + MAP_CACHE_ID;
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id));
+                cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_DATA, null));
                 cmd.ExecuteNonQuery();
             }
         }

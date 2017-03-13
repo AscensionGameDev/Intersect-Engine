@@ -100,16 +100,19 @@ namespace Intersect_Editor.Classes.Maps
         {
             if (Globals.MapsToScreenshot.Contains(MyMapNum))
             {
-                if (Globals.MapGrid != null && Globals.MapGrid.Loaded && Globals.MapGrid.Contains(MyMapNum))
+                if (Globals.MapGrid != null && Globals.MapGrid.Loaded)
                 {
-                    for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
+                    if (Globals.MapGrid.Contains(MyMapNum))
                     {
-                        for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                        for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
                         {
-                            if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight && Globals.MapGrid.Grid[x, y].mapnum > -1)
+                            for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                             {
-                                var needMap = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
-                                if (needMap == null) return;
+                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight && Globals.MapGrid.Grid[x, y].mapnum > -1)
+                                {
+                                    var needMap = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                    if (needMap == null) return;
+                                }
                             }
                         }
                     }

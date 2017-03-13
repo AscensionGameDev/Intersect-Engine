@@ -38,10 +38,11 @@ namespace Intersect_Editor.Forms
             this.pnlMap = new System.Windows.Forms.Panel();
             this.grpMapList = new DarkUI.Controls.DarkGroupBox();
             this.chkChronological = new DarkUI.Controls.DarkCheckBox();
+            this.mapTreeList1 = new Intersect_Editor.Forms.Controls.MapTreeList();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnOk = new DarkUI.Controls.DarkButton();
             this.tmrMapCheck = new System.Windows.Forms.Timer(this.components);
-            this.mapTreeList1 = new Intersect_Editor.Forms.Controls.MapTreeList();
+            this.btnRefreshPreview = new System.Windows.Forms.Button();
             this.grpEverything.SuspendLayout();
             this.grpMapPreview.SuspendLayout();
             this.pnlMapContainer.SuspendLayout();
@@ -55,6 +56,7 @@ namespace Intersect_Editor.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grpEverything.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpEverything.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpEverything.Controls.Add(this.btnRefreshPreview);
             this.grpEverything.Controls.Add(this.grpMapPreview);
             this.grpEverything.Controls.Add(this.grpMapList);
             this.grpEverything.Controls.Add(this.btnCancel);
@@ -127,6 +129,15 @@ namespace Intersect_Editor.Forms
             this.chkChronological.Text = "Chronological";
             this.chkChronological.CheckedChanged += new System.EventHandler(this.chkChronological_CheckedChanged);
             // 
+            // mapTreeList1
+            // 
+            this.mapTreeList1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.mapTreeList1.Location = new System.Drawing.Point(7, 36);
+            this.mapTreeList1.Name = "mapTreeList1";
+            this.mapTreeList1.Size = new System.Drawing.Size(217, 489);
+            this.mapTreeList1.TabIndex = 0;
+            // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -153,14 +164,20 @@ namespace Intersect_Editor.Forms
             // 
             this.tmrMapCheck.Tick += new System.EventHandler(this.tmrMapCheck_Tick);
             // 
-            // mapTreeList1
+            // btnRefreshPreview
             // 
-            this.mapTreeList1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.mapTreeList1.Location = new System.Drawing.Point(7, 36);
-            this.mapTreeList1.Name = "mapTreeList1";
-            this.mapTreeList1.Size = new System.Drawing.Size(217, 489);
-            this.mapTreeList1.TabIndex = 0;
+            this.btnRefreshPreview.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnRefreshPreview.BackgroundImage")));
+            this.btnRefreshPreview.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnRefreshPreview.Enabled = false;
+            this.btnRefreshPreview.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            this.btnRefreshPreview.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRefreshPreview.ForeColor = System.Drawing.Color.Transparent;
+            this.btnRefreshPreview.Location = new System.Drawing.Point(753, 2);
+            this.btnRefreshPreview.Name = "btnRefreshPreview";
+            this.btnRefreshPreview.Size = new System.Drawing.Size(24, 24);
+            this.btnRefreshPreview.TabIndex = 8;
+            this.btnRefreshPreview.UseVisualStyleBackColor = true;
+            this.btnRefreshPreview.Click += new System.EventHandler(this.btnRefreshPreview_Click);
             // 
             // frmWarpSelection
             // 
@@ -195,5 +212,6 @@ namespace Intersect_Editor.Forms
         private DarkButton btnCancel;
         private DarkButton btnOk;
         private System.Windows.Forms.Timer tmrMapCheck;
+        private System.Windows.Forms.Button btnRefreshPreview;
     }
 }

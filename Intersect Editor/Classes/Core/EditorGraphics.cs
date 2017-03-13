@@ -973,85 +973,105 @@ namespace Intersect_Editor.Classes
             RenderTarget2D screenShot = CreateRenderTexture((Options.MapWidth) * Options.TileWidth, (Options.MapHeight) * Options.TileHeight);
             _graphicsDevice.SetRenderTarget(screenShot);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Transparent);
-            //Draw The lower maps
-            for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
+
+            if (Globals.MapGrid.Contains(Globals.CurrentMap.GetId()))
             {
-                for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                //Draw The lower maps
+                for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
                 {
-                    if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                    for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                     {
-                        var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
-                        if (map != null)
+                        if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                         {
-                            lock (map.GetMapLock())
+                            var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                            if (map != null)
                             {
-                                //Draw this map
-                                DrawMap(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true, 0,
-                                    screenShot);
+                                lock (map.GetMapLock())
+                                {
+                                    //Draw this map
+                                    DrawMap(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true, 0,
+                                        screenShot);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //Draw the lower resources/animations
+                for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
+                {
+                    for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                    {
+                        if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                        {
+                            var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                            if (map != null)
+                            {
+                                lock (map.GetMapLock())
+                                {
+                                    DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
+                                        true, screenShot, false);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //Draw The upper maps
+                for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
+                {
+                    for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                    {
+                        if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                        {
+                            var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                            if (map != null)
+                            {
+                                lock (map.GetMapLock())
+                                {
+                                    //Draw this map
+                                    DrawMap(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true, 1,
+                                        screenShot);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //Draw the upper resources/animations
+                for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
+                {
+                    for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                    {
+                        if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                        {
+                            var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                            if (map != null)
+                            {
+                                lock (map.GetMapLock())
+                                {
+                                    DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
+                                        true, screenShot, true);
+                                }
                             }
                         }
                     }
                 }
             }
-
-            //Draw the lower resources/animations
-            for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
+            else
             {
-                for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                lock (Globals.CurrentMap.GetMapLock())
                 {
-                    if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
-                    {
-                        var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
-                        if (map != null)
-                        {
-                            lock (map.GetMapLock())
-                            {
-                                DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
-                                    true, screenShot, false);
-                            }
-                        }
-                    }
-                }
-            }
-
-            //Draw The upper maps
-            for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
-            {
-                for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
-                {
-                    if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
-                    {
-                        var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
-                        if (map != null)
-                        {
-                            lock (map.GetMapLock())
-                            {
-                                //Draw this map
-                                DrawMap(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true, 1,
-                                    screenShot);
-                            }
-                        }
-                    }
-                }
-            }
-
-            //Draw the upper resources/animations
-            for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
-            {
-                for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
-                {
-                    if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
-                    {
-                        var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
-                        if (map != null)
-                        {
-                            lock (map.GetMapLock())
-                            {
-                                DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
-                                    true, screenShot, true);
-                            }
-                        }
-                    }
+                    //Draw this map
+                    DrawMap(Globals.CurrentMap, 0,0, true, 0,
+                        screenShot);
+                    DrawMapAttributes(Globals.CurrentMap, 0,0,
+                                        true, screenShot, false);
+                    //Draw this map
+                    DrawMap(Globals.CurrentMap, 0,0, true, 1,
+                        screenShot);
+                    DrawMapAttributes(Globals.CurrentMap, 0,0,
+                                        true, screenShot, true);
                 }
             }
             if (!Database.GridHideFog) { DrawFog(screenShot); }
