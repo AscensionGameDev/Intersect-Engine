@@ -97,7 +97,7 @@ namespace Intersect_Server.Classes.General
                     }
                 }
             };
-            double result = (double)e.Evaluate();
+            double result = Convert.ToDouble(e.Evaluate());
             return (int)Math.Round(result);
         }
     }

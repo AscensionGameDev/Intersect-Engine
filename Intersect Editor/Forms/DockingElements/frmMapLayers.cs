@@ -57,6 +57,9 @@ namespace Intersect_Editor.Forms
             {
                 SetTileset(cmbTilesets.Items[0].ToString());
             }
+            grpZDimension.Visible = Options.ZDimensionVisible;
+            rbZDimension.Visible = Options.ZDimensionVisible;
+            grpZResource.Visible = Options.ZDimensionVisible;
         }
 
         //Tiles Tab

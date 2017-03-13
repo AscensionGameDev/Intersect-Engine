@@ -236,6 +236,11 @@ namespace Intersect_Server.Classes.General
 
                     //Map
                     Options.GameBorderStyle = GetXmlInt(options, "//Config/Map/BorderStyle");
+                    var zdimension = GetXmlStr(options, "//Config/Map/ZDimensionVisible",false);
+                    if (zdimension != "")
+                    {
+                        Options.ZDimensionVisible = Convert.ToBoolean(zdimension);
+                    }
                     Options.MapWidth = GetXmlInt(options, "//Config/Map/MapWidth");
                     Options.MapHeight = GetXmlInt(options, "//Config/Map/MapHeight");
                     if (Options.MapWidth < 10 || Options.MapWidth > 64 || Options.MapHeight < 10 || Options.MapHeight > 64)
@@ -318,6 +323,7 @@ namespace Intersect_Server.Classes.General
 
             //Map
             bf.WriteInteger(Options.GameBorderStyle);
+            bf.WriteBoolean(Options.ZDimensionVisible);
             bf.WriteInteger(Options.MapWidth);
             bf.WriteInteger(Options.MapHeight);
             bf.WriteInteger(Options.TileWidth);

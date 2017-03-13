@@ -44,6 +44,7 @@ namespace Intersect_Library
 
         //Maps
         public static int GameBorderStyle = 0; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
+        public static bool ZDimensionVisible = false;
         public static int MapWidth = 32;
         public static int MapHeight = 26;
         public static int TileWidth = 32;
@@ -108,6 +109,7 @@ namespace Intersect_Library
 
             //Map
             GameBorderStyle = bf.ReadInteger();
+            ZDimensionVisible = bf.ReadBoolean();
             MapWidth = bf.ReadInteger();
             MapHeight = bf.ReadInteger();
             TileWidth = bf.ReadInteger();
