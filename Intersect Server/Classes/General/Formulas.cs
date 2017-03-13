@@ -67,6 +67,12 @@ namespace Intersect_Server.Classes.General
                     break;
             }
             Expression e = new Expression(expression);
+            var negate = false;
+            if (baseDamage < 0)
+            {
+                baseDamage = Math.Abs(baseDamage);
+                negate = true;
+            }
             e.Parameters["BaseDamage"] = baseDamage;
             e.Parameters["ScalingStat"] = attacker.Stat[(int)scalingStat].Value();
             e.Parameters["ScaleFactor"] = scaling/100f;
@@ -98,6 +104,7 @@ namespace Intersect_Server.Classes.General
                 }
             };
             double result = Convert.ToDouble(e.Evaluate());
+            if (negate) result *= -1;
             return (int)Math.Round(result);
         }
     }
