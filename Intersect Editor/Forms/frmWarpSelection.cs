@@ -37,9 +37,7 @@ namespace Intersect_Editor.Forms
             pnlMap.BackColor = Color.Black;
             mapTreeList1.SetSelect(new TreeViewEventHandler(NodeDoubleClick));
 
-            typeof(Panel).InvokeMember("DoubleBuffered",
-    BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
-    null, pnlMap, new object[] { true });
+            typeof(Panel).InvokeMember("DoubleBuffered",BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,null, pnlMap, new object[] { true });
         }
 
         public void InitForm(bool tileSelection = true, List<int> restrictMaps = null)

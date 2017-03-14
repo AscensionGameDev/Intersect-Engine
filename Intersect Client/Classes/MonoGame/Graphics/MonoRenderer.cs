@@ -31,6 +31,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         private int _screenWidth;
         private int _screenHeight;
         private GameRenderTexture _whiteTex;
+        private List<string> _validVideoModes;
 
         private SpriteBatch _spriteBatch;
         private bool _spriteBatchBegan;
@@ -336,6 +337,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override List<string> GetValidVideoModes()
         {
+            if (_validVideoModes != null) return _validVideoModes;
             var myList = new List<string>();
             myList.Add("800x600");
             myList.Add("1024x768");
@@ -349,7 +351,19 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             myList.Add("1600x900");
             myList.Add("1680x1050");
             myList.Add("1920x1080");
-            return myList;
+
+            _validVideoModes = new List<string>();
+
+            foreach (var itm in myList)
+            {
+                int resX = Convert.ToInt32(itm.Split("x".ToCharArray())[0]);
+                int resY = Convert.ToInt32(itm.Split("x".ToCharArray())[1]);
+                if (resX <= _graphicsDevice.DisplayMode.Width && resY <= _graphicsDevice.DisplayMode.Height)
+                {
+                    _validVideoModes.Add(itm);
+                }
+            }
+            return _validVideoModes;
         }
 
         public override FloatRect GetView()
@@ -363,7 +377,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             {
                 initing = true;
                 if (Globals.Database.TargetResolution < 0 ||
-                    Globals.Database.TargetResolution > GetValidVideoModes().Count)
+                    Globals.Database.TargetResolution >= GetValidVideoModes().Count)
                 {
                     Globals.Database.TargetResolution = 0;
                     Globals.Database.SavePreference("Resolution", Globals.Database.TargetResolution.ToString());

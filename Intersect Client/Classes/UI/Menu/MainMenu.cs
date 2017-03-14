@@ -6,6 +6,7 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Library.Localization;
+using System;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -126,7 +127,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _optionsButton = new Button(_menuCanvas);
             _optionsButton.Clicked += OptionsButton_Clicked;
             _optionsButton.SetText("");
-            _optionsButton.SetToolTipText(Strings.Get("mainmenu", "options"));
+            if (!String.IsNullOrEmpty(Strings.Get("mainmenu", "options"))) _optionsButton.SetToolTipText(Strings.Get("mainmenu", "options"));
             _optionsButton.SetSize(48, 49);
             _optionsButton.SetPosition(_menuCanvas.Width - 50, 2);
             _optionsButton.SetImage( Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "settingsnormal.png"), Button.ControlState.Normal);

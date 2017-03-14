@@ -239,6 +239,10 @@ namespace Intersect_Client.Classes.Entities
                     }
                     upperTimer = Globals.System.GetTimeMS() + myBase.UpperAnimFrameSpeed;
                 }
+                if (!showLower && !showUpper)
+                {
+                    Dispose();
+                }
             }
         }
 

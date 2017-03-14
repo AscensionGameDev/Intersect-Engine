@@ -259,6 +259,11 @@ namespace Intersect_Client.Classes.Core
 
         private void UpdateSoundVolume()
         {
+            if (_map == 0)
+            {
+                _sound.SetVolume(0);
+                return;
+            }
             var map = MapInstance.GetMap(_map);
             if (map == null)
             {

@@ -266,7 +266,7 @@
 	<Options>
 		<string id="title">Options</string>
 		<string id="resolution">Resolution:</string>
-		<string id="targetfps">"Target FPS:</string>
+		<string id="targetfps">Target FPS:</string>
 		<string id="vsync">V-Sync</string>
 		<string id="30fps">30</string>
 		<string id="60fps">60</string>
