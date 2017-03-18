@@ -43,6 +43,16 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
+        public bool IsInMyParty(Entity entity)
+        {
+            if (EntityTypes.Player == entity.GetEntityType())
+            {
+                return Party.Contains(entity.MyIndex);
+            }
+
+            return false;
+        }
+
         public override int CurrentMap
         {
             get { return base.CurrentMap; }

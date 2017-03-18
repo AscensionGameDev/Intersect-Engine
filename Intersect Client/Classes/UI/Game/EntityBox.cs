@@ -178,6 +178,7 @@ namespace Intersect_Client.Classes.UI.Game
                 PartyLabel.TextColorOverride = Color.White;
                 PartyLabel.MouseInputEnabled = true;
                 PartyLabel.Clicked += invite_Clicked;
+                PartyLabel.IsHidden = Globals.Me.IsInMyParty(_myEntity);
             }
 
             lastUpdateTime = Globals.System.GetTimeMS();
@@ -352,9 +353,13 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                 }
             }
+            else
+            {
+                PartyLabel.IsHidden = Globals.Me.IsInMyParty(_myEntity);
+            }
 
-            //Eventually draw icons for buffs and debuffs?
-            lastUpdateTime = Globals.System.GetTimeMS();
+                //Eventually draw icons for buffs and debuffs?
+                lastUpdateTime = Globals.System.GetTimeMS();
         }
 
         public void Dispose()
