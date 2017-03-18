@@ -860,7 +860,7 @@ Tick timer saved in server config.xml.</string>
 		
 		<string id="cost">Spell Cost:</string>
 		<string id="hpcost">HP Cost:</string>
-		<string id="manacost">Mana Cost:</string>
+		<string id="mpcost">Mana Cost:</string>
 		<string id="casttime">Cast Time (ms):</string>
 		<string id="cooldown">Cooldown (ms):</string>
 		
