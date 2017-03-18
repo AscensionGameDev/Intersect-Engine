@@ -285,7 +285,7 @@
 	<Errors>
 		<string id="warpfail">Failed to warp player to new map -- warping to spawn.</string>
 		<string id="errorlogged">An error was logged into errors.log</string>
-		<string id="errorservercrashnohalt">The Intersect server has encountered an error and must close. Error information can be found in resources/errors.log.</string>
-		<string id="errorservercrash">The Intersect server has encountered an error and must close. Error information can be found in resources/errors.log. Press any key to exit.</string>
+		<string id="errorservercrashnohalt">The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log.</string>
+		<string id="errorservercrash">The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log. Press any key to exit.</string>
 	</Errors>
 </Strings>

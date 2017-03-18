@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Forms;
+using Intersect_Library.Logging;
 
 namespace Intersect_Editor.Classes
 {
@@ -25,18 +26,8 @@ namespace Intersect_Editor.Classes
         //Really basic error handler for debugging purposes
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
-            using (StreamWriter writer = new StreamWriter("resources/errors.log", true))
-            {
-                writer.WriteLine("Message :" + ((Exception)e.ExceptionObject).Message + "<br/>" + Environment.NewLine +
-                                 "StackTrace :" + ((Exception)e.ExceptionObject).StackTrace +
-                                 "" + Environment.NewLine + "Date :" + DateTime.Now.ToString());
-                writer.WriteLine(Environment.NewLine +
-                                 "-----------------------------------------------------------------------------" +
-                                 Environment.NewLine);
-            }
-            MessageBox.Show(
-                "The Intersect editor has encountered an error and must close. Error information can be found in resources/errors.log");
+            Log.Error((Exception)e.ExceptionObject);
+            MessageBox.Show("The Intersect Editor has encountered an error and must close. Error information can be found in resources/logs/errors.log");
             Application.Exit();
         }
     }

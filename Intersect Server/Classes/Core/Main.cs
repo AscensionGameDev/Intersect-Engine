@@ -11,6 +11,7 @@ using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
+using Intersect_Library.Logging;
 
 namespace Intersect_Server.Classes
 {
@@ -625,16 +626,7 @@ namespace Intersect_Server.Classes
         //Really basic error handler for debugging purposes
         public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
-            using (StreamWriter writer = new StreamWriter("resources/errors.log", true))
-            {
-                writer.WriteLine("Message :" + ((Exception)e.ExceptionObject).Message + "<br/>" + Environment.NewLine +
-                                 "StackTrace :" + ((Exception)e.ExceptionObject).StackTrace +
-                                 "" + Environment.NewLine + "Date :" + DateTime.Now.ToString());
-                writer.WriteLine(Environment.NewLine +
-                                 "-----------------------------------------------------------------------------" +
-                                 Environment.NewLine);
-            }
+            Log.Error((Exception)e.ExceptionObject);
             if (e.IsTerminating)
             {
                 if (_errorHalt)

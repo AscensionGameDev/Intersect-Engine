@@ -86,6 +86,11 @@
     <Compile Include="GameObjects\TimeBase.cs" />
     <Compile Include="Localization\Language.cs" />
     <Compile Include="Localization\Strings.cs" />
+    <Compile Include="Logging\FileOutput.cs" />
+    <Compile Include="Logging\ILogOutput.cs" />
+    <Compile Include="Logging\Log.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Logging\LogLevel.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -94,6 +99,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="TextUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -111,7 +117,9 @@
     <None Include="Resources\Client.English.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Server.English.xml" />
+    <None Include="Resources\Server.English.xml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

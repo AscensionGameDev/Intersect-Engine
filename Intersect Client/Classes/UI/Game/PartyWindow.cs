@@ -17,6 +17,7 @@ using Color = IntersectClientExtras.GenericClasses.Color;
 using Point = IntersectClientExtras.GenericClasses.Point;
 using Intersect_Library.GameObjects;
 using Intersect_Library.Localization;
+using System.IO;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -165,12 +166,11 @@ namespace Intersect_Client.Classes.UI.Game
                     _lblnames[i].Text = "";
                     if (i > 0) _kickButtons[i].Hide();
             }
-            if (Globals.Me.Party.Count > 0)
+            if (Globals.Me.IsInParty)
             {
                 _leader.Show();
                 _leaveButton.Show();
-
-
+                
                 for (int i = 0; i < 4; i++)
                 {
                     if (i < Globals.Me.Party.Count)

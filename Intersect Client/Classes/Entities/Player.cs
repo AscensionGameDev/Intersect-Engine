@@ -27,7 +27,21 @@ namespace Intersect_Client.Classes.Entities
         public int ExperienceToNextLevel = 0;
         public Dictionary<int, QuestProgressStruct> QuestProgress = new Dictionary<int, QuestProgressStruct>();
 
-        public List<int> Party = new List<int>();
+        public bool IsInParty { get { return Party.Count > 0; } }
+
+        private List<int> mParty = null;
+        public List<int> Party
+        {
+            get
+            {
+                if (mParty == null)
+                {
+                    mParty = new List<int>();
+                }
+
+                return mParty;
+            }
+        }
 
         public override int CurrentMap
         {

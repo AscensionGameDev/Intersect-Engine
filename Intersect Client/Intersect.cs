@@ -18,6 +18,7 @@ using Intersect_Library;
 using Intersect_Library.Localization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Intersect_Library.Logging;
 
 namespace Intersect_Client_MonoGame
 {
@@ -50,18 +51,8 @@ namespace Intersect_Client_MonoGame
         //Really basic error handler for debugging purposes
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
-            using (StreamWriter writer = new StreamWriter(Path.Combine("resources", "errors.log"), true))
-            {
-                writer.WriteLine("Message :" + ((Exception)e.ExceptionObject).Message + "<br/>" + Environment.NewLine +
-                                 "StackTrace :" + ((Exception)e.ExceptionObject).StackTrace +
-                                 "" + Environment.NewLine + "Date :" + DateTime.Now.ToString());
-                writer.WriteLine(Environment.NewLine +
-                                 "-----------------------------------------------------------------------------" +
-                                 Environment.NewLine);
-            }
-            MessageBox.Show(
-                "The Intersect client has encountered an error and must close. Error information can be found in resources/errors.log");
+            Log.Error((Exception)e.ExceptionObject);
+            MessageBox.Show("The Intersect Client has encountered an error and must close. Error information can be found in resources/logs/errors.log");
             Environment.Exit(-1);
         }
 
