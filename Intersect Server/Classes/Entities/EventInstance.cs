@@ -224,22 +224,28 @@ namespace Intersect_Server.Classes.Entities
 
         public static bool MeetsConditionLists(ConditionLists lists, Player MyPlayer, EventInstance EventInstance, bool SingleList = true)
         {
-            if (lists.Lists.Count == 0) return true; //If no condition lists then this passes
+            //If no condition lists then this passes
+            if (lists.Lists.Count == 0)
+                return true;
+
             for (int i = 0; i < lists.Lists.Count; i++)
             {
-                if (!MeetsConditionList(lists.Lists[i], MyPlayer, EventInstance)) //Checks to see if all conditions in this list are met
+                if (MeetsConditionList(lists.Lists[i], MyPlayer, EventInstance)) //Checks to see if all conditions in this list are met
                 {
-                    if (!SingleList) return false; //If not.. and we need all lists to pass then return false
+                    //If all conditions are met.. and we only need a single list to pass then return true
+                    if (SingleList)
+                        return true;
+
+                    continue;
                 }
-                else
-                {
-                    if (SingleList) return true; //If all conditions are met.. and we only need a single list to pass then return true
-                }
+
+                //If not.. and we need all lists to pass then return false
+                if (!SingleList)
+                    return false;
             }
             //There were condition lists. If single list was true then we failed every single list and should return false.
-            if (SingleList) return false;
             //If single list was false (meaning we needed to pass all lists) then we've made it.. return true.
-            return true;
+            return !SingleList;
         }
 
         public static bool MeetsConditionList(ConditionList list, Player MyPlayer, EventInstance EventInstance)
@@ -362,7 +368,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else
                     {
-                        lvlStat = MyPlayer.Stat[conditionCommand.Ints[3] - 1].Value();
+                        lvlStat = MyPlayer.Stat[conditionCommand.Ints[3] - 1].Stat;
                     }
                     switch (conditionCommand.Ints[1])
                     {
