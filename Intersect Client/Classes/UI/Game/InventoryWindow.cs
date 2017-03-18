@@ -188,6 +188,7 @@ namespace Intersect_Client.Classes.UI.Game
         private int _mySlot;
         private bool _isEquipped;
         private int _currentItem = -2;
+        private string texLoaded = "";
 
         //Drag/Drop References
         private InventoryWindow _inventoryWindow;
@@ -329,12 +330,12 @@ namespace Intersect_Client.Classes.UI.Game
                     equipped = true;
                 }
             }
-            if (Globals.Me.Inventory[_mySlot].ItemNum != _currentItem || equipped != _isEquipped)
+            var item = ItemBase.GetItem(Globals.Me.Inventory[_mySlot].ItemNum);
+            if (Globals.Me.Inventory[_mySlot].ItemNum != _currentItem || equipped != _isEquipped || (item == null && texLoaded != "") || (item != null && texLoaded != item.Pic))
             {
                 _currentItem = Globals.Me.Inventory[_mySlot].ItemNum;
                 _isEquipped = equipped;
                 equipPanel.IsHidden = !_isEquipped;
-                var item = ItemBase.GetItem(Globals.Me.Inventory[_mySlot].ItemNum);
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,item.Pic);
@@ -349,6 +350,7 @@ namespace Intersect_Client.Classes.UI.Game
                             pnl.Texture = null;
                         }
                     }
+                    texLoaded = item.Pic;
                 }
                 else
                 {
@@ -356,6 +358,7 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         pnl.Texture = null;
                     }
+                    texLoaded = "";
                 }
             }
             if (!IsDragging)

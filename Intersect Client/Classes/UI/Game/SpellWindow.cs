@@ -161,7 +161,7 @@ namespace Intersect_Client.Classes.UI.Game
         private int myindex;
         private long ClickTime = 0;
 
-        private bool texLoaded = false;
+        private string texLoaded = "";
         private bool iconCD = false;
         private int currentSpell = -1;
 
@@ -225,9 +225,9 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Update()
         {
-            if (!IsDragging && (texLoaded == false || currentSpell != Globals.Me.Spells[myindex].SpellNum || iconCD != (Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMS())))
+            var spell = SpellBase.GetSpell(Globals.Me.Spells[myindex].SpellNum);
+            if (!IsDragging && ((texLoaded != "" && spell == null) || (spell != null && texLoaded != spell.Pic)  || currentSpell != Globals.Me.Spells[myindex].SpellNum || iconCD != (Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMS())))
             {
-                var spell = SpellBase.GetSpell(Globals.Me.Spells[myindex].SpellNum);
                 if (spell != null)
                 {
                     GameTexture spellTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
@@ -251,7 +251,7 @@ namespace Intersect_Client.Classes.UI.Game
                             pnl.Texture = null;
                         }
                     }
-                    texLoaded = true;
+                    texLoaded = spell.Pic;
                     currentSpell = Globals.Me.Spells[myindex].SpellNum;
                     iconCD = (Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMS());
                 }
@@ -261,6 +261,7 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         pnl.Texture = null;
                     }
+                    texLoaded = "";
                 }
             }
             if (!IsDragging)
@@ -296,7 +297,7 @@ namespace Intersect_Client.Classes.UI.Game
                                 {
                                     IsDragging = true;
                                     dragIcon = new Draggable(pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseY, pnl.Texture);
-                                    texLoaded = false;
+                                    texLoaded = "";
                                 }
                             }
                         }
