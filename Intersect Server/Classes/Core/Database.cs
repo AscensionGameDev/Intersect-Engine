@@ -670,7 +670,7 @@ namespace Intersect_Server.Classes.Core
             }
             client.MyId = SaveUser(client, true);
         }
-        private static long SaveUser(Client client, bool newUser = false)
+        public static long SaveUser(Client client, bool newUser = false)
         {
             if (client == null) return -1;
             

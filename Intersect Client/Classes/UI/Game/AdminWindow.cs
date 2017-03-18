@@ -410,7 +410,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (_nameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int)AdminActions.SetAccess, _nameTextbox.Text, _accessDropdown.UserData.ToString());
+                PacketSender.SendAdminAction((int)AdminActions.SetAccess, _nameTextbox.Text, _accessDropdown.SelectedItem.UserData.ToString());
             }
         }
 
