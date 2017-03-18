@@ -62,6 +62,30 @@ namespace Intersect_Server.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;!--Config.xml generated automatically by Intersect Server.--&gt;
+        ///&lt;Config&gt;
+        ///	&lt;Language&gt;English&lt;/Language&gt;
+        ///  &lt;GameName&gt;Intersect&lt;/GameName&gt;
+        ///  &lt;ServerPort&gt;4500&lt;/ServerPort&gt;
+        ///  &lt;GameObjects&gt;
+        ///    &lt;!--You can increase these if you want, but you shouldn&apos;t unless you need to.--&gt;
+        ///    &lt;MaxNpcDrops&gt;10&lt;/MaxNpcDrops&gt;
+        ///  &lt;/GameObjects&gt;
+        ///  &lt;Player&gt;
+        ///    &lt;MaxStat&gt;255&lt;/MaxStat&gt;
+        ///    &lt;MaxLevel&gt;100&lt;/MaxLevel&gt;
+        ///    &lt;MaxInventory&gt;35&lt;/MaxInventory&gt;
+        ///    &lt;MaxSpells&gt;35&lt;/MaxSpells&gt;
+        ///    &lt;M [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string config {
+            get {
+                return ResourceManager.GetString("config", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
         ///&lt;!--formulas.xml generated automatically by Intersect Server.
         ///
         ///Here you can modify formulas used in the Intersect Engine. The three main formulas are for calculating Physical, Magical, and True Damage.

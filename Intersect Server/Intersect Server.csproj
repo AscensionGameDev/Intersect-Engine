@@ -149,6 +149,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon.ico" />
+    <None Include="resources\config.xml" />
+    <None Include="resources\formulas.xml" />
     <Content Include="x64\Mono.Data.Sqlite.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

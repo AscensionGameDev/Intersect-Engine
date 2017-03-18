@@ -23,88 +23,10 @@ namespace Intersect_Server.Classes.General
         //Options File
         public static bool LoadOptions()
         {
-
+            if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
             if (!File.Exists("resources/config.xml"))
             {
-                var settings = new XmlWriterSettings { Indent = true };
-                var writer = XmlWriter.Create("resources/config.xml", settings);
-                writer.WriteStartDocument();
-                writer.WriteComment("Config.xml generated automatically by Intersect Server.");
-                writer.WriteStartElement("Config");
-                writer.WriteElementString("Language", "English");
-                writer.WriteElementString("GameName", "Intersect");
-                writer.WriteElementString("ServerPort", "4500");
-
-                writer.WriteStartElement("Player");
-                writer.WriteElementString("MaxStat", "255");
-                writer.WriteElementString("MaxLevel", "100");
-                writer.WriteElementString("MaxInventory", "35");
-                writer.WriteElementString("MaxSpells", "35");
-                writer.WriteElementString("MaxBank", "100");
-                writer.WriteEndElement();
-
-                writer.WriteStartElement("Passability");
-                writer.WriteComment("Trigger player passability based on map moralites. True = Passable, False = Blocked");
-                writer.WriteElementString("Normal", "False");
-                writer.WriteElementString("Safe", "True");
-                writer.WriteElementString("Arena", "False");
-                writer.WriteEndElement();
-
-                writer.WriteStartElement("Equipment");
-                writer.WriteElementString("WeaponSlot", "2");
-                writer.WriteElementString("ShieldSlot", "3");
-                writer.WriteElementString("Slot0", "Helmet");
-                writer.WriteElementString("Slot1", "Armor");
-                writer.WriteElementString("Slot2", "Weapon");
-                writer.WriteElementString("Slot3", "Shield");
-                writer.WriteElementString("Slot4", "Boots");
-                writer.WriteEndElement();
-
-                writer.WriteStartElement("Paperdoll");
-                writer.WriteComment("Paperdoll is rendered in the following order. If you want to change when each piece of equipment gets rendered simply swap the equipment names.");
-                writer.WriteElementString("Slot0", "Helmet");
-                writer.WriteElementString("Slot1", "Armor");
-                writer.WriteElementString("Slot2", "Weapon");
-                writer.WriteElementString("Slot3", "Shield");
-                writer.WriteElementString("Slot4", "Boots");
-                writer.WriteEndElement();
-
-                writer.WriteStartElement("ToolTypes");
-                writer.WriteElementString("Slot0", "Axe");
-                writer.WriteElementString("Slot1", "Pickaxe");
-                writer.WriteElementString("Slot2", "Shovel");
-                writer.WriteElementString("Slot3", "Fishing Rod");
-                writer.WriteEndElement();
-
-                writer.WriteStartElement("Misc");
-                writer.WriteElementString("ItemDespawnTime", "15000");
-                writer.WriteElementString("ItemSpawnTime", "15000");
-                writer.WriteEndElement();
-
-                writer.WriteStartElement("Combat");
-                writer.WriteElementString("RegenTime", "3000");
-                writer.WriteElementString("MinAttackRate", "1000");
-                writer.WriteElementString("MaxAttackRate", "200");
-                writer.WriteElementString("BlockingSlow", "30");
-                writer.WriteElementString("CritChance", "20");
-                writer.WriteElementString("CritMultiplier", "150");
-                writer.WriteElementString("MaxDashSpeed", "200");
-                writer.WriteEndElement();
-
-                writer.WriteStartElement("Map");
-                writer.WriteComment("MapBorder Override. 0 for seamless with scrolling that stops on world edges. 1 for non-seamless, and 2 for seamless where the camera knows no boundaries. (Black borders where the world ends)");
-                writer.WriteElementString("BorderStyle", "0");
-                writer.WriteComment("DO NOT TOUCH! These values will resize the maps in the engine and will CORRUPT existing maps. In MOST cases this value should not be changed. It would be wise to consult us before doing so!");
-                writer.WriteElementString("MapWidth", "32");
-                writer.WriteElementString("MapHeight", "26");
-                writer.WriteElementString("TileWidth", "32");
-                writer.WriteElementString("TileHeight", "32");
-                writer.WriteEndElement();
-
-                writer.WriteEndElement();
-                writer.WriteEndDocument();
-                writer.Flush();
-                writer.Close();
+                File.WriteAllText("resources/config.xml", Properties.Resources.config);
                 ConfigXml = File.ReadAllText("resources/config.xml");
                 Console.WriteLine("Configuration file was missing and regenerated by the server! Reloading Options Now.");
                 return LoadOptions();
