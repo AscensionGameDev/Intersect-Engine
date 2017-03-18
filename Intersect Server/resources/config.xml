@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Config.xml generated automatically by Intersect Server.-->
+<Config>
+	<Language>English</Language>
+  <GameName>Intersect</GameName>
+  <ServerPort>4500</ServerPort>
+  <GameObjects>
+    <!--You can increase these if you want, but you shouldn't unless you need to.-->
+    <MaxNpcDrops>10</MaxNpcDrops>
+  </GameObjects>
+  <Player>
+    <MaxStat>255</MaxStat>
+    <MaxLevel>100</MaxLevel>
+    <MaxInventory>35</MaxInventory>
+    <MaxSpells>35</MaxSpells>
+    <MaxBank>100</MaxBank>
+  </Player>
+	<!--Trigger player passability based on map moralites. True = Passable, False = Blocked-->
+	<Passability>
+		<Normal>False</Normal>
+		<Safe>True</Safe>
+		<Arena>False</Arena>
+	</Passability>
+  <Equipment>
+    <WeaponSlot>2</WeaponSlot>
+    <ShieldSlot>3</ShieldSlot>
+    <Slot0>Helmet</Slot0>
+    <Slot1>Armor</Slot1>
+    <Slot2>Weapon</Slot2>
+    <Slot3>Shield</Slot3>
+    <Slot4>Boots</Slot4>
+  </Equipment>
+  <Paperdoll>
+		<Up>
+		    <!--Paperdoll is rendered in the following order when facing up. If you want to change when each piece of equipment gets rendered simply swap the equipment names.-->
+				<Slot0>Helmet</Slot0>
+				<Slot1>Armor</Slot1>
+				<Slot2>Weapon</Slot2>
+				<Slot3>Shield</Slot3>
+				<Slot4>Boots</Slot4>
+		</Up>
+		<Down>
+		    <!--Paperdoll is rendered in the following order when facing down. If you want to change when each piece of equipment gets rendered simply swap the equipment names.-->
+				<Slot0>Helmet</Slot0>
+				<Slot1>Armor</Slot1>
+				<Slot2>Weapon</Slot2>
+				<Slot3>Shield</Slot3>
+				<Slot4>Boots</Slot4>
+		</Down>
+		<Left>
+		    <!--Paperdoll is rendered in the following order when facing left. If you want to change when each piece of equipment gets rendered simply swap the equipment names.-->
+				<Slot0>Helmet</Slot0>
+				<Slot1>Armor</Slot1>
+				<Slot2>Weapon</Slot2>
+				<Slot3>Shield</Slot3>
+				<Slot4>Boots</Slot4>
+		</Left>
+		<Right>
+		    <!--Paperdoll is rendered in the following order when facing right. If you want to change when each piece of equipment gets rendered simply swap the equipment names.-->
+				<Slot0>Helmet</Slot0>
+				<Slot1>Armor</Slot1>
+				<Slot2>Weapon</Slot2>
+				<Slot3>Shield</Slot3>
+				<Slot4>Boots</Slot4>
+		</Right>
+  </Paperdoll>
+  <ToolTypes>
+    <Slot0>Axe</Slot0>
+    <Slot1>Pickaxe</Slot1>
+    <Slot2>Shovel</Slot2>
+    <Slot3>Fishing Rod</Slot3>
+  </ToolTypes>
+  <Misc>
+    <ItemDespawnTime>15000</ItemDespawnTime>
+    <ItemSpawnTime>15000</ItemSpawnTime>
+  </Misc>
+  <Combat>
+    <RegenTime>3000</RegenTime>
+    <MinAttackRate>1000</MinAttackRate>
+    <MaxAttackRate>200</MaxAttackRate>
+    <BlockingSlow>30</BlockingSlow>
+    <CritChance>20</CritChance>
+    <CritMultiplier>150</CritMultiplier>
+    <MaxDashSpeed>200</MaxDashSpeed>
+  </Combat>
+  <Map>
+    <!--MapBorder Override. 0 for seamless with scrolling that stops on world edges. 1 for non-seamless, and 2 for seamless where the camera knows no boundaries. (Black borders where the world ends)-->
+    <BorderStyle>0</BorderStyle>
+    <!--DO NOT TOUCH! These values will resize the maps in the engine and will CORRUPT existing maps. In MOST cases this value should not be changed. It would be wise to consult us before doing so!-->
+    <MapWidth>32</MapWidth>
+    <MapHeight>26</MapHeight>
+    <TileWidth>32</TileWidth>
+    <TileHeight>32</TileHeight>
+  </Map>
+</Config>
