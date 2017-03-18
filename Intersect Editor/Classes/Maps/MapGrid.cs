@@ -104,6 +104,7 @@ namespace Intersect_Editor.Classes.Maps
             List<int> gridMaps = new List<int>();
             GridWidth = (int)bf.ReadLong();
             GridHeight = (int)bf.ReadLong();
+            bf.ReadBoolean();
             lock (texLock)
             {
                 UnloadTextures();
