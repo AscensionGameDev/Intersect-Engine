@@ -80,7 +80,13 @@ namespace Intersect_Library.Logging
         {
             if (mWriter != null)
             {
-                mWriter.Flush();
+                try
+                {
+                    mWriter.Flush();
+                } catch (ObjectDisposedException)
+                {
+                    /* Ignore this exception */
+                }
             }
         }
 
@@ -90,7 +96,14 @@ namespace Intersect_Library.Logging
 
             if (mWriter != null)
             {
-                mWriter.Close();
+                try
+                {
+                    mWriter.Close();
+                }
+                catch (ObjectDisposedException)
+                {
+                    /* Ignore this exception */
+                }
                 mWriter = null;
             }
         }
@@ -122,6 +135,7 @@ namespace Intersect_Library.Logging
             Write(tag, logLevel, string.Format("Stack Trace: {0}", exception.StackTrace));
             Write(tag, logLevel, string.Format("Time: {0}", DateTime.UtcNow.ToString()));
             Writer.WriteLine(Environment.NewLine + "-----------------------------------------------------------------------------" + Environment.NewLine);
+            Writer.Flush();
         }
     }
 }
