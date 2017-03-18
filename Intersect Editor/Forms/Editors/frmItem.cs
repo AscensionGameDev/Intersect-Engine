@@ -160,7 +160,7 @@ namespace Intersect_Editor.Forms
             cmbEquipmentBonus.Items.Clear();
             for (int i = 0; i < 3; i++)
             {
-                Strings.Get("itemeditor", "bonuseffect" + i);
+                cmbEquipmentBonus.Items.Add(Strings.Get("itemeditor", "bonuseffect" + i));
             }
 
             grpWeaponProperties.Text = Strings.Get("itemeditor", "weaponproperties");
