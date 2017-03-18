@@ -1289,12 +1289,13 @@ namespace Intersect_Server.Classes.Networking
                                         { p = 1; }
                                         else { p = 0; }
 
-                                        Globals.Clients[i].Power = p;
-                                        if (Globals.Clients[i].Power == 2)
+                                        var targetClient = Globals.Clients[i];
+                                        targetClient.Power = p;
+                                        if (targetClient.Power == 2)
                                         {
                                             PacketSender.SendGlobalMsg(Strings.Get("player","admin",val1));
                                         }
-                                        else if (Globals.Clients[i].Power == 1)
+                                        else if (targetClient.Power == 1)
                                         {
                                             PacketSender.SendGlobalMsg(Strings.Get("player", "mod", val1));
                                         }
@@ -1302,6 +1303,7 @@ namespace Intersect_Server.Classes.Networking
                                         {
                                             PacketSender.SendGlobalMsg(Strings.Get("player", "deadmin", val1));
                                         }
+                                        Database.SaveUser(targetClient);
                                         return;
                                     }
                                     else
