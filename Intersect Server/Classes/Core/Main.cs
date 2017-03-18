@@ -408,7 +408,7 @@ namespace Intersect_Server.Classes
                                             string user = Globals.Clients[i].Entity.MyName.ToLower();
                                             if (user == commandsplit[1].ToLower())
                                             {
-                                                Database.SetPlayerPower(commandsplit[1],
+                                                Database.SetPlayerPower(Globals.Clients[i].MyAccount,
                                                     Int32.Parse(commandsplit[2]));
                                                 PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
                                                 if (Globals.Clients[i].Power > 0)
