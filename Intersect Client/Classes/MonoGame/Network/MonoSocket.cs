@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
+using System.IO;
 
 namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
 {
@@ -78,7 +79,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
                 OnDataReceived(receivedData);
                 _myStream.BeginRead(_tempBuff, 0, MySocket.ReceiveBufferSize, ReceiveCallback, null);
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
                 HandleDisconnect();
             }

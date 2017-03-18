@@ -1285,6 +1285,8 @@ namespace Intersect_Client.Classes.Networking
             Globals.MapGridWidth = bf.ReadLong();
             Globals.MapGridHeight = bf.ReadLong();
             var clearKnownMaps = bf.ReadBoolean();
+            bf.ReadLong(); //Remove this
+            bf.ReadLong(); //Remove this
             Globals.MapGrid = new int[Globals.MapGridWidth, Globals.MapGridHeight];
             if (clearKnownMaps) {
                 var maps = MapInstance.GetObjects();
