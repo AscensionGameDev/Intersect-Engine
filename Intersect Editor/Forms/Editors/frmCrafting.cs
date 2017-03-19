@@ -375,14 +375,17 @@ namespace Intersect_Editor.Forms.Editors
 
         private void btnDupCraft_Click(object sender, EventArgs e)
         {
-            if (lstCrafts.SelectedIndex > -1 && _currentCraft != null)
+            if (lstCompositions.SelectedIndex > -1 && _currentCraft != null)
             {
                 var bf = new ByteBuffer();
                 var craft = new Craft();
                 bf.WriteBytes(_currentCraft.Data());
                 craft.Load(bf);
-                _editorItem.Crafts.Insert(lstCrafts.SelectedIndex,craft);
+                var nextIndex = lstCompositions.SelectedIndex + 1;
+                _editorItem.Crafts.Insert(nextIndex, craft);
                 UpdateEditor();
+                // TODO: Fix this so that when the selected index changes the editor actually updates
+                //lstCompositions.SelectedIndex = nextIndex;
             }
         }
 
