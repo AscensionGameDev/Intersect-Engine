@@ -18,6 +18,7 @@ using Color = IntersectClientExtras.GenericClasses.Color;
 using Point = IntersectClientExtras.GenericClasses.Point;
 using Intersect_Library.GameObjects;
 using Intersect_Library.Localization;
+using Intersect_Client.Classes.Items;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -268,44 +269,43 @@ namespace Intersect_Client.Classes.UI.Game
             }
             else
             {
-                int foundItem = -1;
+                ItemInstance invItem = Globals.Me.Inventory[_mySlot];
+                ShopItem shopItem = null;
                 for (int i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
                 {
-                    if (Globals.GameShop.BuyingItems[i].ItemNum == Globals.Me.Inventory[_mySlot].ItemNum)
+                    var tmpShop = Globals.GameShop.BuyingItems[i];
+
+                    if (invItem.ItemNum == tmpShop.ItemNum)
                     {
-                        foundItem = i;
+                        shopItem = tmpShop;
                         break;
                     }
                 }
-                if ((foundItem > -1 && Globals.GameShop.BuyingWhitelist) || (foundItem == -1 && !Globals.GameShop.BuyingWhitelist))
+
+                if (Globals.GameShop.BuyingWhitelist && shopItem != null)
                 {
-                    if (foundItem > -1)
+                    var hoveredItem = ItemBase.GetItem(shopItem.CostItemNum);
+                    if (hoveredItem != null)
                     {
-                        var hoveredItem = ItemBase.GetItem(Globals.GameShop.BuyingItems[foundItem].CostItemNum);
-                        if (hoveredItem != null)
-                        {
-                            _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
-                                Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y,
-                                Globals.Me.Inventory[_mySlot].StatBoost, "",
-                                Strings.Get("shop","sellsfor",Globals.GameShop.BuyingItems[foundItem].CostItemVal,hoveredItem.Name));
-                        }
+                        _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
+                            Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y,
+                            Globals.Me.Inventory[_mySlot].StatBoost, "",
+                            Strings.Get("shop", "sellsfor", shopItem.CostItemVal, hoveredItem.Name));
                     }
-                    else
-                    {
-                        var hoveredItem = ItemBase.GetItem(Globals.GameShop.BuyingItems[foundItem].ItemNum);
-                        var costItem = ItemBase.GetItem(Globals.GameShop.DefaultCurrency);
-                        if (hoveredItem != null && costItem != null)
-                        {
-                            _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
-                                Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y,
-                                Globals.Me.Inventory[_mySlot].StatBoost, "",
-                                Strings.Get("shop", "sellsfor", hoveredItem.Price, costItem.Name));
-                        }
-                    }
-                }
-                else
+                } else if (shopItem == null)
                 {
-                    _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum, Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 255, _inventoryWindow.Y, Globals.Me.Inventory[_mySlot].StatBoost, "", "Shop Will Not Buy This Item");
+                    var hoveredItem = ItemBase.GetItem(invItem.ItemNum);
+                    var costItem = ItemBase.GetItem(Globals.GameShop.DefaultCurrency);
+                    if (hoveredItem != null && costItem != null)
+                    {
+                        _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
+                            Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y,
+                            Globals.Me.Inventory[_mySlot].StatBoost, "",
+                            Strings.Get("shop", "sellsfor", hoveredItem.Price, costItem.Name));
+                    }
+                } else
+                {
+                    _descWindow = new ItemDescWindow(invItem.ItemNum, invItem.ItemVal, _inventoryWindow.X - 255, _inventoryWindow.Y, invItem.StatBoost, "", "Shop Will Not Buy This Item");
                 }
             }
         }
