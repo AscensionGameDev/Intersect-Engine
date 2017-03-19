@@ -355,7 +355,8 @@ namespace Intersect_Client.Classes.UI.Game
             }
             else
             {
-                PartyLabel.IsHidden = Globals.Me.IsInMyParty(_myEntity);
+                if (PartyLabel != null)
+                    PartyLabel.IsHidden = Globals.Me.IsInMyParty(_myEntity);
             }
 
                 //Eventually draw icons for buffs and debuffs?
