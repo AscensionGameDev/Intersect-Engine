@@ -493,6 +493,12 @@ namespace Intersect_Server.Classes.Entities
         }
         public override void TryAttack(Entity enemy)
         {
+            if (CastTime >= Globals.System.GetTimeMs())
+            {
+                PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "channelingnoattack"));
+                return;
+            }
+
             if (!IsOneBlockAway(enemy)) return;
             if (!isFacingTarget(enemy)) return;
 

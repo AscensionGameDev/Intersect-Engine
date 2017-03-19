@@ -709,68 +709,72 @@ namespace Intersect_Server.Classes.Networking
 
         private static void HandleTryAttack(Client client, byte[] packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            long target = bf.ReadLong();
-
-            //check if player is blinded or stunned
-            for (var n = 0; n < client.Entity.Status.Count; n++)
+            using (var buffer = new ByteBuffer())
             {
-                if (client.Entity.Status[n].Type == (int)StatusTypes.Stun)
+                buffer.WriteBytes(packet);
+                long target = buffer.ReadLong();
+
+                if (client.Entity.CastTime >= Globals.System.GetTimeMs())
                 {
-                    PacketSender.SendPlayerMsg(client, Strings.Get("combat", "stunattacking"));
-                    bf.Dispose();
+                    PacketSender.SendPlayerMsg(client, Strings.Get("combat", "channelingnoattack"));
                     return;
                 }
-                if (client.Entity.Status[n].Type == (int)StatusTypes.Blind)
-                {
-                    PacketSender.SendActionMsg(client.Entity, Strings.Get("combat", "miss"), new Color(255, 255, 255, 255));
-                    bf.Dispose();
-                    return;
-                }
-            }
 
-            //Fire projectile instead if weapon has it
-            if (Options.WeaponIndex > -1)
-            {
-                if (client.Entity.Equipment[Options.WeaponIndex] >= 0 &&
-                    ItemBase.GetItem(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum) !=
-                    null)
+                //check if player is blinded or stunned
+                for (var n = 0; n < client.Entity.Status.Count; n++)
                 {
-                    var projectileBase =
-                        ProjectileBase.GetProjectile(
-                            ItemBase.GetItem(
-                                client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum)
-                                .Projectile);
-                    if (projectileBase != null)
+                    if (client.Entity.Status[n].Type == (int)StatusTypes.Stun)
                     {
-                        if (projectileBase.Ammo > -1)
-                        {
-                            int item = client.Entity.FindItem(projectileBase.Ammo, projectileBase.AmmoRequired);
-                            if (item == -1)
-                            {
-                                PacketSender.SendPlayerMsg(client, Strings.Get("items", "notenough", ItemBase.GetName(projectileBase.Ammo)), Color.Red);
-                                return;
-                            }
-                            else
-                            {
-                                client.Entity.TakeItem(item, projectileBase.AmmoRequired);
-                            }
-                        }
-                        MapInstance.GetMap(client.Entity.CurrentMap)
-                            .SpawnMapProjectile(client.Entity, projectileBase,null, ItemBase.GetItem(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum), client.Entity.CurrentMap,
-                                client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ,
-                                client.Entity.Dir);
-                        bf.Dispose();
+                        PacketSender.SendPlayerMsg(client, Strings.Get("combat", "stunattacking"));
+                        return;
+                    }
+                    if (client.Entity.Status[n].Type == (int)StatusTypes.Blind)
+                    {
+                        PacketSender.SendActionMsg(client.Entity, Strings.Get("combat", "miss"), new Color(255, 255, 255, 255));
                         return;
                     }
                 }
-            }
 
-            //Attack normally.
-            if (target > -1 && target < Globals.Entities.Count && Globals.Entities[(int)target] != null)
-                client.Entity.TryAttack(Globals.Entities[(int)target]);
-            bf.Dispose();
+                //Fire projectile instead if weapon has it
+                if (Options.WeaponIndex > -1)
+                {
+                    if (client.Entity.Equipment[Options.WeaponIndex] >= 0 &&
+                        ItemBase.GetItem(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum) !=
+                        null)
+                    {
+                        var projectileBase =
+                            ProjectileBase.GetProjectile(
+                                ItemBase.GetItem(
+                                    client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum)
+                                    .Projectile);
+                        if (projectileBase != null)
+                        {
+                            if (projectileBase.Ammo > -1)
+                            {
+                                int item = client.Entity.FindItem(projectileBase.Ammo, projectileBase.AmmoRequired);
+                                if (item == -1)
+                                {
+                                    PacketSender.SendPlayerMsg(client, Strings.Get("items", "notenough", ItemBase.GetName(projectileBase.Ammo)), Color.Red);
+                                    return;
+                                }
+                                else
+                                {
+                                    client.Entity.TakeItem(item, projectileBase.AmmoRequired);
+                                }
+                            }
+                            MapInstance.GetMap(client.Entity.CurrentMap)
+                                .SpawnMapProjectile(client.Entity, projectileBase, null, ItemBase.GetItem(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum), client.Entity.CurrentMap,
+                                    client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ,
+                                    client.Entity.Dir);
+                            return;
+                        }
+                    }
+                }
+
+                //Attack normally.
+                if (target > -1 && target < Globals.Entities.Count && Globals.Entities[(int)target] != null)
+                    client.Entity.TryAttack(Globals.Entities[(int)target]);
+            }
         }
 
         private static void HandleDir(Client client, byte[] packet)
