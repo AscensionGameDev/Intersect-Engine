@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Intersect_Library
 {
-    public class ByteBuffer
+    public class ByteBuffer : IDisposable
     {
         readonly List<byte> _buff;
         public int Readpos;
