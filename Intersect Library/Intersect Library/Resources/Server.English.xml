@@ -248,7 +248,8 @@
 		<string id="stunned">You cannot cast this ability whilst stunned.</string>
 		<string id="levelreq">You are not a high enough level to use this ability.</string>
 		<string id="notarget">No Target!</string>
-		<string id="channeling">You are currently channeling another skill.</string>
+        <string id="channeling">You are currently channeling another skill.</string>
+        <string id="channelingnoattack">You are currently channeling a spell, you cannot attack.</string>
 		<string id="cooldown">This skill is on cooldown.</string>
 		<string id="lowhealth">Not enough health.</string>
 		<string id="lowmana">Not enough mana.</string>
