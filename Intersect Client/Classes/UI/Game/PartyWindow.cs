@@ -175,14 +175,15 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (i < Globals.Me.Party.Count)
                     {
+                        var partyMember = Globals.Entities[Globals.Me.Party[i]];
                         _barContainer[i].Show();
-                        _lblnames[i].Text = Globals.Entities[Globals.Me.Party[i]].MyName;
+                        _lblnames[i].Text = partyMember.MyName;
 
-                        float d =
-                        (float)
-                            ((float)Globals.Entities[Globals.Me.Party[i]].Vital[(int)Vitals.Health] /
-                                (float)Globals.Entities[Globals.Me.Party[i]].MaxVital[(int)Vitals.Health]);
-                        _bar[i].SetSize(Convert.ToInt32(d * 183), 25);
+                        var vitalHP = partyMember.Vital[(int)Vitals.Health];
+                        var vitalMaxHP = partyMember.MaxVital[(int)Vitals.Health];
+                        var ratioHP = ((float)vitalHP) / ((float)vitalMaxHP);
+                        ratioHP = Math.Min(1, Math.Max(0, ratioHP));
+                        _bar[i].SetSize(Convert.ToInt32(ratioHP * 183), 25);
                         if (i > 0) _kickButtons[i].Hide();
 
                         //Only show the kick buttons if its you or you are the party leader

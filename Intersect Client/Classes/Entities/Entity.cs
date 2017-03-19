@@ -688,7 +688,9 @@ namespace Intersect_Client.Classes.Entities
                 return;
             }
             var width = Options.TileWidth;
-            var fillWidth = ((float)Vital[(int)Vitals.Health] / MaxVital[(int)Vitals.Health]) * width;
+            var fillRatio = ((float)Vital[(int)Vitals.Health] / MaxVital[(int)Vitals.Health]);
+            fillRatio = Math.Min(1, Math.Max(0, fillRatio));
+            var fillWidth = fillRatio * width;
             var y = (int)Math.Ceiling(GetCenterPos().Y);
             var x = (int)Math.Ceiling(GetCenterPos().X);
             GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MySprite);
