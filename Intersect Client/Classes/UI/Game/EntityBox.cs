@@ -10,6 +10,7 @@ using Intersect_Client.Classes.Networking;
 using Intersect_Library;
 using Intersect_Library.Localization;
 using Color = IntersectClientExtras.GenericClasses.Color;
+using System;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -224,10 +225,8 @@ namespace Intersect_Client.Classes.UI.Game
                 float targetHPWidth = 0f;
                 if (_myEntity.MaxVital[(int) Vitals.Health] > 0)
                 {
-                    targetHPWidth =
-                        (float)
-                            ((float) _myEntity.Vital[(int) Vitals.Health]/
-                             (float) _myEntity.MaxVital[(int) Vitals.Health]);
+                    targetHPWidth = ((float) _myEntity.Vital[(int) Vitals.Health] / (float) _myEntity.MaxVital[(int) Vitals.Health]);
+                    targetHPWidth = Math.Min(1, Math.Max(0, targetHPWidth));
                     //Fix the Labels
                     _hpLbl.Text = Strings.Get("entitybox", "vital0val", _myEntity.Vital[(int)Vitals.Health],_myEntity.MaxVital[(int)Vitals.Health]);
                     //Multiply by the width of the bars.
@@ -270,10 +269,8 @@ namespace Intersect_Client.Classes.UI.Game
                 float targetMPWidth = 0f;
                 if (_myEntity.MaxVital[(int) Vitals.Mana] > 0)
                 {
-                    targetMPWidth =
-                        (float)
-                            ((float)_myEntity.Vital[(int)Vitals.Mana] /
-                             (float)_myEntity.MaxVital[(int)Vitals.Mana]);
+                    targetMPWidth = ((float)_myEntity.Vital[(int)Vitals.Mana] / (float)_myEntity.MaxVital[(int)Vitals.Mana]);
+                    targetMPWidth = Math.Min(1, Math.Max(0, targetMPWidth));
                     _mpLbl.Text = Strings.Get("entitybox", "vital1val", _myEntity.Vital[(int)Vitals.Mana], _myEntity.MaxVital[(int)Vitals.Mana]);
                     targetMPWidth *= _mpBackground.Width;
                 }
