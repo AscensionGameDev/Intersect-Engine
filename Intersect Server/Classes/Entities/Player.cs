@@ -2745,7 +2745,7 @@ namespace Intersect_Server.Classes.Entities
             var evt = FindEvent(instance);
             if (evt > -1 && evt < MyEvents.Count)
             {
-                return MyEvents[FindEvent(instance)];
+                return MyEvents[evt];
             }
             else
             {
