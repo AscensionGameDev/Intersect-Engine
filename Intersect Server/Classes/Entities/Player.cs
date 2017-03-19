@@ -2720,7 +2720,11 @@ namespace Intersect_Server.Classes.Entities
             {
                 for (int i = 0; i < MyEvents.Count; i++)
                 {
-                    if (MyEvents[i] != null && MyEvents[i].PageInstance != null && (MyEvents[i].PageInstance == en || MyEvents[i].PageInstance.GlobalClone == en))
+                    var evt = MyEvents[i];
+                    if (evt == null) { continue; }
+                    if (evt.PageInstance == null) { continue; }
+
+                    if (evt.PageInstance == en || evt.PageInstance.GlobalClone == en)
                     {
                         id = i;
                         return id;
