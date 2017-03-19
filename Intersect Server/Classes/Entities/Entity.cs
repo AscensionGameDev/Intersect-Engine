@@ -730,7 +730,7 @@ namespace Intersect_Server.Classes.Entities
             if (enemy.GetType() == typeof(Resource)) return;
             if (spellBase != null)
             {
-                List<KeyValuePair<int,int>> deadAnimations = new List<KeyValuePair<int, int>>();
+                List<KeyValuePair<int, int>> deadAnimations = new List<KeyValuePair<int, int>>();
                 List<KeyValuePair<int, int>> aliveAnimations = new List<KeyValuePair<int, int>>();
 
                 //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
@@ -761,11 +761,36 @@ namespace Intersect_Server.Classes.Entities
 
                 if (spellBase.HitAnimation > -1)
                 {
-                    deadAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimation,(int)Directions.Up));
+                    deadAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimation, (int)Directions.Up));
                     aliveAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimation, (int)Directions.Up));
                 }
 
-                Attack(enemy, spellBase.VitalDiff[0],spellBase.VitalDiff[1], (DamageType)spellBase.DamageType,(Stats)spellBase.ScalingStat, spellBase.Scaling, spellBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
+                bool shouldTakeDamage = true;
+                if (spellBase.TargetType == (int)SpellTargetTypes.AoE)
+                {
+                    if (spellBase.Friendly != 0)
+                    {
+                        if (this == enemy)
+                        {
+                            shouldTakeDamage = false;
+                        } else if (this is Player)
+                        {
+                            var player = (Player)this;
+                            foreach (var partyMember in player.Party)
+                            {
+                                if (enemy == partyMember)
+                                {
+                                    shouldTakeDamage = false;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                var damageHealth = shouldTakeDamage ? spellBase.VitalDiff[0] : Math.Min(0, spellBase.VitalDiff[0]);
+                var damageMana = shouldTakeDamage ? spellBase.VitalDiff[1] : Math.Min(0, spellBase.VitalDiff[1]);
+
+                Attack(enemy, damageHealth, damageMana, (DamageType)spellBase.DamageType,(Stats)spellBase.ScalingStat, spellBase.Scaling, spellBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
 
                 for (int i = 0; i < (int)Stats.StatCount; i++)
                 {
