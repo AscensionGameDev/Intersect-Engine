@@ -200,7 +200,10 @@ namespace Intersect_Client.Classes.UI.Game
             }
             else
             {
-                _optionsWindow.Show();
+                if (!Globals.Me.IsBusy())
+                {
+                    _optionsWindow.Show();
+                }
             }
         }
         void PartyBtn_Clicked(Base sender, ClickedEventArgs arguments)

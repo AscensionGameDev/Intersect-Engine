@@ -85,11 +85,16 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
+        public bool IsBusy()
+        {
+            return !(Globals.EventHolds.Count == 0 && !Globals.MoveRouteActive && Globals.GameShop == null && Globals.InBank == false && Globals.InCraft == false && Globals.InTrade == false && !Gui.HasInputFocus());
+        }
+
         public override bool Update()
         {
             bool returnval = base.Update();
             HandleInput();
-            if (Globals.EventHolds.Count == 0 && !Globals.MoveRouteActive && Globals.GameShop == null && Globals.InBank == false && Globals.InCraft == false && Globals.InTrade == false && !Gui.HasInputFocus())
+            if (!IsBusy())
             {
                 if (this == Globals.Me && base.IsMoving == false)
                 {
