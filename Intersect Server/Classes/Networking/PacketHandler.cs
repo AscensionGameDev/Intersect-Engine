@@ -1930,7 +1930,11 @@ namespace Intersect_Server.Classes.Networking
             int leader = bf.ReadInteger();
             if (client.Entity.PartyRequester != null && client.Entity.PartyRequester.MyIndex == leader)
             {
-                client.Entity.PartyRequester.AddParty(client.Entity);
+                if (client.Entity.PartyRequester.IsValidPlayer)
+                {
+                    client.Entity.PartyRequester.AddParty(client.Entity);
+                }
+
                 client.Entity.PartyRequester = null;
             }
             bf.Dispose();
@@ -1944,15 +1948,18 @@ namespace Intersect_Server.Classes.Networking
             int leader = bf.ReadInteger();
             if (client.Entity.PartyRequester != null && client.Entity.PartyRequester.MyIndex == leader)
             {
-                PacketSender.SendPlayerMsg(client.Entity.PartyRequester.MyClient,
-                    Strings.Get("parties,declined",client.Entity.MyName), Color.Red);
-                if (client.Entity.PartyRequests.ContainsKey(client.Entity.PartyRequester))
+                if (client.Entity.PartyRequester.IsValidPlayer)
                 {
-                    client.Entity.PartyRequests[client.Entity.PartyRequester] = Globals.System.GetTimeMs() + Player.RequestDeclineTimeout;
-                }
-                else
-                {
-                    client.Entity.PartyRequests.Add(client.Entity.PartyRequester, Globals.System.GetTimeMs() + Player.RequestDeclineTimeout);
+                    PacketSender.SendPlayerMsg(client.Entity.PartyRequester.MyClient, Strings.Get("parties,declined", client.Entity.MyName), Color.Red);
+
+                    if (client.Entity.PartyRequests.ContainsKey(client.Entity.PartyRequester))
+                    {
+                        client.Entity.PartyRequests[client.Entity.PartyRequester] = Globals.System.GetTimeMs() + Player.RequestDeclineTimeout;
+                    }
+                    else
+                    {
+                        client.Entity.PartyRequests.Add(client.Entity.PartyRequester, Globals.System.GetTimeMs() + Player.RequestDeclineTimeout);
+                    }
                 }
                 client.Entity.PartyRequester = null;
             }
@@ -2020,7 +2027,11 @@ namespace Intersect_Server.Classes.Networking
             int target = bf.ReadInteger();
             if (client.Entity.TradeRequester != null && client.Entity.TradeRequester.MyIndex == target)
             {
-                client.Entity.TradeRequester.StartTrade((Player)client.Entity);
+                if (client.Entity.TradeRequester.IsValidPlayer)
+                {
+                    client.Entity.TradeRequester.StartTrade((Player)client.Entity);
+                }
+
                 client.Entity.TradeRequester = null;
             }
             bf.Dispose();
@@ -2034,15 +2045,18 @@ namespace Intersect_Server.Classes.Networking
             int target = bf.ReadInteger();
             if (client.Entity.TradeRequester != null && client.Entity.TradeRequester.MyIndex == target)
             {
-                PacketSender.SendPlayerMsg(client.Entity.TradeRequester.MyClient,
-                    Strings.Get("trading","declined",client.Entity.MyName), Color.Red);
-                if (client.Entity.TradeRequests.ContainsKey(client.Entity.TradeRequester))
+                if (client.Entity.TradeRequester.IsValidPlayer)
                 {
-                    client.Entity.TradeRequests[client.Entity.TradeRequester] = Globals.System.GetTimeMs() + Player.RequestDeclineTimeout;
-                }
-                else
-                {
-                    client.Entity.TradeRequests.Add(client.Entity.TradeRequester, Globals.System.GetTimeMs() + Player.RequestDeclineTimeout);
+                    PacketSender.SendPlayerMsg(client.Entity.TradeRequester.MyClient,
+                    Strings.Get("trading", "declined", client.Entity.MyName), Color.Red);
+                    if (client.Entity.TradeRequests.ContainsKey(client.Entity.TradeRequester))
+                    {
+                        client.Entity.TradeRequests[client.Entity.TradeRequester] = Globals.System.GetTimeMs() + Player.RequestDeclineTimeout;
+                    }
+                    else
+                    {
+                        client.Entity.TradeRequests.Add(client.Entity.TradeRequester, Globals.System.GetTimeMs() + Player.RequestDeclineTimeout);
+                    }
                 }
                 client.Entity.TradeRequester = null;
             }

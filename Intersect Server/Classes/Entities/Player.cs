@@ -60,6 +60,14 @@ namespace Intersect_Server.Classes.Entities
         public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
         public int LastMapEntered = -1;
 
+        public bool IsValidPlayer
+        {
+            get
+            {
+                return (MyClient != null && MyClient.Entity == this);
+            }
+        }
+
         //Init
         public Player(int index, Client newClient) : base(index)
         {
