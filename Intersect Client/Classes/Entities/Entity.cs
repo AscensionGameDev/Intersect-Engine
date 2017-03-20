@@ -88,10 +88,10 @@ namespace Intersect_Client.Classes.Entities
         public List<Entity> RenderList = null;
         public int type = 0;
 
-        public Entity(int index, long spawnTime, ByteBuffer bf)
+        public Entity(int index, long spawnTime, ByteBuffer bf, bool isEvent = false)
         {
             SpawnTime = spawnTime;
-            if (index > -1)
+            if (index > -1 && !isEvent)
             {
                 for (int i = 0; i < Options.MaxInvItems; i++)
                 {
@@ -105,9 +105,10 @@ namespace Intersect_Client.Classes.Entities
                 {
                     Equipment[i] = -1;
                 }
-                MyIndex = index;
-                Load(bf);
             }
+            
+            MyIndex = index;
+            Load(bf);
         }
 
         public virtual EntityTypes GetEntityType()

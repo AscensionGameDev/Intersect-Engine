@@ -58,6 +58,7 @@ namespace Intersect_Client.Classes.Maps
         public List<ActionMsgInstance> ActionMsgs = new List<ActionMsgInstance>();
 
         //Map Players/Events/Npcs
+        private List<Event> mEvents = new List<Event>();
         public Dictionary<int, Entity> LocalEntities = new Dictionary<int, Entity>();
         public List<int> LocalEntitiesToDispose = new List<int>();
 
@@ -694,6 +695,7 @@ namespace Intersect_Client.Classes.Maps
         //Events
         public void AddEvent(Event evt)
         {
+            mEvents.Add(evt);
             if (LocalEntities.ContainsKey(evt.MyIndex))
             {
                 LocalEntities[evt.MyIndex].Dispose();
@@ -702,6 +704,16 @@ namespace Intersect_Client.Classes.Maps
             else
             {
                 LocalEntities.Add(evt.MyIndex, evt);
+            }
+        }
+
+        public void RemoveEvent(Event evt)
+        {
+            mEvents.Remove(evt);
+            if (LocalEntities.ContainsKey(evt.MyIndex))
+            {
+                LocalEntities.Remove(evt.MyIndex);
+                evt.Dispose();
             }
         }
 
@@ -764,6 +776,13 @@ namespace Intersect_Client.Classes.Maps
             {
                 ReleaseRenderTextures();
             }
+
+            foreach (var evt in mEvents)
+            {
+                evt.Dispose();
+            }
+            mEvents.Clear();
+
             if (killentities)
             {
                 foreach (var en in Globals.Entities)

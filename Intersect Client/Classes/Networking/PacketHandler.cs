@@ -286,31 +286,32 @@ namespace Intersect_Client.Classes.Networking
             var mapLength = bf.ReadLong();
             var mapData = bf.ReadBytes((int)mapLength);
             var revision = bf.ReadInteger();
-            if (MapInstance.GetMap(mapNum) != null)
+            var map = MapInstance.GetMap(mapNum);
+            if (map != null)
             {
-                if (revision == MapInstance.GetMap(mapNum).Revision)
+                if (revision == map.Revision)
                 {
                     return;
                 }
                 else
                 {
-                    MapInstance.GetMap(mapNum).Dispose(false, false);
+                    map.Dispose(false, false);
                 }
             }
-            var newMap = new MapInstance((int)mapNum);
-            MapInstance.AddObject(mapNum, newMap);
-            newMap.Load(mapData);
+            map = new MapInstance((int)mapNum);
+            MapInstance.AddObject(mapNum, map);
+            map.Load(mapData);
             if ((mapNum) == Globals.Me.CurrentMap)
             {
-                GameAudio.PlayMusic(newMap.Music, 3, 3, true);
+                GameAudio.PlayMusic(map.Music, 3, 3, true);
             }
-            newMap.Autotiles.LoadData(bf);
-            newMap.MapGridX = bf.ReadInteger();
-            newMap.MapGridY = bf.ReadInteger();
-            newMap.HoldLeft = bf.ReadInteger();
-            newMap.HoldRight = bf.ReadInteger();
-            newMap.HoldUp = bf.ReadInteger();
-            newMap.HoldDown = bf.ReadInteger();
+            map.Autotiles.LoadData(bf);
+            map.MapGridX = bf.ReadInteger();
+            map.MapGridY = bf.ReadInteger();
+            map.HoldLeft = bf.ReadInteger();
+            map.HoldRight = bf.ReadInteger();
+            map.HoldUp = bf.ReadInteger();
+            map.HoldDown = bf.ReadInteger();
             Globals.Me.FetchNewMaps();
         }
 

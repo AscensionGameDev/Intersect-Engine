@@ -29,18 +29,21 @@ namespace Intersect_Client.Classes.Entities
         public int WalkingAnim = 1;
         public int RenderLevel = 1;
 
-        public Event(int index, long spawnTime, int mapNum, ByteBuffer bf) : base(-1,spawnTime,null)
+        public Event(int index, long spawnTime, int mapNum, ByteBuffer bf) : base(index, spawnTime, bf, true)
         {
-            MyIndex = index;
-            var map = MapInstance.GetMap(mapNum);
+            var map = MapInstance.GetMap(CurrentMap);
             if (map != null)
             {
                 map.AddEvent(this);
-                Load(bf);
             }
         }
 
-        public void Load(ByteBuffer bf)
+        public override string ToString()
+        {
+            return MyName;
+        }
+        
+        public override void Load(ByteBuffer bf)
         {
             base.Load(bf);
             HideName = bf.ReadInteger();
