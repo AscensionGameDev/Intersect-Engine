@@ -1098,7 +1098,7 @@ namespace Intersect_Server.Classes.Entities
                         var dash = new DashInstance(this, spellBase.CastRange, Dir, Convert.ToBoolean(spellBase.Data1), Convert.ToBoolean(spellBase.Data2), Convert.ToBoolean(spellBase.Data3), Convert.ToBoolean(spellBase.Data4));
                         break;
                     case (int)SpellTypes.Event:
-                        //To be added
+                        //Handled at the player level
                         break;
                     default:
                         break;

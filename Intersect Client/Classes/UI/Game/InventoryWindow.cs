@@ -305,7 +305,7 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                 } else
                 {
-                    _descWindow = new ItemDescWindow(invItem.ItemNum, invItem.ItemVal, _inventoryWindow.X - 255, _inventoryWindow.Y, invItem.StatBoost, "", "Shop Will Not Buy This Item");
+                    _descWindow = new ItemDescWindow(invItem.ItemNum, invItem.ItemVal, _inventoryWindow.X - 255, _inventoryWindow.Y, invItem.StatBoost, "", Strings.Get("shop","wontbuy"));
                 }
             }
         }

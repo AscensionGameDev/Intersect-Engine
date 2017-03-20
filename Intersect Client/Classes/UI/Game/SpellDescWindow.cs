@@ -70,7 +70,7 @@ namespace Intersect_Client.Classes.UI.Game
             }
             if (spell.CooldownDuration > 0)
             {
-                castInfo.AddText(Strings.Get("spelldesc", "cooldowntime" + ((float)spell.CooldownDuration / 10f)), spellName.TextColor);
+                castInfo.AddText(Strings.Get("spelldesc", "cooldowntime", ((float)spell.CooldownDuration / 10f)), spellName.TextColor);
                 castInfo.AddLineBreak();
             }
             castInfo.SizeToChildren(false, true);
@@ -135,14 +135,14 @@ namespace Intersect_Client.Classes.UI.Game
 
                 if (spell.VitalDiff[(int)Vitals.Health] != 0)
                 {
-                    stats = Strings.Get("itemdesc", "vital0", (spell.VitalDiff[(int)Vitals.Health] > 0 ? Strings.Get("spelldec","addsymbol") : Strings.Get("spelldec", "removesymbol")), spell.VitalDiff[(int)Vitals.Health]);
+                    stats = Strings.Get("spelldesc", "vital0", (spell.VitalDiff[(int)Vitals.Health] > 0 ? Strings.Get("spelldec","addsymbol") : Strings.Get("spelldec", "removesymbol")), spell.VitalDiff[(int)Vitals.Health]);
                     spellStats.AddText(stats, spellName.TextColor);
                     spellStats.AddLineBreak();
                 }
 
                 if (spell.VitalDiff[(int)Vitals.Mana] != 0)
                 {
-                    stats = Strings.Get("itemdesc","vital1", (spell.VitalDiff[(int)Vitals.Mana] > 0 ? Strings.Get("spelldec", "addsymbol") : Strings.Get("spelldec", "removesymbol")), spell.VitalDiff[(int)Vitals.Mana]);
+                    stats = Strings.Get("spelldesc", "vital1", (spell.VitalDiff[(int)Vitals.Mana] > 0 ? Strings.Get("spelldec", "addsymbol") : Strings.Get("spelldec", "removesymbol")), spell.VitalDiff[(int)Vitals.Mana]);
                     spellStats.AddText(stats, spellName.TextColor);
                     spellStats.AddLineBreak();
                 }

@@ -2258,6 +2258,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         StartCommonEvent(evt);
                     }
+                    base.CastSpell(SpellNum, SpellSlot); //To get cooldown :P
                 }
                 else
                 {

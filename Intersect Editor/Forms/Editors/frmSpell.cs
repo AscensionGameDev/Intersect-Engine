@@ -126,7 +126,7 @@ namespace Intersect_Editor.Forms
             toolStripItemPaste.Text = Strings.Get("spelleditor", "paste");
             toolStripItemUndo.Text = Strings.Get("spelleditor", "undo");
 
-            grpSpells.Text = Strings.Get("spelleditor", "npcs");
+            grpSpells.Text = Strings.Get("spelleditor", "spells");
 
             grpGeneral.Text = Strings.Get("spelleditor", "general");
             lblName.Text = Strings.Get("spelleditor", "name");

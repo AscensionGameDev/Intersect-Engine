@@ -214,6 +214,7 @@
 		<string id="cannotsell">This shop does not accept that item!</string>
 		<string id="sellsfor">Sells for {00} {01}(s)</string>
 		<string id="costs">Costs {00} {01}(s)</string>
+		<string id="wontbuy">Shop Will Not Buy This Item</string>
 	</Shop>
 	<Trading>
 		<string id="title">Trading with {00}</string>
