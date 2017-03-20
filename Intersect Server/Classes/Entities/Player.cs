@@ -2709,9 +2709,9 @@ namespace Intersect_Server.Classes.Entities
                         }
                         else
                         {
-                            var tmpStack = new CommandInstance(MyEvents[i].PageInstance.BaseEvent.MyPages[MyEvents[i].PageIndex]);
+                            var tmpStack = new CommandInstance(MyEvents[i].CallStack.Peek().Page);
                             tmpStack.CommandIndex = 0;
-                            tmpStack.ListIndex = MyEvents[i].PageInstance.BaseEvent.MyPages[MyEvents[i].PageIndex].CommandLists[MyEvents[i].CallStack.Peek().ListIndex].Commands[MyEvents[i].CallStack.Peek().CommandIndex].Ints[responseId - 1];
+                            tmpStack.ListIndex = MyEvents[i].CallStack.Peek().Page.CommandLists[MyEvents[i].CallStack.Peek().ListIndex].Commands[MyEvents[i].CallStack.Peek().CommandIndex].Ints[responseId - 1];
                             MyEvents[i].CallStack.Peek().CommandIndex++;
                             MyEvents[i].CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                             MyEvents[i].CallStack.Push(tmpStack);
