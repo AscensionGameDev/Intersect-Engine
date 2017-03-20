@@ -64,6 +64,8 @@ namespace Intersect_Server.Classes.Entities
         {
             get
             {
+                if (IsDisposed) { return false; }
+
                 return (MyClient != null && MyClient.Entity == this);
             }
         }

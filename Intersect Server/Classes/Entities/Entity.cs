@@ -19,6 +19,18 @@ namespace Intersect_Server.Classes.Entities
 
     public class Entity
     {
+        private bool mDisposed;
+
+        public bool IsDisposed { get { return mDisposed; } }
+
+        public void Dispose()
+        {
+            if (!mDisposed)
+            {
+                mDisposed = true;
+            }
+        }
+
         //Core Values
         public int MyIndex;
         public long SpawnTime;

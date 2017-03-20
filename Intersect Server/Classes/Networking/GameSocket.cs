@@ -159,6 +159,7 @@ namespace Intersect_Server.Classes.Networking
                         {
                             PacketSender.SendGlobalMsg(Strings.Get("player","left", _myClient.Entity.MyName,Options.GameName));
                         }
+                        _myClient.Entity.Dispose();
                         _myClient.Entity = null;
                         Globals.Entities[_entityIndex] = null;
                     }

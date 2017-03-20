@@ -118,6 +118,7 @@ namespace Intersect_Server.Classes.Entities
 
         public override void TryAttack(Entity enemy)
         {
+            if (enemy.IsDisposed) return;
             if (!CanAttack(enemy, null)) return;
             if (!IsOneBlockAway(enemy)) return;
             if (!isFacingTarget(enemy)) return;
@@ -411,7 +412,13 @@ namespace Intersect_Server.Classes.Entities
                             }
                             else
                             {
-                                if (CanAttack(MyTarget,null)) TryAttack(MyTarget);
+                                if (MyTarget.IsDisposed)
+                                {
+                                    MyTarget = null;
+                                } else
+                                {
+                                    if (CanAttack(MyTarget, null)) TryAttack(MyTarget);
+                                }
                             }
                         }
                     }
@@ -424,7 +431,14 @@ namespace Intersect_Server.Classes.Entities
                         }
                         else
                         {
-                            if (CanAttack(MyTarget,null)) TryAttack(MyTarget);
+                            if (MyTarget.IsDisposed)
+                            {
+                                MyTarget = null;
+                            }
+                            else
+                            {
+                                if (CanAttack(MyTarget, null)) TryAttack(MyTarget);
+                            }
                         }
                     }
                 }
