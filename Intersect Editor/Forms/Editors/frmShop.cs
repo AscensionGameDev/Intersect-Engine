@@ -141,8 +141,7 @@ namespace Intersect_Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = _editorItem.Name;
-                cmbDefaultCurrency.SelectedIndex =
-                    ItemBase.GetObjects().Keys.ToList().IndexOf(_editorItem.DefaultCurrency);
+                cmbDefaultCurrency.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _editorItem.DefaultCurrency);
                 if (_editorItem.BuyingWhitelist)
                 {
                     rdoBuyWhitelist.Checked = true;
@@ -296,7 +295,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void cmbDefaultCurrency_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.DefaultCurrency = ItemBase.GetObjects().Keys.ToList()[cmbDefaultCurrency.SelectedIndex];
+            _editorItem.DefaultCurrency = Database.GameObjectIdFromList(GameObject.Item,cmbDefaultCurrency.SelectedIndex);
         }
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
