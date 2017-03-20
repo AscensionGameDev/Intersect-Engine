@@ -70,6 +70,7 @@ namespace Intersect_Editor.Classes.Core
         //Resource Downloader
         public static void CheckForResources()
         {
+            System.Net.ServicePointManager.Expect100Continue = false;
             if (!Directory.Exists("resources"))
             {
                 loadingForm = new frmLoadingContent();
