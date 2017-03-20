@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using Intersect_Client.Classes.Core;
+﻿using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
 using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.UI;
-using Intersect_Client.Classes.UI.Game.Chat;
 using Intersect_Client.Classes.UI.Game;
+using Intersect_Client.Classes.UI.Game.Chat;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps.MapList;
-using Color = IntersectClientExtras.GenericClasses.Color;
-using Intersect_Library.GameObjects.Events;
 using Intersect_Library.Localization;
+using System;
+using System.Collections.Generic;
+using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.Networking
 {

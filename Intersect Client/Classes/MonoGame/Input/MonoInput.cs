@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.UI;
+using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Input;
-using Intersect_Client.Classes.Core;
-using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.UI;
-using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
 using Keys = IntersectClientExtras.GenericClasses.Keys;
 
 namespace Intersect_Client_MonoGame.Classes.SFML.Input

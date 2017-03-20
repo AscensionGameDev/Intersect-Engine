@@ -190,8 +190,7 @@ namespace Intersect_Client.Classes.Entities
         {
             var time = 1000f/(float) (1 + Math.Log(Stat[(int) Stats.Speed]));
             if (Blocking) { time += time * (float)Options.BlockingSlow; }
-            if (time > 1000f) time = 1000f;
-            return time;
+            return Math.Min(1000f, time);
         }
 
         //Movement Processing

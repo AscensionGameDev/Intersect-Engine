@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Gwen.Control;
-using IntersectClientExtras.Input;
-using Intersect_Client.Classes.Core;
+﻿using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
+using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.Spells;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
-using Intersect_Client.Classes.Maps;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.Localization;
+using IntersectClientExtras.GenericClasses;
+using System;
+using System.Collections.Generic;
 using Color = IntersectClientExtras.GenericClasses.Color;
-
 
 namespace Intersect_Client.Classes.Entities
 {

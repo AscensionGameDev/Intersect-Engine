@@ -1,11 +1,8 @@
 ﻿
 
-using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
+using Intersect_Library.GameObjects.Events;
 using Intersect_Library.Localization;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
@@ -13,8 +10,9 @@ using Intersect_Server.Classes.Items;
 using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
 using Intersect_Server.Classes.Spells;
+using System;
+using System.Collections.Generic;
 using Attribute = Intersect_Library.GameObjects.Maps.Attribute;
-using Intersect_Library.GameObjects.Events;
 
 namespace Intersect_Server.Classes.Entities
 {
@@ -439,8 +437,7 @@ namespace Intersect_Server.Classes.Entities
         {
             var time = 1000f / (float)(1 + Math.Log(Stat[(int)Stats.Speed].Value()));
             if (Blocking) { time += time * (float)Options.BlockingSlow; }
-            if (time > 1000f) time = 1000f;
-            return time;
+            return Math.Min(1000f, time);
         }
 
         public virtual EntityTypes GetEntityType()
@@ -794,7 +791,7 @@ namespace Intersect_Server.Classes.Entities
 
                 for (int i = 0; i < (int)Stats.StatCount; i++)
                 {
-					enemy.Stat[i].Buff.Add(
+					enemy.Stat[i].AddBuff(
                         new EntityBuff(spellBase.StatDiff[i],
                             (spellBase.Data2 * 100)));
                 }
@@ -1422,8 +1419,9 @@ namespace Intersect_Server.Classes.Entities
     {
         public int Stat = 0;
         private int _statType;
-        public List<EntityBuff> Buff = new List<EntityBuff>();
+        private List<EntityBuff> mBuff = new List<EntityBuff>();
         private Player _player = null;
+        private bool mChanged;
 
         public EntityStat(int stat, int statType, Player owner = null)
         {
@@ -1436,9 +1434,9 @@ namespace Intersect_Server.Classes.Entities
         {
             int s = Stat;
 
-            for (int i = 0; i < Buff.Count; i++)
+            for (int i = 0; i < mBuff.Count; i++)
             {
-                s += Buff[i].Buff;
+                s += mBuff[i].Buff;
             }
 
             if (_player != null)
@@ -1467,20 +1465,30 @@ namespace Intersect_Server.Classes.Entities
         public bool Update()
         {
             var changed = false;
-            for (int i = 0; i < Buff.Count; i++)
+            for (int i = 0; i < mBuff.Count; i++)
             {
-                if (Buff[i].Duration <= Globals.System.GetTimeMs())
+                if (mBuff[i].Duration <= Globals.System.GetTimeMs())
                 {
-                    Buff.RemoveAt(i);
+                    mBuff.RemoveAt(i);
                     changed = true;
                 }
             }
+
+            changed |= mChanged;
+            mChanged = false;
+
             return changed;
+        }
+
+        public void AddBuff(EntityBuff buff)
+        {
+            mBuff.Add(buff);
+            mChanged = true;
         }
 
         public void Reset()
         {
-            Buff.Clear();
+            mBuff.Clear();
         }
     }
 
