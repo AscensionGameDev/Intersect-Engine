@@ -57,11 +57,17 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (value != base.CurrentMap)
                 {
+                    var oldMap = MapInstance.GetMap(base.CurrentMap);
+                    var newMap = MapInstance.GetMap(value);
                     base.CurrentMap = value;
                     if (Globals.Me == this)
                     {
                         if (MapInstance.GetMap(Globals.Me.CurrentMap) != null)
                             GameAudio.PlayMusic(MapInstance.GetMap(Globals.Me.CurrentMap).Music, 3, 3, true);
+                        if (newMap != null && oldMap != null)
+                        {
+                            newMap.CompareEffects(oldMap);
+                        }
                     }
                 }
 

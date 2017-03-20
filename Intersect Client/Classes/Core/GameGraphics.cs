@@ -146,8 +146,21 @@ namespace Intersect_Client.Classes.Core
 
                 GenerateLightMap();
 
+
                 var gridX = currentMap.MapGridX;
                 var gridY = currentMap.MapGridY;
+                //Draw Panoramas First...
+                for (int x = gridX - 1; x <= gridX + 1; x++)
+                {
+                    for (int y = gridY - 1; y <= gridY + 1; y++)
+                    {
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight && Globals.MapGrid[x, y] != -1)
+                        {
+                            DrawMapPanorama(Globals.MapGrid[x, y]);
+                        }
+                    }
+                }
+
                 for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
                     for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -344,6 +357,15 @@ namespace Intersect_Client.Classes.Core
                 if (!new FloatRect(map.GetX(), map.GetY(), Options.TileWidth * Options.MapWidth, Options.TileHeight * Options.MapHeight).IntersectsWith(CurrentView)) return;
                 map.Draw(layer);
                 if (layer == 0) { MapsDrawn++; }
+            }
+        }
+        private static void DrawMapPanorama(int mapNum)
+        {
+            var map = MapInstance.GetMap(mapNum);
+            if (map != null)
+            {
+                if (!new FloatRect(map.GetX(), map.GetY(), Options.TileWidth * Options.MapWidth, Options.TileHeight * Options.MapHeight).IntersectsWith(CurrentView)) return;
+                map.DrawPanorama();
             }
         }
         public static void DrawOverlay()

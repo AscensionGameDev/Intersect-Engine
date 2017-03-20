@@ -60,6 +60,7 @@ namespace Intersect_Client.Classes.Maps
         //Map Players/Events/Npcs
         private List<Event> mEvents = new List<Event>();
         public Dictionary<int, Entity> LocalEntities = new Dictionary<int, Entity>();
+
         public List<int> LocalEntitiesToDispose = new List<int>();
 
         //Map Sounds
@@ -70,20 +71,18 @@ namespace Intersect_Client.Classes.Maps
         private Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance> _attributeAnimInstances = new Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance>();
 
         //Fog Variables
-        private long _fogUpdateTime = -1;
-        private float _curFogIntensity;
-        private float _fogCurrentX;
-        private float _fogCurrentY;
-        private float _lastFogX;
-        private float _lastFogY;
+        protected long _fogUpdateTime = -1;
+        protected float _curFogIntensity;
+        protected float _fogCurrentX;
+        protected float _fogCurrentY;
 
         //Panorama Variables
-        private long _panoramaUpdateTime = -1;
-        private float _panoramaIntensity;
+        protected long _panoramaUpdateTime = -1;
+        protected float _panoramaIntensity;
 
         //Overlay Image Variables
-        private long _overlayUpdateTime = -1;
-        private float _overlayIntensity;
+        protected long _overlayUpdateTime = -1;
+        protected float _overlayIntensity;
 
         //Update Timer
         private long _lastUpdateTime;
@@ -304,10 +303,6 @@ namespace Intersect_Client.Classes.Maps
                 _preRenderLayer = 0;
                 _preRenderStage = 0;
                 _reRenderMap = false;
-            }
-            if (layer == 0)
-            {
-                DrawPanorama();
             }
             if (!MapRendered)
             {
@@ -540,10 +535,21 @@ namespace Intersect_Client.Classes.Maps
             {
                 if (_curFogIntensity != 1)
                 {
-                    _curFogIntensity += (ecTime/2000f);
-                    if (_curFogIntensity > 1)
+                    if (_curFogIntensity < 1)
                     {
-                        _curFogIntensity = 1;
+                        _curFogIntensity += (ecTime / 2000f);
+                        if (_curFogIntensity > 1)
+                        {
+                            _curFogIntensity = 1;
+                        }
+                    }
+                    else
+                    {
+                        _curFogIntensity -= (ecTime / 2000f);
+                        if (_curFogIntensity < 1)
+                        {
+                            _curFogIntensity = 1;
+                        }
                     }
                 }
             }
@@ -612,7 +618,7 @@ namespace Intersect_Client.Classes.Maps
             _curFogIntensity = 1f;
         }
 
-        private void DrawPanorama()
+        public void DrawPanorama()
         {
             float ecTime = Globals.System.GetTimeMS() - _panoramaUpdateTime;
             _panoramaUpdateTime = Globals.System.GetTimeMS();
@@ -675,6 +681,55 @@ namespace Intersect_Client.Classes.Maps
             if (imageTex != null)
             {
                 GameGraphics.DrawFullScreenTexture(imageTex, _overlayIntensity);
+            }
+        }
+
+        public void CompareEffects(MapInstance oldMap)
+        {
+            //Check if fogs the same
+            if (oldMap.Fog == Fog)
+            {
+                GameTexture fogTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Fog, Fog);
+                if (fogTex != null)
+                {
+                    //Copy over fog values
+                    _fogUpdateTime = oldMap._fogUpdateTime;
+                    var ratio = ((float)oldMap.FogTransparency/FogTransparency);
+                    _curFogIntensity = ratio * oldMap._curFogIntensity;
+                    _fogCurrentX = oldMap._fogCurrentX;
+                    _fogCurrentY = oldMap._fogCurrentY;
+                    if (GetX() > oldMap.GetX())
+                    {
+                        _fogCurrentX -= (Options.TileWidth * Options.MapWidth) % fogTex.GetWidth();
+                    }
+                    else if (GetX() < oldMap.GetX())
+                    {
+                        _fogCurrentX += (Options.TileWidth * Options.MapWidth) % fogTex.GetWidth();
+                    }
+                    if (GetY() > oldMap.GetY())
+                    {
+                        _fogCurrentY -= (Options.TileHeight * Options.MapHeight) % fogTex.GetHeight();
+                    }
+                    else if (GetY() < oldMap.GetY())
+                    {
+                        _fogCurrentY += (Options.TileHeight * Options.MapHeight) % fogTex.GetHeight();
+                    }
+                    oldMap._curFogIntensity = 0;
+                }
+            }
+
+            if (oldMap.Panorama == Panorama)
+            {
+                _panoramaIntensity = oldMap._panoramaIntensity;
+                _panoramaUpdateTime = oldMap._panoramaUpdateTime;
+                oldMap._panoramaIntensity = 0;
+            }
+
+            if (oldMap.OverlayGraphic == OverlayGraphic)
+            {
+                _overlayIntensity = oldMap._overlayIntensity;
+                _overlayUpdateTime = oldMap._overlayUpdateTime;
+                oldMap._overlayIntensity = 0;
             }
         }
 
