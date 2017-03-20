@@ -2272,6 +2272,7 @@ namespace Intersect_Server.Classes.Entities
         {
             Equipment[slot] = -1;
             PacketSender.SendPlayerEquipmentToProximity(this);
+            PacketSender.SendEntityStats(this);
         }
         public void EquipmentProcessItemSwap(int item1, int item2)
         {

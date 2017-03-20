@@ -212,37 +212,40 @@ namespace Intersect_Server.Classes.Entities
                 return -5; //Out of Bounds
             }
 
-            var targetMap = MapInstance.GetMap(tile.GetMap());
-            var mapEntities = MapInstance.GetMap(tile.GetMap()).GetEntities();
-            for (int i = 0; i < mapEntities.Count; i++)
+            if (Passable == 0)
             {
-                Entity en = mapEntities[i];
-                if (en.CurrentX == tile.GetX() && en.CurrentY == tile.GetY() && en.CurrentZ == CurrentZ && en.Passable == 0)
+                var targetMap = MapInstance.GetMap(tile.GetMap());
+                var mapEntities = MapInstance.GetMap(tile.GetMap()).GetEntities();
+                for (int i = 0; i < mapEntities.Count; i++)
                 {
-                    //Set a target if a projectile
-                    CollisionIndex = en.MyIndex;
-                    if (en.GetType() == typeof(Player))
+                    Entity en = mapEntities[i];
+                    if (en.CurrentX == tile.GetX() && en.CurrentY == tile.GetY() && en.CurrentZ == CurrentZ && en.Passable == 0)
                     {
-                        //Check if this target player is passable....
-                        if (!Options.PlayerPassable[(int)targetMap.ZoneType])
-                            return (int)EntityTypes.Player;
-                    }
-                    else if (en.GetType() == typeof(Npc))
-                    {
-                        return (int)EntityTypes.Player;
-                    }
-                    else if (en.GetType() == typeof(Resource))
-                    {
-                        //If determine if we should walk
-                        var res = ((Resource) en);
-                        if ((!res.IsDead() && !res.MyBase.WalkableBefore) || (res.IsDead() && !res.MyBase.WalkableAfter))
+                        //Set a target if a projectile
+                        CollisionIndex = en.MyIndex;
+                        if (en.GetType() == typeof(Player))
                         {
-                            return (int) EntityTypes.Resource;
+                            //Check if this target player is passable....
+                            if (!Options.PlayerPassable[(int)targetMap.ZoneType])
+                                return (int)EntityTypes.Player;
                         }
-                    }
-                    else if (en.GetType() == typeof(EventPageInstance))
-                    {
-                        return (int)EntityTypes.Event;
+                        else if (en.GetType() == typeof(Npc))
+                        {
+                            return (int)EntityTypes.Player;
+                        }
+                        else if (en.GetType() == typeof(Resource))
+                        {
+                            //If determine if we should walk
+                            var res = ((Resource)en);
+                            if ((!res.IsDead() && !res.MyBase.WalkableBefore) || (res.IsDead() && !res.MyBase.WalkableAfter))
+                            {
+                                return (int)EntityTypes.Resource;
+                            }
+                        }
+                        else if (en.GetType() == typeof(EventPageInstance))
+                        {
+                            return (int)EntityTypes.Event;
+                        }
                     }
                 }
             }
