@@ -57,32 +57,36 @@ namespace Intersect_Client.Classes.Entities
         {
             if (Hidden) return;
             float rotationDegrees = 0f;
-            switch (_renderDir)
+            if (AutoRotate)
             {
-                case 0: //Up
-                    rotationDegrees = 0f;
-                    break;
-                case 1: //Down
-                    rotationDegrees = 180f;
-                    break;
-                case 2: //Left
-                    rotationDegrees = 270f;
-                    break;
-                case 3: //Right
-                    rotationDegrees = 90f;
-                    break;
-                case 4: //NW
-                    rotationDegrees = 315f;
-                    break;
-                case 5: //NE
-                    rotationDegrees = 45f;
-                    break;
-                case 6: //SW
-                    rotationDegrees = 225f;
-                    break;
-                case 7: //SE
-                    rotationDegrees = 135f;
-                    break;
+
+                switch (_renderDir)
+                {
+                    case 0: //Up
+                        rotationDegrees = 180f;
+                        break;
+                    case 1: //Down
+                        rotationDegrees = 0f;
+                        break;
+                    case 2: //Left
+                        rotationDegrees = 90f;
+                        break;
+                    case 3: //Right
+                        rotationDegrees = 270f;
+                        break;
+                    case 4: //NW
+                        rotationDegrees = 135f;
+                        break;
+                    case 5: //NE
+                        rotationDegrees = 225f;
+                        break;
+                    case 6: //SW
+                        rotationDegrees = 45f;
+                        break;
+                    case 7: //SE
+                        rotationDegrees = 315f;
+                        break;
+                }
             }
 
             if ((!upper && showLower && ZDimension < 1) || (!upper && showLower && ZDimension > 0))
