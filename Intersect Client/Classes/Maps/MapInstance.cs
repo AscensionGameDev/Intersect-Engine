@@ -599,7 +599,7 @@ namespace Intersect_Client.Classes.Maps
                         {
                             int fogW = fogTex.GetWidth();
                             int fogH = fogTex.GetHeight();
-                            GameGraphics.DrawGameTexture(fogTex, new FloatRect(0, 0, fogW, fogH), new FloatRect(GetX() - (Options.MapWidth*Options.TileWidth*1.5f) + x*fogW + drawX, GetY() - (Options.MapHeight*Options.TileHeight*1.5f) + y*fogH + drawY, fogW, fogH), new IntersectClientExtras.GenericClasses.Color((byte) (FogTransparency*_curFogIntensity), 255, 255, 255), null, GameBlendModes.Alpha);
+                            GameGraphics.DrawGameTexture(fogTex, new FloatRect(0, 0, fogW, fogH), new FloatRect(GetX() - (Options.MapWidth*Options.TileWidth*1f) + x*fogW + drawX, GetY() - (Options.MapHeight*Options.TileHeight*1f) + y*fogH + drawY, fogW, fogH), new IntersectClientExtras.GenericClasses.Color((byte) (FogTransparency*_curFogIntensity), 255, 255, 255), null, GameBlendModes.Alpha);
                         }
                     }
                 }

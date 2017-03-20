@@ -212,7 +212,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Globals.MainForm.EnterMap((int)bf.ReadLong());
+            Globals.MainForm.BeginInvoke((Action)(() => Globals.MainForm.EnterMap((int)bf.ReadLong())));
         }
 
         private static void HandleMapList(byte[] packet)
