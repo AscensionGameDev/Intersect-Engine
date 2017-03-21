@@ -16,7 +16,8 @@ namespace Intersect_Server.Classes.Core
             long cps = 0;
             while (Globals.ServerStarted)
             {
-                foreach (var map in MapInstance.GetObjects())
+                var maps = MapInstance.GetObjects();
+                foreach (var map in maps)
                 {
                     if (map.Value.Active) map.Value.Update();
                 }

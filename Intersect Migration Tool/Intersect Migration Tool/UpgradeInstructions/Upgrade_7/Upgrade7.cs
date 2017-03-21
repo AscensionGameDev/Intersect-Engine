@@ -471,6 +471,15 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
+
+
+            cmd = "UPDATE " + CHAR_BANK_TABLE + " set " + CHAR_BANK_ITEM_BAG_ID + " = @" + CHAR_BANK_ITEM_BAG_ID + ";";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_ITEM_BAG_ID, -1));
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
         }
 
         private void AddBagColumnToInventory()
@@ -478,6 +487,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
             var cmd = "ALTER TABLE " + CHAR_INV_TABLE + " ADD " + CHAR_INV_ITEM_BAG_ID + " INTEGER;";
             using (var createCommand = _dbConnection.CreateCommand())
             {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+
+            cmd = "UPDATE " + CHAR_INV_TABLE + " set " + CHAR_INV_ITEM_BAG_ID + " = @" + CHAR_INV_ITEM_BAG_ID + ";";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.Parameters.Add(new SqliteParameter("@" + CHAR_INV_ITEM_BAG_ID, -1));
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }

@@ -750,15 +750,18 @@ namespace Intersect_Client.Classes.Maps
         //Events
         public void AddEvent(Event evt)
         {
-            mEvents.Add(evt);
-            if (LocalEntities.ContainsKey(evt.MyIndex))
+            if (!LocalEntities.ContainsKey(evt.MyIndex) || LocalEntities[evt.MyIndex].SpawnTime != evt.SpawnTime)
             {
-                LocalEntities[evt.MyIndex].Dispose();
-                LocalEntities[evt.MyIndex] = evt;
-            }
-            else
-            {
-                LocalEntities.Add(evt.MyIndex, evt);
+                mEvents.Add(evt);
+                if (LocalEntities.ContainsKey(evt.MyIndex))
+                {
+                    LocalEntities[evt.MyIndex].Dispose();
+                    LocalEntities[evt.MyIndex] = evt;
+                }
+                else
+                {
+                    LocalEntities.Add(evt.MyIndex, evt);
+                }
             }
         }
 

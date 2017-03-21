@@ -500,6 +500,7 @@ namespace Intersect_Server.Classes.Entities
                     if (shouldSendUpdate)
                     {
                         //Send Update
+                        SpawnTime = Globals.System.GetTimeMs();
                         SendToClient();
                     }
                     if (MoveTimer < Globals.System.GetTimeMs())

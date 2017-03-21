@@ -22,10 +22,21 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         public Event_MoveRouteDesigner(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent, EventMoveRoute editingRoute, EventCommand editingCommand = null)
         {
             InitializeComponent();
+            InitLocalization();
 
             foreach (var item in lstCommands.Nodes)
             {
-                _origItems.Add((TreeNode)((TreeNode)item).Clone());
+                var parentNode = new TreeNode(((TreeNode)item).Text);
+                parentNode.Name = ((TreeNode) item).Name;
+                parentNode.Tag = ((TreeNode)item).Tag;
+                foreach (var childItem in ((TreeNode)item).Nodes)
+                {
+                    var childNode = new TreeNode(((TreeNode)childItem).Text);
+                    childNode.Name = ((TreeNode)childItem).Name;
+                    childNode.Tag = ((TreeNode)childItem).Tag;
+                    parentNode.Nodes.Add(childNode);
+                }
+                _origItems.Add(parentNode);
             }
 
             //Grab event editor reference
@@ -71,7 +82,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             }
 
             ListMoveRoute();
-            InitLocalization();
             lstCommands.ExpandAll();
         }
 
@@ -249,7 +259,20 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void cmbTarget_SelectedIndexChanged(object sender, EventArgs e)
         {
             lstCommands.Nodes.Clear();
-            lstCommands.Nodes.AddRange(_origItems.ToArray());
+            foreach (var item in _origItems)
+            {
+                var parentNode = new TreeNode(((TreeNode)item).Text);
+                parentNode.Name = ((TreeNode)item).Name;
+                parentNode.Tag = ((TreeNode)item).Tag;
+                foreach (var childItem in item.Nodes)
+                {
+                    var childNode = new TreeNode(((TreeNode)childItem).Text);
+                    childNode.Name = ((TreeNode)childItem).Name;
+                    childNode.Tag = ((TreeNode)childItem).Tag;
+                    parentNode.Nodes.Add(childNode);
+                }
+                lstCommands.Nodes.Add(parentNode);
+            }
             lstCommands.ExpandAll();
             if (!_editingEvent.CommonEvent && _editingCommand != null && cmbTarget.SelectedIndex == 0)
             {
