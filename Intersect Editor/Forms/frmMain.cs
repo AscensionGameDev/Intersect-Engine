@@ -510,7 +510,7 @@ namespace Intersect_Editor.Forms
                 //Offer to export map
                 if (Globals.CurrentMap != null)
                 {
-                    if (DarkMessageBox.ShowError(Strings.Get("errors","disconnectedsave"),Strings.Get("errors","disconnectedcaption"), DarkDialogButton.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                    if (DarkMessageBox.ShowError(Strings.Get("errors","disconnectedsave"),Strings.Get("errors","disconnectedsavecaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) == System.Windows.Forms.DialogResult.Yes)
                     {
                         exportMapToolStripMenuItem_Click(null, null);
                         Application.Exit();
@@ -522,7 +522,7 @@ namespace Intersect_Editor.Forms
                 }
                 else
                 {
-                    DarkMessageBox.ShowError(Strings.Get("errors","disconnectedclosing"), Strings.Get("errors","disconnected"),DarkDialogButton.Ok);
+                    DarkMessageBox.ShowError(Strings.Get("errors","disconnectedclosing"), Strings.Get("errors","disconnected"),DarkDialogButton.Ok, Properties.Resources.Icon);
                     Application.Exit();
                 }
             }
@@ -531,7 +531,7 @@ namespace Intersect_Editor.Forms
         //MenuBar Functions -- File
         private void saveMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialoguesure"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
+            if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialoguesure"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
             {
                 SaveMap();
             }
@@ -551,8 +551,8 @@ namespace Intersect_Editor.Forms
         }
         private void newMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (DarkMessageBox.ShowWarning(Strings.Get("mapping","newmap"), Strings.Get("mapping","newmapcaption"),DarkDialogButton.YesNo) != DialogResult.Yes) return;
-            if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
+            if (DarkMessageBox.ShowWarning(Strings.Get("mapping","newmap"), Strings.Get("mapping","newmapcaption"),DarkDialogButton.YesNo, Properties.Resources.Icon) != DialogResult.Yes) return;
+            if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
             {
                 SaveMap();
             }
@@ -593,7 +593,7 @@ namespace Intersect_Editor.Forms
                 }
                 else
                 {
-                    DarkMessageBox.ShowError(Strings.Get("errors","importfailed"), Strings.Get("errors", "importfailedcaption"));
+                    DarkMessageBox.ShowError(Strings.Get("errors","importfailed"), Strings.Get("errors", "importfailedcaption"),DarkDialogButton.Ok, Properties.Resources.Icon);
                 }
             }
         }
@@ -1065,7 +1065,7 @@ namespace Intersect_Editor.Forms
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!Globals.ClosingEditor && Globals.CurrentMap != null && Globals.CurrentMap.Changed() && DarkMessageBox.ShowWarning(Strings.Get("mapping","savemapdialogue"), Strings.Get("mapping","savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
+            if (!Globals.ClosingEditor && Globals.CurrentMap != null && Globals.CurrentMap.Changed() && DarkMessageBox.ShowWarning(Strings.Get("mapping","savemapdialogue"), Strings.Get("mapping","savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
             {
                 SaveMap();
             }

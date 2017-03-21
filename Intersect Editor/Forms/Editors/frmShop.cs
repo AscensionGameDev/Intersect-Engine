@@ -308,7 +308,7 @@ namespace Intersect_Editor.Forms.Editors
             if (_editorItem != null && lstShops.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("shopeditor", "deleteprompt"),
-                        Strings.Get("shopeditor", "deletetitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        Strings.Get("shopeditor", "deletetitle"), DarkDialogButton.YesNo,Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -338,7 +338,7 @@ namespace Intersect_Editor.Forms.Editors
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("shopeditor", "undoprompt"),
-                        Strings.Get("shopeditor", "undotitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        Strings.Get("shopeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();

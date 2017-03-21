@@ -63,7 +63,7 @@ namespace Intersect_Editor.Forms
                 e.Cancel = true;
                 return;
             }
-            if (DarkMessageBox.ShowWarning(Strings.Get("eventeditor","savedialogue"), Strings.Get("eventeditor", "savecaption"), DarkDialogButton.YesNo) == DialogResult.Yes)
+            if (DarkMessageBox.ShowWarning(Strings.Get("eventeditor","savedialogue"), Strings.Get("eventeditor", "savecaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
             {
                 btnSave_Click(null, null);
             }
@@ -1636,7 +1636,7 @@ namespace Intersect_Editor.Forms
             if ((tmpCommand.Type == EventCommandType.SetMoveRoute ||
                 tmpCommand.Type == EventCommandType.WaitForRouteCompletion) && MyEvent.CommonEvent)
             {
-                DarkMessageBox.ShowWarning(Strings.Get("eventcommandlist","notcommon"),Strings.Get("eventcommandlist","notcommoncaption"));
+                DarkMessageBox.ShowWarning(Strings.Get("eventcommandlist","notcommon"),Strings.Get("eventcommandlist","notcommoncaption"),DarkDialogButton.Ok, Properties.Resources.Icon);
                 EnableButtons();
                 return;
             }

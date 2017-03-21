@@ -807,7 +807,7 @@ namespace Intersect_Editor.Forms
                         {
                             if (Globals.MapGrid.Grid[x, y].mapnum > -1)
                             {
-                                if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping","savemapdialogue"),Strings.Get("mapping","savemap"),DarkDialogButton.YesNo) == DialogResult.Yes)
+                                if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping","savemapdialogue"),Strings.Get("mapping","savemap"),DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                                 {
                                     SaveMap();
                                 }
@@ -816,14 +816,14 @@ namespace Intersect_Editor.Forms
                             else
                             {
                                 DarkMessageBox.ShowError(Strings.Get("mapping", "diagonalwarning"),
-                                    Strings.Get("mapping", "createmap"));
+                                    Strings.Get("mapping", "createmap"),DarkDialogButton.Ok, Properties.Resources.Icon);
                                 return;
                             }
                         }
                         else
                         {
                             DarkMessageBox.ShowError(Strings.Get("mapping", "diagonalwarning"),
-                                    Strings.Get("mapping", "createmap"));
+                                    Strings.Get("mapping", "createmap"),DarkDialogButton.Ok, Properties.Resources.Icon);
                             return;
                         }
                     }
@@ -832,8 +832,8 @@ namespace Intersect_Editor.Forms
                 {
                     if (newMap == -1)
                     {
-                        if (DarkMessageBox.ShowInformation(Strings.Get("mapping", "createmapdialogue"), Strings.Get("mapping", "createmap"), DarkDialogButton.YesNo) != DialogResult.Yes) return;
-                        if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowWarning(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        if (DarkMessageBox.ShowInformation(Strings.Get("mapping", "createmapdialogue"), Strings.Get("mapping", "createmap"), DarkDialogButton.YesNo, Properties.Resources.Icon) != DialogResult.Yes) return;
+                        if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowWarning(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                         {
                             SaveMap();
                         }
@@ -841,7 +841,7 @@ namespace Intersect_Editor.Forms
                     }
                     else
                     {
-                        if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowWarning(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowWarning(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                         {
                             SaveMap();
                         }
@@ -960,7 +960,7 @@ namespace Intersect_Editor.Forms
             {
                 CurrentMapState = tmpMap.GetMapData(false);
             }
-            if (DarkMessageBox.ShowWarning(Strings.Get("mapping","filllayerdialogue"),Strings.Get("mapping","filllayer"), DarkDialogButton.YesNo) == DialogResult.Yes)
+            if (DarkMessageBox.ShowWarning(Strings.Get("mapping","filllayerdialogue"),Strings.Get("mapping","filllayer"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
             {
                 int x1 = 0;
                 int y1 = 0;
@@ -1026,7 +1026,7 @@ namespace Intersect_Editor.Forms
             {
                 CurrentMapState = tmpMap.GetMapData(false);
             }
-            if (DarkMessageBox.ShowWarning(Strings.Get("mapping", "eraselayerdialogue"), Strings.Get("mapping", "eraselayer"), DarkDialogButton.YesNo) == DialogResult.Yes)
+            if (DarkMessageBox.ShowWarning(Strings.Get("mapping", "eraselayerdialogue"), Strings.Get("mapping", "eraselayer"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
             {
                 for (var x = 0; x < Options.MapWidth; x++)
                 {

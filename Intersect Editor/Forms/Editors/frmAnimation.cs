@@ -521,7 +521,7 @@ namespace Intersect_Editor.Forms
             if (_editorItem != null && lstAnimations.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("animationeditor", "deleteprompt"),
-                        Strings.Get("animationeditor", "deletetitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        Strings.Get("animationeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -551,7 +551,7 @@ namespace Intersect_Editor.Forms
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("animationeditor","undoprompt"),
-                        Strings.Get("animationeditor", "undotitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        Strings.Get("animationeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();

@@ -118,7 +118,7 @@ namespace Intersect_Editor.Forms.Editors
         {
             if (_editorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("switchvariableeditor","deleteprompt"), Strings.Get("switchvariableeditor", "deletecaption"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("switchvariableeditor","deleteprompt"), Strings.Get("switchvariableeditor", "deletecaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }

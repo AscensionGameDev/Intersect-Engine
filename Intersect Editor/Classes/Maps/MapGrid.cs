@@ -162,7 +162,7 @@ namespace Intersect_Editor.Classes.Maps
                     {
                         if (Grid[x1 - 1, y1 - 1].mapnum > -1)
                         {
-                            if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                            if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                             {
                                 SaveMap();
                             }
@@ -196,7 +196,7 @@ namespace Intersect_Editor.Classes.Maps
             fileDialog.ShowDialog();
             if (fileDialog.FileName != "")
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "savescreenshotconfirm"), Strings.Get("mapgrid", "savescreenshottitle"), DarkDialogButton.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "savescreenshotconfirm"), Strings.Get("mapgrid", "savescreenshottitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == System.Windows.Forms.DialogResult.Yes)
                 {
                     FetchMissingPreviews(false);
                     Globals.PreviewProgressForm = new frmProgress();
@@ -333,8 +333,8 @@ namespace Intersect_Editor.Classes.Maps
             List<int> maps = new List<int>();
             if (clearAllFirst)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "clearandfetch"),  Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo) != System.Windows.Forms.DialogResult.Yes) return;
-                if (DarkMessageBox.ShowInformation(Strings.Get("mapgrid", "keepmapcache"), Strings.Get("mapgrid", "mapcachecaption"),DarkDialogButton.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "clearandfetch"),  Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) != System.Windows.Forms.DialogResult.Yes) return;
+                if (DarkMessageBox.ShowInformation(Strings.Get("mapgrid", "keepmapcache"), Strings.Get("mapgrid", "mapcachecaption"),DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     Database.GridHideOverlay = EditorGraphics.HideOverlay;
                     Database.GridHideDarkness = EditorGraphics.HideDarkness;
@@ -375,7 +375,7 @@ namespace Intersect_Editor.Classes.Maps
             }
             if (maps.Count > 0)
             {
-                if (clearAllFirst || DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "justfetch"), Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                if (clearAllFirst || DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "justfetch"), Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) == System.Windows.Forms.DialogResult.Yes)
                 {
                     Globals.FetchingMapPreviews = true;
                     Globals.PreviewProgressForm = new frmProgress();
@@ -466,7 +466,7 @@ namespace Intersect_Editor.Classes.Maps
         {
             if (_contextMap != null && _contextMap.mapnum > -1)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid","unlinkprompt",_contextMap.name), Strings.Get("mapgrid","unlinkcaption"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid","unlinkprompt",_contextMap.name), Strings.Get("mapgrid","unlinkcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                     PacketSender.SendUnlinkMap(_contextMap.mapnum);
             }
 

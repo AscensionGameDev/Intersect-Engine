@@ -525,7 +525,7 @@ namespace Intersect_Editor.Forms
             if (_editorItem != null && lstSpells.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("spelleditor", "deleteprompt"),
-                        Strings.Get("spelleditor", "deletetitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        Strings.Get("spelleditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -555,7 +555,7 @@ namespace Intersect_Editor.Forms
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("spelleditor", "undoprompt"),
-                        Strings.Get("spelleditor", "undotitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        Strings.Get("spelleditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();

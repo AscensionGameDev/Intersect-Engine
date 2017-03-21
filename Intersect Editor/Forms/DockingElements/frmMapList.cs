@@ -24,7 +24,7 @@ namespace Intersect_Editor.Forms
         {
             if (e.Node.Tag.GetType() == typeof(MapListMap))
             {
-                if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     SaveMap();
                 }
@@ -83,7 +83,7 @@ namespace Intersect_Editor.Forms
         {
             if (mapTreeList.list.SelectedNode == null)
             {
-                DarkMessageBox.ShowError(Strings.Get("maplist","selecttorename"), Strings.Get("maplist","rename"));
+                DarkMessageBox.ShowError(Strings.Get("maplist","selecttorename"), Strings.Get("maplist","rename"),DarkDialogButton.Ok, Properties.Resources.Icon);
             }
             else
             {
@@ -94,11 +94,11 @@ namespace Intersect_Editor.Forms
         {
             if (mapTreeList.list.SelectedNode == null)
             {
-                DarkMessageBox.ShowError(Strings.Get("maplist", "selecttodelete"), Strings.Get("maplist", "delete"));
+                DarkMessageBox.ShowError(Strings.Get("maplist", "selecttodelete"), Strings.Get("maplist", "delete"),DarkDialogButton.Ok, Properties.Resources.Icon);
             }
             else
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("maplist","deleteconfirm",((MapListItem)mapTreeList.list.SelectedNode.Tag).Name), Strings.Get("maplist", "delete"), DarkDialogButton.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("maplist","deleteconfirm",((MapListItem)mapTreeList.list.SelectedNode.Tag).Name), Strings.Get("maplist", "delete"), DarkDialogButton.YesNo, Properties.Resources.Icon) == System.Windows.Forms.DialogResult.Yes)
                 {
                     PacketSender.SendDelete((MapListItem)mapTreeList.list.SelectedNode.Tag);
                 }
@@ -112,8 +112,8 @@ namespace Intersect_Editor.Forms
         }
         private void btnNewMap_Click(object sender, EventArgs e)
         {
-            if (DarkMessageBox.ShowWarning(Strings.Get("mapping", "newmap"), Strings.Get("mapping", "newmapcaption"), DarkDialogButton.YesNo) != DialogResult.Yes) return;
-            if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
+            if (DarkMessageBox.ShowWarning(Strings.Get("mapping", "newmap"), Strings.Get("mapping", "newmapcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) != DialogResult.Yes) return;
+            if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
             {
                 SaveMap();
             }

@@ -250,7 +250,7 @@ namespace Intersect_Editor.Forms.Editors
             if (_editorItem != null && lstCrafts.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("craftingeditor", "deleteprompt"),
-                        Strings.Get("craftingeditor", "deletetitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        Strings.Get("craftingeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -280,7 +280,7 @@ namespace Intersect_Editor.Forms.Editors
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("craftingeditor", "undoprompt"),
-                        Strings.Get("craftingeditor", "undotitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        Strings.Get("craftingeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();

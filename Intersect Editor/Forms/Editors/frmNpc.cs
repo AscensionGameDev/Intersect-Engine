@@ -389,7 +389,7 @@ namespace Intersect_Editor.Forms
             if (_editorItem != null && lstNpcs.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("npceditor", "deleteprompt"),
-                        Strings.Get("npceditor", "deletetitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        Strings.Get("npceditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -419,7 +419,7 @@ namespace Intersect_Editor.Forms
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("npceditor", "undoprompt"),
-                        Strings.Get("npceditor", "undotitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        Strings.Get("npceditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();

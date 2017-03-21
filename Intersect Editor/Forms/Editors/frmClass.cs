@@ -630,7 +630,7 @@ namespace Intersect_Editor.Forms
             if (_editorItem != null && lstClasses.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("classeditor", "deleteprompt"),
-                        Strings.Get("classeditor", "deletetitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        Strings.Get("classeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -660,7 +660,7 @@ namespace Intersect_Editor.Forms
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("classeditor","undoprompt"),
-                        Strings.Get("classeditor","undotitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        Strings.Get("classeditor","undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();

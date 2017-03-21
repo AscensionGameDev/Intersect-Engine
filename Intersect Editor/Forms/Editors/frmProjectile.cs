@@ -468,7 +468,7 @@ namespace Intersect_Editor.Classes
             if (_editorItem != null && lstProjectiles.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("projectileeditor", "deleteprompt"),
-                        Strings.Get("projectileeditor", "deletetitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        Strings.Get("projectileeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -498,7 +498,7 @@ namespace Intersect_Editor.Classes
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("projectileeditor", "undoprompt"),
-                        Strings.Get("projectileeditor", "undotitle"), DarkDialogButton.YesNo) == DialogResult.Yes)
+                        Strings.Get("projectileeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();
