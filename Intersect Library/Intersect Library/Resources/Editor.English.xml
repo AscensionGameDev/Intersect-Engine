@@ -912,7 +912,7 @@ Tick timer saved in server config.xml.</string>
 		<string id="magicresist">Magic Resist:</string>
 		
 		<string id="boostduration">Stat Boost/Effect Duration</string>
-		<string id="duration6">Stat Boost/Effect Duration</string>
+		<string id="duration">Duration (ms)</string>
 		<string id="effectgroup">Effect</string>
 		<string id="effectlabel">Extra Effect:</string>
 		<string id="effect0">None</string>
