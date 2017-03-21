@@ -372,7 +372,7 @@
 		<string id="lowerplayback">Playback</string>
 		<string id="lowerframe">Frame: {00}</string>
 		<string id="lowerplay">Play Lower Animation</string>
-		<string id="lowerstop">Stop Upper Animation</string>
+		<string id="lowerstop">Stop Lower Animation</string>
 		<string id="lowerframeoptions">Frame Options</string>
 		<string id="lowerclone">Clone From Previous</string>
 		
