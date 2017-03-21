@@ -22,7 +22,7 @@ namespace Intersect_Migration_Tool
             Console.WriteLine(@"  _| |_| | | | ||  __/ |  \__ \  __/ (__| |_ ");
             Console.WriteLine(@" |_____|_| |_|\__\___|_|  |___/\___|\___|\__|");
             Console.WriteLine(Strings.Get("main","tagline"));
-            Console.WriteLine("Copyright (C) 2017  JC Snider, Joe Bridges");
+            Console.WriteLine("Copyright (C) 2017  Ascension Game Dev");
             Console.WriteLine(Strings.Get("main", "version", Assembly.GetExecutingAssembly().GetName().Version));
             Console.WriteLine(Strings.Get("intro","support"));
 

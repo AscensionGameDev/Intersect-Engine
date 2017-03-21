@@ -1,12 +1,10 @@
-﻿
-
-using System;
+﻿using System;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.GameObjects;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.GameObjects.Events;
-using Mono.Data.Sqlite;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.GameObjects.Maps;
+using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
+using Mono.Data.Sqlite;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
 {
@@ -294,17 +292,20 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
-                    var dataReader = cmd.ExecuteReader();
-                    while (dataReader.Read())
+                    using (var dataReader = cmd.ExecuteReader())
                     {
-                        var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
-                        if (dataReader[GAME_OBJECT_DATA].GetType() != typeof(System.DBNull))
+                        while (dataReader.Read())
                         {
-                            LoadGameObject(type, index, (byte[])dataReader[GAME_OBJECT_DATA]);
-                        }
-                        else
-                        {
-                            nullIssues += "Tried to load null value for index " + index + " of " + tableName + Environment.NewLine;
+                            var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
+                            if (dataReader[GAME_OBJECT_DATA].GetType() != typeof(System.DBNull))
+                            {
+                                LoadGameObject(type, index, (byte[]) dataReader[GAME_OBJECT_DATA]);
+                            }
+                            else
+                            {
+                                nullIssues += "Tried to load null value for index " + index + " of " + tableName +
+                                              Environment.NewLine;
+                            }
                         }
                     }
                 }

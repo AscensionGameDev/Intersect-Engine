@@ -30,6 +30,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventCommand_ConditionalBranch));
             this.grpConditional = new DarkUI.Controls.DarkGroupBox();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.cmbConditionType = new DarkUI.Controls.DarkComboBox();
@@ -66,6 +67,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.lblStartQuest = new System.Windows.Forms.Label();
             this.cmbStartQuest = new DarkUI.Controls.DarkComboBox();
             this.grpLevelStat = new DarkUI.Controls.DarkGroupBox();
+            this.nudLevelStatValue = new DarkUI.Controls.DarkNumericUpDown();
             this.cmbLevelStat = new DarkUI.Controls.DarkComboBox();
             this.lblLevelOrStat = new System.Windows.Forms.Label();
             this.lblLvlStatValue = new System.Windows.Forms.Label();
@@ -94,7 +96,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.grpClass = new DarkUI.Controls.DarkGroupBox();
             this.cmbClass = new DarkUI.Controls.DarkComboBox();
             this.lblClass = new System.Windows.Forms.Label();
-            this.nudLevelStatValue = new DarkUI.Controls.DarkNumericUpDown();
             this.grpConditional.SuspendLayout();
             this.grpHasItem.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudItemAmount)).BeginInit();
@@ -104,19 +105,20 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.grpQuestInProgress.SuspendLayout();
             this.grpStartQuest.SuspendLayout();
             this.grpLevelStat.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLevelStatValue)).BeginInit();
             this.grpTime.SuspendLayout();
             this.grpGender.SuspendLayout();
             this.grpPowerIs.SuspendLayout();
             this.grpSelfSwitch.SuspendLayout();
             this.grpSpell.SuspendLayout();
             this.grpClass.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudLevelStatValue)).BeginInit();
             this.SuspendLayout();
             // 
             // grpConditional
             // 
             this.grpConditional.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpConditional.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpConditional.Controls.Add(this.grpGender);
             this.grpConditional.Controls.Add(this.btnSave);
             this.grpConditional.Controls.Add(this.cmbConditionType);
             this.grpConditional.Controls.Add(this.lblType);
@@ -129,7 +131,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.grpConditional.Controls.Add(this.grpStartQuest);
             this.grpConditional.Controls.Add(this.grpLevelStat);
             this.grpConditional.Controls.Add(this.grpTime);
-            this.grpConditional.Controls.Add(this.grpGender);
             this.grpConditional.Controls.Add(this.grpPowerIs);
             this.grpConditional.Controls.Add(this.grpSelfSwitch);
             this.grpConditional.Controls.Add(this.grpSpell);
@@ -157,6 +158,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbConditionType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbConditionType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbConditionType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbConditionType.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbConditionType.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbConditionType.ButtonIcon")));
+            this.cmbConditionType.DrawDropdownHoverOutline = false;
+            this.cmbConditionType.DrawFocusRectangle = false;
             this.cmbConditionType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbConditionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbConditionType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -178,11 +183,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             "Quest In Progress....",
             "Quest Completed....",
             "Player death...",
-            "No NPCs on the map..."});
+            "No NPCs on the map...",
+            "Gender is..."});
             this.cmbConditionType.Location = new System.Drawing.Point(88, 13);
             this.cmbConditionType.Name = "cmbConditionType";
             this.cmbConditionType.Size = new System.Drawing.Size(157, 21);
             this.cmbConditionType.TabIndex = 22;
+            this.cmbConditionType.Text = "Player Switch is...";
+            this.cmbConditionType.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbConditionType.SelectedIndexChanged += new System.EventHandler(this.cmbConditionType_SelectedIndexChanged);
             // 
             // lblType
@@ -239,6 +247,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbItem.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbItem.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbItem.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbItem.ButtonIcon")));
+            this.cmbItem.DrawDropdownHoverOutline = false;
+            this.cmbItem.DrawFocusRectangle = false;
             this.cmbItem.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -248,6 +260,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbItem.Name = "cmbItem";
             this.cmbItem.Size = new System.Drawing.Size(116, 21);
             this.cmbItem.TabIndex = 3;
+            this.cmbItem.Text = null;
+            this.cmbItem.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblItem
             // 
@@ -288,6 +302,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbSwitchVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbSwitchVal.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSwitchVal.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSwitchVal.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbSwitchVal.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSwitchVal.ButtonIcon")));
+            this.cmbSwitchVal.DrawDropdownHoverOutline = false;
+            this.cmbSwitchVal.DrawFocusRectangle = false;
             this.cmbSwitchVal.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSwitchVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSwitchVal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -300,6 +318,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbSwitchVal.Name = "cmbSwitchVal";
             this.cmbSwitchVal.Size = new System.Drawing.Size(141, 21);
             this.cmbSwitchVal.TabIndex = 3;
+            this.cmbSwitchVal.Text = null;
+            this.cmbSwitchVal.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblSwitchIs
             // 
@@ -315,6 +335,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbSwitch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbSwitch.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSwitch.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSwitch.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbSwitch.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSwitch.ButtonIcon")));
+            this.cmbSwitch.DrawDropdownHoverOutline = false;
+            this.cmbSwitch.DrawFocusRectangle = false;
             this.cmbSwitch.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSwitch.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSwitch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -324,6 +348,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbSwitch.Name = "cmbSwitch";
             this.cmbSwitch.Size = new System.Drawing.Size(141, 21);
             this.cmbSwitch.TabIndex = 1;
+            this.cmbSwitch.Text = null;
+            this.cmbSwitch.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblSwitch
             // 
@@ -376,6 +402,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbVariableMod.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbVariableMod.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbVariableMod.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbVariableMod.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbVariableMod.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbVariableMod.ButtonIcon")));
+            this.cmbVariableMod.DrawDropdownHoverOutline = false;
+            this.cmbVariableMod.DrawFocusRectangle = false;
             this.cmbVariableMod.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbVariableMod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbVariableMod.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -392,6 +422,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbVariableMod.Name = "cmbVariableMod";
             this.cmbVariableMod.Size = new System.Drawing.Size(141, 21);
             this.cmbVariableMod.TabIndex = 3;
+            this.cmbVariableMod.Text = null;
+            this.cmbVariableMod.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblComparator
             // 
@@ -407,6 +439,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbVariable.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbVariable.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbVariable.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbVariable.ButtonIcon")));
+            this.cmbVariable.DrawDropdownHoverOutline = false;
+            this.cmbVariable.DrawFocusRectangle = false;
             this.cmbVariable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -416,6 +452,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbVariable.Name = "cmbVariable";
             this.cmbVariable.Size = new System.Drawing.Size(141, 21);
             this.cmbVariable.TabIndex = 1;
+            this.cmbVariable.Text = null;
+            this.cmbVariable.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblVariable
             // 
@@ -455,6 +493,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbCompletedQuest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbCompletedQuest.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbCompletedQuest.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbCompletedQuest.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbCompletedQuest.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbCompletedQuest.ButtonIcon")));
+            this.cmbCompletedQuest.DrawDropdownHoverOutline = false;
+            this.cmbCompletedQuest.DrawFocusRectangle = false;
             this.cmbCompletedQuest.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbCompletedQuest.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbCompletedQuest.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -464,6 +506,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbCompletedQuest.Name = "cmbCompletedQuest";
             this.cmbCompletedQuest.Size = new System.Drawing.Size(138, 21);
             this.cmbCompletedQuest.TabIndex = 3;
+            this.cmbCompletedQuest.Text = null;
+            this.cmbCompletedQuest.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // grpQuestInProgress
             // 
@@ -498,6 +542,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbQuestTask.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbQuestTask.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbQuestTask.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbQuestTask.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbQuestTask.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbQuestTask.ButtonIcon")));
+            this.cmbQuestTask.DrawDropdownHoverOutline = false;
+            this.cmbQuestTask.DrawFocusRectangle = false;
             this.cmbQuestTask.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbQuestTask.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbQuestTask.Enabled = false;
@@ -508,12 +556,18 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbQuestTask.Name = "cmbQuestTask";
             this.cmbQuestTask.Size = new System.Drawing.Size(138, 21);
             this.cmbQuestTask.TabIndex = 8;
+            this.cmbQuestTask.Text = null;
+            this.cmbQuestTask.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // cmbTaskModifier
             // 
             this.cmbTaskModifier.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbTaskModifier.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbTaskModifier.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbTaskModifier.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbTaskModifier.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbTaskModifier.ButtonIcon")));
+            this.cmbTaskModifier.DrawDropdownHoverOutline = false;
+            this.cmbTaskModifier.DrawFocusRectangle = false;
             this.cmbTaskModifier.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbTaskModifier.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbTaskModifier.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -523,6 +577,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbTaskModifier.Name = "cmbTaskModifier";
             this.cmbTaskModifier.Size = new System.Drawing.Size(138, 21);
             this.cmbTaskModifier.TabIndex = 7;
+            this.cmbTaskModifier.Text = null;
+            this.cmbTaskModifier.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbTaskModifier.SelectedIndexChanged += new System.EventHandler(this.cmbTaskModifier_SelectedIndexChanged);
             // 
             // lblQuestIs
@@ -548,6 +604,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbQuestInProgress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbQuestInProgress.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbQuestInProgress.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbQuestInProgress.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbQuestInProgress.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbQuestInProgress.ButtonIcon")));
+            this.cmbQuestInProgress.DrawDropdownHoverOutline = false;
+            this.cmbQuestInProgress.DrawFocusRectangle = false;
             this.cmbQuestInProgress.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbQuestInProgress.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbQuestInProgress.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -557,6 +617,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbQuestInProgress.Name = "cmbQuestInProgress";
             this.cmbQuestInProgress.Size = new System.Drawing.Size(138, 21);
             this.cmbQuestInProgress.TabIndex = 3;
+            this.cmbQuestInProgress.Text = null;
+            this.cmbQuestInProgress.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbQuestInProgress.SelectedIndexChanged += new System.EventHandler(this.cmbQuestInProgress_SelectedIndexChanged);
             // 
             // grpStartQuest
@@ -588,6 +650,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbStartQuest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbStartQuest.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbStartQuest.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbStartQuest.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbStartQuest.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbStartQuest.ButtonIcon")));
+            this.cmbStartQuest.DrawDropdownHoverOutline = false;
+            this.cmbStartQuest.DrawFocusRectangle = false;
             this.cmbStartQuest.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbStartQuest.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbStartQuest.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -597,6 +663,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbStartQuest.Name = "cmbStartQuest";
             this.cmbStartQuest.Size = new System.Drawing.Size(138, 21);
             this.cmbStartQuest.TabIndex = 3;
+            this.cmbStartQuest.Text = null;
+            this.cmbStartQuest.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // grpLevelStat
             // 
@@ -616,11 +684,29 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.grpLevelStat.TabStop = false;
             this.grpLevelStat.Text = "Level or Stat is...";
             // 
+            // nudLevelStatValue
+            // 
+            this.nudLevelStatValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudLevelStatValue.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudLevelStatValue.Location = new System.Drawing.Point(79, 87);
+            this.nudLevelStatValue.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.nudLevelStatValue.Name = "nudLevelStatValue";
+            this.nudLevelStatValue.Size = new System.Drawing.Size(152, 20);
+            this.nudLevelStatValue.TabIndex = 8;
+            // 
             // cmbLevelStat
             // 
             this.cmbLevelStat.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbLevelStat.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbLevelStat.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbLevelStat.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbLevelStat.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbLevelStat.ButtonIcon")));
+            this.cmbLevelStat.DrawDropdownHoverOutline = false;
+            this.cmbLevelStat.DrawFocusRectangle = false;
             this.cmbLevelStat.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbLevelStat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbLevelStat.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -637,6 +723,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbLevelStat.Name = "cmbLevelStat";
             this.cmbLevelStat.Size = new System.Drawing.Size(151, 21);
             this.cmbLevelStat.TabIndex = 7;
+            this.cmbLevelStat.Text = null;
+            this.cmbLevelStat.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblLevelOrStat
             // 
@@ -661,6 +749,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbLevelComparator.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbLevelComparator.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbLevelComparator.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbLevelComparator.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbLevelComparator.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbLevelComparator.ButtonIcon")));
+            this.cmbLevelComparator.DrawDropdownHoverOutline = false;
+            this.cmbLevelComparator.DrawFocusRectangle = false;
             this.cmbLevelComparator.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbLevelComparator.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbLevelComparator.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -670,6 +762,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbLevelComparator.Name = "cmbLevelComparator";
             this.cmbLevelComparator.Size = new System.Drawing.Size(151, 21);
             this.cmbLevelComparator.TabIndex = 3;
+            this.cmbLevelComparator.Text = null;
+            this.cmbLevelComparator.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblLevelComparator
             // 
@@ -721,6 +815,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbTime2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbTime2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbTime2.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbTime2.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbTime2.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbTime2.ButtonIcon")));
+            this.cmbTime2.DrawDropdownHoverOutline = false;
+            this.cmbTime2.DrawFocusRectangle = false;
             this.cmbTime2.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbTime2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbTime2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -730,12 +828,18 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbTime2.Name = "cmbTime2";
             this.cmbTime2.Size = new System.Drawing.Size(138, 21);
             this.cmbTime2.TabIndex = 4;
+            this.cmbTime2.Text = null;
+            this.cmbTime2.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // cmbTime1
             // 
             this.cmbTime1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbTime1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbTime1.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbTime1.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbTime1.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbTime1.ButtonIcon")));
+            this.cmbTime1.DrawDropdownHoverOutline = false;
+            this.cmbTime1.DrawFocusRectangle = false;
             this.cmbTime1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbTime1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbTime1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -745,6 +849,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbTime1.Name = "cmbTime1";
             this.cmbTime1.Size = new System.Drawing.Size(138, 21);
             this.cmbTime1.TabIndex = 3;
+            this.cmbTime1.Text = null;
+            this.cmbTime1.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblAnd
             // 
@@ -774,6 +880,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbGender.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbGender.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbGender.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbGender.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbGender.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbGender.ButtonIcon")));
+            this.cmbGender.DrawDropdownHoverOutline = false;
+            this.cmbGender.DrawFocusRectangle = false;
             this.cmbGender.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbGender.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbGender.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -783,6 +893,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbGender.Name = "cmbGender";
             this.cmbGender.Size = new System.Drawing.Size(141, 21);
             this.cmbGender.TabIndex = 1;
+            this.cmbGender.Text = null;
+            this.cmbGender.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblGender
             // 
@@ -812,6 +924,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbPower.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbPower.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbPower.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbPower.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbPower.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbPower.ButtonIcon")));
+            this.cmbPower.DrawDropdownHoverOutline = false;
+            this.cmbPower.DrawFocusRectangle = false;
             this.cmbPower.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbPower.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPower.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -821,6 +937,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbPower.Name = "cmbPower";
             this.cmbPower.Size = new System.Drawing.Size(141, 21);
             this.cmbPower.TabIndex = 1;
+            this.cmbPower.Text = null;
+            this.cmbPower.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblPower
             // 
@@ -852,6 +970,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbSelfSwitchVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbSelfSwitchVal.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSelfSwitchVal.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSelfSwitchVal.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbSelfSwitchVal.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSelfSwitchVal.ButtonIcon")));
+            this.cmbSelfSwitchVal.DrawDropdownHoverOutline = false;
+            this.cmbSelfSwitchVal.DrawFocusRectangle = false;
             this.cmbSelfSwitchVal.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSelfSwitchVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSelfSwitchVal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -861,6 +983,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbSelfSwitchVal.Name = "cmbSelfSwitchVal";
             this.cmbSelfSwitchVal.Size = new System.Drawing.Size(141, 21);
             this.cmbSelfSwitchVal.TabIndex = 3;
+            this.cmbSelfSwitchVal.Text = null;
+            this.cmbSelfSwitchVal.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblSelfSwitchIs
             // 
@@ -876,6 +1000,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbSelfSwitch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbSelfSwitch.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSelfSwitch.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSelfSwitch.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbSelfSwitch.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSelfSwitch.ButtonIcon")));
+            this.cmbSelfSwitch.DrawDropdownHoverOutline = false;
+            this.cmbSelfSwitch.DrawFocusRectangle = false;
             this.cmbSelfSwitch.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSelfSwitch.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSelfSwitch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -885,6 +1013,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbSelfSwitch.Name = "cmbSelfSwitch";
             this.cmbSelfSwitch.Size = new System.Drawing.Size(141, 21);
             this.cmbSelfSwitch.TabIndex = 1;
+            this.cmbSelfSwitch.Text = null;
+            this.cmbSelfSwitch.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblSelfSwitch
             // 
@@ -914,6 +1044,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbSpell.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbSpell.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSpell.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSpell.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbSpell.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSpell.ButtonIcon")));
+            this.cmbSpell.DrawDropdownHoverOutline = false;
+            this.cmbSpell.DrawFocusRectangle = false;
             this.cmbSpell.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSpell.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSpell.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -923,6 +1057,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbSpell.Name = "cmbSpell";
             this.cmbSpell.Size = new System.Drawing.Size(151, 21);
             this.cmbSpell.TabIndex = 3;
+            this.cmbSpell.Text = null;
+            this.cmbSpell.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblSpell
             // 
@@ -952,6 +1088,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbClass.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbClass.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbClass.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbClass.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbClass.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbClass.ButtonIcon")));
+            this.cmbClass.DrawDropdownHoverOutline = false;
+            this.cmbClass.DrawFocusRectangle = false;
             this.cmbClass.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbClass.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -961,6 +1101,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.cmbClass.Name = "cmbClass";
             this.cmbClass.Size = new System.Drawing.Size(151, 21);
             this.cmbClass.TabIndex = 3;
+            this.cmbClass.Text = null;
+            this.cmbClass.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblClass
             // 
@@ -970,20 +1112,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.lblClass.Size = new System.Drawing.Size(35, 13);
             this.lblClass.TabIndex = 2;
             this.lblClass.Text = "Class:";
-            // 
-            // nudLevelStatValue
-            // 
-            this.nudLevelStatValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudLevelStatValue.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudLevelStatValue.Location = new System.Drawing.Point(79, 87);
-            this.nudLevelStatValue.Maximum = new decimal(new int[] {
-            100000,
-            0,
-            0,
-            0});
-            this.nudLevelStatValue.Name = "nudLevelStatValue";
-            this.nudLevelStatValue.Size = new System.Drawing.Size(152, 20);
-            this.nudLevelStatValue.TabIndex = 8;
             // 
             // EventCommand_ConditionalBranch
             // 
@@ -1011,6 +1139,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.grpStartQuest.PerformLayout();
             this.grpLevelStat.ResumeLayout(false);
             this.grpLevelStat.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLevelStatValue)).EndInit();
             this.grpTime.ResumeLayout(false);
             this.grpTime.PerformLayout();
             this.grpGender.ResumeLayout(false);
@@ -1023,7 +1152,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.grpSpell.PerformLayout();
             this.grpClass.ResumeLayout(false);
             this.grpClass.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudLevelStatValue)).EndInit();
             this.ResumeLayout(false);
 
         }

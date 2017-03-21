@@ -40,7 +40,8 @@ namespace Intersect_Server.Classes.General
                     options.LoadXml(ConfigXml);
 
                     //General Options
-                    Options.Language = GetXmlStr(options, "//Config/Language", true);
+                    Options.Language = GetXmlStr(options, "//Config/Language", false);
+                    if (Options.Language == "") Options.Language = "English";
                     Options.GameName = GetXmlStr(options, "//Config/GameName", false);
                     Options.ServerPort = GetXmlInt(options, "//Config/ServerPort");
 

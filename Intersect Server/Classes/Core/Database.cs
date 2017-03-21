@@ -25,7 +25,7 @@ namespace Intersect_Server.Classes.Core
     public static class Database
     {
         private static SqliteConnection _dbConnection;
-        private const int DbVersion = 7;
+        private const int DbVersion = 8;
         private const string DbFilename = "resources/intersect.db";
 
         //Database Variables
@@ -703,17 +703,19 @@ namespace Intersect_Server.Classes.Core
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + USER_NAME, username.ToLower().Trim()));
-                var dataReader = cmd.ExecuteReader();
-                if (dataReader.HasRows && dataReader.Read())
+                using (var dataReader = cmd.ExecuteReader())
                 {
-                    string pass = dataReader[USER_PASS].ToString();
-                    string salt = dataReader[USER_SALT].ToString();
-                    string temppass =
-                        BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt)))
-                            .Replace("-", "");
-                    if (temppass == pass)
+                    if (dataReader.HasRows && dataReader.Read())
                     {
-                        return true;
+                        string pass = dataReader[USER_PASS].ToString();
+                        string salt = dataReader[USER_SALT].ToString();
+                        string temppass =
+                            BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt)))
+                                .Replace("-", "");
+                        if (temppass == pass)
+                        {
+                            return true;
+                        }
                     }
                 }
             }
@@ -741,17 +743,19 @@ namespace Intersect_Server.Classes.Core
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + USER_NAME, client.MyAccount.ToLower().Trim()));
-                var dataReader = cmd.ExecuteReader();
-                if (dataReader.HasRows && dataReader.Read())
+                using (var dataReader = cmd.ExecuteReader())
                 {
-                    client.MyAccount = dataReader[USER_NAME].ToString();
-                    client.MyPassword = dataReader[USER_PASS].ToString();
-                    client.MySalt = dataReader[USER_SALT].ToString();
-                    client.MyEmail = dataReader[USER_EMAIL].ToString();
-                    client.Power = Convert.ToInt32(dataReader[USER_POWER]);
-                    client.MyId = Convert.ToInt32(dataReader[USER_ID]);
-                    
-                    return true;
+                    if (dataReader.HasRows && dataReader.Read())
+                    {
+                        client.MyAccount = dataReader[USER_NAME].ToString();
+                        client.MyPassword = dataReader[USER_PASS].ToString();
+                        client.MySalt = dataReader[USER_SALT].ToString();
+                        client.MyEmail = dataReader[USER_EMAIL].ToString();
+                        client.Power = Convert.ToInt32(dataReader[USER_POWER]);
+                        client.MyId = Convert.ToInt32(dataReader[USER_ID]);
+
+                        return true;
+                    }
                 }
             }
             
@@ -1020,56 +1024,58 @@ namespace Intersect_Server.Classes.Core
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_ID, client.MyId));
-                    var dataReader = cmd.ExecuteReader();
-                    if (dataReader.HasRows && dataReader.Read())
+                    using (var dataReader = cmd.ExecuteReader())
                     {
-                        en.MyId = Convert.ToInt32(dataReader[CHAR_ID]);
-                        en.MyName = dataReader[CHAR_NAME].ToString();
-                        en.CurrentMap = Convert.ToInt32(dataReader[CHAR_MAP]);
-                        en.CurrentX = Convert.ToInt32(dataReader[CHAR_X]);
-                        en.CurrentY = Convert.ToInt32(dataReader[CHAR_Y]);
-                        en.CurrentZ = Convert.ToInt32(dataReader[CHAR_Z]);
-                        en.Dir = Convert.ToInt32(dataReader[CHAR_DIR]);
-                        en.MySprite = dataReader[CHAR_SPRITE].ToString();
-                        en.Face = dataReader[CHAR_FACE].ToString();
-                        en.Class = Convert.ToInt32(dataReader[CHAR_CLASS]);
-                        en.Gender = Convert.ToInt32(dataReader[CHAR_GENDER]);
-                        en.Level = Convert.ToInt32(dataReader[CHAR_LEVEL]);
-                        en.Experience = Convert.ToInt32(dataReader[CHAR_EXP]);
-                        var vitalString = dataReader[CHAR_VITALS].ToString();
-                        var vitals = vitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                        for (var i = 0; i < (int)Vitals.VitalCount && i < vitals.Length; i++)
+                        if (dataReader.HasRows && dataReader.Read())
                         {
-                            en.Vital[i] = Int32.Parse(vitals[i]);
+                            en.MyId = Convert.ToInt32(dataReader[CHAR_ID]);
+                            en.MyName = dataReader[CHAR_NAME].ToString();
+                            en.CurrentMap = Convert.ToInt32(dataReader[CHAR_MAP]);
+                            en.CurrentX = Convert.ToInt32(dataReader[CHAR_X]);
+                            en.CurrentY = Convert.ToInt32(dataReader[CHAR_Y]);
+                            en.CurrentZ = Convert.ToInt32(dataReader[CHAR_Z]);
+                            en.Dir = Convert.ToInt32(dataReader[CHAR_DIR]);
+                            en.MySprite = dataReader[CHAR_SPRITE].ToString();
+                            en.Face = dataReader[CHAR_FACE].ToString();
+                            en.Class = Convert.ToInt32(dataReader[CHAR_CLASS]);
+                            en.Gender = Convert.ToInt32(dataReader[CHAR_GENDER]);
+                            en.Level = Convert.ToInt32(dataReader[CHAR_LEVEL]);
+                            en.Experience = Convert.ToInt32(dataReader[CHAR_EXP]);
+                            var vitalString = dataReader[CHAR_VITALS].ToString();
+                            var vitals = vitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            for (var i = 0; i < (int) Vitals.VitalCount && i < vitals.Length; i++)
+                            {
+                                en.Vital[i] = Int32.Parse(vitals[i]);
+                            }
+                            var maxVitalString = dataReader[CHAR_MAX_VITALS].ToString();
+                            var maxVitals = maxVitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            for (var i = 0; i < (int) Vitals.VitalCount && i < maxVitals.Length; i++)
+                            {
+                                en.MaxVital[i] = Int32.Parse(maxVitals[i]);
+                            }
+                            var statsString = dataReader[CHAR_STATS].ToString();
+                            var stats = statsString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            for (var i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
+                            {
+                                en.Stat[i].Stat = Int32.Parse(stats[i]);
+                                if (en.Stat[i].Stat > Options.MaxStatValue) en.Stat[i].Stat = Options.MaxStatValue;
+                            }
+                            en.StatPoints = Convert.ToInt32(dataReader[CHAR_STAT_POINTS]);
+                            var equipmentString = dataReader[CHAR_EQUIPMENT].ToString();
+                            var equipment = equipmentString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            for (var i = 0; i < (int) Options.EquipmentSlots.Count && i < equipment.Length; i++)
+                            {
+                                en.Equipment[i] = Int32.Parse(equipment[i]);
+                            }
+                            if (!LoadCharacterInventory(en)) return false;
+                            if (!LoadCharacterSpells(en)) return false;
+                            if (!LoadCharacterBank(en)) return false;
+                            if (!LoadCharacterHotbar(en)) return false;
+                            if (!LoadCharacterSwitches(en)) return false;
+                            if (!LoadCharacterVariables(en)) return false;
+                            if (!LoadCharacterQuests(en)) return false;
+                            return true;
                         }
-                        var maxVitalString = dataReader[CHAR_MAX_VITALS].ToString();
-                        var maxVitals = maxVitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                        for (var i = 0; i < (int)Vitals.VitalCount && i < maxVitals.Length; i++)
-                        {
-                            en.MaxVital[i] = Int32.Parse(maxVitals[i]);
-                        }
-                        var statsString = dataReader[CHAR_STATS].ToString();
-                        var stats = statsString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                        for (var i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
-                        {
-                            en.Stat[i].Stat = Int32.Parse(stats[i]);
-                            if (en.Stat[i].Stat > Options.MaxStatValue) en.Stat[i].Stat = Options.MaxStatValue;
-                        }
-                        en.StatPoints = Convert.ToInt32(dataReader[CHAR_STAT_POINTS]);
-                        var equipmentString = dataReader[CHAR_EQUIPMENT].ToString();
-                        var equipment = equipmentString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                        for (var i = 0; i < (int)Options.EquipmentSlots.Count && i < equipment.Length; i++)
-                        {
-                            en.Equipment[i] = Int32.Parse(equipment[i]);
-                        }
-                        if (!LoadCharacterInventory(en)) return false;
-                        if (!LoadCharacterSpells(en)) return false;
-                        if (!LoadCharacterBank(en)) return false;
-                        if (!LoadCharacterHotbar(en)) return false;
-                        if (!LoadCharacterSwitches(en)) return false;
-                        if (!LoadCharacterVariables(en)) return false;
-                        if (!LoadCharacterQuests(en)) return false;
-                        return true;
                     }
                 }
                 return false;
@@ -1093,30 +1099,32 @@ namespace Intersect_Server.Classes.Core
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_CHAR_ID, player.MyId));
-                    var dataReader = cmd.ExecuteReader();
-                    while (dataReader.Read())
+                    using (var dataReader = cmd.ExecuteReader())
                     {
-                        var slot = Convert.ToInt32(dataReader[CHAR_INV_SLOT]);
-                        if (slot >= 0 && slot < Options.MaxInvItems)
+                        while (dataReader.Read())
                         {
-                            player.Inventory[slot].ItemNum = Convert.ToInt32(dataReader[CHAR_INV_ITEM_NUM]);
-                            player.Inventory[slot].ItemVal = Convert.ToInt32(dataReader[CHAR_INV_ITEM_VAL]);
-                            var statBoostStr = dataReader[CHAR_INV_ITEM_STATS].ToString();
-                            var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                            for (int i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                            var slot = Convert.ToInt32(dataReader[CHAR_INV_SLOT]);
+                            if (slot >= 0 && slot < Options.MaxInvItems)
                             {
-                                player.Inventory[slot].StatBoost[i] = Int32.Parse(stats[i]);
-                            }
-                            if (ItemBase.GetItem(player.Inventory[slot].ItemNum) == null)
-                            {
-                                player.Inventory[slot].ItemNum = -1;
-                                player.Inventory[slot].ItemVal = 0;
-                                for (int i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                                player.Inventory[slot].ItemNum = Convert.ToInt32(dataReader[CHAR_INV_ITEM_NUM]);
+                                player.Inventory[slot].ItemVal = Convert.ToInt32(dataReader[CHAR_INV_ITEM_VAL]);
+                                var statBoostStr = dataReader[CHAR_INV_ITEM_STATS].ToString();
+                                var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                                for (int i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
                                 {
-                                    player.Inventory[slot].StatBoost[i] = 0;
+                                    player.Inventory[slot].StatBoost[i] = Int32.Parse(stats[i]);
                                 }
+                                if (ItemBase.GetItem(player.Inventory[slot].ItemNum) == null)
+                                {
+                                    player.Inventory[slot].ItemNum = -1;
+                                    player.Inventory[slot].ItemVal = 0;
+                                    for (int i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
+                                    {
+                                        player.Inventory[slot].StatBoost[i] = 0;
+                                    }
+                                }
+                                player.Inventory[slot].BagId = Convert.ToInt32(dataReader[CHAR_INV_ITEM_BAG_ID]);
                             }
-                            player.Inventory[slot].BagId = Convert.ToInt32(dataReader[CHAR_INV_ITEM_BAG_ID]);
                         }
                     }
                 }
@@ -1136,19 +1144,21 @@ namespace Intersect_Server.Classes.Core
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_CHAR_ID, player.MyId));
-                    var dataReader = cmd.ExecuteReader();
-                    while (dataReader.Read())
+                    using (var dataReader = cmd.ExecuteReader())
                     {
-                        var slot = Convert.ToInt32(dataReader[CHAR_SPELL_SLOT]);
-                        if (slot >= 0 && slot < Options.MaxPlayerSkills)
+                        while (dataReader.Read())
                         {
-                            player.Spells[slot].SpellNum = Convert.ToInt32(dataReader[CHAR_SPELL_NUM]);
-                            player.Spells[slot].SpellCD = Globals.System.GetTimeMs() +
-                          Convert.ToInt32(dataReader[CHAR_SPELL_CD]);
-                            if (SpellBase.GetSpell(player.Spells[slot].SpellNum) == null)
+                            var slot = Convert.ToInt32(dataReader[CHAR_SPELL_SLOT]);
+                            if (slot >= 0 && slot < Options.MaxPlayerSkills)
                             {
-                                player.Spells[slot].SpellNum = -1;
-                                player.Spells[slot].SpellCD = -1;
+                                player.Spells[slot].SpellNum = Convert.ToInt32(dataReader[CHAR_SPELL_NUM]);
+                                player.Spells[slot].SpellCD = Globals.System.GetTimeMs() +
+                                                              Convert.ToInt32(dataReader[CHAR_SPELL_CD]);
+                                if (SpellBase.GetSpell(player.Spells[slot].SpellNum) == null)
+                                {
+                                    player.Spells[slot].SpellNum = -1;
+                                    player.Spells[slot].SpellCD = -1;
+                                }
                             }
                         }
                     }
@@ -1171,31 +1181,33 @@ namespace Intersect_Server.Classes.Core
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_CHAR_ID, player.MyId));
-                    var dataReader = cmd.ExecuteReader();
-                    while (dataReader.Read())
+                    using (var dataReader = cmd.ExecuteReader())
                     {
-                        var slot = Convert.ToInt32(dataReader[CHAR_BANK_SLOT]);
-                        if (slot >= 0 && slot < Options.MaxBankSlots)
+                        while (dataReader.Read())
                         {
-                            if (player.Bank[slot] == null) player.Bank[slot] = new ItemInstance();
-                            player.Bank[slot].ItemNum = Convert.ToInt32(dataReader[CHAR_BANK_ITEM_NUM]);
-                            player.Bank[slot].ItemVal = Convert.ToInt32(dataReader[CHAR_BANK_ITEM_VAL]);
-                            var statBoostStr = dataReader[CHAR_BANK_ITEM_STATS].ToString();
-                            var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                            for (int i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                            var slot = Convert.ToInt32(dataReader[CHAR_BANK_SLOT]);
+                            if (slot >= 0 && slot < Options.MaxBankSlots)
                             {
-                                player.Bank[slot].StatBoost[i] = Int32.Parse(stats[i]);
-                            }
-                            if (ItemBase.GetItem(player.Bank[slot].ItemNum) == null)
-                            {
-                                player.Bank[slot].ItemNum = -1;
-                                player.Bank[slot].ItemVal = 0;
-                                for (int i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                                if (player.Bank[slot] == null) player.Bank[slot] = new ItemInstance();
+                                player.Bank[slot].ItemNum = Convert.ToInt32(dataReader[CHAR_BANK_ITEM_NUM]);
+                                player.Bank[slot].ItemVal = Convert.ToInt32(dataReader[CHAR_BANK_ITEM_VAL]);
+                                var statBoostStr = dataReader[CHAR_BANK_ITEM_STATS].ToString();
+                                var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                                for (int i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
                                 {
-                                    player.Bank[slot].StatBoost[i] = 0;
+                                    player.Bank[slot].StatBoost[i] = Int32.Parse(stats[i]);
                                 }
+                                if (ItemBase.GetItem(player.Bank[slot].ItemNum) == null)
+                                {
+                                    player.Bank[slot].ItemNum = -1;
+                                    player.Bank[slot].ItemVal = 0;
+                                    for (int i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
+                                    {
+                                        player.Bank[slot].StatBoost[i] = 0;
+                                    }
+                                }
+                                player.Bank[slot].BagId = Convert.ToInt32(dataReader[CHAR_BANK_ITEM_BAG_ID]);
                             }
-                            player.Bank[slot].BagId = Convert.ToInt32(dataReader[CHAR_BANK_ITEM_BAG_ID]);
                         }
                     }
                 }
@@ -1215,14 +1227,16 @@ namespace Intersect_Server.Classes.Core
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_HOTBAR_CHAR_ID, player.MyId));
-                    var dataReader = cmd.ExecuteReader();
-                    while (dataReader.Read())
+                    using (var dataReader = cmd.ExecuteReader())
                     {
-                        var slot = Convert.ToInt32(dataReader[CHAR_HOTBAR_SLOT]);
-                        if (slot >= 0 && slot < Options.MaxHotbar)
+                        while (dataReader.Read())
                         {
-                            player.Hotbar[slot].Type = Convert.ToInt32(dataReader[CHAR_HOTBAR_TYPE]);
-                            player.Hotbar[slot].Slot = Convert.ToInt32(dataReader[CHAR_HOTBAR_ITEMSLOT]);
+                            var slot = Convert.ToInt32(dataReader[CHAR_HOTBAR_SLOT]);
+                            if (slot >= 0 && slot < Options.MaxHotbar)
+                            {
+                                player.Hotbar[slot].Type = Convert.ToInt32(dataReader[CHAR_HOTBAR_TYPE]);
+                                player.Hotbar[slot].Slot = Convert.ToInt32(dataReader[CHAR_HOTBAR_ITEMSLOT]);
+                            }
                         }
                     }
                 }
@@ -1242,17 +1256,19 @@ namespace Intersect_Server.Classes.Core
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SWITCH_CHAR_ID, player.MyId));
-                    var dataReader = cmd.ExecuteReader();
-                    while (dataReader.Read())
+                    using (var dataReader = cmd.ExecuteReader())
                     {
-                        var id = Convert.ToInt32(dataReader[CHAR_SWITCH_SLOT]);
-                        if (player.Switches.ContainsKey(id))
+                        while (dataReader.Read())
                         {
-                            player.Switches[id] = Convert.ToBoolean(Convert.ToInt32(dataReader[CHAR_SWITCH_VAL]));
-                        }
-                        else
-                        {
-                            player.Switches.Add(id, Convert.ToBoolean(Convert.ToInt32(dataReader[CHAR_SWITCH_VAL])));
+                            var id = Convert.ToInt32(dataReader[CHAR_SWITCH_SLOT]);
+                            if (player.Switches.ContainsKey(id))
+                            {
+                                player.Switches[id] = Convert.ToBoolean(Convert.ToInt32(dataReader[CHAR_SWITCH_VAL]));
+                            }
+                            else
+                            {
+                                player.Switches.Add(id, Convert.ToBoolean(Convert.ToInt32(dataReader[CHAR_SWITCH_VAL])));
+                            }
                         }
                     }
                 }
@@ -1272,17 +1288,19 @@ namespace Intersect_Server.Classes.Core
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_VARIABLE_CHAR_ID, player.MyId));
-                    var dataReader = cmd.ExecuteReader();
-                    while (dataReader.Read())
+                    using (var dataReader = cmd.ExecuteReader())
                     {
-                        var id = Convert.ToInt32(dataReader[CHAR_VARIABLE_SLOT]);
-                        if (player.Variables.ContainsKey(id))
+                        while (dataReader.Read())
                         {
-                            player.Variables[id] = Convert.ToInt32(dataReader[CHAR_VARIABLE_VAL]);
-                        }
-                        else
-                        {
-                            player.Variables.Add(id, Convert.ToInt32(dataReader[CHAR_VARIABLE_VAL]));
+                            var id = Convert.ToInt32(dataReader[CHAR_VARIABLE_SLOT]);
+                            if (player.Variables.ContainsKey(id))
+                            {
+                                player.Variables[id] = Convert.ToInt32(dataReader[CHAR_VARIABLE_VAL]);
+                            }
+                            else
+                            {
+                                player.Variables.Add(id, Convert.ToInt32(dataReader[CHAR_VARIABLE_VAL]));
+                            }
                         }
                     }
                 }
@@ -1302,25 +1320,27 @@ namespace Intersect_Server.Classes.Core
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_CHAR_ID, player.MyId));
-                    var dataReader = cmd.ExecuteReader();
-                    while (dataReader.Read())
+                    using (var dataReader = cmd.ExecuteReader())
                     {
-                        var id = Convert.ToInt32(dataReader[CHAR_QUEST_ID]);
-                        if (player.Quests.ContainsKey(id))
+                        while (dataReader.Read())
                         {
-                            var questProgress = player.Quests[id];
-                            questProgress.task = Convert.ToInt32(dataReader[CHAR_QUEST_TASK]);
-                            questProgress.taskProgress = Convert.ToInt32(dataReader[CHAR_QUEST_TASK_PROGRESS]);
-                            questProgress.completed = Convert.ToInt32(dataReader[CHAR_QUEST_COMPLETED]);
-                            player.Quests[id] = questProgress;
-                        }
-                        else
-                        {
-                            var questProgress = new QuestProgressStruct();
-                            questProgress.task = Convert.ToInt32(dataReader[CHAR_QUEST_TASK]);
-                            questProgress.taskProgress = Convert.ToInt32(dataReader[CHAR_QUEST_TASK_PROGRESS]);
-                            questProgress.completed = Convert.ToInt32(dataReader[CHAR_QUEST_COMPLETED]);
-                            player.Quests.Add(id,questProgress);
+                            var id = Convert.ToInt32(dataReader[CHAR_QUEST_ID]);
+                            if (player.Quests.ContainsKey(id))
+                            {
+                                var questProgress = player.Quests[id];
+                                questProgress.task = Convert.ToInt32(dataReader[CHAR_QUEST_TASK]);
+                                questProgress.taskProgress = Convert.ToInt32(dataReader[CHAR_QUEST_TASK_PROGRESS]);
+                                questProgress.completed = Convert.ToInt32(dataReader[CHAR_QUEST_COMPLETED]);
+                                player.Quests[id] = questProgress;
+                            }
+                            else
+                            {
+                                var questProgress = new QuestProgressStruct();
+                                questProgress.task = Convert.ToInt32(dataReader[CHAR_QUEST_TASK]);
+                                questProgress.taskProgress = Convert.ToInt32(dataReader[CHAR_QUEST_TASK_PROGRESS]);
+                                questProgress.completed = Convert.ToInt32(dataReader[CHAR_QUEST_COMPLETED]);
+                                player.Quests.Add(id, questProgress);
+                            }
                         }
                     }
                 }
@@ -1353,11 +1373,13 @@ namespace Intersect_Server.Classes.Core
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + BAG_ID, bagItem.BagId));
-                var dataReader = cmd.ExecuteReader();
-                while (dataReader.Read())
+                using (var dataReader = cmd.ExecuteReader())
                 {
-                    var slots = Convert.ToInt32(dataReader[BAG_SLOT_COUNT]);
-                    bagItem.BagInstance = new BagInstance(slots);
+                    while (dataReader.Read())
+                    {
+                        var slots = Convert.ToInt32(dataReader[BAG_SLOT_COUNT]);
+                        bagItem.BagInstance = new BagInstance(slots);
+                    }
                 }
             }
             if (bagItem.BagInstance != null)
@@ -1367,30 +1389,32 @@ namespace Intersect_Server.Classes.Core
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_CONTAINER_ID, bagItem.BagId));
-                    var dataReader = cmd.ExecuteReader();
-                    while (dataReader.Read())
+                    using (var dataReader = cmd.ExecuteReader())
                     {
-                        var slot = Convert.ToInt32(dataReader[BAG_ITEM_SLOT]);
-                        if (slot >= 0 && slot < bagItem.BagInstance.Slots)
+                        while (dataReader.Read())
                         {
-                            bagItem.BagInstance.Items[slot].ItemNum = Convert.ToInt32(dataReader[BAG_ITEM_NUM]);
-                            bagItem.BagInstance.Items[slot].ItemVal = Convert.ToInt32(dataReader[BAG_ITEM_VAL]);
-                            var statBoostStr = dataReader[BAG_ITEM_STATS].ToString();
-                            var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                            for (int i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                            var slot = Convert.ToInt32(dataReader[BAG_ITEM_SLOT]);
+                            if (slot >= 0 && slot < bagItem.BagInstance.Slots)
                             {
-                                bagItem.BagInstance.Items[slot].StatBoost[i] = Int32.Parse(stats[i]);
-                            }
-                            if (ItemBase.GetItem(bagItem.BagInstance.Items[slot].ItemNum) == null)
-                            {
-                                bagItem.BagInstance.Items[slot].ItemNum = -1;
-                                bagItem.BagInstance.Items[slot].ItemVal = 0;
-                                for (int i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                                bagItem.BagInstance.Items[slot].ItemNum = Convert.ToInt32(dataReader[BAG_ITEM_NUM]);
+                                bagItem.BagInstance.Items[slot].ItemVal = Convert.ToInt32(dataReader[BAG_ITEM_VAL]);
+                                var statBoostStr = dataReader[BAG_ITEM_STATS].ToString();
+                                var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                                for (int i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
                                 {
-                                    bagItem.BagInstance.Items[slot].StatBoost[i] = 0;
+                                    bagItem.BagInstance.Items[slot].StatBoost[i] = Int32.Parse(stats[i]);
                                 }
+                                if (ItemBase.GetItem(bagItem.BagInstance.Items[slot].ItemNum) == null)
+                                {
+                                    bagItem.BagInstance.Items[slot].ItemNum = -1;
+                                    bagItem.BagInstance.Items[slot].ItemVal = 0;
+                                    for (int i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
+                                    {
+                                        bagItem.BagInstance.Items[slot].StatBoost[i] = 0;
+                                    }
+                                }
+                                bagItem.BagInstance.Items[slot].BagId = Convert.ToInt32(dataReader[BAG_ITEM_BAG_ID]);
                             }
-                            bagItem.BagInstance.Items[slot].BagId = Convert.ToInt32(dataReader[BAG_ITEM_BAG_ID]);
                         }
                     }
                 }
@@ -1493,22 +1517,24 @@ namespace Intersect_Server.Classes.Core
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, account.ToLower().Trim()));
                 cmd.Parameters.Add(new SqliteParameter("@" + MUTE_IP, ip.Trim()));
-                var dataReader = cmd.ExecuteReader();
-                if (dataReader.HasRows && dataReader.Read())
+                using (var dataReader = cmd.ExecuteReader())
                 {
-                    DateTime duration = DateTime.FromBinary(Convert.ToInt64(dataReader[MUTE_DURATION]));
-                    DateTime banStart = DateTime.FromBinary(Convert.ToInt64(dataReader[MUTE_TIME]));
-                    string banner = Convert.ToString(dataReader[MUTE_MUTER]);
-                    string reason = Convert.ToString(dataReader[MUTE_REASON]);
-                    if (duration.CompareTo(DateTime.Today) <= 0) //Check that enough time has passed
+                    if (dataReader.HasRows && dataReader.Read())
                     {
+                        DateTime duration = DateTime.FromBinary(Convert.ToInt64(dataReader[MUTE_DURATION]));
+                        DateTime banStart = DateTime.FromBinary(Convert.ToInt64(dataReader[MUTE_TIME]));
+                        string banner = Convert.ToString(dataReader[MUTE_MUTER]);
+                        string reason = Convert.ToString(dataReader[MUTE_REASON]);
+                        if (duration.CompareTo(DateTime.Today) <= 0) //Check that enough time has passed
+                        {
 
-                        DeleteMute(account);
-                        return null;
-                    }
-                    else
-                    {
-                        return Strings.Get("account", "mutestatus", banStart, banner, duration, reason);
+                            DeleteMute(account);
+                            return null;
+                        }
+                        else
+                        {
+                            return Strings.Get("account", "mutestatus", banStart, banner, duration, reason);
+                        }
                     }
                 }
 
@@ -1557,22 +1583,24 @@ namespace Intersect_Server.Classes.Core
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, account.ToLower().Trim()));
                 cmd.Parameters.Add(new SqliteParameter("@" + BAN_IP, ip.Trim()));
-                var dataReader = cmd.ExecuteReader();
-                if (dataReader.HasRows && dataReader.Read())
+                using (var dataReader = cmd.ExecuteReader())
                 {
-                    DateTime duration = DateTime.FromBinary(Convert.ToInt64(dataReader[BAN_DURATION]));
-                    DateTime banStart = DateTime.FromBinary(Convert.ToInt64(dataReader[BAN_TIME]));
-                    string banner = Convert.ToString(dataReader[BAN_BANNER]);
-                    string reason = Convert.ToString(dataReader[BAN_REASON]);
-                    if (duration.CompareTo(DateTime.Today) <= 0) //Check that enough time has passed
+                    if (dataReader.HasRows && dataReader.Read())
                     {
+                        DateTime duration = DateTime.FromBinary(Convert.ToInt64(dataReader[BAN_DURATION]));
+                        DateTime banStart = DateTime.FromBinary(Convert.ToInt64(dataReader[BAN_TIME]));
+                        string banner = Convert.ToString(dataReader[BAN_BANNER]);
+                        string reason = Convert.ToString(dataReader[BAN_REASON]);
+                        if (duration.CompareTo(DateTime.Today) <= 0) //Check that enough time has passed
+                        {
 
-                        DeleteBan(account);
-                        return null;
-                    }
-                    else
-                    {
-                        return Strings.Get("account", "banstatus", banStart, banner, duration, reason);
+                            DeleteBan(account);
+                            return null;
+                        }
+                        else
+                        {
+                            return Strings.Get("account", "banstatus", banStart, banner, duration, reason);
+                        }
                     }
                 }
 
@@ -1832,17 +1860,19 @@ namespace Intersect_Server.Classes.Core
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
-                var dataReader = cmd.ExecuteReader();
-                while (dataReader.Read())
+                using (var dataReader = cmd.ExecuteReader())
                 {
-                    var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
-                    if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
+                    while (dataReader.Read())
                     {
-                        LoadGameObject(type, index, (byte[])dataReader[GAME_OBJECT_DATA]);
-                    }
-                    else
-                    {
-                        nullIssues += Strings.Get("database","nullfound",index,tableName) + Environment.NewLine;
+                        var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
+                        if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
+                        {
+                            LoadGameObject(type, index, (byte[]) dataReader[GAME_OBJECT_DATA]);
+                        }
+                        else
+                        {
+                            nullIssues += Strings.Get("database", "nullfound", index, tableName) + Environment.NewLine;
+                        }
                     }
                 }
             }
@@ -2124,23 +2154,25 @@ namespace Intersect_Server.Classes.Core
             var query = "SELECT * from " + MAP_LIST_TABLE + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
-                var dataReader = cmd.ExecuteReader();
-                if (dataReader.HasRows)
+                using (var dataReader = cmd.ExecuteReader())
                 {
-                    while (dataReader.Read())
+                    if (dataReader.HasRows)
                     {
-                        if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
+                        while (dataReader.Read())
                         {
-                            var data = (byte[])dataReader[MAP_LIST_DATA];
-                            ByteBuffer myBuffer = new ByteBuffer();
-                            myBuffer.WriteBytes(data);
-                            MapList.GetList().Load(myBuffer, MapBase.GetObjects(), true, true);
+                            if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
+                            {
+                                var data = (byte[]) dataReader[MAP_LIST_DATA];
+                                ByteBuffer myBuffer = new ByteBuffer();
+                                myBuffer.WriteBytes(data);
+                                MapList.GetList().Load(myBuffer, MapBase.GetObjects(), true, true);
+                            }
                         }
                     }
-                }
-                else
-                {
-                    InsertMapList();
+                    else
+                    {
+                        InsertMapList();
+                    }
                 }
             }
             foreach (var map in MapBase.GetObjects())
@@ -2174,21 +2206,23 @@ namespace Intersect_Server.Classes.Core
             var query = "SELECT * from " + TIME_TABLE + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
-                var dataReader = cmd.ExecuteReader();
-                if (dataReader.HasRows)
+                using (var dataReader = cmd.ExecuteReader())
                 {
-                    while (dataReader.Read())
+                    if (dataReader.HasRows)
                     {
-                        if (dataReader[TIME_DATA].GetType() != typeof(System.DBNull))
+                        while (dataReader.Read())
                         {
-                            var data = (byte[])dataReader[TIME_DATA];
-                            TimeBase.GetTimeBase().LoadTimeBase(data);
+                            if (dataReader[TIME_DATA].GetType() != typeof(System.DBNull))
+                            {
+                                var data = (byte[]) dataReader[TIME_DATA];
+                                TimeBase.GetTimeBase().LoadTimeBase(data);
+                            }
                         }
                     }
-                }
-                else
-                {
-                    InsertTime();
+                    else
+                    {
+                        InsertTime();
+                    }
                 }
             }
             

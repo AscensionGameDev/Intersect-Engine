@@ -291,17 +291,20 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
-                    var dataReader = cmd.ExecuteReader();
-                    while (dataReader.Read())
+                    using (var dataReader = cmd.ExecuteReader())
                     {
-                        var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
-                        if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
+                        while (dataReader.Read())
                         {
-                            LoadGameObject(type, index, (byte[])dataReader[GAME_OBJECT_DATA]);
-                        }
-                        else
-                        {
-                            nullIssues += "Tried to load null value for index " + index + " of " + tableName + Environment.NewLine;
+                            var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
+                            if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
+                            {
+                                LoadGameObject(type, index, (byte[]) dataReader[GAME_OBJECT_DATA]);
+                            }
+                            else
+                            {
+                                nullIssues += "Tried to load null value for index " + index + " of " + tableName +
+                                              Environment.NewLine;
+                            }
                         }
                     }
                 }
@@ -343,17 +346,19 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4
             var query = "SELECT * from " + MAP_LIST_TABLE + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
-                var dataReader = cmd.ExecuteReader();
-                if (dataReader.HasRows)
+                using (var dataReader = cmd.ExecuteReader())
                 {
-                    while (dataReader.Read())
+                    if (dataReader.HasRows)
                     {
-                        if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
+                        while (dataReader.Read())
                         {
-                            var data = (byte[])dataReader[MAP_LIST_DATA];
-                            ByteBuffer myBuffer = new ByteBuffer();
-                            myBuffer.WriteBytes(data);
-                            MapList.GetList().Load(myBuffer, MapBase.GetObjects(), true, true);
+                            if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
+                            {
+                                var data = (byte[]) dataReader[MAP_LIST_DATA];
+                                ByteBuffer myBuffer = new ByteBuffer();
+                                myBuffer.WriteBytes(data);
+                                MapList.GetList().Load(myBuffer, MapBase.GetObjects(), true, true);
+                            }
                         }
                     }
                 }
@@ -381,15 +386,17 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4
             var query = "SELECT * from " + TIME_TABLE + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
-                var dataReader = cmd.ExecuteReader();
-                if (dataReader.HasRows)
+                using (var dataReader = cmd.ExecuteReader())
                 {
-                    while (dataReader.Read())
+                    if (dataReader.HasRows)
                     {
-                        if (dataReader[TIME_DATA].GetType() != typeof(System.DBNull))
+                        while (dataReader.Read())
                         {
-                            var data = (byte[])dataReader[TIME_DATA];
-                            TimeBase.GetTimeBase().LoadTimeBase(data);
+                            if (dataReader[TIME_DATA].GetType() != typeof(System.DBNull))
+                            {
+                                var data = (byte[]) dataReader[TIME_DATA];
+                                TimeBase.GetTimeBase().LoadTimeBase(data);
+                            }
                         }
                     }
                 }

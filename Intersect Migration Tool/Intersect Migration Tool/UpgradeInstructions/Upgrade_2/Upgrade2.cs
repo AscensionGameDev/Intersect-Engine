@@ -292,17 +292,20 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
-                    var dataReader = cmd.ExecuteReader();
-                    while (dataReader.Read())
+                    using (var dataReader = cmd.ExecuteReader())
                     {
-                        var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
-                        if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
+                        while (dataReader.Read())
                         {
-                            LoadGameObject(type, index, (byte[])dataReader[GAME_OBJECT_DATA]);
-                        }
-                        else
-                        {
-                            nullIssues += "Tried to load null value for index " + index + " of " + tableName + Environment.NewLine;
+                            var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
+                            if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
+                            {
+                                LoadGameObject(type, index, (byte[]) dataReader[GAME_OBJECT_DATA]);
+                            }
+                            else
+                            {
+                                nullIssues += "Tried to load null value for index " + index + " of " + tableName +
+                                              Environment.NewLine;
+                            }
                         }
                     }
                 }

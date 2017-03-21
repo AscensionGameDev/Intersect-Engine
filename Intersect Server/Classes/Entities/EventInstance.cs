@@ -303,14 +303,14 @@ namespace Intersect_Server.Classes.Entities
                             break;
                     }
                     break;
-                case 2: //Player Switch
+                case 2: //Global Switch
                     var servSwitch = false;
                     if (ServerSwitchBase.GetSwitch(conditionCommand.Ints[1]) != null)
                         servSwitch = ServerSwitchBase.GetSwitch(conditionCommand.Ints[1]).Value;
                     if (servSwitch == Convert.ToBoolean(conditionCommand.Ints[2]))
                         return true;
                     break;
-                case 3: //Player Variable
+                case 3: //Global Variable
                     var servVar = 0;
                     if (ServerVariableBase.GetVariable(conditionCommand.Ints[1]) != null)
                         servVar = ServerVariableBase.GetVariable(conditionCommand.Ints[1]).Value;
@@ -475,7 +475,9 @@ namespace Intersect_Server.Classes.Entities
                         }
                         return true;
                     }
-                    return false;
+                    break;
+                case 16: //Gender is
+                    return MyPlayer.Gender == conditionCommand.Ints[1];
             }
             return false;
         }

@@ -13,6 +13,7 @@ using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_3;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6;
+using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7;
 using Mono.Data.Sqlite;
 
 namespace Intersect_Migration_Tool
@@ -21,7 +22,7 @@ namespace Intersect_Migration_Tool
     {
         private static SqliteConnection _dbConnection;
         private static Object _dbLock = new Object();
-        public const int DbVersion = 7;
+        public const int DbVersion = 8;
         private const string DbFilename = "resources/intersect.db";
 
         //Database Variables
@@ -68,7 +69,7 @@ namespace Intersect_Migration_Tool
             {
                 if (_dbConnection == null)
                 {
-                    _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ",Version=3");
+                    _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ";Version=3");
                     _dbConnection.Open();
                 }
                 return true;
@@ -104,7 +105,7 @@ namespace Intersect_Migration_Tool
             {
                 _dbConnection.Close();
                 _dbConnection = null;
-                _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ",Version=3");
+                _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ";Version=3");
                 _dbConnection.Open();
             }
             var startingVersion = GetDatabaseVersion();
@@ -145,11 +146,18 @@ namespace Intersect_Migration_Tool
                         currentVersion++;
                         IncrementDatabaseVersion();
                         break;
+                    case 7: 
+                        var upgrade7 = new Upgrade7(_dbConnection);
+                        upgrade7.Upgrade();
+                        currentVersion++;
+                        IncrementDatabaseVersion();
+                        break;
                     default:
                         throw new Exception(Strings.Get("upgrade", "noinstructions"));
                 }
                 currentVersion = GetDatabaseVersion();
             }
+
             _dbConnection.Close();
             _dbConnection = null;
             Console.WriteLine(Strings.Get("upgrade","updated",currentVersion));
