@@ -1,12 +1,13 @@
 ﻿using System;
+using Intersect_Library;
 using Intersect_Library.Logging;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Events;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Maps;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Maps.MapList;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 using Mono.Data.Sqlite;
+using GameObject = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObject;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4
 {
