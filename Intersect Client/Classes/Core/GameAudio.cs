@@ -180,9 +180,9 @@ namespace Intersect_Client.Classes.Core
         {
             if (_gameSounds.Count <= 128)
             {
-                MapSound newSound = new MapSound(filename, x, y, map, loop, distance);
-                if (newSound != null) { _gameSounds.Add(newSound); }
-                return newSound;
+                var sound = new MapSound(filename, x, y, map, loop, distance);
+                _gameSounds.Add(sound);
+                return sound;
             }
             return null;
         }

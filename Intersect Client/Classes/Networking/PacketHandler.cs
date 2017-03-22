@@ -749,19 +749,16 @@ namespace Intersect_Client.Classes.Networking
             int mapNum = bf.ReadInteger();
             var map = MapInstance.GetMap(mapNum);
             if (map == null) return;
-            if (map != null)
+            map.MapItems.Clear();
+            int itemCount = bf.ReadInteger();
+            for (int i = 0; i < itemCount; i++)
             {
-                map.MapItems.Clear();
-                int itemCount = bf.ReadInteger();
-                for (int i = 0; i < itemCount; i++)
+                var index = bf.ReadInteger();
+                if (index != -1)
                 {
-                    var index = bf.ReadInteger();
-                    if (index != -1)
-                    {
-                        var item = new MapItemInstance();
-                        item.Load(bf);
-                        map.MapItems.Add(index, item);
-                    }
+                    var item = new MapItemInstance();
+                    item.Load(bf);
+                    map.MapItems.Add(index, item);
                 }
             }
             bf.Dispose();

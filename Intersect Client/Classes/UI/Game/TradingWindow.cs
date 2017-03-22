@@ -128,9 +128,9 @@ namespace Intersect_Client.Classes.UI.Game
                     if (Globals.Trade[n, i] != null && Globals.Trade[n, i].ItemNum > -1)
                     {
                         var item = ItemBase.GetItem(Globals.Trade[n, i].ItemNum);
-                        g += (item.Price * Globals.Trade[n, i].ItemVal);
                         if (item != null)
                         {
+                            g += (item.Price * Globals.Trade[n, i].ItemVal);
                             _tradeSegment[n].Items[i].pnl.IsHidden = false;
                             if (item.IsStackable())
                             {

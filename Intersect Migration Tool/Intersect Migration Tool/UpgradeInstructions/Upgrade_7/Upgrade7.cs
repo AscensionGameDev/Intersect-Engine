@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
+using Intersect_Library.Logging;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib;
 using Mono.Data.Sqlite;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects;
@@ -398,6 +399,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
         }
         public void SaveGameObject(DatabaseObject gameObject)
         {
+            if (gameObject == null)
+            {
+                Log.Error("Attempted to persist null game object to the database.");
+            }
+
             lock (_dbLock)
             {
                 var insertQuery = "UPDATE " + gameObject.GetTable() + " set " + GAME_OBJECT_DELETED + "=@" +
@@ -407,7 +413,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.GetId()));
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
-                    if (gameObject != null && gameObject.GetData() != null)
+                    if (gameObject.GetData() != null)
                     {
                         cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.GetData()));
                     }

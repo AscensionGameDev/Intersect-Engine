@@ -11,6 +11,7 @@ using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
 using Intersect_Library.Localization;
+using Intersect_Library.Logging;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Items;
@@ -1884,7 +1885,12 @@ namespace Intersect_Server.Classes.Core
         }
         public static void SaveGameObject(DatabaseObject gameObject)
         {
-            
+            if (gameObject == null)
+            {
+                Log.Error("Attempted to persist null game object to the database.");
+            }
+
+
             var insertQuery = "UPDATE " + gameObject.GetTable() + " set " + GAME_OBJECT_DELETED + "=@" +
                               GAME_OBJECT_DELETED + "," + GAME_OBJECT_DATA + "=@" + GAME_OBJECT_DATA + " WHERE " +
                               GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
@@ -1892,7 +1898,7 @@ namespace Intersect_Server.Classes.Core
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.Id));
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
-                if (gameObject != null && gameObject.GetData() != null)
+                if (gameObject.GetData() != null)
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.GetData()));
                     cmd.ExecuteNonQuery();

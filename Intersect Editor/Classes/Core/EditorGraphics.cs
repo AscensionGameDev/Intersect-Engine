@@ -1167,7 +1167,7 @@ namespace Intersect_Editor.Classes
             if (screenShotting)
             {
                 Color gridLightColor = Color.FromArgb(Database.GridLightColor);
-                if (!tmpMap.IsIndoors && gridLightColor != null)
+                if (!tmpMap.IsIndoors)
                 {
                     DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),
     Color.FromArgb(255, 255, 255, 255), DarknessTexture, BlendState.Additive);

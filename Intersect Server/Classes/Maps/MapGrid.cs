@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Intersect_Library;
 using Intersect_Server.Classes.Core;
 
@@ -95,20 +96,9 @@ namespace Intersect_Server.Classes.Maps
 
 		public bool HasMap(int mapNum, bool parent = false)
 		{
-		    bool has = false;
-		    has = MyMaps.Contains(mapNum);
-		    if (has) return true;
-		    if (parent)
-		    {
-		        for (int i = 0; i < Database.MapGrids.Count; i++)
-		        {
-		            if (Database.MapGrids[i].HasMap(mapNum))
-		            {
-		                return true;
-		            }
-		        }
-		    }
-		    return has;
+		    if (MyMaps.Contains(mapNum)) return true;
+		    if (!parent) return false;
+		    return Database.MapGrids.Any(t => t.HasMap(mapNum));
 		}
 	}
 }

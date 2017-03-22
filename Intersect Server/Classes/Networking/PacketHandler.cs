@@ -338,7 +338,7 @@ namespace Intersect_Server.Classes.Networking
             {
                 PacketSender.SendMap(client, mapNum);
                 map.SendMapEntitiesTo(client.Entity);
-                if (!client.IsEditor && client != null && client.Entity != null && mapNum == client.Entity.CurrentMap)
+                if (!client.IsEditor && client.Entity != null && mapNum == client.Entity.CurrentMap)
                 {
                     PacketSender.SendMapGrid(client, MapInstance.GetMap(mapNum).MapGrid);
                 }

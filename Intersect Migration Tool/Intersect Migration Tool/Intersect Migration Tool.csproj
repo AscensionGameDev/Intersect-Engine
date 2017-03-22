@@ -329,11 +329,6 @@
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\GameObjects\Switches and Variables\ServerVariableBase.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\GameObjects\TilesetBase.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\GameObjects\TimeBase.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Logging\FileOutput.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Logging\ILogOutput.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Logging\Log.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Logging\Logger.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Logging\LogLevel.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Options.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Point.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\TextUtils.cs" />

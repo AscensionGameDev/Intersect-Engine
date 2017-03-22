@@ -721,6 +721,7 @@ namespace Intersect_Server.Classes.Entities
                         HandleAoESpell(projectile.Spell, s.HitRadius, enemy.CurrentMap, enemy.CurrentX, enemy.CurrentY);
 
                     //Check that the npc has not been destroyed by the splash spell
+                    //TODO: Actually implement this, since null check is wrong.
                     if (enemy == null) { return; }
                 }
                 if (enemy.GetType() == typeof(Player) || enemy.GetType() == typeof(Npc))

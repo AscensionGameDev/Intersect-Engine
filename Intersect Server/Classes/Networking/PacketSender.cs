@@ -8,6 +8,7 @@ using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect_Library.Logging;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
@@ -80,15 +81,20 @@ namespace Intersect_Server.Classes.Networking
 
         public static void SendMap(Client client, int mapNum, bool allEditors = false)
         {
+            if (client == null)
+            {
+                Log.Error("Attempted to send packet to null client.");
+                return;
+            }
+
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.MapData);
             bf.WriteLong(mapNum);
-            bool isEditor = client != null && client.IsEditor;
             var map = MapInstance.GetMap(mapNum);
             if (map == null)
             {
                 bf.WriteInteger(1);
-                if (isEditor)
+                if (client.IsEditor)
                 {
                     if (allEditors) SendDataToEditors(bf.ToArray());
                 }
@@ -101,7 +107,7 @@ namespace Intersect_Server.Classes.Networking
             {
                 bf.WriteInteger(0);
                 byte[] MapData = null;
-                if (isEditor)
+                if (client.IsEditor)
                 {
                     MapData = MapInstance.GetMap(mapNum).GetMapData(false);
                     bf.WriteLong(MapData.Length);
@@ -175,18 +181,15 @@ namespace Intersect_Server.Classes.Networking
                         bf.WriteInteger(0);
                     }
                 }
-                if (client != null)
+                client.SendPacket(bf.ToArray());
+                if (client.IsEditor)
                 {
-                    client.SendPacket(bf.ToArray());
-                    if (isEditor)
-                    {
-                        if (allEditors) SendDataToEditors(bf.ToArray());
-                    }
-                    else
-                    {
-                        MapInstance.GetMap(mapNum).SendMapEntitiesTo(client.Entity);
-                        SendMapItems(client, mapNum);
-                    }
+                    if (allEditors) SendDataToEditors(bf.ToArray());
+                }
+                else
+                {
+                    MapInstance.GetMap(mapNum).SendMapEntitiesTo(client.Entity);
+                    SendMapItems(client, mapNum);
                 }
             }
             bf.Dispose();
