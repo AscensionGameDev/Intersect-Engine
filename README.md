@@ -34,7 +34,7 @@ No special installation steps are required.
 * **[JC Snider](https://github.com/jcsnider)**
 * **[Joe Bridges](https://github.com/irokaiser)**
 
-Special thanks to [Robert Lodico](https://github.com/lodicolo) for all of his contributions and helping us get Intersect to release quciker than expected!
+Special thanks to [Robert Lodico](https://github.com/lodicolo) for all of his contributions and helping us get Intersect to release quicker than expected!
 
 ## License
 
