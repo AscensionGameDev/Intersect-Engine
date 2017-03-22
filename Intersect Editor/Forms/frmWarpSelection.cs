@@ -33,7 +33,7 @@ namespace Intersect_Editor.Forms
             pnlMap.Width = Options.TileWidth * Options.MapWidth;
             pnlMap.Height = Options.TileHeight * Options.MapHeight;
             pnlMap.BackColor = Color.Black;
-            mapTreeList1.SetSelect(new TreeViewEventHandler(NodeDoubleClick));
+            mapTreeList1.SetSelect(NodeDoubleClick);
 
             typeof(Panel).InvokeMember("DoubleBuffered",BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,null, pnlMap, new object[] { true });
         }

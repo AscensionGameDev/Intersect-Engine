@@ -29,7 +29,7 @@ namespace Intersect_Editor.Forms
             if (Database.LoadOptions())
             {
                 Strings.Init(Strings.IntersectComponent.Editor,Options.Language);
-                EditorLoopDelegate = new BeginEditorLoop(EditorLoop.StartLoop);
+                EditorLoopDelegate = EditorLoop.StartLoop;
                 if (Preferences.LoadPreference("username").Trim().Length > 0)
                 {
                     txtUsername.Text = Preferences.LoadPreference("Username");

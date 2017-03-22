@@ -18,7 +18,7 @@ namespace Intersect_Editor.Forms
 
             //Enable Editting of the list
             mapTreeList.EnableEditing(contextMenuStrip1);
-            mapTreeList.SetDoubleClick(new TreeNodeMouseClickEventHandler(NodeDoubleClick));
+            mapTreeList.SetDoubleClick(NodeDoubleClick);
         }
 
         private void NodeDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
