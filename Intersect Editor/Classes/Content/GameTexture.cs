@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Intersect_Editor.Classes.Core;
 using Microsoft.Xna.Framework.Graphics;
 

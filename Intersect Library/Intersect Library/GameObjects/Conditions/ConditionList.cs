@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Intersect_Library.GameObjects.Events;
 
 namespace Intersect_Library.GameObjects.Conditions

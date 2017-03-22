@@ -11,10 +11,7 @@ using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Items;
 using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Spells;
-
-using Attribute = Intersect_Library.GameObjects.Maps.Attribute;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Intersect_Client.Classes.Misc;
 using Intersect_Library.Localization;

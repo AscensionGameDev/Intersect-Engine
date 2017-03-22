@@ -1,10 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Properties;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.Localization;

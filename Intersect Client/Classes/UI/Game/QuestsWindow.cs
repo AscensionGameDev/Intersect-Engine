@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using IntersectClientExtras.File_Management;
-using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using IntersectClientExtras.Gwen.Control.Layout;
 using IntersectClientExtras.Gwen.ControlInternal;
-using IntersectClientExtras.Input;
-using Intersect_Library;
 using Color = IntersectClientExtras.GenericClasses.Color;
-using Point = IntersectClientExtras.GenericClasses.Point;
 using Intersect_Library.GameObjects;
 using Intersect_Library.Localization;
 

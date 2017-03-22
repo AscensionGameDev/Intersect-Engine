@@ -1,19 +1,10 @@
 ﻿using Intersect_Editor.Classes;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
-using Intersect_Editor.Classes.Core;
-using Intersect_Library.GameObjects.Events;
 using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors

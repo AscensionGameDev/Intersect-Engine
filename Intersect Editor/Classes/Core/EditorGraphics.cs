@@ -3,7 +3,6 @@ using System;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.Entities;
@@ -1082,7 +1081,7 @@ namespace Intersect_Editor.Classes
                 OverlayDarkness(screenShot, true);
             }
             int[] data = new int[screenShot.Width * screenShot.Height];
-            screenShot.GetData<int>(0, new Microsoft.Xna.Framework.Rectangle(0, 0, screenShot.Width, screenShot.Height), data, 0, screenShot.Width * screenShot.Height);
+            screenShot.GetData(0, new Microsoft.Xna.Framework.Rectangle(0, 0, screenShot.Width, screenShot.Height), data, 0, screenShot.Width * screenShot.Height);
             Bitmap bitmap = new Bitmap(screenShot.Width, screenShot.Height);
             var bits = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
             unsafe

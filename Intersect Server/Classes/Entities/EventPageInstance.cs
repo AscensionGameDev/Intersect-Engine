@@ -1,20 +1,19 @@
 ﻿
 
-using System;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Misc;
 using Intersect_Server.Classes.Misc.Pathfinding;
 using Intersect_Server.Classes.Networking;
-using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes.Entities
 {
     public class EventPageInstance : Entity
     {
-        public Client Client = null;
+        public Client Client;
         public int Trigger;
         public int MovementType;
         public int MovementFreq;
@@ -23,14 +22,14 @@ namespace Intersect_Server.Classes.Entities
         public int DisablePreview;
         public EventBase BaseEvent;
         public EventPage MyPage;
-        public Entities.EventInstance MyEventIndex;
+        public EventInstance MyEventIndex;
         public EventPageInstance GlobalClone;
         private Pathfinder _pathFinder;
-        private int WalkingAnim = 0;
-        private int DirectionFix = 0;
+        private int WalkingAnim;
+        private int DirectionFix;
         private int RenderLevel = 1;
-        private int PageNum = 0;
-        public EventPageInstance(EventBase myEvent, EventPage myPage, int myIndex, int mapNum, Entities.EventInstance eventIndex, Client client) : base(myIndex)
+        private int PageNum;
+        public EventPageInstance(EventBase myEvent, EventPage myPage, int myIndex, int mapNum, EventInstance eventIndex, Client client) : base(myIndex)
         {
             BaseEvent = myEvent;
             MyPage = myPage;
@@ -87,7 +86,7 @@ namespace Intersect_Server.Classes.Entities
             Client = client;
             SendToClient();
         }
-        public EventPageInstance(EventBase myEvent, EventPage myPage, int myIndex, int mapNum, Entities.EventInstance eventIndex, Client client, EventPageInstance globalClone) : base(myIndex)
+        public EventPageInstance(EventBase myEvent, EventPage myPage, int myIndex, int mapNum, EventInstance eventIndex, Client client, EventPageInstance globalClone) : base(myIndex)
         {
             BaseEvent = myEvent;
             GlobalClone = globalClone;

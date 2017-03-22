@@ -1,7 +1,4 @@
-﻿
-
-using System;
-using System.Threading;
+﻿using System.Threading;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;

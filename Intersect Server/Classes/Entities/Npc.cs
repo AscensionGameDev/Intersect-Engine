@@ -1,7 +1,4 @@
-﻿
-
-using System;
-using Intersect_Library;
+﻿using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;

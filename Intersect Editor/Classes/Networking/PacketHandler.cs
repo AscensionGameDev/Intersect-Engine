@@ -1,7 +1,5 @@
 ﻿
 using System;
-using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.Maps;
@@ -10,7 +8,6 @@ using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
-using Microsoft.Xna.Framework.Graphics;
 
 
 namespace Intersect_Editor.Classes

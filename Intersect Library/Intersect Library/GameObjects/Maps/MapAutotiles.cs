@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Intersect_Library.GameObjects.Maps
+﻿namespace Intersect_Library.GameObjects.Maps
 {
     public class MapAutotiles
     {

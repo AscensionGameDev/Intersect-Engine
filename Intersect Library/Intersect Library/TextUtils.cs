@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Intersect_Library
+﻿namespace Intersect_Library
 {
     public static class TextUtils
     {

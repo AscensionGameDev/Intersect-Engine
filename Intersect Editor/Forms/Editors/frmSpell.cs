@@ -11,7 +11,6 @@ using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Forms.Editors;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps.MapList;
 using Intersect_Library.Localization;
 

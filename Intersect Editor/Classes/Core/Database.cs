@@ -11,8 +11,6 @@ using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps;
 using Mono.Data.Sqlite;
-using System.IO.Compression;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect_Editor.Classes
 {

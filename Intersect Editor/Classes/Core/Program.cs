@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Forms;
 using Intersect_Library.Logging;

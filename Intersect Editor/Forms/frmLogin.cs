@@ -8,7 +8,6 @@ using System.Security.Cryptography;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library;
 using Intersect_Library.Localization;
-using Microsoft.Win32;
 
 namespace Intersect_Editor.Forms
 {

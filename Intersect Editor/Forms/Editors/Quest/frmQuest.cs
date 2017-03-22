@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Forms.Editors;
-using Intersect_Editor.Forms.Editors.Event_Commands;
 using Intersect_Editor.Forms.Editors.Quest;
 using Intersect_Library;
 using Intersect_Library.GameObjects;

@@ -1,7 +1,6 @@
 ﻿
 using System;
 using System.Windows.Forms;
-using DarkUI.Controls;
 using Intersect_Editor.Classes;
 using Intersect_Library;
 using Intersect_Library.GameObjects;

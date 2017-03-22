@@ -1,5 +1,4 @@
-﻿using System;
-using IntersectClientExtras.File_Management;
+﻿using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;

@@ -7,7 +7,6 @@ using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.Items;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
-using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.General
 {

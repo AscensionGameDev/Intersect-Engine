@@ -1,7 +1,6 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Forms.Editors.Event_Commands;

@@ -1,7 +1,4 @@
-﻿using IntersectClientExtras.File_Management;
-using IntersectClientExtras.Gwen.Control;
-using Intersect_Client.Classes.General;
-using Intersect_Library;
+﻿using IntersectClientExtras.Gwen.Control;
 
 namespace Intersect_Client.Classes.UI.Menu
 {

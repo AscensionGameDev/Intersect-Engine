@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Intersect_Library;
-using Intersect_Library.Localization;
 
 namespace Intersect_Server.Classes.General
 {

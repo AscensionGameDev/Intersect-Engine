@@ -1,8 +1,6 @@
 ﻿using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Library.Localization;

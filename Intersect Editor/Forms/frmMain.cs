@@ -14,7 +14,6 @@ using Intersect_Editor.Forms.DockingElements;
 using Intersect_Editor.Forms.Editors;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
-using Microsoft.Xna.Framework.Graphics;
 using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms

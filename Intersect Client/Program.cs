@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Media;
-using IntersectClientExtras.Gwen.Control;
 using Intersect_Client_MonoGame;
 using Intersect_Library.Localization;
 
@@ -24,7 +22,7 @@ namespace Intersect_MonoGameDx
                 {
                     game.Run();
                 }
-                catch (System.PlatformNotSupportedException)
+                catch (PlatformNotSupportedException)
                 {
                     System.Windows.Forms.MessageBox.Show(Strings.Get("errors","openglerror"), Strings.Get("errors", "notsupported"));
                 }

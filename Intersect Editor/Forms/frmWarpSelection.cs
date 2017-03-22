@@ -2,14 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Maps;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Maps.MapList;
 using Intersect_Library.Localization;
-using Microsoft.Xna.Framework.Graphics;
 using Color = System.Drawing.Color;
 using System.Reflection;
 

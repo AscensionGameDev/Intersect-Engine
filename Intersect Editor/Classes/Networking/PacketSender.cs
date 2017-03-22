@@ -1,7 +1,4 @@
-﻿
-
-using Intersect_Editor.Classes.Maps;
-using Intersect_Library;
+﻿using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
