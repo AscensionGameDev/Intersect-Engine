@@ -8,8 +8,7 @@ namespace Intersect_Library.GameObjects.Events
         public new const string DatabaseTable = "events";
         public new const GameObject Type = GameObject.CommonEvent;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
-        public string MyName { get; set; }
+        
         public int MyIndex { get; set; }
         public int SpawnX { get; set; }
         public int SpawnY { get; set; }
@@ -19,8 +18,8 @@ namespace Intersect_Library.GameObjects.Events
 
         public EventBase(int index, int x, int y, bool isCommon = false, byte isGlobal = 0) : base (index)
         {
-            MyName = "";
-            if (isCommon) MyName = "Common Event " + index;
+            Name = "";
+            if (isCommon) Name = "Common Event " + index;
             MyIndex = index;
             SpawnX = x;
             SpawnY = y;
@@ -32,7 +31,7 @@ namespace Intersect_Library.GameObjects.Events
 
         public EventBase(int index, EventBase copy) : base(index)
         {
-            MyName = "New Event";
+            Name = "New Event";
             MyPages = new List<EventPage>();
             MyIndex = index;
             Load(copy.EventData());
@@ -40,7 +39,7 @@ namespace Intersect_Library.GameObjects.Events
         }
         public EventBase(int index, ByteBuffer myBuffer, bool isCommon = false) : base(index)
         {
-            MyName = "New Event";
+            Name = "New Event";
             MyPages = new List<EventPage>();
             MyIndex = index;
             Load(myBuffer.ToArray());
@@ -48,7 +47,7 @@ namespace Intersect_Library.GameObjects.Events
         public byte[] EventData()
         {
             var myBuffer = new ByteBuffer();
-                myBuffer.WriteString(MyName);
+                myBuffer.WriteString(Name);
                 myBuffer.WriteInteger(SpawnX);
                 myBuffer.WriteInteger(SpawnY);
                 myBuffer.WriteByte(IsGlobal);
@@ -64,7 +63,7 @@ namespace Intersect_Library.GameObjects.Events
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
-                MyName = myBuffer.ReadString();
+                Name = myBuffer.ReadString();
                 SpawnX = myBuffer.ReadInteger();
                 SpawnY = myBuffer.ReadInteger();
                 IsGlobal = myBuffer.ReadByte();
@@ -89,7 +88,7 @@ namespace Intersect_Library.GameObjects.Events
         {
             if (Objects.ContainsKey(index))
             {
-                return ((EventBase)Objects[index]).MyName;
+                return ((EventBase)Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -119,7 +118,7 @@ namespace Intersect_Library.GameObjects.Events
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

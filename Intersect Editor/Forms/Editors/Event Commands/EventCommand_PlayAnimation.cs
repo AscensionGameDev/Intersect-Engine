@@ -130,7 +130,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     {
                         foreach (var evt in _currentMap.Events)
                         {
-                            cmbEntities.Items.Add(evt.Key == _editingEvent.MyIndex ? Strings.Get("eventplayanimation","this") + " " : "" + evt.Value.MyName);
+                            cmbEntities.Items.Add(evt.Key == _editingEvent.MyIndex ? Strings.Get("eventplayanimation","this") + " " : "" + evt.Value.Name);
                             if (_myCommand.Ints[2] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
                         }
                     }

@@ -55,13 +55,13 @@ namespace Intersect_Editor.Classes.Maps
         DefaultValueAttribute("New Map")]
         public string Name
         {
-            get { return _myMap.MyName; }
+            get { return _myMap.Name; }
             set
             {
-                if (_myMap.MyName != value)
+                if (_myMap.Name != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.MyName = value;
+                    _myMap.Name = value;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }

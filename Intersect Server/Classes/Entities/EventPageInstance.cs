@@ -37,7 +37,7 @@ namespace Intersect_Server.Classes.Entities
             CurrentMap = mapNum;
             CurrentX = eventIndex.CurrentX;
             CurrentY = eventIndex.CurrentY;
-            MyName = myEvent.MyName;
+            MyName = myEvent.Name;
             MovementType = MyPage.MovementType;
             MovementFreq = MyPage.MovementFreq;
             MovementSpeed = MyPage.MovementSpeed;
@@ -95,7 +95,7 @@ namespace Intersect_Server.Classes.Entities
             CurrentMap = mapNum;
             CurrentX = globalClone.CurrentX;
             CurrentY = globalClone.CurrentY;
-            MyName = myEvent.MyName;
+            MyName = myEvent.Name;
             MovementType = globalClone.MovementType;
             MovementFreq = globalClone.MovementFreq;
             MovementSpeed = globalClone.MovementSpeed;

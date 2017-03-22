@@ -11,7 +11,6 @@ namespace Intersect_Library.GameObjects
         public new const GameObject Type = GameObject.Shop;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
-        public string Name = "New Shop";
         public int DefaultCurrency = 0;
 
         //Selling List
@@ -24,6 +23,7 @@ namespace Intersect_Library.GameObjects
 
         public ShopBase(int id) : base(id)
         {
+            Name = "New Shop";
         }
 
         public override void Load(byte[] packet)
@@ -111,7 +111,7 @@ namespace Intersect_Library.GameObjects
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

@@ -363,7 +363,7 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstItems.Items[Database.GameObjectListIndex(GameObject.Item,_editorItem.GetId())] =  txtName.Text;
+            lstItems.Items[Database.GameObjectListIndex(GameObject.Item,_editorItem.Id)] =  txtName.Text;
         }
 
         private void cmbPic_SelectedIndexChanged(object sender, EventArgs e)

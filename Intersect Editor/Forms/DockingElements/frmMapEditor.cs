@@ -276,7 +276,7 @@ namespace Intersect_Editor.Forms
                                         {
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                 Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex =
-                                                Globals.CurrentTileset.GetId();
+                                                Globals.CurrentTileset.Id;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                 Globals.CurTileX + x, Globals.CurTileY + y].X =
                                                 Globals.CurSelX + x;
@@ -294,7 +294,7 @@ namespace Intersect_Editor.Forms
                             else
                             {
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY]
-                                    .TilesetIndex = Globals.CurrentTileset.GetId();
+                                    .TilesetIndex = Globals.CurrentTileset.Id;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X
                                     = Globals.CurSelX;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y
@@ -499,7 +499,7 @@ namespace Intersect_Editor.Forms
                                         {
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                 Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex =
-                                                Globals.CurrentTileset.GetId();
+                                                Globals.CurrentTileset.Id;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                 Globals.CurTileX + x, Globals.CurTileY + y].X = Globals.CurSelX + x;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
@@ -515,7 +515,7 @@ namespace Intersect_Editor.Forms
                             else
                             {
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY]
-                                    .TilesetIndex = Globals.CurrentTileset.GetId();
+                                    .TilesetIndex = Globals.CurrentTileset.Id;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X =
                                     Globals.CurSelX;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y =
@@ -675,7 +675,7 @@ namespace Intersect_Editor.Forms
                                         if (Globals.CurrentTileset != null)
                                         {
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex =
-                                                Globals.CurrentTileset.GetId();
+                                                Globals.CurrentTileset.Id;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].X = Globals.CurSelX + x1;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Y = Globals.CurSelY + y1;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Autotile =
@@ -696,7 +696,7 @@ namespace Intersect_Editor.Forms
                             {
                                 if (Globals.MouseButton == 0)
                                 {
-                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex = Globals.CurrentTileset.GetId();
+                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex = Globals.CurrentTileset.Id;
                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].X = Globals.CurSelX;
                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Y = Globals.CurSelY;
                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Autotile = (byte)Globals.Autotilemode;
@@ -784,7 +784,7 @@ namespace Intersect_Editor.Forms
                 }
                 if (dir != -1)
                 {
-                    if (Globals.MapGrid != null && Globals.MapGrid.Contains(Globals.CurrentMap.MyMapNum))
+                    if (Globals.MapGrid != null && Globals.MapGrid.Contains(Globals.CurrentMap.Id))
                     {
                         var x = gridX + Globals.CurrentMap.MapGridX;
                         var y = gridY + Globals.CurrentMap.MapGridY;
@@ -799,7 +799,7 @@ namespace Intersect_Editor.Forms
                 }
                 else
                 {
-                    if (Globals.MapGrid != null && Globals.MapGrid.Contains(Globals.CurrentMap.MyMapNum))
+                    if (Globals.MapGrid != null && Globals.MapGrid.Contains(Globals.CurrentMap.Id))
                     {
                         var x = gridX + Globals.CurrentMap.MapGridX;
                         var y = gridY + Globals.CurrentMap.MapGridY;
@@ -837,7 +837,7 @@ namespace Intersect_Editor.Forms
                         {
                             SaveMap();
                         }
-                        PacketSender.SendCreateMap(dir, Globals.CurrentMap.GetId(), null);
+                        PacketSender.SendCreateMap(dir, ((DatabaseObject) Globals.CurrentMap).Id, null);
                     }
                     else
                     {
@@ -981,14 +981,14 @@ namespace Intersect_Editor.Forms
                             {
                                 x1 = (x) % (Globals.CurSelW + 1);
                                 y1 = (y) % (Globals.CurSelH + 1);
-                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = Globals.CurrentTileset.GetId();
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = Globals.CurrentTileset.Id;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = Globals.CurSelX + x1;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY + y1;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
                             }
                             else
                             {
-                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = Globals.CurrentTileset.GetId();
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = Globals.CurrentTileset.Id;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = Globals.CurSelX;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = (byte)Globals.Autotilemode;

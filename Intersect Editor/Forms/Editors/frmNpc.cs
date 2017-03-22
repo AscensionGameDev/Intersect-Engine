@@ -260,7 +260,7 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstNpcs.Items[Database.GameObjectListIndex(GameObject.Npc,_editorItem.GetId())] = txtName.Text;
+            lstNpcs.Items[Database.GameObjectListIndex(GameObject.Npc,_editorItem.Id)] = txtName.Text;
         }
 
         private void cmbBehavior_SelectedIndexChanged(object sender, EventArgs e)

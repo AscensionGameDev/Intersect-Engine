@@ -398,7 +398,7 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstSpells.Items[Database.GameObjectListIndex(GameObject.Spell,_editorItem.GetId())] = txtName.Text;
+            lstSpells.Items[Database.GameObjectListIndex(GameObject.Spell,_editorItem.Id)] = txtName.Text;
         }
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)

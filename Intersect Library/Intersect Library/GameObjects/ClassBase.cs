@@ -9,8 +9,7 @@ namespace Intersect_Library.GameObjects
         public new const string DatabaseTable = "classes";
         public new const GameObject Type = GameObject.Class;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
-        public string Name = "New Class";
+        
 
         //Spawn Info
         public int SpawnMap = 0;
@@ -58,6 +57,7 @@ namespace Intersect_Library.GameObjects
 
         public ClassBase(int id) : base(id)
         {
+            Name = "New Class";
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Items.Add(new ClassItem());
@@ -279,7 +279,7 @@ namespace Intersect_Library.GameObjects
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

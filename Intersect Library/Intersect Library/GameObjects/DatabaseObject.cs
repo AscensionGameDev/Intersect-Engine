@@ -8,18 +8,16 @@ namespace Intersect_Library.GameObjects
 {
     public abstract class DatabaseObject
     {
-        private int _id = -1;
+        public virtual int Id { get; private set; }
+        public string Name { get; set; }
         public const string DatabaseTable = "";
         public const GameObject Type = GameObject.Animation;
         private byte[] backup = null;
         protected DatabaseObject(int id)
         {
-            _id = id;
+            Id = id;
         }
-        public virtual int GetId()
-        {
-            return _id;
-        }
+        
         public abstract void Load(byte[] packet);
         public virtual void MakeBackup()
         {
@@ -87,11 +85,11 @@ namespace Intersect_Library.GameObjects
                     break;
                 case GameObject.Map:
                     foreach (var obj in MapBase.GetObjects())
-                        items.Add(obj.Value.MyName);
+                        items.Add(obj.Value.Name);
                     break;
                 case GameObject.CommonEvent:
                     foreach (var obj in EventBase.GetObjects())
-                        items.Add(obj.Value.MyName);
+                        items.Add(obj.Value.Name);
                     break;
                 case GameObject.PlayerSwitch:
                     foreach (var obj in PlayerSwitchBase.GetObjects())
@@ -111,7 +109,7 @@ namespace Intersect_Library.GameObjects
                     break;
                 case GameObject.Tileset:
                     foreach (var obj in TilesetBase.GetObjects())
-                        items.Add(obj.Value.Value);
+                        items.Add(obj.Value.Name);
                     break;
                 case GameObject.Time:
                     break;

@@ -366,7 +366,7 @@ namespace Intersect_Editor.Classes
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstProjectiles.Items[Database.GameObjectListIndex(GameObject.Projectile,_editorItem.GetId())] = txtName.Text;
+            lstProjectiles.Items[Database.GameObjectListIndex(GameObject.Projectile,_editorItem.Id)] = txtName.Text;
         }
 
         private void chkHoming_CheckedChanged(object sender, EventArgs e)

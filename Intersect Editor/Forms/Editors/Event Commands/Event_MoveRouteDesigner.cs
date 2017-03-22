@@ -64,7 +64,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 }
                 foreach (var evt in _currentMap.Events)
                 {
-                    cmbTarget.Items.Add(evt.Key == _editingEvent.MyIndex ? Strings.Get("eventmoveroute", "thisevent") : "" + evt.Value.MyName);
+                    cmbTarget.Items.Add(evt.Key == _editingEvent.MyIndex ? Strings.Get("eventmoveroute", "thisevent") : "" + evt.Value.Name);
                     if (_editingCommand != null)
                     {
                         if (_editingCommand.Route.Target == evt.Key) cmbTarget.SelectedIndex = cmbTarget.Items.Count;

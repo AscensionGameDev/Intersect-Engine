@@ -826,7 +826,7 @@ namespace Intersect_Server.Classes.Entities
                     bool DoTFound = false;
                     for (int i = 0; i < enemy.DoT.Count; i++)
                     {
-                        if (enemy.DoT[i].SpellBase.GetId() == spellBase.GetId() ||
+                        if (enemy.DoT[i].SpellBase.Id == spellBase.Id ||
                             enemy.DoT[i].OwnerID == MyIndex)
                         {
                             DoTFound = true;
@@ -834,7 +834,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     if (DoTFound == false) //no duplicate DoT/HoT spells.
                     {
-                        enemy.DoT.Add(new DoTInstance(MyIndex, spellBase.GetId(), enemy));
+                        enemy.DoT.Add(new DoTInstance(MyIndex, spellBase.Id, enemy));
                     }
                 }
             }
@@ -1172,7 +1172,7 @@ namespace Intersect_Server.Classes.Entities
                             if (t == null || targetsHit.Contains(t)) continue;
                             if (t.GetType() == typeof(Player) || t.GetType() == typeof(Npc))
                             {
-                                if (t.CurrentMap == tempMap.MyMapNum && t.CurrentX == x2 && t.CurrentY == y2) {
+                                if (t.CurrentMap == tempMap.Id && t.CurrentX == x2 && t.CurrentY == y2) {
                                     if (target == -1 || target == t.MyIndex)
                                     {
                                         targetsHit.Add(t);

@@ -143,7 +143,7 @@ namespace Intersect_Server.Classes.Entities
             ByteBuffer myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(base.Data());
             myBuffer.WriteInteger(Convert.ToInt32(IsDead));
-            myBuffer.WriteInteger(MyBase.GetId());
+            myBuffer.WriteInteger(MyBase.Id);
             return myBuffer.ToArray();
         }
         public override EntityTypes GetEntityType()

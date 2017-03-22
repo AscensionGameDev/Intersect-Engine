@@ -122,7 +122,7 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstQuests.Items[Database.GameObjectListIndex(GameObject.Quest,_editorItem.GetId())] =  txtName.Text;
+            lstQuests.Items[Database.GameObjectListIndex(GameObject.Quest,_editorItem.Id)] =  txtName.Text;
         }
 
         private void txtStartDesc_TextChanged(object sender, EventArgs e)
@@ -137,13 +137,13 @@ namespace Intersect_Editor.Forms
 
         private void btnEditStartEvent_Click(object sender, EventArgs e)
         {
-            _editorItem.StartEvent.MyName = "Quest " + _editorItem.Name + " Start Event";
+            _editorItem.StartEvent.Name = "Quest " + _editorItem.Name + " Start Event";
             openQuestEvent(_editorItem.StartEvent);
         }
 
         private void btnEditCompletionEvent_Click(object sender, EventArgs e)
         {
-            _editorItem.EndEvent.MyName = "Quest " + _editorItem.Name + " Completion Event";
+            _editorItem.EndEvent.Name = "Quest " + _editorItem.Name + " Completion Event";
             openQuestEvent(_editorItem.EndEvent);
         }
 

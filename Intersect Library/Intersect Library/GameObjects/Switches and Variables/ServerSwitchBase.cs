@@ -10,12 +10,12 @@ namespace Intersect_Library.GameObjects
         public new const string DatabaseTable = "server_switches";
         public new const GameObject Type = GameObject.ServerSwitch;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
-        public string Name = "New Global Switch";
+        
         public bool Value = false;
 
         public ServerSwitchBase(int id) : base(id)
         {
+            Name = "New Global Switch";
         }
 
         public override void Load(byte[] packet)
@@ -78,7 +78,7 @@ namespace Intersect_Library.GameObjects
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

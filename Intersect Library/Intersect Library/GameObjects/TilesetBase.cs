@@ -11,30 +11,29 @@ namespace Intersect_Library.GameObjects
         public new const GameObject Type = GameObject.Tileset;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
-        public string Value = "";
-
         public TilesetBase(int id) : base(id)
         {
+            Name = "";
         }
 
         public void SetValue(string filename)
         {
-            Value = filename.Trim();
+            Name = filename.Trim();
         }
 
         public string GetValue()
         {
-            return Value;
+            return Name;
         }
 
         public override void Load(byte[] packet)
         {
-            Value = Encoding.ASCII.GetString(packet, 0, packet.Length);
+            Name = Encoding.ASCII.GetString(packet, 0, packet.Length);
         }
 
         public byte[] Data()
         {
-            return Encoding.ASCII.GetBytes(Value);
+            return Encoding.ASCII.GetBytes(Name);
         }
 
         public static TilesetBase GetTileset(int index)
@@ -51,7 +50,7 @@ namespace Intersect_Library.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return ((TilesetBase)Objects[index]).Value;
+                return ((TilesetBase)Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -81,7 +80,7 @@ namespace Intersect_Library.GameObjects
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

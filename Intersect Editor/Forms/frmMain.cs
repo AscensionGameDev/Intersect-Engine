@@ -356,9 +356,9 @@ namespace Intersect_Editor.Forms
             {
                 toolStripLabelCoords.Text = Strings.Get("mainform","loc",Globals.CurTileX,Globals.CurTileY);
                 toolStripLabelRevision.Text = Strings.Get("mainform","revision", Globals.CurrentMap.Revision);
-                if (Text != Strings.Get("mainform","title", Globals.CurrentMap.MyName))
+                if (Text != Strings.Get("mainform","title", Globals.CurrentMap.Name))
                 {
-                    Text = Strings.Get("mainform", "title", Globals.CurrentMap.MyName);
+                    Text = Strings.Get("mainform", "title", Globals.CurrentMap.Name);
                 }
             }
 
@@ -556,7 +556,7 @@ namespace Intersect_Editor.Forms
             {
                 SaveMap();
             }
-            PacketSender.SendCreateMap(-1, Globals.CurrentMap.GetId(), null);
+            PacketSender.SendCreateMap(-1, ((DatabaseObject) Globals.CurrentMap).Id, null);
         }
         private void exportMapToolStripMenuItem_Click(object sender, EventArgs e)
         {

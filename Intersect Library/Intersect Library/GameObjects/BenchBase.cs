@@ -10,13 +10,12 @@ namespace Intersect_Library.GameObjects
         public new const string DatabaseTable = "crafts";
         public new const GameObject Type = GameObject.Bench;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
-        public string Name = "New Bench";
+        
         public List<Craft> Crafts = new List<Craft>();
 
         public BenchBase(int id) : base(id)
         {
-
+            Name = "New Bench";
         }
 
         public override void Load(byte[] packet)
@@ -104,7 +103,7 @@ namespace Intersect_Library.GameObjects
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

@@ -67,27 +67,27 @@ namespace Intersect_Server.Classes.Maps
 
         private void CalculateBounds(MapInstance map, int x, int y)
         {
-            if (HasMap(map.MyMapNum,true)) { return; }
-            MyMaps.Add(map.MyMapNum);
+            if (HasMap(map.Id,true)) { return; }
+            MyMaps.Add(map.Id);
             map.MapGridX = x;
             map.MapGridY = y;
             if (x < _topLeft.X) {_topLeft.X = x;}
             if (y < _topLeft.Y) {_topLeft.Y = y;}
             if (x > _botRight.X) {_botRight.X = x;}
             if (y > _botRight.Y) { _botRight.Y = y;}
-            if (MapInstance.GetObjects().ContainsKey(map.Up) && MapInstance.GetMap(map.Up).Down == map.MyMapNum)
+            if (MapInstance.GetObjects().ContainsKey(map.Up) && MapInstance.GetMap(map.Up).Down == map.Id)
             {
                 CalculateBounds(MapInstance.GetMap(map.Up), x, y - 1);
             }
-            if (MapInstance.GetObjects().ContainsKey(map.Down) && MapInstance.GetMap(map.Down).Up == map.MyMapNum)
+            if (MapInstance.GetObjects().ContainsKey(map.Down) && MapInstance.GetMap(map.Down).Up == map.Id)
             {
                 CalculateBounds(MapInstance.GetMap(map.Down), x, y + 1);
             }
-            if (MapInstance.GetObjects().ContainsKey(map.Left) && MapInstance.GetMap(map.Left).Right == map.MyMapNum)
+            if (MapInstance.GetObjects().ContainsKey(map.Left) && MapInstance.GetMap(map.Left).Right == map.Id)
             {
                 CalculateBounds(MapInstance.GetMap(map.Left), x - 1, y);
             }
-            if (MapInstance.GetObjects().ContainsKey(map.Right) && MapInstance.GetMap(map.Right).Left == map.MyMapNum)
+            if (MapInstance.GetObjects().ContainsKey(map.Right) && MapInstance.GetMap(map.Right).Left == map.Id)
             {
                 CalculateBounds(MapInstance.GetMap(map.Right), x + 1, y);
             }

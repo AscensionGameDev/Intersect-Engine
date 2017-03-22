@@ -86,7 +86,7 @@ namespace Intersect_Client.Classes.UI.Game
             _drawsLabel.Text = Strings.Get("debug", "draws", GameGraphics.DrawCalls);
             if (MapInstance.GetMap(Globals.Me.CurrentMap) != null)
             {
-                _mapLabel.Text = Strings.Get("debug", "map", MapInstance.GetMap(Globals.Me.CurrentMap).MyName);
+                _mapLabel.Text = Strings.Get("debug", "map", MapInstance.GetMap(Globals.Me.CurrentMap).Name);
                 _xLabel.Text = Strings.Get("debug", "x", Globals.Me.CurrentX);
                 _yLabel.Text = Strings.Get("debug", "y", "Y: " + Globals.Me.CurrentY);
                 _zLabel.Text = Strings.Get("debug", "z", "Z: " + Globals.Me.CurrentZ);

@@ -316,7 +316,7 @@ namespace Intersect_Server.Classes.Entities
                             {
                                 if (entity.IsDead() == false && entity != this)
                                 {
-                                    if ((entity.GetType() == typeof(Player)) && Behaviour == (int)NpcBehavior.AttackOnSight || (entity.GetType() == typeof(Npc) && MyBase.AggroList.Contains(((Npc)entity).MyBase.GetId())))
+                                    if ((entity.GetType() == typeof(Player)) && Behaviour == (int)NpcBehavior.AttackOnSight || (entity.GetType() == typeof(Npc) && MyBase.AggroList.Contains(((Npc)entity).MyBase.Id)))
                                     {
                                         var dist = GetDistanceTo(entity);
                                         if (dist <= Range && dist < closestRange)

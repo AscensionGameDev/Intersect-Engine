@@ -252,16 +252,16 @@ namespace Intersect_Editor.Classes.Core
             var badTilesets = new List<string>();
             for (var i = 0; i < TilesetBase.ObjectCount(); i++)
             {
-                if (File.Exists("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value))
+                if (File.Exists("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name))
                 {
-                    tilesetDict.Add(TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value.ToLower(), new GameTexture("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value));
+                    tilesetDict.Add(TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name.ToLower(), new GameTexture("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name));
                     if (!tilesetWarning)
                     {
-                        using (var img = Bitmap.FromFile("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value))
+                        using (var img = Bitmap.FromFile("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name))
                         {
                             if (img.Width > 2048 || img.Height > 2048)
                             {
-                                badTilesets.Add(TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value);
+                                badTilesets.Add(TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name);
                             }
                         }
                     }

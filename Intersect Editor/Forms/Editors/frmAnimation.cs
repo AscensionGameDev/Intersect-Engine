@@ -221,7 +221,7 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstAnimations.Items[Database.GameObjectListIndex(GameObject.Animation,_editorItem.GetId())] = txtName.Text;
+            lstAnimations.Items[Database.GameObjectListIndex(GameObject.Animation,_editorItem.Id)] = txtName.Text;
         }
 
         private void cmbSound_SelectedIndexChanged(object sender, EventArgs e)

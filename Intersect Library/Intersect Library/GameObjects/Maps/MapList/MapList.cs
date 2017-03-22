@@ -88,7 +88,7 @@ namespace Intersect_Library.GameObjects.Maps.MapList
         {
             if (!gameMaps.ContainsKey(mapNum)) return;
             var tmp = new MapListMap();
-            tmp.Name = gameMaps[mapNum].MyName;
+            tmp.Name = gameMaps[mapNum].Name;
             tmp.MapNum = mapNum;
             Items.Add(tmp);
         }

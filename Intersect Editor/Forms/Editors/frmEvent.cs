@@ -166,7 +166,7 @@ namespace Intersect_Editor.Forms
         {
             _eventBackup = new ByteBuffer();
             _eventBackup.WriteBytes(MyEvent.EventData());
-            txtEventname.Text = MyEvent.MyName;
+            txtEventname.Text = MyEvent.Name;
             if (MyEvent.MyIndex < 0)
             {
                 txtEventname.Enabled = false;
@@ -752,7 +752,7 @@ namespace Intersect_Editor.Forms
                     {
                         if (MyMap.Events.ContainsKey(command.Route.Target))
                         {
-                            return Strings.Get("eventcommandlist", "moveroute", Strings.Get("eventcommandlist", "moverouteevent", (command.Route.Target), MyMap.Events[command.Route.Target].MyName));
+                            return Strings.Get("eventcommandlist", "moveroute", Strings.Get("eventcommandlist", "moverouteevent", (command.Route.Target), MyMap.Events[command.Route.Target].Name));
                         }
                         else
                         {
@@ -765,7 +765,7 @@ namespace Intersect_Editor.Forms
                         return Strings.Get("eventcommandlist", "waitforroute", Strings.Get("eventcommandlist", "moverouteplayer"));
                     }else if (MyMap.Events.ContainsKey(command.Ints[0]))
                     {
-                        return Strings.Get("eventcommandlist", "waitforroute", Strings.Get("eventcommandlist", "moverouteevent", (command.Ints[0]), MyMap.Events[command.Ints[0]].MyName));
+                        return Strings.Get("eventcommandlist", "waitforroute", Strings.Get("eventcommandlist", "moverouteevent", (command.Ints[0]), MyMap.Events[command.Ints[0]].Name));
                     }
                     else
                     {
@@ -802,7 +802,7 @@ namespace Intersect_Editor.Forms
                                 {
                                     return Strings.Get("eventcommandlist", "spawnnpc", NpcBase.GetName(command.Ints[0]),
                                         Strings.Get("eventcommandlist", "spawnonevent", command.Ints[2] + 1,
-                                            MyMap.Events[command.Ints[2]].MyName, command.Ints[3], command.Ints[4],
+                                            MyMap.Events[command.Ints[2]].Name, command.Ints[3], command.Ints[4],
                                             retain));
                                 }
                                 else
@@ -866,7 +866,7 @@ namespace Intersect_Editor.Forms
                                 {
                                     return Strings.Get("eventcommandlist", "playanimation",
                                     AnimationBase.GetName(command.Ints[0]),
-                                    Strings.Get("eventcommandlist", "animationonevent", (command.Ints[2] + 1), MyMap.Events[command.Ints[2]].MyName, command.Ints[3],
+                                    Strings.Get("eventcommandlist", "animationonevent", (command.Ints[2] + 1), MyMap.Events[command.Ints[2]].Name, command.Ints[3],
                                         command.Ints[4], spawnOpt));
                                 }
                                 else
@@ -1209,7 +1209,7 @@ namespace Intersect_Editor.Forms
 
         private void txtEventname_TextChanged(object sender, EventArgs e)
         {
-            MyEvent.MyName = txtEventname.Text;
+            MyEvent.Name = txtEventname.Text;
             this.Text = Strings.Get("eventeditor", "title", MyEvent.MyIndex, txtEventname.Text);
         }
 

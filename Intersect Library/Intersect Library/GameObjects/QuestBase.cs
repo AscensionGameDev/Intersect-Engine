@@ -27,7 +27,6 @@ namespace Intersect_Library.GameObjects
         public new const GameObject Type = GameObject.Quest;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
-        public string Name = "New Quest";
         public string BeforeDesc = "";
         public string StartDesc = "";
         public string InProgressDesc = "";
@@ -51,7 +50,7 @@ namespace Intersect_Library.GameObjects
 
         public QuestBase(int id) : base(id)
         {
-            
+            Name = "New Quest";
         }
 
         public override void Load(byte[] packet)
@@ -200,7 +199,7 @@ namespace Intersect_Library.GameObjects
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

@@ -32,7 +32,7 @@ namespace Intersect_Editor.Classes.Maps
         public MapInstance(MapBase mapStruct) : base(mapStruct)
         {
             Autotiles = new MapAutotiles(this);
-            MyMapNum = mapStruct.MyMapNum;
+            Id = mapStruct.Id;
             if (typeof(MapInstance) == mapStruct.GetType())
             {
                 MapGridX = ((MapInstance) mapStruct).MapGridX;
@@ -98,11 +98,11 @@ namespace Intersect_Editor.Classes.Maps
 
         public void Update()
         {
-            if (Globals.MapsToScreenshot.Contains(MyMapNum))
+            if (Globals.MapsToScreenshot.Contains(Id))
             {
                 if (Globals.MapGrid != null && Globals.MapGrid.Loaded)
                 {
-                    if (Globals.MapGrid.Contains(MyMapNum))
+                    if (Globals.MapGrid.Contains(Id))
                     {
                         for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
                         {
@@ -127,10 +127,10 @@ namespace Intersect_Editor.Classes.Maps
                             screenshotTexture.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
                             ms.Close();
                         }
-                        Database.SaveMapCache(MyMapNum, Revision, ms.ToArray());
+                        Database.SaveMapCache(Id, Revision, ms.ToArray());
                     }
                     Globals.CurrentMap = prevMap;
-                    Globals.MapsToScreenshot.Remove(MyMapNum);
+                    Globals.MapsToScreenshot.Remove(Id);
 
                     //See if this map is around our current map, if not let's delete it
                     if (Globals.CurrentMap != null && Globals.MapGrid != null && Globals.MapGrid.Loaded)
@@ -141,7 +141,7 @@ namespace Intersect_Editor.Classes.Maps
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    if (Globals.MapGrid.Grid[x, y].mapnum == MyMapNum) return;
+                                    if (Globals.MapGrid.Grid[x, y].mapnum == Id) return;
                                 }
                             }
                         }
@@ -155,7 +155,7 @@ namespace Intersect_Editor.Classes.Maps
         public MapBase[,] GenerateAutotileGrid()
         {
             MapBase[,] mapBase = new MapBase[3, 3];
-            if (Globals.MapGrid != null && Globals.MapGrid.Contains(GetId()))
+            if (Globals.MapGrid != null && Globals.MapGrid.Contains(((DatabaseObject) this).Id))
             {
                 for (int x = -1; x <= 1; x++)
                 {
@@ -188,7 +188,7 @@ namespace Intersect_Editor.Classes.Maps
         }
         public void UpdateAdjacentAutotiles()
         {
-            if (Globals.MapGrid != null && Globals.MapGrid.Contains(GetId()))
+            if (Globals.MapGrid != null && Globals.MapGrid.Contains(((DatabaseObject) this).Id))
             {
                 for (int x = -1; x <= 1; x++)
                 {
@@ -273,8 +273,8 @@ namespace Intersect_Editor.Classes.Maps
         {
             lock (objectsLock)
             {
-                Objects.Remove(GetId());
-                MapBase.GetObjects().Remove(GetId());
+                Objects.Remove(((DatabaseObject) this).Id);
+                MapBase.GetObjects().Remove(((DatabaseObject) this).Id);
             }
         }
         public static void ClearObjects()

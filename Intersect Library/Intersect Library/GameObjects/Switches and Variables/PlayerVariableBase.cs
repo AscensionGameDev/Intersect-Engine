@@ -9,11 +9,10 @@ namespace Intersect_Library.GameObjects
         public new const string DatabaseTable = "player_variables";
         public new const GameObject Type = GameObject.PlayerVariable;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
-        public string Name = "New Player Variable";
-
+        
         public PlayerVariableBase(int id) : base(id)
         {
+            Name = "New Player Variable";
         }
 
         public override void Load(byte[] packet)
@@ -74,7 +73,7 @@ namespace Intersect_Library.GameObjects
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

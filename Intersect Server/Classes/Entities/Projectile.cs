@@ -430,7 +430,7 @@ namespace Intersect_Server.Classes.Entities
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(base.Data());
-            bf.WriteInteger(MyBase.GetId());
+            bf.WriteInteger(MyBase.Id);
             bf.WriteInteger(Dir);
             bf.WriteInteger(Target);
             return bf.ToArray();

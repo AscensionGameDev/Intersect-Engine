@@ -153,7 +153,7 @@ namespace Intersect_Editor.Classes
                 {
                     if (Globals.FetchingMapPreviews || Globals.CurrentMap == map)
                     {
-                        int currentmap = Globals.CurrentMap.GetId();
+                        int currentmap = ((DatabaseObject) Globals.CurrentMap).Id;
                         if (Database.LoadMapCacheLegacy(mapNum, map.Revision) == null && !Globals.MapsToScreenshot.Contains(mapNum)) Globals.MapsToScreenshot.Add(mapNum);
                         if (Globals.FetchingMapPreviews)
                         {
@@ -181,7 +181,7 @@ namespace Intersect_Editor.Classes
                     if (map.Left > -1) { PacketSender.SendNeedMap(map.Left); }
                     if (map.Right > -1) { PacketSender.SendNeedMap(map.Right); }
                 }
-                if (Globals.CurrentMap.MyMapNum == mapNum && Globals.MapGrid != null && Globals.MapGrid.Loaded)
+                if (Globals.CurrentMap.Id == mapNum && Globals.MapGrid != null && Globals.MapGrid.Loaded)
                 {
                     for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
                     {

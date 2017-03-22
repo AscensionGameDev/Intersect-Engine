@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.Maps;
 using Intersect_Editor.Forms;
+using Intersect_Library.GameObjects;
 using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Classes
@@ -23,7 +24,7 @@ namespace Intersect_Editor.Classes
         public static void StartLoop()
         {
             Globals.MainForm.Visible = true;
-            Globals.MainForm.EnterMap(Globals.CurrentMap == null ? 0 : Globals.CurrentMap.GetId());
+            Globals.MainForm.EnterMap(Globals.CurrentMap == null ? 0 : ((DatabaseObject) Globals.CurrentMap).Id);
             myForm = Globals.MainForm;
 
             if (mapThread == null)

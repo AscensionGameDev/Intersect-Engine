@@ -11,7 +11,6 @@ namespace Intersect_Library.GameObjects
         public new const GameObject Type = GameObject.Spell;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
-        public string Name = "New Spell";
         public string Desc = "";
         public byte SpellType = 0;
         public int Cost = 0;
@@ -59,7 +58,7 @@ namespace Intersect_Library.GameObjects
 
         public SpellBase(int id) : base(id)
         {
-
+            Name = "New Spell";
         }
 
         public override void Load(byte[] packet)
@@ -209,7 +208,7 @@ namespace Intersect_Library.GameObjects
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

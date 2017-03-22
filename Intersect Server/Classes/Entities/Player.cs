@@ -194,13 +194,13 @@ namespace Intersect_Server.Classes.Entities
                             foreach (var mapEvent in map.Events.Values)
                             {
                                 //Look for event
-                                var foundEvent = EventExists(map.MyMapNum, mapEvent.SpawnX, mapEvent.SpawnY);
+                                var foundEvent = EventExists(map.Id, mapEvent.SpawnX, mapEvent.SpawnY);
                                 if (foundEvent == -1)
                                 {
-                                    var tmpEvent = new EventInstance(MyEvents.Count, MyClient, mapEvent, map.MyMapNum)
+                                    var tmpEvent = new EventInstance(MyEvents.Count, MyClient, mapEvent, map.Id)
                                     {
                                         IsGlobal = mapEvent.IsGlobal == 1,
-                                        MapNum = map.MyMapNum,
+                                        MapNum = map.Id,
                                         SpawnX = mapEvent.SpawnX,
                                         SpawnY = mapEvent.SpawnY
                                     };
@@ -480,7 +480,7 @@ namespace Intersect_Server.Classes.Entities
                             var questTask = quest.FindTask(Quests[questId].task);
                             if (questTask != null)
                             {
-                                if (questTask.Objective == 2 && questTask.Data1 == npc.MyBase.GetId()) //kill npcs
+                                if (questTask.Objective == 2 && questTask.Data1 == npc.MyBase.Id) //kill npcs
                                 {
                                     var questProg = Quests[questId];
                                     questProg.taskProgress++;
@@ -491,7 +491,7 @@ namespace Intersect_Server.Classes.Entities
                                     else
                                     {
                                         Quests[questId] = questProg;
-                                        PacketSender.SendQuestProgress(this, quest.GetId());
+                                        PacketSender.SendQuestProgress(this, quest.Id);
                                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests", "npctask", quest.Name, questProg.taskProgress, questTask.Data2, NpcBase.GetName(questTask.Data1)));
                                     }
                                 }
@@ -639,7 +639,7 @@ namespace Intersect_Server.Classes.Entities
                 var surroundingMaps = map.GetSurroundingMaps(true);
                 foreach (var surrMap in surroundingMaps)
                 {
-                    PacketSender.SendMap(MyClient, surrMap.MyMapNum);
+                    PacketSender.SendMap(MyClient, surrMap.Id);
                 }
                 _sentMap = true;
             }
@@ -668,7 +668,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 var mapenum = MapInstance.GetObjects().GetEnumerator();
                 mapenum.MoveNext();
-                map = mapenum.Current.Value.MyMapNum;
+                map = mapenum.Current.Value.Id;
             }
             Warp(map, x, y);
         }
@@ -783,7 +783,7 @@ namespace Intersect_Server.Classes.Entities
                     Inventory[slot] = new ItemInstance(-1, 0, -1);
                     EquipmentProcessItemLoss(slot);
                 }
-                UpdateGatherItemQuests(itemBase.GetId());
+                UpdateGatherItemQuests(itemBase.Id);
                 PacketSender.SendInventoryItemUpdate(MyClient, slot);
             }
         }
@@ -973,7 +973,7 @@ namespace Intersect_Server.Classes.Entities
             }
             if (returnVal)
             {
-                UpdateGatherItemQuests(itemBase.GetId());
+                UpdateGatherItemQuests(itemBase.Id);
             }
             return returnVal;
         }
@@ -2350,13 +2350,13 @@ namespace Intersect_Server.Classes.Entities
         public bool CanStartQuest(QuestBase quest)
         {
             //Check and see if the quest is already in progress, or if it has already been completed and cannot be repeated.
-            if (Quests.ContainsKey(quest.GetId()))
+            if (Quests.ContainsKey(quest.Id))
             {
-                if (Quests[quest.GetId()].task != -1 && quest.GetTaskIndex(Quests[quest.GetId()].task) != -1)
+                if (Quests[quest.Id].task != -1 && quest.GetTaskIndex(Quests[quest.Id].task) != -1)
                 {
                     return false;
                 }
-                if (Quests[quest.GetId()].completed == 1 && quest.Repeatable == 0)
+                if (Quests[quest.Id].completed == 1 && quest.Repeatable == 0)
                 {
                     return false;
                 }
@@ -2371,9 +2371,9 @@ namespace Intersect_Server.Classes.Entities
         }
         public bool QuestCompleted(QuestBase quest)
         {
-            if (Quests.ContainsKey(quest.GetId()))
+            if (Quests.ContainsKey(quest.Id))
             {
-                if (Quests[quest.GetId()].completed == 1)
+                if (Quests[quest.Id].completed == 1)
                 {
                     return true;
                 }
@@ -2382,9 +2382,9 @@ namespace Intersect_Server.Classes.Entities
         }
         public bool QuestInProgress(QuestBase quest, QuestProgress progress, int taskId)
         {
-            if (Quests.ContainsKey(quest.GetId()))
+            if (Quests.ContainsKey(quest.Id))
             {
-                if (Quests[quest.GetId()].task != -1 && quest.GetTaskIndex(Quests[quest.GetId()].task) != -1)
+                if (Quests[quest.Id].task != -1 && quest.GetTaskIndex(Quests[quest.Id].task) != -1)
                 {
                     switch (progress)
                     {
@@ -2393,19 +2393,19 @@ namespace Intersect_Server.Classes.Entities
                         case QuestProgress.BeforeTask:
                             if (quest.GetTaskIndex(taskId) != -1)
                             {
-                                return quest.GetTaskIndex(taskId) > quest.GetTaskIndex(Quests[quest.GetId()].task);
+                                return quest.GetTaskIndex(taskId) > quest.GetTaskIndex(Quests[quest.Id].task);
                             }
                             break;
                         case QuestProgress.OnTask:
                             if (quest.GetTaskIndex(taskId) != -1)
                             {
-                                return quest.GetTaskIndex(taskId) == quest.GetTaskIndex(Quests[quest.GetId()].task);
+                                return quest.GetTaskIndex(taskId) == quest.GetTaskIndex(Quests[quest.Id].task);
                             }
                             break;
                         case QuestProgress.AfterTask:
                             if (quest.GetTaskIndex(taskId) != -1)
                             {
-                                return quest.GetTaskIndex(taskId) < quest.GetTaskIndex(Quests[quest.GetId()].task);
+                                return quest.GetTaskIndex(taskId) < quest.GetTaskIndex(Quests[quest.Id].task);
                             }
                             break;
                         default:
@@ -2419,27 +2419,27 @@ namespace Intersect_Server.Classes.Entities
         {
             if (CanStartQuest(quest))
             {
-                QuestOffers.Add(quest.GetId());
-                PacketSender.SendQuestOffer(this, quest.GetId());
+                QuestOffers.Add(quest.Id);
+                PacketSender.SendQuestOffer(this, quest.Id);
             }
         }
         public void StartQuest(QuestBase quest)
         {
             if (CanStartQuest(quest))
             {
-                if (Quests.ContainsKey(quest.GetId()))
+                if (Quests.ContainsKey(quest.Id))
                 {
-                    var questProgress = Quests[quest.GetId()];
+                    var questProgress = Quests[quest.Id];
                     questProgress.task = quest.Tasks[0].Id;
                     questProgress.taskProgress = 0;
-                    Quests[quest.GetId()] = questProgress;
+                    Quests[quest.Id] = questProgress;
                 }
                 else
                 {
                     var questProgress = new QuestProgressStruct();
                     questProgress.task = quest.Tasks[0].Id;
                     questProgress.taskProgress = 0;
-                    Quests.Add(quest.GetId(), questProgress);
+                    Quests.Add(quest.Id, questProgress);
                 }
                 if (quest.Tasks[0].Objective == 1) //Gather Items
                 {
@@ -2447,7 +2447,7 @@ namespace Intersect_Server.Classes.Entities
                 }
                 StartCommonEvent(quest.StartEvent);
                 PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests", "started", quest.Name), Color.Cyan);
-                PacketSender.SendQuestProgress(this, quest.GetId());
+                PacketSender.SendQuestProgress(this, quest.Id);
             }
         }
         public void AcceptQuest(int questId)
@@ -2602,12 +2602,12 @@ namespace Intersect_Server.Classes.Entities
                             var questTask = quest.FindTask(Quests[questId].task);
                             if (questTask != null)
                             {
-                                if (questTask.Objective == 1 && questTask.Data1 == item.GetId()) //gather items
+                                if (questTask.Objective == 1 && questTask.Data1 == item.Id) //gather items
                                 {
                                     var questProg = Quests[questId];
-                                    if (questProg.taskProgress != CountItemInstances(item.GetId()))
+                                    if (questProg.taskProgress != CountItemInstances(item.Id))
                                     {
-                                        questProg.taskProgress = CountItemInstances(item.GetId());
+                                        questProg.taskProgress = CountItemInstances(item.Id);
                                         if (questProg.taskProgress >= questTask.Data2)
                                         {
                                             CompleteQuestTask(questId, Quests[questId].task);
@@ -2615,7 +2615,7 @@ namespace Intersect_Server.Classes.Entities
                                         else
                                         {
                                             Quests[questId] = questProg;
-                                            PacketSender.SendQuestProgress(this, quest.GetId());
+                                            PacketSender.SendQuestProgress(this, quest.Id);
                                             PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests", "itemtask", quest.Name, questProg.taskProgress, questTask.Data2, ItemBase.GetName(questTask.Data1)));
                                         }
                                     }

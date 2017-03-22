@@ -198,7 +198,7 @@ namespace Intersect_Editor.Forms.Editors
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstShops.Items[ShopBase.GetObjects().Keys.ToList().IndexOf(_editorItem.GetId())] = txtName.Text;
+            lstShops.Items[ShopBase.GetObjects().Keys.ToList().IndexOf(_editorItem.Id)] = txtName.Text;
         }
 
         private void UpdateLists()

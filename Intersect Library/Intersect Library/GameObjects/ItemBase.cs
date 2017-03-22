@@ -9,8 +9,7 @@ namespace Intersect_Library.GameObjects
         public new const string DatabaseTable = "items";
         public new const GameObject Type = GameObject.Item;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
-        public string Name = "New Item";
+        
         public string Desc = "";
         public int ItemType;
         public string Pic = "";
@@ -39,6 +38,7 @@ namespace Intersect_Library.GameObjects
 
         public ItemBase(int id) : base(id)
         {
+            Name = "New Item";
             Speed = 10; // Set to 10 by default.
             StatsGiven = new int[Options.MaxStats];
         }
@@ -171,7 +171,7 @@ namespace Intersect_Library.GameObjects
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

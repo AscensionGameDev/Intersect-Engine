@@ -16,7 +16,7 @@ namespace Intersect_Library.GameObjects.Maps.MapList
         {
             base.GetData(myBuffer);
             myBuffer.WriteInteger(MapNum);
-            myBuffer.WriteString(gameMaps[MapNum].MyName);
+            myBuffer.WriteString(gameMaps[MapNum].Name);
         }
 
         public bool Load(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps, bool isServer = true)
@@ -32,7 +32,7 @@ namespace Intersect_Library.GameObjects.Maps.MapList
             {
                 if (gameMaps.ContainsKey(MapNum))
                 {
-                    gameMaps[MapNum].MyName = Name;
+                    gameMaps[MapNum].Name = Name;
                 }
             }
             return true;

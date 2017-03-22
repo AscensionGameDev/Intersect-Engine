@@ -146,7 +146,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (_selectedQuest != null)
             {
-                new InputBox(Strings.Get("questlog", "abandontitle", _selectedQuest.Name), Strings.Get("questlog","abandonprompt",_selectedQuest.Name), true, AbandonQuest, null, _selectedQuest.GetId(), false);
+                new InputBox(Strings.Get("questlog", "abandontitle", _selectedQuest.Name), Strings.Get("questlog","abandonprompt",_selectedQuest.Name), true, AbandonQuest, null, _selectedQuest.Id, false);
             }
         }
 
@@ -173,9 +173,9 @@ namespace Intersect_Client.Classes.UI.Game
 
             if (_selectedQuest != null)
             {
-                if (Globals.Me.QuestProgress.ContainsKey(_selectedQuest.GetId()))
+                if (Globals.Me.QuestProgress.ContainsKey(_selectedQuest.Id))
                 {
-                    if (Globals.Me.QuestProgress[_selectedQuest.GetId()].completed == 1 && Globals.Me.QuestProgress[_selectedQuest.GetId()].task == -1)
+                    if (Globals.Me.QuestProgress[_selectedQuest.Id].completed == 1 && Globals.Me.QuestProgress[_selectedQuest.Id].task == -1)
                     {
                         //Completed
                         if (_selectedQuest.LogAfterComplete == 0)
@@ -287,9 +287,9 @@ namespace Intersect_Client.Classes.UI.Game
                 ListBoxRow rw;
                 String[] myText = null;
                 List<String> taskString = new List<string>();
-                if (Globals.Me.QuestProgress.ContainsKey(_selectedQuest.GetId()))
+                if (Globals.Me.QuestProgress.ContainsKey(_selectedQuest.Id))
                 {
-                    if (Globals.Me.QuestProgress[_selectedQuest.GetId()].task != -1)
+                    if (Globals.Me.QuestProgress[_selectedQuest.Id].task != -1)
                     {
                         //In Progress
                         _questStatus.Text = Strings.Get("questlog", "inprogress");
@@ -299,19 +299,19 @@ namespace Intersect_Client.Classes.UI.Game
                         taskString.Add(Strings.Get("questlog", "currenttask"));
                         for (int i = 0; i < _selectedQuest.Tasks.Count; i++)
                         {
-                            if (_selectedQuest.Tasks[i].Id == Globals.Me.QuestProgress[_selectedQuest.GetId()].task)
+                            if (_selectedQuest.Tasks[i].Id == Globals.Me.QuestProgress[_selectedQuest.Id].task)
                             {
                                 taskString.AddRange(Gui.WrapText(_selectedQuest.Tasks[i].Desc, _questDesc.Width - 12,
                                     _questDesc.Parent.Skin.DefaultFont));
                                 if (_selectedQuest.Tasks[i].Objective == 1) //Gather Items
                                 {
                                     taskString.Add("");
-                                    taskString.Add(Strings.Get("questlog", "taskitem",Globals.Me.QuestProgress[_selectedQuest.GetId()].taskProgress, _selectedQuest.Tasks[i].Data2,ItemBase.GetName(_selectedQuest.Tasks[i].Data1)));
+                                    taskString.Add(Strings.Get("questlog", "taskitem",Globals.Me.QuestProgress[_selectedQuest.Id].taskProgress, _selectedQuest.Tasks[i].Data2,ItemBase.GetName(_selectedQuest.Tasks[i].Data1)));
                                 }
                                 else if (_selectedQuest.Tasks[i].Objective == 2) //Kill Npcs
                                 {
                                     taskString.Add("");
-                                    taskString.Add(Strings.Get("questlog","tasknpc",Globals.Me.QuestProgress[_selectedQuest.GetId()].taskProgress, _selectedQuest.Tasks[i].Data2 ,NpcBase.GetName(_selectedQuest.Tasks[i].Data1)));
+                                    taskString.Add(Strings.Get("questlog","tasknpc",Globals.Me.QuestProgress[_selectedQuest.Id].taskProgress, _selectedQuest.Tasks[i].Data2 ,NpcBase.GetName(_selectedQuest.Tasks[i].Data1)));
                                 }
                             }
                         }
@@ -322,7 +322,7 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                     else
                     {
-                        if (Globals.Me.QuestProgress[_selectedQuest.GetId()].completed == 1)
+                        if (Globals.Me.QuestProgress[_selectedQuest.Id].completed == 1)
                         {
                             //Completed
                             if (_selectedQuest.LogAfterComplete == 1)

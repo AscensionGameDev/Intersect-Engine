@@ -174,7 +174,7 @@ namespace Intersect_Client.Classes.Core
                                         //transform pixel format to tile format
                                         x /= Options.TileWidth;
                                         y /= Options.TileHeight;
-                                        int mapNum = map.MyMapNum;
+                                        int mapNum = map.Id;
 
                                         if (Globals.Me.GetRealLocation(ref x, ref y, ref mapNum))
                                         {

@@ -56,7 +56,6 @@ namespace Intersect_Server.Classes.Maps
             {
                 return;
             }
-            MyMapNum = mapNum;
             Autotiles = new MapAutotiles(this);
         }
         public object GetMapLock()
@@ -87,7 +86,7 @@ namespace Intersect_Server.Classes.Maps
             MapBase[,] mapBase = new MapBase[3, 3];
             if (MapGrid >= 0)
             {
-                if (Database.MapGrids[MapGrid] != null && Database.MapGrids[MapGrid].MyMaps.Contains(GetId()))
+                if (Database.MapGrids[MapGrid] != null && Database.MapGrids[MapGrid].MyMaps.Contains(((DatabaseObject) this).Id))
                 {
                     for (int x = -1; x <= 1; x++)
                     {
@@ -188,7 +187,7 @@ namespace Intersect_Server.Classes.Maps
                 {
                     MapItems[MapItems.Count - 1].ItemVal = amount;
                 }
-                PacketSender.SendMapItemUpdate(MyMapNum, MapItems.Count - 1);
+                PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
             }
         }
         private void SpawnAttributeItem(int x, int y)
@@ -211,7 +210,7 @@ namespace Intersect_Server.Classes.Maps
                         MapItems[MapItems.Count - 1].StatBoost[i] = r.Next(-1 * item.StatGrowth, item.StatGrowth + 1);
                     }
                 }
-                PacketSender.SendMapItemUpdate(MyMapNum, MapItems.Count - 1);
+                PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
             }
         }
         public void RemoveItem(int index, bool respawn = true)
@@ -219,7 +218,7 @@ namespace Intersect_Server.Classes.Maps
             if (index < MapItems.Count && MapItems[index] != null)
             {
                 MapItems[index].ItemNum = -1;
-                PacketSender.SendMapItemUpdate(MyMapNum, index);
+                PacketSender.SendMapItemUpdate(Id, index);
                 if (respawn)
                 {
                     if (MapItems[index].AttributeSpawnX > -1)
@@ -303,7 +302,7 @@ namespace Intersect_Server.Classes.Maps
                         Globals.Entities[index].CurrentX = ResourceSpawns[i].X;
                         Globals.Entities[index].CurrentY = ResourceSpawns[i].Y;
                         Globals.Entities[index].CurrentZ = ResourceSpawns[i].Z;
-                        Globals.Entities[index].CurrentMap = MyMapNum;
+                        Globals.Entities[index].CurrentMap = Id;
                         Entities.Add((Resource)Globals.Entities[index]);
                     }
                 }
@@ -412,7 +411,7 @@ namespace Intersect_Server.Classes.Maps
             {
                 int index = Globals.FindOpenEntity();
                 Globals.Entities[index] = new Npc(index, npcBase, despawnable);
-                Globals.Entities[index].CurrentMap = MyMapNum;
+                Globals.Entities[index].CurrentMap = Id;
                 Globals.Entities[index].CurrentX = tileX;
                 Globals.Entities[index].CurrentY = tileY;
 
@@ -440,7 +439,7 @@ namespace Intersect_Server.Classes.Maps
             {
                 if (evt.Value.IsGlobal == 1)
                 {
-                    GlobalEventInstances.Add(evt.Value, new EventInstance(evt.Value, evt.Key, MyMapNum));
+                    GlobalEventInstances.Add(evt.Value, new EventInstance(evt.Value, evt.Key, Id));
                 }
             }
         }
@@ -733,9 +732,9 @@ namespace Intersect_Server.Classes.Maps
                 Active = true;
                 //Send Entity Info to Everyone and Everyone to the Entity
                 SendMapEntitiesTo(player);
-                PacketSender.SendMapItems(player.MyClient, MyMapNum);
+                PacketSender.SendMapItems(player.MyClient, Id);
                 AddEntity(player);
-                player.LastMapEntered = this.GetId();
+                player.LastMapEntered = ((DatabaseObject) this).Id;
                 if (SurroundingMaps.Count <= 0) return;
                 foreach (var t in SurroundingMaps)
                 {
@@ -847,8 +846,8 @@ namespace Intersect_Server.Classes.Maps
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
-            MapBase.Objects.Remove(GetId());
+            Objects.Remove(((DatabaseObject) this).Id);
+            MapBase.Objects.Remove(((DatabaseObject) this).Id);
         }
         public static void ClearObjects()
         {

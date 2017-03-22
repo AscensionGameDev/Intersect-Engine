@@ -1889,7 +1889,7 @@ namespace Intersect_Server.Classes.Core
                               GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
             {
-                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.GetId()));
+                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.Id));
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
                 if (gameObject != null && gameObject.GetData() != null)
                 {
@@ -2003,7 +2003,7 @@ namespace Intersect_Server.Classes.Core
                               GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
             {
-                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.GetId()));
+                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.Id));
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 1.ToString()));
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.GetData()));
                 cmd.ExecuteNonQuery();
@@ -2092,7 +2092,7 @@ namespace Intersect_Server.Classes.Core
             if (updated)
             {
                 SaveGameObject(map);
-                PacketSender.SendMapToEditors(map.MyMapNum);
+                PacketSender.SendMapToEditors(map.Id);
             }
         }
         public static void GenerateMapGrids()
@@ -2104,16 +2104,16 @@ namespace Intersect_Server.Classes.Core
                 {
                     if (MapGrids.Count == 0)
                     {
-                        MapGrids.Add(new MapGrid(map.Value.MyMapNum, 0));
+                        MapGrids.Add(new MapGrid(map.Value.Id, 0));
                     }
                     else
                     {
                         for (var y = 0; y < MapGrids.Count; y++)
                         {
-                            if (!MapGrids[y].HasMap(map.Value.MyMapNum))
+                            if (!MapGrids[y].HasMap(map.Value.Id))
                             {
                                 if (y != MapGrids.Count - 1) continue;
-                                MapGrids.Add(new MapGrid(map.Value.MyMapNum, MapGrids.Count));
+                                MapGrids.Add(new MapGrid(map.Value.Id, MapGrids.Count));
                                 break;
                             }
                             else
@@ -2177,9 +2177,9 @@ namespace Intersect_Server.Classes.Core
             }
             foreach (var map in MapBase.GetObjects())
             {
-                if (MapList.GetList().FindMap(map.Value.MyMapNum) == null)
+                if (MapList.GetList().FindMap(map.Value.Id) == null)
                 {
-                    MapList.GetList().AddMap(map.Value.MyMapNum, MapBase.GetObjects());
+                    MapList.GetList().AddMap(map.Value.Id, MapBase.GetObjects());
                 }
             }
             SaveMapFolders();

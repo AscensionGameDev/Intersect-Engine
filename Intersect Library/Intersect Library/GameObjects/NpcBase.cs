@@ -11,8 +11,7 @@ namespace Intersect_Library.GameObjects
         public new const string DatabaseTable = "npcs";
         public new const GameObject Type = GameObject.Npc;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
-        public string Name = "New Npc";
+        
         public string Sprite = "";
 
         //Vitals & Stats
@@ -48,6 +47,7 @@ namespace Intersect_Library.GameObjects
 
 		public NpcBase(int id) : base(id)
 		{
+            Name = "New Npc";
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Drops.Add(new NPCDrop());
@@ -202,7 +202,7 @@ namespace Intersect_Library.GameObjects
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

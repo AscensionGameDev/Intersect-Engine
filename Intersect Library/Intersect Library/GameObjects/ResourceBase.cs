@@ -13,7 +13,6 @@ namespace Intersect_Library.GameObjects
         public new const GameObject Type = GameObject.Resource;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
-        public string Name = "New Resource";
         public int MinHP = 0;
         public int MaxHP = 0;
         public int Tool = -1;
@@ -33,6 +32,7 @@ namespace Intersect_Library.GameObjects
 
         public ResourceBase(int id): base(id)
         {
+            Name = "New Resource";
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Drops.Add(new ResourceDrop());
@@ -143,7 +143,7 @@ namespace Intersect_Library.GameObjects
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

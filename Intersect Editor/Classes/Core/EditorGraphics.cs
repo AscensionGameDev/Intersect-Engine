@@ -309,7 +309,7 @@ namespace Intersect_Editor.Classes
                     yOffset = -Options.TileHeight;
                     break;
             }
-            DrawTexture(GetTexture(TextureType.Tileset, TilesetBase.GetTileset(map.Layers[layerNum].Tiles[x, y].TilesetIndex).Value),
+            DrawTexture(GetTexture(TextureType.Tileset, TilesetBase.GetTileset(map.Layers[layerNum].Tiles[x, y].TilesetIndex).Name),
                                 destX, destY,
                                 (int)map.Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
                                 (int)map.Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
@@ -442,7 +442,7 @@ namespace Intersect_Editor.Classes
                                                 {
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                         Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex =
-                                                        Globals.CurrentTileset.GetId();
+                                                        Globals.CurrentTileset.Id;
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                         Globals.CurTileX + x, Globals.CurTileY + y].X =
                                                         Globals.CurSelX + x;
@@ -460,7 +460,7 @@ namespace Intersect_Editor.Classes
                                     else
                                     {
                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY
-                                            ].TilesetIndex = Globals.CurrentTileset.GetId();
+                                            ].TilesetIndex = Globals.CurrentTileset.Id;
                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY
                                             ].X = Globals.CurSelX;
                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY
@@ -491,7 +491,7 @@ namespace Intersect_Editor.Classes
                                                     {
                                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                             x0, y0].TilesetIndex =
-                                                            Globals.CurrentTileset.GetId();
+                                                            Globals.CurrentTileset.Id;
                                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                             x0, y0].X = Globals.CurSelX + x;
                                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[
@@ -520,7 +520,7 @@ namespace Intersect_Editor.Classes
                                                 if (Globals.MouseButton == 0)
                                                 {
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex =
-                                                        Globals.CurrentTileset.GetId();
+                                                        Globals.CurrentTileset.Id;
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].X =
                                                         Globals.CurSelX;
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Y =
@@ -570,7 +570,7 @@ namespace Intersect_Editor.Classes
                             {
                                 if (TilesetBase.GetTileset(tmpMap.Layers[z].Tiles[x, y].TilesetIndex) == null) continue;
                                 Texture2D tilesetTex = GetTexture(TextureType.Tileset,
-                                    TilesetBase.GetTileset(tmpMap.Layers[z].Tiles[x, y].TilesetIndex).Value);
+                                    TilesetBase.GetTileset(tmpMap.Layers[z].Tiles[x, y].TilesetIndex).Name);
                                 if (tilesetTex == null) continue;
                                 if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState !=
                                     MapAutotiles.RenderStateNormal)
@@ -819,7 +819,7 @@ namespace Intersect_Editor.Classes
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (Globals.CurrentTileset != null)
             {
-                Texture2D tilesetTex = GetTexture(TextureType.Tileset, Globals.CurrentTileset.Value);
+                Texture2D tilesetTex = GetTexture(TextureType.Tileset, Globals.CurrentTileset.Name);
                 if (tilesetTex != null)
                 {
                     DrawTexture(tilesetTex, 0, 0, _tilesetChain);
@@ -944,7 +944,7 @@ namespace Intersect_Editor.Classes
                                 {
 
                                     var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y],
-                                        animation.GetId());
+                                        animation.Id);
                                     //Update if the animation isn't right!
                                     if (animInstance == null || animInstance.myBase != animation)
                                     {
@@ -974,7 +974,7 @@ namespace Intersect_Editor.Classes
             _graphicsDevice.SetRenderTarget(screenShot);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Transparent);
 
-            if (Globals.MapGrid.Contains(Globals.CurrentMap.GetId()))
+            if (Globals.MapGrid.Contains(((DatabaseObject) Globals.CurrentMap).Id))
             {
                 //Draw The lower maps
                 for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)

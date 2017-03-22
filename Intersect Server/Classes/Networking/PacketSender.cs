@@ -967,7 +967,7 @@ namespace Intersect_Server.Classes.Networking
                         bf.WriteInteger(Database.MapGrids[gridIndex].MyGrid[x, y]);
                         if (client.IsEditor)
                         {
-                            bf.WriteString(MapInstance.GetMap(Database.MapGrids[gridIndex].MyGrid[x, y]).MyName);
+                            bf.WriteString(MapInstance.GetMap(Database.MapGrids[gridIndex].MyGrid[x, y]).Name);
                             bf.WriteInteger(MapInstance.GetMap(Database.MapGrids[gridIndex].MyGrid[x, y]).Revision);
                         }
                     }
@@ -1247,7 +1247,7 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.GameObject);
             bf.WriteInteger((int) obj.GetGameObjectType());
-            bf.WriteInteger(obj.GetId());
+            bf.WriteInteger(obj.Id);
             bf.WriteInteger(Convert.ToInt32(another));
             bf.WriteInteger(Convert.ToInt32(deleted));
             if (!deleted) bf.WriteBytes(obj.GetData());

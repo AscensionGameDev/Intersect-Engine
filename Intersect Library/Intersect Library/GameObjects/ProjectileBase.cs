@@ -14,7 +14,6 @@ namespace Intersect_Library.GameObjects
         public const int SpawnLocationsHeight = 5;
         public const int MaxProjectileDirections = 8;
         
-        public string Name = "New Projectile";
         public int Speed = 1;
         public int Delay = 1;
         public int Quantity = 1;
@@ -35,6 +34,7 @@ namespace Intersect_Library.GameObjects
         //Init
         public ProjectileBase(int id) : base(id)
         {
+            Name = "New Projectile";
             for (var x = 0; x < SpawnLocationsWidth; x++)
             {
                 for (var y = 0; y < SpawnLocationsHeight; y++)
@@ -177,7 +177,7 @@ namespace Intersect_Library.GameObjects
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

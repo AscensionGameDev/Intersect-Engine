@@ -10,10 +10,10 @@ namespace Intersect_Library.GameObjects
         public new const GameObject Type = GameObject.PlayerSwitch;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
-        public string Name = "New Player Switch";
 
         public PlayerSwitchBase(int id) : base(id)
         {
+            Name = "New Player Switch";
         }
 
         public override void Load(byte[] packet)
@@ -74,7 +74,7 @@ namespace Intersect_Library.GameObjects
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

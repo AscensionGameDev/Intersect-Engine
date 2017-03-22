@@ -9,7 +9,6 @@ namespace Intersect_Library.GameObjects
         public new const GameObject Type = GameObject.Animation;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
-        public string Name = "New Animation";
         public string Sound = "";
 
         //Lower Animation
@@ -32,6 +31,7 @@ namespace Intersect_Library.GameObjects
 
         public AnimationBase(int id) : base(id)
         {
+            Name = "New Animation";
             LowerLights = new LightBase[LowerAnimFrameCount];
             for (int i = 0; i < LowerAnimFrameCount; i++)
             {
@@ -166,7 +166,7 @@ namespace Intersect_Library.GameObjects
         } 
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

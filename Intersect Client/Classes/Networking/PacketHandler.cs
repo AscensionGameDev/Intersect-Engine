@@ -482,7 +482,7 @@ namespace Intersect_Client.Classes.Networking
             var map = MapInstance.GetMap(bf.ReadInteger());
             if (map != null)
             {
-                map.ActionMsgs.Add(new ActionMsgInstance(map.GetId(), bf.ReadInteger(), bf.ReadInteger(), bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte())));
+                map.ActionMsgs.Add(new ActionMsgInstance(((DatabaseObject) map).Id, bf.ReadInteger(), bf.ReadInteger(), bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte())));
             }
             bf.Dispose();
         }

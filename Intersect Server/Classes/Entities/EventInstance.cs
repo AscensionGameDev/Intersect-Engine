@@ -1147,7 +1147,7 @@ namespace Intersect_Server.Classes.Entities
                             {
                                 MyPlayer.OfferQuest(quest);
                                 CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Quest;
-                                CallStack.Peek().ResponseIndex = quest.GetId();
+                                CallStack.Peek().ResponseIndex = quest.Id;
                                 break;
                             }
                             else

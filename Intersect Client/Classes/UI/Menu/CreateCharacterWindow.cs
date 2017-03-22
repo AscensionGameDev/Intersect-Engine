@@ -443,11 +443,11 @@ namespace Intersect_Client.Classes.UI.Menu
                 GameFade.FadeOut();
                 if (_maleChk.IsChecked)
                 {
-                    PacketSender.SendCreateCharacter(_charnameTextbox.Text, GetClass().GetId(), _maleSprites[_displaySpriteIndex].Key);
+                    PacketSender.SendCreateCharacter(_charnameTextbox.Text, GetClass().Id, _maleSprites[_displaySpriteIndex].Key);
                 }
                 else
                 {
-                    PacketSender.SendCreateCharacter(_charnameTextbox.Text, GetClass().GetId(), _femaleSprites[_displaySpriteIndex].Key);
+                    PacketSender.SendCreateCharacter(_charnameTextbox.Text, GetClass().Id, _femaleSprites[_displaySpriteIndex].Key);
                 }
                 Globals.WaitingOnServer = true;
             }

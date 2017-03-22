@@ -192,7 +192,7 @@ namespace Intersect_Editor.Forms
             var index = -1;
             foreach (var tileset in tilesets)
             {
-                if (tileset.Value.Value.ToLower() == name.ToLower())
+                if (tileset.Value.Name.ToLower() == name.ToLower())
                 {
                     index = tileset.Key;
                     break;
@@ -204,14 +204,14 @@ namespace Intersect_Editor.Forms
             }
             if (tSet != null)
             {
-                if (File.Exists("resources/tilesets/" + tSet.Value))
+                if (File.Exists("resources/tilesets/" + tSet.Name))
                 {
                     picTileset.Show();
                     Globals.CurrentTileset = tSet;
                     Globals.CurSelX = 0;
                     Globals.CurSelY = 0;
                     Texture2D tilesetTex = GameContentManager.GetTexture(GameContentManager.TextureType.Tileset,
-                        tSet.Value);
+                        tSet.Name);
                     if (tilesetTex != null)
                     {
                         picTileset.Width = tilesetTex.Width;

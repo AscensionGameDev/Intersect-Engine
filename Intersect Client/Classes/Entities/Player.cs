@@ -626,7 +626,7 @@ namespace Intersect_Client.Classes.Entities
                         //transform pixel format to tile format
                         x /= Options.TileWidth;
                         y /= Options.TileHeight;
-                        int mapNum = map.MyMapNum;
+                        int mapNum = map.Id;
 
                         if (GetRealLocation(ref x, ref y, ref mapNum))
                         {
@@ -1040,7 +1040,7 @@ namespace Intersect_Client.Classes.Entities
                 foreach (var en in eventMap.LocalEntities)
                 {
                     if (en.Value == null) continue;
-                    if (en.Value.CurrentMap == eventMap.MyMapNum && ((Event)en.Value).DisablePreview == 0 && !en.Value.IsStealthed())
+                    if (en.Value.CurrentMap == eventMap.Id && ((Event)en.Value).DisablePreview == 0 && !en.Value.IsStealthed())
                     {
                         if (_targetType == 1 && _targetIndex == en.Value.MyIndex)
                         {
@@ -1067,7 +1067,7 @@ namespace Intersect_Client.Classes.Entities
                         //transform pixel format to tile format
                         x /= Options.TileWidth;
                         y /= Options.TileHeight;
-                        int mapNum = map.MyMapNum;
+                        int mapNum = map.Id;
 
                         if (GetRealLocation(ref x, ref y, ref mapNum))
                         {

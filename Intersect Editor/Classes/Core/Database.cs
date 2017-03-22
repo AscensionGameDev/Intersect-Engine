@@ -137,11 +137,11 @@ namespace Intersect_Editor.Classes
                     break;
                 case GameObject.Map:
                     foreach (var obj in MapInstance.GetObjects())
-                        items.Add(obj.Value.MyName);
+                        items.Add(obj.Value.Name);
                     break;
                 case GameObject.CommonEvent:
                     foreach (var obj in EventBase.GetObjects())
-                        items.Add(obj.Value.MyName);
+                        items.Add(obj.Value.Name);
                     break;
                 case GameObject.PlayerSwitch:
                     foreach (var obj in PlayerSwitchBase.GetObjects())
@@ -161,7 +161,7 @@ namespace Intersect_Editor.Classes
                     break;
                 case GameObject.Tileset:
                     foreach (var obj in TilesetBase.GetObjects())
-                        items.Add(obj.Value.Value);
+                        items.Add(obj.Value.Name);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);

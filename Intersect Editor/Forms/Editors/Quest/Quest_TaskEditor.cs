@@ -110,7 +110,7 @@ namespace Intersect_Editor.Forms.Editors.Quest
 
         private void btnEditTaskEvent_Click(object sender, EventArgs e)
         {
-            _myTask.CompletionEvent.MyName = "Task Completion Event";
+            _myTask.CompletionEvent.Name = "Task Completion Event";
             FrmEvent editor = new FrmEvent(null);
             editor.MyEvent = _myTask.CompletionEvent;
             editor.InitEditor();

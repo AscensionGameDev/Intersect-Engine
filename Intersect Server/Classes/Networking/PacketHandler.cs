@@ -517,7 +517,7 @@ namespace Intersect_Server.Classes.Networking
             if (location == -1)
             {
                 var destType = bf.ReadInteger();
-                newMap = Database.AddGameObject(GameObject.Map).GetId();
+                newMap = Database.AddGameObject(GameObject.Map).Id;
                 tmpMap = MapInstance.GetMap(newMap);
                 Database.SaveGameObject(tmpMap);
                 Database.GenerateMapGrids();
@@ -566,7 +566,7 @@ namespace Intersect_Server.Classes.Networking
                     case 0:
                         if (MapInstance.GetMap(MapInstance.GetMap(relativeMap).Up) == null)
                         {
-                            newMap = Database.AddGameObject(GameObject.Map).GetId();
+                            newMap = Database.AddGameObject(GameObject.Map).Id;
                             tmpMap = MapInstance.GetMap(newMap);
                             tmpMap.MapGrid = MapInstance.GetMap(relativeMap).MapGrid;
                             tmpMap.MapGridX = MapInstance.GetMap(relativeMap).MapGridX;
@@ -579,7 +579,7 @@ namespace Intersect_Server.Classes.Networking
                     case 1:
                         if (MapInstance.GetMap(MapInstance.GetMap(relativeMap).Down) == null)
                         {
-                            newMap = Database.AddGameObject(GameObject.Map).GetId();
+                            newMap = Database.AddGameObject(GameObject.Map).Id;
                             tmpMap = MapInstance.GetMap(newMap);
                             tmpMap.MapGrid = MapInstance.GetMap(relativeMap).MapGrid;
                             tmpMap.MapGridX = MapInstance.GetMap(relativeMap).MapGridX;
@@ -591,7 +591,7 @@ namespace Intersect_Server.Classes.Networking
                     case 2:
                         if (MapInstance.GetMap(MapInstance.GetMap(relativeMap).Left) == null)
                         {
-                            newMap = Database.AddGameObject(GameObject.Map).GetId();
+                            newMap = Database.AddGameObject(GameObject.Map).Id;
                             tmpMap = MapInstance.GetMap(newMap);
                             tmpMap.MapGrid = MapInstance.GetMap(relativeMap).MapGrid;
                             tmpMap.MapGridX = MapInstance.GetMap(relativeMap).MapGridX - 1;
@@ -603,7 +603,7 @@ namespace Intersect_Server.Classes.Networking
                     case 3:
                         if (MapInstance.GetMap(MapInstance.GetMap(relativeMap).Right) == null)
                         {
-                            newMap = Database.AddGameObject(GameObject.Map).GetId();
+                            newMap = Database.AddGameObject(GameObject.Map).Id;
                             tmpMap = MapInstance.GetMap(newMap);
                             tmpMap.MapGrid = MapInstance.GetMap(relativeMap).MapGrid;
                             tmpMap.MapGridX = MapInstance.GetMap(relativeMap).MapGridX + 1;
@@ -1104,7 +1104,7 @@ namespace Intersect_Server.Classes.Networking
                     else if (destType == 1)
                     {
                         mapNum = bf.ReadInteger();
-                        MapInstance.GetMap(mapNum).MyName = bf.ReadString();
+                        MapInstance.GetMap(mapNum).Name = bf.ReadString();
                         Database.SaveGameObject(MapInstance.GetMap(mapNum));
                         PacketSender.SendMapListToAll();
 

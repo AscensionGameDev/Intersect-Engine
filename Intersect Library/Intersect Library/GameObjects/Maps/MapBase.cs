@@ -10,13 +10,11 @@ namespace Intersect_Library.GameObjects.Maps
         public new const string DatabaseTable = "maps";
         public new const GameObject Type = GameObject.Map;
         protected static Dictionary<int, MapBase> Objects = new Dictionary<int, MapBase>();
-        
-        public string MyName { get; set; } = "New Map";
+
         public int Up { get; set; } = -1;
         public int Down { get; set; } = -1;
         public int Left { get; set; } = -1;
         public int Right { get; set; } = -1;
-        public int MyMapNum { get; set; }
         public int Revision { get; set; }
 
         //Core Data
@@ -66,7 +64,7 @@ namespace Intersect_Library.GameObjects.Maps
 
         public MapBase(int mapNum, bool isClient) : base(mapNum)
         {
-            MyMapNum = mapNum;
+            Name = "New Map";
             IsClient = isClient;
             for (var i = 0; i < Options.LayerCount; i++)
             {
@@ -82,12 +80,12 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public MapBase(MapBase mapcopy) : base(mapcopy.MyMapNum)
+        public MapBase(MapBase mapcopy) : base(mapcopy.Id)
         {
             lock (GetMapLock())
             {
                 ByteBuffer bf = new ByteBuffer();
-                MyName = mapcopy.MyName;
+                Name = mapcopy.Name;
                 Brightness = mapcopy.Brightness;
                 IsIndoors = mapcopy.IsIndoors;
                 for (var i = 0; i < Options.LayerCount; i++)
@@ -138,7 +136,7 @@ namespace Intersect_Library.GameObjects.Maps
             {
                 var bf = new ByteBuffer();
                 bf.WriteBytes(packet);
-                MyName = bf.ReadString();
+                Name = bf.ReadString();
                 Revision = bf.ReadInteger();
                 Up = bf.ReadInteger();
                 Down = bf.ReadInteger();
@@ -238,7 +236,7 @@ namespace Intersect_Library.GameObjects.Maps
         public virtual byte[] GetMapData(bool forClient)
         {
             var bf = new ByteBuffer();
-            bf.WriteString(MyName);
+            bf.WriteString(Name);
             bf.WriteInteger(Revision);
             bf.WriteInteger(Up);
             bf.WriteInteger(Down);
@@ -344,7 +342,7 @@ namespace Intersect_Library.GameObjects.Maps
         {
             if (Objects.ContainsKey(index))
             {
-                return ((MapBase)Objects[index]).MyName;
+                return ((MapBase)Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -374,7 +372,7 @@ namespace Intersect_Library.GameObjects.Maps
         }
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(base.Id);
         }
         public static void ClearObjects()
         {
