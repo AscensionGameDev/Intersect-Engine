@@ -24,16 +24,16 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
         {
             ByteBuffer myBuffer = new ByteBuffer();
             myBuffer.WriteInteger(Items.Count);
-            for (int i = 0; i < Items.Count; i++)
+            foreach (MapListItem item in Items)
             {
-                if (Items[i].GetType() == typeof(MapListMap))
+                if (item.GetType() == typeof(MapListMap))
                 {
 
-                    ((MapListMap)Items[i]).GetData(myBuffer,gameMaps);
+                    ((MapListMap)item).GetData(myBuffer,gameMaps);
                 }
                 else
                 {
-                    ((MapListFolder)Items[i]).GetData(myBuffer, gameMaps);
+                    ((MapListFolder)item).GetData(myBuffer, gameMaps);
                 }
             }
             return myBuffer.ToArray();
