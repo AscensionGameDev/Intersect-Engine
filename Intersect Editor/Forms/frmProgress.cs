@@ -24,7 +24,7 @@ namespace Intersect_Editor.Forms
 
         public void SetTitle(string title)
         {
-            this.Text = title;
+            Text = title;
         }
         public void SetProgress(string label, int progress, bool showCancel)
         {

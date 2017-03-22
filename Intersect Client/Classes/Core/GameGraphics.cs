@@ -114,7 +114,7 @@ namespace Intersect_Client.Classes.Core
             var currentMap = MapInstance.GetMap(Globals.Me.CurrentMap);
             if (currentMap != null && Globals.NeedsMaps == false)
             {
-                if (GameGraphics.GridSwitched)
+                if (GridSwitched)
                 {
                     var map = MapInstance.GetMap(Globals.Me.CurrentMap);
                     if (map != null)
@@ -339,7 +339,7 @@ namespace Intersect_Client.Classes.Core
                             var map = MapInstance.GetMap(Globals.MapGrid[x, y]);
                             if (map != null && !map.MapRendered)
                             {
-                                if (!GameGraphics.PreRenderedMapLayer)
+                                if (!PreRenderedMapLayer)
                                 {
                                     map.PreRenderMap();
                                 }

@@ -43,7 +43,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void UpdatePreview()
         {
             Bitmap destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(destBitmap);
+            Graphics g = Graphics.FromImage(destBitmap);
             g.Clear(Color.Black);
             if (File.Exists("resources/entities/" + cmbSprite.Text))
             {

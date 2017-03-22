@@ -103,7 +103,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("shopeditor", "title");
+            Text = Strings.Get("shopeditor", "title");
             toolStripItemNew.Text = Strings.Get("shopeditor", "new");
             toolStripItemDelete.Text = Strings.Get("shopeditor", "delete");
             toolStripItemCopy.Text = Strings.Get("shopeditor", "copy");

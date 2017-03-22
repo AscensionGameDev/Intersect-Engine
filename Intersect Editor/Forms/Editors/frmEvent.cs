@@ -208,7 +208,7 @@ namespace Intersect_Editor.Forms
         /// <param name="pageNum">The index of the page to load.</param>
         public void LoadPage(int pageNum)
         {
-            this.Text = Strings.Get("eventeditor", "title",MyEvent.MyIndex,txtEventname.Text);
+            Text = Strings.Get("eventeditor", "title",MyEvent.MyIndex,txtEventname.Text);
             CurrentPageIndex = pageNum;
             CurrentPage = MyEvent.MyPages[pageNum];
             for (int i = 0; i < _pageTabs.Count; i++)
@@ -1081,9 +1081,9 @@ namespace Intersect_Editor.Forms
             {
                 if (cmdWindow.GetType() == typeof(Event_MoveRouteDesigner))
                 {
-                    this.Controls.Add(cmdWindow);
-                    cmdWindow.Width = this.ClientSize.Width;
-                    cmdWindow.Height = this.ClientSize.Height;
+                    Controls.Add(cmdWindow);
+                    cmdWindow.Width = ClientSize.Width;
+                    cmdWindow.Height = ClientSize.Height;
                     cmdWindow.BringToFront();
                     _editingCommand = command;
                 }
@@ -1209,7 +1209,7 @@ namespace Intersect_Editor.Forms
         private void txtEventname_TextChanged(object sender, EventArgs e)
         {
             MyEvent.Name = txtEventname.Text;
-            this.Text = Strings.Get("eventeditor", "title", MyEvent.MyIndex, txtEventname.Text);
+            Text = Strings.Get("eventeditor", "title", MyEvent.MyIndex, txtEventname.Text);
         }
 
         #region "Movement Options"
@@ -1236,9 +1236,9 @@ namespace Intersect_Editor.Forms
         private void btnSetRoute_Click(object sender, EventArgs e)
         {
             Event_MoveRouteDesigner moveRouteDesigner = new Event_MoveRouteDesigner(this, _currentMap, MyEvent, CurrentPage.MoveRoute);
-            this.Controls.Add(moveRouteDesigner);
+            Controls.Add(moveRouteDesigner);
             moveRouteDesigner.BringToFront();
-            moveRouteDesigner.Size = this.ClientSize;
+            moveRouteDesigner.Size = ClientSize;
         }
         #endregion
 
@@ -1381,17 +1381,17 @@ namespace Intersect_Editor.Forms
         private void pnlPreview_DoubleClick(object sender, EventArgs e)
         {
             Event_GraphicSelector graphicSelector = new Event_GraphicSelector(CurrentPage.Graphic, this);
-            this.Controls.Add(graphicSelector);
+            Controls.Add(graphicSelector);
             graphicSelector.BringToFront();
-            graphicSelector.Size = this.ClientSize;
+            graphicSelector.Size = ClientSize;
         }
         private void UpdateEventPreview()
         {
-            System.Drawing.Graphics graphics;
+            Graphics graphics;
             Bitmap sourceBitmap = null;
             Bitmap destBitmap = null;
             destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
-            graphics = System.Drawing.Graphics.FromImage(destBitmap);
+            graphics = Graphics.FromImage(destBitmap);
             graphics.Clear(Color.FromArgb(60, 63, 65));
 
             if (CurrentPage.Graphic.Type == 1) //Sprite

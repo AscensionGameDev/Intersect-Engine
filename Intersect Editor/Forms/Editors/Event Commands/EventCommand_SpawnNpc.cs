@@ -130,7 +130,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             Bitmap destBitmap = new Bitmap(pnlSpawnLoc.Width, pnlSpawnLoc.Height);
             Font renderFont = new Font(new FontFamily("Arial"), 14);
             ;
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(destBitmap);
+            Graphics g = Graphics.FromImage(destBitmap);
             g.Clear(Color.White);
             g.FillRectangle(Brushes.Red, new Rectangle((spawnX + 2) * 32, (spawnY + 2) * 32, 32, 32));
             for (int x = 0; x < 5; x++)

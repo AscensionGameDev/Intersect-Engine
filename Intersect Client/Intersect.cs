@@ -102,7 +102,7 @@ namespace Intersect_Client_MonoGame
             }
             else
             {
-                base.Exit();
+                Exit();
             }
             base.Draw(gameTime);
         }

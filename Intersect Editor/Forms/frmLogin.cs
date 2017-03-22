@@ -49,7 +49,7 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("login", "title");
+            Text = Strings.Get("login", "title");
             lblVersion.Text = Strings.Get("login", "version", Application.ProductVersion);
             lblGettingStarted.Text = Strings.Get("login", "gettingstarted");
             lblUsername.Text = Strings.Get("login", "username");

@@ -421,7 +421,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("craftingeditor", "title");
+            Text = Strings.Get("craftingeditor", "title");
             toolStripItemNew.Text = Strings.Get("craftingeditor", "new");
             toolStripItemDelete.Text = Strings.Get("craftingeditor", "delete");
             toolStripItemCopy.Text = Strings.Get("craftingeditor", "copy");

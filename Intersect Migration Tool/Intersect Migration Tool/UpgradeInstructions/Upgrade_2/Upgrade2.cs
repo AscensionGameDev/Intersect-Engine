@@ -297,7 +297,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                         while (dataReader.Read())
                         {
                             var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
-                            if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
+                            if (dataReader[MAP_LIST_DATA].GetType() != typeof(DBNull))
                             {
                                 LoadGameObject(type, index, (byte[]) dataReader[GAME_OBJECT_DATA]);
                             }

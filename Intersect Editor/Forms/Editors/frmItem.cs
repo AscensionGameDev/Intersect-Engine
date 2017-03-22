@@ -120,7 +120,7 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("itemeditor", "title");
+            Text = Strings.Get("itemeditor", "title");
             toolStripItemNew.Text = Strings.Get("itemeditor", "new");
             toolStripItemDelete.Text = Strings.Get("itemeditor", "delete");
             toolStripItemCopy.Text = Strings.Get("itemeditor", "copy");
@@ -262,7 +262,7 @@ namespace Intersect_Editor.Forms
                 }
                 if (cmbPic.SelectedIndex > 0)
                 {
-                    picItem.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/items/" + cmbPic.Text);
+                    picItem.BackgroundImage = System.Drawing.Image.FromFile("resources/items/" + cmbPic.Text);
                 }
                 else
                 {
@@ -271,7 +271,7 @@ namespace Intersect_Editor.Forms
                 if (cmbMalePaperdoll.SelectedIndex > 0)
                 {
                     picMalePaperdoll.BackgroundImage =
-                        System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
+                        System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
                 }
                 else
                 {
@@ -281,7 +281,7 @@ namespace Intersect_Editor.Forms
                 if (cmbFemalePaperdoll.SelectedIndex > 0)
                 {
                     picFemalePaperdoll.BackgroundImage =
-                        System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
+                        System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
                 }
                 else
                 {
@@ -367,7 +367,7 @@ namespace Intersect_Editor.Forms
         private void cmbPic_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Pic = cmbPic.Text;
-            if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/items/" + cmbPic.Text); }
+            if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = System.Drawing.Image.FromFile("resources/items/" + cmbPic.Text); }
             else { picItem.BackgroundImage = null; }
         }
 
@@ -379,7 +379,7 @@ namespace Intersect_Editor.Forms
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.MalePaperdoll = cmbMalePaperdoll.Text;
-            if (cmbMalePaperdoll.SelectedIndex > 0) { picMalePaperdoll.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text); }
+            if (cmbMalePaperdoll.SelectedIndex > 0) { picMalePaperdoll.BackgroundImage = System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text); }
             else { picMalePaperdoll.BackgroundImage = null; }
         }
 
@@ -429,7 +429,7 @@ namespace Intersect_Editor.Forms
         private void cmbFemalePaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.FemalePaperdoll = cmbFemalePaperdoll.Text;
-            if (cmbFemalePaperdoll.SelectedIndex > 0) { picFemalePaperdoll.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text); }
+            if (cmbFemalePaperdoll.SelectedIndex > 0) { picFemalePaperdoll.BackgroundImage = System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text); }
             else { picFemalePaperdoll.BackgroundImage = null; }
         }
 

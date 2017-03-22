@@ -265,7 +265,7 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("classeditor", "title");
+            Text = Strings.Get("classeditor", "title");
             toolStripItemNew.Text = Strings.Get("classeditor", "new");
             toolStripItemDelete.Text = Strings.Get("classeditor", "delete");
             toolStripItemCopy.Text = Strings.Get("classeditor", "copy");
@@ -480,7 +480,7 @@ namespace Intersect_Editor.Forms
         private void DrawSprite()
         {
             var picSpriteBmp = new Bitmap(picSprite.Width, picSprite.Height);
-            var gfx = System.Drawing.Graphics.FromImage(picSpriteBmp);
+            var gfx = Graphics.FromImage(picSpriteBmp);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picSprite.Width, picSprite.Height));
             if (cmbSprite.SelectedIndex > 0)
             {
@@ -496,7 +496,7 @@ namespace Intersect_Editor.Forms
             picSprite.BackgroundImage = picSpriteBmp;
 
             var picFaceBmp = new Bitmap(picFace.Width, picFace.Height);
-            gfx = System.Drawing.Graphics.FromImage(picFaceBmp);
+            gfx = Graphics.FromImage(picFaceBmp);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picSprite.Width, picSprite.Height));
             if (cmbFace.SelectedIndex > 0)
             {

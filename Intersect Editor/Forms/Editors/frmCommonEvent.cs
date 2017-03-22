@@ -20,7 +20,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("commoneventeditor", "title");
+            Text = Strings.Get("commoneventeditor", "title");
             grpCommonEvents.Text = Strings.Get("commoneventeditor", "events");
             btnNew.Text = Strings.Get("commoneventeditor", "new");
             btnDelete.Text = Strings.Get("commoneventeditor", "delete");

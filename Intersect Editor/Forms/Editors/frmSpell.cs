@@ -118,7 +118,7 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("spelleditor", "title");
+            Text = Strings.Get("spelleditor", "title");
             toolStripItemNew.Text = Strings.Get("spelleditor", "new");
             toolStripItemDelete.Text = Strings.Get("spelleditor", "delete");
             toolStripItemCopy.Text = Strings.Get("spelleditor", "copy");

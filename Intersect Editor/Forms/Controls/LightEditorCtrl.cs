@@ -53,7 +53,7 @@ namespace Intersect_Editor.Forms.Controls
         //Lights Tab
         private void btnLightEditorClose_Click(object sender, EventArgs e)
         {
-            if (CanClose) this.Visible = false;
+            if (CanClose) Visible = false;
             if (_editingLight == Globals.EditingLight) Globals.EditingLight = null;
         }
         private void btnLightEditorRevert_Click(object sender, EventArgs e)
@@ -66,8 +66,8 @@ namespace Intersect_Editor.Forms.Controls
                 _editingLight.OffsetY = _backupLight.OffsetY;
                 if (_editingLight == Globals.EditingLight) Globals.EditingLight = null;
             }
-            Classes.EditorGraphics.TilePreviewUpdated = true;
-            if (CanClose) this.Visible = false;
+            EditorGraphics.TilePreviewUpdated = true;
+            if (CanClose) Visible = false;
         }
         private void btnSelectLightColor_Click(object sender, EventArgs e)
         {
@@ -75,7 +75,7 @@ namespace Intersect_Editor.Forms.Controls
             colorDialog.ShowDialog();
             pnlLightColor.BackColor = colorDialog.Color;
             _editingLight.Color = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B);
-            Classes.EditorGraphics.TilePreviewUpdated = true;
+            EditorGraphics.TilePreviewUpdated = true;
         }
 
         public void Cancel()
@@ -87,35 +87,35 @@ namespace Intersect_Editor.Forms.Controls
         {
             if (_editingLight == null) { return; }
             _editingLight.OffsetX = (int)nudOffsetX.Value;
-            Classes.EditorGraphics.TilePreviewUpdated = true;
+            EditorGraphics.TilePreviewUpdated = true;
         }
 
         private void nudOffsetY_ValueChanged(object sender, EventArgs e)
         {
             if (_editingLight == null) { return; }
             _editingLight.OffsetY = (int)nudOffsetY.Value;
-            Classes.EditorGraphics.TilePreviewUpdated = true;
+            EditorGraphics.TilePreviewUpdated = true;
         }
 
         private void nudSize_ValueChanged(object sender, EventArgs e)
         {
             if (_editingLight == null) { return; }
             _editingLight.Size = (int)nudSize.Value;
-            Classes.EditorGraphics.TilePreviewUpdated = true;
+            EditorGraphics.TilePreviewUpdated = true;
         }
 
         private void nudIntensity_ValueChanged(object sender, EventArgs e)
         {
             if (_editingLight == null) { return; }
             _editingLight.Intensity = (byte)nudIntensity.Value;
-            Classes.EditorGraphics.TilePreviewUpdated = true;
+            EditorGraphics.TilePreviewUpdated = true;
         }
 
         private void nudExpand_ValueChanged(object sender, EventArgs e)
         {
             if (_editingLight == null) { return; }
             _editingLight.Expand = (int)nudExpand.Value;
-            Classes.EditorGraphics.TilePreviewUpdated = true;
+            EditorGraphics.TilePreviewUpdated = true;
         }
     }
 }

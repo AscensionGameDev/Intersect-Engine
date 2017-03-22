@@ -8,8 +8,8 @@ namespace Intersect_Library.GameObjects.Maps.MapList
         public int MapNum = -1;
         public MapListMap(): base()
         {
-            base.Name = "New Map";
-            base.type = 1;
+            Name = "New Map";
+            type = 1;
         }
 
         public void GetData(ByteBuffer myBuffer, Dictionary<int,MapBase> gameMaps )

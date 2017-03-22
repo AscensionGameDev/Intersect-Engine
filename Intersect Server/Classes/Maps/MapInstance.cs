@@ -103,7 +103,7 @@ namespace Intersect_Server.Classes.Maps
                                 }
                                 else
                                 {
-                                    mapBase[x + 1, y + 1] = MapInstance.GetMap(Database.MapGrids[MapGrid].MyGrid[x1, y1]);
+                                    mapBase[x + 1, y + 1] = GetMap(Database.MapGrids[MapGrid].MyGrid[x1, y1]);
                                 }
                             }
                         }
@@ -139,7 +139,7 @@ namespace Intersect_Server.Classes.Maps
         {
             if (ClientMapData == null)
             {
-                ClientMapData = base.GetMapData(true);
+                ClientMapData = GetMapData(true);
             }
             return ClientMapData;
         }
@@ -671,7 +671,7 @@ namespace Intersect_Server.Classes.Maps
             if (includingSelf) maps.Add(this);
             for (int i = 0; i < SurroundingMaps.Count; i++)
             {
-                var map = MapInstance.GetMap(SurroundingMaps[i]);
+                var map = GetMap(SurroundingMaps[i]);
                 if (map != null) maps.Add(map);
             }
             return maps;
@@ -742,8 +742,8 @@ namespace Intersect_Server.Classes.Maps
                 if (SurroundingMaps.Count <= 0) return;
                 foreach (var t in SurroundingMaps)
                 {
-                    MapInstance.GetMap(t).Active = true;
-                    MapInstance.GetMap(t).SendMapEntitiesTo(player);
+                    GetMap(t).Active = true;
+                    GetMap(t).SendMapEntitiesTo(player);
                     PacketSender.SendMapItems(player.MyClient, t);
                 }
                 PacketSender.SendEntityDataToProximity(player);
@@ -851,7 +851,7 @@ namespace Intersect_Server.Classes.Maps
         public override void Delete()
         {
             MapInstanceTable.Remove(((DatabaseObject) this).Id);
-            MapBase.Objects.Remove(((DatabaseObject) this).Id);
+            Objects.Remove(((DatabaseObject) this).Id);
         }
         public static void ClearObjects()
         {
@@ -861,7 +861,7 @@ namespace Intersect_Server.Classes.Maps
         public static void AddObject(int index, DatabaseObject obj)
         {
             MapInstanceTable.Add(index, obj);
-            MapBase.Objects.Add(index, (MapBase)obj);
+            Objects.Add(index, (MapBase)obj);
         }
         public static int ObjectCount()
         {

@@ -73,7 +73,7 @@ namespace Intersect_Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.JoinGame);
-            PacketSender.SendEntityDataTo(client, client.Entity);
+            SendEntityDataTo(client, client.Entity);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -932,7 +932,7 @@ namespace Intersect_Server.Classes.Networking
                     {
                         if (Database.MapGrids[gridIndex].HasMap(Globals.Clients[i].EditorMap))
                         {
-                            PacketSender.SendMapGrid(Globals.Clients[i], gridIndex);
+                            SendMapGrid(Globals.Clients[i], gridIndex);
                         }
                     }
                     else
@@ -941,7 +941,7 @@ namespace Intersect_Server.Classes.Networking
                         {
                             if (Database.MapGrids[gridIndex].HasMap(Globals.Clients[i].Entity.CurrentMap))
                             {
-                                PacketSender.SendMapGrid(Globals.Clients[i],gridIndex,true);
+                                SendMapGrid(Globals.Clients[i],gridIndex,true);
                             }
                         }
                     }
@@ -977,7 +977,7 @@ namespace Intersect_Server.Classes.Networking
                 }
             }
             client.SendPacket(bf.ToArray());
-            if (!client.IsEditor && clearKnownMaps) PacketSender.SendMap(client, client.Entity.CurrentMap);
+            if (!client.IsEditor && clearKnownMaps) SendMap(client, client.Entity.CurrentMap);
             bf.Dispose();
         }
 

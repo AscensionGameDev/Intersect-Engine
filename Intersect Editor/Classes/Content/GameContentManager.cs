@@ -67,7 +67,7 @@ namespace Intersect_Editor.Classes.Core
         //Resource Downloader
         public static void CheckForResources()
         {
-            System.Net.ServicePointManager.Expect100Continue = false;
+            ServicePointManager.Expect100Continue = false;
             if (!Directory.Exists("resources"))
             {
                 loadingForm = new frmLoadingContent();
@@ -134,15 +134,15 @@ namespace Intersect_Editor.Classes.Core
                 Environment.Exit(1);
             }
         }
-        private static void Client_DownloadFileCompleted(global::System.Object sender, global::System.ComponentModel.AsyncCompletedEventArgs e)
+        private static void Client_DownloadFileCompleted(Object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
             downloadCompleted = true;
             if (!e.Cancelled && e.Error == null)
             {
                 try
                 {
-                    global::System.IO.Compression.ZipFile.ExtractToDirectory("resources.zip",
-                        global::System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                    System.IO.Compression.ZipFile.ExtractToDirectory("resources.zip",
+                        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
                     File.Delete("resources.zip");
                 }
                 catch (Exception ex)
@@ -162,7 +162,7 @@ namespace Intersect_Editor.Classes.Core
                 }
             }
         }
-        private static void Client_DownloadProgressChanged(global::System.Object sender, DownloadProgressChangedEventArgs e)
+        private static void Client_DownloadProgressChanged(Object sender, DownloadProgressChangedEventArgs e)
         {
             loadingForm.SetProgress(e.ProgressPercentage);
         }

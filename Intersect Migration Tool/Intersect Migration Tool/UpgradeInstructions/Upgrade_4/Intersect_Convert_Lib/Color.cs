@@ -56,29 +56,29 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Conve
             switch (name)
             {
                 case "Black":
-                    return Color.Black;
+                    return Black;
                 case "White":
-                    return Color.White;
+                    return White;
                 case "Blue":
-                    return Color.Blue;
+                    return Blue;
                 case "Red":
-                    return Color.Red;
+                    return Red;
                 case "Green":
-                    return Color.Green;
+                    return Green;
                 case "Yellow":
-                    return Color.Yellow;
+                    return Yellow;
                 case "Orange":
-                    return Color.Orange;
+                    return Orange;
                 case "Purple":
-                    return Color.Magenta;
+                    return Magenta;
                 case "Gray":
-                    return Color.Gray;
+                    return Gray;
                 case "Cyan":
-                    return Color.Cyan;
+                    return Cyan;
                 case "Pink":
-                    return Color.Pink;
+                    return Pink;
                 default:
-                    return Color.White;
+                    return White;
             }
         }
 

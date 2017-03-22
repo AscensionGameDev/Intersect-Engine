@@ -195,7 +195,7 @@ namespace Intersect_Editor.Classes.Maps
             fileDialog.ShowDialog();
             if (fileDialog.FileName != "")
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "savescreenshotconfirm"), Strings.Get("mapgrid", "savescreenshottitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == System.Windows.Forms.DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "savescreenshotconfirm"), Strings.Get("mapgrid", "savescreenshottitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     FetchMissingPreviews(false);
                     Globals.PreviewProgressForm = new frmProgress();
@@ -332,7 +332,7 @@ namespace Intersect_Editor.Classes.Maps
             List<int> maps = new List<int>();
             if (clearAllFirst)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "clearandfetch"),  Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) != System.Windows.Forms.DialogResult.Yes) return;
+                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "clearandfetch"),  Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) != DialogResult.Yes) return;
                 if (DarkMessageBox.ShowInformation(Strings.Get("mapgrid", "keepmapcache"), Strings.Get("mapgrid", "mapcachecaption"),DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     Database.GridHideOverlay = EditorGraphics.HideOverlay;
@@ -341,11 +341,11 @@ namespace Intersect_Editor.Classes.Maps
                     Database.GridHideResources = EditorGraphics.HideResources;
                     if (EditorGraphics.LightColor != null)
                     {
-                        Database.GridLightColor = System.Drawing.Color.FromArgb(EditorGraphics.LightColor.A, EditorGraphics.LightColor.R, EditorGraphics.LightColor.G, EditorGraphics.LightColor.B).ToArgb();
+                        Database.GridLightColor = Color.FromArgb(EditorGraphics.LightColor.A, EditorGraphics.LightColor.R, EditorGraphics.LightColor.G, EditorGraphics.LightColor.B).ToArgb();
                     }
                     else
                     {
-                        Database.GridLightColor = System.Drawing.Color.FromArgb(255,255,255,255).ToArgb();
+                        Database.GridLightColor = Color.FromArgb(255,255,255,255).ToArgb();
                     }
                 }
                 else
@@ -354,7 +354,7 @@ namespace Intersect_Editor.Classes.Maps
                     Database.GridHideDarkness = true;
                     Database.GridHideFog = true;
                     Database.GridHideResources = false;
-                    Database.GridLightColor = System.Drawing.Color.White.ToArgb();
+                    Database.GridLightColor = Color.White.ToArgb();
                 }
                 Database.SaveGridOptions();
                 Database.ClearAllMapCache();
@@ -374,7 +374,7 @@ namespace Intersect_Editor.Classes.Maps
             }
             if (maps.Count > 0)
             {
-                if (clearAllFirst || DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "justfetch"), Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) == System.Windows.Forms.DialogResult.Yes)
+                if (clearAllFirst || DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "justfetch"), Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     Globals.FetchingMapPreviews = true;
                     Globals.PreviewProgressForm = new frmProgress();
@@ -694,7 +694,7 @@ namespace Intersect_Editor.Classes.Maps
         public Texture2D tex { get; set; }
         public MapGridItem(int num, string name = "", int revision = 0)
         {
-            this.mapnum = num;
+            mapnum = num;
             this.name = name;
             this.revision = revision;
         }

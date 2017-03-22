@@ -273,7 +273,7 @@ namespace Intersect_Editor.Classes.Maps
             lock (objectsLock)
             {
                 Objects.Remove(Id);
-                MapBase.GetObjects().Remove(this.Id);
+                MapBase.GetObjects().Remove(Id);
             }
         }
         public static void ClearObjects()

@@ -99,7 +99,7 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("npceditor", "title");
+            Text = Strings.Get("npceditor", "title");
             toolStripItemNew.Text = Strings.Get("npceditor", "new");
             toolStripItemDelete.Text = Strings.Get("npceditor", "delete");
             toolStripItemCopy.Text = Strings.Get("npceditor", "copy");
@@ -284,7 +284,7 @@ namespace Intersect_Editor.Forms
         private void DrawNpcSprite()
         {
             var picSpriteBmp = new Bitmap(picNpc.Width, picNpc.Height);
-            var gfx = System.Drawing.Graphics.FromImage(picSpriteBmp);
+            var gfx = Graphics.FromImage(picSpriteBmp);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picNpc.Width, picNpc.Height));
             if (cmbSprite.SelectedIndex > 0)
             {

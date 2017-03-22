@@ -1845,7 +1845,7 @@ namespace Intersect_Server.Classes.Entities
                 /* Find an existing stack */
                 for (int i = 0; i < Options.MaxInvItems; i++)
                 {
-                    if (this.Inventory[i] != null && this.Inventory[i].ItemNum == this.Trade[slot].ItemNum)
+                    if (Inventory[i] != null && Inventory[i].ItemNum == Trade[slot].ItemNum)
                     {
                         inventorySlot = i;
                         break;
@@ -1858,7 +1858,7 @@ namespace Intersect_Server.Classes.Entities
                 /* Find a free slot if we don't have one already */
                 for (int j = 0; j < Options.MaxInvItems; j++)
                 {
-                    if (this.Inventory[j] == null || this.Inventory[j].ItemNum == -1)
+                    if (Inventory[j] == null || Inventory[j].ItemNum == -1)
                     {
                         inventorySlot = j;
                         break;
@@ -1873,14 +1873,14 @@ namespace Intersect_Server.Classes.Entities
             }
 
             /* Move the items to the inventory */
-            amount = Math.Min(amount, int.MaxValue - this.Inventory[inventorySlot].ItemVal);
+            amount = Math.Min(amount, int.MaxValue - Inventory[inventorySlot].ItemVal);
 
-            if (this.Inventory[inventorySlot] == null || this.Inventory[inventorySlot].ItemNum == -1 || this.Inventory[inventorySlot].ItemVal < 0)
+            if (Inventory[inventorySlot] == null || Inventory[inventorySlot].ItemNum == -1 || Inventory[inventorySlot].ItemVal < 0)
             {
-                this.Inventory[inventorySlot] = new ItemInstance(Trade[slot].ItemNum, 0, Trade[slot].BagId);
+                Inventory[inventorySlot] = new ItemInstance(Trade[slot].ItemNum, 0, Trade[slot].BagId);
             }
 
-            this.Inventory[inventorySlot].ItemVal += amount;
+            Inventory[inventorySlot].ItemVal += amount;
             if (amount >= Trade[slot].ItemVal)
             {
                 Trade[slot] = null;
@@ -2848,7 +2848,7 @@ namespace Intersect_Server.Classes.Entities
                 {
                     Globals.Entities[index].Dir = attribute.data1 - 1;
                 } //If sets direction, set it.
-                var dash = new DashInstance(this, 1, base.Dir);
+                var dash = new DashInstance(this, 1, Dir);
             }
 
             for (int i = 0; i < MyEvents.Count; i++)

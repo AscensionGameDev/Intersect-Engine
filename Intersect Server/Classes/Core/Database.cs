@@ -1866,7 +1866,7 @@ namespace Intersect_Server.Classes.Core
                     while (dataReader.Read())
                     {
                         var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
-                        if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
+                        if (dataReader[MAP_LIST_DATA].GetType() != typeof(DBNull))
                         {
                             LoadGameObject(type, index, (byte[]) dataReader[GAME_OBJECT_DATA]);
                         }
@@ -2165,7 +2165,7 @@ namespace Intersect_Server.Classes.Core
                     {
                         while (dataReader.Read())
                         {
-                            if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
+                            if (dataReader[MAP_LIST_DATA].GetType() != typeof(DBNull))
                             {
                                 var data = (byte[]) dataReader[MAP_LIST_DATA];
                                 ByteBuffer myBuffer = new ByteBuffer();
@@ -2217,7 +2217,7 @@ namespace Intersect_Server.Classes.Core
                     {
                         while (dataReader.Read())
                         {
-                            if (dataReader[TIME_DATA].GetType() != typeof(System.DBNull))
+                            if (dataReader[TIME_DATA].GetType() != typeof(DBNull))
                             {
                                 var data = (byte[]) dataReader[TIME_DATA];
                                 TimeBase.GetTimeBase().LoadTimeBase(data);

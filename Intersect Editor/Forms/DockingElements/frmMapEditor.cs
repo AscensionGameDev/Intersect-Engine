@@ -37,7 +37,7 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("mapping", "editortitle");
+            Text = Strings.Get("mapping", "editortitle");
         }
 
         private void frmMapEditor_Load(object sender, EventArgs e)
@@ -52,9 +52,9 @@ namespace Intersect_Editor.Forms
 
         public void InitMapEditor()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
-                this.BeginInvoke(PacketHandler.MapUpdatedDelegate);
+                BeginInvoke(PacketHandler.MapUpdatedDelegate);
             }
             else
             {
@@ -80,10 +80,10 @@ namespace Intersect_Editor.Forms
                 }
                 if (EditorGraphics.GetGraphicsDevice() != null)
                 {
-                    if (this.picMap.Width > 0 && this.picMap.Height > 0)
+                    if (picMap.Width > 0 && picMap.Height > 0)
                     {
-                        _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), this.picMap.Handle,
-                            this.picMap.Width, this.picMap.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 0,
+                        _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), picMap.Handle,
+                            picMap.Width, picMap.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 0,
                             RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
                         EditorGraphics.SetMapEditorChain(_chain);
                     }

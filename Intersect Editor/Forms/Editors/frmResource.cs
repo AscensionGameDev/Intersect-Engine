@@ -109,7 +109,7 @@ namespace Intersect_Editor.Classes
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("resourceeditor", "title");
+            Text = Strings.Get("resourceeditor", "title");
             toolStripItemNew.Text = Strings.Get("resourceeditor", "new");
             toolStripItemDelete.Text = Strings.Get("resourceeditor", "delete");
             toolStripItemCopy.Text = Strings.Get("resourceeditor", "copy");
@@ -279,7 +279,7 @@ namespace Intersect_Editor.Classes
             Pen whitePen = new Pen(System.Drawing.Color.Red, 1);
 
             // Initial Sprite
-            var gfx = System.Drawing.Graphics.FromImage(_initialBitmap);
+            var gfx = Graphics.FromImage(_initialBitmap);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picInitialResource.Width, picInitialResource.Height));
             if (cmbInitialSprite.SelectedIndex > 0 && _initialTileset != null)
             {
@@ -291,7 +291,7 @@ namespace Intersect_Editor.Classes
             gfx.Dispose();
 
             // End Sprite
-            gfx = System.Drawing.Graphics.FromImage(_endBitmap);
+            gfx = Graphics.FromImage(_endBitmap);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picEndResource.Width, picEndResource.Height));
             if (cmbEndSprite.SelectedIndex > 0 && _endTileset != null)
             {

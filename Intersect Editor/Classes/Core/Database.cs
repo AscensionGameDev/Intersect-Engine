@@ -341,7 +341,7 @@ namespace Intersect_Editor.Classes
                 var dataReader = cmd.ExecuteReader();
                 while (dataReader.Read())
                 {
-                    if (dataReader[OPTION_VALUE].GetType() != typeof(System.DBNull))
+                    if (dataReader[OPTION_VALUE].GetType() != typeof(DBNull))
                     {
                         var data = (string)dataReader[OPTION_VALUE];
                         return data;
@@ -400,7 +400,7 @@ namespace Intersect_Editor.Classes
                     {
                         // lock bitmap
                         System.Drawing.Imaging.BitmapData origdata =
-                        bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, bmp.PixelFormat);
+                        bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, bmp.PixelFormat);
 
                         uint* byteData = (uint*)origdata.Scan0;
 
@@ -459,7 +459,7 @@ namespace Intersect_Editor.Classes
                 var dataReader = cmd.ExecuteReader();
                 while (dataReader.Read())
                 {
-                    if (dataReader[MAP_CACHE_DATA].GetType() != typeof(System.DBNull))
+                    if (dataReader[MAP_CACHE_DATA].GetType() != typeof(DBNull))
                     {
                         var data = (byte[])dataReader[MAP_CACHE_DATA];
                         return data;

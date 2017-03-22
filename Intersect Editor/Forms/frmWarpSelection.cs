@@ -45,13 +45,13 @@ namespace Intersect_Editor.Forms
             if (!tileSelection)
             {
                 _tileSelection = false;
-                this.Text = Strings.Get("warpselection", "mapselectiontitle");
+                Text = Strings.Get("warpselection", "mapselectiontitle");
             }
         }
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("warpselection", "title");
+            Text = Strings.Get("warpselection", "title");
             chkChronological.Text = Strings.Get("warpselection", "chronological");
             btnOk.Text = Strings.Get("warpselection", "okay");
             btnCancel.Text = Strings.Get("warpselection", "cancel");
@@ -104,7 +104,7 @@ namespace Intersect_Editor.Forms
                     }
                 }
                 Bitmap newBitmap = new Bitmap(pnlMap.Width, pnlMap.Height);
-                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(newBitmap);
+                Graphics g = Graphics.FromImage(newBitmap);
                 g.DrawImage(_mapImage, new Rectangle(0, 0, pnlMap.Width, pnlMap.Height),
                     new Rectangle(0, 0, pnlMap.Width, pnlMap.Height), GraphicsUnit.Pixel);
                 if (_tileSelection)

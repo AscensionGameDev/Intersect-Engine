@@ -219,7 +219,7 @@ namespace Intersect_Server.Classes.Entities
 
         public bool CanSpawnPage(int pageIndex, EventBase eventStruct)
         {
-            return EventInstance.MeetsConditionLists(eventStruct.MyPages[pageIndex].ConditionLists, MyPlayer, this);
+            return MeetsConditionLists(eventStruct.MyPages[pageIndex].ConditionLists, MyPlayer, this);
         }
 
         public static bool MeetsConditionLists(ConditionLists lists, Player MyPlayer, EventInstance EventInstance, bool SingleList = true)

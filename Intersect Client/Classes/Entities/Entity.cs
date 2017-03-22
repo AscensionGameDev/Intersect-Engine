@@ -298,11 +298,11 @@ namespace Intersect_Client.Classes.Entities
                 }
                 if (animInstance.AutoRotate)
                 {
-                    animInstance.SetPosition((int)GetCenterPos().X, (int)GetCenterPos().Y,this.CurrentX,this.CurrentY,this.CurrentMap, Dir, this.CurrentZ);
+                    animInstance.SetPosition((int)GetCenterPos().X, (int)GetCenterPos().Y,CurrentX,CurrentY,CurrentMap, Dir, CurrentZ);
                 }
                 else
                 {
-                    animInstance.SetPosition((int)GetCenterPos().X, (int)GetCenterPos().Y, this.CurrentX, this.CurrentY, this.CurrentMap, - 1, this.CurrentZ);
+                    animInstance.SetPosition((int)GetCenterPos().X, (int)GetCenterPos().Y, CurrentX, CurrentY, CurrentMap, - 1, CurrentZ);
                 }
             }
             var chatbubbles = _chatBubbles.ToArray();
@@ -605,7 +605,7 @@ namespace Intersect_Client.Classes.Entities
                 y = y - (int)((entityTex.GetHeight() / 8));
                 y -= 12;
             }
-            if (this.GetType() != typeof(Event)) { y -= 10; } //Need room for HP bar if not an event.
+            if (GetType() != typeof(Event)) { y -= 10; } //Need room for HP bar if not an event.
             return y;
         }
         public virtual void DrawName(Color color)
@@ -738,7 +738,7 @@ namespace Intersect_Client.Classes.Entities
         //
         public void DrawTarget(int Priority)
         {
-            if (this.GetType() == typeof(Projectile)) return;
+            if (GetType() == typeof(Projectile)) return;
             var map = MapInstance.GetMap(CurrentMap);
             if (map == null) return;
             FloatRect srcRectangle = new FloatRect();

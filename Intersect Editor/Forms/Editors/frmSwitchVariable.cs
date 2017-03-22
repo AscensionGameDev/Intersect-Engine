@@ -25,7 +25,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("switchvariableeditor","title");
+            Text = Strings.Get("switchvariableeditor","title");
             grpTypes.Text = Strings.Get("switchvariableeditor", "type");
             grpList.Text = Strings.Get("switchvariableeditor", "list");
             rdoPlayerSwitch.Text = Strings.Get("switchvariableeditor", "playerswitches");

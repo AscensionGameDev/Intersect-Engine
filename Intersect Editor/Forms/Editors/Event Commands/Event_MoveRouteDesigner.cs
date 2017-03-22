@@ -155,7 +155,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     Event_GraphicSelector graphicSelector = new Event_GraphicSelector(_tmpMoveRoute.Actions[lstActions.SelectedIndex].Graphic, _eventEditor, this, false);
                     _eventEditor.Controls.Add(graphicSelector);
                     graphicSelector.BringToFront();
-                    graphicSelector.Size = this.ClientSize;
+                    graphicSelector.Size = ClientSize;
                 }
                 else if (_tmpMoveRoute.Actions[lstActions.SelectedIndex].Type == MoveRouteEnum.SetAnimation)
                 {
@@ -163,7 +163,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     Event_MoveRouteAnimationSelector animationSelector = new Event_MoveRouteAnimationSelector(this, _tmpMoveRoute.Actions[lstActions.SelectedIndex], true);
                     Controls.Add(animationSelector);
                     animationSelector.BringToFront();
-                    animationSelector.Size = this.ClientSize;
+                    animationSelector.Size = ClientSize;
                 }
             }
         }
@@ -240,7 +240,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 Event_GraphicSelector graphicSelector = new Event_GraphicSelector(action.Graphic, _eventEditor, this, true);
                 _eventEditor.Controls.Add(graphicSelector);
                 graphicSelector.BringToFront();
-                graphicSelector.Size = this.ClientSize;
+                graphicSelector.Size = ClientSize;
             }
             else if (action.Type == MoveRouteEnum.SetAnimation)
             {
@@ -248,7 +248,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 Event_MoveRouteAnimationSelector animationSelector = new Event_MoveRouteAnimationSelector(this, action, true);
                 Controls.Add(animationSelector);
                 animationSelector.BringToFront();
-                animationSelector.Size = this.ClientSize;
+                animationSelector.Size = ClientSize;
             }
             if (lstActions.SelectedIndex == -1)
             {

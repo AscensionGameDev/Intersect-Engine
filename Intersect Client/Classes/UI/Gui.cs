@@ -41,11 +41,11 @@ namespace Intersect_Client.Classes.UI
             //TODO: Make it easier to modify skin.
             _gwenSkin = new TexturedBase(GwenRenderer, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
             {
-                DefaultFont = Globals.ContentManager.GetFont(Gui.DefaultFont, 10)
+                DefaultFont = Globals.ContentManager.GetFont(DefaultFont, 10)
             };
             var _gameSkin = new TexturedBase(GwenRenderer, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
             {
-                DefaultFont = Globals.ContentManager.GetFont(Gui.DefaultFont, 10)
+                DefaultFont = Globals.ContentManager.GetFont(DefaultFont, 10)
             };
 
 
@@ -129,7 +129,7 @@ namespace Intersect_Client.Classes.UI
         //Actual Drawing Function
         public static void DrawGui()
         {
-            if (!Gui.GwenInitialized) Gui.InitGwen();
+            if (!GwenInitialized) InitGwen();
             ErrorMsgHandler.Update();
             _gameCanvas.RestrictToParent = false;
             if (Globals.GameState == GameStates.Menu)

@@ -396,7 +396,7 @@ namespace Intersect_Client.Classes.UI
             if (shouldReset) GameGraphics.Renderer.Init();
             if (Globals.GameState == GameStates.InGame)
             {
-                this.Hide();
+                Hide();
             }
             else
             {

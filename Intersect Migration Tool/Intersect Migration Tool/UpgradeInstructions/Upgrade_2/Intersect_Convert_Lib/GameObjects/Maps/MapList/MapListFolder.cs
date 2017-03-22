@@ -9,8 +9,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
         public MapListFolder()
             : base()
         {
-            base.Name = "New Folder";
-            base.type = 0;
+            Name = "New Folder";
+            type = 0;
         }
 
         public void GetData(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps )

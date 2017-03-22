@@ -58,7 +58,7 @@ namespace Intersect_Server.Classes.Networking
                 _readBuff = new byte[_mySocket.ReceiveBufferSize];
                 _myStream.BeginRead(_readBuff, 0, _mySocket.ReceiveBufferSize, OnReceiveData, null);
             }
-            catch (System.ObjectDisposedException ex)
+            catch (ObjectDisposedException ex)
             {
                 Log.Trace(ex);
                 //Trying to read from a disconnected socket

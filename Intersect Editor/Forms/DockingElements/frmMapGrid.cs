@@ -18,7 +18,7 @@ namespace Intersect_Editor.Forms.DockingElements
         private int _posX = 0;
         private int _posY = 0;
         private ToolTip _toolTip = new ToolTip();
-        private Intersect_Editor.Classes.Maps.MapGridItem _toolTipItem;
+        private MapGridItem _toolTipItem;
 
         public frmMapGrid()
         {
@@ -35,7 +35,7 @@ namespace Intersect_Editor.Forms.DockingElements
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("mapgrid", "title");
+            Text = Strings.Get("mapgrid", "title");
             btnScreenshotWorld.Text = Strings.Get("mapgrid", "screenshotworld");
             btnGridView.Text = Strings.Get("mapgrid", "gridlines");
             btnFetchPreview.Text = Strings.Get("mapgrid", "preview");
@@ -61,13 +61,13 @@ namespace Intersect_Editor.Forms.DockingElements
                 }
                 if (EditorGraphics.GetGraphicsDevice() != null)
                 {
-                    if (this.pnlMapGrid.Width > 0 && this.pnlMapGrid.Height > 0)
+                    if (pnlMapGrid.Width > 0 && pnlMapGrid.Height > 0)
                     {
-                        if (this.pnlMapGrid.Width > 0 && this.pnlMapGrid.Height > 0)
+                        if (pnlMapGrid.Width > 0 && pnlMapGrid.Height > 0)
                         {
                             _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(),
-                                this.pnlMapGrid.Handle,
-                                this.pnlMapGrid.Width, this.pnlMapGrid.Height, false, SurfaceFormat.Color,
+                                pnlMapGrid.Handle,
+                                pnlMapGrid.Width, pnlMapGrid.Height, false, SurfaceFormat.Color,
                                 DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
                             EditorGraphics.SetMapGridChain(_chain);
                         }
@@ -87,7 +87,7 @@ namespace Intersect_Editor.Forms.DockingElements
         }
 
 
-        private void PnlMapGrid_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void PnlMapGrid_MouseWheel(object sender, MouseEventArgs e)
         {
             Globals.MapGrid.ZoomIn(e.Delta, e.X,e.Y);
         }

@@ -20,7 +20,7 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("mapproperties", "title");
+            Text = Strings.Get("mapproperties", "title");
         }
 
         public void Update()

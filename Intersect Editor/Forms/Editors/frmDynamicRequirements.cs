@@ -33,7 +33,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void InitLocalization(RequirementType type)
         {
-            this.Text = Strings.Get("dynamicrequirements", "title");
+            Text = Strings.Get("dynamicrequirements", "title");
             grpConditionLists.Text = Strings.Get("dynamicrequirements", "conditionlists");
             switch (type)
             {
@@ -196,13 +196,13 @@ namespace Intersect_Editor.Forms.Editors
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             _sourceLists.Load(_edittingLists.Data());
-            this.Close();
+            Close();
         }
 
         private void lstConditionLists_KeyDown(object sender, KeyEventArgs e)

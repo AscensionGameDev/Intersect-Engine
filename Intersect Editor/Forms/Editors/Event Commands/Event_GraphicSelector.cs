@@ -141,7 +141,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void UpdatePreview()
         {
-            System.Drawing.Graphics graphics;
+            Graphics graphics;
             Bitmap sourceBitmap = null;
             Bitmap destBitmap = null;
             if (cmbGraphicType.SelectedIndex == 1) //Sprite
@@ -160,9 +160,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 destBitmap = new Bitmap(sourceBitmap.Width, sourceBitmap.Height);
                 pnlGraphic.Width = sourceBitmap.Width;
                 pnlGraphic.Height = sourceBitmap.Height;
-                graphics = System.Drawing.Graphics.FromImage(destBitmap);
+                graphics = Graphics.FromImage(destBitmap);
                 graphics.Clear(Color.FromArgb(60, 63, 65));
-                graphics.DrawImage(sourceBitmap, new System.Drawing.Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height));
+                graphics.DrawImage(sourceBitmap, new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height));
                 if (cmbGraphicType.SelectedIndex == 1)
                 {
                     graphics.DrawRectangle(new Pen(Color.White, 2f),

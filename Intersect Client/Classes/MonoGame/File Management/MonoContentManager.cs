@@ -88,7 +88,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                 Environment.Exit(1);
             }
         }
-        private void Client_DownloadFileCompleted(global::System.Object sender, global::System.ComponentModel.AsyncCompletedEventArgs e)
+        private void Client_DownloadFileCompleted(Object sender, global::System.ComponentModel.AsyncCompletedEventArgs e)
         {
             downloadCompleted = true;
             if (!e.Cancelled && e.Error == null)
@@ -96,7 +96,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                 try
                 {
                     global::System.IO.Compression.ZipFile.ExtractToDirectory("resources.zip",
-                        global::System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
                     File.Delete("resources.zip");
                 }
                 catch (Exception ex)
@@ -116,7 +116,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                 }
             }
         }
-        private void Client_DownloadProgressChanged(global::System.Object sender, DownloadProgressChangedEventArgs e)
+        private void Client_DownloadProgressChanged(Object sender, DownloadProgressChangedEventArgs e)
         {
             loadingForm.SetProgress(e.ProgressPercentage);
         }

@@ -95,7 +95,7 @@ namespace Intersect_Editor.Classes
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("projectileeditor", "title");
+            Text = Strings.Get("projectileeditor", "title");
             toolStripItemNew.Text = Strings.Get("projectileeditor", "new");
             toolStripItemDelete.Text = Strings.Get("projectileeditor", "delete");
             toolStripItemCopy.Text = Strings.Get("projectileeditor", "copy");
@@ -250,7 +250,7 @@ namespace Intersect_Editor.Classes
             {
                 img = (Bitmap)picSpawns.BackgroundImage;
             }
-            var gfx = System.Drawing.Graphics.FromImage(img);
+            var gfx = Graphics.FromImage(img);
             gfx.FillRectangle(Brushes.White, new Rectangle(0, 0, picSpawns.Width, picSpawns.Height));
 
             for (var x = 0; x < ProjectileBase.SpawnLocationsWidth; x++)

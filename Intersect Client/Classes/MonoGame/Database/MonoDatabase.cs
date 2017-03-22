@@ -37,13 +37,13 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
         {
             if (!File.Exists(Path.Combine("resources","config.xml")))
             {
-                File.WriteAllText(Path.Combine("resources", "config.xml"), base.GetDefaultConfig());
+                File.WriteAllText(Path.Combine("resources", "config.xml"), GetDefaultConfig());
                 return LoadConfig();
             }
             else
             {
                 string xmldata = File.ReadAllText(Path.Combine("resources", "config.xml"));
-                return base.LoadConfigFromXml(xmldata);
+                return LoadConfigFromXml(xmldata);
             }
         }
     }

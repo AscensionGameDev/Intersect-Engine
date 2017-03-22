@@ -88,7 +88,7 @@ namespace Intersect_Editor.Forms
             UpdateTimeSimulationList();
 
             toolStripButtonDonate.Size = new Size(54,25);
-            this.WindowState = FormWindowState.Maximized;
+            WindowState = FormWindowState.Maximized;
         }
 
         private void InitLocalization()
@@ -491,9 +491,9 @@ namespace Intersect_Editor.Forms
 
             if (Globals.Dragging)
             {
-                if (Globals.MainForm.ActiveControl.GetType() == typeof(WeifenLuo.WinFormsUI.Docking.DockPane))
+                if (Globals.MainForm.ActiveControl.GetType() == typeof(DockPane))
                 {
-                    Control ctrl = ((WeifenLuo.WinFormsUI.Docking.DockPane)Globals.MainForm.ActiveControl).ActiveControl;
+                    Control ctrl = ((DockPane)Globals.MainForm.ActiveControl).ActiveControl;
                     if (ctrl != Globals.MapEditorWindow)
                     {
                         Globals.MapEditorWindow.PlaceSelection();
@@ -511,7 +511,7 @@ namespace Intersect_Editor.Forms
                 //Offer to export map
                 if (Globals.CurrentMap != null)
                 {
-                    if (DarkMessageBox.ShowError(Strings.Get("errors","disconnectedsave"),Strings.Get("errors","disconnectedsavecaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) == System.Windows.Forms.DialogResult.Yes)
+                    if (DarkMessageBox.ShowError(Strings.Get("errors","disconnectedsave"),Strings.Get("errors","disconnectedsavecaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                     {
                         exportMapToolStripMenuItem_Click(null, null);
                         Application.Exit();
@@ -878,15 +878,15 @@ namespace Intersect_Editor.Forms
         }
         private void toolStripButtonDonate_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://www.freemmorpgmaker.com/donate.php");
+            Process.Start("https://www.freemmorpgmaker.com/donate.php");
         }
         private void toolStripButtonQuestion_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://www.ascensiongamedev.com/community/forum/53-questions-and-answers/");
+            Process.Start("https://www.ascensiongamedev.com/community/forum/53-questions-and-answers/");
         }
         private void toolStripButtonBug_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://www.ascensiongamedev.com/community/bug_tracker/intersect/");
+            Process.Start("https://www.ascensiongamedev.com/community/bug_tracker/intersect/");
         }
         private void UpdateTimeSimulationList()
         {
@@ -912,7 +912,7 @@ namespace Intersect_Editor.Forms
 
                 //Create image of overlay color
                 var img = new Bitmap(16,16);
-                var g = System.Drawing.Graphics.FromImage(img);
+                var g = Graphics.FromImage(img);
                 g.Clear(System.Drawing.Color.Transparent);
                 //Draw the trans tile if we have it
                 if (transtile != null)
@@ -922,7 +922,7 @@ namespace Intersect_Editor.Forms
                 var clr = TimeBase.GetTimeBase().RangeColors[x];
                 Brush brush =
                 new SolidBrush(System.Drawing.Color.FromArgb(clr.A, clr.R, clr.G, clr.B));
-                g.FillRectangle(brush, new System.Drawing.Rectangle(0, 0, 32, 32));
+                g.FillRectangle(brush, new Rectangle(0, 0, 32, 32));
 
                 //Draw the overlay color
                 g.Dispose();

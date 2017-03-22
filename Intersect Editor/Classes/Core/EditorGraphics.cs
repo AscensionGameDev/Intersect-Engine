@@ -91,14 +91,14 @@ namespace Intersect_Editor.Classes
                 SetupWhiteTex();
 
                 //Load the rest of the graphics and audio
-                GameContentManager.LoadEditorContent();
+                LoadEditorContent();
 
                 //Create our multiplicative blending state.
                 MultiplyState = new BlendState()
                 {
                     ColorBlendFunction = BlendFunction.Add,
-                    ColorSourceBlend = Microsoft.Xna.Framework.Graphics.Blend.DestinationColor,
-                    ColorDestinationBlend = Microsoft.Xna.Framework.Graphics.Blend.Zero
+                    ColorSourceBlend = Blend.DestinationColor,
+                    ColorDestinationBlend = Blend.Zero
                 };
             }
             catch (Exception ex)

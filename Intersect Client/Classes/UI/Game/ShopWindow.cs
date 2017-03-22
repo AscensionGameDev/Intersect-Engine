@@ -50,7 +50,7 @@ namespace Intersect_Client.Classes.UI.Game
             _shopWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"), Button.ControlState.Hovered);
             _shopWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"), Button.ControlState.Clicked);
             _shopWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
-            _shopWindow.SetTextColor(new IntersectClientExtras.GenericClasses.Color(255, 220, 220, 220), WindowControl.ControlState.Active);
+            _shopWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
             _itemContainer = new ScrollControl(_shopWindow);
             _itemContainer.SetPosition(0, 0);
@@ -59,7 +59,7 @@ namespace Intersect_Client.Classes.UI.Game
             _itemContainer.AutoHideBars = false;
 
             var scrollbar = _itemContainer.GetVerticalScrollBar();
-            scrollbar.RenderColor = new IntersectClientExtras.GenericClasses.Color(200, 40, 40, 40);
+            scrollbar.RenderColor = new Color(200, 40, 40, 40);
             scrollbar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarnormal.png"), Dragger.ControlState.Normal);
             scrollbar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarhover.png"), Dragger.ControlState.Hovered);
             scrollbar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarclicked.png"), Dragger.ControlState.Clicked);

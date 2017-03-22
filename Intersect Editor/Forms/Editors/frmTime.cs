@@ -22,7 +22,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("timeeditor", "title");
+            Text = Strings.Get("timeeditor", "title");
             lblTimes.Text = Strings.Get("timeeditor", "times");
             grpSettings.Text = Strings.Get("timeeditor", "settings");
             lblIntervals.Text = Strings.Get("timeeditor", "intervals");
@@ -100,13 +100,13 @@ namespace Intersect_Editor.Forms.Editors
         private void pnlColor_Paint(object sender, PaintEventArgs e)
         {
             var g = Graphics.FromImage(tileBackbuffer);
-            g.Clear(System.Drawing.Color.Transparent);
-            g.DrawImage(pnlColor.BackgroundImage, new System.Drawing.Point(0, 0));
+            g.Clear(Color.Transparent);
+            g.DrawImage(pnlColor.BackgroundImage, new Point(0, 0));
             Brush brush =
-                new SolidBrush(System.Drawing.Color.FromArgb((int)((scrlAlpha.Value) / 100f * 255f), pnlColor.BackColor.R, pnlColor.BackColor.G,
+                new SolidBrush(Color.FromArgb((int)((scrlAlpha.Value) / 100f * 255f), pnlColor.BackColor.R, pnlColor.BackColor.G,
                     pnlColor.BackColor.B));
-            g.FillRectangle(brush, new System.Drawing.Rectangle(0, 0, pnlColor.Width, pnlColor.Height));
-            e.Graphics.DrawImage(tileBackbuffer, new System.Drawing.Point(0, 0));
+            g.FillRectangle(brush, new Rectangle(0, 0, pnlColor.Width, pnlColor.Height));
+            e.Graphics.DrawImage(tileBackbuffer, new Point(0, 0));
         }
 
         private void scrlAlpha_Scroll(object sender, ScrollValueEventArgs e)
@@ -124,7 +124,7 @@ namespace Intersect_Editor.Forms.Editors
                 return;
             }
             grpRangeOptions.Show();
-            pnlColor.BackColor = System.Drawing.Color.FromArgb(255, myTime.RangeColors[lstTimes.SelectedIndex].R, myTime.RangeColors[lstTimes.SelectedIndex].G,
+            pnlColor.BackColor = Color.FromArgb(255, myTime.RangeColors[lstTimes.SelectedIndex].R, myTime.RangeColors[lstTimes.SelectedIndex].G,
                 myTime.RangeColors[lstTimes.SelectedIndex].B);
             scrlAlpha.Value = (byte) (((myTime.RangeColors[lstTimes.SelectedIndex].A)/255f)*100f);
             lblBrightness.Text = Strings.Get("timeeditor", "brightness", (100 - scrlAlpha.Value).ToString());

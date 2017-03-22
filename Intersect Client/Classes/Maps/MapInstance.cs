@@ -141,9 +141,9 @@ namespace Intersect_Client.Classes.Maps
 
         public bool InView()
         {
-            if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0 || MapInstance.GetMap(Globals.Me.CurrentMap) == null) return true;
-            var gridX = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridX;
-            var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
+            if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0 || GetMap(Globals.Me.CurrentMap) == null) return true;
+            var gridX = GetMap(Globals.Me.CurrentMap).MapGridX;
+            var gridY = GetMap(Globals.Me.CurrentMap).MapGridY;
             for (int x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -177,7 +177,7 @@ namespace Intersect_Client.Classes.Maps
                             }
                             else
                             {
-                                mapBase[x + 1, y + 1] = MapInstance.GetMap(Globals.MapGrid[x1, y1]);
+                                mapBase[x + 1, y + 1] = GetMap(Globals.MapGrid[x1, y1]);
                             }
                         }
                     }
@@ -485,9 +485,9 @@ namespace Intersect_Client.Classes.Maps
                         Thread.Sleep(10);
                     }
                 }
-                LowerTextures[i].Clear(IntersectClientExtras.GenericClasses.Color.Transparent);
-                UpperTextures[i].Clear(IntersectClientExtras.GenericClasses.Color.Transparent);
-                PeakTextures[i].Clear(IntersectClientExtras.GenericClasses.Color.Transparent);
+                LowerTextures[i].Clear(Color.Transparent);
+                UpperTextures[i].Clear(Color.Transparent);
+                PeakTextures[i].Clear(Color.Transparent);
 
                 _preRenderStage++;
                 return;
@@ -528,7 +528,7 @@ namespace Intersect_Client.Classes.Maps
         //Fogs/Panorama/Overlay
         private void DrawFog()
         {
-            if (Globals.Me == null || MapInstance.GetMap(Globals.Me.CurrentMap) == null) return;
+            if (Globals.Me == null || GetMap(Globals.Me.CurrentMap) == null) return;
             float ecTime = Globals.System.GetTimeMS() - _fogUpdateTime;
             _fogUpdateTime = Globals.System.GetTimeMS();
             if (Id == Globals.Me.CurrentMap)
@@ -605,7 +605,7 @@ namespace Intersect_Client.Classes.Maps
                         {
                             int fogW = fogTex.GetWidth();
                             int fogH = fogTex.GetHeight();
-                            GameGraphics.DrawGameTexture(fogTex, new FloatRect(0, 0, fogW, fogH), new FloatRect(GetX() - (Options.MapWidth*Options.TileWidth*1f) + x*fogW + drawX, GetY() - (Options.MapHeight*Options.TileHeight*1f) + y*fogH + drawY, fogW, fogH), new IntersectClientExtras.GenericClasses.Color((byte) (FogTransparency*_curFogIntensity), 255, 255, 255), null, GameBlendModes.Alpha);
+                            GameGraphics.DrawGameTexture(fogTex, new FloatRect(0, 0, fogW, fogH), new FloatRect(GetX() - (Options.MapWidth*Options.TileWidth*1f) + x*fogW + drawX, GetY() - (Options.MapHeight*Options.TileHeight*1f) + y*fogH + drawY, fogW, fogH), new Color((byte) (FogTransparency*_curFogIntensity), 255, 255, 255), null, GameBlendModes.Alpha);
                         }
                     }
                 }

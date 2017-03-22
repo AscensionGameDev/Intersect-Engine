@@ -30,7 +30,7 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("options", "title");
+            Text = Strings.Get("options", "title");
             btnTileHeader.Text = Strings.Get("options", "generalbtn", Application.ProductVersion);
             chkSuppressTilesetWarning.Text = Strings.Get("options", "tilesetwarning");
             grpClientPath.Text = Strings.Get("options", "pathgroup");

@@ -52,7 +52,7 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("maplist","title");   
+            Text = Strings.Get("maplist","title");   
             btnChronological.Text  = Strings.Get("maplist", "chronological");
             toolSelectMap.Text = Strings.Get("maplist", "selectcurrent");
             btnNewMap.Text = Strings.Get("maplist", "newmap");
@@ -99,7 +99,7 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("maplist","deleteconfirm",((MapListItem)mapTreeList.list.SelectedNode.Tag).Name), Strings.Get("maplist", "delete"), DarkDialogButton.YesNo, Properties.Resources.Icon) == System.Windows.Forms.DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("maplist","deleteconfirm",((MapListItem)mapTreeList.list.SelectedNode.Tag).Name), Strings.Get("maplist", "delete"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     PacketSender.SendDelete((MapListItem)mapTreeList.list.SelectedNode.Tag);
                 }

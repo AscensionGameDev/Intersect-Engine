@@ -25,7 +25,7 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("about", "title");
+            Text = Strings.Get("about", "title");
             lblVersion.Text = Strings.Get("about","version", Application.ProductVersion);
             lblWebsite.Text = Strings.Get("about", "site");
         }

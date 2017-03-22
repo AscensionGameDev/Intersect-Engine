@@ -599,7 +599,7 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("maplayers", "title");
+            Text = Strings.Get("maplayers", "title");
             btnTileHeader.Text = Strings.Get("maplayers", "tiles");
             btnAttributeHeader.Text = Strings.Get("maplayers", "attributes");
             btnEventsHeader.Text = Strings.Get("maplayers", "events");
@@ -724,8 +724,8 @@ namespace Intersect_Editor.Forms
                 }
                 if (EditorGraphics.GetGraphicsDevice() != null)
                 {
-                    _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), this.picTileset.Handle,
-                        this.picTileset.Width, this.picTileset.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 0,
+                    _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), picTileset.Handle,
+                        picTileset.Width, picTileset.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 0,
                             RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
                     EditorGraphics.SetTilesetChain(_chain);
                 }

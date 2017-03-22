@@ -1536,7 +1536,7 @@ namespace Intersect_Server.Classes.Networking
                                 {
                                     //Incompatible Link!
                                     PacketSender.SendAlert(client, Strings.Get("mapping","linkfail"),
-                                        Strings.Get("mapping","linkfailerror",MapInstance.GetName(linkMap), MapInstance.GetName(adjacentMap),MapInstance.GetName(Database.MapGrids[adjacentGrid].MyGrid[x, y]) ,MapInstance.GetName(Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset])));
+                                        Strings.Get("mapping","linkfailerror",MapBase.GetName(linkMap), MapBase.GetName(adjacentMap),MapBase.GetName(Database.MapGrids[adjacentGrid].MyGrid[x, y]) ,MapBase.GetName(Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset])));
                                     return;
                                 }
                             }

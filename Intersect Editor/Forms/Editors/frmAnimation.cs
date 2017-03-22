@@ -116,7 +116,7 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("animationeditor", "title");
+            Text = Strings.Get("animationeditor", "title");
             toolStripItemNew.Text = Strings.Get("animationeditor", "new");
             toolStripItemDelete.Text = Strings.Get("animationeditor", "delete");
             toolStripItemCopy.Text = Strings.Get("animationeditor", "copy");
@@ -308,7 +308,7 @@ namespace Intersect_Editor.Forms
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (_lowerFrame < _editorItem.LowerLights.Length)
             {
-                Classes.EditorGraphics.DrawLight(
+                EditorGraphics.DrawLight(
                     picLowerAnimation.Width / 2 +
                     _editorItem.LowerLights[_lowerFrame].OffsetX,
                     picLowerAnimation.Height / 2 +
@@ -353,7 +353,7 @@ namespace Intersect_Editor.Forms
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (_upperFrame < _editorItem.UpperLights.Length)
             {
-                Classes.EditorGraphics.DrawLight(
+                EditorGraphics.DrawLight(
                     picUpperAnimation.Width / 2 +
                     _editorItem.UpperLights[_upperFrame].OffsetX,
                     picUpperAnimation.Height / 2 +

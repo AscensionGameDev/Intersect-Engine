@@ -213,7 +213,7 @@ namespace Intersect_Server.Classes.Entities
                 if (tileAttribute != null)
                 {
                     if (tileAttribute.value == (int)MapAttributes.Blocked) return -2;
-                    if (tileAttribute.value == (int)MapAttributes.NPCAvoid && this.GetType() == typeof(Npc)) return -2;
+                    if (tileAttribute.value == (int)MapAttributes.NPCAvoid && GetType() == typeof(Npc)) return -2;
                     if (tileAttribute.value == (int)MapAttributes.ZDimension && tileAttribute.data2 > 0 &&
                         tileAttribute.data2 - 1 == CurrentZ) return -3;
                     if (tileAttribute.value == (int)MapAttributes.Slide) return -4;
@@ -514,7 +514,7 @@ namespace Intersect_Server.Classes.Entities
                     CurrentMap = tile.GetMap();
                     if (DontUpdate == false)
                     {
-                        if (this.GetType() == typeof(EventPageInstance))
+                        if (GetType() == typeof(EventPageInstance))
                         {
                             if (client != null)
                             {
@@ -542,7 +542,7 @@ namespace Intersect_Server.Classes.Entities
         public void ChangeDir(int dir)
         {
             Dir = dir;
-            if (this.GetType() == typeof(EventPageInstance))
+            if (GetType() == typeof(EventPageInstance))
             {
                 if (((EventPageInstance)this).Client != null)
                 {
@@ -698,7 +698,7 @@ namespace Intersect_Server.Classes.Entities
             }
             else
             {
-                if (this.GetType() == typeof(Player) && enemy.GetType() == typeof(Player))
+                if (GetType() == typeof(Player) && enemy.GetType() == typeof(Player))
                 {
                     if (MapInstance.GetMap(CurrentMap).ZoneType == MapZones.Safe)
                     {
@@ -749,13 +749,13 @@ namespace Intersect_Server.Classes.Entities
                 if (spellBase.Friendly == 0)
                 {
                     //Check for parties and safe zones, friendly fire off (unless its healing)
-                    if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
+                    if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
                     {
                         if (((Player)this).InParty((Player)enemy) == true) return;
                     }
 
                     //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
-                    if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
+                    if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
                     {
                         if (MapInstance.GetMap(CurrentMap).ZoneType == MapZones.Safe)
                         {
@@ -852,13 +852,13 @@ namespace Intersect_Server.Classes.Entities
             if ((AttackTimer > Globals.System.GetTimeMs() || Blocking)) return;
 
             //Check for parties and safe zones, friendly fire off (unless its healing)
-            if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
+            if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
             {
                 if (((Player)this).InParty((Player)enemy) == true) return;
             }
 
             //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
-            if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
+            if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
             {
                 if (MapInstance.GetMap(CurrentMap).ZoneType == MapZones.Safe)
                 {

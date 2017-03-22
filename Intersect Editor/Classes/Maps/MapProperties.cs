@@ -506,7 +506,7 @@ namespace Intersect_Editor.Classes.Maps
             return false;
         }
 
-        public override System.ComponentModel.TypeConverter.StandardValuesCollection
+        public override StandardValuesCollection
                GetStandardValues(ITypeDescriptorContext context)
         {
             List<string> MusicList = new List<string>
@@ -533,7 +533,7 @@ namespace Intersect_Editor.Classes.Maps
             return false;
         }
 
-        public override System.ComponentModel.TypeConverter.StandardValuesCollection
+        public override StandardValuesCollection
                GetStandardValues(ITypeDescriptorContext context)
         {
             List<string> SoundList = new List<string>
@@ -560,7 +560,7 @@ namespace Intersect_Editor.Classes.Maps
             return false;
         }
 
-        public override System.ComponentModel.TypeConverter.StandardValuesCollection
+        public override StandardValuesCollection
                GetStandardValues(ITypeDescriptorContext context)
         {
             List<string> FogList = new List<string>
@@ -587,7 +587,7 @@ namespace Intersect_Editor.Classes.Maps
             return false;
         }
 
-        public override System.ComponentModel.TypeConverter.StandardValuesCollection
+        public override StandardValuesCollection
                GetStandardValues(ITypeDescriptorContext context)
         {
             List<string> ImageList = new List<string>
@@ -614,7 +614,7 @@ namespace Intersect_Editor.Classes.Maps
             return false;
         }
 
-        public override System.ComponentModel.TypeConverter.StandardValuesCollection
+        public override StandardValuesCollection
                GetStandardValues(ITypeDescriptorContext context)
         {
             return new StandardValuesCollection(Enum.GetNames(typeof(MapZones)));

@@ -380,7 +380,7 @@ namespace Intersect_Library.GameObjects.Maps
         }
         public override void Delete()
         {
-            Objects.Remove(base.Id);
+            Objects.Remove(Id);
         }
         public static void ClearObjects()
         {

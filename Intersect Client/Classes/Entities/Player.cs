@@ -102,7 +102,7 @@ namespace Intersect_Client.Classes.Entities
             HandleInput();
             if (!IsBusy())
             {
-                if (this == Globals.Me && base.IsMoving == false)
+                if (this == Globals.Me && IsMoving == false)
                 {
                     ProcessDirectionalInput();
                 }
