@@ -254,7 +254,7 @@ namespace Intersect_Editor.Forms
                 cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Pic);
                 if (cmbSprite.SelectedIndex > 0)
                 {
-                    picSpell.BackgroundImage = Bitmap.FromFile("resources/spells/" + cmbSprite.Text);
+                    picSpell.BackgroundImage = Image.FromFile("resources/spells/" + cmbSprite.Text);
                 }
                 else
                 {
@@ -416,7 +416,7 @@ namespace Intersect_Editor.Forms
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Pic = cmbSprite.Text;
-            if (cmbSprite.SelectedIndex > 0) { picSpell.BackgroundImage = Bitmap.FromFile("resources/spells/" + cmbSprite.Text); }
+            if (cmbSprite.SelectedIndex > 0) { picSpell.BackgroundImage = Image.FromFile("resources/spells/" + cmbSprite.Text); }
             else { picSpell.BackgroundImage = null; }
         }
 
@@ -455,7 +455,7 @@ namespace Intersect_Editor.Forms
                 {
                     Bitmap bmp = new Bitmap(picSprite.Width, picSprite.Height);
                     var g = Graphics.FromImage(bmp);
-                    Image src = Bitmap.FromFile("resources/entities/" + cmbTransform.Text);
+                    Image src = Image.FromFile("resources/entities/" + cmbTransform.Text);
                     g.DrawImage(src, new Rectangle(picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8, src.Width / 4, src.Height / 4),
                         new Rectangle(0, 0, src.Width / 4, src.Height / 4), GraphicsUnit.Pixel);
                     g.Dispose();
@@ -504,7 +504,7 @@ namespace Intersect_Editor.Forms
             {
                 Bitmap bmp = new Bitmap(picSprite.Width, picSprite.Height);
                 var g = Graphics.FromImage(bmp);
-                Image src = Bitmap.FromFile("resources/entities/" + cmbTransform.Text);
+                Image src = Image.FromFile("resources/entities/" + cmbTransform.Text);
                 g.DrawImage(src, new Rectangle(picSprite.Width/2 - src.Width/8, picSprite.Height/2 - src.Height/8, src.Width/4,src.Height/4),
                     new Rectangle(0, 0, src.Width/4, src.Height/4), GraphicsUnit.Pixel);
                 g.Dispose();

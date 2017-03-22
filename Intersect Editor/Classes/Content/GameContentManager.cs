@@ -253,7 +253,7 @@ namespace Intersect_Editor.Classes.Core
                     tilesetDict.Add(TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name.ToLower(), new GameTexture("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name));
                     if (!tilesetWarning)
                     {
-                        using (var img = Bitmap.FromFile("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name))
+                        using (var img = Image.FromFile("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name))
                         {
                             if (img.Width > 2048 || img.Height > 2048)
                             {

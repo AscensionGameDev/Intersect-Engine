@@ -486,7 +486,7 @@ namespace Intersect_Editor.Forms
             {
                 if (File.Exists("resources/entities/" + cmbSprite.Text))
                 {
-                    var img = Bitmap.FromFile("resources/entities/" + cmbSprite.Text);
+                    var img = Image.FromFile("resources/entities/" + cmbSprite.Text);
                     gfx.DrawImage(img, new Rectangle(0, 0, img.Width/4, img.Height/4),
                         new Rectangle(0, 0, img.Width/4, img.Height/4), GraphicsUnit.Pixel);
                     img.Dispose();
@@ -502,7 +502,7 @@ namespace Intersect_Editor.Forms
             {
                 if (File.Exists("resources/faces/" + cmbFace.Text))
                 {
-                    var img = Bitmap.FromFile("resources/faces/" + cmbFace.Text);
+                    var img = Image.FromFile("resources/faces/" + cmbFace.Text);
                     gfx.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height),
                         new Rectangle(0, 0, img.Width, img.Height), GraphicsUnit.Pixel);
                     img.Dispose();

@@ -288,7 +288,7 @@ namespace Intersect_Editor.Forms
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picNpc.Width, picNpc.Height));
             if (cmbSprite.SelectedIndex > 0)
             {
-                var img = Bitmap.FromFile("resources/entities/" + cmbSprite.Text);
+                var img = Image.FromFile("resources/entities/" + cmbSprite.Text);
                 gfx.DrawImage(img, new Rectangle(0, 0, img.Width / 4, img.Height / 4), new Rectangle(0, 0, img.Width / 4, img.Height / 4), GraphicsUnit.Pixel);
                 img.Dispose();
             }

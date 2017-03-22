@@ -231,7 +231,7 @@ namespace Intersect_Editor.Classes
                 _editorItem.InitialGraphic = cmbInitialSprite.Text;
                 if (File.Exists("resources/resources/" + cmbInitialSprite.Text))
                 {
-                    _initialTileset = (Bitmap)Bitmap.FromFile("resources/resources/" + cmbInitialSprite.Text);
+                    _initialTileset = (Bitmap)Image.FromFile("resources/resources/" + cmbInitialSprite.Text);
                     picInitialResource.Width = _initialTileset.Width;
                     picInitialResource.Height = _initialTileset.Height;
                     _initialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
@@ -256,7 +256,7 @@ namespace Intersect_Editor.Classes
                 _editorItem.EndGraphic = cmbEndSprite.Text;
                 if (File.Exists("resources/resources/" + cmbEndSprite.Text))
                 {
-                    _endTileset = (Bitmap)Bitmap.FromFile("resources/resources/" + cmbEndSprite.Text);
+                    _endTileset = (Bitmap)Image.FromFile("resources/resources/" + cmbEndSprite.Text);
                     picEndResource.Width = _endTileset.Width;
                     picEndResource.Height = _endTileset.Height;
                     _endBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
