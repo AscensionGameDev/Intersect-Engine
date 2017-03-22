@@ -2436,9 +2436,11 @@ namespace Intersect_Server.Classes.Entities
                 }
                 else
                 {
-                    var questProgress = new QuestProgressStruct();
-                    questProgress.task = quest.Tasks[0].Id;
-                    questProgress.taskProgress = 0;
+                    var questProgress = new QuestProgressStruct()
+                    {
+                        task = quest.Tasks[0].Id,
+                        taskProgress = 0
+                    };
                     Quests.Add(quest.Id, questProgress);
                 }
                 if (quest.Tasks[0].Objective == 1) //Gather Items
@@ -2715,9 +2717,11 @@ namespace Intersect_Server.Classes.Entities
                         }
                         else
                         {
-                            var tmpStack = new CommandInstance(MyEvents[i].CallStack.Peek().Page);
-                            tmpStack.CommandIndex = 0;
-                            tmpStack.ListIndex = MyEvents[i].CallStack.Peek().Page.CommandLists[MyEvents[i].CallStack.Peek().ListIndex].Commands[MyEvents[i].CallStack.Peek().CommandIndex].Ints[responseId - 1];
+                            var tmpStack = new CommandInstance(MyEvents[i].CallStack.Peek().Page)
+                            {
+                                CommandIndex = 0,
+                                ListIndex = MyEvents[i].CallStack.Peek().Page.CommandLists[MyEvents[i].CallStack.Peek().ListIndex].Commands[MyEvents[i].CallStack.Peek().CommandIndex].Ints[responseId - 1]
+                            };
                             MyEvents[i].CallStack.Peek().CommandIndex++;
                             MyEvents[i].CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                             MyEvents[i].CallStack.Push(tmpStack);

@@ -46,8 +46,10 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
                 {
                     var directory = Path.IsPathRooted(mFilename) ? Path.GetDirectoryName(mFilename) : Path.Combine("resources", "logs");
                     EnsureOutputDirectory(directory);
-                    mWriter = new StreamWriter(Path.Combine(directory, mFilename), Append, Encoding.UTF8);
-                    mWriter.AutoFlush = true;
+                    mWriter = new StreamWriter(Path.Combine(directory, mFilename), Append, Encoding.UTF8)
+                    {
+                        AutoFlush = true
+                    };
                 }
 
                 return mWriter;

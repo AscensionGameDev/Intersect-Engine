@@ -333,8 +333,7 @@ namespace Intersect_Editor.Forms.Editors
             {
                 if (rdoGlobalVariables.Checked)
                 {
-                    int readInt = 0;
-                    if (int.TryParse(txtVariableVal.Text, out readInt))
+                    if (int.TryParse(txtVariableVal.Text, out int readInt))
                     {
                         var obj = ServerVariableBase.GetVariable(Database.GameObjectIdFromList(GameObject.ServerVariable, lstObjects.SelectedIndex));
                         obj.Value = readInt;

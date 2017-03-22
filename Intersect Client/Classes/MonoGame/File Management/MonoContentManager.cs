@@ -39,8 +39,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                        { "version", Assembly.GetExecutingAssembly().GetName().Version.ToString() },
                     });
                     string result = Encoding.UTF8.GetString(response);
-                    Uri urlResult;
-                    if (Uri.TryCreate(result, UriKind.Absolute, out urlResult))
+                    if (Uri.TryCreate(result, UriKind.Absolute, out Uri urlResult))
                     {
                         client.DownloadProgressChanged += Client_DownloadProgressChanged;
                         client.DownloadFileCompleted += Client_DownloadFileCompleted;
@@ -64,7 +63,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                             if (errorString != "")
                             {
                                 if (
-                                    MessageBox.Show(Strings.Get("resources","resourceexception",errorString), Strings.Get("resources","failedtoload"),
+                                    MessageBox.Show(Strings.Get("resources", "resourceexception", errorString), Strings.Get("resources", "failedtoload"),
                                         MessageBoxButtons.YesNo) != DialogResult.Yes)
                                 {
                                     retry = false;

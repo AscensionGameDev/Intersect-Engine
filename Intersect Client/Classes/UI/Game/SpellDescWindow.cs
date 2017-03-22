@@ -81,8 +81,10 @@ namespace Intersect_Client.Classes.UI.Game
             bool requirements = false;
 
             //Check for requirements
-            RichLabel itemReqs = new RichLabel(_descWindow);
-            itemReqs.Width = 120;
+            RichLabel itemReqs = new RichLabel(_descWindow)
+            {
+                Width = 120
+            };
             itemReqs.AddText(Strings.Get("spelldesc", "prereqs"), spellName.TextColor);
             itemReqs.AddLineBreak();
             itemReqs.SetPosition(_descWindow.Padding.Left + 4, y);

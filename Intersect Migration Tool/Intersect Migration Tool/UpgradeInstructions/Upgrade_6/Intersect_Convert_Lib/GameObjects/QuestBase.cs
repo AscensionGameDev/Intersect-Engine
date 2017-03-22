@@ -105,12 +105,13 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Conve
             Tasks.Clear();
             for (int i = 0; i < MaxTasks; i++)
             {
-                QuestTask task = new QuestTask(myBuffer.ReadInteger());
-                task.Objective = myBuffer.ReadInteger();
-                task.Desc = myBuffer.ReadString();
-                task.Data1 = myBuffer.ReadInteger();
-                task.Data2 = myBuffer.ReadInteger();
-
+                QuestTask task = new QuestTask(myBuffer.ReadInteger())
+                {
+                    Objective = myBuffer.ReadInteger(),
+                    Desc = myBuffer.ReadString(),
+                    Data1 = myBuffer.ReadInteger(),
+                    Data2 = myBuffer.ReadInteger()
+                };
                 var taskCompletionEventLength = myBuffer.ReadInteger();
                 task.CompletionEvent.Load(myBuffer.ReadBytes(taskCompletionEventLength));
 

@@ -303,9 +303,11 @@ namespace Intersect_Client.Classes.Core
             {
                 if (_x == -1 || _y == -1 || _distance == -1)
                 {
-                    Point player = new Point();
-                    player.X = (int) playerx;
-                    player.Y = (int) playery;
+                    Point player = new Point()
+                    {
+                        X = (int)playerx,
+                        Y = (int)playery
+                    };
                     Rectangle mapRect = new Rectangle((int) map.GetX(), (int) map.GetY(),
                         Options.MapWidth*Options.TileWidth, Options.MapHeight*Options.TileHeight);
                     distance = (float) DistancePointToRectangle(player, mapRect)/32f;

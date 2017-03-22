@@ -193,11 +193,13 @@ namespace Intersect_Client.Classes.UI.Game
 
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect();
-            rect.X = pnl.LocalPosToCanvas(new Point(0, 0)).X;
-            rect.Y = pnl.LocalPosToCanvas(new Point(0, 0)).Y;
-            rect.Width = pnl.Width;
-            rect.Height = pnl.Height;
+            FloatRect rect = new FloatRect()
+            {
+                X = pnl.LocalPosToCanvas(new Point(0, 0)).X,
+                Y = pnl.LocalPosToCanvas(new Point(0, 0)).Y,
+                Width = pnl.Width,
+                Height = pnl.Height
+            };
             return rect;
         }
 

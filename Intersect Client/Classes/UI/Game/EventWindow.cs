@@ -41,8 +41,10 @@ namespace Intersect_Client.Classes.UI.Game
             _eventFace.SetSize(80, 80);
             _eventFace.IsHidden = true;
 
-            _eventDialog = new ListBox(_eventDialogWindow);
-            _eventDialog.IsDisabled = true;
+            _eventDialog = new ListBox(_eventDialogWindow)
+            {
+                IsDisabled = true
+            };
             _eventDialog.SetPosition(92 + _eventDialogWindow.Padding.Left, 6 + _eventDialogWindow.Padding.Top);
             _eventDialog.SetSize(402, 80);
             _eventDialog.ShouldDrawBackground = false;

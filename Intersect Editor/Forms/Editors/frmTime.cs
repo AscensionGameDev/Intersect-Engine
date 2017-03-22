@@ -140,8 +140,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void txtTimeRate_TextChanged(object sender, EventArgs e)
         {
-            var val = 0f;
-            if (float.TryParse(txtTimeRate.Text, out val))
+            if (float.TryParse(txtTimeRate.Text, out float val))
             {
                 myTime.Rate = val;
             }

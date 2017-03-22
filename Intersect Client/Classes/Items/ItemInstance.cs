@@ -24,9 +24,11 @@ namespace Intersect_Client.Classes.Items
         }
         public ItemInstance Clone()
         {
-            ItemInstance newItem = new ItemInstance();
-            newItem.ItemNum = ItemNum;
-            newItem.ItemVal = ItemVal;
+            ItemInstance newItem = new ItemInstance()
+            {
+                ItemNum = ItemNum,
+                ItemVal = ItemVal
+            };
             for (int i = 0; i < (int)Stats.StatCount; i++)
             {
                 newItem.StatBoost[i] = StatBoost[i];

@@ -51,11 +51,12 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             _graphics = graphics;
             _contentManager = contentManager;
 
-            _multiplyState = new BlendState();
-            _multiplyState.ColorBlendFunction = BlendFunction.Add;
-            _multiplyState.ColorSourceBlend = Blend.DestinationColor;
-            _multiplyState.ColorDestinationBlend = Blend.Zero;
-
+            _multiplyState = new BlendState()
+            {
+                ColorBlendFunction = BlendFunction.Add,
+                ColorSourceBlend = Blend.DestinationColor,
+                ColorDestinationBlend = Blend.Zero
+            };
             _gameWindow = monoGame.Window;
             centerScreenX = _gameWindow.ClientBounds.Center.X;
             centerScreenY = _gameWindow.ClientBounds.Center.Y;
@@ -336,19 +337,21 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         public override List<string> GetValidVideoModes()
         {
             if (_validVideoModes != null) return _validVideoModes;
-            var myList = new List<string>();
-            myList.Add("800x600");
-            myList.Add("1024x768");
-            myList.Add("1280x720");
-            myList.Add("1280x768");
-            myList.Add("1280x1024");
-            myList.Add("1360x768");
-            myList.Add("1366x768");
-            myList.Add("1400x1050");
-            myList.Add("1440x900");
-            myList.Add("1600x900");
-            myList.Add("1680x1050");
-            myList.Add("1920x1080");
+            var myList = new List<string>
+            {
+                "800x600",
+                "1024x768",
+                "1280x720",
+                "1280x768",
+                "1280x1024",
+                "1360x768",
+                "1366x768",
+                "1400x1050",
+                "1440x900",
+                "1600x900",
+                "1680x1050",
+                "1920x1080"
+            };
 
             _validVideoModes = new List<string>();
 
@@ -403,8 +406,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             string[] parts = name.Split('_');
             if (parts.Length >= 1)
             {
-                int size = 0;
-                if (Int32.TryParse(parts[parts.Length - 1], out size))
+                if (Int32.TryParse(parts[parts.Length - 1], out int size))
                 {
                     name = "";
                     for (int i = 0; i <= parts.Length - 2; i++)

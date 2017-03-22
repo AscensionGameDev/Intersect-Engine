@@ -9,9 +9,11 @@ namespace Intersect_Client.Classes.Spells
 
         public SpellInstance Clone()
         {
-            SpellInstance newSpell = new SpellInstance();
-            newSpell.SpellNum = SpellNum;
-            newSpell.SpellCD = SpellCD;
+            SpellInstance newSpell = new SpellInstance()
+            {
+                SpellNum = SpellNum,
+                SpellCD = SpellCD
+            };
             return newSpell;
         }
         public void Load(ByteBuffer bf)

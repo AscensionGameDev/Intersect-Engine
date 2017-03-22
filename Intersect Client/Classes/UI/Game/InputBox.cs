@@ -53,9 +53,11 @@ namespace Intersect_Client.Classes.UI.Game
             int y = promptLabel.Y + promptLabel.Height + 20;
             if (textInput)
             {
-                var textboxBg = new ImagePanel(_myWindow);
-                textboxBg.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
-                    "dropsellfield.png");
+                var textboxBg = new ImagePanel(_myWindow)
+                {
+                    Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
+                    "dropsellfield.png")
+                };
                 textboxBg.SetSize(200, 25);
                 textboxBg.SetPosition(_myWindow.Width/2 - textboxBg.Width/2, promptLabel.Y + promptLabel.TextHeight + 14);
                 _textbox = new TextBoxNumeric(textboxBg);

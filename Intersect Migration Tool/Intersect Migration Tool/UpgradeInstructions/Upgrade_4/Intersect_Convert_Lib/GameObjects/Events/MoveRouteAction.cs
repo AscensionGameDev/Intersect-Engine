@@ -36,8 +36,10 @@
 
         public MoveRouteAction Copy()
         {
-            MoveRouteAction copy = new MoveRouteAction();
-            copy.Type = Type;
+            MoveRouteAction copy = new MoveRouteAction()
+            {
+                Type = Type
+            };
             if (Type == MoveRouteEnum.SetGraphic)
             {
                 copy.Graphic = new EventGraphic();

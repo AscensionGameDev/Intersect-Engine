@@ -163,8 +163,10 @@ namespace Intersect_Client.Classes.UI.Game
             if (_CombinedItem != null) { _craftWindow.Children.Remove(_CombinedItem.container); }
             var craft = Globals.GameBench.Crafts[index];
             if (craft == null) return;
-            _CombinedItem = new RecepieItem(this, new CraftIngredient(craft.Item, 0));
-            _CombinedItem.container = new ImagePanel(_craftWindow);
+            _CombinedItem = new RecepieItem(this, new CraftIngredient(craft.Item, 0))
+            {
+                container = new ImagePanel(_craftWindow)
+            };
             _CombinedItem.container.SetSize(34, 34);
             _CombinedItem.container.SetPosition(_craftWindow.Width - 102, 12);
             _CombinedItem.container.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "craftitem.png");

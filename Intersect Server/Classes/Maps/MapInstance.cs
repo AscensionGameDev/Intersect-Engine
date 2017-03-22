@@ -260,11 +260,13 @@ namespace Intersect_Server.Classes.Maps
         // Resources
         private void SpawnAttributeResource(int x, int y)
         {
-            var tempResource = new ResourceSpawn();
-            tempResource.ResourceNum = Attributes[x, y].data1;
-            tempResource.X = x;
-            tempResource.Y = y;
-            tempResource.Z = Attributes[x, y].data2;
+            var tempResource = new ResourceSpawn()
+            {
+                ResourceNum = Attributes[x, y].data1,
+                X = x,
+                Y = y,
+                Z = Attributes[x, y].data2
+            };
             ResourceSpawns.Add(tempResource);
         }
         private void SpawnMapResources()
@@ -410,10 +412,12 @@ namespace Intersect_Server.Classes.Maps
             if (npcBase != null)
             {
                 int index = Globals.FindOpenEntity();
-                Globals.Entities[index] = new Npc(index, npcBase, despawnable);
-                Globals.Entities[index].CurrentMap = Id;
-                Globals.Entities[index].CurrentX = tileX;
-                Globals.Entities[index].CurrentY = tileY;
+                Globals.Entities[index] = new Npc(index, npcBase, despawnable)
+                {
+                    CurrentMap = Id,
+                    CurrentX = tileX,
+                    CurrentY = tileY
+                };
 
                 //Give NPC Drops
                 for (int n = 0; n < Options.MaxNpcDrops; n++)

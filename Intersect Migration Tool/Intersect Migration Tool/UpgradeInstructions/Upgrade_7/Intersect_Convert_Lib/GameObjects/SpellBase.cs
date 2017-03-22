@@ -123,12 +123,16 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
 
             myBuffer.Dispose();
 
-            var cndList = new ConditionList();
-            cndList.Name = "Migrated Requirements";
+            var cndList = new ConditionList()
+            {
+                Name = "Migrated Requirements"
+            };
             if (LevelReq > 0)
             {
-                var req = new EventCommand();
-                req.Type = EventCommandType.ConditionalBranch;
+                var req = new EventCommand()
+                {
+                    Type = EventCommandType.ConditionalBranch
+                };
                 req.Ints[0] = 7; //Level or Stat is
                 req.Ints[1] = 1; //Greater than or equal to
                 req.Ints[2] = LevelReq; //Level To Compare
@@ -139,8 +143,10 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             {
                 if (StatReq[i] > 0)
                 {
-                    var req = new EventCommand();
-                    req.Type = EventCommandType.ConditionalBranch;
+                    var req = new EventCommand()
+                    {
+                        Type = EventCommandType.ConditionalBranch
+                    };
                     req.Ints[0] = 7; //Level or Stat is
                     req.Ints[1] = 1; //Greater than or equal to
                     req.Ints[2] = StatReq[i]; //Value To Compare

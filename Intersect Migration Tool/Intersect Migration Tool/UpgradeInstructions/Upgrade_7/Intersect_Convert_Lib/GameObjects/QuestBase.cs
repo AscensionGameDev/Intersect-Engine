@@ -87,12 +87,13 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             Tasks.Clear();
             for (int i = 0; i < MaxTasks; i++)
             {
-                QuestTask task = new QuestTask(myBuffer.ReadInteger());
-                task.Objective = myBuffer.ReadInteger();
-                task.Desc = myBuffer.ReadString();
-                task.Data1 = myBuffer.ReadInteger();
-                task.Data2 = myBuffer.ReadInteger();
-
+                QuestTask task = new QuestTask(myBuffer.ReadInteger())
+                {
+                    Objective = myBuffer.ReadInteger(),
+                    Desc = myBuffer.ReadString(),
+                    Data1 = myBuffer.ReadInteger(),
+                    Data2 = myBuffer.ReadInteger()
+                };
                 var taskCompletionEventLength = myBuffer.ReadInteger();
                 task.CompletionEvent.Load(myBuffer.ReadBytes(taskCompletionEventLength));
 
@@ -105,8 +106,10 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             var endEventLength = myBuffer.ReadInteger();
             EndEvent.Load(myBuffer.ReadBytes(endEventLength));
 
-            var cndList = new ConditionList();
-            cndList.Name = "Migrated Conditions";
+            var cndList = new ConditionList()
+            {
+                Name = "Migrated Conditions"
+            };
             cndList.Conditions.AddRange(OldRequirements.ToArray());
             if (cndList.Conditions.Count > 0) Requirements.Lists.Add(cndList);
 

@@ -37,19 +37,25 @@ namespace Intersect_Client.Classes.UI.Menu
         {
             MenuCanvas = _menuCanvas;
 
-            _logoPanel = new ImagePanel(_menuCanvas);
-            _logoPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
-                Globals.Database.Logo);
+            _logoPanel = new ImagePanel(_menuCanvas)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
+                Globals.Database.Logo)
+            };
 
             //Main Menu Window
-            _menuPanel = new ImagePanel(_menuCanvas);
-            _menuPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png");
+            _menuPanel = new ImagePanel(_menuCanvas)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png")
+            };
             _menuPanel.SetSize(512, 393);
             _menuPanel.SetPosition(_menuCanvas.Width/2 - _menuPanel.Width/2, _menuCanvas.Height/2 - _menuPanel.Height/2);
 
             //Menu Header
-            _menuHeader = new Label(_menuPanel);
-            _menuHeader.AutoSizeToContents = false;
+            _menuHeader = new Label(_menuPanel)
+            {
+                AutoSizeToContents = false
+            };
             _menuHeader.SetText(Strings.Get("mainmenu","title"));
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);

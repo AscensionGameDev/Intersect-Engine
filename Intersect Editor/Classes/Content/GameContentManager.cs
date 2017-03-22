@@ -81,8 +81,7 @@ namespace Intersect_Editor.Classes.Core
                        { "version", Assembly.GetExecutingAssembly().GetName().Version.ToString() },
                     });
                     string result = Encoding.UTF8.GetString(response);
-                    Uri urlResult;
-                    if (Uri.TryCreate(result, UriKind.Absolute, out urlResult))
+                    if (Uri.TryCreate(result, UriKind.Absolute, out Uri urlResult))
                     {
                         client.DownloadProgressChanged += Client_DownloadProgressChanged;
                         client.DownloadFileCompleted += Client_DownloadFileCompleted;

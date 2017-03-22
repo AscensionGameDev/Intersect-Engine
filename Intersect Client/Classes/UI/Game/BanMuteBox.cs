@@ -40,8 +40,10 @@ namespace Intersect_Client.Classes.UI.Game
 
             int y = promptLabel.Y + promptLabel.Height + 8;
 
-            _reasonLabel = new Label(_myWindow);
-            _reasonLabel.Text = Strings.Get("banmute","reason");
+            _reasonLabel = new Label(_myWindow)
+            {
+                Text = Strings.Get("banmute", "reason")
+            };
             _reasonLabel.SetPosition(100, y);
 
             _reasonBox = new TextBox(_myWindow);
@@ -50,8 +52,10 @@ namespace Intersect_Client.Classes.UI.Game
 
             y = _reasonBox.Bottom + 6;
 
-            _durationLabel = new Label(_myWindow);
-            _durationLabel.Text = Strings.Get("banmute", "duration");
+            _durationLabel = new Label(_myWindow)
+            {
+                Text = Strings.Get("banmute", "duration")
+            };
             _durationLabel.SetPosition(100, y);
 
             _durationBox = new ComboBox(_myWindow);
@@ -69,8 +73,10 @@ namespace Intersect_Client.Classes.UI.Game
             _durationBox.AddItem(Strings.Get("banmute", "1year")).UserData = "1 year";
             _durationBox.AddItem(Strings.Get("banmute", "forever")).UserData = "Indefinitely";
 
-            _ipLabel = new Label(_myWindow);
-            _ipLabel.Text = Strings.Get("banmute", "ip");
+            _ipLabel = new Label(_myWindow)
+            {
+                Text = Strings.Get("banmute", "ip")
+            };
             _ipLabel.SetPosition(320, y);
 
             _ipCheckbox = new CheckBox(_myWindow);

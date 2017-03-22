@@ -41,16 +41,20 @@ namespace Intersect_Client.Classes.UI.Game
             _questOfferWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
             //Menu Header
-            _questTitle = new Label(_questOfferWindow);
-            _questTitle.AutoSizeToContents = false;
+            _questTitle = new Label(_questOfferWindow)
+            {
+                AutoSizeToContents = false
+            };
             _questTitle.SetText("");
             _questTitle.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 18);
             _questTitle.SetSize(_questOfferWindow.Width, _questOfferWindow.Height);
             _questTitle.Alignment = Pos.CenterH;
             _questTitle.TextColorOverride = new Color(255, 200, 200, 200);
 
-            _questOffer = new ListBox(_questOfferWindow);
-            _questOffer.IsDisabled = true;
+            _questOffer = new ListBox(_questOfferWindow)
+            {
+                IsDisabled = true
+            };
             _questOffer.SetPosition(8 + _questOfferWindow.Padding.Left, 32 + _questOfferWindow.Padding.Top);
             _questOffer.SetSize(372, 260);
             _questOffer.ShouldDrawBackground = false;

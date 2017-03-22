@@ -864,8 +864,10 @@ namespace Intersect_Editor.Forms
                         Globals.CurrentMap.FindLightAt(Globals.CurTileX,
                             Globals.CurTileY)) == null)
                 {
-                    tmpLight = new LightBase(Globals.CurTileX, Globals.CurTileY);
-                    tmpLight.Size = 50;
+                    tmpLight = new LightBase(Globals.CurTileX, Globals.CurTileY)
+                    {
+                        Size = 50
+                    };
                     Globals.CurrentMap.Lights.Add(tmpLight);
                 }
                 Globals.MapLayersWindow.btnLightsHeader_Click(null, null);
@@ -1163,17 +1165,19 @@ namespace Intersect_Editor.Forms
                         {
                             if (Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset] != null)
                             {
-                                tmpMap.Attributes[x0, y0] = new Intersect_Library.GameObjects.Maps.Attribute();
-                                tmpMap.Attributes[x0, y0].value =
-                                    Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].value;
-                                tmpMap.Attributes[x0, y0].data1 =
-                                    Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data1;
-                                tmpMap.Attributes[x0, y0].data2 =
-                                    Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data2;
-                                tmpMap.Attributes[x0, y0].data3 =
-                                    Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data3;
-                                tmpMap.Attributes[x0, y0].data4 =
-                                    Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data4;
+                                tmpMap.Attributes[x0, y0] = new Intersect_Library.GameObjects.Maps.Attribute()
+                                {
+                                    value =
+                                    Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].value,
+                                    data1 =
+                                    Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data1,
+                                    data2 =
+                                    Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data2,
+                                    data3 =
+                                    Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data3,
+                                    data4 =
+                                    Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data4
+                                };
                             }
                             else
                             {
@@ -1191,9 +1195,11 @@ namespace Intersect_Editor.Forms
                                 {
                                     tmpMap.Spawns.Remove(tmpMap.FindSpawnAt(x0, y0));
                                 }
-                                spawnCopy = new NpcSpawn(Globals.SelectionSource.FindSpawnAt(x0 - dragxoffset, y0 - dragyoffset));
-                                spawnCopy.X = x0;
-                                spawnCopy.Y = y0;
+                                spawnCopy = new NpcSpawn(Globals.SelectionSource.FindSpawnAt(x0 - dragxoffset, y0 - dragyoffset))
+                                {
+                                    X = x0,
+                                    Y = y0
+                                };
                                 tmpMap.Spawns.Add(spawnCopy);
                             }
                         }
@@ -1208,9 +1214,11 @@ namespace Intersect_Editor.Forms
                                 {
                                     tmpMap.Lights.Remove(tmpMap.FindLightAt(x0, y0));
                                 }
-                                lightCopy = new LightBase(Globals.SelectionSource.FindLightAt(x0 - dragxoffset, y0 - dragyoffset));
-                                lightCopy.TileX = x0;
-                                lightCopy.TileY = y0;
+                                lightCopy = new LightBase(Globals.SelectionSource.FindLightAt(x0 - dragxoffset, y0 - dragyoffset))
+                                {
+                                    TileX = x0,
+                                    TileY = y0
+                                };
                                 tmpMap.Lights.Add(lightCopy);
                             }
                         }
@@ -1225,9 +1233,11 @@ namespace Intersect_Editor.Forms
                                 {
                                     tmpMap.Events.Remove(tmpMap.FindEventAt(x0, y0).MyIndex);
                                 }
-                                eventCopy = new EventBase(tmpMap.EventIndex, Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset));
-                                eventCopy.SpawnX = x0;
-                                eventCopy.SpawnY = y0;
+                                eventCopy = new EventBase(tmpMap.EventIndex, Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset))
+                                {
+                                    SpawnX = x0,
+                                    SpawnY = y0
+                                };
                                 tmpMap.Events.Add(tmpMap.EventIndex, eventCopy);
                                 tmpMap.EventIndex++;
                             }

@@ -1452,8 +1452,10 @@ namespace Intersect_Editor.Forms
             _pageTabs.Clear();
             for (int i = 0; i < MyEvent.MyPages.Count; i++)
             {
-                var btn = new DarkButton();
-                btn.Text = (i + 1).ToString();
+                var btn = new DarkButton()
+                {
+                    Text = (i + 1).ToString()
+                };
                 btn.Click += TabBtn_Click;
                 _pageTabs.Add(btn);
             }

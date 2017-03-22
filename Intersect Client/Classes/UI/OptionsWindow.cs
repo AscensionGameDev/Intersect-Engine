@@ -48,8 +48,10 @@ namespace Intersect_Client.Classes.UI
             _mainMenu = mainMenu;
 
             //Main Menu Window
-            _menuPanel = new ImagePanel(parent);
-            _menuPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png");
+            _menuPanel = new ImagePanel(parent)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png")
+            };
             _menuPanel.SetSize(512, 393);
             if (_mainMenu != null && parentPanel != null)
             {
@@ -63,8 +65,10 @@ namespace Intersect_Client.Classes.UI
             Gui.InputBlockingElements.Add(_menuPanel);
 
             //Menu Header
-            _menuHeader = new Label(_menuPanel);
-            _menuHeader.AutoSizeToContents = false;
+            _menuHeader = new Label(_menuPanel)
+            {
+                AutoSizeToContents = false
+            };
             _menuHeader.SetText(Strings.Get("options","title"));
             _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
@@ -72,8 +76,10 @@ namespace Intersect_Client.Classes.UI
             _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
 
             //Resolution Background
-            _resolutionBackground = new ImagePanel(_menuPanel);
-            _resolutionBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png");
+            _resolutionBackground = new ImagePanel(_menuPanel)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
+            };
             _resolutionBackground.SetSize(_resolutionBackground.Texture.GetWidth(), _resolutionBackground.Texture.GetHeight());
             _resolutionBackground.SetPosition(_menuPanel.Width / 2 - _resolutionBackground.Width / 2, 44);
 
@@ -122,8 +128,10 @@ namespace Intersect_Client.Classes.UI
             }
 
             //FPS Background
-            _fpsBackground = new ImagePanel(_menuPanel);
-            _fpsBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png");
+            _fpsBackground = new ImagePanel(_menuPanel)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
+            };
             _fpsBackground.SetSize(_fpsBackground.Texture.GetWidth(), _fpsBackground.Texture.GetHeight());
             _fpsBackground.SetPosition(_menuPanel.Width / 2 - _fpsBackground.Width / 2, _resolutionBackground.Bottom + 16);
 

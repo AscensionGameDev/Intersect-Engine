@@ -57,8 +57,10 @@ namespace Intersect_Client.Classes.UI.Menu
             _mainMenu = mainMenu;
 
             //Main Menu Window
-            _menuPanel = new ImagePanel(parent);
-            _menuPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png");
+            _menuPanel = new ImagePanel(parent)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png")
+            };
             _menuPanel.SetSize(512, 393);
             if (_mainMenu != null && parentPanel != null)
             {
@@ -71,8 +73,10 @@ namespace Intersect_Client.Classes.UI.Menu
             _menuPanel.IsHidden = true;
 
             //Menu Header
-            _menuHeader = new Label(_menuPanel);
-            _menuHeader.AutoSizeToContents = false;
+            _menuHeader = new Label(_menuPanel)
+            {
+                AutoSizeToContents = false
+            };
             _menuHeader.SetText(Strings.Get("charactercreation","title"));
             _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont,24);
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
@@ -80,8 +84,10 @@ namespace Intersect_Client.Classes.UI.Menu
             _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
 
             //Character Name Background
-            _characterNameBackground  = new ImagePanel(_menuPanel);
-            _characterNameBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfieldshort.png");
+            _characterNameBackground = new ImagePanel(_menuPanel)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfieldshort.png")
+            };
             _characterNameBackground.SetSize(_characterNameBackground.Texture.GetWidth(), _characterNameBackground.Texture.GetHeight());
             _characterNameBackground.SetPosition(15, 44);
 
@@ -104,8 +110,10 @@ namespace Intersect_Client.Classes.UI.Menu
             _charnameTextbox.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
             //Class Background
-            _classBackground = new ImagePanel(_menuPanel);
-            _classBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfieldshort.png");
+            _classBackground = new ImagePanel(_menuPanel)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfieldshort.png")
+            };
             _classBackground.SetSize(_classBackground.Texture.GetWidth(), _classBackground.Texture.GetHeight());
             _classBackground.SetPosition(15, _characterNameBackground.Bottom + 16);
 
@@ -169,8 +177,10 @@ namespace Intersect_Client.Classes.UI.Menu
             _prevSpriteButton.Clicked += _prevSpriteButton_Clicked;
 
             //Class Background
-            _genderBackground = new ImagePanel(_menuPanel);
-            _genderBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png");
+            _genderBackground = new ImagePanel(_menuPanel)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
+            };
             _genderBackground.SetSize(_genderBackground.Texture.GetWidth(), _genderBackground.Texture.GetHeight());
             _genderBackground.SetPosition(15, _classBackground.Bottom + 16);
 

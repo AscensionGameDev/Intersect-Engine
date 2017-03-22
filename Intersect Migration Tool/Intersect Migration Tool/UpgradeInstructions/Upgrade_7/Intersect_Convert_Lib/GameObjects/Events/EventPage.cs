@@ -68,8 +68,10 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
                 Conditions.Add(new EventCommand());
                 Conditions[i].Load(curBuffer);
             }
-            var cndList = new ConditionList();
-            cndList.Name = "Migrated Conditions";
+            var cndList = new ConditionList()
+            {
+                Name = "Migrated Conditions"
+            };
             cndList.Conditions.AddRange(Conditions.ToArray());
             if (cndList.Conditions.Count > 0) ConditionLists.Lists.Add(cndList);
         }

@@ -87,17 +87,21 @@ namespace Intersect_Library.GameObjects.Maps.MapList
         public void AddMap(int mapNum, Dictionary<int, MapBase> gameMaps )
         {
             if (!gameMaps.ContainsKey(mapNum)) return;
-            var tmp = new MapListMap();
-            tmp.Name = gameMaps[mapNum].Name;
-            tmp.MapNum = mapNum;
+            var tmp = new MapListMap()
+            {
+                Name = gameMaps[mapNum].Name,
+                MapNum = mapNum
+            };
             Items.Add(tmp);
         }
 
         public void AddFolder(string folderName)
         {
-            var tmp = new MapListFolder();
-            tmp.Name = folderName;
-            tmp.FolderId = int.Parse("" + rand.Next(1, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10));
+            var tmp = new MapListFolder()
+            {
+                Name = folderName,
+                FolderId = int.Parse("" + rand.Next(1, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10))
+            };
             while (_mapList.FindFolderParent(tmp.FolderId, null) != null)
             {
                 tmp.FolderId = int.Parse("" + rand.Next(1, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10));

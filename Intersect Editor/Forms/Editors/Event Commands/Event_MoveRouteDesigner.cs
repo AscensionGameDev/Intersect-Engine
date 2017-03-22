@@ -26,14 +26,18 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
             foreach (var item in lstCommands.Nodes)
             {
-                var parentNode = new TreeNode(((TreeNode)item).Text);
-                parentNode.Name = ((TreeNode) item).Name;
-                parentNode.Tag = ((TreeNode)item).Tag;
+                var parentNode = new TreeNode(((TreeNode)item).Text)
+                {
+                    Name = ((TreeNode)item).Name,
+                    Tag = ((TreeNode)item).Tag
+                };
                 foreach (var childItem in ((TreeNode)item).Nodes)
                 {
-                    var childNode = new TreeNode(((TreeNode)childItem).Text);
-                    childNode.Name = ((TreeNode)childItem).Name;
-                    childNode.Tag = ((TreeNode)childItem).Tag;
+                    var childNode = new TreeNode(((TreeNode)childItem).Text)
+                    {
+                        Name = ((TreeNode)childItem).Name,
+                        Tag = ((TreeNode)childItem).Tag
+                    };
                     parentNode.Nodes.Add(childNode);
                 }
                 _origItems.Add(parentNode);
@@ -225,8 +229,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 return;
             }
-            var action = new MoveRouteAction();
-            action.Type = (MoveRouteEnum)Convert.ToInt32(e.Node.Tag);
+            var action = new MoveRouteAction()
+            {
+                Type = (MoveRouteEnum)Convert.ToInt32(e.Node.Tag)
+            };
             if (action.Type == MoveRouteEnum.SetGraphic)
             {
                 action.Graphic = new EventGraphic();
@@ -261,14 +267,18 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             lstCommands.Nodes.Clear();
             foreach (var item in _origItems)
             {
-                var parentNode = new TreeNode(((TreeNode)item).Text);
-                parentNode.Name = ((TreeNode)item).Name;
-                parentNode.Tag = ((TreeNode)item).Tag;
+                var parentNode = new TreeNode(((TreeNode)item).Text)
+                {
+                    Name = ((TreeNode)item).Name,
+                    Tag = ((TreeNode)item).Tag
+                };
                 foreach (var childItem in item.Nodes)
                 {
-                    var childNode = new TreeNode(((TreeNode)childItem).Text);
-                    childNode.Name = ((TreeNode)childItem).Name;
-                    childNode.Tag = ((TreeNode)childItem).Tag;
+                    var childNode = new TreeNode(((TreeNode)childItem).Text)
+                    {
+                        Name = ((TreeNode)childItem).Name,
+                        Tag = ((TreeNode)childItem).Tag
+                    };
                     parentNode.Nodes.Add(childNode);
                 }
                 lstCommands.Nodes.Add(parentNode);

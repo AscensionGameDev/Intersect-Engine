@@ -70,18 +70,22 @@ namespace Intersect_Client.Classes.UI
             int y = 2;
             foreach (string s in text)
             {
-                var label = new Label(window);
-                label.Text = s;
-                label.TextColorOverride = new Color(255,220,220,220);
-                label.Font = Globals.ContentManager.GetFont(Gui.DefaultFont,16);
+                var label = new Label(window)
+                {
+                    Text = s,
+                    TextColorOverride = new Color(255, 220, 220, 220),
+                    Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 16)
+                };
                 label.SetPosition(0, y);
                 y += label.Height;
                 Align.CenterHorizontally(label);
             }
 
 
-            var m_Button = new Button(window);
-            m_Button.Text = "Ok"; // todo: parametrize buttons
+            var m_Button = new Button(window)
+            {
+                Text = "Ok" // todo: parametrize buttons
+            };
             m_Button.Clicked += OkayClicked;
             m_Button.Margin = Margin.Four;
             m_Button.SetSize(86,41);

@@ -140,8 +140,10 @@ namespace Intersect_Editor.Forms.Editors
 
         private void btnAddCondition_Click(object sender, EventArgs e)
         {
-            var evtCommand = new EventCommand();
-            evtCommand.Type = EventCommandType.ConditionalBranch;
+            var evtCommand = new EventCommand()
+            {
+                Type = EventCommandType.ConditionalBranch
+            };
             if (OpenConditionEditor(evtCommand))
             {
                 _edittingList.Conditions.Add(evtCommand);

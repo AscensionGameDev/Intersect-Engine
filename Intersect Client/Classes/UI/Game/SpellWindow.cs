@@ -133,11 +133,13 @@ namespace Intersect_Client.Classes.UI.Game
         }
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect();
-            rect.X = _spellWindow.LocalPosToCanvas(new Point(0, 0)).X - ItemXPadding / 2;
-            rect.Y = _spellWindow.LocalPosToCanvas(new Point(0, 0)).Y - ItemYPadding / 2;
-            rect.Width = _spellWindow.Width + ItemXPadding;
-            rect.Height = _spellWindow.Height + ItemYPadding;
+            FloatRect rect = new FloatRect()
+            {
+                X = _spellWindow.LocalPosToCanvas(new Point(0, 0)).X - ItemXPadding / 2,
+                Y = _spellWindow.LocalPosToCanvas(new Point(0, 0)).Y - ItemYPadding / 2,
+                Width = _spellWindow.Width + ItemXPadding,
+                Height = _spellWindow.Height + ItemYPadding
+            };
             return rect;
         }
     }
@@ -215,11 +217,13 @@ namespace Intersect_Client.Classes.UI.Game
 
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect();
-            rect.X = pnl.LocalPosToCanvas(new Point(0, 0)).X;
-            rect.Y = pnl.LocalPosToCanvas(new Point(0, 0)).Y;
-            rect.Width = pnl.Width;
-            rect.Height = pnl.Height;
+            FloatRect rect = new FloatRect()
+            {
+                X = pnl.LocalPosToCanvas(new Point(0, 0)).X,
+                Y = pnl.LocalPosToCanvas(new Point(0, 0)).Y,
+                Width = pnl.Width,
+                Height = pnl.Height
+            };
             return rect;
         }
 

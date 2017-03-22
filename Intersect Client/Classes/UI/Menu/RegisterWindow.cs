@@ -46,15 +46,19 @@ namespace Intersect_Client.Classes.UI.Menu
             _mainMenu = mainMenu;
 
             //Main Menu Window
-            _menuPanel = new ImagePanel(parent);
-            _menuPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png");
+            _menuPanel = new ImagePanel(parent)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png")
+            };
             _menuPanel.SetSize(512, 393);
             _menuPanel.SetPosition(parentPanel.X, parentPanel.Y);
             _menuPanel.IsHidden = true;
 
             //Menu Header
-            _menuHeader = new Label(_menuPanel);
-            _menuHeader.AutoSizeToContents = false;
+            _menuHeader = new Label(_menuPanel)
+            {
+                AutoSizeToContents = false
+            };
             _menuHeader.SetText(Strings.Get("registration","title"));
             _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
@@ -62,8 +66,10 @@ namespace Intersect_Client.Classes.UI.Menu
             _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
 
             //Register Username Background
-            _usernameBackground = new ImagePanel(_menuPanel);
-            _usernameBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png");
+            _usernameBackground = new ImagePanel(_menuPanel)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
+            };
             _usernameBackground.SetSize(_usernameBackground.Texture.GetWidth(), _usernameBackground.Texture.GetHeight());
             _usernameBackground.SetPosition(_menuPanel.Width / 2 - _usernameBackground.Width / 2, 44);
 
@@ -86,8 +92,10 @@ namespace Intersect_Client.Classes.UI.Menu
             _usernameTextbox.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
             //Register Email Background
-            _emailBackground = new ImagePanel(_menuPanel);
-            _emailBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png");
+            _emailBackground = new ImagePanel(_menuPanel)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
+            };
             _emailBackground.SetSize(_emailBackground.Texture.GetWidth(), _emailBackground.Texture.GetHeight());
             _emailBackground.SetPosition(_menuPanel.Width / 2 - _emailBackground.Width / 2, _usernameBackground.Bottom + 16);
 
@@ -110,8 +118,10 @@ namespace Intersect_Client.Classes.UI.Menu
             _emailTextbox.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
             //Register Password Background
-            _passwordBackground = new ImagePanel(_menuPanel);
-            _passwordBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png");
+            _passwordBackground = new ImagePanel(_menuPanel)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
+            };
             _passwordBackground.SetSize(_passwordBackground.Texture.GetWidth(), _passwordBackground.Texture.GetHeight());
             _passwordBackground.SetPosition(_menuPanel.Width / 2 - _passwordBackground.Width / 2, _emailBackground.Bottom + 16);
 
@@ -134,8 +144,10 @@ namespace Intersect_Client.Classes.UI.Menu
             _passwordTextbox.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
             //Register Password Background
-            _passwordBackground2 = new ImagePanel(_menuPanel);
-            _passwordBackground2.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png");
+            _passwordBackground2 = new ImagePanel(_menuPanel)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
+            };
             _passwordBackground2.SetSize(_passwordBackground2.Texture.GetWidth(), _passwordBackground2.Texture.GetHeight());
             _passwordBackground2.SetPosition(_menuPanel.Width / 2 - _passwordBackground2.Width / 2, _passwordBackground.Bottom + 16);
 

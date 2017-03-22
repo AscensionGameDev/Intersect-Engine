@@ -100,8 +100,10 @@ namespace Intersect_Editor.Classes.Maps
         {
             get
             {
-                List<string> MusicList = new List<string>();
-                MusicList.Add(Strings.Get("general","none"));
+                List<string> MusicList = new List<string>
+                {
+                    Strings.Get("general", "none")
+                };
                 MusicList.AddRange(GameContentManager.GetMusicNames());
                 if (MusicList.IndexOf(_myMap.Music) <= -1)
                 {
@@ -130,8 +132,10 @@ namespace Intersect_Editor.Classes.Maps
         {
             get
             {
-                List<string> SoundList = new List<string>();
-                SoundList.Add(Strings.Get("general","none"));
+                List<string> SoundList = new List<string>
+                {
+                    Strings.Get("general", "none")
+                };
                 SoundList.AddRange(GameContentManager.GetSoundNames());
                 if (SoundList.IndexOf(_myMap.Sound) <= -1)
                 {
@@ -346,8 +350,10 @@ namespace Intersect_Editor.Classes.Maps
         {
             get
             {
-                List<string> FogList = new List<string>();
-                FogList.Add(Strings.Get("general","none"));
+                List<string> FogList = new List<string>
+                {
+                    Strings.Get("general", "none")
+                };
                 FogList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Fog));
                 if (FogList.IndexOf(_myMap.Fog) <= -1)
                 {
@@ -430,8 +436,10 @@ namespace Intersect_Editor.Classes.Maps
         {
             get
             {
-                List<string> ImageList = new List<string>();
-                ImageList.Add(Strings.Get("general","none"));
+                List<string> ImageList = new List<string>
+                {
+                    Strings.Get("general", "none")
+                };
                 ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
                 if (ImageList.IndexOf(_myMap.Panorama) <= -1)
                 {
@@ -460,8 +468,10 @@ namespace Intersect_Editor.Classes.Maps
         {
             get
             {
-                List<string> ImageList = new List<string>();
-                ImageList.Add(Strings.Get("general","none"));
+                List<string> ImageList = new List<string>
+                {
+                    Strings.Get("general", "none")
+                };
                 ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
                 if (ImageList.IndexOf(_myMap.OverlayGraphic) <= -1)
                 {
@@ -499,8 +509,10 @@ namespace Intersect_Editor.Classes.Maps
         public override System.ComponentModel.TypeConverter.StandardValuesCollection
                GetStandardValues(ITypeDescriptorContext context)
         {
-            List<string> MusicList = new List<string>();
-            MusicList.Add(Strings.Get("general","none"));
+            List<string> MusicList = new List<string>
+            {
+                Strings.Get("general", "none")
+            };
             MusicList.AddRange(GameContentManager.GetMusicNames());
             return new StandardValuesCollection(MusicList.ToArray());
         }
@@ -524,8 +536,10 @@ namespace Intersect_Editor.Classes.Maps
         public override System.ComponentModel.TypeConverter.StandardValuesCollection
                GetStandardValues(ITypeDescriptorContext context)
         {
-            List<string> SoundList = new List<string>();
-            SoundList.Add(Strings.Get("general","none"));
+            List<string> SoundList = new List<string>
+            {
+                Strings.Get("general", "none")
+            };
             SoundList.AddRange(GameContentManager.GetSoundNames());
             return new StandardValuesCollection(SoundList.ToArray());
         }
@@ -549,8 +563,10 @@ namespace Intersect_Editor.Classes.Maps
         public override System.ComponentModel.TypeConverter.StandardValuesCollection
                GetStandardValues(ITypeDescriptorContext context)
         {
-            List<string> FogList = new List<string>();
-            FogList.Add(Strings.Get("general","none"));
+            List<string> FogList = new List<string>
+            {
+                Strings.Get("general", "none")
+            };
             FogList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Fog));
             return new StandardValuesCollection(FogList.ToArray());
         }
@@ -574,8 +590,10 @@ namespace Intersect_Editor.Classes.Maps
         public override System.ComponentModel.TypeConverter.StandardValuesCollection
                GetStandardValues(ITypeDescriptorContext context)
         {
-            List<string> ImageList = new List<string>();
-            ImageList.Add(Strings.Get("general","none"));
+            List<string> ImageList = new List<string>
+            {
+                Strings.Get("general", "none")
+            };
             ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
             return new StandardValuesCollection(ImageList.ToArray());
         }

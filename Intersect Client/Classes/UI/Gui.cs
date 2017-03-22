@@ -39,16 +39,21 @@ namespace Intersect_Client.Classes.UI
         public static void InitGwen()
         {
             //TODO: Make it easier to modify skin.
-            _gwenSkin = new TexturedBase(GwenRenderer, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,"defaultskin.png"));
-            _gwenSkin.DefaultFont = Globals.ContentManager.GetFont(Gui.DefaultFont,10);
-
-            var _gameSkin = new TexturedBase(GwenRenderer, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"));
-            _gameSkin.DefaultFont = Globals.ContentManager.GetFont(Gui.DefaultFont,10);
+            _gwenSkin = new TexturedBase(GwenRenderer, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
+            {
+                DefaultFont = Globals.ContentManager.GetFont(Gui.DefaultFont, 10)
+            };
+            var _gameSkin = new TexturedBase(GwenRenderer, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
+            {
+                DefaultFont = Globals.ContentManager.GetFont(Gui.DefaultFont, 10)
+            };
 
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)
-            _menuCanvas = new Canvas(_gwenSkin);
-            _menuCanvas.Scale =  1f;//(GameGraphics.Renderer.GetScreenWidth()/1920f);
+            _menuCanvas = new Canvas(_gwenSkin)
+            {
+                Scale = 1f//(GameGraphics.Renderer.GetScreenWidth()/1920f);
+            };
             _menuCanvas.SetSize((int)(GameGraphics.Renderer.GetScreenWidth() / _menuCanvas.Scale), (int)(GameGraphics.Renderer.GetScreenHeight() / _menuCanvas.Scale));
             _menuCanvas.ShouldDrawBackground = false;
             _menuCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);

@@ -50,8 +50,10 @@ namespace Intersect_Client.Classes.UI.Game
             _GameCanvas = _gameCanvas;
 
             //Go in reverse order from the right
-            _closeBackground = new ImagePanel(_gameCanvas);
-            _closeBackground.MouseInputEnabled = false;
+            _closeBackground = new ImagePanel(_gameCanvas)
+            {
+                MouseInputEnabled = false
+            };
             _closeBackground.SetSize(backgroundWidth, backgroundHeight);
             _closeBackground.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin), _gameCanvas.Height - buttonMargin - backgroundHeight);
             _closeBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "menuitem.png");
@@ -65,8 +67,10 @@ namespace Intersect_Client.Classes.UI.Game
             _closeButton.HoverLeave += Button_HoverLeave;
             buttonCount ++;
 
-            _optionsBackground = new ImagePanel(_gameCanvas);
-            _optionsBackground.MouseInputEnabled = false;
+            _optionsBackground = new ImagePanel(_gameCanvas)
+            {
+                MouseInputEnabled = false
+            };
             _optionsBackground.SetSize(backgroundWidth, backgroundHeight);
             _optionsBackground.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin), _gameCanvas.Height - buttonMargin - backgroundHeight);
             _optionsBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "menuitem.png");
@@ -80,8 +84,10 @@ namespace Intersect_Client.Classes.UI.Game
             _optionsButton.HoverLeave += Button_HoverLeave;
             buttonCount++;
 
-            _partyBackground = new ImagePanel(_gameCanvas);
-            _partyBackground.MouseInputEnabled = false;
+            _partyBackground = new ImagePanel(_gameCanvas)
+            {
+                MouseInputEnabled = false
+            };
             _partyBackground.SetSize(backgroundWidth, backgroundHeight);
             _partyBackground.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin), _gameCanvas.Height - buttonMargin - backgroundHeight);
             _partyBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "menuitem.png");
@@ -95,8 +101,10 @@ namespace Intersect_Client.Classes.UI.Game
             _partyButton.HoverLeave += Button_HoverLeave;
             buttonCount++;
 
-            _questsBackground = new ImagePanel(_gameCanvas);
-            _questsBackground.MouseInputEnabled = false;
+            _questsBackground = new ImagePanel(_gameCanvas)
+            {
+                MouseInputEnabled = false
+            };
             _questsBackground.SetSize(backgroundWidth, backgroundHeight);
             _questsBackground.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin), _gameCanvas.Height - buttonMargin - backgroundHeight);
             _questsBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "menuitem.png");
@@ -110,8 +118,10 @@ namespace Intersect_Client.Classes.UI.Game
             _questsButton.HoverLeave += Button_HoverLeave;
             buttonCount++;
 
-            _characterBackground  = new ImagePanel(_gameCanvas);
-            _characterBackground.MouseInputEnabled = false;
+            _characterBackground = new ImagePanel(_gameCanvas)
+            {
+                MouseInputEnabled = false
+            };
             _characterBackground.SetSize(backgroundWidth, backgroundHeight);
             _characterBackground.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin), _gameCanvas.Height - buttonMargin - backgroundHeight);
             _characterBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "menuitem.png");
@@ -125,8 +135,10 @@ namespace Intersect_Client.Classes.UI.Game
             _characterButton.HoverLeave += Button_HoverLeave;
             buttonCount++;
 
-            _spellsBackground = new ImagePanel(_gameCanvas);
-            _spellsBackground.MouseInputEnabled = false;
+            _spellsBackground = new ImagePanel(_gameCanvas)
+            {
+                MouseInputEnabled = false
+            };
             _spellsBackground.SetSize(backgroundWidth, backgroundHeight);
             _spellsBackground.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin), _gameCanvas.Height - buttonMargin - backgroundHeight);
             _spellsBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "menuitem.png");
@@ -140,8 +152,10 @@ namespace Intersect_Client.Classes.UI.Game
             _spellsButton.HoverLeave += Button_HoverLeave;
             buttonCount++;
 
-            _inventoryBackground = new ImagePanel(_gameCanvas);
-            _inventoryBackground.MouseInputEnabled = false;
+            _inventoryBackground = new ImagePanel(_gameCanvas)
+            {
+                MouseInputEnabled = false
+            };
             _inventoryBackground.SetSize(backgroundWidth, backgroundHeight);
             _inventoryBackground.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin), _gameCanvas.Height - buttonMargin - backgroundHeight);
             _inventoryBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "menuitem.png");

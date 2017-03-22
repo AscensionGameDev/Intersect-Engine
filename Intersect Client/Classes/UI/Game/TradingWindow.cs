@@ -68,13 +68,17 @@ namespace Intersect_Client.Classes.UI.Game
             _tradeWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
             _tradeWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
-            _yourOffer = new Label(_tradeWindow);
-            _yourOffer.Text = Strings.Get("trading", "youroffer");
+            _yourOffer = new Label(_tradeWindow)
+            {
+                Text = Strings.Get("trading", "youroffer")
+            };
             _yourOffer.SetPosition(4 + ((_tradeWindow.Width - _tradeWindow.Padding.Left - _tradeWindow.Padding.Right) / 4) - (_yourOffer.Width / 2), 4);
             _yourOffer.TextColorOverride = Color.White;
 
-            _theirOffer = new Label(_tradeWindow);
-            _theirOffer.Text = Strings.Get("trading", "theiroffer");
+            _theirOffer = new Label(_tradeWindow)
+            {
+                Text = Strings.Get("trading", "theiroffer")
+            };
             _theirOffer.SetPosition(4 + (3 * (_tradeWindow.Width - _tradeWindow.Padding.Left - _tradeWindow.Padding.Right) / 4) - (_yourOffer.Width / 2), 4);
             _theirOffer.TextColorOverride = Color.White;
 
@@ -160,11 +164,13 @@ namespace Intersect_Client.Classes.UI.Game
 
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect();
-            rect.X = _tradeWindow.LocalPosToCanvas(new Point(0, 0)).X - ItemXPadding / 2;
-            rect.Y = _tradeWindow.LocalPosToCanvas(new Point(0, 0)).Y - ItemYPadding / 2;
-            rect.Width = _tradeWindow.Width + ItemXPadding;
-            rect.Height = _tradeWindow.Height + ItemYPadding;
+            FloatRect rect = new FloatRect()
+            {
+                X = _tradeWindow.LocalPosToCanvas(new Point(0, 0)).X - ItemXPadding / 2,
+                Y = _tradeWindow.LocalPosToCanvas(new Point(0, 0)).Y - ItemYPadding / 2,
+                Width = _tradeWindow.Width + ItemXPadding,
+                Height = _tradeWindow.Height + ItemYPadding
+            };
             return rect;
         }
 
@@ -264,11 +270,13 @@ namespace Intersect_Client.Classes.UI.Game
 
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect();
-            rect.X = pnl.LocalPosToCanvas(new Point(0, 0)).X;
-            rect.Y = pnl.LocalPosToCanvas(new Point(0, 0)).Y;
-            rect.Width = pnl.Width;
-            rect.Height = pnl.Height;
+            FloatRect rect = new FloatRect()
+            {
+                X = pnl.LocalPosToCanvas(new Point(0, 0)).X,
+                Y = pnl.LocalPosToCanvas(new Point(0, 0)).Y,
+                Width = pnl.Width,
+                Height = pnl.Height
+            };
             return rect;
         }
 
@@ -421,8 +429,10 @@ namespace Intersect_Client.Classes.UI.Game
             downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowclicked.png"), Button.ControlState.Clicked);
             downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowhover.png"), Button.ControlState.Hovered);
 
-            GoldValue = new Label(_tradeWindow);
-            GoldValue.Text = Strings.Get("trading", "value", 0);
+            GoldValue = new Label(_tradeWindow)
+            {
+                Text = Strings.Get("trading", "value", 0)
+            };
             GoldValue.SetPosition(4 + (((2 * index) + 1) * (_tradeWindow.Width - _tradeWindow.Padding.Left - _tradeWindow.Padding.Right) / 4) - (GoldValue.Width / 2), 294);
             GoldValue.TextColorOverride = Color.White;
 

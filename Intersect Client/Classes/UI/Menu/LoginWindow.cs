@@ -46,23 +46,29 @@ namespace Intersect_Client.Classes.UI.Menu
             _mainMenu = mainMenu;
 
             //Main Menu Window
-            _menuPanel = new ImagePanel(parent);
-            _menuPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png");
+            _menuPanel = new ImagePanel(parent)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png")
+            };
             _menuPanel.SetSize(512, 393);
             _menuPanel.SetPosition(parentPanel.X, parentPanel.Y);
             _menuPanel.IsHidden = true;
 
             //Menu Header
-            _menuHeader = new Label(_menuPanel);
-            _menuHeader.AutoSizeToContents = false;
+            _menuHeader = new Label(_menuPanel)
+            {
+                AutoSizeToContents = false
+            };
             _menuHeader.SetText(Strings.Get("login","title"));
             _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Alignment = Pos.CenterH;
             _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
 
-            _usernameBackground = new ImagePanel(_menuPanel);
-            _usernameBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,"inputfield.png");
+            _usernameBackground = new ImagePanel(_menuPanel)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
+            };
             _usernameBackground.SetSize(_usernameBackground.Texture.GetWidth(), _usernameBackground.Texture.GetHeight());
             _usernameBackground.SetPosition(_menuPanel.Width/2 - _usernameBackground.Width/2, 44);
 
@@ -85,8 +91,10 @@ namespace Intersect_Client.Classes.UI.Menu
             _usernameTextbox.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
             _usernameTextbox.Clicked += _usernameTextbox_Clicked;
 
-            _passwordBackground = new ImagePanel(_menuPanel);
-            _passwordBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png");
+            _passwordBackground = new ImagePanel(_menuPanel)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
+            };
             _passwordBackground.SetSize(_passwordBackground.Texture.GetWidth(), _passwordBackground.Texture.GetHeight());
             _passwordBackground.SetPosition(_menuPanel.Width / 2 - _passwordBackground.Width / 2, _usernameBackground.Bottom + 16);
 
@@ -100,8 +108,10 @@ namespace Intersect_Client.Classes.UI.Menu
             _passwordLabel.TextColorOverride = new Color(255, 30, 30, 30);
 
             //Login Password Textbox
-            _passwordTextbox = new TextBoxPassword(_passwordBackground);
-            _passwordTextbox.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _passwordTextbox = new TextBoxPassword(_passwordBackground)
+            {
+                Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20)
+            };
             _passwordTextbox.SubmitPressed += PasswordTextbox_SubmitPressed;
             _passwordTextbox.TextChanged += _passwordTextbox_TextChanged;
             _passwordTextbox.SetPosition(190, 8);

@@ -51,8 +51,10 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
                     Autotile[x, y] = new AutoTileCls();
                     for (var i = 0; i < Options.LayerCount; i++)
                     {
-                        Autotile[x, y].Layer[i] = new QuarterTileCls();
-                        Autotile[x, y].Layer[i].QuarterTile = new PointStruct[5];
+                        Autotile[x, y].Layer[i] = new QuarterTileCls()
+                        {
+                            QuarterTile = new PointStruct[5]
+                        };
                     }
                 }
             }

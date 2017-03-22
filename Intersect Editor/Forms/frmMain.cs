@@ -191,8 +191,10 @@ namespace Intersect_Editor.Forms
         {
             if (!String.IsNullOrEmpty((string)((ToolStripItem) sender).Tag))
             {
-                var psi = new ProcessStartInfo(Path.GetFileName((string)((ToolStripItem)sender).Tag));
-                psi.WorkingDirectory = Path.GetDirectoryName((string)((ToolStripItem)sender).Tag);
+                var psi = new ProcessStartInfo(Path.GetFileName((string)((ToolStripItem)sender).Tag))
+                {
+                    WorkingDirectory = Path.GetDirectoryName((string)((ToolStripItem)sender).Tag)
+                };
                 Process.Start(psi);
             }
         }
@@ -559,9 +561,11 @@ namespace Intersect_Editor.Forms
         }
         private void exportMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveFileDialog fileDialog = new SaveFileDialog();
-            fileDialog.Filter = "Intersect Map|*.imap";
-            fileDialog.Title = Strings.Get("mainform","exportmap");
+            SaveFileDialog fileDialog = new SaveFileDialog()
+            {
+                Filter = "Intersect Map|*.imap",
+                Title = Strings.Get("mainform", "exportmap")
+            };
             fileDialog.ShowDialog();
             var buff = new ByteBuffer();
             buff.WriteString(Application.ProductVersion);
@@ -574,9 +578,11 @@ namespace Intersect_Editor.Forms
         }
         private void importMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.Filter = "Intersect Map|*.imap";
-            fileDialog.Title = Strings.Get("mainform", "importmap");
+            OpenFileDialog fileDialog = new OpenFileDialog()
+            {
+                Filter = "Intersect Map|*.imap",
+                Title = Strings.Get("mainform", "importmap")
+            };
             fileDialog.ShowDialog();
 
             if (fileDialog.FileName != "")
@@ -803,9 +809,11 @@ namespace Intersect_Editor.Forms
         }
         private void toolStripBtnScreenshot_Click(object sender, EventArgs e)
         {
-            SaveFileDialog fileDialog = new SaveFileDialog();
-            fileDialog.Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
-            fileDialog.Title = Strings.Get("mainform", "screenshot");
+            SaveFileDialog fileDialog = new SaveFileDialog()
+            {
+                Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif",
+                Title = Strings.Get("mainform", "screenshot")
+            };
             fileDialog.ShowDialog();
 
             if (fileDialog.FileName != "")
@@ -861,8 +869,10 @@ namespace Intersect_Editor.Forms
             var path = Preferences.LoadPreference("ClientPath");
             if (path != "" && File.Exists(path))
             {
-                var processStartInfo = new ProcessStartInfo(path);
-                processStartInfo.WorkingDirectory = Directory.GetParent(path).FullName;
+                var processStartInfo = new ProcessStartInfo(path)
+                {
+                    WorkingDirectory = Directory.GetParent(path).FullName
+                };
                 var process = Process.Start(processStartInfo);
             }
         }
@@ -888,8 +898,10 @@ namespace Intersect_Editor.Forms
             toolStripTimeButton.DropDownItems.Clear();
             var time = new DateTime(2000, 1, 1, 0, 0, 0);
             var x = 0;
-            ToolStripDropDownButton btn = new ToolStripDropDownButton(Strings.Get("general","none"));
-            btn.Tag = null;
+            ToolStripDropDownButton btn = new ToolStripDropDownButton(Strings.Get("general", "none"))
+            {
+                Tag = null
+            };
             btn.Click += TimeDropdownButton_Click;
             toolStripTimeButton.DropDownItems.Add(btn);
             for (int i = 0; i < 1440; i += TimeBase.GetTimeBase().RangeInterval)
@@ -915,8 +927,10 @@ namespace Intersect_Editor.Forms
                 //Draw the overlay color
                 g.Dispose();
 
-                btn = new ToolStripDropDownButton(addRange, img);
-                btn.Tag = clr;
+                btn = new ToolStripDropDownButton(addRange, img)
+                {
+                    Tag = clr
+                };
                 btn.Click += TimeDropdownButton_Click;
                 toolStripTimeButton.DropDownItems.Add(btn);
                 x++;

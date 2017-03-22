@@ -89,28 +89,36 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
 
             //Convert our reqs into a command list.
             //Gotta do stats, gender, level, class, 
-            var cndList = new ConditionList();
-            cndList.Name = "Migrated Requirements";
+            var cndList = new ConditionList()
+            {
+                Name = "Migrated Requirements"
+            };
             if (ClassReq > -1)
             {
-                var req = new EventCommand();
-                req.Type = EventCommandType.ConditionalBranch;
+                var req = new EventCommand()
+                {
+                    Type = EventCommandType.ConditionalBranch
+                };
                 req.Ints[0] = 5; //Class Is
                 req.Ints[1] = ClassReq;
                 cndList.Conditions.Add(req);
             }
             if (GenderReq > 0)
             {
-                var req = new EventCommand();
-                req.Type = EventCommandType.ConditionalBranch;
+                var req = new EventCommand()
+                {
+                    Type = EventCommandType.ConditionalBranch
+                };
                 req.Ints[0] = 16; //Gender Is
                 req.Ints[1] = GenderReq -1;
                 cndList.Conditions.Add(req);
             }
             if (LevelReq > 0)
             {
-                var req = new EventCommand();
-                req.Type = EventCommandType.ConditionalBranch;
+                var req = new EventCommand()
+                {
+                    Type = EventCommandType.ConditionalBranch
+                };
                 req.Ints[0] = 7; //Level or Stat is
                 req.Ints[1] = 1; //Greater than or equal to
                 req.Ints[2] = LevelReq; //Level To Compare
@@ -121,8 +129,10 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             {
                 if (StatsReq[i] > 0)
                 {
-                    var req = new EventCommand();
-                    req.Type = EventCommandType.ConditionalBranch;
+                    var req = new EventCommand()
+                    {
+                        Type = EventCommandType.ConditionalBranch
+                    };
                     req.Ints[0] = 7; //Level or Stat is
                     req.Ints[1] = 1; //Greater than or equal to
                     req.Ints[2] = StatsReq[i]; //Value To Compare

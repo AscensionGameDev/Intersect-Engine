@@ -43,8 +43,10 @@
                     Autotile[x, y] = new AutoTileCls();
                     for (var i = 0; i < Options.LayerCount; i++)
                     {
-                        Autotile[x, y].Layer[i] = new QuarterTileCls();
-                        Autotile[x, y].Layer[i].QuarterTile = new PointStruct[5];
+                        Autotile[x, y].Layer[i] = new QuarterTileCls()
+                        {
+                            QuarterTile = new PointStruct[5]
+                        };
                     }
                 }
             }
@@ -935,13 +937,17 @@
             var autotile = new AutoTileCls();
             for (int i = 0; i < Options.LayerCount; i++)
             {
-                autotile.Layer[i] = new QuarterTileCls();
-                autotile.Layer[i].RenderState = Layer[i].RenderState;
+                autotile.Layer[i] = new QuarterTileCls()
+                {
+                    RenderState = Layer[i].RenderState
+                };
                 for (int z = 0; z < 5; z++)
                 {
-                    autotile.Layer[i].QuarterTile[z] = new PointStruct();
-                    autotile.Layer[i].QuarterTile[z].X = Layer[i].QuarterTile[z].X;
-                    autotile.Layer[i].QuarterTile[z].Y = Layer[i].QuarterTile[z].Y;
+                    autotile.Layer[i].QuarterTile[z] = new PointStruct()
+                    {
+                        X = Layer[i].QuarterTile[z].X,
+                        Y = Layer[i].QuarterTile[z].Y
+                    };
                 }
             }
             return autotile;

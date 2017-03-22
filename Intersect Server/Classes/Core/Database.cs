@@ -1334,10 +1334,12 @@ namespace Intersect_Server.Classes.Core
                             }
                             else
                             {
-                                var questProgress = new QuestProgressStruct();
-                                questProgress.task = Convert.ToInt32(dataReader[CHAR_QUEST_TASK]);
-                                questProgress.taskProgress = Convert.ToInt32(dataReader[CHAR_QUEST_TASK_PROGRESS]);
-                                questProgress.completed = Convert.ToInt32(dataReader[CHAR_QUEST_COMPLETED]);
+                                var questProgress = new QuestProgressStruct()
+                                {
+                                    task = Convert.ToInt32(dataReader[CHAR_QUEST_TASK]),
+                                    taskProgress = Convert.ToInt32(dataReader[CHAR_QUEST_TASK_PROGRESS]),
+                                    completed = Convert.ToInt32(dataReader[CHAR_QUEST_COMPLETED])
+                                };
                                 player.Quests.Add(id, questProgress);
                             }
                         }
@@ -2036,12 +2038,16 @@ namespace Intersect_Server.Classes.Core
                 Console.WriteLine(Strings.Get("database","noclasses"));
                 var cls = (ClassBase)AddGameObject(GameObject.Class);
                 cls.Name = Strings.Get("database","default");
-                ClassSprite defaultMale = new ClassSprite();
-                defaultMale.Sprite = "1.png";
-                defaultMale.Gender = 0;
-                ClassSprite defaultFemale = new ClassSprite();
-                defaultFemale.Sprite = "2.png";
-                defaultFemale.Gender = 1;
+                ClassSprite defaultMale = new ClassSprite()
+                {
+                    Sprite = "1.png",
+                    Gender = 0
+                };
+                ClassSprite defaultFemale = new ClassSprite()
+                {
+                    Sprite = "2.png",
+                    Gender = 1
+                };
                 cls.Sprites.Add(defaultMale);
                 cls.Sprites.Add(defaultFemale);
                 for (int i = 0; i < (int)Vitals.VitalCount; i++)

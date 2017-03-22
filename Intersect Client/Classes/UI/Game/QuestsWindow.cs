@@ -68,18 +68,22 @@ namespace Intersect_Client.Classes.UI.Game
             downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowclicked.png"), Button.ControlState.Clicked);
             downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowhover.png"), Button.ControlState.Hovered);
 
-            _questTitle = new Label(_questsWindow);
-            _questTitle.IsHidden = true;
-            _questTitle.AutoSizeToContents = false;
+            _questTitle = new Label(_questsWindow)
+            {
+                IsHidden = true,
+                AutoSizeToContents = false
+            };
             _questTitle.SetText("");
             _questTitle.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
             _questTitle.SetSize(_questsWindow.Width, 32);
             _questTitle.Alignment = Pos.CenterH;
             _questTitle.SetTextColor(Color.White, Label.ControlState.Normal);
 
-            _questStatus = new Label(_questsWindow);
-            _questStatus.IsHidden = true;
-            _questStatus.AutoSizeToContents = false;
+            _questStatus = new Label(_questsWindow)
+            {
+                IsHidden = true,
+                AutoSizeToContents = false
+            };
             _questStatus.SetText("");
             _questStatus.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 10);
             _questStatus.SetSize(_questsWindow.Width, 32);
@@ -87,8 +91,10 @@ namespace Intersect_Client.Classes.UI.Game
             _questStatus.Alignment = Pos.CenterH;
             _questStatus.SetTextColor(Color.White, Label.ControlState.Normal);
 
-            _questDesc = new ListBox(_questsWindow);
-            _questDesc.IsDisabled = true;
+            _questDesc = new ListBox(_questsWindow)
+            {
+                IsDisabled = true
+            };
             _questDesc.SetPosition(4, 32 + _questsWindow.Padding.Top);
             _questDesc.SetSize(204,208);
             _questDesc.ShouldDrawBackground = false;

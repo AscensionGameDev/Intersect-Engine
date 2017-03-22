@@ -89,8 +89,10 @@ namespace Intersect_Client.Classes.UI.Game
 
             if (myEntity.GetType() != typeof(Event))
             {
-                _hpBackground = new ImagePanel(_entityBox);
-                    _hpBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,"emptybar.png");
+                _hpBackground = new ImagePanel(_entityBox)
+                {
+                    Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "emptybar.png")
+                };
                 _hpBackground.SetSize(183, 25);
                 _hpBackground.SetPosition(117, 32);
 
@@ -105,15 +107,19 @@ namespace Intersect_Client.Classes.UI.Game
                 _hpTitle.SetTextColor(Color.White, Label.ControlState.Normal);
                 _hpTitle.SetPosition(93, 37);
 
-                _hpLbl = new Label(_entityBox);
-                _hpLbl.Alignment = Pos.Center;
-                _hpLbl.AutoSizeToContents = false;
+                _hpLbl = new Label(_entityBox)
+                {
+                    Alignment = Pos.Center,
+                    AutoSizeToContents = false
+                };
                 _hpLbl.SetPosition(_hpBackground.X, _hpBackground.Y);
                 _hpLbl.SetSize(_hpBackground.Width, _hpBackground.Height);
                 _hpLbl.SetTextColor(Color.White, Label.ControlState.Normal);
 
-                _mpBackground = new ImagePanel(_entityBox);
-                    _mpBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "emptybar.png");
+                _mpBackground = new ImagePanel(_entityBox)
+                {
+                    Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "emptybar.png")
+                };
                 _mpBackground.SetSize(183, 25);
                 _mpBackground.SetPosition(117, 58);
 
@@ -128,9 +134,11 @@ namespace Intersect_Client.Classes.UI.Game
                 _mpTitle.SetTextColor(Color.White, Label.ControlState.Normal);
                 _mpTitle.SetPosition(93, 63);
 
-                _mpLbl = new Label(_entityBox);
-                _mpLbl.Alignment = Pos.Center;
-                _mpLbl.AutoSizeToContents = false;
+                _mpLbl = new Label(_entityBox)
+                {
+                    Alignment = Pos.Center,
+                    AutoSizeToContents = false
+                };
                 _mpLbl.SetPosition(_mpBackground.X, _mpBackground.Y);
                 _mpLbl.SetSize(_mpBackground.Width, _mpBackground.Height);
                 _mpLbl.SetTextColor(Color.White, Label.ControlState.Normal);
@@ -138,8 +146,10 @@ namespace Intersect_Client.Classes.UI.Game
 
             if (_myEntity == Globals.Me)
             {
-                _expBackground = new ImagePanel(_entityBox);
-                    _expBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "emptybar.png");
+                _expBackground = new ImagePanel(_entityBox)
+                {
+                    Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "emptybar.png")
+                };
                 _expBackground.SetSize(183, 25);
                 _expBackground.SetPosition(117, 84);
 
@@ -153,10 +163,12 @@ namespace Intersect_Client.Classes.UI.Game
                 _expTitle.SetText(Strings.Get("entitybox", "exp"));
                 _expTitle.SetTextColor(Color.White, Label.ControlState.Normal);
                 _expTitle.SetPosition(88,89);
-                
-                _expLbl = new Label(_entityBox);
-                _expLbl.Alignment = Pos.Center;
-                _expLbl.AutoSizeToContents = false;
+
+                _expLbl = new Label(_entityBox)
+                {
+                    Alignment = Pos.Center,
+                    AutoSizeToContents = false
+                };
                 _expLbl.SetPosition(_expBackground.X, _expBackground.Y);
                 _expLbl.SetSize(_expBackground.Width, _expBackground.Height);
                 _expLbl.SetTextColor(Color.White, Label.ControlState.Normal);

@@ -96,19 +96,23 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
                     {
                         for (var y = 0; y < Options.MapHeight; y++)
                         {
-                            Layers[i].Tiles[x, y] = new Tile();
-                            Layers[i].Tiles[x, y].TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex;
-                            Layers[i].Tiles[x, y].X = mapcopy.Layers[i].Tiles[x, y].X;
-                            Layers[i].Tiles[x, y].Y = mapcopy.Layers[i].Tiles[x, y].Y;
-                            Layers[i].Tiles[x, y].Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile;
+                            Layers[i].Tiles[x, y] = new Tile()
+                            {
+                                TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex,
+                                X = mapcopy.Layers[i].Tiles[x, y].X,
+                                Y = mapcopy.Layers[i].Tiles[x, y].Y,
+                                Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile
+                            };
                             if (i == 0 && mapcopy.Attributes[x, y] != null)
                             {
-                                Attributes[x, y] = new Attribute();
-                                Attributes[x, y].value = mapcopy.Attributes[x, y].value;
-                                Attributes[x, y].data1 = mapcopy.Attributes[x, y].data1;
-                                Attributes[x, y].data2 = mapcopy.Attributes[x, y].data2;
-                                Attributes[x, y].data3 = mapcopy.Attributes[x, y].data3;
-                                Attributes[x, y].data4 = mapcopy.Attributes[x, y].data4;
+                                Attributes[x, y] = new Attribute()
+                                {
+                                    value = mapcopy.Attributes[x, y].value,
+                                    data1 = mapcopy.Attributes[x, y].data1,
+                                    data2 = mapcopy.Attributes[x, y].data2,
+                                    data3 = mapcopy.Attributes[x, y].data3,
+                                    data4 = mapcopy.Attributes[x, y].data4
+                                };
                             }
                         }
                     }
@@ -184,12 +188,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
                         int attributeType = bf.ReadInteger();
                         if (attributeType > 0)
                         {
-                            Attributes[x, y] = new Attribute();
-                            Attributes[x, y].value = attributeType;
-                            Attributes[x, y].data1 = bf.ReadInteger();
-                            Attributes[x, y].data2 = bf.ReadInteger();
-                            Attributes[x, y].data3 = bf.ReadInteger();
-                            Attributes[x, y].data4 = bf.ReadString();
+                            Attributes[x, y] = new Attribute()
+                            {
+                                value = attributeType,
+                                data1 = bf.ReadInteger(),
+                                data2 = bf.ReadInteger(),
+                                data3 = bf.ReadInteger(),
+                                data4 = bf.ReadString()
+                            };
                         }
                         else
                         {
@@ -211,11 +217,13 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
                     var npcCount = bf.ReadInteger();
                     for (var i = 0; i < npcCount; i++)
                     {
-                        var TempNpc = new NpcSpawn();
-                        TempNpc.NpcNum = bf.ReadInteger();
-                        TempNpc.X = bf.ReadInteger();
-                        TempNpc.Y = bf.ReadInteger();
-                        TempNpc.Dir = bf.ReadInteger();
+                        var TempNpc = new NpcSpawn()
+                        {
+                            NpcNum = bf.ReadInteger(),
+                            X = bf.ReadInteger(),
+                            Y = bf.ReadInteger(),
+                            Dir = bf.ReadInteger()
+                        };
                         Spawns.Add(TempNpc);
                     }
                     Events.Clear();

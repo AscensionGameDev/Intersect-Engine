@@ -1414,11 +1414,12 @@ namespace Intersect_Client.Classes.Networking
                     }
                     else
                     {
-                        QuestProgressStruct questProgress = new QuestProgressStruct();
-                        questProgress.completed = bf.ReadInteger();
-                        questProgress.task = bf.ReadInteger();
-                        questProgress.taskProgress = bf.ReadInteger();
-
+                        QuestProgressStruct questProgress = new QuestProgressStruct()
+                        {
+                            completed = bf.ReadInteger(),
+                            task = bf.ReadInteger(),
+                            taskProgress = bf.ReadInteger()
+                        };
                         if (Globals.Me.QuestProgress.ContainsKey(index))
                         {
                             Globals.Me.QuestProgress[index] = questProgress;

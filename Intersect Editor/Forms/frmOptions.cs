@@ -45,17 +45,17 @@ namespace Intersect_Editor.Forms
 
         private void btnBrowseClient_Click(object sender, EventArgs e)
         {
-            OpenFileDialog dialogue = new OpenFileDialog();
-
-            dialogue.Title = Strings.Get("options","dialogueheader");
-            dialogue.CheckFileExists = true;
-            dialogue.CheckPathExists = true;
-            dialogue.DefaultExt = "exe";
-            dialogue.Filter = "(*.exe)|*.exe|" + Strings.Get("options","dialogueallfiles") + "(*.*)|*.*";
-            dialogue.RestoreDirectory = true;
-            dialogue.ReadOnlyChecked = true;
-            dialogue.ShowReadOnly = true;
-
+            OpenFileDialog dialogue = new OpenFileDialog()
+            {
+                Title = Strings.Get("options", "dialogueheader"),
+                CheckFileExists = true,
+                CheckPathExists = true,
+                DefaultExt = "exe",
+                Filter = "(*.exe)|*.exe|" + Strings.Get("options", "dialogueallfiles") + "(*.*)|*.*",
+                RestoreDirectory = true,
+                ReadOnlyChecked = true,
+                ShowReadOnly = true
+            };
             if (dialogue.ShowDialog() == DialogResult.OK)
             {
                 txtGamePath.Text = dialogue.FileName;

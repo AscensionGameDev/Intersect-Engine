@@ -917,8 +917,10 @@ namespace Intersect_Server.Classes.Networking
                 {
                     if (classBase.Spells[i].Level <= 1)
                     {
-                        SpellInstance TempSpell = new SpellInstance();
-                        TempSpell.SpellNum = classBase.Spells[i].SpellNum;
+                        SpellInstance TempSpell = new SpellInstance()
+                        {
+                            SpellNum = classBase.Spells[i].SpellNum
+                        };
                         player.TryTeachSpell(TempSpell, false);
                     }
                 }

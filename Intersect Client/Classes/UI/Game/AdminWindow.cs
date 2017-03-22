@@ -77,33 +77,45 @@ namespace Intersect_Client.Classes.UI.Game
             _nameTextbox.SetBounds(6,22,188,18);
             Gui.FocusElements.Add(_nameTextbox);
 
-            _warpToMeButton = new Button(_adminWindow);
-            _warpToMeButton.Text = Strings.Get("admin", "warp2me");
+            _warpToMeButton = new Button(_adminWindow)
+            {
+                Text = Strings.Get("admin", "warp2me")
+            };
             _warpToMeButton.SetBounds(6, 44, 80, 18);
             _warpToMeButton.Clicked += _warpToMeButton_Clicked;
 
-            _warpMeToButton = new Button(_adminWindow);
-            _warpMeToButton.Text = Strings.Get("admin", "warpme2");
+            _warpMeToButton = new Button(_adminWindow)
+            {
+                Text = Strings.Get("admin", "warpme2")
+            };
             _warpMeToButton.SetBounds(6, 64, 80, 18);
             _warpMeToButton.Clicked += _warpMeToButton_Clicked;
 
-            _kickButton = new Button(_adminWindow);
-            _kickButton.Text = Strings.Get("admin", "kick");
+            _kickButton = new Button(_adminWindow)
+            {
+                Text = Strings.Get("admin", "kick")
+            };
             _kickButton.SetBounds(90,44,50,18);
             _kickButton.Clicked += _kickButton_Clicked;
 
-            _killButton = new Button(_adminWindow);
-            _killButton.Text = Strings.Get("admin", "kill");
+            _killButton = new Button(_adminWindow)
+            {
+                Text = Strings.Get("admin", "kill")
+            };
             _killButton.SetBounds(144,44,50,18);
             _killButton.Clicked += _killButton_Clicked;
 
-            _banButton = new Button(_adminWindow);
-            _banButton.Text = Strings.Get("admin", "ban");
+            _banButton = new Button(_adminWindow)
+            {
+                Text = Strings.Get("admin", "ban")
+            };
             _banButton.SetBounds(90, 64, 50, 18);
             _banButton.Clicked += _banButton_Clicked;
 
-            _noclipLabel = new Label(_adminWindow);
-            _noclipLabel.Text = Strings.Get("admin", "noclip");
+            _noclipLabel = new Label(_adminWindow)
+            {
+                Text = Strings.Get("admin", "noclip")
+            };
             _noclipLabel.SetPosition(6, 86);
             _noclipLabel.SetToolTipText("Check to walk through obstacles.");
 
@@ -113,18 +125,24 @@ namespace Intersect_Client.Classes.UI.Game
             _noclipCheckBox.CheckChanged += _noclipCheckBox_CheckChanged;
             _noclipCheckBox.SetToolTipText(Strings.Get("admin", "nocliptip"));
 
-            _unbanButton = new Button(_adminWindow);
-            _unbanButton.Text = Strings.Get("admin", "unban");
+            _unbanButton = new Button(_adminWindow)
+            {
+                Text = Strings.Get("admin", "unban")
+            };
             _unbanButton.SetBounds(90, 84, 50, 18);
             _unbanButton.Clicked += _unbanButton_Clicked;
 
-            _muteButton = new Button(_adminWindow);
-            _muteButton.Text = Strings.Get("admin", "mute");
+            _muteButton = new Button(_adminWindow)
+            {
+                Text = Strings.Get("admin", "mute")
+            };
             _muteButton.SetBounds(144, 64, 50, 18);
             _muteButton.Clicked += _muteButton_Clicked;
 
-            _unmuteButton = new Button(_adminWindow);
-            _unmuteButton.Text = Strings.Get("admin", "unmute");
+            _unmuteButton = new Button(_adminWindow)
+            {
+                Text = Strings.Get("admin", "unmute")
+            };
             _unmuteButton.SetBounds(144, 84, 50, 18);
             _unmuteButton.Clicked += _unmuteButton_Clicked;
 
@@ -143,8 +161,10 @@ namespace Intersect_Client.Classes.UI.Game
             }
             _spriteDropdown.ItemSelected += _spriteDropdown_ItemSelected;
 
-            _setSpriteButton = new Button(_adminWindow);
-            _setSpriteButton.Text = Strings.Get("admin", "setsprite");
+            _setSpriteButton = new Button(_adminWindow)
+            {
+                Text = Strings.Get("admin", "setsprite")
+            };
             _setSpriteButton.SetBounds(6, 148, 80, 18);
             _setSpriteButton.Clicked += _setSpriteButton_Clicked;
 
@@ -167,10 +187,12 @@ namespace Intersect_Client.Classes.UI.Game
                 _faceDropdown.AddItem(face);
             }
             _faceDropdown.ItemSelected += _faceDropdown_ItemSelected;
-            
 
-            _setFaceButton = new Button(_adminWindow);
-            _setFaceButton.Text = Strings.Get("admin", "setface");
+
+            _setFaceButton = new Button(_adminWindow)
+            {
+                Text = Strings.Get("admin", "setface")
+            };
             _setFaceButton.SetBounds(6, 208, 80, 18);
             _setFaceButton.Clicked += _setFaceButton_Clicked;
 
@@ -188,14 +210,18 @@ namespace Intersect_Client.Classes.UI.Game
             _accessDropdown.AddItem(Strings.Get("admin", "access1")).UserData = "Moderator";
             _accessDropdown.AddItem(Strings.Get("admin", "access2")).UserData = "Admin";
 
-            _setPowerButton = new Button(_adminWindow);
-            _setPowerButton.Text = Strings.Get("admin", "setpower");
+            _setPowerButton = new Button(_adminWindow)
+            {
+                Text = Strings.Get("admin", "setpower")
+            };
             _setPowerButton.SetBounds(6, 268, 80, 18);
             _setPowerButton.Clicked += _setPowerButton_Clicked;
 
             CreateMapList();
-            _mapListLabel = new Label(_adminWindow);
-            _mapListLabel.Text = Strings.Get("admin", "maplist");
+            _mapListLabel = new Label(_adminWindow)
+            {
+                Text = Strings.Get("admin", "maplist")
+            };
             _mapListLabel.SetPosition(4f, 294);
 
             _chkChronological = new CheckBox(_adminWindow);
@@ -203,8 +229,10 @@ namespace Intersect_Client.Classes.UI.Game
             _chkChronological.SetPosition(_adminWindow.Width - 24, 294);
             _chkChronological.CheckChanged += _chkChronological_CheckChanged;
 
-            _lblChronological = new Label(_adminWindow);
-            _lblChronological.Text = Strings.Get("admin", "chronological");
+            _lblChronological = new Label(_adminWindow)
+            {
+                Text = Strings.Get("admin", "chronological")
+            };
             _lblChronological.SetPosition(_chkChronological.X - 30, 294);
 
             UpdateMapList();

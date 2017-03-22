@@ -187,9 +187,11 @@ namespace Intersect_Editor.Classes.Maps
 
         public void ScreenshotWorld()
         {
-            SaveFileDialog fileDialog = new SaveFileDialog();
-            fileDialog.Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
-            fileDialog.Title = Strings.Get("mapgrid","savescreenshotdialogue");
+            SaveFileDialog fileDialog = new SaveFileDialog()
+            {
+                Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif",
+                Title = Strings.Get("mapgrid", "savescreenshotdialogue")
+            };
             fileDialog.ShowDialog();
             if (fileDialog.FileName != "")
             {

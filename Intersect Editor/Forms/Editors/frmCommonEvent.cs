@@ -63,8 +63,10 @@ namespace Intersect_Editor.Forms.Editors
         {
             if (lstCommonEvents.SelectedIndex > -1)
             {
-                FrmEvent editor = new FrmEvent(null);
-                editor.MyEvent = EventBase.GetEvent(Database.GameObjectIdFromList(GameObject.CommonEvent, lstCommonEvents.SelectedIndex));
+                FrmEvent editor = new FrmEvent(null)
+                {
+                    MyEvent = EventBase.GetEvent(Database.GameObjectIdFromList(GameObject.CommonEvent, lstCommonEvents.SelectedIndex))
+                };
                 editor.InitEditor();
                 editor.ShowDialog();
                 ListCommonEvents();

@@ -10,8 +10,10 @@ namespace Intersect_Editor.Forms.Controls
         public AutoDragPanel()
         {
             InitializeComponent();
-            _dragTimer = new Timer();
-            _dragTimer.Interval = 1;
+            _dragTimer = new Timer()
+            {
+                Interval = 1
+            };
             _dragTimer.Tick += DragTimer_Tick;
             this.MouseDown += AutoDragPanel_MouseDown;
             this.MouseUp += AutoDragPanel_MouseUp;

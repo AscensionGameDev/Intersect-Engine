@@ -1220,10 +1220,12 @@ namespace Intersect_Server.Classes.Entities
                         case EventCommandType.ShowOptions:
                             for (int i = 0; i < 4; i++)
                             {
-                                var tmpStack = new CommandInstance(CallStack.Peek().Page);
-                                tmpStack.CommandIndex = 0;
-                                tmpStack.ListIndex =
-                                    CallStack.Peek().Page.CommandLists[stack.Peek().ListIndex].Commands[stack.Peek().CommandIndex].Ints[i];
+                                var tmpStack = new CommandInstance(CallStack.Peek().Page)
+                                {
+                                    CommandIndex = 0,
+                                    ListIndex =
+                                    CallStack.Peek().Page.CommandLists[stack.Peek().ListIndex].Commands[stack.Peek().CommandIndex].Ints[i]
+                                };
                                 stack.Peek().CommandIndex++;
                                 stack.Push(tmpStack);
                                 if (FindLabelResursive(stack, label)) return true;
@@ -1235,10 +1237,12 @@ namespace Intersect_Server.Classes.Entities
                         case EventCommandType.ChangeItems:
                             for (int i = 4; i <= 5; i++)
                             {
-                                var tmpStack = new CommandInstance(CallStack.Peek().Page);
-                                tmpStack.CommandIndex = 0;
-                                tmpStack.ListIndex =
-                                    CallStack.Peek().Page.CommandLists[stack.Peek().ListIndex].Commands[stack.Peek().CommandIndex].Ints[i];
+                                var tmpStack = new CommandInstance(CallStack.Peek().Page)
+                                {
+                                    CommandIndex = 0,
+                                    ListIndex =
+                                    CallStack.Peek().Page.CommandLists[stack.Peek().ListIndex].Commands[stack.Peek().CommandIndex].Ints[i]
+                                };
                                 stack.Peek().CommandIndex++;
                                 stack.Push(tmpStack);
                                 if (FindLabelResursive(stack, label)) return true;
