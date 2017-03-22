@@ -1,15 +1,14 @@
-﻿using System;
-using System.Linq;
+﻿using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.UI.Menu;
+using Intersect_Library.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
-using Intersect_Client.Classes.Core;
-using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.UI.Menu;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using IntersectClientExtras.Gwen.ControlInternal;
-using Intersect_Library.Localization;
+using System;
 
 namespace Intersect_Client.Classes.UI
 {
