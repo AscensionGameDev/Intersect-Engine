@@ -40,7 +40,7 @@ namespace Intersect_Library.GameObjects
             var myBuffer = new ByteBuffer();
 
             myBuffer.WriteString(Name);
-            myBuffer.WriteInteger(Crafts.Count());
+            myBuffer.WriteInteger(Crafts.Count);
             foreach (var craft in Crafts)
             {
                 myBuffer.WriteBytes(craft.Data());

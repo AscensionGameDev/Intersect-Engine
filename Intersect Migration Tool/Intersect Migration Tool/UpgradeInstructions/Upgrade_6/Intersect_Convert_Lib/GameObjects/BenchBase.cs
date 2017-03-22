@@ -63,7 +63,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Conve
             var myBuffer = new ByteBuffer();
 
             myBuffer.WriteString(Name);
-            myBuffer.WriteInteger(Crafts.Count());
+            myBuffer.WriteInteger(Crafts.Count);
             foreach (var craft in Crafts)
             {
                 myBuffer.WriteBytes(craft.Data());

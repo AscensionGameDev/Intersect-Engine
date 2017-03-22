@@ -103,7 +103,7 @@ namespace Intersect_Client.Classes.UI
             _resolutionList.SetTextColor(new Color(255, 220, 220, 220), Label.ControlState.Hovered);
             _resolutionList.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
             var myModes = GameGraphics.Renderer.GetValidVideoModes();
-            for (var i = 0; i < myModes.Count(); i++)
+            for (var i = 0; i < myModes.Count; i++)
             {
                var item =  _resolutionList.AddItem(myModes[i]);
                 item.Alignment = Pos.Center;
@@ -350,7 +350,7 @@ namespace Intersect_Client.Classes.UI
             bool shouldReset = false;
             var resolution = _resolutionList.SelectedItem;
             var myModes = GameGraphics.Renderer.GetValidVideoModes();
-            for (var i = 0; i < myModes.Count(); i++)
+            for (var i = 0; i < myModes.Count; i++)
             {
                 if (resolution.Text == myModes[i])
                 {

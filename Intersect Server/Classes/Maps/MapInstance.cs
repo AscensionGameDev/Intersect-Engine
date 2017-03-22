@@ -465,7 +465,7 @@ namespace Intersect_Server.Classes.Maps
         {
             if (GlobalEventInstances.ContainsKey(baseEvent))
             {
-                for (int i = 0; i < GlobalEventInstances[baseEvent].GlobalPageInstance.Count(); i++)
+                for (int i = 0; i < GlobalEventInstances[baseEvent].GlobalPageInstance.Length; i++)
                 {
                     if (GlobalEventInstances[baseEvent].GlobalPageInstance[i] == globalClone)
                     {
