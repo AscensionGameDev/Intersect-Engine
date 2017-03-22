@@ -94,7 +94,7 @@ namespace Intersect_Client.Classes.UI.Game
             _declineButton = new Button(_questOfferWindow);
             _declineButton.SetText(Strings.Get("questoffer", "decline"));
             _declineButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
-            _declineButton.Clicked += _declineButton_Clicked; ;
+            _declineButton.Clicked += _declineButton_Clicked;
             _declineButton.SetPosition(_questOfferWindow.Width / 2 + _acceptButton.Width/2, 340);
             _declineButton.SetSize(86, 39);
             _declineButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonnormal.png"), Button.ControlState.Normal);

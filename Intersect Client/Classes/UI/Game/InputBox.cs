@@ -74,7 +74,7 @@ namespace Intersect_Client.Classes.UI.Game
             okayBtn.SetSize(86,41);
             okayBtn.SetText(Strings.Get("inputbox","okay"));
             okayBtn.SetPosition(_myWindow.Width/2 - 188 /2, y);
-            okayBtn.Clicked += okayBtn_Clicked; ;
+            okayBtn.Clicked += okayBtn_Clicked;
             okayBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonnormal.png"), Button.ControlState.Normal);
             okayBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonhover.png"), Button.ControlState.Hovered);
             okayBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonclicked.png"), Button.ControlState.Clicked);
