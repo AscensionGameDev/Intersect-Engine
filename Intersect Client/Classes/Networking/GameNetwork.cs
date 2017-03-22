@@ -2,6 +2,7 @@
 using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
 using Intersect_Library;
+using Intersect_Library.Logging;
 
 namespace Intersect_Client.Classes.Networking
 {
@@ -79,9 +80,9 @@ namespace Intersect_Client.Classes.Networking
                 MySocket.Dispose();
                 MySocket = null;
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-
+                Log.Trace(exception);
             }
         }
 
@@ -105,8 +106,9 @@ namespace Intersect_Client.Classes.Networking
                 }
                 MySocket.SendData(buff.ToArray());
             }
-            catch (Exception)
+            catch (Exception exception)
             {
+                Log.Trace(exception);
             }
         }
 

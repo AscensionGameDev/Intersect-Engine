@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml;
 using Intersect_Library.Localization;
+using Intersect_Library.Logging;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_3;
@@ -36,9 +37,9 @@ namespace Intersect_Migration_Tool
                     options.LoadXml(ConfigXml);
                     return GetXmlStr(options, "//Config/Language");
                 }
-                catch (Exception)
+                catch (Exception exception)
                 {
-                    
+                    Log.Trace(exception);
                 }
             }
             return "English";
