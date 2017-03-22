@@ -15,8 +15,8 @@ using Intersect_Client.Classes.Networking;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 using Point = IntersectClientExtras.GenericClasses.Point;
-using Intersect_Library.GameObjects;
-using Intersect_Library.Localization;
+using Intersect.GameObjects;
+using Intersect.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {

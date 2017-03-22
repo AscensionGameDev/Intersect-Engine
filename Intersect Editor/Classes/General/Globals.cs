@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Threading;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Classes.Maps;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
+using Intersect;
+using Intersect.GameObjects;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Forms.DockingElements;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Classes
 {

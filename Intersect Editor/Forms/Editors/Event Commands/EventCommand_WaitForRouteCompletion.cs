@@ -2,9 +2,9 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.GameObjects.Maps;
-using Intersect_Library.Localization;
+using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Maps;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {

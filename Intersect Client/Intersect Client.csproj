@@ -121,7 +121,7 @@
       <DependentUpon>frmLoadingContent.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Intersect.cs" />
+    <Compile Include="IntersectGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Intersect_Library
+namespace Intersect
 {
     public class ByteBuffer : IDisposable
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Intersect_Library.GameObjects.Maps.MapList
+namespace Intersect.GameObjects.Maps.MapList
 {
     public class MapListFolder : MapListItem
     {

@@ -1,4 +1,4 @@
-﻿using Intersect_Library;
+﻿using Intersect;
 
 namespace Intersect_Client.Classes.Spells
 {

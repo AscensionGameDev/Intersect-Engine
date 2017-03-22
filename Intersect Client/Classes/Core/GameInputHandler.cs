@@ -5,7 +5,7 @@ using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.Maps;
-using Intersect_Library;
+using Intersect;
 
 namespace Intersect_Client.Classes.Core
 {

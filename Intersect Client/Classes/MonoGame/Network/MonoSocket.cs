@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
 using System.IO;
-using Intersect_Library.Logging;
+using Intersect.Logging;
 
 namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
 {

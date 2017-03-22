@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Intersect_Library.GameObjects.Conditions;
-using Intersect_Library.Localization;
+using Intersect.GameObjects.Conditions;
+using Intersect.Localization;
 
-namespace Intersect_Library.GameObjects
+namespace Intersect.GameObjects
 {
     public class ResourceBase : DatabaseObject
     {

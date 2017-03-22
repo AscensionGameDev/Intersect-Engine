@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Intersect_Library;
+using Intersect;
 using Intersect_Server.Classes.Core;
 
 namespace Intersect_Server.Classes.Maps

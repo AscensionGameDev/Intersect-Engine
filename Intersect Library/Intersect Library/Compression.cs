@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.IO.Compression;
 
-namespace Intersect_Library
+namespace Intersect
 {
     public static class Compression
     {

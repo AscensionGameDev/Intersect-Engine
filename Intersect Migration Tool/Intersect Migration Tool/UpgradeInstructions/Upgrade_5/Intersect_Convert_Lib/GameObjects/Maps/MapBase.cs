@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect_Library;
+using Intersect;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Events;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Maps

@@ -7,8 +7,8 @@ using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
 using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.Spells;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
+using Intersect;
+using Intersect.GameObjects;
 using Color = IntersectClientExtras.GenericClasses.Color;
 using GameGraphics = Intersect_Client.Classes.Core.GameGraphics;
 namespace Intersect_Client.Classes.Entities

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Intersect_Library.GameObjects.Maps.MapList
+namespace Intersect.GameObjects.Maps.MapList
 {
     public class MapListMap : MapListItem, IComparable<MapListMap>
     {

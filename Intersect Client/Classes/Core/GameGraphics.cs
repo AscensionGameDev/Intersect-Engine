@@ -7,10 +7,10 @@ using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.UI;
-using Intersect_Library;
+using Intersect;
 using Event = Intersect_Client.Classes.Entities.Event;
 using Object = System.Object;
-using Intersect_Library.GameObjects;
+using Intersect.GameObjects;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.Core
@@ -642,7 +642,7 @@ namespace Intersect_Client.Classes.Core
    new Color((int)ClientTime.GetTintColor().A, (int)ClientTime.GetTintColor().R, (int)ClientTime.GetTintColor().G, (int)ClientTime.GetTintColor().B), _darknessTexture, GameBlendModes.None);
             }
 
-            AddLight((int)Math.Ceiling(Globals.Me.GetCenterPos().X), (int)Math.Ceiling(Globals.Me.GetCenterPos().Y), (int)_playerLightSize, (byte)_playerLightIntensity, _playerLightExpand, Intersect_Library.Color.FromArgb((int)_playerLightColor.A, (int)_playerLightColor.R, (int)_playerLightColor.G, (int)_playerLightColor.B));
+            AddLight((int)Math.Ceiling(Globals.Me.GetCenterPos().X), (int)Math.Ceiling(Globals.Me.GetCenterPos().Y), (int)_playerLightSize, (byte)_playerLightIntensity, _playerLightExpand, Intersect.Color.FromArgb((int)_playerLightColor.A, (int)_playerLightColor.R, (int)_playerLightColor.G, (int)_playerLightColor.B));
 
             DrawLights();
             _darknessTexture.End();
@@ -656,7 +656,7 @@ namespace Intersect_Client.Classes.Core
                 DrawGameTexture(_darknessTexture, CurrentView.Left, CurrentView.Top, null, GameBlendModes.Multiply);
             }
         }
-        public static void AddLight(int x, int y, int size, byte intensity, float expand, Intersect_Library.Color color)
+        public static void AddLight(int x, int y, int size, byte intensity, float expand, Intersect.Color color)
         {
             _lightQueue.Add(new LightBase(0, 0, x, y, intensity, size, expand, color));
             LightsDrawn++;

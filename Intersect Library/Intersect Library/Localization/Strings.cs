@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Intersect_Library.Localization
+namespace Intersect.Localization
 {
     public static class Strings
     {

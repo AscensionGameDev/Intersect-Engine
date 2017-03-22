@@ -9,8 +9,8 @@ using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Input;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
+using Intersect;
+using Intersect.GameObjects;
 using Color = IntersectClientExtras.GenericClasses.Color;
 using Point = IntersectClientExtras.GenericClasses.Point;
 

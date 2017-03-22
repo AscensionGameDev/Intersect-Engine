@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Intersect_Library.Logging
+namespace Intersect.Logging
 {
     public class Logger
     {

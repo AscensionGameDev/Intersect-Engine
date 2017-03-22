@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect_Library;
+using Intersect;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib
 {

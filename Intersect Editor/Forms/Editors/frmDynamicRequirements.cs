@@ -2,9 +2,9 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Intersect_Editor.Forms.Editors.Event_Commands;
-using Intersect_Library.GameObjects.Conditions;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.Localization;
+using Intersect.GameObjects.Conditions;
+using Intersect.GameObjects.Events;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms.Editors
 {

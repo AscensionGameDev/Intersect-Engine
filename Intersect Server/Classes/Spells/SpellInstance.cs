@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-using Intersect_Library;
+using Intersect;
 
 namespace Intersect_Server.Classes.Spells
 {

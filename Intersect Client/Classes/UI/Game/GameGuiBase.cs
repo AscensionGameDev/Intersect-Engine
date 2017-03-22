@@ -1,7 +1,7 @@
 ﻿using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
-using Intersect_Library.GameObjects;
+using Intersect.GameObjects;
 
 namespace Intersect_Client.Classes.UI.Game
 {

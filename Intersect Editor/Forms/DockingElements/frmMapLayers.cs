@@ -5,13 +5,13 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Maps;
-using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Maps;
+using Intersect.GameObjects.Maps.MapList;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -351,7 +351,7 @@ namespace Intersect_Editor.Forms
         }
         public void PlaceAttribute(MapBase tmpMap, int x, int y)
         {
-            tmpMap.Attributes[x, y] = new Intersect_Library.GameObjects.Maps.Attribute();
+            tmpMap.Attributes[x, y] = new Intersect.GameObjects.Maps.Attribute();
             if (rbBlocked.Checked == true)
             {
                 tmpMap.Attributes[x, y].value = (int)MapAttributes.Blocked;

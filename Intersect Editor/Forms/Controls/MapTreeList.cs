@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
-using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect.GameObjects.Maps.MapList;
 
 
 namespace Intersect_Editor.Forms.Controls

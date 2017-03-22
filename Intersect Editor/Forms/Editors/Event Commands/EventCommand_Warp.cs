@@ -2,10 +2,10 @@
 using System;
 using System.Windows.Forms;
 using DarkUI.Controls;
-using Intersect_Library;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.GameObjects.Maps.MapList;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Maps.MapList;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {

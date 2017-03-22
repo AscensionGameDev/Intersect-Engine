@@ -5,10 +5,10 @@ using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
-using Intersect_Library;
+using Intersect;
 using Color = IntersectClientExtras.GenericClasses.Color;
 using Intersect_Client.Classes.Maps;
-using Intersect_Library.GameObjects;
+using Intersect.GameObjects;
 
 namespace Intersect_Client.Classes.Entities
 {

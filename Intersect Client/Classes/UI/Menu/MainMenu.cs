@@ -4,7 +4,7 @@ using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 using System;
 
 namespace Intersect_Client.Classes.UI.Menu

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using Intersect_Library;
-using Intersect_Library.Logging;
+using Intersect;
+using Intersect.Logging;
 using Mono.Data.Sqlite;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;

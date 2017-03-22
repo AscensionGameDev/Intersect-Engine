@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.GameObjects.Maps;
+using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Maps;
 
-namespace Intersect_Library.GameObjects
+namespace Intersect.GameObjects
 {
     public abstract class DatabaseObject
     {

@@ -2,9 +2,9 @@
 using System.ComponentModel;
 using System.Collections.Generic;
 using Intersect_Editor.Classes.Core;
-using Intersect_Library;
-using Intersect_Library.GameObjects.Maps;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.GameObjects.Maps;
+using Intersect.Localization;
 using Color = System.Drawing.Color;
 
 namespace Intersect_Editor.Classes.Maps
@@ -254,7 +254,7 @@ namespace Intersect_Editor.Classes.Maps
                 if (_myMap.PlayerLightColor.A != value.A || _myMap.PlayerLightColor.R != value.R || _myMap.PlayerLightColor.G != value.G || _myMap.PlayerLightColor.B != value.B)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.PlayerLightColor = Intersect_Library.Color.FromArgb(value.A, value.R, value.G, value.B);
+                    _myMap.PlayerLightColor = Intersect.Color.FromArgb(value.A, value.R, value.G, value.B);
                     EditorGraphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }

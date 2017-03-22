@@ -5,8 +5,8 @@ using IntersectClientExtras.Input;
 using IntersectClientExtras.Sys;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.Items;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
+using Intersect;
+using Intersect.GameObjects;
 
 namespace Intersect_Client.Classes.General
 {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.Localization;
+using Intersect.GameObjects.Events;
+using Intersect.Localization;
 
-namespace Intersect_Library.GameObjects.Maps
+namespace Intersect.GameObjects.Maps
 {
     public class MapBase : DatabaseObject
     {

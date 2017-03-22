@@ -3,7 +3,7 @@ using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {

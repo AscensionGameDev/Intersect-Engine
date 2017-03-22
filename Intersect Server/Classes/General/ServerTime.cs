@@ -1,6 +1,6 @@
 ﻿using System;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
+using Intersect;
+using Intersect.GameObjects;
 using Intersect_Server.Classes.Networking;
 
 namespace Intersect_Server.Classes.General

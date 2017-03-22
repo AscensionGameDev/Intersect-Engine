@@ -6,8 +6,8 @@ using Intersect_Editor.Classes;
 using System.Text;
 using System.Security.Cryptography;
 using Intersect_Editor.Classes.Core;
-using Intersect_Library;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms
 {

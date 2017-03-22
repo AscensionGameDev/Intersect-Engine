@@ -12,9 +12,9 @@ using Intersect_Editor.Classes.General;
 using Intersect_Editor.Classes.Maps;
 using Intersect_Editor.Forms.DockingElements;
 using Intersect_Editor.Forms.Editors;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -945,7 +945,7 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                EditorGraphics.LightColor = (Intersect_Library.Color)((ToolStripDropDownButton)sender).Tag;
+                EditorGraphics.LightColor = (Intersect.Color)((ToolStripDropDownButton)sender).Tag;
             }
         }
         private void UpdateRunState()

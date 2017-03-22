@@ -3,9 +3,9 @@ using System;
 using System.Windows.Forms;
 using DarkUI.Forms;
 using Intersect_Editor.Classes.General;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Maps.MapList;
-using Intersect_Library.Localization;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Maps.MapList;
+using Intersect.Localization;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect_Editor.Forms

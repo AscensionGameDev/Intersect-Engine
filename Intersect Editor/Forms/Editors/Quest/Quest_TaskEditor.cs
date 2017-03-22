@@ -3,9 +3,9 @@ using System;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using Intersect_Editor.Classes;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Events;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
 
 namespace Intersect_Editor.Forms.Editors.Quest
 {

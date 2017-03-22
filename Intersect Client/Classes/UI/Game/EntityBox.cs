@@ -6,8 +6,8 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
-using Intersect_Library;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.Localization;
 using Color = IntersectClientExtras.GenericClasses.Color;
 using System;
 

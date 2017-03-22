@@ -1,6 +1,6 @@
 ﻿using System;
 using Intersect_Client_MonoGame;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_MonoGameDx
 {
@@ -16,7 +16,7 @@ namespace Intersect_MonoGameDx
         [STAThread]
         static void Main()
         {
-            using (var game = new Intersect())
+            using (var game = new IntersectGame())
             {
                 try
                 {

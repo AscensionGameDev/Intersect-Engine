@@ -1,6 +1,6 @@
 ﻿using System;
 using IntersectClientExtras.GenericClasses;
-using Color = Intersect_Library.Color;
+using Color = Intersect.Color;
 
 namespace Intersect_Client.Classes.General
 {

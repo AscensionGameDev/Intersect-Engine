@@ -8,9 +8,9 @@ using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Forms.Editors;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.Localization;
 
 
 namespace Intersect_Editor.Classes

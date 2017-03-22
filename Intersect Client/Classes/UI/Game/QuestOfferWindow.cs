@@ -4,10 +4,10 @@ using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Color = IntersectClientExtras.GenericClasses.Color;
-using Intersect_Library.GameObjects;
+using Intersect.GameObjects;
 using IntersectClientExtras.Gwen.ControlInternal;
 using Intersect_Client.Classes.Networking;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {

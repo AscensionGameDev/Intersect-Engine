@@ -1,6 +1,6 @@
 ﻿using System;
-using Intersect_Library;
-using Intersect_Library.Logging;
+using Intersect;
+using Intersect.Logging;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Events;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Maps;

@@ -3,10 +3,10 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Intersect_Editor.Classes.Entities;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.GameObjects.Maps;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Maps;
 
 namespace Intersect_Editor.Classes.Maps
 {

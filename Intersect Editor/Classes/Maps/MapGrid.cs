@@ -8,9 +8,9 @@ using DarkUI.Forms;
 using Hjg.Pngcs;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Forms;
-using Intersect_Library;
-using Intersect_Library.GameObjects.Maps.MapList;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.GameObjects.Maps.MapList;
+using Intersect.Localization;
 using Microsoft.Xna.Framework.Graphics;
 using Color = System.Drawing.Color;
 

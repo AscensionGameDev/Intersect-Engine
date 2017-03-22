@@ -2,7 +2,7 @@
 using System;
 using System.Windows.Forms;
 using Intersect_Editor.Forms;
-using Intersect_Library.Logging;
+using Intersect.Logging;
 
 namespace Intersect_Editor.Classes
 {

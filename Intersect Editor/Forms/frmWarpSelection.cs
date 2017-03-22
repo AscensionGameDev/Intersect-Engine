@@ -5,9 +5,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Maps;
-using Intersect_Library;
-using Intersect_Library.GameObjects.Maps.MapList;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.GameObjects.Maps.MapList;
+using Intersect.Localization;
 using Color = System.Drawing.Color;
 using System.Reflection;
 

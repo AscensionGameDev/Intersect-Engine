@@ -1,8 +1,8 @@
 ﻿using System;
 using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
-using Intersect_Library;
-using Intersect_Library.Logging;
+using Intersect;
+using Intersect.Logging;
 
 namespace Intersect_Client.Classes.Networking
 {

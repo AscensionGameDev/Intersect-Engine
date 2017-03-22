@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Intersect_Library.GameObjects.Events
+namespace Intersect.GameObjects.Events
 {
     public class EventMoveRoute
     {

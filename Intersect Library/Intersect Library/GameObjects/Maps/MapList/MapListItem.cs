@@ -1,4 +1,4 @@
-﻿namespace Intersect_Library.GameObjects.Maps.MapList
+﻿namespace Intersect.GameObjects.Maps.MapList
 {
     public class MapListItem
     {

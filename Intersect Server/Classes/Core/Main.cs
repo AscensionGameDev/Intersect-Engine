@@ -5,12 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using Intersect_Library;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.Localization;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Networking;
-using Intersect_Library.Logging;
+using Intersect.Logging;
 
 namespace Intersect_Server.Classes
 {

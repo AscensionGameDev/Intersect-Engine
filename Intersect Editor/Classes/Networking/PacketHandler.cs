@@ -3,11 +3,11 @@ using System;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.Maps;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.GameObjects.Maps;
-using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Maps;
+using Intersect.GameObjects.Maps.MapList;
 
 
 namespace Intersect_Editor.Classes

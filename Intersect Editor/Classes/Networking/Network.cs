@@ -2,7 +2,7 @@
 using System;
 using System.Net.Sockets;
 using System.Windows.Forms;
-using Intersect_Library;
+using Intersect;
 
 namespace Intersect_Editor.Classes
 {

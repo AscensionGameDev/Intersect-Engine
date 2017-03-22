@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Intersect_Library;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.Localization;
 using Intersect_Server.Classes.Core;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.Logging;
+using Intersect.GameObjects.Events;
+using Intersect.Logging;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;

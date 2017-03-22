@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace Intersect_Library.Logging
+namespace Intersect.Logging
 {
     public class FileOutput : ILogOutput
     {

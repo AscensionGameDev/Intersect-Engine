@@ -2,8 +2,8 @@
 
 using System;
 using System.Collections.Generic;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
+using Intersect;
+using Intersect.GameObjects;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;

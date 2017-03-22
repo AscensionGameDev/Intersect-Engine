@@ -1,4 +1,4 @@
-﻿namespace Intersect_Library
+﻿namespace Intersect
 {
     public static class TextUtils
     {

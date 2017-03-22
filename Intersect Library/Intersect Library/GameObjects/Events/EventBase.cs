@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Intersect_Library.GameObjects.Events
+namespace Intersect.GameObjects.Events
 {
     public class EventBase : DatabaseObject
     {

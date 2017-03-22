@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using Intersect_Library.Localization;
-using Intersect_Library.Logging;
+using Intersect.Localization;
+using Intersect.Logging;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_3;

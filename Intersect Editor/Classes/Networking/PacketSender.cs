@@ -1,7 +1,7 @@
-﻿using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Maps;
-using Intersect_Library.GameObjects.Maps.MapList;
+﻿using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Maps;
+using Intersect.GameObjects.Maps.MapList;
 
 namespace Intersect_Editor.Classes
 {

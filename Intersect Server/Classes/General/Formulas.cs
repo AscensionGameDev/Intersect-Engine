@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using Intersect_Library;
-using Intersect_Library.Localization;
-using Intersect_Library.Logging;
+using Intersect;
+using Intersect.Localization;
+using Intersect.Logging;
 using Intersect_Server.Classes.Entities;
 using NCalc;
 

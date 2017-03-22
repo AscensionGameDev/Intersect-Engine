@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Intersect_Library.GameObjects.Conditions;
+using Intersect.GameObjects.Conditions;
 
-namespace Intersect_Library.GameObjects.Events
+namespace Intersect.GameObjects.Events
 {
     public class EventPage
     {

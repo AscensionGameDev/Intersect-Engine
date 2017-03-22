@@ -2,7 +2,7 @@
 
 using System;
 using System.Windows.Forms;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms
 {

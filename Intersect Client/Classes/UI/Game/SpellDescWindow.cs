@@ -2,9 +2,9 @@
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.Localization;
 
 
 namespace Intersect_Client.Classes.UI.Game

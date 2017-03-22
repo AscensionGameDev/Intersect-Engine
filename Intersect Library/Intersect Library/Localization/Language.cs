@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
-namespace Intersect_Library.Localization
+namespace Intersect.Localization
 {
     class Language
     {

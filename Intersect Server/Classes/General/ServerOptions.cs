@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using Intersect_Library;
+using Intersect;
 
 namespace Intersect_Server.Classes.General
 {

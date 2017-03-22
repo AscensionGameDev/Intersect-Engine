@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Intersect_Library.GameObjects.Conditions;
-using Intersect_Library.GameObjects.Events;
+using Intersect.GameObjects.Conditions;
+using Intersect.GameObjects.Events;
 
-namespace Intersect_Library.GameObjects
+namespace Intersect.GameObjects
 {
     public enum QuestProgress
     {

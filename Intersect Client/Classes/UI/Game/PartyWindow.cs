@@ -7,9 +7,9 @@ using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using Intersect_Library;
+using Intersect;
 using Color = IntersectClientExtras.GenericClasses.Color;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {

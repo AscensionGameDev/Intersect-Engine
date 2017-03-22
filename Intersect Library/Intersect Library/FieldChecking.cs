@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_Client.Classes.Misc
 {

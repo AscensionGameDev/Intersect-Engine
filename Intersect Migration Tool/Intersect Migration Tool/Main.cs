@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_Migration_Tool
 {

@@ -12,20 +12,20 @@ using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
 using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 using Intersect_Client_MonoGame.Classes.SFML.Input;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Intersect_Library.Logging;
+using Intersect.Logging;
 
 namespace Intersect_Client_MonoGame
 {
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class Intersect : Game
+    public class IntersectGame : Game
     {
         GraphicsDeviceManager graphics;
-        public Intersect()
+        public IntersectGame()
         {
             //Setup an error handler
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;

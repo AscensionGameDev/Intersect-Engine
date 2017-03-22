@@ -5,7 +5,7 @@ using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.UI;
-using Color = Intersect_Library.Color;
+using Color = Intersect.Color;
 using Point = IntersectClientExtras.GenericClasses.Point;
 
 namespace Intersect_Client.Classes.Entities

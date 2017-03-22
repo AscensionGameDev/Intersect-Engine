@@ -1,5 +1,5 @@
 ﻿using System;
-using Intersect_Library.Logging;
+using Intersect.Logging;
 using WebSocketSharp.Net.WebSockets;
 
 namespace Intersect_Server.Classes.Networking

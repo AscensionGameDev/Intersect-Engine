@@ -14,8 +14,8 @@ using System.Windows.Forms;
 using System.Collections.Specialized;
 using System.Drawing;
 using Intersect_Editor.Classes.Content;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
+using Intersect;
+using Intersect.GameObjects;
 
 namespace Intersect_Editor.Classes.Core
 {

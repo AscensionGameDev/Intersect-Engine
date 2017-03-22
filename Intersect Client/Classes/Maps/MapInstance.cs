@@ -9,12 +9,12 @@ using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Maps;
-using Options = Intersect_Library.Options;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Maps;
+using Options = Intersect.Options;
 using Color = IntersectClientExtras.GenericClasses.Color;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_Client.Classes.Maps
 {
@@ -68,7 +68,7 @@ namespace Intersect_Client.Classes.Maps
         public List<MapSound> AttributeSounds = new List<MapSound>();
 
         //Map Attributes
-        private Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance> _attributeAnimInstances = new Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance>();
+        private Dictionary<Intersect.GameObjects.Maps.Attribute, AnimationInstance> _attributeAnimInstances = new Dictionary<Intersect.GameObjects.Maps.Attribute, AnimationInstance>();
 
         //Fog Variables
         protected long _fogUpdateTime = -1;

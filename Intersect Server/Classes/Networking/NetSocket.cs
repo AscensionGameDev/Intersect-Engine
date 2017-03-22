@@ -2,8 +2,8 @@
 
 using System;
 using System.Net.Sockets;
-using Intersect_Library.Localization;
-using Intersect_Library.Logging;
+using Intersect.Localization;
+using Intersect.Logging;
 
 namespace Intersect_Server.Classes.Networking
 {

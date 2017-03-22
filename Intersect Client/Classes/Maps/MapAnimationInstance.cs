@@ -1,5 +1,5 @@
 ﻿using Intersect_Client.Classes.Entities;
-using Intersect_Library.GameObjects;
+using Intersect.GameObjects;
 
 namespace Intersect_Client.Classes.Maps
 {

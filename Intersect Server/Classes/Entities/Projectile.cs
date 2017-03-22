@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
+using Intersect;
+using Intersect.GameObjects;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
-using Attribute = Intersect_Library.GameObjects.Maps.Attribute;
+using Attribute = Intersect.GameObjects.Maps.Attribute;
 
 
 namespace Intersect_Server.Classes.Entities

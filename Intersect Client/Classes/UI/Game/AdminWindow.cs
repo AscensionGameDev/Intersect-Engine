@@ -5,9 +5,9 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
-using Intersect_Library;
-using Intersect_Library.GameObjects.Maps.MapList;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.GameObjects.Maps.MapList;
+using Intersect.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {

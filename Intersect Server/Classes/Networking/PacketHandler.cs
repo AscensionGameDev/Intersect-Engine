@@ -1,10 +1,10 @@
 
 using System;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.GameObjects.Maps;
-using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Maps;
+using Intersect.GameObjects.Maps.MapList;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
@@ -14,7 +14,7 @@ using Intersect_Server.Classes.Spells;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Intersect_Client.Classes.Misc;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_Server.Classes.Networking
 {

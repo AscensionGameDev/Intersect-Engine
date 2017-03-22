@@ -10,7 +10,7 @@ using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
 using Intersect_Client_MonoGame.Classes.SFML.Graphics;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 using Intersect_MonoGameDx.Classes.SFML.Audio;
 
 namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management

@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Maps.MapList;
 using System.IO;
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms
 {

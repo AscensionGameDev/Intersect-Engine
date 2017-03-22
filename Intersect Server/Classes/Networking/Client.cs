@@ -1,6 +1,6 @@
 
 
-using Intersect_Library;
+using Intersect;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
 using System;
@@ -8,7 +8,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Intersect_Library.Logging;
+using Intersect.Logging;
 
 namespace Intersect_Server.Classes.Networking
 {

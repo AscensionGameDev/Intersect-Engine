@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Intersect_Library.GameObjects.Conditions
+namespace Intersect.GameObjects.Conditions
 {
     public class ConditionLists
     {

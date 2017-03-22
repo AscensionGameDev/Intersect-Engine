@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace Intersect_Library.Logging
+namespace Intersect.Logging
 {
     public static class Log
     {

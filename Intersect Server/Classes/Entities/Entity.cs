@@ -1,9 +1,9 @@
 ﻿
 
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
+using Intersect.Localization;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Items;
@@ -12,7 +12,7 @@ using Intersect_Server.Classes.Networking;
 using Intersect_Server.Classes.Spells;
 using System;
 using System.Collections.Generic;
-using Attribute = Intersect_Library.GameObjects.Maps.Attribute;
+using Attribute = Intersect.GameObjects.Maps.Attribute;
 
 namespace Intersect_Server.Classes.Entities
 {

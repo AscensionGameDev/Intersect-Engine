@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Intersect_Library.GameObjects
+namespace Intersect.GameObjects
 {
     public class NpcBase : DatabaseObject
     {

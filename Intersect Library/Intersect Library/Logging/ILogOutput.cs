@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Intersect_Library.Logging
+namespace Intersect.Logging
 {
     public interface ILogOutput
     {

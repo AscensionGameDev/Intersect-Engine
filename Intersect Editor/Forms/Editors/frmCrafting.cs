@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using DarkUI.Forms;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms.Editors
 {

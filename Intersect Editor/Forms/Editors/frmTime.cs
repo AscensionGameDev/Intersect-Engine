@@ -4,8 +4,8 @@ using System.Reflection;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using Intersect_Editor.Classes;
-using Intersect_Library.GameObjects;
-using Intersect_Library.Localization;
+using Intersect.GameObjects;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms.Editors
 {

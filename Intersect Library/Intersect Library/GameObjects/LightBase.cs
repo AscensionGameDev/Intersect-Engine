@@ -1,4 +1,4 @@
-﻿namespace Intersect_Library.GameObjects
+﻿namespace Intersect.GameObjects
 {
     public class LightBase
     {

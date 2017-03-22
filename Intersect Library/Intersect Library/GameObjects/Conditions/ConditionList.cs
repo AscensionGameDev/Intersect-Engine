@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Intersect_Library.GameObjects.Events;
+using Intersect.GameObjects.Events;
 
-namespace Intersect_Library.GameObjects.Conditions
+namespace Intersect.GameObjects.Conditions
 {
     public class ConditionList
     {

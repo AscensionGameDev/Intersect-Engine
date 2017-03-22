@@ -1,7 +1,7 @@
 ﻿using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
+using Intersect;
+using Intersect.GameObjects;
 using Graphics = Intersect_Client.Classes.Core.GameGraphics;
 
 

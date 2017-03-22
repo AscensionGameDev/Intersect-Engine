@@ -3,7 +3,7 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using Intersect_Library;
+using Intersect;
 
 namespace Intersect_Server.Classes.Networking
 {

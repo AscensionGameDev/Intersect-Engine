@@ -6,10 +6,10 @@ using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
 using Intersect_Client.Classes.UI.Game.Chat;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Maps.MapList;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Maps.MapList;
+using Intersect.Localization;
 using System;
 using System.Collections.Generic;
 using Color = IntersectClientExtras.GenericClasses.Color;
@@ -504,7 +504,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            MapList.GetList().Load(bf, new Dictionary<int, Intersect_Library.GameObjects.Maps.MapBase>(), false);
+            MapList.GetList().Load(bf, new Dictionary<int, Intersect.GameObjects.Maps.MapBase>(), false);
             //If admin window is open update it
             bf.Dispose();
         }
@@ -1322,7 +1322,7 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             DateTime time = DateTime.FromBinary(bf.ReadLong());
             float rate = (float)bf.ReadDouble();
-            Intersect_Library.Color clr = Intersect_Library.Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
+            Intersect.Color clr = Intersect.Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
             ClientTime.LoadTime(time, clr, rate);
         }
 

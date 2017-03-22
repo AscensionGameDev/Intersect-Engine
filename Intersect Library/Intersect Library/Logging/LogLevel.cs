@@ -1,4 +1,4 @@
-﻿namespace Intersect_Library.Logging
+﻿namespace Intersect.Logging
 {
     public enum LogLevel : int
     {

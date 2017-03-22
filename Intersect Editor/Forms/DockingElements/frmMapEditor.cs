@@ -7,14 +7,14 @@ using System.Windows.Forms;
 using DarkUI.Forms;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Classes.Maps;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.GameObjects.Maps;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Maps;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
 using EditorGraphics = Intersect_Editor.Classes.EditorGraphics;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -1165,7 +1165,7 @@ namespace Intersect_Editor.Forms
                         {
                             if (Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset] != null)
                             {
-                                tmpMap.Attributes[x0, y0] = new Intersect_Library.GameObjects.Maps.Attribute()
+                                tmpMap.Attributes[x0, y0] = new Intersect.GameObjects.Maps.Attribute()
                                 {
                                     value =
                                     Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].value,

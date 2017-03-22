@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.Networking;
 using Intersect_Server.Classes.Core;
-using Intersect_Library.GameObjects;
+using Intersect.GameObjects;
 using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes.General

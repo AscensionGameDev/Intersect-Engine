@@ -1,7 +1,7 @@
 ﻿//Pulled from the Open Source Mono library and modified.
 //https://github.com/mono/mono
 
-namespace Intersect_Library
+namespace Intersect
 {
     public class Color
     {

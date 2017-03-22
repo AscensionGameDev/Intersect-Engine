@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
-namespace Intersect_Library.GameObjects.Events
+namespace Intersect.GameObjects.Events
 {
     public class EventCommand
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
-using Intersect_Library.Logging;
+using Intersect.Logging;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 

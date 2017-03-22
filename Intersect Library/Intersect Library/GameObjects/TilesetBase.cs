@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace Intersect_Library.GameObjects
+namespace Intersect.GameObjects
 {
     public class TilesetBase : DatabaseObject
     {
