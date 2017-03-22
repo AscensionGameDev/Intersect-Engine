@@ -25,7 +25,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             }
             set
             {
-                if (TextUtils.IsEmpty(value))
+                if (string.IsNullOrEmpty(value))
                 {
                     Log.Warn("Cannot set FileOutput to an empty file name.");
                     return;
@@ -66,7 +66,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
 
         public FileOutput(string filename, LogLevel logLevel, bool append = true)
         {
-            Filename = TextUtils.IsEmpty(filename) ? Log.SuggestFilename() : filename;
+            Filename = string.IsNullOrEmpty(filename) ? Log.SuggestFilename() : filename;
             LogLevel = logLevel;
             Append = append;
         }
@@ -115,7 +115,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
                 return;
             }
 
-            if (TextUtils.IsEmpty(tag))
+            if (string.IsNullOrEmpty(tag))
             {
                 Writer.WriteLine("{0} [{1}] {2}", DateTime.UtcNow.ToString(TIMESTAMP_FORMAT), logLevel, message);
             } else

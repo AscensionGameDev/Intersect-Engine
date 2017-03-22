@@ -83,8 +83,7 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.MapData);
             bf.WriteLong(mapNum);
-            bool isEditor = false;
-            if (client != null && client.IsEditor) isEditor = true;
+            bool isEditor = client != null && client.IsEditor;
             var map = MapInstance.GetMap(mapNum);
             if (map == null)
             {

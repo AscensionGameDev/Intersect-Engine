@@ -32,7 +32,7 @@ namespace Intersect_Library.Logging
             LogLevel = LogLevel.Info;
 #endif
 
-            Tag = (TextUtils.IsEmpty(tag) ? null : tag);
+            Tag = (string.IsNullOrEmpty(tag) ? null : tag);
         }
 
         public List<ILogOutput> GetOutputs()

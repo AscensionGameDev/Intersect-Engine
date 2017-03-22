@@ -121,9 +121,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         private void StartSpritebatch(FloatRect view, GameBlendModes mode = GameBlendModes.None, GameShader shader = null, GameRenderTexture target = null, bool forced = false, RasterizerState rs = null)
         {
-            bool viewsDiff = false;
-            if (view.X != _currentSpriteView.X || view.Y != _currentSpriteView.Y ||
-                view.Width != _currentSpriteView.Width || view.Height != _currentSpriteView.Height) viewsDiff = true;
+            bool viewsDiff = view.X != _currentSpriteView.X || view.Y != _currentSpriteView.Y ||
+                view.Width != _currentSpriteView.Width || view.Height != _currentSpriteView.Height;
             if (mode != _currentBlendmode || shader != _currentShader || target != _currentTarget || viewsDiff || forced || !_spriteBatchBegan)
             {
                 if (_spriteBatchBegan) _spriteBatch.End();

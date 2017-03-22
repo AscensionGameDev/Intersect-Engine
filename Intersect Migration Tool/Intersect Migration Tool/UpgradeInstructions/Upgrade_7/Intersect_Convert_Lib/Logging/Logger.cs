@@ -32,7 +32,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             LogLevel = LogLevel.Info;
 #endif
 
-            Tag = (TextUtils.IsEmpty(tag) ? null : tag);
+            Tag = (string.IsNullOrEmpty(tag) ? null : tag);
         }
 
         public List<ILogOutput> GetOutputs()
