@@ -51,7 +51,6 @@ namespace Intersect_Library.GameObjects.Events
         public string GetConditionalDesc()
         {
             if (Type != EventCommandType.ConditionalBranch) return "";
-            string output = "";
             switch (Ints[0])
             {
                 case 0: //Player Switch

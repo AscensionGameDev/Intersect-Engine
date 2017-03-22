@@ -4,6 +4,7 @@ using Intersect_Library;
 using Intersect_Library.Localization;
 using Intersect_Server.Classes.Core;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Logging;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
@@ -136,7 +137,7 @@ namespace Intersect_Server.Classes.Networking
                 {
                     if (_myClient.Entity != null)
                     {
-                       var en = _myClient.Entity;
+                        var en = _myClient.Entity;
                         Task.Run(() => Database.SaveCharacter(en));
                         var map = MapInstance.GetMap(_myClient.Entity.CurrentMap);
                         if (map != null) map.RemoveEntity(_myClient.Entity);
@@ -150,14 +151,15 @@ namespace Intersect_Server.Classes.Networking
                         //Search for logout activated events and run them
                         foreach (var evt in EventBase.GetObjects())
                         {
-                            _myClient.Entity.StartCommonEvent(evt.Value, (int)EventPage.CommonEventTriggers.LeaveGame);
+                            _myClient.Entity.StartCommonEvent(evt.Value, (int) EventPage.CommonEventTriggers.LeaveGame);
                         }
 
                         PacketSender.SendEntityLeave(_myClient.Entity.MyIndex, (int) EntityTypes.Player,
                             Globals.Entities[_entityIndex].CurrentMap);
                         if (!_myClient.IsEditor)
                         {
-                            PacketSender.SendGlobalMsg(Strings.Get("player","left", _myClient.Entity.MyName,Options.GameName));
+                            PacketSender.SendGlobalMsg(Strings.Get("player", "left", _myClient.Entity.MyName,
+                                Options.GameName));
                         }
                         _myClient.Entity.Dispose();
                         _myClient.Entity = null;
@@ -171,7 +173,9 @@ namespace Intersect_Server.Classes.Networking
                     Disconnect();
                 }
                 catch (Exception ex)
-                { }
+                {
+                    Log.Trace(ex);
+                }
             }
             _isConnected = false;
         }

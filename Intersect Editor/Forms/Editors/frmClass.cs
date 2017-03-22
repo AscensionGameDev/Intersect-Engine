@@ -388,8 +388,6 @@ namespace Intersect_Editor.Forms
 
         private void rbMale_Click(object sender, EventArgs e)
         {
-            int n = 0;
-
             if (lstSprites.Items.Count > 0)
             {
                 _editorItem.Sprites[lstSprites.SelectedIndex].Gender = 0;
@@ -400,8 +398,6 @@ namespace Intersect_Editor.Forms
 
         private void rbFemale_Click(object sender, EventArgs e)
         {
-            int n = 0;
-
             if (lstSprites.Items.Count > 0)
             {
                 _editorItem.Sprites[lstSprites.SelectedIndex].Gender = 1;
@@ -412,8 +408,6 @@ namespace Intersect_Editor.Forms
 
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int n = 0;
-
             if (lstSprites.SelectedIndex >= 0)
             {
                 _editorItem.Sprites[lstSprites.SelectedIndex].Sprite = cmbSprite.Text;

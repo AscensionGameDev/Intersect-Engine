@@ -1,4 +1,5 @@
 ﻿using System;
+using Intersect_Library.Logging;
 using WebSocketSharp.Net.WebSockets;
 
 namespace Intersect_Server.Classes.Networking
@@ -45,6 +46,7 @@ namespace Intersect_Server.Classes.Networking
             }
             catch (Exception ex)
             {
+                Log.Trace(ex);
                 HandleDisconnect();
             }
         }

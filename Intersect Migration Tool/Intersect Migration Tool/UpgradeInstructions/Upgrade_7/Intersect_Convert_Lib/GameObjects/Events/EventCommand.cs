@@ -52,7 +52,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         public string GetConditionalDesc()
         {
             if (Type != EventCommandType.ConditionalBranch) return "";
-            string output = "";
             switch (Ints[0])
             {
                 case 0: //Player Switch

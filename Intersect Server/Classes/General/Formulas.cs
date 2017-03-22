@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using Intersect_Library;
 using Intersect_Library.Localization;
+using Intersect_Library.Logging;
 using Intersect_Server.Classes.Entities;
 using NCalc;
 
@@ -37,6 +38,7 @@ namespace Intersect_Server.Classes.General
             }
             catch (Exception ex)
             {
+                Log.Trace(ex);
                 Console.WriteLine(Strings.Get("formulas", "syntax"));
                 return false;
             }

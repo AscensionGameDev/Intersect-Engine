@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Intersect_Library.Logging;
 
 namespace Intersect_Server.Classes.Networking
 {
@@ -116,6 +117,7 @@ namespace Intersect_Server.Classes.Networking
             }
             catch (Exception ex)
             {
+                Log.Trace(ex);
                 mySocket.Disconnect();
             }
         }

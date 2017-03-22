@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Net.Sockets;
 using Intersect_Library.Localization;
+using Intersect_Library.Logging;
 using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes.Networking
@@ -61,14 +62,17 @@ namespace Intersect_Server.Classes.Networking
             }
             catch (System.ObjectDisposedException ex)
             {
+                Log.Trace(ex);
                 //Trying to read from a disconnected socket
             }
-            catch (System.IO.IOException)
+            catch (System.IO.IOException ex)
             {
+                Log.Trace(ex);
                 HandleDisconnect();
             }
             catch (Exception ex)
             {
+                Log.Trace(ex);
                 Console.WriteLine(Strings.Get("networking","badpacket"));
                 MainClass.CurrentDomain_UnhandledException(null, new UnhandledExceptionEventArgs(ex,false));
                 HandleDisconnect();
