@@ -5,48 +5,42 @@ using Intersect.Logging;
 
 namespace Intersect.Collections
 {
-    public abstract class AbstractObjectLookup<K, V> where V : IGameObject<K, V>
+    public abstract class AbstractObjectLookup<TKey, TValue> where TValue : IGameObject<TKey, TValue>
     {
-        private Dictionary<K, V> mMutableMap;
-        private ReadOnlyDictionary<K, V> mReadOnlyMap;
+        private readonly Dictionary<TKey, TValue> mMutableMap;
 
-        public int Count { get { return mMutableMap.Count; } }
-        public IDictionary<K, V> ReadOnlyMap { get { return mReadOnlyMap; } }
-        public ICollection<K> Keys { get { return ReadOnlyMap.Keys; } }
-        public ICollection<V> Objects { get { return ReadOnlyMap.Values; } }
+        public int Count => mMutableMap.Count;
+        public IDictionary<TKey, TValue> ReadOnlyMap { get; }
+        public ICollection<KeyValuePair<TKey, TValue>> Pairs => ReadOnlyMap;
+        public ICollection<TKey> Keys => ReadOnlyMap.Keys;
+        public ICollection<TValue> Values => ReadOnlyMap.Values;
 
-        public AbstractObjectLookup()
+        protected AbstractObjectLookup()
         {
-            this.mMutableMap = new Dictionary<K, V>();
-            this.mReadOnlyMap = new ReadOnlyDictionary<K, V>(this.mMutableMap);
+            mMutableMap = new Dictionary<TKey, TValue>();
+            ReadOnlyMap = new ReadOnlyDictionary<TKey, TValue>(mMutableMap);
         }
 
-        protected abstract bool Validate(K key);
+        protected abstract bool Validate(TKey key);
 
-        public V Get(K key)
+        public TValue Get(TKey key)
         {
-            V value;
-
-            if (!Validate(key) || !mMutableMap.TryGetValue(key, out value))
+            if (Validate(key) && !mMutableMap.TryGetValue(key, out TValue value))
             {
-                return default(V);
+                return value;
             }
 
-            return value;
+            return default(TValue);
         }
 
-        public bool Add(V value)
+        public bool Add(TValue value)
         {
-            if (value == null)
-            {
-                Log.Warn("Tried to add a null value to the collection.");
-                return false;
-            }
-
-            return Add(value.Id, value);
+            if (value != null) return Add(value.Id, value);
+            Log.Warn("Tried to add a null value to the collection.");
+            return false;
         }
 
-        public bool Add(K key, V value)
+        public bool Add(TKey key, TValue value)
         {
             if (value == null)
             {
@@ -70,14 +64,9 @@ namespace Intersect.Collections
             return true;
         }
 
-        public bool Delete(V value)
+        public bool Delete(TValue value)
         {
-            if (value != null)
-            {
-                return mMutableMap.Remove(value.Id);
-            }
-
-            return false;
+            return value != null && mMutableMap.Remove(value.Id);
         }
 
         public void Clear()
