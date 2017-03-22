@@ -104,8 +104,7 @@ namespace Intersect_Server.Classes.Networking
                     {
                         Entity.Update();
                     }
-                    byte[] data = null;
-                    while (sendQueue.TryDequeue(out data))
+                    while (sendQueue.TryDequeue(out byte[] data))
                     {
                         if (data != null)
                         {

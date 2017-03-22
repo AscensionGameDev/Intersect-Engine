@@ -72,12 +72,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             Tasks.Clear();
             for (int i = 0; i < MaxTasks; i++)
             {
-                QuestTask Q = new QuestTask();
-                Q.Objective = myBuffer.ReadInteger();
-                Q.Desc = myBuffer.ReadString();
-                Q.Data1 = myBuffer.ReadInteger();
-                Q.Data2 = myBuffer.ReadInteger();
-                Q.Experience = myBuffer.ReadInteger();
+                QuestTask Q = new QuestTask
+                {
+                    Objective = myBuffer.ReadInteger(),
+                    Desc = myBuffer.ReadString(),
+                    Data1 = myBuffer.ReadInteger(),
+                    Data2 = myBuffer.ReadInteger(),
+                    Experience = myBuffer.ReadInteger()
+                };
                 for (int n = 0; n < Options.MaxNpcDrops; n++)
                 {
                     Q.Rewards[n].ItemNum = myBuffer.ReadInteger();

@@ -99,9 +99,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             spriteCount = myBuffer.ReadInteger();
             for (var i = 0; i < spriteCount; i++)
             {
-                TempSprite = new ClassSprite();
-                TempSprite.Sprite = myBuffer.ReadString();
-                TempSprite.Gender = myBuffer.ReadByte();
+                TempSprite = new ClassSprite
+                {
+                    Sprite = myBuffer.ReadString(),
+                    Gender = myBuffer.ReadByte()
+                };
                 Sprites.Add(TempSprite);
             }
 
@@ -128,9 +130,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             spellCount = myBuffer.ReadInteger();
             for (var i = 0; i < spellCount; i++)
             {
-                TempSpell = new ClassSpell();
-                TempSpell.SpellNum = myBuffer.ReadInteger();
-                TempSpell.Level = myBuffer.ReadInteger();
+                TempSpell = new ClassSpell
+                {
+                    SpellNum = myBuffer.ReadInteger(),
+                    Level = myBuffer.ReadInteger()
+                };
                 Spells.Add(TempSpell);
             }
 

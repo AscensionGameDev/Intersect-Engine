@@ -109,10 +109,12 @@ namespace Intersect_Editor.Forms
 
         private void btnAddSpell_Click(object sender, EventArgs e)
         {
-            var n = new ClassSpell();
+            var n = new ClassSpell
+            {
+                SpellNum = Database.GameObjectIdFromList(GameObject.Spell, cmbSpell.SelectedIndex),
+                Level = (int) nudLevel.Value
+            };
 
-            n.SpellNum = Database.GameObjectIdFromList(GameObject.Spell,cmbSpell.SelectedIndex);
-            n.Level = (int)nudLevel.Value;
 
             _editorItem.Spells.Add(n);
             UpdateSpellList(false);
@@ -438,11 +440,13 @@ namespace Intersect_Editor.Forms
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            var n = new ClassSprite();
+            var n = new ClassSprite
+            {
+                Sprite = Strings.Get("general", "none"),
+                Face = Strings.Get("general", "none"),
+                Gender = 0
+            };
 
-            n.Sprite = Strings.Get("general","none");
-            n.Face = Strings.Get("general","none");
-            n.Gender = 0;
 
             _editorItem.Sprites.Add(n);
 

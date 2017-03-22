@@ -87,10 +87,12 @@ namespace Intersect_Library.GameObjects
             spriteCount = myBuffer.ReadInteger();
             for (var i = 0; i < spriteCount; i++)
             {
-                TempSprite = new ClassSprite();
-                TempSprite.Sprite = myBuffer.ReadString();
-                TempSprite.Face = myBuffer.ReadString();
-                TempSprite.Gender = myBuffer.ReadByte();
+                TempSprite = new ClassSprite
+                {
+                    Sprite = myBuffer.ReadString(),
+                    Face = myBuffer.ReadString(),
+                    Gender = myBuffer.ReadByte()
+                };
                 Sprites.Add(TempSprite);
             }
 
@@ -147,9 +149,11 @@ namespace Intersect_Library.GameObjects
             spellCount = myBuffer.ReadInteger();
             for (var i = 0; i < spellCount; i++)
             {
-                TempSpell = new ClassSpell();
-                TempSpell.SpellNum = myBuffer.ReadInteger();
-                TempSpell.Level = myBuffer.ReadInteger();
+                TempSpell = new ClassSpell
+                {
+                    SpellNum = myBuffer.ReadInteger(),
+                    Level = myBuffer.ReadInteger()
+                };
                 Spells.Add(TempSpell);
             }
 

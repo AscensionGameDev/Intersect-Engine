@@ -25,8 +25,7 @@ namespace Intersect_Library.GameObjects.Events
             SpawnY = y;
             CommonEvent = isCommon;
             IsGlobal = isGlobal;
-            MyPages = new List<EventPage>();
-            MyPages.Add(new EventPage());
+            MyPages = new List<EventPage> {new EventPage()};
         }
 
         public EventBase(int index, EventBase copy) : base(index)
