@@ -84,11 +84,7 @@ namespace Intersect_Library
             }
             _wasUpdated = true;
         }
-        public string ReadString()
-        {
-            return ReadString(true);
-        }
-        public string ReadString(bool peek)
+        public string ReadString(bool peek = true)
         {
             var len = ReadInteger(true);
             if (_wasUpdated)
@@ -107,19 +103,11 @@ namespace Intersect_Library
             }
             return ret;
         }
-        public bool ReadBoolean()
-        {
-            return Convert.ToBoolean(ReadByte(true));
-        }
-        public bool ReadBoolean(bool peek)
+        public bool ReadBoolean(bool peek = true)
         {
             return Convert.ToBoolean(ReadByte(peek));
         }
-        public byte ReadByte()
-        {
-            return ReadByte(true);
-        }
-        public byte ReadByte(bool peek)
+        public byte ReadByte(bool peek = true)
         {
             //check to see if this passes the byte count
             if (_buff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");
@@ -130,22 +118,14 @@ namespace Intersect_Library
             }
             return ret;
         }
-        public byte[] ReadBytes(int length)
-        {
-            return ReadBytes(length, true);
-        }
-        public byte[] ReadBytes(int length, bool peek)
+        public byte[] ReadBytes(int length, bool peek = true)
         {
             var ret = _buff.GetRange(Readpos, length).ToArray();
             if (peek)
                 Readpos += length;
             return ret;
         }
-        public short ReadShort()
-        {
-            return ReadShort(true);
-        }
-        public short ReadShort(bool peek)
+        public short ReadShort(bool peek = true)
         {
             //check to see if this passes the byte count
             if (_buff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");
@@ -161,11 +141,7 @@ namespace Intersect_Library
             }
             return ret;
         }
-        public int ReadInteger()
-        {
-            return ReadInteger(true);
-        }
-        public int ReadInteger(bool peek)
+        public int ReadInteger(bool peek = true)
         {
             //check to see if this passes the byte count
             if (_buff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");
@@ -181,11 +157,7 @@ namespace Intersect_Library
             }
             return ret;
         }
-        public long ReadLong()
-        {
-            return ReadLong(true);
-        }
-        public long ReadLong(bool peek)
+        public long ReadLong(bool peek = true)
         {
             //check to see if this passes the byte count
             if (_buff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");
@@ -201,12 +173,8 @@ namespace Intersect_Library
             }
             return ret;
         }
-
-        public double ReadDouble()
-        {
-            return ReadDouble(true);
-        }
-        public double ReadDouble(bool peek)
+        
+        public double ReadDouble(bool peek = true)
         {
             //check to see if this passes the byte count
             if (_buff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");

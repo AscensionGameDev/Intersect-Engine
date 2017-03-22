@@ -666,9 +666,11 @@ namespace Intersect_Server.Classes.Entities
             }
             if (map == -1)
             {
-                var mapenum = MapInstance.GetObjects().GetEnumerator();
-                mapenum.MoveNext();
-                map = mapenum.Current.Value.Id;
+                using (var mapenum = MapInstance.GetObjects().GetEnumerator())
+                {
+                    mapenum.MoveNext();
+                    map = mapenum.Current.Value.Id;
+                }
             }
             Warp(map, x, y);
         }
