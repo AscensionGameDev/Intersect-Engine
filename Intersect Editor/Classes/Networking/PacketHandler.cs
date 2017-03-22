@@ -224,7 +224,7 @@ namespace Intersect_Editor.Classes
             {
                 Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());
             }
-            Globals.MapListWindow.BeginInvoke(Globals.MapListWindow.mapTreeList.MapListDelegate,new object[] {-1,null});
+            Globals.MapListWindow.BeginInvoke(Globals.MapListWindow.mapTreeList.MapListDelegate, -1, null);
             bf.Dispose();
         }
 

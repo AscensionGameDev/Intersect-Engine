@@ -136,7 +136,7 @@ namespace Intersect_Editor.Forms
 
         private void frmWarpSelection_Load(object sender, EventArgs e)
         {
-            mapTreeList1.BeginInvoke(mapTreeList1.MapListDelegate, new object[] { _currentMap, _restrictMaps });
+            mapTreeList1.BeginInvoke(mapTreeList1.MapListDelegate, _currentMap, _restrictMaps);
             UpdatePreview();
         }
 
