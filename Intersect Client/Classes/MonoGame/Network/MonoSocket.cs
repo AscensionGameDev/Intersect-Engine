@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
 using System.IO;
+using Intersect_Library.Logging;
 
 namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
 {
@@ -16,9 +17,11 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
         private static NetworkStream _myStream;
         public MonoSocket() : base()
         {
-            MySocket = new TcpClient();
-            MySocket.SendBufferSize = 256000;
-            MySocket.ReceiveBufferSize = 256000;
+            MySocket = new TcpClient
+            {
+                SendBufferSize = 256000,
+                ReceiveBufferSize = 256000
+            };
             _tempBuff = new byte[MySocket.ReceiveBufferSize];
             MySocket.SendTimeout = 100000;
             MySocket.ReceiveTimeout = 100000;
@@ -81,6 +84,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
             }
             catch (IOException ex)
             {
+                Log.Trace(ex);
                 HandleDisconnect();
             }
         }
@@ -100,6 +104,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
             }
             catch (Exception ex)
             {
+                Log.Trace(ex);
                 HandleDisconnect();
             }
         }

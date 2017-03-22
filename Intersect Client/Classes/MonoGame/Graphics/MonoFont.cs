@@ -1,6 +1,7 @@
 ﻿using System;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
+using Intersect_Library.Logging;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -18,7 +19,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             }
             catch (Exception ex)
             {
-                
+                Log.Trace(ex);
             }
         }
 
