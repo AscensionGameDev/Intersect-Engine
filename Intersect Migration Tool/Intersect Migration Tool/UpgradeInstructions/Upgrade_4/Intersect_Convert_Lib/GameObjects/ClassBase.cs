@@ -28,8 +28,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Conve
     public class ClassBase : DatabaseObject
     {
         //Core info
-        public new const string DatabaseTable = "classes";
-        public new const GameObject Type = GameObject.Class;
+        public new const string DATABASE_TABLE = "classes";
+        public new const GameObject OBJECT_TYPE = GameObject.Class;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         public string Name = "New Class";
@@ -259,12 +259,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Conve
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)

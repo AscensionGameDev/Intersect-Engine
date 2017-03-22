@@ -10,8 +10,8 @@ namespace Intersect_Library.GameObjects
     {
         public virtual int Id { get; private set; }
         public string Name { get; set; }
-        public const string DatabaseTable = "";
-        public const GameObject Type = GameObject.Animation;
+        public const string DATABASE_TABLE = "";
+        public const GameObject OBJECT_TYPE = GameObject.Animation;
         private byte[] backup = null;
         protected DatabaseObject(int id)
         {

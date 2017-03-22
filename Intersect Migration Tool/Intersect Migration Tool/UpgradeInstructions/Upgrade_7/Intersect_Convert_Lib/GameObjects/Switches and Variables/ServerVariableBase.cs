@@ -6,8 +6,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
     public class ServerVariableBase : DatabaseObject
     {
         //Core info
-        public new const string DatabaseTable = "server_variables";
-        public new const GameObject Type = GameObject.ServerVariable;
+        public new const string DATABASE_TABLE = "server_variables";
+        public new const GameObject OBJECT_TYPE = GameObject.ServerVariable;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         public string Name = "New Global Variable";
@@ -59,12 +59,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)

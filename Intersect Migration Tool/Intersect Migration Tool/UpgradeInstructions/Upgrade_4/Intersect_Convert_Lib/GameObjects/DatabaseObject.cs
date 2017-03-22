@@ -10,8 +10,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Conve
     public abstract class DatabaseObject
     {
         private int _id = -1;
-        public const string DatabaseTable = "";
-        public const GameObject Type = GameObject.Animation;
+        public const string DATABASE_TABLE = "";
+        public const GameObject OBJECT_TYPE = GameObject.Animation;
         private byte[] backup = null;
         protected DatabaseObject(int id)
         {

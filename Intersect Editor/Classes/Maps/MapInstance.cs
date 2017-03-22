@@ -13,7 +13,7 @@ namespace Intersect_Editor.Classes.Maps
     public class MapInstance : MapBase
     {
         //Map Attributes
-        public new const GameObject Type = GameObject.Map;
+        public new const GameObject OBJECT_TYPE = GameObject.Map;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         private static object objectsLock = new object();
         private Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance> _attributeAnimInstances = new Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance>();
@@ -32,7 +32,6 @@ namespace Intersect_Editor.Classes.Maps
         public MapInstance(MapBase mapStruct) : base(mapStruct)
         {
             Autotiles = new MapAutotiles(this);
-            Id = mapStruct.Id;
             if (typeof(MapInstance) == mapStruct.GetType())
             {
                 MapGridX = ((MapInstance) mapStruct).MapGridX;
@@ -249,7 +248,7 @@ namespace Intersect_Editor.Classes.Maps
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public new static MapInstance GetMap(int index)

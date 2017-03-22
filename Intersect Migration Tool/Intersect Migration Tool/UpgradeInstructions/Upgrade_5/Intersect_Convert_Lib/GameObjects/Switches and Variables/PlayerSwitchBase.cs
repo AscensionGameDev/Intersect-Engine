@@ -6,8 +6,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
     public class PlayerSwitchBase : DatabaseObject
     {
         //Core info
-        public new const string DatabaseTable = "player_switches";
-        public new const GameObject Type = GameObject.PlayerSwitch;
+        public new const string DATABASE_TABLE = "player_switches";
+        public new const GameObject OBJECT_TYPE = GameObject.PlayerSwitch;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
         public string Name = "New Player Switch";
@@ -56,12 +56,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)

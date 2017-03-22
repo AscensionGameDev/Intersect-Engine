@@ -23,8 +23,8 @@ namespace Intersect_Library.GameObjects
     public class QuestBase : DatabaseObject
     {
         //General
-        public new const string DatabaseTable = "quests";
-        public new const GameObject Type = GameObject.Quest;
+        public new const string DATABASE_TABLE = "quests";
+        public new const GameObject OBJECT_TYPE = GameObject.Quest;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
         public string BeforeDesc = "";
@@ -181,12 +181,12 @@ namespace Intersect_Library.GameObjects
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)

@@ -19,7 +19,7 @@ namespace Intersect_Server.Classes.Maps
     public class MapInstance : MapBase
     {
         //Core
-        public new const GameObject Type = GameObject.Map;
+        public new const GameObject OBJECT_TYPE = GameObject.Map;
         protected static Dictionary<int, DatabaseObject> MapInstanceTable = new Dictionary<int, DatabaseObject>();
 
         //Temporary Values
@@ -822,11 +822,11 @@ namespace Intersect_Server.Classes.Maps
         }
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
         public new static MapInstance GetMap(int index)
         {

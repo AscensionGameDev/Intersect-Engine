@@ -7,8 +7,8 @@ namespace Intersect_Library.GameObjects
     public class ShopBase : DatabaseObject
     {
         //Core info
-        public new const string DatabaseTable = "shops";
-        public new const GameObject Type = GameObject.Shop;
+        public new const string DATABASE_TABLE = "shops";
+        public new const GameObject OBJECT_TYPE = GameObject.Shop;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
         public int DefaultCurrency = 0;
@@ -93,12 +93,12 @@ namespace Intersect_Library.GameObjects
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)

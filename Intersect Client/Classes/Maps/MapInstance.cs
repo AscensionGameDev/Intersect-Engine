@@ -23,7 +23,7 @@ namespace Intersect_Client.Classes.Maps
         //Client Only Values
 
         //Map State Variables
-        public new const GameObject Type = GameObject.Map;
+        public new const GameObject OBJECT_TYPE = GameObject.Map;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public static Dictionary<int,long> MapRequests = new Dictionary<int,long>();
         public bool MapLoaded { get; private set; }
@@ -777,7 +777,7 @@ namespace Intersect_Client.Classes.Maps
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public new static MapInstance GetMap(int index)

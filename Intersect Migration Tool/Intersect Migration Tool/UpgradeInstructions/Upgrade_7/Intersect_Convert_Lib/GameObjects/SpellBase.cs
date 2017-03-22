@@ -8,8 +8,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
     public class SpellBase : DatabaseObject
     {
         //Core Info
-        public new const string DatabaseTable = "spells";
-        public new const GameObject Type = GameObject.Spell;
+        public new const string DATABASE_TABLE = "spells";
+        public new const GameObject OBJECT_TYPE = GameObject.Spell;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
         public string Name = "New Spell";
@@ -227,12 +227,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)

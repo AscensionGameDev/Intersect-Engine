@@ -9,8 +9,8 @@ namespace Intersect_Library.GameObjects
     public class ResourceBase : DatabaseObject
     {
         // General
-        public new const string DatabaseTable = "resources";
-        public new const GameObject Type = GameObject.Resource;
+        public new const string DATABASE_TABLE = "resources";
+        public new const GameObject OBJECT_TYPE = GameObject.Resource;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
         public int MinHP = 0;
@@ -125,12 +125,12 @@ namespace Intersect_Library.GameObjects
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)

@@ -5,8 +5,8 @@ namespace Intersect_Library.GameObjects.Events
 {
     public class EventBase : DatabaseObject
     {
-        public new const string DatabaseTable = "events";
-        public new const GameObject Type = GameObject.CommonEvent;
+        public new const string DATABASE_TABLE = "events";
+        public new const GameObject OBJECT_TYPE = GameObject.CommonEvent;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
         public int MyIndex { get; set; }
@@ -100,12 +100,12 @@ namespace Intersect_Library.GameObjects.Events
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)

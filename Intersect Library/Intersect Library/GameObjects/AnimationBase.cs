@@ -5,8 +5,8 @@ namespace Intersect_Library.GameObjects
 {
     public class AnimationBase : DatabaseObject
     {
-        public new const string DatabaseTable = "animations";
-        public new const GameObject Type = GameObject.Animation;
+        public new const string DATABASE_TABLE = "animations";
+        public new const GameObject OBJECT_TYPE = GameObject.Animation;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
         public string Sound = "";
@@ -139,12 +139,12 @@ namespace Intersect_Library.GameObjects
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)

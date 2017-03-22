@@ -6,8 +6,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
 {
     public class MapBase : DatabaseObject
     {
-        public new const string DatabaseTable = "maps";
-        public new const GameObject Type = GameObject.Map;
+        public new const string DATABASE_TABLE = "maps";
+        public new const GameObject OBJECT_TYPE = GameObject.Map;
         protected static Dictionary<int, MapBase> Objects = new Dictionary<int, MapBase>();
         
         public string MyName { get; set; } = "New Map";
@@ -351,12 +351,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)

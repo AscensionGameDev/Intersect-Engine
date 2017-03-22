@@ -1635,55 +1635,55 @@ namespace Intersect_Server.Classes.Core
             switch (type)
             {
                 case GameObject.Animation:
-                    tableName = AnimationBase.DatabaseTable;
+                    tableName = AnimationBase.DATABASE_TABLE;
                     break;
                 case GameObject.Class:
-                    tableName = ClassBase.DatabaseTable;
+                    tableName = ClassBase.DATABASE_TABLE;
                     break;
                 case GameObject.Item:
-                    tableName = ItemBase.DatabaseTable;
+                    tableName = ItemBase.DATABASE_TABLE;
                     break;
                 case GameObject.Npc:
-                    tableName = NpcBase.DatabaseTable;
+                    tableName = NpcBase.DATABASE_TABLE;
                     break;
                 case GameObject.Projectile:
-                    tableName = ProjectileBase.DatabaseTable;
+                    tableName = ProjectileBase.DATABASE_TABLE;
                     break;
                 case GameObject.Quest:
-                    tableName = QuestBase.DatabaseTable;
+                    tableName = QuestBase.DATABASE_TABLE;
                     break;
                 case GameObject.Resource:
-                    tableName = ResourceBase.DatabaseTable;
+                    tableName = ResourceBase.DATABASE_TABLE;
                     break;
                 case GameObject.Shop:
-                    tableName = ShopBase.DatabaseTable;
+                    tableName = ShopBase.DATABASE_TABLE;
                     break;
                 case GameObject.Spell:
-                    tableName = SpellBase.DatabaseTable;
+                    tableName = SpellBase.DATABASE_TABLE;
                     break;
                 case GameObject.Bench:
-                    tableName = BenchBase.DatabaseTable;
+                    tableName = BenchBase.DATABASE_TABLE;
                     break;
                 case GameObject.Map:
-                    tableName = MapBase.DatabaseTable;
+                    tableName = MapBase.DATABASE_TABLE;
                     break;
                 case GameObject.CommonEvent:
-                    tableName = EventBase.DatabaseTable;
+                    tableName = EventBase.DATABASE_TABLE;
                     break;
                 case GameObject.PlayerSwitch:
-                    tableName = PlayerSwitchBase.DatabaseTable;
+                    tableName = PlayerSwitchBase.DATABASE_TABLE;
                     break;
                 case GameObject.PlayerVariable:
-                    tableName = PlayerVariableBase.DatabaseTable;
+                    tableName = PlayerVariableBase.DATABASE_TABLE;
                     break;
                 case GameObject.ServerSwitch:
-                    tableName = ServerSwitchBase.DatabaseTable;
+                    tableName = ServerSwitchBase.DATABASE_TABLE;
                     break;
                 case GameObject.ServerVariable:
-                    tableName = ServerVariableBase.DatabaseTable;
+                    tableName = ServerVariableBase.DATABASE_TABLE;
                     break;
                 case GameObject.Tileset:
-                    tableName = TilesetBase.DatabaseTable;
+                    tableName = TilesetBase.DATABASE_TABLE;
                     break;
                 case GameObject.Time:
                     return "";

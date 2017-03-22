@@ -7,8 +7,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
     public class TilesetBase : DatabaseObject
     {
         //Core info
-        public new const string DatabaseTable = "tilesets";
-        public new const GameObject Type = GameObject.Tileset;
+        public new const string DATABASE_TABLE = "tilesets";
+        public new const GameObject OBJECT_TYPE = GameObject.Tileset;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         public string Value = "";
@@ -63,12 +63,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)

@@ -28,8 +28,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
     public class QuestBase : DatabaseObject
     {
         //General
-        public new const string DatabaseTable = "quests";
-        public new const GameObject Type = GameObject.Quest;
+        public new const string DATABASE_TABLE = "quests";
+        public new const GameObject OBJECT_TYPE = GameObject.Quest;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
         public string Name = "New Quest";
@@ -146,12 +146,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)

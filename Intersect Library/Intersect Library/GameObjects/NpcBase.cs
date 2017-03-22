@@ -8,8 +8,8 @@ namespace Intersect_Library.GameObjects
     public class NpcBase : DatabaseObject
     {
         //Core info
-        public new const string DatabaseTable = "npcs";
-        public new const GameObject Type = GameObject.Npc;
+        public new const string DATABASE_TABLE = "npcs";
+        public new const GameObject OBJECT_TYPE = GameObject.Npc;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
         public string Sprite = "";
@@ -184,12 +184,12 @@ namespace Intersect_Library.GameObjects
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)

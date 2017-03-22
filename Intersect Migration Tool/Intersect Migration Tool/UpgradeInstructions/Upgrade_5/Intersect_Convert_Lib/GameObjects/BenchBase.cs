@@ -27,8 +27,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
 {
     public class BenchBase : DatabaseObject
     {
-        public new const string DatabaseTable = "crafts";
-        public new const GameObject Type = GameObject.Bench;
+        public new const string DATABASE_TABLE = "crafts";
+        public new const GameObject OBJECT_TYPE = GameObject.Bench;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         public string Name = "New Bench";
@@ -114,12 +114,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)
