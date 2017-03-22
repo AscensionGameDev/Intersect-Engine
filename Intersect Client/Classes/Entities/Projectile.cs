@@ -479,7 +479,7 @@ namespace Intersect_Client.Classes.Entities
         /// <summary>
         /// Rendering all of the individual projectiles from a singular spawn to a map.
         /// </summary>
-        override public void Draw()
+        public override void Draw()
         {
             if (MapInstance.GetMap(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
         }

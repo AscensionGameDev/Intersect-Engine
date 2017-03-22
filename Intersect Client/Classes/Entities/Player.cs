@@ -24,7 +24,7 @@ namespace Intersect_Client.Classes.Entities
         public int ExperienceToNextLevel = 0;
         public Dictionary<int, QuestProgressStruct> QuestProgress = new Dictionary<int, QuestProgressStruct>();
 
-        public bool IsInParty { get { return Party.Count > 0; } }
+        public bool IsInParty => Party.Count > 0;
 
         private List<int> mParty = null;
         public List<int> Party

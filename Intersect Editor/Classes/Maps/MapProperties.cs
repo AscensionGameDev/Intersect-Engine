@@ -21,20 +21,14 @@ namespace Intersect_Editor.Classes.Maps
     {
         public CustomDisplayName(string name) : base(name) { }
 
-        public override string DisplayName
-        {
-            get { return Strings.Get("mapproperties",DisplayNameValue); }
-        }
+        public override string DisplayName => Strings.Get("mapproperties",DisplayNameValue);
     }
 
     class CustomDescription : DescriptionAttribute
     {
         public CustomDescription(string desc) : base(desc) {}
 
-        public override string Description
-        {
-            get { return Strings.Get("mapproperties", DescriptionValue); }
-        }
+        public override string Description => Strings.Get("mapproperties", DescriptionValue);
     }
 
     class MapProperties

@@ -19,15 +19,13 @@ namespace Intersect_Server.Classes.Entities
 
     public class Entity
     {
-        private bool mDisposed;
-
-        public bool IsDisposed { get { return mDisposed; } }
+        public bool IsDisposed { get; private set; }
 
         public void Dispose()
         {
-            if (!mDisposed)
+            if (!IsDisposed)
             {
-                mDisposed = true;
+                IsDisposed = true;
             }
         }
 

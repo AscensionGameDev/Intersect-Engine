@@ -423,7 +423,6 @@ namespace Intersect_Editor.Classes
                     Buffer.BlockCopy(imgData, 0, result, 0, result.Length);
                     return imgData;
                 }
-                return null;
             }
             return null;
         }

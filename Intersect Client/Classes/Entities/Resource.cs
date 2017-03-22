@@ -42,7 +42,7 @@ namespace Intersect_Client.Classes.Entities
             return EntityTypes.Resource;
         }
 
-        override public bool Update()
+        public override bool Update()
         {
             CalculateRenderBounds();
             bool result = base.Update();
@@ -79,7 +79,7 @@ namespace Intersect_Client.Classes.Entities
         }
 
         //Rendering Resources
-        override public void Draw()
+        public override void Draw()
         {
             if (MapInstance.GetMap(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
             GameTexture srcTexture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, MySprite);
