@@ -20,7 +20,7 @@ namespace Intersect_Server.Classes.Maps
     {
         //Core
         public new const GameObject Type = GameObject.Map;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        protected static Dictionary<int, DatabaseObject> MapInstanceTable = new Dictionary<int, DatabaseObject>();
 
         //Temporary Values
         public List<int> SurroundingMaps = new List<int>();
@@ -830,42 +830,42 @@ namespace Intersect_Server.Classes.Maps
         }
         public new static MapInstance GetMap(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (MapInstanceTable.ContainsKey(index))
             {
-                return (MapInstance)Objects[index];
+                return (MapInstance)MapInstanceTable[index];
             }
             return null;
         }
         public static DatabaseObject Get(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (MapInstanceTable.ContainsKey(index))
             {
-                return Objects[index];
+                return MapInstanceTable[index];
             }
             return null;
         }
         public override void Delete()
         {
-            Objects.Remove(((DatabaseObject) this).Id);
+            MapInstanceTable.Remove(((DatabaseObject) this).Id);
             MapBase.Objects.Remove(((DatabaseObject) this).Id);
         }
         public static void ClearObjects()
         {
-            Objects.Clear();
+            MapInstanceTable.Clear();
             MapBase.ClearObjects();
         }
         public static void AddObject(int index, DatabaseObject obj)
         {
-            Objects.Add(index, obj);
+            MapInstanceTable.Add(index, obj);
             MapBase.Objects.Add(index, (MapBase)obj);
         }
         public static int ObjectCount()
         {
-            return Objects.Count;
+            return MapInstanceTable.Count;
         }
         public static Dictionary<int, MapInstance> GetObjects()
         {
-            Dictionary<int, MapInstance> objects = Objects.ToDictionary(k => k.Key, v => (MapInstance)v.Value);
+            Dictionary<int, MapInstance> objects = MapInstanceTable.ToDictionary(k => k.Key, v => (MapInstance)v.Value);
             return objects;
         }
     }
