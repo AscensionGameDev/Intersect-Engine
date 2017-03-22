@@ -2167,9 +2167,10 @@ namespace Intersect_Server.Classes.Entities
                 }
 
                 //Check if the caster has the right ammunition if a projectile
-                if (spell.SpellType == (int)SpellTargetTypes.Projectile && spell.Projectile > -1)
+                if (spell.SpellType == (int)SpellTypes.CombatSpell && spell.TargetType == (int)SpellTargetTypes.Projectile && spell.Projectile > -1)
                 {
                     var projectileBase = ProjectileBase.GetProjectile(spell.Projectile);
+                    if (projectileBase == null) return;
                     if (projectileBase.Ammo > -1)
                     {
                         if (FindItem(projectileBase.Ammo, projectileBase.AmmoRequired) == -1)
