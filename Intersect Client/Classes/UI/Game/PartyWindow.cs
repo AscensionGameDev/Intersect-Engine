@@ -186,7 +186,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _lblnames[i].Text = "";
                 if (i > 0) _kickButtons[i].Hide();
             }
-            if (Globals.Me.IsInParty)
+            if (Globals.Me.IsInParty())
             {
                 _leader.Show();
                 _leaveButton.Show();

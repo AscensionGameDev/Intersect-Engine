@@ -12,48 +12,58 @@ namespace Intersect.Localization
         private Dictionary<string, Dictionary<string, string>> loadedStrings =
             new Dictionary<string, Dictionary<string, string>>();
 
-        public Language(string filename)
+        public Language(string data, bool isRaw)
         {
-            if (File.Exists(filename))
+            if (isRaw)
             {
-                XmlDocument xmlDoc = new XmlDocument(); // Create an XML document object
-                xmlDoc.Load(filename); // Load the XML document from the specified file
-                XmlNodeList nodes = xmlDoc.SelectNodes("//Strings").Item(0).ChildNodes;
-                foreach (XmlNode node in nodes)
+                LoadLanguage(data);
+                return;
+            }
+            if (File.Exists(data))
+            {
+                LoadLanguage(File.ReadAllText(data));
+            }
+        }
+
+        private void LoadLanguage(string xmlData)
+        {
+            XmlDocument xmlDoc = new XmlDocument(); // Create an XML document object
+            xmlDoc.LoadXml(xmlData); // Load the XML document from the specified file
+            XmlNodeList nodes = xmlDoc.SelectNodes("//Strings").Item(0).ChildNodes;
+            foreach (XmlNode node in nodes)
+            {
+                if (node.NodeType != XmlNodeType.Comment)
                 {
-                    if (node.NodeType != XmlNodeType.Comment)
+                    if (!loadedStrings.ContainsKey(node.Name.ToLower()))
                     {
-                        if (!loadedStrings.ContainsKey(node.Name.ToLower()))
+                        loadedStrings.Add(node.Name.ToLower(), new Dictionary<string, string>());
+                    }
+                    foreach (XmlNode childNode in node.ChildNodes)
+                    {
+                        if (childNode.NodeType != XmlNodeType.Comment)
                         {
-                            loadedStrings.Add(node.Name.ToLower(), new Dictionary<string, string>());
-                        }
-                        foreach (XmlNode childNode in node.ChildNodes)
-                        {
-                            if (childNode.NodeType != XmlNodeType.Comment)
+                            if (
+                                !loadedStrings[node.Name.ToLower()].ContainsKey(
+                                    childNode.Attributes["id"].Value.ToLower()))
                             {
-                                if (
-                                    !loadedStrings[node.Name.ToLower()].ContainsKey(
-                                        childNode.Attributes["id"].Value.ToLower()))
+                                if (childNode.FirstChild == null)
                                 {
-                                    if (childNode.FirstChild == null)
-                                    {
-                                        loadedStrings[node.Name.ToLower()].Add(
-                                            childNode.Attributes["id"].Value.ToLower(), "");
-                                    }
-                                    else
-                                    {
-                                        loadedStrings[node.Name.ToLower()].Add(
-                                            childNode.Attributes["id"].Value.ToLower(),
-                                            childNode.FirstChild.Value);
-                                    }
+                                    loadedStrings[node.Name.ToLower()].Add(
+                                        childNode.Attributes["id"].Value.ToLower(), "");
+                                }
+                                else
+                                {
+                                    loadedStrings[node.Name.ToLower()].Add(
+                                        childNode.Attributes["id"].Value.ToLower(),
+                                        childNode.FirstChild.Value);
                                 }
                             }
                         }
                     }
                 }
-                //Try to load it into dictionaries.
-                _loaded = true;
             }
+        //Try to load it into dictionaries.
+        _loaded = true;
         }
 
         public bool Loaded()
