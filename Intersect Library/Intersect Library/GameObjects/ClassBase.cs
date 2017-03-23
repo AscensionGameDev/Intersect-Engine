@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Intersect.GameObjects
 {
-    public class ClassBase : DatabaseObject
+    public class ClassBase : DatabaseObject<ClassBase>
     {
         //Core info
         public new const string DATABASE_TABLE = "classes";

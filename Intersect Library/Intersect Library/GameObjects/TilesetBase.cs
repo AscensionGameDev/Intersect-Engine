@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Intersect.GameObjects
 {
-    public class TilesetBase : DatabaseObject
+    public class TilesetBase : DatabaseObject<TilesetBase>
     {
         //Core info
         public new const string DATABASE_TABLE = "tilesets";

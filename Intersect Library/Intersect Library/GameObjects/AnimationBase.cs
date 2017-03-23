@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Intersect.GameObjects
 {
-    public class AnimationBase : DatabaseObject
+    public class AnimationBase : DatabaseObject<AnimationBase>
     {
         public new const string DATABASE_TABLE = "animations";
         public new const GameObject OBJECT_TYPE = GameObject.Animation;

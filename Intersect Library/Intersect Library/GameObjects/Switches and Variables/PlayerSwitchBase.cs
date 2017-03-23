@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Intersect.GameObjects
 {
-    public class PlayerSwitchBase : DatabaseObject
+    public class PlayerSwitchBase : DatabaseObject<PlayerSwitchBase>
     {
         //Core info
         public new const string DATABASE_TABLE = "player_switches";

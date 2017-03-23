@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Intersect.GameObjects
 {
-    public class ShopBase : DatabaseObject
+    public class ShopBase : DatabaseObject<ShopBase>
     {
         //Core info
         public new const string DATABASE_TABLE = "shops";

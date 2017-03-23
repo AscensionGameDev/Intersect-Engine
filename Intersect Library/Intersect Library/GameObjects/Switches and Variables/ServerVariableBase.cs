@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Intersect.GameObjects
 {
-    public class ServerVariableBase : DatabaseObject
+    public class ServerVariableBase : DatabaseObject<ServerVariableBase>
     {
         //Core info
         public new const string DATABASE_TABLE = "server_variables";

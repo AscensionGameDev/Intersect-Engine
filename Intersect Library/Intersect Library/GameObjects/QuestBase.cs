@@ -20,7 +20,7 @@ namespace Intersect.GameObjects
         public int taskProgress;
     }
 
-    public class QuestBase : DatabaseObject
+    public class QuestBase : DatabaseObject<QuestBase>
     {
         //General
         public new const string DATABASE_TABLE = "quests";

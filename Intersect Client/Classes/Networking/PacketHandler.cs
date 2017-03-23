@@ -1302,7 +1302,7 @@ namespace Intersect_Client.Classes.Networking
                     obj.Load(data);
                     TilesetBase.AddObject(id, obj);
                     if (Globals.HasGameData && !another)
-                        Globals.ContentManager.LoadTilesets(DatabaseObject.GetGameObjectList(GameObject.Tileset));
+                        Globals.ContentManager.LoadTilesets(DatabaseObjectUtils.GetGameObjectList(GameObject.Tileset));
                     break;
                 case GameObject.CommonEvent:
                     //Clients don't store event data, im an idiot.

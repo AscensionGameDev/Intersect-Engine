@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Intersect.GameObjects.Events
 {
-    public class EventBase : DatabaseObject
+    public class EventBase : DatabaseObject<EventBase>
     {
         public new const string DATABASE_TABLE = "events";
         public new const GameObject OBJECT_TYPE = GameObject.CommonEvent;

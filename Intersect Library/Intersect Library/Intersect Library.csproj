@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="AlphanumComparatorFast.cs" />
     <Compile Include="Collections\AbstractObjectLookup.cs" />
+    <Compile Include="Collections\IntObjectLookup.cs" />
     <Compile Include="Compression.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="FieldChecking.cs" />

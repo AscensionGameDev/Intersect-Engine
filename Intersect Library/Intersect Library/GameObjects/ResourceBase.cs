@@ -6,7 +6,7 @@ using Intersect.Localization;
 
 namespace Intersect.GameObjects
 {
-    public class ResourceBase : DatabaseObject
+    public class ResourceBase : DatabaseObject<ResourceBase>
     {
         // General
         public new const string DATABASE_TABLE = "resources";

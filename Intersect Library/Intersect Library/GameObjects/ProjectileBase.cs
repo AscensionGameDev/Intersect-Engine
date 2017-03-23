@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Intersect.GameObjects
 {
-    public class ProjectileBase : DatabaseObject
+    public class ProjectileBase : DatabaseObject<ProjectileBase>
     {
         public new const string DATABASE_TABLE = "projectiles";
         public new const GameObject OBJECT_TYPE = GameObject.Projectile;

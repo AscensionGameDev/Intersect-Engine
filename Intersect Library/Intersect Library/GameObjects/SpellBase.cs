@@ -4,7 +4,7 @@ using Intersect.GameObjects.Conditions;
 
 namespace Intersect.GameObjects
 {
-    public class SpellBase : DatabaseObject
+    public class SpellBase : DatabaseObject<SpellBase>
     {
         //Core Info
         public new const string DATABASE_TABLE = "spells";

@@ -6,7 +6,22 @@ using Intersect.GameObjects.Maps;
 
 namespace Intersect.GameObjects
 {
-    public abstract class DatabaseObject
+    public interface DatabaseObject
+    {
+        int Id { get; }
+        string Name { get; set; }
+
+        void Load(byte[] packet);
+        byte[] GetData();
+        string GetTable();
+        GameObject GetGameObjectType();
+        void MakeBackup();
+        void RestoreBackup();
+        void DeleteBackup();
+        void Delete();
+    }
+
+    public abstract class DatabaseObject<TObject> : DatabaseObject, IGameObject<int, TObject> where TObject : DatabaseObject<TObject>
     {
         public const string DATABASE_TABLE = "";
         public const GameObject OBJECT_TYPE = GameObject.Animation;
@@ -17,7 +32,7 @@ namespace Intersect.GameObjects
             Id = id;
         }
 
-        public int Id { get; private set; }
+        public int Id { get; }
         public string Name { get; set; }
 
         public abstract void Load(byte[] packet);
@@ -42,7 +57,10 @@ namespace Intersect.GameObjects
         public abstract byte[] GetData();
         public abstract GameObject GetGameObjectType();
         public abstract string GetTable();
+    }
 
+    public static class DatabaseObjectUtils
+    {
         //Game Object Handling
         public static string[] GetGameObjectList(GameObject type)
         {

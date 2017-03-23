@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Intersect.GameObjects
 {
-    public class BenchBase : DatabaseObject
+    public class BenchBase : DatabaseObject<BenchBase>
     {
         public new const string DATABASE_TABLE = "crafts";
         public new const GameObject OBJECT_TYPE = GameObject.Bench;

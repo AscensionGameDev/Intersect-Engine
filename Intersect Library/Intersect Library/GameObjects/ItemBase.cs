@@ -4,7 +4,7 @@ using Intersect.GameObjects.Conditions;
 
 namespace Intersect.GameObjects
 {
-    public class ItemBase : DatabaseObject
+    public class ItemBase : DatabaseObject<ItemBase>
     {
         public new const string DATABASE_TABLE = "items";
         public new const GameObject OBJECT_TYPE = GameObject.Item;

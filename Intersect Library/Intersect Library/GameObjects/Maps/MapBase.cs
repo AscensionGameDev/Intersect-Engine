@@ -5,7 +5,7 @@ using Intersect.Localization;
 
 namespace Intersect.GameObjects.Maps
 {
-    public class MapBase : DatabaseObject
+    public class MapBase : DatabaseObject<MapBase>
     {
         public new const string DATABASE_TABLE = "maps";
         public new const GameObject OBJECT_TYPE = GameObject.Map;
@@ -374,7 +374,7 @@ namespace Intersect.GameObjects.Maps
             return OBJECT_TYPE;
         }
 
-        public static DatabaseObject Get(int index)
+        public static DatabaseObject<MapBase> Get(int index)
         {
             if (Objects.ContainsKey(index))
             {
@@ -393,7 +393,7 @@ namespace Intersect.GameObjects.Maps
             Objects.Clear();
         }
 
-        public static void AddObject(int index, DatabaseObject obj)
+        public static void AddObject(int index, DatabaseObject<MapBase> obj)
         {
             Objects.Add(index, (MapBase) obj);
         }
