@@ -213,7 +213,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.DeleteGameObject);
-            bf.WriteInteger((int) obj.GetGameObjectType());
+            bf.WriteInteger((int) obj.GameObjectType);
             bf.WriteInteger(obj.Id);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -223,7 +223,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.SaveGameObject);
-            bf.WriteInteger((int) obj.GetGameObjectType());
+            bf.WriteInteger((int) obj.GameObjectType);
             bf.WriteInteger(obj.Id);
             bf.WriteBytes(obj.BinaryData);
             Network.SendPacket(bf.ToArray());

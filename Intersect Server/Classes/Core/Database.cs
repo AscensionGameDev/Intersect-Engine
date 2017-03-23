@@ -1947,7 +1947,7 @@ namespace Intersect_Server.Classes.Core
                 Log.Error("Attempted to persist null game object to the database.");
             }
 
-            var insertQuery = "UPDATE " + gameObject.GetTable() + " set " + GAME_OBJECT_DELETED + "=@" +
+            var insertQuery = "UPDATE " + gameObject.DatabaseTableName + " set " + GAME_OBJECT_DELETED + "=@" +
                               GAME_OBJECT_DELETED + "," + GAME_OBJECT_DATA + "=@" + GAME_OBJECT_DATA + " WHERE " +
                               GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
@@ -2060,7 +2060,7 @@ namespace Intersect_Server.Classes.Core
 
         public static void DeleteGameObject(DatabaseObject gameObject)
         {
-            var insertQuery = "UPDATE " + gameObject.GetTable() + " set " + GAME_OBJECT_DELETED + "=@" +
+            var insertQuery = "UPDATE " + gameObject.DatabaseTableName + " set " + GAME_OBJECT_DELETED + "=@" +
                               GAME_OBJECT_DELETED + " WHERE " +
                               GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))

@@ -96,14 +96,14 @@ namespace Intersect.GameObjects.Events
 
         public override byte[] BinaryData => EventData();
 
-        public override string GetTable()
+        public override string DatabaseTableName
         {
-            return DATABASE_TABLE;
+            get { return DATABASE_TABLE; }
         }
 
-        public override GameObject GetGameObjectType()
+        public override GameObject GameObjectType
         {
-            return OBJECT_TYPE;
+            get { return OBJECT_TYPE; }
         }
 
         public static DatabaseObject Get(int index)

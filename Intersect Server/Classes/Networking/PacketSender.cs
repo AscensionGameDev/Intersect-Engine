@@ -1283,7 +1283,7 @@ namespace Intersect_Server.Classes.Networking
             if (client == null) return;
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.GameObject);
-            bf.WriteInteger((int) obj.GetGameObjectType());
+            bf.WriteInteger((int) obj.GameObjectType);
             bf.WriteInteger(obj.Id);
             bf.WriteInteger(Convert.ToInt32(another));
             bf.WriteInteger(Convert.ToInt32(deleted));

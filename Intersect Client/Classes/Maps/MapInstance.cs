@@ -811,9 +811,9 @@ namespace Intersect_Client.Classes.Maps
             }
         }
 
-        public override GameObject GetGameObjectType()
+        public override GameObject GameObjectType
         {
-            return OBJECT_TYPE;
+            get { return OBJECT_TYPE; }
         }
 
         public new static MapInstance GetMap(int index)

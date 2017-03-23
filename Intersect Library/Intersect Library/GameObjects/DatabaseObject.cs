@@ -13,8 +13,8 @@ namespace Intersect.GameObjects
 
         void Load(byte[] packet);
         byte[] BinaryData { get; }
-        string GetTable();
-        GameObject GetGameObjectType();
+        string DatabaseTableName { get; }
+        GameObject GameObjectType { get; }
         void MakeBackup();
         void RestoreBackup();
         void DeleteBackup();
@@ -55,8 +55,8 @@ namespace Intersect.GameObjects
 
         public abstract void Delete();
         public abstract byte[] BinaryData { get; }
-        public abstract GameObject GetGameObjectType();
-        public abstract string GetTable();
+        public abstract GameObject GameObjectType { get; }
+        public abstract string DatabaseTableName { get; }
     }
 
     public static class DatabaseObjectUtils
