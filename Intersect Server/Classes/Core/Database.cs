@@ -1801,7 +1801,7 @@ namespace Intersect_Server.Classes.Core
                     ServerVariableBase.ClearObjects();
                     break;
                 case GameObject.Tileset:
-                    TilesetBase.ClearObjects();
+                    TilesetBase.Lookup.Clear();
                     break;
                 case GameObject.Time:
                     break;
@@ -1899,7 +1899,7 @@ namespace Intersect_Server.Classes.Core
                 case GameObject.Tileset:
                     var tset = new TilesetBase(index);
                     tset.Load(data);
-                    TilesetBase.AddObject(index, tset);
+                    TilesetBase.Lookup.Add(index, tset);
                     break;
                 case GameObject.Time:
                     break;
@@ -2042,8 +2042,9 @@ namespace Intersect_Server.Classes.Core
                         ServerVariableBase.AddObject(index, obj);
                         break;
                     case GameObject.Tileset:
-                        obj = new TilesetBase(index);
-                        TilesetBase.AddObject(index, obj);
+                        var tileset = new TilesetBase(index);
+                        obj = tileset;
+                        TilesetBase.Lookup.Add(index, tileset);
                         break;
                     case GameObject.Time:
                         break;

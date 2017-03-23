@@ -15,51 +15,20 @@ namespace Intersect.GameObjects
             Name = "";
         }
 
-        public void SetValue(string filename)
+        public new string Name
         {
-            Name = filename.Trim();
+            get { return base.Name; }
+            set { base.Name = value?.Trim(); }
         }
 
-        public string GetValue()
-        {
-            return Name;
-        }
+        public override void Load(byte[] packet) => Name = Encoding.ASCII.GetString(packet, 0, packet.Length);
 
-        public override void Load(byte[] packet)
-        {
-            Name = Encoding.ASCII.GetString(packet, 0, packet.Length);
-        }
-
-        public byte[] Data()
-        {
-            return Encoding.ASCII.GetBytes(Name);
-        }
-
-        public static TilesetBase GetTileset(int index)
-        {
-            return Lookup.Get(index);
-        }
+        public byte[] Data() => Encoding.ASCII.GetBytes(Name);
 
         public override byte[] BinaryData => Data();
 
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
+        public override string DatabaseTableName => DATABASE_TABLE;
 
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public static void ClearObjects()
-        {
-            Lookup.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            Lookup.Add(index, (TilesetBase)obj);
-        }
+        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 }

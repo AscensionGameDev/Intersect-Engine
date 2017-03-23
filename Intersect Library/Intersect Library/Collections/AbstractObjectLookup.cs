@@ -18,7 +18,7 @@ namespace Intersect.Collections
 
         public int Count => mMutableMap.Count;
         public IDictionary<TKey, TValue> ReadOnlyMap { get; }
-        protected ICollection<KeyValuePair<TKey, TValue>> Pairs => ReadOnlyMap;
+        public ICollection<KeyValuePair<TKey, TValue>> Pairs => ReadOnlyMap;
         public ICollection<TKey> Keys => ReadOnlyMap.Keys;
         public ICollection<TValue> Values => ReadOnlyMap.Values;
 

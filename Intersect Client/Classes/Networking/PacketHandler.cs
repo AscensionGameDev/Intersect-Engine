@@ -1300,7 +1300,7 @@ namespace Intersect_Client.Classes.Networking
                 case GameObject.Tileset:
                     var obj = new TilesetBase(id);
                     obj.Load(data);
-                    TilesetBase.AddObject(id, obj);
+                    TilesetBase.Lookup.Add(id, obj);
                     if (Globals.HasGameData && !another)
                         Globals.ContentManager.LoadTilesets(DatabaseObjectUtils.GetGameObjectList(GameObject.Tileset));
                     break;

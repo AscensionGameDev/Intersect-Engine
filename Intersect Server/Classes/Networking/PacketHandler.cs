@@ -2158,12 +2158,12 @@ namespace Intersect_Server.Classes.Networking
                     if (type == GameObject.Tileset)
                     {
                         foreach (var tileset in TilesetBase.Lookup)
-                            if (tileset.Value.GetValue() == value) return;
+                            if (tileset.Value.Name == value) return;
                     }
                     var obj = Database.AddGameObject(type);
                     if (type == GameObject.Tileset)
                     {
-                        ((TilesetBase) obj).SetValue(value);
+                        ((TilesetBase)obj).Name = value;
                         Database.SaveGameObject(obj);
                     }
                     PacketSender.SendGameObjectToAll(obj, false, i != count - 1);
