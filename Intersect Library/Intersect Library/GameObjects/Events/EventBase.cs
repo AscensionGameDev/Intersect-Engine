@@ -94,10 +94,7 @@ namespace Intersect.GameObjects.Events
             return "Deleted";
         }
 
-        public override byte[] GetData()
-        {
-            return EventData();
-        }
+        public override byte[] BinaryData => EventData();
 
         public override string GetTable()
         {

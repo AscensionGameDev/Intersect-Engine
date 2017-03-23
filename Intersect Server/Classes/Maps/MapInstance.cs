@@ -853,10 +853,14 @@ namespace Intersect_Server.Classes.Maps
         }
 
         //GameObject Functions
-        public override byte[] GetData()
+
+        public override byte[] BinaryData
         {
-            ClientMapData = null;
-            return GetMapData(false);
+            get
+            {
+                ClientMapData = null;
+                return GetMapData(false);
+            }
         }
 
         public override string GetTable()

@@ -250,10 +250,7 @@ namespace Intersect_Editor.Classes.Maps
             return null;
         }
 
-        public override byte[] GetData()
-        {
-            return GetMapData(false);
-        }
+        public override byte[] BinaryData => GetMapData(false);
 
         public override GameObject GetGameObjectType()
         {

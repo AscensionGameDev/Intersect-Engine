@@ -12,7 +12,7 @@ namespace Intersect.GameObjects
         string Name { get; set; }
 
         void Load(byte[] packet);
-        byte[] GetData();
+        byte[] BinaryData { get; }
         string GetTable();
         GameObject GetGameObjectType();
         void MakeBackup();
@@ -39,7 +39,7 @@ namespace Intersect.GameObjects
 
         public virtual void MakeBackup()
         {
-            backup = GetData();
+            backup = BinaryData;
         }
 
         public virtual void RestoreBackup()
@@ -54,7 +54,7 @@ namespace Intersect.GameObjects
         }
 
         public abstract void Delete();
-        public abstract byte[] GetData();
+        public abstract byte[] BinaryData { get; }
         public abstract GameObject GetGameObjectType();
         public abstract string GetTable();
     }

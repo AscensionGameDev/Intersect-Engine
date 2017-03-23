@@ -551,7 +551,7 @@ namespace Intersect_Editor.Forms
         {
             if (_editorItem != null && lstSpells.Focused)
             {
-                _copiedItem = _editorItem.GetData();
+                _copiedItem = _editorItem.BinaryData;
                 toolStripItemPaste.Enabled = true;
             }
         }

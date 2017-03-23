@@ -146,10 +146,7 @@ namespace Intersect.GameObjects
                     ItemType == (int) ItemTypes.Spell) && Stackable > 0;
         }
 
-        public override byte[] GetData()
-        {
-            return ItemData();
-        }
+        public override byte[] BinaryData => ItemData();
 
         public override string GetTable()
         {

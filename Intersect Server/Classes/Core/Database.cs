@@ -1954,9 +1954,9 @@ namespace Intersect_Server.Classes.Core
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.Id));
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
-                if (gameObject.GetData() != null)
+                if (gameObject.BinaryData != null)
                 {
-                    cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.GetData()));
+                    cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.BinaryData));
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -2067,7 +2067,7 @@ namespace Intersect_Server.Classes.Core
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.Id));
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 1.ToString()));
-                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.GetData()));
+                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.BinaryData));
                 cmd.ExecuteNonQuery();
             }
             gameObject.Delete();

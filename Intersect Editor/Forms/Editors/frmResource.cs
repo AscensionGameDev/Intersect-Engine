@@ -342,7 +342,7 @@ namespace Intersect_Editor.Classes
         {
             if (_editorItem != null && lstResources.Focused)
             {
-                _copiedItem = _editorItem.GetData();
+                _copiedItem = _editorItem.BinaryData;
                 toolStripItemPaste.Enabled = true;
             }
         }

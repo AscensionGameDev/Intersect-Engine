@@ -1287,7 +1287,7 @@ namespace Intersect_Server.Classes.Networking
             bf.WriteInteger(obj.Id);
             bf.WriteInteger(Convert.ToInt32(another));
             bf.WriteInteger(Convert.ToInt32(deleted));
-            if (!deleted) bf.WriteBytes(obj.GetData());
+            if (!deleted) bf.WriteBytes(obj.BinaryData);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

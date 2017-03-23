@@ -359,10 +359,7 @@ namespace Intersect.GameObjects.Maps
             return "Deleted";
         }
 
-        public override byte[] GetData()
-        {
-            return GetMapData(false);
-        }
+        public override byte[] BinaryData => GetMapData(false);
 
         public override string GetTable()
         {

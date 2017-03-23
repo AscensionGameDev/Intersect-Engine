@@ -124,16 +124,16 @@ namespace Intersect.GameObjects
                 myBuffer.WriteInteger(Tasks[i].Data1);
                 myBuffer.WriteInteger(Tasks[i].Data2);
 
-                var taskCompleteionData = Tasks[i].CompletionEvent.GetData();
+                var taskCompleteionData = Tasks[i].CompletionEvent.BinaryData;
                 myBuffer.WriteInteger(taskCompleteionData.Length);
                 myBuffer.WriteBytes(taskCompleteionData);
             }
 
-            var startEventData = StartEvent.GetData();
+            var startEventData = StartEvent.BinaryData;
             myBuffer.WriteInteger(startEventData.Length);
             myBuffer.WriteBytes(startEventData);
 
-            var endEventData = EndEvent.GetData();
+            var endEventData = EndEvent.BinaryData;
             myBuffer.WriteInteger(endEventData.Length);
             myBuffer.WriteBytes(endEventData);
 
@@ -176,10 +176,7 @@ namespace Intersect.GameObjects
             return "Deleted";
         }
 
-        public override byte[] GetData()
-        {
-            return QuestData();
-        }
+        public override byte[] BinaryData => QuestData();
 
         public override string GetTable()
         {

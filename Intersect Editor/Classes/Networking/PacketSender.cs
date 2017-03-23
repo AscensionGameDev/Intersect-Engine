@@ -225,7 +225,7 @@ namespace Intersect_Editor.Classes
             bf.WriteLong((int) ClientPackets.SaveGameObject);
             bf.WriteInteger((int) obj.GetGameObjectType());
             bf.WriteInteger(obj.Id);
-            bf.WriteBytes(obj.GetData());
+            bf.WriteBytes(obj.BinaryData);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
         }

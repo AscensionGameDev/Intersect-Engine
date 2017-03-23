@@ -153,10 +153,7 @@ namespace Intersect.GameObjects
             return "Deleted";
         }
 
-        public override byte[] GetData()
-        {
-            return ProjectileData();
-        }
+        public override byte[] BinaryData => ProjectileData();
 
         public override string GetTable()
         {

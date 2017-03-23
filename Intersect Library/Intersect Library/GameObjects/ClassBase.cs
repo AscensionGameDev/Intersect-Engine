@@ -257,10 +257,7 @@ namespace Intersect.GameObjects
             return "Deleted";
         }
 
-        public override byte[] GetData()
-        {
-            return ClassData();
-        }
+        public override byte[] BinaryData => ClassData();
 
         public override string GetTable()
         {
