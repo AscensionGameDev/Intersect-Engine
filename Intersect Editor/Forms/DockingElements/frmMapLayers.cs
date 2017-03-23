@@ -192,17 +192,17 @@ namespace Intersect_Editor.Forms
                 {
                 }
             }
-            if (TilesetBase.ObjectCount() > 0)
+            if (TilesetBase.Lookup.Count > 0)
             {
                 Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
-                Globals.CurrentTileset = TilesetBase.GetTileset(Database.GameObjectListIndex(GameObject.Tileset, 0));
+                Globals.CurrentTileset = TilesetBase.Lookup.Get(Database.GameObjectListIndex(GameObject.Tileset, 0));
             }
         }
 
         public void SetTileset(string name)
         {
             TilesetBase tSet = null;
-            var tilesets = TilesetBase.GetObjects();
+            var tilesets = TilesetBase.Lookup;
             var index = -1;
             foreach (var tileset in tilesets)
             {
@@ -214,7 +214,7 @@ namespace Intersect_Editor.Forms
             }
             if (index > -1)
             {
-                tSet = TilesetBase.GetTileset(index);
+                tSet = TilesetBase.Lookup.Get(index);
             }
             if (tSet != null)
             {

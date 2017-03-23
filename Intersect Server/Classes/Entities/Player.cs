@@ -567,7 +567,7 @@ namespace Intersect_Server.Classes.Entities
             var aliveAnimations = new List<KeyValuePair<int, int>>();
             if (weapon != null)
             {
-                var attackAnim = AnimationBase.GetAnim(weapon.AttackAnimation);
+                var attackAnim = AnimationBase.Lookup.Get(weapon.AttackAnimation);
                 Console.WriteLine("attackAnim == null: {0}", attackAnim == null);
                 if (attackAnim != null)
                 {
@@ -583,7 +583,7 @@ namespace Intersect_Server.Classes.Entities
                 var classBase = ClassBase.GetClass(Class);
                 if (classBase != null)
                 {
-                    var attackAnim = AnimationBase.GetAnim(classBase.AttackAnimation);
+                    var attackAnim = AnimationBase.Lookup.Get(classBase.AttackAnimation);
                     if (attackAnim != null)
                     {
                         deadAnimations.Add(new KeyValuePair<int, int>(classBase.AttackAnimation, Dir));

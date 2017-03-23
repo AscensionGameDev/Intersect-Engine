@@ -114,24 +114,6 @@ namespace Intersect.GameObjects
             return myBuffer.ToArray();
         }
 
-        public static AnimationBase GetAnim(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (AnimationBase) Objects[index];
-            }
-            return null;
-        }
-
-        public static string GetName(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return ((AnimationBase) Objects[index]).Name;
-            }
-            return "Deleted";
-        }
-
         public override byte[] BinaryData => AnimData();
 
         public override string DatabaseTableName
@@ -142,42 +124,6 @@ namespace Intersect.GameObjects
         public override GameObject GameObjectType
         {
             get { return OBJECT_TYPE; }
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, AnimationBase> GetObjects()
-        {
-            Dictionary<int, AnimationBase> objects = Objects.ToDictionary(k => k.Key, v => (AnimationBase) v.Value);
-            return objects;
-        }
-
-        public override void Delete()
-        {
-            Objects.Remove(Id);
-        }
-
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
         }
     }
 }

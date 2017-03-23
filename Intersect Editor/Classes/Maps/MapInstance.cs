@@ -85,7 +85,7 @@ namespace Intersect_Editor.Classes.Maps
             if (attr == null) return null;
             if (!_attributeAnimInstances.ContainsKey(attr))
             {
-                _attributeAnimInstances.Add(attr, new AnimationInstance(AnimationBase.GetAnim(animNum), true));
+                _attributeAnimInstances.Add(attr, new AnimationInstance(AnimationBase.Lookup.Get(animNum), true));
             }
             return _attributeAnimInstances[attr];
         }

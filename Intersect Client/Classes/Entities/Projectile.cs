@@ -102,7 +102,7 @@ namespace Intersect_Client.Classes.Entities
         private void AddProjectileSpawns()
         {
             int Spawn = FindSpawnAnimationData();
-            AnimationBase animBase = AnimationBase.GetAnim(_myBase.Animations[Spawn].Animation);
+            AnimationBase animBase = AnimationBase.Lookup.Get(_myBase.Animations[Spawn].Animation);
 
             for (int x = 0; x < ProjectileBase.SpawnLocationsWidth; x++)
             {

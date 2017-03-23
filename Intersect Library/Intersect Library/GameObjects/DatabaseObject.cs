@@ -79,7 +79,7 @@ namespace Intersect.GameObjects
             switch (type)
             {
                 case GameObject.Animation:
-                    foreach (var obj in AnimationBase.GetObjects())
+                    foreach (var obj in AnimationBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Class:
@@ -160,8 +160,8 @@ namespace Intersect.GameObjects
             switch (type)
             {
                 case GameObject.Animation:
-                    if (listIndex >= AnimationBase.ObjectCount()) return -1;
-                    return AnimationBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= AnimationBase.Lookup.Count) return -1;
+                    return AnimationBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Class:
                     if (listIndex >= ClassBase.ObjectCount()) return -1;
                     return ClassBase.GetObjects().Keys.ToList()[listIndex];
@@ -222,7 +222,7 @@ namespace Intersect.GameObjects
             switch (type)
             {
                 case GameObject.Animation:
-                    return AnimationBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return AnimationBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Class:
                     return ClassBase.GetObjects().Keys.ToList().IndexOf(id);
                 case GameObject.Item:

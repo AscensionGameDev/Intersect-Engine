@@ -326,7 +326,7 @@ namespace Intersect_Editor.Classes
             }
             DrawTexture(
                 GetTexture(TextureType.Tileset,
-                    TilesetBase.GetTileset(map.Layers[layerNum].Tiles[x, y].TilesetIndex).Name),
+                    TilesetBase.Lookup.Get(map.Layers[layerNum].Tiles[x, y].TilesetIndex).Name),
                 destX, destY,
                 (int) map.Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
                 (int) map.Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
@@ -591,9 +591,9 @@ namespace Intersect_Editor.Classes
                                     .IntersectsWith(new System.Drawing.Rectangle(0, 0, CurrentView.Width,
                                         CurrentView.Height)))
                             {
-                                if (TilesetBase.GetTileset(tmpMap.Layers[z].Tiles[x, y].TilesetIndex) == null) continue;
+                                if (TilesetBase.Lookup.Get(tmpMap.Layers[z].Tiles[x, y].TilesetIndex) == null) continue;
                                 Texture2D tilesetTex = GetTexture(TextureType.Tileset,
-                                    TilesetBase.GetTileset(tmpMap.Layers[z].Tiles[x, y].TilesetIndex).Name);
+                                    TilesetBase.Lookup.Get(tmpMap.Layers[z].Tiles[x, y].TilesetIndex).Name);
                                 if (tilesetTex == null) continue;
                                 if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState !=
                                     MapAutotiles.RenderStateNormal)
@@ -1009,7 +1009,7 @@ namespace Intersect_Editor.Classes
                         }
                         else if (tmpMap.Attributes[x, y].value == (int) MapAttributes.Animation)
                         {
-                            var animation = AnimationBase.GetAnim(tmpMap.Attributes[x, y].data1);
+                            var animation = AnimationBase.Lookup.Get(tmpMap.Attributes[x, y].data1);
                             if (animation != null)
                             {
                                 float xpos = x * Options.TileWidth + xoffset + Options.TileWidth / 2;

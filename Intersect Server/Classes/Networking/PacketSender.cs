@@ -1206,7 +1206,7 @@ namespace Intersect_Server.Classes.Networking
             switch (type)
             {
                 case GameObject.Animation:
-                    foreach (var obj in AnimationBase.GetObjects())
+                    foreach (var obj in AnimationBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Class:

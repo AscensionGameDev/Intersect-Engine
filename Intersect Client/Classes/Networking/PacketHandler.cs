@@ -997,7 +997,7 @@ namespace Intersect_Client.Classes.Networking
                 {
                     if (Globals.Entities[entityIndex] != null)
                     {
-                        var animBase = AnimationBase.GetAnim(animNum);
+                        var animBase = AnimationBase.Lookup.Get(animNum);
                         if (animBase != null)
                         {
                             AnimationInstance animInstance = new AnimationInstance(animBase, false,
@@ -1021,7 +1021,7 @@ namespace Intersect_Client.Classes.Networking
                     {
                         if (map.LocalEntities[entityIndex] != null)
                         {
-                            var animBase = AnimationBase.GetAnim(animNum);
+                            var animBase = AnimationBase.Lookup.Get(animNum);
                             if (animBase != null)
                             {
                                 AnimationInstance animInstance = new AnimationInstance(animBase, false,
@@ -1165,14 +1165,14 @@ namespace Intersect_Client.Classes.Networking
                 case GameObject.Animation:
                     if (deleted)
                     {
-                        var anim = AnimationBase.GetAnim(id);
+                        var anim = AnimationBase.Lookup.Get(id);
                         anim.Delete();
                     }
                     else
                     {
                         var anim = new AnimationBase(id);
                         anim.Load(data);
-                        AnimationBase.AddObject(id, anim);
+                        AnimationBase.Lookup.Add(id, anim);
                     }
                     break;
                 case GameObject.Class:

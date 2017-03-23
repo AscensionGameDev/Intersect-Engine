@@ -97,7 +97,7 @@ namespace Intersect_Editor.Classes
             switch (type)
             {
                 case GameObject.Animation:
-                    foreach (var obj in AnimationBase.GetObjects())
+                    foreach (var obj in AnimationBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Class:
@@ -161,7 +161,7 @@ namespace Intersect_Editor.Classes
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Tileset:
-                    foreach (var obj in TilesetBase.GetObjects())
+                    foreach (var obj in TilesetBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 default:
@@ -176,8 +176,8 @@ namespace Intersect_Editor.Classes
             switch (type)
             {
                 case GameObject.Animation:
-                    if (listIndex >= AnimationBase.ObjectCount()) return -1;
-                    return AnimationBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= AnimationBase.Lookup.Count) return -1;
+                    return AnimationBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Class:
                     if (listIndex >= ClassBase.ObjectCount()) return -1;
                     return ClassBase.GetObjects().Keys.ToList()[listIndex];
@@ -224,8 +224,8 @@ namespace Intersect_Editor.Classes
                     if (listIndex >= ServerVariableBase.ObjectCount()) return -1;
                     return ServerVariableBase.GetObjects().Keys.ToList()[listIndex];
                 case GameObject.Tileset:
-                    if (listIndex >= TilesetBase.ObjectCount()) return -1;
-                    return TilesetBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= TilesetBase.Lookup.Count) return -1;
+                    return TilesetBase.Lookup.Keys.ToList()[listIndex];
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
@@ -236,7 +236,7 @@ namespace Intersect_Editor.Classes
             switch (type)
             {
                 case GameObject.Animation:
-                    return AnimationBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return AnimationBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Class:
                     return ClassBase.GetObjects().Keys.ToList().IndexOf(id);
                 case GameObject.Item:
@@ -268,7 +268,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.ServerVariable:
                     return ServerVariableBase.GetObjects().Keys.ToList().IndexOf(id);
                 case GameObject.Tileset:
-                    return TilesetBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return TilesetBase.Lookup.Keys.ToList().IndexOf(id);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }

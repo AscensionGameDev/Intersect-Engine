@@ -1753,7 +1753,7 @@ namespace Intersect_Server.Classes.Core
             switch (type)
             {
                 case GameObject.Animation:
-                    AnimationBase.ClearObjects();
+                    AnimationBase.Lookup.Clear();
                     break;
                 case GameObject.Class:
                     ClassBase.ClearObjects();
@@ -1817,7 +1817,7 @@ namespace Intersect_Server.Classes.Core
                 case GameObject.Animation:
                     var anim = new AnimationBase(index);
                     anim.Load(data);
-                    AnimationBase.AddObject(index, anim);
+                    AnimationBase.Lookup.Add(index, anim);
                     break;
                 case GameObject.Class:
                     var cls = new ClassBase(index);
@@ -1978,8 +1978,9 @@ namespace Intersect_Server.Classes.Core
                 switch (type)
                 {
                     case GameObject.Animation:
-                        obj = new AnimationBase(index);
-                        AnimationBase.AddObject(index, obj);
+                        var anim = new AnimationBase(index);
+                        obj = anim;
+                        AnimationBase.Lookup.Add(index, anim);
                         break;
                     case GameObject.Class:
                         obj = new ClassBase(index);

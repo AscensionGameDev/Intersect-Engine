@@ -255,29 +255,29 @@ namespace Intersect_Editor.Classes.Core
 
             tilesetDict.Clear();
             var badTilesets = new List<string>();
-            for (var i = 0; i < TilesetBase.ObjectCount(); i++)
+            for (var i = 0; i < TilesetBase.Lookup.Count; i++)
             {
                 if (
                     File.Exists("resources/tilesets/" +
-                                TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name))
+                                TilesetBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name))
                 {
                     tilesetDict.Add(
-                        TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name.ToLower(),
+                        TilesetBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name.ToLower(),
                         new GameTexture("resources/tilesets/" +
-                                        TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i))
+                                        TilesetBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Tileset, i))
                                             .Name));
                     if (!tilesetWarning)
                     {
                         using (
                             var img =
                                 Image.FromFile("resources/tilesets/" +
-                                               TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset,
+                                               TilesetBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Tileset,
                                                    i)).Name))
                         {
                             if (img.Width > 2048 || img.Height > 2048)
                             {
                                 badTilesets.Add(
-                                    TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name);
+                                    TilesetBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name);
                             }
                         }
                     }

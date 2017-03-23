@@ -211,7 +211,7 @@ namespace Intersect_Client.Classes.Maps
                     {
                         if (Attributes[x, y].value == (int) MapAttributes.Animation)
                         {
-                            var anim = AnimationBase.GetAnim(Attributes[x, y].data1);
+                            var anim = AnimationBase.Lookup.Get(Attributes[x, y].data1);
                             if (anim != null)
                             {
                                 if (!_attributeAnimInstances.ContainsKey(Attributes[x, y]))
@@ -274,7 +274,7 @@ namespace Intersect_Client.Classes.Maps
         //Animations
         public void AddTileAnimation(int animNum, int tileX, int tileY, int dir = -1)
         {
-            var animBase = AnimationBase.GetAnim(animNum);
+            var animBase = AnimationBase.Lookup.Get(animNum);
             if (animBase != null)
             {
                 var anim = new MapAnimationInstance(animBase, tileX, tileY, dir);

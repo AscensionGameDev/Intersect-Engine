@@ -302,14 +302,14 @@ namespace Intersect_Editor.Classes
                 case GameObject.Animation:
                     if (deleted)
                     {
-                        var anim = AnimationBase.GetAnim(id);
+                        var anim = AnimationBase.Lookup.Get(id);
                         anim.Delete();
                     }
                     else
                     {
                         var anim = new AnimationBase(id);
                         anim.Load(data);
-                        AnimationBase.AddObject(id, anim);
+                        AnimationBase.Lookup.Add(id, anim);
                     }
                     break;
                 case GameObject.Class:
@@ -500,7 +500,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.Tileset:
                     var obj = new TilesetBase(id);
                     obj.Load(data);
-                    TilesetBase.AddObject(id, obj);
+                    TilesetBase.Lookup.Add(id, obj);
                     if (Globals.HasGameData && !another) GameContentManager.LoadTilesets();
                     break;
                 default:

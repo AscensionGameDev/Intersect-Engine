@@ -482,7 +482,7 @@ namespace Intersect_Server.Classes.Entities
                             break;
                         case MoveRouteEnum.SetAnimation:
                             Animations.Clear();
-                            var anim = AnimationBase.GetAnim(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);
+                            var anim = AnimationBase.Lookup.Get(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);
                             if (anim != null)
                             {
                                 Animations.Add(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);

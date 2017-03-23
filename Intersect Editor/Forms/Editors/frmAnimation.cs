@@ -45,7 +45,7 @@ namespace Intersect_Editor.Forms
             if (type == GameObject.Animation)
             {
                 InitEditor();
-                if (_editorItem != null && !AnimationBase.GetObjects().ContainsValue(_editorItem))
+                if (_editorItem != null && !AnimationBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -83,7 +83,7 @@ namespace Intersect_Editor.Forms
         private void lstAnimations_Click(object sender, EventArgs e)
         {
             _editorItem =
-                AnimationBase.GetAnim(Database.GameObjectIdFromList(GameObject.Animation, lstAnimations.SelectedIndex));
+                AnimationBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Animation, lstAnimations.SelectedIndex));
             UpdateEditor();
         }
 

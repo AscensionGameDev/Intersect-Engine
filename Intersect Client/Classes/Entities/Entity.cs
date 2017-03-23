@@ -133,7 +133,7 @@ namespace Intersect_Client.Classes.Entities
             int animCount = bf.ReadInteger();
             for (int i = 0; i < animCount; i++)
             {
-                var anim = AnimationBase.GetAnim(bf.ReadInteger());
+                var anim = AnimationBase.Lookup.Get(bf.ReadInteger());
                 if (anim != null)
                     Animations.Add(new AnimationInstance(anim, true));
             }
