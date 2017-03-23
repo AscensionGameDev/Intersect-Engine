@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Intersect</RootNamespace>
     <AssemblyName>Intersect Library</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -44,6 +44,7 @@
     <Compile Include="AlphanumComparatorFast.cs" />
     <Compile Include="Collections\AbstractObjectLookup.cs" />
     <Compile Include="Collections\IntObjectLookup.cs" />
+    <Compile Include="Collections\ReadOnlyDictionary.cs" />
     <Compile Include="Compression.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="FieldChecking.cs" />
