@@ -2157,7 +2157,7 @@ namespace Intersect_Server.Classes.Networking
                     var value = bf.ReadString();
                     if (type == GameObject.Tileset)
                     {
-                        foreach (var tileset in TilesetBase.GetObjects())
+                        foreach (var tileset in TilesetBase.Lookup)
                             if (tileset.Value.GetValue() == value) return;
                     }
                     var obj = Database.AddGameObject(type);

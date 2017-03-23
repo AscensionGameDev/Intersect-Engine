@@ -143,7 +143,7 @@ namespace Intersect.GameObjects
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Tileset:
-                    foreach (var obj in TilesetBase.GetObjects())
+                    foreach (var obj in TilesetBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Time:
@@ -208,8 +208,8 @@ namespace Intersect.GameObjects
                     if (listIndex >= ServerVariableBase.ObjectCount()) return -1;
                     return ServerVariableBase.GetObjects().Keys.ToList()[listIndex];
                 case GameObject.Tileset:
-                    if (listIndex >= TilesetBase.ObjectCount()) return -1;
-                    return TilesetBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= TilesetBase.Lookup.Count) return -1;
+                    return TilesetBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Time:
                     return -1;
                 default:
@@ -254,7 +254,7 @@ namespace Intersect.GameObjects
                 case GameObject.ServerVariable:
                     return ServerVariableBase.GetObjects().Keys.ToList().IndexOf(id);
                 case GameObject.Tileset:
-                    return TilesetBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return TilesetBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Time:
                     return -1;
                 default:

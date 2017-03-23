@@ -1268,7 +1268,7 @@ namespace Intersect_Server.Classes.Networking
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Tileset:
-                    foreach (var obj in TilesetBase.GetObjects())
+                    foreach (var obj in TilesetBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Time:

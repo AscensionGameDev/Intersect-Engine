@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Intersect.GameObjects;
 using Intersect.Logging;
 
 namespace Intersect.Collections
 {
-    public abstract class AbstractObjectLookup<TKey, TValue> where TValue : IGameObject<TKey, TValue>
+    public abstract class AbstractObjectLookup<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> where TValue : IGameObject<TKey, TValue>
     {
         private readonly Dictionary<TKey, TValue> mMutableMap;
 
@@ -17,11 +18,17 @@ namespace Intersect.Collections
 
         public int Count => mMutableMap.Count;
         public IDictionary<TKey, TValue> ReadOnlyMap { get; }
-        public ICollection<KeyValuePair<TKey, TValue>> Pairs => ReadOnlyMap;
+        protected ICollection<KeyValuePair<TKey, TValue>> Pairs => ReadOnlyMap;
         public ICollection<TKey> Keys => ReadOnlyMap.Keys;
         public ICollection<TValue> Values => ReadOnlyMap.Values;
 
         protected abstract bool Validate(TKey key);
+
+        public TValue this[TKey key]
+        {
+            get { return Get(key); }
+            set { Add(key, value); }
+        }
 
         public TValue Get(TKey key)
         {
@@ -65,5 +72,8 @@ namespace Intersect.Collections
         {
             mMutableMap.Clear();
         }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => Pairs.GetEnumerator();
     }
 }

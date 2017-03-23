@@ -61,15 +61,5 @@ namespace Intersect.GameObjects
         {
             Lookup.Add(index, (TilesetBase)obj);
         }
-
-        public static int ObjectCount()
-        {
-            return Lookup.Count;
-        }
-
-        public static IDictionary<int, TilesetBase> GetObjects()
-        {
-            return Lookup.ReadOnlyMap;
-        }
     }
 }
