@@ -43,7 +43,10 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        public bool IsInParty => Party.Count > 0;
+        public bool IsInParty()
+        {
+            return Party.Count > 0;
+        }
 
         public List<int> Party
         {

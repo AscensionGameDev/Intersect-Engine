@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Xml.Serialization;
 
 namespace Intersect.Localization
 {
@@ -50,11 +51,16 @@ namespace Intersect.Localization
                 //Copy Client.English.xml from resources
                 File.WriteAllText(Path.Combine(langDir, strComponent + ".English.xml"), defaultFile);
             }
-            DefaultLanguage = new Language(Path.Combine(langDir, strComponent + ".English.xml"));
+            DefaultLanguage = new Language(Path.Combine(langDir, strComponent + ".English.xml"),false);
             if (File.Exists(Path.Combine(langDir, strComponent + "." + language + ".xml")))
             {
-                SelectedLanguage = new Language(Path.Combine(langDir, strComponent + "." + language + ".xml"));
+                SelectedLanguage = new Language(Path.Combine(langDir, strComponent + "." + language + ".xml"),false);
             }
+        }
+
+        public static void Init(string languageXml)
+        {
+            SelectedLanguage = new Language(languageXml, true);
         }
 
         public static string Get(string section, string id, params object[] args)
