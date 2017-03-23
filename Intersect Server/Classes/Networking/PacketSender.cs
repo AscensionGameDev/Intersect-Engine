@@ -1248,7 +1248,7 @@ namespace Intersect_Server.Classes.Networking
                 case GameObject.Map:
                     throw new Exception("Maps are not sent as batches, use the proper send map functions");
                 case GameObject.CommonEvent:
-                    foreach (var obj in EventBase.GetObjects())
+                    foreach (var obj in EventBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.PlayerSwitch:

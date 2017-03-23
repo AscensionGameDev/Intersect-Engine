@@ -1786,7 +1786,7 @@ namespace Intersect_Server.Classes.Core
                     MapBase.ClearObjects();
                     break;
                 case GameObject.CommonEvent:
-                    EventBase.ClearObjects();
+                    EventBase.Lookup.Clear();
                     break;
                 case GameObject.PlayerSwitch:
                     PlayerSwitchBase.ClearObjects();
@@ -1873,7 +1873,7 @@ namespace Intersect_Server.Classes.Core
                     var buffer = new ByteBuffer();
                     buffer.WriteBytes(data);
                     var evt = new EventBase(index, buffer, true);
-                    EventBase.AddObject(index, evt);
+                    EventBase.Lookup.Set(index, evt);
                     buffer.Dispose();
                     break;
                 case GameObject.PlayerSwitch:
@@ -1974,78 +1974,93 @@ namespace Intersect_Server.Classes.Core
             }
             if (index > -1)
             {
-                DatabaseObject obj = null;
+                DatabaseObject dbObj = null;
                 switch (type)
                 {
                     case GameObject.Animation:
-                        var anim = new AnimationBase(index);
-                        obj = anim;
-                        AnimationBase.Lookup.Set(index, anim);
+                        var obja = new AnimationBase(index);
+                        dbObj = obja;
+                        AnimationBase.Lookup.Set(index, obja);
                         break;
                     case GameObject.Class:
-                        obj = new ClassBase(index);
-                        ClassBase.AddObject(index, obj);
+                        var objc = new ClassBase(index);
+                        dbObj = objc;
+                        ClassBase.AddObject(index, objc);
                         break;
                     case GameObject.Item:
-                        obj = new ItemBase(index);
-                        ItemBase.AddObject(index, obj);
+                        var objd = new ItemBase(index);
+                        dbObj = objd;
+                        ItemBase.AddObject(index, objd);
                         break;
                     case GameObject.Npc:
-                        obj = new NpcBase(index);
-                        NpcBase.AddObject(index, obj);
+                        var objq = new NpcBase(index);
+                        dbObj = objq;
+                        NpcBase.AddObject(index, objq);
                         break;
                     case GameObject.Projectile:
-                        obj = new ProjectileBase(index);
-                        ProjectileBase.AddObject(index, obj);
+                        var objwe = new ProjectileBase(index);
+                        dbObj = objwe;
+                        ProjectileBase.AddObject(index, objwe);
                         break;
                     case GameObject.Quest:
-                        obj = new QuestBase(index);
-                        QuestBase.AddObject(index, obj);
+                        var objqw = new QuestBase(index);
+                        dbObj = objqw;
+                        QuestBase.AddObject(index, objqw);
                         break;
                     case GameObject.Resource:
-                        obj = new ResourceBase(index);
-                        ResourceBase.AddObject(index, obj);
+                        var objy = new ResourceBase(index);
+                        dbObj = objy;
+                        ResourceBase.AddObject(index, objy);
                         break;
                     case GameObject.Shop:
-                        obj = new ShopBase(index);
-                        ShopBase.AddObject(index, obj);
+                        var objt = new ShopBase(index);
+                        dbObj = objt;
+                        ShopBase.AddObject(index, objt);
                         break;
                     case GameObject.Spell:
-                        obj = new SpellBase(index);
-                        SpellBase.AddObject(index, obj);
+                        var objr = new SpellBase(index);
+                        dbObj = objr;
+                        SpellBase.AddObject(index, objr);
                         break;
                     case GameObject.Bench:
-                        obj = new BenchBase(index);
-                        BenchBase.AddObject(index, obj);
+                        var obje = new BenchBase(index);
+                        dbObj = obje;
+                        BenchBase.AddObject(index, obje);
                         break;
                     case GameObject.Map:
-                        obj = new MapInstance(index);
-                        MapInstance.AddObject(index, obj);
+                        var objw = new MapInstance(index);
+                        dbObj = objw;
+                        MapInstance.AddObject(index, objw);
                         break;
                     case GameObject.CommonEvent:
-                        obj = new EventBase(index, -1, -1, true);
-                        EventBase.AddObject(index, obj);
+                        var objf = new EventBase(index, -1, -1, true);
+                        dbObj = objf;
+                        EventBase.Lookup.Set(index, objf);
                         break;
                     case GameObject.PlayerSwitch:
-                        obj = new PlayerSwitchBase(index);
-                        PlayerSwitchBase.AddObject(index, obj);
+                        var objz = new PlayerSwitchBase(index);
+                        dbObj = objz;
+                        PlayerSwitchBase.AddObject(index, objz);
                         break;
                     case GameObject.PlayerVariable:
-                        obj = new PlayerVariableBase(index);
-                        PlayerVariableBase.AddObject(index, obj);
+                        var objx = new PlayerVariableBase(index);
+                        dbObj = objx;
+                        PlayerVariableBase.AddObject(index, objx);
                         break;
                     case GameObject.ServerSwitch:
-                        obj = new ServerSwitchBase(index);
-                        ServerSwitchBase.AddObject(index, obj);
+                        var ssbobj = new ServerSwitchBase(index);
+                        dbObj = ssbobj;
+                        ServerSwitchBase.AddObject(index, ssbobj);
                         break;
                     case GameObject.ServerVariable:
-                        obj = new ServerVariableBase(index);
-                        ServerVariableBase.AddObject(index, obj);
+                        var svbobj = new ServerVariableBase(index);
+                        dbObj = svbobj;
+                        ServerVariableBase.AddObject(index, svbobj);
                         break;
                     case GameObject.Tileset:
-                        var tileset = new TilesetBase(index);
-                        obj = tileset;
-                        TilesetBase.Lookup.Set(index, tileset);
+                        var tset = new TilesetBase(index);
+                        dbObj = tset;
+                        TilesetBase.Lookup.Set(index, tset);
                         break;
                     case GameObject.Time:
                         break;
@@ -2053,8 +2068,8 @@ namespace Intersect_Server.Classes.Core
                         throw new ArgumentOutOfRangeException(nameof(type), type, null);
                 }
 
-                SaveGameObject(obj);
-                return obj;
+                SaveGameObject(dbObj);
+                return dbObj;
             }
 
             return null;

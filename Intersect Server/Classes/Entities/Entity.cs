@@ -795,7 +795,7 @@ namespace Intersect_Server.Classes.Entities
                     aliveAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimation, (int) Directions.Up));
                 }
 
-                bool shouldTakeDamage = true;
+                var shouldTakeDamage = true;
                 if (spellBase.TargetType == (int) SpellTargetTypes.AoE)
                 {
                     if (spellBase.Friendly != 0)
@@ -807,13 +807,13 @@ namespace Intersect_Server.Classes.Entities
                         else if (this is Player)
                         {
                             var player = (Player) this;
-                            foreach (var partyMember in player.Party)
-                            {
-                                if (enemy == partyMember)
+                            if (player.Party != null)
+                                foreach (var partyMember in player.Party)
                                 {
+                                    if (enemy != partyMember) continue;
                                     shouldTakeDamage = false;
+                                    break;
                                 }
-                            }
                         }
                     }
                 }

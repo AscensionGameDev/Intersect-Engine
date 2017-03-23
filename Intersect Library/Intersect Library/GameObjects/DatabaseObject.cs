@@ -123,7 +123,7 @@ namespace Intersect.GameObjects
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.CommonEvent:
-                    foreach (var obj in EventBase.GetObjects())
+                    foreach (var obj in EventBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.PlayerSwitch:
@@ -193,8 +193,8 @@ namespace Intersect.GameObjects
                     if (listIndex >= MapBase.ObjectCount()) return -1;
                     return MapBase.GetObjects().Keys.ToList()[listIndex];
                 case GameObject.CommonEvent:
-                    if (listIndex >= EventBase.ObjectCount()) return -1;
-                    return EventBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= EventBase.Lookup.Count) return -1;
+                    return EventBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.PlayerSwitch:
                     if (listIndex >= PlayerSwitchBase.ObjectCount()) return -1;
                     return PlayerSwitchBase.GetObjects().Keys.ToList()[listIndex];
@@ -244,7 +244,7 @@ namespace Intersect.GameObjects
                 case GameObject.Map:
                     return MapBase.GetObjects().Keys.ToList().IndexOf(id);
                 case GameObject.CommonEvent:
-                    return EventBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return EventBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.PlayerSwitch:
                     return PlayerSwitchBase.GetObjects().Keys.ToList().IndexOf(id);
                 case GameObject.PlayerVariable:

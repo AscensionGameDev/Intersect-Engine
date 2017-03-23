@@ -809,7 +809,7 @@ namespace Intersect_Server.Classes.Networking
             PacketSender.SendEntityDataTo(client, client.Entity);
 
             //Search for login activated events and run them
-            foreach (var evt in EventBase.GetObjects())
+            foreach (var evt in EventBase.Lookup)
             {
                 ((Player) client.Entity).StartCommonEvent(evt.Value, (int) EventPage.CommonEventTriggers.JoinGame);
             }

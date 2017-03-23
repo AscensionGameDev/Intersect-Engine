@@ -424,7 +424,7 @@ namespace Intersect_Server.Classes.Entities
             PacketSender.SendEntityDataToProximity(this);
 
             //Search for login activated events and run them
-            foreach (var evt in EventBase.GetObjects())
+            foreach (var evt in EventBase.Lookup)
             {
                 StartCommonEvent(evt.Value, (int) EventPage.CommonEventTriggers.LevelUp);
             }
@@ -945,7 +945,7 @@ namespace Intersect_Server.Classes.Entities
                         }
                         break;
                     case (int) ItemTypes.Event:
-                        var evt = EventBase.GetEvent(itemBase.Data1);
+                        var evt = EventBase.Lookup.Get(itemBase.Data1);
                         if (evt != null)
                         {
                             if (StartCommonEvent(evt))
@@ -2359,7 +2359,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (spellBase.SpellType == (int) SpellTypes.Event)
                 {
-                    var evt = EventBase.GetEvent(spellBase.Data1);
+                    var evt = EventBase.Lookup.Get(spellBase.Data1);
                     if (evt != null)
                     {
                         StartCommonEvent(evt);

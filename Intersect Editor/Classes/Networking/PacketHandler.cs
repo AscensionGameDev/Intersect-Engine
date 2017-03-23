@@ -435,14 +435,14 @@ namespace Intersect_Editor.Classes
                 case GameObject.CommonEvent:
                     if (deleted)
                     {
-                        var evt = EventBase.GetEvent(id);
+                        var evt = EventBase.Lookup.Get(id);
                         evt.Delete();
                     }
                     else
                     {
                         var evt = new EventBase(id, -1, -1, true);
                         evt.Load(data);
-                        EventBase.AddObject(id, evt);
+                        EventBase.Lookup.Set(id, evt);
                     }
                     break;
                 case GameObject.PlayerSwitch:

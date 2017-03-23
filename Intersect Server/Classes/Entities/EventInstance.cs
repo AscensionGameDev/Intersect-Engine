@@ -686,7 +686,7 @@ namespace Intersect_Server.Classes.Entities
                     break;
                 case EventCommandType.StartCommonEvent:
                     CallStack.Peek().CommandIndex++;
-                    var commonEvent = EventBase.GetEvent(command.Ints[0]);
+                    var commonEvent = EventBase.Lookup.Get(command.Ints[0]);
                     if (commonEvent != null)
                     {
                         for (int i = 0; i < commonEvent.MyPages.Count; i++)
