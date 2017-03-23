@@ -1,15 +1,14 @@
-﻿namespace Intersect_Library.GameObjects.Maps
+﻿namespace Intersect.GameObjects.Maps
 {
     public class NpcSpawn
     {
+        public int Dir;
         public int NpcNum;
         public int X;
         public int Y;
-        public int Dir;
 
         public NpcSpawn()
         {
-
         }
 
         public NpcSpawn(NpcSpawn copy)

@@ -1,19 +1,19 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
 using DarkUI.Controls;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
 using Intersect_Editor.Classes;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Events;
 
 namespace Intersect_Editor.Forms.Editors.Quest
 {
     public partial class Quest_TaskEditor : UserControl
     {
+        private ByteBuffer _eventBackup = new ByteBuffer();
         private QuestBase.QuestTask _myTask;
         public bool Cancelled = false;
-        private ByteBuffer _eventBackup = new ByteBuffer();
+
         public Quest_TaskEditor(QuestBase.QuestTask refTask)
         {
             InitializeComponent();
@@ -110,9 +110,11 @@ namespace Intersect_Editor.Forms.Editors.Quest
 
         private void btnEditTaskEvent_Click(object sender, EventArgs e)
         {
-            _myTask.CompletionEvent.MyName = "Task Completion Event";
-            FrmEvent editor = new FrmEvent(null);
-            editor.MyEvent = _myTask.CompletionEvent;
+            _myTask.CompletionEvent.Name = "Task Completion Event";
+            FrmEvent editor = new FrmEvent(null)
+            {
+                MyEvent = _myTask.CompletionEvent
+            };
             editor.InitEditor();
             editor.ShowDialog();
             Globals.MainForm.BringToFront();

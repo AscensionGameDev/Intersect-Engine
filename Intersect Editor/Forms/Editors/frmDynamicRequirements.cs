@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Intersect.GameObjects.Conditions;
+using Intersect.GameObjects.Events;
+using Intersect.Localization;
 using Intersect_Editor.Forms.Editors.Event_Commands;
-using Intersect_Library.GameObjects.Conditions;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors
 {
@@ -22,12 +16,14 @@ namespace Intersect_Editor.Forms.Editors
         Event,
         Quest
     }
+
     public partial class frmDynamicRequirements : Form
     {
-        private ConditionLists _sourceLists;
+        private ConditionList _edittingList;
         private ConditionLists _edittingLists;
         private ConditionList _sourceList;
-        private ConditionList _edittingList;
+        private ConditionLists _sourceLists;
+
         public frmDynamicRequirements(ConditionLists lists, RequirementType type)
         {
             InitializeComponent();
@@ -39,7 +35,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void InitLocalization(RequirementType type)
         {
-            this.Text = Strings.Get("dynamicrequirements", "title");
+            Text = Strings.Get("dynamicrequirements", "title");
             grpConditionLists.Text = Strings.Get("dynamicrequirements", "conditionlists");
             switch (type)
             {
@@ -146,8 +142,10 @@ namespace Intersect_Editor.Forms.Editors
 
         private void btnAddCondition_Click(object sender, EventArgs e)
         {
-            var evtCommand = new EventCommand();
-            evtCommand.Type = EventCommandType.ConditionalBranch;
+            var evtCommand = new EventCommand()
+            {
+                Type = EventCommandType.ConditionalBranch
+            };
             if (OpenConditionEditor(evtCommand))
             {
                 _edittingList.Conditions.Add(evtCommand);
@@ -160,7 +158,7 @@ namespace Intersect_Editor.Forms.Editors
             var cmdWindow = new EventCommand_ConditionalBranch(cmd, null, null);
             var frm = new Form
             {
-                Text = Strings.Get("dynamicrequirements","conditioneditor")
+                Text = Strings.Get("dynamicrequirements", "conditioneditor")
             };
             frm.FormBorderStyle = FormBorderStyle.FixedSingle;
             frm.Controls.Add(cmdWindow);
@@ -200,13 +198,13 @@ namespace Intersect_Editor.Forms.Editors
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             _sourceLists.Load(_edittingLists.Data());
-            this.Close();
+            Close();
         }
 
         private void lstConditionLists_KeyDown(object sender, KeyEventArgs e)

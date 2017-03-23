@@ -2,18 +2,15 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using DarkUI.Forms;
 using Hjg.Pngcs;
+using Intersect;
+using Intersect.GameObjects.Maps.MapList;
+using Intersect.Localization;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Forms;
-using Intersect_Library;
-using Intersect_Library.GameObjects.Maps.MapList;
-using Intersect_Library.Localization;
 using Microsoft.Xna.Framework.Graphics;
 using Color = System.Drawing.Color;
 
@@ -21,41 +18,42 @@ namespace Intersect_Editor.Classes.Maps
 {
     public class MapGrid
     {
-        public int GridWidth = 50;
-        public int GridHeight = 50;
-        public MapGridItem[,] Grid;
-        public bool Loaded = false;
+        private MapGridItem _contextMap = null;
+        private ContextMenuStrip _contextMenu;
 
-        public float Zoom = 1;
-        public int TileWidth = 0;
-        public int TileHeight = 0;
-        public Rectangle ViewRect = new Rectangle();
+        private int _currentCellX = -1;
+        private int _currentCellY = -1;
+
+        private ToolStripMenuItem _dropDownLinkItem;
+        private ToolStripMenuItem _dropDownUnlinkItem;
+        private ToolStripMenuItem _recacheMapItem;
         public Rectangle ContentRect = new Rectangle();
+        private bool createTextures = false;
+        private List<Texture2D> freeTextures = new List<Texture2D>();
+        public MapGridItem[,] Grid;
+        public int GridHeight = 50;
+        public int GridWidth = 50;
+
+        private List<int> LinkMaps = new List<int>();
+        public bool Loaded = false;
 
         private float MaxZoom = 1f;
         private float MinZoom = 0f;
+        public bool ShowLines = true;
         private bool sizeChanged = true;
 
         private object texLock = new object();
         private List<Texture2D> textures = new List<Texture2D>();
-        private List<Texture2D> freeTextures = new List<Texture2D>();
+        public int TileHeight = 0;
+        public int TileWidth = 0;
         private List<MapGridItem> toLoad = new List<MapGridItem>();
-        private bool createTextures = false;
+        public Rectangle ViewRect = new Rectangle();
         private Thread workerThread;
-        public bool ShowLines = true;
 
-        private int _currentCellX = -1;
-        private int _currentCellY = -1;
-        private MapGridItem _contextMap = null;
+        public float Zoom = 1;
 
-        private ToolStripMenuItem _dropDownLinkItem;
-        private ContextMenuStrip _contextMenu;
-        private ToolStripMenuItem _dropDownUnlinkItem;
-        private ToolStripMenuItem _recacheMapItem;
-
-        private List<int> LinkMaps = new List<int>();
-
-        public MapGrid(ToolStripMenuItem dropDownItem, ToolStripMenuItem dropDownUnlink,ToolStripMenuItem recacheItem, ContextMenuStrip contextMenu)
+        public MapGrid(ToolStripMenuItem dropDownItem, ToolStripMenuItem dropDownUnlink, ToolStripMenuItem recacheItem,
+            ContextMenuStrip contextMenu)
         {
             workerThread = new Thread(AsyncLoadingThread);
             workerThread.Start();
@@ -67,7 +65,6 @@ namespace Intersect_Editor.Classes.Maps
             _recacheMapItem = recacheItem;
             _recacheMapItem.Click += _recacheMapItem_Click;
         }
-
 
         private void AsyncLoadingThread()
         {
@@ -97,13 +94,12 @@ namespace Intersect_Editor.Classes.Maps
             }
         }
 
-
         public void Load(ByteBuffer bf)
         {
             Loaded = false;
             List<int> gridMaps = new List<int>();
-            GridWidth = (int)bf.ReadLong();
-            GridHeight = (int)bf.ReadLong();
+            GridWidth = (int) bf.ReadLong();
+            GridHeight = (int) bf.ReadLong();
             bf.ReadBoolean();
             lock (texLock)
             {
@@ -116,7 +112,6 @@ namespace Intersect_Editor.Classes.Maps
                 {
                     if (y == -1 || y == GridHeight || x == -1 || x == GridWidth)
                     {
-
                     }
                     else
                     {
@@ -144,9 +139,11 @@ namespace Intersect_Editor.Classes.Maps
             }
             MaxZoom = 1f; //Real Size
             Zoom = MinZoom;
-            TileWidth = (int)(Options.TileWidth * Options.MapWidth * Zoom);
-            TileHeight = (int)(Options.TileHeight * Options.MapHeight * Zoom);
-            ContentRect = new Rectangle(ViewRect.Width/2-(TileWidth * (GridWidth + 2))/2, ViewRect.Height/2 - (TileHeight * (GridHeight + 2))/2, TileWidth * (GridWidth + 2), TileHeight * (GridHeight + 2));
+            TileWidth = (int) (Options.TileWidth * Options.MapWidth * Zoom);
+            TileHeight = (int) (Options.TileHeight * Options.MapHeight * Zoom);
+            ContentRect = new Rectangle(ViewRect.Width / 2 - (TileWidth * (GridWidth + 2)) / 2,
+                ViewRect.Height / 2 - (TileHeight * (GridHeight + 2)) / 2, TileWidth * (GridWidth + 2),
+                TileHeight * (GridHeight + 2));
             createTextures = true;
             Loaded = true;
         }
@@ -157,12 +154,16 @@ namespace Intersect_Editor.Classes.Maps
             {
                 for (int y1 = 1; y1 < GridHeight + 1; y1++)
                 {
-                    if (new Rectangle(ContentRect.X + x1 * TileWidth, ContentRect.Y + y1 * TileHeight, TileWidth, TileHeight)
+                    if (new Rectangle(ContentRect.X + x1 * TileWidth, ContentRect.Y + y1 * TileHeight, TileWidth,
+                            TileHeight)
                         .Contains(new System.Drawing.Point(x, y)))
                     {
                         if (Grid[x1 - 1, y1 - 1].mapnum > -1)
                         {
-                            if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                            if (Globals.CurrentMap.Changed() &&
+                                DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"),
+                                    Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                                DialogResult.Yes)
                             {
                                 SaveMap();
                             }
@@ -176,7 +177,7 @@ namespace Intersect_Editor.Classes.Maps
 
         private void SaveMap()
         {
-            if (Globals.CurrentTool == (int)EdittingTool.Selection)
+            if (Globals.CurrentTool == (int) EdittingTool.Selection)
             {
                 if (Globals.Dragging == true)
                 {
@@ -190,17 +191,22 @@ namespace Intersect_Editor.Classes.Maps
 
         public void ScreenshotWorld()
         {
-            SaveFileDialog fileDialog = new SaveFileDialog();
-            fileDialog.Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
-            fileDialog.Title = Strings.Get("mapgrid","savescreenshotdialogue");
+            SaveFileDialog fileDialog = new SaveFileDialog()
+            {
+                Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif",
+                Title = Strings.Get("mapgrid", "savescreenshotdialogue")
+            };
             fileDialog.ShowDialog();
             if (fileDialog.FileName != "")
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "savescreenshotconfirm"), Strings.Get("mapgrid", "savescreenshottitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == System.Windows.Forms.DialogResult.Yes)
+                if (
+                    DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "savescreenshotconfirm"),
+                        Strings.Get("mapgrid", "savescreenshottitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
                     FetchMissingPreviews(false);
                     Globals.PreviewProgressForm = new frmProgress();
-                    Globals.PreviewProgressForm.SetTitle(Strings.Get("mapgrid","savingscreenshot"));
+                    Globals.PreviewProgressForm.SetTitle(Strings.Get("mapgrid", "savingscreenshot"));
                     Thread screenShotThread = new Thread(() => ScreenshotWorld(fileDialog.FileName));
                     screenShotThread.Start();
                     Globals.PreviewProgressForm.ShowDialog();
@@ -222,7 +228,7 @@ namespace Intersect_Editor.Classes.Maps
             //Generate one row at a time.
             for (int y = 0; y < rows; y++)
             {
-                int gridRow = (int)Math.Floor(y / (double)rowSize);
+                int gridRow = (int) Math.Floor(y / (double) rowSize);
                 if (gridRow != cacheRow)
                 {
                     foreach (var cache in pngReaderDict)
@@ -261,7 +267,8 @@ namespace Intersect_Editor.Classes.Maps
                             //Get the pixel color we need
                             for (int x1 = (x) * colSize; x1 < (x) * colSize + colSize; x1++)
                             {
-                                Color clr = reader.GetPixel(x1 - (x)*colSize, rowNum);// Color.FromArgb(ImageLineHelper.GetPixelToARGB8(line, x1 - (x) * colSize));
+                                Color clr = reader.GetPixel(x1 - (x) * colSize, rowNum);
+                                    // Color.FromArgb(ImageLineHelper.GetPixelToARGB8(line, x1 - (x) * colSize));
                                 row[x1 * 4] = clr.R;
                                 row[x1 * 4 + 1] = clr.G;
                                 row[x1 * 4 + 2] = clr.B;
@@ -291,7 +298,8 @@ namespace Intersect_Editor.Classes.Maps
                     }
                 }
                 png.WriteRowByte(row, y);
-                Globals.PreviewProgressForm.SetProgress(Strings.Get("mapgrid","savingrow",y,rows), (int)((y / (float)rows) * 100), false);
+                Globals.PreviewProgressForm.SetProgress(Strings.Get("mapgrid", "savingrow", y, rows),
+                    (int) ((y / (float) rows) * 100), false);
                 Application.DoEvents();
             }
             png.End();
@@ -333,8 +341,14 @@ namespace Intersect_Editor.Classes.Maps
             List<int> maps = new List<int>();
             if (clearAllFirst)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "clearandfetch"),  Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) != System.Windows.Forms.DialogResult.Yes) return;
-                if (DarkMessageBox.ShowInformation(Strings.Get("mapgrid", "keepmapcache"), Strings.Get("mapgrid", "mapcachecaption"),DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                if (
+                    DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "clearandfetch"),
+                        Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) !=
+                    DialogResult.Yes) return;
+                if (
+                    DarkMessageBox.ShowInformation(Strings.Get("mapgrid", "keepmapcache"),
+                        Strings.Get("mapgrid", "mapcachecaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
                     Database.GridHideOverlay = EditorGraphics.HideOverlay;
                     Database.GridHideDarkness = EditorGraphics.HideDarkness;
@@ -342,11 +356,13 @@ namespace Intersect_Editor.Classes.Maps
                     Database.GridHideResources = EditorGraphics.HideResources;
                     if (EditorGraphics.LightColor != null)
                     {
-                        Database.GridLightColor = System.Drawing.Color.FromArgb(EditorGraphics.LightColor.A, EditorGraphics.LightColor.R, EditorGraphics.LightColor.G, EditorGraphics.LightColor.B).ToArgb();
+                        Database.GridLightColor =
+                            Color.FromArgb(EditorGraphics.LightColor.A, EditorGraphics.LightColor.R,
+                                EditorGraphics.LightColor.G, EditorGraphics.LightColor.B).ToArgb();
                     }
                     else
                     {
-                        Database.GridLightColor = System.Drawing.Color.FromArgb(255,255,255,255).ToArgb();
+                        Database.GridLightColor = Color.FromArgb(255, 255, 255, 255).ToArgb();
                     }
                 }
                 else
@@ -355,11 +371,10 @@ namespace Intersect_Editor.Classes.Maps
                     Database.GridHideDarkness = true;
                     Database.GridHideFog = true;
                     Database.GridHideResources = false;
-                    Database.GridLightColor = System.Drawing.Color.White.ToArgb();
+                    Database.GridLightColor = Color.White.ToArgb();
                 }
                 Database.SaveGridOptions();
                 Database.ClearAllMapCache();
-
             }
             //Get a list of maps without images.
             for (int x = 0; x < GridWidth; x++)
@@ -367,7 +382,7 @@ namespace Intersect_Editor.Classes.Maps
                 for (int y = 0; y < GridHeight; y++)
                 {
                     if (Grid[x, y].mapnum > -1 && Database.LoadMapCacheLegacy(Grid[x, y].mapnum,
-                        Grid[x, y].revision) == null)
+                            Grid[x, y].revision) == null)
                     {
                         maps.Add(Grid[x, y].mapnum);
                     }
@@ -375,12 +390,16 @@ namespace Intersect_Editor.Classes.Maps
             }
             if (maps.Count > 0)
             {
-                if (clearAllFirst || DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "justfetch"), Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) == System.Windows.Forms.DialogResult.Yes)
+                if (clearAllFirst ||
+                    DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "justfetch"),
+                        Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
                     Globals.FetchingMapPreviews = true;
                     Globals.PreviewProgressForm = new frmProgress();
-                    Globals.PreviewProgressForm.SetTitle(Strings.Get("mapgrid","fetchingmaps"));
-                    Globals.PreviewProgressForm.SetProgress(Strings.Get("mapgrid","fetchingprogress",0,maps.Count), 0, false);
+                    Globals.PreviewProgressForm.SetTitle(Strings.Get("mapgrid", "fetchingmaps"));
+                    Globals.PreviewProgressForm.SetProgress(Strings.Get("mapgrid", "fetchingprogress", 0, maps.Count), 0,
+                        false);
                     Globals.FetchCount = maps.Count;
                     Globals.MapsToFetch = maps;
                     for (int i = 0; i < maps.Count; i++)
@@ -398,8 +417,9 @@ namespace Intersect_Editor.Classes.Maps
             {
                 for (int y1 = 0; y1 < GridHeight + 2; y1++)
                 {
-                    if (new Rectangle(ContentRect.X + x1 * TileWidth, ContentRect.Y + y1 * TileHeight, TileWidth, TileHeight)
-                            .Contains(new System.Drawing.Point(x, y)))
+                    if (new Rectangle(ContentRect.X + x1 * TileWidth, ContentRect.Y + y1 * TileHeight, TileWidth,
+                            TileHeight)
+                        .Contains(new System.Drawing.Point(x, y)))
                     {
                         _currentCellX = x1;
                         _currentCellY = y1;
@@ -409,7 +429,8 @@ namespace Intersect_Editor.Classes.Maps
                                 _currentCellY - 1 <= GridHeight)
                             {
                                 if (_currentCellX == 0 || _currentCellY == 0 || _currentCellX - 1 == GridWidth ||
-                                    _currentCellY - 1 == GridHeight || Grid[_currentCellX - 1, _currentCellY - 1].mapnum <= -1)
+                                    _currentCellY - 1 == GridHeight ||
+                                    Grid[_currentCellX - 1, _currentCellY - 1].mapnum <= -1)
                                 {
                                     int adjacentMap = -1;
                                     //Check Left
@@ -419,7 +440,8 @@ namespace Intersect_Editor.Classes.Maps
                                             adjacentMap = Grid[_currentCellX - 2, _currentCellY - 1].mapnum;
                                     }
                                     //Check Right
-                                    if (_currentCellX < GridWidth && _currentCellY != 0 && _currentCellY - 1 < GridHeight)
+                                    if (_currentCellX < GridWidth && _currentCellY != 0 &&
+                                        _currentCellY - 1 < GridHeight)
                                     {
                                         if (Grid[_currentCellX, _currentCellY - 1].mapnum > -1)
                                             adjacentMap = Grid[_currentCellX, _currentCellY - 1].mapnum;
@@ -431,7 +453,8 @@ namespace Intersect_Editor.Classes.Maps
                                             adjacentMap = Grid[_currentCellX - 1, _currentCellY - 2].mapnum;
                                     }
                                     //Check Down
-                                    if (_currentCellX != 0 && _currentCellY < GridHeight && _currentCellX - 1 < GridWidth)
+                                    if (_currentCellX != 0 && _currentCellY < GridHeight &&
+                                        _currentCellX - 1 < GridWidth)
                                     {
                                         if (Grid[_currentCellX - 1, _currentCellY].mapnum > -1)
                                             adjacentMap = Grid[_currentCellX - 1, _currentCellY].mapnum;
@@ -466,10 +489,12 @@ namespace Intersect_Editor.Classes.Maps
         {
             if (_contextMap != null && _contextMap.mapnum > -1)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid","unlinkprompt",_contextMap.name), Strings.Get("mapgrid","unlinkcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                if (
+                    DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "unlinkprompt", _contextMap.name),
+                        Strings.Get("mapgrid", "unlinkcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                     PacketSender.SendUnlinkMap(_contextMap.mapnum);
             }
-
         }
 
         private void _recacheMapItem_Click(object sender, EventArgs e)
@@ -479,7 +504,7 @@ namespace Intersect_Editor.Classes.Maps
                 //Fetch and screenshot this singular map
                 Database.SaveMapCache(_contextMap.mapnum, _contextMap.revision, null);
                 if (MapInstance.GetMap(_contextMap.mapnum) != null) MapInstance.GetMap(_contextMap.mapnum).Delete();
-                Globals.MapsToFetch = new List<int>() { _contextMap.mapnum };
+                Globals.MapsToFetch = new List<int>() {_contextMap.mapnum};
                 PacketSender.SendNeedMap(_contextMap.mapnum);
             }
         }
@@ -527,12 +552,15 @@ namespace Intersect_Editor.Classes.Maps
 
         public void Update(Microsoft.Xna.Framework.Rectangle panelBounds)
         {
-            MinZoom = Math.Min(panelBounds.Width / (float)(Options.TileWidth * Options.MapWidth * (GridWidth + 2)), panelBounds.Height / (float)(Options.TileHeight * Options.MapHeight * (GridHeight + 2))) / 2f; //Gotta calculate 
+            MinZoom =
+                Math.Min(panelBounds.Width / (float) (Options.TileWidth * Options.MapWidth * (GridWidth + 2)),
+                    panelBounds.Height / (float) (Options.TileHeight * Options.MapHeight * (GridHeight + 2))) / 2f;
+                //Gotta calculate 
             if (Zoom < MinZoom)
             {
                 Zoom = MinZoom * 2;
-                TileWidth = (int)(Options.TileWidth * Options.MapWidth * Zoom);
-                TileHeight = (int)(Options.TileHeight * Options.MapHeight * Zoom);
+                TileWidth = (int) (Options.TileWidth * Options.MapWidth * Zoom);
+                TileHeight = (int) (Options.TileHeight * Options.MapHeight * Zoom);
                 ContentRect = new Rectangle(0, 0, TileWidth * (GridWidth + 2), TileHeight * (GridHeight + 2));
                 lock (texLock)
                 {
@@ -559,11 +587,13 @@ namespace Intersect_Editor.Classes.Maps
                         for (int y = 0; y < GridHeight; y++)
                         {
                             //Figure out if this texture should be loaded
-                            if (new Rectangle(ContentRect.X + (x + 1) * TileWidth, ContentRect.Y + (y + 1) * TileHeight, TileWidth,
-                                TileHeight).IntersectsWith(ViewRect) && Grid[x, y] != null)
+                            if (new Rectangle(ContentRect.X + (x + 1) * TileWidth, ContentRect.Y + (y + 1) * TileHeight,
+                                    TileWidth,
+                                    TileHeight).IntersectsWith(ViewRect) && Grid[x, y] != null)
                             {
                                 //if not loaded, add it to the queue
-                                if ((Grid[x, y].tex == null || Grid[x, y].tex.IsDisposed) && Grid[x, y].mapnum != -1 && !toLoad.Contains(Grid[x, y]))
+                                if ((Grid[x, y].tex == null || Grid[x, y].tex.IsDisposed) && Grid[x, y].mapnum != -1 &&
+                                    !toLoad.Contains(Grid[x, y]))
                                 {
                                     toLoad.Add(Grid[x, y]);
                                 }
@@ -595,8 +625,9 @@ namespace Intersect_Editor.Classes.Maps
                         for (int y = 0; y < GridHeight; y++)
                         {
                             //Figure out if this texture should be loaded
-                            if (new Rectangle(ContentRect.X + (x + 1) * TileWidth, ContentRect.Y + (y + 1) * TileHeight, TileWidth,
-                                TileHeight).Contains(new System.Drawing.Point(mouseX, mouseY)) && Grid[x, y] != null)
+                            if (new Rectangle(ContentRect.X + (x + 1) * TileWidth, ContentRect.Y + (y + 1) * TileHeight,
+                                    TileWidth,
+                                    TileHeight).Contains(new System.Drawing.Point(mouseX, mouseY)) && Grid[x, y] != null)
                             {
                                 return Grid[x, y];
                             }
@@ -611,8 +642,8 @@ namespace Intersect_Editor.Classes.Maps
         {
             lock (texLock)
             {
-                int hCount = (int)Math.Ceiling((float)panelBounds.Width / TileWidth) + 2;
-                int wCount = (int)Math.Ceiling((float)panelBounds.Height / TileHeight) + 2;
+                int hCount = (int) Math.Ceiling((float) panelBounds.Width / TileWidth) + 2;
+                int wCount = (int) Math.Ceiling((float) panelBounds.Height / TileHeight) + 2;
                 for (int i = 0; i < hCount * wCount && i < GridWidth * GridHeight; i++)
                 {
                     textures.Add(new Texture2D(EditorGraphics.GetGraphicsDevice(), TileWidth, TileHeight));
@@ -659,8 +690,8 @@ namespace Intersect_Editor.Classes.Maps
             int amt = val / 120;
 
             //Find the original tile we are hovering over
-            var x1 = (double)Math.Min(ContentRect.Width, Math.Max(0, mouseX - ContentRect.X)) / (float)TileWidth;
-            var y1 = (double)Math.Min(ContentRect.Height, Math.Max(0, mouseY - ContentRect.Y)) / (float)TileHeight;
+            var x1 = (double) Math.Min(ContentRect.Width, Math.Max(0, mouseX - ContentRect.X)) / (float) TileWidth;
+            var y1 = (double) Math.Min(ContentRect.Height, Math.Max(0, mouseY - ContentRect.Y)) / (float) TileHeight;
             var prevZoom = Zoom;
             Zoom += .05f * amt;
             if (prevZoom != Zoom)
@@ -673,15 +704,16 @@ namespace Intersect_Editor.Classes.Maps
             }
             if (Zoom < MinZoom) Zoom = MinZoom;
             if (Zoom > MaxZoom) Zoom = MaxZoom;
-            TileWidth = (int)(Options.TileWidth * Options.MapWidth * Zoom);
-            TileHeight = (int)(Options.TileHeight * Options.MapHeight * Zoom);
+            TileWidth = (int) (Options.TileWidth * Options.MapWidth * Zoom);
+            TileHeight = (int) (Options.TileHeight * Options.MapHeight * Zoom);
             //were gonna get the X/Y of where the content rect would need so that the grid location that the mouse is hovering over would be center of the viewing rect
             //Get the current location of the mouse over the current content rectangle
 
-            var x2 = (int)(x1 * TileWidth);
-            var y2 = (int)(y1 * TileHeight);
+            var x2 = (int) (x1 * TileWidth);
+            var y2 = (int) (y1 * TileHeight);
 
-            ContentRect = new Rectangle(-x2 + mouseX, -y2 + mouseY, TileWidth * (GridWidth + 2), TileHeight * (GridHeight + 2));
+            ContentRect = new Rectangle(-x2 + mouseX, -y2 + mouseY, TileWidth * (GridWidth + 2),
+                TileHeight * (GridHeight + 2));
 
             //Lets go the extra mile to make sure our selected map is 
         }
@@ -689,15 +721,16 @@ namespace Intersect_Editor.Classes.Maps
 
     public class MapGridItem
     {
+        public MapGridItem(int num, string name = "", int revision = 0)
+        {
+            mapnum = num;
+            this.name = name;
+            this.revision = revision;
+        }
+
         public string name { get; set; }
         public int revision { get; set; }
         public int mapnum { get; set; }
         public Texture2D tex { get; set; }
-        public MapGridItem(int num, string name = "", int revision = 0)
-        {
-            this.mapnum = num;
-            this.name = name;
-            this.revision = revision;
-        }
     }
 }

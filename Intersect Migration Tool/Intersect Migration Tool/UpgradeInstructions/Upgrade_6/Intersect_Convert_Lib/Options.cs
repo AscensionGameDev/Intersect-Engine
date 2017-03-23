@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Intersect;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib
 {
@@ -27,7 +28,17 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Conve
         public static List<string> EquipmentSlots = new List<string>();
         public static List<string> PaperdollOrder = new List<string>();
         public static List<string> ToolTypes = new List<string>();
-        public static List<string> StatusActionMsgs = new List<string> {"NONE!", "SILENCED!", "STUNNED!", "SNARED!", "BLINDED!", "STEALTH!", "TRANSFORMED!"};
+
+        public static List<string> StatusActionMsgs = new List<string>
+        {
+            "NONE!",
+            "SILENCED!",
+            "STUNNED!",
+            "SNARED!",
+            "BLINDED!",
+            "STEALTH!",
+            "TRANSFORMED!"
+        };
 
         //Combat
         public static int MinAttackRate = 500; //2 attacks per second

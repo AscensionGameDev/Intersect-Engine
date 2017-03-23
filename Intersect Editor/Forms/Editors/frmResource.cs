@@ -1,33 +1,30 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
+using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.Localization;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Forms.Editors;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.Localization;
-
 
 namespace Intersect_Editor.Classes
 {
     public partial class frmResource : Form
     {
-        //General Editting Variables
-        bool _tMouseDown;
-
         private List<ResourceBase> _changed = new List<ResourceBase>();
-        private ResourceBase _editorItem = null;
         private byte[] _copiedItem = null;
-
-        private Bitmap _initialTileset;
+        private ResourceBase _editorItem = null;
+        private Bitmap _endBitmap;
         private Bitmap _endTileset;
         private Bitmap _initialBitmap;
-        private Bitmap _endBitmap;
+
+        private Bitmap _initialTileset;
+        //General Editting Variables
+        bool _tMouseDown;
 
         public frmResource()
         {
@@ -79,7 +76,8 @@ namespace Intersect_Editor.Classes
 
         private void lstResources_Click(object sender, EventArgs e)
         {
-            _editorItem = ResourceBase.GetResource(Database.GameObjectIdFromList(GameObject.Resource, lstResources.SelectedIndex));
+            _editorItem =
+                ResourceBase.GetResource(Database.GameObjectIdFromList(GameObject.Resource, lstResources.SelectedIndex));
             UpdateEditor();
         }
 
@@ -89,8 +87,8 @@ namespace Intersect_Editor.Classes
             _endBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
             cmbInitialSprite.Items.Clear();
             cmbEndSprite.Items.Clear();
-            cmbInitialSprite.Items.Add(Strings.Get("general","none"));
-            cmbEndSprite.Items.Add(Strings.Get("general","none"));
+            cmbInitialSprite.Items.Add(Strings.Get("general", "none"));
+            cmbEndSprite.Items.Add(Strings.Get("general", "none"));
             string[] resources = GameContentManager.GetTextureNames(GameContentManager.TextureType.Resource);
             for (int i = 0; i < resources.Length; i++)
             {
@@ -98,10 +96,10 @@ namespace Intersect_Editor.Classes
                 cmbEndSprite.Items.Add(resources[i]);
             }
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add(Strings.Get("general","none"));
+            cmbAnimation.Items.Add(Strings.Get("general", "none"));
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             cmbItem.Items.Clear();
-            cmbItem.Items.Add(Strings.Get("general","none"));
+            cmbItem.Items.Add(Strings.Get("general", "none"));
             cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
             InitLocalization();
             UpdateEditor();
@@ -109,7 +107,7 @@ namespace Intersect_Editor.Classes
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("resourceeditor", "title");
+            Text = Strings.Get("resourceeditor", "title");
             toolStripItemNew.Text = Strings.Get("resourceeditor", "new");
             toolStripItemDelete.Text = Strings.Get("resourceeditor", "delete");
             toolStripItemCopy.Text = Strings.Get("resourceeditor", "copy");
@@ -148,7 +146,7 @@ namespace Intersect_Editor.Classes
             lstResources.Items.Clear();
             lstResources.Items.AddRange(Database.GetGameObjectList(GameObject.Resource));
             cmbToolType.Items.Clear();
-            cmbToolType.Items.Add(Strings.Get("general","none"));
+            cmbToolType.Items.Add(Strings.Get("general", "none"));
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
         }
 
@@ -161,7 +159,8 @@ namespace Intersect_Editor.Classes
                 txtName.Text = _editorItem.Name;
                 cmbToolType.SelectedIndex = _editorItem.Tool + 1;
                 nudSpawnDuration.Value = _editorItem.SpawnDuration;
-                cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation) + 1;
+                cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation) +
+                                             1;
                 nudMinHp.Value = _editorItem.MinHP;
                 nudMaxHp.Value = _editorItem.MaxHP;
                 chkWalkableBefore.Checked = _editorItem.WalkableBefore;
@@ -201,17 +200,17 @@ namespace Intersect_Editor.Classes
 
         private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.SpawnDuration = (int)nudSpawnDuration.Value;
+            _editorItem.SpawnDuration = (int) nudSpawnDuration.Value;
         }
 
         private void nudDropChance_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value - 1].Chance = (int)nudDropChance.Value;
+            _editorItem.Drops[scrlDropIndex.Value - 1].Chance = (int) nudDropChance.Value;
         }
 
         private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Tool = cmbToolType.SelectedIndex -1;
+            _editorItem.Tool = cmbToolType.SelectedIndex - 1;
         }
 
         private void chkWalkableBefore_CheckedChanged(object sender, EventArgs e)
@@ -231,7 +230,7 @@ namespace Intersect_Editor.Classes
                 _editorItem.InitialGraphic = cmbInitialSprite.Text;
                 if (File.Exists("resources/resources/" + cmbInitialSprite.Text))
                 {
-                    _initialTileset = (Bitmap)Bitmap.FromFile("resources/resources/" + cmbInitialSprite.Text);
+                    _initialTileset = (Bitmap) Image.FromFile("resources/resources/" + cmbInitialSprite.Text);
                     picInitialResource.Width = _initialTileset.Width;
                     picInitialResource.Height = _initialTileset.Height;
                     _initialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
@@ -243,7 +242,7 @@ namespace Intersect_Editor.Classes
             }
             else
             {
-                _editorItem.InitialGraphic = Strings.Get("general","none");
+                _editorItem.InitialGraphic = Strings.Get("general", "none");
                 _initialTileset = null;
             }
             Render();
@@ -256,7 +255,7 @@ namespace Intersect_Editor.Classes
                 _editorItem.EndGraphic = cmbEndSprite.Text;
                 if (File.Exists("resources/resources/" + cmbEndSprite.Text))
                 {
-                    _endTileset = (Bitmap)Bitmap.FromFile("resources/resources/" + cmbEndSprite.Text);
+                    _endTileset = (Bitmap) Image.FromFile("resources/resources/" + cmbEndSprite.Text);
                     picEndResource.Width = _endTileset.Width;
                     picEndResource.Height = _endTileset.Height;
                     _endBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
@@ -268,7 +267,7 @@ namespace Intersect_Editor.Classes
             }
             else
             {
-                _editorItem.EndGraphic = Strings.Get("general","none");
+                _editorItem.EndGraphic = Strings.Get("general", "none");
                 _endTileset = null;
             }
             Render();
@@ -279,11 +278,12 @@ namespace Intersect_Editor.Classes
             Pen whitePen = new Pen(System.Drawing.Color.Red, 1);
 
             // Initial Sprite
-            var gfx = System.Drawing.Graphics.FromImage(_initialBitmap);
+            var gfx = Graphics.FromImage(_initialBitmap);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picInitialResource.Width, picInitialResource.Height));
             if (cmbInitialSprite.SelectedIndex > 0 && _initialTileset != null)
             {
-                gfx.DrawImage(_initialTileset, new Rectangle(0, 0, _initialTileset.Width, _initialTileset.Height), new Rectangle(0, 0, _initialTileset.Width, _initialTileset.Height), GraphicsUnit.Pixel);
+                gfx.DrawImage(_initialTileset, new Rectangle(0, 0, _initialTileset.Width, _initialTileset.Height),
+                    new Rectangle(0, 0, _initialTileset.Width, _initialTileset.Height), GraphicsUnit.Pixel);
             }
             gfx.Dispose();
             gfx = picInitialResource.CreateGraphics();
@@ -291,11 +291,12 @@ namespace Intersect_Editor.Classes
             gfx.Dispose();
 
             // End Sprite
-            gfx = System.Drawing.Graphics.FromImage(_endBitmap);
+            gfx = Graphics.FromImage(_endBitmap);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picEndResource.Width, picEndResource.Height));
             if (cmbEndSprite.SelectedIndex > 0 && _endTileset != null)
             {
-                gfx.DrawImage(_endTileset, new Rectangle(0, 0, _endTileset.Width, _endTileset.Height), new Rectangle(0, 0, _endTileset.Width, _endTileset.Height), GraphicsUnit.Pixel);
+                gfx.DrawImage(_endTileset, new Rectangle(0, 0, _endTileset.Width, _endTileset.Height),
+                    new Rectangle(0, 0, _endTileset.Width, _endTileset.Height), GraphicsUnit.Pixel);
             }
             gfx.Dispose();
             gfx = picEndResource.CreateGraphics();
@@ -329,7 +330,8 @@ namespace Intersect_Editor.Classes
             if (_editorItem != null && lstResources.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("resourceeditor", "deleteprompt"),
-                        Strings.Get("resourceeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                        Strings.Get("resourceeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -340,7 +342,7 @@ namespace Intersect_Editor.Classes
         {
             if (_editorItem != null && lstResources.Focused)
             {
-                _copiedItem = _editorItem.GetData();
+                _copiedItem = _editorItem.BinaryData;
                 toolStripItemPaste.Enabled = true;
             }
         }
@@ -359,7 +361,8 @@ namespace Intersect_Editor.Classes
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("resourceeditor", "undoprompt"),
-                        Strings.Get("resourceeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                        Strings.Get("resourceeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();
@@ -426,12 +429,12 @@ namespace Intersect_Editor.Classes
         private void cmbItem_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Drops[scrlDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObject.Item,
-                cmbItem.SelectedIndex -1);
+                cmbItem.SelectedIndex - 1);
         }
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Animation = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex -1);
+            _editorItem.Animation = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex - 1);
         }
 
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)
@@ -441,12 +444,12 @@ namespace Intersect_Editor.Classes
 
         private void nudMinHp_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.MinHP = (int)nudMinHp.Value;
+            _editorItem.MinHP = (int) nudMinHp.Value;
         }
 
         private void nudMaxHp_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.MinHP = (int)nudMaxHp.Value;
+            _editorItem.MinHP = (int) nudMaxHp.Value;
         }
     }
 }

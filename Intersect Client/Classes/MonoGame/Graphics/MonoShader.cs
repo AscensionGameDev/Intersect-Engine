@@ -11,6 +11,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
     public class MonoShader : GameShader
     {
         private Effect shader;
+
         public MonoShader(string shaderName, ContentManager content) : base(shaderName)
         {
             shader = content.Load<Effect>(GameContentManager.RemoveExtension(shaderName));

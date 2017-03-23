@@ -1,12 +1,12 @@
-﻿
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Intersect.GameObjects;
+using Intersect.Localization;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.Maps;
 using Intersect_Editor.Forms;
-using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Classes
 {
@@ -20,10 +20,11 @@ namespace Intersect_Editor.Classes
         private static long waterfallTimer = Globals.System.GetTimeMs();
         private static Thread mapThread;
         private static frmProgress progressForm;
+
         public static void StartLoop()
         {
             Globals.MainForm.Visible = true;
-            Globals.MainForm.EnterMap(Globals.CurrentMap == null ? 0 : Globals.CurrentMap.GetId());
+            Globals.MainForm.EnterMap(Globals.CurrentMap == null ? 0 : ((DatabaseObject) Globals.CurrentMap).Id);
             myForm = Globals.MainForm;
 
             if (mapThread == null)
@@ -48,13 +49,19 @@ namespace Intersect_Editor.Classes
             if (waterfallTimer < Globals.System.GetTimeMs())
             {
                 Globals.WaterfallFrame++;
-                if (Globals.WaterfallFrame == 3) { Globals.WaterfallFrame = 0; }
+                if (Globals.WaterfallFrame == 3)
+                {
+                    Globals.WaterfallFrame = 0;
+                }
                 waterfallTimer = Globals.System.GetTimeMs() + 500;
             }
             if (animationTimer < Globals.System.GetTimeMs())
             {
                 Globals.AutotileFrame++;
-                if (Globals.AutotileFrame == 3) { Globals.AutotileFrame = 0; }
+                if (Globals.AutotileFrame == 3)
+                {
+                    Globals.AutotileFrame = 0;
+                }
                 animationTimer = Globals.System.GetTimeMs() + 600;
             }
             //Check Editors
@@ -71,11 +78,11 @@ namespace Intersect_Editor.Classes
             if (_fpsTime < Globals.System.GetTimeMs())
             {
                 _fps = _fpsCount;
-                myForm.toolStripLabelFPS.Text = Strings.Get("mainform","fps",_fps);
+                myForm.toolStripLabelFPS.Text = Strings.Get("mainform", "fps", _fps);
                 _fpsCount = 0;
                 _fpsTime = Globals.System.GetTimeMs() + 1000;
             }
-            Thread.Sleep(Math.Max(1, (int)(1000 / 60f - (Globals.System.GetTimeMs() - startTime))));
+            Thread.Sleep(Math.Max(1, (int) (1000 / 60f - (Globals.System.GetTimeMs() - startTime))));
         }
 
         private static void UpdateMaps()
@@ -95,7 +102,12 @@ namespace Intersect_Editor.Classes
                             var maps = MapInstance.GetObjects();
                             foreach (var map in maps)
                             {
-                                if (!myForm.Disposing && progressForm.IsHandleCreated) progressForm.BeginInvoke((Action)(() =>progressForm.SetProgress(Globals.MapsToScreenshot.Count + " maps remaining.", -1,false)));
+                                if (!myForm.Disposing && progressForm.IsHandleCreated)
+                                    progressForm.BeginInvoke(
+                                        (Action)
+                                        (() =>
+                                            progressForm.SetProgress(
+                                                Globals.MapsToScreenshot.Count + " maps remaining.", -1, false)));
                                 if (map.Value != null)
                                 {
                                     map.Value.Update();

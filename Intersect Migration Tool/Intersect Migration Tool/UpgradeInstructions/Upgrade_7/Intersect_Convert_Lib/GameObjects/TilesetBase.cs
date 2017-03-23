@@ -7,8 +7,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
     public class TilesetBase : DatabaseObject
     {
         //Core info
-        public new const string DatabaseTable = "tilesets";
-        public new const GameObject Type = GameObject.Tileset;
+        public new const string DATABASE_TABLE = "tilesets";
+        public new const GameObject OBJECT_TYPE = GameObject.Tileset;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         public string Value = "";
@@ -41,17 +41,16 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return (TilesetBase)Objects[index];
+                return (TilesetBase) Objects[index];
             }
             return null;
         }
-
 
         public static string GetName(int index)
         {
             if (Objects.ContainsKey(index))
             {
-                return ((TilesetBase)Objects[index]).Value;
+                return ((TilesetBase) Objects[index]).Value;
             }
             return "Deleted";
         }
@@ -63,12 +62,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)
@@ -79,26 +78,31 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, TilesetBase> GetObjects()
         {
-            Dictionary<int, TilesetBase> objects = Objects.ToDictionary(k => k.Key, v => (TilesetBase)v.Value);
+            Dictionary<int, TilesetBase> objects = Objects.ToDictionary(k => k.Key, v => (TilesetBase) v.Value);
             return objects;
         }
     }

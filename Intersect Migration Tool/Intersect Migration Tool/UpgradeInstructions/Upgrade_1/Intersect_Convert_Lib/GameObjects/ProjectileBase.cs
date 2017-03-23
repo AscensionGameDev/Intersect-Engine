@@ -1,55 +1,34 @@
-﻿/*
-    Intersect Game Engine (Server)
-    Copyright (C) 2015  JC Snider, Joe Bridges
-    
-    Website: http://ascensiongamedev.com
-    Contact Email: admin@ascensiongamedev.com 
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License along
-    with this program; if not, write to the Free Software Foundation, Inc.,
-    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Intersect;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects
 {
     public class ProjectileBase : DatabaseObject
     {
-        public new const string DatabaseTable = "projectiles";
-        public new const GameObject Type = GameObject.Projectile;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        public new const string DATABASE_TABLE = "projectiles";
+        public new const GameObject OBJECT_TYPE = GameObject.Projectile;
 
         public const int SpawnLocationsWidth = 5;
         public const int SpawnLocationsHeight = 5;
         public const int MaxProjectileDirections = 8;
-        
-        public string Name = "New Projectile";
-        public int Speed = 1;
+        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
         public int Delay = 1;
-        public int Quantity = 1;
-        public int Range = 1;
-        public int Spell = 0;
-        public bool IgnoreMapBlocks = false;
-        public bool IgnoreZDimension = false;
+        public bool GrappleHook = false;
+        public bool Homing = false;
         public bool IgnoreActiveResources = false;
         public bool IgnoreExhaustedResources = false;
-        public bool Homing = false;
-        public bool GrappleHook = false;
+        public bool IgnoreMapBlocks = false;
+        public bool IgnoreZDimension = false;
+
+        public string Name = "New Projectile";
+        public int Quantity = 1;
+        public int Range = 1;
         public Location[,] SpawnLocations = new Location[SpawnLocationsWidth, SpawnLocationsHeight];
-        public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
+        public int Speed = 1;
+        public int Spell = 0;
 
         //Init
         public ProjectileBase(int id) : base(id)
@@ -96,7 +75,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             var animCount = myBuffer.ReadInteger();
             for (var i = 0; i < animCount; i++)
             {
-                Animations.Add(new ProjectileAnimation(myBuffer.ReadInteger(), myBuffer.ReadInteger(), Convert.ToBoolean(myBuffer.ReadInteger())));
+                Animations.Add(new ProjectileAnimation(myBuffer.ReadInteger(), myBuffer.ReadInteger(),
+                    Convert.ToBoolean(myBuffer.ReadInteger())));
             }
 
             //If no animations present.
@@ -151,7 +131,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return (ProjectileBase)Objects[index];
+                return (ProjectileBase) Objects[index];
             }
             return null;
         }
@@ -160,7 +140,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return ((ProjectileBase)Objects[index]).Name;
+                return ((ProjectileBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -172,12 +152,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)
@@ -188,26 +168,31 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, ProjectileBase> GetObjects()
         {
-            Dictionary<int, ProjectileBase> objects = Objects.ToDictionary(k => k.Key, v => (ProjectileBase)v.Value);
+            Dictionary<int, ProjectileBase> objects = Objects.ToDictionary(k => k.Key, v => (ProjectileBase) v.Value);
             return objects;
         }
     }
@@ -220,8 +205,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
     public class ProjectileAnimation
     {
         public int Animation = -1;
-        public int SpawnRange = 1;
         public bool AutoRotate = false;
+        public int SpawnRange = 1;
 
         public ProjectileAnimation(int animation, int spawnRange, bool autoRotate)
         {

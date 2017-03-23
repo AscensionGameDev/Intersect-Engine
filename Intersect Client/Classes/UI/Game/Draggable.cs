@@ -18,7 +18,6 @@ namespace Intersect_Client.Classes.UI.Game
             pnl.SetPosition(x, y);
             pnl.SetSize(32, 32);
             pnl.Texture = tex;
-
         }
 
         public bool Update()
@@ -35,7 +34,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Dispose()
         {
-            Gui.GameUI.GameCanvas.RemoveChild(pnl,false);
+            Gui.GameUI.GameCanvas.RemoveChild(pnl, false);
         }
     }
 }

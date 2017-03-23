@@ -1,4 +1,5 @@
 ﻿using System;
+using Intersect.Logging;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using Microsoft.Xna.Framework.Content;
@@ -9,7 +10,9 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
     public class MonoFont : GameFont
     {
         private SpriteFont font;
-        public MonoFont(string fontName, string fileName, int fontSize, ContentManager contentManager) : base(fontName, fontSize)
+
+        public MonoFont(string fontName, string fileName, int fontSize, ContentManager contentManager)
+            : base(fontName, fontSize)
         {
             try
             {
@@ -18,7 +21,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             }
             catch (Exception ex)
             {
-                
+                Log.Trace(ex);
             }
         }
 

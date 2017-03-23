@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
+using Intersect;
+using Intersect.GameObjects;
 using Intersect_Server.Classes.Networking;
 
 namespace Intersect_Server.Classes.General
@@ -38,13 +34,14 @@ namespace Intersect_Server.Classes.General
             {
                 if (!timeBase.SyncTime)
                 {
-                    _gameTime = _gameTime.Add(new TimeSpan(0, 0,0,0, (int)(1000 * timeBase.Rate))); //Not sure if Rate is negative if time will go backwards but we can hope!
+                    _gameTime = _gameTime.Add(new TimeSpan(0, 0, 0, 0, (int) (1000 * timeBase.Rate)));
+                        //Not sure if Rate is negative if time will go backwards but we can hope!
                 }
 
                 //Calculate what "timeRange" we should be in, if we're not then switch and notify the world
                 //Gonna do this by minutes
-                int minuteOfDay = _gameTime.Hour*60 + _gameTime.Minute;
-                int expectedRange = (int)Math.Floor(minuteOfDay/(float)timeBase.RangeInterval);
+                int minuteOfDay = _gameTime.Hour * 60 + _gameTime.Minute;
+                int expectedRange = (int) Math.Floor(minuteOfDay / (float) timeBase.RangeInterval);
 
                 if (expectedRange != _timeRange)
                 {

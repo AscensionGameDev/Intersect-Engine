@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Xml;
 
-namespace Intersect_Library.Localization
+namespace Intersect.Localization
 {
     class Language
     {
         private bool _loaded = false;
-        private Dictionary<string,Dictionary<string,string>> loadedStrings = new Dictionary<string, Dictionary<string, string>>();
+
+        private Dictionary<string, Dictionary<string, string>> loadedStrings =
+            new Dictionary<string, Dictionary<string, string>>();
+
         public Language(string filename)
         {
             if (File.Exists(filename))
@@ -36,14 +37,15 @@ namespace Intersect_Library.Localization
                                 {
                                     if (childNode.FirstChild == null)
                                     {
-                                        loadedStrings[node.Name.ToLower()].Add(childNode.Attributes["id"].Value.ToLower(),"");
+                                        loadedStrings[node.Name.ToLower()].Add(
+                                            childNode.Attributes["id"].Value.ToLower(), "");
                                     }
                                     else
                                     {
-                                        loadedStrings[node.Name.ToLower()].Add(childNode.Attributes["id"].Value.ToLower(),
-                                        childNode.FirstChild.Value);
+                                        loadedStrings[node.Name.ToLower()].Add(
+                                            childNode.Attributes["id"].Value.ToLower(),
+                                            childNode.FirstChild.Value);
                                     }
-                                    
                                 }
                             }
                         }

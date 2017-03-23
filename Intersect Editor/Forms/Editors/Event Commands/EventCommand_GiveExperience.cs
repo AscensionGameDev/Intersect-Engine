@@ -1,16 +1,15 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
-using DarkUI.Controls;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.Localization;
+using Intersect.GameObjects.Events;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_GiveExperience : UserControl
     {
-        private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
+        private EventCommand _myCommand;
+
         public EventCommand_GiveExperience(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
@@ -30,7 +29,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = (int)nudExperience.Value;
+            _myCommand.Ints[0] = (int) nudExperience.Value;
             _eventEditor.FinishCommandEdit();
         }
 

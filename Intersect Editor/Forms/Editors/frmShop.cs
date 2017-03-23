@@ -1,22 +1,20 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Forms;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.Localization;
 using Intersect_Editor.Classes;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.Localization;
-
 
 namespace Intersect_Editor.Forms.Editors
 {
     public partial class frmShop : Form
     {
         private List<ShopBase> _changed = new List<ShopBase>();
-        private ShopBase _editorItem = null;
         private byte[] _copiedItem = null;
+        private ShopBase _editorItem = null;
 
         public frmShop()
         {
@@ -103,7 +101,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("shopeditor", "title");
+            Text = Strings.Get("shopeditor", "title");
             toolStripItemNew.Text = Strings.Get("shopeditor", "new");
             toolStripItemDelete.Text = Strings.Get("shopeditor", "delete");
             toolStripItemCopy.Text = Strings.Get("shopeditor", "copy");
@@ -141,7 +139,8 @@ namespace Intersect_Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = _editorItem.Name;
-                cmbDefaultCurrency.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _editorItem.DefaultCurrency);
+                cmbDefaultCurrency.SelectedIndex = Database.GameObjectListIndex(GameObject.Item,
+                    _editorItem.DefaultCurrency);
                 if (_editorItem.BuyingWhitelist)
                 {
                     rdoBuyWhitelist.Checked = true;
@@ -171,7 +170,7 @@ namespace Intersect_Editor.Forms.Editors
             {
                 cmbBuyFor.Enabled = true;
                 nudBuyAmount.Enabled = true;
-                grpItemsBought.Text = Strings.Get("shopeditor","itemsboughtwhitelist");
+                grpItemsBought.Text = Strings.Get("shopeditor", "itemsboughtwhitelist");
             }
             else
             {
@@ -198,7 +197,7 @@ namespace Intersect_Editor.Forms.Editors
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstShops.Items[ShopBase.GetObjects().Keys.ToList().IndexOf(_editorItem.GetId())] = txtName.Text;
+            lstShops.Items[ShopBase.GetObjects().Keys.ToList().IndexOf(_editorItem.Id)] = txtName.Text;
         }
 
         private void UpdateLists()
@@ -219,10 +218,10 @@ namespace Intersect_Editor.Forms.Editors
                 {
                     lstBoughtItems.Items.Add("Buy Item #" + (_editorItem.BuyingItems[i].ItemNum + 1) +
                                              " " +
-                                            ItemBase.GetName(_editorItem.BuyingItems[i].ItemNum) + " For (" +
-                                       _editorItem.BuyingItems[i].CostItemVal + ") Item #" +
-                                       (_editorItem.BuyingItems[i].CostItemNum + 1) + ". " +
-                                       ItemBase.GetName(_editorItem.BuyingItems[i].CostItemNum));
+                                             ItemBase.GetName(_editorItem.BuyingItems[i].ItemNum) + " For (" +
+                                             _editorItem.BuyingItems[i].CostItemVal + ") Item #" +
+                                             (_editorItem.BuyingItems[i].CostItemNum + 1) + ". " +
+                                             ItemBase.GetName(_editorItem.BuyingItems[i].CostItemNum));
                 }
             }
             else
@@ -234,15 +233,14 @@ namespace Intersect_Editor.Forms.Editors
                                              ItemBase.GetName(_editorItem.BuyingItems[i].ItemNum));
                 }
             }
-
         }
 
         private void btnAddSoldItem_Click(object sender, EventArgs e)
         {
             bool addedItem = false;
-            int cost = (int)nudSellCost.Value;
+            int cost = (int) nudSellCost.Value;
             ShopItem newItem = new ShopItem(ItemBase.GetObjects().Keys.ToList()[cmbAddSoldItem.SelectedIndex]
-                , ItemBase.GetObjects().Keys.ToList()[cmbSellFor.SelectedIndex],cost);
+                , ItemBase.GetObjects().Keys.ToList()[cmbSellFor.SelectedIndex], cost);
             for (int i = 0; i < _editorItem.SellingItems.Count; i++)
             {
                 if (_editorItem.SellingItems[i].ItemNum == newItem.ItemNum)
@@ -270,7 +268,7 @@ namespace Intersect_Editor.Forms.Editors
             bool addedItem = false;
             int cost = (int) nudBuyAmount.Value;
             ShopItem newItem = new ShopItem(ItemBase.GetObjects().Keys.ToList()[cmbAddBoughtItem.SelectedIndex],
-                ItemBase.GetObjects().Keys.ToList()[cmbBuyFor.SelectedIndex],cost);
+                ItemBase.GetObjects().Keys.ToList()[cmbBuyFor.SelectedIndex], cost);
             for (int i = 0; i < _editorItem.BuyingItems.Count; i++)
             {
                 if (_editorItem.BuyingItems[i].ItemNum == newItem.ItemNum)
@@ -295,7 +293,8 @@ namespace Intersect_Editor.Forms.Editors
 
         private void cmbDefaultCurrency_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.DefaultCurrency = Database.GameObjectIdFromList(GameObject.Item,cmbDefaultCurrency.SelectedIndex);
+            _editorItem.DefaultCurrency = Database.GameObjectIdFromList(GameObject.Item,
+                cmbDefaultCurrency.SelectedIndex);
         }
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
@@ -308,7 +307,8 @@ namespace Intersect_Editor.Forms.Editors
             if (_editorItem != null && lstShops.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("shopeditor", "deleteprompt"),
-                        Strings.Get("shopeditor", "deletetitle"), DarkDialogButton.YesNo,Properties.Resources.Icon) == DialogResult.Yes)
+                        Strings.Get("shopeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -319,7 +319,7 @@ namespace Intersect_Editor.Forms.Editors
         {
             if (_editorItem != null && lstShops.Focused)
             {
-                _copiedItem = _editorItem.GetData();
+                _copiedItem = _editorItem.BinaryData;
                 toolStripItemPaste.Enabled = true;
             }
         }
@@ -338,7 +338,8 @@ namespace Intersect_Editor.Forms.Editors
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("shopeditor", "undoprompt"),
-                        Strings.Get("shopeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                        Strings.Get("shopeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();

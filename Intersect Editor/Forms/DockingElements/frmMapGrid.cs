@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Intersect.Localization;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Maps;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
-using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.DockingElements
 {
@@ -25,7 +18,7 @@ namespace Intersect_Editor.Forms.DockingElements
         private int _posX = 0;
         private int _posY = 0;
         private ToolTip _toolTip = new ToolTip();
-        private Intersect_Editor.Classes.Maps.MapGridItem _toolTipItem;
+        private MapGridItem _toolTipItem;
 
         public frmMapGrid()
         {
@@ -36,13 +29,15 @@ namespace Intersect_Editor.Forms.DockingElements
         private void frmMapGrid_Load(object sender, EventArgs e)
         {
             CreateSwapChain();
-            if (Globals.MapGrid == null) Globals.MapGrid = new MapGrid(linkMapToolStripMenuItem,unlinkMapToolStripMenuItem,recacheMapToolStripMenuItem, contextMenuStrip);
+            if (Globals.MapGrid == null)
+                Globals.MapGrid = new MapGrid(linkMapToolStripMenuItem, unlinkMapToolStripMenuItem,
+                    recacheMapToolStripMenuItem, contextMenuStrip);
             InitLocalization();
         }
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("mapgrid", "title");
+            Text = Strings.Get("mapgrid", "title");
             btnScreenshotWorld.Text = Strings.Get("mapgrid", "screenshotworld");
             btnGridView.Text = Strings.Get("mapgrid", "gridlines");
             btnFetchPreview.Text = Strings.Get("mapgrid", "preview");
@@ -68,13 +63,13 @@ namespace Intersect_Editor.Forms.DockingElements
                 }
                 if (EditorGraphics.GetGraphicsDevice() != null)
                 {
-                    if (this.pnlMapGrid.Width > 0 && this.pnlMapGrid.Height > 0)
+                    if (pnlMapGrid.Width > 0 && pnlMapGrid.Height > 0)
                     {
-                        if (this.pnlMapGrid.Width > 0 && this.pnlMapGrid.Height > 0)
+                        if (pnlMapGrid.Width > 0 && pnlMapGrid.Height > 0)
                         {
                             _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(),
-                                this.pnlMapGrid.Handle,
-                                this.pnlMapGrid.Width, this.pnlMapGrid.Height, false, SurfaceFormat.Color,
+                                pnlMapGrid.Handle,
+                                pnlMapGrid.Width, pnlMapGrid.Height, false, SurfaceFormat.Color,
                                 DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
                             EditorGraphics.SetMapGridChain(_chain);
                         }
@@ -93,10 +88,9 @@ namespace Intersect_Editor.Forms.DockingElements
             CreateSwapChain();
         }
 
-
-        private void PnlMapGrid_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void PnlMapGrid_MouseWheel(object sender, MouseEventArgs e)
         {
-            Globals.MapGrid.ZoomIn(e.Delta, e.X,e.Y);
+            Globals.MapGrid.ZoomIn(e.Delta, e.X, e.Y);
         }
 
         private void pnlMapGrid_MouseMove(object sender, MouseEventArgs e)
@@ -105,7 +99,7 @@ namespace Intersect_Editor.Forms.DockingElements
             _posY = e.Y;
             if (_dragging)
             {
-                Globals.MapGrid.Move(_dragX-e.X, _dragY-e.Y);
+                Globals.MapGrid.Move(_dragX - e.X, _dragY - e.Y);
                 _dragX = e.X;
                 _dragY = e.Y;
             }
@@ -129,14 +123,15 @@ namespace Intersect_Editor.Forms.DockingElements
 
         private void pnlMapGrid_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Middle) { 
+            if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Middle)
+            {
                 _dragging = true;
                 _dragX = e.X;
                 _dragY = e.Y;
             }
             else if (e.Button == MouseButtons.Right)
             {
-                Globals.MapGrid.RightClickGrid(e.X, e.Y,pnlMapGrid);
+                Globals.MapGrid.RightClickGrid(e.X, e.Y, pnlMapGrid);
             }
         }
 
@@ -156,7 +151,6 @@ namespace Intersect_Editor.Forms.DockingElements
 
         private void pnlMapGrid_MouseHover(object sender, EventArgs e)
         {
-
         }
 
         private void btnGridView_Click(object sender, EventArgs e)
@@ -188,12 +182,12 @@ namespace Intersect_Editor.Forms.DockingElements
         {
             if (e.KeyCode == Keys.Oemplus || e.KeyCode == Keys.Add)
             {
-                MouseEventArgs args = new MouseEventArgs(MouseButtons.None, 0,_posX, _posY, 120);
+                MouseEventArgs args = new MouseEventArgs(MouseButtons.None, 0, _posX, _posY, 120);
                 PnlMapGrid_MouseWheel(null, args);
             }
             else if (e.KeyCode == Keys.OemMinus || e.KeyCode == Keys.Subtract)
             {
-                MouseEventArgs args = new MouseEventArgs(MouseButtons.None, 0, _posX, _posY, - 120);
+                MouseEventArgs args = new MouseEventArgs(MouseButtons.None, 0, _posX, _posY, -120);
                 PnlMapGrid_MouseWheel(null, args);
             }
             var xDiff = 0;
@@ -216,7 +210,7 @@ namespace Intersect_Editor.Forms.DockingElements
             }
             if (xDiff != 0 || yDiff != 0)
             {
-                Globals.MapGrid.Move(xDiff,yDiff);
+                Globals.MapGrid.Move(xDiff, yDiff);
             }
         }
     }

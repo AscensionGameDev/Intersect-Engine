@@ -1,26 +1,22 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using DarkUI.Controls;
 using DarkUI.Forms;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.Localization;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Forms.Editors;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.Localization;
-
 
 namespace Intersect_Editor.Forms
 {
     public partial class FrmItem : Form
     {
         private List<ItemBase> _changed = new List<ItemBase>();
-        private ItemBase _editorItem = null;
         private byte[] _copiedItem = null;
+        private ItemBase _editorItem = null;
 
         public FrmItem()
         {
@@ -41,9 +37,10 @@ namespace Intersect_Editor.Forms
                     UpdateEditor();
                 }
             }
-            else if (type == GameObject.Class || type == GameObject.Projectile || type == GameObject.Animation || type == GameObject.Spell)
+            else if (type == GameObject.Class || type == GameObject.Projectile || type == GameObject.Animation ||
+                     type == GameObject.Spell)
             {
-                frmItem_Load(null,null);
+                frmItem_Load(null, null);
             }
         }
 
@@ -83,13 +80,13 @@ namespace Intersect_Editor.Forms
         private void frmItem_Load(object sender, EventArgs e)
         {
             cmbPic.Items.Clear();
-            cmbPic.Items.Add(Strings.Get("general","none"));
+            cmbPic.Items.Add(Strings.Get("general", "none"));
 
             string[] itemnames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Item);
             cmbPic.Items.AddRange(itemnames);
 
             cmbAttackAnimation.Items.Clear();
-            cmbAttackAnimation.Items.Add(Strings.Get("general","none"));
+            cmbAttackAnimation.Items.Add(Strings.Get("general", "none"));
             cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             cmbScalingStat.Items.Clear();
             for (int x = 0; x < Options.MaxStats; x++)
@@ -98,18 +95,18 @@ namespace Intersect_Editor.Forms
             }
 
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add(Strings.Get("general","none"));
+            cmbAnimation.Items.Add(Strings.Get("general", "none"));
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             cmbTeachSpell.Items.Clear();
-            cmbTeachSpell.Items.Add(Strings.Get("general","none"));
+            cmbTeachSpell.Items.Add(Strings.Get("general", "none"));
             cmbTeachSpell.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
             cmbEvent.Items.Clear();
-            cmbEvent.Items.Add(Strings.Get("general","none"));
+            cmbEvent.Items.Add(Strings.Get("general", "none"));
             cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObject.CommonEvent));
             cmbMalePaperdoll.Items.Clear();
-            cmbMalePaperdoll.Items.Add(Strings.Get("general","none"));
+            cmbMalePaperdoll.Items.Add(Strings.Get("general", "none"));
             cmbFemalePaperdoll.Items.Clear();
-            cmbFemalePaperdoll.Items.Add(Strings.Get("general","none"));
+            cmbFemalePaperdoll.Items.Add(Strings.Get("general", "none"));
             string[] paperdollnames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Paperdoll);
             for (var i = 0; i < paperdollnames.Length; i++)
             {
@@ -122,7 +119,7 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("itemeditor", "title");
+            Text = Strings.Get("itemeditor", "title");
             toolStripItemNew.Text = Strings.Get("itemeditor", "new");
             toolStripItemDelete.Text = Strings.Get("itemeditor", "delete");
             toolStripItemCopy.Text = Strings.Get("itemeditor", "copy");
@@ -211,7 +208,7 @@ namespace Intersect_Editor.Forms
             cmbEquipmentSlot.Items.Clear();
             cmbEquipmentSlot.Items.AddRange(Options.EquipmentSlots.ToArray());
             cmbToolType.Items.Clear();
-            cmbToolType.Items.Add(Strings.Get("general","none"));
+            cmbToolType.Items.Add(Strings.Get("general", "none"));
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
             cmbEquipmentBonus.Items.Clear();
             for (int i = 0; i < 3; i++)
@@ -219,7 +216,7 @@ namespace Intersect_Editor.Forms
                 cmbEquipmentBonus.Items.Add(Strings.Get("itemeditor", "bonuseffect" + i));
             }
             cmbProjectile.Items.Clear();
-            cmbProjectile.Items.Add(Strings.Get("general","none"));
+            cmbProjectile.Items.Add(Strings.Get("general", "none"));
             cmbProjectile.Items.AddRange(Database.GetGameObjectList(GameObject.Projectile));
         }
 
@@ -251,20 +248,22 @@ namespace Intersect_Editor.Forms
                 }
                 cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
                 cmbToolType.SelectedIndex = _editorItem.Tool + 1;
-                cmbAttackAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.AttackAnimation) + 1;
-                if (_editorItem.ItemType == (int)ItemTypes.Equipment) cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
+                cmbAttackAnimation.SelectedIndex =
+                    Database.GameObjectListIndex(GameObject.Animation, _editorItem.AttackAnimation) + 1;
+                if (_editorItem.ItemType == (int) ItemTypes.Equipment)
+                    cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
                 nudEffectPercent.Value = _editorItem.Data3;
                 chk2Hand.Checked = Convert.ToBoolean(_editorItem.Data4);
                 cmbMalePaperdoll.SelectedIndex = cmbMalePaperdoll.FindString(_editorItem.MalePaperdoll);
                 cmbFemalePaperdoll.SelectedIndex = cmbFemalePaperdoll.FindString(_editorItem.FemalePaperdoll);
-                if (_editorItem.ItemType == (int)ItemTypes.Consumable)
+                if (_editorItem.ItemType == (int) ItemTypes.Consumable)
                 {
                     cmbConsume.SelectedIndex = _editorItem.Data1;
                     nudInterval.Value = _editorItem.Data2;
                 }
                 if (cmbPic.SelectedIndex > 0)
                 {
-                    picItem.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/items/" + cmbPic.Text);
+                    picItem.BackgroundImage = System.Drawing.Image.FromFile("resources/items/" + cmbPic.Text);
                 }
                 else
                 {
@@ -273,7 +272,7 @@ namespace Intersect_Editor.Forms
                 if (cmbMalePaperdoll.SelectedIndex > 0)
                 {
                     picMalePaperdoll.BackgroundImage =
-                        System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
+                        System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
                 }
                 else
                 {
@@ -283,7 +282,7 @@ namespace Intersect_Editor.Forms
                 if (cmbFemalePaperdoll.SelectedIndex > 0)
                 {
                     picFemalePaperdoll.BackgroundImage =
-                        System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
+                        System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
                 }
                 else
                 {
@@ -294,8 +293,10 @@ namespace Intersect_Editor.Forms
                 cmbScalingStat.SelectedIndex = _editorItem.ScalingStat;
 
                 //External References
-                cmbProjectile.SelectedIndex = Database.GameObjectListIndex(GameObject.Projectile, _editorItem.Projectile) + 1;
-                cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation) + 1;
+                cmbProjectile.SelectedIndex =
+                    Database.GameObjectListIndex(GameObject.Projectile, _editorItem.Projectile) + 1;
+                cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation) +
+                                             1;
 
                 if (_changed.IndexOf(_editorItem) == -1)
                 {
@@ -328,31 +329,34 @@ namespace Intersect_Editor.Forms
                 _editorItem.Data4 = 0;
             }
 
-            if (cmbType.SelectedIndex == (int)ItemTypes.Consumable)
+            if (cmbType.SelectedIndex == (int) ItemTypes.Consumable)
             {
                 cmbConsume.SelectedIndex = _editorItem.Data1;
                 nudInterval.Value = _editorItem.Data2;
                 grpConsumable.Visible = true;
             }
-            else if (cmbType.SelectedIndex == (int)ItemTypes.Spell)
+            else if (cmbType.SelectedIndex == (int) ItemTypes.Spell)
             {
-                cmbTeachSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell,_editorItem.Data1) + 1;
+                cmbTeachSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell, _editorItem.Data1) + 1;
                 grpSpell.Visible = true;
             }
-            else if (cmbType.SelectedIndex == (int)ItemTypes.Event)
+            else if (cmbType.SelectedIndex == (int) ItemTypes.Event)
             {
-                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObject.CommonEvent,_editorItem.Data1) + 1;
+                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObject.CommonEvent, _editorItem.Data1) + 1;
                 grpEvent.Visible = true;
             }
-            else if (cmbType.SelectedIndex == (int)ItemTypes.Equipment)
+            else if (cmbType.SelectedIndex == (int) ItemTypes.Equipment)
             {
                 grpEquipment.Visible = true;
                 cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
                 cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
             }
-            else if (cmbType.SelectedIndex == (int)ItemTypes.Bag)
+            else if (cmbType.SelectedIndex == (int) ItemTypes.Bag)
             {
-                if (_editorItem.Data1 < 1) { _editorItem.Data1 = 1; } //Cant have no space or negative space.
+                if (_editorItem.Data1 < 1)
+                {
+                    _editorItem.Data1 = 1;
+                } //Cant have no space or negative space.
                 grpBags.Visible = true;
                 nudBag.Value = _editorItem.Data1;
             }
@@ -363,14 +367,20 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstItems.Items[Database.GameObjectListIndex(GameObject.Item,_editorItem.GetId())] =  txtName.Text;
+            lstItems.Items[Database.GameObjectListIndex(GameObject.Item, _editorItem.Id)] = txtName.Text;
         }
 
         private void cmbPic_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Pic = cmbPic.Text;
-            if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/items/" + cmbPic.Text); }
-            else { picItem.BackgroundImage = null; }
+            if (cmbPic.SelectedIndex > 0)
+            {
+                picItem.BackgroundImage = System.Drawing.Image.FromFile("resources/items/" + cmbPic.Text);
+            }
+            else
+            {
+                picItem.BackgroundImage = null;
+            }
         }
 
         private void cmbConsume_SelectedIndexChanged(object sender, EventArgs e)
@@ -381,8 +391,15 @@ namespace Intersect_Editor.Forms
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.MalePaperdoll = cmbMalePaperdoll.Text;
-            if (cmbMalePaperdoll.SelectedIndex > 0) { picMalePaperdoll.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text); }
-            else { picMalePaperdoll.BackgroundImage = null; }
+            if (cmbMalePaperdoll.SelectedIndex > 0)
+            {
+                picMalePaperdoll.BackgroundImage =
+                    System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
+            }
+            else
+            {
+                picMalePaperdoll.BackgroundImage = null;
+            }
         }
 
         private void txtDesc_TextChanged(object sender, EventArgs e)
@@ -431,8 +448,15 @@ namespace Intersect_Editor.Forms
         private void cmbFemalePaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.FemalePaperdoll = cmbFemalePaperdoll.Text;
-            if (cmbFemalePaperdoll.SelectedIndex > 0) { picFemalePaperdoll.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text); }
-            else { picFemalePaperdoll.BackgroundImage = null; }
+            if (cmbFemalePaperdoll.SelectedIndex > 0)
+            {
+                picFemalePaperdoll.BackgroundImage =
+                    System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
+            }
+            else
+            {
+                picFemalePaperdoll.BackgroundImage = null;
+            }
         }
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
@@ -445,7 +469,8 @@ namespace Intersect_Editor.Forms
             if (_editorItem != null && lstItems.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("itemeditor", "deleteprompt"),
-                        Strings.Get("itemeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                        Strings.Get("itemeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -456,7 +481,7 @@ namespace Intersect_Editor.Forms
         {
             if (_editorItem != null && lstItems.Focused)
             {
-                _copiedItem = _editorItem.GetData();
+                _copiedItem = _editorItem.BinaryData;
                 toolStripItemPaste.Enabled = true;
             }
         }
@@ -475,7 +500,8 @@ namespace Intersect_Editor.Forms
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("itemeditor", "undoprompt"),
-                        Strings.Get("itemeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                        Strings.Get("itemeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();
@@ -535,7 +561,8 @@ namespace Intersect_Editor.Forms
 
         private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.AttackAnimation = Database.GameObjectIdFromList(GameObject.Animation, cmbAttackAnimation.SelectedIndex - 1);
+            _editorItem.AttackAnimation = Database.GameObjectIdFromList(GameObject.Animation,
+                cmbAttackAnimation.SelectedIndex - 1);
         }
 
         private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
@@ -550,18 +577,19 @@ namespace Intersect_Editor.Forms
 
         private void cmbProjectile_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Projectile = Database.GameObjectIdFromList(GameObject.Projectile, cmbProjectile.SelectedIndex - 1);
+            _editorItem.Projectile = Database.GameObjectIdFromList(GameObject.Projectile,
+                cmbProjectile.SelectedIndex - 1);
         }
 
         private void btnEditRequirements_Click(object sender, EventArgs e)
         {
-            var frm = new frmDynamicRequirements(_editorItem.UseReqs, RequirementType.Item );
+            var frm = new frmDynamicRequirements(_editorItem.UseReqs, RequirementType.Item);
             frm.ShowDialog();
         }
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Animation = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex -1);
+            _editorItem.Animation = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex - 1);
         }
 
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
@@ -576,67 +604,67 @@ namespace Intersect_Editor.Forms
 
         private void nudPrice_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Price = (int)nudPrice.Value;
+            _editorItem.Price = (int) nudPrice.Value;
         }
 
         private void nudScaling_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Scaling = (int)nudScaling.Value;
+            _editorItem.Scaling = (int) nudScaling.Value;
         }
 
         private void nudDamage_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Damage = (int)nudDamage.Value;
+            _editorItem.Damage = (int) nudDamage.Value;
         }
 
         private void nudCritChance_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.CritChance = (int)nudCritChance.Value;
+            _editorItem.CritChance = (int) nudCritChance.Value;
         }
 
         private void nudEffectPercent_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Data3 = (int)nudEffectPercent.Value;
+            _editorItem.Data3 = (int) nudEffectPercent.Value;
         }
 
         private void nudRange_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.StatGrowth = (int)nudRange.Value;
+            _editorItem.StatGrowth = (int) nudRange.Value;
         }
 
         private void nudStr_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.StatsGiven[0] = (int)nudStr.Value;
+            _editorItem.StatsGiven[0] = (int) nudStr.Value;
         }
 
         private void nudMag_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.StatsGiven[1] = (int)nudMag.Value;
+            _editorItem.StatsGiven[1] = (int) nudMag.Value;
         }
 
         private void nudDef_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.StatsGiven[2] = (int)nudDef.Value;
+            _editorItem.StatsGiven[2] = (int) nudDef.Value;
         }
 
         private void nudMR_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.StatsGiven[3] = (int)nudMR.Value;
+            _editorItem.StatsGiven[3] = (int) nudMR.Value;
         }
 
         private void nudSpd_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.StatsGiven[4] = (int)nudSpd.Value;
+            _editorItem.StatsGiven[4] = (int) nudSpd.Value;
         }
 
         private void nudBag_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Data1 = (int)nudBag.Value;
+            _editorItem.Data1 = (int) nudBag.Value;
         }
 
         private void nudInterval_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Data2 =(int)nudInterval.Value;
+            _editorItem.Data2 = (int) nudInterval.Value;
         }
 
         private void chkBound_CheckedChanged(object sender, EventArgs e)

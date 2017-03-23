@@ -1,15 +1,15 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.Localization;
+using Intersect.GameObjects.Events;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_GotoLabel : UserControl
     {
-        private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
+        private EventCommand _myCommand;
+
         public EventCommand_GotoLabel(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();

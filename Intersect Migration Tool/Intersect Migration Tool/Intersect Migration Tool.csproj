@@ -62,7 +62,6 @@
     <Compile Include="Database.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_1\Intersect_Convert_Lib\ByteBuffer.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_1\Intersect_Convert_Lib\Color.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_1\Intersect_Convert_Lib\Enums.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_1\Intersect_Convert_Lib\GameObjects\AnimationBase.cs" />
@@ -105,7 +104,6 @@
     <Compile Include="UpgradeInstructions\Upgrade_1\ServerOptions.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_1\Upgrade1.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_2\Intersect_Convert_Lib\AlphanumComparatorFast.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_2\Intersect_Convert_Lib\ByteBuffer.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_2\Intersect_Convert_Lib\Color.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_2\Intersect_Convert_Lib\Enums.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_2\Intersect_Convert_Lib\GameObjects\AnimationBase.cs" />
@@ -149,7 +147,6 @@
     <Compile Include="UpgradeInstructions\Upgrade_2\Upgrade2.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_3\Upgrade3.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_4\Intersect_Convert_Lib\AlphanumComparatorFast.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_4\Intersect_Convert_Lib\ByteBuffer.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_4\Intersect_Convert_Lib\Color.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_4\Intersect_Convert_Lib\Enums.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_4\Intersect_Convert_Lib\GameObjects\AnimationBase.cs" />
@@ -193,7 +190,6 @@
     <Compile Include="UpgradeInstructions\Upgrade_4\ServerOptions.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_4\Upgrade4.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_5\Intersect_Convert_Lib\AlphanumComparatorFast.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_5\Intersect_Convert_Lib\ByteBuffer.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_5\Intersect_Convert_Lib\Color.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_5\Intersect_Convert_Lib\Compression.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_5\Intersect_Convert_Lib\Enums.cs" />
@@ -239,7 +235,6 @@
     <Compile Include="UpgradeInstructions\Upgrade_5\ServerOptions.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_5\Upgrade5.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_6\Intersect_Convert_Lib\AlphanumComparatorFast.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_6\Intersect_Convert_Lib\ByteBuffer.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_6\Intersect_Convert_Lib\Color.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_6\Intersect_Convert_Lib\Compression.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_6\Intersect_Convert_Lib\Enums.cs" />
@@ -285,7 +280,6 @@
     <Compile Include="UpgradeInstructions\Upgrade_6\ServerOptions.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_6\Upgrade6.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\AlphanumComparatorFast.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\ByteBuffer.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Color.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Compression.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Enums.cs" />
@@ -329,11 +323,6 @@
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\GameObjects\Switches and Variables\ServerVariableBase.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\GameObjects\TilesetBase.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\GameObjects\TimeBase.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Logging\FileOutput.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Logging\ILogOutput.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Logging\Log.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Logging\Logger.cs" />
-    <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Logging\LogLevel.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Options.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\Point.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_7\Intersect_Convert_Lib\TextUtils.cs" />

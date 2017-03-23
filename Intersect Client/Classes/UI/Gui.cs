@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
@@ -16,7 +15,6 @@ namespace Intersect_Client.Classes.UI
 {
     public static class Gui
     {
-
         //GWEN GUI
         public static bool GwenInitialized = false;
         public static InputBase GwenInput;
@@ -36,21 +34,29 @@ namespace Intersect_Client.Classes.UI
         public static List<IntersectClientExtras.Gwen.Control.Base> InputBlockingElements;
 
         #region "Gwen Setup and Input"
+
         //Gwen Low Level Functions
         public static void InitGwen()
         {
             //TODO: Make it easier to modify skin.
-            _gwenSkin = new TexturedBase(GwenRenderer, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,"defaultskin.png"));
-            _gwenSkin.DefaultFont = Globals.ContentManager.GetFont(Gui.DefaultFont,10);
-
-            var _gameSkin = new TexturedBase(GwenRenderer, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"));
-            _gameSkin.DefaultFont = Globals.ContentManager.GetFont(Gui.DefaultFont,10);
-
+            _gwenSkin = new TexturedBase(GwenRenderer,
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
+            {
+                DefaultFont = Globals.ContentManager.GetFont(DefaultFont, 10)
+            };
+            var _gameSkin = new TexturedBase(GwenRenderer,
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
+            {
+                DefaultFont = Globals.ContentManager.GetFont(DefaultFont, 10)
+            };
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)
-            _menuCanvas = new Canvas(_gwenSkin);
-            _menuCanvas.Scale =  1f;//(GameGraphics.Renderer.GetScreenWidth()/1920f);
-            _menuCanvas.SetSize((int)(GameGraphics.Renderer.GetScreenWidth() / _menuCanvas.Scale), (int)(GameGraphics.Renderer.GetScreenHeight() / _menuCanvas.Scale));
+            _menuCanvas = new Canvas(_gwenSkin)
+            {
+                Scale = 1f //(GameGraphics.Renderer.GetScreenWidth()/1920f);
+            };
+            _menuCanvas.SetSize((int) (GameGraphics.Renderer.GetScreenWidth() / _menuCanvas.Scale),
+                (int) (GameGraphics.Renderer.GetScreenHeight() / _menuCanvas.Scale));
             _menuCanvas.ShouldDrawBackground = false;
             _menuCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
             _menuCanvas.KeyboardInputEnabled = true;
@@ -58,7 +64,8 @@ namespace Intersect_Client.Classes.UI
             // Create the game Canvas (it's root, on which all other GWEN controls are created)
             _gameCanvas = new Canvas(_gameSkin);
             //_gameCanvas.Scale = (GameGraphics.Renderer.GetScreenWidth() / 1920f);
-            _gameCanvas.SetSize((int)(GameGraphics.Renderer.GetScreenWidth() / _gameCanvas.Scale), (int)(GameGraphics.Renderer.GetScreenHeight() / _gameCanvas.Scale));
+            _gameCanvas.SetSize((int) (GameGraphics.Renderer.GetScreenWidth() / _gameCanvas.Scale),
+                (int) (GameGraphics.Renderer.GetScreenHeight() / _gameCanvas.Scale));
             _gameCanvas.ShouldDrawBackground = false;
             _gameCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
             _gameCanvas.KeyboardInputEnabled = true;
@@ -87,6 +94,7 @@ namespace Intersect_Client.Classes.UI
 
             GwenInitialized = true;
         }
+
         public static void DestroyGwen()
         {
             //The canvases dispose of all of their children.
@@ -119,13 +127,15 @@ namespace Intersect_Client.Classes.UI
             }
             return false;
         }
+
         #endregion
 
         #region "GUI Functions"
+
         //Actual Drawing Function
         public static void DrawGui()
         {
-            if (!Gui.GwenInitialized) Gui.InitGwen();
+            if (!GwenInitialized) InitGwen();
             ErrorMsgHandler.Update();
             _gameCanvas.RestrictToParent = false;
             if (Globals.GameState == GameStates.Menu)
@@ -149,6 +159,7 @@ namespace Intersect_Client.Classes.UI
             }
             return false;
         }
+
         public static bool MouseHitBase(IntersectClientExtras.Gwen.Control.Base obj)
         {
             if (obj.IsHidden == true)
@@ -157,15 +168,16 @@ namespace Intersect_Client.Classes.UI
             }
             else
             {
-                FloatRect rect = new FloatRect(obj.LocalPosToCanvas(new Point(0, 0)).X, obj.LocalPosToCanvas(new Point(0, 0)).Y, obj.Width, obj.Height);
+                FloatRect rect = new FloatRect(obj.LocalPosToCanvas(new Point(0, 0)).X,
+                    obj.LocalPosToCanvas(new Point(0, 0)).Y, obj.Width, obj.Height);
                 if (rect.Contains(InputHandler.MousePosition.X, InputHandler.MousePosition.Y))
                 {
                     return true;
                 }
-
             }
             return false;
         }
+
         public static string[] WrapText(string input, int width, GameFont font)
         {
             var myOutput = new List<string>();
@@ -191,7 +203,7 @@ namespace Intersect_Client.Classes.UI
                 else
                 {
                     myOutput.Add(input.Substring(curPos, lastSpace).Trim());
-                    if (lastSpace == 0) lastSpace = curLen-1;
+                    if (lastSpace == 0) lastSpace = curLen - 1;
                     curPos = curPos + lastSpace;
                     curLen = 1;
                 }
@@ -200,7 +212,7 @@ namespace Intersect_Client.Classes.UI
             myOutput.Add(input.Substring(curPos, input.Length - curPos).Trim());
             return myOutput.ToArray();
         }
-        #endregion
 
+        #endregion
     }
 }

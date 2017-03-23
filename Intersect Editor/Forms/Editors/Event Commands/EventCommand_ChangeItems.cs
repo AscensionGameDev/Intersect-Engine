@@ -1,19 +1,18 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
-using DarkUI.Controls;
+using Intersect;
+using Intersect.GameObjects.Events;
+using Intersect.Localization;
 using Intersect_Editor.Classes;
-using Intersect_Library;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_ChangeItems : UserControl
     {
-        private EventCommand _myCommand;
-        private EventPage _currentPage;
         private readonly FrmEvent _eventEditor;
+        private EventPage _currentPage;
+        private EventCommand _myCommand;
+
         public EventCommand_ChangeItems(EventCommand refCommand, EventPage refPage, FrmEvent editor)
         {
             InitializeComponent();
@@ -24,7 +23,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             cmbItem.Items.Clear();
             cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
             cmbAction.SelectedIndex = _myCommand.Ints[0];
-            cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item,_myCommand.Ints[1]);
+            cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _myCommand.Ints[1]);
             if (_myCommand.Ints[2] < 1)
             {
                 nudGiveTakeAmount.Value = 1;
@@ -33,7 +32,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 nudGiveTakeAmount.Value = _myCommand.Ints[2];
             }
-            lblAmount.Text = Strings.Get("eventchangeitems","amount");
+            lblAmount.Text = Strings.Get("eventchangeitems", "amount");
         }
 
         private void InitLocalization()
@@ -52,10 +51,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             _myCommand.Ints[0] = cmbAction.SelectedIndex;
-            _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Item,cmbItem.SelectedIndex);
-            _myCommand.Ints[2] = (int)nudGiveTakeAmount.Value;
+            _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Item, cmbItem.SelectedIndex);
+            _myCommand.Ints[2] = (int) nudGiveTakeAmount.Value;
             if (_myCommand.Ints[4] == 0)
-            // command.Ints[4, and 5] are reserved for when the action succeeds or fails
+                // command.Ints[4, and 5] are reserved for when the action succeeds or fails
             {
                 for (var i = 0; i < 2; i++)
                 {

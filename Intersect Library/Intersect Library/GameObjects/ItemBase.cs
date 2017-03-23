@@ -1,44 +1,44 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Intersect_Library.GameObjects.Conditions;
+using Intersect.GameObjects.Conditions;
 
-namespace Intersect_Library.GameObjects
+namespace Intersect.GameObjects
 {
-    public class ItemBase : DatabaseObject
+    public class ItemBase : DatabaseObject<ItemBase>
     {
-        public new const string DatabaseTable = "items";
-        public new const GameObject Type = GameObject.Item;
+        public new const string DATABASE_TABLE = "items";
+        public new const GameObject OBJECT_TYPE = GameObject.Item;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
-        public string Name = "New Item";
-        public string Desc = "";
-        public int ItemType;
-        public string Pic = "";
-        public int Price;
-        public int Bound;
-        public int Stackable;
         public int Animation;
-        public int Projectile = -1;
-        public ConditionLists UseReqs = new ConditionLists();
-        public int[] StatsGiven;
-        public int StatGrowth;
-        public int Damage;
-        public int CritChance;
-        public int DamageType;
-        public int ScalingStat;
-        public int Scaling;
         public int AttackAnimation = -1;
-        public int Speed;
-        public string MalePaperdoll = "";
-        public string FemalePaperdoll = "";
-        public int Tool = -1;
+        public int Bound;
+        public int CritChance;
+        public int Damage;
+        public int DamageType;
         public int Data1;
         public int Data2;
         public int Data3;
         public int Data4;
 
+        public string Desc = "";
+        public string FemalePaperdoll = "";
+        public int ItemType;
+        public string MalePaperdoll = "";
+        public string Pic = "";
+        public int Price;
+        public int Projectile = -1;
+        public int Scaling;
+        public int ScalingStat;
+        public int Speed;
+        public int Stackable;
+        public int StatGrowth;
+        public int[] StatsGiven;
+        public int Tool = -1;
+        public ConditionLists UseReqs = new ConditionLists();
+
         public ItemBase(int id) : base(id)
         {
+            Name = "New Item";
             Speed = 10; // Set to 10 by default.
             StatsGiven = new int[Options.MaxStats];
         }
@@ -123,7 +123,7 @@ namespace Intersect_Library.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return (ItemBase)Objects[index];
+                return (ItemBase) Objects[index];
             }
             return null;
         }
@@ -132,7 +132,7 @@ namespace Intersect_Library.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return ((ItemBase)Objects[index]).Name;
+                return ((ItemBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -146,19 +146,16 @@ namespace Intersect_Library.GameObjects
                     ItemType == (int) ItemTypes.Spell) && Stackable > 0;
         }
 
-        public override byte[] GetData()
+        public override byte[] BinaryData => ItemData();
+
+        public override string DatabaseTableName
         {
-            return ItemData();
+            get { return DATABASE_TABLE; }
         }
 
-        public override string GetTable()
+        public override GameObject GameObjectType
         {
-            return DatabaseTable;
-        }
-
-        public override GameObject GetGameObjectType()
-        {
-            return Type;
+            get { return OBJECT_TYPE; }
         }
 
         public static DatabaseObject Get(int index)
@@ -169,28 +166,32 @@ namespace Intersect_Library.GameObjects
             }
             return null;
         }
+
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, ItemBase> GetObjects()
         {
-            Dictionary<int, ItemBase> objects = Objects.ToDictionary(k => k.Key, v => (ItemBase)v.Value);
+            Dictionary<int, ItemBase> objects = Objects.ToDictionary(k => k.Key, v => (ItemBase) v.Value);
             return objects;
         }
     }
 }
-

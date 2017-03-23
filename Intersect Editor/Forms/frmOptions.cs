@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Intersect.Localization;
 using Intersect_Editor.Classes.Core;
-using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -37,7 +30,7 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("options", "title");
+            Text = Strings.Get("options", "title");
             btnTileHeader.Text = Strings.Get("options", "generalbtn", Application.ProductVersion);
             chkSuppressTilesetWarning.Text = Strings.Get("options", "tilesetwarning");
             grpClientPath.Text = Strings.Get("options", "pathgroup");
@@ -47,22 +40,22 @@ namespace Intersect_Editor.Forms
         private void frmOptions_FormClosing(object sender, FormClosingEventArgs e)
         {
             Preferences.SavePreference("SuppressTextureWarning", chkSuppressTilesetWarning.Checked.ToString());
-            Preferences.SavePreference("ClientPath",txtGamePath.Text);
+            Preferences.SavePreference("ClientPath", txtGamePath.Text);
         }
 
         private void btnBrowseClient_Click(object sender, EventArgs e)
         {
-            OpenFileDialog dialogue = new OpenFileDialog();
-
-            dialogue.Title = Strings.Get("options","dialogueheader");
-            dialogue.CheckFileExists = true;
-            dialogue.CheckPathExists = true;
-            dialogue.DefaultExt = "exe";
-            dialogue.Filter = "(*.exe)|*.exe|" + Strings.Get("options","dialogueallfiles") + "(*.*)|*.*";
-            dialogue.RestoreDirectory = true;
-            dialogue.ReadOnlyChecked = true;
-            dialogue.ShowReadOnly = true;
-
+            OpenFileDialog dialogue = new OpenFileDialog()
+            {
+                Title = Strings.Get("options", "dialogueheader"),
+                CheckFileExists = true,
+                CheckPathExists = true,
+                DefaultExt = "exe",
+                Filter = "(*.exe)|*.exe|" + Strings.Get("options", "dialogueallfiles") + "(*.*)|*.*",
+                RestoreDirectory = true,
+                ReadOnlyChecked = true,
+                ShowReadOnly = true
+            };
             if (dialogue.ShowDialog() == DialogResult.OK)
             {
                 txtGamePath.Text = dialogue.FileName;
@@ -71,7 +64,6 @@ namespace Intersect_Editor.Forms
 
         private void chkSuppressTilesetWarning_CheckedChanged(object sender, EventArgs e)
         {
-
         }
     }
 }

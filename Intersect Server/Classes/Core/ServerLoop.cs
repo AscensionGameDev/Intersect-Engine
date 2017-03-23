@@ -1,7 +1,4 @@
-﻿
-
-using System;
-using System.Threading;
+﻿using System.Threading;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
@@ -29,7 +26,10 @@ namespace Intersect_Server.Classes.Core
                     cpsTimer = Globals.System.GetTimeMs() + 1000;
                 }
                 ServerTime.Update();
-                if (Globals.CPSLock) { Thread.Sleep(10); }
+                if (Globals.CPSLock)
+                {
+                    Thread.Sleep(10);
+                }
             }
 
             //Server is shutting down!!

@@ -1,27 +1,26 @@
-
 #define websockets
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using Intersect_Library;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.Localization;
+using Intersect.Logging;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
-using Intersect_Library.Logging;
 
 namespace Intersect_Server.Classes
 {
     public class MainClass
     {
         private static bool _errorHalt = true;
+
         public static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve; ;
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             Thread logicThread;
             if (!ServerOptions.LoadOptions())
             {
@@ -97,12 +96,15 @@ namespace Intersect_Server.Classes
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                Strings.Get("commands", "commandinfo")));
                         }
                     }
                     else if (commandsplit[0] == Strings.Get("commands", "onlinelist")) //Online List Command
                     {
-                        Console.WriteLine(String.Format("{0,-10}", Strings.Get("commandoutput", "listid")) + String.Format("{0,-28}", Strings.Get("commandoutput", "listaccount")) + String.Format("{0,-28}", Strings.Get("commandoutput", "listcharacter")));
+                        Console.WriteLine(String.Format("{0,-10}", Strings.Get("commandoutput", "listid")) +
+                                          String.Format("{0,-28}", Strings.Get("commandoutput", "listaccount")) +
+                                          String.Format("{0,-28}", Strings.Get("commandoutput", "listcharacter")));
                         Console.WriteLine(new String('-', 66));
                         for (int i = 0; i < Globals.Clients.Count; i++)
                         {
@@ -155,7 +157,8 @@ namespace Intersect_Server.Classes
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                Strings.Get("commands", "commandinfo")));
                         }
                     }
                     else if (commandsplit[0] == Strings.Get("commands", "kick")) //Kick Command
@@ -197,7 +200,8 @@ namespace Intersect_Server.Classes
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                Strings.Get("commands", "commandinfo")));
                         }
                     }
                     else if (commandsplit[0] == Strings.Get("commands", "unban")) //Unban Command
@@ -226,7 +230,8 @@ namespace Intersect_Server.Classes
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                Strings.Get("commands", "commandinfo")));
                         }
                     }
                     else if (commandsplit[0] == Strings.Get("commands", "ban")) //Ban Command
@@ -237,7 +242,8 @@ namespace Intersect_Server.Classes
                             {
                                 Console.WriteLine(@"    " +
                                                   Strings.Get("commands", "banusage",
-                                                      Strings.Get("commands", "true"), Strings.Get("commands", "false"), Strings.Get("commands", "commandinfo")));
+                                                      Strings.Get("commands", "true"), Strings.Get("commands", "false"),
+                                                      Strings.Get("commands", "commandinfo")));
                                 Console.WriteLine(@"    " + Strings.Get("commands", "bandesc"));
                             }
                             else
@@ -260,10 +266,14 @@ namespace Intersect_Server.Classes
                                                 {
                                                     ip = Globals.Clients[i].GetIP();
                                                 }
-                                                Database.AddBan(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason,
+                                                Database.AddBan(Globals.Clients[i], Convert.ToInt32(commandsplit[2]),
+                                                    reason,
                                                     Strings.Get("commands", "banuser"), ip);
-                                                PacketSender.SendGlobalMsg(Strings.Get("account", "banned", Globals.Clients[i].Entity.MyName));
-                                                Console.WriteLine(@"    " + Strings.Get("account", "banned", Globals.Clients[i].Entity.MyName));
+                                                PacketSender.SendGlobalMsg(Strings.Get("account", "banned",
+                                                    Globals.Clients[i].Entity.MyName));
+                                                Console.WriteLine(@"    " +
+                                                                  Strings.Get("account", "banned",
+                                                                      Globals.Clients[i].Entity.MyName));
                                                 Globals.Clients[i].Disconnect(); //Kick em'
                                                 userFound = true;
                                                 break;
@@ -284,7 +294,8 @@ namespace Intersect_Server.Classes
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                Strings.Get("commands", "commandinfo")));
                         }
                     }
                     else if (commandsplit[0] == Strings.Get("commands", "unmute")) //Unmute Command
@@ -310,8 +321,11 @@ namespace Intersect_Server.Classes
                                             Database.DeleteMute(Globals.Clients[i].MyAccount);
                                             Globals.Clients[i].Muted = false;
                                             Globals.Clients[i].MuteReason = "";
-                                            PacketSender.SendGlobalMsg(Strings.Get("account", "unmuted", Globals.Clients[i].Entity.MyName));
-                                            Console.WriteLine(@"    " + Strings.Get("account", "unmuted", Globals.Clients[i].Entity.MyName));
+                                            PacketSender.SendGlobalMsg(Strings.Get("account", "unmuted",
+                                                Globals.Clients[i].Entity.MyName));
+                                            Console.WriteLine(@"    " +
+                                                              Strings.Get("account", "unmuted",
+                                                                  Globals.Clients[i].Entity.MyName));
                                             userFound = true;
                                             break;
                                         }
@@ -325,7 +339,8 @@ namespace Intersect_Server.Classes
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                Strings.Get("commands", "commandinfo")));
                         }
                     }
                     else if (commandsplit[0] == Strings.Get("commands", "mute")) //Mute Command
@@ -336,7 +351,8 @@ namespace Intersect_Server.Classes
                             {
                                 Console.WriteLine(@"    " +
                                                   Strings.Get("commands", "muteusage",
-                                                      Strings.Get("commands", "true"), Strings.Get("commands", "false"), Strings.Get("commands", "commandinfo")));
+                                                      Strings.Get("commands", "true"), Strings.Get("commands", "false"),
+                                                      Strings.Get("commands", "commandinfo")));
                                 Console.WriteLine(@"    " + Strings.Get("commands", "mutedesc"));
                             }
                             else
@@ -359,11 +375,17 @@ namespace Intersect_Server.Classes
                                                 {
                                                     ip = Globals.Clients[i].GetIP();
                                                 }
-                                                Database.AddMute(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason, Strings.Get("commands", "muteuser"), ip);
+                                                Database.AddMute(Globals.Clients[i], Convert.ToInt32(commandsplit[2]),
+                                                    reason, Strings.Get("commands", "muteuser"), ip);
                                                 Globals.Clients[i].Muted = true; //Cut out their tongues!
-                                                Globals.Clients[i].MuteReason = Database.CheckMute(Globals.Clients[i].MyAccount, Globals.Clients[i].GetIP());
-                                                PacketSender.SendGlobalMsg(Strings.Get("account", "muted", Globals.Clients[i].Entity.MyName));
-                                                Console.WriteLine(@"    " + Strings.Get("account", "muted", Globals.Clients[i].Entity.MyName));
+                                                Globals.Clients[i].MuteReason =
+                                                    Database.CheckMute(Globals.Clients[i].MyAccount,
+                                                        Globals.Clients[i].GetIP());
+                                                PacketSender.SendGlobalMsg(Strings.Get("account", "muted",
+                                                    Globals.Clients[i].Entity.MyName));
+                                                Console.WriteLine(@"    " +
+                                                                  Strings.Get("account", "muted",
+                                                                      Globals.Clients[i].Entity.MyName));
                                                 userFound = true;
                                                 break;
                                             }
@@ -383,7 +405,8 @@ namespace Intersect_Server.Classes
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                Strings.Get("commands", "commandinfo")));
                         }
                     }
                     else if (commandsplit[0] == Strings.Get("commands", "power")) //Power Command
@@ -421,7 +444,9 @@ namespace Intersect_Server.Classes
                                                     PacketSender.SendGlobalMsg(Strings.Get("player", "deadmin",
                                                         Globals.Clients[i].Entity.MyName));
                                                 }
-                                                Console.WriteLine(@"    " + Strings.Get("commandoutput", "powerchanged", Globals.Clients[i].Entity.MyName));
+                                                Console.WriteLine(@"    " +
+                                                                  Strings.Get("commandoutput", "powerchanged",
+                                                                      Globals.Clients[i].Entity.MyName));
 
                                                 userFound = true;
                                                 break;
@@ -442,7 +467,8 @@ namespace Intersect_Server.Classes
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                Strings.Get("commands", "commandinfo")));
                         }
                     }
                     else if (commandsplit[0] == Strings.Get("commands", "poweracc")) //Power Account Command
@@ -467,21 +493,28 @@ namespace Intersect_Server.Classes
                                             if (Database.AccountExists(commandsplit[1]))
                                             {
                                                 Database.SetPlayerPower(commandsplit[1], Int32.Parse(commandsplit[2]));
-                                                Console.WriteLine(@"    " + Strings.Get("commandoutput", "powerchanged", commandsplit[1]));
+                                                Console.WriteLine(@"    " +
+                                                                  Strings.Get("commandoutput", "powerchanged",
+                                                                      commandsplit[1]));
                                             }
                                             else
                                             {
-                                                Console.WriteLine(@"    " + Strings.Get("account", "notfound", commandsplit[1]));
+                                                Console.WriteLine(@"    " +
+                                                                  Strings.Get("account", "notfound", commandsplit[1]));
                                             }
                                         }
                                         catch (Exception)
                                         {
-                                            Console.WriteLine(@"    " + Strings.Get("commandoutput", "parseerror", commandsplit[0], Strings.Get("commands", "commandinfo")));
+                                            Console.WriteLine(@"    " +
+                                                              Strings.Get("commandoutput", "parseerror", commandsplit[0],
+                                                                  Strings.Get("commands", "commandinfo")));
                                         }
                                     }
                                     else
                                     {
-                                        Console.WriteLine(@"    " + Strings.Get("commandoutput", "syntaxerror", commandsplit[0], Strings.Get("commands", "commandinfo")));
+                                        Console.WriteLine(@"    " +
+                                                          Strings.Get("commandoutput", "syntaxerror", commandsplit[0],
+                                                              Strings.Get("commands", "commandinfo")));
                                     }
                                 }
                                 else
@@ -493,7 +526,8 @@ namespace Intersect_Server.Classes
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                Strings.Get("commands", "commandinfo")));
                         }
                     }
                     else if (commandsplit[0] == Strings.Get("commands", "cps")) //CPS Command
@@ -529,7 +563,7 @@ namespace Intersect_Server.Classes
                             else
                             {
                                 Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
-                                        Strings.Get("commands", "commandinfo")));
+                                    Strings.Get("commands", "commandinfo")));
                             }
                         }
                         else
@@ -551,7 +585,7 @@ namespace Intersect_Server.Classes
                             else
                             {
                                 Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
-                                        Strings.Get("commands", "commandinfo")));
+                                    Strings.Get("commands", "commandinfo")));
                             }
                         }
                         else
@@ -574,26 +608,42 @@ namespace Intersect_Server.Classes
                             else
                             {
                                 Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
-                                        Strings.Get("commands", "commandinfo")));
+                                    Strings.Get("commands", "commandinfo")));
                             }
                         }
                         else
                         {
                             Console.WriteLine(@"    " + Strings.Get("commandoutput", "helpheader"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "help")) + " - " + Strings.Get("commands", "helphelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "exit")) + " - " + Strings.Get("commands", "exithelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "announcement")) + " - " + Strings.Get("commands", "announcementhelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "cps")) + " - " + Strings.Get("commands", "cpshelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "power")) + " - " + Strings.Get("commands", "powerhelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "poweracc")) + " - " + Strings.Get("commands", "poweracchelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "onlinelist")) + " - " + Strings.Get("commands", "onlinelisthelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "kick")) + " - " + Strings.Get("commands", "kickhelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "ban")) + " - " + Strings.Get("commands", "banhelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "unban")) + " - " + Strings.Get("commands", "unbanhelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "mute")) + " - " + Strings.Get("commands", "mutehelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "unmute")) + " - " + Strings.Get("commands", "unmutehelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "kill")) + " - " + Strings.Get("commands", "killhelp"));
-                            Console.WriteLine(@"    " + Strings.Get("commandoutput", "helpfooter", Strings.Get("commands", "commandinfo")));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "help")) +
+                                              " - " + Strings.Get("commands", "helphelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "exit")) +
+                                              " - " + Strings.Get("commands", "exithelp"));
+                            Console.WriteLine(@"    " +
+                                              String.Format("{0,-20}", Strings.Get("commands", "announcement")) + " - " +
+                                              Strings.Get("commands", "announcementhelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "cps")) + " - " +
+                                              Strings.Get("commands", "cpshelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "power")) +
+                                              " - " + Strings.Get("commands", "powerhelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "poweracc")) +
+                                              " - " + Strings.Get("commands", "poweracchelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "onlinelist")) +
+                                              " - " + Strings.Get("commands", "onlinelisthelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "kick")) +
+                                              " - " + Strings.Get("commands", "kickhelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "ban")) + " - " +
+                                              Strings.Get("commands", "banhelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "unban")) +
+                                              " - " + Strings.Get("commands", "unbanhelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "mute")) +
+                                              " - " + Strings.Get("commands", "mutehelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "unmute")) +
+                                              " - " + Strings.Get("commands", "unmutehelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "kill")) +
+                                              " - " + Strings.Get("commands", "killhelp"));
+                            Console.WriteLine(@"    " +
+                                              Strings.Get("commandoutput", "helpfooter",
+                                                  Strings.Get("commands", "commandinfo")));
                         }
                     }
                     else
@@ -606,12 +656,13 @@ namespace Intersect_Server.Classes
             }
         }
 
-
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             string archSpecificPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
-                    Environment.Is64BitProcess ? Path.Combine("libs", "server", "x64") : Path.Combine("libs", "server", "x86"),
-                    "Mono.Data.Sqlite.dll");
+                Environment.Is64BitProcess
+                    ? Path.Combine("libs", "server", "x64")
+                    : Path.Combine("libs", "server", "x86"),
+                "Mono.Data.Sqlite.dll");
             if (File.Exists(archSpecificPath))
             {
                 return Assembly.LoadFile(archSpecificPath);
@@ -622,11 +673,10 @@ namespace Intersect_Server.Classes
             }
         }
 
-
         //Really basic error handler for debugging purposes
         public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Log.Error((Exception)e.ExceptionObject);
+            Log.Error((Exception) e.ExceptionObject);
             if (e.IsTerminating)
             {
                 if (_errorHalt)

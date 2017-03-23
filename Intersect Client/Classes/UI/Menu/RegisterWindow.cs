@@ -1,4 +1,5 @@
 ﻿using System;
+using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
@@ -8,36 +9,35 @@ using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Misc;
 using Intersect_Client.Classes.Networking;
-using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
     public class RegisterWindow
     {
-        //Controls
-        private ImagePanel _menuPanel;
-        private Label _menuHeader;
-
-        private ImagePanel _usernameBackground;
-        private Label _usernameLabel;
-        private TextBox _usernameTextbox;
+        private Button _backBtn;
 
         private ImagePanel _emailBackground;
         private Label _emailLabel;
         private TextBox _emailTextbox;
 
-        private ImagePanel _passwordBackground;
-        private Label _passwordLabel;
-        private TextBoxPassword _passwordTextbox;
-
-        private ImagePanel _passwordBackground2;
-        private Label _passwordLabel2;
-        private TextBoxPassword _passwordTextbox2;
-        private Button _registerBtn;
-        private Button _backBtn;
-
         //Parent
         private MainMenu _mainMenu;
+        private Label _menuHeader;
+        //Controls
+        private ImagePanel _menuPanel;
+
+        private ImagePanel _passwordBackground;
+
+        private ImagePanel _passwordBackground2;
+        private Label _passwordLabel;
+        private Label _passwordLabel2;
+        private TextBoxPassword _passwordTextbox;
+        private TextBoxPassword _passwordTextbox2;
+        private Button _registerBtn;
+
+        private ImagePanel _usernameBackground;
+        private Label _usernameLabel;
+        private TextBox _usernameTextbox;
 
         //Init
         public RegisterWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
@@ -46,24 +46,30 @@ namespace Intersect_Client.Classes.UI.Menu
             _mainMenu = mainMenu;
 
             //Main Menu Window
-            _menuPanel = new ImagePanel(parent);
-            _menuPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png");
+            _menuPanel = new ImagePanel(parent)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png")
+            };
             _menuPanel.SetSize(512, 393);
             _menuPanel.SetPosition(parentPanel.X, parentPanel.Y);
             _menuPanel.IsHidden = true;
 
             //Menu Header
-            _menuHeader = new Label(_menuPanel);
-            _menuHeader.AutoSizeToContents = false;
-            _menuHeader.SetText(Strings.Get("registration","title"));
+            _menuHeader = new Label(_menuPanel)
+            {
+                AutoSizeToContents = false
+            };
+            _menuHeader.SetText(Strings.Get("registration", "title"));
             _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Alignment = Pos.CenterH;
             _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
 
             //Register Username Background
-            _usernameBackground = new ImagePanel(_menuPanel);
-            _usernameBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png");
+            _usernameBackground = new ImagePanel(_menuPanel)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
+            };
             _usernameBackground.SetSize(_usernameBackground.Texture.GetWidth(), _usernameBackground.Texture.GetHeight());
             _usernameBackground.SetPosition(_menuPanel.Width / 2 - _usernameBackground.Width / 2, 44);
 
@@ -86,10 +92,13 @@ namespace Intersect_Client.Classes.UI.Menu
             _usernameTextbox.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
             //Register Email Background
-            _emailBackground = new ImagePanel(_menuPanel);
-            _emailBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png");
+            _emailBackground = new ImagePanel(_menuPanel)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
+            };
             _emailBackground.SetSize(_emailBackground.Texture.GetWidth(), _emailBackground.Texture.GetHeight());
-            _emailBackground.SetPosition(_menuPanel.Width / 2 - _emailBackground.Width / 2, _usernameBackground.Bottom + 16);
+            _emailBackground.SetPosition(_menuPanel.Width / 2 - _emailBackground.Width / 2,
+                _usernameBackground.Bottom + 16);
 
             //Register Email Label
             _emailLabel = new Label(_emailBackground);
@@ -110,10 +119,13 @@ namespace Intersect_Client.Classes.UI.Menu
             _emailTextbox.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
             //Register Password Background
-            _passwordBackground = new ImagePanel(_menuPanel);
-            _passwordBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png");
+            _passwordBackground = new ImagePanel(_menuPanel)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
+            };
             _passwordBackground.SetSize(_passwordBackground.Texture.GetWidth(), _passwordBackground.Texture.GetHeight());
-            _passwordBackground.SetPosition(_menuPanel.Width / 2 - _passwordBackground.Width / 2, _emailBackground.Bottom + 16);
+            _passwordBackground.SetPosition(_menuPanel.Width / 2 - _passwordBackground.Width / 2,
+                _emailBackground.Bottom + 16);
 
             //Register Password Label
             _passwordLabel = new Label(_passwordBackground);
@@ -134,10 +146,14 @@ namespace Intersect_Client.Classes.UI.Menu
             _passwordTextbox.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
             //Register Password Background
-            _passwordBackground2 = new ImagePanel(_menuPanel);
-            _passwordBackground2.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png");
-            _passwordBackground2.SetSize(_passwordBackground2.Texture.GetWidth(), _passwordBackground2.Texture.GetHeight());
-            _passwordBackground2.SetPosition(_menuPanel.Width / 2 - _passwordBackground2.Width / 2, _passwordBackground.Bottom + 16);
+            _passwordBackground2 = new ImagePanel(_menuPanel)
+            {
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
+            };
+            _passwordBackground2.SetSize(_passwordBackground2.Texture.GetWidth(),
+                _passwordBackground2.Texture.GetHeight());
+            _passwordBackground2.SetPosition(_menuPanel.Width / 2 - _passwordBackground2.Width / 2,
+                _passwordBackground.Bottom + 16);
 
             //Register Password Label2
             _passwordLabel2 = new Label(_passwordBackground2);
@@ -164,9 +180,15 @@ namespace Intersect_Client.Classes.UI.Menu
             _registerBtn.Clicked += RegisterBtn_Clicked;
             _registerBtn.SetPosition(_usernameBackground.X, _passwordBackground2.Bottom + 16);
             _registerBtn.SetSize(211, 61);
-            _registerBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"), Button.ControlState.Normal);
-            _registerBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"), Button.ControlState.Hovered);
-            _registerBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"), Button.ControlState.Clicked);
+            _registerBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"),
+                Button.ControlState.Normal);
+            _registerBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"),
+                Button.ControlState.Hovered);
+            _registerBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"),
+                Button.ControlState.Clicked);
             _registerBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _registerBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _registerBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
@@ -178,26 +200,30 @@ namespace Intersect_Client.Classes.UI.Menu
             _backBtn.Clicked += BackBtn_Clicked;
             _backBtn.SetSize(211, 61);
             _backBtn.SetPosition(_usernameBackground.Right - _backBtn.Width, _passwordBackground2.Bottom + 16);
-            _backBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"), Button.ControlState.Normal);
-            _backBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"), Button.ControlState.Hovered);
-            _backBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"), Button.ControlState.Clicked);
+            _backBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"),
+                Button.ControlState.Normal);
+            _backBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"),
+                Button.ControlState.Hovered);
+            _backBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"),
+                Button.ControlState.Clicked);
             _backBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _backBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _backBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
             _backBtn.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
-
-
         }
 
         //Methods
         public void Update()
         {
-
         }
+
         public void Show()
         {
             _menuPanel.Show();
         }
+
         public void Hide()
         {
             _menuPanel.Hide();
@@ -205,7 +231,10 @@ namespace Intersect_Client.Classes.UI.Menu
 
         void TryRegister()
         {
-            if (Globals.WaitingOnServer) { return; }
+            if (Globals.WaitingOnServer)
+            {
+                return;
+            }
             if (GameNetwork.Connected)
             {
                 if (FieldChecking.IsValidName(_usernameTextbox.Text))
@@ -253,27 +282,31 @@ namespace Intersect_Client.Classes.UI.Menu
         {
             TryRegister();
         }
+
         void EmailTextbox_SubmitPressed(Base sender, EventArgs arguments)
         {
             TryRegister();
         }
+
         void PasswordTextbox_SubmitPressed(Base sender, EventArgs arguments)
         {
             TryRegister();
         }
+
         void PasswordTextbox2_SubmitPressed(Base sender, EventArgs arguments)
         {
             TryRegister();
         }
+
         void RegisterBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             TryRegister();
         }
+
         void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Hide();
             _mainMenu.Show();
         }
-
     }
 }

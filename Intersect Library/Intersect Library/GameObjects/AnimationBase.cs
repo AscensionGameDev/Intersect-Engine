@@ -1,37 +1,37 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Intersect_Library.GameObjects
+namespace Intersect.GameObjects
 {
-    public class AnimationBase : DatabaseObject
+    public class AnimationBase : DatabaseObject<AnimationBase>
     {
-        public new const string DatabaseTable = "animations";
-        public new const GameObject Type = GameObject.Animation;
+        public new const string DATABASE_TABLE = "animations";
+        public new const GameObject OBJECT_TYPE = GameObject.Animation;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        
-        public string Name = "New Animation";
-        public string Sound = "";
+        public int LowerAnimFrameCount = 1;
+        public int LowerAnimFrameSpeed = 100;
+        public int LowerAnimLoopCount = 0;
 
         //Lower Animation
         public string LowerAnimSprite = "";
         public int LowerAnimXFrames = 1;
         public int LowerAnimYFrames = 1;
-        public int LowerAnimFrameCount = 1;
-        public int LowerAnimFrameSpeed = 100;
-        public int LowerAnimLoopCount = 0;
         public LightBase[] LowerLights;
+
+        public string Sound = "";
+        public int UpperAnimFrameCount = 1;
+        public int UpperAnimFrameSpeed = 100;
+        public int UpperAnimLoopCount = 0;
 
         //Upper Animation
         public string UpperAnimSprite = "";
         public int UpperAnimXFrames = 1;
         public int UpperAnimYFrames = 1;
-        public int UpperAnimFrameCount = 1;
-        public int UpperAnimFrameSpeed = 100;
-        public int UpperAnimLoopCount = 0;
         public LightBase[] UpperLights;
 
         public AnimationBase(int id) : base(id)
         {
+            Name = "New Animation";
             LowerLights = new LightBase[LowerAnimFrameCount];
             for (int i = 0; i < LowerAnimFrameCount; i++)
             {
@@ -114,68 +114,16 @@ namespace Intersect_Library.GameObjects
             return myBuffer.ToArray();
         }
 
-        public static AnimationBase GetAnim(int index)
+        public override byte[] BinaryData => AnimData();
+
+        public override string DatabaseTableName
         {
-            if (Objects.ContainsKey(index))
-            {
-                return (AnimationBase)Objects[index];
-            }
-            return null;
+            get { return DATABASE_TABLE; }
         }
 
-        public static string GetName(int index)
+        public override GameObject GameObjectType
         {
-            if (Objects.ContainsKey(index))
-            {
-                return ((AnimationBase)Objects[index]).Name;
-            }
-            return "Deleted";
-        }
-
-        public override byte[] GetData()
-        {
-            return AnimData();
-        }
-
-        public override string GetTable()
-        {
-            return DatabaseTable;
-        }
-
-        public override GameObject GetGameObjectType()
-        {
-            return Type;
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-        public static Dictionary<int, AnimationBase> GetObjects()
-        {
-            Dictionary<int, AnimationBase> objects = Objects.ToDictionary(k => k.Key, v => (AnimationBase)v.Value);
-            return objects;
-        } 
-        public override void Delete()
-        {
-            Objects.Remove(GetId());
-        }
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-        }
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
+            get { return OBJECT_TYPE; }
         }
     }
 }

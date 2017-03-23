@@ -1,18 +1,18 @@
-﻿
-using System;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using Intersect.GameObjects.Events;
+using Intersect.Localization;
 using Intersect_Editor.Classes.Core;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_ChangeFace : UserControl
     {
-        private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
+        private EventCommand _myCommand;
+
         public EventCommand_ChangeFace(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
@@ -43,12 +43,15 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void UpdatePreview()
         {
             Bitmap destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(destBitmap);
+            Graphics g = Graphics.FromImage(destBitmap);
             g.Clear(Color.Black);
             if (File.Exists("resources/faces/" + cmbFace.Text))
             {
                 Bitmap sourceBitmap = new Bitmap("resources/faces/" + cmbFace.Text);
-                g.DrawImage(sourceBitmap,new Rectangle(pnlPreview.Width/2 - sourceBitmap.Width/2,pnlPreview.Height/2 - sourceBitmap.Height/2,sourceBitmap.Width,sourceBitmap.Height), new Rectangle(0,0,sourceBitmap.Width,sourceBitmap.Height),GraphicsUnit.Pixel);
+                g.DrawImage(sourceBitmap,
+                    new Rectangle(pnlPreview.Width / 2 - sourceBitmap.Width / 2,
+                        pnlPreview.Height / 2 - sourceBitmap.Height / 2, sourceBitmap.Width, sourceBitmap.Height),
+                    new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height), GraphicsUnit.Pixel);
             }
             g.Dispose();
             pnlPreview.BackgroundImage = destBitmap;

@@ -1,43 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Intersect_Library.GameObjects.Conditions;
-using Intersect_Library.Localization;
+using Intersect.GameObjects.Conditions;
+using Intersect.Localization;
 
-namespace Intersect_Library.GameObjects
+namespace Intersect.GameObjects
 {
-    public class ResourceBase : DatabaseObject
+    public class ResourceBase : DatabaseObject<ResourceBase>
     {
         // General
-        public new const string DatabaseTable = "resources";
-        public new const GameObject Type = GameObject.Resource;
+        public new const string DATABASE_TABLE = "resources";
+        public new const GameObject OBJECT_TYPE = GameObject.Resource;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        
-        public string Name = "New Resource";
-        public int MinHP = 0;
-        public int MaxHP = 0;
-        public int Tool = -1;
-        public int SpawnDuration = 0;
         public int Animation = 0;
-        public bool WalkableBefore = false;
-        public bool WalkableAfter = false;
+
+        // Drops
+        public List<ResourceDrop> Drops = new List<ResourceDrop>();
+        public string EndGraphic = Strings.Get("general", "none");
 
         public ConditionLists HarvestingReqs = new ConditionLists();
 
         // Graphics
-        public string InitialGraphic = Strings.Get("general","none");
-        public string EndGraphic = Strings.Get("general","none");
+        public string InitialGraphic = Strings.Get("general", "none");
+        public int MaxHP = 0;
 
-        // Drops
-        public List<ResourceDrop> Drops = new List<ResourceDrop>();
+        public int MinHP = 0;
+        public int SpawnDuration = 0;
+        public int Tool = -1;
+        public bool WalkableAfter = false;
+        public bool WalkableBefore = false;
 
-        public ResourceBase(int id): base(id)
+        public ResourceBase(int id) : base(id)
         {
+            Name = "New Resource";
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Drops.Add(new ResourceDrop());
             }
-
         }
 
         public override void Load(byte[] packet)
@@ -93,18 +92,11 @@ namespace Intersect_Library.GameObjects
             return myBuffer.ToArray();
         }
 
-        public class ResourceDrop
-        {
-            public int ItemNum;
-            public int Amount;
-            public int Chance;
-        }
-
         public static ResourceBase GetResource(int index)
         {
             if (Objects.ContainsKey(index))
             {
-                return (ResourceBase)Objects[index];
+                return (ResourceBase) Objects[index];
             }
             return null;
         }
@@ -113,24 +105,21 @@ namespace Intersect_Library.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return ((ResourceBase)Objects[index]).Name;
+                return ((ResourceBase) Objects[index]).Name;
             }
             return "Deleted";
         }
 
-        public override byte[] GetData()
+        public override byte[] BinaryData => ResourceData();
+
+        public override string DatabaseTableName
         {
-            return ResourceData();
+            get { return DATABASE_TABLE; }
         }
 
-        public override string GetTable()
+        public override GameObject GameObjectType
         {
-            return DatabaseTable;
-        }
-
-        public override GameObject GetGameObjectType()
-        {
-            return Type;
+            get { return OBJECT_TYPE; }
         }
 
         public static DatabaseObject Get(int index)
@@ -141,27 +130,39 @@ namespace Intersect_Library.GameObjects
             }
             return null;
         }
+
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, ResourceBase> GetObjects()
         {
-            Dictionary<int, ResourceBase> objects = Objects.ToDictionary(k => k.Key, v => (ResourceBase)v.Value);
+            Dictionary<int, ResourceBase> objects = Objects.ToDictionary(k => k.Key, v => (ResourceBase) v.Value);
             return objects;
+        }
+
+        public class ResourceDrop
+        {
+            public int Amount;
+            public int Chance;
+            public int ItemNum;
         }
     }
 }

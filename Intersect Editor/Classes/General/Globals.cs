@@ -1,15 +1,13 @@
-﻿
-
-using Intersect_Editor.Forms;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.Localization;
+using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Classes.Maps;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Editor.Classes.Core;
+using Intersect_Editor.Forms;
 using Intersect_Editor.Forms.DockingElements;
-using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Classes
 {
@@ -96,7 +94,6 @@ namespace Intersect_Editor.Classes
         public static int FetchCount;
         public static frmProgress PreviewProgressForm;
 
-
         public static LightBase BackupLight;
         public static LightBase EditingLight;
 
@@ -126,15 +123,15 @@ namespace Intersect_Editor.Classes
         {
             switch (statnum)
             {
-                case (int)Stats.Attack:
+                case (int) Stats.Attack:
                     return "Attack";
-                case (int)Stats.AbilityPower:
+                case (int) Stats.AbilityPower:
                     return "Ability Power";
-                case (int)Stats.Defense:
+                case (int) Stats.Defense:
                     return "Defense";
-                case (int)Stats.MagicResist:
+                case (int) Stats.MagicResist:
                     return "Magic Resist";
-                case (int)Stats.Speed:
+                case (int) Stats.Speed:
                     return "Speed";
                 default:
                     return "Invalid Stat";

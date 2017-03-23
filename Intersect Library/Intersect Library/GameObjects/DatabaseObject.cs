@@ -1,44 +1,77 @@
-﻿using System;
+﻿using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Maps;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.GameObjects.Maps;
+using Intersect.Collections;
 
-namespace Intersect_Library.GameObjects
+namespace Intersect.GameObjects
 {
-    public abstract class DatabaseObject
+    public interface DatabaseObject
     {
-        private int _id = -1;
-        public const string DatabaseTable = "";
-        public const GameObject Type = GameObject.Animation;
-        private byte[] backup = null;
+        int Id { get; }
+        string Name { get; set; }
+
+        void Load(byte[] packet);
+        byte[] BinaryData { get; }
+        string DatabaseTableName { get; }
+        GameObject GameObjectType { get; }
+
+        void MakeBackup();
+        void RestoreBackup();
+        void DeleteBackup();
+
+        void Delete();
+    }
+
+    public abstract class DatabaseObject<TObject> : DatabaseObject, IGameObject<int, TObject> where TObject : DatabaseObject<TObject>
+    {
+        private static IntObjectLookup<TObject> sLookup;
+
+        public static IntObjectLookup<TObject> Lookup => (sLookup = (sLookup ?? new IntObjectLookup<TObject>()));
+
+        public const string DATABASE_TABLE = "";
+        public const GameObject OBJECT_TYPE = GameObject.Animation;
+
+        private byte[] mBackup = null;
+
         protected DatabaseObject(int id)
         {
-            _id = id;
+            Id = id;
         }
-        public virtual int GetId()
-        {
-            return _id;
-        }
+
+        public int Id { get; }
+        public string Name { get; set; }
+
         public abstract void Load(byte[] packet);
-        public virtual void MakeBackup()
-        {
-            backup = GetData();
-        }
+
+        public virtual void MakeBackup() => mBackup = BinaryData;
+        public virtual void DeleteBackup() => mBackup = null;
         public virtual void RestoreBackup()
         {
-            if (backup != null)
-                Load(backup);
+            if (mBackup != null)
+            {
+                Load(mBackup);
+            }
         }
-        public virtual void DeleteBackup()
-        {
-            backup = null;
-        }
-        public abstract void Delete();
-        public abstract byte[] GetData();
-        public abstract GameObject GetGameObjectType();
-        public abstract string GetTable();
 
+        public virtual void Delete() => Lookup.Delete((TObject)this);
+
+        public abstract byte[] BinaryData { get; }
+        public abstract GameObject GameObjectType { get; }
+        public abstract string DatabaseTableName { get; }
+
+        public static TObject Get(int index) => Lookup.Get(index);
+
+        public static string GetName(int index)
+        {
+            var obj = Lookup.Get(index);
+            return obj == null ? "Deleted" : obj.Name;
+        }
+    }
+
+    public static class DatabaseObjectUtils
+    {
         //Game Object Handling
         public static string[] GetGameObjectList(GameObject type)
         {
@@ -46,7 +79,7 @@ namespace Intersect_Library.GameObjects
             switch (type)
             {
                 case GameObject.Animation:
-                    foreach (var obj in AnimationBase.GetObjects())
+                    foreach (var obj in AnimationBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Class:
@@ -87,11 +120,11 @@ namespace Intersect_Library.GameObjects
                     break;
                 case GameObject.Map:
                     foreach (var obj in MapBase.GetObjects())
-                        items.Add(obj.Value.MyName);
+                        items.Add(obj.Value.Name);
                     break;
                 case GameObject.CommonEvent:
                     foreach (var obj in EventBase.GetObjects())
-                        items.Add(obj.Value.MyName);
+                        items.Add(obj.Value.Name);
                     break;
                 case GameObject.PlayerSwitch:
                     foreach (var obj in PlayerSwitchBase.GetObjects())
@@ -110,8 +143,8 @@ namespace Intersect_Library.GameObjects
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Tileset:
-                    foreach (var obj in TilesetBase.GetObjects())
-                        items.Add(obj.Value.Value);
+                    foreach (var obj in TilesetBase.Lookup)
+                        items.Add(obj.Value.Name);
                     break;
                 case GameObject.Time:
                     break;
@@ -120,14 +153,15 @@ namespace Intersect_Library.GameObjects
             }
             return items.ToArray();
         }
+
         public static int GameObjectIdFromList(GameObject type, int listIndex)
         {
             if (listIndex < 0) return -1;
             switch (type)
             {
                 case GameObject.Animation:
-                    if (listIndex >= AnimationBase.ObjectCount()) return -1;
-                    return AnimationBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= AnimationBase.Lookup.Count) return -1;
+                    return AnimationBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Class:
                     if (listIndex >= ClassBase.ObjectCount()) return -1;
                     return ClassBase.GetObjects().Keys.ToList()[listIndex];
@@ -174,20 +208,21 @@ namespace Intersect_Library.GameObjects
                     if (listIndex >= ServerVariableBase.ObjectCount()) return -1;
                     return ServerVariableBase.GetObjects().Keys.ToList()[listIndex];
                 case GameObject.Tileset:
-                    if (listIndex >= TilesetBase.ObjectCount()) return -1;
-                    return TilesetBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= TilesetBase.Lookup.Count) return -1;
+                    return TilesetBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Time:
                     return -1;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         public static int GameObjectListIndex(GameObject type, int id)
         {
             switch (type)
             {
                 case GameObject.Animation:
-                    return AnimationBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return AnimationBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Class:
                     return ClassBase.GetObjects().Keys.ToList().IndexOf(id);
                 case GameObject.Item:
@@ -219,7 +254,7 @@ namespace Intersect_Library.GameObjects
                 case GameObject.ServerVariable:
                     return ServerVariableBase.GetObjects().Keys.ToList().IndexOf(id);
                 case GameObject.Tileset:
-                    return TilesetBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return TilesetBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Time:
                     return -1;
                 default:

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib;
+using Intersect;
+using Options = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.Options;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
 {
@@ -21,10 +22,9 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
         //Options File
         public static bool LoadOptions()
         {
-            
             if (!File.Exists("resources/config.xml"))
             {
-                var settings = new XmlWriterSettings { Indent = true };
+                var settings = new XmlWriterSettings {Indent = true};
                 var writer = XmlWriter.Create("resources/config.xml", settings);
                 writer.WriteStartDocument();
                 writer.WriteComment("Config.xml generated automatically by Intersect Server.");
@@ -57,7 +57,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("Paperdoll");
-                writer.WriteComment("Paperdoll is rendered in the following order. If you want to change when each piece of equipment gets rendered simply swap the equipment names.");
+                writer.WriteComment(
+                    "Paperdoll is rendered in the following order. If you want to change when each piece of equipment gets rendered simply swap the equipment names.");
                 writer.WriteElementString("Slot0", "Helmet");
                 writer.WriteElementString("Slot1", "Armor");
                 writer.WriteElementString("Slot2", "Weapon");
@@ -88,9 +89,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("Map");
-                writer.WriteComment("MapBorder Override. 0 for seamless with scrolling that stops on world edges. 1 for non-seamless, and 2 for seamless where the camera knows no boundaries. (Black borders where the world ends)");
+                writer.WriteComment(
+                    "MapBorder Override. 0 for seamless with scrolling that stops on world edges. 1 for non-seamless, and 2 for seamless where the camera knows no boundaries. (Black borders where the world ends)");
                 writer.WriteElementString("BorderStyle", "0");
-                writer.WriteComment("DO NOT TOUCH! These values will resize the maps in the engine and will CORRUPT existing maps. In MOST cases this value should not be changed. It would be wise to consult us before doing so!");
+                writer.WriteComment(
+                    "DO NOT TOUCH! These values will resize the maps in the engine and will CORRUPT existing maps. In MOST cases this value should not be changed. It would be wise to consult us before doing so!");
                 writer.WriteElementString("MapWidth", "32");
                 writer.WriteElementString("MapHeight", "26");
                 writer.WriteElementString("TileWidth", "32");
@@ -114,7 +117,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
                     options.LoadXml(ConfigXml);
 
                     //General Options
-                    Options.GameName = GetXmlStr(options, "//Config/GameName",false);
+                    Options.GameName = GetXmlStr(options, "//Config/GameName", false);
                     Options.MOTD = GetXmlStr(options, "//Config/MOTD", false);
                     Options.ServerPort = GetXmlInt(options, "//Config/ServerPort");
 
@@ -132,9 +135,13 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
                     int slot = 0;
                     while (!string.IsNullOrEmpty(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false)))
                     {
-                        if (Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false)) > -1)
+                        if (
+                            Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false)) >
+                            -1)
                         {
-                            Console.WriteLine("Tried to add the same piece of equipment twice, this is not permitted.  (Path: " + "//Config/Equipment/Slot" + slot + ")");
+                            Console.WriteLine(
+                                "Tried to add the same piece of equipment twice, this is not permitted.  (Path: " +
+                                "//Config/Equipment/Slot" + slot + ")");
                             return false;
                         }
                         else
@@ -146,23 +153,33 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
                     Options.WeaponIndex = GetXmlInt(options, "//Config/Equipment/WeaponSlot");
                     if (Options.WeaponIndex < -1 || Options.WeaponIndex > Options.EquipmentSlots.Count - 1)
                     {
-                        Console.WriteLine("Weapon Slot is out of bounds! Make sure the slot exists and you are counting starting from zero! Use -1 if you do not wish to have equipable weapons in-game!  (Path: " + "//Config/Equipment/WeaponSlot)");
+                        Console.WriteLine(
+                            "Weapon Slot is out of bounds! Make sure the slot exists and you are counting starting from zero! Use -1 if you do not wish to have equipable weapons in-game!  (Path: " +
+                            "//Config/Equipment/WeaponSlot)");
                     }
                     Options.ShieldIndex = GetXmlInt(options, "//Config/Equipment/ShieldSlot");
                     if (Options.ShieldIndex < -1 || Options.ShieldIndex > Options.EquipmentSlots.Count - 1)
                     {
-                        Console.WriteLine("Shield Slot is out of bounds! Make sure the slot exists and you are counting starting from zero! Use -1 if you do not wish to have equipable shields in-game!  (Path: " + "//Config/Equipment/ShieldSlot)");
+                        Console.WriteLine(
+                            "Shield Slot is out of bounds! Make sure the slot exists and you are counting starting from zero! Use -1 if you do not wish to have equipable shields in-game!  (Path: " +
+                            "//Config/Equipment/ShieldSlot)");
                     }
 
                     //Paperdoll
                     slot = 0;
                     while (!string.IsNullOrEmpty(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)))
                     {
-                        if (Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)) > -1)
+                        if (
+                            Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)) >
+                            -1)
                         {
-                            if (Options.PaperdollOrder.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)) > -1)
+                            if (
+                                Options.PaperdollOrder.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot,
+                                    false)) > -1)
                             {
-                                Console.WriteLine("Tried to add the same piece of equipment to the paperdoll render order twice, this is not permitted.  (Path: " + "//Config/Paperdoll/Slot" + slot + ")");
+                                Console.WriteLine(
+                                    "Tried to add the same piece of equipment to the paperdoll render order twice, this is not permitted.  (Path: " +
+                                    "//Config/Paperdoll/Slot" + slot + ")");
                                 return false;
                             }
                             else
@@ -172,7 +189,9 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
                         }
                         else
                         {
-                            Console.WriteLine("Tried to add a paperdoll for a piece of equipment that does not exist!  (Path: " + "//Config/Paperdoll/Slot" + slot + ")");
+                            Console.WriteLine(
+                                "Tried to add a paperdoll for a piece of equipment that does not exist!  (Path: " +
+                                "//Config/Paperdoll/Slot" + slot + ")");
                             return false;
                         }
                         slot++;
@@ -184,7 +203,9 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
                     {
                         if (Options.ToolTypes.IndexOf(GetXmlStr(options, "//Config/ToolTypes/Slot" + slot, false)) > -1)
                         {
-                            Console.WriteLine("Tried to add the same type of tool twice, this is not permitted.  (Path: " + "//Config/ToolTypes/Slot" + slot + ")");
+                            Console.WriteLine(
+                                "Tried to add the same type of tool twice, this is not permitted.  (Path: " +
+                                "//Config/ToolTypes/Slot" + slot + ")");
                             return false;
                         }
                         else
@@ -211,9 +232,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
                     Options.GameBorderStyle = GetXmlInt(options, "//Config/Map/BorderStyle");
                     Options.MapWidth = GetXmlInt(options, "//Config/Map/MapWidth");
                     Options.MapHeight = GetXmlInt(options, "//Config/Map/MapHeight");
-                    if (Options.MapWidth < 10 || Options.MapWidth > 64 || Options.MapHeight < 10 || Options.MapHeight > 64)
+                    if (Options.MapWidth < 10 || Options.MapWidth > 64 || Options.MapHeight < 10 ||
+                        Options.MapHeight > 64)
                     {
-                        Console.WriteLine("MapWidth and/or MapHeight are out of bounds. Must be between 10 and 64. The client loads 9 maps at a time, having large map sizes really hurts performance.");
+                        Console.WriteLine(
+                            "MapWidth and/or MapHeight are out of bounds. Must be between 10 and 64. The client loads 9 maps at a time, having large map sizes really hurts performance.");
                         ConfigFailed = true;
                     }
                     Options.TileWidth = GetXmlInt(options, "//Config/Map/TileWidth");

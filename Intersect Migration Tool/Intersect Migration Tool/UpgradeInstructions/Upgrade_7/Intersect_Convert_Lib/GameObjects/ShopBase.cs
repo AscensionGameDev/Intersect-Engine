@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Intersect;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects
 {
     public class ShopBase : DatabaseObject
     {
         //Core info
-        public new const string DatabaseTable = "shops";
-        public new const GameObject Type = GameObject.Shop;
+        public new const string DATABASE_TABLE = "shops";
+        public new const GameObject OBJECT_TYPE = GameObject.Shop;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        
-        public string Name = "New Shop";
-        public int DefaultCurrency = 0;
-
-        //Selling List
-        public List<ShopItem> SellingItems = new List<ShopItem>();
+        public List<ShopItem> BuyingItems = new List<ShopItem>();
 
         //Buying List
         public bool BuyingWhitelist = true;
-        public List<ShopItem> BuyingItems = new List<ShopItem>();
+        public int DefaultCurrency = 0;
 
+        public string Name = "New Shop";
+
+        //Selling List
+        public List<ShopItem> SellingItems = new List<ShopItem>();
 
         public ShopBase(int id) : base(id)
         {
@@ -72,7 +72,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return (ShopBase)Objects[index];
+                return (ShopBase) Objects[index];
             }
             return null;
         }
@@ -81,7 +81,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return ((ShopBase)Objects[index]).Name;
+                return ((ShopBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -93,12 +93,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)
@@ -109,47 +109,55 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, ShopBase> GetObjects()
         {
-            Dictionary<int, ShopBase> objects = Objects.ToDictionary(k => k.Key, v => (ShopBase)v.Value);
+            Dictionary<int, ShopBase> objects = Objects.ToDictionary(k => k.Key, v => (ShopBase) v.Value);
             return objects;
         }
     }
 
     public class ShopItem
     {
-        public int ItemNum;
         public int CostItemNum;
         public int CostItemVal;
+        public int ItemNum;
+
         public ShopItem(ByteBuffer myBuffer)
         {
             ItemNum = myBuffer.ReadInteger();
             CostItemNum = myBuffer.ReadInteger();
             CostItemVal = myBuffer.ReadInteger();
         }
+
         public ShopItem(int itemNum, int costItemNum, int costVal)
         {
             ItemNum = itemNum;
             CostItemNum = costItemNum;
             CostItemVal = costVal;
         }
+
         public byte[] Data()
         {
             ByteBuffer myBuffer = new ByteBuffer();

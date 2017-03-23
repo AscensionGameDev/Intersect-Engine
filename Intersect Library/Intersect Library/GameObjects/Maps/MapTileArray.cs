@@ -1,4 +1,4 @@
-﻿namespace Intersect_Library.GameObjects.Maps
+﻿namespace Intersect.GameObjects.Maps
 {
     public struct TileArray
     {

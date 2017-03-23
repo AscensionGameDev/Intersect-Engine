@@ -1,13 +1,15 @@
-﻿namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Events
+﻿using Intersect;
+
+namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Events
 {
     public class EventGraphic
     {
         public string Filename;
+        public int Height;
         public int Type;
+        public int Width;
         public int X;
         public int Y;
-        public int Width;
-        public int Height;
 
         public EventGraphic()
         {
@@ -48,6 +50,5 @@
             Width = toCopy.Width;
             Height = toCopy.Height;
         }
-
     }
 }

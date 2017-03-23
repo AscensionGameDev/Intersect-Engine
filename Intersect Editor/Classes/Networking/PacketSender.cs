@@ -1,20 +1,16 @@
-﻿
-
-using Intersect_Editor.Classes.Maps;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Maps;
-using Intersect_Library.GameObjects.Maps.MapList;
+﻿using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Maps;
+using Intersect.GameObjects.Maps.MapList;
 
 namespace Intersect_Editor.Classes
 {
     public static class PacketSender
     {
-
         public static void SendPing()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.Ping);
+            bf.WriteLong((int) ClientPackets.Ping);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -22,7 +18,7 @@ namespace Intersect_Editor.Classes
         public static void SendLogin(string username, string password)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.EditorLogin);
+            bf.WriteLong((int) ClientPackets.EditorLogin);
             bf.WriteString(username);
             bf.WriteString(password);
             Network.SendPacket(bf.ToArray());
@@ -32,7 +28,7 @@ namespace Intersect_Editor.Classes
         public static void SendNeedMap(int mapNum)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.NeedMap);
+            bf.WriteLong((int) ClientPackets.NeedMap);
             bf.WriteLong(mapNum);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -42,8 +38,8 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             var mapData = map.GetMapData(false);
-            bf.WriteLong((int)ClientPackets.SaveMap);
-            bf.WriteLong(map.GetId());
+            bf.WriteLong((int) ClientPackets.SaveMap);
+            bf.WriteLong(((DatabaseObject) map).Id);
             bf.WriteLong(mapData.Length);
             bf.WriteBytes(mapData);
             Network.SendPacket(bf.ToArray());
@@ -53,7 +49,7 @@ namespace Intersect_Editor.Classes
         public static void SendCreateMap(int location, int currentMap, MapListItem parent)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.CreateMap);
+            bf.WriteLong((int) ClientPackets.CreateMap);
             bf.WriteInteger(location);
             if (location > -1)
             {
@@ -71,12 +67,12 @@ namespace Intersect_Editor.Classes
                     if (parent.GetType() == typeof(MapListMap))
                     {
                         bf.WriteInteger(1);
-                        bf.WriteInteger(((MapListMap)parent).MapNum);
+                        bf.WriteInteger(((MapListMap) parent).MapNum);
                     }
                     else
                     {
                         bf.WriteInteger(0);
-                        bf.WriteInteger(((MapListFolder)parent).FolderId);
+                        bf.WriteInteger(((MapListFolder) parent).FolderId);
                     }
                 }
             }
@@ -87,8 +83,8 @@ namespace Intersect_Editor.Classes
         public static void SendMapListMove(int srcType, int srcId, int destType, int destId)
         {
             ByteBuffer bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.MapListUpdate);
-            bf.WriteInteger((int)MapListUpdates.MoveItem);
+            bf.WriteLong((int) ClientPackets.MapListUpdate);
+            bf.WriteInteger((int) MapListUpdates.MoveItem);
             bf.WriteInteger(srcType);
             bf.WriteInteger(srcId);
             bf.WriteInteger(destType);
@@ -100,8 +96,8 @@ namespace Intersect_Editor.Classes
         public static void SendAddFolder(MapListItem parent)
         {
             ByteBuffer bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.MapListUpdate);
-            bf.WriteInteger((int)MapListUpdates.AddFolder);
+            bf.WriteLong((int) ClientPackets.MapListUpdate);
+            bf.WriteInteger((int) MapListUpdates.AddFolder);
             if (parent == null)
             {
                 bf.WriteInteger(-1);
@@ -112,12 +108,12 @@ namespace Intersect_Editor.Classes
                 if (parent.GetType() == typeof(MapListMap))
                 {
                     bf.WriteInteger(1);
-                    bf.WriteInteger(((MapListMap)parent).MapNum);
+                    bf.WriteInteger(((MapListMap) parent).MapNum);
                 }
                 else
                 {
                     bf.WriteInteger(0);
-                    bf.WriteInteger(((MapListFolder)parent).FolderId);
+                    bf.WriteInteger(((MapListFolder) parent).FolderId);
                 }
             }
             Network.SendPacket(bf.ToArray());
@@ -127,17 +123,17 @@ namespace Intersect_Editor.Classes
         public static void SendRename(MapListItem parent, string name)
         {
             ByteBuffer bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.MapListUpdate);
-            bf.WriteInteger((int)MapListUpdates.Rename);
+            bf.WriteLong((int) ClientPackets.MapListUpdate);
+            bf.WriteInteger((int) MapListUpdates.Rename);
             if (parent.GetType() == typeof(MapListMap))
             {
                 bf.WriteInteger(1);
-                bf.WriteInteger(((MapListMap)parent).MapNum);
+                bf.WriteInteger(((MapListMap) parent).MapNum);
             }
             else
             {
                 bf.WriteInteger(0);
-                bf.WriteInteger(((MapListFolder)parent).FolderId);
+                bf.WriteInteger(((MapListFolder) parent).FolderId);
             }
             bf.WriteString(name);
             Network.SendPacket(bf.ToArray());
@@ -147,17 +143,17 @@ namespace Intersect_Editor.Classes
         public static void SendDelete(MapListItem target)
         {
             ByteBuffer bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.MapListUpdate);
-            bf.WriteInteger((int)MapListUpdates.Delete);
+            bf.WriteLong((int) ClientPackets.MapListUpdate);
+            bf.WriteInteger((int) MapListUpdates.Delete);
             if (target.GetType() == typeof(MapListMap))
             {
                 bf.WriteInteger(1);
-                bf.WriteInteger(((MapListMap)target).MapNum);
+                bf.WriteInteger(((MapListMap) target).MapNum);
             }
             else
             {
                 bf.WriteInteger(0);
-                bf.WriteInteger(((MapListFolder)target).FolderId);
+                bf.WriteInteger(((MapListFolder) target).FolderId);
             }
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -166,7 +162,7 @@ namespace Intersect_Editor.Classes
         public static void SendNeedGrid(int mapNum)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.NeedGrid);
+            bf.WriteLong((int) ClientPackets.NeedGrid);
             bf.WriteLong(mapNum);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -175,9 +171,9 @@ namespace Intersect_Editor.Classes
         public static void SendUnlinkMap(int mapNum)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.UnlinkMap);
+            bf.WriteLong((int) ClientPackets.UnlinkMap);
             bf.WriteLong(mapNum);
-            bf.WriteLong(Globals.CurrentMap.GetId());
+            bf.WriteLong(((DatabaseObject) Globals.CurrentMap).Id);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -185,7 +181,7 @@ namespace Intersect_Editor.Classes
         public static void SendLinkMap(int adjacentMap, int linkMap, int gridX, int gridY)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.LinkMap);
+            bf.WriteLong((int) ClientPackets.LinkMap);
             bf.WriteLong(adjacentMap);
             bf.WriteLong(linkMap);
             bf.WriteLong(gridX);
@@ -207,8 +203,8 @@ namespace Intersect_Editor.Classes
         public static void SendOpenEditor(GameObject type)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.OpenObjectEditor);
-            bf.WriteInteger((int)type);
+            bf.WriteLong((int) ClientPackets.OpenObjectEditor);
+            bf.WriteInteger((int) type);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -216,9 +212,9 @@ namespace Intersect_Editor.Classes
         public static void SendDeleteObject(DatabaseObject obj)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.DeleteGameObject);
-            bf.WriteInteger((int)obj.GetGameObjectType());
-            bf.WriteInteger(obj.GetId());
+            bf.WriteLong((int) ClientPackets.DeleteGameObject);
+            bf.WriteInteger((int) obj.GameObjectType);
+            bf.WriteInteger(obj.Id);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -226,10 +222,10 @@ namespace Intersect_Editor.Classes
         public static void SendSaveObject(DatabaseObject obj)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.SaveGameObject);
-            bf.WriteInteger((int)obj.GetGameObjectType());
-            bf.WriteInteger(obj.GetId());
-            bf.WriteBytes(obj.GetData());
+            bf.WriteLong((int) ClientPackets.SaveGameObject);
+            bf.WriteInteger((int) obj.GameObjectType);
+            bf.WriteInteger(obj.Id);
+            bf.WriteBytes(obj.BinaryData);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -237,7 +233,7 @@ namespace Intersect_Editor.Classes
         public static void SendSaveTime(byte[] data)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.SaveTime);
+            bf.WriteLong((int) ClientPackets.SaveTime);
             bf.WriteBytes(data);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -246,7 +242,7 @@ namespace Intersect_Editor.Classes
         public static void SendNewTilesets(string[] tilesets)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.AddTilesets);
+            bf.WriteLong((int) ClientPackets.AddTilesets);
             bf.WriteInteger(tilesets.Length);
             for (int i = 0; i < tilesets.Length; i++)
             {
@@ -259,7 +255,7 @@ namespace Intersect_Editor.Classes
         public static void SendEnterMap(int mapNum)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.EnterMap);
+            bf.WriteLong((int) ClientPackets.EnterMap);
             bf.WriteInteger(mapNum);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();

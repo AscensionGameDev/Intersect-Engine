@@ -1,21 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib;
-using Mono.Data.Sqlite;
+using Intersect;
+using Intersect.Logging;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Maps;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
+using Mono.Data.Sqlite;
+using GameObject = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObject;
+using Options = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.Options;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
 {
     public class Upgrade7
     {
-        private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
-
         //GameObject Table Constants
         private const string GAME_OBJECT_ID = "id";
         private const string GAME_OBJECT_DELETED = "deleted";
@@ -41,9 +40,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
         //Char Bank Table Constants
         private const string CHAR_BANK_TABLE = "char_bank";
         private const string CHAR_BANK_ITEM_BAG_ID = "item_bag_id";
-
-
-
+        private SqliteConnection _dbConnection;
+        private Object _dbLock = new Object();
 
         public Upgrade7(SqliteConnection connection)
         {
@@ -67,7 +65,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
         {
             //Remove the Paperdoll element.. going to replace it
             XmlDocument doc = new XmlDocument();
-            doc.Load(Path.Combine("resources","config.xml"));
+            doc.Load(Path.Combine("resources", "config.xml"));
             XmlNodeList nodes = doc.SelectNodes("//Config/Paperdoll");
             for (int i = nodes.Count - 1; i >= 0; i--)
             {
@@ -84,7 +82,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
             {
                 XmlElement dirElement = doc.CreateElement(dir);
                 XmlComment comment =
-                    doc.CreateComment("Paperdoll is rendered in the following order when facing " + dir + ". If you want to change when each piece of equipment gets rendered simply swap the equipment names.");
+                    doc.CreateComment("Paperdoll is rendered in the following order when facing " + dir +
+                                      ". If you want to change when each piece of equipment gets rendered simply swap the equipment names.");
                 dirElement.AppendChild(comment);
                 for (int i = 0; i < Options.PaperdollOrder.Count; i++)
                 {
@@ -99,7 +98,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
 
             //Finally create the passability options
             eleNew = doc.CreateElement("Passability");
-            var passabilityComment = doc.CreateComment("Trigger player passability based on map moralites. True = Passable, False = Blocked");
+            var passabilityComment =
+                doc.CreateComment("Trigger player passability based on map moralites. True = Passable, False = Blocked");
             XmlElement normal = doc.CreateElement("Normal");
             normal.InnerText = "False";
             XmlElement safe = doc.CreateElement("Safe");
@@ -119,16 +119,15 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
         //Game Object Saving/Loading
         private void LoadAllGameObjects()
         {
-
             foreach (var val in Enum.GetValues(typeof(GameObject)))
             {
-                if ((GameObject)val != GameObject.Time)
+                if ((GameObject) val != GameObject.Time)
                 {
-                    LoadGameObjects((GameObject)val);
+                    LoadGameObjects((GameObject) val);
                 }
             }
-
         }
+
         //Game Object Saving/Loading
         private string GetGameObjectTable(GameObject type)
         {
@@ -136,61 +135,62 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
             switch (type)
             {
                 case GameObject.Animation:
-                    tableName = AnimationBase.DatabaseTable;
+                    tableName = AnimationBase.DATABASE_TABLE;
                     break;
                 case GameObject.Bench:
-                    tableName = BenchBase.DatabaseTable;
+                    tableName = BenchBase.DATABASE_TABLE;
                     break;
                 case GameObject.Class:
-                    tableName = ClassBase.DatabaseTable;
+                    tableName = ClassBase.DATABASE_TABLE;
                     break;
                 case GameObject.Item:
-                    tableName = ItemBase.DatabaseTable;
+                    tableName = ItemBase.DATABASE_TABLE;
                     break;
                 case GameObject.Npc:
-                    tableName = NpcBase.DatabaseTable;
+                    tableName = NpcBase.DATABASE_TABLE;
                     break;
                 case GameObject.Projectile:
-                    tableName = ProjectileBase.DatabaseTable;
+                    tableName = ProjectileBase.DATABASE_TABLE;
                     break;
                 case GameObject.Quest:
-                    tableName = QuestBase.DatabaseTable;
+                    tableName = QuestBase.DATABASE_TABLE;
                     break;
                 case GameObject.Resource:
-                    tableName = ResourceBase.DatabaseTable;
+                    tableName = ResourceBase.DATABASE_TABLE;
                     break;
                 case GameObject.Shop:
-                    tableName = ShopBase.DatabaseTable;
+                    tableName = ShopBase.DATABASE_TABLE;
                     break;
                 case GameObject.Spell:
-                    tableName = SpellBase.DatabaseTable;
+                    tableName = SpellBase.DATABASE_TABLE;
                     break;
                 case GameObject.Map:
-                    tableName = MapBase.DatabaseTable;
+                    tableName = MapBase.DATABASE_TABLE;
                     break;
                 case GameObject.CommonEvent:
-                    tableName = EventBase.DatabaseTable;
+                    tableName = EventBase.DATABASE_TABLE;
                     break;
                 case GameObject.PlayerSwitch:
-                    tableName = PlayerSwitchBase.DatabaseTable;
+                    tableName = PlayerSwitchBase.DATABASE_TABLE;
                     break;
                 case GameObject.PlayerVariable:
-                    tableName = PlayerVariableBase.DatabaseTable;
+                    tableName = PlayerVariableBase.DATABASE_TABLE;
                     break;
                 case GameObject.ServerSwitch:
-                    tableName = ServerSwitchBase.DatabaseTable;
+                    tableName = ServerSwitchBase.DATABASE_TABLE;
                     break;
                 case GameObject.ServerVariable:
-                    tableName = ServerVariableBase.DatabaseTable;
+                    tableName = ServerVariableBase.DATABASE_TABLE;
                     break;
                 case GameObject.Tileset:
-                    tableName = TilesetBase.DatabaseTable;
+                    tableName = TilesetBase.DATABASE_TABLE;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
             return tableName;
         }
+
         private void ClearGameObjects(GameObject type)
         {
             switch (type)
@@ -250,6 +250,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         private void LoadGameObject(GameObject type, int index, byte[] data)
         {
             switch (type)
@@ -362,6 +363,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         public void LoadGameObjects(GameObject type)
         {
             var nullIssues = "";
@@ -379,7 +381,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                         while (dataReader.Read())
                         {
                             var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
-                            if (dataReader[GAME_OBJECT_DATA].GetType() != typeof(System.DBNull))
+                            if (dataReader[GAME_OBJECT_DATA].GetType() != typeof(DBNull))
                             {
                                 LoadGameObject(type, index, (byte[]) dataReader[GAME_OBJECT_DATA]);
                             }
@@ -397,8 +399,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                 throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine + nullIssues));
             }
         }
+
         public void SaveGameObject(DatabaseObject gameObject)
         {
+            if (gameObject == null)
+            {
+                Log.Error("Attempted to persist null game object to the database.");
+            }
+
             lock (_dbLock)
             {
                 var insertQuery = "UPDATE " + gameObject.GetTable() + " set " + GAME_OBJECT_DELETED + "=@" +
@@ -408,7 +416,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.GetId()));
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
-                    if (gameObject != null && gameObject.GetData() != null)
+                    if (gameObject.GetData() != null)
                     {
                         cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.GetData()));
                     }
@@ -425,37 +433,40 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
         private void CreateBagsTable()
         {
             var cmd = "CREATE TABLE " + BAGS_TABLE + " ("
-                + BAG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + BAG_SLOT_COUNT + " INTEGER"
-                + ");";
+                      + BAG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + BAG_SLOT_COUNT + " INTEGER"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private void CreateBagItemsTable()
         {
             var cmd = "CREATE TABLE " + BAG_ITEMS_TABLE + " ("
-                + BAG_ITEM_CONTAINER_ID + " INTEGER,"
-                + BAG_ITEM_SLOT + " INTEGER,"
-                + BAG_ITEM_NUM + " INTEGER,"
-                + BAG_ITEM_VAL + " INTEGER,"
-                + BAG_ITEM_STATS + " TEXT,"
-                + BAG_ITEM_BAG_ID + " TEXT,"
-                + " unique('" + BAG_ITEM_CONTAINER_ID + "','" + BAG_ITEM_SLOT + "')"
-                + ");";
+                      + BAG_ITEM_CONTAINER_ID + " INTEGER,"
+                      + BAG_ITEM_SLOT + " INTEGER,"
+                      + BAG_ITEM_NUM + " INTEGER,"
+                      + BAG_ITEM_VAL + " INTEGER,"
+                      + BAG_ITEM_STATS + " TEXT,"
+                      + BAG_ITEM_BAG_ID + " TEXT,"
+                      + " unique('" + BAG_ITEM_CONTAINER_ID + "','" + BAG_ITEM_SLOT + "')"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
-            CreateBag(1); //This is to bypass an issue where we use itemVal to store the bag identifier (we are terrible!)
+            CreateBag(1);
+                //This is to bypass an issue where we use itemVal to store the bag identifier (we are terrible!)
         }
 
         public void CreateBag(int slotCount)
         {
-            var insertQuery = "INSERT into " + BAGS_TABLE + " (" + BAG_SLOT_COUNT + ")" + "VALUES (@" + BAG_SLOT_COUNT + ");";
+            var insertQuery = "INSERT into " + BAGS_TABLE + " (" + BAG_SLOT_COUNT + ")" + "VALUES (@" + BAG_SLOT_COUNT +
+                              ");";
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + BAG_SLOT_COUNT, slotCount));
@@ -471,7 +482,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
-
 
             cmd = "UPDATE " + CHAR_BANK_TABLE + " set " + CHAR_BANK_ITEM_BAG_ID + " = @" + CHAR_BANK_ITEM_BAG_ID + ";";
             using (var createCommand = _dbConnection.CreateCommand())
@@ -499,6 +509,5 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                 createCommand.ExecuteNonQuery();
             }
         }
-
     }
 }

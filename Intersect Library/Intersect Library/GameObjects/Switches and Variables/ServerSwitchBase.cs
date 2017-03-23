@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Intersect_Library.GameObjects
+namespace Intersect.GameObjects
 {
-    public class ServerSwitchBase : DatabaseObject
+    public class ServerSwitchBase : DatabaseObject<ServerSwitchBase>
     {
         //Core info
-        public new const string DatabaseTable = "server_switches";
-        public new const GameObject Type = GameObject.ServerSwitch;
+        public new const string DATABASE_TABLE = "server_switches";
+        public new const GameObject OBJECT_TYPE = GameObject.ServerSwitch;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
-        public string Name = "New Global Switch";
         public bool Value = false;
 
         public ServerSwitchBase(int id) : base(id)
         {
+            Name = "New Global Switch";
         }
 
         public override void Load(byte[] packet)
@@ -39,7 +39,7 @@ namespace Intersect_Library.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return (ServerSwitchBase)Objects[index];
+                return (ServerSwitchBase) Objects[index];
             }
             return null;
         }
@@ -48,24 +48,21 @@ namespace Intersect_Library.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return ((ServerSwitchBase)Objects[index]).Name;
+                return ((ServerSwitchBase) Objects[index]).Name;
             }
             return "Deleted";
         }
 
-        public override byte[] GetData()
+        public override byte[] BinaryData => Data();
+
+        public override string DatabaseTableName
         {
-            return Data();
+            get { return DATABASE_TABLE; }
         }
 
-        public override string GetTable()
+        public override GameObject GameObjectType
         {
-            return DatabaseTable;
-        }
-
-        public override GameObject GetGameObjectType()
-        {
-            return Type;
+            get { return OBJECT_TYPE; }
         }
 
         public static DatabaseObject Get(int index)
@@ -76,26 +73,31 @@ namespace Intersect_Library.GameObjects
             }
             return null;
         }
+
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            Objects.Remove(Id);
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, ServerSwitchBase> GetObjects()
         {
-            Dictionary<int, ServerSwitchBase> objects = Objects.ToDictionary(k => k.Key, v => (ServerSwitchBase)v.Value);
+            Dictionary<int, ServerSwitchBase> objects = Objects.ToDictionary(k => k.Key, v => (ServerSwitchBase) v.Value);
             return objects;
         }
     }

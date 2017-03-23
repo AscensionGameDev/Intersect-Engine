@@ -1,29 +1,41 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Windows.Forms;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect_Editor.Classes.Content;
 using Intersect_Editor.Forms;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Media;
-using System.Windows.Forms;
-using System.Collections.Specialized;
-using System.Drawing;
-using System.Threading.Tasks;
-using Intersect_Editor.Classes.Content;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
 
 namespace Intersect_Editor.Classes.Core
 {
     public static class GameContentManager
     {
+        public enum TextureType
+        {
+            Tileset = 0,
+            Item,
+            Entity,
+            Spell,
+            Animation,
+            Face,
+            Image,
+            Fog,
+            Resource,
+            Paperdoll,
+            Gui,
+            Misc,
+        }
+
         //MonoGame Content Manager
         private static ContentManager contentManger;
 
@@ -51,26 +63,10 @@ namespace Intersect_Editor.Classes.Core
         static Dictionary<string, object> musicDict = new Dictionary<string, object>();
         static Dictionary<string, object> soundDict = new Dictionary<string, object>();
 
-        public enum TextureType
-        {
-            Tileset = 0,
-            Item,
-            Entity,
-            Spell,
-            Animation,
-            Face,
-            Image,
-            Fog,
-            Resource,
-            Paperdoll,
-            Gui,
-            Misc,
-        }
-
         //Resource Downloader
         public static void CheckForResources()
         {
-            System.Net.ServicePointManager.Expect100Continue = false;
+            ServicePointManager.Expect100Continue = false;
             if (!Directory.Exists("resources"))
             {
                 loadingForm = new frmLoadingContent();
@@ -79,13 +75,12 @@ namespace Intersect_Editor.Classes.Core
                 using (WebClient client = new WebClient())
                 {
                     byte[] response =
-                    client.UploadValues(resourceRelayer, new NameValueCollection()
-                    {
-                       { "version", Assembly.GetExecutingAssembly().GetName().Version.ToString() },
-                    });
+                        client.UploadValues(resourceRelayer, new NameValueCollection()
+                        {
+                            {"version", Assembly.GetExecutingAssembly().GetName().Version.ToString()},
+                        });
                     string result = Encoding.UTF8.GetString(response);
-                    Uri urlResult;
-                    if (Uri.TryCreate(result, UriKind.Absolute, out urlResult))
+                    if (Uri.TryCreate(result, UriKind.Absolute, out Uri urlResult))
                     {
                         client.DownloadProgressChanged += Client_DownloadProgressChanged;
                         client.DownloadFileCompleted += Client_DownloadFileCompleted;
@@ -138,15 +133,16 @@ namespace Intersect_Editor.Classes.Core
                 Environment.Exit(1);
             }
         }
-        private static void Client_DownloadFileCompleted(global::System.Object sender, global::System.ComponentModel.AsyncCompletedEventArgs e)
+
+        private static void Client_DownloadFileCompleted(Object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
             downloadCompleted = true;
             if (!e.Cancelled && e.Error == null)
             {
                 try
                 {
-                    global::System.IO.Compression.ZipFile.ExtractToDirectory("resources.zip",
-                        global::System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                    System.IO.Compression.ZipFile.ExtractToDirectory("resources.zip",
+                        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
                     File.Delete("resources.zip");
                 }
                 catch (Exception ex)
@@ -166,7 +162,8 @@ namespace Intersect_Editor.Classes.Core
                 }
             }
         }
-        private static void Client_DownloadProgressChanged(global::System.Object sender, DownloadProgressChangedEventArgs e)
+
+        private static void Client_DownloadProgressChanged(Object sender, DownloadProgressChangedEventArgs e)
         {
             loadingForm.SetProgress(e.ProgressPercentage);
         }
@@ -176,7 +173,8 @@ namespace Intersect_Editor.Classes.Core
             //Start by creating a MonoGame Content Manager
             //We create a dummy game service so we can load up a content manager.
             var container = new GameServiceContainer();
-            container.AddService(typeof(IGraphicsDeviceService), new DummyGraphicsDeviceManager(EditorGraphics.GetGraphicsDevice()));
+            container.AddService(typeof(IGraphicsDeviceService),
+                new DummyGraphicsDeviceManager(EditorGraphics.GetGraphicsDevice()));
             contentManger = new ContentManager(container, "");
             LoadItems();
             LoadEntities();
@@ -203,7 +201,10 @@ namespace Intersect_Editor.Classes.Core
         public static void LoadTextureGroup(string directory, Dictionary<string, GameTexture> dict)
         {
             dict.Clear();
-            if (!Directory.Exists("resources/" + directory)) { Directory.CreateDirectory("resources/" + directory); }
+            if (!Directory.Exists("resources/" + directory))
+            {
+                Directory.CreateDirectory("resources/" + directory);
+            }
             var items = Directory.GetFiles("resources/" + directory, "*.png");
             for (int i = 0; i < items.Length; i++)
             {
@@ -211,9 +212,13 @@ namespace Intersect_Editor.Classes.Core
                 dict.Add(filename, new GameTexture("resources/" + directory + "/" + filename));
             }
         }
+
         public static void LoadTilesets()
         {
-            if (!Directory.Exists("resources/tilesets")) { Directory.CreateDirectory("resources/tilesets"); }
+            if (!Directory.Exists("resources/tilesets"))
+            {
+                Directory.CreateDirectory("resources/tilesets");
+            }
             var tilesets = Directory.GetFiles("resources/tilesets", "*.png");
             var tilesetWarning = false;
             var suppressTilesetWarning = Preferences.LoadPreference("SuppressTextureWarning");
@@ -250,18 +255,29 @@ namespace Intersect_Editor.Classes.Core
 
             tilesetDict.Clear();
             var badTilesets = new List<string>();
-            for (var i = 0; i < TilesetBase.ObjectCount(); i++)
+            for (var i = 0; i < TilesetBase.Lookup.Count; i++)
             {
-                if (File.Exists("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value))
+                if (
+                    File.Exists("resources/tilesets/" +
+                                TilesetBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name))
                 {
-                    tilesetDict.Add(TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value.ToLower(), new GameTexture("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value));
+                    tilesetDict.Add(
+                        TilesetBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name.ToLower(),
+                        new GameTexture("resources/tilesets/" +
+                                        TilesetBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Tileset, i))
+                                            .Name));
                     if (!tilesetWarning)
                     {
-                        using (var img = Bitmap.FromFile("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value))
+                        using (
+                            var img =
+                                Image.FromFile("resources/tilesets/" +
+                                               TilesetBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Tileset,
+                                                   i)).Name))
                         {
                             if (img.Width > 2048 || img.Height > 2048)
                             {
-                                badTilesets.Add(TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value);
+                                badTilesets.Add(
+                                    TilesetBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Tileset, i)).Name);
                             }
                         }
                     }
@@ -270,7 +286,10 @@ namespace Intersect_Editor.Classes.Core
 
             if (badTilesets.Count > 0)
             {
-                    MessageBox.Show("One or more tilesets is too large and likely won't load for your players on older machines! We recommmend that no graphic is larger than 2048 pixels in width or height.\n\nFaulting tileset(s): " +string.Join(",", badTilesets.ToArray()),"Large Tileset Warning!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(
+                    "One or more tilesets is too large and likely won't load for your players on older machines! We recommmend that no graphic is larger than 2048 pixels in width or height.\n\nFaulting tileset(s): " +
+                    string.Join(",", badTilesets.ToArray()), "Large Tileset Warning!", MessageBoxButtons.OK,
+                    MessageBoxIcon.Exclamation);
             }
 
             if (newTilesets.Count > 0)
@@ -278,61 +297,80 @@ namespace Intersect_Editor.Classes.Core
                 PacketSender.SendNewTilesets(newTilesets.ToArray());
             }
         }
+
         private static void LoadItems()
         {
             LoadTextureGroup("items", itemDict);
         }
+
         private static void LoadEntities()
         {
             LoadTextureGroup("entities", entityDict);
         }
+
         private static void LoadSpells()
         {
             LoadTextureGroup("spells", spellDict);
         }
+
         private static void LoadAnimations()
         {
             LoadTextureGroup("animations", animationDict);
         }
+
         private static void LoadFaces()
         {
             LoadTextureGroup("faces", faceDict);
         }
+
         private static void LoadImages()
         {
             LoadTextureGroup("images", imageDict);
         }
+
         private static void LoadFogs()
         {
             LoadTextureGroup("fogs", fogDict);
         }
+
         private static void LoadResources()
         {
             LoadTextureGroup("resources", resourceDict);
         }
+
         private static void LoadPaperdolls()
         {
             LoadTextureGroup("paperdolls", paperdollDict);
         }
+
         private static void LoadMisc()
         {
             LoadTextureGroup("misc", miscDict);
         }
+
         public static void LoadShaders()
         {
             shaderDict.Clear();
-            if (!Directory.Exists("resources/" + "shaders")) { Directory.CreateDirectory("resources/" + "shaders"); }
+            if (!Directory.Exists("resources/" + "shaders"))
+            {
+                Directory.CreateDirectory("resources/" + "shaders");
+            }
             var items = Directory.GetFiles("resources/" + "shaders", "*_editor.xnb");
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace("resources/" + "shaders" + "\\", "").ToLower();
-                shaderDict.Add(filename, contentManger.Load<Effect>(RemoveExtension("resources/" + "shaders" + "/" + filename)));
+                shaderDict.Add(filename,
+                    contentManger.Load<Effect>(RemoveExtension("resources/" + "shaders" + "/" + filename)));
             }
         }
+
         public static void LoadSounds()
         {
             soundDict.Clear();
-            if (!Directory.Exists("resources/" + "sounds")) { Directory.CreateDirectory("resources/" + "sounds"); }
+            if (!Directory.Exists("resources/" + "sounds"))
+            {
+                Directory.CreateDirectory("resources/" + "sounds");
+            }
             var items = Directory.GetFiles("resources/" + "sounds", "*.wav");
             for (int i = 0; i < items.Length; i++)
             {
@@ -340,10 +378,14 @@ namespace Intersect_Editor.Classes.Core
                 soundDict.Add(filename, null); //TODO Sound Playback
             }
         }
+
         public static void LoadMusic()
         {
             musicDict.Clear();
-            if (!Directory.Exists("resources/" + "music")) { Directory.CreateDirectory("resources/" + "music"); }
+            if (!Directory.Exists("resources/" + "music"))
+            {
+                Directory.CreateDirectory("resources/" + "music");
+            }
             var items = Directory.GetFiles("resources/" + "music", "*.ogg");
             for (int i = 0; i < items.Length; i++)
             {
@@ -351,6 +393,7 @@ namespace Intersect_Editor.Classes.Core
                 musicDict.Add(filename, null); //TODO Music Playback
             }
         }
+
         public static string RemoveExtension(string fileName)
         {
             int fileExtPos = fileName.LastIndexOf(".");
@@ -404,21 +447,25 @@ namespace Intersect_Editor.Classes.Core
             }
             return null;
         }
+
         public static Effect GetShader(string name)
         {
             if (shaderDict.ContainsKey(name.ToLower())) return shaderDict[name.ToLower()];
             return null;
         }
+
         public static object GetMusic(string name)
         {
             if (musicDict.ContainsKey(name.ToLower())) return musicDict[name.ToLower()];
             return null;
         }
+
         public static object GetSound(string name)
         {
             if (soundDict.ContainsKey(name.ToLower())) return soundDict[name.ToLower()];
             return null;
         }
+
         //Getting Filenames
         public static string[] GetTextureNames(TextureType type)
         {
@@ -451,10 +498,12 @@ namespace Intersect_Editor.Classes.Core
             }
             return null;
         }
+
         public static string[] GetMusicNames()
         {
             return musicDict.Keys.ToArray();
         }
+
         public static string[] GetSoundNames()
         {
             return soundDict.Keys.ToArray();
@@ -463,6 +512,11 @@ namespace Intersect_Editor.Classes.Core
 
     internal class DummyGraphicsDeviceManager : IGraphicsDeviceService
     {
+        public DummyGraphicsDeviceManager(GraphicsDevice graphicsDevice)
+        {
+            GraphicsDevice = graphicsDevice;
+        }
+
         public GraphicsDevice GraphicsDevice { get; private set; }
 
         // Not used but required that these be here:
@@ -470,10 +524,5 @@ namespace Intersect_Editor.Classes.Core
         public event EventHandler<EventArgs> DeviceDisposing;
         public event EventHandler<EventArgs> DeviceReset;
         public event EventHandler<EventArgs> DeviceResetting;
-
-        public DummyGraphicsDeviceManager(GraphicsDevice graphicsDevice)
-        {
-            GraphicsDevice = graphicsDevice;
-        }
     }
 }

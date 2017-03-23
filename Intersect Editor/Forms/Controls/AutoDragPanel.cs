@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Intersect_Editor.Forms.Controls
@@ -14,14 +7,17 @@ namespace Intersect_Editor.Forms.Controls
     {
         private Timer _dragTimer;
         private int MaxDragChange = 2;
+
         public AutoDragPanel()
         {
             InitializeComponent();
-            _dragTimer = new Timer();
-            _dragTimer.Interval = 1;
+            _dragTimer = new Timer()
+            {
+                Interval = 1
+            };
             _dragTimer.Tick += DragTimer_Tick;
-            this.MouseDown += AutoDragPanel_MouseDown;
-            this.MouseUp += AutoDragPanel_MouseUp;
+            MouseDown += AutoDragPanel_MouseDown;
+            MouseUp += AutoDragPanel_MouseUp;
         }
 
         public void AutoDragPanel_MouseUp(object sender, MouseEventArgs e)
@@ -45,10 +41,10 @@ namespace Intersect_Editor.Forms.Controls
             var bottom = ClientRectangle.Bottom;
 
             if (VerticalScroll.Visible)
-                right = this.Width - System.Windows.Forms.SystemInformation.VerticalScrollBarWidth;
+                right = Width - SystemInformation.VerticalScrollBarWidth;
 
             if (HorizontalScroll.Visible)
-                bottom = this.Height - System.Windows.Forms.SystemInformation.HorizontalScrollBarHeight;
+                bottom = Height - SystemInformation.HorizontalScrollBarHeight;
 
             if (VerticalScroll.Visible)
             {

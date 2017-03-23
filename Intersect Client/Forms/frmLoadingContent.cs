@@ -13,6 +13,5 @@ namespace Intersect_Client.Classes
         {
             lblProgress.Text = "Downloading: " + percent + "% Complete";
         }
-
     }
 }

@@ -4,17 +4,17 @@ namespace Intersect_Client.Classes.Core
 {
     public static class GameFade
     {
-        private static FadeType _currentAction;
-        private static float _fadeAmt;
-        private static float _fadeRate = 3000f;
-        private static long _lastUpdate = 0;
-
         public enum FadeType
         {
             None = 0,
             In = 1,
             Out = 2,
         }
+
+        private static FadeType _currentAction;
+        private static float _fadeAmt;
+        private static float _fadeRate = 3000f;
+        private static long _lastUpdate = 0;
 
         public static void FadeIn()
         {
@@ -53,7 +53,7 @@ namespace Intersect_Client.Classes.Core
             }
             else if (_currentAction == FadeType.Out)
             {
-                _fadeAmt += ((Globals.System.GetTimeMS() - _lastUpdate)/_fadeRate)*255f;
+                _fadeAmt += ((Globals.System.GetTimeMS() - _lastUpdate) / _fadeRate) * 255f;
                 if (_fadeAmt >= 255f)
                 {
                     _currentAction = FadeType.None;

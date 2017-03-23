@@ -1,8 +1,6 @@
-﻿
-
-using System;
+﻿using System;
 using System.Windows.Forms;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -25,8 +23,8 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("about", "title");
-            lblVersion.Text = Strings.Get("about","version", Application.ProductVersion);
+            Text = Strings.Get("about", "title");
+            lblVersion.Text = Strings.Get("about", "version", Application.ProductVersion);
             lblWebsite.Text = Strings.Get("about", "site");
         }
     }

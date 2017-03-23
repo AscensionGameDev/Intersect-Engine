@@ -1,18 +1,18 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
 using DarkUI.Controls;
-using Intersect_Library;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.GameObjects.Maps.MapList;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Maps.MapList;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_Warp : UserControl
     {
-        private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
+        private EventCommand _myCommand;
+
         public EventCommand_Warp(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
@@ -32,7 +32,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 cmbMap.SelectedIndex = 0;
             }
-            scrlX.Maximum = Options.MapWidth -1;
+            scrlX.Maximum = Options.MapWidth - 1;
             scrlY.Maximum = Options.MapHeight - 1;
             scrlX.Value = _myCommand.Ints[1];
             scrlY.Value = _myCommand.Ints[2];
@@ -85,7 +85,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void btnVisual_Click(object sender, EventArgs e)
         {
             frmWarpSelection frmWarpSelection = new frmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum,scrlX.Value,scrlY.Value);
+            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum, scrlX.Value, scrlY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
@@ -106,32 +106,26 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void lblY_Click(object sender, EventArgs e)
         {
-
         }
 
         private void lblX_Click(object sender, EventArgs e)
         {
-
         }
 
         private void label23_Click(object sender, EventArgs e)
         {
-
         }
 
         private void cmbDirection_SelectedIndexChanged(object sender, EventArgs e)
         {
-
         }
 
         private void cmbMap_SelectedIndexChanged(object sender, EventArgs e)
         {
-
         }
 
         private void label21_Click(object sender, EventArgs e)
         {
-
         }
     }
 }

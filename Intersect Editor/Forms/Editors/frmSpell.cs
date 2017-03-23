@@ -1,28 +1,25 @@
-﻿
-using Intersect_Editor.Classes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Maps.MapList;
+using Intersect.Localization;
+using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Forms.Editors;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.GameObjects.Maps.MapList;
-using Intersect_Library.Localization;
-
 
 namespace Intersect_Editor.Forms
 {
     public partial class frmSpell : Form
     {
         private List<SpellBase> _changed = new List<SpellBase>();
-        private SpellBase _editorItem = null;
         private byte[] _copiedItem = null;
+        private SpellBase _editorItem = null;
 
         public frmSpell()
         {
@@ -83,23 +80,23 @@ namespace Intersect_Editor.Forms
             cmbProjectile.Items.Clear();
             cmbProjectile.Items.AddRange(Database.GetGameObjectList(GameObject.Projectile));
             cmbCastAnimation.Items.Clear();
-            cmbCastAnimation.Items.Add(Strings.Get("general","none"));
+            cmbCastAnimation.Items.Add(Strings.Get("general", "none"));
             cmbCastAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             cmbHitAnimation.Items.Clear();
-            cmbHitAnimation.Items.Add(Strings.Get("general","none"));
+            cmbHitAnimation.Items.Add(Strings.Get("general", "none"));
             cmbHitAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             cmbEvent.Items.Clear();
-            cmbEvent.Items.Add(Strings.Get("general","none"));
+            cmbEvent.Items.Add(Strings.Get("general", "none"));
             cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObject.CommonEvent));
             cmbSprite.Items.Clear();
-            cmbSprite.Items.Add(Strings.Get("general","none"));
+            cmbSprite.Items.Add(Strings.Get("general", "none"));
             string[] spellNames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Spell);
             for (int i = 0; i < spellNames.Length; i++)
             {
                 cmbSprite.Items.Add(spellNames[i]);
             }
             cmbTransform.Items.Clear();
-            cmbTransform.Items.Add(Strings.Get("general","none"));
+            cmbTransform.Items.Add(Strings.Get("general", "none"));
             string[] spriteNames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity);
             for (int i = 0; i < spriteNames.Length; i++)
             {
@@ -119,7 +116,7 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("spelleditor", "title");
+            Text = Strings.Get("spelleditor", "title");
             toolStripItemNew.Text = Strings.Get("spelleditor", "new");
             toolStripItemDelete.Text = Strings.Get("spelleditor", "delete");
             toolStripItemCopy.Text = Strings.Get("spelleditor", "copy");
@@ -249,13 +246,15 @@ namespace Intersect_Editor.Forms
                 nudCastDuration.Value = _editorItem.CastDuration * 100;
                 nudCooldownDuration.Value = _editorItem.CooldownDuration * 100;
 
-                cmbCastAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.CastAnimation) + 1;
-                cmbHitAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.HitAnimation) + 1;
+                cmbCastAnimation.SelectedIndex =
+                    Database.GameObjectListIndex(GameObject.Animation, _editorItem.CastAnimation) + 1;
+                cmbHitAnimation.SelectedIndex =
+                    Database.GameObjectListIndex(GameObject.Animation, _editorItem.HitAnimation) + 1;
 
                 cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Pic);
                 if (cmbSprite.SelectedIndex > 0)
                 {
-                    picSpell.BackgroundImage = Bitmap.FromFile("resources/spells/" + cmbSprite.Text);
+                    picSpell.BackgroundImage = Image.FromFile("resources/spells/" + cmbSprite.Text);
                 }
                 else
                 {
@@ -263,7 +262,6 @@ namespace Intersect_Editor.Forms
                 }
                 nudHPCost.Value = _editorItem.VitalCost[(int) Vitals.Health];
                 nudMpCost.Value = _editorItem.VitalCost[(int) Vitals.Mana];
-                
 
                 UpdateSpellTypePanels();
                 if (_changed.IndexOf(_editorItem) == -1)
@@ -288,7 +286,7 @@ namespace Intersect_Editor.Forms
             grpEvent.Hide();
             cmbTargetType.Enabled = true;
 
-            if (cmbType.SelectedIndex == (int)SpellTypes.CombatSpell)
+            if (cmbType.SelectedIndex == (int) SpellTypes.CombatSpell)
             {
                 grpTargetInfo.Show();
                 grpCombat.Show();
@@ -297,11 +295,11 @@ namespace Intersect_Editor.Forms
 
                 nudHPDamage.Value = _editorItem.VitalDiff[(int) Vitals.Health];
                 nudMPDamage.Value = _editorItem.VitalDiff[(int) Vitals.Mana];
-                nudStr.Value = _editorItem.StatDiff[(int)Stats.Attack];
-                nudDef.Value = _editorItem.StatDiff[(int)Stats.Defense];
-                nudSpd.Value = _editorItem.StatDiff[(int)Stats.Speed];
-                nudMag.Value = _editorItem.StatDiff[(int)Stats.AbilityPower];
-                nudMR.Value = _editorItem.StatDiff[(int)Stats.MagicResist];
+                nudStr.Value = _editorItem.StatDiff[(int) Stats.Attack];
+                nudDef.Value = _editorItem.StatDiff[(int) Stats.Defense];
+                nudSpd.Value = _editorItem.StatDiff[(int) Stats.Speed];
+                nudMag.Value = _editorItem.StatDiff[(int) Stats.AbilityPower];
+                nudMR.Value = _editorItem.StatDiff[(int) Stats.MagicResist];
 
                 chkFriendly.Checked = Convert.ToBoolean(_editorItem.Friendly);
                 cmbDamageType.SelectedIndex = _editorItem.DamageType;
@@ -314,9 +312,8 @@ namespace Intersect_Editor.Forms
                 nudTick.Value = _editorItem.Data4 * 100;
                 cmbExtraEffect.SelectedIndex = _editorItem.Data3;
                 cmbExtraEffect_SelectedIndexChanged(null, null);
-
             }
-            else if (cmbType.SelectedIndex == (int)SpellTypes.Warp)
+            else if (cmbType.SelectedIndex == (int) SpellTypes.Warp)
             {
                 grpWarp.Show();
                 for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
@@ -331,14 +328,14 @@ namespace Intersect_Editor.Forms
                 nudWarpY.Value = _editorItem.Data3;
                 cmbDirection.SelectedIndex = _editorItem.Data4;
             }
-            else if (cmbType.SelectedIndex == (int)SpellTypes.WarpTo)
+            else if (cmbType.SelectedIndex == (int) SpellTypes.WarpTo)
             {
                 grpTargetInfo.Show();
-                cmbTargetType.SelectedIndex = (int)SpellTargetTypes.Single;
+                cmbTargetType.SelectedIndex = (int) SpellTargetTypes.Single;
                 cmbTargetType.Enabled = false;
                 UpdateTargetTypePanel();
             }
-            else if (cmbType.SelectedIndex == (int)SpellTypes.Dash)
+            else if (cmbType.SelectedIndex == (int) SpellTypes.Dash)
             {
                 grpDash.Show();
                 scrlRange.Value = _editorItem.CastRange;
@@ -348,10 +345,10 @@ namespace Intersect_Editor.Forms
                 chkIgnoreInactiveResources.Checked = Convert.ToBoolean(_editorItem.Data3);
                 chkIgnoreZDimensionBlocks.Checked = Convert.ToBoolean(_editorItem.Data4);
             }
-            else if (cmbType.SelectedIndex == (int)SpellTypes.Event)
+            else if (cmbType.SelectedIndex == (int) SpellTypes.Event)
             {
                 grpEvent.Show();
-                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObject.CommonEvent,_editorItem.Data1) + 1;
+                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObject.CommonEvent, _editorItem.Data1) + 1;
             }
         }
 
@@ -363,49 +360,50 @@ namespace Intersect_Editor.Forms
             nudCastRange.Hide();
             lblProjectile.Hide();
             cmbProjectile.Hide();
-            if (cmbTargetType.SelectedIndex == (int)SpellTargetTypes.Single)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.Single)
             {
                 lblCastRange.Show();
                 nudCastRange.Show();
                 nudCastRange.Value = _editorItem.CastRange;
-                if (cmbType.SelectedIndex == (int)SpellTypes.CombatSpell)
+                if (cmbType.SelectedIndex == (int) SpellTypes.CombatSpell)
                 {
                     lblHitRadius.Show();
                     nudHitRadius.Show();
                     nudHitRadius.Value = _editorItem.HitRadius;
                 }
             }
-            if (cmbTargetType.SelectedIndex == (int)SpellTargetTypes.AoE && cmbType.SelectedIndex == (int)SpellTypes.CombatSpell)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.AoE &&
+                cmbType.SelectedIndex == (int) SpellTypes.CombatSpell)
             {
                 lblHitRadius.Show();
                 nudHitRadius.Show();
                 nudHitRadius.Value = _editorItem.HitRadius;
             }
-            if (cmbTargetType.SelectedIndex < (int)SpellTargetTypes.Self)
+            if (cmbTargetType.SelectedIndex < (int) SpellTargetTypes.Self)
             {
                 lblCastRange.Show();
                 nudCastRange.Show();
                 nudCastRange.Value = _editorItem.CastRange;
             }
-            if (cmbTargetType.SelectedIndex == (int)SpellTargetTypes.Projectile)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.Projectile)
             {
                 lblProjectile.Show();
                 cmbProjectile.Show();
-                cmbProjectile.SelectedIndex = Database.GameObjectListIndex(GameObject.Projectile,_editorItem.Projectile);
+                cmbProjectile.SelectedIndex = Database.GameObjectListIndex(GameObject.Projectile, _editorItem.Projectile);
             }
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstSpells.Items[Database.GameObjectListIndex(GameObject.Spell,_editorItem.GetId())] = txtName.Text;
+            lstSpells.Items[Database.GameObjectListIndex(GameObject.Spell, _editorItem.Id)] = txtName.Text;
         }
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbType.SelectedIndex != _editorItem.SpellType)
             {
-                _editorItem.SpellType = (byte)cmbType.SelectedIndex;
+                _editorItem.SpellType = (byte) cmbType.SelectedIndex;
                 _editorItem.Data1 = 0;
                 _editorItem.Data2 = 0;
                 _editorItem.Data3 = 0;
@@ -417,8 +415,14 @@ namespace Intersect_Editor.Forms
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Pic = cmbSprite.Text;
-            if (cmbSprite.SelectedIndex > 0) { picSpell.BackgroundImage = Bitmap.FromFile("resources/spells/" + cmbSprite.Text); }
-            else { picSpell.BackgroundImage = null; }
+            if (cmbSprite.SelectedIndex > 0)
+            {
+                picSpell.BackgroundImage = Image.FromFile("resources/spells/" + cmbSprite.Text);
+            }
+            else
+            {
+                picSpell.BackgroundImage = null;
+            }
         }
 
         private void cmbTargetType_SelectedIndexChanged(object sender, EventArgs e)
@@ -440,7 +444,7 @@ namespace Intersect_Editor.Forms
         private void cmbExtraEffect_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Data3 = cmbExtraEffect.SelectedIndex;
-            
+
             lblSprite.Visible = false;
             cmbTransform.Visible = false;
             picSprite.Visible = false;
@@ -456,14 +460,19 @@ namespace Intersect_Editor.Forms
                 {
                     Bitmap bmp = new Bitmap(picSprite.Width, picSprite.Height);
                     var g = Graphics.FromImage(bmp);
-                    Image src = Bitmap.FromFile("resources/entities/" + cmbTransform.Text);
-                    g.DrawImage(src, new Rectangle(picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8, src.Width / 4, src.Height / 4),
+                    Image src = Image.FromFile("resources/entities/" + cmbTransform.Text);
+                    g.DrawImage(src,
+                        new Rectangle(picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8,
+                            src.Width / 4, src.Height / 4),
                         new Rectangle(0, 0, src.Width / 4, src.Height / 4), GraphicsUnit.Pixel);
                     g.Dispose();
                     src.Dispose();
                     picSprite.BackgroundImage = bmp;
                 }
-                else { picSprite.BackgroundImage = null; }
+                else
+                {
+                    picSprite.BackgroundImage = null;
+                }
             }
         }
 
@@ -505,14 +514,19 @@ namespace Intersect_Editor.Forms
             {
                 Bitmap bmp = new Bitmap(picSprite.Width, picSprite.Height);
                 var g = Graphics.FromImage(bmp);
-                Image src = Bitmap.FromFile("resources/entities/" + cmbTransform.Text);
-                g.DrawImage(src, new Rectangle(picSprite.Width/2 - src.Width/8, picSprite.Height/2 - src.Height/8, src.Width/4,src.Height/4),
-                    new Rectangle(0, 0, src.Width/4, src.Height/4), GraphicsUnit.Pixel);
+                Image src = Image.FromFile("resources/entities/" + cmbTransform.Text);
+                g.DrawImage(src,
+                    new Rectangle(picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8,
+                        src.Width / 4, src.Height / 4),
+                    new Rectangle(0, 0, src.Width / 4, src.Height / 4), GraphicsUnit.Pixel);
                 g.Dispose();
                 src.Dispose();
                 picSprite.BackgroundImage = bmp;
             }
-            else { picSprite.BackgroundImage = null; }
+            else
+            {
+                picSprite.BackgroundImage = null;
+            }
         }
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
@@ -525,7 +539,8 @@ namespace Intersect_Editor.Forms
             if (_editorItem != null && lstSpells.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("spelleditor", "deleteprompt"),
-                        Strings.Get("spelleditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                        Strings.Get("spelleditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -536,7 +551,7 @@ namespace Intersect_Editor.Forms
         {
             if (_editorItem != null && lstSpells.Focused)
             {
-                _copiedItem = _editorItem.GetData();
+                _copiedItem = _editorItem.BinaryData;
                 toolStripItemPaste.Enabled = true;
             }
         }
@@ -555,7 +570,8 @@ namespace Intersect_Editor.Forms
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("spelleditor", "undoprompt"),
-                        Strings.Get("spelleditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                        Strings.Get("spelleditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();
@@ -636,12 +652,14 @@ namespace Intersect_Editor.Forms
 
         private void cmbCastAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.CastAnimation = Database.GameObjectIdFromList(GameObject.Animation, cmbCastAnimation.SelectedIndex - 1);
+            _editorItem.CastAnimation = Database.GameObjectIdFromList(GameObject.Animation,
+                cmbCastAnimation.SelectedIndex - 1);
         }
 
         private void cmbHitAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.HitAnimation = Database.GameObjectIdFromList(GameObject.Animation, cmbHitAnimation.SelectedIndex - 1);
+            _editorItem.HitAnimation = Database.GameObjectIdFromList(GameObject.Animation,
+                cmbHitAnimation.SelectedIndex - 1);
         }
 
         private void cmbProjectile_SelectedIndexChanged(object sender, EventArgs e)
@@ -657,7 +675,8 @@ namespace Intersect_Editor.Forms
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
             frmWarpSelection frmWarpSelection = new frmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum, (int)nudWarpX.Value, (int)nudWarpY.Value);
+            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum, (int) nudWarpX.Value,
+                (int) nudWarpY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
@@ -684,7 +703,7 @@ namespace Intersect_Editor.Forms
 
         private void nudWarpX_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Data2 = (int)nudWarpX.Value;
+            _editorItem.Data2 = (int) nudWarpX.Value;
         }
 
         private void nudWarpY_ValueChanged(object sender, EventArgs e)
@@ -699,87 +718,87 @@ namespace Intersect_Editor.Forms
 
         private void nudCastDuration_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.CastDuration = (int)nudCastDuration.Value / 100;
+            _editorItem.CastDuration = (int) nudCastDuration.Value / 100;
         }
 
         private void nudCooldownDuration_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.CooldownDuration = (int)nudCooldownDuration.Value / 100;
+            _editorItem.CooldownDuration = (int) nudCooldownDuration.Value / 100;
         }
 
         private void nudHitRadius_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.HitRadius = (int)nudHitRadius.Value;
+            _editorItem.HitRadius = (int) nudHitRadius.Value;
         }
 
         private void nudHPCost_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.VitalCost[(int)Vitals.Health] = (int)nudHPCost.Value;
+            _editorItem.VitalCost[(int) Vitals.Health] = (int) nudHPCost.Value;
         }
 
         private void nudMpCost_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.VitalCost[(int)Vitals.Mana] = (int)nudMpCost.Value;
+            _editorItem.VitalCost[(int) Vitals.Mana] = (int) nudMpCost.Value;
         }
 
         private void nudHPDamage_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.VitalDiff[(int)Vitals.Health] = (int)nudHPDamage.Value;
+            _editorItem.VitalDiff[(int) Vitals.Health] = (int) nudHPDamage.Value;
         }
 
         private void nudMPDamage_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.VitalDiff[(int)Vitals.Mana] = (int)nudMPDamage.Value;
+            _editorItem.VitalDiff[(int) Vitals.Mana] = (int) nudMPDamage.Value;
         }
 
         private void nudStr_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.StatDiff[(int)Stats.Attack] = (int)nudStr.Value;
+            _editorItem.StatDiff[(int) Stats.Attack] = (int) nudStr.Value;
         }
 
         private void nudMag_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.StatDiff[(int)Stats.AbilityPower] = (int)nudMag.Value;
+            _editorItem.StatDiff[(int) Stats.AbilityPower] = (int) nudMag.Value;
         }
 
         private void nudDef_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.StatDiff[(int)Stats.Defense] = (int)nudDef.Value;
+            _editorItem.StatDiff[(int) Stats.Defense] = (int) nudDef.Value;
         }
 
         private void nudMR_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.StatDiff[(int)Stats.MagicResist] = (int)nudMR.Value;
+            _editorItem.StatDiff[(int) Stats.MagicResist] = (int) nudMR.Value;
         }
 
         private void nudSpd_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.StatDiff[(int)Stats.Speed] = (int)nudSpd.Value;
+            _editorItem.StatDiff[(int) Stats.Speed] = (int) nudSpd.Value;
         }
 
         private void nudBuffDuration_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Data2 = (int)nudBuffDuration.Value / 100;
+            _editorItem.Data2 = (int) nudBuffDuration.Value / 100;
         }
 
         private void nudTick_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Data4 = (int)nudTick.Value / 100;
+            _editorItem.Data4 = (int) nudTick.Value / 100;
         }
 
         private void nudCritChance_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.CritChance = (int)nudCritChance.Value;
+            _editorItem.CritChance = (int) nudCritChance.Value;
         }
 
         private void nudScaling_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Scaling = (int)nudScaling.Value;
+            _editorItem.Scaling = (int) nudScaling.Value;
         }
 
         private void nudCastRange_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.CastRange = (int)nudCastRange.Value;
+            _editorItem.CastRange = (int) nudCastRange.Value;
         }
     }
 }

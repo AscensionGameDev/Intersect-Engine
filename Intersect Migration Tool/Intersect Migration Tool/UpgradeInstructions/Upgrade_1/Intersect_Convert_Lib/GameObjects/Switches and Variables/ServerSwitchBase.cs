@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Switches_and_Variables
+namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.
+    Switches_and_Variables
 {
     public class ServerSwitchBase : DatabaseObject
     {
         //Core info
-        public new const string DatabaseTable = "server_switches";
-        public new const GameObject Type = GameObject.ServerSwitch;
+        public new const string DATABASE_TABLE = "server_switches";
+        public new const GameObject OBJECT_TYPE = GameObject.ServerSwitch;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         public string Name = "New Global Switch";
@@ -39,7 +41,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return (ServerSwitchBase)Objects[index];
+                return (ServerSwitchBase) Objects[index];
             }
             return null;
         }
@@ -48,7 +50,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return ((ServerSwitchBase)Objects[index]).Name;
+                return ((ServerSwitchBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -60,12 +62,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)
@@ -76,26 +78,31 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, ServerSwitchBase> GetObjects()
         {
-            Dictionary<int, ServerSwitchBase> objects = Objects.ToDictionary(k => k.Key, v => (ServerSwitchBase)v.Value);
+            Dictionary<int, ServerSwitchBase> objects = Objects.ToDictionary(k => k.Key, v => (ServerSwitchBase) v.Value);
             return objects;
         }
     }

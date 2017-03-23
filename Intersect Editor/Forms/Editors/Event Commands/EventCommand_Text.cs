@@ -1,18 +1,18 @@
-﻿
-using System;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using Intersect.GameObjects.Events;
+using Intersect.Localization;
 using Intersect_Editor.Classes.Core;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_Text : UserControl
     {
-        private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
+        private EventCommand _myCommand;
+
         public EventCommand_Text(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
@@ -21,7 +21,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitLocalization();
             txtShowText.Text = _myCommand.Strs[0];
             cmbFace.Items.Clear();
-            cmbFace.Items.Add(Strings.Get("general","none"));
+            cmbFace.Items.Add(Strings.Get("general", "none"));
             cmbFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
             if (cmbFace.Items.IndexOf(_myCommand.Strs[1]) > -1)
             {

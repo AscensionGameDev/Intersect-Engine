@@ -7,16 +7,17 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
 {
     public class MonoSoundSource : GameAudioSource
     {
-        private SoundEffect _sound;
+        private ContentManager _contentManager;
         private string _filename;
         private int _instanceCount = 0;
-        private ContentManager _contentManager;
+        private SoundEffect _sound;
 
         public MonoSoundSource(string filename, ContentManager contentManager)
         {
             _filename = filename;
             _contentManager = contentManager;
         }
+
         public override GameAudioInstance CreateInstance()
         {
             _instanceCount++;
@@ -48,7 +49,6 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
             {
                 _sound = SoundEffect.FromStream(fileStream);
             }
-
         }
     }
 }

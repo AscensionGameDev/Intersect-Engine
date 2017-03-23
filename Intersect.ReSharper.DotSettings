@@ -1,0 +1,50 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:Boolean x:Key="/Default/CodeEditing/Intellisense/CodeCompletion/IntelliSenseCompletingCharacters/CSharpCompletingCharacters/UpgradedFromVSSettings/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/CodeEditing/Intellisense/CodeCompletion/IntellisenseGloballyEnabled/IntellisenseEnabled/@EntryValue">Disabled</s:String>
+	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=_002A_002Eresx/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=_002A_002Exml/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConditionalTernaryEqualBranch/@EntryIndexedValue">ERROR</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConvertMethodToExpressionBody/@EntryIndexedValue">SUGGESTION</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=FunctionComplexityOverflow/@EntryIndexedValue">WARNING</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=OptionalParameterRefOut/@EntryIndexedValue">ERROR</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/ValueAnalysisMode/@EntryValue">PESSIMISTIC</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeCleanup/RecentlyUsedProfile/@EntryValue">Default: Reformat Code</s:String>
+	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_BLANK_LINES_IN_CODE/@EntryValue">1</s:Int64>
+	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_BLANK_LINES_IN_DECLARATIONS/@EntryValue">1</s:Int64>
+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=Constants/@EntryIndexedValue">&lt;Policy Inspect="True" Prefix="" Suffix="" Style="AA_BB" /&gt;</s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=PrivateConstants/@EntryIndexedValue">&lt;Policy Inspect="True" Prefix="" Suffix="" Style="AA_BB" /&gt;</s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=PrivateInstanceFields/@EntryIndexedValue">&lt;Policy Inspect="True" Prefix="m" Suffix="" Style="AaBb_aaBb" /&gt;</s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=PrivateStaticFields/@EntryIndexedValue">&lt;Policy Inspect="True" Prefix="s" Suffix="" Style="AaBb_aaBb" /&gt;</s:String>
+	<s:String x:Key="/Default/Connection/XmlConnectionList/@EntryValue">&lt;Configurator&gt;&lt;ConnectList /&gt;&lt;/Configurator&gt;</s:String>
+	<s:Boolean x:Key="/Default/Environment/ExternalSources/FirstTimeFormShown/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/ExternalSources/Decompiler/DecompileMethodBodies/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/ExternalSources/Decompiler/ShowCompilerGeneratedCode/@EntryValue">True</s:Boolean>
+	<s:Int64 x:Key="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue">5</s:Int64>
+	<s:String x:Key="/Default/Environment/UpdatesManger/LastUpdateCheck/@EntryValue">03/22/2017 10:49:33</s:String>
+	<s:String x:Key="/Default/Environment/UserInterface/ShortcutSchemeName/@EntryValue">VS</s:String>
+	<s:Int64 x:Key="/Default/Environment/UserInterface/InspectionResultView/GroupingIndex/@EntryValue">5</s:Int64>
+	<s:String x:Key="/Default/GlobalFilterSettingsManager/AttributeFilterXml/@EntryValue">&lt;data&gt;&lt;AttributeFilter ClassMask="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" IsEnabled="True" /&gt;&lt;/data&gt;</s:String>
+	<s:String x:Key="/Default/Housekeeping/AssemblyExport/AssemblyExportHistory/History/@EntryValue">&lt;AssemblyExportHisory&gt;&#xD;
+  &lt;ExportElement Assembly="131152570209758533|C:\USERS\LODICOLO\DOWNLOADS\INTERSECT ALPHA 1.6\INTERSECT ALPHA 1.6\CLIENT AND EDITOR\INTERSECT CLIENT.EXE" Project="C:\Users\lodicolo\data\scratchpad\Intersect\1.6\Client\Intersect Client\Intersect Client.csproj" /&gt;&#xD;
+  &lt;ExportElement Assembly="131152570211568456|C:\USERS\LODICOLO\DOWNLOADS\INTERSECT ALPHA 1.6\INTERSECT ALPHA 1.6\CLIENT AND EDITOR\INTERSECT EDITOR.EXE" Project="C:\Users\lodicolo\data\scratchpad\Intersect\1.6\Intersect Editor\Intersect Editor.csproj" /&gt;&#xD;
+  &lt;ExportElement Assembly="131152570212498498|C:\USERS\LODICOLO\DOWNLOADS\INTERSECT ALPHA 1.6\INTERSECT ALPHA 1.6\CLIENT AND EDITOR\INTERSECT LIBRARY.DLL" Project="C:\Users\lodicolo\data\scratchpad\Intersect\1.6\Intersect Library\Intersect Library.csproj" /&gt;&#xD;
+  &lt;ExportElement Assembly="131152570227741424|C:\USERS\LODICOLO\DOWNLOADS\INTERSECT ALPHA 1.6\INTERSECT ALPHA 1.6\SERVER\INTERSECT MIGRATION TOOL.EXE" Project="C:\Users\lodicolo\data\scratchpad\Intersect\1.6\Intersect Migration Tool\Intersect Migration Tool.csproj" /&gt;&#xD;
+  &lt;ExportElement Assembly="131152570228909805|C:\USERS\LODICOLO\DOWNLOADS\INTERSECT ALPHA 1.6\INTERSECT ALPHA 1.6\SERVER\INTERSECT SERVER.EXE" Project="C:\Users\lodicolo\data\scratchpad\Intersect\1.6\Intersect Server\Intersect Server.csproj" /&gt;&#xD;
+  &lt;ExportElement Assembly="131152570213606461|C:\USERS\LODICOLO\DOWNLOADS\INTERSECT ALPHA 1.6\INTERSECT ALPHA 1.6\CLIENT AND EDITOR\INTERSECTCLIENTEXTRAS.DLL" Project="C:\Users\lodicolo\data\scratchpad\Intersect\1.6\IntersectClientExtras\IntersectClientExtras.csproj" /&gt;&#xD;
+  &lt;ExportElement Assembly="131162742323390322|C:\USERS\LODICOLO\DATA\GIT\ORION-PLUS-GAME-ENGINE\ORION CLIENT\BIN\X86\DEBUG\ORION+ CLIENT.EXE" Project="C:\Users\lodicolo\Downloads\orion\decomp\client\Orion+ Client\Orion+ Client.csproj" /&gt;&#xD;
+  &lt;ExportElement Assembly="131162742321448977|C:\USERS\LODICOLO\DATA\GIT\ORION-PLUS-GAME-ENGINE\ORION SERVER\BIN\X86\DEBUG\ORION+ SERVER.EXE" Project="C:\Users\lodicolo\Downloads\orion\decomp\Orion+ Server\Orion+ Server.csproj" /&gt;&#xD;
+  &lt;ExportElement Assembly="131162814256775218|C:\USERS\LODICOLO\DATA\GIT\ORION-PLUS-GAME-ENGINE\ORION SERVER\BIN\RELEASE\ORION+ SERVER.EXE" Project="C:\Users\lodicolo\Downloads\orion\Orion+ Server\Orion+ Server.csproj" /&gt;&#xD;
+  &lt;ExportElement Assembly="131162814262472366|C:\USERS\LODICOLO\DATA\GIT\ORION-PLUS-GAME-ENGINE\ORION CLIENT\BIN\RELEASE\ORION+ CLIENT.EXE" Project="C:\Users\lodicolo\Downloads\orion\Orion+ Client\Orion+ Client.csproj" /&gt;&#xD;
+  &lt;ExportElement Assembly="131161101260000000|C:\USERS\LODICOLO\DOWNLOADS\INTERSECT ALPHA 1.9\INTERSECT ALPHA 1.9\CLIENT AND EDITOR\INTERSECT EDITOR.EXE" Project="C:\Users\lodicolo\Downloads\Intersect Alpha 1.9\EditorSrc\Intersect Editor\Intersect Editor.csproj" /&gt;&#xD;
+&lt;/AssemblyExportHisory&gt;</s:String>
+	<s:String x:Key="/Default/Housekeeping/FeedbackReport/SelectedUserIdentificator/@EntryValue">anonymous</s:String>
+	<s:Boolean x:Key="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/Housekeeping/Layout/DialogWindows/ExportToProjectDialog/DestinationFolder/@EntryValue">C:\Users\lodicolo\Downloads\Intersect Alpha 1.9\EditorSrc</s:String>
+	<s:String x:Key="/Default/Housekeeping/Layout/DialogWindows/OptionsDialog/Position/@EntryValue">[183.5,70](967,600)</s:String>
+	<s:String x:Key="/Default/Housekeeping/Layout/DialogWindows/OptionsDialog/SelectedPageId/@EntryValue">InspectionSeverity</s:String>
+	<s:String x:Key="/Default/Housekeeping/Layout/DialogWindows/RefactoringWizardWindow/Location/@EntryValue">-84,-250</s:String>
+	<s:Boolean x:Key="/Default/Housekeeping/LiveTemplatesHousekeeping/HotspotSessionHintIsShown/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Housekeeping/RefactoringsMru/UseInline/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/Housekeeping/RefactoringsMru/RenameRefactoring/DoSearchForTextInStrings/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/Housekeeping/UpgradeFromExceptionReport/UpgradePerformed/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/SnapshotsStore/CurrentStore/@EntryValue">C:\Users\lodicolo\AppData\Local\JetBrains\Shared\vAny\Sessions</s:String></wpf:ResourceDictionary>

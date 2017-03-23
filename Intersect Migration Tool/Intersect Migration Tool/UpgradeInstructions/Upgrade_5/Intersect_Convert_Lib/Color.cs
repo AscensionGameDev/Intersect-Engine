@@ -1,41 +1,7 @@
-﻿//Pulled from the Open Source Mono library and modified.
-//https://github.com/mono/mono
-
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib
+﻿namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib
 {
     public class Color
     {
-        public byte A { get; set; }
-        public byte R { get; set; }
-        public byte G { get; set; }
-        public byte B { get; set; }
-
-        public Color()
-        {
-
-        }
-
-        public Color(int a, int r, int g, int b)
-        {
-            A = (byte)a;
-            R = (byte)r;
-            G = (byte)g;
-            B = (byte)b;
-        }
-
-        public Color(int r, int g, int b)
-        {
-            A = 255;
-            R = (byte)r;
-            G = (byte)g;
-            B = (byte)b;
-        }
-
-        public byte GetHue()
-        {
-            return 0;
-        }
-
         public enum ChatColor
         {
             Black = 0,
@@ -51,34 +17,88 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
             Pink,
         }
 
+        public Color()
+        {
+        }
+
+        public Color(int a, int r, int g, int b)
+        {
+            A = (byte) a;
+            R = (byte) r;
+            G = (byte) g;
+            B = (byte) b;
+        }
+
+        public Color(int r, int g, int b)
+        {
+            A = 255;
+            R = (byte) r;
+            G = (byte) g;
+            B = (byte) b;
+        }
+
+        public byte A { get; set; }
+        public byte R { get; set; }
+        public byte G { get; set; }
+        public byte B { get; set; }
+
+        public static Color White => new Color(255, 255, 255, 255);
+
+        public static Color Black => new Color(255, 0, 0, 0);
+
+        public static Color Transparent => new Color(0, 0, 0, 0);
+
+        public static Color Red => new Color(255, 255, 0, 0);
+
+        public static Color Green => new Color(255, 0, 255, 0);
+
+        public static Color Blue => new Color(255, 0, 0, 255);
+
+        public static Color Yellow => new Color(255, 255, 255, 0);
+
+        public static Color LightCoral => new Color(255, 240, 128, 128);
+
+        public static Color ForestGreen => new Color(255, 34, 139, 34);
+        public static Color Magenta => new Color(255, 255, 0, 255);
+        public static Color OrangeRed => new Color(255, 255, 69, 0);
+        public static Color Orange => new Color(255, 255, 165, 0);
+        public static Color Gray => new Color(255, 128, 128, 128);
+        public static Color Cyan => new Color(255, 0, 255, 255);
+        public static Color Pink => new Color(255, 255, 192, 203);
+
+        public byte GetHue()
+        {
+            return 0;
+        }
+
         public static Color FromName(string name)
         {
             switch (name)
             {
                 case "Black":
-                    return Color.Black;
+                    return Black;
                 case "White":
-                    return Color.White;
+                    return White;
                 case "Blue":
-                    return Color.Blue;
+                    return Blue;
                 case "Red":
-                    return Color.Red;
+                    return Red;
                 case "Green":
-                    return Color.Green;
+                    return Green;
                 case "Yellow":
-                    return Color.Yellow;
+                    return Yellow;
                 case "Orange":
-                    return Color.Orange;
+                    return Orange;
                 case "Purple":
-                    return Color.Magenta;
+                    return Magenta;
                 case "Gray":
-                    return Color.Gray;
+                    return Gray;
                 case "Cyan":
-                    return Color.Cyan;
+                    return Cyan;
                 case "Pink":
-                    return Color.Pink;
+                    return Pink;
                 default:
-                    return Color.White;
+                    return White;
             }
         }
 
@@ -90,73 +110,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
         public static Color FromArgb(int r, int g, int b)
         {
             return new Color(255, r, g, b);
-        }
-
-        public static Color White
-        {
-            get { return new Color(255, 255, 255, 255); }
-        }
-
-        public static Color Black
-        {
-            get { return new Color(255, 0, 0, 0); }
-        }
-
-        public static Color Transparent
-        {
-            get { return new Color(0, 0, 0, 0); }
-        }
-
-        public static Color Red
-        {
-            get { return new Color(255, 255, 0, 0); }
-        }
-
-        public static Color Green
-        {
-            get { return new Color(255, 0, 255, 0); }
-        }
-
-        public static Color Blue
-        {
-            get { return new Color(255, 0, 0, 255); }
-        }
-
-        public static Color Yellow
-        {
-            get { return new Color(255, 255, 255, 0); }
-        }
-        public static Color LightCoral
-        {
-            get { return new Color(255, 240, 128, 128); }
-        }
-        public static Color ForestGreen
-        {
-            get { return new Color(255, 34, 139, 34); }
-        }
-        public static Color Magenta
-        {
-            get { return new Color(255, 255, 0, 255); }
-        }
-        public static Color OrangeRed
-        {
-            get { return new Color(255, 255, 69, 0); }
-        }
-        public static Color Orange
-        {
-            get { return new Color(255, 255,165,0); }
-        }
-        public static Color Gray
-        {
-            get { return new Color(255, 128, 128, 128); }
-        }
-        public static Color Cyan
-        {
-            get { return new Color(255, 0,255,255); }
-        }
-        public static Color Pink
-        {
-            get { return new Color(255, 255,192,203); }
         }
     }
 }

@@ -2,9 +2,10 @@
 {
     public class PathfinderTarget
     {
+        public int TargetMap;
         public int TargetX;
         public int TargetY;
-        public int TargetMap;
+
         public PathfinderTarget(int map, int x, int y)
         {
             TargetMap = map;

@@ -1,14 +1,10 @@
-﻿
-
-using System;
-using System.IO;
+﻿using System;
 using System.Net.Sockets;
-using Intersect_Library.Localization;
-using Intersect_Server.Classes.General;
+using Intersect.Localization;
+using Intersect.Logging;
 
 namespace Intersect_Server.Classes.Networking
 {
-
     public class NetSocket : GameSocket
     {
         private TcpClient _mySocket;
@@ -22,7 +18,10 @@ namespace Intersect_Server.Classes.Networking
             _mySocket.ReceiveBufferSize = 256000;
             _myStream = _mySocket.GetStream();
             _readBuff = new byte[_mySocket.ReceiveBufferSize];
-            if (_myStream != null) { _myStream.BeginRead(_readBuff, 0, _mySocket.ReceiveBufferSize, OnReceiveData, null); }
+            if (_myStream != null)
+            {
+                _myStream.BeginRead(_readBuff, 0, _mySocket.ReceiveBufferSize, OnReceiveData, null);
+            }
             _isConnected = true;
         }
 
@@ -30,7 +29,8 @@ namespace Intersect_Server.Classes.Networking
         {
             try
             {
-                if (_mySocket != null && _mySocket.Connected && _myStream != null) _myStream.Write(data, 0, data.Length);
+                if (_mySocket != null && _mySocket.Connected && _myStream != null)
+                    _myStream.Write(data, 0, data.Length);
             }
             catch (Exception)
             {
@@ -59,18 +59,21 @@ namespace Intersect_Server.Classes.Networking
                 _readBuff = new byte[_mySocket.ReceiveBufferSize];
                 _myStream.BeginRead(_readBuff, 0, _mySocket.ReceiveBufferSize, OnReceiveData, null);
             }
-            catch (System.ObjectDisposedException ex)
+            catch (ObjectDisposedException ex)
             {
+                Log.Trace(ex);
                 //Trying to read from a disconnected socket
             }
-            catch (System.IO.IOException)
+            catch (System.IO.IOException ex)
             {
+                Log.Trace(ex);
                 HandleDisconnect();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(Strings.Get("networking","badpacket"));
-                MainClass.CurrentDomain_UnhandledException(null, new UnhandledExceptionEventArgs(ex,false));
+                Log.Trace(ex);
+                Console.WriteLine(Strings.Get("networking", "badpacket"));
+                MainClass.CurrentDomain_UnhandledException(null, new UnhandledExceptionEventArgs(ex, false));
                 HandleDisconnect();
             }
         }
@@ -87,7 +90,6 @@ namespace Intersect_Server.Classes.Networking
 
         public override void Dispose()
         {
-
         }
 
         public override bool IsConnected()
@@ -99,7 +101,7 @@ namespace Intersect_Server.Classes.Networking
         {
             if (_mySocket != null)
             {
-                return ((System.Net.IPEndPoint)_mySocket.Client.RemoteEndPoint).Address.ToString();
+                return ((System.Net.IPEndPoint) _mySocket.Client.RemoteEndPoint).Address.ToString();
             }
             else
             {
@@ -107,6 +109,4 @@ namespace Intersect_Server.Classes.Networking
             }
         }
     }
-
-
 }

@@ -1,23 +1,19 @@
-﻿
-
-using Intersect_Library;
-using Intersect_Library.GameObjects;
+﻿using Intersect;
+using Intersect.GameObjects;
 using Intersect_Server.Classes.General;
-
 
 namespace Intersect_Server.Classes.Items
 {
     public class ItemInstance
     {
-        public int ItemNum = -1;
-        public int ItemVal = 0;
-        public int[] StatBoost = new int[(int)Stats.StatCount];
         public int BagId = -1;
         public BagInstance BagInstance = null;
+        public int ItemNum = -1;
+        public int ItemVal = 0;
+        public int[] StatBoost = new int[(int) Stats.StatCount];
 
         public ItemInstance()
         {
-            
         }
 
         public ItemInstance(int itemNum, int itemVal, int bagId)
@@ -32,8 +28,8 @@ namespace Intersect_Server.Classes.Items
                     itemVal = 1;
                     for (int i = 0; i < (int) Stats.StatCount; i++)
                     {
-                      StatBoost[i] =
-                            Globals.Rand.Next(-1* ItemBase.GetItem(ItemNum).StatGrowth,
+                        StatBoost[i] =
+                            Globals.Rand.Next(-1 * ItemBase.GetItem(ItemNum).StatGrowth,
                                 ItemBase.GetItem(ItemNum).StatGrowth + 1);
                     }
                 }
@@ -45,7 +41,7 @@ namespace Intersect_Server.Classes.Items
             var bf = new ByteBuffer();
             bf.WriteInteger(ItemNum);
             bf.WriteInteger(ItemVal);
-            for (int i = 0; i < (int)Stats.StatCount; i++)
+            for (int i = 0; i < (int) Stats.StatCount; i++)
             {
                 bf.WriteInteger(StatBoost[i]);
             }
@@ -54,8 +50,9 @@ namespace Intersect_Server.Classes.Items
 
         public ItemInstance Clone()
         {
-            ItemInstance newItem = new ItemInstance(ItemNum,ItemVal, BagId);
-            for (int i = 0; i < (int)Stats.StatCount; i++){
+            ItemInstance newItem = new ItemInstance(ItemNum, ItemVal, BagId);
+            for (int i = 0; i < (int) Stats.StatCount; i++)
+            {
                 newItem.StatBoost[i] = StatBoost[i];
             }
             if (BagInstance != null) newItem.BagInstance = BagInstance.Clone();
