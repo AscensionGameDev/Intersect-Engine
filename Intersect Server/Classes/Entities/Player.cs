@@ -2794,7 +2794,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (MyEvents[i] != null)
                 {
-                    if (MyEvents[i].MapNum == mapNum && MyEvents[i].BaseEvent.MyIndex == eventIndex)
+                    if (MyEvents[i].MapNum == mapNum && MyEvents[i].BaseEvent.Id == eventIndex)
                     {
                         if (MyEvents[i].PageInstance == null) return;
                         if (MyEvents[i].PageInstance.Trigger != 0) return;
@@ -2841,7 +2841,7 @@ namespace Intersect_Server.Classes.Entities
                 for (int i = 0; i < MyEvents.Count; i++)
                 {
                     if (MyEvents[i] != null && MyEvents[i].MapNum == mapNum &&
-                        MyEvents[i].BaseEvent.MyIndex == eventIndex)
+                        MyEvents[i].BaseEvent.Id == eventIndex)
                     {
                         if (MyEvents[i].CallStack.Count <= 0) return;
                         if (MyEvents[i].CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Dialogue)

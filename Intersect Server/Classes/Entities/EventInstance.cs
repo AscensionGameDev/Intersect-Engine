@@ -127,7 +127,7 @@ namespace Intersect_Server.Classes.Entities
                                     {
                                         if (MyPlayer.MyEvents[i] == null) continue;
                                         if (MyPlayer.MyEvents[i].MapNum == CallStack.Peek().WaitingForRouteMap &&
-                                            MyPlayer.MyEvents[i].BaseEvent.MyIndex == CallStack.Peek().WaitingForRoute)
+                                            MyPlayer.MyEvents[i].BaseEvent.Id == CallStack.Peek().WaitingForRoute)
                                         {
                                             if (MyPlayer.MyEvents[i].PageInstance == null) break;
                                             if (!MyPlayer.MyEvents[i].PageInstance.MoveRoute.Complete) break;
@@ -192,7 +192,7 @@ namespace Intersect_Server.Classes.Entities
                         {
                             if (MapInstance.GetMap(MapNum).GetGlobalEventInstance(BaseEvent) != null)
                             {
-                                PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.MyIndex,
+                                PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.Id,
                                     MapNum, this, MyClient,
                                     MapInstance.GetMap(MapNum).GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
                                 sendLeave = false;
@@ -201,7 +201,7 @@ namespace Intersect_Server.Classes.Entities
                         }
                         else
                         {
-                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.MyIndex,
+                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.Id,
                                 MapNum, this, MyClient);
                             sendLeave = false;
                             PageIndex = i;
@@ -214,11 +214,11 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (IsGlobal)
                     {
-                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.MyIndex, (int) EntityTypes.Event, MapNum);
+                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.Id, (int) EntityTypes.Event, MapNum);
                     }
                     else
                     {
-                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.MyIndex, (int) EntityTypes.Event, MapNum);
+                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.Id, (int) EntityTypes.Event, MapNum);
                     }
                 }
             }
@@ -526,7 +526,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 case EventCommandType.ShowText:
                     PacketSender.SendEventDialog(MyClient, ParseEventText(command.Strs[0]), command.Strs[1], MapNum,
-                        BaseEvent.MyIndex);
+                        BaseEvent.Id);
                     CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Dialogue;
                     CallStack.Peek().CommandIndex++;
                     break;
@@ -534,7 +534,7 @@ namespace Intersect_Server.Classes.Entities
                     PacketSender.SendEventDialog(MyClient, ParseEventText(command.Strs[0]),
                         ParseEventText(command.Strs[1]), ParseEventText(command.Strs[2]),
                         ParseEventText(command.Strs[3]), ParseEventText(command.Strs[4]), command.Strs[5], MapNum,
-                        BaseEvent.MyIndex);
+                        BaseEvent.Id);
                     CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Dialogue;
                     CallStack.Peek().ResponseIndex = 1;
                     break;
@@ -855,7 +855,7 @@ namespace Intersect_Server.Classes.Entities
                         for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
                         {
                             if (MyPlayer.MyEvents[i] == null) continue;
-                            if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
+                            if (MyPlayer.MyEvents[i].BaseEvent.Id ==
                                 CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
                                     CallStack.Peek().CommandIndex].Route.Target)
                             {
@@ -884,11 +884,11 @@ namespace Intersect_Server.Classes.Entities
                         for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
                         {
                             if (MyPlayer.MyEvents[i] == null) continue;
-                            if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
+                            if (MyPlayer.MyEvents[i].BaseEvent.Id ==
                                 CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
                                     CallStack.Peek().CommandIndex].Ints[0])
                             {
-                                CallStack.Peek().WaitingForRoute = MyPlayer.MyEvents[i].BaseEvent.MyIndex;
+                                CallStack.Peek().WaitingForRoute = MyPlayer.MyEvents[i].BaseEvent.Id;
                                 CallStack.Peek().WaitingForRouteMap = MyPlayer.MyEvents[i].MapNum;
                                 break;
                             }
@@ -936,7 +936,7 @@ namespace Intersect_Server.Classes.Entities
                                 for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
                                 {
                                     if (MyPlayer.MyEvents[i] == null) continue;
-                                    if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
+                                    if (MyPlayer.MyEvents[i].BaseEvent.Id ==
                                         CallStack.Peek().Page.CommandLists[
                                             CallStack.Peek().ListIndex].Commands[
                                             CallStack.Peek().CommandIndex].Ints[2])
@@ -1049,7 +1049,7 @@ namespace Intersect_Server.Classes.Entities
                                 for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
                                 {
                                     if (MyPlayer.MyEvents[i] == null) continue;
-                                    if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
+                                    if (MyPlayer.MyEvents[i].BaseEvent.Id ==
                                         CallStack.Peek().Page.CommandLists[
                                             CallStack.Peek().ListIndex].Commands[
                                             CallStack.Peek().CommandIndex].Ints[2])

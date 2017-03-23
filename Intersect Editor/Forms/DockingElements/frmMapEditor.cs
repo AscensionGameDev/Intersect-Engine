@@ -360,7 +360,7 @@ namespace Intersect_Editor.Forms
                         EventBase tmpEvent;
                         if ((tmpEvent = Globals.CurrentMap.FindEventAt(Globals.CurTileX, Globals.CurTileY)) != null)
                         {
-                            Globals.CurrentMap.Events.Remove(tmpEvent.MyIndex);
+                            Globals.CurrentMap.Events.Remove(tmpEvent.Id);
                             MapChanged = true;
                         }
                     }
@@ -1303,7 +1303,7 @@ namespace Intersect_Editor.Forms
                             {
                                 if (tmpMap.FindEventAt(x0, y0) != null)
                                 {
-                                    tmpMap.Events.Remove(tmpMap.FindEventAt(x0, y0).MyIndex);
+                                    tmpMap.Events.Remove(tmpMap.FindEventAt(x0, y0).Id);
                                 }
                                 eventCopy = new EventBase(tmpMap.EventIndex,
                                     Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset))
@@ -1441,7 +1441,7 @@ namespace Intersect_Editor.Forms
                         {
                             if (((MapInstance) tmpMap).FindEventAt(x0, y0) != null)
                             {
-                                tmpMap.Events.Remove(((MapInstance) tmpMap).FindEventAt(x0, y0).MyIndex);
+                                tmpMap.Events.Remove(((MapInstance) tmpMap).FindEventAt(x0, y0).Id);
                             }
                         }
                     }

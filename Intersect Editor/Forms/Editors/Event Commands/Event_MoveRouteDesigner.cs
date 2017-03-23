@@ -69,7 +69,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 }
                 foreach (var evt in _currentMap.Events)
                 {
-                    cmbTarget.Items.Add(evt.Key == _editingEvent.MyIndex
+                    cmbTarget.Items.Add(evt.Key == _editingEvent.Id
                         ? Strings.Get("eventmoveroute", "thisevent")
                         : "" + evt.Value.Name);
                     if (_editingCommand != null)

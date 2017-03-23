@@ -13,7 +13,6 @@ namespace Intersect.GameObjects.Events
         {
             Name = "";
             if (isCommon) Name = "Common Event " + index;
-            MyIndex = index;
             SpawnX = x;
             SpawnY = y;
             CommonEvent = isCommon;
@@ -25,7 +24,6 @@ namespace Intersect.GameObjects.Events
         {
             Name = "New Event";
             MyPages = new List<EventPage>();
-            MyIndex = index;
             Load(copy.EventData());
             CommonEvent = copy.CommonEvent;
         }
@@ -34,11 +32,9 @@ namespace Intersect.GameObjects.Events
         {
             Name = "New Event";
             MyPages = new List<EventPage>();
-            MyIndex = index;
             Load(myBuffer.ToArray());
         }
-
-        public int MyIndex { get; set; }
+        
         public int SpawnX { get; set; }
         public int SpawnY { get; set; }
         public bool CommonEvent { get; set; }
@@ -117,7 +113,7 @@ namespace Intersect.GameObjects.Events
 
         public override void Delete()
         {
-            Objects.Remove(Id);
+            Objects.Remove(base.Id);
         }
 
         public static void ClearObjects()
