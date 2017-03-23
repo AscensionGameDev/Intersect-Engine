@@ -88,6 +88,7 @@ namespace Intersect_Client.Classes.Entities
 
         public Entity(int index, long spawnTime, ByteBuffer bf, bool isEvent = false)
         {
+            CurrentMap = -1;
             SpawnTime = spawnTime;
             if (index > -1 && !isEvent)
             {
@@ -109,7 +110,7 @@ namespace Intersect_Client.Classes.Entities
             Load(bf);
         }
 
-        public virtual int CurrentMap { get; set; } = -1;
+        public virtual int CurrentMap { get; set; }
 
         public virtual EntityTypes GetEntityType()
         {
