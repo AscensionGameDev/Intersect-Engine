@@ -401,10 +401,10 @@ namespace Intersect_Client.Classes.Maps
                     yOffset = -Options.TileHeight;
                     break;
             }
-            if (TilesetBase.GetTileset(Layers[layerNum].Tiles[x, y].TilesetIndex) != null)
+            if (TilesetBase.Lookup.Get(Layers[layerNum].Tiles[x, y].TilesetIndex) != null)
             {
                 GameTexture tileset = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
-                    TilesetBase.GetTileset(Layers[layerNum].Tiles[x, y].TilesetIndex).Name);
+                    TilesetBase.Lookup.Get(Layers[layerNum].Tiles[x, y].TilesetIndex).Name);
                 GameGraphics.DrawGameTexture(tileset, destX, destY,
                     (int) Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
                     (int) Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
@@ -455,7 +455,7 @@ namespace Intersect_Client.Classes.Maps
             {
                 for (var y = ymin; y < ymax; y++)
                 {
-                    var tileset = TilesetBase.GetTileset(Layers[l].Tiles[x, y].TilesetIndex);
+                    var tileset = TilesetBase.Lookup.Get(Layers[l].Tiles[x, y].TilesetIndex);
                     if (tileset == null) continue;
                     GameTexture tilesetTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
                         tileset.Name);
