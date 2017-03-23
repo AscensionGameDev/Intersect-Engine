@@ -37,16 +37,18 @@ namespace Intersect.GameObjects
 
         public byte[] CraftData()
         {
-            var myBuffer = new ByteBuffer();
-
-            myBuffer.WriteString(Name);
-            myBuffer.WriteInteger(Crafts.Count);
-            foreach (var craft in Crafts)
+            using (var myBuffer = new ByteBuffer())
             {
-                myBuffer.WriteBytes(craft.Data());
-            }
 
-            return myBuffer.ToArray();
+                myBuffer.WriteString(Name);
+                myBuffer.WriteInteger(Crafts.Count);
+                foreach (var craft in Crafts)
+                {
+                    myBuffer.WriteBytes(craft.Data());
+                }
+
+                return myBuffer.ToArray();
+            }
         }
 
         public static BenchBase GetCraft(int index)
