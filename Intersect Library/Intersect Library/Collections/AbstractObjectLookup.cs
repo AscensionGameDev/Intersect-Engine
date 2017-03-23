@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Intersect.GameObjects;
 using Intersect.Logging;
@@ -15,26 +16,30 @@ namespace Intersect.Collections
             ReadOnlyMap = new ReadOnlyDictionary<TKey, TValue>(mMutableMap);
         }
 
-        public int Count => mMutableMap.Count;
+        public int Count => mMutableMap?.Count ?? -1;
         public IDictionary<TKey, TValue> ReadOnlyMap { get; }
         public ICollection<KeyValuePair<TKey, TValue>> Pairs => ReadOnlyMap;
-        public ICollection<TKey> Keys => ReadOnlyMap.Keys;
-        public ICollection<TValue> Values => ReadOnlyMap.Values;
+        public ICollection<TKey> Keys => ReadOnlyMap?.Keys;
+        public ICollection<TValue> Values => ReadOnlyMap?.Values;
 
         protected abstract bool Validate(TKey key);
 
         public TValue this[TKey key]
         {
             get { return Get(key); }
-            set { Add(key, value); }
+            set { Set(key, value); }
         }
 
         public TValue Get(TKey key)
         {
-            if (Validate(key) && mMutableMap.TryGetValue(key, out TValue value))
-                return value;
+            if (!Validate(key)) return default(TValue);
 
-            return default(TValue);
+            if (mMutableMap == null)
+            {
+                throw new AccessViolationException("Internal map is null despite being set in the constructor.");
+            }
+
+            return mMutableMap.TryGetValue(key, out TValue value) ? value : default(TValue);
         }
 
         public bool Add(TValue value)
@@ -52,27 +57,52 @@ namespace Intersect.Collections
                 return false;
             }
 
-            if (!Validate(key))
-                return false;
+            if (!Validate(key)) return false;
 
-            if (mMutableMap.ContainsKey(key))
-                Log.Warn("Collection already contains object with key '{0}'.", key);
+            if (mMutableMap == null)
+            {
+                throw new AccessViolationException("Internal map is null despite being set in the constructor.");
+            }
+
+            if (!mMutableMap.ContainsKey(key)) return Set(key, value);
+
+            Log.Error("Collection already contains object with key '{0}'.", key);
+            return false;
+        }
+
+        public bool Set(TKey key, TValue value)
+        {
+            if (value == null)
+            {
+                Log.Warn("Tried to set a null value for key '{0}'.", key);
+                return false;
+            }
+
+            if (!Validate(key)) return false;
+
+            if (mMutableMap == null)
+            {
+                throw new AccessViolationException("Internal map is null despite being set in the constructor.");
+            }
 
             mMutableMap[key] = value;
             return true;
         }
 
-        public bool Delete(TValue value)
-        {
-            return value != null && mMutableMap.Remove(value.Id);
-        }
+        public bool Delete(TValue value) => value != null && (mMutableMap?.Remove(value.Id) ?? false);
 
-        public void Clear()
-        {
-            mMutableMap.Clear();
-        }
+        public void Clear() => mMutableMap?.Clear();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => Pairs.GetEnumerator();
+
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        {
+            if (Pairs == null)
+            {
+                throw new AccessViolationException("Lookup pairs somehow null.");
+            }
+
+            return Pairs.GetEnumerator();
+        }
     }
 }

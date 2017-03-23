@@ -309,7 +309,7 @@ namespace Intersect_Editor.Classes
                     {
                         var anim = new AnimationBase(id);
                         anim.Load(data);
-                        AnimationBase.Lookup.Add(id, anim);
+                        AnimationBase.Lookup.Set(id, anim);
                     }
                     break;
                 case GameObject.Class:
@@ -500,7 +500,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.Tileset:
                     var obj = new TilesetBase(id);
                     obj.Load(data);
-                    TilesetBase.Lookup.Add(id, obj);
+                    TilesetBase.Lookup.Set(id, obj);
                     if (Globals.HasGameData && !another) GameContentManager.LoadTilesets();
                     break;
                 default:

@@ -1817,7 +1817,7 @@ namespace Intersect_Server.Classes.Core
                 case GameObject.Animation:
                     var anim = new AnimationBase(index);
                     anim.Load(data);
-                    AnimationBase.Lookup.Add(index, anim);
+                    AnimationBase.Lookup.Set(index, anim);
                     break;
                 case GameObject.Class:
                     var cls = new ClassBase(index);
@@ -1899,7 +1899,7 @@ namespace Intersect_Server.Classes.Core
                 case GameObject.Tileset:
                     var tset = new TilesetBase(index);
                     tset.Load(data);
-                    TilesetBase.Lookup.Add(index, tset);
+                    TilesetBase.Lookup.Set(index, tset);
                     break;
                 case GameObject.Time:
                     break;
@@ -1980,7 +1980,7 @@ namespace Intersect_Server.Classes.Core
                     case GameObject.Animation:
                         var anim = new AnimationBase(index);
                         obj = anim;
-                        AnimationBase.Lookup.Add(index, anim);
+                        AnimationBase.Lookup.Set(index, anim);
                         break;
                     case GameObject.Class:
                         obj = new ClassBase(index);
@@ -2045,7 +2045,7 @@ namespace Intersect_Server.Classes.Core
                     case GameObject.Tileset:
                         var tileset = new TilesetBase(index);
                         obj = tileset;
-                        TilesetBase.Lookup.Add(index, tileset);
+                        TilesetBase.Lookup.Set(index, tileset);
                         break;
                     case GameObject.Time:
                         break;
