@@ -1,26 +1,4 @@
-﻿/*
-    Intersect Game Engine (Server)
-    Copyright (C) 2015  JC Snider, Joe Bridges
-    
-    Website: http://ascensiongamedev.com
-    Contact Email: admin@ascensiongamedev.com 
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License along
-    with this program; if not, write to the Free Software Foundation, Inc.,
-    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Intersect;
@@ -33,41 +11,39 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
         public new const string DATABASE_TABLE = "npcs";
         public new const GameObject OBJECT_TYPE = GameObject.Npc;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        public List<int> AggroList = new List<int>();
+        public bool AttackAllies = false;
+        public byte Behavior = 0;
 
-        public string Name = "New Npc";
-        public string Sprite = "";
-
-        //Vitals & Stats
-        public int[] MaxVital = new int[(int)Vitals.VitalCount];
-        public int[] Stat = new int[(int)Stats.StatCount];
+        //Drops
+        public List<NPCDrop> Drops = new List<NPCDrop>();
         public int Experience = 0;
 
-        //Basic Info
-        public int SpawnDuration = 0;
-        public byte Behavior = 0;
-        public int SightRange = 0;
+        //Vitals & Stats
+        public int[] MaxVital = new int[(int) Vitals.VitalCount];
 
-        //Spells
-        public List<int> Spells = new List<int>();
-        public int SpellFrequency = 2;
+        public string Name = "New Npc";
 
         //NPC vs NPC Combat
         public bool NpcVsNpcEnabled = false;
-        public bool AttackAllies = false;
-        public List<int> AggroList = new List<int>();
-        
-        //Drops
-        public List<NPCDrop> Drops = new List<NPCDrop>();
+        public int SightRange = 0;
 
+        //Basic Info
+        public int SpawnDuration = 0;
+        public int SpellFrequency = 2;
 
-		public NpcBase(int id) : base(id)
-		{
+        //Spells
+        public List<int> Spells = new List<int>();
+        public string Sprite = "";
+        public int[] Stat = new int[(int) Stats.StatCount];
+
+        public NpcBase(int id) : base(id)
+        {
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Drops.Add(new NPCDrop());
             }
-			
-		}
+        }
 
         public override void Load(byte[] packet)
         {
@@ -75,11 +51,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             myBuffer.WriteBytes(packet);
             Name = myBuffer.ReadString();
             Sprite = myBuffer.ReadString();
-            for (int i = 0; i < (int)Vitals.VitalCount; i++)
+            for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 MaxVital[i] = myBuffer.ReadInteger();
             }
-            for (int i = 0; i < (int)Stats.StatCount; i++)
+            for (int i = 0; i < (int) Stats.StatCount; i++)
             {
                 Stat[i] = myBuffer.ReadInteger();
             }
@@ -99,7 +75,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             {
                 Spells.Add(myBuffer.ReadInteger());
             }
-            
 
             myBuffer.Dispose();
         }
@@ -109,11 +84,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
             myBuffer.WriteString(Sprite);
-            for (int i = 0; i < (int)Vitals.VitalCount; i++)
+            for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 myBuffer.WriteInteger(MaxVital[i]);
             }
-            for (int i = 0; i < (int)Stats.StatCount; i++)
+            for (int i = 0; i < (int) Stats.StatCount; i++)
             {
                 myBuffer.WriteInteger(Stat[i]);
             }
@@ -149,7 +124,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return (NpcBase)Objects[index];
+                return (NpcBase) Objects[index];
             }
             return null;
         }
@@ -158,7 +133,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return ((NpcBase)Objects[index]).Name;
+                return ((NpcBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -186,36 +161,39 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, NpcBase> GetObjects()
         {
-            Dictionary<int, NpcBase> objects = Objects.ToDictionary(k => k.Key, v => (NpcBase)v.Value);
+            Dictionary<int, NpcBase> objects = Objects.ToDictionary(k => k.Key, v => (NpcBase) v.Value);
             return objects;
         }
-
     }
 
     public class NPCDrop
     {
-        public int ItemNum;
         public int Amount;
         public int Chance;
-
+        public int ItemNum;
     }
 }

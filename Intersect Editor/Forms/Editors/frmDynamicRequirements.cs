@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Intersect_Editor.Forms.Editors.Event_Commands;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
+using Intersect_Editor.Forms.Editors.Event_Commands;
 
 namespace Intersect_Editor.Forms.Editors
 {
@@ -16,12 +16,14 @@ namespace Intersect_Editor.Forms.Editors
         Event,
         Quest
     }
+
     public partial class frmDynamicRequirements : Form
     {
-        private ConditionLists _sourceLists;
+        private ConditionList _edittingList;
         private ConditionLists _edittingLists;
         private ConditionList _sourceList;
-        private ConditionList _edittingList;
+        private ConditionLists _sourceLists;
+
         public frmDynamicRequirements(ConditionLists lists, RequirementType type)
         {
             InitializeComponent();
@@ -156,7 +158,7 @@ namespace Intersect_Editor.Forms.Editors
             var cmdWindow = new EventCommand_ConditionalBranch(cmd, null, null);
             var frm = new Form
             {
-                Text = Strings.Get("dynamicrequirements","conditioneditor")
+                Text = Strings.Get("dynamicrequirements", "conditioneditor")
             };
             frm.FormBorderStyle = FormBorderStyle.FixedSingle;
             frm.Controls.Add(cmdWindow);

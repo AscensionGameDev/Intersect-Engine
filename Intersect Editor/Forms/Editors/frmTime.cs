@@ -3,17 +3,18 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using DarkUI.Controls;
-using Intersect_Editor.Classes;
 using Intersect.GameObjects;
 using Intersect.Localization;
+using Intersect_Editor.Classes;
 
 namespace Intersect_Editor.Forms.Editors
 {
     public partial class frmTime : Form
     {
-        private Bitmap tileBackbuffer;
         private TimeBase backupTime;
         private TimeBase myTime;
+        private Bitmap tileBackbuffer;
+
         public frmTime()
         {
             InitializeComponent();
@@ -48,11 +49,11 @@ namespace Intersect_Editor.Forms.Editors
             backupTime = new TimeBase();
             backupTime.LoadTimeBase(time.SaveTimeBase());
 
-            tileBackbuffer = new Bitmap(pnlColor.Width,pnlColor.Height);
+            tileBackbuffer = new Bitmap(pnlColor.Width, pnlColor.Height);
             UpdateList(TimeBase.GetTimeInterval(cmbIntervals.SelectedIndex));
             typeof(Panel).InvokeMember("DoubleBuffered",
-            BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
-            null, pnlColor, new object[] { true });
+                BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
+                null, pnlColor, new object[] {true});
 
             chkSync.Checked = myTime.SyncTime;
             txtTimeRate.Text = myTime.Rate.ToString();
@@ -75,7 +76,7 @@ namespace Intersect_Editor.Forms.Editors
         private void UpdateList(int duration)
         {
             lstTimes.Items.Clear();
-            var time = new DateTime(2000, 1, 1, 0,0,0);
+            var time = new DateTime(2000, 1, 1, 0, 0, 0);
             for (int i = 0; i < 1440; i += duration)
             {
                 var addRange = time.ToString("h:mm:ss tt") + " " + Strings.Get("timeeditor", "to") + " ";
@@ -103,7 +104,8 @@ namespace Intersect_Editor.Forms.Editors
             g.Clear(Color.Transparent);
             g.DrawImage(pnlColor.BackgroundImage, new Point(0, 0));
             Brush brush =
-                new SolidBrush(Color.FromArgb((int)((scrlAlpha.Value) / 100f * 255f), pnlColor.BackColor.R, pnlColor.BackColor.G,
+                new SolidBrush(Color.FromArgb((int) ((scrlAlpha.Value) / 100f * 255f), pnlColor.BackColor.R,
+                    pnlColor.BackColor.G,
                     pnlColor.BackColor.B));
             g.FillRectangle(brush, new Rectangle(0, 0, pnlColor.Width, pnlColor.Height));
             e.Graphics.DrawImage(tileBackbuffer, new Point(0, 0));
@@ -111,8 +113,8 @@ namespace Intersect_Editor.Forms.Editors
 
         private void scrlAlpha_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblBrightness.Text = Strings.Get("timeeditor", "brightness", (100- scrlAlpha.Value).ToString());
-            myTime.RangeColors[lstTimes.SelectedIndex].A = (byte)(scrlAlpha.Value/100f*255f);
+            lblBrightness.Text = Strings.Get("timeeditor", "brightness", (100 - scrlAlpha.Value).ToString());
+            myTime.RangeColors[lstTimes.SelectedIndex].A = (byte) (scrlAlpha.Value / 100f * 255f);
             pnlColor.Refresh();
         }
 
@@ -124,9 +126,10 @@ namespace Intersect_Editor.Forms.Editors
                 return;
             }
             grpRangeOptions.Show();
-            pnlColor.BackColor = Color.FromArgb(255, myTime.RangeColors[lstTimes.SelectedIndex].R, myTime.RangeColors[lstTimes.SelectedIndex].G,
+            pnlColor.BackColor = Color.FromArgb(255, myTime.RangeColors[lstTimes.SelectedIndex].R,
+                myTime.RangeColors[lstTimes.SelectedIndex].G,
                 myTime.RangeColors[lstTimes.SelectedIndex].B);
-            scrlAlpha.Value = (byte) (((myTime.RangeColors[lstTimes.SelectedIndex].A)/255f)*100f);
+            scrlAlpha.Value = (byte) (((myTime.RangeColors[lstTimes.SelectedIndex].A) / 255f) * 100f);
             lblBrightness.Text = Strings.Get("timeeditor", "brightness", (100 - scrlAlpha.Value).ToString());
             pnlColor.Refresh();
             EditorGraphics.LightColor = myTime.RangeColors[lstTimes.SelectedIndex];

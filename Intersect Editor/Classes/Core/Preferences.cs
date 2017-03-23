@@ -19,10 +19,16 @@ namespace Intersect_Editor.Classes.Core
         {
             RegistryKey regkey = Registry.CurrentUser.OpenSubKey("Software", false);
             regkey = regkey.OpenSubKey("IntersectEditor", false);
-            if (regkey == null) { return ""; }
+            if (regkey == null)
+            {
+                return "";
+            }
             regkey = regkey.OpenSubKey(Globals.ServerHost + ":" + Globals.ServerPort);
-            if (regkey == null) { return ""; }
-            string value = (string)regkey.GetValue(key);
+            if (regkey == null)
+            {
+                return "";
+            }
+            string value = (string) regkey.GetValue(key);
             if (string.IsNullOrEmpty(value))
             {
                 return "";

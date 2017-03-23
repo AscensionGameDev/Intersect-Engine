@@ -1,13 +1,12 @@
-﻿
-using System;
+﻿using System;
 using System.Diagnostics;
-using System.Windows.Forms;
-using Intersect_Editor.Classes;
-using System.Text;
 using System.Security.Cryptography;
-using Intersect_Editor.Classes.Core;
+using System.Text;
+using System.Windows.Forms;
 using Intersect;
 using Intersect.Localization;
+using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.Core;
 
 namespace Intersect_Editor.Forms
 {
@@ -15,6 +14,7 @@ namespace Intersect_Editor.Forms
     {
         //Cross Thread Delegates
         public delegate void BeginEditorLoop();
+
         public BeginEditorLoop EditorLoopDelegate;
         private string SavedPassword = "";
 
@@ -28,7 +28,7 @@ namespace Intersect_Editor.Forms
             GameContentManager.CheckForResources();
             if (Database.LoadOptions())
             {
-                Strings.Init(Strings.IntersectComponent.Editor,Options.Language);
+                Strings.Init(Strings.IntersectComponent.Editor, Options.Language);
                 EditorLoopDelegate = EditorLoop.StartLoop;
                 if (Preferences.LoadPreference("username").Trim().Length > 0)
                 {
@@ -69,11 +69,11 @@ namespace Intersect_Editor.Forms
             }
             else if (Network.Connecting)
             {
-
             }
             else
             {
-                statusString = Strings.Get("login", "failedtoconnect",((Globals.ReconnectTime - Globals.System.GetTimeMs())/1000).ToString("0"));
+                statusString = Strings.Get("login", "failedtoconnect",
+                    ((Globals.ReconnectTime - Globals.System.GetTimeMs()) / 1000).ToString("0"));
                 btnLogin.Enabled = false;
             }
             Globals.LoginForm.lblStatus.Text = statusString;
@@ -99,7 +99,9 @@ namespace Intersect_Editor.Forms
                 }
                 else
                 {
-                    PacketSender.SendLogin(txtUsername.Text.Trim(), BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim()))).Replace("-", ""));
+                    PacketSender.SendLogin(txtUsername.Text.Trim(),
+                        BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim())))
+                            .Replace("-", ""));
                 }
             }
         }
@@ -126,17 +128,19 @@ namespace Intersect_Editor.Forms
                 Preferences.SavePreference("Username", txtUsername.Text);
                 if (SavedPassword != "")
                 {
-                    Preferences.SavePreference("Password",SavedPassword);
+                    Preferences.SavePreference("Password", SavedPassword);
                 }
                 else
                 {
-                    Preferences.SavePreference("Password",BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim()))).Replace("-", ""));
+                    Preferences.SavePreference("Password",
+                        BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim())))
+                            .Replace("-", ""));
                 }
             }
             else
             {
                 Preferences.SavePreference("Username", "");
-                Preferences.SavePreference("Password","");
+                Preferences.SavePreference("Password", "");
             }
         }
 
@@ -171,6 +175,4 @@ namespace Intersect_Editor.Forms
             }
         }
     }
-
-
 }

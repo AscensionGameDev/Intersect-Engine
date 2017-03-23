@@ -8,7 +8,7 @@ namespace Intersect.GameObjects
         public new const string DATABASE_TABLE = "crafts";
         public new const GameObject OBJECT_TYPE = GameObject.Bench;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        
+
         public List<Craft> Crafts = new List<Craft>();
 
         public BenchBase(int id) : base(id)
@@ -53,7 +53,7 @@ namespace Intersect.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return (BenchBase)Objects[index];
+                return (BenchBase) Objects[index];
             }
             return null;
         }
@@ -62,7 +62,7 @@ namespace Intersect.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return ((BenchBase)Objects[index]).Name;
+                return ((BenchBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -90,23 +90,28 @@ namespace Intersect.GameObjects
             }
             return null;
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, BenchBase> GetObjects()
         {
-            Dictionary<int, BenchBase> objects = Objects.ToDictionary(k => k.Key, v => (BenchBase)v.Value);
+            Dictionary<int, BenchBase> objects = Objects.ToDictionary(k => k.Key, v => (BenchBase) v.Value);
             return objects;
         }
+
         public override void Delete()
         {
             Objects.Remove(Id);
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
@@ -116,10 +121,9 @@ namespace Intersect.GameObjects
 
     public class Craft
     {
-        public int Time = 1;
-        public int Item = -1;
-
         public List<CraftIngredient> Ingredients = new List<CraftIngredient>();
+        public int Item = -1;
+        public int Time = 1;
 
         public void Load(ByteBuffer bf)
         {
@@ -129,7 +133,7 @@ namespace Intersect.GameObjects
             var count = bf.ReadInteger();
             for (int i = 0; i < count; i++)
             {
-                var craftIngredient = new CraftIngredient(bf.ReadInteger(),bf.ReadInteger());
+                var craftIngredient = new CraftIngredient(bf.ReadInteger(), bf.ReadInteger());
                 Ingredients.Add(craftIngredient);
             }
         }

@@ -1,23 +1,21 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Forms.Editors;
-using Intersect_Editor.Forms.Editors.Quest;
 using Intersect;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
-
+using Intersect_Editor.Classes;
+using Intersect_Editor.Forms.Editors;
+using Intersect_Editor.Forms.Editors.Quest;
 
 namespace Intersect_Editor.Forms
 {
     public partial class frmQuest : Form
     {
         private List<QuestBase> _changed = new List<QuestBase>();
-        private QuestBase _editorItem = null;
         private byte[] _copiedItem = null;
+        private QuestBase _editorItem = null;
 
         public frmQuest()
         {
@@ -102,7 +100,7 @@ namespace Intersect_Editor.Forms
                 chkQuittable.Checked = Convert.ToBoolean(_editorItem.Quitable);
                 chkLogBeforeOffer.Checked = Convert.ToBoolean(_editorItem.LogBeforeOffer);
                 chkLogAfterComplete.Checked = Convert.ToBoolean(_editorItem.LogAfterComplete);
-                
+
                 ListQuestTasks();
 
                 if (_changed.IndexOf(_editorItem) == -1)
@@ -121,7 +119,7 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstQuests.Items[Database.GameObjectListIndex(GameObject.Quest,_editorItem.Id)] =  txtName.Text;
+            lstQuests.Items[Database.GameObjectListIndex(GameObject.Quest, _editorItem.Id)] = txtName.Text;
         }
 
         private void txtStartDesc_TextChanged(object sender, EventArgs e)
@@ -213,7 +211,7 @@ namespace Intersect_Editor.Forms
             {
                 var item = _editorItem.Tasks[lstTasks.SelectedIndex];
                 _editorItem.Tasks.RemoveAt(lstTasks.SelectedIndex);
-                _editorItem.Tasks.Insert(lstTasks.SelectedIndex -1,item);
+                _editorItem.Tasks.Insert(lstTasks.SelectedIndex - 1, item);
                 ListQuestTasks();
             }
         }
@@ -310,7 +308,8 @@ namespace Intersect_Editor.Forms
         {
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
-                if (MessageBox.Show("Are you sure you want to undo changes made to this game object? This action cannot be reverted!",
+                if (MessageBox.Show(
+                        "Are you sure you want to undo changes made to this game object? This action cannot be reverted!",
                         "Undo Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
@@ -340,7 +339,7 @@ namespace Intersect_Editor.Forms
             {
                 if (e.KeyCode == Keys.Delete)
                 {
-                    toolStripItemDelete_Click(null,null);
+                    toolStripItemDelete_Click(null, null);
                 }
             }
         }

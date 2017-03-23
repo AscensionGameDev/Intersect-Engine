@@ -4,11 +4,11 @@ namespace Intersect.GameObjects
 {
     public class TimeBase
     {
-        public bool SyncTime = true;
+        private static TimeBase _timeBase = new TimeBase();
+        public Color[] RangeColors;
         public int RangeInterval = 720;
         public float Rate = 1.0f;
-        public Color[] RangeColors;
-        private static TimeBase _timeBase = new TimeBase();
+        public bool SyncTime = true;
 
         public TimeBase()
         {
@@ -25,7 +25,8 @@ namespace Intersect.GameObjects
             RangeColors = new Color[1440 / RangeInterval];
             for (int i = 0; i < 1440 / RangeInterval; i++)
             {
-                RangeColors[i] = new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte());
+                RangeColors[i] = new Color((int) bf.ReadByte(), (int) bf.ReadByte(), (int) bf.ReadByte(),
+                    (int) bf.ReadByte());
             }
             bf.Dispose();
         }
@@ -35,7 +36,7 @@ namespace Intersect.GameObjects
             var bf = new ByteBuffer();
             bf.WriteInteger(Convert.ToInt32(SyncTime));
             bf.WriteInteger(RangeInterval);
-            bf.WriteDouble((double)Rate);
+            bf.WriteDouble((double) Rate);
             for (int i = 0; i < 1440 / RangeInterval; i++)
             {
                 bf.WriteByte(RangeColors[i].A);
@@ -48,10 +49,10 @@ namespace Intersect.GameObjects
 
         public void ResetColors()
         {
-            RangeColors = new Color[1440/RangeInterval];
+            RangeColors = new Color[1440 / RangeInterval];
             for (int i = 0; i < 1440 / RangeInterval; i++)
             {
-                RangeColors[i] = new Color(255,255,255,255);
+                RangeColors[i] = new Color(255, 255, 255, 255);
             }
         }
 

@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Net.Sockets;
 using System.Windows.Forms;
 using Intersect;
@@ -35,7 +34,10 @@ namespace Intersect_Editor.Classes
 
         public static void Update()
         {
-            if (Connected) { TryHandleData(); }
+            if (Connected)
+            {
+                TryHandleData();
+            }
             if (!Connected && !Connecting)
             {
                 InitNetwork();

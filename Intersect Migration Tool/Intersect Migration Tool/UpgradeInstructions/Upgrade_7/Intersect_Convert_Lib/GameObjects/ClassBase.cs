@@ -10,52 +10,52 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         public new const string DATABASE_TABLE = "classes";
         public new const GameObject OBJECT_TYPE = GameObject.Class;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        public int AttackAnimation = -1;
+
+        //Exp Calculations
+        public int BaseExp = 100;
+        public int BasePoints = 0;
+        public int[] BaseStat = new int[(int) Stats.StatCount];
+
+        //Starting Vitals & Stats
+        public int[] BaseVital = new int[(int) Vitals.VitalCount];
+        public int CritChance;
+
+        //Combat
+        public int Damage;
+        public int DamageType;
+        public int ExpIncrease = 50;
+
+        //Level Up Info
+        public int IncreasePercentage = 0;
+
+        //Starting Items
+        public List<ClassItem> Items = new List<ClassItem>();
+
+        //Locked - Can the class be chosen from character select?
+        public int Locked = 0;
 
         public string Name = "New Class";
+        public int PointIncrease = 0;
+        public int Scaling;
+        public int ScalingStat;
+        public int SpawnDir = 0;
 
         //Spawn Info
         public int SpawnMap = 0;
         public int SpawnX = 0;
         public int SpawnY = 0;
-        public int SpawnDir = 0;
-
-        //Locked - Can the class be chosen from character select?
-        public int Locked = 0;
-
-        //Sprites
-        public List<ClassSprite> Sprites = new List<ClassSprite>();
-
-        //Starting Vitals & Stats
-        public int[] BaseVital = new int[(int)Vitals.VitalCount];
-        public int[] BaseStat = new int[(int)Stats.StatCount];
-        public int BasePoints = 0;
-
-        //Combat
-        public int Damage;
-        public int CritChance;
-        public int DamageType;
-        public int ScalingStat;
-        public int Scaling;
-        public int AttackAnimation = -1;
-
-        //Level Up Info
-        public int IncreasePercentage = 0;
-        public int[] VitalIncrease = new int[(int)Vitals.VitalCount];
-        public int[] StatIncrease = new int[(int)Stats.StatCount];
-        public int PointIncrease = 0;
-
-        //Exp Calculations
-        public int BaseExp = 100;
-        public int ExpIncrease = 50;
-
-        //Regen Percentages
-        public int[] VitalRegen = new int[(int)Vitals.VitalCount];
-
-        //Starting Items
-        public List<ClassItem> Items = new List<ClassItem>();
 
         //Starting Spells
         public List<ClassSpell> Spells = new List<ClassSpell>();
+
+        //Sprites
+        public List<ClassSprite> Sprites = new List<ClassSprite>();
+        public int[] StatIncrease = new int[(int) Stats.StatCount];
+        public int[] VitalIncrease = new int[(int) Vitals.VitalCount];
+
+        //Regen Percentages
+        public int[] VitalRegen = new int[(int) Vitals.VitalCount];
 
         public ClassBase(int id) : base(id)
         {
@@ -98,11 +98,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             }
 
             //Base Info
-            for (int i = 0; i < (int)Vitals.VitalCount; i++)
+            for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 BaseVital[i] = myBuffer.ReadInteger();
             }
-            for (int i = 0; i < (int)Stats.StatCount; i++)
+            for (int i = 0; i < (int) Stats.StatCount; i++)
             {
                 BaseStat[i] = myBuffer.ReadInteger();
             }
@@ -118,11 +118,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
 
             //Level Up Info
             IncreasePercentage = myBuffer.ReadInteger();
-            for (int i = 0; i < (int)Vitals.VitalCount; i++)
+            for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 VitalIncrease[i] = myBuffer.ReadInteger();
             }
-            for (int i = 0; i < (int)Stats.StatCount; i++)
+            for (int i = 0; i < (int) Stats.StatCount; i++)
             {
                 StatIncrease[i] = myBuffer.ReadInteger();
             }
@@ -133,7 +133,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             ExpIncrease = myBuffer.ReadInteger();
 
             //Regen
-            for (int i = 0; i < (int)Vitals.VitalCount; i++)
+            for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 VitalRegen[i] = myBuffer.ReadInteger();
             }
@@ -183,11 +183,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             }
 
             //Base Stats
-            for (int i = 0; i < (int)Vitals.VitalCount; i++)
+            for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 myBuffer.WriteInteger(BaseVital[i]);
             }
-            for (int i = 0; i < (int)Stats.StatCount; i++)
+            for (int i = 0; i < (int) Stats.StatCount; i++)
             {
                 myBuffer.WriteInteger(BaseStat[i]);
             }
@@ -203,11 +203,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
 
             //Level Up Stats
             myBuffer.WriteInteger(IncreasePercentage);
-            for (int i = 0; i < (int)Vitals.VitalCount; i++)
+            for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 myBuffer.WriteInteger(VitalIncrease[i]);
             }
-            for (int i = 0; i < (int)Stats.StatCount; i++)
+            for (int i = 0; i < (int) Stats.StatCount; i++)
             {
                 myBuffer.WriteInteger(StatIncrease[i]);
             }
@@ -218,7 +218,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             myBuffer.WriteInteger(ExpIncrease);
 
             //Regen
-            for (int i = 0; i < (int)Vitals.VitalCount; i++)
+            for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 myBuffer.WriteInteger(VitalRegen[i]);
             }
@@ -245,7 +245,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return (ClassBase)Objects[index];
+                return (ClassBase) Objects[index];
             }
             return null;
         }
@@ -254,7 +254,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return ((ClassBase)Objects[index]).Name;
+                return ((ClassBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -282,46 +282,51 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, ClassBase> GetObjects()
         {
-            Dictionary<int, ClassBase> objects = Objects.ToDictionary(k => k.Key, v => (ClassBase)v.Value);
+            Dictionary<int, ClassBase> objects = Objects.ToDictionary(k => k.Key, v => (ClassBase) v.Value);
             return objects;
         }
     }
 
     public class ClassItem
     {
-        public int ItemNum;
         public int Amount;
+        public int ItemNum;
     }
 
     public class ClassSpell
     {
-        public int SpellNum;
         public int Level;
+        public int SpellNum;
     }
 
     public class ClassSprite
     {
-        public string Sprite = "";
         public string Face = "";
         public byte Gender;
+        public string Sprite = "";
     }
 }

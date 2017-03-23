@@ -1,32 +1,40 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Collections.Generic;
-using Intersect_Editor.Classes.Core;
+using System.ComponentModel;
 using Intersect;
 using Intersect.GameObjects.Maps;
 using Intersect.Localization;
+using Intersect_Editor.Classes.Core;
 using Color = System.Drawing.Color;
 
 namespace Intersect_Editor.Classes.Maps
 {
     class CustomCategory : CategoryAttribute
     {
-        public CustomCategory(string category) : base(category) { }
+        public CustomCategory(string category) : base(category)
+        {
+        }
+
         protected override string GetLocalizedString(string value)
         {
-            return Strings.Get("mapproperties",value);
+            return Strings.Get("mapproperties", value);
         }
     }
+
     class CustomDisplayName : DisplayNameAttribute
     {
-        public CustomDisplayName(string name) : base(name) { }
+        public CustomDisplayName(string name) : base(name)
+        {
+        }
 
-        public override string DisplayName => Strings.Get("mapproperties",DisplayNameValue);
+        public override string DisplayName => Strings.Get("mapproperties", DisplayNameValue);
     }
 
     class CustomDescription : DescriptionAttribute
     {
-        public CustomDescription(string desc) : base(desc) {}
+        public CustomDescription(string desc) : base(desc)
+        {
+        }
 
         public override string Description => Strings.Get("mapproperties", DescriptionValue);
     }
@@ -41,9 +49,9 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         [CustomCategory("general"),
-        CustomDescription("namedesc"),
-        CustomDisplayName("name"),
-        DefaultValueAttribute("New Map")]
+         CustomDescription("namedesc"),
+         CustomDisplayName("name"),
+         DefaultValue("New Map")]
         public string Name
         {
             get { return _myMap.Name; }
@@ -59,17 +67,14 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         [CustomCategory("general"),
-        CustomDescription("zonedesc"),
-        CustomDisplayName("zonetype"),
-        DefaultValueAttribute("Normal"),
-        TypeConverter(typeof(MapZoneProperty)),
-        Browsable(true)]
+         CustomDescription("zonedesc"),
+         CustomDisplayName("zonetype"),
+         DefaultValue("Normal"),
+         TypeConverter(typeof(MapZoneProperty)),
+         Browsable(true)]
         public string ZoneType
         {
-            get
-            {
-                return Strings.Get("mapproperties","zone" + (int)_myMap.ZoneType);
-            }
+            get { return Strings.Get("mapproperties", "zone" + (int) _myMap.ZoneType); }
             set
             {
                 Globals.MapEditorWindow.PrepUndoState();
@@ -77,7 +82,7 @@ namespace Intersect_Editor.Classes.Maps
                 {
                     if (Strings.Get("mapproperties", "zone" + i) == value)
                     {
-                        _myMap.ZoneType = (MapZones)i;
+                        _myMap.ZoneType = (MapZones) i;
                     }
                 }
                 Globals.MapEditorWindow.AddUndoState();
@@ -85,11 +90,11 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         [CustomCategory("audio"),
-        CustomDescription("musicdesc"),
-        CustomDisplayName("music"),
-        DefaultValueAttribute("None"),
-        TypeConverter(typeof(MapMusicProperty)),
-        Browsable(true)]
+         CustomDescription("musicdesc"),
+         CustomDisplayName("music"),
+         DefaultValue("None"),
+         TypeConverter(typeof(MapMusicProperty)),
+         Browsable(true)]
         public string Music
         {
             get
@@ -101,7 +106,7 @@ namespace Intersect_Editor.Classes.Maps
                 MusicList.AddRange(GameContentManager.GetMusicNames());
                 if (MusicList.IndexOf(_myMap.Music) <= -1)
                 {
-                    _myMap.Music = Strings.Get("general","none");
+                    _myMap.Music = Strings.Get("general", "none");
                 }
                 return _myMap.Music;
             }
@@ -117,11 +122,11 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         [CustomCategory("audio"),
-        CustomDescription("sounddesc"),
-        CustomDisplayName("sound"),
-        DefaultValueAttribute("None"),
-        TypeConverter(typeof(MapSoundProperty)),
-        Browsable(true)]
+         CustomDescription("sounddesc"),
+         CustomDisplayName("sound"),
+         DefaultValue("None"),
+         TypeConverter(typeof(MapSoundProperty)),
+         Browsable(true)]
         public string Sound
         {
             get
@@ -133,7 +138,7 @@ namespace Intersect_Editor.Classes.Maps
                 SoundList.AddRange(GameContentManager.GetSoundNames());
                 if (SoundList.IndexOf(_myMap.Sound) <= -1)
                 {
-                    _myMap.Sound = Strings.Get("general","none");
+                    _myMap.Sound = Strings.Get("general", "none");
                 }
                 return _myMap.Sound;
             }
@@ -149,9 +154,9 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         [CustomCategory("lighting"),
-        CustomDescription("isindoorsdesc"),
-        CustomDisplayName("isindoors"),
-        DefaultValueAttribute(false)]
+         CustomDescription("isindoorsdesc"),
+         CustomDisplayName("isindoors"),
+         DefaultValue(false)]
         public bool IsIndoors
         {
             get { return _myMap.IsIndoors; }
@@ -166,10 +171,11 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
+
         [CustomCategory("lighting"),
-        CustomDescription("brightnessdesc"),
-        CustomDisplayName("brightness"),
-        DefaultValueAttribute(100)]
+         CustomDescription("brightnessdesc"),
+         CustomDisplayName("brightness"),
+         DefaultValue(100)]
         public int Brightness
         {
             get { return _myMap.Brightness; }
@@ -185,10 +191,11 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
+
         [CustomCategory("lighting"),
-        CustomDescription("playerlightsizedesc"),
-        CustomDisplayName("playerlightsize"),
-        DefaultValueAttribute(300)]
+         CustomDescription("playerlightsizedesc"),
+         CustomDisplayName("playerlightsize"),
+         DefaultValue(300)]
         public int PlayerLightSize
         {
             get { return _myMap.PlayerLightSize; }
@@ -204,10 +211,11 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
+
         [CustomCategory("lighting"),
-        CustomDescription("playerlightexpanddesc"),
-        CustomDisplayName("playerlightexpand"),
-        DefaultValueAttribute(0)]
+         CustomDescription("playerlightexpanddesc"),
+         CustomDisplayName("playerlightexpand"),
+         DefaultValue(0)]
         public float PlayerLightExpand
         {
             get { return _myMap.PlayerLightExpand; }
@@ -223,10 +231,11 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
+
         [CustomCategory("lighting"),
-        CustomDescription("playerlightintensitydesc"),
-        CustomDisplayName("playerlightintensity"),
-        DefaultValueAttribute(255)]
+         CustomDescription("playerlightintensitydesc"),
+         CustomDisplayName("playerlightintensity"),
+         DefaultValue(255)]
         public byte PlayerLightIntensity
         {
             get { return _myMap.PlayerLightIntensity; }
@@ -235,23 +244,29 @@ namespace Intersect_Editor.Classes.Maps
                 if (_myMap.PlayerLightIntensity != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.PlayerLightIntensity = Math.Max(value, (byte)0);
-                    _myMap.PlayerLightIntensity = Math.Min(_myMap.PlayerLightIntensity, (byte)255);
+                    _myMap.PlayerLightIntensity = Math.Max(value, (byte) 0);
+                    _myMap.PlayerLightIntensity = Math.Min(_myMap.PlayerLightIntensity, (byte) 255);
                     EditorGraphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
         }
+
         [CustomCategory("lighting"),
-        CustomDescription("playerlightcolordesc"),
-        CustomDisplayName("playerlightcolor"),
-        DefaultValueAttribute(0)]
+         CustomDescription("playerlightcolordesc"),
+         CustomDisplayName("playerlightcolor"),
+         DefaultValue(0)]
         public Color PlayerLightColor
         {
-            get { return Color.FromArgb(_myMap.PlayerLightColor.A, _myMap.PlayerLightColor.R, _myMap.PlayerLightColor.G, _myMap.PlayerLightColor.B); }
+            get
+            {
+                return Color.FromArgb(_myMap.PlayerLightColor.A, _myMap.PlayerLightColor.R, _myMap.PlayerLightColor.G,
+                    _myMap.PlayerLightColor.B);
+            }
             set
             {
-                if (_myMap.PlayerLightColor.A != value.A || _myMap.PlayerLightColor.R != value.R || _myMap.PlayerLightColor.G != value.G || _myMap.PlayerLightColor.B != value.B)
+                if (_myMap.PlayerLightColor.A != value.A || _myMap.PlayerLightColor.R != value.R ||
+                    _myMap.PlayerLightColor.G != value.G || _myMap.PlayerLightColor.B != value.B)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
                     _myMap.PlayerLightColor = Intersect.Color.FromArgb(value.A, value.R, value.G, value.B);
@@ -262,9 +277,9 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         [CustomCategory("overlay"),
-        CustomDescription("rhuedesc"),
-        CustomDisplayName("rhue"),
-        DefaultValueAttribute(0)]
+         CustomDescription("rhuedesc"),
+         CustomDisplayName("rhue"),
+         DefaultValue(0)]
         public int RHue
         {
             get { return _myMap.RHue; }
@@ -279,10 +294,11 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
+
         [CustomCategory("overlay"),
-        CustomDescription("ghuedesc"),
-        CustomDisplayName("ghue"),
-        DefaultValueAttribute(0)]
+         CustomDescription("ghuedesc"),
+         CustomDisplayName("ghue"),
+         DefaultValue(0)]
         public int GHue
         {
             get { return _myMap.GHue; }
@@ -297,10 +313,11 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
+
         [CustomCategory("overlay"),
-        CustomDescription("bhuedesc"),
-        CustomDisplayName("bhue"),
-        DefaultValueAttribute(0)]
+         CustomDescription("bhuedesc"),
+         CustomDisplayName("bhue"),
+         DefaultValue(0)]
         public int BHue
         {
             get { return _myMap.BHue; }
@@ -315,10 +332,11 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
+
         [CustomCategory("overlay"),
-        CustomDescription("ahuedesc"),
-        CustomDisplayName("ahue"),
-        DefaultValueAttribute(0)]
+         CustomDescription("ahuedesc"),
+         CustomDisplayName("ahue"),
+         DefaultValue(0)]
         public int AHue
         {
             get { return _myMap.AHue; }
@@ -335,11 +353,11 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         [CustomCategory("fog"),
-        CustomDescription("fogdesc"),
-        CustomDisplayName("fog"),
-        DefaultValueAttribute("None"),
-        TypeConverter(typeof(MapFogProperty)),
-        Browsable(true)]
+         CustomDescription("fogdesc"),
+         CustomDisplayName("fog"),
+         DefaultValue("None"),
+         TypeConverter(typeof(MapFogProperty)),
+         Browsable(true)]
         public string Fog
         {
             get
@@ -351,7 +369,7 @@ namespace Intersect_Editor.Classes.Maps
                 FogList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Fog));
                 if (FogList.IndexOf(_myMap.Fog) <= -1)
                 {
-                    _myMap.Fog = Strings.Get("general","none");
+                    _myMap.Fog = Strings.Get("general", "none");
                 }
                 return _myMap.Fog;
             }
@@ -365,10 +383,11 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
+
         [CustomCategory("fog"),
-        CustomDescription("fogxspeeddesc"),
-        CustomDisplayName("fogxspeed"),
-        DefaultValueAttribute(0)]
+         CustomDescription("fogxspeeddesc"),
+         CustomDisplayName("fogxspeed"),
+         DefaultValue(0)]
         public int FogXSpeed
         {
             get { return _myMap.FogXSpeed; }
@@ -383,10 +402,11 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
+
         [CustomCategory("fog"),
-        CustomDescription("fogyspeeddesc"),
-        CustomDisplayName("fogyspeed"),
-        DefaultValueAttribute(0)]
+         CustomDescription("fogyspeeddesc"),
+         CustomDisplayName("fogyspeed"),
+         DefaultValue(0)]
         public int FogYSpeed
         {
             get { return _myMap.FogYSpeed; }
@@ -401,10 +421,11 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
+
         [CustomCategory("fog"),
-        CustomDescription("fogalphadesc"),
-        CustomDisplayName("fogalpha"),
-        DefaultValueAttribute(0)]
+         CustomDescription("fogalphadesc"),
+         CustomDisplayName("fogalpha"),
+         DefaultValue(0)]
         public int FogAlpha
         {
             get { return _myMap.FogTransparency; }
@@ -421,11 +442,11 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         [CustomCategory("misc"),
-        CustomDescription("panoramadesc"),
-        CustomDisplayName("panorama"),
-        DefaultValueAttribute("None"),
-        TypeConverter(typeof(MapImageProperty)),
-        Browsable(true)]
+         CustomDescription("panoramadesc"),
+         CustomDisplayName("panorama"),
+         DefaultValue("None"),
+         TypeConverter(typeof(MapImageProperty)),
+         Browsable(true)]
         public string Panorama
         {
             get
@@ -437,7 +458,7 @@ namespace Intersect_Editor.Classes.Maps
                 ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
                 if (ImageList.IndexOf(_myMap.Panorama) <= -1)
                 {
-                    _myMap.Panorama = Strings.Get("general","none");
+                    _myMap.Panorama = Strings.Get("general", "none");
                 }
                 return _myMap.Panorama;
             }
@@ -453,11 +474,11 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         [CustomCategory("misc"),
-        CustomDescription("overlaygraphicdesc"),
-        CustomDisplayName("overlaygraphic"),
-        DefaultValueAttribute("None"),
-        TypeConverter(typeof(MapImageProperty)),
-        Browsable(true)]
+         CustomDescription("overlaygraphicdesc"),
+         CustomDisplayName("overlaygraphic"),
+         DefaultValue("None"),
+         TypeConverter(typeof(MapImageProperty)),
+         Browsable(true)]
         public string OverlayGraphic
         {
             get
@@ -469,7 +490,7 @@ namespace Intersect_Editor.Classes.Maps
                 ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
                 if (ImageList.IndexOf(_myMap.OverlayGraphic) <= -1)
                 {
-                    _myMap.Panorama = Strings.Get("general","none");
+                    _myMap.Panorama = Strings.Get("general", "none");
                 }
                 return _myMap.OverlayGraphic;
             }
@@ -501,7 +522,7 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         public override StandardValuesCollection
-               GetStandardValues(ITypeDescriptorContext context)
+            GetStandardValues(ITypeDescriptorContext context)
         {
             List<string> MusicList = new List<string>
             {
@@ -528,7 +549,7 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         public override StandardValuesCollection
-               GetStandardValues(ITypeDescriptorContext context)
+            GetStandardValues(ITypeDescriptorContext context)
         {
             List<string> SoundList = new List<string>
             {
@@ -555,7 +576,7 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         public override StandardValuesCollection
-               GetStandardValues(ITypeDescriptorContext context)
+            GetStandardValues(ITypeDescriptorContext context)
         {
             List<string> FogList = new List<string>
             {
@@ -582,7 +603,7 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         public override StandardValuesCollection
-               GetStandardValues(ITypeDescriptorContext context)
+            GetStandardValues(ITypeDescriptorContext context)
         {
             List<string> ImageList = new List<string>
             {
@@ -609,10 +630,9 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         public override StandardValuesCollection
-               GetStandardValues(ITypeDescriptorContext context)
+            GetStandardValues(ITypeDescriptorContext context)
         {
             return new StandardValuesCollection(Enum.GetNames(typeof(MapZones)));
         }
     }
-
 }

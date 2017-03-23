@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -17,14 +16,12 @@ using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Items;
 using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
-using MapInstance = Intersect_Server.Classes.Maps.MapInstance;
 using Mono.Data.Sqlite;
 
 namespace Intersect_Server.Classes.Core
 {
     public static class Database
     {
-        private static SqliteConnection _dbConnection;
         private const int DbVersion = 8;
         private const string DbFilename = "resources/intersect.db";
 
@@ -168,6 +165,7 @@ namespace Intersect_Server.Classes.Core
         private const string BAG_ITEM_VAL = "itemval";
         private const string BAG_ITEM_STATS = "itemstats";
         private const string BAG_ITEM_BAG_ID = "item_bag_id";
+        private static SqliteConnection _dbConnection;
 
         public static object MapGridLock = new Object();
         public static List<MapGrid> MapGrids = new List<MapGrid>();
@@ -175,7 +173,10 @@ namespace Intersect_Server.Classes.Core
         //Check Directories
         public static void CheckDirectories()
         {
-            if (!Directory.Exists("resources")) { Directory.CreateDirectory("resources"); }
+            if (!Directory.Exists("resources"))
+            {
+                Directory.CreateDirectory("resources");
+            }
         }
 
         //Database setup, version checking
@@ -197,19 +198,20 @@ namespace Intersect_Server.Classes.Core
             LoadTime();
             return true;
         }
+
         private static long GetDatabaseVersion()
         {
-            
             long version = -1;
             var cmd = "SELECT " + DB_VERSION + " from " + INFO_TABLE + ";";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
-                version = (long)createCommand.ExecuteScalar();
+                version = (long) createCommand.ExecuteScalar();
             }
-            
+
             return version;
         }
+
         private static void CreateDatabase()
         {
             _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ",Version=3,New=True");
@@ -233,6 +235,7 @@ namespace Intersect_Server.Classes.Core
             CreateBagsTable();
             CreateBagItemsTable();
         }
+
         private static void CreateInfoTable()
         {
             var cmd = "CREATE TABLE " + INFO_TABLE + " (" + DB_VERSION + " INTEGER NOT NULL);";
@@ -248,257 +251,275 @@ namespace Intersect_Server.Classes.Core
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateLogsTable()
         {
             var cmd = "CREATE TABLE " + LOG_TABLE + " ("
-                        + LOG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                        + LOG_TIME + " TEXT,"
-                        + LOG_TYPE + " TEXT,"
-                        + LOG_INFO + " TEXT"
-                        + ");";
+                      + LOG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + LOG_TIME + " TEXT,"
+                      + LOG_TYPE + " TEXT,"
+                      + LOG_INFO + " TEXT"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateMutesTable()
         {
             var cmd = "CREATE TABLE " + MUTE_TABLE + " ("
-                + MUTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + MUTE_TIME + " TEXT,"
-                + MUTE_USER + " INTEGER,"
-                + MUTE_IP + " TEXT,"
-                + MUTE_DURATION + " INTEGER,"
-                + MUTE_REASON + " TEXT,"
-                + MUTE_MUTER + " TEXT"
-                + ");";
+                      + MUTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + MUTE_TIME + " TEXT,"
+                      + MUTE_USER + " INTEGER,"
+                      + MUTE_IP + " TEXT,"
+                      + MUTE_DURATION + " INTEGER,"
+                      + MUTE_REASON + " TEXT,"
+                      + MUTE_MUTER + " TEXT"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateBansTable()
         {
             var cmd = "CREATE TABLE " + BAN_TABLE + " ("
-                + BAN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + BAN_TIME + " TEXT,"
-                + BAN_USER + " INTEGER,"
-                + BAN_IP + " TEXT,"
-                + BAN_DURATION + " INTEGER,"
-                + BAN_REASON + " TEXT,"
-                + BAN_BANNER + " TEXT"
-                + ");";
+                      + BAN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + BAN_TIME + " TEXT,"
+                      + BAN_USER + " INTEGER,"
+                      + BAN_IP + " TEXT,"
+                      + BAN_DURATION + " INTEGER,"
+                      + BAN_REASON + " TEXT,"
+                      + BAN_BANNER + " TEXT"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateUsersTable()
         {
             var cmd = "CREATE TABLE " + USERS_TABLE + " ("
-                + USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + USER_NAME + " TEXT,"
-                + USER_PASS + " TEXT,"
-                + USER_SALT + " TEXT,"
-                + USER_EMAIL + " TEXT,"
-                + USER_POWER + " INTEGER"
-                + ");";
+                      + USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + USER_NAME + " TEXT,"
+                      + USER_PASS + " TEXT,"
+                      + USER_SALT + " TEXT,"
+                      + USER_EMAIL + " TEXT,"
+                      + USER_POWER + " INTEGER"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateCharactersTable()
         {
             var cmd = "CREATE TABLE " + CHAR_TABLE + " ("
-                + CHAR_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + CHAR_USER_ID + " INTEGER,"
-                + CHAR_NAME + " TEXT,"
-                + CHAR_MAP + " INTEGER,"
-                + CHAR_X + " INTEGER,"
-                + CHAR_Y + " INTEGER,"
-                + CHAR_Z + " INTEGER,"
-                + CHAR_DIR + " INTEGER,"
-                + CHAR_SPRITE + " TEXT,"
-                + CHAR_FACE + " TEXT,"
-                + CHAR_CLASS + " INTEGER,"
-                + CHAR_GENDER + " INTEGER,"
-                + CHAR_LEVEL + " INTEGER,"
-                + CHAR_EXP + " INTEGER,"
-                + CHAR_VITALS + " TEXT,"
-                + CHAR_MAX_VITALS + " TEXT,"
-                + CHAR_STATS + " TEXT,"
-                + CHAR_STAT_POINTS + " INTEGER,"
-                + CHAR_EQUIPMENT + " TEXT"
-                + ");";
+                      + CHAR_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + CHAR_USER_ID + " INTEGER,"
+                      + CHAR_NAME + " TEXT,"
+                      + CHAR_MAP + " INTEGER,"
+                      + CHAR_X + " INTEGER,"
+                      + CHAR_Y + " INTEGER,"
+                      + CHAR_Z + " INTEGER,"
+                      + CHAR_DIR + " INTEGER,"
+                      + CHAR_SPRITE + " TEXT,"
+                      + CHAR_FACE + " TEXT,"
+                      + CHAR_CLASS + " INTEGER,"
+                      + CHAR_GENDER + " INTEGER,"
+                      + CHAR_LEVEL + " INTEGER,"
+                      + CHAR_EXP + " INTEGER,"
+                      + CHAR_VITALS + " TEXT,"
+                      + CHAR_MAX_VITALS + " TEXT,"
+                      + CHAR_STATS + " TEXT,"
+                      + CHAR_STAT_POINTS + " INTEGER,"
+                      + CHAR_EQUIPMENT + " TEXT"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateCharacterInventoryTable()
         {
             var cmd = "CREATE TABLE " + CHAR_INV_TABLE + " ("
-                + CHAR_INV_CHAR_ID + " INTEGER,"
-                + CHAR_INV_SLOT + " INTEGER,"
-                + CHAR_INV_ITEM_NUM + " INTEGER,"
-                + CHAR_INV_ITEM_VAL + " INTEGER,"
-                + CHAR_INV_ITEM_STATS + " TEXT,"
-                + CHAR_INV_ITEM_BAG_ID + " INTEGER,"
-                + " unique(`" + CHAR_INV_CHAR_ID + "`,`" + CHAR_INV_SLOT + "`)"
-                + ");";
+                      + CHAR_INV_CHAR_ID + " INTEGER,"
+                      + CHAR_INV_SLOT + " INTEGER,"
+                      + CHAR_INV_ITEM_NUM + " INTEGER,"
+                      + CHAR_INV_ITEM_VAL + " INTEGER,"
+                      + CHAR_INV_ITEM_STATS + " TEXT,"
+                      + CHAR_INV_ITEM_BAG_ID + " INTEGER,"
+                      + " unique(`" + CHAR_INV_CHAR_ID + "`,`" + CHAR_INV_SLOT + "`)"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateCharacterSpellsTable()
         {
             var cmd = "CREATE TABLE " + CHAR_SPELL_TABLE + " ("
-                + CHAR_SPELL_CHAR_ID + " INTEGER,"
-                + CHAR_SPELL_SLOT + " INTEGER,"
-                + CHAR_SPELL_NUM + " INTEGER,"
-                + CHAR_SPELL_CD + " INTEGER,"
-                + " unique('" + CHAR_SPELL_CHAR_ID + "','" + CHAR_SPELL_SLOT + "')"
-                + ");";
+                      + CHAR_SPELL_CHAR_ID + " INTEGER,"
+                      + CHAR_SPELL_SLOT + " INTEGER,"
+                      + CHAR_SPELL_NUM + " INTEGER,"
+                      + CHAR_SPELL_CD + " INTEGER,"
+                      + " unique('" + CHAR_SPELL_CHAR_ID + "','" + CHAR_SPELL_SLOT + "')"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateCharacterHotbarTable()
         {
             var cmd = "CREATE TABLE " + CHAR_HOTBAR_TABLE + " ("
-                + CHAR_HOTBAR_CHAR_ID + " INTEGER,"
-                + CHAR_HOTBAR_SLOT + " INTEGER,"
-                + CHAR_HOTBAR_TYPE + " INTEGER,"
-                + CHAR_HOTBAR_ITEMSLOT + " INTEGER,"
-                + " unique('" + CHAR_HOTBAR_CHAR_ID + "','" + CHAR_HOTBAR_SLOT + "')"
-                + ");";
+                      + CHAR_HOTBAR_CHAR_ID + " INTEGER,"
+                      + CHAR_HOTBAR_SLOT + " INTEGER,"
+                      + CHAR_HOTBAR_TYPE + " INTEGER,"
+                      + CHAR_HOTBAR_ITEMSLOT + " INTEGER,"
+                      + " unique('" + CHAR_HOTBAR_CHAR_ID + "','" + CHAR_HOTBAR_SLOT + "')"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateCharacterBankTable()
         {
             var cmd = "CREATE TABLE " + CHAR_BANK_TABLE + " ("
-                + CHAR_BANK_CHAR_ID + " INTEGER,"
-                + CHAR_BANK_SLOT + " INTEGER,"
-                + CHAR_BANK_ITEM_NUM + " INTEGER,"
-                + CHAR_BANK_ITEM_VAL + " INTEGER,"
-                + CHAR_BANK_ITEM_STATS + " TEXT,"
-                + CHAR_BANK_ITEM_BAG_ID + " INTEGER,"
-                + " unique('" + CHAR_BANK_CHAR_ID + "','" + CHAR_BANK_SLOT + "')"
-                + ");";
+                      + CHAR_BANK_CHAR_ID + " INTEGER,"
+                      + CHAR_BANK_SLOT + " INTEGER,"
+                      + CHAR_BANK_ITEM_NUM + " INTEGER,"
+                      + CHAR_BANK_ITEM_VAL + " INTEGER,"
+                      + CHAR_BANK_ITEM_STATS + " TEXT,"
+                      + CHAR_BANK_ITEM_BAG_ID + " INTEGER,"
+                      + " unique('" + CHAR_BANK_CHAR_ID + "','" + CHAR_BANK_SLOT + "')"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateCharacterSwitchesTable()
         {
             var cmd = "CREATE TABLE " + CHAR_SWITCHES_TABLE + " ("
-                + CHAR_SWITCH_CHAR_ID + " INTEGER,"
-                + CHAR_SWITCH_SLOT + " INTEGER,"
-                + CHAR_SWITCH_VAL + " INTEGER,"
-                + " unique('" + CHAR_SWITCH_CHAR_ID + "','" + CHAR_SWITCH_SLOT + "')"
-                + ");";
+                      + CHAR_SWITCH_CHAR_ID + " INTEGER,"
+                      + CHAR_SWITCH_SLOT + " INTEGER,"
+                      + CHAR_SWITCH_VAL + " INTEGER,"
+                      + " unique('" + CHAR_SWITCH_CHAR_ID + "','" + CHAR_SWITCH_SLOT + "')"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateCharacterVariablesTable()
         {
             var cmd = "CREATE TABLE " + CHAR_VARIABLES_TABLE + " ("
-                + CHAR_VARIABLE_CHAR_ID + " INTEGER,"
-                + CHAR_VARIABLE_SLOT + " INTEGER,"
-                + CHAR_VARIABLE_VAL + " INTEGER,"
-                + " unique('" + CHAR_VARIABLE_CHAR_ID + "','" + CHAR_VARIABLE_SLOT + "')"
-                + ");";
+                      + CHAR_VARIABLE_CHAR_ID + " INTEGER,"
+                      + CHAR_VARIABLE_SLOT + " INTEGER,"
+                      + CHAR_VARIABLE_VAL + " INTEGER,"
+                      + " unique('" + CHAR_VARIABLE_CHAR_ID + "','" + CHAR_VARIABLE_SLOT + "')"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateCharacterQuestsTable()
         {
             var cmd = "CREATE TABLE " + CHAR_QUESTS_TABLE + " ("
-                + CHAR_QUEST_CHAR_ID + " INTEGER,"
-                + CHAR_QUEST_ID + " INTEGER,"
-                + CHAR_QUEST_TASK + " INTEGER,"
-                + CHAR_QUEST_TASK_PROGRESS + " INTEGER,"
-                + CHAR_QUEST_COMPLETED + " INTEGER,"
-                + " unique('" + CHAR_QUEST_CHAR_ID + "','" + CHAR_QUEST_ID + "')"
-                + ");";
+                      + CHAR_QUEST_CHAR_ID + " INTEGER,"
+                      + CHAR_QUEST_ID + " INTEGER,"
+                      + CHAR_QUEST_TASK + " INTEGER,"
+                      + CHAR_QUEST_TASK_PROGRESS + " INTEGER,"
+                      + CHAR_QUEST_COMPLETED + " INTEGER,"
+                      + " unique('" + CHAR_QUEST_CHAR_ID + "','" + CHAR_QUEST_ID + "')"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateBagsTable()
         {
             var cmd = "CREATE TABLE " + BAGS_TABLE + " ("
-                + BAG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + BAG_SLOT_COUNT + " INTEGER"
-                + ");";
+                      + BAG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + BAG_SLOT_COUNT + " INTEGER"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateBagItemsTable()
         {
             var cmd = "CREATE TABLE " + BAG_ITEMS_TABLE + " ("
-                + BAG_ITEM_CONTAINER_ID + " INTEGER,"
-                + BAG_ITEM_SLOT + " INTEGER,"
-                + BAG_ITEM_NUM + " INTEGER,"
-                + BAG_ITEM_VAL + " INTEGER,"
-                + BAG_ITEM_STATS + " TEXT,"
-                + BAG_ITEM_BAG_ID + " TEXT,"
-                + " unique('" + BAG_ITEM_CONTAINER_ID + "','" + BAG_ITEM_SLOT + "')"
-                + ");";
+                      + BAG_ITEM_CONTAINER_ID + " INTEGER,"
+                      + BAG_ITEM_SLOT + " INTEGER,"
+                      + BAG_ITEM_NUM + " INTEGER,"
+                      + BAG_ITEM_VAL + " INTEGER,"
+                      + BAG_ITEM_STATS + " TEXT,"
+                      + BAG_ITEM_BAG_ID + " TEXT,"
+                      + " unique('" + BAG_ITEM_CONTAINER_ID + "','" + BAG_ITEM_SLOT + "')"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
-            CreateBag(1); //This is to bypass an issue where we use itemVal to store the bag identifier (we are terrible!)
+            CreateBag(1);
+                //This is to bypass an issue where we use itemVal to store the bag identifier (we are terrible!)
         }
+
         private static void CreateGameObjectTables()
         {
             foreach (var val in Enum.GetValues(typeof(GameObject)))
             {
-                if ((GameObject)val != GameObject.Time)
-                    CreateGameObjectTable((GameObject)val);
+                if ((GameObject) val != GameObject.Time)
+                    CreateGameObjectTable((GameObject) val);
             }
         }
+
         private static void CreateGameObjectTable(GameObject gameObject)
         {
             var cmd = "CREATE TABLE " + GetGameObjectTable(gameObject) + " ("
-                + GAME_OBJECT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + GAME_OBJECT_DELETED + " INTEGER NOT NULL DEFAULT 0,"
-                + GAME_OBJECT_DATA + " BLOB" + ");";
+                      + GAME_OBJECT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + GAME_OBJECT_DELETED + " INTEGER NOT NULL DEFAULT 0,"
+                      + GAME_OBJECT_DATA + " BLOB" + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateMapListTable()
         {
             var cmd = "CREATE TABLE " + MAP_LIST_TABLE + " (" + MAP_LIST_DATA + " BLOB);";
@@ -509,6 +530,7 @@ namespace Intersect_Server.Classes.Core
             }
             InsertMapList();
         }
+
         private static void InsertMapList()
         {
             var cmd = "INSERT into " + MAP_LIST_TABLE + " (" + MAP_LIST_DATA + ") VALUES (" + "NULL" + ");";
@@ -518,6 +540,7 @@ namespace Intersect_Server.Classes.Core
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private static void CreateTimeTable()
         {
             var cmd = "CREATE TABLE " + TIME_TABLE + " (" + TIME_DATA + " BLOB);";
@@ -528,6 +551,7 @@ namespace Intersect_Server.Classes.Core
             }
             InsertTime();
         }
+
         private static void InsertTime()
         {
             var cmd = "INSERT into " + TIME_TABLE + " (" + TIME_DATA + ") VALUES (" + "NULL" + ");";
@@ -544,14 +568,15 @@ namespace Intersect_Server.Classes.Core
             if (_dbConnection == null || _dbConnection.State == ConnectionState.Closed) return -1;
             var cmd = _dbConnection.CreateCommand();
             cmd.CommandText = "SELECT last_insert_rowid()";
-            return (long)cmd.ExecuteScalar();
+            return (long) cmd.ExecuteScalar();
         }
 
         //Players General
         public static void LoadPlayerDatabase()
         {
-            Console.WriteLine(Strings.Get("database","usingsqlite"));
+            Console.WriteLine(Strings.Get("database", "usingsqlite"));
         }
+
         public static Client GetPlayerClient(string username)
         {
             //Try to fetch a player entity by username, online or offline.
@@ -576,6 +601,7 @@ namespace Intersect_Server.Classes.Core
             LoadCharacter(fakeClient);
             return fakeClient;
         }
+
         public static void SetPlayerPower(string username, int power)
         {
             if (AccountExists(username))
@@ -583,71 +609,71 @@ namespace Intersect_Server.Classes.Core
                 Client client = GetPlayerClient(username);
                 client.Power = power;
                 SaveUser(client);
-                PacketSender.SendPlayerMsg(client, Strings.Get("player","powermodified"), client.Entity.MyName);
-                Console.WriteLine(Strings.Get("commandoutput","powerlevel",username,power));
+                PacketSender.SendPlayerMsg(client, Strings.Get("player", "powermodified"), client.Entity.MyName);
+                Console.WriteLine(Strings.Get("commandoutput", "powerlevel", username, power));
             }
             else
             {
-                Console.WriteLine(Strings.Get("account","doesnotexist"));
+                Console.WriteLine(Strings.Get("account", "doesnotexist"));
             }
         }
 
         //User Info
         public static bool AccountExists(string accountname)
         {
-            
             long count = -1;
             var query = "SELECT COUNT(*)" + " from " + USERS_TABLE + " WHERE LOWER(" + USER_NAME + ")=@" + USER_NAME +
                         ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + USER_NAME, accountname.ToLower().Trim()));
-                count = (long)cmd.ExecuteScalar();
+                count = (long) cmd.ExecuteScalar();
             }
-            
+
             return (count > 0);
         }
+
         public static bool EmailInUse(string email)
         {
-            
             long count = -1;
             var query = "SELECT COUNT(*)" + " from " + USERS_TABLE + " WHERE LOWER(" + USER_EMAIL + ")=@" +
                         USER_EMAIL + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + USER_EMAIL, email.ToLower().Trim()));
-                count = (long)cmd.ExecuteScalar();
+                count = (long) cmd.ExecuteScalar();
             }
-            
+
             return (count > 0);
         }
+
         public static bool CharacterNameInUse(string name)
         {
-            
             long count = -1;
             var query = "SELECT COUNT(*)" + " from " + CHAR_TABLE + " WHERE LOWER(" + CHAR_NAME + ")=@" + CHAR_NAME +
                         ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + CHAR_NAME, name.ToLower().Trim()));
-                count = (long)cmd.ExecuteScalar();
+                count = (long) cmd.ExecuteScalar();
             }
-            
+
             return (count > 0);
         }
+
         public static long GetRegisteredPlayers()
         {
-            
             long count = -1;
             var cmd = "SELECT COUNT(*)" + " from " + USERS_TABLE + ";";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
-                count = (long)createCommand.ExecuteScalar();
+                count = (long) createCommand.ExecuteScalar();
             }
-            
+
             return count;
         }
+
         public static void CreateAccount(Client client, string username, string password, string email)
         {
             var sha = new SHA256Managed();
@@ -657,10 +683,14 @@ namespace Intersect_Server.Classes.Core
             RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
             byte[] buff = new byte[20];
             rng.GetBytes(buff);
-            client.MySalt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(buff)))).Replace("-", "");
+            client.MySalt =
+                BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(buff))))
+                    .Replace("-", "");
 
             //Hash the Password
-            client.MyPassword = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + client.MySalt))).Replace("-", "");
+            client.MyPassword =
+                BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + client.MySalt)))
+                    .Replace("-", "");
 
             client.MyEmail = email;
 
@@ -670,16 +700,18 @@ namespace Intersect_Server.Classes.Core
             }
             client.MyId = SaveUser(client, true);
         }
+
         public static long SaveUser(Client client, bool newUser = false)
         {
             if (client == null) return -1;
-            
+
             var insertQuery = "INSERT into " + USERS_TABLE + " (" + USER_NAME + "," + USER_EMAIL + "," + USER_PASS +
                               "," + USER_SALT + "," + USER_POWER + ")" + "VALUES (@" + USER_NAME + ",@" + USER_EMAIL +
                               ",@" + USER_PASS + ",@" + USER_SALT + ",@" + USER_POWER + ");";
             var updateQuery = "UPDATE " + USERS_TABLE + " SET " + USER_NAME + "=@" + USER_NAME + "," + USER_EMAIL +
                               "=@" + USER_EMAIL + "," + USER_PASS + "=@" + USER_PASS + "," + USER_SALT + "=@" +
-                              USER_SALT + "," + USER_POWER + "=@" + USER_POWER + " WHERE " + USER_ID + "=@" + USER_ID + ";";
+                              USER_SALT + "," + USER_POWER + "=@" + USER_POWER + " WHERE " + USER_ID + "=@" + USER_ID +
+                              ";";
             using (SqliteCommand cmd = new SqliteCommand(newUser ? insertQuery : updateQuery, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + USER_NAME, client.MyAccount));
@@ -691,12 +723,12 @@ namespace Intersect_Server.Classes.Core
                 cmd.ExecuteNonQuery();
             }
             var rowId = GetLastInsertRowId();
-            
+
             return (rowId);
         }
+
         public static bool CheckPassword(string username, string password)
         {
-            
             var sha = new SHA256Managed();
             var query = "SELECT " + USER_SALT + "," + USER_PASS + " from " + USERS_TABLE + " WHERE LOWER(" +
                         USER_NAME + ")=@" + USER_NAME + ";";
@@ -719,26 +751,26 @@ namespace Intersect_Server.Classes.Core
                     }
                 }
             }
-            
+
             return false;
         }
+
         public static long CheckPower(string username)
         {
-            
             long power = 0;
             var query = "SELECT " + USER_POWER + " from " + USERS_TABLE + " WHERE LOWER(" + USER_NAME + ")=@" +
                         USER_NAME + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + USER_NAME, username.ToLower().Trim()));
-                power = (long)cmd.ExecuteScalar();
+                power = (long) cmd.ExecuteScalar();
             }
-            
+
             return power;
         }
+
         public static bool LoadUser(Client client)
         {
-            
             var query = "SELECT * from " + USERS_TABLE + " WHERE LOWER(" + USER_NAME + ")=@" + USER_NAME + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
@@ -758,7 +790,7 @@ namespace Intersect_Server.Classes.Core
                     }
                 }
             }
-            
+
             return false;
         }
 
@@ -850,17 +882,20 @@ namespace Intersect_Server.Classes.Core
                 transaction.Commit();
             }
             if (!newCharacter)
-                PacketSender.SendPlayerMsg(player.MyClient, Strings.Get("player","saved"));
+                PacketSender.SendPlayerMsg(player.MyClient, Strings.Get("player", "saved"));
             return (rowId);
         }
-        private static void SaveCharacterInventory(Player player )
+
+        private static void SaveCharacterInventory(Player player)
         {
             for (int i = 0; i < Options.MaxInvItems; i++)
             {
                 var query = "INSERT OR REPLACE into " + CHAR_INV_TABLE + " (" + CHAR_INV_CHAR_ID + "," +
                             CHAR_INV_SLOT + "," + CHAR_INV_ITEM_NUM + "," + CHAR_INV_ITEM_VAL + "," +
-                            CHAR_INV_ITEM_STATS + "," + CHAR_INV_ITEM_BAG_ID + ")" + " VALUES " + " (@" + CHAR_INV_CHAR_ID + ",@" + CHAR_INV_SLOT +
-                            ",@" + CHAR_INV_ITEM_NUM + ",@" + CHAR_INV_ITEM_VAL + ",@" + CHAR_INV_ITEM_STATS + ",@" + CHAR_INV_ITEM_BAG_ID + ")";
+                            CHAR_INV_ITEM_STATS + "," + CHAR_INV_ITEM_BAG_ID + ")" + " VALUES " + " (@" +
+                            CHAR_INV_CHAR_ID + ",@" + CHAR_INV_SLOT +
+                            ",@" + CHAR_INV_ITEM_NUM + ",@" + CHAR_INV_ITEM_VAL + ",@" + CHAR_INV_ITEM_STATS + ",@" +
+                            CHAR_INV_ITEM_BAG_ID + ")";
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_CHAR_ID, player.MyId));
@@ -878,7 +913,8 @@ namespace Intersect_Server.Classes.Core
                 }
             }
         }
-        private static void SaveCharacterSpells(Player player )
+
+        private static void SaveCharacterSpells(Player player)
         {
             for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
@@ -892,20 +928,22 @@ namespace Intersect_Server.Classes.Core
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_SLOT, i));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_NUM, player.Spells[i].SpellNum));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_CD,
-                        (player.Spells[i].SpellCD > Globals.System.GetTimeMs()
-                            ? Globals.System.GetTimeMs() - player.Spells[i].SpellCD
-                            : 0)));
+                    (player.Spells[i].SpellCD > Globals.System.GetTimeMs()
+                        ? Globals.System.GetTimeMs() - player.Spells[i].SpellCD
+                        : 0)));
                     cmd.ExecuteNonQuery();
                 }
             }
         }
-        private static void SaveCharacterBank(Player player )
+
+        private static void SaveCharacterBank(Player player)
         {
             for (int i = 0; i < Options.MaxBankSlots; i++)
             {
                 var query = "INSERT OR REPLACE into " + CHAR_BANK_TABLE + " (" + CHAR_BANK_CHAR_ID + "," +
                             CHAR_BANK_SLOT + "," + CHAR_BANK_ITEM_NUM + "," + CHAR_BANK_ITEM_VAL + "," +
-                            CHAR_BANK_ITEM_STATS + "," + CHAR_BANK_ITEM_BAG_ID + ")" + " VALUES " + " (@" + CHAR_BANK_CHAR_ID + ",@" +
+                            CHAR_BANK_ITEM_STATS + "," + CHAR_BANK_ITEM_BAG_ID + ")" + " VALUES " + " (@" +
+                            CHAR_BANK_CHAR_ID + ",@" +
                             CHAR_BANK_SLOT + ",@" + CHAR_BANK_ITEM_NUM + ",@" + CHAR_BANK_ITEM_VAL + ",@" +
                             CHAR_BANK_ITEM_STATS + ",@" + CHAR_BANK_ITEM_BAG_ID + ");";
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
@@ -940,7 +978,8 @@ namespace Intersect_Server.Classes.Core
                 }
             }
         }
-        private static void SaveCharacterHotbar(Player player )
+
+        private static void SaveCharacterHotbar(Player player)
         {
             for (int i = 0; i < Options.MaxHotbar; i++)
             {
@@ -958,7 +997,8 @@ namespace Intersect_Server.Classes.Core
                 }
             }
         }
-        private static void SaveCharacterSwitches(Player player )
+
+        private static void SaveCharacterSwitches(Player player)
         {
             foreach (var playerSwitch in player.Switches)
             {
@@ -975,7 +1015,8 @@ namespace Intersect_Server.Classes.Core
                 }
             }
         }
-        private static void SaveCharacterVariables(Player player )
+
+        private static void SaveCharacterVariables(Player player)
         {
             foreach (var playerVariable in player.Variables)
             {
@@ -992,26 +1033,31 @@ namespace Intersect_Server.Classes.Core
                 }
             }
         }
+
         private static void SaveCharacterQuests(Player player)
         {
             foreach (var playerQuest in player.Quests)
             {
                 var query = "INSERT OR REPLACE into " + CHAR_QUESTS_TABLE + " (" + CHAR_QUEST_CHAR_ID + "," +
-                            CHAR_QUEST_ID + "," + CHAR_QUEST_TASK + "," + CHAR_QUEST_TASK_PROGRESS + "," + 
-                            CHAR_QUEST_COMPLETED + ")" + " VALUES " + " (@" + CHAR_QUEST_CHAR_ID + ",@" + 
+                            CHAR_QUEST_ID + "," + CHAR_QUEST_TASK + "," + CHAR_QUEST_TASK_PROGRESS + "," +
+                            CHAR_QUEST_COMPLETED + ")" + " VALUES " + " (@" + CHAR_QUEST_CHAR_ID + ",@" +
                             CHAR_QUEST_ID + ",@" + CHAR_QUEST_TASK + ",@" + CHAR_QUEST_TASK_PROGRESS + ",@" +
                             CHAR_QUEST_COMPLETED + ");";
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_CHAR_ID, player.MyId));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_ID, playerQuest.Key));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_TASK,Convert.ToInt32(playerQuest.Value.task)));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_TASK_PROGRESS, Convert.ToInt32(playerQuest.Value.taskProgress)));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_COMPLETED, Convert.ToInt32(playerQuest.Value.completed)));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_TASK,
+                        Convert.ToInt32(playerQuest.Value.task)));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_TASK_PROGRESS,
+                        Convert.ToInt32(playerQuest.Value.taskProgress)));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_COMPLETED,
+                        Convert.ToInt32(playerQuest.Value.completed)));
                     cmd.ExecuteNonQuery();
                 }
             }
         }
+
         public static bool LoadCharacter(Client client)
         {
             var en = client.Entity;
@@ -1088,7 +1134,8 @@ namespace Intersect_Server.Classes.Core
             {
             }
         }
-        private static bool LoadCharacterInventory(Player player )
+
+        private static bool LoadCharacterInventory(Player player)
         {
             var commaSep = new char[1];
             commaSep[0] = ',';
@@ -1135,7 +1182,8 @@ namespace Intersect_Server.Classes.Core
                 throw ex;
             }
         }
-        private static bool LoadCharacterSpells(Player player )
+
+        private static bool LoadCharacterSpells(Player player)
         {
             try
             {
@@ -1170,7 +1218,8 @@ namespace Intersect_Server.Classes.Core
                 throw ex;
             }
         }
-        private static bool LoadCharacterBank(Player player )
+
+        private static bool LoadCharacterBank(Player player)
         {
             var commaSep = new char[1];
             commaSep[0] = ',';
@@ -1218,7 +1267,8 @@ namespace Intersect_Server.Classes.Core
                 throw ex;
             }
         }
-        private static bool LoadCharacterHotbar(Player player )
+
+        private static bool LoadCharacterHotbar(Player player)
         {
             try
             {
@@ -1247,7 +1297,8 @@ namespace Intersect_Server.Classes.Core
                 throw ex;
             }
         }
-        private static bool LoadCharacterSwitches(Player player )
+
+        private static bool LoadCharacterSwitches(Player player)
         {
             try
             {
@@ -1279,7 +1330,8 @@ namespace Intersect_Server.Classes.Core
                 throw ex;
             }
         }
-        private static bool LoadCharacterVariables(Player player )
+
+        private static bool LoadCharacterVariables(Player player)
         {
             try
             {
@@ -1311,6 +1363,7 @@ namespace Intersect_Server.Classes.Core
                 throw ex;
             }
         }
+
         private static bool LoadCharacterQuests(Player player)
         {
             try
@@ -1357,15 +1410,17 @@ namespace Intersect_Server.Classes.Core
         //Bags
         public static int CreateBag(int slotCount)
         {
-            var insertQuery = "INSERT into " + BAGS_TABLE + " (" + BAG_SLOT_COUNT +  ")" + "VALUES (@" + BAG_SLOT_COUNT + ");";
+            var insertQuery = "INSERT into " + BAGS_TABLE + " (" + BAG_SLOT_COUNT + ")" + "VALUES (@" + BAG_SLOT_COUNT +
+                              ");";
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + BAG_SLOT_COUNT, slotCount));
                 cmd.ExecuteNonQuery();
             }
             var rowId = GetLastInsertRowId();
-            return (int)(rowId);
+            return (int) (rowId);
         }
+
         public static void LoadBag(ItemInstance bagItem)
         {
             var commaSep = new char[1];
@@ -1387,7 +1442,8 @@ namespace Intersect_Server.Classes.Core
             if (bagItem.BagInstance != null)
             {
                 //Then query the bag items table to get all the item data...
-                query = "SELECT * from " + BAG_ITEMS_TABLE + " WHERE " + BAG_ITEM_CONTAINER_ID + " = @" + BAG_ITEM_CONTAINER_ID + ";";
+                query = "SELECT * from " + BAG_ITEMS_TABLE + " WHERE " + BAG_ITEM_CONTAINER_ID + " = @" +
+                        BAG_ITEM_CONTAINER_ID + ";";
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_CONTAINER_ID, bagItem.BagId));
@@ -1425,7 +1481,7 @@ namespace Intersect_Server.Classes.Core
 
         public static bool BagEmpty(int bagId)
         {
-            var bagItem = new ItemInstance(-1,0,bagId);
+            var bagItem = new ItemInstance(-1, 0, bagId);
             LoadBag(bagItem);
             for (int i = 0; i < bagItem.BagInstance.Slots; i++)
             {
@@ -1440,11 +1496,14 @@ namespace Intersect_Server.Classes.Core
             }
             return true;
         }
+
         public static void SaveBagItem(int bagId, int slot, ItemInstance bagItem)
         {
-            var query = "INSERT OR REPLACE into " + BAG_ITEMS_TABLE + " (" + BAG_ITEM_CONTAINER_ID + "," + BAG_ITEM_SLOT + "," + BAG_ITEM_NUM + "," +
-                            BAG_ITEM_VAL + "," + BAG_ITEM_STATS + "," + BAG_ITEM_BAG_ID + ")" + " VALUES " + " (@" +
-                            BAG_ITEM_CONTAINER_ID + ",@" + BAG_ITEM_SLOT + ",@" + BAG_ITEM_NUM + ",@" + BAG_ITEM_VAL + ",@" + BAG_ITEM_STATS + ",@" + BAG_ITEM_BAG_ID + ");";
+            var query = "INSERT OR REPLACE into " + BAG_ITEMS_TABLE + " (" + BAG_ITEM_CONTAINER_ID + "," + BAG_ITEM_SLOT +
+                        "," + BAG_ITEM_NUM + "," +
+                        BAG_ITEM_VAL + "," + BAG_ITEM_STATS + "," + BAG_ITEM_BAG_ID + ")" + " VALUES " + " (@" +
+                        BAG_ITEM_CONTAINER_ID + ",@" + BAG_ITEM_SLOT + ",@" + BAG_ITEM_NUM + ",@" + BAG_ITEM_VAL + ",@" +
+                        BAG_ITEM_STATS + ",@" + BAG_ITEM_BAG_ID + ");";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_CONTAINER_ID, bagId));
@@ -1467,7 +1526,7 @@ namespace Intersect_Server.Classes.Core
                     var stats = "";
                     for (int x = 0; x < Options.MaxStats; x++)
                     {
-                        stats +=  "0,";
+                        stats += "0,";
                     }
                     cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_STATS, stats));
                 }
@@ -1479,12 +1538,11 @@ namespace Intersect_Server.Classes.Core
         //Bans and Mutes
         public static void AddMute(Client player, int duration, string reason, string muter, string ip)
         {
-
             var query = "INSERT OR REPLACE into " + MUTE_TABLE + " (" + MUTE_ID + "," +
-                            MUTE_TIME + "," + MUTE_USER + "," + MUTE_IP + "," + MUTE_DURATION + "," +
-                            MUTE_REASON + "," + MUTE_MUTER + ")" + " VALUES " + " (@" +
-                            MUTE_ID + ",@" + MUTE_TIME + ",@" + MUTE_USER + ",@" + MUTE_IP + ",@" +
-                            MUTE_DURATION + ",@" + MUTE_REASON + ",@" + MUTE_MUTER + ");";
+                        MUTE_TIME + "," + MUTE_USER + "," + MUTE_IP + "," + MUTE_DURATION + "," +
+                        MUTE_REASON + "," + MUTE_MUTER + ")" + " VALUES " + " (@" +
+                        MUTE_ID + ",@" + MUTE_TIME + ",@" + MUTE_USER + ",@" + MUTE_IP + ",@" +
+                        MUTE_DURATION + ",@" + MUTE_REASON + ",@" + MUTE_MUTER + ");";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MUTE_ID, player.MyId));
@@ -1497,24 +1555,23 @@ namespace Intersect_Server.Classes.Core
                 cmd.Parameters.Add(new SqliteParameter("@" + MUTE_MUTER, muter));
                 cmd.ExecuteNonQuery();
             }
-
         }
+
         public static void DeleteMute(string account)
         {
-
             var insertQuery = "DELETE FROM " + MUTE_TABLE + " WHERE " + MUTE_USER + "=@" + MUTE_USER + ";";
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, account));
                 cmd.ExecuteNonQuery();
             }
-
         }
+
         public static string CheckMute(string account, string ip)
         {
-
             var query = "SELECT " + MUTE_DURATION + "," + MUTE_TIME + "," + MUTE_MUTER + "," + MUTE_REASON +
-                    " from " + MUTE_TABLE + " WHERE (LOWER(" + MUTE_USER + ")=@" + MUTE_USER + " OR " + MUTE_IP + "=@" + MUTE_IP + ")" + ";";
+                        " from " + MUTE_TABLE + " WHERE (LOWER(" + MUTE_USER + ")=@" + MUTE_USER + " OR " + MUTE_IP +
+                        "=@" + MUTE_IP + ")" + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, account.ToLower().Trim()));
@@ -1529,7 +1586,6 @@ namespace Intersect_Server.Classes.Core
                         string reason = Convert.ToString(dataReader[MUTE_REASON]);
                         if (duration.CompareTo(DateTime.Today) <= 0) //Check that enough time has passed
                         {
-
                             DeleteMute(account);
                             return null;
                         }
@@ -1543,14 +1599,14 @@ namespace Intersect_Server.Classes.Core
                 return null;
             }
         }
+
         public static void AddBan(Client player, int duration, string reason, string banner, string ip)
         {
-
             var query = "INSERT OR REPLACE into " + BAN_TABLE + " (" + BAN_ID + "," +
-                            BAN_TIME + "," + BAN_USER + "," + BAN_IP + "," + BAN_DURATION + "," +
-                            BAN_REASON + "," + BAN_BANNER + ")" + " VALUES " + " (@" +
-                            BAN_ID + ",@" + BAN_TIME + ",@" + BAN_USER + ",@" + BAN_IP + ",@" +
-                            BAN_DURATION + ",@" + BAN_REASON + ",@" + BAN_BANNER + ");";
+                        BAN_TIME + "," + BAN_USER + "," + BAN_IP + "," + BAN_DURATION + "," +
+                        BAN_REASON + "," + BAN_BANNER + ")" + " VALUES " + " (@" +
+                        BAN_ID + ",@" + BAN_TIME + ",@" + BAN_USER + ",@" + BAN_IP + ",@" +
+                        BAN_DURATION + ",@" + BAN_REASON + ",@" + BAN_BANNER + ");";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + BAN_ID, player.MyId));
@@ -1563,24 +1619,23 @@ namespace Intersect_Server.Classes.Core
                 cmd.Parameters.Add(new SqliteParameter("@" + BAN_BANNER, banner));
                 cmd.ExecuteNonQuery();
             }
-
         }
+
         public static void DeleteBan(string account)
         {
-
             var insertQuery = "DELETE FROM " + BAN_TABLE + " WHERE " + BAN_USER + "=@" + BAN_USER + ";";
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, account));
                 cmd.ExecuteNonQuery();
             }
-
         }
+
         public static string CheckBan(string account, string ip)
         {
-
             var query = "SELECT " + BAN_DURATION + "," + BAN_TIME + "," + BAN_BANNER + "," + BAN_REASON +
-                    " from " + BAN_TABLE + " WHERE (LOWER(" + BAN_USER + ")=@" + BAN_USER + " OR " + BAN_IP + "=@" + BAN_IP + ")" + ";";
+                        " from " + BAN_TABLE + " WHERE (LOWER(" + BAN_USER + ")=@" + BAN_USER + " OR " + BAN_IP + "=@" +
+                        BAN_IP + ")" + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, account.ToLower().Trim()));
@@ -1595,7 +1650,6 @@ namespace Intersect_Server.Classes.Core
                         string reason = Convert.ToString(dataReader[BAN_REASON]);
                         if (duration.CompareTo(DateTime.Today) <= 0) //Check that enough time has passed
                         {
-
                             DeleteBan(account);
                             return null;
                         }
@@ -1613,24 +1667,23 @@ namespace Intersect_Server.Classes.Core
         //Game Object Saving/Loading
         private static void LoadAllGameObjects()
         {
-            
             foreach (var val in Enum.GetValues(typeof(GameObject)))
             {
-                if ((GameObject)val != GameObject.Time)
+                if ((GameObject) val != GameObject.Time)
                 {
-                    LoadGameObjects((GameObject)val);
-                    if ((GameObject)val == GameObject.Map)
+                    LoadGameObjects((GameObject) val);
+                    if ((GameObject) val == GameObject.Map)
                     {
                         OnMapsLoaded();
                     }
-                    else if ((GameObject)val == GameObject.Class)
+                    else if ((GameObject) val == GameObject.Class)
                     {
                         OnClassesLoaded();
                     }
                 }
             }
-            
         }
+
         private static string GetGameObjectTable(GameObject type)
         {
             var tableName = "";
@@ -1694,6 +1747,7 @@ namespace Intersect_Server.Classes.Core
             }
             return tableName;
         }
+
         private static void ClearGameObjects(GameObject type)
         {
             switch (type)
@@ -1755,6 +1809,7 @@ namespace Intersect_Server.Classes.Core
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         private static void LoadGameObject(GameObject type, int index, byte[] data)
         {
             switch (type)
@@ -1852,7 +1907,8 @@ namespace Intersect_Server.Classes.Core
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
-        public static void LoadGameObjects(GameObject type )
+
+        public static void LoadGameObjects(GameObject type)
         {
             var nullIssues = "";
             var tableName = GetGameObjectTable(type);
@@ -1880,16 +1936,16 @@ namespace Intersect_Server.Classes.Core
             }
             if (nullIssues != "")
             {
-                throw (new Exception(Strings.Get("database","nullerror") + Environment.NewLine + nullIssues));
+                throw (new Exception(Strings.Get("database", "nullerror") + Environment.NewLine + nullIssues));
             }
         }
+
         public static void SaveGameObject(DatabaseObject gameObject)
         {
             if (gameObject == null)
             {
                 Log.Error("Attempted to persist null game object to the database.");
             }
-
 
             var insertQuery = "UPDATE " + gameObject.GetTable() + " set " + GAME_OBJECT_DELETED + "=@" +
                               GAME_OBJECT_DELETED + "," + GAME_OBJECT_DATA + "=@" + GAME_OBJECT_DATA + " WHERE " +
@@ -1904,18 +1960,17 @@ namespace Intersect_Server.Classes.Core
                     cmd.ExecuteNonQuery();
                 }
             }
-            
         }
+
         public static DatabaseObject AddGameObject(GameObject type)
         {
-            
             var insertQuery = "INSERT into " + GetGameObjectTable(type) + " DEFAULT VALUES" + ";";
             int index = -1;
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
             {
                 cmd.ExecuteNonQuery();
                 cmd.CommandText = "SELECT last_insert_rowid()";
-                index = (int)((long)cmd.ExecuteScalar());
+                index = (int) ((long) cmd.ExecuteScalar());
             }
             if (index > -1)
             {
@@ -1995,16 +2050,16 @@ namespace Intersect_Server.Classes.Core
                     default:
                         throw new ArgumentOutOfRangeException(nameof(type), type, null);
                 }
-                
+
                 SaveGameObject(obj);
                 return obj;
             }
-            
+
             return null;
         }
+
         public static void DeleteGameObject(DatabaseObject gameObject)
         {
-            
             var insertQuery = "UPDATE " + gameObject.GetTable() + " set " + GAME_OBJECT_DELETED + "=@" +
                               GAME_OBJECT_DELETED + " WHERE " +
                               GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
@@ -2023,7 +2078,7 @@ namespace Intersect_Server.Classes.Core
         {
             if (MapBase.ObjectCount() == 0)
             {
-                Console.WriteLine(Strings.Get("database","nomaps"));
+                Console.WriteLine(Strings.Get("database", "nomaps"));
                 AddGameObject(GameObject.Map);
             }
 
@@ -2037,13 +2092,14 @@ namespace Intersect_Server.Classes.Core
                 map.Value.InitAutotiles();
             }
         }
+
         private static void OnClassesLoaded()
         {
             if (ClassBase.ObjectCount() == 0)
             {
-                Console.WriteLine(Strings.Get("database","noclasses"));
-                var cls = (ClassBase)AddGameObject(GameObject.Class);
-                cls.Name = Strings.Get("database","default");
+                Console.WriteLine(Strings.Get("database", "noclasses"));
+                var cls = (ClassBase) AddGameObject(GameObject.Class);
+                cls.Name = Strings.Get("database", "default");
                 ClassSprite defaultMale = new ClassSprite()
                 {
                     Sprite = "1.png",
@@ -2056,11 +2112,11 @@ namespace Intersect_Server.Classes.Core
                 };
                 cls.Sprites.Add(defaultMale);
                 cls.Sprites.Add(defaultFemale);
-                for (int i = 0; i < (int)Vitals.VitalCount; i++)
+                for (int i = 0; i < (int) Vitals.VitalCount; i++)
                 {
                     cls.BaseVital[i] = 20;
                 }
-                for (int i = 0; i < (int)Stats.StatCount; i++)
+                for (int i = 0; i < (int) Stats.StatCount; i++)
                 {
                     cls.BaseStat[i] = 20;
                 }
@@ -2077,6 +2133,7 @@ namespace Intersect_Server.Classes.Core
                 CheckMapConnections(map.Value, maps);
             }
         }
+
         public static void CheckMapConnections(MapBase map, Dictionary<int, MapInstance> maps)
         {
             bool updated = false;
@@ -2106,6 +2163,7 @@ namespace Intersect_Server.Classes.Core
                 PacketSender.SendMapToEditors(map.Id);
             }
         }
+
         public static void GenerateMapGrids()
         {
             lock (MapGridLock)
@@ -2144,7 +2202,8 @@ namespace Intersect_Server.Classes.Core
                         {
                             if ((x == map.Value.MapGridX) && (y == map.Value.MapGridY))
                                 continue;
-                            if (x >= MapGrids[myGrid].XMin && x < MapGrids[myGrid].XMax && y >= MapGrids[myGrid].YMin && y < MapGrids[myGrid].YMax && MapGrids[myGrid].MyGrid[x, y] > -1)
+                            if (x >= MapGrids[myGrid].XMin && x < MapGrids[myGrid].XMax && y >= MapGrids[myGrid].YMin &&
+                                y < MapGrids[myGrid].YMax && MapGrids[myGrid].MyGrid[x, y] > -1)
                             {
                                 map.Value.SurroundingMaps.Add(MapGrids[myGrid].MyGrid[x, y]);
                             }
@@ -2161,7 +2220,6 @@ namespace Intersect_Server.Classes.Core
         //Map Folders
         private static void LoadMapFolders()
         {
-            
             var query = "SELECT * from " + MAP_LIST_TABLE + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
@@ -2195,11 +2253,10 @@ namespace Intersect_Server.Classes.Core
             }
             SaveMapFolders();
             PacketSender.SendMapListToAll();
-            
         }
+
         public static void SaveMapFolders()
         {
-            
             var query = "UPDATE " + MAP_LIST_TABLE + " set " + MAP_LIST_DATA + "=@" + MAP_LIST_DATA + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
@@ -2207,13 +2264,11 @@ namespace Intersect_Server.Classes.Core
                     MapList.GetList().Data(MapBase.GetObjects())));
                 cmd.ExecuteNonQuery();
             }
-            
         }
 
         //Time
         private static void LoadTime()
         {
-            
             var query = "SELECT * from " + TIME_TABLE + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
@@ -2236,22 +2291,20 @@ namespace Intersect_Server.Classes.Core
                     }
                 }
             }
-            
+
             SaveTime();
             ServerTime.Init();
         }
+
         public static void SaveTime()
         {
-            
             var query = "UPDATE " + TIME_TABLE + " set " + TIME_DATA + "=@" + TIME_DATA + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + TIME_DATA,
-                  TimeBase.GetTimeBase().SaveTimeBase()));
+                    TimeBase.GetTimeBase().SaveTimeBase()));
                 cmd.ExecuteNonQuery();
             }
-            
         }
     }
 }
-

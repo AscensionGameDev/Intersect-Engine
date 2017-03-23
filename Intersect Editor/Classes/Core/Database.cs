@@ -1,22 +1,20 @@
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using Intersect_Editor.Classes.Maps;
 using Intersect;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
+using Intersect_Editor.Classes.Maps;
 using Mono.Data.Sqlite;
 
 namespace Intersect_Editor.Classes
 {
     public static class Database
     {
-        private static SqliteConnection _dbConnection;
         private const string DbFilename = "resources/mapcache.db";
 
         //Map Table Constants
@@ -30,6 +28,7 @@ namespace Intersect_Editor.Classes
         private const string OPTION_ID = "id";
         private const string OPTION_NAME = "name";
         private const string OPTION_VALUE = "value";
+        private static SqliteConnection _dbConnection;
 
         //Grid Variables
         public static bool GridHideDarkness = false;
@@ -44,7 +43,7 @@ namespace Intersect_Editor.Classes
             if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
             if (!File.Exists("resources/config.xml"))
             {
-                var settings = new XmlWriterSettings { Indent = true };
+                var settings = new XmlWriterSettings {Indent = true};
                 using (var writer = XmlWriter.Create("resources/config.xml", settings))
                 {
                     writer.WriteStartDocument();
@@ -53,11 +52,16 @@ namespace Intersect_Editor.Classes
                     writer.WriteElementString("Language", "English");
                     writer.WriteElementString("Host", "localhost");
                     writer.WriteElementString("Port", "4500");
-                    writer.WriteElementString("RenderCache", "true"); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
-                    writer.WriteElementString("MenuBGM", ""); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
-                    writer.WriteElementString("MenuBG", "background.png"); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
-                    writer.WriteElementString("Logo", "logo.png"); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
-                    writer.WriteElementString("IntroBG", ""); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    writer.WriteElementString("RenderCache", "true");
+                        //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    writer.WriteElementString("MenuBGM", "");
+                        //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    writer.WriteElementString("MenuBG", "background.png");
+                        //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    writer.WriteElementString("Logo", "logo.png");
+                        //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    writer.WriteElementString("IntroBG", "");
+                        //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
                     writer.WriteEndElement();
                     writer.WriteEndDocument();
                     writer.Flush();
@@ -85,7 +89,6 @@ namespace Intersect_Editor.Classes
             }
             return true;
         }
-
 
         //Game Object Handling
         public static string[] GetGameObjectList(GameObject type)
@@ -166,6 +169,7 @@ namespace Intersect_Editor.Classes
             }
             return items.ToArray();
         }
+
         public static int GameObjectIdFromList(GameObject type, int listIndex)
         {
             if (listIndex < 0) return -1;
@@ -226,6 +230,7 @@ namespace Intersect_Editor.Classes
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         public static int GameObjectListIndex(GameObject type, int id)
         {
             switch (type)
@@ -269,7 +274,6 @@ namespace Intersect_Editor.Classes
             }
         }
 
-
         //Map Cache DB
         public static void InitMapCache()
         {
@@ -299,10 +303,10 @@ namespace Intersect_Editor.Classes
         public static void CreateOptionsTable()
         {
             var cmd = "CREATE TABLE " + OPTION_TABLE + " ("
-                        + OPTION_ID + " INTEGER PRIMARY KEY,"
-                        + OPTION_NAME + " TEXT UNIQUE,"
-                        + OPTION_VALUE + " TEXT"
-                        + ");";
+                      + OPTION_ID + " INTEGER PRIMARY KEY,"
+                      + OPTION_NAME + " TEXT UNIQUE,"
+                      + OPTION_VALUE + " TEXT"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
@@ -322,8 +326,8 @@ namespace Intersect_Editor.Classes
         public static void SaveOption(string name, string value)
         {
             var query = "INSERT OR REPLACE into " + OPTION_TABLE + " (" + OPTION_NAME + "," +
-                              OPTION_VALUE + ")" + " VALUES " + " (@" +
-                              OPTION_NAME + ",@" + OPTION_VALUE + ");";
+                        OPTION_VALUE + ")" + " VALUES " + " (@" +
+                        OPTION_NAME + ",@" + OPTION_VALUE + ");";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + OPTION_NAME, name));
@@ -343,7 +347,7 @@ namespace Intersect_Editor.Classes
                 {
                     if (dataReader[OPTION_VALUE].GetType() != typeof(DBNull))
                     {
-                        var data = (string)dataReader[OPTION_VALUE];
+                        var data = (string) dataReader[OPTION_VALUE];
                         return data;
                     }
                 }
@@ -374,10 +378,10 @@ namespace Intersect_Editor.Classes
         public static void CreateMapCacheTable()
         {
             var cmd = "CREATE TABLE " + MAP_CACHE_TABLE + " ("
-                        + MAP_CACHE_ID + " INTEGER PRIMARY KEY,"
-                        + MAP_CACHE_REVISION + " INTEGER,"
-                        + MAP_CACHE_DATA + " BLOB"
-                        + ");";
+                      + MAP_CACHE_ID + " INTEGER PRIMARY KEY,"
+                      + MAP_CACHE_REVISION + " INTEGER,"
+                      + MAP_CACHE_DATA + " BLOB"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
@@ -400,14 +404,16 @@ namespace Intersect_Editor.Classes
                     {
                         // lock bitmap
                         System.Drawing.Imaging.BitmapData origdata =
-                        bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, bmp.PixelFormat);
+                            bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
+                                System.Drawing.Imaging.ImageLockMode.ReadOnly, bmp.PixelFormat);
 
-                        uint* byteData = (uint*)origdata.Scan0;
+                        uint* byteData = (uint*) origdata.Scan0;
 
                         // Switch bgra -> rgba
                         for (int i = 0; i < imgData.Length; i++)
                         {
-                            byteData[i] = (byteData[i] & 0x000000ff) << 16 | (byteData[i] & 0x0000FF00) | (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000);
+                            byteData[i] = (byteData[i] & 0x000000ff) << 16 | (byteData[i] & 0x0000FF00) |
+                                          (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000);
                         }
 
                         // copy data
@@ -447,7 +453,7 @@ namespace Intersect_Editor.Classes
             {
                 query += " AND " + MAP_CACHE_REVISION + "=@" + MAP_CACHE_REVISION;
             }
-            
+
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id.ToString()));
@@ -460,7 +466,7 @@ namespace Intersect_Editor.Classes
                 {
                     if (dataReader[MAP_CACHE_DATA].GetType() != typeof(DBNull))
                     {
-                        var data = (byte[])dataReader[MAP_CACHE_DATA];
+                        var data = (byte[]) dataReader[MAP_CACHE_DATA];
                         return data;
                     }
                 }
@@ -471,8 +477,8 @@ namespace Intersect_Editor.Classes
         public static void SaveMapCache(int id, int revision, byte[] data)
         {
             var query = "INSERT OR REPLACE into " + MAP_CACHE_TABLE + " (" + MAP_CACHE_ID + "," +
-                               MAP_CACHE_REVISION + "," + MAP_CACHE_DATA  + ")" + " VALUES " + " (@" +
-                               MAP_CACHE_ID + ",@" + MAP_CACHE_REVISION + ",@" + MAP_CACHE_DATA + ");";
+                        MAP_CACHE_REVISION + "," + MAP_CACHE_DATA + ")" + " VALUES " + " (@" +
+                        MAP_CACHE_ID + ",@" + MAP_CACHE_REVISION + ",@" + MAP_CACHE_DATA + ");";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id));
@@ -489,9 +495,10 @@ namespace Intersect_Editor.Classes
             }
         }
 
-        public static void ClearMapCache (int id)
+        public static void ClearMapCache(int id)
         {
-            var query = "UPDATE " + MAP_CACHE_TABLE + " SET " + MAP_CACHE_DATA + " = @" + MAP_CACHE_DATA + " WHERE " + MAP_CACHE_ID + " = @" + MAP_CACHE_ID;
+            var query = "UPDATE " + MAP_CACHE_TABLE + " SET " + MAP_CACHE_DATA + " = @" + MAP_CACHE_DATA + " WHERE " +
+                        MAP_CACHE_ID + " = @" + MAP_CACHE_ID;
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id));

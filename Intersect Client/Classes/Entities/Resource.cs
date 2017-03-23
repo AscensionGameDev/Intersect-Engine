@@ -1,25 +1,25 @@
 ﻿using System;
+using Intersect;
+using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
-using IntersectClientExtras.Graphics;
-using Intersect;
-using Color = IntersectClientExtras.GenericClasses.Color;
 using Intersect_Client.Classes.Maps;
-using Intersect.GameObjects;
+using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.Entities
 {
     public class Resource : Entity
     {
+        public ResourceBase _baseResource;
         private bool _hasRenderBounds;
-        FloatRect srcRectangle = new FloatRect();
         FloatRect destRectangle = new FloatRect();
         public bool IsDead;
-        public ResourceBase _baseResource;
+        FloatRect srcRectangle = new FloatRect();
 
-        public Resource(int index,long spawnTime,ByteBuffer bf) : base(index,spawnTime,bf)
+        public Resource(int index, long spawnTime, ByteBuffer bf) : base(index, spawnTime, bf)
         {
         }
 
@@ -46,8 +46,13 @@ namespace Intersect_Client.Classes.Entities
         {
             CalculateRenderBounds();
             bool result = base.Update();
-            if (!_hasRenderBounds) { CalculateRenderBounds(); }
-            if (result && !GameGraphics.CurrentView.IntersectsWith(new FloatRect(destRectangle.Left,destRectangle.Top,destRectangle.Width,destRectangle.Height)))
+            if (!_hasRenderBounds)
+            {
+                CalculateRenderBounds();
+            }
+            if (result &&
+                !GameGraphics.CurrentView.IntersectsWith(new FloatRect(destRectangle.Left, destRectangle.Top,
+                    destRectangle.Width, destRectangle.Height)))
             {
                 if (RenderList != null)
                 {
@@ -68,10 +73,16 @@ namespace Intersect_Client.Classes.Entities
             if (srcTexture != null)
             {
                 srcRectangle = new FloatRect(0, 0, srcTexture.GetWidth(), srcTexture.GetHeight());
-                destRectangle.Y = (int)(map.GetY() + CurrentY * Options.TileHeight + OffsetY);
-                destRectangle.X = (int)(map.GetX() + CurrentX * Options.TileWidth + OffsetX);
-                if (srcRectangle.Height > 32) { destRectangle.Y -= srcRectangle.Height - 32; }
-                if (srcRectangle.Width > 32) { destRectangle.X -= (srcRectangle.Width - 32) / 2; }
+                destRectangle.Y = (int) (map.GetY() + CurrentY * Options.TileHeight + OffsetY);
+                destRectangle.X = (int) (map.GetX() + CurrentX * Options.TileWidth + OffsetX);
+                if (srcRectangle.Height > 32)
+                {
+                    destRectangle.Y -= srcRectangle.Height - 32;
+                }
+                if (srcRectangle.Width > 32)
+                {
+                    destRectangle.X -= (srcRectangle.Width - 32) / 2;
+                }
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
                 _hasRenderBounds = true;

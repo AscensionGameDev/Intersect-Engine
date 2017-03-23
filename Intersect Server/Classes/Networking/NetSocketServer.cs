@@ -1,5 +1,3 @@
-
-
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -7,18 +5,18 @@ using Intersect;
 
 namespace Intersect_Server.Classes.Networking
 {
-	public static class SocketServer
-	{
-	    static TcpListener _tcpServer;
-	    private static bool _started = false;
+    public static class SocketServer
+    {
+        static TcpListener _tcpServer;
+        private static bool _started = false;
 
-	    public static void  Init ()
-		{
-		    _tcpServer = new TcpListener(IPAddress.Any, Options.ServerPort);
+        public static void Init()
+        {
+            _tcpServer = new TcpListener(IPAddress.Any, Options.ServerPort);
             _tcpServer.Start();
-	        _started = true;
+            _started = true;
             _tcpServer.BeginAcceptTcpClient(OnClientConnect, null);
-		}
+        }
 
         public static void Stop()
         {
@@ -44,4 +42,3 @@ namespace Intersect_Server.Classes.Networking
         }
     }
 }
-

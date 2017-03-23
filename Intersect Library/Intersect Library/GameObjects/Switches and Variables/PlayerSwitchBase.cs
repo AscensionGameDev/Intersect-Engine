@@ -9,7 +9,6 @@ namespace Intersect.GameObjects
         public new const string DATABASE_TABLE = "player_switches";
         public new const GameObject OBJECT_TYPE = GameObject.PlayerSwitch;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        
 
         public PlayerSwitchBase(int id) : base(id)
         {
@@ -35,7 +34,7 @@ namespace Intersect.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return (PlayerSwitchBase)Objects[index];
+                return (PlayerSwitchBase) Objects[index];
             }
             return null;
         }
@@ -44,7 +43,7 @@ namespace Intersect.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return ((PlayerSwitchBase)Objects[index]).Name;
+                return ((PlayerSwitchBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -72,26 +71,31 @@ namespace Intersect.GameObjects
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(Id);
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, PlayerSwitchBase> GetObjects()
         {
-            Dictionary<int, PlayerSwitchBase> objects = Objects.ToDictionary(k => k.Key, v => (PlayerSwitchBase)v.Value);
+            Dictionary<int, PlayerSwitchBase> objects = Objects.ToDictionary(k => k.Key, v => (PlayerSwitchBase) v.Value);
             return objects;
         }
     }

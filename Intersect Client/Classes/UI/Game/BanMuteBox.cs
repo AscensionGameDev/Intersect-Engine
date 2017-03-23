@@ -1,38 +1,36 @@
 ﻿using System;
+using Intersect.Localization;
+using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Core;
-using IntersectClientExtras.Gwen;
-using Intersect.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
     public class BanMuteBox
     {
-        private WindowControl _myWindow;
-        private event EventHandler _okayEventHandler;
-        private TextBoxNumeric _textbox;
-        private Label _reasonLabel;
-        private TextBox _reasonBox;
-        private Label _durationLabel;
         private ComboBox _durationBox;
-        private Label _ipLabel;
+        private Label _durationLabel;
         private CheckBox _ipCheckbox;
+        private Label _ipLabel;
+        private WindowControl _myWindow;
+        private TextBox _reasonBox;
+        private Label _reasonLabel;
+        private TextBoxNumeric _textbox;
 
         public BanMuteBox(string title, string prompt, bool modal, EventHandler okayClicked)
         {
-
             _okayEventHandler = okayClicked;
 
             _myWindow = new WindowControl(Gui.GameUI.GameCanvas, title, modal);
             _myWindow.SetSize(500, 150);
-            _myWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - _myWindow.Width / 2, GameGraphics.Renderer.GetScreenHeight() / 2 - _myWindow.Height / 2);
+            _myWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - _myWindow.Width / 2,
+                GameGraphics.Renderer.GetScreenHeight() / 2 - _myWindow.Height / 2);
             _myWindow.IsClosable = false;
             _myWindow.DisableResizing();
             _myWindow.Margin = Margin.Zero;
             _myWindow.Padding = Padding.Zero;
             Gui.InputBlockingElements.Add(_myWindow);
-
 
             Label promptLabel = new Label(_myWindow);
             promptLabel.SetText(prompt);
@@ -47,7 +45,7 @@ namespace Intersect_Client.Classes.UI.Game
             _reasonLabel.SetPosition(100, y);
 
             _reasonBox = new TextBox(_myWindow);
-            _reasonBox.SetBounds(180, y-3, 220, 22);
+            _reasonBox.SetBounds(180, y - 3, 220, 22);
             Gui.FocusElements.Add(_reasonBox);
 
             y = _reasonBox.Bottom + 6;
@@ -80,13 +78,12 @@ namespace Intersect_Client.Classes.UI.Game
             _ipLabel.SetPosition(320, y);
 
             _ipCheckbox = new CheckBox(_myWindow);
-            _ipCheckbox.SetPosition(400 - _ipCheckbox.Width,y);
+            _ipCheckbox.SetPosition(400 - _ipCheckbox.Width, y);
 
-
-            Button okayBtn =  new Button(_myWindow);
-            okayBtn.SetSize(86,22);
+            Button okayBtn = new Button(_myWindow);
+            okayBtn.SetSize(86, 22);
             okayBtn.SetText(Strings.Get("banmute", "ok"));
-            okayBtn.SetPosition(_myWindow.Width/2 - 188 /2, 90);
+            okayBtn.SetPosition(_myWindow.Width / 2 - 188 / 2, 90);
             okayBtn.Clicked += okayBtn_Clicked;
 
             Button cancelBtn = new Button(_myWindow);
@@ -94,8 +91,9 @@ namespace Intersect_Client.Classes.UI.Game
             cancelBtn.SetText(Strings.Get("banmute", "cancel"));
             cancelBtn.Clicked += CancelBtn_Clicked;
             cancelBtn.SetPosition(_myWindow.Width / 2 - 188 / 2 + 86 + 16, 90);
-
         }
+
+        private event EventHandler _okayEventHandler;
 
         private void CancelBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
@@ -104,14 +102,17 @@ namespace Intersect_Client.Classes.UI.Game
 
         void okayBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_okayEventHandler != null) { _okayEventHandler(this, EventArgs.Empty); }
+            if (_okayEventHandler != null)
+            {
+                _okayEventHandler(this, EventArgs.Empty);
+            }
             _myWindow.Close();
         }
 
         public void Dispose()
         {
             _myWindow.Close();
-            Gui.GameUI.GameCanvas.RemoveChild(_myWindow,false);
+            Gui.GameUI.GameCanvas.RemoveChild(_myWindow, false);
             _myWindow.Dispose();
         }
 
@@ -154,6 +155,5 @@ namespace Intersect_Client.Classes.UI.Game
         {
             return _ipCheckbox.IsChecked;
         }
-
     }
 }

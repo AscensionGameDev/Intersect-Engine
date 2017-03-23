@@ -1,27 +1,23 @@
-﻿using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects;
-using Mono.Data.Sqlite;
-using System;
+﻿using System;
 using Intersect;
 using Intersect.Logging;
+using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Events;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Maps;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
+using Mono.Data.Sqlite;
 using GameObject = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObject;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5
 {
     public class Upgrade5
     {
-        private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
-
         //GameObject Table Constants
         private const string GAME_OBJECT_ID = "id";
         private const string GAME_OBJECT_DELETED = "deleted";
         private const string GAME_OBJECT_DATA = "data";
-
-
-
+        private SqliteConnection _dbConnection;
+        private Object _dbLock = new Object();
 
         public Upgrade5(SqliteConnection connection)
         {
@@ -37,13 +33,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5
             LoadAllGameObjects();
         }
 
-
         private void CreateGameObjectTable(GameObject gameObject)
         {
             var cmd = "CREATE TABLE " + GetGameObjectTable(gameObject) + " ("
-                + GAME_OBJECT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + GAME_OBJECT_DELETED + " INTEGER NOT NULL DEFAULT 0,"
-                + GAME_OBJECT_DATA + " BLOB" + ");";
+                      + GAME_OBJECT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + GAME_OBJECT_DELETED + " INTEGER NOT NULL DEFAULT 0,"
+                      + GAME_OBJECT_DATA + " BLOB" + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
@@ -54,16 +49,15 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5
         //Game Object Saving/Loading
         private void LoadAllGameObjects()
         {
-
             foreach (var val in Enum.GetValues(typeof(GameObject)))
             {
-                if ((GameObject)val != GameObject.Time)
+                if ((GameObject) val != GameObject.Time)
                 {
-                    LoadGameObjects((GameObject)val);
+                    LoadGameObjects((GameObject) val);
                 }
             }
-
         }
+
         //Game Object Saving/Loading
         private string GetGameObjectTable(GameObject type)
         {
@@ -126,6 +120,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5
             }
             return tableName;
         }
+
         private void ClearGameObjects(GameObject type)
         {
             switch (type)
@@ -185,6 +180,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         private void LoadGameObject(GameObject type, int index, byte[] data)
         {
             switch (type)
@@ -297,6 +293,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         public void LoadGameObjects(GameObject type)
         {
             var nullIssues = "";
@@ -332,6 +329,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5
                 throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine + nullIssues));
             }
         }
+
         public void SaveGameObject(DatabaseObject gameObject)
         {
             if (gameObject == null)
@@ -361,6 +359,5 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5
                 }
             }
         }
-
     }
 }

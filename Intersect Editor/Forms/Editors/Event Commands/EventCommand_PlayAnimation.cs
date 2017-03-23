@@ -1,27 +1,28 @@
-﻿
-using System;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Intersect_Editor.Classes;
 using Intersect;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
+using Intersect_Editor.Classes;
 using Color = System.Drawing.Color;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_PlayAnimation : UserControl
     {
-        private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
         private MapBase _currentMap;
         private EventBase _editingEvent;
+        private EventCommand _myCommand;
         private int spawnX = 0;
         private int spawnY = 0;
-        public EventCommand_PlayAnimation(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent, EventCommand editingCommand)
+
+        public EventCommand_PlayAnimation(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent,
+            EventCommand editingCommand)
         {
             InitializeComponent();
             _myCommand = editingCommand;
@@ -31,8 +32,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitLocalization();
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
-            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation,_myCommand.Ints[0]);
-            cmbConditionType.SelectedIndex =  _myCommand.Ints[1];
+            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _myCommand.Ints[0]);
+            cmbConditionType.SelectedIndex = _myCommand.Ints[1];
             nudWarpX.Maximum = Options.MapWidth;
             nudWarpY.Maximum = Options.MapHeight;
             UpdateFormElements();
@@ -80,7 +81,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
             lblMap.Text = Strings.Get("warping", "map", "");
             lblX.Text = Strings.Get("warping", "x", "");
-            lblY.Text = Strings.Get("warping", "y","");
+            lblY.Text = Strings.Get("warping", "y", "");
             lblDir.Text = Strings.Get("warping", "direction", "");
             cmbDirection.Items.Clear();
             for (int i = 0; i < 4; i++)
@@ -129,12 +130,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     {
                         foreach (var evt in _currentMap.Events)
                         {
-                            cmbEntities.Items.Add(evt.Key == _editingEvent.MyIndex ? Strings.Get("eventplayanimation","this") + " " : "" + evt.Value.Name);
+                            cmbEntities.Items.Add(evt.Key == _editingEvent.MyIndex
+                                ? Strings.Get("eventplayanimation", "this") + " "
+                                : "" + evt.Value.Name);
                             if (_myCommand.Ints[2] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
                         }
                     }
                     UpdateSpawnPreview();
-
 
                     break;
             }
@@ -154,7 +156,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             }
             g.DrawLine(Pens.Black, 0, 32 * 5 - 1, 32 * 5, 32 * 5 - 1);
             g.DrawLine(Pens.Black, 32 * 5 - 1, 0, 32 * 5 - 1, 32 * 5 - 1);
-            g.DrawString("E", renderFont, Brushes.Black, pnlSpawnLoc.Width / 2 - g.MeasureString("E", renderFont).Width / 2,
+            g.DrawString("E", renderFont, Brushes.Black,
+                pnlSpawnLoc.Width / 2 - g.MeasureString("E", renderFont).Width / 2,
                 pnlSpawnLoc.Height / 2 - g.MeasureString("S", renderFont).Height / 2);
             g.Dispose();
             pnlSpawnLoc.BackgroundImage = destBitmap;
@@ -168,8 +171,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 case 0: //Tile Spawn
                     _myCommand.Ints[2] = MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum;
-                    _myCommand.Ints[3] = (int)nudWarpX.Value;
-                    _myCommand.Ints[4] = (int)nudWarpY.Value;
+                    _myCommand.Ints[3] = (int) nudWarpX.Value;
+                    _myCommand.Ints[4] = (int) nudWarpY.Value;
                     _myCommand.Ints[5] = cmbDirection.SelectedIndex;
                     break;
                 case 1: //On/Around Entity Spawn
@@ -185,19 +188,23 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     _myCommand.Ints[4] = spawnY;
                     if (chkRelativeLocation.Checked && chkRotateDirection.Checked)
                     {
-                        _myCommand.Ints[5] = 3; //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                        _myCommand.Ints[5] = 3;
+                            //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
                     else if (chkRelativeLocation.Checked)
                     {
-                        _myCommand.Ints[5] = 1; //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                        _myCommand.Ints[5] = 1;
+                            //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
                     else if (chkRotateDirection.Checked)
                     {
-                        _myCommand.Ints[5] = 2; //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                        _myCommand.Ints[5] = 2;
+                            //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
                     else
                     {
-                        _myCommand.Ints[5] = 0; //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                        _myCommand.Ints[5] = 0;
+                            //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
 
                     break;
@@ -218,7 +225,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void btnVisual_Click(object sender, EventArgs e)
         {
             frmWarpSelection frmWarpSelection = new frmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum, (int)nudWarpX.Value, (int)nudWarpY.Value);
+            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum, (int) nudWarpX.Value,
+                (int) nudWarpY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
@@ -239,8 +247,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         {
             if (e.X >= 0 && e.Y >= 0 && e.X < pnlSpawnLoc.Width && e.Y < pnlSpawnLoc.Height)
             {
-                spawnX = (int)Math.Floor((double)(e.X) / Options.TileWidth) - 2;
-                spawnY = (int)Math.Floor((double)(e.Y) / Options.TileHeight) - 2;
+                spawnX = (int) Math.Floor((double) (e.X) / Options.TileWidth) - 2;
+                spawnY = (int) Math.Floor((double) (e.Y) / Options.TileHeight) - 2;
                 UpdateSpawnPreview();
             }
         }

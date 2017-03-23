@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect;
 using IntersectClientExtras.Audio;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
-using Intersect;
 using Point = IntersectClientExtras.GenericClasses.Point;
 
 namespace Intersect_Client.Classes.Core
@@ -28,11 +28,13 @@ namespace Intersect_Client.Classes.Core
         //Sounds
         private static List<MapSound> _gameSounds = new List<MapSound>();
 
-
         //Init
         public static void Init()
         {
-            if (_isInitialized == true) { return; }
+            if (_isInitialized == true)
+            {
+                return;
+            }
             Globals.ContentManager.LoadAudio();
             _isInitialized = true;
         }
@@ -41,7 +43,7 @@ namespace Intersect_Client.Classes.Core
         {
             if (_myMusic != null)
             {
-                _myMusic.SetVolume(_myMusic.GetVolume(),true);
+                _myMusic.SetVolume(_myMusic.GetVolume(), true);
             }
             for (int i = 0; i < _gameSounds.Count; i++)
             {
@@ -74,7 +76,7 @@ namespace Intersect_Client.Classes.Core
                         }
                         else
                         {
-                            _fadeTimer = Globals.System.GetTimeMS() + (long)(_fadeRate / 1000);
+                            _fadeTimer = Globals.System.GetTimeMS() + (long) (_fadeRate / 1000);
                         }
                     }
                     else
@@ -82,28 +84,32 @@ namespace Intersect_Client.Classes.Core
                         _myMusic.SetVolume(_myMusic.GetVolume() + 1, true);
                         if (_myMusic.GetVolume() < 100)
                         {
-                            _fadeTimer = Globals.System.GetTimeMS() + (long)(_fadeRate / 1000);
+                            _fadeTimer = Globals.System.GetTimeMS() + (long) (_fadeRate / 1000);
                         }
                         else
                         {
                             _fadeTimer = 0;
                         }
                     }
-
                 }
                 else
                 {
                     if (_myMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped)
                     {
-                        if (_musicLoop) { _myMusic.Play(); }
+                        if (_musicLoop)
+                        {
+                            _myMusic.Play();
+                        }
                     }
                 }
             }
             for (int i = 0; i < _gameSounds.Count; i++)
             {
                 _gameSounds[i].Update();
-                if (!_gameSounds[i].Loaded) { 
-                    _gameSounds.RemoveAt(i); }
+                if (!_gameSounds[i].Loaded)
+                {
+                    _gameSounds.RemoveAt(i);
+                }
             }
         }
 
@@ -113,18 +119,19 @@ namespace Intersect_Client.Classes.Core
             filename = GameContentManager.RemoveExtension(filename);
             if (_myMusic != null)
             {
-                if (fadeout == 0 || _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped || _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Paused || _myMusic.GetVolume() == 0)
+                if (fadeout == 0 || _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped ||
+                    _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Paused || _myMusic.GetVolume() == 0)
                 {
                     StopMusic();
-                    StartMusic(filename,fadein);
+                    StartMusic(filename, fadein);
                 }
                 else
                 {
                     //Start fadeout
                     if (_currentSong.ToLower() != filename.ToLower() || _fadingOut)
                     {
-                        _fadeRate = (float)_myMusic.GetVolume() / fadeout;
-                        _fadeTimer = Globals.System.GetTimeMS() + (long)(_fadeRate / 1000);
+                        _fadeRate = (float) _myMusic.GetVolume() / fadeout;
+                        _fadeTimer = Globals.System.GetTimeMS() + (long) (_fadeRate / 1000);
                         _fadingOut = true;
                         _queuedMusic = filename;
                         _queuedFade = fadein;
@@ -138,9 +145,13 @@ namespace Intersect_Client.Classes.Core
             }
             _musicLoop = loop;
         }
+
         private static void StartMusic(string filename, float fadein = 0f)
         {
-            if (Globals.Database.MusicVolume == 0) { return; }
+            if (Globals.Database.MusicVolume == 0)
+            {
+                return;
+            }
             GameAudioSource music = Globals.ContentManager.GetMusic(filename);
             if (music != null)
             {
@@ -148,16 +159,18 @@ namespace Intersect_Client.Classes.Core
                 _currentSong = filename;
                 _myMusic.Play();
                 _myMusic.SetVolume(0, true);
-                _fadeRate = (float)100 / fadein;
-                _fadeTimer = Globals.System.GetTimeMS() + (long)(_fadeRate / 1000) + 1;
+                _fadeRate = (float) 100 / fadein;
+                _fadeTimer = Globals.System.GetTimeMS() + (long) (_fadeRate / 1000) + 1;
                 _fadingOut = false;
             }
         }
+
         public static void StopMusic(float fadeout = 0f)
         {
             if (_myMusic != null)
             {
-                if (fadeout == 0 || _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped || _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Paused || _myMusic.GetVolume() == 0)
+                if (fadeout == 0 || _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped ||
+                    _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Paused || _myMusic.GetVolume() == 0)
                 {
                     _currentSong = "";
                     _myMusic.Stop();
@@ -168,8 +181,8 @@ namespace Intersect_Client.Classes.Core
                 else
                 {
                     //Start fadeout
-                    _fadeRate = (float)_myMusic.GetVolume() / fadeout;
-                    _fadeTimer = Globals.System.GetTimeMS() + (long)(_fadeRate / 1000);
+                    _fadeRate = (float) _myMusic.GetVolume() / fadeout;
+                    _fadeTimer = Globals.System.GetTimeMS() + (long) (_fadeRate / 1000);
                     _fadingOut = true;
                 }
             }
@@ -186,10 +199,12 @@ namespace Intersect_Client.Classes.Core
             }
             return null;
         }
+
         public static void StopSound(MapSound sound)
         {
             sound.Stop();
         }
+
         public static void StopAllSounds()
         {
             for (int i = 0; i < _gameSounds.Count; i++)
@@ -200,20 +215,18 @@ namespace Intersect_Client.Classes.Core
                 }
             }
         }
-
-
     }
 
     public class MapSound
     {
-        private GameAudioInstance _sound;
+        private int _distance;
         private string _filename;
+        private bool _loop;
+        private int _map;
+        private GameAudioInstance _sound;
+        private float _volume;
         private int _x;
         private int _y;
-        private int _map;
-        private bool _loop;
-        private int _distance;
-        private float _volume;
         public bool Loaded;
 
         public MapSound(string filename, int x, int y, int map, bool loop, int distance)
@@ -279,15 +292,17 @@ namespace Intersect_Client.Classes.Core
                 if (_distance > 0 && Globals.GridMaps.Contains(_map))
                 {
                     float volume = 100 - ((100 / _distance) * CalculateSoundDistance());
-                    if (volume < 0) {volume = 0f;}
-                    _sound.SetVolume((int)volume);
+                    if (volume < 0)
+                    {
+                        volume = 0f;
+                    }
+                    _sound.SetVolume((int) volume);
                 }
                 else
                 {
                     _sound.SetVolume(0);
                 }
             }
-            
         }
 
         private float CalculateSoundDistance()
@@ -305,18 +320,18 @@ namespace Intersect_Client.Classes.Core
                 {
                     Point player = new Point()
                     {
-                        X = (int)playerx,
-                        Y = (int)playery
+                        X = (int) playerx,
+                        Y = (int) playery
                     };
                     Rectangle mapRect = new Rectangle((int) map.GetX(), (int) map.GetY(),
-                        Options.MapWidth*Options.TileWidth, Options.MapHeight*Options.TileHeight);
-                    distance = (float) DistancePointToRectangle(player, mapRect)/32f;
+                        Options.MapWidth * Options.TileWidth, Options.MapHeight * Options.TileHeight);
+                    distance = (float) DistancePointToRectangle(player, mapRect) / 32f;
                 }
                 else
                 {
-                    soundx = map.GetX() + _x*Options.TileWidth + 16;
-                    soundy = map.GetY() + _y*Options.TileHeight + 16;
-                    distance = (float) Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2))/32f;
+                    soundx = map.GetX() + _x * Options.TileWidth + 16;
+                    soundy = map.GetY() + _y * Options.TileHeight + 16;
+                    distance = (float) Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) / 32f;
                 }
             }
             return distance;
@@ -345,55 +360,67 @@ namespace Intersect_Client.Classes.Core
             //  Note that the +y direction is down because of Unity's GUI coordinates.
 
             if (point.X < rect.X)
-            { // Region I, VIII, or VII
+            {
+                // Region I, VIII, or VII
                 if (point.Y < rect.Y)
-                { // I
+                {
+                    // I
                     point.X = point.X - rect.X;
                     point.Y = point.Y - rect.Y;
-                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
+                    return (float) Math.Sqrt(point.X * point.X + point.Y * point.Y);
                 }
                 else if (point.Y > rect.Y + rect.Height)
-                { // VII
+                {
+                    // VII
                     point.X = point.X - rect.X;
                     point.Y = point.Y - (rect.Y + rect.Height);
-                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
+                    return (float) Math.Sqrt(point.X * point.X + point.Y * point.Y);
                 }
                 else
-                { // VIII
+                {
+                    // VIII
                     return rect.X - point.X;
                 }
             }
             else if (point.X > rect.X + rect.Width)
-            { // Region III, IV, or V
+            {
+                // Region III, IV, or V
                 if (point.Y < rect.Y)
-                { // III
+                {
+                    // III
                     point.X = point.X - (rect.X + rect.Width);
                     point.Y = point.Y - rect.Y;
-                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
+                    return (float) Math.Sqrt(point.X * point.X + point.Y * point.Y);
                 }
                 else if (point.Y > rect.Y + rect.Height)
-                { // V
+                {
+                    // V
                     point.X = point.X - (rect.X + rect.Width);
                     point.Y = point.Y - (rect.Y + rect.Height);
-                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
+                    return (float) Math.Sqrt(point.X * point.X + point.Y * point.Y);
                 }
                 else
-                { // IV
+                {
+                    // IV
                     return point.X - rect.X + rect.Width;
                 }
             }
             else
-            { // Region II, IX, or VI
+            {
+                // Region II, IX, or VI
                 if (point.Y < rect.Y)
-                { // II
+                {
+                    // II
                     return rect.Y - point.Y;
                 }
                 else if (point.Y > rect.Y + rect.Height)
-                { // VI
+                {
+                    // VI
                     return point.Y - rect.Y + rect.Height;
                 }
                 else
-                { // IX
+                {
+                    // IX
                     return 0f;
                 }
             }

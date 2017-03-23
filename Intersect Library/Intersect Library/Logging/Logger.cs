@@ -6,21 +6,6 @@ namespace Intersect.Logging
     public class Logger
     {
         private List<ILogOutput> mOutputs;
-        public List<ILogOutput> Outputs
-        {
-            get {
-                if (mOutputs == null)
-                {
-                    mOutputs = new List<ILogOutput>();
-                }
-
-                return new List<ILogOutput>(mOutputs);
-            }
-        }
-
-        public LogLevel LogLevel { get; set; }
-
-        public string Tag { get; set; }
 
         public Logger(string tag = null)
         {
@@ -34,6 +19,23 @@ namespace Intersect.Logging
 
             Tag = (string.IsNullOrEmpty(tag) ? null : tag);
         }
+
+        public List<ILogOutput> Outputs
+        {
+            get
+            {
+                if (mOutputs == null)
+                {
+                    mOutputs = new List<ILogOutput>();
+                }
+
+                return new List<ILogOutput>(mOutputs);
+            }
+        }
+
+        public LogLevel LogLevel { get; set; }
+
+        public string Tag { get; set; }
 
         public List<ILogOutput> GetOutputs()
         {

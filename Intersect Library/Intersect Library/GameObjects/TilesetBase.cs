@@ -40,17 +40,16 @@ namespace Intersect.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return (TilesetBase)Objects[index];
+                return (TilesetBase) Objects[index];
             }
             return null;
         }
-
 
         public static string GetName(int index)
         {
             if (Objects.ContainsKey(index))
             {
-                return ((TilesetBase)Objects[index]).Name;
+                return ((TilesetBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -78,26 +77,31 @@ namespace Intersect.GameObjects
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(Id);
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, TilesetBase> GetObjects()
         {
-            Dictionary<int, TilesetBase> objects = Objects.ToDictionary(k => k.Key, v => (TilesetBase)v.Value);
+            Dictionary<int, TilesetBase> objects = Objects.ToDictionary(k => k.Key, v => (TilesetBase) v.Value);
             return objects;
         }
     }

@@ -26,7 +26,10 @@ namespace Intersect_Server.Classes.Core
                     cpsTimer = Globals.System.GetTimeMs() + 1000;
                 }
                 ServerTime.Update();
-                if (Globals.CPSLock) { Thread.Sleep(10); }
+                if (Globals.CPSLock)
+                {
+                    Thread.Sleep(10);
+                }
             }
 
             //Server is shutting down!!

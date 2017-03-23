@@ -27,36 +27,35 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         public new const string DATABASE_TABLE = "quests";
         public new const GameObject OBJECT_TYPE = GameObject.Quest;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        
-        public string Name = "New Quest";
         public string BeforeDesc = "";
-        public string StartDesc = "";
-        public string InProgressDesc = "";
         public string EndDesc = "";
-
-        public byte Repeatable = 0;
-        public byte Quitable = 0;
-        public byte LogBeforeOffer = 0;
+        public EventBase EndEvent = new EventBase(-1, 0, 0, true);
+        public string InProgressDesc = "";
         public byte LogAfterComplete = 0;
+        public byte LogBeforeOffer = 0;
+
+        public string Name = "New Quest";
+
+        //Tasks
+        public int NextTaskID = 0;
 
         //Requirements
         //I am cheating here and using event commands as conditional branches instead of having a lot of duplicate code.
         public List<EventCommand> OldRequirements = new List<EventCommand>();
+        public byte Quitable = 0;
+
+        public byte Repeatable = 0;
 
         //Requirements
         public ConditionLists Requirements = new ConditionLists();
-
-        //Tasks
-        public int NextTaskID = 0;
-        public List<QuestTask> Tasks = new List<QuestTask>();
+        public string StartDesc = "";
 
         //Events
         public EventBase StartEvent = new EventBase(-1, 0, 0, true);
-        public EventBase EndEvent = new EventBase(-1, 0, 0, true);
+        public List<QuestTask> Tasks = new List<QuestTask>();
 
         public QuestBase(int id) : base(id)
         {
-            
         }
 
         public override void Load(byte[] packet)
@@ -181,7 +180,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return (QuestBase)Objects[index];
+                return (QuestBase) Objects[index];
             }
             return null;
         }
@@ -190,7 +189,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return ((QuestBase)Objects[index]).Name;
+                return ((QuestBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -218,37 +217,42 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, QuestBase> GetObjects()
         {
-            Dictionary<int, QuestBase> objects = Objects.ToDictionary(k => k.Key, v => (QuestBase)v.Value);
+            Dictionary<int, QuestBase> objects = Objects.ToDictionary(k => k.Key, v => (QuestBase) v.Value);
             return objects;
         }
 
         public class QuestTask
         {
-            public int Id = 0;
-            public int Objective = 0;
-            public string Desc = "";
+            public EventBase CompletionEvent = new EventBase(-1, 0, 0, true);
             public int Data1 = 0;
             public int Data2 = 0;
-            public EventBase CompletionEvent = new EventBase(-1,0,0,true);
+            public string Desc = "";
+            public int Id = 0;
+            public int Objective = 0;
 
             public QuestTask(int id)
             {
@@ -276,8 +280,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
 
         public class QuestReward
         {
-            public int ItemNum = 0;
             public int Amount = 0;
+            public int ItemNum = 0;
         }
     }
 }

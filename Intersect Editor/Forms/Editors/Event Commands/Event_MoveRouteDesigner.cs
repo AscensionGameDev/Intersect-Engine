@@ -1,42 +1,43 @@
-﻿
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.Localization;
-using System.Collections.Generic;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class Event_MoveRouteDesigner : UserControl
     {
-        private EventMoveRoute _editingRoute;
-        private EventMoveRoute _tmpMoveRoute;
-        private FrmEvent _eventEditor;
         private readonly EventBase _editingEvent;
-        private EventCommand _editingCommand;
         private MapBase _currentMap;
+        private EventCommand _editingCommand;
+        private EventMoveRoute _editingRoute;
+        private FrmEvent _eventEditor;
         private MoveRouteAction _lastAddedAction;
         private List<TreeNode> _origItems = new List<TreeNode>();
-        public Event_MoveRouteDesigner(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent, EventMoveRoute editingRoute, EventCommand editingCommand = null)
+        private EventMoveRoute _tmpMoveRoute;
+
+        public Event_MoveRouteDesigner(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent,
+            EventMoveRoute editingRoute, EventCommand editingCommand = null)
         {
             InitializeComponent();
             InitLocalization();
 
             foreach (var item in lstCommands.Nodes)
             {
-                var parentNode = new TreeNode(((TreeNode)item).Text)
+                var parentNode = new TreeNode(((TreeNode) item).Text)
                 {
-                    Name = ((TreeNode)item).Name,
-                    Tag = ((TreeNode)item).Tag
+                    Name = ((TreeNode) item).Name,
+                    Tag = ((TreeNode) item).Tag
                 };
-                foreach (var childItem in ((TreeNode)item).Nodes)
+                foreach (var childItem in ((TreeNode) item).Nodes)
                 {
-                    var childNode = new TreeNode(((TreeNode)childItem).Text)
+                    var childNode = new TreeNode(((TreeNode) childItem).Text)
                     {
-                        Name = ((TreeNode)childItem).Name,
-                        Tag = ((TreeNode)childItem).Tag
+                        Name = ((TreeNode) childItem).Name,
+                        Tag = ((TreeNode) childItem).Tag
                     };
                     parentNode.Nodes.Add(childNode);
                 }
@@ -68,7 +69,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 }
                 foreach (var evt in _currentMap.Events)
                 {
-                    cmbTarget.Items.Add(evt.Key == _editingEvent.MyIndex ? Strings.Get("eventmoveroute", "thisevent") : "" + evt.Value.Name);
+                    cmbTarget.Items.Add(evt.Key == _editingEvent.MyIndex
+                        ? Strings.Get("eventmoveroute", "thisevent")
+                        : "" + evt.Value.Name);
                     if (_editingCommand != null)
                     {
                         if (_editingCommand.Route.Target == evt.Key) cmbTarget.SelectedIndex = cmbTarget.Items.Count;
@@ -102,7 +105,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 lstCommands.Nodes[i].Text = Strings.Get("eventmoveroute", lstCommands.Nodes[i].Name);
                 for (int x = 0; x < lstCommands.Nodes[i].Nodes.Count; x++)
                 {
-                    lstCommands.Nodes[i].Nodes[x].Text = Strings.Get("eventmoveroute", lstCommands.Nodes[i].Nodes[x].Name);
+                    lstCommands.Nodes[i].Nodes[x].Text = Strings.Get("eventmoveroute",
+                        lstCommands.Nodes[i].Nodes[x].Name);
                 }
             }
         }
@@ -116,7 +120,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 {
                     for (int x = 0; x < lstCommands.Nodes[i].Nodes.Count; x++)
                     {
-                        if (Convert.ToInt32(lstCommands.Nodes[i].Nodes[x].Tag) == (int)action.Type)
+                        if (Convert.ToInt32(lstCommands.Nodes[i].Nodes[x].Tag) == (int) action.Type)
                         {
                             lstActions.Items.Add(Strings.Get("eventmoveroute", lstCommands.Nodes[i].Nodes[x].Name));
                         }
@@ -152,7 +156,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 if (_tmpMoveRoute.Actions[lstActions.SelectedIndex].Type == MoveRouteEnum.SetGraphic)
                 {
                     //Open the graphic editor....
-                    Event_GraphicSelector graphicSelector = new Event_GraphicSelector(_tmpMoveRoute.Actions[lstActions.SelectedIndex].Graphic, _eventEditor, this, false);
+                    Event_GraphicSelector graphicSelector =
+                        new Event_GraphicSelector(_tmpMoveRoute.Actions[lstActions.SelectedIndex].Graphic, _eventEditor,
+                            this, false);
                     _eventEditor.Controls.Add(graphicSelector);
                     graphicSelector.BringToFront();
                     graphicSelector.Size = ClientSize;
@@ -160,7 +166,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 else if (_tmpMoveRoute.Actions[lstActions.SelectedIndex].Type == MoveRouteEnum.SetAnimation)
                 {
                     //Open the animation selector
-                    Event_MoveRouteAnimationSelector animationSelector = new Event_MoveRouteAnimationSelector(this, _tmpMoveRoute.Actions[lstActions.SelectedIndex], true);
+                    Event_MoveRouteAnimationSelector animationSelector = new Event_MoveRouteAnimationSelector(this,
+                        _tmpMoveRoute.Actions[lstActions.SelectedIndex], true);
                     Controls.Add(animationSelector);
                     animationSelector.BringToFront();
                     animationSelector.Size = ClientSize;
@@ -220,7 +227,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void lstCommands_SelectedIndexChanged(object sender, EventArgs e)
         {
-
         }
 
         private void lstCommands_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -231,13 +237,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             }
             var action = new MoveRouteAction()
             {
-                Type = (MoveRouteEnum)Convert.ToInt32(e.Node.Tag)
+                Type = (MoveRouteEnum) Convert.ToInt32(e.Node.Tag)
             };
             if (action.Type == MoveRouteEnum.SetGraphic)
             {
                 action.Graphic = new EventGraphic();
                 //Open the graphic editor....
-                Event_GraphicSelector graphicSelector = new Event_GraphicSelector(action.Graphic, _eventEditor, this, true);
+                Event_GraphicSelector graphicSelector = new Event_GraphicSelector(action.Graphic, _eventEditor, this,
+                    true);
                 _eventEditor.Controls.Add(graphicSelector);
                 graphicSelector.BringToFront();
                 graphicSelector.Size = ClientSize;
@@ -245,7 +252,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             else if (action.Type == MoveRouteEnum.SetAnimation)
             {
                 //Open the animation selector
-                Event_MoveRouteAnimationSelector animationSelector = new Event_MoveRouteAnimationSelector(this, action, true);
+                Event_MoveRouteAnimationSelector animationSelector = new Event_MoveRouteAnimationSelector(this, action,
+                    true);
                 Controls.Add(animationSelector);
                 animationSelector.BringToFront();
                 animationSelector.Size = ClientSize;
@@ -267,17 +275,17 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             lstCommands.Nodes.Clear();
             foreach (var item in _origItems)
             {
-                var parentNode = new TreeNode(((TreeNode)item).Text)
+                var parentNode = new TreeNode(((TreeNode) item).Text)
                 {
-                    Name = ((TreeNode)item).Name,
-                    Tag = ((TreeNode)item).Tag
+                    Name = ((TreeNode) item).Name,
+                    Tag = ((TreeNode) item).Tag
                 };
                 foreach (var childItem in item.Nodes)
                 {
-                    var childNode = new TreeNode(((TreeNode)childItem).Text)
+                    var childNode = new TreeNode(((TreeNode) childItem).Text)
                     {
-                        Name = ((TreeNode)childItem).Name,
-                        Tag = ((TreeNode)childItem).Tag
+                        Name = ((TreeNode) childItem).Name,
+                        Tag = ((TreeNode) childItem).Tag
                     };
                     parentNode.Nodes.Add(childNode);
                 }
@@ -286,23 +294,27 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             lstCommands.ExpandAll();
             if (!_editingEvent.CommonEvent && _editingCommand != null && cmbTarget.SelectedIndex == 0)
             {
-                var hideNodes = new string[]{ "movetowardplayer", "moveawayfromplayer", "turntowardplayer", "turnawayfromplayer", "setspeed", "setmovementfrequency", "setattribute", "setgraphic", "setanimation" };
+                var hideNodes = new string[]
+                {
+                    "movetowardplayer", "moveawayfromplayer", "turntowardplayer", "turnawayfromplayer", "setspeed",
+                    "setmovementfrequency", "setattribute", "setgraphic", "setanimation"
+                };
                 var nodesToRemove = new List<TreeNode>();
                 foreach (var parentNode in lstCommands.Nodes)
                 {
                     if (parentNode != null)
                     {
-                        if (hideNodes.Contains(((TreeNode)parentNode).Name))
+                        if (hideNodes.Contains(((TreeNode) parentNode).Name))
                         {
-                            nodesToRemove.Add(((TreeNode)parentNode));
+                            nodesToRemove.Add(((TreeNode) parentNode));
                         }
-                        foreach (var childNode in ((TreeNode)parentNode).Nodes)
+                        foreach (var childNode in ((TreeNode) parentNode).Nodes)
                         {
                             if (childNode != null)
                             {
-                                if (hideNodes.Contains(((TreeNode)childNode).Name))
+                                if (hideNodes.Contains(((TreeNode) childNode).Name))
                                 {
-                                    nodesToRemove.Add((TreeNode)childNode);
+                                    nodesToRemove.Add((TreeNode) childNode);
                                 }
                             }
                         }

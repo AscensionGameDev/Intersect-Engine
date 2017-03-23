@@ -10,55 +10,21 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
         public new const string DATABASE_TABLE = "maps";
         public new const GameObject OBJECT_TYPE = GameObject.Map;
         protected static Dictionary<int, MapBase> Objects = new Dictionary<int, MapBase>();
-        
-        public string MyName { get; set; } = "New Map";
-        public int Up { get; set; } = -1;
-        public int Down { get; set; } = -1;
-        public int Left { get; set; } = -1;
-        public int Right { get; set; } = -1;
-        public int MyMapNum { get; set; }
-        public int Revision { get; set; }
 
-        //Core Data
-        public TileArray[] Layers = new TileArray[Options.LayerCount];
-        public Attribute[,] Attributes { get; set; }  = new Attribute[Options.MapWidth, Options.MapHeight];
-        public List<LightBase> Lights { get; set; }  = new List<LightBase>();
+        //SyncLock
+        protected Object _mapLock = new Object();
 
         //Client/Editor Only
         public MapAutotiles Autotiles;
 
         //Server/Editor Only
         public int EventIndex = 0;
-        public Dictionary<int,EventBase> Events { get; set; } = new Dictionary<int,EventBase>();
-        public List<NpcSpawn> Spawns { get; set; } = new List<NpcSpawn>();
-        public List<ResourceSpawn> ResourceSpawns { get; set; } = new List<ResourceSpawn>();
-
-        //Properties
-        public string Music { get; set; } = "None";
-        public string Sound { get; set; } = "None";
-        public bool IsIndoors { get; set; }
-        public string Panorama { get; set; } = "None";
-        public string Fog { get; set; } = "None";
-        public int FogXSpeed { get; set; } = 0;
-        public int FogYSpeed { get; set; } = 0;
-        public int FogTransparency { get; set; } = 0;
-        public int RHue { get; set; } = 0;
-        public int GHue { get; set; } = 0;
-        public int BHue { get; set; } = 0;
-        public int AHue { get; set; } = 0;
-        public int Brightness { get; set; } = 100;
-        public byte ZoneType { get; set; } = 0; //Everything goes, 1 is safe, add more later
-        public int PlayerLightSize { get; set; } = 300;
-        public byte PlayerLightIntensity { get; set; } = 255;
-        public float PlayerLightExpand { get; set; } = 0f;
-        public Color PlayerLightColor { get; set; } = Color.White;
-        public string OverlayGraphic { get; set; } = "None";
-
-        //SyncLock
-        protected Object _mapLock = new Object();
 
         //Temporary Values
         public bool IsClient = false;
+
+        //Core Data
+        public TileArray[] Layers = new TileArray[Options.LayerCount];
 
         public MapBase(int mapNum, bool isClient) : base(mapNum)
         {
@@ -72,7 +38,10 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
                     for (var y = 0; y < Options.MapHeight; y++)
                     {
                         Layers[i].Tiles[x, y].TilesetIndex = -1;
-                        if (i == 0) { Attributes[x, y] = new Attribute(); }
+                        if (i == 0)
+                        {
+                            Attributes[x, y] = new Attribute();
+                        }
                     }
                 }
             }
@@ -132,6 +101,40 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             }
         }
 
+        public string MyName { get; set; } = "New Map";
+        public int Up { get; set; } = -1;
+        public int Down { get; set; } = -1;
+        public int Left { get; set; } = -1;
+        public int Right { get; set; } = -1;
+        public int MyMapNum { get; set; }
+        public int Revision { get; set; }
+        public Attribute[,] Attributes { get; set; } = new Attribute[Options.MapWidth, Options.MapHeight];
+        public List<LightBase> Lights { get; set; } = new List<LightBase>();
+        public Dictionary<int, EventBase> Events { get; set; } = new Dictionary<int, EventBase>();
+        public List<NpcSpawn> Spawns { get; set; } = new List<NpcSpawn>();
+        public List<ResourceSpawn> ResourceSpawns { get; set; } = new List<ResourceSpawn>();
+
+        //Properties
+        public string Music { get; set; } = "None";
+        public string Sound { get; set; } = "None";
+        public bool IsIndoors { get; set; }
+        public string Panorama { get; set; } = "None";
+        public string Fog { get; set; } = "None";
+        public int FogXSpeed { get; set; } = 0;
+        public int FogYSpeed { get; set; } = 0;
+        public int FogTransparency { get; set; } = 0;
+        public int RHue { get; set; } = 0;
+        public int GHue { get; set; } = 0;
+        public int BHue { get; set; } = 0;
+        public int AHue { get; set; } = 0;
+        public int Brightness { get; set; } = 100;
+        public byte ZoneType { get; set; } = 0; //Everything goes, 1 is safe, add more later
+        public int PlayerLightSize { get; set; } = 300;
+        public byte PlayerLightIntensity { get; set; } = 255;
+        public float PlayerLightExpand { get; set; } = 0f;
+        public Color PlayerLightColor { get; set; } = Color.White;
+        public string OverlayGraphic { get; set; } = "None";
+
         public override void Load(byte[] packet)
         {
             lock (_mapLock)
@@ -160,7 +163,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
                 ZoneType = bf.ReadByte();
                 OverlayGraphic = bf.ReadString();
                 PlayerLightSize = bf.ReadInteger();
-                PlayerLightExpand = (float)bf.ReadDouble();
+                PlayerLightExpand = (float) bf.ReadDouble();
                 PlayerLightIntensity = bf.ReadByte();
                 PlayerLightColor = Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
 
@@ -231,7 +234,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
                         var eventIndex = bf.ReadInteger();
                         var evtDataLen = bf.ReadLong();
                         var evtBuffer = new ByteBuffer();
-                        evtBuffer.WriteBytes(bf.ReadBytes((int)evtDataLen));
+                        evtBuffer.WriteBytes(bf.ReadBytes((int) evtDataLen));
                         Events.Add(eventIndex, new EventBase(eventIndex, evtBuffer));
                         evtBuffer.Dispose();
                     }
@@ -339,7 +342,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return (MapBase)Objects[index];
+                return (MapBase) Objects[index];
             }
             return null;
         }
@@ -348,7 +351,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return ((MapBase)Objects[index]).MyName;
+                return ((MapBase) Objects[index]).MyName;
             }
             return "Deleted";
         }
@@ -376,22 +379,27 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
-            Objects.Add(index, (MapBase)obj);
+            Objects.Add(index, (MapBase) obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, MapBase> GetObjects()
         {
             return Objects;

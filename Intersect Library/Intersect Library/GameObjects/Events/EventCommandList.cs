@@ -8,7 +8,6 @@ namespace Intersect.GameObjects.Events
 
         public CommandList()
         {
-
         }
 
         public CommandList(ByteBuffer myBuffer)
@@ -18,7 +17,6 @@ namespace Intersect.GameObjects.Events
             {
                 Commands.Add(new EventCommand());
                 Commands[i].Load(myBuffer);
-
             }
         }
 

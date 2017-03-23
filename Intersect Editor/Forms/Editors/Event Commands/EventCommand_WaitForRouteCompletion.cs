@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows.Forms;
 using Intersect.GameObjects.Events;
@@ -10,11 +9,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_WaitForRouteCompletion : UserControl
     {
-        private FrmEvent _eventEditor;
         private readonly EventBase _editingEvent;
-        private EventCommand _editingCommand;
         private MapBase _currentMap;
-        public EventCommand_WaitForRouteCompletion(EventCommand refCommand, FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent)
+        private EventCommand _editingCommand;
+        private FrmEvent _eventEditor;
+
+        public EventCommand_WaitForRouteCompletion(EventCommand refCommand, FrmEvent eventEditor, MapBase currentMap,
+            EventBase currentEvent)
         {
             InitializeComponent();
 
@@ -31,8 +32,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 if (_editingCommand.Ints[0] == -1) cmbEntities.SelectedIndex = -1;
                 foreach (var evt in _currentMap.Events)
                 {
-                    cmbEntities.Items.Add(evt.Key == _editingEvent.MyIndex ? Strings.Get("eventwaitforroutecompletion", "this")+ " " : "" + evt.Value.Name);
-                    if (_editingCommand.Ints[0] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count-1;
+                    cmbEntities.Items.Add(evt.Key == _editingEvent.MyIndex
+                        ? Strings.Get("eventwaitforroutecompletion", "this") + " "
+                        : "" + evt.Value.Name);
+                    if (_editingCommand.Ints[0] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
                 }
             }
             if (cmbEntities.SelectedIndex == -1 && cmbEntities.Items.Count > 0)
@@ -62,7 +65,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 }
                 else
                 {
-                    _editingCommand.Ints[0] = _currentMap.Events.Keys.ToList()[cmbEntities.SelectedIndex-1];
+                    _editingCommand.Ints[0] = _currentMap.Events.Keys.ToList()[cmbEntities.SelectedIndex - 1];
                 }
             }
             _eventEditor.FinishCommandEdit();

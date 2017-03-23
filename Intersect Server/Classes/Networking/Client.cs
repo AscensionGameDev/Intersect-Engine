@@ -1,54 +1,58 @@
-
-
-using Intersect;
-using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.General;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Intersect;
 using Intersect.Logging;
+using Intersect_Server.Classes.Entities;
+using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes.Networking
 {
     public class Client
     {
-
-        //Game Incorperation Variables
-        public string MyAccount = "";
-        public string MyEmail = "";
-        public string MyPassword = "";
-        public string MySalt = "";
-        public long MyId = -1;
-        public int EntityIndex;
-        public Player Entity;
         public int EditorMap = -1;
+        public Player Entity;
+        public int EntityIndex;
 
         //Client Properties
         public bool IsEditor;
-        public int Power = 0;
 
         //Adminastrative punnishments
         public bool Muted = false;
         public string MuteReason = "";
 
+        //Game Incorperation Variables
+        public string MyAccount = "";
+        public string MyEmail = "";
+        public long MyId = -1;
+        public string MyPassword = "";
+        public string MySalt = "";
+
         //Network Variables
         private GameSocket mySocket;
+        public int Power = 0;
         private ConcurrentQueue<byte[]> sendQueue = new ConcurrentQueue<byte[]>();
-
-        //Processing Thead
-        private Thread updateThread;
 
         //Sent Maps
         public Dictionary<int, Tuple<long, int>> SentMaps = new Dictionary<int, Tuple<long, int>>();
+
+        //Processing Thead
+        private Thread updateThread;
 
         public Client(int entIndex, GameSocket socket)
         {
             mySocket = socket;
             EntityIndex = entIndex;
-            if (EntityIndex > -1) { Entity = (Player)Globals.Entities[EntityIndex]; }
-            if (mySocket != null && mySocket.IsConnected()) { PacketSender.SendPing(this); }
+            if (EntityIndex > -1)
+            {
+                Entity = (Player) Globals.Entities[EntityIndex];
+            }
+            if (mySocket != null && mySocket.IsConnected())
+            {
+                PacketSender.SendPing(this);
+            }
             updateThread = new Thread(Update);
             updateThread.Start();
         }

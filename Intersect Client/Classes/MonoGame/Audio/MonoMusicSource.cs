@@ -6,13 +6,15 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
 {
     public class MonoMusicSource : GameAudioSource
     {
-        private Song _song;
         private string _path;
+        private Song _song;
+
         public MonoMusicSource(string path)
         {
             _path = path;
             _song = Song.FromUri(path, new Uri(path, UriKind.Relative));
         }
+
         public override GameAudioInstance CreateInstance()
         {
             return new MonoMusicInstance(this);

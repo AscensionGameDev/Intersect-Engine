@@ -1,11 +1,11 @@
-﻿using IntersectClientExtras.File_Management;
+﻿using Intersect;
+using Intersect.GameObjects;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
-using Intersect.GameObjects;
-using Intersect_Client.Classes.Maps;
-using Intersect;
 
 // ReSharper disable All
 
@@ -68,7 +68,7 @@ namespace Intersect_Client.Classes.Core
                 GameAudio.Update();
             }
         }
-        
+
         private static void ProcessIntro()
         {
             if (Globals.Database.IntroBG.Count > 0)
@@ -134,7 +134,7 @@ namespace Intersect_Client.Classes.Core
             if (Globals.Me == null || MapInstance.GetMap(Globals.Me.CurrentMap) == null) return;
             if (!_createdMapTextures)
             {
-                if (Globals.Database.RenderCaching) GameGraphics.CreateMapTextures(9*18);
+                if (Globals.Database.RenderCaching) GameGraphics.CreateMapTextures(9 * 18);
                 _createdMapTextures = true;
             }
             if (!_loadedTilesets && Globals.HasGameData)
@@ -142,17 +142,19 @@ namespace Intersect_Client.Classes.Core
                 Globals.ContentManager.LoadTilesets(DatabaseObject.GetGameObjectList(GameObject.Tileset));
                 _loadedTilesets = true;
             }
-            if (Globals.Database.RenderCaching && Globals.Me != null && MapInstance.GetMap(Globals.Me.CurrentMap) != null)
+            if (Globals.Database.RenderCaching && Globals.Me != null &&
+                MapInstance.GetMap(Globals.Me.CurrentMap) != null)
             {
                 var gridX = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridX;
                 var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
                 for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
-                    for (int y = gridY-1; y <= gridY + 1; y++)
+                    for (int y = gridY - 1; y <= gridY + 1; y++)
                     {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight && Globals.MapGrid[x, y] != -1)
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                            Globals.MapGrid[x, y] != -1)
                         {
-                            var map = MapInstance.GetMap(Globals.MapGrid[x,y]);
+                            var map = MapInstance.GetMap(Globals.MapGrid[x, y]);
                             if (map != null)
                             {
                                 if (map.MapLoaded == false)
@@ -173,7 +175,7 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
             }
-            
+
             GameAudio.PlayMusic(MapInstance.GetMap(Globals.Me.CurrentMap).Music, 3, 3, true);
             Globals.GameState = GameStates.InGame;
             GameFade.FadeIn();
@@ -275,7 +277,10 @@ namespace Intersect_Client.Classes.Core
             if (_animTimer < Globals.System.GetTimeMS())
             {
                 Globals.AnimFrame++;
-                if (Globals.AnimFrame == 3) { Globals.AnimFrame = 0; }
+                if (Globals.AnimFrame == 3)
+                {
+                    Globals.AnimFrame = 0;
+                }
                 _animTimer = Globals.System.GetTimeMS() + 500;
             }
 
@@ -297,9 +302,5 @@ namespace Intersect_Client.Classes.Core
             Globals.LoggedIn = true;
             GameAudio.StopMusic(3f);
         }
-
-
     }
-
-
 }

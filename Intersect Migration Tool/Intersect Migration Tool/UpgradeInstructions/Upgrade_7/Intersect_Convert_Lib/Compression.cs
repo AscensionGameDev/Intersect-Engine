@@ -17,7 +17,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             {
                 using (DeflateStream decompressionStream = new DeflateStream(ms, CompressionMode.Decompress))
                 {
-
                     decompressionStream.Read(decompessed, 0, decompessed.Length);
                 }
                 return decompessed;

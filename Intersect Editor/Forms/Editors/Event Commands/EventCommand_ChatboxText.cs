@@ -1,17 +1,17 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
-using Intersect_Editor.Classes;
 using Intersect;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
+using Intersect_Editor.Classes;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_ChatboxText : UserControl
     {
-        private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
+        private EventCommand _myCommand;
+
         public EventCommand_ChatboxText(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();

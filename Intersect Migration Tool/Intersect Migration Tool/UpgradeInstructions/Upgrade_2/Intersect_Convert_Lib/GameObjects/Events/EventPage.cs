@@ -5,25 +5,41 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
 {
     public class EventPage
     {
+        public enum CommonEventTriggers
+        {
+            None,
+            JoinGame,
+            LevelUp,
+            Autorun,
+        }
+
+        public enum EventTriggers
+        {
+            ActionButton,
+            OnTouch,
+            Autorun,
+            ProjectileHit,
+        }
+
+        public int Animation = -1;
+        public List<CommandList> CommandLists = new List<CommandList>();
+        public List<EventCommand> Conditions = new List<EventCommand>();
         public string Desc = "";
-        public int MovementType;
-        public int MovementSpeed;
-        public int MovementFreq;
-        public EventMoveRoute MoveRoute = new EventMoveRoute();
-        public int Passable;
-        public int Layer;
-        public int Trigger;
-        public int TriggerVal;
+        public int DirectionFix;
+        public int DisablePreview = 1;
         public string FaceGraphic = "";
         public EventGraphic Graphic = new EventGraphic();
         public int HideName;
-        public int DisablePreview = 1;
-        public int DirectionFix;
-        public int WalkingAnimation = 1;
-        public int Animation = -1;
         public int InteractionFreeze;
-        public List<CommandList> CommandLists = new List<CommandList>();
-        public List<EventCommand> Conditions = new List<EventCommand>();
+        public int Layer;
+        public int MovementFreq;
+        public int MovementSpeed;
+        public int MovementType;
+        public EventMoveRoute MoveRoute = new EventMoveRoute();
+        public int Passable;
+        public int Trigger;
+        public int TriggerVal;
+        public int WalkingAnimation = 1;
 
         public EventPage()
         {
@@ -98,22 +114,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             {
                 condition.Save(myBuffer);
             }
-        }
-
-        public enum EventTriggers
-        {
-            ActionButton,
-            OnTouch,
-            Autorun,
-            ProjectileHit,
-        }
-
-        public enum CommonEventTriggers
-        {
-            None,
-            JoinGame,
-            LevelUp,
-            Autorun,
         }
     }
 }

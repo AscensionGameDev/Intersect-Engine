@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect_Editor.Classes;
 using Intersect;
 using Intersect.GameObjects;
 using Intersect.Localization;
+using Intersect_Editor.Classes;
 
 namespace Intersect_Editor.Forms.Controls
 {
     public partial class LightEditorCtrl : UserControl
     {
-        public bool CanClose = true;
-        private LightBase _editingLight;
         private LightBase _backupLight;
+        private LightBase _editingLight;
+        public bool CanClose = true;
 
         public LightEditorCtrl()
         {
@@ -30,8 +30,9 @@ namespace Intersect_Editor.Forms.Controls
             nudSize.Value = tmpLight.Size;
             nudOffsetX.Value = tmpLight.OffsetX;
             nudOffsetY.Value = tmpLight.OffsetY;
-            nudExpand.Value = (int)tmpLight.Expand;
-            pnlLightColor.BackColor = System.Drawing.Color.FromArgb(tmpLight.Color.A, tmpLight.Color.R, tmpLight.Color.G, tmpLight.Color.B);
+            nudExpand.Value = (int) tmpLight.Expand;
+            pnlLightColor.BackColor = System.Drawing.Color.FromArgb(tmpLight.Color.A, tmpLight.Color.R, tmpLight.Color.G,
+                tmpLight.Color.B);
             if (!CanClose) btnOkay.Hide();
             InitLocalization();
         }
@@ -56,6 +57,7 @@ namespace Intersect_Editor.Forms.Controls
             if (CanClose) Visible = false;
             if (_editingLight == Globals.EditingLight) Globals.EditingLight = null;
         }
+
         private void btnLightEditorRevert_Click(object sender, EventArgs e)
         {
             if (_editingLight != null)
@@ -69,12 +71,14 @@ namespace Intersect_Editor.Forms.Controls
             EditorGraphics.TilePreviewUpdated = true;
             if (CanClose) Visible = false;
         }
+
         private void btnSelectLightColor_Click(object sender, EventArgs e)
         {
             colorDialog.Color = System.Drawing.Color.White;
             colorDialog.ShowDialog();
             pnlLightColor.BackColor = colorDialog.Color;
-            _editingLight.Color = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B);
+            _editingLight.Color = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G,
+                colorDialog.Color.B);
             EditorGraphics.TilePreviewUpdated = true;
         }
 
@@ -85,36 +89,51 @@ namespace Intersect_Editor.Forms.Controls
 
         private void nudOffsetX_ValueChanged(object sender, EventArgs e)
         {
-            if (_editingLight == null) { return; }
-            _editingLight.OffsetX = (int)nudOffsetX.Value;
+            if (_editingLight == null)
+            {
+                return;
+            }
+            _editingLight.OffsetX = (int) nudOffsetX.Value;
             EditorGraphics.TilePreviewUpdated = true;
         }
 
         private void nudOffsetY_ValueChanged(object sender, EventArgs e)
         {
-            if (_editingLight == null) { return; }
-            _editingLight.OffsetY = (int)nudOffsetY.Value;
+            if (_editingLight == null)
+            {
+                return;
+            }
+            _editingLight.OffsetY = (int) nudOffsetY.Value;
             EditorGraphics.TilePreviewUpdated = true;
         }
 
         private void nudSize_ValueChanged(object sender, EventArgs e)
         {
-            if (_editingLight == null) { return; }
-            _editingLight.Size = (int)nudSize.Value;
+            if (_editingLight == null)
+            {
+                return;
+            }
+            _editingLight.Size = (int) nudSize.Value;
             EditorGraphics.TilePreviewUpdated = true;
         }
 
         private void nudIntensity_ValueChanged(object sender, EventArgs e)
         {
-            if (_editingLight == null) { return; }
-            _editingLight.Intensity = (byte)nudIntensity.Value;
+            if (_editingLight == null)
+            {
+                return;
+            }
+            _editingLight.Intensity = (byte) nudIntensity.Value;
             EditorGraphics.TilePreviewUpdated = true;
         }
 
         private void nudExpand_ValueChanged(object sender, EventArgs e)
         {
-            if (_editingLight == null) { return; }
-            _editingLight.Expand = (int)nudExpand.Value;
+            if (_editingLight == null)
+            {
+                return;
+            }
+            _editingLight.Expand = (int) nudExpand.Value;
             EditorGraphics.TilePreviewUpdated = true;
         }
     }

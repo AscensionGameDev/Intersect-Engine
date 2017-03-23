@@ -1,23 +1,22 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
-using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Classes.Maps;
 using Intersect;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
-
+using Intersect_Editor.Classes.Core;
+using Intersect_Editor.Classes.Maps;
 
 namespace Intersect_Editor.Classes
 {
     public static class PacketHandler
     {
         public delegate void GameObjectUpdated(GameObject type);
-        public static  GameObjectUpdated GameObjectUpdatedDelegate;
 
         public delegate void MapUpdated();
+
+        public static GameObjectUpdated GameObjectUpdatedDelegate;
         public static MapUpdated MapUpdatedDelegate;
 
         public static void HandlePacket(byte[] packet)
@@ -34,7 +33,7 @@ namespace Intersect_Editor.Classes
                 bf.WriteBytes(data);
             }
 
-            var packetHeader = (ServerPackets)bf.ReadLong();
+            var packetHeader = (ServerPackets) bf.ReadLong();
             switch (packetHeader)
             {
                 case ServerPackets.Ping:
@@ -111,7 +110,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            int mapNum = (int)bf.ReadLong();
+            int mapNum = (int) bf.ReadLong();
             int deleted = bf.ReadInteger();
             if (deleted == 1)
             {
@@ -127,8 +126,8 @@ namespace Intersect_Editor.Classes
             else
             {
                 var mapLength = bf.ReadLong();
-                var mapData = bf.ReadBytes((int)mapLength);
-                var map = new MapInstance((int)mapNum);
+                var mapData = bf.ReadBytes((int) mapLength);
+                var map = new MapInstance((int) mapNum);
                 if (MapInstance.GetMap(mapNum) != null)
                 {
                     if (Globals.CurrentMap == MapInstance.GetMap(mapNum))
@@ -151,7 +150,8 @@ namespace Intersect_Editor.Classes
                     if (Globals.FetchingMapPreviews || Globals.CurrentMap == map)
                     {
                         int currentmap = ((DatabaseObject) Globals.CurrentMap).Id;
-                        if (Database.LoadMapCacheLegacy(mapNum, map.Revision) == null && !Globals.MapsToScreenshot.Contains(mapNum)) Globals.MapsToScreenshot.Add(mapNum);
+                        if (Database.LoadMapCacheLegacy(mapNum, map.Revision) == null &&
+                            !Globals.MapsToScreenshot.Contains(mapNum)) Globals.MapsToScreenshot.Add(mapNum);
                         if (Globals.FetchingMapPreviews)
                         {
                             if (Globals.MapsToFetch.Contains(mapNum))
@@ -164,7 +164,12 @@ namespace Intersect_Editor.Classes
                                 }
                                 else
                                 {
-                                    Globals.PreviewProgressForm.SetProgress("Fetching Maps: " + (Globals.FetchCount - Globals.MapsToFetch.Count) + "/" + Globals.FetchCount, (int)(((float)(Globals.FetchCount - Globals.MapsToFetch.Count) / (float)Globals.FetchCount) * 100f), false);
+                                    Globals.PreviewProgressForm.SetProgress(
+                                        "Fetching Maps: " + (Globals.FetchCount - Globals.MapsToFetch.Count) + "/" +
+                                        Globals.FetchCount,
+                                        (int)
+                                        (((float) (Globals.FetchCount - Globals.MapsToFetch.Count) /
+                                          (float) Globals.FetchCount) * 100f), false);
                                 }
                             }
                         }
@@ -173,10 +178,22 @@ namespace Intersect_Editor.Classes
                     if (mapNum != Globals.LoadingMap) return;
                     Globals.CurrentMap = MapInstance.GetMap(Globals.LoadingMap);
                     MapUpdatedDelegate();
-                    if (map.Up > -1) { PacketSender.SendNeedMap(map.Up); }
-                    if (map.Down > -1) { PacketSender.SendNeedMap(map.Down); }
-                    if (map.Left > -1) { PacketSender.SendNeedMap(map.Left); }
-                    if (map.Right > -1) { PacketSender.SendNeedMap(map.Right); }
+                    if (map.Up > -1)
+                    {
+                        PacketSender.SendNeedMap(map.Up);
+                    }
+                    if (map.Down > -1)
+                    {
+                        PacketSender.SendNeedMap(map.Down);
+                    }
+                    if (map.Left > -1)
+                    {
+                        PacketSender.SendNeedMap(map.Left);
+                    }
+                    if (map.Right > -1)
+                    {
+                        PacketSender.SendNeedMap(map.Right);
+                    }
                 }
                 if (Globals.CurrentMap.Id == mapNum && Globals.MapGrid != null && Globals.MapGrid.Loaded)
                 {
@@ -187,7 +204,8 @@ namespace Intersect_Editor.Classes
                             if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                             {
                                 var needMap = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
-                                if (needMap == null && Globals.MapGrid.Grid[x, y].mapnum > -1) PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                if (needMap == null && Globals.MapGrid.Grid[x, y].mapnum > -1)
+                                    PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].mapnum);
                             }
                         }
                     }
@@ -209,7 +227,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Globals.MainForm.BeginInvoke((Action)(() => Globals.MainForm.EnterMap((int)bf.ReadLong())));
+            Globals.MainForm.BeginInvoke((Action) (() => Globals.MainForm.EnterMap((int) bf.ReadLong())));
         }
 
         private static void HandleMapList(byte[] packet)
@@ -241,7 +259,7 @@ namespace Intersect_Editor.Classes
             if (Globals.MapGrid != null)
             {
                 Globals.MapGrid.Load(bf);
-                if (Globals.CurrentMap != null &&  Globals.MapGrid != null && Globals.MapGrid.Loaded)
+                if (Globals.CurrentMap != null && Globals.MapGrid != null && Globals.MapGrid.Loaded)
                 {
                     for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
                     {
@@ -250,7 +268,8 @@ namespace Intersect_Editor.Classes
                             if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                             {
                                 var needMap = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
-                                if (needMap == null && Globals.MapGrid.Grid[x, y].mapnum > -1) PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                if (needMap == null && Globals.MapGrid.Grid[x, y].mapnum > -1)
+                                    PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].mapnum);
                             }
                         }
                     }
@@ -495,7 +514,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var type = (GameObject)bf.ReadInteger();
+            var type = (GameObject) bf.ReadInteger();
             Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, type);
             bf.Dispose();
         }

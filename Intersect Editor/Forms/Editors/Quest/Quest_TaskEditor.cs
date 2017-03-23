@@ -1,19 +1,19 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
 using DarkUI.Controls;
-using Intersect_Editor.Classes;
 using Intersect;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
+using Intersect_Editor.Classes;
 
 namespace Intersect_Editor.Forms.Editors.Quest
 {
     public partial class Quest_TaskEditor : UserControl
     {
+        private ByteBuffer _eventBackup = new ByteBuffer();
         private QuestBase.QuestTask _myTask;
         public bool Cancelled = false;
-        private ByteBuffer _eventBackup = new ByteBuffer();
+
         public Quest_TaskEditor(QuestBase.QuestTask refTask)
         {
             InitializeComponent();

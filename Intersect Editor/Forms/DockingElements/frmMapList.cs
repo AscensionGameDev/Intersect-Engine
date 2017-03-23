@@ -1,11 +1,11 @@
-﻿using Intersect_Editor.Classes;
-using System;
+﻿using System;
 using System.Windows.Forms;
 using DarkUI.Forms;
-using Intersect_Editor.Classes.General;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
+using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.General;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect_Editor.Forms
@@ -25,16 +25,20 @@ namespace Intersect_Editor.Forms
         {
             if (e.Node.Tag.GetType() == typeof(MapListMap))
             {
-                if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                if (Globals.CurrentMap.Changed() &&
+                    DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"),
+                        Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
                     SaveMap();
                 }
-                Globals.MainForm.EnterMap(((MapListMap)e.Node.Tag).MapNum);
+                Globals.MainForm.EnterMap(((MapListMap) e.Node.Tag).MapNum);
             }
         }
+
         private void SaveMap()
         {
-            if (Globals.CurrentTool == (int)EdittingTool.Selection)
+            if (Globals.CurrentTool == (int) EdittingTool.Selection)
             {
                 if (Globals.Dragging == true)
                 {
@@ -45,6 +49,7 @@ namespace Intersect_Editor.Forms
             }
             PacketSender.SendMap(Globals.CurrentMap);
         }
+
         private void frmMapList_Load(object sender, EventArgs e)
         {
             InitLocalization();
@@ -52,8 +57,8 @@ namespace Intersect_Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.Get("maplist","title");   
-            btnChronological.Text  = Strings.Get("maplist", "chronological");
+            Text = Strings.Get("maplist", "title");
+            btnChronological.Text = Strings.Get("maplist", "chronological");
             toolSelectMap.Text = Strings.Get("maplist", "selectcurrent");
             btnNewMap.Text = Strings.Get("maplist", "newmap");
             btnNewFolder.Text = Strings.Get("maplist", "newfolder");
@@ -69,6 +74,7 @@ namespace Intersect_Editor.Forms
         {
             mapTreeList.UpdateMapList();
         }
+
         private void btnNewFolder_Click(object sender, EventArgs e)
         {
             if (mapTreeList.list.SelectedNode == null)
@@ -77,54 +83,70 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                PacketSender.SendAddFolder((MapListItem)mapTreeList.list.SelectedNode.Tag);
+                PacketSender.SendAddFolder((MapListItem) mapTreeList.list.SelectedNode.Tag);
             }
         }
+
         private void btnRename_Click(object sender, EventArgs e)
         {
             if (mapTreeList.list.SelectedNode == null)
             {
-                DarkMessageBox.ShowError(Strings.Get("maplist","selecttorename"), Strings.Get("maplist","rename"),DarkDialogButton.Ok, Properties.Resources.Icon);
+                DarkMessageBox.ShowError(Strings.Get("maplist", "selecttorename"), Strings.Get("maplist", "rename"),
+                    DarkDialogButton.Ok, Properties.Resources.Icon);
             }
             else
             {
                 mapTreeList.list.SelectedNode.BeginEdit();
             }
         }
+
         private void btnDelete_Click(object sender, EventArgs e)
         {
             if (mapTreeList.list.SelectedNode == null)
             {
-                DarkMessageBox.ShowError(Strings.Get("maplist", "selecttodelete"), Strings.Get("maplist", "delete"),DarkDialogButton.Ok, Properties.Resources.Icon);
+                DarkMessageBox.ShowError(Strings.Get("maplist", "selecttodelete"), Strings.Get("maplist", "delete"),
+                    DarkDialogButton.Ok, Properties.Resources.Icon);
             }
             else
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("maplist","deleteconfirm",((MapListItem)mapTreeList.list.SelectedNode.Tag).Name), Strings.Get("maplist", "delete"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                if (
+                    DarkMessageBox.ShowWarning(
+                        Strings.Get("maplist", "deleteconfirm", ((MapListItem) mapTreeList.list.SelectedNode.Tag).Name),
+                        Strings.Get("maplist", "delete"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
-                    PacketSender.SendDelete((MapListItem)mapTreeList.list.SelectedNode.Tag);
+                    PacketSender.SendDelete((MapListItem) mapTreeList.list.SelectedNode.Tag);
                 }
             }
         }
+
         private void btnChronological_Click(object sender, EventArgs e)
         {
             btnChronological.Checked = !btnChronological.Checked;
             mapTreeList.Chronological = btnChronological.Checked;
             mapTreeList.UpdateMapList();
         }
+
         private void btnNewMap_Click(object sender, EventArgs e)
         {
-            if (DarkMessageBox.ShowWarning(Strings.Get("mapping", "newmap"), Strings.Get("mapping", "newmapcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) != DialogResult.Yes) return;
-            if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+            if (
+                DarkMessageBox.ShowWarning(Strings.Get("mapping", "newmap"), Strings.Get("mapping", "newmapcaption"),
+                    DarkDialogButton.YesNo, Properties.Resources.Icon) != DialogResult.Yes) return;
+            if (Globals.CurrentMap.Changed() &&
+                DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"),
+                    Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                DialogResult.Yes)
             {
                 SaveMap();
             }
             if (mapTreeList.list.SelectedNode == null)
             {
-                PacketSender.SendCreateMap(-1,((DatabaseObject) Globals.CurrentMap).Id,null);
+                PacketSender.SendCreateMap(-1, ((DatabaseObject) Globals.CurrentMap).Id, null);
             }
             else
             {
-                PacketSender.SendCreateMap(-1, ((DatabaseObject) Globals.CurrentMap).Id, (MapListItem)mapTreeList.list.SelectedNode.Tag);
+                PacketSender.SendCreateMap(-1, ((DatabaseObject) Globals.CurrentMap).Id,
+                    (MapListItem) mapTreeList.list.SelectedNode.Tag);
             }
         }
 

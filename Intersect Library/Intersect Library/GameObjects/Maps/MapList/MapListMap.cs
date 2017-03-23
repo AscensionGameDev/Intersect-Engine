@@ -6,13 +6,19 @@ namespace Intersect.GameObjects.Maps.MapList
     public class MapListMap : MapListItem, IComparable<MapListMap>
     {
         public int MapNum = -1;
-        public MapListMap(): base()
+
+        public MapListMap() : base()
         {
             Name = "New Map";
             type = 1;
         }
 
-        public void GetData(ByteBuffer myBuffer, Dictionary<int,MapBase> gameMaps )
+        public int CompareTo(MapListMap obj)
+        {
+            return MapNum.CompareTo(obj.MapNum);
+        }
+
+        public void GetData(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps)
         {
             base.GetData(myBuffer);
             myBuffer.WriteInteger(MapNum);
@@ -36,11 +42,6 @@ namespace Intersect.GameObjects.Maps.MapList
                 }
             }
             return true;
-        }
-
-        public int CompareTo(MapListMap obj)
-        {
-            return MapNum.CompareTo(obj.MapNum);
         }
     }
 }

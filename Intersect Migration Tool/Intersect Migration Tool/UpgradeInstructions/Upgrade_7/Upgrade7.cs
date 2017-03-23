@@ -3,11 +3,11 @@ using System.IO;
 using System.Xml;
 using Intersect;
 using Intersect.Logging;
-using Mono.Data.Sqlite;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Maps;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
+using Mono.Data.Sqlite;
 using GameObject = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObject;
 using Options = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.Options;
 
@@ -15,9 +15,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
 {
     public class Upgrade7
     {
-        private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
-
         //GameObject Table Constants
         private const string GAME_OBJECT_ID = "id";
         private const string GAME_OBJECT_DELETED = "deleted";
@@ -43,9 +40,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
         //Char Bank Table Constants
         private const string CHAR_BANK_TABLE = "char_bank";
         private const string CHAR_BANK_ITEM_BAG_ID = "item_bag_id";
-
-
-
+        private SqliteConnection _dbConnection;
+        private Object _dbLock = new Object();
 
         public Upgrade7(SqliteConnection connection)
         {
@@ -69,7 +65,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
         {
             //Remove the Paperdoll element.. going to replace it
             XmlDocument doc = new XmlDocument();
-            doc.Load(Path.Combine("resources","config.xml"));
+            doc.Load(Path.Combine("resources", "config.xml"));
             XmlNodeList nodes = doc.SelectNodes("//Config/Paperdoll");
             for (int i = nodes.Count - 1; i >= 0; i--)
             {
@@ -86,7 +82,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
             {
                 XmlElement dirElement = doc.CreateElement(dir);
                 XmlComment comment =
-                    doc.CreateComment("Paperdoll is rendered in the following order when facing " + dir + ". If you want to change when each piece of equipment gets rendered simply swap the equipment names.");
+                    doc.CreateComment("Paperdoll is rendered in the following order when facing " + dir +
+                                      ". If you want to change when each piece of equipment gets rendered simply swap the equipment names.");
                 dirElement.AppendChild(comment);
                 for (int i = 0; i < Options.PaperdollOrder.Count; i++)
                 {
@@ -101,7 +98,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
 
             //Finally create the passability options
             eleNew = doc.CreateElement("Passability");
-            var passabilityComment = doc.CreateComment("Trigger player passability based on map moralites. True = Passable, False = Blocked");
+            var passabilityComment =
+                doc.CreateComment("Trigger player passability based on map moralites. True = Passable, False = Blocked");
             XmlElement normal = doc.CreateElement("Normal");
             normal.InnerText = "False";
             XmlElement safe = doc.CreateElement("Safe");
@@ -121,16 +119,15 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
         //Game Object Saving/Loading
         private void LoadAllGameObjects()
         {
-
             foreach (var val in Enum.GetValues(typeof(GameObject)))
             {
-                if ((GameObject)val != GameObject.Time)
+                if ((GameObject) val != GameObject.Time)
                 {
-                    LoadGameObjects((GameObject)val);
+                    LoadGameObjects((GameObject) val);
                 }
             }
-
         }
+
         //Game Object Saving/Loading
         private string GetGameObjectTable(GameObject type)
         {
@@ -193,6 +190,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
             }
             return tableName;
         }
+
         private void ClearGameObjects(GameObject type)
         {
             switch (type)
@@ -252,6 +250,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         private void LoadGameObject(GameObject type, int index, byte[] data)
         {
             switch (type)
@@ -364,6 +363,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         public void LoadGameObjects(GameObject type)
         {
             var nullIssues = "";
@@ -399,6 +399,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                 throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine + nullIssues));
             }
         }
+
         public void SaveGameObject(DatabaseObject gameObject)
         {
             if (gameObject == null)
@@ -432,37 +433,40 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
         private void CreateBagsTable()
         {
             var cmd = "CREATE TABLE " + BAGS_TABLE + " ("
-                + BAG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + BAG_SLOT_COUNT + " INTEGER"
-                + ");";
+                      + BAG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + BAG_SLOT_COUNT + " INTEGER"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private void CreateBagItemsTable()
         {
             var cmd = "CREATE TABLE " + BAG_ITEMS_TABLE + " ("
-                + BAG_ITEM_CONTAINER_ID + " INTEGER,"
-                + BAG_ITEM_SLOT + " INTEGER,"
-                + BAG_ITEM_NUM + " INTEGER,"
-                + BAG_ITEM_VAL + " INTEGER,"
-                + BAG_ITEM_STATS + " TEXT,"
-                + BAG_ITEM_BAG_ID + " TEXT,"
-                + " unique('" + BAG_ITEM_CONTAINER_ID + "','" + BAG_ITEM_SLOT + "')"
-                + ");";
+                      + BAG_ITEM_CONTAINER_ID + " INTEGER,"
+                      + BAG_ITEM_SLOT + " INTEGER,"
+                      + BAG_ITEM_NUM + " INTEGER,"
+                      + BAG_ITEM_VAL + " INTEGER,"
+                      + BAG_ITEM_STATS + " TEXT,"
+                      + BAG_ITEM_BAG_ID + " TEXT,"
+                      + " unique('" + BAG_ITEM_CONTAINER_ID + "','" + BAG_ITEM_SLOT + "')"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
-            CreateBag(1); //This is to bypass an issue where we use itemVal to store the bag identifier (we are terrible!)
+            CreateBag(1);
+                //This is to bypass an issue where we use itemVal to store the bag identifier (we are terrible!)
         }
 
         public void CreateBag(int slotCount)
         {
-            var insertQuery = "INSERT into " + BAGS_TABLE + " (" + BAG_SLOT_COUNT + ")" + "VALUES (@" + BAG_SLOT_COUNT + ");";
+            var insertQuery = "INSERT into " + BAGS_TABLE + " (" + BAG_SLOT_COUNT + ")" + "VALUES (@" + BAG_SLOT_COUNT +
+                              ");";
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + BAG_SLOT_COUNT, slotCount));
@@ -478,7 +482,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
-
 
             cmd = "UPDATE " + CHAR_BANK_TABLE + " set " + CHAR_BANK_ITEM_BAG_ID + " = @" + CHAR_BANK_ITEM_BAG_ID + ";";
             using (var createCommand = _dbConnection.CreateCommand())
@@ -506,6 +509,5 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                 createCommand.ExecuteNonQuery();
             }
         }
-
     }
 }

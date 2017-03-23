@@ -6,12 +6,12 @@ namespace Intersect_Editor.Classes.Content
 {
     public class GameTexture
     {
-        private Texture2D _tex;
-        private string _path = "";
-        private bool _loadError = false;
-        private int _width = -1;
         private int _height = -1;
         private long _lastAccessTime = 0;
+        private bool _loadError = false;
+        private string _path = "";
+        private Texture2D _tex;
+        private int _width = -1;
 
         public GameTexture(string path)
         {
@@ -24,7 +24,7 @@ namespace Intersect_Editor.Classes.Content
             _loadError = true;
             if (File.Exists(_path))
             {
-                using (var fileStream = new FileStream(_path, FileMode.Open, FileAccess.Read,FileShare.ReadWrite))
+                using (var fileStream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     _tex = Texture2D.FromStream(EditorGraphics.GetGraphicsDevice(), fileStream);
                     if (_tex != null)

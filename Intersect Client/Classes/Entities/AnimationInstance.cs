@@ -1,34 +1,33 @@
 ﻿using System;
+using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
-using Intersect.GameObjects;
 
 namespace Intersect_Client.Classes.Entities
 {
-
-
     public class AnimationInstance
     {
-        private AnimationBase myBase;
+        private int _renderDir = 0;
         private float _renderX = 0;
         private float _renderY = 0;
-        private int _renderDir = 0;
-        private int lowerFrame;
-        private int upperFrame;
-        private int lowerLoop;
-        private int upperLoop;
-        private long lowerTimer;
-        private long upperTimer;
-        private bool infiniteLoop = false;
-        private bool showLower = true;
-        private bool showUpper = true;
-        private int ZDimension = -1;
         public bool AutoRotate = false;
         public bool Hidden = false;
+        private bool infiniteLoop = false;
+        private int lowerFrame;
+        private int lowerLoop;
+        private long lowerTimer;
+        private AnimationBase myBase;
+        private bool showLower = true;
+        private bool showUpper = true;
         private MapSound sound;
+        private int upperFrame;
+        private int upperLoop;
+        private long upperTimer;
+        private int ZDimension = -1;
+
         public AnimationInstance(AnimationBase animBase, bool loopForever, bool autoRotate = false, int zDimension = -1)
         {
             myBase = animBase;
@@ -59,7 +58,6 @@ namespace Intersect_Client.Classes.Entities
             float rotationDegrees = 0f;
             if (AutoRotate)
             {
-
                 switch (_renderDir)
                 {
                     case 0: //Up
@@ -92,29 +90,36 @@ namespace Intersect_Client.Classes.Entities
             if ((!upper && showLower && ZDimension < 1) || (!upper && showLower && ZDimension > 0))
             {
                 //Draw Lower
-                GameTexture tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation, myBase.LowerAnimSprite);
+                GameTexture tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation,
+                    myBase.LowerAnimSprite);
                 if (tex != null)
                 {
                     if (myBase.LowerAnimXFrames > 0 && myBase.LowerAnimYFrames > 0)
                     {
-                        int frameWidth = tex.GetWidth()/myBase.LowerAnimXFrames;
-                        int frameHeight = tex.GetHeight()/myBase.LowerAnimYFrames;
+                        int frameWidth = tex.GetWidth() / myBase.LowerAnimXFrames;
+                        int frameHeight = tex.GetHeight() / myBase.LowerAnimYFrames;
                         GameGraphics.DrawGameTexture(tex,
-                            new FloatRect((lowerFrame%myBase.LowerAnimXFrames)*frameWidth,
-                                (float) Math.Floor((double) lowerFrame/myBase.LowerAnimXFrames)*frameHeight,
+                            new FloatRect((lowerFrame % myBase.LowerAnimXFrames) * frameWidth,
+                                (float) Math.Floor((double) lowerFrame / myBase.LowerAnimXFrames) * frameHeight,
                                 frameWidth,
                                 frameHeight),
-                            new FloatRect(_renderX - frameWidth/2, _renderY - frameHeight/2, frameWidth, frameHeight),
+                            new FloatRect(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth, frameHeight),
                             Color.White, null, GameBlendModes.None, null, rotationDegrees);
                     }
                 }
                 int offsetX = myBase.LowerLights[lowerFrame].OffsetX;
                 int offsetY = myBase.LowerLights[lowerFrame].OffsetY;
-                var rotationRadians = (float)((Math.PI / 180) * rotationDegrees);
-                offsetX = (int)(Math.Cos(rotationRadians) * ((double)offsetX) - (double)Math.Sin(rotationRadians) * ((double)offsetY));
-                offsetY = (int)(Math.Sin(rotationRadians) * ((double)offsetX) + (double)Math.Cos(rotationRadians) * ((double)offsetY));
-                GameGraphics.AddLight((int)_renderX + offsetX,
-                    (int)_renderY + offsetY, myBase.LowerLights[lowerFrame].Size,
+                var rotationRadians = (float) ((Math.PI / 180) * rotationDegrees);
+                offsetX =
+                    (int)
+                    (Math.Cos(rotationRadians) * ((double) offsetX) -
+                     (double) Math.Sin(rotationRadians) * ((double) offsetY));
+                offsetY =
+                    (int)
+                    (Math.Sin(rotationRadians) * ((double) offsetX) +
+                     (double) Math.Cos(rotationRadians) * ((double) offsetY));
+                GameGraphics.AddLight((int) _renderX + offsetX,
+                    (int) _renderY + offsetY, myBase.LowerLights[lowerFrame].Size,
                     myBase.LowerLights[lowerFrame].Intensity, myBase.LowerLights[lowerFrame].Expand,
                     myBase.LowerLights[lowerFrame].Color);
             }
@@ -122,38 +127,39 @@ namespace Intersect_Client.Classes.Entities
             if ((upper && showUpper && ZDimension != 0) || (upper && showUpper && ZDimension == 0))
             {
                 //Draw Upper
-                GameTexture tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation, myBase.UpperAnimSprite);
+                GameTexture tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation,
+                    myBase.UpperAnimSprite);
                 if (tex != null)
                 {
                     if (myBase.UpperAnimXFrames > 0 && myBase.UpperAnimYFrames > 0)
                     {
-                        int frameWidth = tex.GetWidth()/myBase.UpperAnimXFrames;
-                        int frameHeight = tex.GetHeight()/myBase.UpperAnimYFrames;
+                        int frameWidth = tex.GetWidth() / myBase.UpperAnimXFrames;
+                        int frameHeight = tex.GetHeight() / myBase.UpperAnimYFrames;
 
                         GameGraphics.DrawGameTexture(tex,
-                            new FloatRect((upperFrame%myBase.UpperAnimXFrames)*frameWidth,
-                                (float) Math.Floor((double) upperFrame/myBase.UpperAnimXFrames)*frameHeight,
+                            new FloatRect((upperFrame % myBase.UpperAnimXFrames) * frameWidth,
+                                (float) Math.Floor((double) upperFrame / myBase.UpperAnimXFrames) * frameHeight,
                                 frameWidth,
                                 frameHeight),
-                            new FloatRect(_renderX - frameWidth/2, _renderY - frameHeight/2, frameWidth, frameHeight),
+                            new FloatRect(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth, frameHeight),
                             Color.White, null, GameBlendModes.None, null, rotationDegrees);
                     }
                 }
                 int offsetX = myBase.LowerLights[lowerFrame].OffsetX;
                 int offsetY = myBase.LowerLights[lowerFrame].OffsetY;
-                var rotationRadians = (float)((Math.PI / 180) * rotationDegrees);
+                var rotationRadians = (float) ((Math.PI / 180) * rotationDegrees);
                 offsetX =
                     (int)
-                        (Math.Cos(rotationRadians) * ((double)offsetX) -
-                            (double)Math.Sin(rotationRadians) * ((double)offsetY));
+                    (Math.Cos(rotationRadians) * ((double) offsetX) -
+                     (double) Math.Sin(rotationRadians) * ((double) offsetY));
                 offsetY =
                     (int)
-                        (Math.Sin(rotationRadians) * ((double)offsetX) +
-                            (double)Math.Cos(rotationRadians) * ((double)offsetY));
-                GameGraphics.AddLight((int)_renderX + offsetX,
-                        (int)_renderY + offsetY, myBase.UpperLights[upperFrame].Size,
-                        myBase.UpperLights[upperFrame].Intensity, myBase.UpperLights[upperFrame].Expand,
-                        myBase.UpperLights[upperFrame].Color);
+                    (Math.Sin(rotationRadians) * ((double) offsetX) +
+                     (double) Math.Cos(rotationRadians) * ((double) offsetY));
+                GameGraphics.AddLight((int) _renderX + offsetX,
+                    (int) _renderY + offsetY, myBase.UpperLights[upperFrame].Size,
+                    myBase.UpperLights[upperFrame].Intensity, myBase.UpperLights[upperFrame].Expand,
+                    myBase.UpperLights[upperFrame].Color);
             }
         }
 
@@ -180,7 +186,7 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        public void SetPosition(float worldX, float worldY,int mapx, int mapy, int map, int dir, int z = 0)
+        public void SetPosition(float worldX, float worldY, int mapx, int mapy, int map, int dir, int z = 0)
         {
             _renderX = worldX;
             _renderY = worldY;
@@ -233,7 +239,6 @@ namespace Intersect_Client.Classes.Entities
                             if (infiniteLoop)
                             {
                                 upperLoop = myBase.UpperAnimLoopCount;
-
                             }
                             else
                             {

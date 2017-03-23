@@ -1,41 +1,7 @@
-﻿//Pulled from the Open Source Mono library and modified.
-//https://github.com/mono/mono
-
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib
+﻿namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib
 {
     public class Color
     {
-        public byte A { get; set; }
-        public byte R { get; set; }
-        public byte G { get; set; }
-        public byte B { get; set; }
-
-        public Color()
-        {
-
-        }
-
-        public Color(int a, int r, int g, int b)
-        {
-            A = (byte)a;
-            R = (byte)r;
-            G = (byte)g;
-            B = (byte)b;
-        }
-
-        public Color(int r, int g, int b)
-        {
-            A = 255;
-            R = (byte)r;
-            G = (byte)g;
-            B = (byte)b;
-        }
-
-        public byte GetHue()
-        {
-            return 0;
-        }
-
         public enum ChatColor
         {
             Black = 0,
@@ -49,6 +15,60 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Conve
             Gray,
             Cyan,
             Pink,
+        }
+
+        public Color()
+        {
+        }
+
+        public Color(int a, int r, int g, int b)
+        {
+            A = (byte) a;
+            R = (byte) r;
+            G = (byte) g;
+            B = (byte) b;
+        }
+
+        public Color(int r, int g, int b)
+        {
+            A = 255;
+            R = (byte) r;
+            G = (byte) g;
+            B = (byte) b;
+        }
+
+        public byte A { get; set; }
+        public byte R { get; set; }
+        public byte G { get; set; }
+        public byte B { get; set; }
+
+        public static Color White => new Color(255, 255, 255, 255);
+
+        public static Color Black => new Color(255, 0, 0, 0);
+
+        public static Color Transparent => new Color(0, 0, 0, 0);
+
+        public static Color Red => new Color(255, 255, 0, 0);
+
+        public static Color Green => new Color(255, 0, 255, 0);
+
+        public static Color Blue => new Color(255, 0, 0, 255);
+
+        public static Color Yellow => new Color(255, 255, 255, 0);
+
+        public static Color LightCoral => new Color(255, 240, 128, 128);
+        public static Color ForestGreen => new Color(255, 34, 139, 34);
+
+        public static Color Magenta => new Color(255, 255, 0, 255);
+        public static Color OrangeRed => new Color(255, 255, 69, 0);
+        public static Color Orange => new Color(255, 255, 165, 0);
+        public static Color Gray => new Color(255, 128, 128, 128);
+        public static Color Cyan => new Color(255, 0, 255, 255);
+        public static Color Pink => new Color(255, 255, 192, 203);
+
+        public byte GetHue()
+        {
+            return 0;
         }
 
         public static Color FromName(string name)
@@ -91,29 +111,5 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Conve
         {
             return new Color(255, r, g, b);
         }
-
-        public static Color White => new Color(255, 255, 255, 255);
-
-        public static Color Black => new Color(255, 0, 0, 0);
-
-        public static Color Transparent => new Color(0, 0, 0, 0);
-
-        public static Color Red => new Color(255, 255, 0, 0);
-
-        public static Color Green => new Color(255, 0, 255, 0);
-
-        public static Color Blue => new Color(255, 0, 0, 255);
-
-        public static Color Yellow => new Color(255, 255, 255, 0);
-
-        public static Color LightCoral => new Color(255, 240, 128, 128);
-        public static Color ForestGreen => new Color(255, 34, 139, 34);
-
-        public static Color Magenta => new Color(255, 255, 0, 255);
-        public static Color OrangeRed => new Color(255, 255, 69, 0);
-        public static Color Orange => new Color(255, 255,165,0);
-        public static Color Gray => new Color(255, 128, 128, 128);
-        public static Color Cyan => new Color(255, 0,255,255);
-        public static Color Pink => new Color(255, 255,192,203);
     }
 }

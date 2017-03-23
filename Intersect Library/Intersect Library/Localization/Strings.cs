@@ -12,13 +12,15 @@ namespace Intersect.Localization
             Server,
             Migrator
         }
+
         private static Language DefaultLanguage;
         private static Language SelectedLanguage;
+
         public static void Init(IntersectComponent component, string language)
         {
             if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
             var langDir = Path.Combine("resources", "languages");
-            if (!Directory.Exists(langDir))  Directory.CreateDirectory(langDir);
+            if (!Directory.Exists(langDir)) Directory.CreateDirectory(langDir);
             string defaultFile = "";
             string strComponent = "";
             switch (component)
@@ -46,7 +48,7 @@ namespace Intersect.Localization
             if (!File.Exists(Path.Combine(langDir, strComponent + ".English.xml")))
             {
                 //Copy Client.English.xml from resources
-                File.WriteAllText(Path.Combine(langDir, strComponent + ".English.xml"),defaultFile);
+                File.WriteAllText(Path.Combine(langDir, strComponent + ".English.xml"), defaultFile);
             }
             DefaultLanguage = new Language(Path.Combine(langDir, strComponent + ".English.xml"));
             if (File.Exists(Path.Combine(langDir, strComponent + "." + language + ".xml")))

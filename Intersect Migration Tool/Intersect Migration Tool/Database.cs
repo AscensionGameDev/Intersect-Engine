@@ -16,14 +16,14 @@ namespace Intersect_Migration_Tool
 {
     public static class Database
     {
-        private static SqliteConnection _dbConnection;
-        private static Object _dbLock = new Object();
         public const int DbVersion = 8;
         private const string DbFilename = "resources/intersect.db";
 
         //Database Variables
         private const string INFO_TABLE = "info";
         private const string DB_VERSION = "dbversion";
+        private static SqliteConnection _dbConnection;
+        private static Object _dbLock = new Object();
 
         //Config Info
         public static string GetLanguageFromConfig()
@@ -44,6 +44,7 @@ namespace Intersect_Migration_Tool
             }
             return "English";
         }
+
         private static string GetXmlStr(XmlDocument xmlDoc, string xmlPath)
         {
             var selectSingleNode = xmlDoc.SelectSingleNode(xmlPath);
@@ -71,6 +72,7 @@ namespace Intersect_Migration_Tool
                 return true;
             }
         }
+
         public static long GetDatabaseVersion()
         {
             long version = -1;
@@ -78,7 +80,7 @@ namespace Intersect_Migration_Tool
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
-                version = (long)createCommand.ExecuteScalar();
+                version = (long) createCommand.ExecuteScalar();
             }
             return version;
         }
@@ -96,7 +98,9 @@ namespace Intersect_Migration_Tool
 
         public static void Upgrade()
         {
-            File.Copy("resources/intersect.db", "resources/intersect_v" + GetDatabaseVersion() + "_" + DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss") + ".db");
+            File.Copy("resources/intersect.db",
+                "resources/intersect_v" + GetDatabaseVersion() + "_" + DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss") +
+                ".db");
             if (_dbConnection != null)
             {
                 _dbConnection.Close();
@@ -142,7 +146,7 @@ namespace Intersect_Migration_Tool
                         currentVersion++;
                         IncrementDatabaseVersion();
                         break;
-                    case 7: 
+                    case 7:
                         var upgrade7 = new Upgrade7(_dbConnection);
                         upgrade7.Upgrade();
                         currentVersion++;
@@ -156,8 +160,9 @@ namespace Intersect_Migration_Tool
 
             _dbConnection.Close();
             _dbConnection = null;
-            Console.WriteLine(Strings.Get("upgrade","updated",currentVersion));
-            Console.WriteLine(Strings.Get("upgrade","backupinfo", startingVersion, startingVersion, DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss")));
+            Console.WriteLine(Strings.Get("upgrade", "updated", currentVersion));
+            Console.WriteLine(Strings.Get("upgrade", "backupinfo", startingVersion, startingVersion,
+                DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss")));
         }
     }
 }

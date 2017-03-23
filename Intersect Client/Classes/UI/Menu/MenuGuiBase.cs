@@ -5,14 +5,15 @@ namespace Intersect_Client.Classes.UI.Menu
     public class MenuGuiBase
     {
         private readonly Canvas _menuCanvas;
+
+        public MainMenu _mainMenu;
         private bool shouldReset = false;
+
         public MenuGuiBase(Canvas myCanvas)
         {
             _menuCanvas = myCanvas;
             InitMenuGui();
         }
-
-        public MainMenu _mainMenu;
 
         private void InitMenuGui()
         {
@@ -26,7 +27,6 @@ namespace Intersect_Client.Classes.UI.Menu
             {
                 _mainMenu.Reset();
                 shouldReset = false;
-                
             }
             _menuCanvas.RenderCanvas();
         }
@@ -35,7 +35,5 @@ namespace Intersect_Client.Classes.UI.Menu
         {
             shouldReset = true;
         }
-
-        
     }
 }

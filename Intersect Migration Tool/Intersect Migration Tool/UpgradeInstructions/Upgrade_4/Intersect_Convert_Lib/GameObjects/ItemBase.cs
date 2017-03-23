@@ -1,26 +1,4 @@
-﻿/*
-    Intersect Game Engine (Server)
-    Copyright (C) 2015  JC Snider, Joe Bridges
-    
-    Website: http://ascensiongamedev.com
-    Contact Email: admin@ascensiongamedev.com 
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License along
-    with this program; if not, write to the Free Software Foundation, Inc.,
-    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Intersect;
 
@@ -31,30 +9,30 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Conve
         public new const string DATABASE_TABLE = "items";
         public new const GameObject OBJECT_TYPE = GameObject.Item;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
-        public string Name = "New Item";
-        public string Desc = "";
-        public int ItemType;
-        public string Pic = "";
-        public int Price;
-        public int Bound;
         public int Animation;
+        public int Bound;
         public int ClassReq = -1;
-        public int LevelReq;
-        public int Projectile = -1;
-        public int[] StatsReq;
-        public int[] StatsGiven;
-        public int GenderReq;
-        public int StatGrowth;
         public int Damage;
-        public int Speed;
-        public string MalePaperdoll = "";
-        public string FemalePaperdoll = "";
-        public int Tool;
         public int Data1;
         public int Data2;
         public int Data3;
         public int Data4;
+        public string Desc = "";
+        public string FemalePaperdoll = "";
+        public int GenderReq;
+        public int ItemType;
+        public int LevelReq;
+        public string MalePaperdoll = "";
+
+        public string Name = "New Item";
+        public string Pic = "";
+        public int Price;
+        public int Projectile = -1;
+        public int Speed;
+        public int StatGrowth;
+        public int[] StatsGiven;
+        public int[] StatsReq;
+        public int Tool;
 
         public ItemBase(int id) : base(id)
         {
@@ -135,7 +113,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return (ItemBase)Objects[index];
+                return (ItemBase) Objects[index];
             }
             return null;
         }
@@ -144,7 +122,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return ((ItemBase)Objects[index]).Name;
+                return ((ItemBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -172,28 +150,32 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Conve
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, ItemBase> GetObjects()
         {
-            Dictionary<int, ItemBase> objects = Objects.ToDictionary(k => k.Key, v => (ItemBase)v.Value);
+            Dictionary<int, ItemBase> objects = Objects.ToDictionary(k => k.Key, v => (ItemBase) v.Value);
             return objects;
         }
     }
 }
-

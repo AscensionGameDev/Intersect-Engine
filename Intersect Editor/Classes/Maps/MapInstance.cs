@@ -2,11 +2,11 @@
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using Intersect_Editor.Classes.Entities;
 using Intersect;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
+using Intersect_Editor.Classes.Entities;
 
 namespace Intersect_Editor.Classes.Maps
 {
@@ -16,13 +16,11 @@ namespace Intersect_Editor.Classes.Maps
         public new const GameObject OBJECT_TYPE = GameObject.Map;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         private static object objectsLock = new object();
-        private Dictionary<Attribute, AnimationInstance> _attributeAnimInstances = new Dictionary<Attribute, AnimationInstance>();
+
+        private Dictionary<Attribute, AnimationInstance> _attributeAnimInstances =
+            new Dictionary<Attribute, AnimationInstance>();
+
         private byte[] loadedData;
-
-        //World Position
-        public int MapGridX { get; set; }
-        public int MapGridY { get; set; }
-
 
         public MapInstance(int mapNum) : base(mapNum, false)
         {
@@ -35,10 +33,14 @@ namespace Intersect_Editor.Classes.Maps
             if (typeof(MapInstance) == mapStruct.GetType())
             {
                 MapGridX = ((MapInstance) mapStruct).MapGridX;
-                MapGridY = ((MapInstance)mapStruct).MapGridY;
+                MapGridY = ((MapInstance) mapStruct).MapGridY;
             }
             InitAutotiles();
         }
+
+        //World Position
+        public int MapGridX { get; set; }
+        public int MapGridY { get; set; }
 
         public void Load(byte[] myArr, bool import = false)
         {
@@ -87,6 +89,7 @@ namespace Intersect_Editor.Classes.Maps
             }
             return _attributeAnimInstances[attr];
         }
+
         public void SetAttributeAnimation(Attribute attribute, AnimationInstance animationInstance)
         {
             if (_attributeAnimInstances.ContainsKey(attribute))
@@ -107,7 +110,8 @@ namespace Intersect_Editor.Classes.Maps
                         {
                             for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                             {
-                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight && Globals.MapGrid.Grid[x, y].mapnum > -1)
+                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight &&
+                                    Globals.MapGrid.Grid[x, y].mapnum > -1)
                                 {
                                     var needMap = GetMap(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (needMap == null) return;
@@ -178,6 +182,7 @@ namespace Intersect_Editor.Classes.Maps
             }
             return mapBase;
         }
+
         public void InitAutotiles()
         {
             lock (GetMapLock())
@@ -185,6 +190,7 @@ namespace Intersect_Editor.Classes.Maps
                 Autotiles.InitAutotiles(GenerateAutotileGrid());
             }
         }
+
         public void UpdateAdjacentAutotiles()
         {
             if (Globals.MapGrid != null && Globals.MapGrid.Contains(Id))
@@ -204,6 +210,7 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
+
         public EventBase FindEventAt(int x, int y)
         {
             if (Events.Count <= 0) return null;
@@ -216,6 +223,7 @@ namespace Intersect_Editor.Classes.Maps
             }
             return null;
         }
+
         public LightBase FindLightAt(int x, int y)
         {
             if (Lights.Count <= 0) return null;
@@ -228,6 +236,7 @@ namespace Intersect_Editor.Classes.Maps
             }
             return null;
         }
+
         public NpcSpawn FindSpawnAt(int x, int y)
         {
             if (Spawns.Count <= 0) return null;
@@ -255,7 +264,7 @@ namespace Intersect_Editor.Classes.Maps
         {
             if (Objects.ContainsKey(index))
             {
-                return (MapInstance)Objects[index];
+                return (MapInstance) Objects[index];
             }
             return null;
         }
@@ -268,6 +277,7 @@ namespace Intersect_Editor.Classes.Maps
             }
             return null;
         }
+
         public override void Delete()
         {
             lock (objectsLock)
@@ -276,6 +286,7 @@ namespace Intersect_Editor.Classes.Maps
                 MapBase.GetObjects().Remove(Id);
             }
         }
+
         public static void ClearObjects()
         {
             lock (objectsLock)
@@ -284,6 +295,7 @@ namespace Intersect_Editor.Classes.Maps
                 MapBase.ClearObjects();
             }
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             lock (objectsLock)
@@ -292,10 +304,12 @@ namespace Intersect_Editor.Classes.Maps
                 MapBase.Objects.Add(index, (MapBase) obj);
             }
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, MapInstance> GetObjects()
         {
             lock (objectsLock)
@@ -307,7 +321,6 @@ namespace Intersect_Editor.Classes.Maps
 
         public void Dispose()
         {
-
         }
     }
 }

@@ -7,69 +7,96 @@ namespace Intersect
     public class ByteBuffer : IDisposable
     {
         readonly List<byte> _buff;
-        public int Readpos;
-        private bool _wasUpdated;
+
+        // To detect redundant calls
+        private bool _disposedValue;
         private byte[] _readBytes;
+        private bool _wasUpdated;
+        public int Readpos;
+
         public ByteBuffer()
         {
             _buff = new List<byte>();
             Readpos = 0;
         }
+
+        #region " IDisposable Support "
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
+
         public byte[] ToArray()
         {
             return _buff.ToArray();
         }
+
         public int Count()
         {
             return _buff.Count;
         }
+
         public int Pos()
         {
             return Readpos;
         }
+
         public int Length()
         {
             return Count() - Readpos;
         }
+
         public void Clear()
         {
             _buff.Clear();
             Readpos = 0;
         }
+
         public void WriteBytes(byte[] input)
         {
             _buff.AddRange(input);
             _wasUpdated = true;
         }
+
         public void WriteByte(byte input)
         {
             _buff.Add(input);
             _wasUpdated = true;
         }
+
         public void WriteBoolean(bool input)
         {
             WriteByte(Convert.ToByte(input));
         }
+
         public void WriteShort(short input)
         {
             _buff.AddRange(BitConverter.GetBytes(input));
             _wasUpdated = true;
         }
+
         public void WriteInteger(int input)
         {
             _buff.AddRange(BitConverter.GetBytes(input));
             _wasUpdated = true;
         }
+
         public void WriteLong(long input)
         {
             _buff.AddRange(BitConverter.GetBytes(input));
             _wasUpdated = true;
         }
+
         public void WriteDouble(double input)
         {
             _buff.AddRange(BitConverter.GetBytes(input));
             _wasUpdated = true;
         }
+
         public void WriteString(string input)
         {
             if (String.IsNullOrEmpty(input))
@@ -84,6 +111,7 @@ namespace Intersect
             }
             _wasUpdated = true;
         }
+
         public string ReadString(bool peek = true)
         {
             var len = ReadInteger(true);
@@ -103,10 +131,12 @@ namespace Intersect
             }
             return ret;
         }
+
         public bool ReadBoolean(bool peek = true)
         {
             return Convert.ToBoolean(ReadByte(peek));
         }
+
         public byte ReadByte(bool peek = true)
         {
             //check to see if this passes the byte count
@@ -118,6 +148,7 @@ namespace Intersect
             }
             return ret;
         }
+
         public byte[] ReadBytes(int length, bool peek = true)
         {
             var ret = _buff.GetRange(Readpos, length).ToArray();
@@ -125,6 +156,7 @@ namespace Intersect
                 Readpos += length;
             return ret;
         }
+
         public short ReadShort(bool peek = true)
         {
             //check to see if this passes the byte count
@@ -141,6 +173,7 @@ namespace Intersect
             }
             return ret;
         }
+
         public int ReadInteger(bool peek = true)
         {
             //check to see if this passes the byte count
@@ -157,6 +190,7 @@ namespace Intersect
             }
             return ret;
         }
+
         public long ReadLong(bool peek = true)
         {
             //check to see if this passes the byte count
@@ -173,7 +207,7 @@ namespace Intersect
             }
             return ret;
         }
-        
+
         public double ReadDouble(bool peek = true)
         {
             //check to see if this passes the byte count
@@ -191,9 +225,6 @@ namespace Intersect
             return ret;
         }
 
-        // To detect redundant calls
-        private bool _disposedValue;
-
         // IDisposable
         protected virtual void Dispose(bool disposing)
         {
@@ -207,15 +238,5 @@ namespace Intersect
             }
             _disposedValue = true;
         }
-
-        #region " IDisposable Support "
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        #endregion
-
-
     }
 }

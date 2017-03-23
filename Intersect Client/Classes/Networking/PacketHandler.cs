@@ -1,4 +1,10 @@
-﻿using Intersect_Client.Classes.Core;
+﻿using System;
+using System.Collections.Generic;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Maps.MapList;
+using Intersect.Localization;
+using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
@@ -6,12 +12,6 @@ using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
 using Intersect_Client.Classes.UI.Game.Chat;
-using Intersect;
-using Intersect.GameObjects;
-using Intersect.GameObjects.Maps.MapList;
-using Intersect.Localization;
-using System;
-using System.Collections.Generic;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.Networking
@@ -20,6 +20,7 @@ namespace Intersect_Client.Classes.Networking
     {
         public static long Ping = 0;
         public static long PingTime = 0;
+
         public static void HandlePacket(byte[] packet)
         {
             var bf = new ByteBuffer();
@@ -34,7 +35,7 @@ namespace Intersect_Client.Classes.Networking
                 bf.WriteBytes(data);
             }
 
-            var packetHeader = (ServerPackets)bf.ReadLong();
+            var packetHeader = (ServerPackets) bf.ReadLong();
             lock (Globals.GameLock)
             {
                 switch (packetHeader)
@@ -258,7 +259,7 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                GameNetwork.Ping = (int)(Globals.System.GetTimeMS() - PingTime) / 2;
+                GameNetwork.Ping = (int) (Globals.System.GetTimeMS() - PingTime) / 2;
             }
         }
 
@@ -280,10 +281,10 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var mapNum = (int)bf.ReadLong();
+            var mapNum = (int) bf.ReadLong();
             bf.ReadInteger();
             var mapLength = bf.ReadLong();
-            var mapData = bf.ReadBytes((int)mapLength);
+            var mapData = bf.ReadBytes((int) mapLength);
             var revision = bf.ReadInteger();
             var map = MapInstance.GetMap(mapNum);
             if (map != null)
@@ -297,7 +298,7 @@ namespace Intersect_Client.Classes.Networking
                     map.Dispose(false, false);
                 }
             }
-            map = new MapInstance((int)mapNum);
+            map = new MapInstance((int) mapNum);
             MapInstance.AddObject(mapNum, map);
             map.Load(mapData);
             if ((mapNum) == Globals.Me.CurrentMap)
@@ -319,10 +320,10 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var spawnTime = bf.ReadLong();
-            var i = (int)bf.ReadLong();
+            var i = (int) bf.ReadLong();
             var entityType = bf.ReadInteger();
             var mapNum = bf.ReadInteger(false);
-            if (entityType != (int)EntityTypes.Event)
+            if (entityType != (int) EntityTypes.Event)
             {
                 var en = Globals.GetEntity(i, entityType, spawnTime);
                 if (en != null)
@@ -333,16 +334,16 @@ namespace Intersect_Client.Classes.Networking
                 {
                     switch (entityType)
                     {
-                        case (int)EntityTypes.Player:
+                        case (int) EntityTypes.Player:
                             Globals.Entities.Add(i, new Player(i, spawnTime, bf));
                             break;
-                        case (int)EntityTypes.GlobalEntity:
+                        case (int) EntityTypes.GlobalEntity:
                             Globals.Entities.Add(i, new Entity(i, spawnTime, bf));
                             break;
-                        case (int)EntityTypes.Resource:
+                        case (int) EntityTypes.Resource:
                             Globals.Entities.Add(i, new Resource(i, spawnTime, bf));
                             break;
-                        case (int)EntityTypes.Projectile:
+                        case (int) EntityTypes.Projectile:
                             Globals.Entities.Add(i, new Projectile(i, spawnTime, bf));
                             break;
                     }
@@ -352,7 +353,6 @@ namespace Intersect_Client.Classes.Networking
             {
                 new Event(i, spawnTime, mapNum, bf);
             }
-
         }
 
         private static void HandleMapEntities(byte[] packet)
@@ -363,10 +363,10 @@ namespace Intersect_Client.Classes.Networking
             for (int z = 0; z < entityCount; z++)
             {
                 var spawnTime = bf.ReadLong();
-                var i = (int)bf.ReadLong();
+                var i = (int) bf.ReadLong();
                 var entityType = bf.ReadInteger();
                 var mapNum = bf.ReadInteger(false);
-                if (entityType != (int)EntityTypes.Event)
+                if (entityType != (int) EntityTypes.Event)
                 {
                     var en = Globals.GetEntity(i, entityType, spawnTime);
                     if (en != null)
@@ -377,16 +377,16 @@ namespace Intersect_Client.Classes.Networking
                     {
                         switch (entityType)
                         {
-                            case (int)EntityTypes.Player:
+                            case (int) EntityTypes.Player:
                                 Globals.Entities.Add(i, new Player(i, spawnTime, bf));
                                 break;
-                            case (int)EntityTypes.GlobalEntity:
+                            case (int) EntityTypes.GlobalEntity:
                                 Globals.Entities.Add(i, new Entity(i, spawnTime, bf));
                                 break;
-                            case (int)EntityTypes.Resource:
+                            case (int) EntityTypes.Resource:
                                 Globals.Entities.Add(i, new Resource(i, spawnTime, bf));
                                 break;
-                            case (int)EntityTypes.Projectile:
+                            case (int) EntityTypes.Projectile:
                                 Globals.Entities.Add(i, new Projectile(i, spawnTime, bf));
                                 break;
                         }
@@ -403,22 +403,29 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = (int)bf.ReadLong();
+            var index = (int) bf.ReadLong();
             var type = bf.ReadInteger();
             var mapNum = bf.ReadInteger();
             Entity en;
-            if (type != (int)EntityTypes.Event)
+            if (type != (int) EntityTypes.Event)
             {
-                if (!Globals.Entities.ContainsKey(index)) { return; }
+                if (!Globals.Entities.ContainsKey(index))
+                {
+                    return;
+                }
                 en = Globals.Entities[index];
             }
             else
             {
                 if (MapInstance.GetMap(mapNum) == null) return;
-                if (!MapInstance.GetMap(mapNum).LocalEntities.ContainsKey(index)) { return; }
+                if (!MapInstance.GetMap(mapNum).LocalEntities.ContainsKey(index))
+                {
+                    return;
+                }
                 en = MapInstance.GetMap(mapNum).LocalEntities[index];
             }
-            if (en == Globals.Me && (Globals.Me.DashQueue.Count > 0 || Globals.Me.DashTimer > Globals.System.GetTimeMS())) return;
+            if (en == Globals.Me &&
+                (Globals.Me.DashQueue.Count > 0 || Globals.Me.DashTimer > Globals.System.GetTimeMS())) return;
             if (en == Globals.Me && Globals.Me.CurrentMap != mapNum)
             {
                 Globals.Me.CurrentMap = mapNum;
@@ -440,11 +447,14 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = (int)bf.ReadLong();
+            var index = (int) bf.ReadLong();
             var type = bf.ReadInteger();
             var mapNum = bf.ReadInteger();
-            if (index == Globals.Me.MyIndex && type < (int)EntityTypes.Event) { return; }
-            if (type != (int)EntityTypes.Event)
+            if (index == Globals.Me.MyIndex && type < (int) EntityTypes.Event)
+            {
+                return;
+            }
+            if (type != (int) EntityTypes.Event)
             {
                 if (Globals.Entities.ContainsKey(index))
                 {
@@ -465,14 +475,15 @@ namespace Intersect_Client.Classes.Networking
                     }
                 }
             }
-
         }
 
         private static void HandleMsg(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            ChatboxMsg.AddMessage(new ChatboxMsg(bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte()), bf.ReadString()));
+            ChatboxMsg.AddMessage(new ChatboxMsg(bf.ReadString(),
+                new Color((int) bf.ReadByte(), (int) bf.ReadByte(), (int) bf.ReadByte(), (int) bf.ReadByte()),
+                bf.ReadString()));
         }
 
         private static void HandleActionMsg(byte[] packet)
@@ -482,7 +493,9 @@ namespace Intersect_Client.Classes.Networking
             var map = MapInstance.GetMap(bf.ReadInteger());
             if (map != null)
             {
-                map.ActionMsgs.Add(new ActionMsgInstance(((DatabaseObject) map).Id, bf.ReadInteger(), bf.ReadInteger(), bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte())));
+                map.ActionMsgs.Add(new ActionMsgInstance(((DatabaseObject) map).Id, bf.ReadInteger(), bf.ReadInteger(),
+                    bf.ReadString(),
+                    new Color((int) bf.ReadByte(), (int) bf.ReadByte(), (int) bf.ReadByte(), (int) bf.ReadByte())));
             }
             bf.Dispose();
         }
@@ -496,7 +509,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var mapNum = (int)bf.ReadLong();
+            var mapNum = (int) bf.ReadLong();
             if (Globals.Me != null && Globals.Me.CurrentMap != mapNum && Globals.Me.CurrentMap != -1) return;
         }
 
@@ -513,32 +526,45 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = (int)bf.ReadLong();
+            var index = (int) bf.ReadLong();
             var type = bf.ReadInteger();
             var mapNum = bf.ReadInteger();
             Entity en;
-            if (type < (int)EntityTypes.Event)
+            if (type < (int) EntityTypes.Event)
             {
-                if (!Globals.Entities.ContainsKey(index)) { return; }
+                if (!Globals.Entities.ContainsKey(index))
+                {
+                    return;
+                }
                 en = Globals.Entities[index];
             }
             else
             {
                 var gameMap = MapInstance.GetMap(mapNum);
                 if (gameMap == null) return;
-                if (!gameMap.LocalEntities.ContainsKey(index)) { return; }
+                if (!gameMap.LocalEntities.ContainsKey(index))
+                {
+                    return;
+                }
                 en = gameMap.LocalEntities[index];
             }
-            if (en == null) { return; }
+            if (en == null)
+            {
+                return;
+            }
             var entityMap = MapInstance.GetMap(en.CurrentMap);
-            if (entityMap == null) { return; }
+            if (entityMap == null)
+            {
+                return;
+            }
             if (en.Dashing != null || en.DashQueue.Count > 0) return;
             var map = mapNum;
             var x = bf.ReadInteger();
             var y = bf.ReadInteger();
             var dir = bf.ReadInteger();
             var correction = bf.ReadInteger();
-            if ((en.CurrentMap != map || en.CurrentX != x || en.CurrentY != y) && (en != Globals.Me || (en == Globals.Me && correction == 1)) && en.Dashing == null)
+            if ((en.CurrentMap != map || en.CurrentX != x || en.CurrentY != y) &&
+                (en != Globals.Me || (en == Globals.Me && correction == 1)) && en.Dashing == null)
             {
                 en.CurrentMap = map;
                 en.CurrentX = x;
@@ -569,7 +595,7 @@ namespace Intersect_Client.Classes.Networking
 
             // Set the Z-Dimension if the player has moved up or down a dimension.
             if (entityMap.Attributes[en.CurrentX, en.CurrentY] != null &&
-                entityMap.Attributes[en.CurrentX, en.CurrentY].value == (int)MapAttributes.ZDimension)
+                entityMap.Attributes[en.CurrentX, en.CurrentY].value == (int) MapAttributes.ZDimension)
             {
                 if (entityMap.Attributes[en.CurrentX, en.CurrentY].data1 > 0)
                 {
@@ -582,27 +608,33 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = (int)bf.ReadLong();
+            var index = (int) bf.ReadLong();
             var type = bf.ReadInteger();
             var mapNum = bf.ReadInteger();
             Entity en = null;
-            if (type < (int)EntityTypes.Event)
+            if (type < (int) EntityTypes.Event)
             {
-                if (!Globals.Entities.ContainsKey(index)) { return; }
+                if (!Globals.Entities.ContainsKey(index))
+                {
+                    return;
+                }
                 en = Globals.Entities[index];
             }
             else
             {
                 var entityMap = MapInstance.GetMap(mapNum);
                 if (entityMap == null) return;
-                if (!entityMap.LocalEntities.ContainsKey(index)) { return; }
+                if (!entityMap.LocalEntities.ContainsKey(index))
+                {
+                    return;
+                }
                 en = entityMap.LocalEntities[index];
             }
             if (en == null)
             {
                 return;
             }
-            for (var i = 0; i < (int)Vitals.VitalCount; i++)
+            for (var i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 en.MaxVital[i] = bf.ReadInteger();
                 en.Vital[i] = bf.ReadInteger();
@@ -621,27 +653,33 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = (int)bf.ReadLong();
+            var index = (int) bf.ReadLong();
             var type = bf.ReadInteger();
             var mapNum = bf.ReadInteger();
             Entity en = null;
-            if (type < (int)EntityTypes.Event)
+            if (type < (int) EntityTypes.Event)
             {
-                if (!Globals.Entities.ContainsKey(index)) { return; }
+                if (!Globals.Entities.ContainsKey(index))
+                {
+                    return;
+                }
                 en = Globals.Entities[index];
             }
             else
             {
                 var entityMap = MapInstance.GetMap(mapNum);
                 if (entityMap == null) return;
-                if (!entityMap.LocalEntities.ContainsKey(index)) { return; }
+                if (!entityMap.LocalEntities.ContainsKey(index))
+                {
+                    return;
+                }
                 en = entityMap.LocalEntities[index];
             }
             if (en == null)
             {
                 return;
             }
-            for (var i = 0; i < (int)Stats.StatCount; i++)
+            for (var i = 0; i < (int) Stats.StatCount; i++)
             {
                 en.Stat[i] = bf.ReadInteger();
             }
@@ -651,20 +689,26 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = (int)bf.ReadLong();
+            var index = (int) bf.ReadLong();
             var type = bf.ReadInteger();
             var mapNum = bf.ReadInteger();
             Entity en = null;
-            if (type < (int)EntityTypes.Event)
+            if (type < (int) EntityTypes.Event)
             {
-                if (!Globals.Entities.ContainsKey(index)) { return; }
+                if (!Globals.Entities.ContainsKey(index))
+                {
+                    return;
+                }
                 en = Globals.Entities[index];
             }
             else
             {
                 var entityMap = MapInstance.GetMap(mapNum);
                 if (entityMap == null) return;
-                if (!entityMap.LocalEntities.ContainsKey(index)) { return; }
+                if (!entityMap.LocalEntities.ContainsKey(index))
+                {
+                    return;
+                }
                 en = entityMap.LocalEntities[index];
             }
             if (en == null)
@@ -678,22 +722,28 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = (int)bf.ReadLong();
+            var index = (int) bf.ReadLong();
             var type = bf.ReadInteger();
             var mapNum = bf.ReadInteger();
             var attackTimer = bf.ReadInteger();
 
             Entity en = null;
-            if (type < (int)EntityTypes.Event)
+            if (type < (int) EntityTypes.Event)
             {
-                if (!Globals.Entities.ContainsKey(index)) { return; }
+                if (!Globals.Entities.ContainsKey(index))
+                {
+                    return;
+                }
                 en = Globals.Entities[index];
             }
             else
             {
                 var entityMap = MapInstance.GetMap(mapNum);
                 if (entityMap == null) return;
-                if (!entityMap.LocalEntities.ContainsKey(index)) { return; }
+                if (!entityMap.LocalEntities.ContainsKey(index))
+                {
+                    return;
+                }
                 en = entityMap.LocalEntities[index];
             }
             if (en == null)
@@ -717,7 +767,6 @@ namespace Intersect_Client.Classes.Networking
             ed.Type = bf.ReadInteger();
             if (ed.Type == 0)
             {
-
             }
             else
             {
@@ -877,7 +926,7 @@ namespace Intersect_Client.Classes.Networking
             if (SpellBase.GetSpell(SpellNum) != null && Globals.Entities.ContainsKey(EntityNum))
             {
                 Globals.Entities[EntityNum].CastTime = Globals.System.GetTimeMS() +
-                                                        SpellBase.GetSpell(SpellNum).CastDuration * 100;
+                                                       SpellBase.GetSpell(SpellNum).CastDuration * 100;
                 Globals.Entities[EntityNum].SpellCast = SpellNum;
             }
             bf.Dispose();
@@ -891,7 +940,8 @@ namespace Intersect_Client.Classes.Networking
             if (SpellBase.GetSpell(Globals.Me.Spells[SpellSlot].SpellNum) != null)
             {
                 Globals.Me.Spells[SpellSlot].SpellCD = Globals.System.GetTimeMS() +
-                                                       (SpellBase.GetSpell(Globals.Me.Spells[SpellSlot].SpellNum).CooldownDuration * 100);
+                                                       (SpellBase.GetSpell(Globals.Me.Spells[SpellSlot].SpellNum)
+                                                            .CooldownDuration * 100);
             }
             bf.Dispose();
         }
@@ -912,10 +962,11 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            int entityIndex = (int)bf.ReadLong();
-            if (Globals.Entities.ContainsKey(entityIndex) && Globals.Entities[entityIndex].GetType() == typeof(Projectile))
+            int entityIndex = (int) bf.ReadLong();
+            if (Globals.Entities.ContainsKey(entityIndex) &&
+                Globals.Entities[entityIndex].GetType() == typeof(Projectile))
             {
-                ((Projectile)Globals.Entities[entityIndex]).SpawnDead((int)bf.ReadLong());
+                ((Projectile) Globals.Entities[entityIndex]).SpawnDead((int) bf.ReadLong());
             }
             bf.Dispose();
         }
@@ -949,7 +1000,8 @@ namespace Intersect_Client.Classes.Networking
                         var animBase = AnimationBase.GetAnim(animNum);
                         if (animBase != null)
                         {
-                            AnimationInstance animInstance = new AnimationInstance(animBase, false, dir == -1 ? true : false);
+                            AnimationInstance animInstance = new AnimationInstance(animBase, false,
+                                dir == -1 ? true : false);
                             if (dir > -1) animInstance.SetDir(dir);
                             Globals.Entities[entityIndex].Animations.Add(animInstance);
                         }
@@ -972,14 +1024,14 @@ namespace Intersect_Client.Classes.Networking
                             var animBase = AnimationBase.GetAnim(animNum);
                             if (animBase != null)
                             {
-                                AnimationInstance animInstance = new AnimationInstance(animBase, false, dir == -1 ? true : false);
+                                AnimationInstance animInstance = new AnimationInstance(animBase, false,
+                                    dir == -1 ? true : false);
                                 if (dir > -1) animInstance.SetDir(dir);
                                 map.LocalEntities[entityIndex].Animations.Add(animInstance);
                             }
                         }
                     }
                 }
-
             }
             bf.Dispose();
         }
@@ -1103,7 +1155,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var type = (GameObject)bf.ReadInteger();
+            var type = (GameObject) bf.ReadInteger();
             var id = bf.ReadInteger();
             var another = Convert.ToBoolean(bf.ReadInteger());
             var deleted = Convert.ToBoolean(bf.ReadInteger());
@@ -1249,7 +1301,8 @@ namespace Intersect_Client.Classes.Networking
                     var obj = new TilesetBase(id);
                     obj.Load(data);
                     TilesetBase.AddObject(id, obj);
-                    if (Globals.HasGameData && !another) Globals.ContentManager.LoadTilesets(DatabaseObject.GetGameObjectList(GameObject.Tileset));
+                    if (Globals.HasGameData && !another)
+                        Globals.ContentManager.LoadTilesets(DatabaseObject.GetGameObjectList(GameObject.Tileset));
                     break;
                 case GameObject.CommonEvent:
                     //Clients don't store event data, im an idiot.
@@ -1264,14 +1317,15 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = (int)bf.ReadLong();
+            var index = (int) bf.ReadLong();
             var endMap = bf.ReadInteger();
             var endX = bf.ReadInteger();
             var endY = bf.ReadInteger();
             var dashTime = bf.ReadInteger();
             var direction = bf.ReadInteger();
             if (Globals.Entities.ContainsKey(index))
-                Globals.Entities[index].DashQueue.Enqueue(new DashInstance(Globals.Entities[index], endMap, endX, endY, dashTime, direction));
+                Globals.Entities[index].DashQueue.Enqueue(new DashInstance(Globals.Entities[index], endMap, endX, endY,
+                    dashTime, direction));
             bf.Dispose();
         }
 
@@ -1283,7 +1337,8 @@ namespace Intersect_Client.Classes.Networking
             Globals.MapGridHeight = bf.ReadLong();
             var clearKnownMaps = bf.ReadBoolean();
             Globals.MapGrid = new int[Globals.MapGridWidth, Globals.MapGridHeight];
-            if (clearKnownMaps) {
+            if (clearKnownMaps)
+            {
                 var maps = MapInstance.GetObjects();
                 foreach (var map in maps)
                 {
@@ -1299,7 +1354,7 @@ namespace Intersect_Client.Classes.Networking
                     Globals.MapGrid[x, y] = bf.ReadInteger();
                     if (Globals.MapGrid[x, y] != -1)
                     {
-                        Globals.GridMaps.Add(Globals.MapGrid[x,y]);
+                        Globals.GridMaps.Add(Globals.MapGrid[x, y]);
                         if (MapInstance.MapRequests.ContainsKey(Globals.MapGrid[x, y]))
                         {
                             MapInstance.MapRequests[Globals.MapGrid[x, y]] = Globals.System.GetTimeMS() + 2000;
@@ -1321,7 +1376,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             DateTime time = DateTime.FromBinary(bf.ReadLong());
-            float rate = (float)bf.ReadDouble();
+            float rate = (float) bf.ReadDouble();
             Intersect.Color clr = Intersect.Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
             ClientTime.LoadTime(time, clr, rate);
         }
@@ -1345,9 +1400,11 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-			string leader = bf.ReadString();
+            string leader = bf.ReadString();
             int leaderId = bf.ReadInteger();
-            InputBox iBox = new InputBox(Strings.Get("parties","partyinvite"), Strings.Get("parties","inviteprompt",leader), true, PacketSender.SendPartyAccept, PacketSender.SendPartyDecline, leaderId, false);
+            InputBox iBox = new InputBox(Strings.Get("parties", "partyinvite"),
+                Strings.Get("parties", "inviteprompt", leader), true, PacketSender.SendPartyAccept,
+                PacketSender.SendPartyDecline, leaderId, false);
             bf.Dispose();
         }
 
@@ -1355,20 +1412,26 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = (int)bf.ReadLong();
+            var index = (int) bf.ReadLong();
             var type = bf.ReadInteger();
             var mapNum = bf.ReadInteger();
             Entity en = null;
-            if (type < (int)EntityTypes.Event)
+            if (type < (int) EntityTypes.Event)
             {
-                if (!Globals.Entities.ContainsKey(index)) { return; }
+                if (!Globals.Entities.ContainsKey(index))
+                {
+                    return;
+                }
                 en = Globals.Entities[index];
             }
             else
             {
                 var entityMap = MapInstance.GetMap(mapNum);
                 if (entityMap == null) return;
-                if (!entityMap.LocalEntities.ContainsKey(index)) { return; }
+                if (!entityMap.LocalEntities.ContainsKey(index))
+                {
+                    return;
+                }
                 en = entityMap.LocalEntities[index];
             }
             if (en == null)
@@ -1379,12 +1442,11 @@ namespace Intersect_Client.Classes.Networking
             bf.Dispose();
         }
 
-
         private static void HandleQuestOffer(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = (int)bf.ReadInteger();
+            var index = (int) bf.ReadInteger();
             if (!Globals.QuestOffers.Contains(index))
             {
                 Globals.QuestOffers.Add(index);
@@ -1490,7 +1552,9 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             string partner = bf.ReadString();
             int partnerId = bf.ReadInteger();
-            InputBox iBox = new InputBox(Strings.Get("trading","traderequest"), Strings.Get("trading", "requestprompt",partner), true, PacketSender.SendTradeRequestAccept, PacketSender.SendTradeRequestDecline, partnerId, false);
+            InputBox iBox = new InputBox(Strings.Get("trading", "traderequest"),
+                Strings.Get("trading", "requestprompt", partner), true, PacketSender.SendTradeRequestAccept,
+                PacketSender.SendTradeRequestDecline, partnerId, false);
             bf.Dispose();
         }
 
@@ -1510,7 +1574,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = (int)bf.ReadLong();
+            var index = (int) bf.ReadLong();
             if (Globals.Entities.ContainsKey(index))
             {
                 //Clear all dashes.
@@ -1525,7 +1589,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = (int)bf.ReadLong();
+            var index = (int) bf.ReadLong();
             if (Globals.Entities.ContainsKey(index))
             {
                 Globals.Entities[index].CurrentZ = bf.ReadInteger();

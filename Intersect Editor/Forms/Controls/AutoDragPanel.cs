@@ -7,6 +7,7 @@ namespace Intersect_Editor.Forms.Controls
     {
         private Timer _dragTimer;
         private int MaxDragChange = 2;
+
         public AutoDragPanel()
         {
             InitializeComponent();

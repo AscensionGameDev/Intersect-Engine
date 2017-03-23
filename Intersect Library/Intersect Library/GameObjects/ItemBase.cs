@@ -9,32 +9,32 @@ namespace Intersect.GameObjects
         public new const string DATABASE_TABLE = "items";
         public new const GameObject OBJECT_TYPE = GameObject.Item;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        
-        public string Desc = "";
-        public int ItemType;
-        public string Pic = "";
-        public int Price;
-        public int Bound;
-        public int Stackable;
         public int Animation;
-        public int Projectile = -1;
-        public ConditionLists UseReqs = new ConditionLists();
-        public int[] StatsGiven;
-        public int StatGrowth;
-        public int Damage;
-        public int CritChance;
-        public int DamageType;
-        public int ScalingStat;
-        public int Scaling;
         public int AttackAnimation = -1;
-        public int Speed;
-        public string MalePaperdoll = "";
-        public string FemalePaperdoll = "";
-        public int Tool = -1;
+        public int Bound;
+        public int CritChance;
+        public int Damage;
+        public int DamageType;
         public int Data1;
         public int Data2;
         public int Data3;
         public int Data4;
+
+        public string Desc = "";
+        public string FemalePaperdoll = "";
+        public int ItemType;
+        public string MalePaperdoll = "";
+        public string Pic = "";
+        public int Price;
+        public int Projectile = -1;
+        public int Scaling;
+        public int ScalingStat;
+        public int Speed;
+        public int Stackable;
+        public int StatGrowth;
+        public int[] StatsGiven;
+        public int Tool = -1;
+        public ConditionLists UseReqs = new ConditionLists();
 
         public ItemBase(int id) : base(id)
         {
@@ -123,7 +123,7 @@ namespace Intersect.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return (ItemBase)Objects[index];
+                return (ItemBase) Objects[index];
             }
             return null;
         }
@@ -132,7 +132,7 @@ namespace Intersect.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return ((ItemBase)Objects[index]).Name;
+                return ((ItemBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -169,28 +169,32 @@ namespace Intersect.GameObjects
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(Id);
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, ItemBase> GetObjects()
         {
-            Dictionary<int, ItemBase> objects = Objects.ToDictionary(k => k.Key, v => (ItemBase)v.Value);
+            Dictionary<int, ItemBase> objects = Objects.ToDictionary(k => k.Key, v => (ItemBase) v.Value);
             return objects;
         }
     }
 }
-

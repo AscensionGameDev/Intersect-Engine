@@ -1,17 +1,17 @@
-﻿using Intersect_Editor.Classes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using Intersect_Editor.Classes.Core;
 using Intersect;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
+using Intersect.Localization;
+using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.Core;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
-using Intersect.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -23,15 +23,17 @@ namespace Intersect_Editor.Forms
         Events,
         Npcs
     }
+
     public partial class frmMapLayers : DockContent
     {
         //MonoGame Swap Chain
         private SwapChainRenderTarget _chain;
+        private int _lastTileLayer;
+        private List<PictureBox> _mapLayers = new List<PictureBox>();
         private bool _tMouseDown;
         public LayerTabs CurrentTab = LayerTabs.Tiles;
-        private List<PictureBox> _mapLayers = new List<PictureBox>();
         public List<bool> LayerVisibility = new List<bool>();
-        private int _lastTileLayer;
+
         public frmMapLayers()
         {
             InitializeComponent();
@@ -65,17 +67,26 @@ namespace Intersect_Editor.Forms
         {
             SetTileset(cmbTilesets.Text);
         }
+
         private void picTileset_MouseDown(object sender, MouseEventArgs e)
         {
-            
-            if (e.X > picTileset.Width || e.Y > picTileset.Height) { return; }
+            if (e.X > picTileset.Width || e.Y > picTileset.Height)
+            {
+                return;
+            }
             _tMouseDown = true;
-            Globals.CurSelX = (int)Math.Floor((double)e.X / Options.TileWidth);
-            Globals.CurSelY = (int)Math.Floor((double)e.Y / Options.TileHeight);
+            Globals.CurSelX = (int) Math.Floor((double) e.X / Options.TileWidth);
+            Globals.CurSelY = (int) Math.Floor((double) e.Y / Options.TileHeight);
             Globals.CurSelW = 0;
             Globals.CurSelH = 0;
-            if (Globals.CurSelX < 0) { Globals.CurSelX = 0; }
-            if (Globals.CurSelY < 0) { Globals.CurSelY = 0; }
+            if (Globals.CurSelX < 0)
+            {
+                Globals.CurSelX = 0;
+            }
+            if (Globals.CurSelY < 0)
+            {
+                Globals.CurSelY = 0;
+            }
             switch (Globals.Autotilemode)
             {
                 case 1:
@@ -96,19 +107,23 @@ namespace Intersect_Editor.Forms
                     Globals.CurSelH = 1;
                     break;
             }
-
         }
+
         private void picTileset_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.X > picTileset.Width || e.Y > picTileset.Height) { return; }
+            if (e.X > picTileset.Width || e.Y > picTileset.Height)
+            {
+                return;
+            }
             if (_tMouseDown && Globals.Autotilemode == 0)
             {
-                var tmpX = (int)Math.Floor((double)e.X / Options.TileWidth);
-                var tmpY = (int)Math.Floor((double)e.Y / Options.TileHeight);
+                var tmpX = (int) Math.Floor((double) e.X / Options.TileWidth);
+                var tmpY = (int) Math.Floor((double) e.Y / Options.TileHeight);
                 Globals.CurSelW = tmpX - Globals.CurSelX;
                 Globals.CurSelH = tmpY - Globals.CurSelY;
             }
         }
+
         private void picTileset_MouseUp(object sender, MouseEventArgs e)
         {
             var selX = Globals.CurSelX;
@@ -132,6 +147,7 @@ namespace Intersect_Editor.Forms
             _tMouseDown = false;
             Globals.MapEditorWindow.DockPanel.Focus();
         }
+
         private void cmbAutotile_SelectedIndexChanged(object sender, EventArgs e)
         {
             SetAutoTile(cmbAutotile.SelectedIndex);
@@ -160,7 +176,6 @@ namespace Intersect_Editor.Forms
                     Globals.CurSelW = 1;
                     Globals.CurSelH = 1;
                     break;
-
             }
         }
 
@@ -180,9 +195,10 @@ namespace Intersect_Editor.Forms
             if (TilesetBase.ObjectCount() > 0)
             {
                 Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
-                Globals.CurrentTileset = TilesetBase.GetTileset(Database.GameObjectListIndex(GameObject.Tileset,0));
+                Globals.CurrentTileset = TilesetBase.GetTileset(Database.GameObjectListIndex(GameObject.Tileset, 0));
             }
         }
+
         public void SetTileset(string name)
         {
             TilesetBase tSet = null;
@@ -219,6 +235,7 @@ namespace Intersect_Editor.Forms
                 }
             }
         }
+
         public void SetLayer(int index)
         {
             Globals.CurrentLayer = index;
@@ -230,22 +247,26 @@ namespace Intersect_Editor.Forms
                     {
                         if (!LayerVisibility[i])
                         {
-                            _mapLayers[i].BackgroundImage =(Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_A_Hide");
+                            _mapLayers[i].BackgroundImage =
+                                (Bitmap) Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_A_Hide");
                         }
                         else
                         {
-                            _mapLayers[i].BackgroundImage =(Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_A");
+                            _mapLayers[i].BackgroundImage =
+                                (Bitmap) Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_A");
                         }
                     }
                     else
                     {
                         if (!LayerVisibility[i])
                         {
-                            _mapLayers[i].BackgroundImage = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_B_Hide");
+                            _mapLayers[i].BackgroundImage =
+                                (Bitmap) Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_B_Hide");
                         }
                         else
                         {
-                            _mapLayers[i].BackgroundImage = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_B");
+                            _mapLayers[i].BackgroundImage =
+                                (Bitmap) Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_B");
                         }
                     }
                 }
@@ -253,14 +274,13 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                
             }
             EditorGraphics.TilePreviewUpdated = true;
         }
 
         //Mapping Attribute Functions
         /// <summary>
-        /// A method that hides all of the extra group boxes for tile data related to the map attributes.
+        ///     A method that hides all of the extra group boxes for tile data related to the map attributes.
         /// </summary>
         private void hideAttributeMenus()
         {
@@ -272,6 +292,7 @@ namespace Intersect_Editor.Forms
             grpAnimation.Visible = false;
             grpSlide.Visible = false;
         }
+
         private void rbItem_CheckedChanged(object sender, EventArgs e)
         {
             hideAttributeMenus();
@@ -280,19 +301,23 @@ namespace Intersect_Editor.Forms
             cmbItemAttribute.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
             if (cmbItemAttribute.Items.Count > 0) cmbItemAttribute.SelectedIndex = 0;
         }
+
         private void rbBlocked_CheckedChanged(object sender, EventArgs e)
         {
             hideAttributeMenus();
         }
+
         private void rbNPCAvoid_CheckedChanged(object sender, EventArgs e)
         {
             hideAttributeMenus();
         }
+
         private void rbZDimension_CheckedChanged(object sender, EventArgs e)
         {
             hideAttributeMenus();
             grpZDimension.Visible = true;
         }
+
         private void rbWarp_CheckedChanged(object sender, EventArgs e)
         {
             hideAttributeMenus();
@@ -307,15 +332,17 @@ namespace Intersect_Editor.Forms
             cmbWarpMap.SelectedIndex = 0;
             cmbDirection.SelectedIndex = 0;
         }
+
         private void rbSound_CheckedChanged(object sender, EventArgs e)
         {
             hideAttributeMenus();
             grpSound.Visible = true;
             cmbMapAttributeSound.Items.Clear();
-            cmbMapAttributeSound.Items.Add(Strings.Get("general","none"));
+            cmbMapAttributeSound.Items.Add(Strings.Get("general", "none"));
             cmbMapAttributeSound.Items.AddRange(GameContentManager.GetSoundNames());
             cmbMapAttributeSound.SelectedIndex = 0;
         }
+
         private void rbResource_CheckedChanged(object sender, EventArgs e)
         {
             hideAttributeMenus();
@@ -324,6 +351,7 @@ namespace Intersect_Editor.Forms
             cmbResourceAttribute.Items.AddRange(Database.GetGameObjectList(GameObject.Resource));
             if (cmbResourceAttribute.Items.Count > 0) cmbResourceAttribute.SelectedIndex = 0;
         }
+
         // Used for returning an integer value depending on which radio button is selected on the forms. This is merely used to make PlaceAtrribute less messy.
         private int GetEditorDimensionGateway()
         {
@@ -337,6 +365,7 @@ namespace Intersect_Editor.Forms
             }
             return 0;
         }
+
         private int GetEditorDimensionBlock()
         {
             if (rbBlock1.Checked == true)
@@ -349,49 +378,52 @@ namespace Intersect_Editor.Forms
             }
             return 0;
         }
+
         public void PlaceAttribute(MapBase tmpMap, int x, int y)
         {
             tmpMap.Attributes[x, y] = new Intersect.GameObjects.Maps.Attribute();
             if (rbBlocked.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)MapAttributes.Blocked;
+                tmpMap.Attributes[x, y].value = (int) MapAttributes.Blocked;
             }
             else if (rbItem.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)MapAttributes.Item;
-                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObject.Item,cmbItemAttribute.SelectedIndex);
-                tmpMap.Attributes[x, y].data2 = (int)nudItemQuantity.Value;
+                tmpMap.Attributes[x, y].value = (int) MapAttributes.Item;
+                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObject.Item,
+                    cmbItemAttribute.SelectedIndex);
+                tmpMap.Attributes[x, y].data2 = (int) nudItemQuantity.Value;
             }
             else if (rbZDimension.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)MapAttributes.ZDimension;
+                tmpMap.Attributes[x, y].value = (int) MapAttributes.ZDimension;
                 tmpMap.Attributes[x, y].data1 = GetEditorDimensionGateway();
                 tmpMap.Attributes[x, y].data2 = GetEditorDimensionBlock();
             }
             else if (rbNPCAvoid.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)MapAttributes.NPCAvoid;
+                tmpMap.Attributes[x, y].value = (int) MapAttributes.NPCAvoid;
             }
             else if (rbWarp.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)MapAttributes.Warp;
+                tmpMap.Attributes[x, y].value = (int) MapAttributes.Warp;
                 tmpMap.Attributes[x, y].data1 = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum;
-                tmpMap.Attributes[x, y].data2 = (int)nudWarpX.Value;
-                tmpMap.Attributes[x, y].data3 = (int)nudWarpY.Value;
+                tmpMap.Attributes[x, y].data2 = (int) nudWarpX.Value;
+                tmpMap.Attributes[x, y].data3 = (int) nudWarpY.Value;
                 tmpMap.Attributes[x, y].data4 = (cmbDirection.SelectedIndex - 1).ToString();
             }
             else if (rbSound.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)MapAttributes.Sound;
-                tmpMap.Attributes[x, y].data1 = (int)nudSoundDistance.Value;
+                tmpMap.Attributes[x, y].value = (int) MapAttributes.Sound;
+                tmpMap.Attributes[x, y].data1 = (int) nudSoundDistance.Value;
                 tmpMap.Attributes[x, y].data2 = 0;
                 tmpMap.Attributes[x, y].data3 = 0;
                 tmpMap.Attributes[x, y].data4 = cmbMapAttributeSound.Text;
             }
             else if (rbResource.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)MapAttributes.Resource;
-                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObject.Resource,cmbResourceAttribute.SelectedIndex);
+                tmpMap.Attributes[x, y].value = (int) MapAttributes.Resource;
+                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObject.Resource,
+                    cmbResourceAttribute.SelectedIndex);
                 if (rbLevel1.Checked == true)
                 {
                     tmpMap.Attributes[x, y].data2 = 0;
@@ -403,19 +435,21 @@ namespace Intersect_Editor.Forms
             }
             else if (rbAnimation.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)MapAttributes.Animation;
-                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimationAttribute.SelectedIndex);
+                tmpMap.Attributes[x, y].value = (int) MapAttributes.Animation;
+                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObject.Animation,
+                    cmbAnimationAttribute.SelectedIndex);
             }
             else if (rbGrappleStone.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)MapAttributes.GrappleStone;
+                tmpMap.Attributes[x, y].value = (int) MapAttributes.GrappleStone;
             }
             else if (rbSlide.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)MapAttributes.Slide;
+                tmpMap.Attributes[x, y].value = (int) MapAttributes.Slide;
                 tmpMap.Attributes[x, y].data1 = cmbSlideDir.SelectedIndex;
             }
         }
+
         public bool RemoveAttribute(MapBase tmpMap, int x, int y)
         {
             if (tmpMap.Attributes[x, y] != null && tmpMap.Attributes[x, y].value > 0)
@@ -447,7 +481,8 @@ namespace Intersect_Editor.Forms
             {
                 lstMapNpcs.SelectedIndex = 0;
                 cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
-                cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Npc, Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum);
+                cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Npc,
+                    Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum);
                 if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                 {
                     rbDeclared.Checked = true;
@@ -478,6 +513,7 @@ namespace Intersect_Editor.Forms
                 lstMapNpcs.SelectedIndex = lstMapNpcs.Items.Count - 1;
             }
         }
+
         private void btnRemoveMapNpc_Click(object sender, EventArgs e)
         {
             if (lstMapNpcs.SelectedIndex > -1)
@@ -498,11 +534,13 @@ namespace Intersect_Editor.Forms
                 }
             }
         }
+
         private void lstMapNpcs_Click(object sender, EventArgs e)
         {
             if (lstMapNpcs.Items.Count > 0 && lstMapNpcs.SelectedIndex > -1)
             {
-                cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Npc,Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum);
+                cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Npc,
+                    Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum);
                 cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
                 if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                 {
@@ -514,6 +552,7 @@ namespace Intersect_Editor.Forms
                 }
             }
         }
+
         private void rbRandom_Click(object sender, EventArgs e)
         {
             if (lstMapNpcs.SelectedIndex > -1)
@@ -523,6 +562,7 @@ namespace Intersect_Editor.Forms
                 Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir = -1;
             }
         }
+
         private void cmbDir_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstMapNpcs.SelectedIndex >= 0)
@@ -530,13 +570,15 @@ namespace Intersect_Editor.Forms
                 Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir = cmbDir.SelectedIndex - 1;
             }
         }
+
         private void cmbNpc_SelectedIndexChanged(object sender, EventArgs e)
         {
             int n = 0;
 
             if (lstMapNpcs.SelectedIndex >= 0)
             {
-                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum = Database.GameObjectIdFromList(GameObject.Npc,cmbNpc.SelectedIndex);
+                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum =
+                    Database.GameObjectIdFromList(GameObject.Npc, cmbNpc.SelectedIndex);
 
                 // Refresh List
                 n = lstMapNpcs.SelectedIndex;
@@ -551,13 +593,13 @@ namespace Intersect_Editor.Forms
 
         private void lightEditor_Load(object sender, EventArgs e)
         {
-
         }
 
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
             frmWarpSelection frmWarpSelection = new frmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum, (int)nudWarpX.Value, (int)nudWarpY.Value);
+            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum, (int) nudWarpX.Value,
+                (int) nudWarpY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
@@ -666,7 +708,7 @@ namespace Intersect_Editor.Forms
 
             //Warp
             grpWarp.Text = Strings.Get("attributes", "warp");
-            lblMap.Text = Strings.Get("warping", "map","");
+            lblMap.Text = Strings.Get("warping", "map", "");
             lblX.Text = Strings.Get("warping", "x", "");
             lblY.Text = Strings.Get("warping", "y", "");
             lblWarpDir.Text = Strings.Get("warping", "direction", "");
@@ -676,7 +718,7 @@ namespace Intersect_Editor.Forms
                 cmbDirection.Items.Add(Strings.Get("directions", i.ToString()));
             }
             btnVisualMapSelector.Text = Strings.Get("warping", "visual");
-            
+
             //Resource
             grpResource.Text = Strings.Get("attributes", "resourcespawn");
             lblResource.Text = Strings.Get("attributes", "resource");
@@ -684,9 +726,10 @@ namespace Intersect_Editor.Forms
             rbLevel1.Text = Strings.Get("attributes", "zlevel1");
             rbLevel2.Text = Strings.Get("attributes", "zlevel2");
 
-
             //NPCS Tab
-            grpSpawnLoc.Text = rbDeclared.Checked ? Strings.Get("npcspawns", "spawndeclared") : Strings.Get("npcspawns", "spawnrandom");
+            grpSpawnLoc.Text = rbDeclared.Checked
+                ? Strings.Get("npcspawns", "spawndeclared")
+                : Strings.Get("npcspawns", "spawnrandom");
             rbDeclared.Text = Strings.Get("npcspawns", "declaredlocation");
             rbRandom.Text = Strings.Get("npcspawns", "randomlocation");
             lblDir.Text = Strings.Get("npcspawns", "direction");
@@ -726,7 +769,7 @@ namespace Intersect_Editor.Forms
                 {
                     _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), picTileset.Handle,
                         picTileset.Width, picTileset.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 0,
-                            RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
+                        RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
                     EditorGraphics.SetTilesetChain(_chain);
                 }
             }
@@ -839,7 +882,7 @@ namespace Intersect_Editor.Forms
         private void picMapLayer_MouseHover(object sender, EventArgs e)
         {
             ToolTip tt = new ToolTip();
-            tt.SetToolTip((PictureBox)sender, Strings.Get("tiles","layer" + _mapLayers.IndexOf((PictureBox)sender)));
+            tt.SetToolTip((PictureBox) sender, Strings.Get("tiles", "layer" + _mapLayers.IndexOf((PictureBox) sender)));
         }
     }
 }

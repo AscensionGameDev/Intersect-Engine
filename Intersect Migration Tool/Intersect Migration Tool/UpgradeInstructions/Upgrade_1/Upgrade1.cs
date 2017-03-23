@@ -12,9 +12,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
 {
     public class Upgrade1
     {
-        private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
-
         //Ban Table Constants
         private const string BAN_TABLE = "bans";
         private const string BAN_ID = "id";
@@ -58,6 +55,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
         //Map List Table Constants
         private const string MAP_LIST_TABLE = "map_list";
         private const string MAP_LIST_DATA = "data";
+        private SqliteConnection _dbConnection;
+        private Object _dbLock = new Object();
 
         public Upgrade1(SqliteConnection connection)
         {
@@ -89,6 +88,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
                 SaveGameObject(obj.Value);
             }
         }
+
         public void ConvertClasses()
         {
             LoadGameObjects(GameObject.Class);
@@ -97,6 +97,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
                 SaveGameObject(obj.Value);
             }
         }
+
         public void ConvertItems()
         {
             LoadGameObjects(GameObject.Item);
@@ -105,6 +106,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
                 SaveGameObject(obj.Value);
             }
         }
+
         public void ConvertSpells()
         {
             LoadGameObjects(GameObject.Spell);
@@ -113,6 +115,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
                 SaveGameObject(obj.Value);
             }
         }
+
         public void ConvertEvents()
         {
             LoadGameObjects(GameObject.CommonEvent);
@@ -121,6 +124,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
                 SaveGameObject(obj.Value);
             }
         }
+
         public void ConvertMaps()
         {
             LoadGameObjects(GameObject.Map);
@@ -189,6 +193,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
             }
             return tableName;
         }
+
         private void ClearGameObjects(GameObject type)
         {
             switch (type)
@@ -245,6 +250,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         private void LoadGameObject(GameObject type, int index, byte[] data)
         {
             switch (type)
@@ -295,7 +301,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
                     SpellBase.AddObject(index, spl);
                     break;
                 case GameObject.Map:
-                    var map = new MapBase(index,false);
+                    var map = new MapBase(index, false);
                     MapBase.AddObject(index, map);
                     map.Load(data);
                     break;
@@ -335,6 +341,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         public void LoadGameObjects(GameObject type)
         {
             var nullIssues = "";
@@ -370,6 +377,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
                 throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine + nullIssues));
             }
         }
+
         public void SaveGameObject(DatabaseObject gameObject)
         {
             if (gameObject == null)
@@ -399,67 +407,69 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
                 }
             }
         }
-        
 
         //Create Missing Tables
         private void CreateLogsTable()
         {
             var cmd = "CREATE TABLE " + LOG_TABLE + " ("
-                        + LOG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                        + LOG_TIME + " TEXT,"
-                        + LOG_TYPE + " TEXT,"
-                        + LOG_INFO + " TEXT"
-                        + ");";
+                      + LOG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + LOG_TIME + " TEXT,"
+                      + LOG_TYPE + " TEXT,"
+                      + LOG_INFO + " TEXT"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private void CreateMutesTable()
         {
             var cmd = "CREATE TABLE " + MUTE_TABLE + " ("
-                + MUTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + MUTE_TIME + " TEXT,"
-                + MUTE_USER + " INTEGER,"
-                + MUTE_IP + " TEXT,"
-                + MUTE_DURATION + " INTEGER,"
-                + MUTE_REASON + " TEXT,"
-                + MUTE_MUTER + " INTEGER"
-                + ");";
+                      + MUTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + MUTE_TIME + " TEXT,"
+                      + MUTE_USER + " INTEGER,"
+                      + MUTE_IP + " TEXT,"
+                      + MUTE_DURATION + " INTEGER,"
+                      + MUTE_REASON + " TEXT,"
+                      + MUTE_MUTER + " INTEGER"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private void CreateBansTable()
         {
             var cmd = "CREATE TABLE " + BAN_TABLE + " ("
-                + BAN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + BAN_TIME + " TEXT,"
-                + BAN_USER + " INTEGER,"
-                + BAN_IP + " TEXT,"
-                + BAN_DURATION + " INTEGER,"
-                + BAN_REASON + " TEXT,"
-                + BAN_BANNER + " INTEGER"
-                + ");";
+                      + BAN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + BAN_TIME + " TEXT,"
+                      + BAN_USER + " INTEGER,"
+                      + BAN_IP + " TEXT,"
+                      + BAN_DURATION + " INTEGER,"
+                      + BAN_REASON + " TEXT,"
+                      + BAN_BANNER + " INTEGER"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private void CreateCharacterQuestsTable()
         {
             var cmd = "CREATE TABLE " + CHAR_QUESTS_TABLE + " ("
-                + CHAR_QUEST_CHAR_ID + " INTEGER,"
-                + CHAR_QUEST_ID + " INTEGER,"
-                + CHAR_QUEST_TASK + " INTEGER,"
-                + CHAR_QUEST_TASK_PROGRESS + " INTEGER,"
-                + CHAR_QUEST_COMPLETED + " INTEGER,"
-                + " unique('" + CHAR_QUEST_CHAR_ID + "','" + CHAR_QUEST_ID + "')"
-                + ");";
+                      + CHAR_QUEST_CHAR_ID + " INTEGER,"
+                      + CHAR_QUEST_ID + " INTEGER,"
+                      + CHAR_QUEST_TASK + " INTEGER,"
+                      + CHAR_QUEST_TASK_PROGRESS + " INTEGER,"
+                      + CHAR_QUEST_COMPLETED + " INTEGER,"
+                      + " unique('" + CHAR_QUEST_CHAR_ID + "','" + CHAR_QUEST_ID + "')"
+                      + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;

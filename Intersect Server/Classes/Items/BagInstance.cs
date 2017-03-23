@@ -2,8 +2,8 @@
 {
     public class BagInstance
     {
-        public int Slots = 0;
         public ItemInstance[] Items = null;
+        public int Slots = 0;
 
         public BagInstance(int slots)
         {
@@ -11,10 +11,9 @@
             Items = new ItemInstance[slots];
             for (int i = 0; i < slots; i++)
             {
-                Items[i] = new ItemInstance(-1,-1, -1);
+                Items[i] = new ItemInstance(-1, -1, -1);
             }
         }
-
 
         public BagInstance Clone()
         {

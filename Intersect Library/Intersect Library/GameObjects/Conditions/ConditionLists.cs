@@ -8,7 +8,6 @@ namespace Intersect.GameObjects.Conditions
 
         public ConditionLists()
         {
-
         }
 
         public ConditionLists(ByteBuffer buff)

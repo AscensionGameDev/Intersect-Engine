@@ -1,20 +1,20 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
-using Intersect_Editor.Classes;
 using Intersect;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
+using Intersect_Editor.Classes;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_ConditionalBranch : UserControl
     {
-        private EventCommand _myCommand;
-        private EventPage _currentPage;
         private readonly FrmEvent _eventEditor;
+        private EventPage _currentPage;
+        private EventCommand _myCommand;
         public bool Cancelled = false;
+
         public EventCommand_ConditionalBranch(EventCommand refCommand, EventPage refPage, FrmEvent editor)
         {
             InitializeComponent();
@@ -31,7 +31,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbSwitchVal.SelectedIndex = _myCommand.Ints[2];
                     break;
                 case 1: //Player Variable
-                    cmbVariable.SelectedIndex = Database.GameObjectListIndex(GameObject.PlayerVariable, _myCommand.Ints[1]);
+                    cmbVariable.SelectedIndex = Database.GameObjectListIndex(GameObject.PlayerVariable,
+                        _myCommand.Ints[1]);
                     cmbVariableMod.SelectedIndex = _myCommand.Ints[2];
                     txtVariableVal.Text = _myCommand.Ints[3].ToString();
                     break;
@@ -40,7 +41,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbSwitchVal.SelectedIndex = _myCommand.Ints[2];
                     break;
                 case 3: //Global Variable
-                    cmbVariable.SelectedIndex = Database.GameObjectListIndex(GameObject.ServerVariable, _myCommand.Ints[1]);
+                    cmbVariable.SelectedIndex = Database.GameObjectListIndex(GameObject.ServerVariable,
+                        _myCommand.Ints[1]);
                     cmbVariableMod.SelectedIndex = _myCommand.Ints[2];
                     txtVariableVal.Text = _myCommand.Ints[3].ToString();
                     break;
@@ -80,7 +82,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     if (cmbTaskModifier.SelectedIndex != 0)
                     {
                         //Get Quest Task Here
-                        var quest = QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, cmbQuestInProgress.SelectedIndex));
+                        var quest =
+                            QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest,
+                                cmbQuestInProgress.SelectedIndex));
                         if (quest != null)
                         {
                             for (int i = 0; i < quest.Tasks.Count; i++)
@@ -360,7 +364,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             if (_currentPage != null)
             {
                 if (_myCommand.Ints[4] == 0)
-                // command.Ints[4 & 5] are reserved for referencing which command list the true/false braches follow
+                    // command.Ints[4 & 5] are reserved for referencing which command list the true/false braches follow
                 {
                     for (var i = 0; i < 2; i++)
                     {
@@ -378,7 +382,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     _myCommand.Ints[2] = cmbSwitchVal.SelectedIndex;
                     break;
                 case 1: //Player Variable
-                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.PlayerVariable, cmbVariable.SelectedIndex);
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.PlayerVariable,
+                        cmbVariable.SelectedIndex);
                     _myCommand.Ints[2] = cmbVariableMod.SelectedIndex;
                     if (int.TryParse(txtVariableVal.Text, out n))
                     {
@@ -394,7 +399,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     _myCommand.Ints[2] = cmbSwitchVal.SelectedIndex;
                     break;
                 case 3: //Global Variable
-                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.ServerVariable, cmbVariable.SelectedIndex);
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.ServerVariable,
+                        cmbVariable.SelectedIndex);
                     _myCommand.Ints[2] = cmbVariableMod.SelectedIndex;
                     if (int.TryParse(txtVariableVal.Text, out n))
                     {
@@ -407,7 +413,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     break;
                 case 4: //Has Item
                     _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Item, cmbItem.SelectedIndex);
-                    _myCommand.Ints[2] = (int)nudItemAmount.Value;
+                    _myCommand.Ints[2] = (int) nudItemAmount.Value;
                     break;
                 case 5: //Class Is
                     _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Class, cmbClass.SelectedIndex);
@@ -417,7 +423,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     break;
                 case 7: //Level or Stat is
                     _myCommand.Ints[1] = cmbLevelComparator.SelectedIndex;
-                    _myCommand.Ints[2] = (int)nudLevelStatValue.Value;
+                    _myCommand.Ints[2] = (int) nudLevelStatValue.Value;
                     _myCommand.Ints[3] = cmbLevelStat.SelectedIndex;
                     break;
                 case 8: //Self Switch
@@ -435,13 +441,16 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Quest, cmbStartQuest.SelectedIndex);
                     break;
                 case 12: //Quest IN Progress
-                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Quest, cmbQuestInProgress.SelectedIndex);
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Quest,
+                        cmbQuestInProgress.SelectedIndex);
                     _myCommand.Ints[2] = cmbTaskModifier.SelectedIndex;
                     _myCommand.Ints[3] = -1;
                     if (cmbTaskModifier.SelectedIndex != 0)
                     {
                         //Get Quest Task Here
-                        var quest = QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, cmbQuestInProgress.SelectedIndex));
+                        var quest =
+                            QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest,
+                                cmbQuestInProgress.SelectedIndex));
                         if (quest != null)
                         {
                             if (cmbQuestTask.SelectedIndex > -1)

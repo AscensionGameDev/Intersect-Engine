@@ -2,7 +2,8 @@
 using System.Linq;
 using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Switches_and_Variables
+namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.
+    Switches_and_Variables
 {
     public class ServerVariableBase : DatabaseObject
     {
@@ -39,7 +40,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return (ServerVariableBase)Objects[index];
+                return (ServerVariableBase) Objects[index];
             }
             return null;
         }
@@ -48,7 +49,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return ((ServerVariableBase)Objects[index]).Name;
+                return ((ServerVariableBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -76,26 +77,32 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, ServerVariableBase> GetObjects()
         {
-            Dictionary<int, ServerVariableBase> objects = Objects.ToDictionary(k => k.Key, v => (ServerVariableBase)v.Value);
+            Dictionary<int, ServerVariableBase> objects = Objects.ToDictionary(k => k.Key,
+                v => (ServerVariableBase) v.Value);
             return objects;
         }
     }

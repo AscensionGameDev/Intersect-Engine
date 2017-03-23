@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
@@ -8,8 +7,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_SelfSwitch : UserControl
     {
-        private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
+        private EventCommand _myCommand;
+
         public EventCommand_SelfSwitch(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();

@@ -1,4 +1,5 @@
 ﻿using System;
+using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
@@ -8,21 +9,20 @@ using IntersectClientExtras.Gwen.ControlInternal;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI.Game.Chat;
-using Intersect.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
     public class Chatbox
     {
+        private TextBox _chatboxInput;
+        private ListBox _chatboxMessages;
+        private ScrollBar _chatboxScrollBar;
+        private Button _chatboxSendButton;
         //Window Controls
         private ImagePanel _chatboxWindow;
-        private ListBox _chatboxMessages;
-        private TextBox _chatboxInput;
-        private Button _chatboxSendButton;
-        private ScrollBar _chatboxScrollBar;
-        private bool _receivedMessage = false;
-        private int _messageIndex = 0;
         private GameGuiBase _gameUi;
+        private int _messageIndex = 0;
+        private bool _receivedMessage = false;
 
         //Init
         public Chatbox(Canvas _gameCanvas, GameGuiBase gameUi)
@@ -31,51 +31,74 @@ namespace Intersect_Client.Classes.UI.Game
 
             //Chatbox Window
             _chatboxWindow = new ImagePanel(_gameCanvas);
-            _chatboxWindow.SetSize(402,173);
+            _chatboxWindow.SetSize(402, 173);
             _chatboxWindow.SetPosition(0, _gameCanvas.Height - _chatboxWindow.Height);
             _chatboxWindow.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "chatbox.png");
 
-            _chatboxMessages = new ListBox(_chatboxWindow) { IsDisabled = true };
-            _chatboxMessages.SetPosition(19,20);
-            _chatboxMessages.SetSize(369,113);
+            _chatboxMessages = new ListBox(_chatboxWindow) {IsDisabled = true};
+            _chatboxMessages.SetPosition(19, 20);
+            _chatboxMessages.SetSize(369, 113);
             _chatboxMessages.ShouldDrawBackground = false;
             _chatboxMessages.EnableScroll(false, true);
             _chatboxMessages.AutoHideBars = false;
 
             _chatboxScrollBar = _chatboxMessages.GetVerticalScrollBar();
-            _chatboxScrollBar.RenderColor = new Color(200,40,40,40);
-            _chatboxScrollBar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarnormal.png"),Dragger.ControlState.Normal);
-            _chatboxScrollBar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarhover.png"), Dragger.ControlState.Hovered);
-            _chatboxScrollBar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarclicked.png"), Dragger.ControlState.Clicked);
+            _chatboxScrollBar.RenderColor = new Color(200, 40, 40, 40);
+            _chatboxScrollBar.SetScrollBarImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarnormal.png"),
+                Dragger.ControlState.Normal);
+            _chatboxScrollBar.SetScrollBarImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarhover.png"),
+                Dragger.ControlState.Hovered);
+            _chatboxScrollBar.SetScrollBarImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarclicked.png"),
+                Dragger.ControlState.Clicked);
 
             var upButton = _chatboxScrollBar.GetScrollBarButton(Pos.Top);
-            upButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrownormal.png"), Button.ControlState.Normal);
-            upButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowclicked.png"), Button.ControlState.Clicked);
-            upButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowhover.png"), Button.ControlState.Hovered);
+            upButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrownormal.png"),
+                Button.ControlState.Normal);
+            upButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowclicked.png"),
+                Button.ControlState.Clicked);
+            upButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowhover.png"),
+                Button.ControlState.Hovered);
             var downButton = _chatboxScrollBar.GetScrollBarButton(Pos.Bottom);
-            downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrownormal.png"), Button.ControlState.Normal);
-            downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowclicked.png"), Button.ControlState.Clicked);
-            downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowhover.png"), Button.ControlState.Hovered);
-
+            downButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrownormal.png"),
+                Button.ControlState.Normal);
+            downButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowclicked.png"),
+                Button.ControlState.Clicked);
+            downButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowhover.png"),
+                Button.ControlState.Hovered);
 
             _chatboxInput = new TextBox(_chatboxWindow);
-            _chatboxInput.SetPosition(18,144);
+            _chatboxInput.SetPosition(18, 144);
             _chatboxInput.SetSize(314, 16);
             _chatboxInput.SubmitPressed += ChatBoxInput_SubmitPressed;
-            _chatboxInput.Text = Strings.Get("chatbox","enterchat");
+            _chatboxInput.Text = Strings.Get("chatbox", "enterchat");
             _chatboxInput.Clicked += ChatBoxInput_Clicked;
             _chatboxInput.ShouldDrawBackground = false;
             _chatboxInput.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Normal);
             Gui.FocusElements.Add(_chatboxInput);
 
             _chatboxSendButton = new Button(_chatboxWindow);
-            _chatboxSendButton.SetSize(49,18);
-            _chatboxSendButton.SetPosition(_chatboxMessages.Right - _chatboxSendButton.Width,143);
-            _chatboxSendButton.Text = Strings.Get("chatbox","send");
+            _chatboxSendButton.SetSize(49, 18);
+            _chatboxSendButton.SetPosition(_chatboxMessages.Right - _chatboxSendButton.Width, 143);
+            _chatboxSendButton.Text = Strings.Get("chatbox", "send");
             _chatboxSendButton.Clicked += ChatBoxSendBtn_Clicked;
-            _chatboxSendButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "sendnormal.png"),Button.ControlState.Normal);
-            _chatboxSendButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "sendhover.png"), Button.ControlState.Hovered);
-            _chatboxSendButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "sendclicked.png"), Button.ControlState.Clicked);
+            _chatboxSendButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "sendnormal.png"),
+                Button.ControlState.Normal);
+            _chatboxSendButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "sendhover.png"),
+                Button.ControlState.Hovered);
+            _chatboxSendButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "sendclicked.png"),
+                Button.ControlState.Clicked);
             _chatboxSendButton.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _chatboxSendButton.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _chatboxSendButton.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
@@ -139,8 +162,12 @@ namespace Intersect_Client.Classes.UI.Game
         //Chatbox Window
         void ChatBoxInput_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_chatboxInput.Text == "Press enter to chat.") { _chatboxInput.Text = ""; }
+            if (_chatboxInput.Text == "Press enter to chat.")
+            {
+                _chatboxInput.Text = "";
+            }
         }
+
         void ChatBoxInput_SubmitPressed(Base sender, EventArgs arguments)
         {
             if (_chatboxInput.Text.Trim().Length <= 0 || _chatboxInput.Text == "Press enter to chat.")
@@ -151,6 +178,7 @@ namespace Intersect_Client.Classes.UI.Game
             PacketSender.SendChatMsg(_chatboxInput.Text.Trim());
             _chatboxInput.Text = "Press enter to chat.";
         }
+
         void ChatBoxSendBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             if (_chatboxInput.Text.Trim().Length <= 0 || _chatboxInput.Text == "Press enter to chat.")

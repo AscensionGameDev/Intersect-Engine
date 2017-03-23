@@ -7,6 +7,7 @@ namespace Intersect_Server.Classes.Networking
     public class WebSocket : GameSocket
     {
         private WebSocketContext _myContext;
+
         public WebSocket(WebSocketContext context)
         {
             _myContext = context;

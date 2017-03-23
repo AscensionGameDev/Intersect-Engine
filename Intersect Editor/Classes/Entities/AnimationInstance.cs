@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
-using Intersect_Editor.Classes.Core;
 using Intersect;
 using Intersect.GameObjects;
+using Intersect_Editor.Classes.Core;
 using Microsoft.Xna.Framework.Graphics;
 using Color = System.Drawing.Color;
 
@@ -10,19 +10,19 @@ namespace Intersect_Editor.Classes.Entities
 {
     public class AnimationInstance
     {
-        public AnimationBase myBase;
+        private int _renderDir = 0;
         private float _renderX = 0;
         private float _renderY = 0;
-        private int _renderDir = 0;
-        private int lowerFrame;
-        private int upperFrame;
-        private int lowerLoop;
-        private int upperLoop;
-        private long lowerTimer;
-        private long upperTimer;
         private bool infiniteLoop = false;
+        private int lowerFrame;
+        private int lowerLoop;
+        private long lowerTimer;
+        public AnimationBase myBase;
         private bool showLower = true;
         private bool showUpper = true;
+        private int upperFrame;
+        private int upperLoop;
+        private long upperTimer;
 
         public AnimationInstance(AnimationBase animBase, bool loopForever)
         {

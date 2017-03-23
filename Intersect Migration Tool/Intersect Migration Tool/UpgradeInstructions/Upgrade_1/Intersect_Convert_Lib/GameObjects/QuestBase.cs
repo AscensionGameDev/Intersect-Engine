@@ -1,26 +1,4 @@
-﻿/*
-    Intersect Game Engine (Server)
-    Copyright (C) 2015  JC Snider, Joe Bridges
-    
-    Website: http://ascensiongamedev.com
-    Contact Email: admin@ascensiongamedev.com 
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License along
-    with this program; if not, write to the Free Software Foundation, Inc.,
-    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Intersect;
 
@@ -32,26 +10,25 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
         public new const string DATABASE_TABLE = "quests";
         public new const GameObject OBJECT_TYPE = GameObject.Quest;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        
-        public string Name = "New Quest";
-        public string StartDesc = "";
-        public string EndDesc = "";
 
         //Requirements
         public int ClassReq = 0;
+        public string EndDesc = "";
         public int ItemReq = 0;
         public int LevelReq = 0;
+
+        public string Name = "New Quest";
         public int QuestReq = 0;
+        public string StartDesc = "";
         public int SwitchReq = 0;
-        public int VariableReq = 0;
-        public int VariableValue = 0;
 
         //Tasks
         public List<QuestTask> Tasks = new List<QuestTask>();
+        public int VariableReq = 0;
+        public int VariableValue = 0;
 
         public QuestBase(int id) : base(id)
         {
-            
         }
 
         public override void Load(byte[] packet)
@@ -128,7 +105,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return (QuestBase)Objects[index];
+                return (QuestBase) Objects[index];
             }
             return null;
         }
@@ -137,7 +114,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return ((QuestBase)Objects[index]).Name;
+                return ((QuestBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -165,36 +142,41 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, QuestBase> GetObjects()
         {
-            Dictionary<int, QuestBase> objects = Objects.ToDictionary(k => k.Key, v => (QuestBase)v.Value);
+            Dictionary<int, QuestBase> objects = Objects.ToDictionary(k => k.Key, v => (QuestBase) v.Value);
             return objects;
         }
 
         public class QuestTask
         {
-            public int Objective = 0;
-            public string Desc = "";
             public int Data1 = 0;
             public int Data2 = 0;
+            public string Desc = "";
             public int Experience = 0;
+            public int Objective = 0;
             public List<QuestReward> Rewards = new List<QuestReward>();
 
             public QuestTask()
@@ -208,8 +190,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
 
         public class QuestReward
         {
-            public int ItemNum = 0;
             public int Amount = 0;
+            public int ItemNum = 0;
         }
     }
 }

@@ -4,8 +4,8 @@ namespace Intersect_Server.Classes.Maps
 {
     public class MapResourceSpawn
     {
-        public int EntityIndex = -1;
         public Resource Entity;
+        public int EntityIndex = -1;
         public long RespawnTime = -1;
     }
 }

@@ -1,18 +1,18 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
-using Intersect_Editor.Classes;
 using Intersect;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
+using Intersect_Editor.Classes;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_ChangeSpells : UserControl
     {
-        private EventCommand _myCommand;
-        private EventPage _currentPage;
         private readonly FrmEvent _eventEditor;
+        private EventPage _currentPage;
+        private EventCommand _myCommand;
+
         public EventCommand_ChangeSpells(EventCommand refCommand, EventPage refPage, FrmEvent editor)
         {
             InitializeComponent();
@@ -23,7 +23,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             cmbSpell.Items.Clear();
             cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
             cmbAction.SelectedIndex = _myCommand.Ints[0];
-            cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell,_myCommand.Ints[1]);
+            cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell, _myCommand.Ints[1]);
         }
 
         private void InitLocalization()
@@ -43,9 +43,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             _myCommand.Ints[0] = cmbAction.SelectedIndex;
-            _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Spell,cmbSpell.SelectedIndex);
+            _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Spell, cmbSpell.SelectedIndex);
             if (_myCommand.Ints[4] == 0)
-            // command.Ints[4, and 5] are reserved for when the action succeeds or fails
+                // command.Ints[4, and 5] are reserved for when the action succeeds or fails
             {
                 for (var i = 0; i < 2; i++)
                 {

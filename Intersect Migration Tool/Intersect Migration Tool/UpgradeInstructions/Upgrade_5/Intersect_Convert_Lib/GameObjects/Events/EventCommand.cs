@@ -7,10 +7,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
 {
     public class EventCommand
     {
-        public EventCommandType Type;
-        public string[] Strs = new string[6];
         public int[] Ints = new int[6];
         public EventMoveRoute Route;
+        public string[] Strs = new string[6];
+        public EventCommandType Type;
+
         public EventCommand()
         {
             for (var i = 0; i < 6; i++)
@@ -22,7 +23,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
 
         public void Load(ByteBuffer myBuffer)
         {
-            Type = (EventCommandType)myBuffer.ReadInteger();
+            Type = (EventCommandType) myBuffer.ReadInteger();
             for (var x = 0; x < 6; x++)
             {
                 Strs[x] = myBuffer.ReadString();
@@ -37,7 +38,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
 
         public void Save(ByteBuffer myBuffer)
         {
-            myBuffer.WriteInteger((int)Type);
+            myBuffer.WriteInteger((int) Type);
             for (var x = 0; x < 6; x++)
             {
                 myBuffer.WriteString(Strs[x]);
@@ -141,7 +142,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
                     output += Ints[2];
                     return output;
                 case 8: //Self Switch
-                    return "Self Switch " + (char)('A' + Ints[1]) + " is " + Convert.ToBoolean(Ints[2]);
+                    return "Self Switch " + (char) ('A' + Ints[1]) + " is " + Convert.ToBoolean(Ints[2]);
                 case 9: //Power is
                     output = "Player's Power is";
                     switch (Ints[1])
@@ -199,11 +200,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
                         switch (Ints[2])
                         {
                             case 1:
-                                return "Quest In Progress: " + QuestBase.GetName(Ints[1]) + ", Before Task: " + task.GetTaskString();
+                                return "Quest In Progress: " + QuestBase.GetName(Ints[1]) + ", Before Task: " +
+                                       task.GetTaskString();
                             case 2:
-                                return "Quest In Progress: " + QuestBase.GetName(Ints[1]) + ", After Task: " + task.GetTaskString();
+                                return "Quest In Progress: " + QuestBase.GetName(Ints[1]) + ", After Task: " +
+                                       task.GetTaskString();
                             case 3:
-                                return "Quest In Progress: " + QuestBase.GetName(Ints[1]) + ", On Task: " + task.GetTaskString();
+                                return "Quest In Progress: " + QuestBase.GetName(Ints[1]) + ", On Task: " +
+                                       task.GetTaskString();
                             default:
                                 return "Quest In Progress: " + QuestBase.GetName(Ints[1]) + ", On Any Task";
                         }

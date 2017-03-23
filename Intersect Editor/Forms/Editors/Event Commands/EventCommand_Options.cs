@@ -1,19 +1,19 @@
-﻿
-using System;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using Intersect_Editor.Classes.Core;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
+using Intersect_Editor.Classes.Core;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_Options : UserControl
     {
-        private EventCommand _myCommand;
-        private EventPage _currentPage;
         private readonly FrmEvent _eventEditor;
+        private EventPage _currentPage;
+        private EventCommand _myCommand;
+
         public EventCommand_Options(EventCommand refCommand, EventPage refPage, FrmEvent editor)
         {
             InitializeComponent();
@@ -27,7 +27,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             txtShowOptionsOpt3.Text = _myCommand.Strs[3];
             txtShowOptionsOpt4.Text = _myCommand.Strs[4];
             cmbFace.Items.Clear();
-            cmbFace.Items.Add(Strings.Get("general","none"));
+            cmbFace.Items.Add(Strings.Get("general", "none"));
             cmbFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
             if (cmbFace.Items.IndexOf(_myCommand.Strs[5]) > -1)
             {

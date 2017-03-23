@@ -1,19 +1,18 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
-using Intersect_Editor.Classes;
 using Intersect;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-
+using Intersect_Editor.Classes;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_Variable : UserControl
     {
-        private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
         private bool _loading = false;
+        private EventCommand _myCommand;
+
         public EventCommand_Variable(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
@@ -103,18 +102,18 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 _myCommand.Ints[0] = (int) SwitchVariableTypes.PlayerVariable;
                 _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.PlayerVariable,
-                        cmbVariable.SelectedIndex);
+                    cmbVariable.SelectedIndex);
             }
             if (rdoGlobalVariable.Checked)
             {
                 _myCommand.Ints[0] = (int) SwitchVariableTypes.ServerVariable;
                 _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.ServerVariable,
-                        cmbVariable.SelectedIndex);
+                    cmbVariable.SelectedIndex);
             }
             if (optSet.Checked)
             {
                 _myCommand.Ints[2] = 0;
-                _myCommand.Ints[3] = (int)nudSet.Value;
+                _myCommand.Ints[3] = (int) nudSet.Value;
             }
             else if (optAdd.Checked)
             {

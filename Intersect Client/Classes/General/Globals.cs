@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
+using Intersect;
+using Intersect.GameObjects;
 using IntersectClientExtras.Database;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Input;
 using IntersectClientExtras.Sys;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.Items;
-using Intersect;
-using Intersect.GameObjects;
 
 namespace Intersect_Client.Classes.General
 {
@@ -14,10 +14,10 @@ namespace Intersect_Client.Classes.General
     {
         //Engine Progression
         public static int IntroIndex = 0;
-        public static long IntroStartTime =-1;
+        public static long IntroStartTime = -1;
         public static long IntroDelay = 2000;
         public static bool IntroComing = true;
-        
+
         //Game Lock
         public static object GameLock = new object();
         public static bool IsRunning = false;
@@ -43,7 +43,6 @@ namespace Intersect_Client.Classes.General
         public static int[] MapRevision;
         public static float MapRenderTimer = 0f;
 
-
         //Local player information
         public static Player Me;
         public static int CurrentMap = -1;
@@ -61,21 +60,6 @@ namespace Intersect_Client.Classes.General
         //public static List<Entity> Entities = new List<Entity>();
         public static Dictionary<int, Entity> Entities = new Dictionary<int, Entity>();
         public static List<int> EntitiesToDispose = new List<int>();
-
-        public static Entity GetEntity(int index, int type, long spawnTime)
-        {
-            if (Entities.ContainsKey(index))
-            {
-                if ((int) Entities[index].GetEntityType() == type && Entities[index].SpawnTime == spawnTime)
-                {
-                    EntitiesToDispose.Remove(Entities[index].MyIndex);
-                    return Entities[index];
-                }
-                Entities[index].Dispose();
-                Entities.Remove(index);
-            }
-            return null;
-        }
 
         //Bank
         public static ItemInstance[] Bank = new ItemInstance[Options.MaxBankSlots];
@@ -108,5 +92,20 @@ namespace Intersect_Client.Classes.General
         public static List<EventHold> EventHolds = new List<EventHold>();
         public static List<int> QuestOffers = new List<int>();
         public static bool MoveRouteActive = false;
+
+        public static Entity GetEntity(int index, int type, long spawnTime)
+        {
+            if (Entities.ContainsKey(index))
+            {
+                if ((int) Entities[index].GetEntityType() == type && Entities[index].SpawnTime == spawnTime)
+                {
+                    EntitiesToDispose.Remove(Entities[index].MyIndex);
+                    return Entities[index];
+                }
+                Entities[index].Dispose();
+                Entities.Remove(index);
+            }
+            return null;
+        }
     }
 }

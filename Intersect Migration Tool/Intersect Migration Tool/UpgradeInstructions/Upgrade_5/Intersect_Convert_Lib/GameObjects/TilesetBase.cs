@@ -41,17 +41,16 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return (TilesetBase)Objects[index];
+                return (TilesetBase) Objects[index];
             }
             return null;
         }
-
 
         public static string GetName(int index)
         {
             if (Objects.ContainsKey(index))
             {
-                return ((TilesetBase)Objects[index]).Value;
+                return ((TilesetBase) Objects[index]).Value;
             }
             return "Deleted";
         }
@@ -79,26 +78,31 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, TilesetBase> GetObjects()
         {
-            Dictionary<int, TilesetBase> objects = Objects.ToDictionary(k => k.Key, v => (TilesetBase)v.Value);
+            Dictionary<int, TilesetBase> objects = Objects.ToDictionary(k => k.Key, v => (TilesetBase) v.Value);
             return objects;
         }
     }

@@ -12,9 +12,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
 {
     public class Upgrade2
     {
-        private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
-
         //Ban Table Constants
         private const string BAN_TABLE = "bans";
         private const string BAN_ID = "id";
@@ -43,6 +40,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
         //Map List Table Constants
         private const string MAP_LIST_TABLE = "map_list";
         private const string MAP_LIST_DATA = "data";
+        private SqliteConnection _dbConnection;
+        private Object _dbLock = new Object();
 
         public Upgrade2(SqliteConnection connection)
         {
@@ -68,6 +67,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                 SaveGameObject(obj.Value);
             }
         }
+
         public void ConvertProjectiles()
         {
             LoadGameObjects(GameObject.Projectile);
@@ -136,6 +136,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
             }
             return tableName;
         }
+
         private void ClearGameObjects(GameObject type)
         {
             switch (type)
@@ -192,6 +193,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         private void LoadGameObject(GameObject type, int index, byte[] data)
         {
             switch (type)
@@ -282,6 +284,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         public void LoadGameObjects(GameObject type)
         {
             var nullIssues = "";
@@ -317,6 +320,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                 throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine + nullIssues));
             }
         }
+
         public void SaveGameObject(DatabaseObject gameObject)
         {
             if (gameObject == null)
@@ -347,7 +351,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
             }
         }
 
-
         private void FixMutesTable()
         {
             var cmd = "DROP TABLE " + MUTE_TABLE;
@@ -356,21 +359,22 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
-             cmd = "CREATE TABLE " + MUTE_TABLE + " ("
-                + MUTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + MUTE_TIME + " TEXT,"
-                + MUTE_USER + " INTEGER,"
-                + MUTE_IP + " TEXT,"
-                + MUTE_DURATION + " INTEGER,"
-                + MUTE_REASON + " TEXT,"
-                + MUTE_MUTER + " TEXT"
-                + ");";
+            cmd = "CREATE TABLE " + MUTE_TABLE + " ("
+                  + MUTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                  + MUTE_TIME + " TEXT,"
+                  + MUTE_USER + " INTEGER,"
+                  + MUTE_IP + " TEXT,"
+                  + MUTE_DURATION + " INTEGER,"
+                  + MUTE_REASON + " TEXT,"
+                  + MUTE_MUTER + " TEXT"
+                  + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private void FixBansTable()
         {
             var cmd = "DROP TABLE " + BAN_TABLE;
@@ -380,14 +384,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                 createCommand.ExecuteNonQuery();
             }
             cmd = "CREATE TABLE " + BAN_TABLE + " ("
-                    + BAN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    + BAN_TIME + " TEXT,"
-                    + BAN_USER + " INTEGER,"
-                    + BAN_IP + " TEXT,"
-                    + BAN_DURATION + " INTEGER,"
-                    + BAN_REASON + " TEXT,"
-                    + BAN_BANNER + " TEXT"
-                    + ");";
+                  + BAN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                  + BAN_TIME + " TEXT,"
+                  + BAN_USER + " INTEGER,"
+                  + BAN_IP + " TEXT,"
+                  + BAN_DURATION + " INTEGER,"
+                  + BAN_REASON + " TEXT,"
+                  + BAN_BANNER + " TEXT"
+                  + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;

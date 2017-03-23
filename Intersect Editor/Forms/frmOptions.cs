@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect_Editor.Classes.Core;
 using Intersect.Localization;
+using Intersect_Editor.Classes.Core;
 
 namespace Intersect_Editor.Forms
 {
@@ -40,7 +40,7 @@ namespace Intersect_Editor.Forms
         private void frmOptions_FormClosing(object sender, FormClosingEventArgs e)
         {
             Preferences.SavePreference("SuppressTextureWarning", chkSuppressTilesetWarning.Checked.ToString());
-            Preferences.SavePreference("ClientPath",txtGamePath.Text);
+            Preferences.SavePreference("ClientPath", txtGamePath.Text);
         }
 
         private void btnBrowseClient_Click(object sender, EventArgs e)
@@ -64,7 +64,6 @@ namespace Intersect_Editor.Forms
 
         private void chkSuppressTilesetWarning_CheckedChanged(object sender, EventArgs e)
         {
-
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Intersect;
 using Intersect.GameObjects;
@@ -8,34 +6,33 @@ using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
 
-
 namespace Intersect_Server.Classes.Entities
 {
     public class Resource : Entity
     {
+        public bool IsDead;
         // Resource Number
         public ResourceBase MyBase;
 
         //Respawn
         public long RespawnTime = 0;
 
-        public bool IsDead;
-        
         public Resource(int index, ResourceBase resource) : base(index)
         {
             MyBase = resource;
             MyName = resource.Name;
             MySprite = resource.InitialGraphic;
-            Vital[(int)Vitals.Health] = Globals.Rand.Next(Math.Min(1,resource.MinHP), Math.Max(resource.MaxHP, Math.Min(1, resource.MinHP)) + 1);
-            MaxVital[(int)Vitals.Health] = Vital[(int)Vitals.Health];
+            Vital[(int) Vitals.Health] = Globals.Rand.Next(Math.Min(1, resource.MinHP),
+                Math.Max(resource.MaxHP, Math.Min(1, resource.MinHP)) + 1);
+            MaxVital[(int) Vitals.Health] = Vital[(int) Vitals.Health];
             Passable = Convert.ToInt32(resource.WalkableBefore);
             HideName = 1;
         }
 
         public void Destroy(bool dropitems = false, Entity killer = null)
         {
-            Die(dropitems,killer);
-            PacketSender.SendEntityLeave(MyIndex,(int)EntityTypes.Resource,CurrentMap);
+            Die(dropitems, killer);
+            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Resource, CurrentMap);
         }
 
         public override void Die(bool dropitems = false, Entity killer = null)
@@ -58,8 +55,9 @@ namespace Intersect_Server.Classes.Entities
         public void Spawn()
         {
             MySprite = MyBase.InitialGraphic;
-            Vital[(int)Vitals.Health] = Globals.Rand.Next(Math.Min(1, MyBase.MinHP), Math.Max(MyBase.MaxHP, Math.Min(1, MyBase.MinHP)) + 1);
-            MaxVital[(int)Vitals.Health] = Vital[(int)Vitals.Health];
+            Vital[(int) Vitals.Health] = Globals.Rand.Next(Math.Min(1, MyBase.MinHP),
+                Math.Max(MyBase.MaxHP, Math.Min(1, MyBase.MinHP)) + 1);
+            MaxVital[(int) Vitals.Health] = Vital[(int) Vitals.Health];
             Passable = Convert.ToInt32(MyBase.WalkableBefore);
             Inventory.Clear();
             //Give Resource Drops
@@ -67,10 +65,9 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (Globals.Rand.Next(1, 101) <= MyBase.Drops[n].Chance)
                 {
-                    Inventory.Add(new MapItemInstance(MyBase.Drops[n].ItemNum,MyBase.Drops[n].Amount, -1));
+                    Inventory.Add(new MapItemInstance(MyBase.Drops[n].ItemNum, MyBase.Drops[n].Amount, -1));
                 }
             }
-           
 
             IsDead = false;
             PacketSender.SendEntityDataToProximity(this);
@@ -131,7 +128,8 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (ItemBase.GetItem(item.ItemNum) != null)
                     {
-                        MapInstance.GetMap(selectedTile.GetMap()).SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.ItemVal);
+                        MapInstance.GetMap(selectedTile.GetMap())
+                            .SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.ItemVal);
                     }
                 }
             }
@@ -146,6 +144,7 @@ namespace Intersect_Server.Classes.Entities
             myBuffer.WriteInteger(MyBase.Id);
             return myBuffer.ToArray();
         }
+
         public override EntityTypes GetEntityType()
         {
             return EntityTypes.Resource;

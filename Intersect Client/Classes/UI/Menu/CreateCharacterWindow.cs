@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect.GameObjects;
+using Intersect.Localization;
 using IntersectClientExtras.File_Management;
+using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -8,47 +11,43 @@ using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Misc;
 using Intersect_Client.Classes.Networking;
-using Intersect.GameObjects;
-using Intersect.Localization;
-using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
     public class CreateCharacterWindow
     {
-        //Controls
-        private ImagePanel _menuPanel;
-        private Label _menuHeader;
+        private ImagePanel _characterContainer;
 
         private ImagePanel _characterNameBackground;
+        private ImagePanel _characterPortrait;
+
+        //Image
+        private string _characterPortraitImg = "";
         private Label _charnameLabel;
         private TextBox _charnameTextbox;
 
         private ImagePanel _classBackground;
-        private Label _classLabel;
         private ComboBox _classCombobox;
+        private Label _classLabel;
+        private Button _createButton;
+        private int _displaySpriteIndex = -1;
+        private LabeledCheckBox _femaleChk;
+        private List<KeyValuePair<int, ClassSprite>> _femaleSprites = new List<KeyValuePair<int, ClassSprite>>();
 
         private ImagePanel _genderBackground;
         private Label _genderLabel;
-        private LabeledCheckBox _maleChk;
-        private LabeledCheckBox _femaleChk;
-        private Button _createButton;
-
-        //Image
-        private string _characterPortraitImg = "";
-        private ImagePanel _characterPortrait;
-        private ImagePanel _characterContainer;
-        private Button _nextSpriteButton;
-        private Button _prevSpriteButton;
-
 
         //Parent
         private MainMenu _mainMenu;
+        private LabeledCheckBox _maleChk;
 
         //Class Info
-        private List<KeyValuePair<int,ClassSprite>> _maleSprites = new List<KeyValuePair<int, ClassSprite>>();
-        private List<KeyValuePair<int, ClassSprite>> _femaleSprites = new List<KeyValuePair<int, ClassSprite>>();
-        private int _displaySpriteIndex = -1;
+        private List<KeyValuePair<int, ClassSprite>> _maleSprites = new List<KeyValuePair<int, ClassSprite>>();
+        private Label _menuHeader;
+        //Controls
+        private ImagePanel _menuPanel;
+        private Button _nextSpriteButton;
+        private Button _prevSpriteButton;
 
         //Init
         public CreateCharacterWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
@@ -68,7 +67,8 @@ namespace Intersect_Client.Classes.UI.Menu
             }
             else
             {
-                _menuPanel.SetPosition(parent.Width / 2 - _menuPanel.Width / 2, parent.Height / 2 - _menuPanel.Height / 2);
+                _menuPanel.SetPosition(parent.Width / 2 - _menuPanel.Width / 2,
+                    parent.Height / 2 - _menuPanel.Height / 2);
             }
             _menuPanel.IsHidden = true;
 
@@ -77,8 +77,8 @@ namespace Intersect_Client.Classes.UI.Menu
             {
                 AutoSizeToContents = false
             };
-            _menuHeader.SetText(Strings.Get("charactercreation","title"));
-            _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont,24);
+            _menuHeader.SetText(Strings.Get("charactercreation", "title"));
+            _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Alignment = Pos.CenterH;
             _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
@@ -88,7 +88,8 @@ namespace Intersect_Client.Classes.UI.Menu
             {
                 Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfieldshort.png")
             };
-            _characterNameBackground.SetSize(_characterNameBackground.Texture.GetWidth(), _characterNameBackground.Texture.GetHeight());
+            _characterNameBackground.SetSize(_characterNameBackground.Texture.GetWidth(),
+                _characterNameBackground.Texture.GetHeight());
             _characterNameBackground.SetPosition(15, 44);
 
             //Character name Label
@@ -98,7 +99,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _charnameLabel.SetSize(178, 60);
             _charnameLabel.Alignment = Pos.Center;
             _charnameLabel.TextColorOverride = new Color(255, 30, 30, 30);
-            _charnameLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont,20);
+            _charnameLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
             //Character name Textbox
             _charnameTextbox = new TextBox(_characterNameBackground);
@@ -151,8 +152,9 @@ namespace Intersect_Client.Classes.UI.Menu
             //Character Container
             _characterContainer = new ImagePanel(_menuPanel);
             _characterContainer.SetSize(74, 74);
-            _characterContainer.SetPosition(_menuPanel.Width -15 - _characterContainer.Width, 44);
-            _characterContainer.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,"charview.png");
+            _characterContainer.SetPosition(_menuPanel.Width - 15 - _characterContainer.Width, 44);
+            _characterContainer.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
+                "charview.png");
 
             //Character sprite
             _characterPortrait = new ImagePanel(_characterContainer);
@@ -160,20 +162,32 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Next Sprite Button
             _nextSpriteButton = new Button(_characterContainer);
-            _nextSpriteButton.SetSize(15,15);
-            _nextSpriteButton.SetPosition(74-15,_characterContainer.Height/2 - 15/2);
-            _nextSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrownormal.png"),Button.ControlState.Normal);
-            _nextSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrowhover.png"), Button.ControlState.Hovered);
-            _nextSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrowclicked.png"), Button.ControlState.Clicked);
+            _nextSpriteButton.SetSize(15, 15);
+            _nextSpriteButton.SetPosition(74 - 15, _characterContainer.Height / 2 - 15 / 2);
+            _nextSpriteButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrownormal.png"),
+                Button.ControlState.Normal);
+            _nextSpriteButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrowhover.png"),
+                Button.ControlState.Hovered);
+            _nextSpriteButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrowclicked.png"),
+                Button.ControlState.Clicked);
             _nextSpriteButton.Clicked += _nextSpriteButton_Clicked;
 
             //Prev Sprite Button
             _prevSpriteButton = new Button(_characterContainer);
-            _prevSpriteButton.SetSize(15,15);
-            _prevSpriteButton.SetPosition(0, _characterContainer.Height/2 - 15/2);
-            _prevSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrownormal.png"), Button.ControlState.Normal);
-            _prevSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrowhover.png"), Button.ControlState.Hovered);
-            _prevSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrowclicked.png"), Button.ControlState.Clicked);
+            _prevSpriteButton.SetSize(15, 15);
+            _prevSpriteButton.SetPosition(0, _characterContainer.Height / 2 - 15 / 2);
+            _prevSpriteButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrownormal.png"),
+                Button.ControlState.Normal);
+            _prevSpriteButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrowhover.png"),
+                Button.ControlState.Hovered);
+            _prevSpriteButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrowclicked.png"),
+                Button.ControlState.Clicked);
             _prevSpriteButton.Clicked += _prevSpriteButton_Clicked;
 
             //Class Background
@@ -194,11 +208,15 @@ namespace Intersect_Client.Classes.UI.Menu
             _genderLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
             //Male Checkbox
-            _maleChk = new LabeledCheckBox(_genderBackground) { Text = Strings.Get("charactercreation", "male") };
+            _maleChk = new LabeledCheckBox(_genderBackground) {Text = Strings.Get("charactercreation", "male")};
             _maleChk.SetSize(200, 36);
             _maleChk.SetPosition(180, 8);
-            _maleChk.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxempty.png"), CheckBox.ControlState.Normal);
-            _maleChk.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxfull.png"), CheckBox.ControlState.CheckedNormal);
+            _maleChk.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxempty.png"),
+                CheckBox.ControlState.Normal);
+            _maleChk.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxfull.png"),
+                CheckBox.ControlState.CheckedNormal);
             _maleChk.SetCheckSize(32, 32);
             _maleChk.SetLabelDistance(8);
             _maleChk.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
@@ -209,13 +227,17 @@ namespace Intersect_Client.Classes.UI.Menu
             _maleChk.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 20));
 
             //Female Checkbox
-            _femaleChk = new LabeledCheckBox(_genderBackground) { Text = Strings.Get("charactercreation", "female") };
+            _femaleChk = new LabeledCheckBox(_genderBackground) {Text = Strings.Get("charactercreation", "female")};
             _femaleChk.Checked += femaleChk_Checked;
             _femaleChk.UnChecked += maleChk_Checked;
             _femaleChk.SetSize(200, 36);
             _femaleChk.SetPosition(300, 8);
-            _femaleChk.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxempty.png"), CheckBox.ControlState.Normal);
-            _femaleChk.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxfull.png"), CheckBox.ControlState.CheckedNormal);
+            _femaleChk.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxempty.png"),
+                CheckBox.ControlState.Normal);
+            _femaleChk.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxfull.png"),
+                CheckBox.ControlState.CheckedNormal);
             _femaleChk.SetCheckSize(32, 32);
             _femaleChk.SetLabelDistance(8);
             _femaleChk.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
@@ -227,10 +249,17 @@ namespace Intersect_Client.Classes.UI.Menu
             _createButton.SetText(Strings.Get("charactercreation", "create"));
             _createButton.Clicked += CreateButton_Clicked;
             _createButton.SetSize(211, 61);
-            _createButton.SetPosition(_menuPanel.Width/2 - _createButton.Width/2, _menuPanel.Height - 40 - _createButton.Height);
-            _createButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"), Button.ControlState.Normal);
-            _createButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"), Button.ControlState.Hovered);
-            _createButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"), Button.ControlState.Clicked);
+            _createButton.SetPosition(_menuPanel.Width / 2 - _createButton.Width / 2,
+                _menuPanel.Height - 40 - _createButton.Height);
+            _createButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"),
+                Button.ControlState.Normal);
+            _createButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"),
+                Button.ControlState.Hovered);
+            _createButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"),
+                Button.ControlState.Clicked);
             _createButton.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _createButton.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _createButton.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
@@ -251,19 +280,27 @@ namespace Intersect_Client.Classes.UI.Menu
                 {
                     if (_maleChk.IsChecked)
                     {
-                        _characterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, _maleSprites[_displaySpriteIndex].Value.Face);
+                        _characterPortrait.Texture =
+                            Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face,
+                                _maleSprites[_displaySpriteIndex].Value.Face);
                         if (_characterPortrait.Texture == null)
                         {
-                            _characterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, _maleSprites[_displaySpriteIndex].Value.Sprite);
+                            _characterPortrait.Texture =
+                                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity,
+                                    _maleSprites[_displaySpriteIndex].Value.Sprite);
                             isFace = false;
                         }
                     }
                     else
                     {
-                        _characterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, _femaleSprites[_displaySpriteIndex].Value.Face);
+                        _characterPortrait.Texture =
+                            Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face,
+                                _femaleSprites[_displaySpriteIndex].Value.Face);
                         if (_characterPortrait.Texture == null)
                         {
-                            _characterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, _femaleSprites[_displaySpriteIndex].Value.Sprite);
+                            _characterPortrait.Texture =
+                                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity,
+                                    _femaleSprites[_displaySpriteIndex].Value.Sprite);
                             isFace = false;
                         }
                     }
@@ -271,13 +308,15 @@ namespace Intersect_Client.Classes.UI.Menu
                     {
                         if (isFace)
                         {
-                            _characterPortrait.SetTextureRect(0, 0, _characterPortrait.Texture.GetWidth(),_characterPortrait.Texture.GetHeight());
+                            _characterPortrait.SetTextureRect(0, 0, _characterPortrait.Texture.GetWidth(),
+                                _characterPortrait.Texture.GetHeight());
                             _characterPortrait.SetSize(64, 64);
-                            _characterPortrait.SetPosition(5,5);
+                            _characterPortrait.SetPosition(5, 5);
                         }
                         else
                         {
-                            _characterPortrait.SetTextureRect(0, 0, _characterPortrait.Texture.GetWidth() / 4, _characterPortrait.Texture.GetHeight() / 4);
+                            _characterPortrait.SetTextureRect(0, 0, _characterPortrait.Texture.GetWidth() / 4,
+                                _characterPortrait.Texture.GetHeight() / 4);
                             _characterPortrait.SetSize(_characterPortrait.Texture.GetWidth() / 4,
                                 _characterPortrait.Texture.GetHeight() / 4);
                             _characterPortrait.SetPosition(_characterContainer.Width / 2 - _characterPortrait.Width / 2,
@@ -327,13 +366,13 @@ namespace Intersect_Client.Classes.UI.Menu
                 {
                     if (cls.Sprites[i].Gender == 0)
                     {
-                        _maleSprites.Add(new KeyValuePair<int, ClassSprite>(i,cls.Sprites[i]));
+                        _maleSprites.Add(new KeyValuePair<int, ClassSprite>(i, cls.Sprites[i]));
                     }
                     else
                     {
                         _femaleSprites.Add(new KeyValuePair<int, ClassSprite>(i, cls.Sprites[i]));
                     }
-                } 
+                }
             }
             ResetSprite();
         }
@@ -446,17 +485,22 @@ namespace Intersect_Client.Classes.UI.Menu
 
         void TryCreateCharacter(int Gender)
         {
-            if (Globals.WaitingOnServer || _displaySpriteIndex == -1) { return; }
+            if (Globals.WaitingOnServer || _displaySpriteIndex == -1)
+            {
+                return;
+            }
             if (FieldChecking.IsValidName(_charnameTextbox.Text))
             {
                 GameFade.FadeOut();
                 if (_maleChk.IsChecked)
                 {
-                    PacketSender.SendCreateCharacter(_charnameTextbox.Text, GetClass().Id, _maleSprites[_displaySpriteIndex].Key);
+                    PacketSender.SendCreateCharacter(_charnameTextbox.Text, GetClass().Id,
+                        _maleSprites[_displaySpriteIndex].Key);
                 }
                 else
                 {
-                    PacketSender.SendCreateCharacter(_charnameTextbox.Text, GetClass().Id, _femaleSprites[_displaySpriteIndex].Key);
+                    PacketSender.SendCreateCharacter(_charnameTextbox.Text, GetClass().Id,
+                        _femaleSprites[_displaySpriteIndex].Key);
                 }
                 Globals.WaitingOnServer = true;
             }
@@ -478,11 +522,13 @@ namespace Intersect_Client.Classes.UI.Menu
                 TryCreateCharacter(1);
             }
         }
+
         void classCombobox_ItemSelected(Base control, ItemSelectedEventArgs args)
         {
             LoadClass();
             Update();
         }
+
         void maleChk_Checked(Base sender, EventArgs arguments)
         {
             _maleChk.IsChecked = true;
@@ -490,6 +536,7 @@ namespace Intersect_Client.Classes.UI.Menu
             ResetSprite();
             Update();
         }
+
         void femaleChk_Checked(Base sender, EventArgs arguments)
         {
             _femaleChk.IsChecked = true;
@@ -497,6 +544,7 @@ namespace Intersect_Client.Classes.UI.Menu
             ResetSprite();
             Update();
         }
+
         void CreateButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             if (_maleChk.IsChecked == true)

@@ -17,6 +17,5 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
         {
             Name = myBuffer.ReadString();
         }
-
     }
 }

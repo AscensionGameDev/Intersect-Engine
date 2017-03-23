@@ -5,12 +5,11 @@ namespace Intersect.GameObjects.Conditions
 {
     public class ConditionList
     {
-        public string Name = "New Condition List";
         public List<EventCommand> Conditions = new List<EventCommand>(); //Long story.. just go with it.. okay?
+        public string Name = "New Condition List";
 
         public ConditionList()
         {
-            
         }
 
         public ConditionList(ByteBuffer buff)

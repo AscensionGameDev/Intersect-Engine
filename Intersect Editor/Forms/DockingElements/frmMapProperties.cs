@@ -1,7 +1,7 @@
-﻿using WeifenLuo.WinFormsUI.Docking;
-using Intersect_Editor.Classes.Maps;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using Intersect.Localization;
+using Intersect_Editor.Classes.Maps;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect_Editor.Forms
 {

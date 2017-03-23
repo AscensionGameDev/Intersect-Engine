@@ -1,17 +1,17 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
-using Intersect_Editor.Classes;
 using Intersect;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
+using Intersect_Editor.Classes;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_StartCommonEvent : UserControl
     {
-        private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
+        private EventCommand _myCommand;
+
         public EventCommand_StartCommonEvent(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
@@ -20,7 +20,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitLocalization();
             cmbEvent.Items.Clear();
             cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObject.CommonEvent));
-            cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObject.CommonEvent,refCommand.Ints[0]);
+            cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObject.CommonEvent, refCommand.Ints[0]);
         }
 
         private void InitLocalization()
@@ -33,7 +33,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.CommonEvent,cmbEvent.SelectedIndex);
+            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.CommonEvent, cmbEvent.SelectedIndex);
             _eventEditor.FinishCommandEdit();
         }
 

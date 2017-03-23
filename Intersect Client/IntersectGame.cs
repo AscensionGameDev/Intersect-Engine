@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
+using Intersect.Localization;
+using Intersect.Logging;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Gwen.Renderer;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database;
@@ -12,19 +14,18 @@ using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
 using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 using Intersect_Client_MonoGame.Classes.SFML.Input;
-using Intersect.Localization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Intersect.Logging;
 
 namespace Intersect_Client_MonoGame
 {
     /// <summary>
-    /// This is the main type for your game.
+    ///     This is the main type for your game.
     /// </summary>
     public class IntersectGame : Game
     {
         GraphicsDeviceManager graphics;
+
         public IntersectGame()
         {
             //Setup an error handler
@@ -36,7 +37,7 @@ namespace Intersect_Client_MonoGame
             Globals.Database = new MonoDatabase();
             Globals.Database.LoadConfig();
             Globals.Database.LoadPreferences();
-            Strings.Init(Strings.IntersectComponent.Client,Globals.Database.Language);
+            Strings.Init(Strings.IntersectComponent.Client, Globals.Database.Language);
             Globals.InputManager = new MonoInput(this);
             GameGraphics.Renderer = new MonoRenderer(graphics, Content, this);
             Globals.System = new MonoSystem();
@@ -48,21 +49,22 @@ namespace Intersect_Client_MonoGame
         //Really basic error handler for debugging purposes
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Log.Error((Exception)e.ExceptionObject);
-            MessageBox.Show("The Intersect Client has encountered an error and must close. Error information can be found in resources/logs/errors.log");
+            Log.Error((Exception) e.ExceptionObject);
+            MessageBox.Show(
+                "The Intersect Client has encountered an error and must close. Error information can be found in resources/logs/errors.log");
             Environment.Exit(-1);
         }
 
         /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
+        ///     Allows the game to perform any initialization it needs to before starting to run.
+        ///     This is where it can query for any required services and load any non-graphic
+        ///     related content.  Calling base.Initialize will enumerate through any components
+        ///     and initialize them as well.
         /// </summary>
         protected override void Initialize()
         {
             //Setup SFML Classes
-            ((MonoRenderer)GameGraphics.Renderer).Init(GraphicsDevice);
+            ((MonoRenderer) GameGraphics.Renderer).Init(GraphicsDevice);
             GameNetwork.MySocket = new MonoSocket();
 
             GameMain.Start();
@@ -70,8 +72,8 @@ namespace Intersect_Client_MonoGame
         }
 
         /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
+        ///     Allows the game to run logic such as updating the world,
+        ///     checking for collisions, gathering input, and playing audio.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
@@ -87,7 +89,7 @@ namespace Intersect_Client_MonoGame
         }
 
         /// <summary>
-        /// This is called when the game should draw itself.
+        ///     This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)

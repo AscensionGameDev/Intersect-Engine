@@ -4,14 +4,13 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
 {
     public class MoveRouteAction
     {
-        public MoveRouteEnum Type;
-        public EventGraphic Graphic = null;
         public int AnimationIndex = -1;
-
+        public EventGraphic Graphic = null;
+        public MoveRouteEnum Type;
 
         public void Save(ByteBuffer myBuffer)
         {
-            myBuffer.WriteInteger((int)Type);
+            myBuffer.WriteInteger((int) Type);
             if (Type == MoveRouteEnum.SetGraphic)
             {
                 Graphic.Save(myBuffer);
@@ -24,7 +23,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
 
         public void Load(ByteBuffer myBuffer)
         {
-            Type = (MoveRouteEnum)myBuffer.ReadInteger();
+            Type = (MoveRouteEnum) myBuffer.ReadInteger();
             if (Type == MoveRouteEnum.SetGraphic)
             {
                 Graphic = new EventGraphic();

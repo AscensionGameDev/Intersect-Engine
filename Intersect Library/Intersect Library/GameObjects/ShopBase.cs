@@ -10,16 +10,15 @@ namespace Intersect.GameObjects
         public new const string DATABASE_TABLE = "shops";
         public new const GameObject OBJECT_TYPE = GameObject.Shop;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        
+        public List<ShopItem> BuyingItems = new List<ShopItem>();
+
+        //Buying List
+        public bool BuyingWhitelist = true;
+
         public int DefaultCurrency = 0;
 
         //Selling List
         public List<ShopItem> SellingItems = new List<ShopItem>();
-
-        //Buying List
-        public bool BuyingWhitelist = true;
-        public List<ShopItem> BuyingItems = new List<ShopItem>();
-
 
         public ShopBase(int id) : base(id)
         {
@@ -72,7 +71,7 @@ namespace Intersect.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return (ShopBase)Objects[index];
+                return (ShopBase) Objects[index];
             }
             return null;
         }
@@ -81,7 +80,7 @@ namespace Intersect.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return ((ShopBase)Objects[index]).Name;
+                return ((ShopBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -109,47 +108,55 @@ namespace Intersect.GameObjects
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(Id);
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, ShopBase> GetObjects()
         {
-            Dictionary<int, ShopBase> objects = Objects.ToDictionary(k => k.Key, v => (ShopBase)v.Value);
+            Dictionary<int, ShopBase> objects = Objects.ToDictionary(k => k.Key, v => (ShopBase) v.Value);
             return objects;
         }
     }
 
     public class ShopItem
     {
-        public int ItemNum;
         public int CostItemNum;
         public int CostItemVal;
+        public int ItemNum;
+
         public ShopItem(ByteBuffer myBuffer)
         {
             ItemNum = myBuffer.ReadInteger();
             CostItemNum = myBuffer.ReadInteger();
             CostItemVal = myBuffer.ReadInteger();
         }
+
         public ShopItem(int itemNum, int costItemNum, int costVal)
         {
             ItemNum = itemNum;
             CostItemNum = costItemNum;
             CostItemVal = costVal;
         }
+
         public byte[] Data()
         {
             ByteBuffer myBuffer = new ByteBuffer();

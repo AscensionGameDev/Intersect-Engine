@@ -8,8 +8,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
     {
         private static MapList _mapList = new MapList();
         private static List<MapListMap> _orderedMaps = new List<MapListMap>();
-        private Random rand = new Random();
         public List<MapListItem> Items = new List<MapListItem>();
+        private Random rand = new Random();
 
         public static MapList GetList()
         {
@@ -19,7 +19,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
         public static List<MapListMap> GetOrderedMaps()
         {
             return _orderedMaps;
-        } 
+        }
 
         public byte[] Data(Dictionary<int, MapBase> gameMaps)
         {
@@ -29,20 +29,20 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             {
                 if (Items[i].GetType() == typeof(MapListMap))
                 {
-
-                    ((MapListMap)Items[i]).GetData(myBuffer,gameMaps);
+                    ((MapListMap) Items[i]).GetData(myBuffer, gameMaps);
                 }
                 else
                 {
-                    ((MapListFolder)Items[i]).GetData(myBuffer, gameMaps);
+                    ((MapListFolder) Items[i]).GetData(myBuffer, gameMaps);
                 }
             }
             return myBuffer.ToArray();
         }
 
-        public bool Load(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps, bool isServer = true, bool isTopLevel = false)
+        public bool Load(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps, bool isServer = true,
+            bool isTopLevel = false)
         {
-            if (isTopLevel)_orderedMaps.Clear();
+            if (isTopLevel) _orderedMaps.Clear();
             Items.Clear();
             int count = myBuffer.ReadInteger();
             int type = -1;
@@ -55,7 +55,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
                 if (type == 0)
                 {
                     tmpDir = new MapListFolder();
-                    if (tmpDir.Load(myBuffer,gameMaps, isServer))
+                    if (tmpDir.Load(myBuffer, gameMaps, isServer))
                     {
                         Items.Add(tmpDir);
                     }
@@ -67,7 +67,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
                 else if (type == 1)
                 {
                     tmpMap = new MapListMap();
-                    if (tmpMap.Load(myBuffer,gameMaps, isServer))
+                    if (tmpMap.Load(myBuffer, gameMaps, isServer))
                     {
                         if (gameMaps.ContainsKey(tmpMap.MapNum) || !isServer)
                         {
@@ -85,7 +85,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             return result;
         }
 
-        public void AddMap(int mapNum, Dictionary<int, MapBase> gameMaps )
+        public void AddMap(int mapNum, Dictionary<int, MapBase> gameMaps)
         {
             if (!gameMaps.ContainsKey(mapNum)) return;
             var tmp = new MapListMap()
@@ -101,14 +101,17 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             var tmp = new MapListFolder()
             {
                 Name = folderName,
-                FolderId = int.Parse("" + rand.Next(1, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10))
+                FolderId =
+                    int.Parse("" + rand.Next(1, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) +
+                              rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10))
             };
             while (_mapList.FindFolderParent(tmp.FolderId, null) != null)
             {
-                tmp.FolderId = int.Parse("" + rand.Next(1, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10));
+                tmp.FolderId =
+                    int.Parse("" + rand.Next(1, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) +
+                              rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10));
             }
             Items.Add(tmp);
-            
         }
 
         public MapListFolder FindDir(int folderId)
@@ -117,13 +120,13 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             {
                 if (Items[i].type == 0)
                 {
-                    if (((MapListFolder)Items[i]).FolderId == folderId)
+                    if (((MapListFolder) Items[i]).FolderId == folderId)
                     {
-                        return ((MapListFolder)Items[i]);
+                        return ((MapListFolder) Items[i]);
                     }
-                    if (((MapListFolder)Items[i]).Children.FindDir(folderId) != null)
+                    if (((MapListFolder) Items[i]).Children.FindDir(folderId) != null)
                     {
-                        return ((MapListFolder)Items[i]).Children.FindDir(folderId);
+                        return ((MapListFolder) Items[i]).Children.FindDir(folderId);
                     }
                 }
             }
@@ -136,16 +139,16 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             {
                 if (Items[i].type == 0)
                 {
-                    if (((MapListFolder)Items[i]).Children.FindMap(mapNum) != null)
+                    if (((MapListFolder) Items[i]).Children.FindMap(mapNum) != null)
                     {
-                        return ((MapListFolder)Items[i]).Children.FindMap(mapNum);
+                        return ((MapListFolder) Items[i]).Children.FindMap(mapNum);
                     }
                 }
                 else
                 {
-                    if (((MapListMap)Items[i]).MapNum == mapNum)
+                    if (((MapListMap) Items[i]).MapNum == mapNum)
                     {
-                        return ((MapListMap)Items[i]);
+                        return ((MapListMap) Items[i]);
                     }
                 }
             }
@@ -158,11 +161,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             {
                 if (Items[i].GetType() == typeof(MapListFolder))
                 {
-                    if (((MapListFolder)Items[i]).Children.FindMapParent(mapNum, (MapListFolder)Items[i]) != null) { return ((MapListFolder)Items[i]).Children.FindMapParent(mapNum, (MapListFolder)Items[i]); }
+                    if (((MapListFolder) Items[i]).Children.FindMapParent(mapNum, (MapListFolder) Items[i]) != null)
+                    {
+                        return ((MapListFolder) Items[i]).Children.FindMapParent(mapNum, (MapListFolder) Items[i]);
+                    }
                 }
                 else
                 {
-                    if (((MapListMap)Items[i]).MapNum == mapNum)
+                    if (((MapListMap) Items[i]).MapNum == mapNum)
                     {
                         return parent;
                     }
@@ -177,11 +183,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             {
                 if (Items[i].GetType() == typeof(MapListFolder))
                 {
-                    if (((MapListFolder)Items[i]).FolderId == folderId)
+                    if (((MapListFolder) Items[i]).FolderId == folderId)
                     {
                         return parent;
                     }
-                    if (((MapListFolder)Items[i]).Children.FindFolderParent(folderId, (MapListFolder)Items[i]) != null) { return ((MapListFolder)Items[i]).Children.FindFolderParent(folderId, (MapListFolder)Items[i]); }
+                    if (((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]) != null)
+                    {
+                        return ((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]);
+                    }
                 }
             }
             return null;
@@ -251,7 +260,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             {
                 if (destType == 0)
                 {
-                    ((MapListFolder)dest).Children.Items.Add(source);
+                    ((MapListFolder) dest).Children.Items.Add(source);
                     sourceList.Items.Remove(source);
                 }
                 else
@@ -312,6 +321,5 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             }
             return lowestMap;
         }
-
     }
 }

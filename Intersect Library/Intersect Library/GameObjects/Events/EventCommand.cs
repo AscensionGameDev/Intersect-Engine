@@ -6,10 +6,11 @@ namespace Intersect.GameObjects.Events
 {
     public class EventCommand
     {
-        public EventCommandType Type;
-        public string[] Strs = new string[6];
         public int[] Ints = new int[6];
         public EventMoveRoute Route;
+        public string[] Strs = new string[6];
+        public EventCommandType Type;
+
         public EventCommand()
         {
             for (var i = 0; i < 6; i++)
@@ -21,7 +22,7 @@ namespace Intersect.GameObjects.Events
 
         public void Load(ByteBuffer myBuffer)
         {
-            Type = (EventCommandType)myBuffer.ReadInteger();
+            Type = (EventCommandType) myBuffer.ReadInteger();
             for (var x = 0; x < 6; x++)
             {
                 Strs[x] = myBuffer.ReadString();
@@ -36,7 +37,7 @@ namespace Intersect.GameObjects.Events
 
         public void Save(ByteBuffer myBuffer)
         {
-            myBuffer.WriteInteger((int)Type);
+            myBuffer.WriteInteger((int) Type);
             for (var x = 0; x < 6; x++)
             {
                 myBuffer.WriteString(Strs[x]);
@@ -56,13 +57,13 @@ namespace Intersect.GameObjects.Events
                 case 0: //Player Switch
                     var pValue = Strings.Get("eventconditiondesc", "false");
                     if (Convert.ToBoolean(Ints[2])) pValue = Strings.Get("eventconditiondesc", "true");
-                    return Strings.Get("eventconditiondesc","playerswitch", PlayerSwitchBase.GetName(Ints[1]), pValue);
+                    return Strings.Get("eventconditiondesc", "playerswitch", PlayerSwitchBase.GetName(Ints[1]), pValue);
                 case 1: //Player Variables
                     var pVar = "";
                     switch (Ints[2])
                     {
                         case 0:
-                            pVar = Strings.Get("eventconditiondesc", "equal",Ints[3]);
+                            pVar = Strings.Get("eventconditiondesc", "equal", Ints[3]);
                             break;
                         case 1:
                             pVar = Strings.Get("eventconditiondesc", "greaterequal", Ints[3]);
@@ -145,18 +146,19 @@ namespace Intersect.GameObjects.Events
                             lvlorstat = Strings.Get("eventconditiondesc", "level");
                             break;
                         default:
-                            lvlorstat = Strings.Get("combat", "stat" + (Ints[3]-1));
+                            lvlorstat = Strings.Get("combat", "stat" + (Ints[3] - 1));
                             break;
                     }
                     return Strings.Get("eventconditiondesc", "levelorstat", lvlorstat, pLvl);
                 case 8: //Self Switch
                     var sValue = Strings.Get("eventconditiondesc", "false");
                     if (Convert.ToBoolean(Ints[2])) sValue = Strings.Get("eventconditiondesc", "true");
-                    return Strings.Get("eventconditiondesc", "selfswitch", Strings.Get("eventconditiondesc", "selfswitch" + Ints[1]), sValue);
+                    return Strings.Get("eventconditiondesc", "selfswitch",
+                        Strings.Get("eventconditiondesc", "selfswitch" + Ints[1]), sValue);
                 case 9: //Power is
                     if (Ints[1] == 0)
                     {
-                        return Strings.Get("eventconditiondesc", "power", Strings.Get("eventconditiondesc","modadmin"));
+                        return Strings.Get("eventconditiondesc", "power", Strings.Get("eventconditiondesc", "modadmin"));
                     }
                     else
                     {
@@ -188,7 +190,7 @@ namespace Intersect.GameObjects.Events
                     }
                     else
                     {
-                        time2= Strings.Get("eventconditiondesc", "timeinvalid");
+                        time2 = Strings.Get("eventconditiondesc", "timeinvalid");
                     }
                     return Strings.Get("eventconditiondesc", "time", time1, time2);
                 case 11: //Can Start Quest...
@@ -208,16 +210,20 @@ namespace Intersect.GameObjects.Events
                         switch (Ints[2])
                         {
                             case 1:
-                                return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]), Strings.Get("eventconditiondesc","beforetask",task.GetTaskString()));
+                                return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]),
+                                    Strings.Get("eventconditiondesc", "beforetask", task.GetTaskString()));
                             case 2:
-                                return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]), Strings.Get("eventconditiondesc", "aftertask", task.GetTaskString()));
+                                return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]),
+                                    Strings.Get("eventconditiondesc", "aftertask", task.GetTaskString()));
                             case 3:
-                                return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]), Strings.Get("eventconditiondesc", "ontask", task.GetTaskString()));
+                                return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]),
+                                    Strings.Get("eventconditiondesc", "ontask", task.GetTaskString()));
                             default:
-                                return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]), Strings.Get("eventconditiondesc", "onanytask"));
+                                return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]),
+                                    Strings.Get("eventconditiondesc", "onanytask"));
                         }
                     }
-                    return Strings.Get("eventconditiondesc","questinprogress",QuestBase.GetName(Ints[1]));
+                    return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]));
                 case 13: //Quest Completed
                     return Strings.Get("eventconditiondesc", "questcompleted", QuestBase.GetName(Ints[1]));
                 case 14: //Player death
@@ -225,7 +231,10 @@ namespace Intersect.GameObjects.Events
                 case 15: //No NPCs on map
                     return Strings.Get("eventconditiondesc", "nonpcsonmap");
                 case 16: //Gender Is
-                    return Strings.Get("eventconditiondesc", "gender", (Ints[1] == 0 ? Strings.Get("eventconditiondesc", "male") : Strings.Get("eventconditiondesc", "female")));
+                    return Strings.Get("eventconditiondesc", "gender",
+                    (Ints[1] == 0
+                        ? Strings.Get("eventconditiondesc", "male")
+                        : Strings.Get("eventconditiondesc", "female")));
             }
             return "";
         }

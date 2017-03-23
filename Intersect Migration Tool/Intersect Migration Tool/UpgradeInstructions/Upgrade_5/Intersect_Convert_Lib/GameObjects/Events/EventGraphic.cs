@@ -5,11 +5,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
     public class EventGraphic
     {
         public string Filename;
+        public int Height;
         public int Type;
+        public int Width;
         public int X;
         public int Y;
-        public int Width;
-        public int Height;
 
         public EventGraphic()
         {
@@ -50,6 +50,5 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
             Width = toCopy.Width;
             Height = toCopy.Height;
         }
-
     }
 }

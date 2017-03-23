@@ -8,30 +8,36 @@ namespace Intersect.GameObjects
 {
     public abstract class DatabaseObject
     {
-        public int Id { get; private set; }
-        public string Name { get; set; }
         public const string DATABASE_TABLE = "";
         public const GameObject OBJECT_TYPE = GameObject.Animation;
         private byte[] backup = null;
+
         protected DatabaseObject(int id)
         {
             Id = id;
         }
-        
+
+        public int Id { get; private set; }
+        public string Name { get; set; }
+
         public abstract void Load(byte[] packet);
+
         public virtual void MakeBackup()
         {
             backup = GetData();
         }
+
         public virtual void RestoreBackup()
         {
             if (backup != null)
                 Load(backup);
         }
+
         public virtual void DeleteBackup()
         {
             backup = null;
         }
+
         public abstract void Delete();
         public abstract byte[] GetData();
         public abstract GameObject GetGameObjectType();
@@ -118,6 +124,7 @@ namespace Intersect.GameObjects
             }
             return items.ToArray();
         }
+
         public static int GameObjectIdFromList(GameObject type, int listIndex)
         {
             if (listIndex < 0) return -1;
@@ -180,6 +187,7 @@ namespace Intersect.GameObjects
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         public static int GameObjectListIndex(GameObject type, int id)
         {
             switch (type)

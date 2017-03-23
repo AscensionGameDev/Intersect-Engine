@@ -2,11 +2,12 @@
 {
     public class PathfinderPoint
     {
+        public int F;
+        public int G;
+        public int H;
         public int X;
         public int Y;
-        public int F;
-        public int H;
-        public int G;
+
         public PathfinderPoint(int x, int y, int g, int h)
         {
             X = x;

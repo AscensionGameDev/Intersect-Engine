@@ -15,6 +15,5 @@
         {
             Name = myBuffer.ReadString();
         }
-
     }
 }

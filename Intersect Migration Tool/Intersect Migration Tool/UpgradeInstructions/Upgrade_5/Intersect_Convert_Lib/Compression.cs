@@ -16,7 +16,6 @@ namespace Intersect
             {
                 using (DeflateStream decompressionStream = new DeflateStream(ms, CompressionMode.Decompress))
                 {
-
                     decompressionStream.Read(decompessed, 0, decompessed.Length);
                 }
                 return decompessed;

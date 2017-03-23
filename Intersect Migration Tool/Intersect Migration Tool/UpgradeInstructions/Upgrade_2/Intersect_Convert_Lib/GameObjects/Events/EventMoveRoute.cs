@@ -5,12 +5,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
 {
     public class EventMoveRoute
     {
-        public int Target = -1;
-        public bool RepeatRoute = false;
-        public bool IgnoreIfBlocked = false;
-        public bool Complete = false;
-        public List<MoveRouteAction> Actions = new List<MoveRouteAction>();
         public int ActionIndex = 0;
+        public List<MoveRouteAction> Actions = new List<MoveRouteAction>();
+        public bool Complete = false;
+        public bool IgnoreIfBlocked = false;
+        public bool RepeatRoute = false;
+        public int Target = -1;
 
         public EventMoveRoute()
         {

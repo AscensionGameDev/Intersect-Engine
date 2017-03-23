@@ -1,15 +1,15 @@
 ﻿using System;
-using IntersectClientExtras.Network;
-using Intersect_Client.Classes.General;
 using Intersect;
 using Intersect.Logging;
+using IntersectClientExtras.Network;
+using Intersect_Client.Classes.General;
 
 namespace Intersect_Client.Classes.Networking
 {
     public static class GameNetwork
     {
         public static GameSocket MySocket;
-        
+
         public static bool Connected;
         public static bool Connecting;
         private static byte[] _tempBuff;
@@ -46,7 +46,6 @@ namespace Intersect_Client.Classes.Networking
                 _myBuffer.WriteBytes(data);
             }
             TryHandleData();
-
         }
 
         private static void MySocket_OnDataReceived(byte[] data)

@@ -1,8 +1,5 @@
-﻿
-
-using Intersect;
+﻿using Intersect;
 using WebSocketSharp.Server;
-
 
 namespace Intersect_Server.Classes.Networking
 {
@@ -19,7 +16,6 @@ namespace Intersect_Server.Classes.Networking
 
         public static void Stop()
         {
-            
         }
     }
 
@@ -37,5 +33,4 @@ namespace Intersect_Server.Classes.Networking
             gameSocket.Start();
         }
     }
-
 }

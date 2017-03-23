@@ -6,7 +6,6 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
 {
     public class MonoDatabase : GameDatabase
     {
-
         public override void SavePreference(string key, string value)
         {
             RegistryKey regkey = Registry.CurrentUser.OpenSubKey("Software", true);
@@ -22,10 +21,16 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
         {
             RegistryKey regkey = Registry.CurrentUser.OpenSubKey("Software", false);
             regkey = regkey.OpenSubKey("IntersectClient", false);
-            if (regkey == null) { return ""; }
+            if (regkey == null)
+            {
+                return "";
+            }
             regkey = regkey.OpenSubKey(ServerHost + ":" + ServerPort);
-            if (regkey == null) { return ""; }
-            string value = (string)regkey.GetValue(key);
+            if (regkey == null)
+            {
+                return "";
+            }
+            string value = (string) regkey.GetValue(key);
             if (string.IsNullOrEmpty(value))
             {
                 return "";
@@ -35,7 +40,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
 
         public override bool LoadConfig()
         {
-            if (!File.Exists(Path.Combine("resources","config.xml")))
+            if (!File.Exists(Path.Combine("resources", "config.xml")))
             {
                 File.WriteAllText(Path.Combine("resources", "config.xml"), GetDefaultConfig());
                 return LoadConfig();

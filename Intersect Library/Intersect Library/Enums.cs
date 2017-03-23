@@ -6,6 +6,7 @@
         Magic,
         True
     }
+
     public enum GameObject
     {
         Animation = 0,
@@ -157,7 +158,7 @@
         PartyData,
         PartyInvite,
         ChatBubble,
-		MapEntities,
+        MapEntities,
         QuestOffer,
         QuestProgress,
         TradeStart,

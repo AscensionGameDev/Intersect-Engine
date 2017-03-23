@@ -2,20 +2,21 @@
 {
     public class LightBase
     {
+        public Color Color = Color.White;
+        public float Expand = 0f;
+        public byte Intensity = 255;
         public int OffsetX;
         public int OffsetY;
+        public int Size = 0;
         public int TileX;
         public int TileY;
-        public byte Intensity = 255;
-        public int Size = 0;
-        public float Expand = 0f;
-        public Color Color = Color.White;
 
         public LightBase()
         {
             TileX = -1;
             TileY = -1;
         }
+
         public LightBase(int x, int y)
         {
             TileX = x;
@@ -33,6 +34,7 @@
             Expand = copy.Expand;
             Color = Color.FromArgb(copy.Color.R, copy.Color.G, copy.Color.B);
         }
+
         public LightBase(ByteBuffer myBuffer)
         {
             OffsetX = myBuffer.ReadInteger();
@@ -41,11 +43,12 @@
             TileY = myBuffer.ReadInteger();
             Intensity = myBuffer.ReadByte();
             Size = myBuffer.ReadInteger();
-            Expand = (float)myBuffer.ReadDouble();
+            Expand = (float) myBuffer.ReadDouble();
             Color = Color.FromArgb(myBuffer.ReadByte(), myBuffer.ReadByte(), myBuffer.ReadByte());
-
         }
-        public LightBase(int tileX, int tileY, int offsetX, int offsetY, byte intensity, int size, float expand, Color clr)
+
+        public LightBase(int tileX, int tileY, int offsetX, int offsetY, byte intensity, int size, float expand,
+            Color clr)
         {
             TileX = tileX;
             TileY = tileY;
@@ -56,6 +59,7 @@
             Expand = expand;
             Color = clr;
         }
+
         public byte[] LightData()
         {
             var myBuffer = new ByteBuffer();

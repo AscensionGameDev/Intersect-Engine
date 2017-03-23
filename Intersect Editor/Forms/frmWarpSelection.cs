@@ -1,29 +1,27 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Maps;
 using Intersect;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
+using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.Maps;
 using Color = System.Drawing.Color;
-using System.Reflection;
 
 namespace Intersect_Editor.Forms
 {
     public partial class frmWarpSelection : Form
     {
-        private bool _result = false;
         private int _currentMap = -1;
-        private int _drawnMap = -1;
-        private Image _mapImage = null;
         private int _currentX;
         private int _currentY;
+        private int _drawnMap = -1;
+        private Image _mapImage = null;
         private List<int> _restrictMaps = null;
+        private bool _result = false;
         private bool _tileSelection = true;
-
 
         public frmWarpSelection()
         {
@@ -35,7 +33,9 @@ namespace Intersect_Editor.Forms
             pnlMap.BackColor = Color.Black;
             mapTreeList1.SetSelect(NodeDoubleClick);
 
-            typeof(Panel).InvokeMember("DoubleBuffered",BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,null, pnlMap, new object[] { true });
+            typeof(Panel).InvokeMember("DoubleBuffered",
+                BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null, pnlMap,
+                new object[] {true});
         }
 
         public void InitForm(bool tileSelection = true, List<int> restrictMaps = null)
@@ -63,7 +63,7 @@ namespace Intersect_Editor.Forms
         {
             if (e.Node.Tag.GetType() == typeof(MapListMap))
             {
-                SelectTile(((MapListMap)e.Node.Tag).MapNum, _currentX, _currentY);
+                SelectTile(((MapListMap) e.Node.Tag).MapNum, _currentX, _currentY);
             }
         }
 
@@ -94,7 +94,7 @@ namespace Intersect_Editor.Forms
                     else
                     {
                         if (MapInstance.GetMap(_currentMap) != null) MapInstance.GetMap(_currentMap).Delete();
-                        Globals.MapsToFetch = new List<int>() { _currentMap };
+                        Globals.MapsToFetch = new List<int>() {_currentMap};
                         if (!Globals.MapsToScreenshot.Contains(_currentMap)) Globals.MapsToScreenshot.Add(_currentMap);
                         PacketSender.SendNeedMap(_currentMap);
                         pnlMap.BackgroundImage = null;
@@ -156,10 +156,16 @@ namespace Intersect_Editor.Forms
 
         private void pnlMap_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.X >= pnlMap.Width || e.Y >= pnlMap.Height) { return; }
-            if (e.X < 0 || e.Y < 0) { return; }
-            _currentX = (int)Math.Floor((double)(e.X) / Options.TileWidth);
-            _currentY = (int)Math.Floor((double)(e.Y) / Options.TileHeight);
+            if (e.X >= pnlMap.Width || e.Y >= pnlMap.Height)
+            {
+                return;
+            }
+            if (e.X < 0 || e.Y < 0)
+            {
+                return;
+            }
+            _currentX = (int) Math.Floor((double) (e.X) / Options.TileWidth);
+            _currentY = (int) Math.Floor((double) (e.Y) / Options.TileHeight);
             UpdatePreview();
         }
 

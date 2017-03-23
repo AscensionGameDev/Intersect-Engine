@@ -1,18 +1,18 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
-using Intersect_Editor.Classes;
 using Intersect;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
+using Intersect_Editor.Classes;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_StartQuest : UserControl
     {
-        private EventCommand _myCommand;
-        private EventPage _currentPage;
         private readonly FrmEvent _eventEditor;
+        private EventPage _currentPage;
+        private EventCommand _myCommand;
+
         public EventCommand_StartQuest(EventCommand refCommand, EventPage page, FrmEvent editor)
         {
             InitializeComponent();
@@ -40,7 +40,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.Quest, cmbQuests.SelectedIndex);
             _myCommand.Ints[1] = Convert.ToInt32(chkShowOfferWindow.Checked);
             if (_myCommand.Ints[4] == 0)
-            // command.Ints[4, and 5] are reserved for when the action succeeds or fails
+                // command.Ints[4, and 5] are reserved for when the action succeeds or fails
             {
                 for (var i = 0; i < 2; i++)
                 {

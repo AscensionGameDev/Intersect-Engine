@@ -1,43 +1,43 @@
-﻿using IntersectClientExtras.Gwen.Control;
+﻿using Intersect.GameObjects;
+using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
-using Intersect.GameObjects;
 
 namespace Intersect_Client.Classes.UI.Game
 {
     public class GameGuiBase
     {
-        public Canvas GameCanvas;
-        private DebugMenu _debugMenu;
-        private ShopWindow _shopWindow;
-        private BankWindow _bankWindow;
+        private AdminWindow _adminWindow;
         private BagWindow _bagWindow;
-        private QuestOfferWindow _questOfferWindow;
+        private BankWindow _bankWindow;
+        private Chatbox _chatBox;
         private CraftingBenchWindow _CraftingBenchWindow;
+        private DebugMenu _debugMenu;
+
+        private EventWindow _eventWindow;
+        private EntityBox _playerBox;
+        private QuestOfferWindow _questOfferWindow;
+        private ShopWindow _shopWindow;
+        private bool _shouldCloseBag = false;
+        private bool _shouldCloseBank = false;
+        private bool _shouldCloseCraftingBench = false;
+        private bool _shouldCloseShop = false;
+        private bool _shouldCloseTrading = false;
+        private bool _shouldOpenAdminWindow = false;
+        private bool _shouldOpenBag = false;
+        private bool _shouldOpenBank = false;
+        private bool _shouldOpenCraftingBench = false;
+        private bool _shouldOpenShop = false;
+        private bool _shouldOpenTrading = false;
+        private bool _shouldUpdateQuestLog = true;
+        private int _tradingTarget = -1;
         private TradingWindow _TradingWindow;
         public bool FocusChat;
-        private bool _shouldOpenAdminWindow = false;
-        private bool _shouldOpenShop = false;
-        private bool _shouldCloseShop = false;
-        private bool _shouldOpenBank = false;
-        private bool _shouldCloseBank = false;
-        private bool _shouldOpenBag = false;
-        private bool _shouldCloseBag = false;
-        private bool _shouldOpenCraftingBench = false;
-        private bool _shouldCloseCraftingBench = false;
-        private bool _shouldUpdateQuestLog = true;
-        private bool _shouldOpenTrading = false;
-        private bool _shouldCloseTrading = false;
-        private int _tradingTarget = -1;
+        public Canvas GameCanvas;
+        private GameMenu GameMenu;
 
         //Public Components - For clicking/dragging
         public HotBarWindow Hotbar;
-        private GameMenu GameMenu;
-        private AdminWindow _adminWindow;
-
-        private EventWindow _eventWindow;
-        private Chatbox _chatBox;
-        private EntityBox _playerBox;
 
         public GameGuiBase(Canvas myCanvas)
         {
@@ -48,12 +48,15 @@ namespace Intersect_Client.Classes.UI.Game
         public void InitGameGui()
         {
             _eventWindow = new EventWindow(GameCanvas);
-            _chatBox = new Chatbox(GameCanvas,this);
+            _chatBox = new Chatbox(GameCanvas, this);
             GameMenu = new GameMenu(GameCanvas);
             Hotbar = new HotBarWindow(GameCanvas);
             _debugMenu = new DebugMenu(GameCanvas);
             _questOfferWindow = new QuestOfferWindow(GameCanvas);
-            if (Globals.Me != null) { TryAddPlayerBox(); }
+            if (Globals.Me != null)
+            {
+                TryAddPlayerBox();
+            }
         }
 
         //Admin Window
@@ -61,6 +64,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             _shouldOpenAdminWindow = true;
         }
+
         public void OpenAdminWindow()
         {
             if (_adminWindow == null)
@@ -86,10 +90,12 @@ namespace Intersect_Client.Classes.UI.Game
         {
             _shouldOpenShop = true;
         }
+
         public void NotifyCloseShop()
         {
             _shouldCloseShop = true;
         }
+
         public void OpenShop()
         {
             if (_shopWindow != null) _shopWindow.Close();
@@ -102,10 +108,12 @@ namespace Intersect_Client.Classes.UI.Game
         {
             _shouldOpenBank = true;
         }
+
         public void NotifyCloseBank()
         {
             _shouldCloseBank = true;
         }
+
         public void OpenBank()
         {
             if (_bankWindow != null) _bankWindow.Close();
@@ -119,13 +127,15 @@ namespace Intersect_Client.Classes.UI.Game
         {
             _shouldOpenBag = true;
         }
+
         public void NotifyCloseBag()
         {
             _shouldCloseBag = true;
         }
+
         public void OpenBag()
         {
-            if(_bagWindow != null) _bagWindow.Close();
+            if (_bagWindow != null) _bagWindow.Close();
             _bagWindow = new BagWindow(GameCanvas);
             _shouldOpenBag = false;
             Globals.InBag = true;
@@ -136,10 +146,12 @@ namespace Intersect_Client.Classes.UI.Game
         {
             _shouldOpenCraftingBench = true;
         }
+
         public void NotifyCloseCraftingBench()
         {
             _shouldCloseCraftingBench = true;
         }
+
         public void OpenCraftingBench()
         {
             if (_CraftingBenchWindow != null) _CraftingBenchWindow.Close();
@@ -152,18 +164,20 @@ namespace Intersect_Client.Classes.UI.Game
         public void NotifyQuestsUpdated()
         {
             _shouldUpdateQuestLog = true;
-		}
-		
+        }
+
         //Trading
         public void NotifyOpenTrading(int index)
         {
             _shouldOpenTrading = true;
             _tradingTarget = index;
         }
+
         public void NotifyCloseTrading()
         {
             _shouldCloseTrading = true;
         }
+
         public void OpenTrading()
         {
             if (_TradingWindow != null) _TradingWindow.Close();
@@ -174,8 +188,11 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void TryAddPlayerBox()
         {
-            if (_playerBox != null || Globals.Me == null) { return; }
-            _playerBox = new EntityBox(GameCanvas, Globals.Me,4,4);
+            if (_playerBox != null || Globals.Me == null)
+            {
+                return;
+            }
+            _playerBox = new EntityBox(GameCanvas, Globals.Me, 4, 4);
         }
 
         public void ShowHideDebug()
@@ -212,15 +229,20 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Draw()
         {
-
-            if (Globals.Me != null) { TryAddPlayerBox(); }
+            if (Globals.Me != null)
+            {
+                TryAddPlayerBox();
+            }
             _eventWindow.Update();
             _chatBox.Update();
             GameMenu.Update(_shouldUpdateQuestLog);
             _shouldUpdateQuestLog = false;
             Hotbar.Update();
             _debugMenu.Update();
-            if (_playerBox != null) { _playerBox.Update(); }
+            if (_playerBox != null)
+            {
+                _playerBox.Update();
+            }
 
             if (Globals.QuestOffers.Count > 0)
             {

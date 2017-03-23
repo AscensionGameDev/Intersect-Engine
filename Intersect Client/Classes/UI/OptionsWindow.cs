@@ -1,6 +1,4 @@
-﻿using Intersect_Client.Classes.Core;
-using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.UI.Menu;
+﻿using System;
 using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
@@ -8,37 +6,39 @@ using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using IntersectClientExtras.Gwen.ControlInternal;
-using System;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.UI.Menu;
 
 namespace Intersect_Client.Classes.UI
 {
     public class OptionsWindow
     {
-        //Controls
-        private ImagePanel _menuPanel;
-        private Label _menuHeader;
-
-        private ImagePanel _resolutionBackground;
-        private Label _resolutionLabel;
-        private ComboBox _resolutionList;
+        private Button _applyBtn;
+        private Button _backBtn;
 
         private ImagePanel _fpsBackground;
         private Label _fpsLabel;
         private ComboBox _fpsList;
 
         private LabeledCheckBox _fullscreen;
-        private Label _soundLabel;
-        private HorizontalSlider _soundSlider;
-        private Label _musicLabel;
-        private HorizontalSlider _musicSlider;
-        private Button _applyBtn;
-        private Button _backBtn;
-
-        private int _previousSoundVolume;
-        private int _previousMusicVolume;
 
         private bool _gameWindow = false;
         private MainMenu _mainMenu = null;
+        private Label _menuHeader;
+        //Controls
+        private ImagePanel _menuPanel;
+        private Label _musicLabel;
+        private HorizontalSlider _musicSlider;
+        private int _previousMusicVolume;
+
+        private int _previousSoundVolume;
+
+        private ImagePanel _resolutionBackground;
+        private Label _resolutionLabel;
+        private ComboBox _resolutionList;
+        private Label _soundLabel;
+        private HorizontalSlider _soundSlider;
 
         //Init
         public OptionsWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
@@ -58,7 +58,8 @@ namespace Intersect_Client.Classes.UI
             }
             else
             {
-                _menuPanel.SetPosition(parent.Width / 2 - _menuPanel.Width / 2, parent.Height / 2 - _menuPanel.Height / 2);
+                _menuPanel.SetPosition(parent.Width / 2 - _menuPanel.Width / 2,
+                    parent.Height / 2 - _menuPanel.Height / 2);
             }
             _menuPanel.IsHidden = true;
             Gui.InputBlockingElements.Add(_menuPanel);
@@ -68,7 +69,7 @@ namespace Intersect_Client.Classes.UI
             {
                 AutoSizeToContents = false
             };
-            _menuHeader.SetText(Strings.Get("options","title"));
+            _menuHeader.SetText(Strings.Get("options", "title"));
             _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Alignment = Pos.CenterH;
@@ -79,7 +80,8 @@ namespace Intersect_Client.Classes.UI
             {
                 Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
             };
-            _resolutionBackground.SetSize(_resolutionBackground.Texture.GetWidth(), _resolutionBackground.Texture.GetHeight());
+            _resolutionBackground.SetSize(_resolutionBackground.Texture.GetWidth(),
+                _resolutionBackground.Texture.GetHeight());
             _resolutionBackground.SetPosition(_menuPanel.Width / 2 - _resolutionBackground.Width / 2, 44);
 
             //Options - Resolution Label
@@ -96,7 +98,7 @@ namespace Intersect_Client.Classes.UI
             _resolutionList.SetSize(260, 38);
             _resolutionList.Alignment = Pos.Center;
             _resolutionList.ShouldDrawBackground = false;
-            _resolutionList.SetMenuBackgroundColor(new Color(220,0,0,0));
+            _resolutionList.SetMenuBackgroundColor(new Color(220, 0, 0, 0));
             _resolutionList.SetMenuMaxSize(260, 200);
             _resolutionList.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
             _resolutionList.SetTextColor(new Color(255, 220, 220, 220), Label.ControlState.Hovered);
@@ -104,7 +106,7 @@ namespace Intersect_Client.Classes.UI
             var myModes = GameGraphics.Renderer.GetValidVideoModes();
             for (var i = 0; i < myModes.Count; i++)
             {
-               var item =  _resolutionList.AddItem(myModes[i]);
+                var item = _resolutionList.AddItem(myModes[i]);
                 item.Alignment = Pos.Center;
                 /*if (Globals.GameBorderStyle == 1)
                 {
@@ -132,7 +134,8 @@ namespace Intersect_Client.Classes.UI
                 Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
             };
             _fpsBackground.SetSize(_fpsBackground.Texture.GetWidth(), _fpsBackground.Texture.GetHeight());
-            _fpsBackground.SetPosition(_menuPanel.Width / 2 - _fpsBackground.Width / 2, _resolutionBackground.Bottom + 16);
+            _fpsBackground.SetPosition(_menuPanel.Width / 2 - _fpsBackground.Width / 2,
+                _resolutionBackground.Bottom + 16);
 
             //Options - FPS Label
             _fpsLabel = new Label(_fpsBackground);
@@ -162,11 +165,15 @@ namespace Intersect_Client.Classes.UI
             _fpsList.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
             //Options - Fullscreen Checkbox
-            _fullscreen = new LabeledCheckBox(_menuPanel) { Text = Strings.Get("options", "fullscreen") };
+            _fullscreen = new LabeledCheckBox(_menuPanel) {Text = Strings.Get("options", "fullscreen")};
             _fullscreen.SetSize(300, 36);
             _fullscreen.SetPosition(_fpsBackground.X + 24, _fpsBackground.Bottom + 16);
-            _fullscreen.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxempty.png"), CheckBox.ControlState.Normal);
-            _fullscreen.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxfull.png"), CheckBox.ControlState.CheckedNormal);
+            _fullscreen.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxempty.png"),
+                CheckBox.ControlState.Normal);
+            _fullscreen.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxfull.png"),
+                CheckBox.ControlState.CheckedNormal);
             _fullscreen.SetCheckSize(32, 32);
             _fullscreen.SetLabelDistance(12);
             _fullscreen.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
@@ -175,10 +182,10 @@ namespace Intersect_Client.Classes.UI
 
             //Options - Sound Label
             _soundLabel = new Label(_menuPanel);
-            _soundLabel.SetText(Strings.Get("options", "soundvolume",100));
+            _soundLabel.SetText(Strings.Get("options", "soundvolume", 100));
             _soundLabel.SetSize(210, 32);
             _soundLabel.AutoSizeToContents = false;
-            _soundLabel.SetPosition(_resolutionBackground.X,_fullscreen.Bottom + 16);
+            _soundLabel.SetPosition(_resolutionBackground.X, _fullscreen.Bottom + 16);
             _soundLabel.Alignment = Pos.Center;
             _soundLabel.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
             _soundLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 16);
@@ -186,20 +193,26 @@ namespace Intersect_Client.Classes.UI
             //Options - Sound Slider
             _soundSlider = new HorizontalSlider(_menuPanel);
             _soundSlider.SetSize(210, 25);
-            _soundSlider.SetPosition(_soundLabel.X,_soundLabel.Bottom + 8);
+            _soundSlider.SetPosition(_soundLabel.X, _soundLabel.Bottom + 8);
             _soundSlider.Min = 0;
             _soundSlider.Max = 100;
             _soundSlider.ValueChanged += _soundSlider_ValueChanged;
             _soundSlider.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "sliderbar.png"));
-            _soundSlider.SetDraggerImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggerv.png"),Dragger.ControlState.Normal);
-            _soundSlider.SetDraggerImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggervclick.png"), Dragger.ControlState.Clicked);
-            _soundSlider.SetDraggerImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggervhover.png"), Dragger.ControlState.Hovered);
-            
+            _soundSlider.SetDraggerImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggerv.png"),
+                Dragger.ControlState.Normal);
+            _soundSlider.SetDraggerImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggervclick.png"),
+                Dragger.ControlState.Clicked);
+            _soundSlider.SetDraggerImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggervhover.png"),
+                Dragger.ControlState.Hovered);
+
             _soundSlider.SetDraggerSize(14, 26);
 
             //Options - Music Label
             _musicLabel = new Label(_menuPanel);
-            _musicLabel.SetText(Strings.Get("options", "musicvolume",100));
+            _musicLabel.SetText(Strings.Get("options", "musicvolume", 100));
             _musicLabel.SetSize(210, 32);
             _musicLabel.AutoSizeToContents = false;
             _musicLabel.SetPosition(_resolutionBackground.Right - _musicLabel.Width, _fullscreen.Bottom + 16);
@@ -215,9 +228,15 @@ namespace Intersect_Client.Classes.UI
             _musicSlider.Max = 100;
             _musicSlider.ValueChanged += _musicSlider_ValueChanged;
             _musicSlider.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "sliderbar.png"));
-            _musicSlider.SetDraggerImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggerv.png"), Dragger.ControlState.Normal);
-            _musicSlider.SetDraggerImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggervclick.png"), Dragger.ControlState.Clicked);
-            _musicSlider.SetDraggerImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggervhover.png"), Dragger.ControlState.Hovered);
+            _musicSlider.SetDraggerImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggerv.png"),
+                Dragger.ControlState.Normal);
+            _musicSlider.SetDraggerImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggervclick.png"),
+                Dragger.ControlState.Clicked);
+            _musicSlider.SetDraggerImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggervhover.png"),
+                Dragger.ControlState.Hovered);
             _musicSlider.SetDraggerSize(14, 26);
 
             //Options - Apply Button
@@ -227,14 +246,19 @@ namespace Intersect_Client.Classes.UI
             _applyBtn.SetSize(56, 32);
             _applyBtn.Clicked += ApplyBtn_Clicked;
             _applyBtn.SetSize(211, 61);
-            _applyBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"), Button.ControlState.Normal);
-            _applyBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"), Button.ControlState.Hovered);
-            _applyBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"), Button.ControlState.Clicked);
+            _applyBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"),
+                Button.ControlState.Normal);
+            _applyBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"),
+                Button.ControlState.Hovered);
+            _applyBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"),
+                Button.ControlState.Clicked);
             _applyBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _applyBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _applyBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
             _applyBtn.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
-
 
             //Options - Back Button
             _backBtn = new Button(_menuPanel);
@@ -242,21 +266,25 @@ namespace Intersect_Client.Classes.UI
             _backBtn.SetSize(211, 61);
             _backBtn.SetPosition(_resolutionBackground.Right - _backBtn.Width, _soundSlider.Bottom + 16);
             _backBtn.Clicked += BackBtn_Clicked;
-            _backBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"), Button.ControlState.Normal);
-            _backBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"), Button.ControlState.Hovered);
-            _backBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"), Button.ControlState.Clicked);
+            _backBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"),
+                Button.ControlState.Normal);
+            _backBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"),
+                Button.ControlState.Hovered);
+            _backBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"),
+                Button.ControlState.Clicked);
             _backBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _backBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _backBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
             _backBtn.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
         }
 
-
         //Methods
         public void Update()
         {
-
         }
+
         public void Show()
         {
             if (_mainMenu == null)
@@ -267,7 +295,8 @@ namespace Intersect_Client.Classes.UI
             _previousSoundVolume = Globals.Database.SoundVolume;
             if (GameGraphics.Renderer.GetValidVideoModes().Count > 0)
             {
-                _resolutionList.SelectByText(GameGraphics.Renderer.GetValidVideoModes()[Globals.Database.TargetResolution]);
+                _resolutionList.SelectByText(
+                    GameGraphics.Renderer.GetValidVideoModes()[Globals.Database.TargetResolution]);
             }
             switch (Globals.Database.TargetFps)
             {
@@ -296,8 +325,8 @@ namespace Intersect_Client.Classes.UI
             _fullscreen.IsChecked = Globals.Database.FullScreen;
             _musicSlider.Value = Globals.Database.MusicVolume;
             _soundSlider.Value = Globals.Database.SoundVolume;
-            _musicLabel.Text = Strings.Get("options", "musicvolume",(int)_musicSlider.Value);
-            _soundLabel.Text = Strings.Get("options", "soundvolume",(int)_soundSlider.Value);
+            _musicLabel.Text = Strings.Get("options", "musicvolume", (int) _musicSlider.Value);
+            _soundLabel.Text = Strings.Get("options", "soundvolume", (int) _soundSlider.Value);
             _menuPanel.IsHidden = false;
         }
 
@@ -331,19 +360,21 @@ namespace Intersect_Client.Classes.UI
                 Hide();
             }
         }
+
         void _musicSlider_ValueChanged(Base sender, EventArgs arguments)
         {
-            _musicLabel.Text = Strings.Get("options", "musicvolume",(int)_musicSlider.Value);
-            Globals.Database.MusicVolume = (int)_musicSlider.Value;
+            _musicLabel.Text = Strings.Get("options", "musicvolume", (int) _musicSlider.Value);
+            Globals.Database.MusicVolume = (int) _musicSlider.Value;
             GameAudio.UpdateGlobalVolume();
         }
 
         void _soundSlider_ValueChanged(Base sender, EventArgs arguments)
         {
-            _soundLabel.Text = Strings.Get("options", "soundvolume",(int)_soundSlider.Value);
-            Globals.Database.SoundVolume = (int)_soundSlider.Value;
+            _soundLabel.Text = Strings.Get("options", "soundvolume", (int) _soundSlider.Value);
+            Globals.Database.SoundVolume = (int) _soundSlider.Value;
             GameAudio.UpdateGlobalVolume();
         }
+
         void ApplyBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             bool shouldReset = false;
@@ -389,8 +420,8 @@ namespace Intersect_Client.Classes.UI
                 shouldReset = true;
                 Globals.Database.TargetFps = newFps;
             }
-            Globals.Database.MusicVolume = (int)_musicSlider.Value;
-            Globals.Database.SoundVolume = (int)_soundSlider.Value;
+            Globals.Database.MusicVolume = (int) _musicSlider.Value;
+            Globals.Database.SoundVolume = (int) _soundSlider.Value;
             GameAudio.UpdateGlobalVolume();
             Globals.Database.SavePreferences();
             if (shouldReset) GameGraphics.Renderer.Init();

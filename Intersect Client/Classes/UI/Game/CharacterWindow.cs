@@ -1,67 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
-using Intersect_Client.Classes.Core;
-using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.Networking;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using IntersectClientExtras.Gwen.ControlInternal;
 using IntersectClientExtras.Input;
-using Intersect;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Networking;
 using Color = IntersectClientExtras.GenericClasses.Color;
-
 using Point = IntersectClientExtras.GenericClasses.Point;
-using Intersect.GameObjects;
-using Intersect.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
     public class CharacterWindow
     {
-        //Controls
-        private WindowControl _characterWindow;
-        private ScrollControl _equipmentContainer;
-
-        private Label _characterName;
-        private Label _characterLevelAndClass;
-
-        private string _characterPortraitImg = "";
-        private ImagePanel _characterContainer;
-        private ImagePanel _characterPortrait;
-        private string _currentSprite = "";
-        private int[] _emptyStatBoost = new int[Options.MaxStats];
-
-        //Stats
-        Label _attackLabel;
-        Label _defenseLabel;
-        Label _speedLabel;
         Label _abilityPwrLabel;
-        Label _magicRstLabel;
-        Label _pointsLabel;
+        Button _addAbilityPwrBtn;
         Button _addAttackBtn;
         Button _addDefenseBtn;
-        Button _addAbilityPwrBtn;
         Button _addMagicResistBtn;
         Button _addSpeedBtn;
 
+        //Stats
+        Label _attackLabel;
+        private ImagePanel _characterContainer;
+        private Label _characterLevelAndClass;
+
+        private Label _characterName;
+        private ImagePanel _characterPortrait;
+
+        private string _characterPortraitImg = "";
+        //Controls
+        private WindowControl _characterWindow;
+        private string _currentSprite = "";
+        Label _defenseLabel;
+        private int[] _emptyStatBoost = new int[Options.MaxStats];
+        private ScrollControl _equipmentContainer;
+        Label _magicRstLabel;
+        Label _pointsLabel;
+        Label _speedLabel;
+
+        //Equipment List
+        public List<EquipmentItem> Items = new List<EquipmentItem>();
 
         //Location
         public int X;
         public int Y;
 
-        //Equipment List
-        public List<EquipmentItem> Items = new List<EquipmentItem>();
-
         //Init
         public CharacterWindow(Canvas _gameCanvas)
         {
-            _characterWindow = new WindowControl(_gameCanvas, Strings.Get("character","title"));
+            _characterWindow = new WindowControl(_gameCanvas, Strings.Get("character", "title"));
             _characterWindow.SetSize(228, 320);
-            _characterWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 210, GameGraphics.Renderer.GetScreenHeight() - 500);
+            _characterWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 210,
+                GameGraphics.Renderer.GetScreenHeight() - 500);
             _characterWindow.DisableResizing();
             _characterWindow.Margin = Margin.Zero;
             _characterWindow.Padding = new Padding(8, 5, 9, 11);
@@ -69,10 +68,18 @@ namespace Intersect_Client.Classes.UI.Game
 
             _characterWindow.SetTitleBarHeight(24);
             _characterWindow.SetCloseButtonSize(20, 20);
-            _characterWindow.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "characteractive.png"), WindowControl.ControlState.Active);
-            _characterWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"), Button.ControlState.Normal);
-            _characterWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"), Button.ControlState.Hovered);
-            _characterWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"), Button.ControlState.Clicked);
+            _characterWindow.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "characteractive.png"),
+                WindowControl.ControlState.Active);
+            _characterWindow.SetCloseButtonImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"),
+                Button.ControlState.Normal);
+            _characterWindow.SetCloseButtonImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"),
+                Button.ControlState.Hovered);
+            _characterWindow.SetCloseButtonImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"),
+                Button.ControlState.Clicked);
             _characterWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
             _characterWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
@@ -104,12 +111,13 @@ namespace Intersect_Client.Classes.UI.Game
 
             Label equipmentLabel = new Label(_characterWindow);
             equipmentLabel.SetPosition(4, 126);
-            equipmentLabel.SetText(Strings.Get("character","equipment"));
+            equipmentLabel.SetText(Strings.Get("character", "equipment"));
             equipmentLabel.SetTextColor(Color.White, Label.ControlState.Normal);
 
             _equipmentContainer = new ScrollControl(_characterWindow);
             _equipmentContainer.SetPosition(5, 144);
-            _equipmentContainer.SetSize(_characterWindow.Width - _characterWindow.Padding.Left - _characterWindow.Padding.Right - 10, 38);
+            _equipmentContainer.SetSize(
+                _characterWindow.Width - _characterWindow.Padding.Left - _characterWindow.Padding.Right - 10, 38);
 
             Label statsLabel = new Label(_characterWindow);
             statsLabel.SetPosition(4, 204);
@@ -121,12 +129,18 @@ namespace Intersect_Client.Classes.UI.Game
             _attackLabel.SetTextColor(Color.White, Label.ControlState.Normal);
 
             _addAttackBtn = new Button(_characterWindow);
-            _addAttackBtn.SetSize(15,15);
+            _addAttackBtn.SetSize(15, 15);
             _addAttackBtn.SetPosition(76, 220);
             _addAttackBtn.Clicked += _addAttackBtn_Clicked;
-            _addAttackBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatnormal.png"),Button.ControlState.Normal);
-            _addAttackBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstathover.png"), Button.ControlState.Hovered);
-            _addAttackBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatclicked.png"), Button.ControlState.Clicked);
+            _addAttackBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatnormal.png"),
+                Button.ControlState.Normal);
+            _addAttackBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstathover.png"),
+                Button.ControlState.Hovered);
+            _addAttackBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatclicked.png"),
+                Button.ControlState.Clicked);
 
             _defenseLabel = new Label(_characterWindow);
             _defenseLabel.SetPosition(4, 238);
@@ -136,9 +150,15 @@ namespace Intersect_Client.Classes.UI.Game
             _addDefenseBtn.SetSize(15, 15);
             _addDefenseBtn.SetPosition(76, 238);
             _addDefenseBtn.Clicked += _addDefenseBtn_Clicked;
-            _addDefenseBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatnormal.png"), Button.ControlState.Normal);
-            _addDefenseBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstathover.png"), Button.ControlState.Hovered);
-            _addDefenseBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatclicked.png"), Button.ControlState.Clicked);
+            _addDefenseBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatnormal.png"),
+                Button.ControlState.Normal);
+            _addDefenseBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstathover.png"),
+                Button.ControlState.Hovered);
+            _addDefenseBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatclicked.png"),
+                Button.ControlState.Clicked);
 
             _speedLabel = new Label(_characterWindow);
             _speedLabel.SetPosition(4, 256);
@@ -148,9 +168,15 @@ namespace Intersect_Client.Classes.UI.Game
             _addSpeedBtn.SetSize(15, 15);
             _addSpeedBtn.SetPosition(76, 256);
             _addSpeedBtn.Clicked += _addSpeedBtn_Clicked;
-            _addSpeedBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatnormal.png"), Button.ControlState.Normal);
-            _addSpeedBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstathover.png"), Button.ControlState.Hovered);
-            _addSpeedBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatclicked.png"), Button.ControlState.Clicked);
+            _addSpeedBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatnormal.png"),
+                Button.ControlState.Normal);
+            _addSpeedBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstathover.png"),
+                Button.ControlState.Hovered);
+            _addSpeedBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatclicked.png"),
+                Button.ControlState.Clicked);
 
             _abilityPwrLabel = new Label(_characterWindow);
             _abilityPwrLabel.SetPosition(96, 220);
@@ -160,9 +186,15 @@ namespace Intersect_Client.Classes.UI.Game
             _addAbilityPwrBtn.SetSize(15, 15);
             _addAbilityPwrBtn.SetPosition(196, 220);
             _addAbilityPwrBtn.Clicked += _addAbilityPwrBtn_Clicked;
-            _addAbilityPwrBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatnormal.png"), Button.ControlState.Normal);
-            _addAbilityPwrBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstathover.png"), Button.ControlState.Hovered);
-            _addAbilityPwrBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatclicked.png"), Button.ControlState.Clicked);
+            _addAbilityPwrBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatnormal.png"),
+                Button.ControlState.Normal);
+            _addAbilityPwrBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstathover.png"),
+                Button.ControlState.Hovered);
+            _addAbilityPwrBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatclicked.png"),
+                Button.ControlState.Clicked);
 
             _magicRstLabel = new Label(_characterWindow);
             _magicRstLabel.SetPosition(96, 238);
@@ -172,9 +204,15 @@ namespace Intersect_Client.Classes.UI.Game
             _addMagicResistBtn.SetSize(15, 15);
             _addMagicResistBtn.SetPosition(196, 238);
             _addMagicResistBtn.Clicked += _addMagicResistBtn_Clicked;
-            _addMagicResistBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatnormal.png"), Button.ControlState.Normal);
-            _addMagicResistBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstathover.png"), Button.ControlState.Hovered);
-            _addMagicResistBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatclicked.png"), Button.ControlState.Clicked);
+            _addMagicResistBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatnormal.png"),
+                Button.ControlState.Normal);
+            _addMagicResistBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstathover.png"),
+                Button.ControlState.Hovered);
+            _addMagicResistBtn.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "addstatclicked.png"),
+                Button.ControlState.Clicked);
 
             _pointsLabel = new Label(_characterWindow);
             _pointsLabel.SetPosition(96, 256);
@@ -183,31 +221,30 @@ namespace Intersect_Client.Classes.UI.Game
             InitEquipmentContainer();
         }
 
-
         //Update Button Event Handlers
         void _addMagicResistBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.SendUpgradeStat((int)Stats.MagicResist);
+            PacketSender.SendUpgradeStat((int) Stats.MagicResist);
         }
 
         void _addAbilityPwrBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.SendUpgradeStat((int)Stats.AbilityPower);
+            PacketSender.SendUpgradeStat((int) Stats.AbilityPower);
         }
 
         void _addSpeedBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.SendUpgradeStat((int)Stats.Speed);
+            PacketSender.SendUpgradeStat((int) Stats.Speed);
         }
 
         void _addDefenseBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.SendUpgradeStat((int)Stats.Defense);
+            PacketSender.SendUpgradeStat((int) Stats.Defense);
         }
 
         void _addAttackBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.SendUpgradeStat((int)Stats.Attack);
+            PacketSender.SendUpgradeStat((int) Stats.Attack);
         }
 
         private void InitEquipmentContainer()
@@ -217,31 +254,55 @@ namespace Intersect_Client.Classes.UI.Game
             if (w > _characterWindow.Width - _characterWindow.Padding.Left - _characterWindow.Padding.Right - 10)
             {
                 _equipmentContainer.EnableScroll(true, false);
-                _equipmentContainer.SetSize(_characterWindow.Width - _characterWindow.Padding.Left - _characterWindow.Padding.Right - 10, 38 + 16);
+                _equipmentContainer.SetSize(
+                    _characterWindow.Width - _characterWindow.Padding.Left - _characterWindow.Padding.Right - 10,
+                    38 + 16);
             }
             else
             {
                 _equipmentContainer.SetSize(w, 38 + 16);
-                _equipmentContainer.SetPosition((_characterWindow.Width - _characterWindow.Padding.Right)/2 - _equipmentContainer.Width/2 + 5,_equipmentContainer.Y);
+                _equipmentContainer.SetPosition(
+                    (_characterWindow.Width - _characterWindow.Padding.Right) / 2 - _equipmentContainer.Width / 2 + 5,
+                    _equipmentContainer.Y);
                 _equipmentContainer.EnableScroll(false, false);
             }
             var scrollbar = _equipmentContainer.GetHorizontalScrollBar();
             scrollbar.RenderColor = new Color(200, 40, 40, 40);
-            scrollbar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarnormal.png"), Dragger.ControlState.Normal);
-            scrollbar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarhover.png"), Dragger.ControlState.Hovered);
-            scrollbar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarclicked.png"), Dragger.ControlState.Clicked);
+            scrollbar.SetScrollBarImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarnormal.png"),
+                Dragger.ControlState.Normal);
+            scrollbar.SetScrollBarImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarhover.png"),
+                Dragger.ControlState.Hovered);
+            scrollbar.SetScrollBarImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarclicked.png"),
+                Dragger.ControlState.Clicked);
 
             var leftButton = scrollbar.GetScrollBarButton(Pos.Left);
-            leftButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrownormal.png"), Button.ControlState.Normal);
-            leftButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrowclicked.png"), Button.ControlState.Clicked);
-            leftButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrowhover.png"), Button.ControlState.Hovered);
+            leftButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrownormal.png"),
+                Button.ControlState.Normal);
+            leftButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrowclicked.png"),
+                Button.ControlState.Clicked);
+            leftButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrowhover.png"),
+                Button.ControlState.Hovered);
             var rightButton = scrollbar.GetScrollBarButton(Pos.Right);
-            rightButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrownormal.png"), Button.ControlState.Normal);
-            rightButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrowclicked.png"), Button.ControlState.Clicked);
-            rightButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrowhover.png"), Button.ControlState.Hovered);
+            rightButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrownormal.png"),
+                Button.ControlState.Normal);
+            rightButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrowclicked.png"),
+                Button.ControlState.Clicked);
+            rightButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrowhover.png"),
+                Button.ControlState.Hovered);
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                Items.Add(new EquipmentItem(i, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,"equipmentitem.png"), _characterWindow));
+                Items.Add(new EquipmentItem(i,
+                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "equipmentitem.png"),
+                    _characterWindow));
                 Items[i].pnl = new ImagePanel(_equipmentContainer);
                 Items[i].pnl.SetSize(34, 34);
                 Items[i].pnl.SetPosition(x + i * 36, 2);
@@ -253,14 +314,18 @@ namespace Intersect_Client.Classes.UI.Game
         //Methods
         public void Update()
         {
-            if (_characterWindow.IsHidden) { return; }
+            if (_characterWindow.IsHidden)
+            {
+                return;
+            }
             _characterName.Text = Globals.Me.MyName;
             _characterLevelAndClass.Text = Strings.Get("character", "levelandclass", Globals.Me.Level,
                 ClassBase.GetName(Globals.Me.Class));
 
             //Load Portrait
             GameTexture faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, Globals.Me.Face);
-            GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, Globals.Me.MySprite);
+            GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity,
+                Globals.Me.MySprite);
             if (Globals.Me.Face != "" && Globals.Me.Face != _currentSprite && faceTex != null)
             {
                 _characterPortrait.Texture = faceTex;
@@ -272,7 +337,7 @@ namespace Intersect_Client.Classes.UI.Game
             else if (Globals.Me.MySprite != "" && Globals.Me.MySprite != _currentSprite && entityTex != null)
             {
                 _characterPortrait.Texture = entityTex;
-                _characterPortrait.SetTextureRect(0, 0, entityTex.GetWidth()/4, entityTex.GetHeight()/4);
+                _characterPortrait.SetTextureRect(0, 0, entityTex.GetWidth() / 4, entityTex.GetHeight() / 4);
                 _characterPortrait.SizeToContents();
                 Align.Center(_characterPortrait);
                 _characterPortrait.IsHidden = false;
@@ -283,21 +348,26 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             _attackLabel.SetText(Strings.Get("character", "stat0", Strings.Get("combat", "stat0"),
-                Globals.Me.Stat[(int) Stats.Attack])); 
+                Globals.Me.Stat[(int) Stats.Attack]));
             _defenseLabel.SetText(Strings.Get("character", "stat2", Strings.Get("combat", "stat2"),
-                Globals.Me.Stat[(int)Stats.Defense]));
+                Globals.Me.Stat[(int) Stats.Defense]));
             _speedLabel.SetText(Strings.Get("character", "stat4", Strings.Get("combat", "stat4"),
-                Globals.Me.Stat[(int)Stats.Speed]));
+                Globals.Me.Stat[(int) Stats.Speed]));
             _abilityPwrLabel.SetText(Strings.Get("character", "stat1", Strings.Get("combat", "stat1"),
-                Globals.Me.Stat[(int)Stats.AbilityPower]));
+                Globals.Me.Stat[(int) Stats.AbilityPower]));
             _magicRstLabel.SetText(Strings.Get("character", "stat3", Strings.Get("combat", "stat3"),
-                Globals.Me.Stat[(int)Stats.MagicResist]));
-            _pointsLabel.SetText(Strings.Get("character","points",Globals.Me.StatPoints));
-            _addAbilityPwrBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Stats.AbilityPower] == Options.MaxStatValue);
-            _addAttackBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Stats.Attack] == Options.MaxStatValue);
-            _addDefenseBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Stats.Defense] == Options.MaxStatValue);
-            _addMagicResistBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Stats.MagicResist] == Options.MaxStatValue);
-            _addSpeedBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Stats.Speed] == Options.MaxStatValue);
+                Globals.Me.Stat[(int) Stats.MagicResist]));
+            _pointsLabel.SetText(Strings.Get("character", "points", Globals.Me.StatPoints));
+            _addAbilityPwrBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
+                                          Globals.Me.Stat[(int) Stats.AbilityPower] == Options.MaxStatValue);
+            _addAttackBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
+                                      Globals.Me.Stat[(int) Stats.Attack] == Options.MaxStatValue);
+            _addDefenseBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
+                                       Globals.Me.Stat[(int) Stats.Defense] == Options.MaxStatValue);
+            _addMagicResistBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
+                                           Globals.Me.Stat[(int) Stats.MagicResist] == Options.MaxStatValue);
+            _addSpeedBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
+                                     Globals.Me.Stat[(int) Stats.Speed] == Options.MaxStatValue);
 
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
@@ -305,46 +375,48 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (Globals.Me.Inventory[Globals.Me.Equipment[i]].ItemNum > -1)
                     {
-                        Items[i].Update(Globals.Me.Inventory[Globals.Me.Equipment[i]].ItemNum, Globals.Me.Inventory[Globals.Me.Equipment[i]].StatBoost);
+                        Items[i].Update(Globals.Me.Inventory[Globals.Me.Equipment[i]].ItemNum,
+                            Globals.Me.Inventory[Globals.Me.Equipment[i]].StatBoost);
                     }
                     else
                     {
-                        Items[i].Update(-1,_emptyStatBoost);
+                        Items[i].Update(-1, _emptyStatBoost);
                     }
                 }
                 else
                 {
                     Items[i].Update(-1, _emptyStatBoost);
                 }
-
             }
         }
+
         public void Show()
         {
             _characterWindow.IsHidden = false;
         }
+
         public bool IsVisible()
         {
             return !_characterWindow.IsHidden;
         }
+
         public void Hide()
         {
             _characterWindow.IsHidden = true;
         }
     }
 
-
     public class EquipmentItem
     {
-        public ImagePanel pnl;
-        public ImagePanel contentPanel;
-        private ItemDescWindow _descWindow;
-        private int myindex;
+        private WindowControl _characterWindow;
         private int _currentItem = -1;
+        private ItemDescWindow _descWindow;
+        private GameTexture _equipmentBG;
         private int[] _statBoost = new int[Options.MaxStats];
         private bool _texLoaded = false;
-        private GameTexture _equipmentBG;
-        private WindowControl _characterWindow;
+        public ImagePanel contentPanel;
+        private int myindex;
+        public ImagePanel pnl;
 
         public EquipmentItem(int index, GameTexture equipmentBG, WindowControl characterWindow)
         {
@@ -365,8 +437,7 @@ namespace Intersect_Client.Classes.UI.Game
             contentPanel.MouseInputEnabled = false;
             pnl.SetToolTipText(Options.EquipmentSlots[myindex]);
 
-            pnl.Texture =  _equipmentBG;
-
+            pnl.Texture = _equipmentBG;
         }
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
@@ -376,15 +447,27 @@ namespace Intersect_Client.Classes.UI.Game
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
         {
-            if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
+            if (_descWindow != null)
+            {
+                _descWindow.Dispose();
+                _descWindow = null;
+            }
         }
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)) { return; }
-            if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
+            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            {
+                return;
+            }
+            if (_descWindow != null)
+            {
+                _descWindow.Dispose();
+                _descWindow = null;
+            }
             if (ItemBase.GetItem(_currentItem) == null) return;
-            _descWindow = new ItemDescWindow(_currentItem, 1, _characterWindow.X - 255, _characterWindow.Y, _statBoost, "Equipment Slot: " + Options.EquipmentSlots[myindex]);
+            _descWindow = new ItemDescWindow(_currentItem, 1, _characterWindow.X - 255, _characterWindow.Y, _statBoost,
+                "Equipment Slot: " + Options.EquipmentSlots[myindex]);
         }
 
         public FloatRect RenderBounds()
@@ -399,8 +482,6 @@ namespace Intersect_Client.Classes.UI.Game
             return rect;
         }
 
-
-
         public void Update(int currentItem, int[] statBoost)
         {
             if (currentItem != _currentItem || !_texLoaded)
@@ -410,7 +491,8 @@ namespace Intersect_Client.Classes.UI.Game
                 var item = ItemBase.GetItem(_currentItem);
                 if (item != null)
                 {
-                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
+                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
+                        item.Pic);
                     if (itemTex != null)
                     {
                         contentPanel.Show();

@@ -10,15 +10,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
         public new const GameObject OBJECT_TYPE = GameObject.CommonEvent;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
-        public string MyName { get; set; }
-        public int MyIndex { get; set; }
-        public int SpawnX { get; set; }
-        public int SpawnY { get; set; }
-        public bool CommonEvent { get; set; }
-        public byte IsGlobal { get; set; }
-        public List<EventPage> MyPages { get; set; }
-
-        public EventBase(int index, int x, int y, bool isCommon = false, byte isGlobal = 0) : base (index)
+        public EventBase(int index, int x, int y, bool isCommon = false, byte isGlobal = 0) : base(index)
         {
             MyName = "";
             if (isCommon) MyName = "Common Event " + index;
@@ -38,6 +30,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
             Load(copy.EventData());
             CommonEvent = copy.CommonEvent;
         }
+
         public EventBase(int index, ByteBuffer myBuffer, bool isCommon = false) : base(index)
         {
             MyName = "New Event";
@@ -45,18 +38,27 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
             MyIndex = index;
             Load(myBuffer.ToArray());
         }
+
+        public string MyName { get; set; }
+        public int MyIndex { get; set; }
+        public int SpawnX { get; set; }
+        public int SpawnY { get; set; }
+        public bool CommonEvent { get; set; }
+        public byte IsGlobal { get; set; }
+        public List<EventPage> MyPages { get; set; }
+
         public byte[] EventData()
         {
             var myBuffer = new ByteBuffer();
-                myBuffer.WriteString(MyName);
-                myBuffer.WriteInteger(SpawnX);
-                myBuffer.WriteInteger(SpawnY);
-                myBuffer.WriteByte(IsGlobal);
-                myBuffer.WriteInteger(MyPages.Count);
-                for (var i = 0; i < MyPages.Count; i++)
-                {
-                    MyPages[i].WriteBytes(myBuffer);
-                }
+            myBuffer.WriteString(MyName);
+            myBuffer.WriteInteger(SpawnX);
+            myBuffer.WriteInteger(SpawnY);
+            myBuffer.WriteByte(IsGlobal);
+            myBuffer.WriteInteger(MyPages.Count);
+            for (var i = 0; i < MyPages.Count; i++)
+            {
+                MyPages[i].WriteBytes(myBuffer);
+            }
             return myBuffer.ToArray();
         }
 
@@ -64,23 +66,23 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
-                MyName = myBuffer.ReadString();
-                SpawnX = myBuffer.ReadInteger();
-                SpawnY = myBuffer.ReadInteger();
-                IsGlobal = myBuffer.ReadByte();
-                int pageCount = myBuffer.ReadInteger();
-                MyPages.Clear();
-                for (var i = 0; i < pageCount; i++)
-                {
-                    MyPages.Add(new EventPage(myBuffer));
-                }
+            MyName = myBuffer.ReadString();
+            SpawnX = myBuffer.ReadInteger();
+            SpawnY = myBuffer.ReadInteger();
+            IsGlobal = myBuffer.ReadByte();
+            int pageCount = myBuffer.ReadInteger();
+            MyPages.Clear();
+            for (var i = 0; i < pageCount; i++)
+            {
+                MyPages.Add(new EventPage(myBuffer));
+            }
         }
 
         public static EventBase GetEvent(int index)
         {
             if (Objects.ContainsKey(index))
             {
-                return (EventBase)Objects[index];
+                return (EventBase) Objects[index];
             }
             return null;
         }
@@ -89,7 +91,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return ((EventBase)Objects[index]).MyName;
+                return ((EventBase) Objects[index]).MyName;
             }
             return "Deleted";
         }
@@ -117,26 +119,31 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, EventBase> GetObjects()
         {
-            Dictionary<int, EventBase> objects = Objects.ToDictionary(k => k.Key, v => (EventBase)v.Value);
+            Dictionary<int, EventBase> objects = Objects.ToDictionary(k => k.Key, v => (EventBase) v.Value);
             return objects;
         }
     }

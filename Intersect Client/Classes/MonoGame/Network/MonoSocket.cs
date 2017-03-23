@@ -1,9 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Net.Sockets;
+using Intersect.Logging;
 using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
-using System.IO;
-using Intersect.Logging;
 
 namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
 {
@@ -15,6 +15,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
         private static byte[] _tempBuff;
         public static TcpClient MySocket;
         private static NetworkStream _myStream;
+
         public MonoSocket() : base()
         {
             MySocket = new TcpClient
@@ -34,12 +35,12 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
         }
 
         /// <summary>
-        /// This is called when the socket succeeded or failed in connecting to the server.
-        /// This will error on the .EndConnect line if the server is offline or unreachable.
-        /// Since this error is caught with the Try-Catch you can ignore it.
+        ///     This is called when the socket succeeded or failed in connecting to the server.
+        ///     This will error on the .EndConnect line if the server is offline or unreachable.
+        ///     Since this error is caught with the Try-Catch you can ignore it.
         /// </summary>
         /// <param name="result"></param>
-        private void ConnectCallback(IAsyncResult result) 
+        private void ConnectCallback(IAsyncResult result)
         {
             try
             {
@@ -67,7 +68,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
                 OnConnectionFailed();
             }
         }
-        
+
         private void ReceiveCallback(IAsyncResult result)
         {
             try

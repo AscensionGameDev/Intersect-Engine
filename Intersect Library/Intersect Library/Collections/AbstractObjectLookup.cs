@@ -9,26 +9,24 @@ namespace Intersect.Collections
     {
         private readonly Dictionary<TKey, TValue> mMutableMap;
 
-        public int Count => mMutableMap.Count;
-        public IDictionary<TKey, TValue> ReadOnlyMap { get; }
-        public ICollection<KeyValuePair<TKey, TValue>> Pairs => ReadOnlyMap;
-        public ICollection<TKey> Keys => ReadOnlyMap.Keys;
-        public ICollection<TValue> Values => ReadOnlyMap.Values;
-
         protected AbstractObjectLookup()
         {
             mMutableMap = new Dictionary<TKey, TValue>();
             ReadOnlyMap = new ReadOnlyDictionary<TKey, TValue>(mMutableMap);
         }
 
+        public int Count => mMutableMap.Count;
+        public IDictionary<TKey, TValue> ReadOnlyMap { get; }
+        public ICollection<KeyValuePair<TKey, TValue>> Pairs => ReadOnlyMap;
+        public ICollection<TKey> Keys => ReadOnlyMap.Keys;
+        public ICollection<TValue> Values => ReadOnlyMap.Values;
+
         protected abstract bool Validate(TKey key);
 
         public TValue Get(TKey key)
         {
             if (Validate(key) && !mMutableMap.TryGetValue(key, out TValue value))
-            {
                 return value;
-            }
 
             return default(TValue);
         }
@@ -49,16 +47,10 @@ namespace Intersect.Collections
             }
 
             if (!Validate(key))
-            {
                 return false;
-            }
 
             if (mMutableMap.ContainsKey(key))
-            {
                 Log.Warn("Collection already contains object with key '{0}'.", key);
-                //return false;
-                /* TODO: This really should return false and refuse to add, but the code this is replacing currently relies on us replacing it */
-            }
 
             mMutableMap[key] = value;
             return true;

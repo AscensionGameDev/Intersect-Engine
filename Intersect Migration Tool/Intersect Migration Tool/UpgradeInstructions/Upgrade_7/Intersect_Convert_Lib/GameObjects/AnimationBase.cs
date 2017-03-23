@@ -9,26 +9,26 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         public new const string DATABASE_TABLE = "animations";
         public new const GameObject OBJECT_TYPE = GameObject.Animation;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        
-        public string Name = "New Animation";
-        public string Sound = "";
+        public int LowerAnimFrameCount = 1;
+        public int LowerAnimFrameSpeed = 100;
+        public int LowerAnimLoopCount = 0;
 
         //Lower Animation
         public string LowerAnimSprite = "";
         public int LowerAnimXFrames = 1;
         public int LowerAnimYFrames = 1;
-        public int LowerAnimFrameCount = 1;
-        public int LowerAnimFrameSpeed = 100;
-        public int LowerAnimLoopCount = 0;
         public LightBase[] LowerLights;
+
+        public string Name = "New Animation";
+        public string Sound = "";
+        public int UpperAnimFrameCount = 1;
+        public int UpperAnimFrameSpeed = 100;
+        public int UpperAnimLoopCount = 0;
 
         //Upper Animation
         public string UpperAnimSprite = "";
         public int UpperAnimXFrames = 1;
         public int UpperAnimYFrames = 1;
-        public int UpperAnimFrameCount = 1;
-        public int UpperAnimFrameSpeed = 100;
-        public int UpperAnimLoopCount = 0;
         public LightBase[] UpperLights;
 
         public AnimationBase(int id) : base(id)
@@ -119,7 +119,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return (AnimationBase)Objects[index];
+                return (AnimationBase) Objects[index];
             }
             return null;
         }
@@ -128,7 +128,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return ((AnimationBase)Objects[index]).Name;
+                return ((AnimationBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -156,23 +156,28 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             }
             return null;
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, AnimationBase> GetObjects()
         {
-            Dictionary<int, AnimationBase> objects = Objects.ToDictionary(k => k.Key, v => (AnimationBase)v.Value);
+            Dictionary<int, AnimationBase> objects = Objects.ToDictionary(k => k.Key, v => (AnimationBase) v.Value);
             return objects;
-        } 
+        }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);

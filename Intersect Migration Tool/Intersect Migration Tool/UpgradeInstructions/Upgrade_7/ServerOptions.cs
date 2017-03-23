@@ -54,9 +54,13 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                     int slot = 0;
                     while (!string.IsNullOrEmpty(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false)))
                     {
-                        if (Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false)) > -1)
+                        if (
+                            Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false)) >
+                            -1)
                         {
-                            Console.WriteLine("Tried to add the same piece of equipment twice, this is not permitted.  (Path: " + "//Config/Equipment/Slot" + slot + ")");
+                            Console.WriteLine(
+                                "Tried to add the same piece of equipment twice, this is not permitted.  (Path: " +
+                                "//Config/Equipment/Slot" + slot + ")");
                             return false;
                         }
                         else
@@ -68,23 +72,33 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                     Options.WeaponIndex = GetXmlInt(options, "//Config/Equipment/WeaponSlot");
                     if (Options.WeaponIndex < -1 || Options.WeaponIndex > Options.EquipmentSlots.Count - 1)
                     {
-                        Console.WriteLine("Weapon Slot is out of bounds! Make sure the slot exists and you are counting starting from zero! Use -1 if you do not wish to have equipable weapons in-game!  (Path: " + "//Config/Equipment/WeaponSlot)");
+                        Console.WriteLine(
+                            "Weapon Slot is out of bounds! Make sure the slot exists and you are counting starting from zero! Use -1 if you do not wish to have equipable weapons in-game!  (Path: " +
+                            "//Config/Equipment/WeaponSlot)");
                     }
                     Options.ShieldIndex = GetXmlInt(options, "//Config/Equipment/ShieldSlot");
                     if (Options.ShieldIndex < -1 || Options.ShieldIndex > Options.EquipmentSlots.Count - 1)
                     {
-                        Console.WriteLine("Shield Slot is out of bounds! Make sure the slot exists and you are counting starting from zero! Use -1 if you do not wish to have equipable shields in-game!  (Path: " + "//Config/Equipment/ShieldSlot)");
+                        Console.WriteLine(
+                            "Shield Slot is out of bounds! Make sure the slot exists and you are counting starting from zero! Use -1 if you do not wish to have equipable shields in-game!  (Path: " +
+                            "//Config/Equipment/ShieldSlot)");
                     }
 
                     //Paperdoll
                     slot = 0;
                     while (!string.IsNullOrEmpty(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)))
                     {
-                        if (Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)) > -1)
+                        if (
+                            Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)) >
+                            -1)
                         {
-                            if (Options.PaperdollOrder.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)) > -1)
+                            if (
+                                Options.PaperdollOrder.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot,
+                                    false)) > -1)
                             {
-                                Console.WriteLine("Tried to add the same piece of equipment to the paperdoll render order twice, this is not permitted.  (Path: " + "//Config/Paperdoll/Slot" + slot + ")");
+                                Console.WriteLine(
+                                    "Tried to add the same piece of equipment to the paperdoll render order twice, this is not permitted.  (Path: " +
+                                    "//Config/Paperdoll/Slot" + slot + ")");
                                 return false;
                             }
                             else
@@ -94,7 +108,9 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                         }
                         else
                         {
-                            Console.WriteLine("Tried to add a paperdoll for a piece of equipment that does not exist!  (Path: " + "//Config/Paperdoll/Slot" + slot + ")");
+                            Console.WriteLine(
+                                "Tried to add a paperdoll for a piece of equipment that does not exist!  (Path: " +
+                                "//Config/Paperdoll/Slot" + slot + ")");
                             return false;
                         }
                         slot++;
@@ -106,7 +122,9 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                     {
                         if (Options.ToolTypes.IndexOf(GetXmlStr(options, "//Config/ToolTypes/Slot" + slot, false)) > -1)
                         {
-                            Console.WriteLine("Tried to add the same type of tool twice, this is not permitted.  (Path: " + "//Config/ToolTypes/Slot" + slot + ")");
+                            Console.WriteLine(
+                                "Tried to add the same type of tool twice, this is not permitted.  (Path: " +
+                                "//Config/ToolTypes/Slot" + slot + ")");
                             return false;
                         }
                         else
@@ -131,16 +149,18 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
 
                     //Map
                     Options.GameBorderStyle = GetXmlInt(options, "//Config/Map/BorderStyle");
-                    var zdimension = GetXmlStr(options, "//Config/Map/ZDimensionVisible",false);
+                    var zdimension = GetXmlStr(options, "//Config/Map/ZDimensionVisible", false);
                     if (zdimension != "")
                     {
                         Options.ZDimensionVisible = Convert.ToBoolean(zdimension);
                     }
                     Options.MapWidth = GetXmlInt(options, "//Config/Map/MapWidth");
                     Options.MapHeight = GetXmlInt(options, "//Config/Map/MapHeight");
-                    if (Options.MapWidth < 10 || Options.MapWidth > 64 || Options.MapHeight < 10 || Options.MapHeight > 64)
+                    if (Options.MapWidth < 10 || Options.MapWidth > 64 || Options.MapHeight < 10 ||
+                        Options.MapHeight > 64)
                     {
-                        Console.WriteLine("MapWidth and/or MapHeight are out of bounds. Must be between 10 and 64. The client loads 9 maps at a time, having large map sizes really hurts performance.");
+                        Console.WriteLine(
+                            "MapWidth and/or MapHeight are out of bounds. Must be between 10 and 64. The client loads 9 maps at a time, having large map sizes really hurts performance.");
                         ConfigFailed = true;
                     }
                     Options.TileWidth = GetXmlInt(options, "//Config/Map/TileWidth");

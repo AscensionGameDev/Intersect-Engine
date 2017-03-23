@@ -6,22 +6,22 @@ namespace Intersect_Client.Classes.Items
     {
         public int ItemNum = -1;
         public int ItemVal = 0;
-        public int[] StatBoost = new int[(int)Stats.StatCount];
+        public int[] StatBoost = new int[(int) Stats.StatCount];
 
         public ItemInstance()
         {
-
         }
 
         public void Load(ByteBuffer bf)
         {
             ItemNum = bf.ReadInteger();
             ItemVal = bf.ReadInteger();
-            for (int i = 0; i < (int)Stats.StatCount; i++)
+            for (int i = 0; i < (int) Stats.StatCount; i++)
             {
                 StatBoost[i] = bf.ReadInteger();
             }
         }
+
         public ItemInstance Clone()
         {
             ItemInstance newItem = new ItemInstance()
@@ -29,7 +29,7 @@ namespace Intersect_Client.Classes.Items
                 ItemNum = ItemNum,
                 ItemVal = ItemVal
             };
-            for (int i = 0; i < (int)Stats.StatCount; i++)
+            for (int i = 0; i < (int) Stats.StatCount; i++)
             {
                 newItem.StatBoost[i] = StatBoost[i];
             }
@@ -42,8 +42,8 @@ namespace Intersect_Client.Classes.Items
         public int X = 0;
         public int Y = 0;
 
-        public MapItemInstance() : base() {
-
+        public MapItemInstance() : base()
+        {
         }
 
         public void Load(ByteBuffer bf)

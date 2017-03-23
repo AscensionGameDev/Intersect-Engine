@@ -9,7 +9,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
 
         public CommandList()
         {
-
         }
 
         public CommandList(ByteBuffer myBuffer)
@@ -19,7 +18,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             {
                 Commands.Add(new EventCommand());
                 Commands[i].Load(myBuffer);
-
             }
         }
 
