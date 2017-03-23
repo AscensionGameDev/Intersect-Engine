@@ -9,7 +9,6 @@ namespace Intersect.GameObjects
         //Core info
         public new const string DATABASE_TABLE = "tilesets";
         public new const GameObject OBJECT_TYPE = GameObject.Tileset;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         public TilesetBase(int id) : base(id)
         {
@@ -38,20 +37,7 @@ namespace Intersect.GameObjects
 
         public static TilesetBase GetTileset(int index)
         {
-            if (Objects.ContainsKey(index))
-            {
-                return (TilesetBase) Objects[index];
-            }
-            return null;
-        }
-
-        public static string GetName(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return ((TilesetBase) Objects[index]).Name;
-            }
-            return "Deleted";
+            return Lookup.Get(index);
         }
 
         public override byte[] BinaryData => Data();
@@ -66,40 +52,24 @@ namespace Intersect.GameObjects
             get { return OBJECT_TYPE; }
         }
 
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            Objects.Remove(Id);
-        }
-
         public static void ClearObjects()
         {
-            Objects.Clear();
+            Lookup.Clear();
         }
 
         public static void AddObject(int index, DatabaseObject obj)
         {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
+            Lookup.Add(index, (TilesetBase)obj);
         }
 
         public static int ObjectCount()
         {
-            return Objects.Count;
+            return Lookup.Count;
         }
 
-        public static Dictionary<int, TilesetBase> GetObjects()
+        public static IDictionary<int, TilesetBase> GetObjects()
         {
-            Dictionary<int, TilesetBase> objects = Objects.ToDictionary(k => k.Key, v => (TilesetBase) v.Value);
-            return objects;
+            return Lookup.ReadOnlyMap;
         }
     }
 }

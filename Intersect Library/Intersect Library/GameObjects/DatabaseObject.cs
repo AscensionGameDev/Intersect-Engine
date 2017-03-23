@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Maps;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Maps;
+using Intersect.Collections;
 
 namespace Intersect.GameObjects
 {
@@ -15,17 +16,24 @@ namespace Intersect.GameObjects
         byte[] BinaryData { get; }
         string DatabaseTableName { get; }
         GameObject GameObjectType { get; }
+
         void MakeBackup();
         void RestoreBackup();
         void DeleteBackup();
+
         void Delete();
     }
 
     public abstract class DatabaseObject<TObject> : DatabaseObject, IGameObject<int, TObject> where TObject : DatabaseObject<TObject>
     {
+        private static IntObjectLookup<TObject> sLookup;
+
+        public static IntObjectLookup<TObject> Lookup => (sLookup = (sLookup ?? new IntObjectLookup<TObject>()));
+
         public const string DATABASE_TABLE = "";
         public const GameObject OBJECT_TYPE = GameObject.Animation;
-        private byte[] backup = null;
+
+        private byte[] mBackup = null;
 
         protected DatabaseObject(int id)
         {
@@ -37,26 +45,29 @@ namespace Intersect.GameObjects
 
         public abstract void Load(byte[] packet);
 
-        public virtual void MakeBackup()
-        {
-            backup = BinaryData;
-        }
-
+        public virtual void MakeBackup() => mBackup = BinaryData;
+        public virtual void DeleteBackup() => mBackup = null;
         public virtual void RestoreBackup()
         {
-            if (backup != null)
-                Load(backup);
+            if (mBackup != null)
+            {
+                Load(mBackup);
+            }
         }
 
-        public virtual void DeleteBackup()
-        {
-            backup = null;
-        }
+        public virtual void Delete() => Lookup.Delete((TObject)this);
 
-        public abstract void Delete();
         public abstract byte[] BinaryData { get; }
         public abstract GameObject GameObjectType { get; }
         public abstract string DatabaseTableName { get; }
+
+        public static TObject Get(int index) => Lookup.Get(index);
+
+        public static string GetName(int index)
+        {
+            var obj = Lookup.Get(index);
+            return obj == null ? "Deleted" : obj.Name;
+        }
     }
 
     public static class DatabaseObjectUtils

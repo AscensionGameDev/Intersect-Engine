@@ -25,7 +25,7 @@ namespace Intersect.Collections
 
         public TValue Get(TKey key)
         {
-            if (Validate(key) && !mMutableMap.TryGetValue(key, out TValue value))
+            if (Validate(key) && mMutableMap.TryGetValue(key, out TValue value))
                 return value;
 
             return default(TValue);
