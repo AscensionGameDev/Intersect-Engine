@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using IntersectClientExtras.GenericClasses;
-using Color = Intersect_Library.Color;
+using Color = Intersect.Color;
 
 namespace Intersect_Client.Classes.General
 {
@@ -28,7 +25,7 @@ namespace Intersect_Client.Classes.General
         {
             if (_updateTime < Globals.System.GetTimeMS())
             {
-                var ts = new TimeSpan(0, 0, 0, 0, (int) (1000*_rate));
+                var ts = new TimeSpan(0, 0, 0, 0, (int) (1000 * _rate));
                 _serverTime = _serverTime.Add(ts);
                 _updateTime = Globals.System.GetTimeMS() + 1000;
             }
@@ -38,11 +35,11 @@ namespace Intersect_Client.Classes.General
             _currentColor.R = LerpVal(_currentColor.R, _targetColor.R, valChange);
             _currentColor.G = LerpVal(_currentColor.G, _targetColor.G, valChange);
             _currentColor.B = LerpVal(_currentColor.B, _targetColor.B, valChange);
-            
+
             _colorUpdate = Globals.System.GetTimeMS();
         }
 
-        private static float LerpVal(float val,float target, float amt)
+        private static float LerpVal(float val, float target, float amt)
         {
             if (val < target)
             {
@@ -79,7 +76,5 @@ namespace Intersect_Client.Classes.General
         {
             return _currentColor;
         }
-
-
     }
 }

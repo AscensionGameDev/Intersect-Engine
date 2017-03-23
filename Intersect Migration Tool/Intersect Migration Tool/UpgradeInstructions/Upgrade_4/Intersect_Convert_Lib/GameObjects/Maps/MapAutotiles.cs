@@ -1,4 +1,6 @@
-﻿namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Maps
+﻿using Intersect;
+
+namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Maps
 {
     public class MapAutotiles
     {
@@ -22,14 +24,14 @@
         public const byte RenderStateNormal = 1;
         public const byte RenderStateAutotile = 2;
 
+        private readonly MapBase _myMap;
+
         // autotiling
         public PointStruct[] AutoInner = new PointStruct[6];
-        public PointStruct[] AutoNw = new PointStruct[6];
         public PointStruct[] AutoNe = new PointStruct[6];
-        public PointStruct[] AutoSw = new PointStruct[6];
+        public PointStruct[] AutoNw = new PointStruct[6];
         public PointStruct[] AutoSe = new PointStruct[6];
-
-        private readonly MapBase _myMap;
+        public PointStruct[] AutoSw = new PointStruct[6];
         public AutoTileCls[,] Autotile;
 
         public MapAutotiles(MapBase map)
@@ -43,8 +45,10 @@
                     Autotile[x, y] = new AutoTileCls();
                     for (var i = 0; i < Options.LayerCount; i++)
                     {
-                        Autotile[x, y].Layer[i] = new QuarterTileCls();
-                        Autotile[x, y].Layer[i].QuarterTile = new PointStruct[5];
+                        Autotile[x, y].Layer[i] = new QuarterTileCls()
+                        {
+                            QuarterTile = new PointStruct[5]
+                        };
                     }
                 }
             }
@@ -133,8 +137,6 @@
             // SE - t
             AutoSe[4].X = (2 * Options.TileWidth) - (Options.TileWidth / 2);
             AutoSe[4].Y = (2 * Options.TileHeight) + (Options.TileHeight / 2);
-
-
         }
 
         public byte[] GetData()
@@ -248,10 +250,14 @@
         public void CacheRenderState(int x, int y, int layerNum)
         {
             // exit out early
-            if (x < 0 || x > Options.MapWidth || y < 0 || y > Options.MapHeight) { return; }
+            if (x < 0 || x > Options.MapWidth || y < 0 || y > Options.MapHeight)
+            {
+                return;
+            }
 
             // check if it needs to be rendered as an autotile
-            if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == AutotileNone || _myMap.Layers[layerNum].Tiles[x, y].Autotile == AutotileFake)
+            if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == AutotileNone ||
+                _myMap.Layers[layerNum].Tiles[x, y].Autotile == AutotileFake)
             {
                 // default to... default
                 Autotile[x, y].Layer[layerNum].RenderState = RenderStateNormal;
@@ -264,8 +270,14 @@
                 int quarterNum;
                 for (quarterNum = 1; quarterNum < 5; quarterNum++)
                 {
-                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X = (_myMap.Layers[layerNum].Tiles[x, y].X * Options.TileWidth) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y = (_myMap.Layers[layerNum].Tiles[x, y].Y * Options.TileHeight) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X = (_myMap.Layers[layerNum].Tiles[x, y].X *
+                                                                                Options.TileWidth) +
+                                                                               Autotile[x, y].Layer[layerNum]
+                                                                                   .QuarterTile[quarterNum].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y = (_myMap.Layers[layerNum].Tiles[x, y].Y *
+                                                                                Options.TileHeight) +
+                                                                               Autotile[x, y].Layer[layerNum]
+                                                                                   .QuarterTile[quarterNum].Y;
                 }
             }
         }
@@ -282,12 +294,14 @@
             // The situations are "inner", "outer", "horizontal", "vertical" and "fill".
 
             // Exit out if we don//t have an auatotile
-            if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == 0) { return; }
+            if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == 0)
+            {
+                return;
+            }
 
             // Okay, we have autotiling but which one?
             switch (_myMap.Layers[layerNum].Tiles[x, y].Autotile)
             {
-
                 // Normal or animated - same difference
                 case AutotileNormal:
                 case AutotileAnim:
@@ -343,24 +357,48 @@
             byte situation = 1;
 
             // North West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y - 1, surroundingMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y - 1, surroundingMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // North
-            if (CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation - Inner
-            if (!tmpTile[2] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[2] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
             // Horizontal
-            if (!tmpTile[2] && tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (!tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (tmpTile[2] && !tmpTile[3]) { situation = AutoTileVertical; }
+            if (tmpTile[2] && !tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Outer
-            if (!tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileOuter; }
+            if (!tmpTile[1] && tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileOuter;
+            }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -389,24 +427,48 @@
             byte situation = 1;
 
             // North
-            if (CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // North East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y - 1, surroundingMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y - 1, surroundingMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation - Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
             // Horizontal
-            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (!tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileVertical; }
+            if (tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Outer
-            if (tmpTile[1] && !tmpTile[2] && tmpTile[3]) { situation = AutoTileOuter; }
+            if (tmpTile[1] && !tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileOuter;
+            }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -435,24 +497,48 @@
             byte situation = 1;
 
             // West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // South West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y + 1, surroundingMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y + 1, surroundingMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // South
-            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation - Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
             // Horizontal
-            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileVertical; }
+            if (!tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Outer
-            if (tmpTile[1] && !tmpTile[2] && tmpTile[3]) { situation = AutoTileOuter; }
+            if (tmpTile[1] && !tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileOuter;
+            }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -481,24 +567,48 @@
             byte situation = 1;
 
             // South
-            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // South East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y + 1, surroundingMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y + 1, surroundingMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation - Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
             // Horizontal
-            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (!tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileVertical; }
+            if (tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Outer
-            if (tmpTile[1] && !tmpTile[2] && tmpTile[3]) { situation = AutoTileOuter; }
+            if (tmpTile[1] && !tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileOuter;
+            }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -597,22 +707,43 @@
             byte situation = 1;
 
             // North West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y - 1, surroundingMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y - 1, surroundingMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // North
-            if (CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation - Horizontal
-            if (!tmpTile[2] && tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (!tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (tmpTile[2] && !tmpTile[3]) { situation = AutoTileVertical; }
+            if (tmpTile[2] && !tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Fill
-            if (tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
             // Inner
-            if (!tmpTile[2] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[2] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -638,22 +769,43 @@
             byte situation = 1;
 
             // North
-            if (CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // North East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y - 1, surroundingMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y - 1, surroundingMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation - Horizontal
-            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (!tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileVertical; }
+            if (tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Fill
-            if (tmpTile[1] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
             // Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -679,22 +831,43 @@
             byte situation = 1;
 
             // West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // South West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y + 1, surroundingMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y + 1, surroundingMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // South
-            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation - Horizontal
-            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileVertical; }
+            if (!tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Fill
-            if (tmpTile[1] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
             // Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -720,22 +893,43 @@
             byte situation = 1;
 
             // South
-            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // South East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y + 1, surroundingMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y + 1, surroundingMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation -  Horizontal
-            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (!tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileVertical; }
+            if (tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Fill
-            if (tmpTile[1] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
             // Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -786,7 +980,6 @@
                 y2 -= Options.MapHeight;
             }
 
-
             if (surroundingMaps[gridX + 1, gridY + 1] != null)
             {
                 targetTile = surroundingMaps[gridX + 1, gridY + 1].Layers[layerNum].Tiles[x2, y2];
@@ -824,7 +1017,6 @@
 
             return true;
         }
-
 
         public void PlaceAutotile(int layerNum, int x, int y, byte tileQuarter, string autoTileLetter)
         {
@@ -935,13 +1127,17 @@
             var autotile = new AutoTileCls();
             for (int i = 0; i < Options.LayerCount; i++)
             {
-                autotile.Layer[i] = new QuarterTileCls();
-                autotile.Layer[i].RenderState = Layer[i].RenderState;
+                autotile.Layer[i] = new QuarterTileCls()
+                {
+                    RenderState = Layer[i].RenderState
+                };
                 for (int z = 0; z < 5; z++)
                 {
-                    autotile.Layer[i].QuarterTile[z] = new PointStruct();
-                    autotile.Layer[i].QuarterTile[z].X = Layer[i].QuarterTile[z].X;
-                    autotile.Layer[i].QuarterTile[z].Y = Layer[i].QuarterTile[z].Y;
+                    autotile.Layer[i].QuarterTile[z] = new PointStruct()
+                    {
+                        X = Layer[i].QuarterTile[z].X,
+                        Y = Layer[i].QuarterTile[z].Y
+                    };
                 }
             }
             return autotile;

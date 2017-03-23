@@ -24,14 +24,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
         public const byte RenderStateNormal = 1;
         public const byte RenderStateAutotile = 2;
 
+        private readonly MapBase _myMap;
+
         // autotiling
         public PointStruct[] AutoInner = new PointStruct[6];
-        public PointStruct[] AutoNw = new PointStruct[6];
         public PointStruct[] AutoNe = new PointStruct[6];
-        public PointStruct[] AutoSw = new PointStruct[6];
+        public PointStruct[] AutoNw = new PointStruct[6];
         public PointStruct[] AutoSe = new PointStruct[6];
-
-        private readonly MapBase _myMap;
+        public PointStruct[] AutoSw = new PointStruct[6];
         public AutoTileCls[,] Autotile;
 
         public MapAutotiles(MapBase map)
@@ -43,7 +43,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
         {
             Autotile = new AutoTileCls[Options.MapWidth, Options.MapHeight];
 
-
             for (var x = 0; x < Options.MapWidth; x++)
             {
                 for (var y = 0; y < Options.MapHeight; y++)
@@ -51,8 +50,10 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
                     Autotile[x, y] = new AutoTileCls();
                     for (var i = 0; i < Options.LayerCount; i++)
                     {
-                        Autotile[x, y].Layer[i] = new QuarterTileCls();
-                        Autotile[x, y].Layer[i].QuarterTile = new PointStruct[5];
+                        Autotile[x, y].Layer[i] = new QuarterTileCls()
+                        {
+                            QuarterTile = new PointStruct[5]
+                        };
                     }
                 }
             }
@@ -182,7 +183,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             }
         }
 
-        public void UpdateAutoTiles(int x, int y, int layer,  Dictionary<int, MapBase> gameMaps)
+        public void UpdateAutoTiles(int x, int y, int layer, Dictionary<int, MapBase> gameMaps)
         {
             for (var x1 = x - 1; x1 < x + 2; x1++)
             {
@@ -207,10 +208,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
         public void CacheRenderState(int x, int y, int layerNum)
         {
             // exit out early
-            if (x < 0 || x > Options.MapWidth || y < 0 || y > Options.MapHeight) { return; }
+            if (x < 0 || x > Options.MapWidth || y < 0 || y > Options.MapHeight)
+            {
+                return;
+            }
 
             // check if it needs to be rendered as an autotile
-            if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == AutotileNone || _myMap.Layers[layerNum].Tiles[x, y].Autotile == AutotileFake)
+            if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == AutotileNone ||
+                _myMap.Layers[layerNum].Tiles[x, y].Autotile == AutotileFake)
             {
                 // default to... default
                 Autotile[x, y].Layer[layerNum].RenderState = RenderStateNormal;
@@ -223,8 +228,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
                 int quarterNum;
                 for (quarterNum = 1; quarterNum < 5; quarterNum++)
                 {
-                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X = (_myMap.Layers[layerNum].Tiles[x, y].X * Options.TileWidth) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y = (_myMap.Layers[layerNum].Tiles[x, y].Y * Options.TileHeight) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X = (_myMap.Layers[layerNum].Tiles[x, y].X *
+                                                                                Options.TileWidth) +
+                                                                               Autotile[x, y].Layer[layerNum]
+                                                                                   .QuarterTile[quarterNum].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y = (_myMap.Layers[layerNum].Tiles[x, y].Y *
+                                                                                Options.TileHeight) +
+                                                                               Autotile[x, y].Layer[layerNum]
+                                                                                   .QuarterTile[quarterNum].Y;
                 }
             }
         }
@@ -241,12 +252,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             // The situations are "inner", "outer", "horizontal", "vertical" and "fill".
 
             // Exit out if we don//t have an auatotile
-            if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == 0) { return; }
+            if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == 0)
+            {
+                return;
+            }
 
             // Okay, we have autotiling but which one?
             switch (_myMap.Layers[layerNum].Tiles[x, y].Autotile)
             {
-
                 // Normal or animated - same difference
                 case AutotileNormal:
                 case AutotileAnim:
@@ -302,24 +315,48 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             byte situation = 1;
 
             // North West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y - 1, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y - 1, gameMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // North
-            if (CheckTileMatch(layerNum, x, y, x, y - 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y - 1, gameMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation - Inner
-            if (!tmpTile[2] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[2] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
             // Horizontal
-            if (!tmpTile[2] && tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (!tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (tmpTile[2] && !tmpTile[3]) { situation = AutoTileVertical; }
+            if (tmpTile[2] && !tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Outer
-            if (!tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileOuter; }
+            if (!tmpTile[1] && tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileOuter;
+            }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -348,24 +385,48 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             byte situation = 1;
 
             // North
-            if (CheckTileMatch(layerNum, x, y, x, y - 1, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y - 1, gameMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // North East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y - 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y - 1, gameMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation - Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
             // Horizontal
-            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (!tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileVertical; }
+            if (tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Outer
-            if (tmpTile[1] && !tmpTile[2] && tmpTile[3]) { situation = AutoTileOuter; }
+            if (tmpTile[1] && !tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileOuter;
+            }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -394,24 +455,48 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             byte situation = 1;
 
             // West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // South West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y + 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y + 1, gameMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // South
-            if (CheckTileMatch(layerNum, x, y, x, y + 1, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y + 1, gameMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation - Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
             // Horizontal
-            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileVertical; }
+            if (!tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Outer
-            if (tmpTile[1] && !tmpTile[2] && tmpTile[3]) { situation = AutoTileOuter; }
+            if (tmpTile[1] && !tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileOuter;
+            }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -440,24 +525,48 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             byte situation = 1;
 
             // South
-            if (CheckTileMatch(layerNum, x, y, x, y + 1, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y + 1, gameMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // South East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y + 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y + 1, gameMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation - Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
             // Horizontal
-            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (!tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileVertical; }
+            if (tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Outer
-            if (tmpTile[1] && !tmpTile[2] && tmpTile[3]) { situation = AutoTileOuter; }
+            if (tmpTile[1] && !tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileOuter;
+            }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -556,22 +665,43 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             byte situation = 1;
 
             // North West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y - 1, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y - 1, gameMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // North
-            if (CheckTileMatch(layerNum, x, y, x, y - 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y - 1, gameMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation - Horizontal
-            if (!tmpTile[2] && tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (!tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (tmpTile[2] && !tmpTile[3]) { situation = AutoTileVertical; }
+            if (tmpTile[2] && !tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Fill
-            if (tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[2] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
             // Inner
-            if (!tmpTile[2] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[2] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -597,22 +727,43 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             byte situation = 1;
 
             // North
-            if (CheckTileMatch(layerNum, x, y, x, y - 1, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y - 1, gameMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // North East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y - 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y - 1, gameMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation - Horizontal
-            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (!tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileVertical; }
+            if (tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Fill
-            if (tmpTile[1] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
             // Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -638,22 +789,43 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             byte situation = 1;
 
             // West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // South West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y + 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y + 1, gameMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // South
-            if (CheckTileMatch(layerNum, x, y, x, y + 1, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y + 1, gameMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation - Horizontal
-            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileVertical; }
+            if (!tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Fill
-            if (tmpTile[1] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
             // Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -679,22 +851,43 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             byte situation = 1;
 
             // South
-            if (CheckTileMatch(layerNum, x, y, x, y + 1, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y + 1, gameMaps))
+            {
+                tmpTile[1] = true;
+            }
 
             // South East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y + 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y + 1, gameMaps))
+            {
+                tmpTile[2] = true;
+            }
 
             // East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps))
+            {
+                tmpTile[3] = true;
+            }
 
             // Calculate Situation -  Horizontal
-            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileHorizontal; }
+            if (!tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileHorizontal;
+            }
             // Vertical
-            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileVertical; }
+            if (tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileVertical;
+            }
             // Fill
-            if (tmpTile[1] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[3])
+            {
+                situation = AutoTileFill;
+            }
             // Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
+            if (!tmpTile[1] && !tmpTile[3])
+            {
+                situation = AutoTileInner;
+            }
 
             // Actually place the subtile
             switch (situation)
@@ -724,7 +917,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             // if ( it//s off the map ) { set it as autotile and exit out early
             if (x2 < 0 || x2 >= Options.MapWidth || y2 < 0 || y2 >= Options.MapHeight)
             {
-                if (((x2 < 0 && y2 < 0)) || (x2 >= Options.MapWidth && y2 >= Options.MapHeight) || (x2 < 0 && y2 >= Options.MapHeight) || (x2 >= Options.MapWidth && y2 < 0))
+                if (((x2 < 0 && y2 < 0)) || (x2 >= Options.MapWidth && y2 >= Options.MapHeight) ||
+                    (x2 < 0 && y2 >= Options.MapHeight) || (x2 >= Options.MapWidth && y2 < 0))
                 {
                     return true;
                 }
@@ -843,7 +1037,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
 
             return true;
         }
-
 
         public void PlaceAutotile(int layerNum, int x, int y, byte tileQuarter, string autoTileLetter)
         {

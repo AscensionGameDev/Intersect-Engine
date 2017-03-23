@@ -1,29 +1,25 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Intersect.GameObjects.Maps.MapList;
 using Intersect_Editor.Classes;
-using Intersect_Library.GameObjects.Maps.MapList;
-
 
 namespace Intersect_Editor.Forms.Controls
 {
     public partial class MapTreeList : UserControl
     {
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        internal static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
-
         //Cross Thread Delegates
-        public delegate void TryUpdateMapList(int selectMap = -1,List<int> restrictMaps = null);
-        public TryUpdateMapList MapListDelegate;
-        public bool Chronological = false;
+        public delegate void TryUpdateMapList(int selectMap = -1, List<int> restrictMaps = null);
+
         private bool _canEdit = false;
+        private List<int> _restrictMaps = null;
+        public bool Chronological = false;
+        public TryUpdateMapList MapListDelegate;
         private List<int> OpenFolders = new List<int>();
+        private System.Drawing.Point ScrollPoint;
         private int SelectedMap = -1; //id or map or folder that is selected
         private int SelectionType = -1; //0 for none, 1 for map, 2 for folder
-        private System.Drawing.Point ScrollPoint;
-        private List<int> _restrictMaps = null;
 
         public MapTreeList()
         {
@@ -32,16 +28,21 @@ namespace Intersect_Editor.Forms.Controls
             MapListDelegate = UpdateMapList;
         }
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        internal static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+
         private void treeMapList_ItemDrag(object sender, ItemDragEventArgs e)
         {
             if (!_canEdit) return;
             DoDragDrop(e.Item, DragDropEffects.Move);
         }
+
         private void treeMapList_DragEnter(object sender, DragEventArgs e)
         {
             if (!_canEdit) return;
             e.Effect = DragDropEffects.Move;
         }
+
         private void treeMapList_DragDrop(object sender, DragEventArgs e)
         {
             if (!_canEdit) return;
@@ -52,19 +53,19 @@ namespace Intersect_Editor.Forms.Controls
             TreeNode targetNode = list.GetNodeAt(targetPoint);
 
             // Retrieve the node that was dragged.
-            TreeNode draggedNode = (TreeNode)e.Data.GetData(typeof(TreeNode));
+            TreeNode draggedNode = (TreeNode) e.Data.GetData(typeof(TreeNode));
             int srcType = -1;
             int srcId = -1;
 
             if (draggedNode.Tag.GetType() == typeof(MapListMap))
             {
                 srcType = 1;
-                srcId = ((MapListMap)draggedNode.Tag).MapNum;
+                srcId = ((MapListMap) draggedNode.Tag).MapNum;
             }
             else
             {
                 srcType = 0;
-                srcId = ((MapListFolder)draggedNode.Tag).FolderId;
+                srcId = ((MapListFolder) draggedNode.Tag).FolderId;
             }
 
             // Confirm that the node at the drop location is not 
@@ -75,7 +76,7 @@ namespace Intersect_Editor.Forms.Controls
                 if (targetNode.Tag.GetType() == typeof(MapListMap))
                 {
                     int destType = 1;
-                    int destId = ((MapListMap)targetNode.Tag).MapNum;
+                    int destId = ((MapListMap) targetNode.Tag).MapNum;
                     PacketSender.SendMapListMove(srcType, srcId, destType, destId);
                     // Remove the node from its current 
                     // location and add it to the node at the drop location.
@@ -97,7 +98,7 @@ namespace Intersect_Editor.Forms.Controls
                 else
                 {
                     int destType = 0;
-                    int destId = ((MapListFolder)targetNode.Tag).FolderId;
+                    int destId = ((MapListFolder) targetNode.Tag).FolderId;
                     PacketSender.SendMapListMove(srcType, srcId, destType, destId);
                     // Remove the node from its current 
                     // location and add it to the node at the drop location.
@@ -120,6 +121,7 @@ namespace Intersect_Editor.Forms.Controls
                 list.Nodes.Add(draggedNode);
             }
         }
+
         private void treeMapList_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             if (!_canEdit) return;
@@ -129,16 +131,16 @@ namespace Intersect_Editor.Forms.Controls
                 {
                     if (e.Node.Tag.GetType() == typeof(MapListMap))
                     {
-                        ((MapListMap)e.Node.Tag).Name = e.Label;
+                        ((MapListMap) e.Node.Tag).Name = e.Label;
                         //Send Rename Map
-                        PacketSender.SendRename((MapListItem)e.Node.Tag, e.Label);
-                        e.Node.Text = ((MapListMap)e.Node.Tag).Name;
+                        PacketSender.SendRename((MapListItem) e.Node.Tag, e.Label);
+                        e.Node.Text = ((MapListMap) e.Node.Tag).Name;
                     }
                     else
                     {
-                        ((MapListFolder)e.Node.Tag).Name = e.Label;
+                        ((MapListFolder) e.Node.Tag).Name = e.Label;
                         //Send Rename Folder
-                        PacketSender.SendRename((MapListItem)e.Node.Tag, e.Label);
+                        PacketSender.SendRename((MapListItem) e.Node.Tag, e.Label);
                         e.Node.Text = e.Label;
                     }
                 }
@@ -146,7 +148,7 @@ namespace Intersect_Editor.Forms.Controls
                 {
                     if (e.Node.Tag.GetType() == typeof(MapListMap))
                     {
-                        e.Node.Text = ((MapListMap)e.Node.Tag).Name;
+                        e.Node.Text = ((MapListMap) e.Node.Tag).Name;
                     }
                     else
                     {
@@ -156,6 +158,7 @@ namespace Intersect_Editor.Forms.Controls
             }
             e.CancelEdit = true;
         }
+
         private void treeMapList_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             if (!_canEdit) return;
@@ -163,9 +166,9 @@ namespace Intersect_Editor.Forms.Controls
             {
                 if (e.Node.Tag.GetType() == typeof(MapListMap))
                 {
-                    if (e.Node.Text == ((MapListMap)e.Node.Tag).Name && Chronological)
-                    { 
-                        e.Node.Text = ((MapListMap)e.Node.Tag).Name;
+                    if (e.Node.Text == ((MapListMap) e.Node.Tag).Name && Chronological)
+                    {
+                        e.Node.Text = ((MapListMap) e.Node.Tag).Name;
                     }
                 }
             }
@@ -176,12 +179,12 @@ namespace Intersect_Editor.Forms.Controls
             if (e.Node.Tag.GetType() == typeof(MapListMap))
             {
                 SelectionType = 0;
-                SelectedMap = ((MapListMap)e.Node.Tag).MapNum;
+                SelectedMap = ((MapListMap) e.Node.Tag).MapNum;
             }
             else if (e.Node.Tag.GetType() == typeof(MapListFolder))
             {
                 SelectionType = 1;
-                SelectedMap = ((MapListFolder)e.Node.Tag).FolderId;
+                SelectedMap = ((MapListFolder) e.Node.Tag).FolderId;
             }
             else
             {
@@ -192,8 +195,8 @@ namespace Intersect_Editor.Forms.Controls
 
         private void treeMapList_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            
         }
+
         private void treeMapList_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -201,18 +204,21 @@ namespace Intersect_Editor.Forms.Controls
                 list.SelectedNode = list.GetNodeAt(e.Location);
             }
         }
+
         private void beginEdit(TreeNode node)
         {
             node.BeginEdit();
         }
-        public void UpdateMapList(int selectMap = -1, List<int> restrictMaps = null )
+
+        public void UpdateMapList(int selectMap = -1, List<int> restrictMaps = null)
         {
             list.Nodes.Clear();
             _restrictMaps = restrictMaps;
             AddMapListToTree(MapList.GetList(), null, selectMap, _restrictMaps);
-
         }
-        private void AddMapListToTree(MapList mapList, TreeNode parent, int selectMap = -1, List<int> restrictMaps = null)
+
+        private void AddMapListToTree(MapList mapList, TreeNode parent, int selectMap = -1,
+            List<int> restrictMaps = null)
         {
             TreeNode tmpNode;
             if (Chronological)
@@ -253,20 +259,22 @@ namespace Intersect_Editor.Forms.Controls
                         if (parent == null)
                         {
                             tmpNode = list.Nodes.Add(mapList.Items[i].Name);
-                            tmpNode.Tag = ((MapListFolder)mapList.Items[i]);
-                            AddMapListToTree(((MapListFolder)mapList.Items[i]).Children, tmpNode,selectMap,restrictMaps);
+                            tmpNode.Tag = ((MapListFolder) mapList.Items[i]);
+                            AddMapListToTree(((MapListFolder) mapList.Items[i]).Children, tmpNode, selectMap,
+                                restrictMaps);
                         }
                         else
                         {
                             tmpNode = parent.Nodes.Add(mapList.Items[i].Name);
-                            tmpNode.Tag = ((MapListFolder)mapList.Items[i]);
-                            AddMapListToTree(((MapListFolder)mapList.Items[i]).Children, tmpNode,selectMap,restrictMaps);
+                            tmpNode.Tag = ((MapListFolder) mapList.Items[i]);
+                            AddMapListToTree(((MapListFolder) mapList.Items[i]).Children, tmpNode, selectMap,
+                                restrictMaps);
                         }
                         if (OpenFolders.Contains(((MapListFolder) mapList.Items[i]).FolderId))
                         {
                             tmpNode.Expand();
                         }
-                        if (SelectionType == 1 && SelectedMap == ((MapListFolder)mapList.Items[i]).FolderId)
+                        if (SelectionType == 1 && SelectedMap == ((MapListFolder) mapList.Items[i]).FolderId)
                         {
                             list.SelectedNode = tmpNode;
                             list.Focus();
@@ -276,7 +284,7 @@ namespace Intersect_Editor.Forms.Controls
                     }
                     else
                     {
-                        if (restrictMaps == null || restrictMaps.Contains(((MapListMap)mapList.Items[i]).MapNum))
+                        if (restrictMaps == null || restrictMaps.Contains(((MapListMap) mapList.Items[i]).MapNum))
                         {
                             if (parent == null)
                             {
@@ -333,7 +341,8 @@ namespace Intersect_Editor.Forms.Controls
         {
             if (e.Node.Tag.GetType() == typeof(MapListFolder))
             {
-                if (!OpenFolders.Contains(((MapListFolder)e.Node.Tag).FolderId)) OpenFolders.Add(((MapListFolder)e.Node.Tag).FolderId);
+                if (!OpenFolders.Contains(((MapListFolder) e.Node.Tag).FolderId))
+                    OpenFolders.Add(((MapListFolder) e.Node.Tag).FolderId);
             }
         }
 
@@ -341,7 +350,8 @@ namespace Intersect_Editor.Forms.Controls
         {
             if (e.Node.Tag.GetType() == typeof(MapListFolder))
             {
-                if (OpenFolders.Contains(((MapListFolder)e.Node.Tag).FolderId)) OpenFolders.Remove(((MapListFolder)e.Node.Tag).FolderId);
+                if (OpenFolders.Contains(((MapListFolder) e.Node.Tag).FolderId))
+                    OpenFolders.Remove(((MapListFolder) e.Node.Tag).FolderId);
             }
         }
 
@@ -352,12 +362,12 @@ namespace Intersect_Editor.Forms.Controls
             if ((pt.Y + 20) > control.Height)
             {
                 // scroll down
-                SendMessage(control.Handle, 277, (IntPtr)1, (IntPtr)0);
+                SendMessage(control.Handle, 277, (IntPtr) 1, (IntPtr) 0);
             }
             else if (pt.Y < 20)
             {
                 // scroll up
-                SendMessage(control.Handle, 277, (IntPtr)0, (IntPtr)0);
+                SendMessage(control.Handle, 277, (IntPtr) 0, (IntPtr) 0);
             }
         }
 

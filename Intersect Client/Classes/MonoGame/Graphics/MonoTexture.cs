@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;
@@ -9,13 +8,13 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 {
     public class MonoTexture : GameTexture
     {
-        private Texture2D _tex;
-        private string _path = "";
-        private bool _loadError = false;
-        private int _width = -1;
+        private GraphicsDevice _graphicsDevice;
         private int _height = -1;
         private long _lastAccessTime = 0;
-        private GraphicsDevice _graphicsDevice;
+        private bool _loadError = false;
+        private string _path = "";
+        private Texture2D _tex;
+        private int _width = -1;
 
         public MonoTexture(GraphicsDevice graphicsDevice, string filename)
         {
@@ -28,7 +27,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             _loadError = true;
             if (File.Exists(_path))
             {
-                using (var fileStream = new FileStream(_path, FileMode.Open,FileAccess.Read,FileShare.ReadWrite))
+                using (var fileStream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     _tex = Texture2D.FromStream(_graphicsDevice, fileStream);
                     if (_path.Contains("g7"))

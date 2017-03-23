@@ -1,7 +1,6 @@
 ﻿using System;
-using Intersect_Library;
+using Intersect;
 using Intersect_Server.Classes.Core;
-
 
 namespace Intersect_Server.Classes.Maps
 {
@@ -12,7 +11,7 @@ namespace Intersect_Server.Classes.Maps
         private int _tileY;
 
         /// <summary>
-        /// Creates a new tile helper instance in a position given.
+        ///     Creates a new tile helper instance in a position given.
         /// </summary>
         /// <param name="mapNum"></param>
         /// <param name="tileX"></param>
@@ -25,7 +24,8 @@ namespace Intersect_Server.Classes.Maps
         }
 
         /// <summary>
-        /// Moves our tile and then attempts to adjust the map location of we walked out of bounds. Will return true if the position is valid. False if not.
+        ///     Moves our tile and then attempts to adjust the map location of we walked out of bounds. Will return true if the
+        ///     position is valid. False if not.
         /// </summary>
         /// <param name="xOffset"></param>
         /// <param name="yOffset"></param>
@@ -61,23 +61,24 @@ namespace Intersect_Server.Classes.Maps
             int GridY = MapInstance.GetMap(_mapNum).MapGridY;
             switch (direction)
             {
-                case (int)Directions.Up:
-                    if (GridY > 0 && Database.MapGrids[Grid].MyGrid[GridX, GridY-1] > -1)
+                case (int) Directions.Up:
+                    if (GridY > 0 && Database.MapGrids[Grid].MyGrid[GridX, GridY - 1] > -1)
                     {
                         _mapNum = Database.MapGrids[Grid].MyGrid[GridX, GridY - 1];
                         _tileY += Options.MapHeight;
                         return true;
                     }
                     return false;
-                case (int)Directions.Down:
-                    if (GridY + 1 < Database.MapGrids[Grid].Height && Database.MapGrids[Grid].MyGrid[GridX, GridY + 1] > -1)
+                case (int) Directions.Down:
+                    if (GridY + 1 < Database.MapGrids[Grid].Height &&
+                        Database.MapGrids[Grid].MyGrid[GridX, GridY + 1] > -1)
                     {
                         _mapNum = Database.MapGrids[Grid].MyGrid[GridX, GridY + 1];
                         _tileY -= Options.MapHeight;
                         return true;
                     }
                     return false;
-                case (int)Directions.Left:
+                case (int) Directions.Left:
                     if (GridX > 0 && Database.MapGrids[Grid].MyGrid[GridX - 1, GridY] > -1)
                     {
                         _mapNum = Database.MapGrids[Grid].MyGrid[GridX - 1, GridY];
@@ -85,8 +86,9 @@ namespace Intersect_Server.Classes.Maps
                         return true;
                     }
                     return false;
-                case (int)Directions.Right:
-                    if (GridX + 1 < Database.MapGrids[Grid].Width && Database.MapGrids[Grid].MyGrid[GridX + 1, GridY] > -1)
+                case (int) Directions.Right:
+                    if (GridX + 1 < Database.MapGrids[Grid].Width &&
+                        Database.MapGrids[Grid].MyGrid[GridX + 1, GridY] > -1)
                     {
                         _mapNum = Database.MapGrids[Grid].MyGrid[GridX + 1, GridY];
                         _tileX -= Options.MapWidth;
@@ -108,15 +110,15 @@ namespace Intersect_Server.Classes.Maps
             }
             while (_tileY < 0)
             {
-                if (!TransitionMaps((int)Directions.Up)) return false;
+                if (!TransitionMaps((int) Directions.Up)) return false;
             }
             while (_tileX >= Options.MapWidth)
             {
-                if (!TransitionMaps((int)Directions.Right)) return false;
+                if (!TransitionMaps((int) Directions.Right)) return false;
             }
             while (_tileY >= Options.MapHeight)
             {
-                if (!TransitionMaps((int)Directions.Down)) return false;
+                if (!TransitionMaps((int) Directions.Down)) return false;
             }
             return true;
         }

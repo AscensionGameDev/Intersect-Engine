@@ -1,12 +1,10 @@
-﻿using IntersectClientExtras.Gwen;
+﻿using Intersect.Localization;
+using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.Networking;
-using Intersect_Library;
-using System;
-using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -14,24 +12,24 @@ namespace Intersect_Client.Classes.UI.Game
     {
         //Controls
         private WindowControl _debugWindow;
-        private Label _fpsLabel;
-        private Label _pingLabel;
         private Label _drawsLabel;
+        private Label _entitiesDrawnLabel;
+        private Label _entitiesLabel;
+        private Label _fpsLabel;
+        private Label _lightsDrawnLabel;
         private Label _mapLabel;
+        private Label _mapsDrawnLabel;
+        private Label _mapsLoadedLabel;
+        private Label _pingLabel;
+        private Label _timeLabel;
         private Label _xLabel;
         private Label _yLabel;
         private Label _zLabel;
-        private Label _entitiesLabel;
-        private Label _mapsLoadedLabel;
-        private Label _mapsDrawnLabel;
-        private Label _entitiesDrawnLabel;
-        private Label _lightsDrawnLabel;
-        private Label _timeLabel;
 
         //Init
         public DebugMenu(Canvas _gameCanvas)
         {
-            _debugWindow = new WindowControl(_gameCanvas, Strings.Get("debug","title"));
+            _debugWindow = new WindowControl(_gameCanvas, Strings.Get("debug", "title"));
             _debugWindow.SetSize(200, 212);
             _debugWindow.SetPosition(0, 150);
             _debugWindow.DisableResizing();
@@ -73,12 +71,12 @@ namespace Intersect_Client.Classes.UI.Game
             _entitiesDrawnLabel.SetPosition(4, 124);
 
             _lightsDrawnLabel = new Label(_debugWindow);
-            _lightsDrawnLabel.SetPosition(4,136);
-            
+            _lightsDrawnLabel.SetPosition(4, 136);
+
             _timeLabel = new Label(_debugWindow);
             _timeLabel.SetPosition(4, 148);
-
         }
+
         public void Update()
         {
             _fpsLabel.Text = Strings.Get("debug", "fps", GameGraphics.Renderer.GetFps());
@@ -86,7 +84,7 @@ namespace Intersect_Client.Classes.UI.Game
             _drawsLabel.Text = Strings.Get("debug", "draws", GameGraphics.DrawCalls);
             if (MapInstance.GetMap(Globals.Me.CurrentMap) != null)
             {
-                _mapLabel.Text = Strings.Get("debug", "map", MapInstance.GetMap(Globals.Me.CurrentMap).MyName);
+                _mapLabel.Text = Strings.Get("debug", "map", MapInstance.GetMap(Globals.Me.CurrentMap).Name);
                 _xLabel.Text = Strings.Get("debug", "x", Globals.Me.CurrentX);
                 _yLabel.Text = Strings.Get("debug", "y", "Y: " + Globals.Me.CurrentY);
                 _zLabel.Text = Strings.Get("debug", "z", "Z: " + Globals.Me.CurrentZ);
@@ -99,18 +97,21 @@ namespace Intersect_Client.Classes.UI.Game
             _entitiesLabel.Text = Strings.Get("debug", "knownentities", Globals.Entities.Count);
             _mapsLoadedLabel.Text = Strings.Get("debug", "knownmaps", MapInstance.ObjectCount());
             _mapsDrawnLabel.Text = Strings.Get("debug", "mapsdrawn", GameGraphics.MapsDrawn);
-            _entitiesDrawnLabel.Text = Strings.Get("debug", "entitiesdrawn", + GameGraphics.EntitiesDrawn);
+            _entitiesDrawnLabel.Text = Strings.Get("debug", "entitiesdrawn", +GameGraphics.EntitiesDrawn);
             _lightsDrawnLabel.Text = Strings.Get("debug", "lightsdrawn", GameGraphics.LightsDrawn);
             _timeLabel.Text = Strings.Get("debug", "time", ClientTime.GetTime());
         }
+
         public void Show()
         {
             _debugWindow.IsHidden = false;
         }
+
         public bool IsVisible()
         {
             return !_debugWindow.IsHidden;
         }
+
         public void Hide()
         {
             _debugWindow.IsHidden = true;

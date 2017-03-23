@@ -1,16 +1,16 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
+using Intersect.GameObjects.Events;
+using Intersect.Localization;
 using Intersect_Editor.Classes.Core;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_PlayBgm : UserControl
     {
-        private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
+        private EventCommand _myCommand;
+
         public EventCommand_PlayBgm(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
@@ -18,7 +18,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _eventEditor = editor;
             InitLocalization();
             cmbBgm.Items.Clear();
-            cmbBgm.Items.Add(Strings.Get("general","none"));
+            cmbBgm.Items.Add(Strings.Get("general", "none"));
             cmbBgm.Items.AddRange(GameContentManager.GetMusicNames());
             if (cmbBgm.Items.IndexOf(_myCommand.Strs[0]) > -1)
             {

@@ -1,4 +1,4 @@
-﻿namespace Intersect_Library.GameObjects.Events
+﻿namespace Intersect.GameObjects.Events
 {
     public enum MoveRouteEnum
     {

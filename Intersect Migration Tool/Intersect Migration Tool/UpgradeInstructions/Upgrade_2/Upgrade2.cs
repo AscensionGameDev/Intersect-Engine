@@ -1,18 +1,17 @@
 ﻿using System;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib;
+using Intersect;
+using Intersect.Logging;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects.Events;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects.Maps;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 using Mono.Data.Sqlite;
+using GameObject = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObject;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
 {
     public class Upgrade2
     {
-        private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
-
         //Ban Table Constants
         private const string BAN_TABLE = "bans";
         private const string BAN_ID = "id";
@@ -41,6 +40,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
         //Map List Table Constants
         private const string MAP_LIST_TABLE = "map_list";
         private const string MAP_LIST_DATA = "data";
+        private SqliteConnection _dbConnection;
+        private Object _dbLock = new Object();
 
         public Upgrade2(SqliteConnection connection)
         {
@@ -66,6 +67,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                 SaveGameObject(obj.Value);
             }
         }
+
         public void ConvertProjectiles()
         {
             LoadGameObjects(GameObject.Projectile);
@@ -82,58 +84,59 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
             switch (type)
             {
                 case GameObject.Animation:
-                    tableName = AnimationBase.DatabaseTable;
+                    tableName = AnimationBase.DATABASE_TABLE;
                     break;
                 case GameObject.Class:
-                    tableName = ClassBase.DatabaseTable;
+                    tableName = ClassBase.DATABASE_TABLE;
                     break;
                 case GameObject.Item:
-                    tableName = ItemBase.DatabaseTable;
+                    tableName = ItemBase.DATABASE_TABLE;
                     break;
                 case GameObject.Npc:
-                    tableName = NpcBase.DatabaseTable;
+                    tableName = NpcBase.DATABASE_TABLE;
                     break;
                 case GameObject.Projectile:
-                    tableName = ProjectileBase.DatabaseTable;
+                    tableName = ProjectileBase.DATABASE_TABLE;
                     break;
                 case GameObject.Quest:
-                    tableName = QuestBase.DatabaseTable;
+                    tableName = QuestBase.DATABASE_TABLE;
                     break;
                 case GameObject.Resource:
-                    tableName = ResourceBase.DatabaseTable;
+                    tableName = ResourceBase.DATABASE_TABLE;
                     break;
                 case GameObject.Shop:
-                    tableName = ShopBase.DatabaseTable;
+                    tableName = ShopBase.DATABASE_TABLE;
                     break;
                 case GameObject.Spell:
-                    tableName = SpellBase.DatabaseTable;
+                    tableName = SpellBase.DATABASE_TABLE;
                     break;
                 case GameObject.Map:
-                    tableName = MapBase.DatabaseTable;
+                    tableName = MapBase.DATABASE_TABLE;
                     break;
                 case GameObject.CommonEvent:
-                    tableName = EventBase.DatabaseTable;
+                    tableName = EventBase.DATABASE_TABLE;
                     break;
                 case GameObject.PlayerSwitch:
-                    tableName = PlayerSwitchBase.DatabaseTable;
+                    tableName = PlayerSwitchBase.DATABASE_TABLE;
                     break;
                 case GameObject.PlayerVariable:
-                    tableName = PlayerVariableBase.DatabaseTable;
+                    tableName = PlayerVariableBase.DATABASE_TABLE;
                     break;
                 case GameObject.ServerSwitch:
-                    tableName = ServerSwitchBase.DatabaseTable;
+                    tableName = ServerSwitchBase.DATABASE_TABLE;
                     break;
                 case GameObject.ServerVariable:
-                    tableName = ServerVariableBase.DatabaseTable;
+                    tableName = ServerVariableBase.DATABASE_TABLE;
                     break;
                 case GameObject.Tileset:
-                    tableName = TilesetBase.DatabaseTable;
+                    tableName = TilesetBase.DATABASE_TABLE;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
             return tableName;
         }
+
         private void ClearGameObjects(GameObject type)
         {
             switch (type)
@@ -190,6 +193,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         private void LoadGameObject(GameObject type, int index, byte[] data)
         {
             switch (type)
@@ -280,6 +284,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         public void LoadGameObjects(GameObject type)
         {
             var nullIssues = "";
@@ -297,7 +302,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                         while (dataReader.Read())
                         {
                             var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
-                            if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
+                            if (dataReader[MAP_LIST_DATA].GetType() != typeof(DBNull))
                             {
                                 LoadGameObject(type, index, (byte[]) dataReader[GAME_OBJECT_DATA]);
                             }
@@ -315,8 +320,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                 throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine + nullIssues));
             }
         }
+
         public void SaveGameObject(DatabaseObject gameObject)
         {
+            if (gameObject == null)
+            {
+                Log.Error("Attempted to persist null game object to the database.");
+            }
+
             lock (_dbLock)
             {
                 var insertQuery = "UPDATE " + gameObject.GetTable() + " set " + GAME_OBJECT_DELETED + "=@" +
@@ -326,7 +337,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.GetId()));
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
-                    if (gameObject != null && gameObject.GetData() != null)
+                    if (gameObject.GetData() != null)
                     {
                         cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.GetData()));
                     }
@@ -340,7 +351,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
             }
         }
 
-
         private void FixMutesTable()
         {
             var cmd = "DROP TABLE " + MUTE_TABLE;
@@ -349,21 +359,22 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
-             cmd = "CREATE TABLE " + MUTE_TABLE + " ("
-                + MUTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + MUTE_TIME + " TEXT,"
-                + MUTE_USER + " INTEGER,"
-                + MUTE_IP + " TEXT,"
-                + MUTE_DURATION + " INTEGER,"
-                + MUTE_REASON + " TEXT,"
-                + MUTE_MUTER + " TEXT"
-                + ");";
+            cmd = "CREATE TABLE " + MUTE_TABLE + " ("
+                  + MUTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                  + MUTE_TIME + " TEXT,"
+                  + MUTE_USER + " INTEGER,"
+                  + MUTE_IP + " TEXT,"
+                  + MUTE_DURATION + " INTEGER,"
+                  + MUTE_REASON + " TEXT,"
+                  + MUTE_MUTER + " TEXT"
+                  + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
         }
+
         private void FixBansTable()
         {
             var cmd = "DROP TABLE " + BAN_TABLE;
@@ -373,14 +384,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
                 createCommand.ExecuteNonQuery();
             }
             cmd = "CREATE TABLE " + BAN_TABLE + " ("
-                    + BAN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    + BAN_TIME + " TEXT,"
-                    + BAN_USER + " INTEGER,"
-                    + BAN_IP + " TEXT,"
-                    + BAN_DURATION + " INTEGER,"
-                    + BAN_REASON + " TEXT,"
-                    + BAN_BANNER + " TEXT"
-                    + ");";
+                  + BAN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                  + BAN_TIME + " TEXT,"
+                  + BAN_USER + " INTEGER,"
+                  + BAN_IP + " TEXT,"
+                  + BAN_DURATION + " INTEGER,"
+                  + BAN_REASON + " TEXT,"
+                  + BAN_BANNER + " TEXT"
+                  + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;

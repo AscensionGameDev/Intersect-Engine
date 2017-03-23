@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.Localization;
-
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Classes
 {
     public partial class frmProjectile : Form
     {
         private List<ProjectileBase> _changed = new List<ProjectileBase>();
-        private ProjectileBase _editorItem = null;
         private byte[] _copiedItem = null;
-        
 
         private Bitmap _directionGrid;
+        private ProjectileBase _editorItem = null;
 
         public frmProjectile()
         {
@@ -70,7 +68,9 @@ namespace Intersect_Editor.Classes
 
         private void lstProjectiles_Click(object sender, EventArgs e)
         {
-            _editorItem = ProjectileBase.GetProjectile(Database.GameObjectIdFromList(GameObject.Projectile, lstProjectiles.SelectedIndex));
+            _editorItem =
+                ProjectileBase.GetProjectile(Database.GameObjectIdFromList(GameObject.Projectile,
+                    lstProjectiles.SelectedIndex));
             UpdateEditor();
         }
 
@@ -78,7 +78,7 @@ namespace Intersect_Editor.Classes
         {
             _directionGrid = new Bitmap("resources/misc/directions.png");
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add(Strings.Get("general","none"));
+            cmbAnimation.Items.Add(Strings.Get("general", "none"));
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
 
             cmbItem.Items.Clear();
@@ -95,7 +95,7 @@ namespace Intersect_Editor.Classes
 
         private void InitLocalization()
         {
-            this.Text = Strings.Get("projectileeditor", "title");
+            Text = Strings.Get("projectileeditor", "title");
             toolStripItemNew.Text = Strings.Get("projectileeditor", "new");
             toolStripItemDelete.Text = Strings.Get("projectileeditor", "delete");
             toolStripItemCopy.Text = Strings.Get("projectileeditor", "copy");
@@ -103,7 +103,6 @@ namespace Intersect_Editor.Classes
             toolStripItemUndo.Text = Strings.Get("projectileeditor", "undo");
 
             grpProjectiles.Text = Strings.Get("projectileeditor", "projectiles");
-
 
             grpProperties.Text = Strings.Get("projectileeditor", "properties");
             lblName.Text = Strings.Get("projectileeditor", "name");
@@ -166,7 +165,10 @@ namespace Intersect_Editor.Classes
                 cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _editorItem.Ammo) + 1;
                 nudConsume.Value = _editorItem.AmmoRequired;
 
-                if (lstAnimations.SelectedIndex < 0) { lstAnimations.SelectedIndex = 0; }
+                if (lstAnimations.SelectedIndex < 0)
+                {
+                    lstAnimations.SelectedIndex = 0;
+                }
                 updateAnimationData(0);
                 lstAnimations.SelectedIndex = 0;
 
@@ -187,8 +189,9 @@ namespace Intersect_Editor.Classes
         private void updateAnimationData(int index)
         {
             updateAnimations(true);
-            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animations[index].Animation) + 1;
-            scrlSpawnRange.Value = Math.Min(_editorItem.Animations[index].SpawnRange,scrlSpawnRange.Maximum);
+            cmbAnimation.SelectedIndex =
+                Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animations[index].Animation) + 1;
+            scrlSpawnRange.Value = Math.Min(_editorItem.Animations[index].SpawnRange, scrlSpawnRange.Maximum);
             chkRotation.Checked = _editorItem.Animations[index].AutoRotate;
             updateAnimations(true);
         }
@@ -205,11 +208,17 @@ namespace Intersect_Editor.Classes
             }
 
             //Update the spawn range maximum
-            if (nudAmount.Value < scrlSpawnRange.Value) { scrlSpawnRange.Value = (int)nudAmount.Value; }
-            scrlSpawnRange.Maximum = (int)nudAmount.Value;
+            if (nudAmount.Value < scrlSpawnRange.Value)
+            {
+                scrlSpawnRange.Value = (int) nudAmount.Value;
+            }
+            scrlSpawnRange.Maximum = (int) nudAmount.Value;
 
             //Save the index
-            if (SaveIndex == true) { selectedIndex = lstAnimations.SelectedIndex; }
+            if (SaveIndex == true)
+            {
+                selectedIndex = lstAnimations.SelectedIndex;
+            }
 
             // Add the animations to the list
             lstAnimations.Items.Clear();
@@ -217,24 +226,32 @@ namespace Intersect_Editor.Classes
             {
                 if (_editorItem.Animations[i].Animation != -1)
                 {
-                    lstAnimations.Items.Add(Strings.Get("projectileeditor","animationline",n,_editorItem.Animations[i].SpawnRange, AnimationBase.GetName(_editorItem.Animations[i].Animation)));
+                    lstAnimations.Items.Add(Strings.Get("projectileeditor", "animationline", n,
+                        _editorItem.Animations[i].SpawnRange, AnimationBase.GetName(_editorItem.Animations[i].Animation)));
                 }
                 else
                 {
-                    lstAnimations.Items.Add(Strings.Get("projectileeditor", "animationline", n, _editorItem.Animations[i].SpawnRange, Strings.Get("general","none")));
+                    lstAnimations.Items.Add(Strings.Get("projectileeditor", "animationline", n,
+                        _editorItem.Animations[i].SpawnRange, Strings.Get("general", "none")));
                 }
                 n = _editorItem.Animations[i].SpawnRange + 1;
             }
             lstAnimations.SelectedIndex = selectedIndex;
-            if (lstAnimations.SelectedIndex < 0) { lstAnimations.SelectedIndex = 0; }
+            if (lstAnimations.SelectedIndex < 0)
+            {
+                lstAnimations.SelectedIndex = 0;
+            }
 
             if (lstAnimations.SelectedIndex > 0)
             {
-                lblSpawnRange.Text = Strings.Get("projectileeditor","spawnrange", (_editorItem.Animations[lstAnimations.SelectedIndex - 1].SpawnRange + 1), _editorItem.Animations[lstAnimations.SelectedIndex].SpawnRange);
+                lblSpawnRange.Text = Strings.Get("projectileeditor", "spawnrange",
+                    (_editorItem.Animations[lstAnimations.SelectedIndex - 1].SpawnRange + 1),
+                    _editorItem.Animations[lstAnimations.SelectedIndex].SpawnRange);
             }
             else
             {
-                lblSpawnRange.Text = Strings.Get("projectileeditor", "spawnrange", 1, _editorItem.Animations[lstAnimations.SelectedIndex].SpawnRange);
+                lblSpawnRange.Text = Strings.Get("projectileeditor", "spawnrange", 1,
+                    _editorItem.Animations[lstAnimations.SelectedIndex].SpawnRange);
             }
         }
 
@@ -248,27 +265,35 @@ namespace Intersect_Editor.Classes
             }
             else
             {
-                img = (Bitmap)picSpawns.BackgroundImage;
+                img = (Bitmap) picSpawns.BackgroundImage;
             }
-            var gfx = System.Drawing.Graphics.FromImage(img);
+            var gfx = Graphics.FromImage(img);
             gfx.FillRectangle(Brushes.White, new Rectangle(0, 0, picSpawns.Width, picSpawns.Height));
 
             for (var x = 0; x < ProjectileBase.SpawnLocationsWidth; x++)
             {
                 for (var y = 0; y < ProjectileBase.SpawnLocationsHeight; y++)
                 {
-                    gfx.DrawImage(_directionGrid, new Rectangle(x * 32, y * 32, 32, 32), new Rectangle(0, 0, 32, 32), GraphicsUnit.Pixel);
+                    gfx.DrawImage(_directionGrid, new Rectangle(x * 32, y * 32, 32, 32), new Rectangle(0, 0, 32, 32),
+                        GraphicsUnit.Pixel);
                     for (var i = 0; i < ProjectileBase.MaxProjectileDirections; i++)
                     {
                         if (_editorItem.SpawnLocations[x, y].Directions[i] == true)
                         {
-                            gfx.DrawImage(_directionGrid, new Rectangle((x * 32) + DirectionOffsetX(i), (y * 32) + DirectionOffsetY(i), (32 - 2) / 3, (32 - 2) / 3), new Rectangle(32 + DirectionOffsetX(i), DirectionOffsetY(i), (32 - 2) / 3, (32 - 2) / 3), GraphicsUnit.Pixel);
+                            gfx.DrawImage(_directionGrid,
+                                new Rectangle((x * 32) + DirectionOffsetX(i), (y * 32) + DirectionOffsetY(i),
+                                    (32 - 2) / 3, (32 - 2) / 3),
+                                new Rectangle(32 + DirectionOffsetX(i), DirectionOffsetY(i), (32 - 2) / 3, (32 - 2) / 3),
+                                GraphicsUnit.Pixel);
                         }
                     }
                 }
             }
 
-            gfx.DrawImage(_directionGrid, new Rectangle((picSpawns.Width / 2) - (((32 - 2) / 3) / 2), (picSpawns.Height / 2) - (((32 - 2) / 3) / 2), (32 - 2) / 3, (32 - 2) / 3), new Rectangle(43, 11, (32 - 2) / 3, (32 - 2) / 3), GraphicsUnit.Pixel);
+            gfx.DrawImage(_directionGrid,
+                new Rectangle((picSpawns.Width / 2) - (((32 - 2) / 3) / 2),
+                    (picSpawns.Height / 2) - (((32 - 2) / 3) / 2), (32 - 2) / 3, (32 - 2) / 3),
+                new Rectangle(43, 11, (32 - 2) / 3, (32 - 2) / 3), GraphicsUnit.Pixel);
             gfx.Dispose();
             picSpawns.Refresh();
         }
@@ -366,7 +391,7 @@ namespace Intersect_Editor.Classes
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstProjectiles.Items[Database.GameObjectListIndex(GameObject.Projectile,_editorItem.GetId())] = txtName.Text;
+            lstProjectiles.Items[Database.GameObjectListIndex(GameObject.Projectile, _editorItem.Id)] = txtName.Text;
         }
 
         private void chkHoming_CheckedChanged(object sender, EventArgs e)
@@ -394,7 +419,8 @@ namespace Intersect_Editor.Classes
             i = Math.Floor(i);
             j = Math.Floor(j);
 
-            _editorItem.SpawnLocations[(int)x, (int)y].Directions[FindDirection((int)i, (int)j)] = !_editorItem.SpawnLocations[(int)x, (int)y].Directions[FindDirection((int)i, (int)j)];
+            _editorItem.SpawnLocations[(int) x, (int) y].Directions[FindDirection((int) i, (int) j)] =
+                !_editorItem.SpawnLocations[(int) x, (int) y].Directions[FindDirection((int) i, (int) j)];
 
             Render();
         }
@@ -429,8 +455,8 @@ namespace Intersect_Editor.Classes
             //Clone the previous animation to save time, set the end point to always be the quantity of spawns.
             _editorItem.Animations.Add(
                 new ProjectileAnimation(_editorItem.Animations[_editorItem.Animations.Count - 1].Animation,
-                _editorItem.Quantity,
-                _editorItem.Animations[_editorItem.Animations.Count - 1].AutoRotate));
+                    _editorItem.Quantity,
+                    _editorItem.Animations[_editorItem.Animations.Count - 1].AutoRotate));
             updateAnimations();
         }
 
@@ -468,7 +494,8 @@ namespace Intersect_Editor.Classes
             if (_editorItem != null && lstProjectiles.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("projectileeditor", "deleteprompt"),
-                        Strings.Get("projectileeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                        Strings.Get("projectileeditor", "deletetitle"), DarkDialogButton.YesNo,
+                        Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -479,7 +506,7 @@ namespace Intersect_Editor.Classes
         {
             if (_editorItem != null && lstProjectiles.Focused)
             {
-                _copiedItem = _editorItem.GetData();
+                _copiedItem = _editorItem.BinaryData;
                 toolStripItemPaste.Enabled = true;
             }
         }
@@ -498,7 +525,8 @@ namespace Intersect_Editor.Classes
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("projectileeditor", "undoprompt"),
-                        Strings.Get("projectileeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                        Strings.Get("projectileeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();
@@ -563,39 +591,40 @@ namespace Intersect_Editor.Classes
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Animations[lstAnimations.SelectedIndex].Animation = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex -1);
+            _editorItem.Animations[lstAnimations.SelectedIndex].Animation =
+                Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex - 1);
             updateAnimations();
         }
 
         private void nudSpeed_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Speed = (int)nudSpeed.Value;
+            _editorItem.Speed = (int) nudSpeed.Value;
         }
 
         private void nudSpawnDelay_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Delay = (int)nudSpawn.Value;
+            _editorItem.Delay = (int) nudSpawn.Value;
         }
 
         private void nudAmount_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Quantity = (int)nudAmount.Value;
+            _editorItem.Quantity = (int) nudAmount.Value;
             updateAnimations();
         }
 
         private void nudRange_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Range = (int)nudRange.Value;
+            _editorItem.Range = (int) nudRange.Value;
         }
 
         private void nudKnockback_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Knockback = (int)nudKnockback.Value;
+            _editorItem.Knockback = (int) nudKnockback.Value;
         }
 
         private void nudConsume_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.AmmoRequired = (int)nudConsume.Value;
+            _editorItem.AmmoRequired = (int) nudConsume.Value;
         }
 
         private void cmbSpell_SelectedIndexChanged(object sender, EventArgs e)

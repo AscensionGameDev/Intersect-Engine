@@ -1,22 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Intersect_Library.GameObjects.Maps.MapList
+namespace Intersect.GameObjects.Maps.MapList
 {
     public class MapListMap : MapListItem, IComparable<MapListMap>
     {
         public int MapNum = -1;
-        public MapListMap(): base()
+
+        public MapListMap() : base()
         {
-            base.Name = "New Map";
-            base.type = 1;
+            Name = "New Map";
+            type = 1;
         }
 
-        public void GetData(ByteBuffer myBuffer, Dictionary<int,MapBase> gameMaps )
+        public int CompareTo(MapListMap obj)
+        {
+            return MapNum.CompareTo(obj.MapNum);
+        }
+
+        public void GetData(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps)
         {
             base.GetData(myBuffer);
             myBuffer.WriteInteger(MapNum);
-            myBuffer.WriteString(gameMaps[MapNum].MyName);
+            myBuffer.WriteString(gameMaps[MapNum].Name);
         }
 
         public bool Load(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps, bool isServer = true)
@@ -32,15 +38,10 @@ namespace Intersect_Library.GameObjects.Maps.MapList
             {
                 if (gameMaps.ContainsKey(MapNum))
                 {
-                    gameMaps[MapNum].MyName = Name;
+                    gameMaps[MapNum].Name = Name;
                 }
             }
             return true;
-        }
-
-        public int CompareTo(MapListMap obj)
-        {
-            return MapNum.CompareTo(obj.MapNum);
         }
     }
 }

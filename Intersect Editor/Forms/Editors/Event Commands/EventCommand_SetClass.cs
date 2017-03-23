@@ -1,17 +1,17 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
+using Intersect;
+using Intersect.GameObjects.Events;
+using Intersect.Localization;
 using Intersect_Editor.Classes;
-using Intersect_Library;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_SetClass : UserControl
     {
-        private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
+        private EventCommand _myCommand;
+
         public EventCommand_SetClass(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();

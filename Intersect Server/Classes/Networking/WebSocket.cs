@@ -1,4 +1,5 @@
 ﻿using System;
+using Intersect.Logging;
 using WebSocketSharp.Net.WebSockets;
 
 namespace Intersect_Server.Classes.Networking
@@ -6,6 +7,7 @@ namespace Intersect_Server.Classes.Networking
     public class WebSocket : GameSocket
     {
         private WebSocketContext _myContext;
+
         public WebSocket(WebSocketContext context)
         {
             _myContext = context;
@@ -45,6 +47,7 @@ namespace Intersect_Server.Classes.Networking
             }
             catch (Exception ex)
             {
+                Log.Trace(ex);
                 HandleDisconnect();
             }
         }

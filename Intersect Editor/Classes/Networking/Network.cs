@@ -1,8 +1,7 @@
-﻿
-using System;
+﻿using System;
 using System.Net.Sockets;
 using System.Windows.Forms;
-using Intersect_Library;
+using Intersect;
 
 namespace Intersect_Editor.Classes
 {
@@ -23,9 +22,11 @@ namespace Intersect_Editor.Classes
                 MySocket.Close();
             }
 
-            MySocket = new TcpClient ();
-            MySocket.SendBufferSize = 256000;
-            MySocket.ReceiveBufferSize = 256000;
+            MySocket = new TcpClient()
+            {
+                SendBufferSize = 256000,
+                ReceiveBufferSize = 256000
+            };
             _tempBuff = new byte[MySocket.ReceiveBufferSize];
             MySocket.BeginConnect(Globals.ServerHost, Globals.ServerPort, ConnectCb, null);
             Connecting = true;
@@ -33,7 +34,10 @@ namespace Intersect_Editor.Classes
 
         public static void Update()
         {
-            if (Connected) { TryHandleData(); }
+            if (Connected)
+            {
+                TryHandleData();
+            }
             if (!Connected && !Connecting)
             {
                 InitNetwork();

@@ -1,30 +1,48 @@
 ﻿using System.Collections.Generic;
+using Intersect;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Conditions;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events
 {
     public class EventPage
     {
-        public string Desc = "";
-        public int MovementType;
-        public int MovementSpeed;
-        public int MovementFreq;
-        public EventMoveRoute MoveRoute = new EventMoveRoute();
-        public int Passable;
-        public int Layer;
-        public int Trigger;
-        public int TriggerVal;
-        public string FaceGraphic = "";
-        public EventGraphic Graphic = new EventGraphic();
-        public int HideName;
-        public int DisablePreview = 1;
-        public int DirectionFix;
-        public int WalkingAnimation = 1;
+        public enum CommonEventTriggers
+        {
+            None,
+            JoinGame,
+            LevelUp,
+            LeaveGame,
+            Autorun,
+        }
+
+        public enum EventTriggers
+        {
+            ActionButton,
+            OnTouch,
+            Autorun,
+            ProjectileHit,
+        }
+
         public int Animation = -1;
-        public int InteractionFreeze;
         public List<CommandList> CommandLists = new List<CommandList>();
         public ConditionLists ConditionLists = new ConditionLists();
         public List<EventCommand> Conditions = new List<EventCommand>();
+        public string Desc = "";
+        public int DirectionFix;
+        public int DisablePreview = 1;
+        public string FaceGraphic = "";
+        public EventGraphic Graphic = new EventGraphic();
+        public int HideName;
+        public int InteractionFreeze;
+        public int Layer;
+        public int MovementFreq;
+        public int MovementSpeed;
+        public int MovementType;
+        public EventMoveRoute MoveRoute = new EventMoveRoute();
+        public int Passable;
+        public int Trigger;
+        public int TriggerVal;
+        public int WalkingAnimation = 1;
 
         public EventPage()
         {
@@ -68,8 +86,10 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
                 Conditions.Add(new EventCommand());
                 Conditions[i].Load(curBuffer);
             }
-            var cndList = new ConditionList();
-            cndList.Name = "Migrated Conditions";
+            var cndList = new ConditionList()
+            {
+                Name = "Migrated Conditions"
+            };
             cndList.Conditions.AddRange(Conditions.ToArray());
             if (cndList.Conditions.Count > 0) ConditionLists.Lists.Add(cndList);
         }
@@ -99,23 +119,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
                 commandList.WriteBytes(myBuffer);
             }
             ConditionLists.Save(myBuffer);
-        }
-
-        public enum EventTriggers
-        {
-            ActionButton,
-            OnTouch,
-            Autorun,
-            ProjectileHit,
-        }
-
-        public enum CommonEventTriggers
-        {
-            None,
-            JoinGame,
-            LevelUp,
-            LeaveGame,
-            Autorun,
         }
     }
 }

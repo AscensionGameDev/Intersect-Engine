@@ -1,43 +1,42 @@
-﻿
-
-using System;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Events;
+﻿using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
 using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Misc;
 using Intersect_Server.Classes.Misc.Pathfinding;
 using Intersect_Server.Classes.Networking;
-using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes.Entities
 {
     public class EventPageInstance : Entity
     {
-        public Client Client = null;
-        public int Trigger;
-        public int MovementType;
+        private Pathfinder _pathFinder;
+        public EventBase BaseEvent;
+        public Client Client;
+        private int DirectionFix;
+        public int DisablePreview;
+        public EventPageInstance GlobalClone;
         public int MovementFreq;
         public int MovementSpeed;
+        public int MovementType;
+        public EventInstance MyEventIndex;
         public EventGraphic MyGraphic = new EventGraphic();
-        public int DisablePreview;
-        public EventBase BaseEvent;
         public EventPage MyPage;
-        public Entities.EventInstance MyEventIndex;
-        public EventPageInstance GlobalClone;
-        private Pathfinder _pathFinder;
-        private int WalkingAnim = 0;
-        private int DirectionFix = 0;
+        private int PageNum;
         private int RenderLevel = 1;
-        private int PageNum = 0;
-        public EventPageInstance(EventBase myEvent, EventPage myPage, int myIndex, int mapNum, Entities.EventInstance eventIndex, Client client) : base(myIndex)
+        public int Trigger;
+        private int WalkingAnim;
+
+        public EventPageInstance(EventBase myEvent, EventPage myPage, int myIndex, int mapNum, EventInstance eventIndex,
+            Client client) : base(myIndex)
         {
             BaseEvent = myEvent;
             MyPage = myPage;
             CurrentMap = mapNum;
             CurrentX = eventIndex.CurrentX;
             CurrentY = eventIndex.CurrentY;
-            MyName = myEvent.MyName;
+            MyName = myEvent.Name;
             MovementType = MyPage.MovementType;
             MovementFreq = MyPage.MovementFreq;
             MovementSpeed = MyPage.MovementSpeed;
@@ -87,7 +86,9 @@ namespace Intersect_Server.Classes.Entities
             Client = client;
             SendToClient();
         }
-        public EventPageInstance(EventBase myEvent, EventPage myPage, int myIndex, int mapNum, Entities.EventInstance eventIndex, Client client, EventPageInstance globalClone) : base(myIndex)
+
+        public EventPageInstance(EventBase myEvent, EventPage myPage, int myIndex, int mapNum, EventInstance eventIndex,
+            Client client, EventPageInstance globalClone) : base(myIndex)
         {
             BaseEvent = myEvent;
             GlobalClone = globalClone;
@@ -95,7 +96,7 @@ namespace Intersect_Server.Classes.Entities
             CurrentMap = mapNum;
             CurrentX = globalClone.CurrentX;
             CurrentY = globalClone.CurrentY;
-            MyName = myEvent.MyName;
+            MyName = myEvent.Name;
             MovementType = globalClone.MovementType;
             MovementFreq = globalClone.MovementFreq;
             MovementSpeed = globalClone.MovementSpeed;
@@ -203,12 +204,13 @@ namespace Intersect_Server.Classes.Entities
                 case 4:
                     Stat[2].Stat = 40;
                     break;
-
             }
         }
+
         public void Update(bool isActive)
         {
-            if (MoveTimer >= Globals.System.GetTimeMs() || GlobalClone != null || (isActive && MyPage.InteractionFreeze == 1)) return;
+            if (MoveTimer >= Globals.System.GetTimeMs() || GlobalClone != null ||
+                (isActive && MyPage.InteractionFreeze == 1)) return;
             if (MovementType == 2 && MoveRoute != null)
             {
                 ProcessMoveRoute(Client);
@@ -222,15 +224,16 @@ namespace Intersect_Server.Classes.Entities
                     if (CanMove(dir) == -1)
                     {
                         Move(dir, Client);
-                        MoveTimer = Globals.System.GetTimeMs() + (long)GetMovementTime();
+                        MoveTimer = Globals.System.GetTimeMs() + (long) GetMovementTime();
                     }
                 }
             }
         }
-        
+
         protected override bool ProcessMoveRoute(Client client)
         {
-            if (!base.ProcessMoveRoute(client)) {
+            if (!base.ProcessMoveRoute(client))
+            {
                 var moved = false;
                 var shouldSendUpdate = false;
                 int lookDir = 0, moveDir = 0;
@@ -242,7 +245,10 @@ namespace Intersect_Server.Classes.Entities
                             //Pathfinding required.. this will be weird.
                             if (client != null && GlobalClone == null) //Local Event
                             {
-                                if (_pathFinder.GetTarget() == null || _pathFinder.GetTarget().TargetMap != client.Entity.CurrentMap || _pathFinder.GetTarget().TargetX != client.Entity.CurrentX || _pathFinder.GetTarget().TargetY != client.Entity.CurrentY)
+                                if (_pathFinder.GetTarget() == null ||
+                                    _pathFinder.GetTarget().TargetMap != client.Entity.CurrentMap ||
+                                    _pathFinder.GetTarget().TargetX != client.Entity.CurrentX ||
+                                    _pathFinder.GetTarget().TargetY != client.Entity.CurrentY)
                                 {
                                     _pathFinder.SetTarget(new PathfinderTarget(client.Entity.CurrentMap,
                                         client.Entity.CurrentX, client.Entity.CurrentY));
@@ -270,17 +276,17 @@ namespace Intersect_Server.Classes.Entities
                                 {
                                     switch (moveDir)
                                     {
-                                        case (int)Directions.Up:
-                                            moveDir = (int)Directions.Down;
+                                        case (int) Directions.Up:
+                                            moveDir = (int) Directions.Down;
                                             break;
-                                        case (int)Directions.Down:
-                                            moveDir = (int)Directions.Up;
+                                        case (int) Directions.Down:
+                                            moveDir = (int) Directions.Up;
                                             break;
-                                        case (int)Directions.Left:
-                                            moveDir = (int)Directions.Right;
+                                        case (int) Directions.Left:
+                                            moveDir = (int) Directions.Right;
                                             break;
-                                        case (int)Directions.Right:
-                                            moveDir = (int)Directions.Left;
+                                        case (int) Directions.Right:
+                                            moveDir = (int) Directions.Left;
                                             break;
                                     }
                                     if (CanMove(moveDir) == -1)
@@ -330,17 +336,17 @@ namespace Intersect_Server.Classes.Entities
                                 {
                                     switch (lookDir)
                                     {
-                                        case (int)Directions.Up:
-                                            lookDir = (int)Directions.Down;
+                                        case (int) Directions.Up:
+                                            lookDir = (int) Directions.Down;
                                             break;
-                                        case (int)Directions.Down:
-                                            lookDir = (int)Directions.Up;
+                                        case (int) Directions.Down:
+                                            lookDir = (int) Directions.Up;
                                             break;
-                                        case (int)Directions.Left:
-                                            lookDir = (int)Directions.Right;
+                                        case (int) Directions.Left:
+                                            lookDir = (int) Directions.Right;
                                             break;
-                                        case (int)Directions.Right:
-                                            lookDir = (int)Directions.Left;
+                                        case (int) Directions.Right:
+                                            lookDir = (int) Directions.Left;
                                             break;
                                     }
                                     ChangeDir(lookDir);
@@ -476,7 +482,7 @@ namespace Intersect_Server.Classes.Entities
                             break;
                         case MoveRouteEnum.SetAnimation:
                             Animations.Clear();
-                            var anim = AnimationBase.GetAnim(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);
+                            var anim = AnimationBase.Lookup.Get(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);
                             if (anim != null)
                             {
                                 Animations.Add(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);
@@ -505,7 +511,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     if (MoveTimer < Globals.System.GetTimeMs())
                     {
-                        MoveTimer = Globals.System.GetTimeMs() + (long)GetMovementTime();
+                        MoveTimer = Globals.System.GetTimeMs() + (long) GetMovementTime();
                     }
                 }
             }
@@ -535,16 +541,16 @@ namespace Intersect_Server.Classes.Entities
         {
             switch (moveDir)
             {
-                case (int)Directions.Up:
+                case (int) Directions.Up:
                     if (CurrentY == 0) return -5;
                     break;
-                case (int)Directions.Down:
+                case (int) Directions.Down:
                     if (CurrentY == Options.MapHeight - 1) return -5;
                     break;
-                case (int)Directions.Left:
+                case (int) Directions.Left:
                     if (CurrentX == 0) return -5;
                     break;
-                case (int)Directions.Right:
+                case (int) Directions.Right:
                     if (CurrentX == Options.MapWidth - 1) return -5;
                     break;
             }
@@ -567,7 +573,8 @@ namespace Intersect_Server.Classes.Entities
         public bool ShouldDespawn()
         {
             //Should despawn if conditions are not met OR an earlier page can spawn
-            if (!EventInstance.MeetsConditionLists(MyPage.ConditionLists, MyEventIndex.MyPlayer, MyEventIndex)) return true;
+            if (!EventInstance.MeetsConditionLists(MyPage.ConditionLists, MyEventIndex.MyPlayer, MyEventIndex))
+                return true;
             for (int i = 0; i < BaseEvent.MyPages.Count; i++)
             {
                 if (MyEventIndex.CanSpawnPage(i, BaseEvent))
@@ -578,7 +585,7 @@ namespace Intersect_Server.Classes.Entities
             if (GlobalClone != null)
             {
                 var map = MapInstance.GetMap(GlobalClone.CurrentMap);
-                if (map == null || !map.FindEvent(GlobalClone.BaseEvent,GlobalClone)) return true;
+                if (map == null || !map.FindEvent(GlobalClone.BaseEvent, GlobalClone)) return true;
             }
             return false;
         }

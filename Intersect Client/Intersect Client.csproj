@@ -120,7 +120,8 @@
     <Compile Include="Forms\frmLoadingContent.Designer.cs">
       <DependentUpon>frmLoadingContent.cs</DependentUpon>
     </Compile>
-    <Compile Include="Intersect.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="IntersectGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

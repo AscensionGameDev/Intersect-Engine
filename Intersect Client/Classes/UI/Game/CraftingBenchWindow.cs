@@ -1,24 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.Localization;
 using IntersectClientExtras.File_Management;
-using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using IntersectClientExtras.Gwen.ControlInternal;
-using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Input;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
-using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game.Chat;
-using Intersect_Library;
 using Color = IntersectClientExtras.GenericClasses.Color;
-using Point = IntersectClientExtras.GenericClasses.Point;
-using Intersect_Library.GameObjects;
-using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -26,38 +22,39 @@ namespace Intersect_Client.Classes.UI.Game
     {
         private static int ItemXPadding = 4;
         private static int ItemYPadding = 4;
+        private ImagePanel _bar;
+
+        private ImagePanel _barContainer;
+
+        private RecepieItem _CombinedItem;
+        private Button _craft;
 
         //Controls
         private WindowControl _craftWindow;
         private ScrollControl _itemContainer;
-
-        //Location
-        public int X;
-        public int Y;
+        private List<RecepieItem> _items = new List<RecepieItem>();
+        private Label _lblIngredients;
+        private Label _lblProduct;
+        private Label _lblRecepies;
 
         //Objects
         private ListBox _Recepies;
-        private Label _lblRecepies;
-        private Label _lblIngredients;
-        private Label _lblProduct;
-        private Button _craft;
-
-        private RecepieItem _CombinedItem;
-        private List<RecepieItem> _items = new List<RecepieItem>();
         private List<Label> _values = new List<Label>();
-
-        private ImagePanel _barContainer;
-        private ImagePanel _bar;
 
         private long BarTimer = 0;
         private int craftIndex = 0;
         public bool crafting = false;
 
+        //Location
+        public int X;
+        public int Y;
+
         public CraftingBenchWindow(Canvas _gameCanvas)
         {
             _craftWindow = new WindowControl(_gameCanvas, Strings.Get("craftingbench", "title"));
             _craftWindow.SetSize(415, 424);
-            _craftWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 200, GameGraphics.Renderer.GetScreenHeight() / 2 - 200);
+            _craftWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 200,
+                GameGraphics.Renderer.GetScreenHeight() / 2 - 200);
             _craftWindow.DisableResizing();
             _craftWindow.Margin = Margin.Zero;
             _craftWindow.Padding = new Padding(8, 5, 9, 11);
@@ -66,10 +63,18 @@ namespace Intersect_Client.Classes.UI.Game
 
             _craftWindow.SetTitleBarHeight(24);
             _craftWindow.SetCloseButtonSize(20, 20);
-            _craftWindow.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "craftbenchactive.png"), WindowControl.ControlState.Active);
-            _craftWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"), Button.ControlState.Normal);
-            _craftWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"), Button.ControlState.Hovered);
-            _craftWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"), Button.ControlState.Clicked);
+            _craftWindow.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "craftbenchactive.png"),
+                WindowControl.ControlState.Active);
+            _craftWindow.SetCloseButtonImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"),
+                Button.ControlState.Normal);
+            _craftWindow.SetCloseButtonImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"),
+                Button.ControlState.Hovered);
+            _craftWindow.SetCloseButtonImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"),
+                Button.ControlState.Clicked);
             _craftWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
             _craftWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
@@ -92,7 +97,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             _lblProduct = new Label(_craftWindow);
             _lblProduct.SetPosition(_craftWindow.Width / 2, 20);
-            _lblProduct.Text = Strings.Get("craftingbench","product");
+            _lblProduct.Text = Strings.Get("craftingbench", "product");
             _lblProduct.TextColorOverride = Color.White;
 
             //Recepie list
@@ -104,20 +109,38 @@ namespace Intersect_Client.Classes.UI.Game
             _Recepies.EnableScroll(false, true);
             _Recepies.AutoHideBars = false;
 
-            var _recepieScrollBar =  _Recepies.GetVerticalScrollBar();
+            var _recepieScrollBar = _Recepies.GetVerticalScrollBar();
             _recepieScrollBar.RenderColor = new Color(200, 40, 40, 40);
-            _recepieScrollBar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarnormal.png"), Dragger.ControlState.Normal);
-            _recepieScrollBar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarhover.png"), Dragger.ControlState.Hovered);
-            _recepieScrollBar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarclicked.png"), Dragger.ControlState.Clicked);
+            _recepieScrollBar.SetScrollBarImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarnormal.png"),
+                Dragger.ControlState.Normal);
+            _recepieScrollBar.SetScrollBarImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarhover.png"),
+                Dragger.ControlState.Hovered);
+            _recepieScrollBar.SetScrollBarImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarclicked.png"),
+                Dragger.ControlState.Clicked);
 
             var upButton = _recepieScrollBar.GetScrollBarButton(Pos.Top);
-            upButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrownormal.png"), Button.ControlState.Normal);
-            upButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowclicked.png"), Button.ControlState.Clicked);
-            upButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowhover.png"), Button.ControlState.Hovered);
+            upButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrownormal.png"),
+                Button.ControlState.Normal);
+            upButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowclicked.png"),
+                Button.ControlState.Clicked);
+            upButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowhover.png"),
+                Button.ControlState.Hovered);
             var downButton = _recepieScrollBar.GetScrollBarButton(Pos.Bottom);
-            downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrownormal.png"), Button.ControlState.Normal);
-            downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowclicked.png"), Button.ControlState.Clicked);
-            downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowhover.png"), Button.ControlState.Hovered);
+            downButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrownormal.png"),
+                Button.ControlState.Normal);
+            downButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowclicked.png"),
+                Button.ControlState.Clicked);
+            downButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowhover.png"),
+                Button.ControlState.Hovered);
 
             ListBoxRow tmpRow;
             for (int i = 0; i < Globals.GameBench.Crafts.Count; i++)
@@ -136,7 +159,8 @@ namespace Intersect_Client.Classes.UI.Game
             _barContainer = new ImagePanel(_craftWindow);
             _barContainer.SetSize(100, 34);
             _barContainer.SetPosition(_craftWindow.Width - 210, _craftWindow.Height - 80);
-            _barContainer.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "emptycraftbar.png");
+            _barContainer.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
+                "emptycraftbar.png");
 
             _bar = new ImagePanel(_barContainer);
             _bar.SetSize(0, 34);
@@ -147,11 +171,17 @@ namespace Intersect_Client.Classes.UI.Game
             _craft = new Button(_craftWindow);
             _craft.SetSize(86, 39);
             _craft.SetText(Strings.Get("craftingbench", "craft"));
-            _craft.SetPosition(_craftWindow.Width - 100 , _craftWindow.Height - 82);
-            _craft.Clicked += craft_Clicked; 
-            _craft.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonnormal.png"), Button.ControlState.Normal);
-            _craft.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonhover.png"), Button.ControlState.Hovered);
-            _craft.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonclicked.png"), Button.ControlState.Clicked);
+            _craft.SetPosition(_craftWindow.Width - 100, _craftWindow.Height - 82);
+            _craft.Clicked += craft_Clicked;
+            _craft.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonnormal.png"),
+                Button.ControlState.Normal);
+            _craft.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonhover.png"),
+                Button.ControlState.Hovered);
+            _craft.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonclicked.png"),
+                Button.ControlState.Clicked);
             _craft.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _craft.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _craft.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
@@ -164,18 +194,27 @@ namespace Intersect_Client.Classes.UI.Game
         {
             //Combined item
             craftIndex = index;
-            if (_CombinedItem != null) { _craftWindow.Children.Remove(_CombinedItem.container); }
+            if (_CombinedItem != null)
+            {
+                _craftWindow.Children.Remove(_CombinedItem.container);
+            }
             var craft = Globals.GameBench.Crafts[index];
             if (craft == null) return;
-            _CombinedItem = new RecepieItem(this, new CraftIngredient(craft.Item, 0));
-            _CombinedItem.container = new ImagePanel(_craftWindow);
+            _CombinedItem = new RecepieItem(this, new CraftIngredient(craft.Item, 0))
+            {
+                container = new ImagePanel(_craftWindow)
+            };
             _CombinedItem.container.SetSize(34, 34);
             _CombinedItem.container.SetPosition(_craftWindow.Width - 102, 12);
-            _CombinedItem.container.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "craftitem.png");
+            _CombinedItem.container.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
+                "craftitem.png");
             _CombinedItem.Setup(2, 2);
 
             //Clear the old item description box
-            if (_CombinedItem._descWindow != null) { _CombinedItem._descWindow.Dispose(); }
+            if (_CombinedItem._descWindow != null)
+            {
+                _CombinedItem._descWindow.Dispose();
+            }
 
             _items.Clear();
             _values.Clear();
@@ -186,15 +225,20 @@ namespace Intersect_Client.Classes.UI.Game
                 _items.Add(new RecepieItem(this, craft.Ingredients[i]));
                 _items[i].container = new ImagePanel(_itemContainer);
                 _items[i].container.SetSize(34, 34);
-                _items[i].container.SetPosition((i % (_itemContainer.Width / (34 + ItemXPadding))) * (34 + ItemXPadding) + ItemXPadding - 4, 70 + (i / (_itemContainer.Width / (34 + ItemXPadding))) * (34 + ItemYPadding) + ItemYPadding);
-                _items[i].container.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "craftitem.png");
+                _items[i].container.SetPosition(
+                    (i % (_itemContainer.Width / (34 + ItemXPadding))) * (34 + ItemXPadding) + ItemXPadding - 4,
+                    70 + (i / (_itemContainer.Width / (34 + ItemXPadding))) * (34 + ItemYPadding) + ItemYPadding);
+                _items[i].container.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
+                    "craftitem.png");
                 _items[i].Setup(2, 2);
 
                 //Clear the old item description box
-                if (_items[i]._descWindow != null) { _items[craftIndex]._descWindow.Dispose(); }
+                if (_items[i]._descWindow != null)
+                {
+                    _items[craftIndex]._descWindow.Dispose();
+                }
 
                 Label _lblTemp = new Label(_items[i].container);
-
 
                 int n = Globals.Me.FindItem(craft.Ingredients[i].Item);
                 int x = 0;
@@ -218,10 +262,12 @@ namespace Intersect_Client.Classes.UI.Game
                 _craftWindow.Close();
             }
         }
+
         public bool IsVisible()
         {
             return !_craftWindow.IsHidden;
         }
+
         public void Hide()
         {
             if (crafting == false)
@@ -235,9 +281,8 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (crafting == false)
             {
-                LoadCraftItems(Convert.ToInt32(((ListBoxRow)sender).UserData));
+                LoadCraftItems(Convert.ToInt32(((ListBoxRow) sender).UserData));
             }
-            
         }
 
         //Craft the item
@@ -250,11 +295,14 @@ namespace Intersect_Client.Classes.UI.Game
                 if (n > -1)
                 {
                     x = Globals.Me.Inventory[n].ItemVal;
-                    if (x == 0) { x = 1; }
+                    if (x == 0)
+                    {
+                        x = 1;
+                    }
                 }
                 if (x < c.Quantity)
                 {
-                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Get("craftingbench","incorrectresources"), Color.Red));
+                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Get("craftingbench", "incorrectresources"), Color.Red));
                     return;
                 }
             }
@@ -278,7 +326,8 @@ namespace Intersect_Client.Classes.UI.Game
                     _craftWindow.IsClosable = true;
                     LoadCraftItems(craftIndex);
                 }
-                decimal width = Convert.ToDecimal(i) / Convert.ToDecimal(Globals.GameBench.Crafts[craftIndex].Time) * 100;
+                decimal width = Convert.ToDecimal(i) / Convert.ToDecimal(Globals.GameBench.Crafts[craftIndex].Time) *
+                                100;
                 _bar.Width = Convert.ToInt32(width);
             }
         }
@@ -286,25 +335,24 @@ namespace Intersect_Client.Classes.UI.Game
 
     public class RecepieItem
     {
-        public ImagePanel container;
-        public ImagePanel pnl;
+        //References
+        private CraftingBenchWindow _craftingBenchWindow;
         public ItemDescWindow _descWindow;
+
+        //Slot info
+        CraftIngredient _ingredient;
+
+        //Dragging
+        private bool CanDrag = false;
+        public ImagePanel container;
+        private Draggable dragIcon;
+        public bool IsDragging;
 
         //Mouse Event Variables
         private bool MouseOver = false;
         private int MouseX = -1;
         private int MouseY = -1;
-
-        //Dragging
-        private bool CanDrag = false;
-        private Draggable dragIcon;
-        public bool IsDragging;
-
-        //Slot info
-        CraftIngredient _ingredient;
-
-        //References
-        private CraftingBenchWindow _craftingBenchWindow;
+        public ImagePanel pnl;
 
         public RecepieItem(CraftingBenchWindow craftingBenchWindow, CraftIngredient ingredient)
         {
@@ -351,18 +399,31 @@ namespace Intersect_Client.Classes.UI.Game
             MouseOver = false;
             MouseX = -1;
             MouseY = -1;
-            if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
+            if (_descWindow != null)
+            {
+                _descWindow.Dispose();
+                _descWindow = null;
+            }
         }
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
             MouseOver = true;
             CanDrag = true;
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)) { CanDrag = false; return; }
-            if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
+            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            {
+                CanDrag = false;
+                return;
+            }
+            if (_descWindow != null)
+            {
+                _descWindow.Dispose();
+                _descWindow = null;
+            }
             if (_ingredient != null)
             {
-                _descWindow = new ItemDescWindow(_ingredient.Item, _ingredient.Quantity, _craftingBenchWindow.X - 255, _craftingBenchWindow.Y, new int[(int)Stats.StatCount]);
+                _descWindow = new ItemDescWindow(_ingredient.Item, _ingredient.Quantity, _craftingBenchWindow.X - 255,
+                    _craftingBenchWindow.Y, new int[(int) Stats.StatCount]);
             }
         }
     }

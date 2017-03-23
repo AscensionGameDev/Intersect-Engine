@@ -7,9 +7,10 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
 {
     public class MonoMusicInstance : GameAudioInstance
     {
-        private Song _song;
         private bool _disposed;
+        private Song _song;
         private int _volume;
+
         public MonoMusicInstance(GameAudioSource music) : base(music)
         {
             _song = ((MonoMusicSource) music).GetSource();
@@ -35,7 +36,7 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
             _volume = volume;
             try
             {
-               MediaPlayer.Volume = (_volume*(float) (Globals.Database.MusicVolume/100f)/100f);
+                MediaPlayer.Volume = (_volume * (float) (Globals.Database.MusicVolume / 100f) / 100f);
             }
             catch (NullReferenceException)
             {

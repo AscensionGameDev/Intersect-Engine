@@ -1,21 +1,19 @@
-﻿using IntersectClientExtras.File_Management;
-using IntersectClientExtras.Gwen.Control;
-using Intersect_Client.Classes.General;
-using Intersect_Library;
+﻿using IntersectClientExtras.Gwen.Control;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
     public class MenuGuiBase
     {
         private readonly Canvas _menuCanvas;
+
+        public MainMenu _mainMenu;
         private bool shouldReset = false;
+
         public MenuGuiBase(Canvas myCanvas)
         {
             _menuCanvas = myCanvas;
             InitMenuGui();
         }
-
-        public MainMenu _mainMenu;
 
         private void InitMenuGui()
         {
@@ -29,7 +27,6 @@ namespace Intersect_Client.Classes.UI.Menu
             {
                 _mainMenu.Reset();
                 shouldReset = false;
-                
             }
             _menuCanvas.RenderCanvas();
         }
@@ -38,7 +35,5 @@ namespace Intersect_Client.Classes.UI.Menu
         {
             shouldReset = true;
         }
-
-        
     }
 }

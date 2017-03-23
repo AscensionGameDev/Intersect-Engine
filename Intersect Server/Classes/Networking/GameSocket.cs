@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Intersect_Library;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.GameObjects.Events;
+using Intersect.Localization;
+using Intersect.Logging;
 using Intersect_Server.Classes.Core;
-using Intersect_Library.GameObjects.Events;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
@@ -12,17 +13,17 @@ namespace Intersect_Server.Classes.Networking
 {
     public abstract class GameSocket
     {
-        protected long _connectTime;
-        protected PacketHandler _packetHandler = new PacketHandler();
-        protected ByteBuffer _myBuffer = new ByteBuffer();
         protected Object _bufferLock = new Object();
-        protected Client _myClient;
-        protected int _entityIndex;
-        protected long _pingTime;
-        protected long _pingInterval = 5000;
         protected long _connectionTimeout = -1;
-        protected long _timeout = 20000; //20 seconds
+        protected long _connectTime;
+        protected int _entityIndex;
         protected bool _isConnected = true;
+        protected ByteBuffer _myBuffer = new ByteBuffer();
+        protected Client _myClient;
+        protected PacketHandler _packetHandler = new PacketHandler();
+        protected long _pingInterval = 5000;
+        protected long _pingTime;
+        protected long _timeout = 20000; //20 seconds
 
         public GameSocket()
         {
@@ -36,10 +37,12 @@ namespace Intersect_Server.Classes.Networking
         }
 
         public abstract void SendData(byte[] data);
+
         public virtual void Disconnect()
         {
             HandleDisconnect();
         }
+
         public abstract void Dispose();
         public abstract bool IsConnected();
         public abstract string GetIP();
@@ -52,14 +55,17 @@ namespace Intersect_Server.Classes.Networking
         {
             DataReceived(data);
         }
+
         protected void OnConnected()
         {
             Connected();
         }
+
         protected void OnConnectionFailed()
         {
             ConnectionFailed();
         }
+
         protected void OnDisconnected()
         {
             Disconnected();
@@ -109,7 +115,8 @@ namespace Intersect_Server.Classes.Networking
 
         public virtual void Update()
         {
-            if (_connectionTimeout > -1 && _connectionTimeout < Globals.System.GetTimeMs() && !System.Diagnostics.Debugger.IsAttached)
+            if (_connectionTimeout > -1 && _connectionTimeout < Globals.System.GetTimeMs() &&
+                !System.Diagnostics.Debugger.IsAttached)
             {
                 HandleDisconnect();
             }
@@ -136,7 +143,7 @@ namespace Intersect_Server.Classes.Networking
                 {
                     if (_myClient.Entity != null)
                     {
-                       var en = _myClient.Entity;
+                        var en = _myClient.Entity;
                         Task.Run(() => Database.SaveCharacter(en));
                         var map = MapInstance.GetMap(_myClient.Entity.CurrentMap);
                         if (map != null) map.RemoveEntity(_myClient.Entity);
@@ -150,14 +157,15 @@ namespace Intersect_Server.Classes.Networking
                         //Search for logout activated events and run them
                         foreach (var evt in EventBase.GetObjects())
                         {
-                            _myClient.Entity.StartCommonEvent(evt.Value, (int)EventPage.CommonEventTriggers.LeaveGame);
+                            _myClient.Entity.StartCommonEvent(evt.Value, (int) EventPage.CommonEventTriggers.LeaveGame);
                         }
 
                         PacketSender.SendEntityLeave(_myClient.Entity.MyIndex, (int) EntityTypes.Player,
                             Globals.Entities[_entityIndex].CurrentMap);
                         if (!_myClient.IsEditor)
                         {
-                            PacketSender.SendGlobalMsg(Strings.Get("player","left", _myClient.Entity.MyName,Options.GameName));
+                            PacketSender.SendGlobalMsg(Strings.Get("player", "left", _myClient.Entity.MyName,
+                                Options.GameName));
                         }
                         _myClient.Entity.Dispose();
                         _myClient.Entity = null;
@@ -171,14 +179,19 @@ namespace Intersect_Server.Classes.Networking
                     Disconnect();
                 }
                 catch (Exception ex)
-                { }
+                {
+                    Log.Trace(ex);
+                }
             }
             _isConnected = false;
         }
     }
 
     public delegate void DataReceivedHandler(byte[] data);
+
     public delegate void ConnectedHandler();
+
     public delegate void ConnectionFailedHandler();
+
     public delegate void DisconnectedHandler();
 }

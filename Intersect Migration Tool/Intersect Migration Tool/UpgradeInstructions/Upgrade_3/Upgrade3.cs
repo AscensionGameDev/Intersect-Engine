@@ -5,12 +5,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_3
 {
     public class Upgrade3
     {
-        private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
-
         //Time of Day Table Constants
         private const string TIME_TABLE = "time";
         private const string TIME_DATA = "data";
+        private SqliteConnection _dbConnection;
+        private Object _dbLock = new Object();
 
         public Upgrade3(SqliteConnection connection)
         {
@@ -33,6 +32,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_3
             }
             InsertTime();
         }
+
         private void InsertTime()
         {
             var cmd = "INSERT into " + TIME_TABLE + " (" + TIME_DATA + ") VALUES (" + "NULL" + ");";

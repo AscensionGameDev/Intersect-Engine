@@ -1,17 +1,16 @@
 ﻿using System;
+using Intersect;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Input;
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
-using Intersect_Client.Classes.Maps;
-using Intersect_Library;
 
 namespace Intersect_Client.Classes.Core
 {
     public static class GameInputHandler
     {
-
         public static void OnKeyPressed(Keys key)
         {
             if (!Gui.HasInputFocus())
@@ -73,7 +72,7 @@ namespace Intersect_Client.Classes.Core
                     if (Globals.GameState != GameStates.InGame) return;
                     if (!Gui.HasInputFocus())
                     {
-                        Gui.GameUI.Hotbar.Items[((int)key - (int)Keys.D1)].Activate();
+                        Gui.GameUI.Hotbar.Items[((int) key - (int) Keys.D1)].Activate();
                     }
                 }
                 else if (key == Keys.D0)
@@ -126,7 +125,8 @@ namespace Intersect_Client.Classes.Core
                                     return;
                                 }
                                 if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
-                                    Globals.Me.AttackTimer = Globals.System.GetTimeMS() + Globals.Me.CalculateAttackTime();
+                                    Globals.Me.AttackTimer = Globals.System.GetTimeMS() +
+                                                             Globals.Me.CalculateAttackTime();
                             }
                         }
                     }
@@ -158,8 +158,12 @@ namespace Intersect_Client.Classes.Core
                         Globals.Me.StopBlocking();
                         if (Globals.InputManager.KeyDown(Keys.Shift) == true)
                         {
-                            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
-                            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
+                            var x =
+                                (int)
+                                Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
+                            var y =
+                                (int)
+                                Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
 
                             foreach (var map in MapInstance.GetObjects().Values)
                             {
@@ -168,17 +172,18 @@ namespace Intersect_Client.Classes.Core
                                     if (y >= map.GetY() && y <= map.GetY() + (Options.MapHeight * Options.TileHeight))
                                     {
                                         //Remove the offsets to just be dealing with pixels within the map selected
-                                        x -= (int)map.GetX();
-                                        y -= (int)map.GetY();
+                                        x -= (int) map.GetX();
+                                        y -= (int) map.GetY();
 
                                         //transform pixel format to tile format
                                         x /= Options.TileWidth;
                                         y /= Options.TileHeight;
-                                        int mapNum = map.MyMapNum;
+                                        int mapNum = map.Id;
 
                                         if (Globals.Me.GetRealLocation(ref x, ref y, ref mapNum))
                                         {
-                                            PacketSender.SendAdminAction((int)AdminActions.WarpToLoc, Convert.ToString(mapNum), Convert.ToString(x), Convert.ToString(y));
+                                            PacketSender.SendAdminAction((int) AdminActions.WarpToLoc,
+                                                Convert.ToString(mapNum), Convert.ToString(x), Convert.ToString(y));
                                         }
                                         return;
                                     }

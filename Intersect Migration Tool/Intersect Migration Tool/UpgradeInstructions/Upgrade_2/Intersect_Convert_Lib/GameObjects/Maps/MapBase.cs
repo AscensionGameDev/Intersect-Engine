@@ -1,15 +1,106 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects.Events;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects.Maps
 {
     public class MapBase : DatabaseObject
     {
-        public new const string DatabaseTable = "maps";
-        public new const GameObject Type = GameObject.Map;
+        public new const string DATABASE_TABLE = "maps";
+        public new const GameObject OBJECT_TYPE = GameObject.Map;
         protected static Dictionary<int, MapBase> Objects = new Dictionary<int, MapBase>();
-        
+
+        //SyncLock
+        protected Object _mapLock = new Object();
+
+        //Client/Editor Only
+        public MapAutotiles Autotiles;
+
+        //Server/Editor Only
+        public int EventIndex = 0;
+
+        //Temporary Values
+        public bool IsClient = false;
+
+        //Core Data
+        public TileArray[] Layers = new TileArray[Options.LayerCount];
+
+        public MapBase(int mapNum, bool isClient) : base(mapNum)
+        {
+            MyMapNum = mapNum;
+            IsClient = isClient;
+            for (var i = 0; i < Options.LayerCount; i++)
+            {
+                Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
+                for (var x = 0; x < Options.MapWidth; x++)
+                {
+                    for (var y = 0; y < Options.MapHeight; y++)
+                    {
+                        Layers[i].Tiles[x, y].TilesetIndex = -1;
+                        if (i == 0)
+                        {
+                            Attributes[x, y] = new Attribute();
+                        }
+                    }
+                }
+            }
+        }
+
+        public MapBase(MapBase mapcopy) : base(mapcopy.MyMapNum)
+        {
+            lock (_mapLock)
+            {
+                ByteBuffer bf = new ByteBuffer();
+                MyName = mapcopy.MyName;
+                Brightness = mapcopy.Brightness;
+                IsIndoors = mapcopy.IsIndoors;
+                for (var i = 0; i < Options.LayerCount; i++)
+                {
+                    Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
+                    for (var x = 0; x < Options.MapWidth; x++)
+                    {
+                        for (var y = 0; y < Options.MapHeight; y++)
+                        {
+                            Layers[i].Tiles[x, y] = new Tile()
+                            {
+                                TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex,
+                                X = mapcopy.Layers[i].Tiles[x, y].X,
+                                Y = mapcopy.Layers[i].Tiles[x, y].Y,
+                                Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile
+                            };
+                            if (i == 0 && mapcopy.Attributes[x, y] != null)
+                            {
+                                Attributes[x, y] = new Attribute()
+                                {
+                                    value = mapcopy.Attributes[x, y].value,
+                                    data1 = mapcopy.Attributes[x, y].data1,
+                                    data2 = mapcopy.Attributes[x, y].data2,
+                                    data3 = mapcopy.Attributes[x, y].data3,
+                                    data4 = mapcopy.Attributes[x, y].data4
+                                };
+                            }
+                        }
+                    }
+                }
+                for (var i = 0; i < mapcopy.Spawns.Count; i++)
+                {
+                    Spawns.Add(new NpcSpawn(mapcopy.Spawns[i]));
+                }
+                for (var i = 0; i < mapcopy.Lights.Count; i++)
+                {
+                    Lights.Add(new LightBase(mapcopy.Lights[i]));
+                }
+                EventIndex = mapcopy.EventIndex;
+                foreach (var evt in mapcopy.Events)
+                {
+                    bf.WriteBytes(evt.Value.EventData());
+                    Events.Add(evt.Key, new EventBase(evt.Key, bf));
+                    bf.Clear();
+                }
+            }
+        }
+
         public string MyName { get; set; } = "New Map";
         public int Up { get; set; } = -1;
         public int Down { get; set; } = -1;
@@ -17,18 +108,9 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
         public int Right { get; set; } = -1;
         public int MyMapNum { get; set; }
         public int Revision { get; set; }
-
-        //Core Data
-        public TileArray[] Layers = new TileArray[Options.LayerCount];
-        public Attribute[,] Attributes { get; set; }  = new Attribute[Options.MapWidth, Options.MapHeight];
-        public List<LightBase> Lights { get; set; }  = new List<LightBase>();
-
-        //Client/Editor Only
-        public MapAutotiles Autotiles;
-
-        //Server/Editor Only
-        public int EventIndex = 0;
-        public Dictionary<int,EventBase> Events { get; set; } = new Dictionary<int,EventBase>();
+        public Attribute[,] Attributes { get; set; } = new Attribute[Options.MapWidth, Options.MapHeight];
+        public List<LightBase> Lights { get; set; } = new List<LightBase>();
+        public Dictionary<int, EventBase> Events { get; set; } = new Dictionary<int, EventBase>();
         public List<NpcSpawn> Spawns { get; set; } = new List<NpcSpawn>();
         public List<ResourceSpawn> ResourceSpawns { get; set; } = new List<ResourceSpawn>();
 
@@ -52,80 +134,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
         public float PlayerLightExpand { get; set; } = 0f;
         public Color PlayerLightColor { get; set; } = Color.White;
         public string OverlayGraphic { get; set; } = "None";
-
-        //SyncLock
-        protected Object _mapLock = new Object();
-
-        //Temporary Values
-        public bool IsClient = false;
-
-        public MapBase(int mapNum, bool isClient) : base(mapNum)
-        {
-            MyMapNum = mapNum;
-            IsClient = isClient;
-            for (var i = 0; i < Options.LayerCount; i++)
-            {
-                Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
-                for (var x = 0; x < Options.MapWidth; x++)
-                {
-                    for (var y = 0; y < Options.MapHeight; y++)
-                    {
-                        Layers[i].Tiles[x, y].TilesetIndex = -1;
-                        if (i == 0) { Attributes[x, y] = new Attribute(); }
-                    }
-                }
-            }
-        }
-
-        public MapBase(MapBase mapcopy) : base(mapcopy.MyMapNum)
-        {
-            lock (_mapLock)
-            {
-                ByteBuffer bf = new ByteBuffer();
-                MyName = mapcopy.MyName;
-                Brightness = mapcopy.Brightness;
-                IsIndoors = mapcopy.IsIndoors;
-                for (var i = 0; i < Options.LayerCount; i++)
-                {
-                    Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
-                    for (var x = 0; x < Options.MapWidth; x++)
-                    {
-                        for (var y = 0; y < Options.MapHeight; y++)
-                        {
-                            Layers[i].Tiles[x, y] = new Tile();
-                            Layers[i].Tiles[x, y].TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex;
-                            Layers[i].Tiles[x, y].X = mapcopy.Layers[i].Tiles[x, y].X;
-                            Layers[i].Tiles[x, y].Y = mapcopy.Layers[i].Tiles[x, y].Y;
-                            Layers[i].Tiles[x, y].Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile;
-                            if (i == 0 && mapcopy.Attributes[x, y] != null)
-                            {
-                                Attributes[x, y] = new Attribute();
-                                Attributes[x, y].value = mapcopy.Attributes[x, y].value;
-                                Attributes[x, y].data1 = mapcopy.Attributes[x, y].data1;
-                                Attributes[x, y].data2 = mapcopy.Attributes[x, y].data2;
-                                Attributes[x, y].data3 = mapcopy.Attributes[x, y].data3;
-                                Attributes[x, y].data4 = mapcopy.Attributes[x, y].data4;
-                            }
-                        }
-                    }
-                }
-                for (var i = 0; i < mapcopy.Spawns.Count; i++)
-                {
-                    Spawns.Add(new NpcSpawn(mapcopy.Spawns[i]));
-                }
-                for (var i = 0; i < mapcopy.Lights.Count; i++)
-                {
-                    Lights.Add(new LightBase(mapcopy.Lights[i]));
-                }
-                EventIndex = mapcopy.EventIndex;
-                foreach (var evt in mapcopy.Events)
-                {
-                    bf.WriteBytes(evt.Value.EventData());
-                    Events.Add(evt.Key, new EventBase(evt.Key, bf));
-                    bf.Clear();
-                }
-            }
-        }
 
         public override void Load(byte[] packet)
         {
@@ -155,7 +163,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
                 ZoneType = bf.ReadByte();
                 OverlayGraphic = bf.ReadString();
                 PlayerLightSize = bf.ReadInteger();
-                PlayerLightExpand = (float)bf.ReadDouble();
+                PlayerLightExpand = (float) bf.ReadDouble();
                 PlayerLightIntensity = bf.ReadByte();
                 PlayerLightColor = Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
 
@@ -180,12 +188,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
                         int attributeType = bf.ReadInteger();
                         if (attributeType > 0)
                         {
-                            Attributes[x, y] = new Attribute();
-                            Attributes[x, y].value = attributeType;
-                            Attributes[x, y].data1 = bf.ReadInteger();
-                            Attributes[x, y].data2 = bf.ReadInteger();
-                            Attributes[x, y].data3 = bf.ReadInteger();
-                            Attributes[x, y].data4 = bf.ReadString();
+                            Attributes[x, y] = new Attribute()
+                            {
+                                value = attributeType,
+                                data1 = bf.ReadInteger(),
+                                data2 = bf.ReadInteger(),
+                                data3 = bf.ReadInteger(),
+                                data4 = bf.ReadString()
+                            };
                         }
                         else
                         {
@@ -207,11 +217,13 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
                     var npcCount = bf.ReadInteger();
                     for (var i = 0; i < npcCount; i++)
                     {
-                        var TempNpc = new NpcSpawn();
-                        TempNpc.NpcNum = bf.ReadInteger();
-                        TempNpc.X = bf.ReadInteger();
-                        TempNpc.Y = bf.ReadInteger();
-                        TempNpc.Dir = bf.ReadInteger();
+                        var TempNpc = new NpcSpawn()
+                        {
+                            NpcNum = bf.ReadInteger(),
+                            X = bf.ReadInteger(),
+                            Y = bf.ReadInteger(),
+                            Dir = bf.ReadInteger()
+                        };
                         Spawns.Add(TempNpc);
                     }
                     Events.Clear();
@@ -222,7 +234,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
                         var eventIndex = bf.ReadInteger();
                         var evtDataLen = bf.ReadLong();
                         var evtBuffer = new ByteBuffer();
-                        evtBuffer.WriteBytes(bf.ReadBytes((int)evtDataLen));
+                        evtBuffer.WriteBytes(bf.ReadBytes((int) evtDataLen));
                         Events.Add(eventIndex, new EventBase(eventIndex, evtBuffer));
                         evtBuffer.Dispose();
                     }
@@ -330,7 +342,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return (MapBase)Objects[index];
+                return (MapBase) Objects[index];
             }
             return null;
         }
@@ -339,7 +351,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return ((MapBase)Objects[index]).MyName;
+                return ((MapBase) Objects[index]).MyName;
             }
             return "Deleted";
         }
@@ -351,12 +363,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)
@@ -367,22 +379,27 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
-            Objects.Add(index, (MapBase)obj);
+            Objects.Add(index, (MapBase) obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, MapBase> GetObjects()
         {
             return Objects;

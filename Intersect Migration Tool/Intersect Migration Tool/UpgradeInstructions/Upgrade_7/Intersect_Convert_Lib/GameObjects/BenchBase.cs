@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Intersect;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects
 {
     public class BenchBase : DatabaseObject
     {
-        public new const string DatabaseTable = "crafts";
-        public new const GameObject Type = GameObject.Bench;
+        public new const string DATABASE_TABLE = "crafts";
+        public new const GameObject OBJECT_TYPE = GameObject.Bench;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        public List<Craft> Crafts = new List<Craft>();
 
         public string Name = "New Bench";
-        public List<Craft> Crafts = new List<Craft>();
 
         public BenchBase(int id) : base(id)
         {
-
         }
 
         public override void Load(byte[] packet)
@@ -41,7 +41,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             var myBuffer = new ByteBuffer();
 
             myBuffer.WriteString(Name);
-            myBuffer.WriteInteger(Crafts.Count());
+            myBuffer.WriteInteger(Crafts.Count);
             foreach (var craft in Crafts)
             {
                 myBuffer.WriteBytes(craft.Data());
@@ -54,7 +54,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return (BenchBase)Objects[index];
+                return (BenchBase) Objects[index];
             }
             return null;
         }
@@ -63,7 +63,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return ((BenchBase)Objects[index]).Name;
+                return ((BenchBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -75,12 +75,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)
@@ -91,23 +91,28 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             }
             return null;
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, BenchBase> GetObjects()
         {
-            Dictionary<int, BenchBase> objects = Objects.ToDictionary(k => k.Key, v => (BenchBase)v.Value);
+            Dictionary<int, BenchBase> objects = Objects.ToDictionary(k => k.Key, v => (BenchBase) v.Value);
             return objects;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
@@ -117,10 +122,9 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
 
     public class Craft
     {
-        public int Time = 1;
-        public int Item = -1;
-
         public List<CraftIngredient> Ingredients = new List<CraftIngredient>();
+        public int Item = -1;
+        public int Time = 1;
 
         public void Load(ByteBuffer bf)
         {
@@ -130,7 +134,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             var count = bf.ReadInteger();
             for (int i = 0; i < count; i++)
             {
-                var craftIngredient = new CraftIngredient(bf.ReadInteger(),bf.ReadInteger());
+                var craftIngredient = new CraftIngredient(bf.ReadInteger(), bf.ReadInteger());
                 Ingredients.Add(craftIngredient);
             }
         }

@@ -1,16 +1,16 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms
 {
     public partial class frmProgress : Form
     {
-        private string statusText;
         private int progressVal;
-        private Boolean showCancelBtn;
         private Boolean shouldClose;
+        private Boolean showCancelBtn;
+        private string statusText;
+
         public frmProgress()
         {
             InitializeComponent();
@@ -24,8 +24,9 @@ namespace Intersect_Editor.Forms
 
         public void SetTitle(string title)
         {
-            this.Text = title;
+            Text = title;
         }
+
         public void SetProgress(string label, int progress, bool showCancel)
         {
             statusText = label;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Intersect_Library.GameObjects.Events
+namespace Intersect.GameObjects.Events
 {
     public class CommandList
     {
@@ -8,7 +8,6 @@ namespace Intersect_Library.GameObjects.Events
 
         public CommandList()
         {
-
         }
 
         public CommandList(ByteBuffer myBuffer)
@@ -18,7 +17,6 @@ namespace Intersect_Library.GameObjects.Events
             {
                 Commands.Add(new EventCommand());
                 Commands[i].Load(myBuffer);
-
             }
         }
 

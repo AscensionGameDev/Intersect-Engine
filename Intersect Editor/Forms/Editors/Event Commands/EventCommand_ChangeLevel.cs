@@ -1,17 +1,16 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
-using DarkUI.Controls;
-using Intersect_Library;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.Localization;
+using Intersect;
+using Intersect.GameObjects.Events;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_ChangeLevel : UserControl
     {
-        private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
+        private EventCommand _myCommand;
+
         public EventCommand_ChangeLevel(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
@@ -30,10 +29,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             btnSave.Text = Strings.Get("eventchangelevel", "okay");
             btnCancel.Text = Strings.Get("eventchangelevel", "cancel");
         }
-        
+
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = (int)nudLevel.Value;
+            _myCommand.Ints[0] = (int) nudLevel.Value;
             _eventEditor.FinishCommandEdit();
         }
 

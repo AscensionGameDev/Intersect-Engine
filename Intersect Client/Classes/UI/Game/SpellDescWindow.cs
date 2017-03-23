@@ -1,27 +1,31 @@
-﻿using IntersectClientExtras.File_Management;
+﻿using Intersect;
+using Intersect.GameObjects;
+using Intersect.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.Localization;
-
 
 namespace Intersect_Client.Classes.UI.Game
 {
     public class SpellDescWindow
     {
         ImagePanel _descWindow;
+
         public SpellDescWindow(int spellnum, int x, int y)
         {
             var spell = SpellBase.GetSpell(spellnum);
-            if (spell == null) { return; }
+            if (spell == null)
+            {
+                return;
+            }
             _descWindow = new ImagePanel(Gui.GameUI.GameCanvas);
             _descWindow.SetSize(255, 320);
             _descWindow.Margin = Margin.Zero;
             _descWindow.Padding = new Padding(8, 5, 9, 11);
             _descWindow.SetPosition(x, y);
-            _descWindow.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "spelldescpanel.png");
+            _descWindow.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
+                "spelldescpanel.png");
 
             ImagePanel icon = new ImagePanel(_descWindow);
             icon.SetSize(32, 32);
@@ -48,7 +52,7 @@ namespace Intersect_Client.Classes.UI.Game
             //itemDesc.SetBounds(4, y, 180, 10);
             if (spell.Desc.Length > 0)
             {
-                spellDesc.AddText(Strings.Get("spelldesc","desc",spell.Desc), spellName.TextColor);
+                spellDesc.AddText(Strings.Get("spelldesc", "desc", spell.Desc), spellName.TextColor);
             }
             spellDesc.SizeToChildren(false, true);
 
@@ -58,19 +62,21 @@ namespace Intersect_Client.Classes.UI.Game
             castInfo.SetPosition(_descWindow.Padding.Left + 4, y);
             castInfo.Width = 240;
 
-            if (spell.SpellType == (int)SpellTypes.CombatSpell)
+            if (spell.SpellType == (int) SpellTypes.CombatSpell)
             {
                 spellType.Text = Strings.Get("spelldesc", "targettype" + spell.TargetType, spell.CastRange,
                     spell.HitRadius);
             }
             if (spell.CastDuration > 0)
             {
-                castInfo.AddText(Strings.Get("spelldesc", "casttime",((float)spell.CastDuration / 10f)), spellName.TextColor);
+                castInfo.AddText(Strings.Get("spelldesc", "casttime", ((float) spell.CastDuration / 10f)),
+                    spellName.TextColor);
                 castInfo.AddLineBreak();
             }
             if (spell.CooldownDuration > 0)
             {
-                castInfo.AddText(Strings.Get("spelldesc", "cooldowntime", ((float)spell.CooldownDuration / 10f)), spellName.TextColor);
+                castInfo.AddText(Strings.Get("spelldesc", "cooldowntime", ((float) spell.CooldownDuration / 10f)),
+                    spellName.TextColor);
                 castInfo.AddLineBreak();
             }
             castInfo.SizeToChildren(false, true);
@@ -81,21 +87,25 @@ namespace Intersect_Client.Classes.UI.Game
             bool requirements = false;
 
             //Check for requirements
-            RichLabel itemReqs = new RichLabel(_descWindow);
-            itemReqs.Width = 120;
+            RichLabel itemReqs = new RichLabel(_descWindow)
+            {
+                Width = 120
+            };
             itemReqs.AddText(Strings.Get("spelldesc", "prereqs"), spellName.TextColor);
             itemReqs.AddLineBreak();
             itemReqs.SetPosition(_descWindow.Padding.Left + 4, y);
-            if (spell.VitalCost[(int)Vitals.Health] > 0)
+            if (spell.VitalCost[(int) Vitals.Health] > 0)
             {
                 requirements = true;
-                itemReqs.AddText(Strings.Get("spelldesc", "vital0cost", spell.VitalCost[(int)Vitals.Health]), spellName.TextColor);
+                itemReqs.AddText(Strings.Get("spelldesc", "vital0cost", spell.VitalCost[(int) Vitals.Health]),
+                    spellName.TextColor);
                 itemReqs.AddLineBreak();
             }
-            if (spell.VitalCost[(int)Vitals.Mana] > 0)
+            if (spell.VitalCost[(int) Vitals.Mana] > 0)
             {
                 requirements = true;
-                itemReqs.AddText(Strings.Get("spelldesc", "vital1cost", spell.VitalCost[(int)Vitals.Mana]), spellName.TextColor);
+                itemReqs.AddText(Strings.Get("spelldesc", "vital1cost", spell.VitalCost[(int) Vitals.Mana]),
+                    spellName.TextColor);
                 itemReqs.AddLineBreak();
             }
             if (requirements == true)
@@ -109,7 +119,7 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             string stats = "";
-            if (spell.SpellType == (int)SpellTypes.CombatSpell)
+            if (spell.SpellType == (int) SpellTypes.CombatSpell)
             {
                 RichLabel spellStats = new RichLabel(_descWindow);
                 if (requirements != true)
@@ -119,30 +129,35 @@ namespace Intersect_Client.Classes.UI.Game
                 }
                 else
                 {
-                    spellStats.SetPosition(120,y);
+                    spellStats.SetPosition(120, y);
                     spellStats.Width = 120;
                 }
                 stats = Strings.Get("spelldesc", "effects");
                 spellStats.AddText(stats, spellName.TextColor);
                 spellStats.AddLineBreak();
 
-
                 if (spell.Data2 > 0)
                 {
-                    spellStats.AddText(Strings.Get("spelldesc","effect" + spell.Data3), spellName.TextColor);
+                    spellStats.AddText(Strings.Get("spelldesc", "effect" + spell.Data3), spellName.TextColor);
                     spellStats.AddLineBreak();
                 }
 
-                if (spell.VitalDiff[(int)Vitals.Health] != 0)
+                if (spell.VitalDiff[(int) Vitals.Health] != 0)
                 {
-                    stats = Strings.Get("spelldesc", "vital0", (spell.VitalDiff[(int)Vitals.Health] > 0 ? Strings.Get("spelldec","addsymbol") : Strings.Get("spelldec", "removesymbol")), spell.VitalDiff[(int)Vitals.Health]);
+                    stats = Strings.Get("spelldesc", "vital0",
+                    (spell.VitalDiff[(int) Vitals.Health] > 0
+                        ? Strings.Get("spelldec", "addsymbol")
+                        : Strings.Get("spelldec", "removesymbol")), spell.VitalDiff[(int) Vitals.Health]);
                     spellStats.AddText(stats, spellName.TextColor);
                     spellStats.AddLineBreak();
                 }
 
-                if (spell.VitalDiff[(int)Vitals.Mana] != 0)
+                if (spell.VitalDiff[(int) Vitals.Mana] != 0)
                 {
-                    stats = Strings.Get("spelldesc", "vital1", (spell.VitalDiff[(int)Vitals.Mana] > 0 ? Strings.Get("spelldec", "addsymbol") : Strings.Get("spelldec", "removesymbol")), spell.VitalDiff[(int)Vitals.Mana]);
+                    stats = Strings.Get("spelldesc", "vital1",
+                    (spell.VitalDiff[(int) Vitals.Mana] > 0
+                        ? Strings.Get("spelldec", "addsymbol")
+                        : Strings.Get("spelldec", "removesymbol")), spell.VitalDiff[(int) Vitals.Mana]);
                     spellStats.AddText(stats, spellName.TextColor);
                     spellStats.AddLineBreak();
                 }
@@ -153,11 +168,14 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         if (spell.StatDiff[i] != 0)
                         {
-                            spellStats.AddText(Strings.Get("combat", "stat" + i) + ": "  +(spell.StatDiff[i] > 0 ? "+ " : "") + spell.StatDiff[i], spellName.TextColor);
+                            spellStats.AddText(
+                                Strings.Get("combat", "stat" + i) + ": " + (spell.StatDiff[i] > 0 ? "+ " : "") +
+                                spell.StatDiff[i], spellName.TextColor);
                             spellStats.AddLineBreak();
                         }
                     }
-                    spellStats.AddText(Strings.Get("spelldesc","duration",(float)spell.Data2 / 10f), spellName.TextColor);
+                    spellStats.AddText(Strings.Get("spelldesc", "duration", (float) spell.Data2 / 10f),
+                        spellName.TextColor);
                     spellStats.AddLineBreak();
                 }
                 spellStats.SizeToChildren(false, true);
@@ -167,7 +185,10 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Dispose()
         {
-            if (_descWindow == null) { return; }
+            if (_descWindow == null)
+            {
+                return;
+            }
             Gui.GameUI.GameCanvas.RemoveChild(_descWindow, false);
             _descWindow.Dispose();
         }

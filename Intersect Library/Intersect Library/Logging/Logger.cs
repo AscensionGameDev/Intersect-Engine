@@ -1,16 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Intersect_Library.Logging
+namespace Intersect.Logging
 {
     public class Logger
     {
         private List<ILogOutput> mOutputs;
+
+        public Logger(string tag = null)
+        {
+            mOutputs = new List<ILogOutput>();
+
+#if DEBUG
+            LogLevel = LogLevel.All;
+#else
+            LogLevel = LogLevel.Info;
+#endif
+
+            Tag = (string.IsNullOrEmpty(tag) ? null : tag);
+        }
+
         public List<ILogOutput> Outputs
         {
-            get {
+            get
+            {
                 if (mOutputs == null)
                 {
                     mOutputs = new List<ILogOutput>();
@@ -23,19 +36,6 @@ namespace Intersect_Library.Logging
         public LogLevel LogLevel { get; set; }
 
         public string Tag { get; set; }
-
-        public Logger(string tag = null)
-        {
-            mOutputs = new List<ILogOutput>();
-
-#if DEBUG
-            LogLevel = LogLevel.All;
-#else
-            LogLevel = LogLevel.Info;
-#endif
-
-            Tag = (TextUtils.IsEmpty(tag) ? null : tag);
-        }
 
         public List<ILogOutput> GetOutputs()
         {

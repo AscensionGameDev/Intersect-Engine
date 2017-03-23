@@ -1,5 +1,5 @@
 ﻿using DarkUI.Controls;
-using Intersect_Library.Localization;
+using Intersect.Localization;
 
 namespace Intersect_Editor.Forms
 {

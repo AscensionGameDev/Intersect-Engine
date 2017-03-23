@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Intersect_Library.GameObjects.Events;
+﻿using System.Collections.Generic;
 
-namespace Intersect_Library.GameObjects.Conditions
+namespace Intersect.GameObjects.Conditions
 {
     public class ConditionLists
     {
@@ -12,7 +8,6 @@ namespace Intersect_Library.GameObjects.Conditions
 
         public ConditionLists()
         {
-
         }
 
         public ConditionLists(ByteBuffer buff)

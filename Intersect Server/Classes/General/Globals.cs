@@ -1,18 +1,15 @@
-
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.Networking;
+using Intersect.GameObjects;
 using Intersect_Server.Classes.Core;
-using Intersect_Library.GameObjects;
+using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.Maps;
+using Intersect_Server.Classes.Networking;
 
 namespace Intersect_Server.Classes.General
 {
-	public static class Globals
-	{
-
+    public static class Globals
+    {
         //Console Variables
         public static long CPS = 0;
         public static Boolean CPSLock = true;
@@ -22,11 +19,14 @@ namespace Intersect_Server.Classes.General
         public static object ClientLock = new object();
         public static List<Client> Clients = new List<Client>();
 
-		public static List<Entity> Entities = new List<Entity>();
+        public static List<Entity> Entities = new List<Entity>();
 
-	    public static List<Entity> GetOnlineList()
-	    {
-	        var onlineList = new List<Entity>();
+        //Game helping stuff
+        public static Random Rand = new Random();
+
+        public static List<Entity> GetOnlineList()
+        {
+            var onlineList = new List<Entity>();
             for (int i = 0; i < Clients.Count; i++)
             {
                 if (Clients[i] != null && Clients[i].Entity != null)
@@ -34,11 +34,8 @@ namespace Intersect_Server.Classes.General
                     onlineList.Add(Clients[i].Entity);
                 }
             }
-	        return onlineList;
-	    }
-
-        //Game helping stuff
-        public static Random Rand = new Random();
+            return onlineList;
+        }
 
         public static int FindOpenEntity()
         {
@@ -69,9 +66,10 @@ namespace Intersect_Server.Classes.General
             var resources = new List<Resource>();
             for (int i = 0; i < Entities.Count; i++)
             {
-                if (Entities[i] != null && Entities[i].GetType() == typeof(Resource) && ((Resource)Entities[i]).MyBase == resource)
+                if (Entities[i] != null && Entities[i].GetType() == typeof(Resource) &&
+                    ((Resource) Entities[i]).MyBase == resource)
                 {
-                    resources.Add((Resource)Entities[i]);
+                    resources.Add((Resource) Entities[i]);
                 }
             }
             foreach (var en in resources)
@@ -86,9 +84,9 @@ namespace Intersect_Server.Classes.General
             var npcs = new List<Npc>();
             for (int i = 0; i < Entities.Count; i++)
             {
-                if (Entities[i] != null && Entities[i].GetType() == typeof(Npc) && ((Npc)Entities[i]).MyBase == npc)
+                if (Entities[i] != null && Entities[i].GetType() == typeof(Npc) && ((Npc) Entities[i]).MyBase == npc)
                 {
-                    npcs.Add((Npc)Entities[i]);
+                    npcs.Add((Npc) Entities[i]);
                 }
             }
             foreach (var en in npcs)
@@ -107,6 +105,5 @@ namespace Intersect_Server.Classes.General
                 }
             }
         }
-	}
+    }
 }
-

@@ -1,38 +1,38 @@
-﻿using Intersect_Client.Classes.Core;
-using Intersect_Client.Classes.UI;
-using Intersect_Client_MonoGame.Classes.SFML.Graphics;
+﻿using System;
+using System.Collections.Generic;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Input;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.UI;
+using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
 using Keys = IntersectClientExtras.GenericClasses.Keys;
 
 namespace Intersect_Client_MonoGame.Classes.SFML.Input
 {
     public class MonoInput : GameInput
     {
-        private MouseState lastMouseState;
-        private KeyboardState lastKeyboardState;
-        private Dictionary<Keys,Microsoft.Xna.Framework.Input.Keys> _keyDictionary; 
+        private Dictionary<Keys, Microsoft.Xna.Framework.Input.Keys> _keyDictionary;
         private int _mouseX = 0;
         private int _mouseY = 0;
         private Game _myGame;
+        private KeyboardState lastKeyboardState;
+        private MouseState lastMouseState;
 
         public MonoInput(Game myGame)
         {
             myGame.Window.TextInput += Window_TextInput;
             _myGame = myGame;
             _keyDictionary = new Dictionary<Keys, Microsoft.Xna.Framework.Input.Keys>();
-            foreach (Keys key in Enum.GetValues(typeof (Keys)))
+            foreach (Keys key in Enum.GetValues(typeof(Keys)))
             {
                 if (!_keyDictionary.ContainsKey(key))
                 {
                     foreach (
                         Microsoft.Xna.Framework.Input.Keys monoKey in
-                            Enum.GetValues(typeof (Microsoft.Xna.Framework.Input.Keys)))
+                        Enum.GetValues(typeof(Microsoft.Xna.Framework.Input.Keys)))
                     {
                         if (key == Keys.Shift)
                         {
@@ -64,7 +64,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
         private void Window_TextInput(object sender, TextInputEventArgs e)
         {
             Gui.GwenInput.ProcessMessage(new GwenInputMessage(IntersectInput.InputEvent.TextEntered,
-               GetMousePosition(), (int)MouseButtons.None, Keys.Alt, false, false, false, e.Character.ToString()));
+                GetMousePosition(), (int) MouseButtons.None, Keys.Alt, false, false, false, e.Character.ToString()));
         }
 
         public override bool MouseButtonDown(MouseButtons mb)
@@ -104,13 +104,13 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
             if (bs == ButtonState.Pressed && !MouseButtonDown(mb))
             {
                 Gui.GwenInput.ProcessMessage(new GwenInputMessage(IntersectInput.InputEvent.MouseDown,
-                   GetMousePosition(), (int)mb, Keys.Alt));
+                    GetMousePosition(), (int) mb, Keys.Alt));
                 GameInputHandler.OnMouseDown(mb);
             }
             else if (bs == ButtonState.Released && MouseButtonDown(mb))
             {
                 Gui.GwenInput.ProcessMessage(new GwenInputMessage(IntersectInput.InputEvent.MouseUp,
-                   GetMousePosition(), (int)mb, Keys.Alt));
+                    GetMousePosition(), (int) mb, Keys.Alt));
                 GameInputHandler.OnMouseUp(mb);
             }
         }
@@ -124,8 +124,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
 
                 if (mState.X != _mouseX || mState.Y != _mouseY)
                 {
-                    _mouseX = (int)(mState.X * ((MonoRenderer)GameGraphics.Renderer).GetMouseOffset().X);
-                    _mouseY = (int)(mState.Y * ((MonoRenderer)GameGraphics.Renderer).GetMouseOffset().Y);
+                    _mouseX = (int) (mState.X * ((MonoRenderer) GameGraphics.Renderer).GetMouseOffset().X);
+                    _mouseY = (int) (mState.Y * ((MonoRenderer) GameGraphics.Renderer).GetMouseOffset().Y);
                     Gui.GwenInput.ProcessMessage(new GwenInputMessage(IntersectInput.InputEvent.MouseMove,
                         GetMousePosition(), (int) MouseButtons.None, Keys.Alt));
                 }
@@ -161,7 +161,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
                     if (lastKeyboardState.IsKeyDown(key.Value))
                     {
                         Gui.GwenInput.ProcessMessage(new GwenInputMessage(IntersectInput.InputEvent.KeyUp,
-                            GetMousePosition(), (int)MouseButtons.None, key.Key));
+                            GetMousePosition(), (int) MouseButtons.None, key.Key));
                         GameInputHandler.OnKeyReleased(key.Key);
                     }
                 }
@@ -173,7 +173,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
             }
         }
 
-        public override void OpenKeyboard(KeyboardType type, string text, bool autoCorrection, bool multiLine, bool secure)
+        public override void OpenKeyboard(KeyboardType type, string text, bool autoCorrection, bool multiLine,
+            bool secure)
         {
             return; //no on screen keyboard for pc clients
         }

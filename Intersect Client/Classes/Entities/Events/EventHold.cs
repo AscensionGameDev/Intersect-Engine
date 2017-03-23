@@ -2,8 +2,8 @@
 {
     public class EventHold
     {
-        public int MapNum;
         public int EventIndex;
+        public int MapNum;
 
         public EventHold(int mapNum, int eventIndex)
         {

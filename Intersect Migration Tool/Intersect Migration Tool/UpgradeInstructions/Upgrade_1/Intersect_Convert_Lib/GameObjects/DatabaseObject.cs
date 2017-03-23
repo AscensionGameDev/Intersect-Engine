@@ -9,32 +9,39 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
 {
     public abstract class DatabaseObject
     {
+        public const string DATABASE_TABLE = "";
+        public const GameObject OBJECT_TYPE = GameObject.Animation;
         private int _id = -1;
-        public const string DatabaseTable = "";
-        public const GameObject Type = GameObject.Animation;
         private byte[] backup = null;
+
         protected DatabaseObject(int id)
         {
             _id = id;
         }
+
         public virtual int GetId()
         {
             return _id;
         }
+
         public abstract void Load(byte[] packet);
+
         public virtual void MakeBackup()
         {
             backup = GetData();
         }
+
         public virtual void RestoreBackup()
         {
             if (backup != null)
                 Load(backup);
         }
+
         public virtual void DeleteBackup()
         {
             backup = null;
         }
+
         public abstract void Delete();
         public abstract byte[] GetData();
         public abstract GameObject GetGameObjectType();
@@ -115,6 +122,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
             }
             return items.ToArray();
         }
+
         public static int GameObjectIdFromList(GameObject type, int listIndex)
         {
             if (listIndex < 0) return -1;
@@ -172,6 +180,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         public static int GameObjectListIndex(GameObject type, int id)
         {
             switch (type)

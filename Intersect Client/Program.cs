@@ -1,35 +1,33 @@
 ﻿using System;
-using System.Media;
-using IntersectClientExtras.Gwen.Control;
+using Intersect.Localization;
 using Intersect_Client_MonoGame;
-using Intersect_Library.Localization;
 
 namespace Intersect_MonoGameDx
 {
 #if WINDOWS || LINUX
     /// <summary>
-    /// The main class.
+    ///     The main class.
     /// </summary>
     public static class Program
     {
         /// <summary>
-        /// The main entry point for the application.
+        ///     The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            using (var game = new Intersect())
+            using (var game = new IntersectGame())
             {
                 try
                 {
                     game.Run();
                 }
-                catch (System.PlatformNotSupportedException)
+                catch (PlatformNotSupportedException)
                 {
-                    System.Windows.Forms.MessageBox.Show(Strings.Get("errors","openglerror"), Strings.Get("errors", "notsupported"));
+                    System.Windows.Forms.MessageBox.Show(Strings.Get("errors", "openglerror"),
+                        Strings.Get("errors", "notsupported"));
                 }
             }
-                
         }
     }
 #endif

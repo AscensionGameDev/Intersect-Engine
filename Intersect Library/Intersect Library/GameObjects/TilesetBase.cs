@@ -2,104 +2,33 @@
 using System.Linq;
 using System.Text;
 
-namespace Intersect_Library.GameObjects
+namespace Intersect.GameObjects
 {
-    public class TilesetBase : DatabaseObject
+    public class TilesetBase : DatabaseObject<TilesetBase>
     {
         //Core info
-        public new const string DatabaseTable = "tilesets";
-        public new const GameObject Type = GameObject.Tileset;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
-        public string Value = "";
+        public new const string DATABASE_TABLE = "tilesets";
+        public new const GameObject OBJECT_TYPE = GameObject.Tileset;
 
         public TilesetBase(int id) : base(id)
         {
+            Name = "";
         }
 
-        public void SetValue(string filename)
+        public new string Name
         {
-            Value = filename.Trim();
+            get { return base.Name; }
+            set { base.Name = value?.Trim(); }
         }
 
-        public string GetValue()
-        {
-            return Value;
-        }
+        public override void Load(byte[] packet) => Name = Encoding.ASCII.GetString(packet, 0, packet.Length);
 
-        public override void Load(byte[] packet)
-        {
-            Value = Encoding.ASCII.GetString(packet, 0, packet.Length);
-        }
+        public byte[] Data() => Encoding.ASCII.GetBytes(Name);
 
-        public byte[] Data()
-        {
-            return Encoding.ASCII.GetBytes(Value);
-        }
+        public override byte[] BinaryData => Data();
 
-        public static TilesetBase GetTileset(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (TilesetBase)Objects[index];
-            }
-            return null;
-        }
+        public override string DatabaseTableName => DATABASE_TABLE;
 
-
-        public static string GetName(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return ((TilesetBase)Objects[index]).Value;
-            }
-            return "Deleted";
-        }
-
-        public override byte[] GetData()
-        {
-            return Data();
-        }
-
-        public override string GetTable()
-        {
-            return DatabaseTable;
-        }
-
-        public override GameObject GetGameObjectType()
-        {
-            return Type;
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-        public override void Delete()
-        {
-            Objects.Remove(GetId());
-        }
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-        }
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
-        }
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-        public static Dictionary<int, TilesetBase> GetObjects()
-        {
-            Dictionary<int, TilesetBase> objects = Objects.ToDictionary(k => k.Key, v => (TilesetBase)v.Value);
-            return objects;
-        }
+        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 }

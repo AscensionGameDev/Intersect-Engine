@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
+using Intersect;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Conditions
 {
     public class ConditionList
     {
-        public string Name = "New Condition List";
         public List<EventCommand> Conditions = new List<EventCommand>(); //Long story.. just go with it.. okay?
+        public string Name = "New Condition List";
 
         public ConditionList()
         {
-            
         }
 
         public ConditionList(ByteBuffer buff)

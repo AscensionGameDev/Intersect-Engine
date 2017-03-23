@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
 
-namespace Intersect_Library
+namespace Intersect
 {
     public static class Compression
     {
@@ -20,7 +16,6 @@ namespace Intersect_Library
             {
                 using (DeflateStream decompressionStream = new DeflateStream(ms, CompressionMode.Decompress))
                 {
-
                     decompressionStream.Read(decompessed, 0, decompessed.Length);
                 }
                 return decompessed;

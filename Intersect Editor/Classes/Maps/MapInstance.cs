@@ -1,28 +1,26 @@
 ﻿using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using Intersect;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Maps;
 using Intersect_Editor.Classes.Entities;
-using Intersect_Library;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.GameObjects.Maps;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect_Editor.Classes.Maps
 {
     public class MapInstance : MapBase
     {
         //Map Attributes
-        public new const GameObject Type = GameObject.Map;
+        public new const GameObject OBJECT_TYPE = GameObject.Map;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         private static object objectsLock = new object();
-        private Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance> _attributeAnimInstances = new Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance>();
-        private byte[] loadedData = null;
 
-        //World Position
-        public int MapGridX { get; set; }
-        public int MapGridY { get; set; }
+        private Dictionary<Attribute, AnimationInstance> _attributeAnimInstances =
+            new Dictionary<Attribute, AnimationInstance>();
 
+        private byte[] loadedData;
 
         public MapInstance(int mapNum) : base(mapNum, false)
         {
@@ -32,14 +30,17 @@ namespace Intersect_Editor.Classes.Maps
         public MapInstance(MapBase mapStruct) : base(mapStruct)
         {
             Autotiles = new MapAutotiles(this);
-            MyMapNum = mapStruct.MyMapNum;
             if (typeof(MapInstance) == mapStruct.GetType())
             {
                 MapGridX = ((MapInstance) mapStruct).MapGridX;
-                MapGridY = ((MapInstance)mapStruct).MapGridY;
+                MapGridY = ((MapInstance) mapStruct).MapGridY;
             }
             InitAutotiles();
         }
+
+        //World Position
+        public int MapGridX { get; set; }
+        public int MapGridY { get; set; }
 
         public void Load(byte[] myArr, bool import = false)
         {
@@ -62,7 +63,7 @@ namespace Intersect_Editor.Classes.Maps
         {
             if (loadedData != null)
             {
-                var newData = this.GetMapData(false);
+                var newData = GetMapData(false);
                 if (newData.Length == loadedData.Length)
                 {
                     for (int i = 0; i < newData.Length; i++)
@@ -79,16 +80,17 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         //Attribute/Animations
-        public AnimationInstance GetAttributeAnimation(Intersect_Library.GameObjects.Maps.Attribute attr, int animNum)
+        public AnimationInstance GetAttributeAnimation(Attribute attr, int animNum)
         {
             if (attr == null) return null;
             if (!_attributeAnimInstances.ContainsKey(attr))
             {
-                _attributeAnimInstances.Add(attr, new AnimationInstance(AnimationBase.GetAnim(animNum), true));
+                _attributeAnimInstances.Add(attr, new AnimationInstance(AnimationBase.Lookup.Get(animNum), true));
             }
             return _attributeAnimInstances[attr];
         }
-        public void SetAttributeAnimation(Intersect_Library.GameObjects.Maps.Attribute attribute, AnimationInstance animationInstance)
+
+        public void SetAttributeAnimation(Attribute attribute, AnimationInstance animationInstance)
         {
             if (_attributeAnimInstances.ContainsKey(attribute))
             {
@@ -98,19 +100,20 @@ namespace Intersect_Editor.Classes.Maps
 
         public void Update()
         {
-            if (Globals.MapsToScreenshot.Contains(MyMapNum))
+            if (Globals.MapsToScreenshot.Contains(Id))
             {
                 if (Globals.MapGrid != null && Globals.MapGrid.Loaded)
                 {
-                    if (Globals.MapGrid.Contains(MyMapNum))
+                    if (Globals.MapGrid.Contains(Id))
                     {
                         for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
                         {
                             for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                             {
-                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight && Globals.MapGrid.Grid[x, y].mapnum > -1)
+                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight &&
+                                    Globals.MapGrid.Grid[x, y].mapnum > -1)
                                 {
-                                    var needMap = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                    var needMap = GetMap(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (needMap == null) return;
                                 }
                             }
@@ -124,13 +127,13 @@ namespace Intersect_Editor.Classes.Maps
                         lock (EditorGraphics.GraphicsLock)
                         {
                             var screenshotTexture = EditorGraphics.ScreenShotMap();
-                            screenshotTexture.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                            screenshotTexture.Save(ms, ImageFormat.Png);
                             ms.Close();
                         }
-                        Database.SaveMapCache(MyMapNum, Revision, ms.ToArray());
+                        Database.SaveMapCache(Id, Revision, ms.ToArray());
                     }
                     Globals.CurrentMap = prevMap;
-                    Globals.MapsToScreenshot.Remove(MyMapNum);
+                    Globals.MapsToScreenshot.Remove(Id);
 
                     //See if this map is around our current map, if not let's delete it
                     if (Globals.CurrentMap != null && Globals.MapGrid != null && Globals.MapGrid.Loaded)
@@ -141,7 +144,7 @@ namespace Intersect_Editor.Classes.Maps
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    if (Globals.MapGrid.Grid[x, y].mapnum == MyMapNum) return;
+                                    if (Globals.MapGrid.Grid[x, y].mapnum == Id) return;
                                 }
                             }
                         }
@@ -155,7 +158,7 @@ namespace Intersect_Editor.Classes.Maps
         public MapBase[,] GenerateAutotileGrid()
         {
             MapBase[,] mapBase = new MapBase[3, 3];
-            if (Globals.MapGrid != null && Globals.MapGrid.Contains(GetId()))
+            if (Globals.MapGrid != null && Globals.MapGrid.Contains(Id))
             {
                 for (int x = -1; x <= 1; x++)
                 {
@@ -171,7 +174,7 @@ namespace Intersect_Editor.Classes.Maps
                             }
                             else
                             {
-                                mapBase[x + 1, y + 1] = MapInstance.GetMap(Globals.MapGrid.Grid[x1, y1].mapnum);
+                                mapBase[x + 1, y + 1] = GetMap(Globals.MapGrid.Grid[x1, y1].mapnum);
                             }
                         }
                     }
@@ -179,6 +182,7 @@ namespace Intersect_Editor.Classes.Maps
             }
             return mapBase;
         }
+
         public void InitAutotiles()
         {
             lock (GetMapLock())
@@ -186,9 +190,10 @@ namespace Intersect_Editor.Classes.Maps
                 Autotiles.InitAutotiles(GenerateAutotileGrid());
             }
         }
+
         public void UpdateAdjacentAutotiles()
         {
-            if (Globals.MapGrid != null && Globals.MapGrid.Contains(GetId()))
+            if (Globals.MapGrid != null && Globals.MapGrid.Contains(Id))
             {
                 for (int x = -1; x <= 1; x++)
                 {
@@ -198,13 +203,14 @@ namespace Intersect_Editor.Classes.Maps
                         var y1 = MapGridY + y;
                         if (x1 >= 0 && y1 >= 0 && x1 < Globals.MapGrid.GridWidth && y1 < Globals.MapGrid.GridHeight)
                         {
-                            var map = MapInstance.GetMap(Globals.MapGrid.Grid[x1, y1].mapnum);
+                            var map = GetMap(Globals.MapGrid.Grid[x1, y1].mapnum);
                             if (map != null && map != this) map.InitAutotiles();
                         }
                     }
                 }
             }
         }
+
         public EventBase FindEventAt(int x, int y)
         {
             if (Events.Count <= 0) return null;
@@ -217,6 +223,7 @@ namespace Intersect_Editor.Classes.Maps
             }
             return null;
         }
+
         public LightBase FindLightAt(int x, int y)
         {
             if (Lights.Count <= 0) return null;
@@ -229,6 +236,7 @@ namespace Intersect_Editor.Classes.Maps
             }
             return null;
         }
+
         public NpcSpawn FindSpawnAt(int x, int y)
         {
             if (Spawns.Count <= 0) return null;
@@ -242,21 +250,18 @@ namespace Intersect_Editor.Classes.Maps
             return null;
         }
 
-        public override byte[] GetData()
-        {
-            return GetMapData(false);
-        }
+        public override byte[] BinaryData => GetMapData(false);
 
-        public override GameObject GetGameObjectType()
+        public override GameObject GameObjectType
         {
-            return Type;
+            get { return OBJECT_TYPE; }
         }
 
         public new static MapInstance GetMap(int index)
         {
             if (Objects.ContainsKey(index))
             {
-                return (MapInstance)Objects[index];
+                return (MapInstance) Objects[index];
             }
             return null;
         }
@@ -269,14 +274,16 @@ namespace Intersect_Editor.Classes.Maps
             }
             return null;
         }
+
         public override void Delete()
         {
             lock (objectsLock)
             {
-                Objects.Remove(GetId());
-                MapBase.GetObjects().Remove(GetId());
+                Objects.Remove(Id);
+                MapBase.GetObjects().Remove(Id);
             }
         }
+
         public static void ClearObjects()
         {
             lock (objectsLock)
@@ -285,6 +292,7 @@ namespace Intersect_Editor.Classes.Maps
                 MapBase.ClearObjects();
             }
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             lock (objectsLock)
@@ -293,10 +301,12 @@ namespace Intersect_Editor.Classes.Maps
                 MapBase.Objects.Add(index, (MapBase) obj);
             }
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, MapInstance> GetObjects()
         {
             lock (objectsLock)
@@ -308,7 +318,6 @@ namespace Intersect_Editor.Classes.Maps
 
         public void Dispose()
         {
-
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Maps.MapList
+﻿using Intersect;
+
+namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Maps.MapList
 {
     public class MapListItem
     {
@@ -15,6 +17,5 @@
         {
             Name = myBuffer.ReadString();
         }
-
     }
 }

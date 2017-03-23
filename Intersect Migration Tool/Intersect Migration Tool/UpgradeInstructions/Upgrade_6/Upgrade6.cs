@@ -1,25 +1,23 @@
 ﻿using System;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib;
+using Intersect;
+using Intersect.Logging;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.GameObjects;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.GameObjects.Events;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.GameObjects.Maps;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 using Mono.Data.Sqlite;
+using GameObject = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.GameObject;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
 {
     public class Upgrade6
     {
-        private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
-
         //GameObject Table Constants
         private const string GAME_OBJECT_ID = "id";
         private const string GAME_OBJECT_DELETED = "deleted";
         private const string GAME_OBJECT_DATA = "data";
-
-
-
+        private SqliteConnection _dbConnection;
+        private Object _dbLock = new Object();
 
         public Upgrade6(SqliteConnection connection)
         {
@@ -37,16 +35,15 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
         //Game Object Saving/Loading
         private void LoadAllGameObjects()
         {
-
             foreach (var val in Enum.GetValues(typeof(GameObject)))
             {
-                if ((GameObject)val != GameObject.Time)
+                if ((GameObject) val != GameObject.Time)
                 {
-                    LoadGameObjects((GameObject)val);
+                    LoadGameObjects((GameObject) val);
                 }
             }
-
         }
+
         //Game Object Saving/Loading
         private string GetGameObjectTable(GameObject type)
         {
@@ -54,61 +51,62 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
             switch (type)
             {
                 case GameObject.Animation:
-                    tableName = AnimationBase.DatabaseTable;
+                    tableName = AnimationBase.DATABASE_TABLE;
                     break;
                 case GameObject.Bench:
-                    tableName = BenchBase.DatabaseTable;
+                    tableName = BenchBase.DATABASE_TABLE;
                     break;
                 case GameObject.Class:
-                    tableName = ClassBase.DatabaseTable;
+                    tableName = ClassBase.DATABASE_TABLE;
                     break;
                 case GameObject.Item:
-                    tableName = ItemBase.DatabaseTable;
+                    tableName = ItemBase.DATABASE_TABLE;
                     break;
                 case GameObject.Npc:
-                    tableName = NpcBase.DatabaseTable;
+                    tableName = NpcBase.DATABASE_TABLE;
                     break;
                 case GameObject.Projectile:
-                    tableName = ProjectileBase.DatabaseTable;
+                    tableName = ProjectileBase.DATABASE_TABLE;
                     break;
                 case GameObject.Quest:
-                    tableName = QuestBase.DatabaseTable;
+                    tableName = QuestBase.DATABASE_TABLE;
                     break;
                 case GameObject.Resource:
-                    tableName = ResourceBase.DatabaseTable;
+                    tableName = ResourceBase.DATABASE_TABLE;
                     break;
                 case GameObject.Shop:
-                    tableName = ShopBase.DatabaseTable;
+                    tableName = ShopBase.DATABASE_TABLE;
                     break;
                 case GameObject.Spell:
-                    tableName = SpellBase.DatabaseTable;
+                    tableName = SpellBase.DATABASE_TABLE;
                     break;
                 case GameObject.Map:
-                    tableName = MapBase.DatabaseTable;
+                    tableName = MapBase.DATABASE_TABLE;
                     break;
                 case GameObject.CommonEvent:
-                    tableName = EventBase.DatabaseTable;
+                    tableName = EventBase.DATABASE_TABLE;
                     break;
                 case GameObject.PlayerSwitch:
-                    tableName = PlayerSwitchBase.DatabaseTable;
+                    tableName = PlayerSwitchBase.DATABASE_TABLE;
                     break;
                 case GameObject.PlayerVariable:
-                    tableName = PlayerVariableBase.DatabaseTable;
+                    tableName = PlayerVariableBase.DATABASE_TABLE;
                     break;
                 case GameObject.ServerSwitch:
-                    tableName = ServerSwitchBase.DatabaseTable;
+                    tableName = ServerSwitchBase.DATABASE_TABLE;
                     break;
                 case GameObject.ServerVariable:
-                    tableName = ServerVariableBase.DatabaseTable;
+                    tableName = ServerVariableBase.DATABASE_TABLE;
                     break;
                 case GameObject.Tileset:
-                    tableName = TilesetBase.DatabaseTable;
+                    tableName = TilesetBase.DATABASE_TABLE;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
             return tableName;
         }
+
         private void ClearGameObjects(GameObject type)
         {
             switch (type)
@@ -168,6 +166,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         private void LoadGameObject(GameObject type, int index, byte[] data)
         {
             switch (type)
@@ -280,6 +279,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
         public void LoadGameObjects(GameObject type)
         {
             var nullIssues = "";
@@ -297,7 +297,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
                         while (dataReader.Read())
                         {
                             var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
-                            if (dataReader[GAME_OBJECT_DATA].GetType() != typeof(System.DBNull))
+                            if (dataReader[GAME_OBJECT_DATA].GetType() != typeof(DBNull))
                             {
                                 LoadGameObject(type, index, (byte[]) dataReader[GAME_OBJECT_DATA]);
                             }
@@ -315,8 +315,14 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
                 throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine + nullIssues));
             }
         }
+
         public void SaveGameObject(DatabaseObject gameObject)
         {
+            if (gameObject == null)
+            {
+                Log.Error("Attempted to persist null game object to the database.");
+            }
+
             lock (_dbLock)
             {
                 var insertQuery = "UPDATE " + gameObject.GetTable() + " set " + GAME_OBJECT_DELETED + "=@" +
@@ -326,7 +332,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.GetId()));
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
-                    if (gameObject != null && gameObject.GetData() != null)
+                    if (gameObject.GetData() != null)
                     {
                         cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.GetData()));
                     }
@@ -339,6 +345,5 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
                 }
             }
         }
-
     }
 }

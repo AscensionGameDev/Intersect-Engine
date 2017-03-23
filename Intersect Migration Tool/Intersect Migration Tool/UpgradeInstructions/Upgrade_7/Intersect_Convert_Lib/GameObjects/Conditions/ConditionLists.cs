@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Intersect;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Conditions
 {
@@ -8,7 +9,6 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
 
         public ConditionLists()
         {
-
         }
 
         public ConditionLists(ByteBuffer buff)

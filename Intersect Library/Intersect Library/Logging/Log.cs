@@ -2,17 +2,20 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace Intersect_Library.Logging
+namespace Intersect.Logging
 {
     public static class Log
     {
         public static string SuggestFilename(DateTime? time = null)
         {
-            return string.Format("{0}-{1}.log", Path.GetFileNameWithoutExtension(Process.GetCurrentProcess().MainModule.FileName), (time.HasValue ? time.Value : DateTime.Now).ToString("yyyy_MM_dd-HH_mm_ss_fff"));
+            return
+                $"{Path.GetFileNameWithoutExtension(Process.GetCurrentProcess().MainModule.FileName)}-{time ?? DateTime.Now:yyyy_MM_dd-HH_mm_ss_fff}.log";
         }
 
         #region Global
+
         private static Logger sGlobal;
+
         public static Logger Global
         {
             get
@@ -163,6 +166,7 @@ namespace Intersect_Library.Logging
         {
             Global.Verbose(exception);
         }
+
         #endregion
     }
 }

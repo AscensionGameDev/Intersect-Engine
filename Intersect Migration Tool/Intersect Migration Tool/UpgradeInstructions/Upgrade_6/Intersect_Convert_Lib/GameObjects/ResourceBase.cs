@@ -1,61 +1,39 @@
-﻿/*
-    Intersect Game Engine (Server)
-    Copyright (C) 2015  JC Snider, Joe Bridges
-    
-    Website: http://ascensiongamedev.com
-    Contact Email: admin@ascensiongamedev.com 
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License along
-    with this program; if not, write to the Free Software Foundation, Inc.,
-    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Intersect;
 
 namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.GameObjects
 {
     public class ResourceBase : DatabaseObject
     {
         // General
-        public new const string DatabaseTable = "resources";
-        public new const GameObject Type = GameObject.Resource;
+        public new const string DATABASE_TABLE = "resources";
+        public new const GameObject OBJECT_TYPE = GameObject.Resource;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        
-        public string Name = "New Resource";
-        public int MinHP = 0;
-        public int MaxHP = 0;
-        public int Tool = -1;
-        public int SpawnDuration = 0;
         public int Animation = 0;
-        public bool WalkableBefore = false;
-        public bool WalkableAfter = false;
-
-        // Graphics
-        public string InitialGraphic = "None";
-        public string EndGraphic = "None";
 
         // Drops
         public List<ResourceDrop> Drops = new List<ResourceDrop>();
+        public string EndGraphic = "None";
 
-        public ResourceBase(int id): base(id)
+        // Graphics
+        public string InitialGraphic = "None";
+        public int MaxHP = 0;
+        public int MinHP = 0;
+
+        public string Name = "New Resource";
+        public int SpawnDuration = 0;
+        public int Tool = -1;
+        public bool WalkableAfter = false;
+        public bool WalkableBefore = false;
+
+        public ResourceBase(int id) : base(id)
         {
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Drops.Add(new ResourceDrop());
             }
-
         }
 
         public override void Load(byte[] packet)
@@ -107,18 +85,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Conve
             return myBuffer.ToArray();
         }
 
-        public class ResourceDrop
-        {
-            public int ItemNum;
-            public int Amount;
-            public int Chance;
-        }
-
         public static ResourceBase GetResource(int index)
         {
             if (Objects.ContainsKey(index))
             {
-                return (ResourceBase)Objects[index];
+                return (ResourceBase) Objects[index];
             }
             return null;
         }
@@ -127,7 +98,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Conve
         {
             if (Objects.ContainsKey(index))
             {
-                return ((ResourceBase)Objects[index]).Name;
+                return ((ResourceBase) Objects[index]).Name;
             }
             return "Deleted";
         }
@@ -139,12 +110,12 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Conve
 
         public override string GetTable()
         {
-            return DatabaseTable;
+            return DATABASE_TABLE;
         }
 
         public override GameObject GetGameObjectType()
         {
-            return Type;
+            return OBJECT_TYPE;
         }
 
         public static DatabaseObject Get(int index)
@@ -155,27 +126,39 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Conve
             }
             return null;
         }
+
         public override void Delete()
         {
             Objects.Remove(GetId());
         }
+
         public static void ClearObjects()
         {
             Objects.Clear();
         }
+
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Remove(index);
             Objects.Add(index, obj);
         }
+
         public static int ObjectCount()
         {
             return Objects.Count;
         }
+
         public static Dictionary<int, ResourceBase> GetObjects()
         {
-            Dictionary<int, ResourceBase> objects = Objects.ToDictionary(k => k.Key, v => (ResourceBase)v.Value);
+            Dictionary<int, ResourceBase> objects = Objects.ToDictionary(k => k.Key, v => (ResourceBase) v.Value);
             return objects;
+        }
+
+        public class ResourceDrop
+        {
+            public int Amount;
+            public int Chance;
+            public int ItemNum;
         }
     }
 }

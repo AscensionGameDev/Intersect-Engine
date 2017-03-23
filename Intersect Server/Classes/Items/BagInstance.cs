@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Intersect_Server.Classes.Items
+﻿namespace Intersect_Server.Classes.Items
 {
     public class BagInstance
     {
-        public int Slots = 0;
         public ItemInstance[] Items = null;
+        public int Slots = 0;
 
         public BagInstance(int slots)
         {
@@ -17,10 +11,9 @@ namespace Intersect_Server.Classes.Items
             Items = new ItemInstance[slots];
             for (int i = 0; i < slots; i++)
             {
-                Items[i] = new ItemInstance(-1,-1, -1);
+                Items[i] = new ItemInstance(-1, -1, -1);
             }
         }
-
 
         public BagInstance Clone()
         {
