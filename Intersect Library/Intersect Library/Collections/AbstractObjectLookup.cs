@@ -52,14 +52,14 @@ namespace Intersect.Collections
             return mMutableMap.TryGetValue(key, out TValue value) ? value : default(TValue);
         }
 
-        public bool Add(TValue value)
+        private bool Add(TValue value)
         {
             if (value != null) return Add(value.Id, value);
             Log.Warn("Tried to add a null value to the collection.");
             return false;
         }
 
-        public bool Add(TKey key, TValue value)
+        private bool Add(TKey key, TValue value)
         {
             if (value == null)
             {

@@ -234,7 +234,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            MapList.GetList().Load(bf, MapBase.GetObjects(), false, true);
+            MapList.GetList().Load(bf, MapBase.Lookup, false, true);
             if (Globals.CurrentMap == null)
             {
                 Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());

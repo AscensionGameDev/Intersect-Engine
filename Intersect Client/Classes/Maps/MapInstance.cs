@@ -837,19 +837,19 @@ namespace Intersect_Client.Classes.Maps
         public override void Delete()
         {
             Objects.Remove(((DatabaseObject) this).Id);
-            MapBase.GetObjects().Remove(((DatabaseObject) this).Id);
+            MapBase.Lookup.Delete(this);
         }
 
         public static void ClearObjects()
         {
             Objects.Clear();
-            MapBase.ClearObjects();
+            MapBase.Lookup.Clear();
         }
 
         public static void AddObject(int index, DatabaseObject obj)
         {
             Objects.Add(index, obj);
-            MapBase.Objects.Add(index, (MapBase) obj);
+            MapBase.Lookup.Set(index, (MapBase) obj);
         }
 
         public static int ObjectCount()

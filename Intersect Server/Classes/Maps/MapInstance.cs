@@ -894,19 +894,19 @@ namespace Intersect_Server.Classes.Maps
         public override void Delete()
         {
             MapInstanceTable.Remove(((DatabaseObject) this).Id);
-            Objects.Remove(((DatabaseObject) this).Id);
+            Lookup.Delete(this);
         }
 
         public static void ClearObjects()
         {
             MapInstanceTable.Clear();
-            MapBase.ClearObjects();
+            MapBase.Lookup.Clear();
         }
 
         public static void AddObject(int index, DatabaseObject obj)
         {
             MapInstanceTable.Add(index, obj);
-            Objects.Add(index, (MapBase) obj);
+            Lookup.Set(index, (MapBase) obj);
         }
 
         public static int ObjectCount()

@@ -1783,7 +1783,7 @@ namespace Intersect_Server.Classes.Core
                     BenchBase.Lookup.Clear();
                     break;
                 case GameObject.Map:
-                    MapBase.ClearObjects();
+                    MapBase.Lookup.Clear();
                     break;
                 case GameObject.CommonEvent:
                     EventBase.Lookup.Clear();
@@ -2093,7 +2093,7 @@ namespace Intersect_Server.Classes.Core
         //Post Loading Functions
         private static void OnMapsLoaded()
         {
-            if (MapBase.ObjectCount() == 0)
+            if (MapBase.Lookup.Count == 0)
             {
                 Console.WriteLine(Strings.Get("database", "nomaps"));
                 AddGameObject(GameObject.Map);
@@ -2251,7 +2251,7 @@ namespace Intersect_Server.Classes.Core
                                 var data = (byte[]) dataReader[MAP_LIST_DATA];
                                 ByteBuffer myBuffer = new ByteBuffer();
                                 myBuffer.WriteBytes(data);
-                                MapList.GetList().Load(myBuffer, MapBase.GetObjects(), true, true);
+                                MapList.GetList().Load(myBuffer, MapBase.Lookup, true, true);
                             }
                         }
                     }
@@ -2261,11 +2261,11 @@ namespace Intersect_Server.Classes.Core
                     }
                 }
             }
-            foreach (var map in MapBase.GetObjects())
+            foreach (var map in MapBase.Lookup)
             {
                 if (MapList.GetList().FindMap(map.Value.Id) == null)
                 {
-                    MapList.GetList().AddMap(map.Value.Id, MapBase.GetObjects());
+                    MapList.GetList().AddMap(map.Value.Id, MapBase.Lookup);
                 }
             }
             SaveMapFolders();
@@ -2278,7 +2278,7 @@ namespace Intersect_Server.Classes.Core
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_LIST_DATA,
-                    MapList.GetList().Data(MapBase.GetObjects())));
+                    MapList.GetList().Data(MapBase.Lookup)));
                 cmd.ExecuteNonQuery();
             }
         }

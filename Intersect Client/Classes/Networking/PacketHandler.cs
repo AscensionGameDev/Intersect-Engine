@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect;
+using Intersect.Collections;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
 using Intersect_Client.Classes.Core;
@@ -517,7 +519,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            MapList.GetList().Load(bf, new Dictionary<int, Intersect.GameObjects.Maps.MapBase>(), false);
+            MapList.GetList().Load(bf, new IntObjectLookup<MapBase>(), false);
             //If admin window is open update it
             bf.Dispose();
         }

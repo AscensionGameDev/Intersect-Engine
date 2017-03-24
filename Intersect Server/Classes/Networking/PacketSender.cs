@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Intersect;
+using Intersect.Collections;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
@@ -753,8 +754,8 @@ namespace Intersect_Server.Classes.Networking
         public static void SendMapList(Client client)
         {
             var bf = new ByteBuffer();
-            Dictionary<int, MapBase> gameMaps = MapInstance.GetObjects()
-                .ToDictionary(k => k.Key, v => (MapBase) v.Value);
+            IntObjectLookup<MapBase> gameMaps = new IntObjectLookup<MapBase>();
+            foreach (var pair in MapInstance.GetObjects()) gameMaps.Set(pair.Key, pair.Value);
             bf.WriteLong((int) ServerPackets.MapList);
             bf.WriteBytes(MapList.GetList().Data(gameMaps));
             client.SendPacket(bf.ToArray());
@@ -764,8 +765,8 @@ namespace Intersect_Server.Classes.Networking
         public static void SendMapListToAll()
         {
             var bf = new ByteBuffer();
-            Dictionary<int, MapBase> gameMaps = MapInstance.GetObjects()
-                .ToDictionary(k => k.Key, v => (MapBase) v.Value);
+            IntObjectLookup<MapBase> gameMaps = new IntObjectLookup<MapBase>();
+            foreach (var pair in MapInstance.GetObjects()) gameMaps.Set(pair.Key, pair.Value);
             bf.WriteLong((int) ServerPackets.MapList);
             bf.WriteBytes(MapList.GetList().Data(gameMaps));
             SendDataToAll(bf.ToArray());

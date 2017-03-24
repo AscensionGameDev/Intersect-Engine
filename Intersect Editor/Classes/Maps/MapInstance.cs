@@ -280,7 +280,7 @@ namespace Intersect_Editor.Classes.Maps
             lock (objectsLock)
             {
                 Objects.Remove(Id);
-                MapBase.GetObjects().Remove(Id);
+                MapBase.Lookup.Delete(this);
             }
         }
 
@@ -289,7 +289,7 @@ namespace Intersect_Editor.Classes.Maps
             lock (objectsLock)
             {
                 Objects.Clear();
-                MapBase.ClearObjects();
+                MapBase.Lookup.Clear();
             }
         }
 
@@ -298,7 +298,7 @@ namespace Intersect_Editor.Classes.Maps
             lock (objectsLock)
             {
                 Objects.Add(index, obj);
-                MapBase.Objects.Add(index, (MapBase) obj);
+                MapBase.Lookup.Set(index, (MapBase) obj);
             }
         }
 

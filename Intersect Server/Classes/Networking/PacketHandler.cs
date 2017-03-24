@@ -527,7 +527,7 @@ namespace Intersect_Server.Classes.Networking
                 destType = -1;
                 if (destType == -1)
                 {
-                    MapList.GetList().AddMap(newMap, MapBase.GetObjects());
+                    MapList.GetList().AddMap(newMap, MapBase.Lookup);
                 }
                 Database.SaveMapFolders();
                 PacketSender.SendMapListToAll();
@@ -670,11 +670,11 @@ namespace Intersect_Server.Classes.Networking
                     var folderDir = MapList.GetList().FindMapParent(relativeMap, null);
                     if (folderDir != null)
                     {
-                        folderDir.Children.AddMap(newMap, MapBase.GetObjects());
+                        folderDir.Children.AddMap(newMap, MapBase.Lookup);
                     }
                     else
                     {
-                        MapList.GetList().AddMap(newMap, MapBase.GetObjects());
+                        MapList.GetList().AddMap(newMap, MapBase.Lookup);
                     }
                     Database.SaveMapFolders();
                     PacketSender.SendMapListToAll();

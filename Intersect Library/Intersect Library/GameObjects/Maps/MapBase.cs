@@ -9,7 +9,6 @@ namespace Intersect.GameObjects.Maps
     {
         public new const string DATABASE_TABLE = "maps";
         public new const GameObject OBJECT_TYPE = GameObject.Map;
-        protected static Dictionary<int, MapBase> Objects = new Dictionary<int, MapBase>();
 
         //SyncLock
         protected Object _mapLock = new Object();
@@ -341,68 +340,8 @@ namespace Intersect.GameObjects.Maps
             return bf.ToArray();
         }
 
-        public static MapBase GetMap(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (MapBase) Objects[index];
-            }
-            return null;
-        }
-
-        public static string GetName(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return ((MapBase) Objects[index]).Name;
-            }
-            return "Deleted";
-        }
-
         public override byte[] BinaryData => GetMapData(false);
-
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public static DatabaseObject<MapBase> Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            Objects.Remove(Id);
-        }
-
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject<MapBase> obj)
-        {
-            Objects.Add(index, (MapBase) obj);
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, MapBase> GetObjects()
-        {
-            return Objects;
-        }
+        public override string DatabaseTableName => DATABASE_TABLE;
+        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 }
