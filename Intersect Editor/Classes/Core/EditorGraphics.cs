@@ -174,7 +174,7 @@ namespace Intersect_Editor.Classes
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                    var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (map != null)
                                     {
                                         //Draw this map
@@ -203,7 +203,7 @@ namespace Intersect_Editor.Classes
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                    var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (map != null)
                                     {
                                         DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
@@ -220,7 +220,7 @@ namespace Intersect_Editor.Classes
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                    var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (map != null)
                                     {
                                         //Draw this map
@@ -238,7 +238,7 @@ namespace Intersect_Editor.Classes
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                    var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (map != null)
                                     {
                                         DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
@@ -1065,7 +1065,7 @@ namespace Intersect_Editor.Classes
                     {
                         if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                         {
-                            var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                            var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
                             if (map != null)
                             {
                                 lock (map.GetMapLock())
@@ -1087,7 +1087,7 @@ namespace Intersect_Editor.Classes
                     {
                         if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                         {
-                            var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                            var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
                             if (map != null)
                             {
                                 lock (map.GetMapLock())
@@ -1108,7 +1108,7 @@ namespace Intersect_Editor.Classes
                     {
                         if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                         {
-                            var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                            var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
                             if (map != null)
                             {
                                 lock (map.GetMapLock())
@@ -1130,7 +1130,7 @@ namespace Intersect_Editor.Classes
                     {
                         if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                         {
-                            var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                            var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
                             if (map != null)
                             {
                                 lock (map.GetMapLock())

@@ -18,8 +18,6 @@ namespace Intersect_Editor.Classes.Maps
 
         //Map Attributes
         public new const GameObject OBJECT_TYPE = GameObject.Map;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        private static object objectsLock = new object();
 
         private Dictionary<Attribute, AnimationInstance> _attributeAnimInstances =
             new Dictionary<Attribute, AnimationInstance>();
@@ -117,7 +115,7 @@ namespace Intersect_Editor.Classes.Maps
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight &&
                                     Globals.MapGrid.Grid[x, y].mapnum > -1)
                                 {
-                                    var needMap = GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                    var needMap = Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (needMap == null) return;
                                 }
                             }
@@ -178,7 +176,7 @@ namespace Intersect_Editor.Classes.Maps
                             }
                             else
                             {
-                                mapBase[x + 1, y + 1] = GetMap(Globals.MapGrid.Grid[x1, y1].mapnum);
+                                mapBase[x + 1, y + 1] = Lookup.Get(Globals.MapGrid.Grid[x1, y1].mapnum);
                             }
                         }
                     }
@@ -207,7 +205,7 @@ namespace Intersect_Editor.Classes.Maps
                         var y1 = MapGridY + y;
                         if (x1 >= 0 && y1 >= 0 && x1 < Globals.MapGrid.GridWidth && y1 < Globals.MapGrid.GridHeight)
                         {
-                            var map = GetMap(Globals.MapGrid.Grid[x1, y1].mapnum);
+                            var map = Lookup.Get(Globals.MapGrid.Grid[x1, y1].mapnum);
                             if (map != null && map != this) map.InitAutotiles();
                         }
                     }
@@ -256,69 +254,9 @@ namespace Intersect_Editor.Classes.Maps
 
         public override byte[] BinaryData => GetMapData(false);
 
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
+        public override GameObject GameObjectType => OBJECT_TYPE;
 
-        public new static MapInstance GetMap(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (MapInstance) Objects[index];
-            }
-            return null;
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            lock (objectsLock)
-            {
-                Objects.Remove(Id);
-                MapBase.Lookup.Delete(this);
-            }
-        }
-
-        public static void ClearObjects()
-        {
-            lock (objectsLock)
-            {
-                Objects.Clear();
-                MapBase.Lookup.Clear();
-            }
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            lock (objectsLock)
-            {
-                Objects.Add(index, obj);
-                MapBase.Lookup.Set(index, (MapBase) obj);
-            }
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, MapInstance> GetObjects()
-        {
-            lock (objectsLock)
-            {
-                Dictionary<int, MapInstance> objects = Objects.ToDictionary(k => k.Key, v => (MapInstance) v.Value);
-                return objects;
-            }
-        }
+        public override void Delete() => Lookup?.Delete(this);
 
         public void Dispose()
         {

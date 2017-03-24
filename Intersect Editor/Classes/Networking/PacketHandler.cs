@@ -114,13 +114,13 @@ namespace Intersect_Editor.Classes
             int deleted = bf.ReadInteger();
             if (deleted == 1)
             {
-                if (MapInstance.GetMap(mapNum) != null)
+                if (MapInstance.Lookup.Get(mapNum) != null)
                 {
-                    if (Globals.CurrentMap == MapInstance.GetMap(mapNum))
+                    if (Globals.CurrentMap == MapInstance.Lookup.Get(mapNum))
                     {
                         Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());
                     }
-                    MapInstance.GetMap(mapNum).Delete();
+                    MapInstance.Lookup.Get(mapNum).Delete();
                 }
             }
             else
@@ -128,13 +128,13 @@ namespace Intersect_Editor.Classes
                 var mapLength = bf.ReadLong();
                 var mapData = bf.ReadBytes((int) mapLength);
                 var map = new MapInstance((int) mapNum);
-                if (MapInstance.GetMap(mapNum) != null)
+                if (MapInstance.Lookup.Get(mapNum) != null)
                 {
-                    if (Globals.CurrentMap == MapInstance.GetMap(mapNum))
+                    if (Globals.CurrentMap == MapInstance.Lookup.Get(mapNum))
                         Globals.CurrentMap = map;
-                    MapInstance.GetMap(mapNum).Delete();
+                    MapInstance.Lookup.Get(mapNum).Delete();
                 }
-                MapInstance.AddObject(mapNum, map);
+                MapInstance.Lookup.Set(mapNum, map);
                 map.Load(mapData);
                 map.MapGridX = bf.ReadInteger();
                 map.MapGridY = bf.ReadInteger();
@@ -173,10 +173,10 @@ namespace Intersect_Editor.Classes
                                 }
                             }
                         }
-                        Globals.CurrentMap = MapInstance.GetMap(currentmap);
+                        Globals.CurrentMap = MapInstance.Lookup.Get(currentmap);
                     }
                     if (mapNum != Globals.LoadingMap) return;
-                    Globals.CurrentMap = MapInstance.GetMap(Globals.LoadingMap);
+                    Globals.CurrentMap = MapInstance.Lookup.Get(Globals.LoadingMap);
                     MapUpdatedDelegate();
                     if (map.Up > -1)
                     {
@@ -203,7 +203,7 @@ namespace Intersect_Editor.Classes
                         {
                             if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                             {
-                                var needMap = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                var needMap = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
                                 if (needMap == null && Globals.MapGrid.Grid[x, y].mapnum > -1)
                                     PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].mapnum);
                             }
@@ -267,7 +267,7 @@ namespace Intersect_Editor.Classes
                         {
                             if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                             {
-                                var needMap = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                var needMap = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
                                 if (needMap == null && Globals.MapGrid.Grid[x, y].mapnum > -1)
                                     PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].mapnum);
                             }

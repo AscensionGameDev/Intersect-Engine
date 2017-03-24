@@ -137,7 +137,7 @@ namespace Intersect_Editor.Classes
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Map:
-                    foreach (var obj in MapInstance.GetObjects())
+                    foreach (var obj in MapInstance.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.CommonEvent:

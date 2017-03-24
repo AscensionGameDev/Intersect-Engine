@@ -809,7 +809,7 @@ namespace Intersect_Client.Classes.Maps
 
         public override GameObject GameObjectType => OBJECT_TYPE;
 
-        public override void Delete() => Lookup.Delete(this);
+        public override void Delete() => Lookup?.Delete(this);
 
         //Dispose
         public void Dispose(bool prep = true, bool killentities = true)
