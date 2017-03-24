@@ -292,6 +292,8 @@ namespace Intersect_Client.Classes.Entities
         /// </summary>
         public override bool Update()
         {
+            if (_myBase == null) return false;
+
             var tmpI = -1;
             var map = CurrentMap;
             var y = CurrentY;
