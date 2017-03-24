@@ -126,7 +126,7 @@ namespace Intersect_Server.Classes.Entities
                 // Drop items
                 foreach (var item in Inventory)
                 {
-                    if (ItemBase.GetItem(item.ItemNum) != null)
+                    if (ItemBase.Lookup.Get(item.ItemNum) != null)
                     {
                         MapInstance.GetMap(selectedTile.GetMap())
                             .SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.ItemVal);

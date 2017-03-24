@@ -1129,10 +1129,10 @@ namespace Intersect_Server.Classes.Networking
 
         public static void SendOpenShop(Client client, int shopNum)
         {
-            if (ShopBase.GetShop(shopNum) == null) return;
+            if (ShopBase.Lookup.Get(shopNum) == null) return;
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.OpenShop);
-            bf.WriteBytes(ShopBase.GetShop(shopNum).ShopData());
+            bf.WriteBytes(ShopBase.Lookup.Get(shopNum).ShopData());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

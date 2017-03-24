@@ -737,12 +737,12 @@ namespace Intersect_Server.Classes.Networking
                 if (Options.WeaponIndex > -1)
                 {
                     if (client.Entity.Equipment[Options.WeaponIndex] >= 0 &&
-                        ItemBase.GetItem(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum) !=
+                        ItemBase.Lookup.Get(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum) !=
                         null)
                     {
                         var projectileBase =
-                            ProjectileBase.GetProjectile(
-                                ItemBase.GetItem(
+                            ProjectileBase.Lookup.Get(
+                                ItemBase.Lookup.Get(
                                         client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum)
                                     .Projectile);
                         if (projectileBase != null)
@@ -764,7 +764,7 @@ namespace Intersect_Server.Classes.Networking
                             }
                             MapInstance.GetMap(client.Entity.CurrentMap)
                                 .SpawnMapProjectile(client.Entity, projectileBase, null,
-                                    ItemBase.GetItem(
+                                    ItemBase.Lookup.Get(
                                         client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum),
                                     client.Entity.CurrentMap,
                                     client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ,

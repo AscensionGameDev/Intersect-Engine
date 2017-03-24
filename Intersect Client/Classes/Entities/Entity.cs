@@ -526,9 +526,9 @@ namespace Intersect_Client.Classes.Entities
                                 {
                                     itemNum = Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])];
                                 }
-                                if (ItemBase.GetItem(itemNum) != null)
+                                if (ItemBase.Lookup.Get(itemNum) != null)
                                 {
-                                    var itemdata = ItemBase.GetItem(itemNum);
+                                    var itemdata = ItemBase.Lookup.Get(itemNum);
                                     if (Gender == 0)
                                     {
                                         DrawEquipment(itemdata.MalePaperdoll, alpha);
@@ -773,7 +773,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
-            var castSpell = SpellBase.GetSpell(SpellCast);
+            var castSpell = SpellBase.Lookup.Get(SpellCast);
             if (castSpell != null)
             {
                 var width = Options.TileWidth;

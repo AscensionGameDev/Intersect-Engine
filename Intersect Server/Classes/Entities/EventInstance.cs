@@ -314,15 +314,15 @@ namespace Intersect_Server.Classes.Entities
                     break;
                 case 2: //Global Switch
                     var servSwitch = false;
-                    if (ServerSwitchBase.GetServerSwitch(conditionCommand.Ints[1]) != null)
-                        servSwitch = ServerSwitchBase.GetServerSwitch(conditionCommand.Ints[1]).Value;
+                    if (ServerSwitchBase.Lookup.Get(conditionCommand.Ints[1]) != null)
+                        servSwitch = ServerSwitchBase.Lookup.Get(conditionCommand.Ints[1]).Value;
                     if (servSwitch == Convert.ToBoolean(conditionCommand.Ints[2]))
                         return true;
                     break;
                 case 3: //Global Variable
                     var servVar = 0;
-                    if (ServerVariableBase.GetServerVariable(conditionCommand.Ints[1]) != null)
-                        servVar = ServerVariableBase.GetServerVariable(conditionCommand.Ints[1]).Value;
+                    if (ServerVariableBase.Lookup.Get(conditionCommand.Ints[1]) != null)
+                        servVar = ServerVariableBase.Lookup.Get(conditionCommand.Ints[1]).Value;
                     switch (conditionCommand.Ints[2]) //Comparator
                     {
                         case 0: //Equal to
@@ -441,14 +441,14 @@ namespace Intersect_Server.Classes.Entities
                         return true;
                     }
                 case 11: //Can Start Quest
-                    var startQuest = QuestBase.GetQuest(conditionCommand.Ints[1]);
+                    var startQuest = QuestBase.Lookup.Get(conditionCommand.Ints[1]);
                     if (startQuest != null)
                     {
                         return MyPlayer.CanStartQuest(startQuest);
                     }
                     break;
                 case 12: //Quest In Progress
-                    var questInProgress = QuestBase.GetQuest(conditionCommand.Ints[1]);
+                    var questInProgress = QuestBase.Lookup.Get(conditionCommand.Ints[1]);
                     if (questInProgress != null)
                     {
                         return MyPlayer.QuestInProgress(questInProgress, (QuestProgress) conditionCommand.Ints[2],
@@ -456,7 +456,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     break;
                 case 13: //Quest Completed
-                    var questCompleted = QuestBase.GetQuest(conditionCommand.Ints[1]);
+                    var questCompleted = QuestBase.Lookup.Get(conditionCommand.Ints[1]);
                     if (questCompleted != null)
                     {
                         return MyPlayer.QuestCompleted(questCompleted);
@@ -566,7 +566,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else if (command.Ints[0] == (int) SwitchVariableTypes.ServerSwitch)
                     {
-                        var serverSwitch = ServerSwitchBase.GetServerSwitch(command.Ints[1]);
+                        var serverSwitch = ServerSwitchBase.Lookup.Get(command.Ints[1]);
                         if (serverSwitch != null)
                         {
                             serverSwitch.Value = Convert.ToBoolean(command.Ints[2]);
@@ -601,7 +601,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else if (command.Ints[0] == (int) SwitchVariableTypes.ServerVariable)
                     {
-                        var serverVarible = ServerVariableBase.GetServerVariable(command.Ints[1]);
+                        var serverVarible = ServerVariableBase.Lookup.Get(command.Ints[1]);
                         if (serverVarible != null)
                         {
                             switch (command.Ints[2])
@@ -1201,7 +1201,7 @@ namespace Intersect_Server.Classes.Entities
                     break;
                 case EventCommandType.StartQuest:
                     success = false;
-                    var quest = QuestBase.GetQuest(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                    var quest = QuestBase.Lookup.Get(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                         .Commands[CallStack.Peek().CommandIndex].Ints[0]);
                     if (quest != null)
                     {

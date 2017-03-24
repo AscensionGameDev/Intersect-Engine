@@ -1161,7 +1161,7 @@ namespace Intersect_Server.Classes.Core
                                 {
                                     player.Inventory[slot].StatBoost[i] = Int32.Parse(stats[i]);
                                 }
-                                if (ItemBase.GetItem(player.Inventory[slot].ItemNum) == null)
+                                if (ItemBase.Lookup.Get(player.Inventory[slot].ItemNum) == null)
                                 {
                                     player.Inventory[slot].ItemNum = -1;
                                     player.Inventory[slot].ItemVal = 0;
@@ -1202,7 +1202,7 @@ namespace Intersect_Server.Classes.Core
                                 player.Spells[slot].SpellNum = Convert.ToInt32(dataReader[CHAR_SPELL_NUM]);
                                 player.Spells[slot].SpellCD = Globals.System.GetTimeMs() +
                                                               Convert.ToInt32(dataReader[CHAR_SPELL_CD]);
-                                if (SpellBase.GetSpell(player.Spells[slot].SpellNum) == null)
+                                if (SpellBase.Lookup.Get(player.Spells[slot].SpellNum) == null)
                                 {
                                     player.Spells[slot].SpellNum = -1;
                                     player.Spells[slot].SpellCD = -1;
@@ -1246,7 +1246,7 @@ namespace Intersect_Server.Classes.Core
                                 {
                                     player.Bank[slot].StatBoost[i] = Int32.Parse(stats[i]);
                                 }
-                                if (ItemBase.GetItem(player.Bank[slot].ItemNum) == null)
+                                if (ItemBase.Lookup.Get(player.Bank[slot].ItemNum) == null)
                                 {
                                     player.Bank[slot].ItemNum = -1;
                                     player.Bank[slot].ItemVal = 0;
@@ -1462,7 +1462,7 @@ namespace Intersect_Server.Classes.Core
                                 {
                                     bagItem.BagInstance.Items[slot].StatBoost[i] = Int32.Parse(stats[i]);
                                 }
-                                if (ItemBase.GetItem(bagItem.BagInstance.Items[slot].ItemNum) == null)
+                                if (ItemBase.Lookup.Get(bagItem.BagInstance.Items[slot].ItemNum) == null)
                                 {
                                     bagItem.BagInstance.Items[slot].ItemNum = -1;
                                     bagItem.BagInstance.Items[slot].ItemVal = 0;
@@ -1487,7 +1487,7 @@ namespace Intersect_Server.Classes.Core
             {
                 if (bagItem.BagInstance.Items[i] != null)
                 {
-                    var item = ItemBase.GetItem(bagItem.BagInstance.Items[i].ItemNum);
+                    var item = ItemBase.Lookup.Get(bagItem.BagInstance.Items[i].ItemNum);
                     if (item != null)
                     {
                         return false;

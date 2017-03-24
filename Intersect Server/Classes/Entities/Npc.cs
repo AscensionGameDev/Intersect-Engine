@@ -147,7 +147,7 @@ namespace Intersect_Server.Classes.Entities
 
                 for (int i = 0; i < MyBase.AggroList.Count; i++)
                 {
-                    if (NpcBase.GetNpc(MyBase.AggroList[i]) == ((Npc) enemy).MyBase)
+                    if (NpcBase.Lookup.Get(MyBase.AggroList[i]) == ((Npc) enemy).MyBase)
                     {
                         return true;
                     }
@@ -194,7 +194,7 @@ namespace Intersect_Server.Classes.Entities
                     if (MyBase.Spells.Count > 0)
                     {
                         var s = Globals.Rand.Next(0, MyBase.Spells.Count); //Pick a random spell
-                        var spell = SpellBase.GetSpell((MyBase.Spells[s]));
+                        var spell = SpellBase.Lookup.Get((MyBase.Spells[s]));
                         if (spell != null)
                         {
                             if (spell.SpellType == (int) SpellTypes.CombatSpell &&

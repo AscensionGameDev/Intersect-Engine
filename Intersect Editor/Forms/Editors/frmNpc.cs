@@ -68,7 +68,7 @@ namespace Intersect_Editor.Forms
 
         private void lstNpcs_Click(object sender, EventArgs e)
         {
-            _editorItem = NpcBase.GetNpc(Database.GameObjectIdFromList(GameObject.Npc, lstNpcs.SelectedIndex));
+            _editorItem = NpcBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Npc, lstNpcs.SelectedIndex));
             UpdateEditor();
         }
 

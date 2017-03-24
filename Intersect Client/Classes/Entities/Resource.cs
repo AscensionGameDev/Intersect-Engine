@@ -33,7 +33,7 @@ namespace Intersect_Client.Classes.Entities
             base.Load(bf);
             IsDead = Convert.ToBoolean(bf.ReadInteger());
             var baseIndex = bf.ReadInteger();
-            _baseResource = ResourceBase.GetResource(baseIndex);
+            _baseResource = ResourceBase.Lookup.Get(baseIndex);
             HideName = 1;
         }
 

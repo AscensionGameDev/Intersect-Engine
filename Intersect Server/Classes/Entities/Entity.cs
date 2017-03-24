@@ -731,7 +731,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (projectile.Spell > -1)
                 {
-                    var s = SpellBase.GetSpell(projectile.Spell);
+                    var s = SpellBase.Lookup.Get(projectile.Spell);
                     if (s != null)
                         HandleAoESpell(projectile.Spell, s.HitRadius, enemy.CurrentMap, enemy.CurrentX, enemy.CurrentY);
 
@@ -1085,7 +1085,7 @@ namespace Intersect_Server.Classes.Entities
 
         public virtual void CastSpell(int SpellNum, int SpellSlot = -1)
         {
-            var spellBase = SpellBase.GetSpell(SpellNum);
+            var spellBase = SpellBase.Lookup.Get(SpellNum);
             if (spellBase != null)
             {
                 switch (spellBase.SpellType)
@@ -1117,7 +1117,7 @@ namespace Intersect_Server.Classes.Entities
                                 HandleAoESpell(SpellNum, spellBase.HitRadius, CurrentMap, CurrentX, CurrentY);
                                 break;
                             case (int) SpellTargetTypes.Projectile:
-                                var projectileBase = ProjectileBase.GetProjectile(spellBase.Projectile);
+                                var projectileBase = ProjectileBase.Lookup.Get(spellBase.Projectile);
                                 if (projectileBase != null)
                                 {
                                     MapInstance.GetMap(CurrentMap).SpawnMapProjectile(this,
@@ -1168,7 +1168,7 @@ namespace Intersect_Server.Classes.Entities
 
         private void HandleAoESpell(int SpellNum, int Range, int StartMap, int StartX, int StartY, int target = -1)
         {
-            var spellBase = SpellBase.GetSpell(SpellNum);
+            var spellBase = SpellBase.Lookup.Get(SpellNum);
             var targetsHit = new List<Entity>();
             if (spellBase != null)
             {
@@ -1363,7 +1363,7 @@ namespace Intersect_Server.Classes.Entities
                 // Drop items
                 foreach (var item in Inventory)
                 {
-                    if (ItemBase.GetItem(item.ItemNum) != null)
+                    if (ItemBase.Lookup.Get(item.ItemNum) != null)
                     {
                         MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, item, item.ItemVal);
                     }
@@ -1505,7 +1505,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (_player.Inventory[_player.Equipment[i]].ItemNum > -1)
                         {
-                            var item = ItemBase.GetItem(_player.Inventory[_player.Equipment[i]].ItemNum);
+                            var item = ItemBase.Lookup.Get(_player.Inventory[_player.Equipment[i]].ItemNum);
                             if (item != null)
                             {
                                 s += _player.Inventory[_player.Equipment[i]].StatBoost[_statType] +
@@ -1573,7 +1573,7 @@ namespace Intersect_Server.Classes.Entities
 
         public DoTInstance(int ownerID, int spellNum, Entity target)
         {
-            SpellBase = SpellBase.GetSpell(spellNum);
+            SpellBase = SpellBase.Lookup.Get(spellNum);
             if (SpellBase != null)
             {
                 OwnerID = ownerID;

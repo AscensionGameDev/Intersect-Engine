@@ -69,7 +69,7 @@ namespace Intersect_Editor.Classes
         private void lstProjectiles_Click(object sender, EventArgs e)
         {
             _editorItem =
-                ProjectileBase.GetProjectile(Database.GameObjectIdFromList(GameObject.Projectile,
+                ProjectileBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Projectile,
                     lstProjectiles.SelectedIndex));
             UpdateEditor();
         }

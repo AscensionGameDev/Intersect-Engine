@@ -39,7 +39,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand.Ints[1] = -1;
             if (cmbQuests.SelectedIndex > -1)
             {
-                var quest = QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, cmbQuests.SelectedIndex));
+                var quest = QuestBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Quest, cmbQuests.SelectedIndex));
                 if (quest != null)
                 {
                     var i = -1;
@@ -67,7 +67,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             lblTask.Hide();
             if (cmbQuests.SelectedIndex > -1)
             {
-                var quest = QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, cmbQuests.SelectedIndex));
+                var quest = QuestBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Quest, cmbQuests.SelectedIndex));
                 if (quest != null)
                 {
                     lblTask.Show();

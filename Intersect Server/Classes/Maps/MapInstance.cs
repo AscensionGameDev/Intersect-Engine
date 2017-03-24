@@ -174,7 +174,7 @@ namespace Intersect_Server.Classes.Maps
 
         public void SpawnItem(int x, int y, ItemInstance item, int amount)
         {
-            var itemBase = ItemBase.GetItem(item.ItemNum);
+            var itemBase = ItemBase.Lookup.Get(item.ItemNum);
             if (itemBase != null)
             {
                 MapItems.Add(new MapItemInstance(item.ItemNum, item.ItemVal, item.BagId));
@@ -199,7 +199,7 @@ namespace Intersect_Server.Classes.Maps
 
         private void SpawnAttributeItem(int x, int y)
         {
-            var item = ItemBase.GetItem(Attributes[x, y].data1);
+            var item = ItemBase.Lookup.Get(Attributes[x, y].data1);
             if (item != null)
             {
                 MapItems.Add(new MapItemInstance(Attributes[x, y].data1, Attributes[x, y].data2, -1));
@@ -259,7 +259,7 @@ namespace Intersect_Server.Classes.Maps
             {
                 if (MapItems[i] != null)
                 {
-                    if (ItemBase.GetItem(MapItems[i].ItemNum) == itemBase)
+                    if (ItemBase.Lookup.Get(MapItems[i].ItemNum) == itemBase)
                     {
                         RemoveItem(i, true);
                     }
@@ -307,7 +307,7 @@ namespace Intersect_Server.Classes.Maps
                 }
                 if (resourceSpawnInstance.Entity == null)
                 {
-                    var resourceBase = ResourceBase.GetResource(ResourceSpawns[i].ResourceNum);
+                    var resourceBase = ResourceBase.Lookup.Get(ResourceSpawns[i].ResourceNum);
                     if (resourceBase != null)
                     {
                         index = Globals.FindOpenEntity();
@@ -359,7 +359,7 @@ namespace Intersect_Server.Classes.Maps
             int X = 0;
             int Y = 0;
             int dir = 0;
-            var npcBase = NpcBase.GetNpc(Spawns[i].NpcNum);
+            var npcBase = NpcBase.Lookup.Get(Spawns[i].NpcNum);
             if (npcBase != null)
             {
                 MapNpcSpawn npcSpawnInstance;
@@ -424,7 +424,7 @@ namespace Intersect_Server.Classes.Maps
 
         public Entity SpawnNpc(int tileX, int tileY, int dir, int npcNum, bool despawnable = false)
         {
-            var npcBase = NpcBase.GetNpc(npcNum);
+            var npcBase = NpcBase.Lookup.Get(npcNum);
             if (npcBase != null)
             {
                 int index = Globals.FindOpenEntity();

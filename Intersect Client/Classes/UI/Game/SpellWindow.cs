@@ -281,7 +281,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Update()
         {
-            var spell = SpellBase.GetSpell(Globals.Me.Spells[myindex].SpellNum);
+            var spell = SpellBase.Lookup.Get(Globals.Me.Spells[myindex].SpellNum);
             if (!IsDragging &&
                 ((texLoaded != "" && spell == null) || (spell != null && texLoaded != spell.Pic) ||
                  currentSpell != Globals.Me.Spells[myindex].SpellNum ||

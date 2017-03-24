@@ -69,7 +69,7 @@ namespace Intersect_Editor.Forms
 
         private void lstQuests_Click(object sender, EventArgs e)
         {
-            _editorItem = QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, lstQuests.SelectedIndex));
+            _editorItem = QuestBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Quest, lstQuests.SelectedIndex));
             UpdateEditor();
         }
 

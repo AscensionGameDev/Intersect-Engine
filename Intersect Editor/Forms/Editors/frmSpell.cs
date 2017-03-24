@@ -71,7 +71,7 @@ namespace Intersect_Editor.Forms
 
         private void lstSpells_Click(object sender, EventArgs e)
         {
-            _editorItem = SpellBase.GetSpell(Database.GameObjectIdFromList(GameObject.Spell, lstSpells.SelectedIndex));
+            _editorItem = SpellBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Spell, lstSpells.SelectedIndex));
             UpdateEditor();
         }
 

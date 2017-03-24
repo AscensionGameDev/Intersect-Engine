@@ -351,7 +351,7 @@ namespace Intersect_Client.Classes.Maps
                 //Draw Map Items
                 foreach (var item in MapItems)
                 {
-                    var itemBase = ItemBase.GetItem(item.Value.ItemNum);
+                    var itemBase = ItemBase.Lookup.Get(item.Value.ItemNum);
                     if (itemBase != null)
                     {
                         GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,

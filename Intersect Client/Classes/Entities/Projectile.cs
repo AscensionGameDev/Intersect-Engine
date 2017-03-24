@@ -40,7 +40,7 @@ namespace Intersect_Client.Classes.Entities
             ProjectileNum = bf.ReadInteger();
             Dir = bf.ReadInteger();
             Target = bf.ReadInteger();
-            _myBase = ProjectileBase.GetProjectile(ProjectileNum);
+            _myBase = ProjectileBase.Lookup.Get(ProjectileNum);
             if (_myBase != null)
             {
                 for (int x = 0; x < ProjectileBase.SpawnLocationsWidth; x++)

@@ -488,7 +488,7 @@ namespace Intersect_Server.Classes.Entities
                 for (int i = 0; i < Quests.Keys.Count; i++)
                 {
                     var questId = Quests.Keys.ToArray()[i];
-                    var quest = QuestBase.GetQuest(questId);
+                    var quest = QuestBase.Lookup.Get(questId);
                     if (quest != null)
                     {
                         if (Quests[questId].task > -1)
@@ -536,7 +536,7 @@ namespace Intersect_Server.Classes.Entities
             if (((Player) Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex] >= 0)
             {
                 weapon =
-                    ItemBase.GetItem(
+                    ItemBase.Lookup.Get(
                         Inventory[((Player) Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex]].ItemNum);
             }
 
@@ -705,7 +705,7 @@ namespace Intersect_Server.Classes.Entities
         //Inventory
         public bool CanGiveItem(ItemInstance item)
         {
-            var itemBase = ItemBase.GetItem(item.ItemNum);
+            var itemBase = ItemBase.Lookup.Get(item.ItemNum);
             if (itemBase != null)
             {
                 if (itemBase.IsStackable())
@@ -733,7 +733,7 @@ namespace Intersect_Server.Classes.Entities
 
         public bool TryGiveItem(ItemInstance item, bool SendUpdate = true)
         {
-            var itemBase = ItemBase.GetItem(item.ItemNum);
+            var itemBase = ItemBase.Lookup.Get(item.ItemNum);
             if (itemBase != null)
             {
                 if (itemBase.IsStackable())
@@ -784,7 +784,7 @@ namespace Intersect_Server.Classes.Entities
 
         public void DropItems(int slot, int amount)
         {
-            var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get(Inventory[slot].ItemNum);
             if (itemBase != null)
             {
                 if (itemBase.Bound > 0)
@@ -824,7 +824,7 @@ namespace Intersect_Server.Classes.Entities
         {
             bool equipped = false;
             var itemInstance = Inventory[slot];
-            var itemBase = ItemBase.GetItem(itemInstance.ItemNum);
+            var itemBase = ItemBase.Lookup.Get(itemInstance.ItemNum);
             if (itemBase != null)
             {
                 //Check if the user is silenced or stunned
@@ -916,9 +916,9 @@ namespace Intersect_Server.Classes.Entities
                                     if (Equipment[Options.WeaponIndex] > -1)
                                     {
                                         //If we have a 2-hand weapon, remove it to equip this new shield
-                                        if (ItemBase.GetItem(Inventory[Equipment[Options.WeaponIndex]].ItemNum) != null &&
+                                        if (ItemBase.Lookup.Get(Inventory[Equipment[Options.WeaponIndex]].ItemNum) != null &&
                                             Convert.ToBoolean(
-                                                ItemBase.GetItem(Inventory[Equipment[Options.WeaponIndex]].ItemNum)
+                                                ItemBase.Lookup.Get(Inventory[Equipment[Options.WeaponIndex]].ItemNum)
                                                     .Data4))
                                         {
                                             Equipment[Options.WeaponIndex] = -1;
@@ -980,7 +980,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 return false;
             }
-            var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get(Inventory[slot].ItemNum);
             if (itemBase != null)
             {
                 if (itemBase.IsStackable())
@@ -1057,7 +1057,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (Inventory[Equipment[Options.WeaponIndex]].ItemNum > -1)
                 {
-                    var item = ItemBase.GetItem(Inventory[Equipment[Options.WeaponIndex]].ItemNum);
+                    var item = ItemBase.Lookup.Get(Inventory[Equipment[Options.WeaponIndex]].ItemNum);
                     if (item != null)
                     {
                         return item.Damage;
@@ -1092,10 +1092,10 @@ namespace Intersect_Server.Classes.Entities
             int rewardItemVal = 0;
             int sellItemNum = Inventory[slot].ItemNum;
             if (InShop == -1) return;
-            ShopBase shop = ShopBase.GetShop(InShop);
+            ShopBase shop = ShopBase.Lookup.Get(InShop);
             if (shop != null)
             {
-                var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+                var itemBase = ItemBase.Lookup.Get(Inventory[slot].ItemNum);
                 if (itemBase != null)
                 {
                     if (itemBase.Bound > 0)
@@ -1187,12 +1187,12 @@ namespace Intersect_Server.Classes.Entities
             int buyItemNum = -1;
             int buyItemAmt = 1;
             if (InShop == -1) return;
-            ShopBase shop = ShopBase.GetShop(InShop);
+            ShopBase shop = ShopBase.Lookup.Get(InShop);
             if (shop != null)
             {
                 if (slot >= 0 && slot < shop.SellingItems.Count)
                 {
-                    var itemBase = ItemBase.GetItem(shop.SellingItems[slot].ItemNum);
+                    var itemBase = ItemBase.Lookup.Get(shop.SellingItems[slot].ItemNum);
                     if (itemBase != null)
                     {
                         buyItemNum = shop.SellingItems[slot].ItemNum;
@@ -1349,7 +1349,7 @@ namespace Intersect_Server.Classes.Entities
         public void DepositItem(int slot, int amount)
         {
             if (!InBank) return;
-            var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get(Inventory[slot].ItemNum);
             if (itemBase != null)
             {
                 if (Inventory[slot].ItemNum > -1)
@@ -1426,7 +1426,7 @@ namespace Intersect_Server.Classes.Entities
         public void WithdrawItem(int slot, int amount)
         {
             if (!InBank) return;
-            var itemBase = ItemBase.GetItem(Bank[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get(Bank[slot].ItemNum);
             var inventorySlot = -1;
             if (itemBase != null)
             {
@@ -1574,7 +1574,7 @@ namespace Intersect_Server.Classes.Entities
         public void StoreBagItem(int slot, int amount)
         {
             if (InBag < 0 || !HasBag(InBag)) return;
-            var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get(Inventory[slot].ItemNum);
             var bag = GetBag();
             if (itemBase != null && bag != null)
             {
@@ -1663,7 +1663,7 @@ namespace Intersect_Server.Classes.Entities
         {
             if (InBag < 0 || !HasBag(InBag)) return;
             var bag = GetBag();
-            var itemBase = ItemBase.GetItem(bag.Items[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get(bag.Items[slot].ItemNum);
             var inventorySlot = -1;
             if (itemBase != null)
             {
@@ -1800,7 +1800,7 @@ namespace Intersect_Server.Classes.Entities
         public void OfferItem(int slot, int amount)
         {
             if (Trading < 0) return;
-            var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get(Inventory[slot].ItemNum);
             if (itemBase != null)
             {
                 if (Inventory[slot].ItemNum > -1)
@@ -1894,7 +1894,7 @@ namespace Intersect_Server.Classes.Entities
         {
             if (Trading < 0) return;
 
-            ItemBase itemBase = ItemBase.GetItem(Trade[slot].ItemNum);
+            ItemBase itemBase = ItemBase.Lookup.Get(Trade[slot].ItemNum);
             if (itemBase == null)
             {
                 return;
@@ -2236,7 +2236,7 @@ namespace Intersect_Server.Classes.Entities
             Target = target;
             if (SpellBase.Lookup.Get(spellNum) != null)
             {
-                var spell = SpellBase.GetSpell(spellNum);
+                var spell = SpellBase.Lookup.Get(spellNum);
 
                 if (!EventInstance.MeetsConditionLists(spell.CastingReqs, this, null))
                 {
@@ -2263,7 +2263,7 @@ namespace Intersect_Server.Classes.Entities
                 if (spell.SpellType == (int) SpellTypes.CombatSpell &&
                     spell.TargetType == (int) SpellTargetTypes.Projectile && spell.Projectile > -1)
                 {
-                    var projectileBase = ProjectileBase.GetProjectile(spell.Projectile);
+                    var projectileBase = ProjectileBase.Lookup.Get(spell.Projectile);
                     if (projectileBase == null) return;
                     if (projectileBase.Ammo > -1)
                     {
@@ -2312,7 +2312,7 @@ namespace Intersect_Server.Classes.Entities
                                 //Check if the caster has the right ammunition if a projectile
                                 if (spell.SpellType == (int) SpellTargetTypes.Projectile && spell.Projectile > -1)
                                 {
-                                    var projectileBase = ProjectileBase.GetProjectile(spell.Projectile);
+                                    var projectileBase = ProjectileBase.Lookup.Get(spell.Projectile);
                                     if (projectileBase.Ammo > -1)
                                     {
                                         TakeItem(FindItem(projectileBase.Ammo, projectileBase.AmmoRequired),
@@ -2354,7 +2354,7 @@ namespace Intersect_Server.Classes.Entities
 
         public override void CastSpell(int SpellNum, int SpellSlot = -1)
         {
-            var spellBase = SpellBase.GetSpell(SpellNum);
+            var spellBase = SpellBase.Lookup.Get(SpellNum);
             if (spellBase != null)
             {
                 if (spellBase.SpellType == (int) SpellTypes.Event)
@@ -2569,7 +2569,7 @@ namespace Intersect_Server.Classes.Entities
             if (QuestOffers.Contains(questId))
             {
                 QuestOffers.Remove(questId);
-                var quest = QuestBase.GetQuest(questId);
+                var quest = QuestBase.Lookup.Get(questId);
                 if (quest != null)
                 {
                     StartQuest(quest);
@@ -2643,7 +2643,7 @@ namespace Intersect_Server.Classes.Entities
 
         public void CancelQuest(int questId)
         {
-            var quest = QuestBase.GetQuest(questId);
+            var quest = QuestBase.Lookup.Get(questId);
             if (quest != null)
             {
                 if (QuestInProgress(quest, QuestProgress.OnAnyTask, -1))
@@ -2665,7 +2665,7 @@ namespace Intersect_Server.Classes.Entities
 
         public void CompleteQuestTask(int questId, int taskId)
         {
-            var quest = QuestBase.GetQuest(questId);
+            var quest = QuestBase.Lookup.Get(questId);
             if (quest != null)
             {
                 if (Quests.ContainsKey(questId))
@@ -2716,13 +2716,13 @@ namespace Intersect_Server.Classes.Entities
         private void UpdateGatherItemQuests(int itemNum)
         {
             //If any quests demand that this item be gathered then let's handle it
-            var item = ItemBase.GetItem(itemNum);
+            var item = ItemBase.Lookup.Get(itemNum);
             if (item != null)
             {
                 for (int i = 0; i < Quests.Keys.Count; i++)
                 {
                     var questId = Quests.Keys.ToArray()[i];
-                    var quest = QuestBase.GetQuest(questId);
+                    var quest = QuestBase.Lookup.Get(questId);
                     if (quest != null)
                     {
                         if (Quests[questId].task > -1)

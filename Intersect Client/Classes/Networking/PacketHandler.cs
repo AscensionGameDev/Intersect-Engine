@@ -923,10 +923,10 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             int EntityNum = bf.ReadInteger();
             int SpellNum = bf.ReadInteger();
-            if (SpellBase.GetSpell(SpellNum) != null && Globals.Entities.ContainsKey(EntityNum))
+            if (SpellBase.Lookup.Get(SpellNum) != null && Globals.Entities.ContainsKey(EntityNum))
             {
                 Globals.Entities[EntityNum].CastTime = Globals.System.GetTimeMS() +
-                                                       SpellBase.GetSpell(SpellNum).CastDuration * 100;
+                                                       SpellBase.Lookup.Get(SpellNum).CastDuration * 100;
                 Globals.Entities[EntityNum].SpellCast = SpellNum;
             }
             bf.Dispose();
@@ -937,10 +937,10 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int SpellSlot = bf.ReadInteger();
-            if (SpellBase.GetSpell(Globals.Me.Spells[SpellSlot].SpellNum) != null)
+            if (SpellBase.Lookup.Get(Globals.Me.Spells[SpellSlot].SpellNum) != null)
             {
                 Globals.Me.Spells[SpellSlot].SpellCD = Globals.System.GetTimeMS() +
-                                                       (SpellBase.GetSpell(Globals.Me.Spells[SpellSlot].SpellNum)
+                                                       (SpellBase.Lookup.Get(Globals.Me.Spells[SpellSlot].SpellNum)
                                                             .CooldownDuration * 100);
             }
             bf.Dispose();
@@ -1191,7 +1191,7 @@ namespace Intersect_Client.Classes.Networking
                 case GameObject.Item:
                     if (deleted)
                     {
-                        var itm = ItemBase.GetItem(id);
+                        var itm = ItemBase.Lookup.Get(id);
                         itm.Delete();
                     }
                     else
@@ -1204,7 +1204,7 @@ namespace Intersect_Client.Classes.Networking
                 case GameObject.Npc:
                     if (deleted)
                     {
-                        var npc = NpcBase.GetNpc(id);
+                        var npc = NpcBase.Lookup.Get(id);
                         npc.Delete();
                     }
                     else
@@ -1217,7 +1217,7 @@ namespace Intersect_Client.Classes.Networking
                 case GameObject.Projectile:
                     if (deleted)
                     {
-                        var proj = ProjectileBase.GetProjectile(id);
+                        var proj = ProjectileBase.Lookup.Get(id);
                         proj.Delete();
                     }
                     else
@@ -1230,7 +1230,7 @@ namespace Intersect_Client.Classes.Networking
                 case GameObject.Quest:
                     if (deleted)
                     {
-                        var qst = QuestBase.GetQuest(id);
+                        var qst = QuestBase.Lookup.Get(id);
                         qst.Delete();
                         Gui.GameUI.NotifyQuestsUpdated();
                     }
@@ -1245,7 +1245,7 @@ namespace Intersect_Client.Classes.Networking
                 case GameObject.Resource:
                     if (deleted)
                     {
-                        var res = ResourceBase.GetResource(id);
+                        var res = ResourceBase.Lookup.Get(id);
                         res.Delete();
                     }
                     else
@@ -1258,7 +1258,7 @@ namespace Intersect_Client.Classes.Networking
                 case GameObject.Shop:
                     if (deleted)
                     {
-                        var shp = ShopBase.GetShop(id);
+                        var shp = ShopBase.Lookup.Get(id);
                         shp.Delete();
                     }
                     else
@@ -1284,7 +1284,7 @@ namespace Intersect_Client.Classes.Networking
                 case GameObject.Spell:
                     if (deleted)
                     {
-                        var spl = SpellBase.GetSpell(id);
+                        var spl = SpellBase.Lookup.Get(id);
                         spl.Delete();
                     }
                     else

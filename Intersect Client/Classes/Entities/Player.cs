@@ -154,12 +154,12 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryDropItem(int index)
         {
-            if (ItemBase.GetItem(Inventory[index].ItemNum) != null)
+            if (ItemBase.Lookup.Get(Inventory[index].ItemNum) != null)
             {
                 if (Inventory[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("inventory", "dropitem"),
-                        Strings.Get("inventory", "dropitemprompt", ItemBase.GetItem(Inventory[index].ItemNum).Name),
+                        Strings.Get("inventory", "dropitemprompt", ItemBase.Lookup.Get(Inventory[index].ItemNum).Name),
                         true, DropItemInputBoxOkay, null, index, true);
                 }
                 else
@@ -212,7 +212,7 @@ namespace Intersect_Client.Classes.Entities
 
         public void TrySellItem(int index)
         {
-            if (ItemBase.GetItem(Inventory[index].ItemNum) != null)
+            if (ItemBase.Lookup.Get(Inventory[index].ItemNum) != null)
             {
                 int foundItem = -1;
                 for (int i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
@@ -229,7 +229,7 @@ namespace Intersect_Client.Classes.Entities
                     if (Inventory[index].ItemVal > 1)
                     {
                         InputBox iBox = new InputBox(Strings.Get("shop", "sellitem"),
-                            Strings.Get("shop", "sellitemprompt", ItemBase.GetItem(Inventory[index].ItemNum).Name), true,
+                            Strings.Get("shop", "sellitemprompt", ItemBase.Lookup.Get(Inventory[index].ItemNum).Name), true,
                             SellItemInputBoxOkay, null, index, true);
                     }
                     else
@@ -257,12 +257,12 @@ namespace Intersect_Client.Classes.Entities
         //bank
         public void TryDepositItem(int index)
         {
-            if (ItemBase.GetItem(Inventory[index].ItemNum) != null)
+            if (ItemBase.Lookup.Get(Inventory[index].ItemNum) != null)
             {
                 if (Inventory[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("bank", "deposititem"),
-                        Strings.Get("bank", "deposititemprompt", ItemBase.GetItem(Inventory[index].ItemNum).Name), true,
+                        Strings.Get("bank", "deposititemprompt", ItemBase.Lookup.Get(Inventory[index].ItemNum).Name), true,
                         DepositItemInputBoxOkay, null, index, true);
                 }
                 else
@@ -283,12 +283,12 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryWithdrawItem(int index)
         {
-            if (Globals.Bank[index] != null && ItemBase.GetItem(Globals.Bank[index].ItemNum) != null)
+            if (Globals.Bank[index] != null && ItemBase.Lookup.Get(Globals.Bank[index].ItemNum) != null)
             {
                 if (Globals.Bank[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("bank", "withdrawitem"),
-                        Strings.Get("bank", "withdrawitemprompt", ItemBase.GetItem(Globals.Bank[index].ItemNum).Name),
+                        Strings.Get("bank", "withdrawitemprompt", ItemBase.Lookup.Get(Globals.Bank[index].ItemNum).Name),
                         true, WithdrawItemInputBoxOkay, null, index, true);
                 }
                 else
@@ -310,12 +310,12 @@ namespace Intersect_Client.Classes.Entities
         //Bag
         public void TryStoreBagItem(int index)
         {
-            if (ItemBase.GetItem(Inventory[index].ItemNum) != null)
+            if (ItemBase.Lookup.Get(Inventory[index].ItemNum) != null)
             {
                 if (Inventory[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("bags", "storeitem"),
-                        Strings.Get("bags", "storeitemprompt", ItemBase.GetItem(Inventory[index].ItemNum).Name), true,
+                        Strings.Get("bags", "storeitemprompt", ItemBase.Lookup.Get(Inventory[index].ItemNum).Name), true,
                         StoreBagItemInputBoxOkay, null, index, true);
                 }
                 else
@@ -336,12 +336,12 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryRetreiveBagItem(int index)
         {
-            if (Globals.Bag[index] != null && ItemBase.GetItem(Globals.Bag[index].ItemNum) != null)
+            if (Globals.Bag[index] != null && ItemBase.Lookup.Get(Globals.Bag[index].ItemNum) != null)
             {
                 if (Globals.Bag[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("bags", "retreiveitem"),
-                        Strings.Get("bags", "retreiveitemprompt", ItemBase.GetItem(Globals.Bag[index].ItemNum).Name),
+                        Strings.Get("bags", "retreiveitemprompt", ItemBase.Lookup.Get(Globals.Bag[index].ItemNum).Name),
                         true, RetreiveBagItemInputBoxOkay, null, index, true);
                 }
                 else
@@ -363,12 +363,12 @@ namespace Intersect_Client.Classes.Entities
         //Trade
         public void TryTradeItem(int index)
         {
-            if (ItemBase.GetItem(Inventory[index].ItemNum) != null)
+            if (ItemBase.Lookup.Get(Inventory[index].ItemNum) != null)
             {
                 if (Inventory[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("trading", "offeritem"),
-                        Strings.Get("trading", "offeritemprompt", ItemBase.GetItem(Inventory[index].ItemNum).Name), true,
+                        Strings.Get("trading", "offeritemprompt", ItemBase.Lookup.Get(Inventory[index].ItemNum).Name), true,
                         TradeItemInputBoxOkay, null, index, true);
                 }
                 else
@@ -389,13 +389,13 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryRevokeItem(int index)
         {
-            if (Globals.Trade[0, index] != null && ItemBase.GetItem(Globals.Trade[0, index].ItemNum) != null)
+            if (Globals.Trade[0, index] != null && ItemBase.Lookup.Get(Globals.Trade[0, index].ItemNum) != null)
             {
                 if (Globals.Trade[0, index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("trading", "revokeitem"),
                         Strings.Get("trading", "revokeitemprompt",
-                            ItemBase.GetItem(Globals.Trade[0, index].ItemNum).Name), true, RevokeItemInputBoxOkay, null,
+                            ItemBase.Lookup.Get(Globals.Trade[0, index].ItemNum).Name), true, RevokeItemInputBoxOkay, null,
                         index, true);
                 }
                 else
@@ -424,10 +424,10 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryForgetSpell(int index)
         {
-            if (SpellBase.GetSpell(Spells[index].SpellNum) != null)
+            if (SpellBase.Lookup.Get(Spells[index].SpellNum) != null)
             {
                 InputBox iBox = new InputBox(Strings.Get("spells", "forgetspell"),
-                    Strings.Get("spells", "forgetspellprompt", SpellBase.GetSpell(Spells[index].SpellNum).Name), true,
+                    Strings.Get("spells", "forgetspellprompt", SpellBase.Lookup.Get(Spells[index].SpellNum).Name), true,
                     ForgetSpellInputBoxOkay, null, index, false);
             }
         }
@@ -532,7 +532,7 @@ namespace Intersect_Client.Classes.Entities
 
             if (Options.ShieldIndex > -1 && Globals.Me.Equipment[Options.ShieldIndex] > -1)
             {
-                var item = ItemBase.GetItem(Globals.Me.Inventory[Globals.Me.Equipment[Options.ShieldIndex]].ItemNum);
+                var item = ItemBase.Lookup.Get(Globals.Me.Inventory[Globals.Me.Equipment[Options.ShieldIndex]].ItemNum);
                 if (item != null)
                 {
                     PacketSender.SendBlock(1);
@@ -600,7 +600,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 if (Options.WeaponIndex > -1 && Globals.Me.Equipment[Options.WeaponIndex] > -1)
                 {
-                    var item = ItemBase.GetItem(Globals.Me.Inventory[Globals.Me.Equipment[Options.WeaponIndex]].ItemNum);
+                    var item = ItemBase.Lookup.Get(Globals.Me.Inventory[Globals.Me.Equipment[Options.WeaponIndex]].ItemNum);
                     if (item != null && item.Projectile >= 0)
                     {
                         PacketSender.SendAttack(-1);
@@ -626,7 +626,7 @@ namespace Intersect_Client.Classes.Entities
             //If has a weapon with a projectile equiped, attack anyway
             if (Options.WeaponIndex > -1 && Globals.Me.Equipment[Options.WeaponIndex] > -1)
             {
-                var item = ItemBase.GetItem(Globals.Me.Inventory[Globals.Me.Equipment[Options.WeaponIndex]].ItemNum);
+                var item = ItemBase.Lookup.Get(Globals.Me.Inventory[Globals.Me.Equipment[Options.WeaponIndex]].ItemNum);
                 if (item != null && item.Projectile >= 0)
                 {
                     PacketSender.SendAttack(_targetIndex);

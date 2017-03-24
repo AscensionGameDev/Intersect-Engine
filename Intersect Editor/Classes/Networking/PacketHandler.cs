@@ -328,7 +328,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.Item:
                     if (deleted)
                     {
-                        var itm = ItemBase.GetItem(id);
+                        var itm = ItemBase.Lookup.Get(id);
                         itm.Delete();
                     }
                     else
@@ -341,7 +341,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.Npc:
                     if (deleted)
                     {
-                        var npc = NpcBase.GetNpc(id);
+                        var npc = NpcBase.Lookup.Get(id);
                         npc.Delete();
                     }
                     else
@@ -354,7 +354,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.Projectile:
                     if (deleted)
                     {
-                        var proj = ProjectileBase.GetProjectile(id);
+                        var proj = ProjectileBase.Lookup.Get(id);
                         proj.Delete();
                     }
                     else
@@ -367,7 +367,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.Quest:
                     if (deleted)
                     {
-                        var qst = QuestBase.GetQuest(id);
+                        var qst = QuestBase.Lookup.Get(id);
                         qst.Delete();
                     }
                     else
@@ -380,7 +380,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.Resource:
                     if (deleted)
                     {
-                        var res = ResourceBase.GetResource(id);
+                        var res = ResourceBase.Lookup.Get(id);
                         res.Delete();
                     }
                     else
@@ -393,7 +393,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.Shop:
                     if (deleted)
                     {
-                        var shp = ShopBase.GetShop(id);
+                        var shp = ShopBase.Lookup.Get(id);
                         shp.Delete();
                     }
                     else
@@ -406,7 +406,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.Spell:
                     if (deleted)
                     {
-                        var spl = SpellBase.GetSpell(id);
+                        var spl = SpellBase.Lookup.Get(id);
                         spl.Delete();
                     }
                     else
@@ -448,7 +448,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.PlayerSwitch:
                     if (deleted)
                     {
-                        var pswtch = PlayerSwitchBase.GetSwitch(id);
+                        var pswtch = PlayerSwitchBase.Lookup.Get(id);
                         pswtch.Delete();
                     }
                     else
@@ -461,7 +461,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.PlayerVariable:
                     if (deleted)
                     {
-                        var pvar = PlayerVariableBase.GetVariable(id);
+                        var pvar = PlayerVariableBase.Lookup.Get(id);
                         pvar.Delete();
                     }
                     else
@@ -474,7 +474,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.ServerSwitch:
                     if (deleted)
                     {
-                        var sswtch = ServerSwitchBase.GetServerSwitch(id);
+                        var sswtch = ServerSwitchBase.Lookup.Get(id);
                         sswtch.Delete();
                     }
                     else
@@ -487,7 +487,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.ServerVariable:
                     if (deleted)
                     {
-                        var svar = ServerVariableBase.GetServerVariable(id);
+                        var svar = ServerVariableBase.Lookup.Get(id);
                         svar.Delete();
                     }
                     else

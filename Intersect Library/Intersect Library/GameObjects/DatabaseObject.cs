@@ -58,22 +58,9 @@ namespace Intersect.GameObjects
         public abstract byte[] BinaryData { get; }
         public abstract GameObject GameObjectType { get; }
         public abstract string DatabaseTableName { get; }
-        
         public virtual void Delete() => Lookup.Delete((TObject)this);
 
         public static string GetName(int index) => Lookup.Get(index)?.Name ?? "Deleted";
-        
-        public static ItemBase GetItem(int index) => (ItemBase)(DatabaseObject)Lookup.Get(index);
-        public static NpcBase GetNpc(int index) => (NpcBase)(DatabaseObject)Lookup.Get(index);
-        public static QuestBase GetQuest(int index) => (QuestBase)(DatabaseObject)Lookup.Get(index);
-        public static ProjectileBase GetProjectile(int index) => (ProjectileBase)(DatabaseObject)Lookup.Get(index);
-        public static ShopBase GetShop(int index) => (ShopBase)(DatabaseObject)Lookup.Get(index);
-        public static PlayerSwitchBase GetSwitch(int index) => (PlayerSwitchBase)(DatabaseObject)Lookup.Get(index);
-        public static PlayerVariableBase GetVariable(int index) => (PlayerVariableBase)(DatabaseObject)Lookup.Get(index);
-        public static ServerSwitchBase GetServerSwitch(int index) => (ServerSwitchBase)(DatabaseObject)Lookup.Get(index);
-        public static SpellBase GetSpell(int index) => (SpellBase)(DatabaseObject)Lookup.Get(index);
-        public static ResourceBase GetResource(int index) => (ResourceBase)(DatabaseObject)Lookup.Get(index);
-        public static ServerVariableBase GetServerVariable(int index) => (ServerVariableBase)(DatabaseObject)Lookup.Get(index);
     }
 
     public static class DatabaseObjectUtils

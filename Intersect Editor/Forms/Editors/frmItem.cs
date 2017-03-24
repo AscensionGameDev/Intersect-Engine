@@ -73,7 +73,7 @@ namespace Intersect_Editor.Forms
 
         private void lstItems_Click(object sender, EventArgs e)
         {
-            _editorItem = ItemBase.GetItem(Database.GameObjectIdFromList(GameObject.Item, lstItems.SelectedIndex));
+            _editorItem = ItemBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Item, lstItems.SelectedIndex));
             UpdateEditor();
         }
 

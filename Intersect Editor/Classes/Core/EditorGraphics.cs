@@ -983,7 +983,7 @@ namespace Intersect_Editor.Classes
                     {
                         if (tmpMap.Attributes[x, y].value == (int) MapAttributes.Resource && !upper)
                         {
-                            var resource = ResourceBase.GetResource(tmpMap.Attributes[x, y].data1);
+                            var resource = ResourceBase.Lookup.Get(tmpMap.Attributes[x, y].data1);
                             if (resource != null)
                             {
                                 if (resource.Name != "" & resource.InitialGraphic != Strings.Get("general", "none"))

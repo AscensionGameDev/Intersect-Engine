@@ -77,7 +77,7 @@ namespace Intersect_Editor.Classes
         private void lstResources_Click(object sender, EventArgs e)
         {
             _editorItem =
-                ResourceBase.GetResource(Database.GameObjectIdFromList(GameObject.Resource, lstResources.SelectedIndex));
+                ResourceBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Resource, lstResources.SelectedIndex));
             UpdateEditor();
         }
 
