@@ -165,7 +165,7 @@ namespace Intersect_Client.Classes.Core
                                 (int)
                                 Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
 
-                            foreach (var map in MapInstance.GetObjects().Values)
+                            foreach (var map in MapInstance.Lookup.Values)
                             {
                                 if (x >= map.GetX() && x <= map.GetX() + (Options.MapWidth * Options.TileWidth))
                                 {

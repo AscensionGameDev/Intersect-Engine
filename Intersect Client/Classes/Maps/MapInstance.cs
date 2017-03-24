@@ -17,8 +17,11 @@ using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.Maps
 {
-    public class MapInstance : MapBase
+    public class MapInstance : MapBase, IGameObject<int, MapInstance>
     {
+        private static MapInstances<MapInstance> sLookup;
+
+        public new static MapInstances<MapInstance> Lookup => (sLookup = (sLookup ?? new MapInstances<MapInstance>(MapBase.Lookup)));
         //Client Only Values
 
         //Map State Variables
@@ -142,10 +145,10 @@ namespace Intersect_Client.Classes.Maps
 
         public bool InView()
         {
-            if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0 || GetMap(Globals.Me.CurrentMap) == null)
+            if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0 || Lookup.Get(Globals.Me.CurrentMap) == null)
                 return true;
-            var gridX = GetMap(Globals.Me.CurrentMap).MapGridX;
-            var gridY = GetMap(Globals.Me.CurrentMap).MapGridY;
+            var gridX = Lookup.Get(Globals.Me.CurrentMap).MapGridX;
+            var gridY = Lookup.Get(Globals.Me.CurrentMap).MapGridY;
             for (int x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -179,7 +182,7 @@ namespace Intersect_Client.Classes.Maps
                             }
                             else
                             {
-                                mapBase[x + 1, y + 1] = GetMap(Globals.MapGrid[x1, y1]);
+                                mapBase[x + 1, y + 1] = Lookup.Get(Globals.MapGrid[x1, y1]);
                             }
                         }
                     }
@@ -189,16 +192,10 @@ namespace Intersect_Client.Classes.Maps
         }
 
         //Retreives the X Position of the Left side of the map in world space.
-        public float GetX()
-        {
-            return MapGridX * Options.MapWidth * Options.TileWidth;
-        }
+        public float GetX() => MapGridX * Options.MapWidth * Options.TileWidth;
 
         //Retreives the Y Position of the Top side of the map in world space.
-        public float GetY()
-        {
-            return MapGridY * Options.MapHeight * Options.TileHeight;
-        }
+        public float GetY() => MapGridY * Options.MapHeight * Options.TileHeight;
 
         //Attribute References
         private void UpdateMapAttributes()
@@ -554,7 +551,7 @@ namespace Intersect_Client.Classes.Maps
         //Fogs/Panorama/Overlay
         private void DrawFog()
         {
-            if (Globals.Me == null || GetMap(Globals.Me.CurrentMap) == null) return;
+            if (Globals.Me == null || Lookup.Get(Globals.Me.CurrentMap) == null) return;
             float ecTime = Globals.System.GetTimeMS() - _fogUpdateTime;
             _fogUpdateTime = Globals.System.GetTimeMS();
             if (Id == Globals.Me.CurrentMap)
@@ -811,57 +808,9 @@ namespace Intersect_Client.Classes.Maps
             }
         }
 
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
+        public override GameObject GameObjectType => OBJECT_TYPE;
 
-        public new static MapInstance GetMap(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (MapInstance) Objects[index];
-            }
-            return null;
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            Objects.Remove(((DatabaseObject) this).Id);
-            MapBase.Lookup.Delete(this);
-        }
-
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-            MapBase.Lookup.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            Objects.Add(index, obj);
-            MapBase.Lookup.Set(index, (MapBase) obj);
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, MapInstance> GetObjects()
-        {
-            Dictionary<int, MapInstance> objects = Objects.ToDictionary(k => k.Key, v => (MapInstance) v.Value);
-            return objects;
-        }
+        public override void Delete() => Lookup.Delete(this);
 
         //Dispose
         public void Dispose(bool prep = true, bool killentities = true)
@@ -949,7 +898,7 @@ namespace Intersect_Client.Classes.Maps
         {
             if (TransmittionTimer <= Globals.System.GetTimeMS())
             {
-                MapInstance.GetMap(MapNum).ActionMsgs.Remove(this);
+                MapInstance.Lookup.Get(MapNum).ActionMsgs.Remove(this);
             }
         }
     }

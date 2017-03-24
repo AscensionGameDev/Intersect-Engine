@@ -288,7 +288,7 @@ namespace Intersect_Client.Classes.Networking
             var mapLength = bf.ReadLong();
             var mapData = bf.ReadBytes((int) mapLength);
             var revision = bf.ReadInteger();
-            var map = MapInstance.GetMap(mapNum);
+            var map = MapInstance.Lookup.Get(mapNum);
             if (map != null)
             {
                 if (revision == map.Revision)
@@ -301,7 +301,7 @@ namespace Intersect_Client.Classes.Networking
                 }
             }
             map = new MapInstance((int) mapNum);
-            MapInstance.AddObject(mapNum, map);
+            MapInstance.Lookup.Set(mapNum, map);
             map.Load(mapData);
             if ((mapNum) == Globals.Me.CurrentMap)
             {
@@ -419,12 +419,12 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                if (MapInstance.GetMap(mapNum) == null) return;
-                if (!MapInstance.GetMap(mapNum).LocalEntities.ContainsKey(index))
+                if (MapInstance.Lookup.Get(mapNum) == null) return;
+                if (!MapInstance.Lookup.Get(mapNum).LocalEntities.ContainsKey(index))
                 {
                     return;
                 }
-                en = MapInstance.GetMap(mapNum).LocalEntities[index];
+                en = MapInstance.Lookup.Get(mapNum).LocalEntities[index];
             }
             if (en == Globals.Me &&
                 (Globals.Me.DashQueue.Count > 0 || Globals.Me.DashTimer > Globals.System.GetTimeMS())) return;
@@ -466,7 +466,7 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                var map = MapInstance.GetMap(mapNum);
+                var map = MapInstance.Lookup.Get(mapNum);
                 if (map != null)
                 {
                     if (map.LocalEntities.ContainsKey(index))
@@ -492,7 +492,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var map = MapInstance.GetMap(bf.ReadInteger());
+            var map = MapInstance.Lookup.Get(bf.ReadInteger());
             if (map != null)
             {
                 map.ActionMsgs.Add(new ActionMsgInstance(((DatabaseObject) map).Id, bf.ReadInteger(), bf.ReadInteger(),
@@ -542,7 +542,7 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                var gameMap = MapInstance.GetMap(mapNum);
+                var gameMap = MapInstance.Lookup.Get(mapNum);
                 if (gameMap == null) return;
                 if (!gameMap.LocalEntities.ContainsKey(index))
                 {
@@ -554,7 +554,7 @@ namespace Intersect_Client.Classes.Networking
             {
                 return;
             }
-            var entityMap = MapInstance.GetMap(en.CurrentMap);
+            var entityMap = MapInstance.Lookup.Get(en.CurrentMap);
             if (entityMap == null)
             {
                 return;
@@ -624,7 +624,7 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                var entityMap = MapInstance.GetMap(mapNum);
+                var entityMap = MapInstance.Lookup.Get(mapNum);
                 if (entityMap == null) return;
                 if (!entityMap.LocalEntities.ContainsKey(index))
                 {
@@ -669,7 +669,7 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                var entityMap = MapInstance.GetMap(mapNum);
+                var entityMap = MapInstance.Lookup.Get(mapNum);
                 if (entityMap == null) return;
                 if (!entityMap.LocalEntities.ContainsKey(index))
                 {
@@ -705,7 +705,7 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                var entityMap = MapInstance.GetMap(mapNum);
+                var entityMap = MapInstance.Lookup.Get(mapNum);
                 if (entityMap == null) return;
                 if (!entityMap.LocalEntities.ContainsKey(index))
                 {
@@ -740,7 +740,7 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                var entityMap = MapInstance.GetMap(mapNum);
+                var entityMap = MapInstance.Lookup.Get(mapNum);
                 if (entityMap == null) return;
                 if (!entityMap.LocalEntities.ContainsKey(index))
                 {
@@ -798,7 +798,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int mapNum = bf.ReadInteger();
-            var map = MapInstance.GetMap(mapNum);
+            var map = MapInstance.Lookup.Get(mapNum);
             if (map == null) return;
             map.MapItems.Clear();
             int itemCount = bf.ReadInteger();
@@ -821,7 +821,7 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             int mapNum = bf.ReadInteger();
             int index = bf.ReadInteger();
-            var map = MapInstance.GetMap(mapNum);
+            var map = MapInstance.Lookup.Get(mapNum);
             if (map != null)
             {
                 if (bf.ReadInteger() == -1)
@@ -987,7 +987,7 @@ namespace Intersect_Client.Classes.Networking
             if (targetType == -1)
             {
                 int mapNum = bf.ReadInteger();
-                var map = MapInstance.GetMap(mapNum);
+                var map = MapInstance.Lookup.Get(mapNum);
                 if (map != null)
                 {
                     map.AddTileAnimation(animNum, bf.ReadInteger(), bf.ReadInteger(), bf.ReadInteger());
@@ -1020,7 +1020,7 @@ namespace Intersect_Client.Classes.Networking
                 bf.ReadInteger();
                 bf.ReadInteger();
                 int dir = bf.ReadInteger();
-                var map = MapInstance.GetMap(mapIndex);
+                var map = MapInstance.Lookup.Get(mapIndex);
                 if (map != null)
                 {
                     if (entityIndex >= 0 && entityIndex < map.LocalEntities.Count)
@@ -1345,7 +1345,7 @@ namespace Intersect_Client.Classes.Networking
             Globals.MapGrid = new int[Globals.MapGridWidth, Globals.MapGridHeight];
             if (clearKnownMaps)
             {
-                var maps = MapInstance.GetObjects();
+                var maps = MapInstance.Lookup;
                 foreach (var map in maps)
                 {
                     map.Value.Dispose();
@@ -1432,7 +1432,7 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                var entityMap = MapInstance.GetMap(mapNum);
+                var entityMap = MapInstance.Lookup.Get(mapNum);
                 if (entityMap == null) return;
                 if (!entityMap.LocalEntities.ContainsKey(index))
                 {

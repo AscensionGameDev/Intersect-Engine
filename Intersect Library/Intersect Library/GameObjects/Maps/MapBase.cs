@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect.Collections;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
 
@@ -7,6 +8,35 @@ namespace Intersect.GameObjects.Maps
 {
     public class MapBase : DatabaseObject<MapBase>
     {
+        public class MapInstances<TInstanceType> : IntObjectLookup<TInstanceType> where TInstanceType : MapBase, IGameObject<int, TInstanceType>
+        {
+            private readonly IntObjectLookup<MapBase> mBaseLookup;
+
+            public MapInstances(IntObjectLookup<MapBase> baseLookup)
+            {
+                if (mBaseLookup == null) throw new ArgumentNullException();
+                mBaseLookup = baseLookup;
+            }
+
+            public override bool Set(int key, TInstanceType value)
+            {
+                mBaseLookup?.Set(key, value);
+                return base.Set(key, value);
+            }
+
+            public override bool Delete(TInstanceType value)
+            {
+                mBaseLookup?.Delete(value);
+                return base.Delete(value);
+            }
+
+            public override void Clear()
+            {
+                mBaseLookup?.Clear();
+                base.Clear();
+            }
+        }
+
         public new const string DATABASE_TABLE = "maps";
         public new const GameObject OBJECT_TYPE = GameObject.Map;
 

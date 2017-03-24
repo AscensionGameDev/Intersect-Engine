@@ -10,8 +10,12 @@ using Intersect_Editor.Classes.Entities;
 
 namespace Intersect_Editor.Classes.Maps
 {
-    public class MapInstance : MapBase
+    public class MapInstance : MapBase, IGameObject<int, MapInstance>
     {
+        private static MapInstances<MapInstance> sLookup;
+
+        public new static MapInstances<MapInstance> Lookup => (sLookup = (sLookup ?? new MapInstances<MapInstance>(MapBase.Lookup)));
+
         //Map Attributes
         public new const GameObject OBJECT_TYPE = GameObject.Map;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();

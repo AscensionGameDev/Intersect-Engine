@@ -68,13 +68,13 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (value != base.CurrentMap)
                 {
-                    var oldMap = MapInstance.GetMap(base.CurrentMap);
-                    var newMap = MapInstance.GetMap(value);
+                    var oldMap = MapInstance.Lookup.Get(base.CurrentMap);
+                    var newMap = MapInstance.Lookup.Get(value);
                     base.CurrentMap = value;
                     if (Globals.Me == this)
                     {
-                        if (MapInstance.GetMap(Globals.Me.CurrentMap) != null)
-                            GameAudio.PlayMusic(MapInstance.GetMap(Globals.Me.CurrentMap).Music, 3, 3, true);
+                        if (MapInstance.Lookup.Get(Globals.Me.CurrentMap) != null)
+                            GameAudio.PlayMusic(MapInstance.Lookup.Get(Globals.Me.CurrentMap).Music, 3, 3, true);
                         if (newMap != null && oldMap != null)
                         {
                             newMap.CompareEffects(oldMap);
@@ -460,15 +460,15 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (CurrentY < Options.MapHeight && CurrentY >= 0)
                 {
-                    if (MapInstance.GetMap(CurrentMap) != null &&
-                        MapInstance.GetMap(CurrentMap).Attributes[CurrentX, CurrentY] != null)
+                    if (MapInstance.Lookup.Get(CurrentMap) != null &&
+                        MapInstance.Lookup.Get(CurrentMap).Attributes[CurrentX, CurrentY] != null)
                     {
-                        if (MapInstance.GetMap(CurrentMap).Attributes[CurrentX, CurrentY].value ==
+                        if (MapInstance.Lookup.Get(CurrentMap).Attributes[CurrentX, CurrentY].value ==
                             (int) MapAttributes.ZDimension)
                         {
-                            if (MapInstance.GetMap(CurrentMap).Attributes[CurrentX, CurrentY].data1 > 0)
+                            if (MapInstance.Lookup.Get(CurrentMap).Attributes[CurrentX, CurrentY].data1 > 0)
                             {
-                                CurrentZ = MapInstance.GetMap(CurrentMap).Attributes[CurrentX, CurrentY].data1 - 1;
+                                CurrentZ = MapInstance.Lookup.Get(CurrentMap).Attributes[CurrentX, CurrentY].data1 - 1;
                             }
                         }
                     }
@@ -581,7 +581,7 @@ namespace Intersect_Client.Classes.Entities
             }
             if (GetRealLocation(ref x, ref y, ref map))
             {
-                foreach (var eventMap in MapInstance.GetObjects().Values)
+                foreach (var eventMap in MapInstance.Lookup.Values)
                 {
                     foreach (var en in eventMap.LocalEntities)
                     {
@@ -642,10 +642,10 @@ namespace Intersect_Client.Classes.Entities
             var tmpX = x;
             var tmpY = y;
             var tmpI = -1;
-            if (MapInstance.GetMap(map) != null)
+            if (MapInstance.Lookup.Get(map) != null)
             {
-                var gridX = MapInstance.GetMap(map).MapGridX;
-                var gridY = MapInstance.GetMap(map).MapGridY;
+                var gridX = MapInstance.Lookup.Get(map).MapGridX;
+                var gridY = MapInstance.Lookup.Get(map).MapGridY;
 
                 if (x < 0)
                 {
@@ -670,7 +670,7 @@ namespace Intersect_Client.Classes.Entities
 
                 if (gridX >= 0 && gridX < Globals.MapGridWidth && gridY >= 0 && gridY < Globals.MapGridHeight)
                 {
-                    if (MapInstance.GetMap(Globals.MapGrid[gridX, gridY]) != null)
+                    if (MapInstance.Lookup.Get(Globals.MapGrid[gridX, gridY]) != null)
                     {
                         x = tmpX;
                         y = tmpY;
@@ -687,7 +687,7 @@ namespace Intersect_Client.Classes.Entities
             var x = (int) Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
             var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
 
-            foreach (var map in MapInstance.GetObjects().Values)
+            foreach (var map in MapInstance.Lookup.Values)
             {
                 if (x >= map.GetX() && x <= map.GetX() + (Options.MapWidth * Options.TileWidth))
                 {
@@ -739,7 +739,7 @@ namespace Intersect_Client.Classes.Entities
                                     }
                                 }
                             }
-                            foreach (var eventMap in MapInstance.GetObjects().Values)
+                            foreach (var eventMap in MapInstance.Lookup.Values)
                             {
                                 foreach (var en in eventMap.LocalEntities)
                                 {
@@ -791,7 +791,7 @@ namespace Intersect_Client.Classes.Entities
 
         public bool TryPickupItem()
         {
-            var map = MapInstance.GetMap(CurrentMap);
+            var map = MapInstance.Lookup.Get(CurrentMap);
             if (map == null)
             {
                 return false;
@@ -900,8 +900,8 @@ namespace Intersect_Client.Classes.Entities
                         if (CurrentX < 0 || CurrentY < 0 || CurrentX > (Options.MapWidth - 1) ||
                             CurrentY > (Options.MapHeight - 1))
                         {
-                            var gridX = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridX;
-                            var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
+                            var gridX = MapInstance.Lookup.Get(Globals.Me.CurrentMap).MapGridX;
+                            var gridY = MapInstance.Lookup.Get(Globals.Me.CurrentMap).MapGridY;
                             if (CurrentX < 0)
                             {
                                 gridX--;
@@ -950,10 +950,10 @@ namespace Intersect_Client.Classes.Entities
         public void FetchNewMaps()
         {
             if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0) return;
-            if (MapInstance.GetMap(Globals.Me.CurrentMap) != null)
+            if (MapInstance.Lookup.Get(Globals.Me.CurrentMap) != null)
             {
-                var gridX = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridX;
-                var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
+                var gridX = MapInstance.Lookup.Get(Globals.Me.CurrentMap).MapGridX;
+                var gridY = MapInstance.Lookup.Get(Globals.Me.CurrentMap).MapGridY;
                 for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
                     for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -961,7 +961,7 @@ namespace Intersect_Client.Classes.Entities
                         if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
                             Globals.MapGrid[x, y] != -1)
                         {
-                            if (MapInstance.GetMap(Globals.MapGrid[x, y]) == null)
+                            if (MapInstance.Lookup.Get(Globals.MapGrid[x, y]) == null)
                             {
                                 PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
                             }
@@ -982,7 +982,7 @@ namespace Intersect_Client.Classes.Entities
         /// <returns></returns>
         public int IsTileBlocked(int x, int y, int z, int map)
         {
-            var mapInstance = MapInstance.GetMap(map);
+            var mapInstance = MapInstance.Lookup.Get(map);
             if (mapInstance == null) return -2;
             var gridX = mapInstance.MapGridX;
             var gridY = mapInstance.MapGridY;
@@ -1015,7 +1015,7 @@ namespace Intersect_Client.Classes.Entities
                 if (gridX < 0 || gridY < 0 || gridX >= Globals.MapGridWidth || gridY >= Globals.MapGridHeight)
                     return -2;
 
-                var gameMap = MapInstance.GetMap(Globals.MapGrid[gridX, gridY]);
+                var gameMap = MapInstance.Lookup.Get(Globals.MapGrid[gridX, gridY]);
                 if (gameMap != null)
                 {
                     if (gameMap.Attributes[tmpX, tmpY] != null)
@@ -1068,7 +1068,7 @@ namespace Intersect_Client.Classes.Entities
                                 else if (en.Value.GetType() == typeof(Player))
                                 {
                                     //Return the entity key as this should block the player.  Only exception is if the MapZone this entity is on is passable.
-                                    var entityMap = MapInstance.GetMap(en.Value.CurrentMap);
+                                    var entityMap = MapInstance.Lookup.Get(en.Value.CurrentMap);
                                     if (Options.PlayerPassable[(int) entityMap.ZoneType]) continue;
                                 }
                                 return en.Key;
@@ -1076,9 +1076,9 @@ namespace Intersect_Client.Classes.Entities
                         }
                     }
                 }
-                if (MapInstance.GetMap(tmpMap) != null)
+                if (MapInstance.Lookup.Get(tmpMap) != null)
                 {
-                    foreach (var en in MapInstance.GetMap(tmpMap).LocalEntities)
+                    foreach (var en in MapInstance.Lookup.Get(tmpMap).LocalEntities)
                     {
                         if (en.Value == null) continue;
                         if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY &&
@@ -1143,7 +1143,7 @@ namespace Intersect_Client.Classes.Entities
                     }
                 }
             }
-            foreach (var eventMap in MapInstance.GetObjects().Values)
+            foreach (var eventMap in MapInstance.Lookup.Values)
             {
                 foreach (var en in eventMap.LocalEntities)
                 {
@@ -1162,7 +1162,7 @@ namespace Intersect_Client.Classes.Entities
             var x = (int) Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
             var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
 
-            foreach (var map in MapInstance.GetObjects().Values)
+            foreach (var map in MapInstance.Lookup.Values)
             {
                 if (x >= map.GetX() && x <= map.GetX() + (Options.MapWidth * Options.TileWidth))
                 {
@@ -1195,7 +1195,7 @@ namespace Intersect_Client.Classes.Entities
                                     }
                                 }
                             }
-                            foreach (var eventMap in MapInstance.GetObjects().Values)
+                            foreach (var eventMap in MapInstance.Lookup.Values)
                             {
                                 foreach (var en in eventMap.LocalEntities)
                                 {

@@ -26,21 +26,21 @@ namespace Intersect.Collections
 
         public Type KeyType => typeof(TKey);
         public Type ValueType => typeof(TValue);
-        public int Count => mMutableMap?.Count ?? -1;
-        public IDictionary<TKey, TValue> ReadOnlyMap { get; }
-        public ICollection<KeyValuePair<TKey, TValue>> Pairs => ReadOnlyMap;
-        public ICollection<TKey> Keys => ReadOnlyMap?.Keys;
-        public ICollection<TValue> Values => ReadOnlyMap?.Values;
+        public virtual int Count => mMutableMap?.Count ?? -1;
+        public virtual IDictionary<TKey, TValue> ReadOnlyMap { get; }
+        public virtual ICollection<KeyValuePair<TKey, TValue>> Pairs => ReadOnlyMap;
+        public virtual ICollection<TKey> Keys => ReadOnlyMap?.Keys;
+        public virtual ICollection<TValue> Values => ReadOnlyMap?.Values;
 
         protected abstract bool Validate(TKey key);
 
-        public TValue this[TKey key]
+        public virtual TValue this[TKey key]
         {
             get { return Get(key); }
             set { Set(key, value); }
         }
 
-        public TValue Get(TKey key)
+        public virtual TValue Get(TKey key)
         {
             if (!Validate(key)) return default(TValue);
 
@@ -87,7 +87,7 @@ namespace Intersect.Collections
             return Add(key, value) ? value : default(TValue);
         }
 
-        public bool Set(TKey key, TValue value)
+        public virtual bool Set(TKey key, TValue value)
         {
             if (value == null)
             {
@@ -106,13 +106,13 @@ namespace Intersect.Collections
             return true;
         }
 
-        public bool Delete(TValue value) => value != null && (mMutableMap?.Remove(value.Id) ?? false);
+        public virtual bool Delete(TValue value) => value != null && (mMutableMap?.Remove(value.Id) ?? false);
 
-        public void Clear() => mMutableMap?.Clear();
+        public virtual void Clear() => mMutableMap?.Clear();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        public virtual IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
             if (Pairs == null)
             {
