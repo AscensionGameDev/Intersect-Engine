@@ -2763,8 +2763,9 @@ namespace Intersect_Server.Classes.Entities
         {
             for (var i = 0; i < MyEvents.Count; i++)
             {
-                if (MyEvents[i] == null) continue;
-                if (map == MyEvents[i].MapNum && x == MyEvents[i].SpawnX && y == MyEvents[i].SpawnY)
+                var evt = MyEvents[i];
+                if (evt == null) continue;
+                if (map == evt.MapNum && x == evt.SpawnX && y == evt.SpawnY)
                 {
                     return i;
                 }

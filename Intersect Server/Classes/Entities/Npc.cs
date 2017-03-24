@@ -378,10 +378,9 @@ namespace Intersect_Server.Classes.Entities
                     if (pathFinder.GetTarget() != null)
                     {
                         TryCastSpells();
-                        if (
-                            !IsOneBlockAway(pathFinder.GetTarget().TargetMap, pathFinder.GetTarget().TargetX,
-                                pathFinder.GetTarget().TargetY))
+                        if (!IsOneBlockAway(pathFinder.GetTarget().TargetMap, pathFinder.GetTarget().TargetX,pathFinder.GetTarget().TargetY))
                         {
+                            pathFinder.Update();
                             var dir = pathFinder.GetMove();
                             if (dir > -1)
                             {
@@ -397,7 +396,6 @@ namespace Intersect_Server.Classes.Entities
                                         }
                                     }
                                     Move(dir, null);
-                                    pathFinder.RemoveMove();
                                 }
                                 else
                                 {

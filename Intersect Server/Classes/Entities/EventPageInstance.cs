@@ -252,17 +252,15 @@ namespace Intersect_Server.Classes.Entities
                                 {
                                     _pathFinder.SetTarget(new PathfinderTarget(client.Entity.CurrentMap,
                                         client.Entity.CurrentX, client.Entity.CurrentY));
+                                    _pathFinder.Update();
                                 }
-                                else
+                                _pathFinder.Update();
+                                if (_pathFinder.GetMove() > -1)
                                 {
-                                    if (_pathFinder.GetMove() > -1)
+                                    if (CanMove(_pathFinder.GetMove()) == -1)
                                     {
-                                        if (CanMove(_pathFinder.GetMove()) == -1)
-                                        {
-                                            Move(_pathFinder.GetMove(), client);
-                                            _pathFinder.RemoveMove();
-                                            moved = true;
-                                        }
+                                        Move(_pathFinder.GetMove(), client);
+                                        moved = true;
                                     }
                                 }
                             }
