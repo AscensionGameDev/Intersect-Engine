@@ -61,7 +61,6 @@ namespace Intersect.GameObjects
         
         public virtual void Delete() => Lookup.Delete((TObject)this);
         public static TObject Get(int index) => Lookup.Get(index);
-        public static TObject Lookup_Get(int index) => Lookup.Get(index);
         public static int Lookup_Count => Lookup.Count;
         public static void Lookup_Clear() => Lookup.Clear();
         public static void Lookup_Set(int index, TObject obj) => Lookup.Set(index, obj);
@@ -72,17 +71,17 @@ namespace Intersect.GameObjects
         public static void AddObject(int index, DatabaseObject obj) => Lookup.Set(index, (TObject)obj);
         public static int ObjectCount() => Lookup.Count;
         public static IDictionary<int, TObject> GetObjects() => Lookup.ReadOnlyMap;
-        public static ItemBase GetItem(int index) => (ItemBase)(DatabaseObject)Lookup_Get(index);
-        public static NpcBase GetNpc(int index) => (NpcBase)(DatabaseObject)Lookup_Get(index);
-        public static QuestBase GetQuest(int index) => (QuestBase)(DatabaseObject)Lookup_Get(index);
-        public static ProjectileBase GetProjectile(int index) => (ProjectileBase)(DatabaseObject)Lookup_Get(index);
-        public static ShopBase GetShop(int index) => (ShopBase)(DatabaseObject)Lookup_Get(index);
-        public static PlayerSwitchBase GetSwitch(int index) => (PlayerSwitchBase)(DatabaseObject)Lookup_Get(index);
-        public static PlayerVariableBase GetVariable(int index) => (PlayerVariableBase)(DatabaseObject)Lookup_Get(index);
-        public static ServerSwitchBase GetServerSwitch(int index) => (ServerSwitchBase)(DatabaseObject)Lookup_Get(index);
-        public static SpellBase GetSpell(int index) => (SpellBase)(DatabaseObject)Lookup_Get(index);
-        public static ResourceBase GetResource(int index) => (ResourceBase)(DatabaseObject)Lookup_Get(index);
-        public static ServerVariableBase GetServerVariable(int index) => (ServerVariableBase)(DatabaseObject)Lookup_Get(index);
+        public static ItemBase GetItem(int index) => (ItemBase)(DatabaseObject)Lookup.Get(index);
+        public static NpcBase GetNpc(int index) => (NpcBase)(DatabaseObject)Lookup.Get(index);
+        public static QuestBase GetQuest(int index) => (QuestBase)(DatabaseObject)Lookup.Get(index);
+        public static ProjectileBase GetProjectile(int index) => (ProjectileBase)(DatabaseObject)Lookup.Get(index);
+        public static ShopBase GetShop(int index) => (ShopBase)(DatabaseObject)Lookup.Get(index);
+        public static PlayerSwitchBase GetSwitch(int index) => (PlayerSwitchBase)(DatabaseObject)Lookup.Get(index);
+        public static PlayerVariableBase GetVariable(int index) => (PlayerVariableBase)(DatabaseObject)Lookup.Get(index);
+        public static ServerSwitchBase GetServerSwitch(int index) => (ServerSwitchBase)(DatabaseObject)Lookup.Get(index);
+        public static SpellBase GetSpell(int index) => (SpellBase)(DatabaseObject)Lookup.Get(index);
+        public static ResourceBase GetResource(int index) => (ResourceBase)(DatabaseObject)Lookup.Get(index);
+        public static ServerVariableBase GetServerVariable(int index) => (ServerVariableBase)(DatabaseObject)Lookup.Get(index);
     }
 
     public static class DatabaseObjectUtils

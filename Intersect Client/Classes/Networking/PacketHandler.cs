@@ -1178,7 +1178,7 @@ namespace Intersect_Client.Classes.Networking
                 case GameObject.Class:
                     if (deleted)
                     {
-                        var cls = ClassBase.Lookup_Get(id);
+                        var cls = ClassBase.Lookup.Get(id);
                         cls.Delete();
                     }
                     else
@@ -1271,7 +1271,7 @@ namespace Intersect_Client.Classes.Networking
                 case GameObject.Bench:
                     if (deleted)
                     {
-                        var bnc = BenchBase.Lookup_Get(id);
+                        var bnc = BenchBase.Lookup.Get(id);
                         bnc.Delete();
                     }
                     else

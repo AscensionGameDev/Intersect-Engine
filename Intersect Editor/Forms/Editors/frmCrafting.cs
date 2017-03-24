@@ -51,7 +51,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void lstCrafts_Click(object sender, EventArgs e)
         {
-            _editorItem = BenchBase.Lookup_Get(Database.GameObjectIdFromList(GameObject.Bench, lstCrafts.SelectedIndex));
+            _editorItem = BenchBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Bench, lstCrafts.SelectedIndex));
             UpdateEditor();
         }
 

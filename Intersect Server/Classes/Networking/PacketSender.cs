@@ -1169,7 +1169,7 @@ namespace Intersect_Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.OpenCraftingBench);
-            bf.WriteBytes(BenchBase.Lookup_Get(benchNum).CraftData());
+            bf.WriteBytes(BenchBase.Lookup.Get(benchNum).CraftData());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

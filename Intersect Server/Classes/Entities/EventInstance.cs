@@ -1190,7 +1190,7 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetClass:
-                    if (ClassBase.Lookup_Get(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                    if (ClassBase.Lookup.Get(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                             .Commands[CallStack.Peek().CommandIndex].Ints[0]) != null)
                     {
                         MyPlayer.Class = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]

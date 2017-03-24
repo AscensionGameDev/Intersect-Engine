@@ -315,7 +315,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.Class:
                     if (deleted)
                     {
-                        var cls = ClassBase.Lookup_Get(id);
+                        var cls = ClassBase.Lookup.Get(id);
                         cls.Delete();
                     }
                     else
@@ -419,7 +419,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.Bench:
                     if (deleted)
                     {
-                        var cft = BenchBase.Lookup_Get(id);
+                        var cft = BenchBase.Lookup.Get(id);
                         cft.Delete();
                     }
                     else
