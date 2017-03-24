@@ -42,7 +42,7 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
         public PathfinderResult Update(long timeMs)
         {
             //TODO: Pull this out into server config :) 
-            var pathfindingRange = 20; //Search as far as 20 tiles out.. maximum.
+            var pathfindingRange = Math.Max(Options.MapWidth,Options.MapHeight); //Search as far as 20 tiles out.. maximum.
             //Do lots of logic eventually leading up to an A* pathfinding run if needed.
             PathfinderResult returnVal = PathfinderResult.Success;
             AStarNode[,] mapGrid;
@@ -227,7 +227,7 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
                             mapGrid[targetX, targetY].IsWall = false;
                             aStar = new SpatialAStar<AStarNode, Object>(mapGrid);
                             path = aStar.Search(new Point(sourceX, sourceY), new Point(targetX, targetY), null);
-                            returnVal = PathfinderResult.NoPathToTarget;
+                            returnVal = PathfinderResult.Success;
                         }
                         else
                         {
@@ -253,7 +253,7 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
             {
                 case PathfinderResult.Success:
                     //Use the same path for at least a second before trying again.
-                    mWaitTime = timeMs + 1000;
+                    mWaitTime = timeMs + 200;
                     mConsecutiveFails = 0;
                     break;
                 case PathfinderResult.OutOfRange:

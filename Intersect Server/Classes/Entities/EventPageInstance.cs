@@ -253,6 +253,7 @@ namespace Intersect_Server.Classes.Entities
                                     _pathFinder.SetTarget(new PathfinderTarget(client.Entity.CurrentMap,
                                         client.Entity.CurrentX, client.Entity.CurrentY));
                                 }
+                                //Todo check if next to or on top of player.. if so don't run pathfinder.
                                 if (_pathFinder.Update(timeMs) == PathfinderResult.Success)
                                 {
                                     if (_pathFinder.GetMove() > -1)

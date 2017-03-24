@@ -409,13 +409,17 @@ namespace Intersect_Server.Classes.Entities
                                     break;
                                 case PathfinderResult.OutOfRange:
                                     MyTarget = null;
+                                    targetMap = -1;
                                     break;
                                 case PathfinderResult.NoPathToTarget:
+                                    targetMap = -1;
                                     break;
                                 case PathfinderResult.Failure:
+                                    targetMap = -1;
                                     MyTarget = null;
                                     break;
                                 case PathfinderResult.Wait:
+                                    targetMap = -1;
                                     break;
                                 default:
                                     throw new ArgumentOutOfRangeException();

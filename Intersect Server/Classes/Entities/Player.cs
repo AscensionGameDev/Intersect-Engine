@@ -657,6 +657,8 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (MyEvents[i] != null && MyEvents[i].MapNum != -1 && MyEvents[i].MapNum != newMap)
                 {
+                    EventLookup.Remove(new Tuple<int, int, int>(MyEvents[i].MapNum, MyEvents[i].BaseEvent.SpawnX,
+                        MyEvents[i].BaseEvent.SpawnY));
                     MyEvents[i] = null;
                 }
             }
