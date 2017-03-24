@@ -21,7 +21,19 @@ namespace Intersect_Client.Classes.Maps
     {
         private static MapInstances<MapInstance> sLookup;
 
-        public new static MapInstances<MapInstance> Lookup => (sLookup = (sLookup ?? new MapInstances<MapInstance>(MapBase.Lookup)));
+        public new static MapInstances<MapInstance> Lookup
+        {
+            get
+            {
+                if (sLookup != null)
+                {
+                    sLookup = new MapInstances<MapInstance>(MapBase.Lookup);
+                }
+
+                return sLookup;
+            }
+        }
+
         //Client Only Values
 
         //Map State Variables
@@ -191,10 +203,16 @@ namespace Intersect_Client.Classes.Maps
         }
 
         //Retreives the X Position of the Left side of the map in world space.
-        public float GetX() => MapGridX * Options.MapWidth * Options.TileWidth;
+        public float GetX()
+        {
+            return MapGridX * Options.MapWidth * Options.TileWidth;
+        }
 
         //Retreives the Y Position of the Top side of the map in world space.
-        public float GetY() => MapGridY * Options.MapHeight * Options.TileHeight;
+        public float GetY()
+        {
+            return MapGridY * Options.MapHeight * Options.TileHeight;
+        }
 
         //Attribute References
         private void UpdateMapAttributes()
@@ -807,9 +825,15 @@ namespace Intersect_Client.Classes.Maps
             }
         }
 
-        public override GameObject GameObjectType => OBJECT_TYPE;
+        public override GameObject GameObjectType
+        {
+            get { return OBJECT_TYPE; }
+        }
 
-        public override void Delete() => Lookup?.Delete(this);
+        public override void Delete()
+        {
+            if (Lookup != null) Lookup.Delete(this);
+        }
 
         //Dispose
         public void Dispose(bool prep = true, bool killentities = true)
