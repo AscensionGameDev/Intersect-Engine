@@ -99,7 +99,7 @@ namespace Intersect_Editor.Classes
                         new Task((() => progressForm.ShowDialog())).Start();
                         while (Globals.MapsToScreenshot.Count > 0)
                         {
-                            var maps = MapInstance.GetObjects();
+                            var maps = MapInstance.Lookup;
                             foreach (var map in maps)
                             {
                                 if (!myForm.Disposing && progressForm.IsHandleCreated)

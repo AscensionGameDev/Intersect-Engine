@@ -360,7 +360,7 @@ namespace Intersect_Editor.Forms
                         EventBase tmpEvent;
                         if ((tmpEvent = Globals.CurrentMap.FindEventAt(Globals.CurTileX, Globals.CurTileY)) != null)
                         {
-                            Globals.CurrentMap.Events.Remove(tmpEvent.MyIndex);
+                            Globals.CurrentMap.Events.Remove(tmpEvent.Id);
                             MapChanged = true;
                         }
                     }
@@ -390,23 +390,23 @@ namespace Intersect_Editor.Forms
             }
             if (Globals.CurTileX == 0)
             {
-                if (MapInstance.GetMap(tmpMap.Left) != null)
-                    MapInstance.GetMap(tmpMap.Left).InitAutotiles();
+                if (MapInstance.Lookup.Get(tmpMap.Left) != null)
+                    MapInstance.Lookup.Get(tmpMap.Left).InitAutotiles();
             }
             if (Globals.CurTileY == 0)
             {
-                if (MapInstance.GetMap(tmpMap.Up) != null)
-                    MapInstance.GetMap(tmpMap.Up).InitAutotiles();
+                if (MapInstance.Lookup.Get(tmpMap.Up) != null)
+                    MapInstance.Lookup.Get(tmpMap.Up).InitAutotiles();
             }
             if (Globals.CurTileX == Options.MapWidth - 1)
             {
-                if (MapInstance.GetMap(tmpMap.Right) != null)
-                    MapInstance.GetMap(tmpMap.Right).InitAutotiles();
+                if (MapInstance.Lookup.Get(tmpMap.Right) != null)
+                    MapInstance.Lookup.Get(tmpMap.Right).InitAutotiles();
             }
             if (Globals.CurTileY == Options.MapHeight - 1)
             {
-                if (MapInstance.GetMap(tmpMap.Down) != null)
-                    MapInstance.GetMap(tmpMap.Down).InitAutotiles();
+                if (MapInstance.Lookup.Get(tmpMap.Down) != null)
+                    MapInstance.Lookup.Get(tmpMap.Down).InitAutotiles();
             }
         }
 
@@ -549,23 +549,23 @@ namespace Intersect_Editor.Forms
                         }
                         if (Globals.CurTileX == 0)
                         {
-                            if (MapInstance.GetMap(tmpMap.Left) != null)
-                                MapInstance.GetMap(tmpMap.Left).InitAutotiles();
+                            if (MapInstance.Lookup.Get(tmpMap.Left) != null)
+                                MapInstance.Lookup.Get(tmpMap.Left).InitAutotiles();
                         }
                         if (Globals.CurTileY == 0)
                         {
-                            if (MapInstance.GetMap(tmpMap.Up) != null)
-                                MapInstance.GetMap(tmpMap.Up).InitAutotiles();
+                            if (MapInstance.Lookup.Get(tmpMap.Up) != null)
+                                MapInstance.Lookup.Get(tmpMap.Up).InitAutotiles();
                         }
                         if (Globals.CurTileX == Options.MapWidth - 1)
                         {
-                            if (MapInstance.GetMap(tmpMap.Right) != null)
-                                MapInstance.GetMap(tmpMap.Right).InitAutotiles();
+                            if (MapInstance.Lookup.Get(tmpMap.Right) != null)
+                                MapInstance.Lookup.Get(tmpMap.Right).InitAutotiles();
                         }
                         if (Globals.CurTileY == Options.MapHeight - 1)
                         {
-                            if (MapInstance.GetMap(tmpMap.Down) != null)
-                                MapInstance.GetMap(tmpMap.Down).InitAutotiles();
+                            if (MapInstance.Lookup.Get(tmpMap.Down) != null)
+                                MapInstance.Lookup.Get(tmpMap.Down).InitAutotiles();
                         }
                     }
                 }
@@ -597,23 +597,23 @@ namespace Intersect_Editor.Forms
                     }
                     if (Globals.CurTileX == 0)
                     {
-                        if (MapInstance.GetMap(tmpMap.Left) != null)
-                            MapInstance.GetMap(tmpMap.Left).InitAutotiles();
+                        if (MapInstance.Lookup.Get(tmpMap.Left) != null)
+                            MapInstance.Lookup.Get(tmpMap.Left).InitAutotiles();
                     }
                     if (Globals.CurTileY == 0)
                     {
-                        if (MapInstance.GetMap(tmpMap.Up) != null)
-                            MapInstance.GetMap(tmpMap.Up).InitAutotiles();
+                        if (MapInstance.Lookup.Get(tmpMap.Up) != null)
+                            MapInstance.Lookup.Get(tmpMap.Up).InitAutotiles();
                     }
                     if (Globals.CurTileX == Options.MapWidth - 1)
                     {
-                        if (MapInstance.GetMap(tmpMap.Right) != null)
-                            MapInstance.GetMap(tmpMap.Right).InitAutotiles();
+                        if (MapInstance.Lookup.Get(tmpMap.Right) != null)
+                            MapInstance.Lookup.Get(tmpMap.Right).InitAutotiles();
                     }
                     if (Globals.CurTileY == Options.MapHeight - 1)
                     {
-                        if (MapInstance.GetMap(tmpMap.Down) != null)
-                            MapInstance.GetMap(tmpMap.Down).InitAutotiles();
+                        if (MapInstance.Lookup.Get(tmpMap.Down) != null)
+                            MapInstance.Lookup.Get(tmpMap.Down).InitAutotiles();
                     }
                 }
             }
@@ -1055,14 +1055,14 @@ namespace Intersect_Editor.Forms
                 tmpMap.InitAutotiles();
                 Globals.CurTileX = oldCurSelX;
                 Globals.CurTileY = oldCurSelY;
-                if (MapInstance.GetMap(tmpMap.Left) != null)
-                    MapInstance.GetMap(tmpMap.Left).InitAutotiles();
-                if (MapInstance.GetMap(tmpMap.Up) != null)
-                    MapInstance.GetMap(tmpMap.Up).InitAutotiles();
-                if (MapInstance.GetMap(tmpMap.Right) != null)
-                    MapInstance.GetMap(tmpMap.Right).InitAutotiles();
-                if (MapInstance.GetMap(tmpMap.Down) != null)
-                    MapInstance.GetMap(tmpMap.Down).InitAutotiles();
+                if (MapInstance.Lookup.Get(tmpMap.Left) != null)
+                    MapInstance.Lookup.Get(tmpMap.Left).InitAutotiles();
+                if (MapInstance.Lookup.Get(tmpMap.Up) != null)
+                    MapInstance.Lookup.Get(tmpMap.Up).InitAutotiles();
+                if (MapInstance.Lookup.Get(tmpMap.Right) != null)
+                    MapInstance.Lookup.Get(tmpMap.Right).InitAutotiles();
+                if (MapInstance.Lookup.Get(tmpMap.Down) != null)
+                    MapInstance.Lookup.Get(tmpMap.Down).InitAutotiles();
 
                 if (!CurrentMapState.SequenceEqual(tmpMap.GetMapData(false)))
                 {
@@ -1112,14 +1112,14 @@ namespace Intersect_Editor.Forms
                 tmpMap.InitAutotiles();
                 Globals.CurTileX = oldCurSelX;
                 Globals.CurTileY = oldCurSelY;
-                if (MapInstance.GetMap(tmpMap.Left) != null)
-                    MapInstance.GetMap(tmpMap.Left).InitAutotiles();
-                if (MapInstance.GetMap(tmpMap.Up) != null)
-                    MapInstance.GetMap(tmpMap.Up).InitAutotiles();
-                if (MapInstance.GetMap(tmpMap.Right) != null)
-                    MapInstance.GetMap(tmpMap.Right).InitAutotiles();
-                if (MapInstance.GetMap(tmpMap.Down) != null)
-                    MapInstance.GetMap(tmpMap.Down).InitAutotiles();
+                if (MapInstance.Lookup.Get(tmpMap.Left) != null)
+                    MapInstance.Lookup.Get(tmpMap.Left).InitAutotiles();
+                if (MapInstance.Lookup.Get(tmpMap.Up) != null)
+                    MapInstance.Lookup.Get(tmpMap.Up).InitAutotiles();
+                if (MapInstance.Lookup.Get(tmpMap.Right) != null)
+                    MapInstance.Lookup.Get(tmpMap.Right).InitAutotiles();
+                if (MapInstance.Lookup.Get(tmpMap.Down) != null)
+                    MapInstance.Lookup.Get(tmpMap.Down).InitAutotiles();
 
                 if (!CurrentMapState.SequenceEqual(tmpMap.GetMapData(false)))
                 {
@@ -1303,7 +1303,7 @@ namespace Intersect_Editor.Forms
                             {
                                 if (tmpMap.FindEventAt(x0, y0) != null)
                                 {
-                                    tmpMap.Events.Remove(tmpMap.FindEventAt(x0, y0).MyIndex);
+                                    tmpMap.Events.Remove(tmpMap.FindEventAt(x0, y0).Id);
                                 }
                                 eventCopy = new EventBase(tmpMap.EventIndex,
                                     Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset))
@@ -1441,7 +1441,7 @@ namespace Intersect_Editor.Forms
                         {
                             if (((MapInstance) tmpMap).FindEventAt(x0, y0) != null)
                             {
-                                tmpMap.Events.Remove(((MapInstance) tmpMap).FindEventAt(x0, y0).MyIndex);
+                                tmpMap.Events.Remove(((MapInstance) tmpMap).FindEventAt(x0, y0).Id);
                             }
                         }
                     }

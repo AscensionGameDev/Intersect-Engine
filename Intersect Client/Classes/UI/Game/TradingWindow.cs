@@ -151,7 +151,7 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (Globals.Trade[n, i] != null && Globals.Trade[n, i].ItemNum > -1)
                     {
-                        var item = ItemBase.GetItem(Globals.Trade[n, i].ItemNum);
+                        var item = ItemBase.Lookup.Get(Globals.Trade[n, i].ItemNum);
                         if (item != null)
                         {
                             g += (item.Price * Globals.Trade[n, i].ItemVal);
@@ -300,7 +300,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _descWindow.Dispose();
                 _descWindow = null;
             }
-            if (ItemBase.Get(Globals.Trade[_mySide, _mySlot].ItemNum) != null)
+            if (ItemBase.Lookup.Get(Globals.Trade[_mySide, _mySlot].ItemNum) != null)
             {
                 _descWindow = new ItemDescWindow(Globals.Trade[_mySide, _mySlot].ItemNum,
                     Globals.Trade[_mySide, _mySlot].ItemVal, _tradeWindow.X - 255, _tradeWindow.Y,
@@ -326,7 +326,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (Globals.Trade[n, _mySlot].ItemNum != _currentItem)
             {
                 _currentItem = Globals.Trade[n, _mySlot].ItemNum;
-                var item = ItemBase.GetItem(Globals.Trade[n, _mySlot].ItemNum);
+                var item = ItemBase.Lookup.Get(Globals.Trade[n, _mySlot].ItemNum);
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,

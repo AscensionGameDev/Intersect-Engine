@@ -13,7 +13,6 @@ namespace Intersect.GameObjects.Events
         {
             Name = "";
             if (isCommon) Name = "Common Event " + index;
-            MyIndex = index;
             SpawnX = x;
             SpawnY = y;
             CommonEvent = isCommon;
@@ -25,7 +24,6 @@ namespace Intersect.GameObjects.Events
         {
             Name = "New Event";
             MyPages = new List<EventPage>();
-            MyIndex = index;
             Load(copy.EventData());
             CommonEvent = copy.CommonEvent;
         }
@@ -34,11 +32,9 @@ namespace Intersect.GameObjects.Events
         {
             Name = "New Event";
             MyPages = new List<EventPage>();
-            MyIndex = index;
             Load(myBuffer.ToArray());
         }
-
-        public int MyIndex { get; set; }
+        
         public int SpawnX { get; set; }
         public int SpawnY { get; set; }
         public bool CommonEvent { get; set; }
@@ -76,70 +72,9 @@ namespace Intersect.GameObjects.Events
             }
         }
 
-        public static EventBase GetEvent(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (EventBase) Objects[index];
-            }
-            return null;
-        }
-
-        public static string GetName(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return ((EventBase) Objects[index]).Name;
-            }
-            return "Deleted";
-        }
-
         public override byte[] BinaryData => EventData();
 
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            Objects.Remove(Id);
-        }
-
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, EventBase> GetObjects()
-        {
-            Dictionary<int, EventBase> objects = Objects.ToDictionary(k => k.Key, v => (EventBase) v.Value);
-            return objects;
-        }
+        public override string DatabaseTableName => DATABASE_TABLE;
+        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 }

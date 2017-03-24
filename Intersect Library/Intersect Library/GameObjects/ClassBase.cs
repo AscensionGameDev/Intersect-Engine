@@ -8,7 +8,6 @@ namespace Intersect.GameObjects
         //Core info
         public new const string DATABASE_TABLE = "classes";
         public new const GameObject OBJECT_TYPE = GameObject.Class;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public int AttackAnimation = -1;
 
         //Exp Calculations
@@ -239,71 +238,9 @@ namespace Intersect.GameObjects
             return myBuffer.ToArray();
         }
 
-        public static ClassBase GetClass(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (ClassBase) Objects[index];
-            }
-            return null;
-        }
-
-        public static string GetName(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return ((ClassBase) Objects[index]).Name;
-            }
-            return "Deleted";
-        }
-
         public override byte[] BinaryData => ClassData();
-
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            Objects.Remove(Id);
-        }
-
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, ClassBase> GetObjects()
-        {
-            Dictionary<int, ClassBase> objects = Objects.ToDictionary(k => k.Key, v => (ClassBase) v.Value);
-            return objects;
-        }
+        public override string DatabaseTableName => DATABASE_TABLE;
+        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 
     public class ClassItem

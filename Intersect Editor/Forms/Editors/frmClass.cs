@@ -33,7 +33,7 @@ namespace Intersect_Editor.Forms
             if (type == GameObject.Class)
             {
                 InitEditor();
-                if (_editorItem != null && !ClassBase.GetObjects().ContainsValue(_editorItem))
+                if (_editorItem != null && !ClassBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -70,7 +70,7 @@ namespace Intersect_Editor.Forms
 
         private void lstClasses_Click(object sender, EventArgs e)
         {
-            _editorItem = ClassBase.GetClass(Database.GameObjectIdFromList(GameObject.Class, lstClasses.SelectedIndex));
+            _editorItem = ClassBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Class, lstClasses.SelectedIndex));
             UpdateEditor();
         }
 
@@ -143,7 +143,7 @@ namespace Intersect_Editor.Forms
                 nudDef.Value = _editorItem.BaseStat[(int) Stats.Defense];
                 nudMR.Value = _editorItem.BaseStat[(int) Stats.MagicResist];
                 nudSpd.Value = _editorItem.BaseStat[(int) Stats.Speed];
-                nudBaseHP.Value = _editorItem.BaseVital[(int) Vitals.Health];
+                nudBaseHP.Value = Math.Max(Math.Min(_editorItem.BaseVital[(int)Vitals.Health], nudBaseHP.Maximum), nudBaseHP.Minimum);
                 nudBaseMana.Value = _editorItem.BaseVital[(int) Vitals.Mana];
                 nudPoints.Value = _editorItem.BasePoints;
                 chkLocked.Checked = Convert.ToBoolean(_editorItem.Locked);

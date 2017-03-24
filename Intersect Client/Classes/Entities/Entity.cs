@@ -206,7 +206,7 @@ namespace Intersect_Client.Classes.Entities
             }
             else
             {
-                if ((MapInstance.GetMap(CurrentMap) == null || !MapInstance.GetMap(CurrentMap).InView()) &&
+                if ((MapInstance.Lookup.Get(CurrentMap) == null || !MapInstance.Lookup.Get(CurrentMap).InView()) &&
                     !Globals.Me.Party.Contains(MyIndex))
                 {
                     Globals.EntitiesToDispose.Add(MyIndex);
@@ -373,12 +373,12 @@ namespace Intersect_Client.Classes.Entities
                 renderList.Remove(this);
             }
 
-            if (MapInstance.GetMap(Globals.Me.CurrentMap) == null)
+            if (MapInstance.Lookup.Get(Globals.Me.CurrentMap) == null)
             {
                 return null;
             }
-            var gridX = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridX;
-            var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
+            var gridX = MapInstance.Lookup.Get(Globals.Me.CurrentMap).MapGridX;
+            var gridY = MapInstance.Lookup.Get(Globals.Me.CurrentMap).MapGridY;
             for (int x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -423,7 +423,7 @@ namespace Intersect_Client.Classes.Entities
         //Rendering Functions
         public virtual void Draw()
         {
-            if (MapInstance.GetMap(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
+            if (MapInstance.Lookup.Get(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
             var d = 0;
@@ -455,7 +455,7 @@ namespace Intersect_Client.Classes.Entities
             GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, sprite);
             if (entityTex != null)
             {
-                var map = MapInstance.GetMap(CurrentMap);
+                var map = MapInstance.Lookup.Get(CurrentMap);
                 if (entityTex.GetHeight() / 4 > Options.TileHeight)
                 {
                     destRectangle.X = (map.GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2);
@@ -526,9 +526,9 @@ namespace Intersect_Client.Classes.Entities
                                 {
                                     itemNum = Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])];
                                 }
-                                if (ItemBase.GetItem(itemNum) != null)
+                                if (ItemBase.Lookup.Get(itemNum) != null)
                                 {
-                                    var itemdata = ItemBase.GetItem(itemNum);
+                                    var itemdata = ItemBase.Lookup.Get(itemNum);
                                     if (Gender == 0)
                                     {
                                         DrawEquipment(itemdata.MalePaperdoll, alpha);
@@ -557,7 +557,7 @@ namespace Intersect_Client.Classes.Entities
 
         public virtual void DrawEquipment(string filename, int alpha)
         {
-            var map = MapInstance.GetMap(CurrentMap);
+            var map = MapInstance.Lookup.Get(CurrentMap);
             if (map == null) return;
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
@@ -620,7 +620,7 @@ namespace Intersect_Client.Classes.Entities
         //returns the point on the screen that is the center of the player sprite
         public virtual Pointf GetCenterPos()
         {
-            var map = MapInstance.GetMap(CurrentMap);
+            var map = MapInstance.Lookup.Get(CurrentMap);
             if (map == null)
             {
                 return new Pointf(0, 0);
@@ -638,7 +638,7 @@ namespace Intersect_Client.Classes.Entities
 
         public virtual float GetTopPos()
         {
-            var map = MapInstance.GetMap(CurrentMap);
+            var map = MapInstance.Lookup.Get(CurrentMap);
             if (map == null)
             {
                 return 0f;
@@ -702,7 +702,7 @@ namespace Intersect_Client.Classes.Entities
                     }
                 }
             }
-            var map = MapInstance.GetMap(CurrentMap);
+            var map = MapInstance.Lookup.Get(CurrentMap);
             if (map == null)
             {
                 return;
@@ -739,7 +739,7 @@ namespace Intersect_Client.Classes.Entities
                 }
             }
 
-            var map = MapInstance.GetMap(CurrentMap);
+            var map = MapInstance.Lookup.Get(CurrentMap);
             if (map == null)
             {
                 return;
@@ -769,11 +769,11 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
-            if (MapInstance.GetMap(CurrentMap) == null)
+            if (MapInstance.Lookup.Get(CurrentMap) == null)
             {
                 return;
             }
-            var castSpell = SpellBase.GetSpell(SpellCast);
+            var castSpell = SpellBase.Lookup.Get(SpellCast);
             if (castSpell != null)
             {
                 var width = Options.TileWidth;
@@ -801,7 +801,7 @@ namespace Intersect_Client.Classes.Entities
         public void DrawTarget(int Priority)
         {
             if (GetType() == typeof(Projectile)) return;
-            var map = MapInstance.GetMap(CurrentMap);
+            var map = MapInstance.Lookup.Get(CurrentMap);
             if (map == null) return;
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
@@ -869,15 +869,15 @@ namespace Intersect_Client.Classes.Entities
 
         public void Start(Entity en)
         {
-            if (MapInstance.GetMap(en.CurrentMap) == null || MapInstance.GetMap(_endMap) == null ||
+            if (MapInstance.Lookup.Get(en.CurrentMap) == null || MapInstance.Lookup.Get(_endMap) == null ||
                 (_endMap == en.CurrentMap) && (_endX == en.CurrentX) && (_endY == en.CurrentY))
             {
                 en.Dashing = null;
             }
             else
             {
-                var startMap = MapInstance.GetMap(en.CurrentMap);
-                var endMap = MapInstance.GetMap(_endMap);
+                var startMap = MapInstance.Lookup.Get(en.CurrentMap);
+                var endMap = MapInstance.Lookup.Get(_endMap);
                 _startTime = Globals.System.GetTimeMS();
                 _startXCoord = en.OffsetX;
                 _startYCoord = en.OffsetY;

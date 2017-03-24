@@ -35,7 +35,7 @@ namespace Intersect_Editor.Forms.Editors
             if (type == GameObject.Bench)
             {
                 InitEditor();
-                if (_editorItem != null && !BenchBase.GetObjects().ContainsValue(_editorItem))
+                if (_editorItem != null && !DatabaseObject<BenchBase>.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -51,7 +51,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void lstCrafts_Click(object sender, EventArgs e)
         {
-            _editorItem = BenchBase.GetCraft(Database.GameObjectIdFromList(GameObject.Bench, lstCrafts.SelectedIndex));
+            _editorItem = BenchBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Bench, lstCrafts.SelectedIndex));
             UpdateEditor();
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect.Collections;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
 
@@ -7,9 +8,37 @@ namespace Intersect.GameObjects.Maps
 {
     public class MapBase : DatabaseObject<MapBase>
     {
+        public class MapInstances<TInstanceType> : IntObjectLookup<TInstanceType> where TInstanceType : MapBase, IGameObject<int, TInstanceType>
+        {
+            private readonly IntObjectLookup<MapBase> mBaseLookup;
+
+            public MapInstances(IntObjectLookup<MapBase> baseLookup)
+            {
+                if (baseLookup == null) throw new ArgumentNullException();
+                mBaseLookup = baseLookup;
+            }
+
+            public override bool Set(int key, TInstanceType value)
+            {
+                mBaseLookup?.Set(key, value);
+                return base.Set(key, value);
+            }
+
+            public override bool Delete(TInstanceType value)
+            {
+                mBaseLookup?.Delete(value);
+                return base.Delete(value);
+            }
+
+            public override void Clear()
+            {
+                mBaseLookup?.Clear();
+                base.Clear();
+            }
+        }
+
         public new const string DATABASE_TABLE = "maps";
         public new const GameObject OBJECT_TYPE = GameObject.Map;
-        protected static Dictionary<int, MapBase> Objects = new Dictionary<int, MapBase>();
 
         //SyncLock
         protected Object _mapLock = new Object();
@@ -341,68 +370,8 @@ namespace Intersect.GameObjects.Maps
             return bf.ToArray();
         }
 
-        public static MapBase GetMap(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (MapBase) Objects[index];
-            }
-            return null;
-        }
-
-        public static string GetName(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return ((MapBase) Objects[index]).Name;
-            }
-            return "Deleted";
-        }
-
         public override byte[] BinaryData => GetMapData(false);
-
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public static DatabaseObject<MapBase> Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            Objects.Remove(Id);
-        }
-
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject<MapBase> obj)
-        {
-            Objects.Add(index, (MapBase) obj);
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, MapBase> GetObjects()
-        {
-            return Objects;
-        }
+        public override string DatabaseTableName => DATABASE_TABLE;
+        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 }

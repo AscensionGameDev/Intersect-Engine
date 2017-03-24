@@ -31,7 +31,7 @@ namespace Intersect_Editor.Classes
             if (type == GameObject.Projectile)
             {
                 InitEditor();
-                if (_editorItem != null && !ProjectileBase.GetObjects().ContainsValue(_editorItem))
+                if (_editorItem != null && !ProjectileBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -69,7 +69,7 @@ namespace Intersect_Editor.Classes
         private void lstProjectiles_Click(object sender, EventArgs e)
         {
             _editorItem =
-                ProjectileBase.GetProjectile(Database.GameObjectIdFromList(GameObject.Projectile,
+                ProjectileBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Projectile,
                     lstProjectiles.SelectedIndex));
             UpdateEditor();
         }

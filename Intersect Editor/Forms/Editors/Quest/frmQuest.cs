@@ -30,7 +30,7 @@ namespace Intersect_Editor.Forms
             if (type == GameObject.Quest)
             {
                 InitEditor();
-                if (_editorItem != null && !QuestBase.GetObjects().ContainsValue(_editorItem))
+                if (_editorItem != null && !QuestBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -69,14 +69,14 @@ namespace Intersect_Editor.Forms
 
         private void lstQuests_Click(object sender, EventArgs e)
         {
-            _editorItem = QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, lstQuests.SelectedIndex));
+            _editorItem = QuestBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Quest, lstQuests.SelectedIndex));
             UpdateEditor();
         }
 
         public void InitEditor()
         {
             lstQuests.Items.Clear();
-            foreach (var quest in QuestBase.GetObjects())
+            foreach (var quest in QuestBase.Lookup)
             {
                 lstQuests.Items.Add(quest.Value.Name);
             }

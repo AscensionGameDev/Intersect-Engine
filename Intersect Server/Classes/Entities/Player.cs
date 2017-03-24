@@ -114,7 +114,7 @@ namespace Intersect_Server.Classes.Entities
 
             if (InCraft > -1 && CraftIndex > -1)
             {
-                BenchBase b = BenchBase.GetCraft(InCraft);
+                BenchBase b = BenchBase.Lookup.Get(InCraft);
                 if (CraftTimer + b.Crafts[CraftIndex].Time < Environment.TickCount)
                 {
                     CraftItem(CraftIndex);
@@ -159,24 +159,24 @@ namespace Intersect_Server.Classes.Entities
             //If we switched maps, lets update the maps
             if (LastMapEntered != CurrentMap)
             {
-                if (MapInstance.GetMap(LastMapEntered) != null)
+                if (MapInstance.Lookup.Get(LastMapEntered) != null)
                 {
-                    MapInstance.GetMap(LastMapEntered).RemoveEntity(this);
+                    MapInstance.Lookup.Get(LastMapEntered).RemoveEntity(this);
                 }
                 if (CurrentMap > -1)
                 {
-                    if (!MapInstance.GetObjects().ContainsKey(CurrentMap))
+                    if (!MapInstance.Lookup.Keys.Contains(CurrentMap))
                     {
                         WarpToSpawn();
                     }
                     else
                     {
-                        MapInstance.GetMap(CurrentMap).PlayerEnteredMap(this);
+                        MapInstance.Lookup.Get(CurrentMap).PlayerEnteredMap(this);
                     }
                 }
             }
 
-            var currentMap = MapInstance.GetMap(CurrentMap);
+            var currentMap = MapInstance.Lookup.Get(CurrentMap);
             if (currentMap != null)
             {
                 for (var i = 0; i < currentMap.SurroundingMaps.Count + 1; i++)
@@ -188,7 +188,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else
                     {
-                        map = MapInstance.GetMap(currentMap.SurroundingMaps[i]);
+                        map = MapInstance.Lookup.Get(currentMap.SurroundingMaps[i]);
                     }
                     if (map == null) continue;
                     lock (map.GetMapLock())
@@ -238,7 +238,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     if (evt.MapNum != CurrentMap)
                     {
-                        foreach (var t in MapInstance.GetMap(CurrentMap).SurroundingMaps)
+                        foreach (var t in MapInstance.Lookup.Get(CurrentMap).SurroundingMaps)
                         {
                             if (t == evt.MapNum)
                             {
@@ -276,7 +276,7 @@ namespace Intersect_Server.Classes.Entities
         //Spawning/Dying
         private void Respawn()
         {
-            var cls = ClassBase.GetClass(Class);
+            var cls = ClassBase.Lookup.Get(Class);
             if (cls != null)
             {
                 Warp(cls.SpawnMap, cls.SpawnX, cls.SpawnY, cls.SpawnDir);
@@ -324,7 +324,7 @@ namespace Intersect_Server.Classes.Entities
 
         public override void ProcessRegen()
         {
-            var myclass = ClassBase.GetClass(Class);
+            var myclass = ClassBase.Lookup.Get(Class);
             var vitalAdded = false;
             if (myclass != null)
             {
@@ -363,7 +363,7 @@ namespace Intersect_Server.Classes.Entities
                 {
                     SetLevel(Level + 1, resetExperience);
                     //Let's pull up class - leveling info
-                    var myclass = ClassBase.GetClass(Class);
+                    var myclass = ClassBase.Lookup.Get(Class);
                     if (myclass != null)
                     {
                         foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
@@ -424,7 +424,7 @@ namespace Intersect_Server.Classes.Entities
             PacketSender.SendEntityDataToProximity(this);
 
             //Search for login activated events and run them
-            foreach (var evt in EventBase.GetObjects())
+            foreach (var evt in EventBase.Lookup)
             {
                 StartCommonEvent(evt.Value, (int) EventPage.CommonEventTriggers.LevelUp);
             }
@@ -458,7 +458,7 @@ namespace Intersect_Server.Classes.Entities
         public int GetExperienceToNextLevel()
         {
             if (Level >= Options.MaxLevel) return -1;
-            var myclass = ClassBase.GetClass(Class);
+            var myclass = ClassBase.Lookup.Get(Class);
             if (myclass != null)
             {
                 return (int) (myclass.BaseExp * Math.Pow(1 + (myclass.ExpIncrease / 100f) / 1, Level));
@@ -488,7 +488,7 @@ namespace Intersect_Server.Classes.Entities
                 for (int i = 0; i < Quests.Keys.Count; i++)
                 {
                     var questId = Quests.Keys.ToArray()[i];
-                    var quest = QuestBase.GetQuest(questId);
+                    var quest = QuestBase.Lookup.Get(questId);
                     if (quest != null)
                     {
                         if (Quests[questId].task > -1)
@@ -536,7 +536,7 @@ namespace Intersect_Server.Classes.Entities
             if (((Player) Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex] >= 0)
             {
                 weapon =
-                    ItemBase.GetItem(
+                    ItemBase.Lookup.Get(
                         Inventory[((Player) Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex]].ItemNum);
             }
 
@@ -580,7 +580,7 @@ namespace Intersect_Server.Classes.Entities
             }
             else
             {
-                var classBase = ClassBase.GetClass(Class);
+                var classBase = ClassBase.Lookup.Get(Class);
                 if (classBase != null)
                 {
                     var attackAnim = AnimationBase.Lookup.Get(classBase.AttackAnimation);
@@ -635,7 +635,7 @@ namespace Intersect_Server.Classes.Entities
 
         public override void Warp(int newMap, int newX, int newY, int newDir)
         {
-            var map = MapInstance.GetMap(newMap);
+            var map = MapInstance.Lookup.Get(newMap);
             if (map == null)
             {
                 WarpToSpawn();
@@ -652,7 +652,7 @@ namespace Intersect_Server.Classes.Entities
             }
             if (newMap != CurrentMap || _sentMap == false)
             {
-                var oldMap = MapInstance.GetMap(CurrentMap);
+                var oldMap = MapInstance.Lookup.Get(CurrentMap);
                 if (oldMap != null)
                 {
                     oldMap.RemoveEntity(this);
@@ -681,10 +681,10 @@ namespace Intersect_Server.Classes.Entities
         public void WarpToSpawn(bool sendWarp = false)
         {
             int map = -1, x = 0, y = 0;
-            var cls = ClassBase.GetClass(Class);
+            var cls = ClassBase.Lookup.Get(Class);
             if (cls != null)
             {
-                if (MapInstance.GetObjects().ContainsKey(cls.SpawnMap))
+                if (MapInstance.Lookup.Keys.Contains(cls.SpawnMap))
                 {
                     map = cls.SpawnMap;
                 }
@@ -693,7 +693,7 @@ namespace Intersect_Server.Classes.Entities
             }
             if (map == -1)
             {
-                using (var mapenum = MapInstance.GetObjects().GetEnumerator())
+                using (var mapenum = MapInstance.Lookup.GetEnumerator())
                 {
                     mapenum.MoveNext();
                     map = mapenum.Current.Value.Id;
@@ -705,7 +705,7 @@ namespace Intersect_Server.Classes.Entities
         //Inventory
         public bool CanGiveItem(ItemInstance item)
         {
-            var itemBase = ItemBase.GetItem(item.ItemNum);
+            var itemBase = ItemBase.Lookup.Get(item.ItemNum);
             if (itemBase != null)
             {
                 if (itemBase.IsStackable())
@@ -733,7 +733,7 @@ namespace Intersect_Server.Classes.Entities
 
         public bool TryGiveItem(ItemInstance item, bool SendUpdate = true)
         {
-            var itemBase = ItemBase.GetItem(item.ItemNum);
+            var itemBase = ItemBase.Lookup.Get(item.ItemNum);
             if (itemBase != null)
             {
                 if (itemBase.IsStackable())
@@ -784,7 +784,7 @@ namespace Intersect_Server.Classes.Entities
 
         public void DropItems(int slot, int amount)
         {
-            var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get(Inventory[slot].ItemNum);
             if (itemBase != null)
             {
                 if (itemBase.Bound > 0)
@@ -798,7 +798,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         amount = Inventory[slot].ItemVal;
                     }
-                    MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, Inventory[slot], amount);
+                    MapInstance.Lookup.Get(CurrentMap).SpawnItem(CurrentX, CurrentY, Inventory[slot], amount);
                     if (amount == Inventory[slot].ItemVal)
                     {
                         Inventory[slot] = new ItemInstance(-1, 0, -1);
@@ -811,7 +811,7 @@ namespace Intersect_Server.Classes.Entities
                 }
                 else
                 {
-                    MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, Inventory[slot], 1);
+                    MapInstance.Lookup.Get(CurrentMap).SpawnItem(CurrentX, CurrentY, Inventory[slot], 1);
                     Inventory[slot] = new ItemInstance(-1, 0, -1);
                     EquipmentProcessItemLoss(slot);
                 }
@@ -824,7 +824,7 @@ namespace Intersect_Server.Classes.Entities
         {
             bool equipped = false;
             var itemInstance = Inventory[slot];
-            var itemBase = ItemBase.GetItem(itemInstance.ItemNum);
+            var itemBase = ItemBase.Lookup.Get(itemInstance.ItemNum);
             if (itemBase != null)
             {
                 //Check if the user is silenced or stunned
@@ -916,9 +916,9 @@ namespace Intersect_Server.Classes.Entities
                                     if (Equipment[Options.WeaponIndex] > -1)
                                     {
                                         //If we have a 2-hand weapon, remove it to equip this new shield
-                                        if (ItemBase.GetItem(Inventory[Equipment[Options.WeaponIndex]].ItemNum) != null &&
+                                        if (ItemBase.Lookup.Get(Inventory[Equipment[Options.WeaponIndex]].ItemNum) != null &&
                                             Convert.ToBoolean(
-                                                ItemBase.GetItem(Inventory[Equipment[Options.WeaponIndex]].ItemNum)
+                                                ItemBase.Lookup.Get(Inventory[Equipment[Options.WeaponIndex]].ItemNum)
                                                     .Data4))
                                         {
                                             Equipment[Options.WeaponIndex] = -1;
@@ -945,7 +945,7 @@ namespace Intersect_Server.Classes.Entities
                         }
                         break;
                     case (int) ItemTypes.Event:
-                        var evt = EventBase.GetEvent(itemBase.Data1);
+                        var evt = EventBase.Lookup.Get(itemBase.Data1);
                         if (evt != null)
                         {
                             if (StartCommonEvent(evt))
@@ -980,7 +980,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 return false;
             }
-            var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get(Inventory[slot].ItemNum);
             if (itemBase != null)
             {
                 if (itemBase.IsStackable())
@@ -1057,7 +1057,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (Inventory[Equipment[Options.WeaponIndex]].ItemNum > -1)
                 {
-                    var item = ItemBase.GetItem(Inventory[Equipment[Options.WeaponIndex]].ItemNum);
+                    var item = ItemBase.Lookup.Get(Inventory[Equipment[Options.WeaponIndex]].ItemNum);
                     if (item != null)
                     {
                         return item.Damage;
@@ -1092,10 +1092,10 @@ namespace Intersect_Server.Classes.Entities
             int rewardItemVal = 0;
             int sellItemNum = Inventory[slot].ItemNum;
             if (InShop == -1) return;
-            ShopBase shop = ShopBase.GetShop(InShop);
+            ShopBase shop = ShopBase.Lookup.Get(InShop);
             if (shop != null)
             {
-                var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+                var itemBase = ItemBase.Lookup.Get(Inventory[slot].ItemNum);
                 if (itemBase != null)
                 {
                     if (itemBase.Bound > 0)
@@ -1187,12 +1187,12 @@ namespace Intersect_Server.Classes.Entities
             int buyItemNum = -1;
             int buyItemAmt = 1;
             if (InShop == -1) return;
-            ShopBase shop = ShopBase.GetShop(InShop);
+            ShopBase shop = ShopBase.Lookup.Get(InShop);
             if (shop != null)
             {
                 if (slot >= 0 && slot < shop.SellingItems.Count)
                 {
-                    var itemBase = ItemBase.GetItem(shop.SellingItems[slot].ItemNum);
+                    var itemBase = ItemBase.Lookup.Get(shop.SellingItems[slot].ItemNum);
                     if (itemBase != null)
                     {
                         buyItemNum = shop.SellingItems[slot].ItemNum;
@@ -1274,7 +1274,7 @@ namespace Intersect_Server.Classes.Entities
                     invbackup.Add(item.Clone());
                 }
                 //Check the player actually has the items
-                foreach (CraftIngredient c in BenchBase.GetCraft(InCraft).Crafts[index].Ingredients)
+                foreach (CraftIngredient c in BenchBase.Lookup.Get(InCraft).Crafts[index].Ingredients)
                 {
                     int n = FindItem(c.Item);
                     int x = 0;
@@ -1293,7 +1293,7 @@ namespace Intersect_Server.Classes.Entities
                 }
 
                 //Take the items
-                foreach (CraftIngredient c in BenchBase.GetCraft(InCraft).Crafts[index].Ingredients)
+                foreach (CraftIngredient c in BenchBase.Lookup.Get(InCraft).Crafts[index].Ingredients)
                 {
                     int n = FindItem(c.Item);
                     if (n > -1)
@@ -1303,11 +1303,11 @@ namespace Intersect_Server.Classes.Entities
                 }
 
                 //Give them the craft
-                if (TryGiveItem(new ItemInstance(BenchBase.GetCraft(InCraft).Crafts[index].Item, 1, -1)))
+                if (TryGiveItem(new ItemInstance(BenchBase.Lookup.Get(InCraft).Crafts[index].Item, 1, -1)))
                 {
                     PacketSender.SendPlayerMsg(MyClient,
                         Strings.Get("crafting", "crafted",
-                            ItemBase.GetName(BenchBase.GetCraft(InCraft).Crafts[index].Item)), Color.Green);
+                            ItemBase.GetName(BenchBase.Lookup.Get(InCraft).Crafts[index].Item)), Color.Green);
                 }
                 else
                 {
@@ -1315,7 +1315,7 @@ namespace Intersect_Server.Classes.Entities
                     PacketSender.SendInventory(MyClient);
                     PacketSender.SendPlayerMsg(MyClient,
                         "You do not have enough inventory space to craft " +
-                        ItemBase.GetName(BenchBase.GetCraft(InCraft).Crafts[index].Item) +
+                        ItemBase.GetName(BenchBase.Lookup.Get(InCraft).Crafts[index].Item) +
                         "!", Color.Red);
                 }
                 CraftIndex = -1;
@@ -1349,7 +1349,7 @@ namespace Intersect_Server.Classes.Entities
         public void DepositItem(int slot, int amount)
         {
             if (!InBank) return;
-            var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get(Inventory[slot].ItemNum);
             if (itemBase != null)
             {
                 if (Inventory[slot].ItemNum > -1)
@@ -1426,7 +1426,7 @@ namespace Intersect_Server.Classes.Entities
         public void WithdrawItem(int slot, int amount)
         {
             if (!InBank) return;
-            var itemBase = ItemBase.GetItem(Bank[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get(Bank[slot].ItemNum);
             var inventorySlot = -1;
             if (itemBase != null)
             {
@@ -1574,7 +1574,7 @@ namespace Intersect_Server.Classes.Entities
         public void StoreBagItem(int slot, int amount)
         {
             if (InBag < 0 || !HasBag(InBag)) return;
-            var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get(Inventory[slot].ItemNum);
             var bag = GetBag();
             if (itemBase != null && bag != null)
             {
@@ -1663,7 +1663,7 @@ namespace Intersect_Server.Classes.Entities
         {
             if (InBag < 0 || !HasBag(InBag)) return;
             var bag = GetBag();
-            var itemBase = ItemBase.GetItem(bag.Items[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get(bag.Items[slot].ItemNum);
             var inventorySlot = -1;
             if (itemBase != null)
             {
@@ -1800,7 +1800,7 @@ namespace Intersect_Server.Classes.Entities
         public void OfferItem(int slot, int amount)
         {
             if (Trading < 0) return;
-            var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get(Inventory[slot].ItemNum);
             if (itemBase != null)
             {
                 if (Inventory[slot].ItemNum > -1)
@@ -1894,7 +1894,7 @@ namespace Intersect_Server.Classes.Entities
         {
             if (Trading < 0) return;
 
-            ItemBase itemBase = ItemBase.GetItem(Trade[slot].ItemNum);
+            ItemBase itemBase = ItemBase.Lookup.Get(Trade[slot].ItemNum);
             if (itemBase == null)
             {
                 return;
@@ -1974,7 +1974,7 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (!TryGiveItem(Trade[i]))
                     {
-                        MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, Trade[i], Trade[i].ItemVal);
+                        MapInstance.Lookup.Get(CurrentMap).SpawnItem(CurrentX, CurrentY, Trade[i], Trade[i].ItemVal);
                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading", "itemsdropped"), Color.Red);
                     }
                     Trade[i].ItemNum = 0;
@@ -2234,9 +2234,9 @@ namespace Intersect_Server.Classes.Entities
         {
             int spellNum = Spells[spellSlot].SpellNum;
             Target = target;
-            if (SpellBase.Get(spellNum) != null)
+            if (SpellBase.Lookup.Get(spellNum) != null)
             {
-                var spell = SpellBase.GetSpell(spellNum);
+                var spell = SpellBase.Lookup.Get(spellNum);
 
                 if (!EventInstance.MeetsConditionLists(spell.CastingReqs, this, null))
                 {
@@ -2263,7 +2263,7 @@ namespace Intersect_Server.Classes.Entities
                 if (spell.SpellType == (int) SpellTypes.CombatSpell &&
                     spell.TargetType == (int) SpellTargetTypes.Projectile && spell.Projectile > -1)
                 {
-                    var projectileBase = ProjectileBase.GetProjectile(spell.Projectile);
+                    var projectileBase = ProjectileBase.Lookup.Get(spell.Projectile);
                     if (projectileBase == null) return;
                     if (projectileBase.Ammo > -1)
                     {
@@ -2312,7 +2312,7 @@ namespace Intersect_Server.Classes.Entities
                                 //Check if the caster has the right ammunition if a projectile
                                 if (spell.SpellType == (int) SpellTargetTypes.Projectile && spell.Projectile > -1)
                                 {
-                                    var projectileBase = ProjectileBase.GetProjectile(spell.Projectile);
+                                    var projectileBase = ProjectileBase.Lookup.Get(spell.Projectile);
                                     if (projectileBase.Ammo > -1)
                                     {
                                         TakeItem(FindItem(projectileBase.Ammo, projectileBase.AmmoRequired),
@@ -2354,12 +2354,12 @@ namespace Intersect_Server.Classes.Entities
 
         public override void CastSpell(int SpellNum, int SpellSlot = -1)
         {
-            var spellBase = SpellBase.GetSpell(SpellNum);
+            var spellBase = SpellBase.Lookup.Get(SpellNum);
             if (spellBase != null)
             {
                 if (spellBase.SpellType == (int) SpellTypes.Event)
                 {
-                    var evt = EventBase.GetEvent(spellBase.Data1);
+                    var evt = EventBase.Lookup.Get(spellBase.Data1);
                     if (evt != null)
                     {
                         StartCommonEvent(evt);
@@ -2569,7 +2569,7 @@ namespace Intersect_Server.Classes.Entities
             if (QuestOffers.Contains(questId))
             {
                 QuestOffers.Remove(questId);
-                var quest = QuestBase.GetQuest(questId);
+                var quest = QuestBase.Lookup.Get(questId);
                 if (quest != null)
                 {
                     StartQuest(quest);
@@ -2643,7 +2643,7 @@ namespace Intersect_Server.Classes.Entities
 
         public void CancelQuest(int questId)
         {
-            var quest = QuestBase.GetQuest(questId);
+            var quest = QuestBase.Lookup.Get(questId);
             if (quest != null)
             {
                 if (QuestInProgress(quest, QuestProgress.OnAnyTask, -1))
@@ -2665,7 +2665,7 @@ namespace Intersect_Server.Classes.Entities
 
         public void CompleteQuestTask(int questId, int taskId)
         {
-            var quest = QuestBase.GetQuest(questId);
+            var quest = QuestBase.Lookup.Get(questId);
             if (quest != null)
             {
                 if (Quests.ContainsKey(questId))
@@ -2716,13 +2716,13 @@ namespace Intersect_Server.Classes.Entities
         private void UpdateGatherItemQuests(int itemNum)
         {
             //If any quests demand that this item be gathered then let's handle it
-            var item = ItemBase.GetItem(itemNum);
+            var item = ItemBase.Lookup.Get(itemNum);
             if (item != null)
             {
                 for (int i = 0; i < Quests.Keys.Count; i++)
                 {
                     var questId = Quests.Keys.ToArray()[i];
-                    var quest = QuestBase.GetQuest(questId);
+                    var quest = QuestBase.Lookup.Get(questId);
                     if (quest != null)
                     {
                         if (Quests[questId].task > -1)
@@ -2794,7 +2794,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (MyEvents[i] != null)
                 {
-                    if (MyEvents[i].MapNum == mapNum && MyEvents[i].BaseEvent.MyIndex == eventIndex)
+                    if (MyEvents[i].MapNum == mapNum && MyEvents[i].BaseEvent.Id == eventIndex)
                     {
                         if (MyEvents[i].PageInstance == null) return;
                         if (MyEvents[i].PageInstance.Trigger != 0) return;
@@ -2841,7 +2841,7 @@ namespace Intersect_Server.Classes.Entities
                 for (int i = 0; i < MyEvents.Count; i++)
                 {
                     if (MyEvents[i] != null && MyEvents[i].MapNum == mapNum &&
-                        MyEvents[i].BaseEvent.MyIndex == eventIndex)
+                        MyEvents[i].BaseEvent.Id == eventIndex)
                     {
                         if (MyEvents[i].CallStack.Count <= 0) return;
                         if (MyEvents[i].CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Dialogue)
@@ -2980,7 +2980,7 @@ namespace Intersect_Server.Classes.Entities
             base.Move(moveDir, client, DontUpdate, correction);
             // Check for a warp, if so warp the player.
             var attribute =
-                MapInstance.GetMap(Globals.Entities[index].CurrentMap).Attributes[
+                MapInstance.Lookup.Get(Globals.Entities[index].CurrentMap).Attributes[
                     Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
             if (attribute != null && attribute.value == (int) MapAttributes.Warp)
             {

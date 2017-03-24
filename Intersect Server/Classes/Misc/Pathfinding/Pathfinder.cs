@@ -82,7 +82,7 @@ namespace Intersect_Server.Classes.Misc
             var openList = new List<PathfinderPoint>();
             var closedList = new List<PathfinderPoint>();
             var adjSquares = new List<PathfinderPoint>();
-            var map = MapInstance.GetMap(_sourceEntity.CurrentMap);
+            var map = MapInstance.Lookup.Get(_sourceEntity.CurrentMap);
             if (map != null)
             {
                 var myGrid = map.MapGrid;
@@ -93,20 +93,20 @@ namespace Intersect_Server.Classes.Misc
                 {
                     var target = _target;
                     //Loop through surrouding maps to generate a array of open and blocked points.
-                    for (var x = MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX - 1;
-                        x <= MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1;
+                    for (var x = MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridX - 1;
+                        x <= MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridX + 1;
                         x++)
                     {
                         if (x == -1 || x >= Database.MapGrids[myGrid].Width) continue;
-                        for (var y = MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY - 1;
-                            y <= MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1;
+                        for (var y = MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridY - 1;
+                            y <= MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridY + 1;
                             y++)
                         {
                             if (y == -1 || y >= Database.MapGrids[myGrid].Height) continue;
                             if (Database.MapGrids[myGrid].MyGrid[x, y] > -1)
                             {
                                 var mapEntities =
-                                    MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).GetEntities();
+                                    MapInstance.Lookup.Get(Database.MapGrids[myGrid].MyGrid[x, y]).GetEntities();
                                 for (var i = 0; i < mapEntities.Count; i++)
                                 {
                                     lock (_targetLock)
@@ -128,11 +128,11 @@ namespace Intersect_Server.Classes.Misc
                                                             closedList.Add(
                                                                 new PathfinderPoint(
                                                                     (x -
-                                                                     MapInstance.GetMap(_sourceEntity.CurrentMap)
+                                                                     MapInstance.Lookup.Get(_sourceEntity.CurrentMap)
                                                                          .MapGridX + 1) *
                                                                     Options.MapWidth + mapEntities[i].CurrentX,
                                                                     (y -
-                                                                     MapInstance.GetMap(_sourceEntity.CurrentMap)
+                                                                     MapInstance.Lookup.Get(_sourceEntity.CurrentMap)
                                                                          .MapGridY + 1) *
                                                                     Options.MapHeight + mapEntities[i].CurrentY, -1, 0));
                                                         }
@@ -151,25 +151,25 @@ namespace Intersect_Server.Classes.Misc
                                             if (_target != null)
                                             {
                                                 if (
-                                                    MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y])
+                                                    MapInstance.Lookup.Get(Database.MapGrids[myGrid].MyGrid[x, y])
                                                         .Attributes[x1, y1] != null)
                                                 {
                                                     if (
-                                                        MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y])
+                                                        MapInstance.Lookup.Get(Database.MapGrids[myGrid].MyGrid[x, y])
                                                             .Attributes[x1, y1]
                                                             .value == (int) MapAttributes.Blocked ||
-                                                        MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y])
+                                                        MapInstance.Lookup.Get(Database.MapGrids[myGrid].MyGrid[x, y])
                                                             .Attributes[x1, y1]
                                                             .value == (int) MapAttributes.NPCAvoid)
                                                     {
                                                         closedList.Add(
                                                             new PathfinderPoint(
                                                                 (x -
-                                                                 MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX +
+                                                                 MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridX +
                                                                  1) *
                                                                 Options.MapWidth + x1,
                                                                 (y -
-                                                                 MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY +
+                                                                 MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridY +
                                                                  1) *
                                                                 Options.MapHeight + y1, -1, 0));
                                                     }
@@ -177,20 +177,20 @@ namespace Intersect_Server.Classes.Misc
                                                 if (Database.MapGrids[myGrid].MyGrid[x, y] == _target.TargetMap &&
                                                     x1 == _target.TargetX && y1 == _target.TargetY)
                                                 {
-                                                    targetX = (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX +
+                                                    targetX = (x - MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridX +
                                                                1) *
                                                               Options.MapWidth + x1;
-                                                    targetY = (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY +
+                                                    targetY = (y - MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridY +
                                                                1) *
                                                               Options.MapHeight + y1;
                                                 }
                                                 if (Database.MapGrids[myGrid].MyGrid[x, y] == _sourceEntity.CurrentMap &&
                                                     x1 == _sourceEntity.CurrentX && y1 == _sourceEntity.CurrentY)
                                                 {
-                                                    startX = (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX +
+                                                    startX = (x - MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridX +
                                                               1) *
                                                              Options.MapWidth + x1;
-                                                    startY = (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY +
+                                                    startY = (y - MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridY +
                                                               1) *
                                                              Options.MapHeight + y1;
                                                 }
@@ -207,9 +207,9 @@ namespace Intersect_Server.Classes.Misc
                                     {
                                         closedList.Add(
                                             new PathfinderPoint(
-                                                (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
+                                                (x - MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridX + 1) *
                                                 Options.MapWidth + x1,
-                                                (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
+                                                (y - MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridY + 1) *
                                                 Options.MapHeight + y1, -1, 0));
                                     }
                                 }

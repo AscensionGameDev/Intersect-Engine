@@ -31,7 +31,7 @@ namespace Intersect_Editor.Forms
             if (type == GameObject.Npc)
             {
                 InitEditor();
-                if (_editorItem != null && !NpcBase.GetObjects().ContainsValue(_editorItem))
+                if (_editorItem != null && !NpcBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -68,7 +68,7 @@ namespace Intersect_Editor.Forms
 
         private void lstNpcs_Click(object sender, EventArgs e)
         {
-            _editorItem = NpcBase.GetNpc(Database.GameObjectIdFromList(GameObject.Npc, lstNpcs.SelectedIndex));
+            _editorItem = NpcBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Npc, lstNpcs.SelectedIndex));
             UpdateEditor();
         }
 

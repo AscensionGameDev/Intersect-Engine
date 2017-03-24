@@ -41,7 +41,7 @@ namespace Intersect_Editor.Forms.Editors
         private void btnDelete_Click(object sender, EventArgs e)
         {
             if (lstCommonEvents.SelectedIndex > -1 &&
-                EventBase.GetEvent(Database.GameObjectIdFromList(GameObject.CommonEvent, lstCommonEvents.SelectedIndex)) !=
+                EventBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.CommonEvent, lstCommonEvents.SelectedIndex)) !=
                 null)
             {
                 if (
@@ -50,7 +50,7 @@ namespace Intersect_Editor.Forms.Editors
                         "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(
-                        EventBase.GetEvent(Database.GameObjectIdFromList(GameObject.CommonEvent,
+                        EventBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.CommonEvent,
                             lstCommonEvents.SelectedIndex)));
                 }
             }
@@ -69,7 +69,7 @@ namespace Intersect_Editor.Forms.Editors
                 FrmEvent editor = new FrmEvent(null)
                 {
                     MyEvent =
-                        EventBase.GetEvent(Database.GameObjectIdFromList(GameObject.CommonEvent,
+                        EventBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.CommonEvent,
                             lstCommonEvents.SelectedIndex))
                 };
                 editor.InitEditor();

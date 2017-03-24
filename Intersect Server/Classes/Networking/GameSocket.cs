@@ -145,7 +145,7 @@ namespace Intersect_Server.Classes.Networking
                     {
                         var en = _myClient.Entity;
                         Task.Run(() => Database.SaveCharacter(en));
-                        var map = MapInstance.GetMap(_myClient.Entity.CurrentMap);
+                        var map = MapInstance.Lookup.Get(_myClient.Entity.CurrentMap);
                         if (map != null) map.RemoveEntity(_myClient.Entity);
 
                         //Update parties
@@ -155,7 +155,7 @@ namespace Intersect_Server.Classes.Networking
                         _myClient.Entity.CancelTrade();
 
                         //Search for logout activated events and run them
-                        foreach (var evt in EventBase.GetObjects())
+                        foreach (var evt in EventBase.Lookup)
                         {
                             _myClient.Entity.StartCommonEvent(evt.Value, (int) EventPage.CommonEventTriggers.LeaveGame);
                         }

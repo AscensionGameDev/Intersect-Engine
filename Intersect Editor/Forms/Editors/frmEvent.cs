@@ -51,7 +51,7 @@ namespace Intersect_Editor.Forms
         private void txtEventname_TextChanged(object sender, EventArgs e)
         {
             MyEvent.Name = txtEventname.Text;
-            Text = Strings.Get("eventeditor", "title", MyEvent.MyIndex, txtEventname.Text);
+            Text = Strings.Get("eventeditor", "title", MyEvent.Id, txtEventname.Text);
         }
 
         private void lstEventCommands_SelectedIndexChanged(object sender, EventArgs e)
@@ -548,7 +548,7 @@ namespace Intersect_Editor.Forms
             _eventBackup = new ByteBuffer();
             _eventBackup.WriteBytes(MyEvent.EventData());
             txtEventname.Text = MyEvent.Name;
-            if (MyEvent.MyIndex < 0)
+            if (MyEvent.Id < 0)
             {
                 txtEventname.Enabled = false;
                 grpTriggers.Hide();
@@ -591,7 +591,7 @@ namespace Intersect_Editor.Forms
         /// <param name="pageNum">The index of the page to load.</param>
         public void LoadPage(int pageNum)
         {
-            Text = Strings.Get("eventeditor", "title", MyEvent.MyIndex, txtEventname.Text);
+            Text = Strings.Get("eventeditor", "title", MyEvent.Id, txtEventname.Text);
             CurrentPageIndex = pageNum;
             CurrentPage = MyEvent.MyPages[pageNum];
             for (int i = 0; i < _pageTabs.Count; i++)
@@ -658,8 +658,8 @@ namespace Intersect_Editor.Forms
             }
             if (NewEvent)
             {
-                if (MyMap.EventIndex == MyEvent.MyIndex + 1) MyMap.EventIndex--;
-                MyMap.Events.Remove(MyEvent.MyIndex);
+                if (MyMap.EventIndex == MyEvent.Id + 1) MyMap.EventIndex--;
+                MyMap.Events.Remove(MyEvent.Id);
             }
             else
             {
@@ -675,7 +675,7 @@ namespace Intersect_Editor.Forms
             {
                 CancelCommandEdit();
             }
-            if (MyEvent.CommonEvent && MyEvent.MyIndex >= 0)
+            if (MyEvent.CommonEvent && MyEvent.Id >= 0)
             {
                 PacketSender.SendSaveObject(MyEvent);
             }
@@ -1344,7 +1344,7 @@ namespace Intersect_Editor.Forms
                             Strings.Get("eventcommandlist", "showoffer"));
                     }
                 case EventCommandType.CompleteQuestTask:
-                    var quest = QuestBase.GetQuest(command.Ints[0]);
+                    var quest = QuestBase.Lookup.Get(command.Ints[0]);
                     if (quest != null)
                     {
                         //Try to find task

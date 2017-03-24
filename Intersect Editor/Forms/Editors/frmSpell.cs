@@ -34,7 +34,7 @@ namespace Intersect_Editor.Forms
             if (type == GameObject.Spell)
             {
                 InitEditor();
-                if (_editorItem != null && !SpellBase.GetObjects().Values.Contains(_editorItem))
+                if (_editorItem != null && !SpellBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -71,7 +71,7 @@ namespace Intersect_Editor.Forms
 
         private void lstSpells_Click(object sender, EventArgs e)
         {
-            _editorItem = SpellBase.GetSpell(Database.GameObjectIdFromList(GameObject.Spell, lstSpells.SelectedIndex));
+            _editorItem = SpellBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Spell, lstSpells.SelectedIndex));
             UpdateEditor();
         }
 
