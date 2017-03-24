@@ -14,7 +14,7 @@ namespace Intersect.GameObjects.Maps
 
             public MapInstances(IntObjectLookup<MapBase> baseLookup)
             {
-                if (mBaseLookup == null) throw new ArgumentNullException();
+                if (baseLookup == null) throw new ArgumentNullException();
                 mBaseLookup = baseLookup;
             }
 
