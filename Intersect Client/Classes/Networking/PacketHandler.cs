@@ -874,9 +874,13 @@ namespace Intersect_Client.Classes.Networking
             int entityIndex = bf.ReadInteger();
             if (Globals.Entities.ContainsKey(entityIndex))
             {
-                for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                var entity = Globals.Entities[entityIndex];
+                if (entity != null)
                 {
-                    (Globals.Entities[entityIndex]).Equipment[i] = bf.ReadInteger();
+                    for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                    {
+                        (Globals.Entities[entityIndex]).Equipment[i] = bf.ReadInteger();
+                    }
                 }
             }
             bf.Dispose();

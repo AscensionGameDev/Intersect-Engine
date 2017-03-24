@@ -766,6 +766,9 @@ namespace Intersect_Server.Classes.Entities
                 //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
                 if (spellBase.Friendly == 0)
                 {
+                    //If about to hit self with an unfriendly spell (maybe aoe?) return
+                    if (enemy == this) return;
+
                     //Check for parties and safe zones, friendly fire off (unless its healing)
                     if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
                     {
@@ -788,6 +791,14 @@ namespace Intersect_Server.Classes.Entities
                     //If we took damage lets reset our combat timer
                     enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
                 }
+                else
+                {
+                    //Friendly Spell! Do not attack other players/npcs around us.
+                    if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
+                    {
+                        if (!((Player)this).InParty((Player)enemy) && this != enemy) return;
+                    }
+                }
 
                 if (spellBase.HitAnimation > -1)
                 {
@@ -795,31 +806,8 @@ namespace Intersect_Server.Classes.Entities
                     aliveAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimation, (int) Directions.Up));
                 }
 
-                var shouldTakeDamage = true;
-                if (spellBase.TargetType == (int) SpellTargetTypes.AoE)
-                {
-                    if (spellBase.Friendly != 0)
-                    {
-                        if (this == enemy)
-                        {
-                            shouldTakeDamage = false;
-                        }
-                        else if (this is Player)
-                        {
-                            var player = (Player) this;
-                            if (player.Party != null)
-                                foreach (var partyMember in player.Party)
-                                {
-                                    if (enemy != partyMember) continue;
-                                    shouldTakeDamage = false;
-                                    break;
-                                }
-                        }
-                    }
-                }
-
-                var damageHealth = shouldTakeDamage ? spellBase.VitalDiff[0] : Math.Min(0, spellBase.VitalDiff[0]);
-                var damageMana = shouldTakeDamage ? spellBase.VitalDiff[1] : Math.Min(0, spellBase.VitalDiff[1]);
+                var damageHealth = spellBase.VitalDiff[0];
+                var damageMana = spellBase.VitalDiff[1];
 
                 Attack(enemy, damageHealth, damageMana, (DamageType) spellBase.DamageType, (Stats) spellBase.ScalingStat,
                     spellBase.Scaling, spellBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
