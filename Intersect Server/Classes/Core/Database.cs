@@ -5,6 +5,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Intersect;
+using Intersect.Collections;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
@@ -1866,7 +1867,7 @@ namespace Intersect_Server.Classes.Core
                     break;
                 case GameObject.Map:
                     var map = new MapInstance(index);
-                    MapInstance.AddObject(index, map);
+                    MapInstance.Lookup.Set(index, map);
                     map.Load(data);
                     break;
                 case GameObject.CommonEvent:
@@ -2030,7 +2031,7 @@ namespace Intersect_Server.Classes.Core
                     case GameObject.Map:
                         var objw = new MapInstance(index);
                         dbObj = objw;
-                        MapInstance.AddObject(index, objw);
+                        MapInstance.Lookup.Set(index, objw);
                         break;
                     case GameObject.CommonEvent:
                         var objf = new EventBase(index, -1, -1, true);
@@ -2103,7 +2104,7 @@ namespace Intersect_Server.Classes.Core
             LoadMapFolders();
             CheckAllMapConnections();
 
-            var maps = MapInstance.GetObjects();
+            var maps = MapInstance.Lookup;
             foreach (var map in maps)
             {
                 map.Value.InitAutotiles();
@@ -2144,32 +2145,31 @@ namespace Intersect_Server.Classes.Core
         //Extra Map Helper Functions
         public static void CheckAllMapConnections()
         {
-            var maps = MapInstance.GetObjects();
-            foreach (var map in maps)
+            foreach (var map in MapInstance.Lookup)
             {
-                CheckMapConnections(map.Value, maps);
+                CheckMapConnections(map.Value, MapInstance.Lookup);
             }
         }
 
-        public static void CheckMapConnections(MapBase map, Dictionary<int, MapInstance> maps)
+        public static void CheckMapConnections(MapBase map, IntObjectLookup<MapInstance> maps)
         {
             bool updated = false;
-            if (!maps.ContainsKey(map.Up) && map.Up != -1)
+            if (!maps.Keys.Contains(map.Up) && map.Up != -1)
             {
                 map.Up = -1;
                 updated = true;
             }
-            if (!maps.ContainsKey(map.Down) && map.Down != -1)
+            if (!maps.Keys.Contains(map.Down) && map.Down != -1)
             {
                 map.Down = -1;
                 updated = true;
             }
-            if (!maps.ContainsKey(map.Left) && map.Left != -1)
+            if (!maps.Keys.Contains(map.Left) && map.Left != -1)
             {
                 map.Left = -1;
                 updated = true;
             }
-            if (!maps.ContainsKey(map.Right) && map.Right != -1)
+            if (!maps.Keys.Contains(map.Right) && map.Right != -1)
             {
                 map.Right = -1;
                 updated = true;
@@ -2186,7 +2186,7 @@ namespace Intersect_Server.Classes.Core
             lock (MapGridLock)
             {
                 MapGrids.Clear();
-                foreach (var map in MapInstance.GetObjects())
+                foreach (var map in MapInstance.Lookup)
                 {
                     if (MapGrids.Count == 0)
                     {
@@ -2209,7 +2209,7 @@ namespace Intersect_Server.Classes.Core
                         }
                     }
                 }
-                foreach (var map in MapInstance.GetObjects())
+                foreach (var map in MapInstance.Lookup)
                 {
                     map.Value.SurroundingMaps.Clear();
                     var myGrid = map.Value.MapGrid;

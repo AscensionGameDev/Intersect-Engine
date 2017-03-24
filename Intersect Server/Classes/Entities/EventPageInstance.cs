@@ -584,7 +584,7 @@ namespace Intersect_Server.Classes.Entities
             }
             if (GlobalClone != null)
             {
-                var map = MapInstance.GetMap(GlobalClone.CurrentMap);
+                var map = MapInstance.Lookup.Get(GlobalClone.CurrentMap);
                 if (map == null || !map.FindEvent(GlobalClone.BaseEvent, GlobalClone)) return true;
             }
             return false;

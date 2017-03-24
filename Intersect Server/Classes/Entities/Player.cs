@@ -159,24 +159,24 @@ namespace Intersect_Server.Classes.Entities
             //If we switched maps, lets update the maps
             if (LastMapEntered != CurrentMap)
             {
-                if (MapInstance.GetMap(LastMapEntered) != null)
+                if (MapInstance.Lookup.Get(LastMapEntered) != null)
                 {
-                    MapInstance.GetMap(LastMapEntered).RemoveEntity(this);
+                    MapInstance.Lookup.Get(LastMapEntered).RemoveEntity(this);
                 }
                 if (CurrentMap > -1)
                 {
-                    if (!MapInstance.GetObjects().ContainsKey(CurrentMap))
+                    if (!MapInstance.Lookup.Keys.Contains(CurrentMap))
                     {
                         WarpToSpawn();
                     }
                     else
                     {
-                        MapInstance.GetMap(CurrentMap).PlayerEnteredMap(this);
+                        MapInstance.Lookup.Get(CurrentMap).PlayerEnteredMap(this);
                     }
                 }
             }
 
-            var currentMap = MapInstance.GetMap(CurrentMap);
+            var currentMap = MapInstance.Lookup.Get(CurrentMap);
             if (currentMap != null)
             {
                 for (var i = 0; i < currentMap.SurroundingMaps.Count + 1; i++)
@@ -188,7 +188,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else
                     {
-                        map = MapInstance.GetMap(currentMap.SurroundingMaps[i]);
+                        map = MapInstance.Lookup.Get(currentMap.SurroundingMaps[i]);
                     }
                     if (map == null) continue;
                     lock (map.GetMapLock())
@@ -238,7 +238,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     if (evt.MapNum != CurrentMap)
                     {
-                        foreach (var t in MapInstance.GetMap(CurrentMap).SurroundingMaps)
+                        foreach (var t in MapInstance.Lookup.Get(CurrentMap).SurroundingMaps)
                         {
                             if (t == evt.MapNum)
                             {
@@ -635,7 +635,7 @@ namespace Intersect_Server.Classes.Entities
 
         public override void Warp(int newMap, int newX, int newY, int newDir)
         {
-            var map = MapInstance.GetMap(newMap);
+            var map = MapInstance.Lookup.Get(newMap);
             if (map == null)
             {
                 WarpToSpawn();
@@ -652,7 +652,7 @@ namespace Intersect_Server.Classes.Entities
             }
             if (newMap != CurrentMap || _sentMap == false)
             {
-                var oldMap = MapInstance.GetMap(CurrentMap);
+                var oldMap = MapInstance.Lookup.Get(CurrentMap);
                 if (oldMap != null)
                 {
                     oldMap.RemoveEntity(this);
@@ -684,7 +684,7 @@ namespace Intersect_Server.Classes.Entities
             var cls = ClassBase.Lookup.Get(Class);
             if (cls != null)
             {
-                if (MapInstance.GetObjects().ContainsKey(cls.SpawnMap))
+                if (MapInstance.Lookup.Keys.Contains(cls.SpawnMap))
                 {
                     map = cls.SpawnMap;
                 }
@@ -693,7 +693,7 @@ namespace Intersect_Server.Classes.Entities
             }
             if (map == -1)
             {
-                using (var mapenum = MapInstance.GetObjects().GetEnumerator())
+                using (var mapenum = MapInstance.Lookup.GetEnumerator())
                 {
                     mapenum.MoveNext();
                     map = mapenum.Current.Value.Id;
@@ -798,7 +798,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         amount = Inventory[slot].ItemVal;
                     }
-                    MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, Inventory[slot], amount);
+                    MapInstance.Lookup.Get(CurrentMap).SpawnItem(CurrentX, CurrentY, Inventory[slot], amount);
                     if (amount == Inventory[slot].ItemVal)
                     {
                         Inventory[slot] = new ItemInstance(-1, 0, -1);
@@ -811,7 +811,7 @@ namespace Intersect_Server.Classes.Entities
                 }
                 else
                 {
-                    MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, Inventory[slot], 1);
+                    MapInstance.Lookup.Get(CurrentMap).SpawnItem(CurrentX, CurrentY, Inventory[slot], 1);
                     Inventory[slot] = new ItemInstance(-1, 0, -1);
                     EquipmentProcessItemLoss(slot);
                 }
@@ -1974,7 +1974,7 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (!TryGiveItem(Trade[i]))
                     {
-                        MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, Trade[i], Trade[i].ItemVal);
+                        MapInstance.Lookup.Get(CurrentMap).SpawnItem(CurrentX, CurrentY, Trade[i], Trade[i].ItemVal);
                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading", "itemsdropped"), Color.Red);
                     }
                     Trade[i].ItemNum = 0;
@@ -2980,7 +2980,7 @@ namespace Intersect_Server.Classes.Entities
             base.Move(moveDir, client, DontUpdate, correction);
             // Check for a warp, if so warp the player.
             var attribute =
-                MapInstance.GetMap(Globals.Entities[index].CurrentMap).Attributes[
+                MapInstance.Lookup.Get(Globals.Entities[index].CurrentMap).Attributes[
                     Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
             if (attribute != null && attribute.value == (int) MapAttributes.Warp)
             {

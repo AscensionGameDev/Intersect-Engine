@@ -67,7 +67,7 @@ namespace Intersect_Server.Classes.Entities
         public override void Die(bool dropitems = false, Entity killer = null)
         {
             base.Die(dropitems, killer);
-            MapInstance.GetMap(CurrentMap).RemoveEntity(this);
+            MapInstance.Lookup.Get(CurrentMap).RemoveEntity(this);
             PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.GlobalEntity, CurrentMap);
             Globals.Entities[MyIndex] = null;
         }
@@ -305,7 +305,7 @@ namespace Intersect_Server.Classes.Entities
                     if (Behaviour == (int) NpcBehavior.AttackOnSight || MyBase.AggroList.Count > -1)
                         // Check if attack on sight or have other npc's to target
                     {
-                        var maps = MapInstance.GetMap(CurrentMap).GetSurroundingMaps(true);
+                        var maps = MapInstance.Lookup.Get(CurrentMap).GetSurroundingMaps(true);
                         var possibleTargets = new List<Entity>();
                         int closestRange = Range + 1; //If the range is out of range we didn't find anything.
                         int closestIndex = -1;
@@ -343,15 +343,15 @@ namespace Intersect_Server.Classes.Entities
                     //Check if target map is on one of the surrounding maps, if not then we are not even going to look.
                     if (targetMap != CurrentMap)
                     {
-                        if (MapInstance.GetMap(CurrentMap).SurroundingMaps.Count > 0)
+                        if (MapInstance.Lookup.Get(CurrentMap).SurroundingMaps.Count > 0)
                         {
-                            for (var x = 0; x < MapInstance.GetMap(CurrentMap).SurroundingMaps.Count; x++)
+                            for (var x = 0; x < MapInstance.Lookup.Get(CurrentMap).SurroundingMaps.Count; x++)
                             {
-                                if (MapInstance.GetMap(CurrentMap).SurroundingMaps[x] == targetMap)
+                                if (MapInstance.Lookup.Get(CurrentMap).SurroundingMaps[x] == targetMap)
                                 {
                                     break;
                                 }
-                                if (x == MapInstance.GetMap(CurrentMap).SurroundingMaps.Count - 1)
+                                if (x == MapInstance.Lookup.Get(CurrentMap).SurroundingMaps.Count - 1)
                                 {
                                     targetMap = -1;
                                 }
@@ -482,11 +482,11 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (curMapLink != -1)
                 {
-                    MapInstance.GetMap(curMapLink).RemoveEntity(this);
+                    MapInstance.Lookup.Get(curMapLink).RemoveEntity(this);
                 }
                 if (CurrentMap > -1)
                 {
-                    MapInstance.GetMap(CurrentMap).AddEntity(this);
+                    MapInstance.Lookup.Get(CurrentMap).AddEntity(this);
                 }
             }
         }

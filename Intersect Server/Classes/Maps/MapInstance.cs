@@ -111,7 +111,7 @@ namespace Intersect_Server.Classes.Maps
                                 }
                                 else
                                 {
-                                    mapBase[x + 1, y + 1] = GetMap(Database.MapGrids[MapGrid].MyGrid[x1, y1]);
+                                    mapBase[x + 1, y + 1] = Lookup.Get(Database.MapGrids[MapGrid].MyGrid[x1, y1]);
                                 }
                             }
                         }
@@ -703,7 +703,7 @@ namespace Intersect_Server.Classes.Maps
             if (includingSelf) maps.Add(this);
             for (int i = 0; i < SurroundingMaps.Count; i++)
             {
-                var map = GetMap(SurroundingMaps[i]);
+                var map = Lookup.Get(SurroundingMaps[i]);
                 if (map != null) maps.Add(map);
             }
             return maps;
@@ -778,8 +778,8 @@ namespace Intersect_Server.Classes.Maps
                 if (SurroundingMaps.Count <= 0) return;
                 foreach (var t in SurroundingMaps)
                 {
-                    GetMap(t).Active = true;
-                    GetMap(t).SendMapEntitiesTo(player);
+                    Lookup.Get(t).Active = true;
+                    Lookup.Get(t).SendMapEntitiesTo(player);
                     PacketSender.SendMapItems(player.MyClient, t);
                 }
                 PacketSender.SendEntityDataToProximity(player);
@@ -868,61 +868,10 @@ namespace Intersect_Server.Classes.Maps
             }
         }
 
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
+        public override string DatabaseTableName => DATABASE_TABLE;
 
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
+        public override GameObject GameObjectType => OBJECT_TYPE;
 
-        public new static MapInstance GetMap(int index)
-        {
-            if (MapInstanceTable.ContainsKey(index))
-            {
-                return (MapInstance)MapInstanceTable[index];
-            }
-            return null;
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (MapInstanceTable.ContainsKey(index))
-            {
-                return MapInstanceTable[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            MapInstanceTable.Remove(((DatabaseObject)this).Id);
-            Lookup.Delete(this);
-        }
-
-        public static void ClearObjects()
-        {
-            MapInstanceTable.Clear();
-            MapBase.Lookup.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            MapInstanceTable.Add(index, obj);
-            Lookup.Set(index, (MapInstance)obj);
-        }
-
-        public static int ObjectCount()
-        {
-            return MapInstanceTable.Count;
-        }
-
-        public static Dictionary<int, MapInstance> GetObjects()
-        {
-            Dictionary<int, MapInstance> objects = MapInstanceTable.ToDictionary(k => k.Key, v => (MapInstance)v.Value);
-            return objects;
-        }
+        public override void Delete() => Lookup?.Delete(this);
     }
 }

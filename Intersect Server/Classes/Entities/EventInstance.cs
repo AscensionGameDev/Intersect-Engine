@@ -190,11 +190,11 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (IsGlobal)
                         {
-                            if (MapInstance.GetMap(MapNum).GetGlobalEventInstance(BaseEvent) != null)
+                            if (MapInstance.Lookup.Get(MapNum).GetGlobalEventInstance(BaseEvent) != null)
                             {
                                 PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.Id,
                                     MapNum, this, MyClient,
-                                    MapInstance.GetMap(MapNum).GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
+                                    MapInstance.Lookup.Get(MapNum).GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
                                 sendLeave = false;
                                 PageIndex = i;
                             }
@@ -406,7 +406,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (EventInstance.IsGlobal)
                         {
-                            var evts = MapInstance.GetMap(EventInstance.MapNum).GlobalEventInstances.Values.ToList();
+                            var evts = MapInstance.Lookup.Get(EventInstance.MapNum).GlobalEventInstances.Values.ToList();
                             for (int i = 0; i < evts.Count; i++)
                             {
                                 if (evts[i] != null && evts[i].BaseEvent == EventInstance.BaseEvent)
@@ -472,7 +472,7 @@ namespace Intersect_Server.Classes.Entities
                     if (EventInstance != null)
                     {
                         if (EventInstance.NPCDeathTriggerd == true) return false; //Only call it once
-                        MapInstance m = MapInstance.GetMap(EventInstance.MapNum);
+                        MapInstance m = MapInstance.Lookup.Get(EventInstance.MapNum);
                         for (int i = 0; i < m.Spawns.Count; i++)
                         {
                             if (m.NpcSpawnInstances.ContainsKey(m.Spawns[i]))
@@ -628,7 +628,7 @@ namespace Intersect_Server.Classes.Entities
                 case EventCommandType.SetSelfSwitch:
                     if (IsGlobal)
                     {
-                        var evts = MapInstance.GetMap(MapNum).GlobalEventInstances.Values.ToList();
+                        var evts = MapInstance.Lookup.Get(MapNum).GlobalEventInstances.Values.ToList();
                         for (int i = 0; i < evts.Count; i++)
                         {
                             if (evts[i] != null && evts[i].BaseEvent == BaseEvent)
@@ -987,7 +987,7 @@ namespace Intersect_Server.Classes.Entities
                     tile = new TileHelper(mapNum, tileX, tileY);
                     if (tile.TryFix())
                     {
-                        var npc = MapInstance.GetMap(mapNum).SpawnNpc(tileX, tileY, direction, npcNum, true);
+                        var npc = MapInstance.Lookup.Get(mapNum).SpawnNpc(tileX, tileY, direction, npcNum, true);
                         MyPlayer.SpawnedNpcs.Add((Npc) npc);
                     }
                     CallStack.Peek().CommandIndex++;

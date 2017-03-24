@@ -97,7 +97,7 @@ namespace Intersect_Server.Classes.General
 
         public static void KillItemsOf(ItemBase item)
         {
-            foreach (var map in MapInstance.GetObjects())
+            foreach (var map in MapInstance.Lookup)
             {
                 if (map.Value != null)
                 {
