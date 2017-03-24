@@ -40,6 +40,7 @@ namespace Intersect_Server.Classes.Entities
         public int Level = 1;
         public Client MyClient;
         public List<EventInstance> MyEvents = new List<EventInstance>();
+        public Dictionary<Tuple<int,int,int>,int> EventLookup = new Dictionary<Tuple<int, int, int>, int>();
 
         public long MyId = -1;
         public List<Player> Party = new List<Player>();
@@ -210,9 +211,16 @@ namespace Intersect_Server.Classes.Entities
                                         SpawnY = mapEvent.SpawnY
                                     };
                                     MyEvents.Add(tmpEvent);
+                                    if (EventLookup.ContainsKey(new Tuple<int, int, int>(map.Id, mapEvent.SpawnX,mapEvent.SpawnY)))
+                                    {
+                                        EventLookup.Add(new Tuple<int, int, int>(map.Id,mapEvent.SpawnX,mapEvent.SpawnY),MyEvents.Count-1);
+                                    }
+                                    else
+                                    {
+                                        EventLookup[new Tuple<int, int, int>(map.Id, mapEvent.SpawnX, mapEvent.SpawnY)] = MyEvents.Count - 1;
+                                    }
                                 }
-                                else
-                                {
+                                else { 
                                     MyEvents[foundEvent].Update(timeMs);
                                 }
                             }
@@ -252,6 +260,8 @@ namespace Intersect_Server.Classes.Entities
                     }
                     if (eventFound) continue;
                     PacketSender.SendEntityLeaveTo(MyClient, i, (int) EntityTypes.Event, evt.MapNum);
+                    EventLookup.Remove(new Tuple<int, int, int>(MyEvents[i].MapNum, MyEvents[i].BaseEvent.SpawnX,
+                        MyEvents[i].BaseEvent.SpawnY));
                     MyEvents[i] = null;
                 }
             }
@@ -2759,17 +2769,10 @@ namespace Intersect_Server.Classes.Entities
         }
 
         //Event Processing Methods
-        private int EventExists(int map, int x, int y)
+        public int EventExists(int map, int x, int y)
         {
-            for (var i = 0; i < MyEvents.Count; i++)
-            {
-                var evt = MyEvents[i];
-                if (evt == null) continue;
-                if (map == evt.MapNum && x == evt.SpawnX && y == evt.SpawnY)
-                {
-                    return i;
-                }
-            }
+            int index = -1;
+            if (EventLookup.TryGetValue(new Tuple<int, int, int>(map, x, y), out index)) return index;
             return -1;
         }
 

@@ -172,17 +172,44 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
                                                     Player player = ev.Client.Entity;
                                                     if (player != null)
                                                     {
-                                                        var playerEvents = player.MyEvents;
-                                                        foreach (var evt in playerEvents)
+                                                        if (player.MyEvents.Count > Options.MapWidth * Options.MapHeight)
                                                         {
-                                                            if (evt != null && evt.PageInstance != null &&
-                                                                evt.PageInstance.Passable == 0)
+                                                            //Find all events on this map (since events can't switch maps)
+                                                            for (int mapX = 0; mapX < Options.MapWidth; mapX++)
                                                             {
-                                                                mapGrid[
-                                                                    ((x + 1) - gridX) * Options.MapWidth +
-                                                                    evt.PageInstance.CurrentX,
-                                                                    ((y + 1) - gridY) * Options.MapHeight +
-                                                                    evt.PageInstance.CurrentY].IsWall = true;
+                                                                for (int mapY = 0; mapY < Options.MapHeight; mapY++)
+                                                                {
+                                                                    var evtIndex = player.EventExists(ev.CurrentMap, mapX, mapY);
+                                                                    if (evtIndex > -1)
+                                                                    {
+                                                                        var evt = player.MyEvents[evtIndex];
+                                                                        if (evt != null && evt.PageInstance != null && evt.PageInstance.Passable == 0)
+                                                                        {
+                                                                            mapGrid[
+                                                                                ((x + 1) - gridX) * Options.MapWidth +
+                                                                                evt.CurrentX,
+                                                                                ((y + 1) - gridY) * Options.MapHeight +
+                                                                                evt.CurrentY].IsWall = true;
+                                                                        }
+                                                                    }
+
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            var playerEvents = player.MyEvents;
+                                                            foreach (var evt in playerEvents)
+                                                            {
+                                                                if (evt != null && evt.PageInstance != null &&
+                                                                    evt.PageInstance.Passable == 0)
+                                                                {
+                                                                    mapGrid[
+                                                                        ((x + 1) - gridX) * Options.MapWidth +
+                                                                        evt.PageInstance.CurrentX,
+                                                                        ((y + 1) - gridY) * Options.MapHeight +
+                                                                        evt.PageInstance.CurrentY].IsWall = true;
+                                                                }
                                                             }
                                                         }
                                                     }
