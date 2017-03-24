@@ -133,7 +133,7 @@ namespace Intersect_Editor.Classes
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Bench:
-                    foreach (var obj in BenchBase.GetObjects())
+                    foreach (var obj in BenchBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Map:
@@ -203,8 +203,8 @@ namespace Intersect_Editor.Classes
                     if (listIndex >= SpellBase.ObjectCount()) return -1;
                     return SpellBase.GetObjects().Keys.ToList()[listIndex];
                 case GameObject.Bench:
-                    if (listIndex >= BenchBase.ObjectCount()) return -1;
-                    return BenchBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= BenchBase.Lookup_Count) return -1;
+                    return BenchBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Map:
                     if (listIndex >= MapBase.ObjectCount()) return -1;
                     return MapBase.GetObjects().Keys.ToList()[listIndex];
@@ -254,7 +254,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.Spell:
                     return SpellBase.GetObjects().Keys.ToList().IndexOf(id);
                 case GameObject.Bench:
-                    return BenchBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return BenchBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Map:
                     return MapBase.GetObjects().Keys.ToList().IndexOf(id);
                 case GameObject.CommonEvent:

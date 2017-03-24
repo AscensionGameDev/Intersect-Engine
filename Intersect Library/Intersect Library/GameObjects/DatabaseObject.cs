@@ -55,19 +55,34 @@ namespace Intersect.GameObjects
             }
         }
 
-        public virtual void Delete() => Lookup.Delete((TObject)this);
-
         public abstract byte[] BinaryData { get; }
         public abstract GameObject GameObjectType { get; }
         public abstract string DatabaseTableName { get; }
-
+        
+        public virtual void Delete() => Lookup.Delete((TObject)this);
         public static TObject Get(int index) => Lookup.Get(index);
+        public static TObject Lookup_Get(int index) => Lookup.Get(index);
+        public static int Lookup_Count => Lookup.Count;
+        public static void Lookup_Clear() => Lookup.Clear();
+        public static void Lookup_Set(int index, TObject obj) => Lookup.Set(index, obj);
 
-        public static string GetName(int index)
-        {
-            var obj = Lookup.Get(index);
-            return obj == null ? "Deleted" : obj.Name;
-        }
+        public static string GetName(int index) => Lookup.Get(index)?.Name ?? "Deleted";
+
+        public static void ClearObjects() => Lookup.Clear();
+        public static void AddObject(int index, DatabaseObject obj) => Lookup.Set(index, (TObject)obj);
+        public static int ObjectCount() => Lookup.Count;
+        public static Dictionary<int, TObject> GetObjects() => (Dictionary<int, TObject>)Lookup.ReadOnlyMap;
+        public static ItemBase GetItem(int index) => (ItemBase)(DatabaseObject)Lookup_Get(index);
+        public static NpcBase GetNpc(int index) => (NpcBase)(DatabaseObject)Lookup_Get(index);
+        public static QuestBase GetQuest(int index) => (QuestBase)(DatabaseObject)Lookup_Get(index);
+        public static ProjectileBase GetProjectile(int index) => (ProjectileBase)(DatabaseObject)Lookup_Get(index);
+        public static ShopBase GetShop(int index) => (ShopBase)(DatabaseObject)Lookup_Get(index);
+        public static PlayerSwitchBase GetSwitch(int index) => (PlayerSwitchBase)(DatabaseObject)Lookup_Get(index);
+        public static PlayerVariableBase GetVariable(int index) => (PlayerVariableBase)(DatabaseObject)Lookup_Get(index);
+        public static ServerSwitchBase GetServerSwitch(int index) => (ServerSwitchBase)(DatabaseObject)Lookup_Get(index);
+        public static SpellBase GetSpell(int index) => (SpellBase)(DatabaseObject)Lookup_Get(index);
+        public static ResourceBase GetResource(int index) => (ResourceBase)(DatabaseObject)Lookup_Get(index);
+        public static ServerVariableBase GetServerVariable(int index) => (ServerVariableBase)(DatabaseObject)Lookup_Get(index);
     }
 
     public static class DatabaseObjectUtils
@@ -115,7 +130,7 @@ namespace Intersect.GameObjects
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Bench:
-                    foreach (var obj in BenchBase.GetObjects())
+                    foreach (var obj in BenchBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Map:
@@ -187,8 +202,8 @@ namespace Intersect.GameObjects
                     if (listIndex >= SpellBase.ObjectCount()) return -1;
                     return SpellBase.GetObjects().Keys.ToList()[listIndex];
                 case GameObject.Bench:
-                    if (listIndex >= BenchBase.ObjectCount()) return -1;
-                    return BenchBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= BenchBase.Lookup_Count) return -1;
+                    return BenchBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Map:
                     if (listIndex >= MapBase.ObjectCount()) return -1;
                     return MapBase.GetObjects().Keys.ToList()[listIndex];
@@ -240,7 +255,7 @@ namespace Intersect.GameObjects
                 case GameObject.Spell:
                     return SpellBase.GetObjects().Keys.ToList().IndexOf(id);
                 case GameObject.Bench:
-                    return BenchBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return BenchBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Map:
                     return MapBase.GetObjects().Keys.ToList().IndexOf(id);
                 case GameObject.CommonEvent:

@@ -315,7 +315,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.Class:
                     if (deleted)
                     {
-                        var cls = ClassBase.GetClass(id);
+                        var cls = ClassBase.Lookup_Get(id);
                         cls.Delete();
                     }
                     else
@@ -419,14 +419,14 @@ namespace Intersect_Editor.Classes
                 case GameObject.Bench:
                     if (deleted)
                     {
-                        var cft = BenchBase.GetCraft(id);
+                        var cft = BenchBase.Lookup_Get(id);
                         cft.Delete();
                     }
                     else
                     {
                         var cft = new BenchBase(id);
                         cft.Load(data);
-                        BenchBase.AddObject(id, cft);
+                        BenchBase.Lookup_Set(id, cft);
                     }
                     break;
                 case GameObject.Map:
@@ -474,7 +474,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.ServerSwitch:
                     if (deleted)
                     {
-                        var sswtch = ServerSwitchBase.GetSwitch(id);
+                        var sswtch = ServerSwitchBase.GetServerSwitch(id);
                         sswtch.Delete();
                     }
                     else
@@ -487,7 +487,7 @@ namespace Intersect_Editor.Classes
                 case GameObject.ServerVariable:
                     if (deleted)
                     {
-                        var svar = ServerVariableBase.GetVariable(id);
+                        var svar = ServerVariableBase.GetServerVariable(id);
                         svar.Delete();
                     }
                     else

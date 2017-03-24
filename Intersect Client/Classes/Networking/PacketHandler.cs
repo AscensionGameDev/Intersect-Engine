@@ -1178,7 +1178,7 @@ namespace Intersect_Client.Classes.Networking
                 case GameObject.Class:
                     if (deleted)
                     {
-                        var cls = ClassBase.GetClass(id);
+                        var cls = ClassBase.Lookup_Get(id);
                         cls.Delete();
                     }
                     else
@@ -1271,14 +1271,14 @@ namespace Intersect_Client.Classes.Networking
                 case GameObject.Bench:
                     if (deleted)
                     {
-                        var bnc = BenchBase.GetCraft(id);
+                        var bnc = BenchBase.Lookup_Get(id);
                         bnc.Delete();
                     }
                     else
                     {
                         var bnc = new BenchBase(id);
                         bnc.Load(data);
-                        BenchBase.AddObject(id, bnc);
+                        BenchBase.Lookup_Set(id, bnc);
                     }
                     break;
                 case GameObject.Spell:

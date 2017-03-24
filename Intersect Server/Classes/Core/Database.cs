@@ -1780,7 +1780,7 @@ namespace Intersect_Server.Classes.Core
                     SpellBase.ClearObjects();
                     break;
                 case GameObject.Bench:
-                    BenchBase.ClearObjects();
+                    BenchBase.Lookup_Clear();
                     break;
                 case GameObject.Map:
                     MapBase.ClearObjects();
@@ -1862,7 +1862,7 @@ namespace Intersect_Server.Classes.Core
                 case GameObject.Bench:
                     var cft = new BenchBase(index);
                     cft.Load(data);
-                    BenchBase.AddObject(index, cft);
+                    BenchBase.Lookup_Set(index, cft);
                     break;
                 case GameObject.Map:
                     var map = new MapInstance(index);
@@ -2025,7 +2025,7 @@ namespace Intersect_Server.Classes.Core
                     case GameObject.Bench:
                         var obje = new BenchBase(index);
                         dbObj = obje;
-                        BenchBase.AddObject(index, obje);
+                        BenchBase.Lookup_Set(index, obje);
                         break;
                     case GameObject.Map:
                         var objw = new MapInstance(index);

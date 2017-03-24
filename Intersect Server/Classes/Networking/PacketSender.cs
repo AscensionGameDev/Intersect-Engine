@@ -1169,7 +1169,7 @@ namespace Intersect_Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.OpenCraftingBench);
-            bf.WriteBytes(BenchBase.GetCraft(benchNum).CraftData());
+            bf.WriteBytes(BenchBase.Lookup_Get(benchNum).CraftData());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1242,7 +1242,7 @@ namespace Intersect_Server.Classes.Networking
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Bench:
-                    foreach (var obj in BenchBase.GetObjects())
+                    foreach (var obj in BenchBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Map:

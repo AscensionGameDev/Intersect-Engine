@@ -92,71 +92,9 @@ namespace Intersect.GameObjects
             return myBuffer.ToArray();
         }
 
-        public static ResourceBase GetResource(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (ResourceBase) Objects[index];
-            }
-            return null;
-        }
-
-        public static string GetName(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return ((ResourceBase) Objects[index]).Name;
-            }
-            return "Deleted";
-        }
-
         public override byte[] BinaryData => ResourceData();
-
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            Objects.Remove(Id);
-        }
-
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, ResourceBase> GetObjects()
-        {
-            Dictionary<int, ResourceBase> objects = Objects.ToDictionary(k => k.Key, v => (ResourceBase) v.Value);
-            return objects;
-        }
+        public override string DatabaseTableName => DATABASE_TABLE;
+        public override GameObject GameObjectType => OBJECT_TYPE;
 
         public class ResourceDrop
         {

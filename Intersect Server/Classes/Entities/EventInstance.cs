@@ -314,15 +314,15 @@ namespace Intersect_Server.Classes.Entities
                     break;
                 case 2: //Global Switch
                     var servSwitch = false;
-                    if (ServerSwitchBase.GetSwitch(conditionCommand.Ints[1]) != null)
-                        servSwitch = ServerSwitchBase.GetSwitch(conditionCommand.Ints[1]).Value;
+                    if (ServerSwitchBase.GetServerSwitch(conditionCommand.Ints[1]) != null)
+                        servSwitch = ServerSwitchBase.GetServerSwitch(conditionCommand.Ints[1]).Value;
                     if (servSwitch == Convert.ToBoolean(conditionCommand.Ints[2]))
                         return true;
                     break;
                 case 3: //Global Variable
                     var servVar = 0;
-                    if (ServerVariableBase.GetVariable(conditionCommand.Ints[1]) != null)
-                        servVar = ServerVariableBase.GetVariable(conditionCommand.Ints[1]).Value;
+                    if (ServerVariableBase.GetServerVariable(conditionCommand.Ints[1]) != null)
+                        servVar = ServerVariableBase.GetServerVariable(conditionCommand.Ints[1]).Value;
                     switch (conditionCommand.Ints[2]) //Comparator
                     {
                         case 0: //Equal to
@@ -566,7 +566,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else if (command.Ints[0] == (int) SwitchVariableTypes.ServerSwitch)
                     {
-                        var serverSwitch = ServerSwitchBase.GetSwitch(command.Ints[1]);
+                        var serverSwitch = ServerSwitchBase.GetServerSwitch(command.Ints[1]);
                         if (serverSwitch != null)
                         {
                             serverSwitch.Value = Convert.ToBoolean(command.Ints[2]);
@@ -601,7 +601,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else if (command.Ints[0] == (int) SwitchVariableTypes.ServerVariable)
                     {
-                        var serverVarible = ServerVariableBase.GetVariable(command.Ints[1]);
+                        var serverVarible = ServerVariableBase.GetServerVariable(command.Ints[1]);
                         if (serverVarible != null)
                         {
                             switch (command.Ints[2])
@@ -1190,7 +1190,7 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetClass:
-                    if (ClassBase.GetClass(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                    if (ClassBase.Lookup_Get(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                             .Commands[CallStack.Peek().CommandIndex].Ints[0]) != null)
                     {
                         MyPlayer.Class = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]

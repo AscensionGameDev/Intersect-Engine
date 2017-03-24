@@ -31,7 +31,7 @@ namespace Intersect_Editor.Forms
             if (type == GameObject.Item)
             {
                 InitEditor();
-                if (_editorItem != null && !ItemBase.GetObjects().Values.Contains(_editorItem))
+                if (_editorItem != null && !ItemBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();

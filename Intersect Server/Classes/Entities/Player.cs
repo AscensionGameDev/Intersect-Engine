@@ -114,7 +114,7 @@ namespace Intersect_Server.Classes.Entities
 
             if (InCraft > -1 && CraftIndex > -1)
             {
-                BenchBase b = BenchBase.GetCraft(InCraft);
+                BenchBase b = BenchBase.Lookup_Get(InCraft);
                 if (CraftTimer + b.Crafts[CraftIndex].Time < Environment.TickCount)
                 {
                     CraftItem(CraftIndex);
@@ -276,7 +276,7 @@ namespace Intersect_Server.Classes.Entities
         //Spawning/Dying
         private void Respawn()
         {
-            var cls = ClassBase.GetClass(Class);
+            var cls = ClassBase.Lookup_Get(Class);
             if (cls != null)
             {
                 Warp(cls.SpawnMap, cls.SpawnX, cls.SpawnY, cls.SpawnDir);
@@ -324,7 +324,7 @@ namespace Intersect_Server.Classes.Entities
 
         public override void ProcessRegen()
         {
-            var myclass = ClassBase.GetClass(Class);
+            var myclass = ClassBase.Lookup_Get(Class);
             var vitalAdded = false;
             if (myclass != null)
             {
@@ -363,7 +363,7 @@ namespace Intersect_Server.Classes.Entities
                 {
                     SetLevel(Level + 1, resetExperience);
                     //Let's pull up class - leveling info
-                    var myclass = ClassBase.GetClass(Class);
+                    var myclass = ClassBase.Lookup_Get(Class);
                     if (myclass != null)
                     {
                         foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
@@ -458,7 +458,7 @@ namespace Intersect_Server.Classes.Entities
         public int GetExperienceToNextLevel()
         {
             if (Level >= Options.MaxLevel) return -1;
-            var myclass = ClassBase.GetClass(Class);
+            var myclass = ClassBase.Lookup_Get(Class);
             if (myclass != null)
             {
                 return (int) (myclass.BaseExp * Math.Pow(1 + (myclass.ExpIncrease / 100f) / 1, Level));
@@ -580,7 +580,7 @@ namespace Intersect_Server.Classes.Entities
             }
             else
             {
-                var classBase = ClassBase.GetClass(Class);
+                var classBase = ClassBase.Lookup_Get(Class);
                 if (classBase != null)
                 {
                     var attackAnim = AnimationBase.Lookup.Get(classBase.AttackAnimation);
@@ -681,7 +681,7 @@ namespace Intersect_Server.Classes.Entities
         public void WarpToSpawn(bool sendWarp = false)
         {
             int map = -1, x = 0, y = 0;
-            var cls = ClassBase.GetClass(Class);
+            var cls = ClassBase.Lookup_Get(Class);
             if (cls != null)
             {
                 if (MapInstance.GetObjects().ContainsKey(cls.SpawnMap))
@@ -1274,7 +1274,7 @@ namespace Intersect_Server.Classes.Entities
                     invbackup.Add(item.Clone());
                 }
                 //Check the player actually has the items
-                foreach (CraftIngredient c in BenchBase.GetCraft(InCraft).Crafts[index].Ingredients)
+                foreach (CraftIngredient c in BenchBase.Lookup_Get(InCraft).Crafts[index].Ingredients)
                 {
                     int n = FindItem(c.Item);
                     int x = 0;
@@ -1293,7 +1293,7 @@ namespace Intersect_Server.Classes.Entities
                 }
 
                 //Take the items
-                foreach (CraftIngredient c in BenchBase.GetCraft(InCraft).Crafts[index].Ingredients)
+                foreach (CraftIngredient c in BenchBase.Lookup_Get(InCraft).Crafts[index].Ingredients)
                 {
                     int n = FindItem(c.Item);
                     if (n > -1)
@@ -1303,11 +1303,11 @@ namespace Intersect_Server.Classes.Entities
                 }
 
                 //Give them the craft
-                if (TryGiveItem(new ItemInstance(BenchBase.GetCraft(InCraft).Crafts[index].Item, 1, -1)))
+                if (TryGiveItem(new ItemInstance(BenchBase.Lookup_Get(InCraft).Crafts[index].Item, 1, -1)))
                 {
                     PacketSender.SendPlayerMsg(MyClient,
                         Strings.Get("crafting", "crafted",
-                            ItemBase.GetName(BenchBase.GetCraft(InCraft).Crafts[index].Item)), Color.Green);
+                            ItemBase.GetName(BenchBase.Lookup_Get(InCraft).Crafts[index].Item)), Color.Green);
                 }
                 else
                 {
@@ -1315,7 +1315,7 @@ namespace Intersect_Server.Classes.Entities
                     PacketSender.SendInventory(MyClient);
                     PacketSender.SendPlayerMsg(MyClient,
                         "You do not have enough inventory space to craft " +
-                        ItemBase.GetName(BenchBase.GetCraft(InCraft).Crafts[index].Item) +
+                        ItemBase.GetName(BenchBase.Lookup_Get(InCraft).Crafts[index].Item) +
                         "!", Color.Red);
                 }
                 CraftIndex = -1;

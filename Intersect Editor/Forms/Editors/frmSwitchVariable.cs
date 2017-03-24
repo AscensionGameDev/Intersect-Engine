@@ -174,13 +174,13 @@ namespace Intersect_Editor.Forms.Editors
                 else if (rdoGlobalSwitches.Checked)
                 {
                     obj =
-                        ServerSwitchBase.GetSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch,
+                        ServerSwitchBase.GetServerSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch,
                             lstObjects.SelectedIndex));
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
                     obj =
-                        ServerVariableBase.GetVariable(Database.GameObjectIdFromList(GameObject.ServerVariable,
+                        ServerVariableBase.GetServerVariable(Database.GameObjectIdFromList(GameObject.ServerVariable,
                             lstObjects.SelectedIndex));
                 }
                 if (obj != null)
@@ -214,7 +214,7 @@ namespace Intersect_Editor.Forms.Editors
             {
                 for (int i = 0; i < ServerSwitchBase.ObjectCount(); i++)
                 {
-                    var swtch = ServerSwitchBase.GetSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch, i));
+                    var swtch = ServerSwitchBase.GetServerSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch, i));
                     lstObjects.Items.Add(swtch.Name + "  =  " + swtch.Value.ToString());
                 }
             }
@@ -222,7 +222,7 @@ namespace Intersect_Editor.Forms.Editors
             {
                 for (int i = 0; i < ServerVariableBase.ObjectCount(); i++)
                 {
-                    var var = ServerVariableBase.GetVariable(Database.GameObjectIdFromList(GameObject.ServerVariable, i));
+                    var var = ServerVariableBase.GetServerVariable(Database.GameObjectIdFromList(GameObject.ServerVariable, i));
                     lstObjects.Items.Add(var.Name + "  =  " + var.Value.ToString());
                 }
             }
@@ -302,7 +302,7 @@ namespace Intersect_Editor.Forms.Editors
                 if (rdoGlobalSwitches.Checked)
                 {
                     var obj =
-                        ServerSwitchBase.GetSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch,
+                        ServerSwitchBase.GetServerSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch,
                             lstObjects.SelectedIndex));
                     obj.Value = Convert.ToBoolean(cmbSwitchValue.SelectedIndex);
                     UpdateSelection();
@@ -333,14 +333,14 @@ namespace Intersect_Editor.Forms.Editors
                 else if (rdoGlobalSwitches.Checked)
                 {
                     var obj =
-                        ServerSwitchBase.GetSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch,
+                        ServerSwitchBase.GetServerSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch,
                             lstObjects.SelectedIndex));
                     lstObjects.Items[lstObjects.SelectedIndex] = obj.Name + "  =  " + obj.Value.ToString();
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
                     var obj =
-                        ServerVariableBase.GetVariable(Database.GameObjectIdFromList(GameObject.ServerVariable,
+                        ServerVariableBase.GetServerVariable(Database.GameObjectIdFromList(GameObject.ServerVariable,
                             lstObjects.SelectedIndex));
                     lstObjects.Items[lstObjects.SelectedIndex] = obj.Name + "  =  " + obj.Value.ToString();
                 }
@@ -356,7 +356,7 @@ namespace Intersect_Editor.Forms.Editors
                     if (int.TryParse(txtVariableVal.Text, out int readInt))
                     {
                         var obj =
-                            ServerVariableBase.GetVariable(Database.GameObjectIdFromList(GameObject.ServerVariable,
+                            ServerVariableBase.GetServerVariable(Database.GameObjectIdFromList(GameObject.ServerVariable,
                                 lstObjects.SelectedIndex));
                         obj.Value = readInt;
                         UpdateSelection();
@@ -386,14 +386,14 @@ namespace Intersect_Editor.Forms.Editors
                 else if (rdoGlobalSwitches.Checked)
                 {
                     var obj =
-                        ServerSwitchBase.GetSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch,
+                        ServerSwitchBase.GetServerSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch,
                             lstObjects.SelectedIndex));
                     obj.Name = txtObjectName.Text;
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
                     var obj =
-                        ServerVariableBase.GetVariable(Database.GameObjectIdFromList(GameObject.ServerVariable,
+                        ServerVariableBase.GetServerVariable(Database.GameObjectIdFromList(GameObject.ServerVariable,
                             lstObjects.SelectedIndex));
                     obj.Name = txtObjectName.Text;
                 }
