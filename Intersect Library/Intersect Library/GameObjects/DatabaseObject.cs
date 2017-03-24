@@ -71,7 +71,7 @@ namespace Intersect.GameObjects
         public static void ClearObjects() => Lookup.Clear();
         public static void AddObject(int index, DatabaseObject obj) => Lookup.Set(index, (TObject)obj);
         public static int ObjectCount() => Lookup.Count;
-        public static Dictionary<int, TObject> GetObjects() => (Dictionary<int, TObject>)Lookup.ReadOnlyMap;
+        public static IDictionary<int, TObject> GetObjects() => Lookup.ReadOnlyMap;
         public static ItemBase GetItem(int index) => (ItemBase)(DatabaseObject)Lookup_Get(index);
         public static NpcBase GetNpc(int index) => (NpcBase)(DatabaseObject)Lookup_Get(index);
         public static QuestBase GetQuest(int index) => (QuestBase)(DatabaseObject)Lookup_Get(index);

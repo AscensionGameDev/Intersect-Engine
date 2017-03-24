@@ -20,7 +20,7 @@ namespace Intersect.Collections
             mConstructor = ValueType.GetConstructor(new[] {KeyType});
             if (mConstructor == null)
             {
-                throw new ArgumentNullException($"Missing constructor with parameter '{KeyType.Name}'.");
+                //throw new ArgumentNullException($"Missing constructor with parameter '{KeyType.Name}'.");
             }
         }
 
@@ -80,7 +80,7 @@ namespace Intersect.Collections
             return false;
         }
 
-        public TValue AddNew(TKey key)
+        private TValue AddNew(TKey key)
         {
             var value = (TValue) mConstructor?.Invoke(new object[] {key});
             if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType.Name}'.");

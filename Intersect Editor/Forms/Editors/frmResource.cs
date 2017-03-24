@@ -39,7 +39,7 @@ namespace Intersect_Editor.Classes
             if (type == GameObject.Resource)
             {
                 InitEditor();
-                if (_editorItem != null && !ResourceBase.GetObjects().ContainsValue(_editorItem))
+                if (_editorItem != null && !ResourceBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();

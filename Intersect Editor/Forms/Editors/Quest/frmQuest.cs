@@ -30,7 +30,7 @@ namespace Intersect_Editor.Forms
             if (type == GameObject.Quest)
             {
                 InitEditor();
-                if (_editorItem != null && !QuestBase.GetObjects().ContainsValue(_editorItem))
+                if (_editorItem != null && !QuestBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
