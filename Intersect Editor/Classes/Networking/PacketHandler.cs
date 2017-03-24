@@ -322,7 +322,7 @@ namespace Intersect_Editor.Classes
                     {
                         var cls = new ClassBase(id);
                         cls.Load(data);
-                        ClassBase.AddObject(id, cls);
+                        ClassBase.Lookup.Set(id, cls);
                     }
                     break;
                 case GameObject.Item:
@@ -335,7 +335,7 @@ namespace Intersect_Editor.Classes
                     {
                         var itm = new ItemBase(id);
                         itm.Load(data);
-                        ItemBase.AddObject(id, itm);
+                        ItemBase.Lookup.Set(id, itm);
                     }
                     break;
                 case GameObject.Npc:
@@ -348,7 +348,7 @@ namespace Intersect_Editor.Classes
                     {
                         var npc = new NpcBase(id);
                         npc.Load(data);
-                        NpcBase.AddObject(id, npc);
+                        NpcBase.Lookup.Set(id, npc);
                     }
                     break;
                 case GameObject.Projectile:
@@ -361,7 +361,7 @@ namespace Intersect_Editor.Classes
                     {
                         var proj = new ProjectileBase(id);
                         proj.Load(data);
-                        ProjectileBase.AddObject(id, proj);
+                        ProjectileBase.Lookup.Set(id, proj);
                     }
                     break;
                 case GameObject.Quest:
@@ -374,7 +374,7 @@ namespace Intersect_Editor.Classes
                     {
                         var qst = new QuestBase(id);
                         qst.Load(data);
-                        QuestBase.AddObject(id, qst);
+                        QuestBase.Lookup.Set(id, qst);
                     }
                     break;
                 case GameObject.Resource:
@@ -387,7 +387,7 @@ namespace Intersect_Editor.Classes
                     {
                         var res = new ResourceBase(id);
                         res.Load(data);
-                        ResourceBase.AddObject(id, res);
+                        ResourceBase.Lookup.Set(id, res);
                     }
                     break;
                 case GameObject.Shop:
@@ -400,7 +400,7 @@ namespace Intersect_Editor.Classes
                     {
                         var shp = new ShopBase(id);
                         shp.Load(data);
-                        ShopBase.AddObject(id, shp);
+                        ShopBase.Lookup.Set(id, shp);
                     }
                     break;
                 case GameObject.Spell:
@@ -413,7 +413,7 @@ namespace Intersect_Editor.Classes
                     {
                         var spl = new SpellBase(id);
                         spl.Load(data);
-                        SpellBase.AddObject(id, spl);
+                        SpellBase.Lookup.Set(id, spl);
                     }
                     break;
                 case GameObject.Bench:
@@ -426,7 +426,7 @@ namespace Intersect_Editor.Classes
                     {
                         var cft = new BenchBase(id);
                         cft.Load(data);
-                        BenchBase.Lookup_Set(id, cft);
+                        BenchBase.Lookup.Set(id, cft);
                     }
                     break;
                 case GameObject.Map:
@@ -455,7 +455,7 @@ namespace Intersect_Editor.Classes
                     {
                         var pswtch = new PlayerSwitchBase(id);
                         pswtch.Load(data);
-                        PlayerSwitchBase.AddObject(id, pswtch);
+                        PlayerSwitchBase.Lookup.Set(id, pswtch);
                     }
                     break;
                 case GameObject.PlayerVariable:
@@ -468,7 +468,7 @@ namespace Intersect_Editor.Classes
                     {
                         var pvar = new PlayerVariableBase(id);
                         pvar.Load(data);
-                        PlayerVariableBase.AddObject(id, pvar);
+                        PlayerVariableBase.Lookup.Set(id, pvar);
                     }
                     break;
                 case GameObject.ServerSwitch:
@@ -481,7 +481,7 @@ namespace Intersect_Editor.Classes
                     {
                         var sswtch = new ServerSwitchBase(id);
                         sswtch.Load(data);
-                        ServerSwitchBase.AddObject(id, sswtch);
+                        ServerSwitchBase.Lookup.Set(id, sswtch);
                     }
                     break;
                 case GameObject.ServerVariable:
@@ -494,7 +494,7 @@ namespace Intersect_Editor.Classes
                     {
                         var svar = new ServerVariableBase(id);
                         svar.Load(data);
-                        ServerVariableBase.AddObject(id, svar);
+                        ServerVariableBase.Lookup.Set(id, svar);
                     }
                     break;
                 case GameObject.Tileset:

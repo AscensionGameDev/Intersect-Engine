@@ -1185,7 +1185,7 @@ namespace Intersect_Client.Classes.Networking
                     {
                         var cls = new ClassBase(id);
                         cls.Load(data);
-                        ClassBase.AddObject(id, cls);
+                        ClassBase.Lookup.Set(id, cls);
                     }
                     break;
                 case GameObject.Item:
@@ -1198,7 +1198,7 @@ namespace Intersect_Client.Classes.Networking
                     {
                         var itm = new ItemBase(id);
                         itm.Load(data);
-                        ItemBase.AddObject(id, itm);
+                        ItemBase.Lookup.Set(id, itm);
                     }
                     break;
                 case GameObject.Npc:
@@ -1211,7 +1211,7 @@ namespace Intersect_Client.Classes.Networking
                     {
                         var npc = new NpcBase(id);
                         npc.Load(data);
-                        NpcBase.AddObject(id, npc);
+                        NpcBase.Lookup.Set(id, npc);
                     }
                     break;
                 case GameObject.Projectile:
@@ -1224,7 +1224,7 @@ namespace Intersect_Client.Classes.Networking
                     {
                         var proj = new ProjectileBase(id);
                         proj.Load(data);
-                        ProjectileBase.AddObject(id, proj);
+                        ProjectileBase.Lookup.Set(id, proj);
                     }
                     break;
                 case GameObject.Quest:
@@ -1238,7 +1238,7 @@ namespace Intersect_Client.Classes.Networking
                     {
                         var qst = new QuestBase(id);
                         qst.Load(data);
-                        QuestBase.AddObject(id, qst);
+                        QuestBase.Lookup.Set(id, qst);
                         Gui.GameUI.NotifyQuestsUpdated();
                     }
                     break;
@@ -1252,7 +1252,7 @@ namespace Intersect_Client.Classes.Networking
                     {
                         var res = new ResourceBase(id);
                         res.Load(data);
-                        ResourceBase.AddObject(id, res);
+                        ResourceBase.Lookup.Set(id, res);
                     }
                     break;
                 case GameObject.Shop:
@@ -1265,7 +1265,7 @@ namespace Intersect_Client.Classes.Networking
                     {
                         var shp = new ShopBase(id);
                         shp.Load(data);
-                        ShopBase.AddObject(id, shp);
+                        ShopBase.Lookup.Set(id, shp);
                     }
                     break;
                 case GameObject.Bench:
@@ -1278,7 +1278,7 @@ namespace Intersect_Client.Classes.Networking
                     {
                         var bnc = new BenchBase(id);
                         bnc.Load(data);
-                        BenchBase.Lookup_Set(id, bnc);
+                        BenchBase.Lookup.Set(id, bnc);
                     }
                     break;
                 case GameObject.Spell:
@@ -1291,7 +1291,7 @@ namespace Intersect_Client.Classes.Networking
                     {
                         var spl = new SpellBase(id);
                         spl.Load(data);
-                        SpellBase.AddObject(id, spl);
+                        SpellBase.Lookup.Set(id, spl);
                     }
                     break;
                 case GameObject.Map:

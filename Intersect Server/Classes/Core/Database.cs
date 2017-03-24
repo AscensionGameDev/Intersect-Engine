@@ -1756,31 +1756,31 @@ namespace Intersect_Server.Classes.Core
                     AnimationBase.Lookup.Clear();
                     break;
                 case GameObject.Class:
-                    ClassBase.ClearObjects();
+                    ClassBase.Lookup.Clear();
                     break;
                 case GameObject.Item:
-                    ItemBase.ClearObjects();
+                    ItemBase.Lookup.Clear();
                     break;
                 case GameObject.Npc:
-                    NpcBase.ClearObjects();
+                    NpcBase.Lookup.Clear();
                     break;
                 case GameObject.Projectile:
-                    ProjectileBase.ClearObjects();
+                    ProjectileBase.Lookup.Clear();
                     break;
                 case GameObject.Quest:
-                    QuestBase.ClearObjects();
+                    QuestBase.Lookup.Clear();
                     break;
                 case GameObject.Resource:
-                    ResourceBase.ClearObjects();
+                    ResourceBase.Lookup.Clear();
                     break;
                 case GameObject.Shop:
-                    ShopBase.ClearObjects();
+                    ShopBase.Lookup.Clear();
                     break;
                 case GameObject.Spell:
-                    SpellBase.ClearObjects();
+                    SpellBase.Lookup.Clear();
                     break;
                 case GameObject.Bench:
-                    BenchBase.Lookup_Clear();
+                    BenchBase.Lookup.Clear();
                     break;
                 case GameObject.Map:
                     MapBase.ClearObjects();
@@ -1789,16 +1789,16 @@ namespace Intersect_Server.Classes.Core
                     EventBase.Lookup.Clear();
                     break;
                 case GameObject.PlayerSwitch:
-                    PlayerSwitchBase.ClearObjects();
+                    PlayerSwitchBase.Lookup.Clear();
                     break;
                 case GameObject.PlayerVariable:
-                    PlayerVariableBase.ClearObjects();
+                    PlayerVariableBase.Lookup.Clear();
                     break;
                 case GameObject.ServerSwitch:
-                    ServerSwitchBase.ClearObjects();
+                    ServerSwitchBase.Lookup.Clear();
                     break;
                 case GameObject.ServerVariable:
-                    ServerVariableBase.ClearObjects();
+                    ServerVariableBase.Lookup.Clear();
                     break;
                 case GameObject.Tileset:
                     TilesetBase.Lookup.Clear();
@@ -1822,47 +1822,47 @@ namespace Intersect_Server.Classes.Core
                 case GameObject.Class:
                     var cls = new ClassBase(index);
                     cls.Load(data);
-                    ClassBase.AddObject(index, cls);
+                    ClassBase.Lookup.Set(index, cls);
                     break;
                 case GameObject.Item:
                     var itm = new ItemBase(index);
                     itm.Load(data);
-                    ItemBase.AddObject(index, itm);
+                    ItemBase.Lookup.Set(index, itm);
                     break;
                 case GameObject.Npc:
                     var npc = new NpcBase(index);
                     npc.Load(data);
-                    NpcBase.AddObject(index, npc);
+                    NpcBase.Lookup.Set(index, npc);
                     break;
                 case GameObject.Projectile:
                     var proj = new ProjectileBase(index);
                     proj.Load(data);
-                    ProjectileBase.AddObject(index, proj);
+                    ProjectileBase.Lookup.Set(index, proj);
                     break;
                 case GameObject.Quest:
                     var qst = new QuestBase(index);
                     qst.Load(data);
-                    QuestBase.AddObject(index, qst);
+                    QuestBase.Lookup.Set(index, qst);
                     break;
                 case GameObject.Resource:
                     var res = new ResourceBase(index);
                     res.Load(data);
-                    ResourceBase.AddObject(index, res);
+                    ResourceBase.Lookup.Set(index, res);
                     break;
                 case GameObject.Shop:
                     var shp = new ShopBase(index);
                     shp.Load(data);
-                    ShopBase.AddObject(index, shp);
+                    ShopBase.Lookup.Set(index, shp);
                     break;
                 case GameObject.Spell:
                     var spl = new SpellBase(index);
                     spl.Load(data);
-                    SpellBase.AddObject(index, spl);
+                    SpellBase.Lookup.Set(index, spl);
                     break;
                 case GameObject.Bench:
                     var cft = new BenchBase(index);
                     cft.Load(data);
-                    BenchBase.Lookup_Set(index, cft);
+                    BenchBase.Lookup.Set(index, cft);
                     break;
                 case GameObject.Map:
                     var map = new MapInstance(index);
@@ -1879,22 +1879,22 @@ namespace Intersect_Server.Classes.Core
                 case GameObject.PlayerSwitch:
                     var pswitch = new PlayerSwitchBase(index);
                     pswitch.Load(data);
-                    PlayerSwitchBase.AddObject(index, pswitch);
+                    PlayerSwitchBase.Lookup.Set(index, pswitch);
                     break;
                 case GameObject.PlayerVariable:
                     var pvar = new PlayerVariableBase(index);
                     pvar.Load(data);
-                    PlayerVariableBase.AddObject(index, pvar);
+                    PlayerVariableBase.Lookup.Set(index, pvar);
                     break;
                 case GameObject.ServerSwitch:
                     var sswitch = new ServerSwitchBase(index);
                     sswitch.Load(data);
-                    ServerSwitchBase.AddObject(index, sswitch);
+                    ServerSwitchBase.Lookup.Set(index, sswitch);
                     break;
                 case GameObject.ServerVariable:
                     var svar = new ServerVariableBase(index);
                     svar.Load(data);
-                    ServerVariableBase.AddObject(index, svar);
+                    ServerVariableBase.Lookup.Set(index, svar);
                     break;
                 case GameObject.Tileset:
                     var tset = new TilesetBase(index);
@@ -1985,47 +1985,47 @@ namespace Intersect_Server.Classes.Core
                     case GameObject.Class:
                         var objc = new ClassBase(index);
                         dbObj = objc;
-                        ClassBase.AddObject(index, objc);
+                        ClassBase.Lookup.Set(index, objc);
                         break;
                     case GameObject.Item:
                         var objd = new ItemBase(index);
                         dbObj = objd;
-                        ItemBase.AddObject(index, objd);
+                        ItemBase.Lookup.Set(index, objd);
                         break;
                     case GameObject.Npc:
                         var objq = new NpcBase(index);
                         dbObj = objq;
-                        NpcBase.AddObject(index, objq);
+                        NpcBase.Lookup.Set(index, objq);
                         break;
                     case GameObject.Projectile:
                         var objwe = new ProjectileBase(index);
                         dbObj = objwe;
-                        ProjectileBase.AddObject(index, objwe);
+                        ProjectileBase.Lookup.Set(index, objwe);
                         break;
                     case GameObject.Quest:
                         var objqw = new QuestBase(index);
                         dbObj = objqw;
-                        QuestBase.AddObject(index, objqw);
+                        QuestBase.Lookup.Set(index, objqw);
                         break;
                     case GameObject.Resource:
                         var objy = new ResourceBase(index);
                         dbObj = objy;
-                        ResourceBase.AddObject(index, objy);
+                        ResourceBase.Lookup.Set(index, objy);
                         break;
                     case GameObject.Shop:
                         var objt = new ShopBase(index);
                         dbObj = objt;
-                        ShopBase.AddObject(index, objt);
+                        ShopBase.Lookup.Set(index, objt);
                         break;
                     case GameObject.Spell:
                         var objr = new SpellBase(index);
                         dbObj = objr;
-                        SpellBase.AddObject(index, objr);
+                        SpellBase.Lookup.Set(index, objr);
                         break;
                     case GameObject.Bench:
                         var obje = new BenchBase(index);
                         dbObj = obje;
-                        BenchBase.Lookup_Set(index, obje);
+                        BenchBase.Lookup.Set(index, obje);
                         break;
                     case GameObject.Map:
                         var objw = new MapInstance(index);
@@ -2040,22 +2040,22 @@ namespace Intersect_Server.Classes.Core
                     case GameObject.PlayerSwitch:
                         var objz = new PlayerSwitchBase(index);
                         dbObj = objz;
-                        PlayerSwitchBase.AddObject(index, objz);
+                        PlayerSwitchBase.Lookup.Set(index, objz);
                         break;
                     case GameObject.PlayerVariable:
                         var objx = new PlayerVariableBase(index);
                         dbObj = objx;
-                        PlayerVariableBase.AddObject(index, objx);
+                        PlayerVariableBase.Lookup.Set(index, objx);
                         break;
                     case GameObject.ServerSwitch:
                         var ssbobj = new ServerSwitchBase(index);
                         dbObj = ssbobj;
-                        ServerSwitchBase.AddObject(index, ssbobj);
+                        ServerSwitchBase.Lookup.Set(index, ssbobj);
                         break;
                     case GameObject.ServerVariable:
                         var svbobj = new ServerVariableBase(index);
                         dbObj = svbobj;
-                        ServerVariableBase.AddObject(index, svbobj);
+                        ServerVariableBase.Lookup.Set(index, svbobj);
                         break;
                     case GameObject.Tileset:
                         var tset = new TilesetBase(index);
@@ -2112,7 +2112,7 @@ namespace Intersect_Server.Classes.Core
 
         private static void OnClassesLoaded()
         {
-            if (ClassBase.ObjectCount() == 0)
+            if (ClassBase.Lookup.Count == 0)
             {
                 Console.WriteLine(Strings.Get("database", "noclasses"));
                 var cls = (ClassBase) AddGameObject(GameObject.Class);

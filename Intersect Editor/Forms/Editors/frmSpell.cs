@@ -34,7 +34,7 @@ namespace Intersect_Editor.Forms
             if (type == GameObject.Spell)
             {
                 InitEditor();
-                if (_editorItem != null && !SpellBase.GetObjects().Values.Contains(_editorItem))
+                if (_editorItem != null && !SpellBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();

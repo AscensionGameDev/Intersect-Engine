@@ -1210,35 +1210,35 @@ namespace Intersect_Server.Classes.Networking
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Class:
-                    foreach (var obj in ClassBase.GetObjects())
+                    foreach (var obj in ClassBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Item:
-                    foreach (var obj in ItemBase.GetObjects())
+                    foreach (var obj in ItemBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Npc:
-                    foreach (var obj in NpcBase.GetObjects())
+                    foreach (var obj in NpcBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Projectile:
-                    foreach (var obj in ProjectileBase.GetObjects())
+                    foreach (var obj in ProjectileBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Quest:
-                    foreach (var obj in QuestBase.GetObjects())
+                    foreach (var obj in QuestBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Resource:
-                    foreach (var obj in ResourceBase.GetObjects())
+                    foreach (var obj in ResourceBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Shop:
-                    foreach (var obj in ShopBase.GetObjects())
+                    foreach (var obj in ShopBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Spell:
-                    foreach (var obj in SpellBase.GetObjects())
+                    foreach (var obj in SpellBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Bench:
@@ -1252,19 +1252,19 @@ namespace Intersect_Server.Classes.Networking
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.PlayerSwitch:
-                    foreach (var obj in PlayerSwitchBase.GetObjects())
+                    foreach (var obj in PlayerSwitchBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.PlayerVariable:
-                    foreach (var obj in PlayerVariableBase.GetObjects())
+                    foreach (var obj in PlayerVariableBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.ServerSwitch:
-                    foreach (var obj in ServerSwitchBase.GetObjects())
+                    foreach (var obj in ServerSwitchBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.ServerVariable:
-                    foreach (var obj in ServerVariableBase.GetObjects())
+                    foreach (var obj in ServerVariableBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Tileset:

@@ -2234,7 +2234,7 @@ namespace Intersect_Server.Classes.Entities
         {
             int spellNum = Spells[spellSlot].SpellNum;
             Target = target;
-            if (SpellBase.Get(spellNum) != null)
+            if (SpellBase.Lookup.Get(spellNum) != null)
             {
                 var spell = SpellBase.GetSpell(spellNum);
 

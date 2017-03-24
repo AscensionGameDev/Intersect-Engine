@@ -1754,7 +1754,7 @@ namespace Intersect_Server.Classes.Networking
                     obj = AnimationBase.Lookup.Get(id);
                     break;
                 case GameObject.Class:
-                    if (ClassBase.ObjectCount() == 1)
+                    if (ClassBase.Lookup.Count == 1)
                     {
                         PacketSender.SendAlert(client, Strings.Get("classes", "lastclass"),
                             Strings.Get("classes", "lastclasserror"));
@@ -1763,25 +1763,25 @@ namespace Intersect_Server.Classes.Networking
                     obj = DatabaseObject<ClassBase>.Lookup.Get(id);
                     break;
                 case GameObject.Item:
-                    obj = ItemBase.Get(id);
+                    obj = ItemBase.Lookup.Get(id);
                     break;
                 case GameObject.Npc:
-                    obj = NpcBase.Get(id);
+                    obj = NpcBase.Lookup.Get(id);
                     break;
                 case GameObject.Projectile:
-                    obj = ProjectileBase.Get(id);
+                    obj = ProjectileBase.Lookup.Get(id);
                     break;
                 case GameObject.Quest:
-                    obj = QuestBase.Get(id);
+                    obj = QuestBase.Lookup.Get(id);
                     break;
                 case GameObject.Resource:
-                    obj = ResourceBase.Get(id);
+                    obj = ResourceBase.Lookup.Get(id);
                     break;
                 case GameObject.Shop:
-                    obj = ShopBase.Get(id);
+                    obj = ShopBase.Lookup.Get(id);
                     break;
                 case GameObject.Spell:
-                    obj = SpellBase.Get(id);
+                    obj = SpellBase.Lookup.Get(id);
                     break;
                 case GameObject.Bench:
                     obj = DatabaseObject<BenchBase>.Lookup.Get(id);
@@ -1792,16 +1792,16 @@ namespace Intersect_Server.Classes.Networking
                     obj = EventBase.Lookup.Get(id);
                     break;
                 case GameObject.PlayerSwitch:
-                    obj = PlayerSwitchBase.Get(id);
+                    obj = PlayerSwitchBase.Lookup.Get(id);
                     break;
                 case GameObject.PlayerVariable:
-                    obj = PlayerVariableBase.Get(id);
+                    obj = PlayerVariableBase.Lookup.Get(id);
                     break;
                 case GameObject.ServerSwitch:
-                    obj = ServerSwitchBase.Get(id);
+                    obj = ServerSwitchBase.Lookup.Get(id);
                     break;
                 case GameObject.ServerVariable:
-                    obj = ServerVariableBase.Get(id);
+                    obj = ServerVariableBase.Lookup.Get(id);
                     break;
                 case GameObject.Tileset:
                     break;
@@ -1847,25 +1847,25 @@ namespace Intersect_Server.Classes.Networking
                     obj = DatabaseObject<ClassBase>.Lookup.Get(id);
                     break;
                 case GameObject.Item:
-                    obj = ItemBase.Get(id);
+                    obj = ItemBase.Lookup.Get(id);
                     break;
                 case GameObject.Npc:
-                    obj = NpcBase.Get(id);
+                    obj = NpcBase.Lookup.Get(id);
                     break;
                 case GameObject.Projectile:
-                    obj = ProjectileBase.Get(id);
+                    obj = ProjectileBase.Lookup.Get(id);
                     break;
                 case GameObject.Quest:
-                    obj = QuestBase.Get(id);
+                    obj = QuestBase.Lookup.Get(id);
                     break;
                 case GameObject.Resource:
-                    obj = ResourceBase.Get(id);
+                    obj = ResourceBase.Lookup.Get(id);
                     break;
                 case GameObject.Shop:
-                    obj = ShopBase.Get(id);
+                    obj = ShopBase.Lookup.Get(id);
                     break;
                 case GameObject.Spell:
-                    obj = SpellBase.Get(id);
+                    obj = SpellBase.Lookup.Get(id);
                     break;
                 case GameObject.Bench:
                     obj = DatabaseObject<BenchBase>.Lookup.Get(id);
@@ -1876,16 +1876,16 @@ namespace Intersect_Server.Classes.Networking
                     obj = EventBase.Lookup.Get(id);
                     break;
                 case GameObject.PlayerSwitch:
-                    obj = PlayerSwitchBase.Get(id);
+                    obj = PlayerSwitchBase.Lookup.Get(id);
                     break;
                 case GameObject.PlayerVariable:
-                    obj = PlayerVariableBase.Get(id);
+                    obj = PlayerVariableBase.Lookup.Get(id);
                     break;
                 case GameObject.ServerSwitch:
-                    obj = ServerSwitchBase.Get(id);
+                    obj = ServerSwitchBase.Lookup.Get(id);
                     break;
                 case GameObject.ServerVariable:
-                    obj = ServerVariableBase.Get(id);
+                    obj = ServerVariableBase.Lookup.Get(id);
                     break;
                 case GameObject.Tileset:
                     break;

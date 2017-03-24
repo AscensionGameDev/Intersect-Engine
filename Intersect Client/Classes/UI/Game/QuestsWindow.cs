@@ -264,7 +264,7 @@ namespace Intersect_Client.Classes.UI.Game
             _questList.RemoveAllRows();
             if (Globals.Me != null)
             {
-                var quests = QuestBase.GetObjects();
+                var quests = QuestBase.Lookup;
                 foreach (var quest in quests)
                 {
                     if (quest.Value != null)

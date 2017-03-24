@@ -49,7 +49,7 @@ namespace Intersect_Editor.Forms.Editors
             if (type == GameObject.PlayerSwitch)
             {
                 InitEditor();
-                if (_editorItem != null && !PlayerSwitchBase.GetObjects().Values.Contains(_editorItem))
+                if (_editorItem != null && !PlayerSwitchBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -58,7 +58,7 @@ namespace Intersect_Editor.Forms.Editors
             else if (type == GameObject.PlayerVariable)
             {
                 InitEditor();
-                if (_editorItem != null && !PlayerVariableBase.GetObjects().Values.Contains(_editorItem))
+                if (_editorItem != null && !PlayerVariableBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -67,7 +67,7 @@ namespace Intersect_Editor.Forms.Editors
             else if (type == GameObject.ServerSwitch)
             {
                 InitEditor();
-                if (_editorItem != null && !ServerSwitchBase.GetObjects().Values.Contains(_editorItem))
+                if (_editorItem != null && !ServerSwitchBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -76,7 +76,7 @@ namespace Intersect_Editor.Forms.Editors
             else if (type == GameObject.ServerVariable)
             {
                 InitEditor();
-                if (_editorItem != null && !ServerVariableBase.GetObjects().Values.Contains(_editorItem))
+                if (_editorItem != null && !ServerVariableBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -212,7 +212,7 @@ namespace Intersect_Editor.Forms.Editors
             }
             else if (rdoGlobalSwitches.Checked)
             {
-                for (int i = 0; i < ServerSwitchBase.ObjectCount(); i++)
+                for (int i = 0; i < ServerSwitchBase.Lookup.Count; i++)
                 {
                     var swtch = ServerSwitchBase.GetServerSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch, i));
                     lstObjects.Items.Add(swtch.Name + "  =  " + swtch.Value.ToString());
@@ -220,7 +220,7 @@ namespace Intersect_Editor.Forms.Editors
             }
             else if (rdoGlobalVariables.Checked)
             {
-                for (int i = 0; i < ServerVariableBase.ObjectCount(); i++)
+                for (int i = 0; i < ServerVariableBase.Lookup.Count; i++)
                 {
                     var var = ServerVariableBase.GetServerVariable(Database.GameObjectIdFromList(GameObject.ServerVariable, i));
                     lstObjects.Items.Add(var.Name + "  =  " + var.Value.ToString());

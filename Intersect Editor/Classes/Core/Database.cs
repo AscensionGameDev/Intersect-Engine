@@ -101,35 +101,35 @@ namespace Intersect_Editor.Classes
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Class:
-                    foreach (var obj in ClassBase.GetObjects())
+                    foreach (var obj in ClassBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Item:
-                    foreach (var obj in ItemBase.GetObjects())
+                    foreach (var obj in ItemBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Npc:
-                    foreach (var obj in NpcBase.GetObjects())
+                    foreach (var obj in NpcBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Projectile:
-                    foreach (var obj in ProjectileBase.GetObjects())
+                    foreach (var obj in ProjectileBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Quest:
-                    foreach (var obj in QuestBase.GetObjects())
+                    foreach (var obj in QuestBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Resource:
-                    foreach (var obj in ResourceBase.GetObjects())
+                    foreach (var obj in ResourceBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Shop:
-                    foreach (var obj in ShopBase.GetObjects())
+                    foreach (var obj in ShopBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Spell:
-                    foreach (var obj in SpellBase.GetObjects())
+                    foreach (var obj in SpellBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Bench:
@@ -145,19 +145,19 @@ namespace Intersect_Editor.Classes
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.PlayerSwitch:
-                    foreach (var obj in PlayerSwitchBase.GetObjects())
+                    foreach (var obj in PlayerSwitchBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.PlayerVariable:
-                    foreach (var obj in PlayerVariableBase.GetObjects())
+                    foreach (var obj in PlayerVariableBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.ServerSwitch:
-                    foreach (var obj in ServerSwitchBase.GetObjects())
+                    foreach (var obj in ServerSwitchBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.ServerVariable:
-                    foreach (var obj in ServerVariableBase.GetObjects())
+                    foreach (var obj in ServerVariableBase.Lookup)
                         items.Add(obj.Value.Name);
                     break;
                 case GameObject.Tileset:
@@ -179,31 +179,31 @@ namespace Intersect_Editor.Classes
                     if (listIndex >= AnimationBase.Lookup.Count) return -1;
                     return AnimationBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Class:
-                    if (listIndex >= ClassBase.ObjectCount()) return -1;
-                    return ClassBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= ClassBase.Lookup.Count) return -1;
+                    return ClassBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Item:
-                    if (listIndex >= ItemBase.ObjectCount()) return -1;
-                    return ItemBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= ItemBase.Lookup.Count) return -1;
+                    return ItemBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Npc:
-                    if (listIndex >= NpcBase.ObjectCount()) return -1;
-                    return NpcBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= NpcBase.Lookup.Count) return -1;
+                    return NpcBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Projectile:
-                    if (listIndex >= ProjectileBase.ObjectCount()) return -1;
-                    return ProjectileBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= ProjectileBase.Lookup.Count) return -1;
+                    return ProjectileBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Quest:
-                    if (listIndex >= QuestBase.ObjectCount()) return -1;
-                    return QuestBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= QuestBase.Lookup.Count) return -1;
+                    return QuestBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Resource:
-                    if (listIndex >= ResourceBase.ObjectCount()) return -1;
-                    return ResourceBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= ResourceBase.Lookup.Count) return -1;
+                    return ResourceBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Shop:
-                    if (listIndex >= ShopBase.ObjectCount()) return -1;
-                    return ShopBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= ShopBase.Lookup.Count) return -1;
+                    return ShopBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Spell:
-                    if (listIndex >= SpellBase.ObjectCount()) return -1;
-                    return SpellBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= SpellBase.Lookup.Count) return -1;
+                    return SpellBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Bench:
-                    if (listIndex >= BenchBase.Lookup_Count) return -1;
+                    if (listIndex >= BenchBase.Lookup.Count) return -1;
                     return BenchBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Map:
                     if (listIndex >= MapBase.ObjectCount()) return -1;
@@ -212,17 +212,17 @@ namespace Intersect_Editor.Classes
                     if (listIndex >= EventBase.Lookup.Count) return -1;
                     return EventBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.PlayerSwitch:
-                    if (listIndex >= PlayerSwitchBase.ObjectCount()) return -1;
-                    return PlayerSwitchBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= PlayerSwitchBase.Lookup.Count) return -1;
+                    return PlayerSwitchBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.PlayerVariable:
-                    if (listIndex >= PlayerVariableBase.ObjectCount()) return -1;
-                    return PlayerVariableBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= PlayerVariableBase.Lookup.Count) return -1;
+                    return PlayerVariableBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.ServerSwitch:
-                    if (listIndex >= ServerSwitchBase.ObjectCount()) return -1;
-                    return ServerSwitchBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= ServerSwitchBase.Lookup.Count) return -1;
+                    return ServerSwitchBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.ServerVariable:
-                    if (listIndex >= ServerVariableBase.ObjectCount()) return -1;
-                    return ServerVariableBase.GetObjects().Keys.ToList()[listIndex];
+                    if (listIndex >= ServerVariableBase.Lookup.Count) return -1;
+                    return ServerVariableBase.Lookup.Keys.ToList()[listIndex];
                 case GameObject.Tileset:
                     if (listIndex >= TilesetBase.Lookup.Count) return -1;
                     return TilesetBase.Lookup.Keys.ToList()[listIndex];
@@ -238,21 +238,21 @@ namespace Intersect_Editor.Classes
                 case GameObject.Animation:
                     return AnimationBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Class:
-                    return ClassBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return ClassBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Item:
-                    return ItemBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return ItemBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Npc:
-                    return NpcBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return NpcBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Projectile:
-                    return ProjectileBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return ProjectileBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Quest:
-                    return QuestBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return QuestBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Resource:
-                    return ResourceBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return ResourceBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Shop:
-                    return ShopBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return ShopBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Spell:
-                    return SpellBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return SpellBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Bench:
                     return BenchBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Map:
@@ -260,13 +260,13 @@ namespace Intersect_Editor.Classes
                 case GameObject.CommonEvent:
                     return EventBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.PlayerSwitch:
-                    return PlayerSwitchBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return PlayerSwitchBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.PlayerVariable:
-                    return PlayerVariableBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return PlayerVariableBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.ServerSwitch:
-                    return ServerSwitchBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return ServerSwitchBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.ServerVariable:
-                    return ServerVariableBase.GetObjects().Keys.ToList().IndexOf(id);
+                    return ServerVariableBase.Lookup.Keys.ToList().IndexOf(id);
                 case GameObject.Tileset:
                     return TilesetBase.Lookup.Keys.ToList().IndexOf(id);
                 default:

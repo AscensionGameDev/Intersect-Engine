@@ -29,7 +29,7 @@ namespace Intersect_Editor.Forms.Editors
             if (type == GameObject.Shop)
             {
                 InitEditor();
-                if (_editorItem != null && !ShopBase.GetObjects().Values.Contains(_editorItem))
+                if (_editorItem != null && !ShopBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -83,7 +83,7 @@ namespace Intersect_Editor.Forms.Editors
             cmbBuyFor.Items.Clear();
             cmbSellFor.Items.Clear();
             cmbDefaultCurrency.Items.Clear();
-            foreach (var item in ItemBase.GetObjects())
+            foreach (var item in ItemBase.Lookup)
             {
                 cmbAddBoughtItem.Items.Add(item.Value.Name);
                 cmbAddSoldItem.Items.Add(item.Value.Name);
@@ -197,7 +197,7 @@ namespace Intersect_Editor.Forms.Editors
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstShops.Items[ShopBase.GetObjects().Keys.ToList().IndexOf(_editorItem.Id)] = txtName.Text;
+            lstShops.Items[ShopBase.Lookup.Keys.ToList().IndexOf(_editorItem.Id)] = txtName.Text;
         }
 
         private void UpdateLists()
@@ -239,8 +239,8 @@ namespace Intersect_Editor.Forms.Editors
         {
             bool addedItem = false;
             int cost = (int) nudSellCost.Value;
-            ShopItem newItem = new ShopItem(ItemBase.GetObjects().Keys.ToList()[cmbAddSoldItem.SelectedIndex]
-                , ItemBase.GetObjects().Keys.ToList()[cmbSellFor.SelectedIndex], cost);
+            ShopItem newItem = new ShopItem(ItemBase.Lookup.Keys.ToList()[cmbAddSoldItem.SelectedIndex]
+                , ItemBase.Lookup.Keys.ToList()[cmbSellFor.SelectedIndex], cost);
             for (int i = 0; i < _editorItem.SellingItems.Count; i++)
             {
                 if (_editorItem.SellingItems[i].ItemNum == newItem.ItemNum)
@@ -267,8 +267,8 @@ namespace Intersect_Editor.Forms.Editors
         {
             bool addedItem = false;
             int cost = (int) nudBuyAmount.Value;
-            ShopItem newItem = new ShopItem(ItemBase.GetObjects().Keys.ToList()[cmbAddBoughtItem.SelectedIndex],
-                ItemBase.GetObjects().Keys.ToList()[cmbBuyFor.SelectedIndex], cost);
+            ShopItem newItem = new ShopItem(ItemBase.Lookup.Keys.ToList()[cmbAddBoughtItem.SelectedIndex],
+                ItemBase.Lookup.Keys.ToList()[cmbBuyFor.SelectedIndex], cost);
             for (int i = 0; i < _editorItem.BuyingItems.Count; i++)
             {
                 if (_editorItem.BuyingItems[i].ItemNum == newItem.ItemNum)

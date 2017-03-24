@@ -300,7 +300,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _descWindow.Dispose();
                 _descWindow = null;
             }
-            if (ItemBase.Get(Globals.Trade[_mySide, _mySlot].ItemNum) != null)
+            if (ItemBase.Lookup.Get(Globals.Trade[_mySide, _mySlot].ItemNum) != null)
             {
                 _descWindow = new ItemDescWindow(Globals.Trade[_mySide, _mySlot].ItemNum,
                     Globals.Trade[_mySide, _mySlot].ItemVal, _tradeWindow.X - 255, _tradeWindow.Y,

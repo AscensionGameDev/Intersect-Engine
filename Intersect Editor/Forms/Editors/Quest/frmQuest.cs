@@ -76,7 +76,7 @@ namespace Intersect_Editor.Forms
         public void InitEditor()
         {
             lstQuests.Items.Clear();
-            foreach (var quest in QuestBase.GetObjects())
+            foreach (var quest in QuestBase.Lookup)
             {
                 lstQuests.Items.Add(quest.Value.Name);
             }
