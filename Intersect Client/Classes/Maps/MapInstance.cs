@@ -26,7 +26,6 @@ namespace Intersect_Client.Classes.Maps
 
         //Map State Variables
         public new const GameObject OBJECT_TYPE = GameObject.Map;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public static Dictionary<int, long> MapRequests = new Dictionary<int, long>();
 
         //Map Attributes
