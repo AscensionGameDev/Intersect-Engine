@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Intersect.GameObjects
+﻿namespace Intersect.GameObjects
 {
     public class AnimationBase : DatabaseObject<AnimationBase>
     {

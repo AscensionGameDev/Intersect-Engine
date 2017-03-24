@@ -1,5 +1,4 @@
 ﻿using Intersect;
-using Intersect.Collections;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
