@@ -70,7 +70,7 @@ namespace Intersect_Server.Classes.Entities
 
         public bool[] SelfSwitch { get; set; }
 
-        public void Update()
+        public void Update(long timeMs)
         {
             var sendLeave = false;
             if (PageInstance != null)
@@ -92,7 +92,7 @@ namespace Intersect_Server.Classes.Entities
                 else
                 {
                     if (!IsGlobal)
-                        PageInstance.Update(CallStack.Count > 0); //Process movement and stuff that is client specific
+                        PageInstance.Update(CallStack.Count > 0, timeMs); //Process movement and stuff that is client specific
                     if (CallStack.Count > 0)
                     {
                         if (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.Shop &&

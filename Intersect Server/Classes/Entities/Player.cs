@@ -99,32 +99,32 @@ namespace Intersect_Server.Classes.Entities
         }
 
         //Update
-        public override void Update()
+        public override void Update(long timeMs)
         {
             if (!InGame || CurrentMap == -1)
             {
                 return;
             }
 
-            if (SaveTimer + 120000 < Environment.TickCount)
+            if (SaveTimer + 120000 < timeMs)
             {
                 Task.Run(() => Database.SaveCharacter(this, false));
-                SaveTimer = Environment.TickCount;
+                SaveTimer = timeMs;
             }
 
             if (InCraft > -1 && CraftIndex > -1)
             {
                 BenchBase b = BenchBase.GetCraft(InCraft);
-                if (CraftTimer + b.Crafts[CraftIndex].Time < Environment.TickCount)
+                if (CraftTimer + b.Crafts[CraftIndex].Time < timeMs)
                 {
                     CraftItem(CraftIndex);
                 }
             }
 
-            base.Update();
+            base.Update(timeMs);
 
             //If we have a move route then let's process it....
-            if (MoveRoute != null && MoveTimer < Globals.System.GetTimeMs())
+            if (MoveRoute != null && MoveTimer < timeMs)
             {
                 //Check to see if the event instance is still active for us... if not then let's remove this route
                 for (var i = 0; i < MyEvents.Count; i++)
@@ -134,7 +134,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (MoveRoute.ActionIndex < MoveRoute.Actions.Count)
                         {
-                            ProcessMoveRoute(MyClient);
+                            ProcessMoveRoute(MyClient, timeMs);
                         }
                         else
                         {
@@ -213,7 +213,7 @@ namespace Intersect_Server.Classes.Entities
                                 }
                                 else
                                 {
-                                    MyEvents[foundEvent].Update();
+                                    MyEvents[foundEvent].Update(timeMs);
                                 }
                             }
                         }
@@ -230,7 +230,7 @@ namespace Intersect_Server.Classes.Entities
                     var eventFound = false;
                     if (evt.MapNum == -1)
                     {
-                        evt.Update();
+                        evt.Update(timeMs);
                         if (evt.CallStack.Count > 0)
                         {
                             eventFound = true;
@@ -2942,7 +2942,7 @@ namespace Intersect_Server.Classes.Entities
                     SpawnY = -1
                 };
                 MyEvents.Add(tmpEvent);
-                tmpEvent.Update();
+                tmpEvent.Update(Globals.System.GetTimeMs());
                 if (tmpEvent.PageInstance != null && (trigger == -1 || tmpEvent.PageInstance.MyPage.Trigger == trigger))
                 {
                     var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage) {CommandIndex = 0, ListIndex = 0};

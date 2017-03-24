@@ -207,13 +207,13 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
-        public void Update(bool isActive)
+        public void Update(bool isActive, long timeMs)
         {
             if (MoveTimer >= Globals.System.GetTimeMs() || GlobalClone != null ||
                 (isActive && MyPage.InteractionFreeze == 1)) return;
             if (MovementType == 2 && MoveRoute != null)
             {
-                ProcessMoveRoute(Client);
+                ProcessMoveRoute(Client, timeMs);
             }
             else
             {
@@ -230,9 +230,9 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
-        protected override bool ProcessMoveRoute(Client client)
+        protected override bool ProcessMoveRoute(Client client, long timeMs)
         {
-            if (!base.ProcessMoveRoute(client))
+            if (!base.ProcessMoveRoute(client,timeMs))
             {
                 var moved = false;
                 var shouldSendUpdate = false;
@@ -252,15 +252,16 @@ namespace Intersect_Server.Classes.Entities
                                 {
                                     _pathFinder.SetTarget(new PathfinderTarget(client.Entity.CurrentMap,
                                         client.Entity.CurrentX, client.Entity.CurrentY));
-                                    _pathFinder.Update();
                                 }
-                                _pathFinder.Update();
-                                if (_pathFinder.GetMove() > -1)
+                                if (_pathFinder.Update(timeMs) == PathfinderResult.Success)
                                 {
-                                    if (CanMove(_pathFinder.GetMove()) == -1)
+                                    if (_pathFinder.GetMove() > -1)
                                     {
-                                        Move(_pathFinder.GetMove(), client);
-                                        moved = true;
+                                        if (CanMove(_pathFinder.GetMove()) == -1)
+                                        {
+                                            Move(_pathFinder.GetMove(), client);
+                                            moved = true;
+                                        }
                                     }
                                 }
                             }

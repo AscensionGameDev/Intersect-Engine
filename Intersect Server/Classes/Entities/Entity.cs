@@ -112,10 +112,10 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
-        public virtual void Update()
+        public virtual void Update(long timeMs)
         {
             //Cast timers
-            if (CastTime != 0 && CastTime < Globals.System.GetTimeMs())
+            if (CastTime != 0 && CastTime < timeMs)
             {
                 CastTime = 0;
                 CastSpell(Spells[SpellCastSlot].SpellNum, SpellCastSlot);
@@ -264,7 +264,7 @@ namespace Intersect_Server.Classes.Entities
             return -1;
         }
 
-        protected virtual bool ProcessMoveRoute(Client client)
+        protected virtual bool ProcessMoveRoute(Client client, long timeMs)
         {
             var moved = false;
             int lookDir = 0, moveDir = 0;

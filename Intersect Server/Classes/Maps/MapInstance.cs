@@ -617,7 +617,7 @@ namespace Intersect_Server.Classes.Maps
         }
 
         //Update + Related Functions
-        public void Update()
+        public void Update(long timeMs)
         {
             lock (_mapLock)
             {
@@ -631,14 +631,14 @@ namespace Intersect_Server.Classes.Maps
                     for (int i = 0; i < MapItems.Count; i++)
                     {
                         if (MapItems[i] != null && MapItems[i].DespawnTime != -1 &&
-                            MapItems[i].DespawnTime < Globals.System.GetTimeMs())
+                            MapItems[i].DespawnTime < timeMs)
                         {
                             RemoveItem(i);
                         }
                     }
                     for (int i = 0; i < ItemRespawns.Count; i++)
                     {
-                        if (ItemRespawns[i].RespawnTime < Globals.System.GetTimeMs())
+                        if (ItemRespawns[i].RespawnTime < timeMs)
                         {
                             SpawnAttributeItem(ItemRespawns[i].AttributeSpawnX, ItemRespawns[i].AttributeSpawnY);
                             ItemRespawns.RemoveAt(i);
@@ -649,7 +649,7 @@ namespace Intersect_Server.Classes.Maps
                     {
                         if (Entities[i] != null)
                         {
-                            Entities[i].Update();
+                            Entities[i].Update(timeMs);
                 }
                     }
                     //Process NPC Respawns
@@ -717,7 +717,7 @@ namespace Intersect_Server.Classes.Maps
                                     if (eventInstance != null && eventInstance.CallStack.Count > 0) active = true;
                                 }
                             }
-                            evts[i].GlobalPageInstance[x].Update(active);
+                            evts[i].GlobalPageInstance[x].Update(active, timeMs);
                         }
                     }
                 }
