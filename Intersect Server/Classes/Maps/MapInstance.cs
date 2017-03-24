@@ -23,7 +23,6 @@ namespace Intersect_Server.Classes.Maps
 
         //Core
         public new const GameObject OBJECT_TYPE = GameObject.Map;
-        protected static Dictionary<int, DatabaseObject> MapInstanceTable = new Dictionary<int, DatabaseObject>();
 
         //Does the map have a player on or nearby it?
         public bool Active;
