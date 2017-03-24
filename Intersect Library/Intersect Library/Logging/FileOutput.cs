@@ -91,7 +91,7 @@ namespace Intersect.Logging
         {
             Write(tag, logLevel, string.Format("Message: {0}", exception.Message));
             Write(tag, logLevel, string.Format("Stack Trace: {0}", exception.StackTrace));
-            Write(tag, logLevel, string.Format("Time: {0}", DateTime.UtcNow.ToString()));
+            Write(tag, logLevel, string.Format("Time: {0}", DateTime.UtcNow));
             Writer.WriteLine(Environment.NewLine +
                              "-----------------------------------------------------------------------------" +
                              Environment.NewLine);

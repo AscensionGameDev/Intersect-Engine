@@ -103,7 +103,7 @@ namespace Intersect_Editor.Classes
             catch (Exception ex)
             {
                 // ignored
-                MessageBox.Show("Failed to initialize MonoGame. Exception Info: " + ex.ToString() + "\nClosing Now");
+                MessageBox.Show("Failed to initialize MonoGame. Exception Info: " + ex + "\nClosing Now");
                 Application.Exit();
             }
         }

@@ -862,11 +862,11 @@ namespace Intersect_Server.Classes.Entities
                                 AddVital(Vitals.Health, itemBase.Data2);
                                 if (s == Strings.Get("combat", "addsymbol"))
                                 {
-                                    PacketSender.SendActionMsg(this, s + itemBase.Data2.ToString(), Color.Green);
+                                    PacketSender.SendActionMsg(this, s + itemBase.Data2, Color.Green);
                                 }
                                 else
                                 {
-                                    PacketSender.SendActionMsg(this, s + itemBase.Data2.ToString(), Color.Red);
+                                    PacketSender.SendActionMsg(this, s + itemBase.Data2, Color.Red);
                                     if (Vital[(int) Vitals.Health] <= 0) //Add a death handler for poison.
                                     {
                                         Die();
@@ -875,11 +875,11 @@ namespace Intersect_Server.Classes.Entities
                                 break;
                             case 1: //Mana
                                 AddVital(Vitals.Mana, itemBase.Data2);
-                                PacketSender.SendActionMsg(this, s + itemBase.Data2.ToString(), Color.Blue);
+                                PacketSender.SendActionMsg(this, s + itemBase.Data2, Color.Blue);
                                 break;
                             case 2: //Exp
                                 GiveExperience(itemBase.Data2);
-                                PacketSender.SendActionMsg(this, s + itemBase.Data2.ToString(), Color.White);
+                                PacketSender.SendActionMsg(this, s + itemBase.Data2, Color.White);
                                 break;
                             default:
                                 break;

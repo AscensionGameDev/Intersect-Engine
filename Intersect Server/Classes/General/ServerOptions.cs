@@ -199,7 +199,7 @@ namespace Intersect_Server.Classes.General
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Failed to load config.xml. Exception info: " + ex.ToString());
+                    Console.WriteLine("Failed to load config.xml. Exception info: " + ex);
                     return false;
                 }
             }

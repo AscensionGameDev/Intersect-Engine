@@ -56,7 +56,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
                 }
                 if (!_keyDictionary.ContainsKey(key))
                 {
-                    Console.WriteLine("Mono does not have a key to match: " + key.ToString());
+                    Console.WriteLine("Mono does not have a key to match: " + key);
                 }
             }
         }

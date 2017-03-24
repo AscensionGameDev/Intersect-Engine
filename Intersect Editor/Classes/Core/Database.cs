@@ -331,7 +331,7 @@ namespace Intersect_Editor.Classes
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + OPTION_NAME, name));
-                cmd.Parameters.Add(new SqliteParameter("@" + OPTION_VALUE, value.ToString()));
+                cmd.Parameters.Add(new SqliteParameter("@" + OPTION_VALUE, value));
                 cmd.ExecuteNonQuery();
             }
         }
