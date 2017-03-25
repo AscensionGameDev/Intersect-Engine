@@ -233,7 +233,7 @@ namespace Intersect_Client.Classes.Entities
                     }
                     break;
                 case 2: //Tile
-                    foreach (var tileset in DatabaseObjectUtils.GetGameObjectList(GameObject.Tileset))
+                    foreach (var tileset in TilesetBase.GetNameList())
                     {
                         if (tileset == GraphicFile)
                         {
@@ -271,7 +271,7 @@ namespace Intersect_Client.Classes.Entities
                     }
                     break;
                 case 2: //Tile
-                    foreach (var tileset in DatabaseObjectUtils.GetGameObjectList(GameObject.Tileset))
+                    foreach (var tileset in TilesetBase.GetNameList())
                     {
                         if (tileset == GraphicFile)
                         {

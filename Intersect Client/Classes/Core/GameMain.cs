@@ -139,7 +139,7 @@ namespace Intersect_Client.Classes.Core
             }
             if (!_loadedTilesets && Globals.HasGameData)
             {
-                Globals.ContentManager.LoadTilesets(DatabaseObjectUtils.GetGameObjectList(GameObject.Tileset));
+                Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
                 _loadedTilesets = true;
             }
             if (Globals.Database.RenderCaching && Globals.Me != null &&
