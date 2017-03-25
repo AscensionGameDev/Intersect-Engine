@@ -55,7 +55,7 @@ namespace Intersect.Logging
                 {
                     var directory = Path.IsPathRooted(mFilename)
                         ? Path.GetDirectoryName(mFilename)
-                        : Path.Combine("resources", "logs");
+                        : "logs";
                     EnsureOutputDirectory(directory);
                     mWriter = new StreamWriter(
                         Path.Combine(directory, mFilename),
