@@ -6,6 +6,7 @@ using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Items;
+using Intersect_Server.Classes.Misc.Pathfinding;
 using Intersect_Server.Classes.Networking;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,8 @@ namespace Intersect_Server.Classes.Maps
         private List<Entity> Entities = new List<Entity>();
         public Dictionary<EventBase, EventInstance> GlobalEventInstances = new Dictionary<EventBase, EventInstance>();
         public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
+        private Point[] MapBlocks;
+        private Point[] NpcMapBlocks;
 
         //Location of Map in the current grid
         public int MapGrid;
@@ -78,8 +81,41 @@ namespace Intersect_Server.Classes.Maps
                 DespawnEverything();
                 base.Load(packet);
                 if (keepRevision > -1) Revision = keepRevision;
+                CacheMapBlocks();
                 RespawnEverything();
             }
+        }
+
+        private void CacheMapBlocks()
+        {
+            var blocks = new List<Point>();
+            var npcBlocks = new List<Point>();
+            for (int x = 0; x < Options.MapWidth; x++)
+            {
+                for (int y = 0; y < Options.MapHeight; y++)
+                {
+                    if (Attributes[x, y] != null)
+                    {
+                        if (Attributes[x, y].value == (int)MapAttributes.Blocked || Attributes[x, y].value == (int)MapAttributes.GrappleStone)
+                        {
+                            blocks.Add(new Point(x,y));
+                            npcBlocks.Add(new Point(x,y));
+                        }
+                        else if (Attributes[x, y].value == (int)MapAttributes.NPCAvoid)
+                        {
+                            npcBlocks.Add(new Point(x,y));
+                        }
+                    }
+                }
+            }
+            MapBlocks = blocks.ToArray();
+            NpcMapBlocks = npcBlocks.ToArray();
+        }
+
+        public Point[] GetCachedBlocks(bool isPlayer)
+        {
+            if (isPlayer) return MapBlocks;
+            return NpcMapBlocks;
         }
 
         //Autotile Caching (So Clients Don't have to calculate it)
@@ -581,7 +617,7 @@ namespace Intersect_Server.Classes.Maps
         }
 
         //Update + Related Functions
-        public void Update()
+        public void Update(long timeMs)
         {
             lock (_mapLock)
             {
@@ -595,14 +631,14 @@ namespace Intersect_Server.Classes.Maps
                     for (int i = 0; i < MapItems.Count; i++)
                     {
                         if (MapItems[i] != null && MapItems[i].DespawnTime != -1 &&
-                            MapItems[i].DespawnTime < Globals.System.GetTimeMs())
+                            MapItems[i].DespawnTime < timeMs)
                         {
                             RemoveItem(i);
                         }
                     }
                     for (int i = 0; i < ItemRespawns.Count; i++)
                     {
-                        if (ItemRespawns[i].RespawnTime < Globals.System.GetTimeMs())
+                        if (ItemRespawns[i].RespawnTime < timeMs)
                         {
                             SpawnAttributeItem(ItemRespawns[i].AttributeSpawnX, ItemRespawns[i].AttributeSpawnY);
                             ItemRespawns.RemoveAt(i);
@@ -611,14 +647,7 @@ namespace Intersect_Server.Classes.Maps
                     //Process All Entites
                     for (int i = 0; i < Entities.Count; i++)
                     {
-                        if (Entities[i] != null)
-                        {
-                            //Active Npcs On the Map
-                            if (Entities[i].GetType() == typeof(Npc))
-                            {
-                                ((Npc)Entities[i]).Update();
-                            }
-                        }
+                            Entities[i].Update(timeMs);
                     }
                     //Process NPC Respawns
                     for (int i = 0; i < Spawns.Count; i++)
@@ -685,7 +714,7 @@ namespace Intersect_Server.Classes.Maps
                                     if (eventInstance != null && eventInstance.CallStack.Count > 0) active = true;
                                 }
                             }
-                            evts[i].GlobalPageInstance[x].Update(active);
+                            evts[i].GlobalPageInstance[x].Update(active, timeMs);
                         }
                     }
                 }

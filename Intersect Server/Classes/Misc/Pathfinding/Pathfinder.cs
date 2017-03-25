@@ -1,140 +1,226 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Intersect;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Misc.Pathfinding;
 
-namespace Intersect_Server.Classes.Misc
+namespace Intersect_Server.Classes.Misc.Pathfinding
 {
-    public class Pathfinder
+    public enum PathfinderResult
     {
-        private List<int> _directions = new List<int>();
-        private int _failures = 0;
-        private bool _pathFinding = false;
-        private Task _pathFindingTask;
-        private long _pathfingingTime = 0;
-        private Entity _sourceEntity;
-        private PathfinderTarget _target;
-        private object _targetLock = new object();
+        Success,
+        OutOfRange,
+        NoPathToTarget,
+        Failure, //No Map, No Target, Who Knows?
+        Wait, //Pathfinder won't run due to recent failures and trying to conserve cpu
+    }
+    class Pathfinder
+    {
+        private Entity mEntity;
+        private PathfinderTarget mTarget;
+        private IEnumerable<AStarNode> mPath;
+        private long mWaitTime = 0;
+        private int mConsecutiveFails = 0;
 
-        public Pathfinder(Entity sourceEntity)
+        public Pathfinder(Entity parent)
         {
-            _sourceEntity = sourceEntity;
-            _target = null;
-            _pathFindingTask = new Task(() => PathFind());
-        }
-
-        public PathfinderTarget GetTarget()
-        {
-            return _target;
+            mEntity = parent;
         }
 
         public void SetTarget(PathfinderTarget target)
         {
-            lock (_targetLock)
-            {
-                _directions.Clear();
-                _target = target;
-                if (_pathFindingTask.IsCompleted)
-                {
-                    _pathFindingTask.Dispose();
-                    _pathFindingTask = new Task(() => PathFind());
-                    _pathfingingTime = Globals.System.GetTimeMs() +
-                                       Globals.Rand.Next(_failures * 1000 + 200, _failures * 2000 + 500);
-                }
-                else
-                {
-                    if (_pathFindingTask.Status == TaskStatus.Created && Globals.System.GetTimeMs() > _pathfingingTime)
-                        _pathFindingTask.Start();
-                }
-            }
+            mTarget = target;
         }
 
-        public int GetMove()
+        public PathfinderTarget GetTarget()
         {
-            if (_directions.Count > 0)
-            {
-                return _directions[0];
-            }
-            return -1;
+            return mTarget;
         }
 
-        public void RemoveMove()
+        public PathfinderResult Update(long timeMs)
         {
-            if (_directions.Count > 0)
+            //TODO: Pull this out into server config :) 
+            var pathfindingRange = Math.Max(Options.MapWidth, Options.MapHeight); //Search as far as 1 map out.. maximum.
+            //Do lots of logic eventually leading up to an A* pathfinding run if needed.
+            PathfinderResult returnVal = PathfinderResult.Success;
+            AStarNode[,] mapGrid;
+            SpatialAStar<AStarNode, Object> aStar;
+            IEnumerable<AStarNode> path = mPath;
+            if (mWaitTime < timeMs)
             {
-                _directions.RemoveAt(0);
-            }
-        }
-
-        private void PathFind()
-        {
-            var targetX = -1;
-            var targetY = -1;
-            var startX = -1;
-            var startY = -1;
-            var startTime = Globals.System.GetTimeMs();
-            _directions = new List<int>();
-            var openList = new List<PathfinderPoint>();
-            var closedList = new List<PathfinderPoint>();
-            var adjSquares = new List<PathfinderPoint>();
-            var map = MapInstance.Lookup.Get(_sourceEntity.CurrentMap);
-            if (map != null)
-            {
-                var myGrid = map.MapGrid;
-                _pathFinding = true;
-                var start = Globals.System.GetTimeMs();
-                var foundPath = false;
-                if (_target != null)
+                var currentMap = MapInstance.Lookup.Get(mEntity.CurrentMap);
+                if (currentMap != null && mTarget != null)
                 {
-                    var target = _target;
-                    //Loop through surrouding maps to generate a array of open and blocked points.
-                    for (var x = MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridX - 1;
-                        x <= MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridX + 1;
-                        x++)
+                    var myGrid = currentMap.MapGrid;
+                    var gridX = currentMap.MapGridX;
+                    var gridY = currentMap.MapGridY;
+
+                    var targetFound = false;
+                    var targetX = -1;
+                    var targetY = -1;
+                    var sourceX = Options.MapWidth + mEntity.CurrentX;
+                    var sourceY = Options.MapHeight + mEntity.CurrentY;
+
+                    //Loop through surrouding maps to see if our target is even around.
+                    for (var x = gridX - 1; x <= gridX + 1; x++)
                     {
                         if (x == -1 || x >= Database.MapGrids[myGrid].Width) continue;
-                        for (var y = MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridY - 1;
-                            y <= MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridY + 1;
-                            y++)
+                        for (var y = gridY - 1; y <= gridY + 1; y++)
                         {
                             if (y == -1 || y >= Database.MapGrids[myGrid].Height) continue;
                             if (Database.MapGrids[myGrid].MyGrid[x, y] > -1)
                             {
-                                var mapEntities =
-                                    MapInstance.Lookup.Get(Database.MapGrids[myGrid].MyGrid[x, y]).GetEntities();
-                                for (var i = 0; i < mapEntities.Count; i++)
+                                if (Database.MapGrids[myGrid].MyGrid[x, y] == mTarget.TargetMap)
                                 {
-                                    lock (_targetLock)
+                                    targetX = (x - gridX + 1) * Options.MapWidth + mTarget.TargetX;
+                                    targetY = (y - gridY + 1) * Options.MapHeight + mTarget.TargetY;
+                                    targetFound = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if (targetFound)
+                    {
+                        if (AlongPath(mPath, targetX, targetY))
+                        {
+                            path = mPath;
+                            returnVal = PathfinderResult.Success;
+                        }
+                        else
+                        {
+                            //See if the target is physically within range:
+                            if (Math.Abs(sourceX - targetX) + Math.Abs(sourceY - targetY) < pathfindingRange)
+                            {
+                                //Doing good...
+                                mapGrid = new AStarNode[Options.MapWidth * 3, Options.MapHeight * 3];
+
+                                for (int x = 0; x < Options.MapWidth * 3; x++)
+                                {
+                                    for (int y = 0; y < Options.MapHeight * 3; y++)
                                     {
-                                        if (_target != null)
+                                        mapGrid[x, y] = new AStarNode();
+                                        mapGrid[x, y].X = x;
+                                        mapGrid[x, y].Y = y;
+                                        if (x < sourceX - pathfindingRange || x > sourceX + pathfindingRange ||
+                                            y < sourceY - pathfindingRange || y > sourceY + pathfindingRange)
                                         {
-                                            if (mapEntities[i] != null && mapEntities[i].GetType() != typeof(Projectile))
+                                            mapGrid[x, y].IsWall = true;
+                                        }
+                                    }
+                                }
+
+                                //loop through all surrounding maps.. gather blocking elements, resources, players, npcs, global events, and local events (if this is a local event)
+                                for (var x = gridX - 1; x <= gridX + 1; x++)
+                                {
+                                    if (x == -1 || x >= Database.MapGrids[myGrid].Width)
+                                    {
+                                        for (int y = 0; y < 3; y++)
+                                        {
+                                            FillArea(mapGrid, ((x + 1) - gridX) * Options.MapWidth, y * Options.MapHeight,
+                                                Options.MapWidth, Options.MapHeight);
+                                        }
+                                        continue;
+                                    }
+                                    for (var y = gridY - 1; y <= gridY + 1; y++)
+                                    {
+                                        if (y == -1 || y >= Database.MapGrids[myGrid].Height)
+                                        {
+                                            FillArea(mapGrid, ((x + 1) - gridX) * Options.MapWidth,
+                                                ((y + 1) - gridY) * Options.MapHeight, Options.MapWidth, Options.MapHeight);
+                                            continue;
+                                        }
+
+                                        if (Database.MapGrids[myGrid].MyGrid[x, y] > -1)
+                                        {
+                                            var tmpMap = MapInstance.Lookup.Get(Database.MapGrids[myGrid].MyGrid[x, y]);
+                                            if (tmpMap != null)
                                             {
-                                                if (i != _sourceEntity.MyIndex &&
-                                                    (mapEntities[i].CurrentMap != _target.TargetMap ||
-                                                     mapEntities[i].CurrentY != _target.TargetY ||
-                                                     mapEntities[i].CurrentX != _target.TargetX))
+                                                //Copy the cached array of tile blocks
+                                                var blocks = tmpMap.GetCachedBlocks(mEntity.GetType() == typeof(Player));
+                                                foreach (var block in blocks)
                                                 {
-                                                    if (mapEntities[i] != null)
+                                                    mapGrid[
+                                                        ((x + 1) - gridX) * Options.MapWidth + block.X,
+                                                        ((y + 1) - gridY) * Options.MapHeight + block.Y].IsWall = true;
+                                                }
+
+                                                //Block of Players, Npcs, and Resources
+                                                foreach (var en in tmpMap.GetEntities())
+                                                {
+                                                    mapGrid[
+                                                        ((x + 1) - gridX) * Options.MapWidth + en.CurrentX,
+                                                        ((y + 1) - gridY) * Options.MapHeight + en.CurrentY].IsWall = true;
+                                                }
+
+                                                //Block Global Events if they are not passable.
+                                                foreach (var en in tmpMap.GlobalEventInstances)
+                                                {
+                                                    if (en.Value != null)
                                                     {
-                                                        if (mapEntities[i].CurrentMap ==
-                                                            Database.MapGrids[myGrid].MyGrid[x, y])
+                                                        mapGrid[
+                                                                    ((x + 1) - gridX) * Options.MapWidth + en.Value.CurrentX,
+                                                                    ((y + 1) - gridY) * Options.MapHeight +
+                                                                    en.Value.CurrentY]
+                                                                .IsWall =
+                                                            true;
+                                                    }
+                                                }
+
+                                                //If this is a local event then we gotta loop through all other local events for the player
+                                                if (mEntity.GetType() == typeof(EventPageInstance))
+                                                {
+                                                    EventPageInstance ev = (EventPageInstance)mEntity;
+                                                    if (ev.Passable == 0 && ev.Client != null)
+                                                    //Make sure this is a local event
+                                                    {
+                                                        Player player = ev.Client.Entity;
+                                                        if (player != null)
                                                         {
-                                                            closedList.Add(
-                                                                new PathfinderPoint(
-                                                                    (x -
-                                                                     MapInstance.Lookup.Get(_sourceEntity.CurrentMap)
-                                                                         .MapGridX + 1) *
-                                                                    Options.MapWidth + mapEntities[i].CurrentX,
-                                                                    (y -
-                                                                     MapInstance.Lookup.Get(_sourceEntity.CurrentMap)
-                                                                         .MapGridY + 1) *
-                                                                    Options.MapHeight + mapEntities[i].CurrentY, -1, 0));
+                                                            if (player.MyEvents.Count > Options.MapWidth * Options.MapHeight)
+                                                            {
+                                                                //Find all events on this map (since events can't switch maps)
+                                                                for (int mapX = 0; mapX < Options.MapWidth; mapX++)
+                                                                {
+                                                                    for (int mapY = 0; mapY < Options.MapHeight; mapY++)
+                                                                    {
+                                                                        var evtIndex = player.EventExists(ev.CurrentMap,
+                                                                            mapX, mapY);
+                                                                        if (evtIndex > -1)
+                                                                        {
+                                                                            var evt = player.MyEvents[evtIndex];
+                                                                            if (evt != null && evt.PageInstance != null &&
+                                                                                evt.PageInstance.Passable == 0)
+                                                                            {
+                                                                                mapGrid[
+                                                                                    ((x + 1) - gridX) * Options.MapWidth +
+                                                                                    evt.CurrentX,
+                                                                                    ((y + 1) - gridY) * Options.MapHeight +
+                                                                                    evt.CurrentY].IsWall = true;
+                                                                            }
+                                                                        }
+
+                                                                    }
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                var playerEvents = player.MyEvents;
+                                                                foreach (var evt in playerEvents)
+                                                                {
+                                                                    if (evt != null && evt.PageInstance != null &&
+                                                                        evt.PageInstance.Passable == 0)
+                                                                    {
+                                                                        mapGrid[
+                                                                            ((x + 1) - gridX) * Options.MapWidth +
+                                                                            evt.PageInstance.CurrentX,
+                                                                            ((y + 1) - gridY) * Options.MapHeight +
+                                                                            evt.PageInstance.CurrentY].IsWall = true;
+                                                                    }
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -142,216 +228,186 @@ namespace Intersect_Server.Classes.Misc
                                         }
                                     }
                                 }
-                                for (var x1 = 0; x1 < Options.MapWidth; x1++)
-                                {
-                                    for (var y1 = 0; y1 < Options.MapHeight; y1++)
-                                    {
-                                        lock (_targetLock)
-                                        {
-                                            if (_target != null)
-                                            {
-                                                if (
-                                                    MapInstance.Lookup.Get(Database.MapGrids[myGrid].MyGrid[x, y])
-                                                        .Attributes[x1, y1] != null)
-                                                {
-                                                    if (
-                                                        MapInstance.Lookup.Get(Database.MapGrids[myGrid].MyGrid[x, y])
-                                                            .Attributes[x1, y1]
-                                                            .value == (int) MapAttributes.Blocked ||
-                                                        MapInstance.Lookup.Get(Database.MapGrids[myGrid].MyGrid[x, y])
-                                                            .Attributes[x1, y1]
-                                                            .value == (int) MapAttributes.NPCAvoid)
-                                                    {
-                                                        closedList.Add(
-                                                            new PathfinderPoint(
-                                                                (x -
-                                                                 MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridX +
-                                                                 1) *
-                                                                Options.MapWidth + x1,
-                                                                (y -
-                                                                 MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridY +
-                                                                 1) *
-                                                                Options.MapHeight + y1, -1, 0));
-                                                    }
-                                                }
-                                                if (Database.MapGrids[myGrid].MyGrid[x, y] == _target.TargetMap &&
-                                                    x1 == _target.TargetX && y1 == _target.TargetY)
-                                                {
-                                                    targetX = (x - MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridX +
-                                                               1) *
-                                                              Options.MapWidth + x1;
-                                                    targetY = (y - MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridY +
-                                                               1) *
-                                                              Options.MapHeight + y1;
-                                                }
-                                                if (Database.MapGrids[myGrid].MyGrid[x, y] == _sourceEntity.CurrentMap &&
-                                                    x1 == _sourceEntity.CurrentX && y1 == _sourceEntity.CurrentY)
-                                                {
-                                                    startX = (x - MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridX +
-                                                              1) *
-                                                             Options.MapWidth + x1;
-                                                    startY = (y - MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridY +
-                                                              1) *
-                                                             Options.MapHeight + y1;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+
+                                //TODO See if target and this entiy are both on the old path..
+                                //If so then see if each tile is open. If so just use the old path.
+
+                                //Finally done.. let's get a path from the pathfinder.
+                                mapGrid[targetX, targetY].IsWall = false;
+                                aStar = new SpatialAStar<AStarNode, Object>(mapGrid);
+                                path = aStar.Search(new Point(sourceX, sourceY), new Point(targetX, targetY), null);
+                                returnVal = PathfinderResult.Success;
                             }
                             else
                             {
-                                for (var x1 = 0; x1 < Options.MapWidth; x1++)
-                                {
-                                    for (var y1 = 0; y1 < Options.MapHeight; y1++)
-                                    {
-                                        closedList.Add(
-                                            new PathfinderPoint(
-                                                (x - MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridX + 1) *
-                                                Options.MapWidth + x1,
-                                                (y - MapInstance.Lookup.Get(_sourceEntity.CurrentMap).MapGridY + 1) *
-                                                Options.MapHeight + y1, -1, 0));
-                                    }
-                                }
+                                returnVal = PathfinderResult.OutOfRange;
                             }
                         }
                     }
-
-                    //If our target point is in the closed list for some reason let's remove it
-                    for (int i = 0; i < closedList.Count; i++)
+                    else
                     {
-                        if (closedList[i].X == targetX && closedList[i].Y == targetY)
-                        {
-                            closedList.RemoveAt(i);
-                            break;
-                        }
+                        returnVal = PathfinderResult.OutOfRange;
                     }
+                }
+                else
+                {
+                    mPath = null;
+                    returnVal = PathfinderResult.Failure;
+                }
+            }
+            else
+            {
+                returnVal = PathfinderResult.Wait;
+            }
+            switch (returnVal)
+            {
+                case PathfinderResult.Success:
+                    //Use the same path for at least a second before trying again.
+                    mWaitTime = timeMs + 200;
+                    mConsecutiveFails = 0;
+                    break;
+                case PathfinderResult.OutOfRange:
+                    //Npc might immediately find a new target. Give it a 500ms wait but make this wait grow if we keep finding targets out of range.
+                    mConsecutiveFails++;
+                    mWaitTime = timeMs + mConsecutiveFails * 500;
+                    break;
+                case PathfinderResult.NoPathToTarget:
+                    //Wait 2 seconds and try again. This will move the npc randomly and might allow other npcs or players to get out of the way
+                    mConsecutiveFails++;
+                    mWaitTime = timeMs + 1000 + mConsecutiveFails * 500;
+                    break;
+                case PathfinderResult.Failure:
+                    //Can try again in a second.. we don't waste much processing time on failures
+                    mWaitTime = timeMs + 500;
+                    mConsecutiveFails = 0;
+                    break;
+                case PathfinderResult.Wait:
+                    //Nothing to do here.. we are already waiting.
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            mPath = path;
+            return returnVal;
+        }
 
-                    if (startX > -1 && targetX > -1)
-                    {
-                        openList.Add(new PathfinderPoint(startX, startY, 0, 0));
-                        do
-                        {
-                            var currentTile = FindLowestF(openList);
-                            closedList.Add(currentTile);
-                            openList.Remove(currentTile);
-
-                            foreach (PathfinderPoint t in closedList)
-                            {
-                                if (t.X != targetX || t.Y != targetY) continue;
-                                //path found
-                                currentTile = t;
-                                while (currentTile.G > 0)
-                                {
-                                    foreach (var t1 in closedList)
-                                    {
-                                        if (t1.G != currentTile.G - 1) continue;
-                                        if (currentTile.X > t1.X)
-                                        {
-                                            _directions.Insert(0, 3);
-                                        }
-                                        else if (currentTile.X < t1.X)
-                                        {
-                                            _directions.Insert(0, 2);
-                                        }
-                                        else if (currentTile.Y > t1.Y)
-                                        {
-                                            _directions.Insert(0, 1);
-                                        }
-                                        else if (currentTile.Y < t1.Y)
-                                        {
-                                            _directions.Insert(0, 0);
-                                        }
-                                        currentTile = t1;
-                                        break;
-                                    }
-                                }
-                                foundPath = true;
-                                _failures = 0;
-                                _pathFinding = false;
-                                return;
-                            }
-
-                            adjSquares.Clear();
-                            if (currentTile.X > 0)
-                            {
-                                adjSquares.Add(new PathfinderPoint(currentTile.X - 1, currentTile.Y, 0, 0));
-                            }
-                            if (currentTile.Y > 0)
-                            {
-                                adjSquares.Add(new PathfinderPoint(currentTile.X, currentTile.Y - 1, 0, 0));
-                            }
-                            if (currentTile.X < 89)
-                            {
-                                adjSquares.Add(new PathfinderPoint(currentTile.X + 1, currentTile.Y, 0, 0));
-                            }
-                            if (currentTile.Y < 89)
-                            {
-                                adjSquares.Add(new PathfinderPoint(currentTile.X, currentTile.Y + 1, 0, 0));
-                            }
-
-                            foreach (var t in adjSquares)
-                            {
-                                for (var x = 0; x < closedList.Count; x++)
-                                {
-                                    if (closedList[x].X == t.X && closedList[x].Y == t.Y)
-                                    {
-                                        //Continue - already in the closed list
-                                        break;
-                                    }
-                                    if (x != closedList.Count - 1) continue;
-                                    if (openList.Count > 0)
-                                    {
-                                        //If not in the closed list then add or update the open list
-                                        for (var y = 0; y < openList.Count; y++)
-                                        {
-                                            if (openList[y].X == t.X && openList[y].Y == t.Y)
-                                            {
-                                                //Update if the PathfinderPoints are better
-                                                var newPathfinderPoint = new PathfinderPoint(t.X, t.Y, currentTile.G + 1,
-                                                    Math.Abs(targetX - t.X) + Math.Abs(targetY - t.Y));
-                                                if (newPathfinderPoint.F < openList[y].F)
-                                                {
-                                                    openList.RemoveAt(y);
-                                                    openList.Add(newPathfinderPoint);
-                                                }
-                                                break;
-                                            }
-                                            if (y == openList.Count - 1)
-                                            {
-                                                //add to the open list
-                                                openList.Add(new PathfinderPoint(t.X, t.Y, currentTile.G + 1,
-                                                    Math.Abs(targetX - t.X) + Math.Abs(targetY - t.Y)));
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        //add to the open list
-                                        openList.Add(new PathfinderPoint(t.X, t.Y, currentTile.G + 1,
-                                            Math.Abs(targetX - t.X) + Math.Abs(targetY - t.Y)));
-                                    }
-                                }
-                            }
-                        } while (openList.Count > 0 && foundPath == false && target == _target);
-                    }
-                    _pathFinding = false;
-                    _failures++;
+        private void FillArea(AStarNode[,] dest, int startX, int startY, int width, int height)
+        {
+            for (int x = startX; x < startX + width; x++)
+            {
+                for (int y = startY; y < startY + height; y++)
+                {
+                    dest[x, y].IsWall = true;
                 }
             }
         }
 
-        private static PathfinderPoint FindLowestF(IList<PathfinderPoint> openList)
+        public bool AlongPath(IEnumerable<AStarNode> path, int x, int y)
         {
-            var solution = openList[0];
-            foreach (var t in openList)
+            if (path == null) return false;
+            var foundUs = false;
+            var enm = path.GetEnumerator();
+            while (enm.MoveNext())
             {
-                if (t.F < solution.F)
+                if (enm.Current.X - Options.MapWidth == mEntity.CurrentX && enm.Current.Y - Options.MapHeight == mEntity.CurrentY)
                 {
-                    solution = t;
+                    foundUs = true;
+                }
+                if (foundUs && enm.Current.X == x)
+                {
+                    if (enm.Current.Y == y || enm.Current.Y - 1 == y || enm.Current.Y + 1 == y)
+                    {
+                        enm.Dispose();
+                        return true;
+                    }
+                }
+                if (foundUs && enm.Current.Y == y)
+                {
+                    if (enm.Current.X == x || enm.Current.X - 1 == x || enm.Current.X + 1 == x)
+                    {
+                        enm.Dispose();
+                        return true;
+                    }
                 }
             }
-            return solution;
+            enm.Dispose();
+            return false;
+        }
+
+        public void PathFailed(long timeMs)
+        {
+            mPath = null;
+            mConsecutiveFails++;
+            mWaitTime = timeMs + 1000;
+        }
+
+        public int GetMove()
+        {
+            if (mPath == null) return -1;
+            var enm = mPath.GetEnumerator();
+            while (enm.MoveNext())
+            {
+                if (enm.Current.X - Options.MapWidth == mEntity.CurrentX && enm.Current.Y - Options.MapHeight == mEntity.CurrentY)
+                {
+                    if (enm.MoveNext())
+                    {
+                        var newX = enm.Current.X - Options.MapWidth;
+                        var newY = enm.Current.Y - Options.MapHeight;
+                        if (mEntity.CurrentX < newX)
+                        {
+                            enm.Dispose();
+                            return (int)Directions.Right;
+                        }
+                        else if (mEntity.CurrentX > newX)
+                        {
+                            enm.Dispose();
+                            return (int)Directions.Left;
+                        }
+                        else if (mEntity.CurrentY < newY)
+                        {
+                            enm.Dispose();
+                            return (int)Directions.Down;
+                        }
+                        else if (mEntity.CurrentY > newY)
+                        {
+                            enm.Dispose();
+                            return (int)Directions.Up;
+                        }
+                    }
+                }
+            }
+            enm.Dispose();
+            return -1;
+        }
+    }
+
+    public class AStarNode : IPathNode<Object>
+    {
+        public Int32 X { get; set; }
+        public Int32 Y { get; set; }
+        public Boolean IsWall { get; set; }
+
+        public bool IsWalkable(Object unused)
+        {
+            return !IsWall;
+        }
+    }
+
+    public class AStarSolver<TPathNode, TUserContext> : SpatialAStar<TPathNode, TUserContext> where TPathNode : IPathNode<TUserContext>
+    {
+        protected override Double Heuristic(PathNode inStart, PathNode inEnd)
+        {
+            return Math.Abs(inStart.X - inEnd.X) + Math.Abs(inStart.Y - inEnd.Y);
+        }
+
+        protected override Double NeighborDistance(PathNode inStart, PathNode inEnd)
+        {
+            return Heuristic(inStart, inEnd);
+        }
+
+        public AStarSolver(TPathNode[,] inGrid)
+            : base(inGrid)
+        {
         }
     }
 }

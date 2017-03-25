@@ -112,10 +112,10 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
-        public virtual void Update()
+        public virtual void Update(long timeMs)
         {
             //Cast timers
-            if (CastTime != 0 && CastTime < Globals.System.GetTimeMs())
+            if (CastTime != 0 && CastTime < timeMs)
             {
                 CastTime = 0;
                 CastSpell(Spells[SpellCastSlot].SpellNum, SpellCastSlot);
@@ -264,7 +264,7 @@ namespace Intersect_Server.Classes.Entities
             return -1;
         }
 
-        protected virtual bool ProcessMoveRoute(Client client)
+        protected virtual bool ProcessMoveRoute(Client client, long timeMs)
         {
             var moved = false;
             int lookDir = 0, moveDir = 0;
@@ -1262,13 +1262,23 @@ namespace Intersect_Server.Classes.Entities
 
         protected int GetDistanceTo(Entity target)
         {
-            //Calculate World Tile of Me
-            var x1 = CurrentX + (MapInstance.Lookup.Get(CurrentMap).MapGridX * Options.MapWidth);
-            var y1 = CurrentY + (MapInstance.Lookup.Get(CurrentMap).MapGridY * Options.MapHeight);
-            //Calculate world tile of target
-            var x2 = target.CurrentX + (MapInstance.Lookup.Get(CurrentMap).MapGridX * Options.MapWidth);
-            var y2 = target.CurrentY + (MapInstance.Lookup.Get(CurrentMap).MapGridY * Options.MapHeight);
-            return (int) Math.Sqrt(Math.Pow(x1 - x2, 2) + (Math.Pow(y1 - y2, 2)));
+            if (target != null)
+            {
+                var myMap = MapInstance.Lookup.Get(CurrentMap);
+                var targetMap = MapInstance.Lookup.Get(target.CurrentMap);
+                if (myMap != null && targetMap != null)
+                {
+                    //Calculate World Tile of Me
+                    var x1 = CurrentX + (myMap.MapGridX * Options.MapWidth);
+                    var y1 = CurrentY + (myMap.MapGridY * Options.MapHeight);
+                    //Calculate world tile of target
+                    var x2 = target.CurrentX + (targetMap.MapGridX * Options.MapWidth);
+                    var y2 = target.CurrentY + (targetMap.MapGridY * Options.MapHeight);
+                    return (int)Math.Sqrt(Math.Pow(x1 - x2, 2) + (Math.Pow(y1 - y2, 2)));
+                }
+            }
+            //Something is null.. return a value that is out of range :) 
+            return 9999;
         }
 
         protected bool InRangeOf(Entity target, int Range)

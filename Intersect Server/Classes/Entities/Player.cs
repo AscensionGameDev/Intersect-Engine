@@ -40,6 +40,7 @@ namespace Intersect_Server.Classes.Entities
         public int Level = 1;
         public Client MyClient;
         public List<EventInstance> MyEvents = new List<EventInstance>();
+        public Dictionary<Tuple<int,int,int>,int> EventLookup = new Dictionary<Tuple<int, int, int>, int>();
 
         public long MyId = -1;
         public List<Player> Party = new List<Player>();
@@ -99,32 +100,32 @@ namespace Intersect_Server.Classes.Entities
         }
 
         //Update
-        public override void Update()
+        public override void Update(long timeMs)
         {
             if (!InGame || CurrentMap == -1)
             {
                 return;
             }
 
-            if (SaveTimer + 120000 < Environment.TickCount)
+            if (SaveTimer + 120000 < timeMs)
             {
                 Task.Run(() => Database.SaveCharacter(this, false));
-                SaveTimer = Environment.TickCount;
+                SaveTimer = timeMs;
             }
 
             if (InCraft > -1 && CraftIndex > -1)
             {
                 BenchBase b = BenchBase.Lookup.Get(InCraft);
-                if (CraftTimer + b.Crafts[CraftIndex].Time < Environment.TickCount)
+                if (CraftTimer + b.Crafts[CraftIndex].Time < timeMs)
                 {
                     CraftItem(CraftIndex);
                 }
             }
 
-            base.Update();
+            base.Update(timeMs);
 
             //If we have a move route then let's process it....
-            if (MoveRoute != null && MoveTimer < Globals.System.GetTimeMs())
+            if (MoveRoute != null && MoveTimer < timeMs)
             {
                 //Check to see if the event instance is still active for us... if not then let's remove this route
                 for (var i = 0; i < MyEvents.Count; i++)
@@ -134,7 +135,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (MoveRoute.ActionIndex < MoveRoute.Actions.Count)
                         {
-                            ProcessMoveRoute(MyClient);
+                            ProcessMoveRoute(MyClient, timeMs);
                         }
                         else
                         {
@@ -210,10 +211,17 @@ namespace Intersect_Server.Classes.Entities
                                         SpawnY = mapEvent.SpawnY
                                     };
                                     MyEvents.Add(tmpEvent);
+                                    if (EventLookup.ContainsKey(new Tuple<int, int, int>(map.Id, mapEvent.SpawnX,mapEvent.SpawnY)))
+                                    {
+                                        EventLookup.Add(new Tuple<int, int, int>(map.Id,mapEvent.SpawnX,mapEvent.SpawnY),MyEvents.Count-1);
+                                    }
+                                    else
+                                    {
+                                        EventLookup[new Tuple<int, int, int>(map.Id, mapEvent.SpawnX, mapEvent.SpawnY)] = MyEvents.Count - 1;
+                                    }
                                 }
-                                else
-                                {
-                                    MyEvents[foundEvent].Update();
+                                else { 
+                                    MyEvents[foundEvent].Update(timeMs);
                                 }
                             }
                         }
@@ -230,7 +238,7 @@ namespace Intersect_Server.Classes.Entities
                     var eventFound = false;
                     if (evt.MapNum == -1)
                     {
-                        evt.Update();
+                        evt.Update(timeMs);
                         if (evt.CallStack.Count > 0)
                         {
                             eventFound = true;
@@ -252,6 +260,8 @@ namespace Intersect_Server.Classes.Entities
                     }
                     if (eventFound) continue;
                     PacketSender.SendEntityLeaveTo(MyClient, i, (int) EntityTypes.Event, evt.MapNum);
+                    EventLookup.Remove(new Tuple<int, int, int>(MyEvents[i].MapNum, MyEvents[i].BaseEvent.SpawnX,
+                        MyEvents[i].BaseEvent.SpawnY));
                     MyEvents[i] = null;
                 }
             }
@@ -568,7 +578,6 @@ namespace Intersect_Server.Classes.Entities
             if (weapon != null)
             {
                 var attackAnim = AnimationBase.Lookup.Get(weapon.AttackAnimation);
-                Console.WriteLine("attackAnim == null: {0}", attackAnim == null);
                 if (attackAnim != null)
                 {
                     deadAnimations.Add(new KeyValuePair<int, int>(weapon.AttackAnimation, Dir));
@@ -647,6 +656,8 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (MyEvents[i] != null && MyEvents[i].MapNum != -1 && MyEvents[i].MapNum != newMap)
                 {
+                    EventLookup.Remove(new Tuple<int, int, int>(MyEvents[i].MapNum, MyEvents[i].BaseEvent.SpawnX,
+                        MyEvents[i].BaseEvent.SpawnY));
                     MyEvents[i] = null;
                 }
             }
@@ -2759,16 +2770,10 @@ namespace Intersect_Server.Classes.Entities
         }
 
         //Event Processing Methods
-        private int EventExists(int map, int x, int y)
+        public int EventExists(int map, int x, int y)
         {
-            for (var i = 0; i < MyEvents.Count; i++)
-            {
-                if (MyEvents[i] == null) continue;
-                if (map == MyEvents[i].MapNum && x == MyEvents[i].SpawnX && y == MyEvents[i].SpawnY)
-                {
-                    return i;
-                }
-            }
+            int index = -1;
+            if (EventLookup.TryGetValue(new Tuple<int, int, int>(map, x, y), out index)) return index;
             return -1;
         }
 
@@ -2941,7 +2946,7 @@ namespace Intersect_Server.Classes.Entities
                     SpawnY = -1
                 };
                 MyEvents.Add(tmpEvent);
-                tmpEvent.Update();
+                tmpEvent.Update(Globals.System.GetTimeMs());
                 if (tmpEvent.PageInstance != null && (trigger == -1 || tmpEvent.PageInstance.MyPage.Trigger == trigger))
                 {
                     var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage) {CommandIndex = 0, ListIndex = 0};

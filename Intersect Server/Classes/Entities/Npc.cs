@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Intersect;
 using Intersect.GameObjects;
@@ -268,10 +269,10 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
-        public override void Update()
+        public override void Update(long timeMs)
         {
             var curMapLink = CurrentMap;
-            base.Update();
+            base.Update(timeMs);
             if (MoveTimer < Globals.System.GetTimeMs())
             {
                 var targetMap = -1;
@@ -375,39 +376,57 @@ namespace Intersect_Server.Classes.Entities
                         }
                     }
 
+                    if (pathFinder.GetTarget() == null)
+                    {
+                        pathFinder.SetTarget(new PathfinderTarget(targetMap, targetX, targetY));
+                    }
+
                     if (pathFinder.GetTarget() != null)
                     {
                         TryCastSpells();
-                        if (
-                            !IsOneBlockAway(pathFinder.GetTarget().TargetMap, pathFinder.GetTarget().TargetX,
-                                pathFinder.GetTarget().TargetY))
+                        if (!IsOneBlockAway(pathFinder.GetTarget().TargetMap, pathFinder.GetTarget().TargetX,pathFinder.GetTarget().TargetY))
                         {
-                            var dir = pathFinder.GetMove();
-                            if (dir > -1)
+                            switch (pathFinder.Update(timeMs))
                             {
-                                if (CanMove(dir) == -1 || CanMove(dir) == -4)
-                                {
-                                    //check if NPC is snared or stunned
-                                    for (var n = 0; n < Status.Count; n++)
+                                case PathfinderResult.Success:
+                                    var dir = pathFinder.GetMove();
+                                    if (dir > -1)
                                     {
-                                        if (Status[n].Type == (int) StatusTypes.Stun ||
-                                            Status[n].Type == (int) StatusTypes.Snare)
+                                        if (CanMove(dir) == -1 || CanMove(dir) == -4)
                                         {
-                                            return;
+                                            //check if NPC is snared or stunned
+                                            for (var n = 0; n < Status.Count; n++)
+                                            {
+                                                if (Status[n].Type == (int) StatusTypes.Stun ||
+                                                    Status[n].Type == (int) StatusTypes.Snare)
+                                                {
+                                                    return;
+                                                }
+                                            }
+                                            Move(dir, null);
+                                        }
+                                        else
+                                        {
+                                            pathFinder.PathFailed(timeMs);
                                         }
                                     }
-                                    Move(dir, null);
-                                    pathFinder.RemoveMove();
-                                }
-                                else
-                                {
-                                    pathFinder.SetTarget(null);
-                                }
-                            }
-                            else
-                            {
-                                pathFinder.SetTarget(pathFinder.GetTarget());
-                                targetMap = -1;
+                                    break;
+                                case PathfinderResult.OutOfRange:
+                                    MyTarget = null;
+                                    targetMap = -1;
+                                    break;
+                                case PathfinderResult.NoPathToTarget:
+                                    targetMap = -1;
+                                    break;
+                                case PathfinderResult.Failure:
+                                    targetMap = -1;
+                                    MyTarget = null;
+                                    break;
+                                case PathfinderResult.Wait:
+                                    targetMap = -1;
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
                             }
                         }
                         else
@@ -426,25 +445,6 @@ namespace Intersect_Server.Classes.Entities
                                 {
                                     if (CanAttack(MyTarget, null)) TryAttack(MyTarget);
                                 }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        pathFinder.SetTarget(new PathfinderTarget(targetMap, targetX, targetY));
-                        if (Dir != DirToEnemy(MyTarget) && DirToEnemy(MyTarget) != -1)
-                        {
-                            ChangeDir(DirToEnemy(MyTarget));
-                        }
-                        else
-                        {
-                            if (MyTarget.IsDisposed)
-                            {
-                                MyTarget = null;
-                            }
-                            else
-                            {
-                                if (CanAttack(MyTarget, null)) TryAttack(MyTarget);
                             }
                         }
                     }
