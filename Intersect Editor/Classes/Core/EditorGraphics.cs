@@ -320,6 +320,9 @@ namespace Intersect_Editor.Classes
                 case MapAutotiles.AutotileAnim:
                     xOffset = Globals.AutotileFrame * Options.TileWidth * 2;
                     break;
+                case MapAutotiles.AutotileAnimXP:
+                    xOffset = Globals.AutotileFrame * Options.TileWidth * 3;
+                    break;
                 case MapAutotiles.AutotileCliff:
                     yOffset = -Options.TileHeight;
                     break;

@@ -176,6 +176,14 @@ namespace Intersect_Editor.Forms
                     Globals.CurSelW = 1;
                     Globals.CurSelH = 1;
                     break;
+                case 6:
+                    Globals.CurSelW = 2;
+                    Globals.CurSelH = 3;
+                    break;
+                case 7:
+                    Globals.CurSelW = 8;
+                    Globals.CurSelH = 3;
+                    break;
             }
         }
 
@@ -659,6 +667,8 @@ namespace Intersect_Editor.Forms
             cmbAutotile.Items.Add(Strings.Get("tiles", "animated"));
             cmbAutotile.Items.Add(Strings.Get("tiles", "cliff"));
             cmbAutotile.Items.Add(Strings.Get("tiles", "waterfall"));
+            cmbAutotile.Items.Add(Strings.Get("tiles", "autotilexp"));
+            cmbAutotile.Items.Add(Strings.Get("tiles", "animatedxp"));
 
             //Attributes Panel
             rbBlocked.Text = Strings.Get("attributes", "blocked");
