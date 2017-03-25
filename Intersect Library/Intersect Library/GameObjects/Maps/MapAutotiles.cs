@@ -1175,6 +1175,11 @@
             var tmpTile = new bool[4, 4];
             byte situation = 1;
 
+            if (x == 3 && y == 2)
+            {
+                int z = 0;
+            }
+
             // Find the tile matches of neighboring 8 tiles
             for (int j = -1; j < 2; j++)
             {
@@ -1188,11 +1193,6 @@
             }
 
             // Calculate Situations
-            // Inner
-            if (tmpTile[1, 2] && tmpTile[2, 1])
-            {
-                situation = XPInner;
-            }
             // Horizontal South
             if (tmpTile[1, 2] && !tmpTile[2, 3])
             {
@@ -1234,8 +1234,13 @@
             {
                 situation = XPNw;
             }
+            // Inner
+            if (tmpTile[1, 2] && tmpTile[2, 1] && !tmpTile[1, 1])
+            {
+                situation = XPInner;
+            }
             // Center
-            if (tmpTile[1, 1] && tmpTile[2, 1] && tmpTile[3, 1] && tmpTile[1, 2] && tmpTile[2, 2] && tmpTile[3, 2] && tmpTile[1, 3] && tmpTile[2, 3] && tmpTile[3, 3])
+            if (tmpTile[1, 1] && tmpTile[2, 1] && tmpTile[1, 2])
             {
                 situation = XPFill;
             }
@@ -1294,11 +1299,6 @@
             }
 
             // Calculate Situations
-            // Inner
-            if (tmpTile[3, 2] && tmpTile[2, 1])
-            {
-                situation = XPInner;
-            }
             // Horizontal South
             if (tmpTile[1, 2] && !tmpTile[2, 3])
             {
@@ -1340,8 +1340,13 @@
             {
                 situation = XPNw;
             }
+            // Inner
+            if (tmpTile[3, 2] && tmpTile[2, 1] && !tmpTile[3, 1])
+            {
+                situation = XPInner;
+            }
             // Center
-            if (tmpTile[1, 1] && tmpTile[2, 1] && tmpTile[3, 1] && tmpTile[1, 2] && tmpTile[2, 2] && tmpTile[3, 2] && tmpTile[1, 3] && tmpTile[2, 3] && tmpTile[3, 3])
+            if (tmpTile[2, 1] && tmpTile[3, 1] && tmpTile[3, 2])
             {
                 situation = XPFill;
             }
@@ -1400,11 +1405,6 @@
             }
 
             // Calculate Situations
-            // Inner
-            if (tmpTile[1, 2] && tmpTile[2, 3])
-            {
-                situation = XPInner;
-            }
             // Horizontal North
             if (tmpTile[1, 2] && !tmpTile[2, 1])
             {
@@ -1446,8 +1446,13 @@
             {
                 situation = XPNw;
             }
+            // Inner
+            if (tmpTile[1, 2] && tmpTile[2, 3] && !tmpTile[1, 3])
+            {
+                situation = XPInner;
+            }
             // Center
-            if (tmpTile[1, 1] && tmpTile[2, 1] && tmpTile[3, 1] && tmpTile[1, 2] && tmpTile[2, 2] && tmpTile[3, 2] && tmpTile[1, 3] && tmpTile[2, 3] && tmpTile[3, 3])
+            if (tmpTile[1, 2] && tmpTile[1, 3] && tmpTile[2, 3])
             {
                 situation = XPFill;
             }
@@ -1506,11 +1511,6 @@
             }
 
             // Calculate Situations
-            // Inner
-            if (tmpTile[3, 2] && tmpTile[2, 3])
-            {
-                situation = XPInner;
-            }
             // Horizontal North
             if (tmpTile[1, 2] && !tmpTile[2, 1])
             {
@@ -1552,8 +1552,13 @@
             {
                 situation = XPNw;
             }
+            // Inner
+            if (tmpTile[3, 2] && tmpTile[2, 3] && !tmpTile[3, 3])
+            {
+                situation = XPInner;
+            }
             // Center
-            if (tmpTile[1, 1] && tmpTile[2, 1] && tmpTile[3, 1] && tmpTile[1, 2] && tmpTile[2, 2] && tmpTile[3, 2] && tmpTile[1, 3] && tmpTile[2, 3] && tmpTile[3, 3])
+            if (tmpTile[3, 2] && tmpTile[3, 3] && tmpTile[2, 3])
             {
                 situation = XPFill;
             }
