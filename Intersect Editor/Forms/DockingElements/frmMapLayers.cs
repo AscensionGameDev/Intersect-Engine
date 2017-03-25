@@ -106,6 +106,14 @@ namespace Intersect_Editor.Forms
                     Globals.CurSelW = 1;
                     Globals.CurSelH = 1;
                     break;
+                case 6:
+                    Globals.CurSelW = 2;
+                    Globals.CurSelH = 3;
+                    break;
+                case 7:
+                    Globals.CurSelW = 8;
+                    Globals.CurSelH = 3;
+                    break;
             }
         }
 
