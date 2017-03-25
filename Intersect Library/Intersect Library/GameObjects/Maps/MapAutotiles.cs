@@ -1175,11 +1175,6 @@
             var tmpTile = new bool[4, 4];
             byte situation = 1;
 
-            if (x == 3 && y == 2)
-            {
-                int z = 0;
-            }
-
             // Find the tile matches of neighboring 8 tiles
             for (int j = -1; j < 2; j++)
             {
@@ -1229,8 +1224,8 @@
                     situation = XPSw;
                 }
             }
-            // Corner Tile
-            if (!tmpTile[1, 1] && !tmpTile[1, 2] && !tmpTile[2, 1])
+            // Top Left Corner Tile
+            if (!tmpTile[1, 2] && !tmpTile[2, 1])
             {
                 situation = XPNw;
             }
@@ -1335,10 +1330,15 @@
                     situation = XPSe;
                 }
             }
-            // Corner Tile
-            if (!tmpTile[1, 1] && !tmpTile[1, 2] && !tmpTile[2, 1])
+            // Top Left Corner Tile
+            if (!tmpTile[1, 2] && !tmpTile[2, 1])
             {
                 situation = XPNw;
+            }
+            // Corner Tile
+            if (!tmpTile[2, 1] && !tmpTile[3, 2])
+            {
+                situation = XPNe;
             }
             // Inner
             if (tmpTile[3, 2] && tmpTile[2, 1] && !tmpTile[3, 1])
@@ -1441,10 +1441,15 @@
                     situation = XPSw;
                 }
             }
-            // Corner Tile
-            if (!tmpTile[1, 1] && !tmpTile[1, 2] && !tmpTile[2, 1])
+            // Top Left Corner Tile
+            if (!tmpTile[1, 2] && !tmpTile[2, 1])
             {
                 situation = XPNw;
+            }
+            // Corner Tile
+            if (!tmpTile[1, 2] && !tmpTile[2, 3])
+            {
+                situation = XPSw;
             }
             // Inner
             if (tmpTile[1, 2] && tmpTile[2, 3] && !tmpTile[1, 3])
@@ -1547,10 +1552,25 @@
                     situation = XPSe;
                 }
             }
-            // Corner Tile
-            if (!tmpTile[1, 1] && !tmpTile[1, 2] && !tmpTile[2, 1])
+            // Top Left Corner Tile
+            if (!tmpTile[1, 2] && !tmpTile[2, 1])
             {
                 situation = XPNw;
+            }
+            // Sw Corner
+            if (!tmpTile[1, 2] && !tmpTile[2, 3])
+            {
+                situation = XPSw;
+            }
+            // Ne Corner
+            if (!tmpTile[2, 1] && !tmpTile[3, 2])
+            {
+                situation = XPNe;
+            }
+            // Corner Tile
+            if (!tmpTile[2, 3] && !tmpTile[3, 2])
+            {
+                situation = XPSe;
             }
             // Inner
             if (tmpTile[3, 2] && tmpTile[2, 3] && !tmpTile[3, 3])
