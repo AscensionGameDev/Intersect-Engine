@@ -578,7 +578,6 @@ namespace Intersect_Server.Classes.Entities
             if (weapon != null)
             {
                 var attackAnim = AnimationBase.Lookup.Get(weapon.AttackAnimation);
-                Console.WriteLine("attackAnim == null: {0}", attackAnim == null);
                 if (attackAnim != null)
                 {
                     deadAnimations.Add(new KeyValuePair<int, int>(weapon.AttackAnimation, Dir));
