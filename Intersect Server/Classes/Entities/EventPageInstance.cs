@@ -266,7 +266,7 @@ namespace Intersect_Server.Classes.Entities
                                         }
                                         else
                                         {
-                                            _pathFinder.PathFailed();
+                                            _pathFinder.PathFailed(timeMs);
                                         }
                                     }
                                 }

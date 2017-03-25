@@ -2241,7 +2241,7 @@ namespace Intersect_Server.Classes.Entities
             PacketSender.SendPlayerSpellUpdate(MyClient, spellSlot);
         }
 
-        public void UseSpell(int spellSlot, int target)
+        public void UseSpell(int spellSlot, Entity target)
         {
             int spellNum = Spells[spellSlot].SpellNum;
             Target = target;
@@ -2287,18 +2287,16 @@ namespace Intersect_Server.Classes.Entities
                     }
                 }
 
-                if (target == -1 &&
-                    ((spell.SpellType == (int) SpellTypes.CombatSpell &&
-                      spell.TargetType == (int) SpellTargetTypes.Single) || spell.SpellType == (int) SpellTypes.WarpTo))
+                if (target == null && ((spell.SpellType == (int) SpellTypes.CombatSpell &&  spell.TargetType == (int) SpellTargetTypes.Single) || spell.SpellType == (int) SpellTypes.WarpTo))
                 {
                     PacketSender.SendActionMsg(this, Strings.Get("combat", "notarget"), new Color(255, 255, 0, 0));
                     return;
                 }
 
                 //Check for range of a single target spell
-                if (spell.TargetType == (int) SpellTargetTypes.Single && Globals.Entities[Target] != this)
+                if (spell.SpellType == (int)SpellTypes.CombatSpell && spell.TargetType == (int) SpellTargetTypes.Single && Target != this)
                 {
-                    if (!InRangeOf(Globals.Entities[Target], spell.CastRange))
+                    if (!InRangeOf(Target, spell.CastRange))
                     {
                         PacketSender.SendActionMsg(this, Strings.Get("combat", "targetoutsiderange"),
                             new Color(255, 255, 0, 0));
@@ -2319,12 +2317,13 @@ namespace Intersect_Server.Classes.Entities
                                                              spell.VitalCost[(int) Vitals.Health];
                                 CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
                                 SpellCastSlot = spellSlot;
+                                CastTarget = Target;
 
                                 //Check if the caster has the right ammunition if a projectile
-                                if (spell.SpellType == (int) SpellTargetTypes.Projectile && spell.Projectile > -1)
+                                if (spell.SpellType == (int)SpellTypes.CombatSpell && spell.TargetType == (int)SpellTargetTypes.Projectile && spell.Projectile > -1)
                                 {
                                     var projectileBase = ProjectileBase.GetProjectile(spell.Projectile);
-                                    if (projectileBase.Ammo > -1)
+                                    if (projectileBase != null && projectileBase.Ammo > -1)
                                     {
                                         TakeItem(FindItem(projectileBase.Ammo, projectileBase.AmmoRequired),
                                             projectileBase.AmmoRequired);

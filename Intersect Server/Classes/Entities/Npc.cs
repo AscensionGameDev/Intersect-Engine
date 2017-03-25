@@ -228,6 +228,14 @@ namespace Intersect_Server.Classes.Entities
                                                                      spell.VitalCost[(int) Vitals.Health
                                                                      ];
                                         CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
+                                        if (spell.Friendly == 1)
+                                        {
+                                            CastTarget = this;
+                                        }
+                                        else
+                                        {
+                                            CastTarget = MyTarget;
+                                        }
 
                                         switch (MyBase.SpellFrequency)
                                         {
