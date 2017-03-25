@@ -1562,34 +1562,34 @@
             switch (situation)
             {
                 case XPInner:
-                    PlaceAutotileXP(layerNum, x, y, 1, "d");
+                    PlaceAutotileXP(layerNum, x, y, 4, "d");
                     break;
                 case XPFill:
-                    PlaceAutotileXP(layerNum, x, y, 1, "D");
+                    PlaceAutotileXP(layerNum, x, y, 4, "D");
                     break;
                 case XPNw:
-                    PlaceAutotileXP(layerNum, x, y, 1, "h");
+                    PlaceAutotileXP(layerNum, x, y, 4, "h");
                     break;
                 case XPN:
-                    PlaceAutotileXP(layerNum, x, y, 1, "H");
+                    PlaceAutotileXP(layerNum, x, y, 4, "H");
                     break;
                 case XPNe:
-                    PlaceAutotileXP(layerNum, x, y, 1, "l");
+                    PlaceAutotileXP(layerNum, x, y, 4, "l");
                     break;
                 case XPE:
-                    PlaceAutotileXP(layerNum, x, y, 1, "L");
+                    PlaceAutotileXP(layerNum, x, y, 4, "L");
                     break;
                 case XPSe:
-                    PlaceAutotileXP(layerNum, x, y, 1, "t");
+                    PlaceAutotileXP(layerNum, x, y, 4, "t");
                     break;
                 case XPS:
-                    PlaceAutotileXP(layerNum, x, y, 1, "T");
+                    PlaceAutotileXP(layerNum, x, y, 4, "T");
                     break;
                 case XPSw:
-                    PlaceAutotileXP(layerNum, x, y, 1, "p");
+                    PlaceAutotileXP(layerNum, x, y, 4, "p");
                     break;
                 case XPW:
-                    PlaceAutotileXP(layerNum, x, y, 1, "P");
+                    PlaceAutotileXP(layerNum, x, y, 4, "P");
                     break;
             }
         }
