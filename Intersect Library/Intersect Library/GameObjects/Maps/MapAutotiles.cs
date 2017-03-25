@@ -1350,34 +1350,34 @@
             switch (situation)
             {
                 case XPInner:
-                    PlaceAutotileXP(layerNum, x, y, 1, "b");
+                    PlaceAutotileXP(layerNum, x, y, 2, "b");
                     break;
                 case XPFill:
-                    PlaceAutotileXP(layerNum, x, y, 1, "B");
+                    PlaceAutotileXP(layerNum, x, y, 2, "B");
                     break;
                 case XPNw:
-                    PlaceAutotileXP(layerNum, x, y, 1, "f");
+                    PlaceAutotileXP(layerNum, x, y, 2, "f");
                     break;
                 case XPN:
-                    PlaceAutotileXP(layerNum, x, y, 1, "F");
+                    PlaceAutotileXP(layerNum, x, y, 2, "F");
                     break;
                 case XPNe:
-                    PlaceAutotileXP(layerNum, x, y, 1, "j");
+                    PlaceAutotileXP(layerNum, x, y, 2, "j");
                     break;
                 case XPE:
-                    PlaceAutotileXP(layerNum, x, y, 1, "J");
+                    PlaceAutotileXP(layerNum, x, y, 2, "J");
                     break;
                 case XPSe:
-                    PlaceAutotileXP(layerNum, x, y, 1, "r");
+                    PlaceAutotileXP(layerNum, x, y, 2, "r");
                     break;
                 case XPS:
-                    PlaceAutotileXP(layerNum, x, y, 1, "R");
+                    PlaceAutotileXP(layerNum, x, y, 2, "R");
                     break;
                 case XPSw:
-                    PlaceAutotileXP(layerNum, x, y, 1, "n");
+                    PlaceAutotileXP(layerNum, x, y, 2, "n");
                     break;
                 case XPW:
-                    PlaceAutotileXP(layerNum, x, y, 1, "N");
+                    PlaceAutotileXP(layerNum, x, y, 2, "N");
                     break;
             }
         }
@@ -1456,34 +1456,34 @@
             switch (situation)
             {
                 case XPInner:
-                    PlaceAutotileXP(layerNum, x, y, 1, "c");
+                    PlaceAutotileXP(layerNum, x, y, 3, "c");
                     break;
                 case XPFill:
-                    PlaceAutotileXP(layerNum, x, y, 1, "C");
+                    PlaceAutotileXP(layerNum, x, y, 3, "C");
                     break;
                 case XPNw:
-                    PlaceAutotileXP(layerNum, x, y, 1, "g");
+                    PlaceAutotileXP(layerNum, x, y, 3, "g");
                     break;
                 case XPN:
-                    PlaceAutotileXP(layerNum, x, y, 1, "G");
+                    PlaceAutotileXP(layerNum, x, y, 3, "G");
                     break;
                 case XPNe:
-                    PlaceAutotileXP(layerNum, x, y, 1, "k");
+                    PlaceAutotileXP(layerNum, x, y, 3, "k");
                     break;
                 case XPE:
-                    PlaceAutotileXP(layerNum, x, y, 1, "K");
+                    PlaceAutotileXP(layerNum, x, y, 3, "K");
                     break;
                 case XPSe:
-                    PlaceAutotileXP(layerNum, x, y, 1, "s");
+                    PlaceAutotileXP(layerNum, x, y, 3, "s");
                     break;
                 case XPS:
-                    PlaceAutotileXP(layerNum, x, y, 1, "S");
+                    PlaceAutotileXP(layerNum, x, y, 3, "S");
                     break;
                 case XPSw:
-                    PlaceAutotileXP(layerNum, x, y, 1, "o");
+                    PlaceAutotileXP(layerNum, x, y, 3, "o");
                     break;
                 case XPW:
-                    PlaceAutotileXP(layerNum, x, y, 1, "O");
+                    PlaceAutotileXP(layerNum, x, y, 3, "O");
                     break;
             }
         }
