@@ -256,12 +256,17 @@ namespace Intersect_Server.Classes.Entities
                                 //Todo check if next to or on top of player.. if so don't run pathfinder.
                                 if (_pathFinder.Update(timeMs) == PathfinderResult.Success)
                                 {
-                                    if (_pathFinder.GetMove() > -1)
+                                    var pathDir = _pathFinder.GetMove();
+                                    if (pathDir > -1)
                                     {
-                                        if (CanMove(_pathFinder.GetMove()) == -1)
+                                        if (CanMove(pathDir) == -1)
                                         {
-                                            Move(_pathFinder.GetMove(), client);
+                                            Move(pathDir, client);
                                             moved = true;
+                                        }
+                                        else
+                                        {
+                                            _pathFinder.PathFailed();
                                         }
                                     }
                                 }

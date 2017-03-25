@@ -960,8 +960,7 @@ namespace Intersect_Server.Classes.Maps
         {
             lock (TableLock)
             {
-                Dictionary<int, MapInstance> objects = MapInstanceTable.ToDictionary(k => k.Key,
-                    v => (MapInstance) v.Value);
+                Dictionary<int, MapInstance> objects = MapInstanceTable.ToDictionary(k => k.Key,v => (MapInstance) v.Value);
                 return objects;
             }
         }
