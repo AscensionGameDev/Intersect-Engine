@@ -1,40 +1,47 @@
-﻿using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Maps;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Intersect.Collections;
+using Intersect.Enums;
+using Intersect.GameObjects;
 
-namespace Intersect.GameObjects
+namespace Intersect
 {
-    public interface DatabaseObject
-    {
-        int Id { get; }
-        string Name { get; set; }
-
-        void Load(byte[] packet);
-        byte[] BinaryData { get; }
-        string DatabaseTableName { get; }
-        GameObject GameObjectType { get; }
-
-        void MakeBackup();
-        void RestoreBackup();
-        void DeleteBackup();
-
-        void Delete();
-    }
-
     public abstract class DatabaseObject<TObject>
-        : DatabaseObject, IGameObject<int, TObject>
+        : IDatabaseObject, IGameObject<int, TObject>
         where TObject : DatabaseObject<TObject>
     {
         private static IntObjectLookup<TObject> sLookup;
+        private static Dictionary<Type, GameObjectType> sEnumMap;
 
         public static IntObjectLookup<TObject> Lookup =>
             (sLookup = (sLookup ?? new IntObjectLookup<TObject>()));
 
-        public const string DATABASE_TABLE = "";
-        public const GameObject OBJECT_TYPE = GameObject.Animation;
+        private static Dictionary<Type, GameObjectType> EnumMap =>
+            (sEnumMap = (sEnumMap ?? new Dictionary<Type, GameObjectType>()));
+
+        public GameObjectType Type
+        {
+            get
+            {
+                if (EnumMap.ContainsKey(typeof(TObject)))
+                    return EnumMap[typeof(TObject)];
+
+                var values = Enum.GetValues(typeof(GameObjectType));
+                foreach (GameObjectType gameObjectType in values)
+                {
+                    if (typeof(TObject) != gameObjectType.GetObjectType())
+                        continue;
+
+                    EnumMap[typeof(TObject)] = gameObjectType;
+                    return gameObjectType;
+                }
+
+                return default(GameObjectType);
+            }
+        }
+
+        public string DatabaseTable => Type.GetTable();
 
         private byte[] mBackup = null;
 
@@ -59,8 +66,6 @@ namespace Intersect.GameObjects
         }
 
         public abstract byte[] BinaryData { get; }
-        public abstract GameObject GameObjectType { get; }
-        public abstract string DatabaseTableName { get; }
         public virtual void Delete() => Lookup.Delete((TObject)this);
 
         public static string GetName(int index) =>

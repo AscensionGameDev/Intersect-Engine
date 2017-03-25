@@ -37,9 +37,6 @@ namespace Intersect.GameObjects.Maps
             }
         }
 
-        public new const string DATABASE_TABLE = "maps";
-        public new const GameObject OBJECT_TYPE = GameObject.Map;
-
         //SyncLock
         protected Object _mapLock = new Object();
 
@@ -371,7 +368,5 @@ namespace Intersect.GameObjects.Maps
         }
 
         public override byte[] BinaryData => GetMapData(false);
-        public override string DatabaseTableName => DATABASE_TABLE;
-        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 }

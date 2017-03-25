@@ -1,5 +1,4 @@
-﻿using Intersect;
-using Intersect.GameObjects;
+﻿using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;

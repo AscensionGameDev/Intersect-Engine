@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Intersect;
 using Intersect.Collections;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
@@ -501,16 +502,16 @@ namespace Intersect_Server.Classes.Core
 
         private static void CreateGameObjectTables()
         {
-            foreach (var val in Enum.GetValues(typeof(GameObject)))
+            foreach (var val in Enum.GetValues(typeof(GameObjectType)))
             {
-                if ((GameObject) val != GameObject.Time)
-                    CreateGameObjectTable((GameObject) val);
+                if ((GameObjectType) val != GameObjectType.Time)
+                    CreateGameObjectTable((GameObjectType) val);
             }
         }
 
-        private static void CreateGameObjectTable(GameObject gameObject)
+        private static void CreateGameObjectTable(GameObjectType gameObjectType)
         {
-            var cmd = "CREATE TABLE " + GetGameObjectTable(gameObject) + " ("
+            var cmd = "CREATE TABLE " + gameObjectType.GetTable() + " ("
                       + GAME_OBJECT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                       + GAME_OBJECT_DELETED + " INTEGER NOT NULL DEFAULT 0,"
                       + GAME_OBJECT_DATA + " BLOB" + ");";
@@ -1668,16 +1669,16 @@ namespace Intersect_Server.Classes.Core
         //Game Object Saving/Loading
         private static void LoadAllGameObjects()
         {
-            foreach (var val in Enum.GetValues(typeof(GameObject)))
+            foreach (var val in Enum.GetValues(typeof(GameObjectType)))
             {
-                if ((GameObject) val != GameObject.Time)
+                if ((GameObjectType) val != GameObjectType.Time)
                 {
-                    LoadGameObjects((GameObject) val);
-                    if ((GameObject) val == GameObject.Map)
+                    LoadGameObjects((GameObjectType) val);
+                    if ((GameObjectType) val == GameObjectType.Map)
                     {
                         OnMapsLoaded();
                     }
-                    else if ((GameObject) val == GameObject.Class)
+                    else if ((GameObjectType) val == GameObjectType.Class)
                     {
                         OnClassesLoaded();
                     }
@@ -1685,235 +1686,171 @@ namespace Intersect_Server.Classes.Core
             }
         }
 
-        private static string GetGameObjectTable(GameObject type)
-        {
-            var tableName = "";
-            switch (type)
-            {
-                case GameObject.Animation:
-                    tableName = AnimationBase.DATABASE_TABLE;
-                    break;
-                case GameObject.Class:
-                    tableName = ClassBase.DATABASE_TABLE;
-                    break;
-                case GameObject.Item:
-                    tableName = ItemBase.DATABASE_TABLE;
-                    break;
-                case GameObject.Npc:
-                    tableName = NpcBase.DATABASE_TABLE;
-                    break;
-                case GameObject.Projectile:
-                    tableName = ProjectileBase.DATABASE_TABLE;
-                    break;
-                case GameObject.Quest:
-                    tableName = QuestBase.DATABASE_TABLE;
-                    break;
-                case GameObject.Resource:
-                    tableName = ResourceBase.DATABASE_TABLE;
-                    break;
-                case GameObject.Shop:
-                    tableName = ShopBase.DATABASE_TABLE;
-                    break;
-                case GameObject.Spell:
-                    tableName = SpellBase.DATABASE_TABLE;
-                    break;
-                case GameObject.Bench:
-                    tableName = BenchBase.DATABASE_TABLE;
-                    break;
-                case GameObject.Map:
-                    tableName = MapBase.DATABASE_TABLE;
-                    break;
-                case GameObject.CommonEvent:
-                    tableName = EventBase.DATABASE_TABLE;
-                    break;
-                case GameObject.PlayerSwitch:
-                    tableName = PlayerSwitchBase.DATABASE_TABLE;
-                    break;
-                case GameObject.PlayerVariable:
-                    tableName = PlayerVariableBase.DATABASE_TABLE;
-                    break;
-                case GameObject.ServerSwitch:
-                    tableName = ServerSwitchBase.DATABASE_TABLE;
-                    break;
-                case GameObject.ServerVariable:
-                    tableName = ServerVariableBase.DATABASE_TABLE;
-                    break;
-                case GameObject.Tileset:
-                    tableName = TilesetBase.DATABASE_TABLE;
-                    break;
-                case GameObject.Time:
-                    return "";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
-            return tableName;
-        }
-
-        private static void ClearGameObjects(GameObject type)
+        private static void ClearGameObjects(GameObjectType type)
         {
             switch (type)
             {
-                case GameObject.Animation:
+                case GameObjectType.Animation:
                     AnimationBase.Lookup.Clear();
                     break;
-                case GameObject.Class:
+                case GameObjectType.Class:
                     ClassBase.Lookup.Clear();
                     break;
-                case GameObject.Item:
+                case GameObjectType.Item:
                     ItemBase.Lookup.Clear();
                     break;
-                case GameObject.Npc:
+                case GameObjectType.Npc:
                     NpcBase.Lookup.Clear();
                     break;
-                case GameObject.Projectile:
+                case GameObjectType.Projectile:
                     ProjectileBase.Lookup.Clear();
                     break;
-                case GameObject.Quest:
+                case GameObjectType.Quest:
                     QuestBase.Lookup.Clear();
                     break;
-                case GameObject.Resource:
+                case GameObjectType.Resource:
                     ResourceBase.Lookup.Clear();
                     break;
-                case GameObject.Shop:
+                case GameObjectType.Shop:
                     ShopBase.Lookup.Clear();
                     break;
-                case GameObject.Spell:
+                case GameObjectType.Spell:
                     SpellBase.Lookup.Clear();
                     break;
-                case GameObject.Bench:
+                case GameObjectType.Bench:
                     BenchBase.Lookup.Clear();
                     break;
-                case GameObject.Map:
+                case GameObjectType.Map:
                     MapBase.Lookup.Clear();
                     break;
-                case GameObject.CommonEvent:
+                case GameObjectType.CommonEvent:
                     EventBase.Lookup.Clear();
                     break;
-                case GameObject.PlayerSwitch:
+                case GameObjectType.PlayerSwitch:
                     PlayerSwitchBase.Lookup.Clear();
                     break;
-                case GameObject.PlayerVariable:
+                case GameObjectType.PlayerVariable:
                     PlayerVariableBase.Lookup.Clear();
                     break;
-                case GameObject.ServerSwitch:
+                case GameObjectType.ServerSwitch:
                     ServerSwitchBase.Lookup.Clear();
                     break;
-                case GameObject.ServerVariable:
+                case GameObjectType.ServerVariable:
                     ServerVariableBase.Lookup.Clear();
                     break;
-                case GameObject.Tileset:
+                case GameObjectType.Tileset:
                     TilesetBase.Lookup.Clear();
                     break;
-                case GameObject.Time:
+                case GameObjectType.Time:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
 
-        private static void LoadGameObject(GameObject type, int index, byte[] data)
+        private static void LoadGameObject(GameObjectType type, int index, byte[] data)
         {
             switch (type)
             {
-                case GameObject.Animation:
+                case GameObjectType.Animation:
                     var anim = new AnimationBase(index);
                     anim.Load(data);
                     AnimationBase.Lookup.Set(index, anim);
                     break;
-                case GameObject.Class:
+                case GameObjectType.Class:
                     var cls = new ClassBase(index);
                     cls.Load(data);
                     ClassBase.Lookup.Set(index, cls);
                     break;
-                case GameObject.Item:
+                case GameObjectType.Item:
                     var itm = new ItemBase(index);
                     itm.Load(data);
                     ItemBase.Lookup.Set(index, itm);
                     break;
-                case GameObject.Npc:
+                case GameObjectType.Npc:
                     var npc = new NpcBase(index);
                     npc.Load(data);
                     NpcBase.Lookup.Set(index, npc);
                     break;
-                case GameObject.Projectile:
+                case GameObjectType.Projectile:
                     var proj = new ProjectileBase(index);
                     proj.Load(data);
                     ProjectileBase.Lookup.Set(index, proj);
                     break;
-                case GameObject.Quest:
+                case GameObjectType.Quest:
                     var qst = new QuestBase(index);
                     qst.Load(data);
                     QuestBase.Lookup.Set(index, qst);
                     break;
-                case GameObject.Resource:
+                case GameObjectType.Resource:
                     var res = new ResourceBase(index);
                     res.Load(data);
                     ResourceBase.Lookup.Set(index, res);
                     break;
-                case GameObject.Shop:
+                case GameObjectType.Shop:
                     var shp = new ShopBase(index);
                     shp.Load(data);
                     ShopBase.Lookup.Set(index, shp);
                     break;
-                case GameObject.Spell:
+                case GameObjectType.Spell:
                     var spl = new SpellBase(index);
                     spl.Load(data);
                     SpellBase.Lookup.Set(index, spl);
                     break;
-                case GameObject.Bench:
+                case GameObjectType.Bench:
                     var cft = new BenchBase(index);
                     cft.Load(data);
                     BenchBase.Lookup.Set(index, cft);
                     break;
-                case GameObject.Map:
+                case GameObjectType.Map:
                     var map = new MapInstance(index);
                     MapInstance.Lookup.Set(index, map);
                     map.Load(data);
                     break;
-                case GameObject.CommonEvent:
+                case GameObjectType.CommonEvent:
                     var buffer = new ByteBuffer();
                     buffer.WriteBytes(data);
                     var evt = new EventBase(index, buffer, true);
                     EventBase.Lookup.Set(index, evt);
                     buffer.Dispose();
                     break;
-                case GameObject.PlayerSwitch:
+                case GameObjectType.PlayerSwitch:
                     var pswitch = new PlayerSwitchBase(index);
                     pswitch.Load(data);
                     PlayerSwitchBase.Lookup.Set(index, pswitch);
                     break;
-                case GameObject.PlayerVariable:
+                case GameObjectType.PlayerVariable:
                     var pvar = new PlayerVariableBase(index);
                     pvar.Load(data);
                     PlayerVariableBase.Lookup.Set(index, pvar);
                     break;
-                case GameObject.ServerSwitch:
+                case GameObjectType.ServerSwitch:
                     var sswitch = new ServerSwitchBase(index);
                     sswitch.Load(data);
                     ServerSwitchBase.Lookup.Set(index, sswitch);
                     break;
-                case GameObject.ServerVariable:
+                case GameObjectType.ServerVariable:
                     var svar = new ServerVariableBase(index);
                     svar.Load(data);
                     ServerVariableBase.Lookup.Set(index, svar);
                     break;
-                case GameObject.Tileset:
+                case GameObjectType.Tileset:
                     var tset = new TilesetBase(index);
                     tset.Load(data);
                     TilesetBase.Lookup.Set(index, tset);
                     break;
-                case GameObject.Time:
+                case GameObjectType.Time:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
 
-        public static void LoadGameObjects(GameObject type)
+        public static void LoadGameObjects(GameObjectType gameObjectType)
         {
             var nullIssues = "";
-            var tableName = GetGameObjectTable(type);
-            ClearGameObjects(type);
+            var tableName = gameObjectType.GetTable();
+            ClearGameObjects(gameObjectType);
             var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" + GAME_OBJECT_DELETED +
                         ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
@@ -1926,7 +1863,7 @@ namespace Intersect_Server.Classes.Core
                         var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
                         if (dataReader[MAP_LIST_DATA].GetType() != typeof(DBNull))
                         {
-                            LoadGameObject(type, index, (byte[]) dataReader[GAME_OBJECT_DATA]);
+                            LoadGameObject(gameObjectType, index, (byte[]) dataReader[GAME_OBJECT_DATA]);
                         }
                         else
                         {
@@ -1941,14 +1878,14 @@ namespace Intersect_Server.Classes.Core
             }
         }
 
-        public static void SaveGameObject(DatabaseObject gameObject)
+        public static void SaveGameObject(IDatabaseObject gameObject)
         {
             if (gameObject == null)
             {
                 Log.Error("Attempted to persist null game object to the database.");
             }
 
-            var insertQuery = "UPDATE " + gameObject.DatabaseTableName + " set " + GAME_OBJECT_DELETED + "=@" +
+            var insertQuery = "UPDATE " + gameObject.DatabaseTable + " set " + GAME_OBJECT_DELETED + "=@" +
                               GAME_OBJECT_DELETED + "," + GAME_OBJECT_DATA + "=@" + GAME_OBJECT_DATA + " WHERE " +
                               GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
@@ -1963,9 +1900,9 @@ namespace Intersect_Server.Classes.Core
             }
         }
 
-        public static DatabaseObject AddGameObject(GameObject type)
+        public static IDatabaseObject AddGameObject(GameObjectType gameObjectType)
         {
-            var insertQuery = "INSERT into " + GetGameObjectTable(type) + " DEFAULT VALUES" + ";";
+            var insertQuery = "INSERT into " + gameObjectType.GetTable() + " DEFAULT VALUES" + ";";
             int index = -1;
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
             {
@@ -1975,98 +1912,98 @@ namespace Intersect_Server.Classes.Core
             }
             if (index > -1)
             {
-                DatabaseObject dbObj = null;
-                switch (type)
+                IDatabaseObject dbObj = null;
+                switch (gameObjectType)
                 {
-                    case GameObject.Animation:
+                    case GameObjectType.Animation:
                         var obja = new AnimationBase(index);
                         dbObj = obja;
                         AnimationBase.Lookup.Set(index, obja);
                         break;
-                    case GameObject.Class:
+                    case GameObjectType.Class:
                         var objc = new ClassBase(index);
                         dbObj = objc;
                         ClassBase.Lookup.Set(index, objc);
                         break;
-                    case GameObject.Item:
+                    case GameObjectType.Item:
                         var objd = new ItemBase(index);
                         dbObj = objd;
                         ItemBase.Lookup.Set(index, objd);
                         break;
-                    case GameObject.Npc:
+                    case GameObjectType.Npc:
                         var objq = new NpcBase(index);
                         dbObj = objq;
                         NpcBase.Lookup.Set(index, objq);
                         break;
-                    case GameObject.Projectile:
+                    case GameObjectType.Projectile:
                         var objwe = new ProjectileBase(index);
                         dbObj = objwe;
                         ProjectileBase.Lookup.Set(index, objwe);
                         break;
-                    case GameObject.Quest:
+                    case GameObjectType.Quest:
                         var objqw = new QuestBase(index);
                         dbObj = objqw;
                         QuestBase.Lookup.Set(index, objqw);
                         break;
-                    case GameObject.Resource:
+                    case GameObjectType.Resource:
                         var objy = new ResourceBase(index);
                         dbObj = objy;
                         ResourceBase.Lookup.Set(index, objy);
                         break;
-                    case GameObject.Shop:
+                    case GameObjectType.Shop:
                         var objt = new ShopBase(index);
                         dbObj = objt;
                         ShopBase.Lookup.Set(index, objt);
                         break;
-                    case GameObject.Spell:
+                    case GameObjectType.Spell:
                         var objr = new SpellBase(index);
                         dbObj = objr;
                         SpellBase.Lookup.Set(index, objr);
                         break;
-                    case GameObject.Bench:
+                    case GameObjectType.Bench:
                         var obje = new BenchBase(index);
                         dbObj = obje;
                         BenchBase.Lookup.Set(index, obje);
                         break;
-                    case GameObject.Map:
+                    case GameObjectType.Map:
                         var objw = new MapInstance(index);
                         dbObj = objw;
                         MapInstance.Lookup.Set(index, objw);
                         break;
-                    case GameObject.CommonEvent:
+                    case GameObjectType.CommonEvent:
                         var objf = new EventBase(index, -1, -1, true);
                         dbObj = objf;
                         EventBase.Lookup.Set(index, objf);
                         break;
-                    case GameObject.PlayerSwitch:
+                    case GameObjectType.PlayerSwitch:
                         var objz = new PlayerSwitchBase(index);
                         dbObj = objz;
                         PlayerSwitchBase.Lookup.Set(index, objz);
                         break;
-                    case GameObject.PlayerVariable:
+                    case GameObjectType.PlayerVariable:
                         var objx = new PlayerVariableBase(index);
                         dbObj = objx;
                         PlayerVariableBase.Lookup.Set(index, objx);
                         break;
-                    case GameObject.ServerSwitch:
+                    case GameObjectType.ServerSwitch:
                         var ssbobj = new ServerSwitchBase(index);
                         dbObj = ssbobj;
                         ServerSwitchBase.Lookup.Set(index, ssbobj);
                         break;
-                    case GameObject.ServerVariable:
+                    case GameObjectType.ServerVariable:
                         var svbobj = new ServerVariableBase(index);
                         dbObj = svbobj;
                         ServerVariableBase.Lookup.Set(index, svbobj);
                         break;
-                    case GameObject.Tileset:
+                    case GameObjectType.Tileset:
                         var tset = new TilesetBase(index);
                         dbObj = tset;
                         TilesetBase.Lookup.Set(index, tset);
                         break;
-                    case GameObject.Time:
+                    case GameObjectType.Time:
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                        throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
                 }
 
                 SaveGameObject(dbObj);
@@ -2076,9 +2013,9 @@ namespace Intersect_Server.Classes.Core
             return null;
         }
 
-        public static void DeleteGameObject(DatabaseObject gameObject)
+        public static void DeleteGameObject(IDatabaseObject gameObject)
         {
-            var insertQuery = "UPDATE " + gameObject.DatabaseTableName + " set " + GAME_OBJECT_DELETED + "=@" +
+            var insertQuery = "UPDATE " + gameObject.DatabaseTable + " set " + GAME_OBJECT_DELETED + "=@" +
                               GAME_OBJECT_DELETED + " WHERE " +
                               GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
@@ -2097,15 +2034,14 @@ namespace Intersect_Server.Classes.Core
             if (MapBase.Lookup.Count == 0)
             {
                 Console.WriteLine(Strings.Get("database", "nomaps"));
-                AddGameObject(GameObject.Map);
+                AddGameObject(GameObjectType.Map);
             }
 
             GenerateMapGrids();
             LoadMapFolders();
             CheckAllMapConnections();
-
-            var maps = MapInstance.Lookup;
-            foreach (var map in maps)
+            
+            foreach (var map in MapInstance.Lookup.Copy)
             {
                 map.Value.InitAutotiles();
             }
@@ -2116,7 +2052,7 @@ namespace Intersect_Server.Classes.Core
             if (ClassBase.Lookup.Count == 0)
             {
                 Console.WriteLine(Strings.Get("database", "noclasses"));
-                var cls = (ClassBase) AddGameObject(GameObject.Class);
+                var cls = (ClassBase) AddGameObject(GameObjectType.Class);
                 cls.Name = Strings.Get("database", "default");
                 ClassSprite defaultMale = new ClassSprite()
                 {
@@ -2145,7 +2081,7 @@ namespace Intersect_Server.Classes.Core
         //Extra Map Helper Functions
         public static void CheckAllMapConnections()
         {
-            foreach (var map in MapInstance.Lookup)
+            foreach (var map in MapInstance.Lookup.Copy)
             {
                 CheckMapConnections(map.Value, MapInstance.Lookup);
             }
@@ -2186,7 +2122,7 @@ namespace Intersect_Server.Classes.Core
             lock (MapGridLock)
             {
                 MapGrids.Clear();
-                foreach (var map in MapInstance.Lookup)
+                foreach (var map in MapInstance.Lookup.Copy)
                 {
                     if (MapGrids.Count == 0)
                     {
@@ -2209,7 +2145,7 @@ namespace Intersect_Server.Classes.Core
                         }
                     }
                 }
-                foreach (var map in MapInstance.Lookup)
+                foreach (var map in MapInstance.Lookup.Copy)
                 {
                     map.Value.SurroundingMaps.Clear();
                     var myGrid = map.Value.MapGrid;

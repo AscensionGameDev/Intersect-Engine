@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
@@ -312,7 +313,7 @@ namespace Intersect_Editor.Forms
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.Animation = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex - 1);
+            CurrentPage.Animation = Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
         }
 
         private void chkIsGlobal_CheckedChanged(object sender, EventArgs e)
@@ -558,7 +559,7 @@ namespace Intersect_Editor.Forms
             cmbPreviewFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.Get("general", "none"));
-            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             if (MyEvent.CommonEvent)
             {
                 grpEntityOptions.Hide();
@@ -577,7 +578,7 @@ namespace Intersect_Editor.Forms
                 }
                 cmbTriggerVal.Items.Clear();
                 cmbTriggerVal.Items.Add(Strings.Get("general", "none"));
-                cmbTriggerVal.Items.AddRange(Database.GetGameObjectList(GameObject.Projectile));
+                cmbTriggerVal.Items.AddRange(Database.GetGameObjectList(GameObjectType.Projectile));
             }
             chkIsGlobal.Checked = Convert.ToBoolean(MyEvent.IsGlobal);
             if (MyEvent.CommonEvent) chkIsGlobal.Hide();
@@ -629,7 +630,7 @@ namespace Intersect_Editor.Forms
                     lblTriggerVal.Text = Strings.Get("eventeditor", "projectile");
                     cmbTriggerVal.Show();
                     cmbTriggerVal.SelectedIndex =
-                        Database.GameObjectListIndex(GameObject.Projectile, CurrentPage.TriggerVal) + 1;
+                        Database.GameObjectListIndex(GameObjectType.Projectile, CurrentPage.TriggerVal) + 1;
                 }
             }
             cmbPreviewFace.SelectedIndex = cmbPreviewFace.Items.IndexOf(CurrentPage.FaceGraphic);
@@ -638,7 +639,7 @@ namespace Intersect_Editor.Forms
                 cmbPreviewFace.SelectedIndex = 0;
                 UpdateFacePreview();
             }
-            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, CurrentPage.Animation) + 1;
+            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, CurrentPage.Animation) + 1;
             chkHideName.Checked = Convert.ToBoolean(CurrentPage.HideName);
             chkDisableInspector.Checked = Convert.ToBoolean(CurrentPage.DisablePreview);
             chkDirectionFix.Checked = Convert.ToBoolean(CurrentPage.DirectionFix);

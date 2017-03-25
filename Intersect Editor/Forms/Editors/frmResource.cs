@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using Intersect_Editor.Classes.Core;
@@ -34,9 +35,9 @@ namespace Intersect_Editor.Classes
             lstResources.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObject type)
+        private void GameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (type == GameObject.Resource)
+            if (type == GameObjectType.Resource)
             {
                 InitEditor();
                 if (_editorItem != null && !ResourceBase.Lookup.Values.Contains(_editorItem))
@@ -77,7 +78,7 @@ namespace Intersect_Editor.Classes
         private void lstResources_Click(object sender, EventArgs e)
         {
             _editorItem =
-                ResourceBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Resource, lstResources.SelectedIndex));
+                ResourceBase.Lookup.Get(Database.GameObjectIdFromList(GameObjectType.Resource, lstResources.SelectedIndex));
             UpdateEditor();
         }
 
@@ -97,10 +98,10 @@ namespace Intersect_Editor.Classes
             }
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.Get("general", "none"));
-            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbItem.Items.Clear();
             cmbItem.Items.Add(Strings.Get("general", "none"));
-            cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
+            cmbItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
             InitLocalization();
             UpdateEditor();
         }
@@ -144,7 +145,7 @@ namespace Intersect_Editor.Classes
         public void InitEditor()
         {
             lstResources.Items.Clear();
-            lstResources.Items.AddRange(Database.GetGameObjectList(GameObject.Resource));
+            lstResources.Items.AddRange(Database.GetGameObjectList(GameObjectType.Resource));
             cmbToolType.Items.Clear();
             cmbToolType.Items.Add(Strings.Get("general", "none"));
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
@@ -159,7 +160,7 @@ namespace Intersect_Editor.Classes
                 txtName.Text = _editorItem.Name;
                 cmbToolType.SelectedIndex = _editorItem.Tool + 1;
                 nudSpawnDuration.Value = _editorItem.SpawnDuration;
-                cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation) +
+                cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.Animation) +
                                              1;
                 nudMinHp.Value = _editorItem.MinHP;
                 nudMaxHp.Value = _editorItem.MaxHP;
@@ -188,7 +189,7 @@ namespace Intersect_Editor.Classes
         {
             int index = scrlDropIndex.Value - 1;
             lblDropIndex.Text = Strings.Get("resourceeditor", "dropindex", index + 1);
-            cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _editorItem.Drops[index].ItemNum) + 1;
+            cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, _editorItem.Drops[index].ItemNum) + 1;
             nudDropAmount.Value = _editorItem.Drops[index].Amount;
             nudDropChance.Value = _editorItem.Drops[index].Chance;
         }
@@ -322,7 +323,7 @@ namespace Intersect_Editor.Classes
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
         {
-            PacketSender.SendCreateObject(GameObject.Resource);
+            PacketSender.SendCreateObject(GameObjectType.Resource);
         }
 
         private void toolStripItemDelete_Click(object sender, EventArgs e)
@@ -428,13 +429,13 @@ namespace Intersect_Editor.Classes
 
         private void cmbItem_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObject.Item,
+            _editorItem.Drops[scrlDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item,
                 cmbItem.SelectedIndex - 1);
         }
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Animation = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex - 1);
+            _editorItem.Animation = Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
         }
 
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)

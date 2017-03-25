@@ -13,8 +13,7 @@ namespace Intersect_Server.Classes.Core
             long cps = 0;
             while (Globals.ServerStarted)
             {
-                var maps = MapInstance.Lookup;
-                foreach (var map in maps)
+                foreach (var map in MapInstance.Lookup.Copy)
                 {
                     if (map.Value.Active) map.Value.Update();
                 }

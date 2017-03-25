@@ -1,6 +1,7 @@
 ﻿using System;
 using Intersect;
 using Intersect.Collections;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
@@ -494,7 +495,7 @@ namespace Intersect_Client.Classes.Networking
             var map = MapInstance.Lookup.Get(bf.ReadInteger());
             if (map != null)
             {
-                map.ActionMsgs.Add(new ActionMsgInstance(((DatabaseObject) map).Id, bf.ReadInteger(), bf.ReadInteger(),
+                map.ActionMsgs.Add(new ActionMsgInstance(((IDatabaseObject) map).Id, bf.ReadInteger(), bf.ReadInteger(),
                     bf.ReadString(),
                     new Color((int) bf.ReadByte(), (int) bf.ReadByte(), (int) bf.ReadByte(), (int) bf.ReadByte())));
             }
@@ -1160,14 +1161,14 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var type = (GameObject) bf.ReadInteger();
+            var type = (GameObjectType) bf.ReadInteger();
             var id = bf.ReadInteger();
             var another = Convert.ToBoolean(bf.ReadInteger());
             var deleted = Convert.ToBoolean(bf.ReadInteger());
             var data = bf.ReadBytes(bf.Length());
             switch (type)
             {
-                case GameObject.Animation:
+                case GameObjectType.Animation:
                     if (deleted)
                     {
                         var anim = AnimationBase.Lookup.Get(id);
@@ -1180,7 +1181,7 @@ namespace Intersect_Client.Classes.Networking
                         AnimationBase.Lookup.Set(id, anim);
                     }
                     break;
-                case GameObject.Class:
+                case GameObjectType.Class:
                     if (deleted)
                     {
                         var cls = ClassBase.Lookup.Get(id);
@@ -1193,7 +1194,7 @@ namespace Intersect_Client.Classes.Networking
                         ClassBase.Lookup.Set(id, cls);
                     }
                     break;
-                case GameObject.Item:
+                case GameObjectType.Item:
                     if (deleted)
                     {
                         var itm = ItemBase.Lookup.Get(id);
@@ -1206,7 +1207,7 @@ namespace Intersect_Client.Classes.Networking
                         ItemBase.Lookup.Set(id, itm);
                     }
                     break;
-                case GameObject.Npc:
+                case GameObjectType.Npc:
                     if (deleted)
                     {
                         var npc = NpcBase.Lookup.Get(id);
@@ -1219,7 +1220,7 @@ namespace Intersect_Client.Classes.Networking
                         NpcBase.Lookup.Set(id, npc);
                     }
                     break;
-                case GameObject.Projectile:
+                case GameObjectType.Projectile:
                     if (deleted)
                     {
                         var proj = ProjectileBase.Lookup.Get(id);
@@ -1232,7 +1233,7 @@ namespace Intersect_Client.Classes.Networking
                         ProjectileBase.Lookup.Set(id, proj);
                     }
                     break;
-                case GameObject.Quest:
+                case GameObjectType.Quest:
                     if (deleted)
                     {
                         var qst = QuestBase.Lookup.Get(id);
@@ -1247,7 +1248,7 @@ namespace Intersect_Client.Classes.Networking
                         Gui.GameUI.NotifyQuestsUpdated();
                     }
                     break;
-                case GameObject.Resource:
+                case GameObjectType.Resource:
                     if (deleted)
                     {
                         var res = ResourceBase.Lookup.Get(id);
@@ -1260,7 +1261,7 @@ namespace Intersect_Client.Classes.Networking
                         ResourceBase.Lookup.Set(id, res);
                     }
                     break;
-                case GameObject.Shop:
+                case GameObjectType.Shop:
                     if (deleted)
                     {
                         var shp = ShopBase.Lookup.Get(id);
@@ -1273,7 +1274,7 @@ namespace Intersect_Client.Classes.Networking
                         ShopBase.Lookup.Set(id, shp);
                     }
                     break;
-                case GameObject.Bench:
+                case GameObjectType.Bench:
                     if (deleted)
                     {
                         var bnc = BenchBase.Lookup.Get(id);
@@ -1286,7 +1287,7 @@ namespace Intersect_Client.Classes.Networking
                         BenchBase.Lookup.Set(id, bnc);
                     }
                     break;
-                case GameObject.Spell:
+                case GameObjectType.Spell:
                     if (deleted)
                     {
                         var spl = SpellBase.Lookup.Get(id);
@@ -1299,17 +1300,17 @@ namespace Intersect_Client.Classes.Networking
                         SpellBase.Lookup.Set(id, spl);
                     }
                     break;
-                case GameObject.Map:
+                case GameObjectType.Map:
                     //Handled in a different packet
                     break;
-                case GameObject.Tileset:
+                case GameObjectType.Tileset:
                     var obj = new TilesetBase(id);
                     obj.Load(data);
                     TilesetBase.Lookup.Set(id, obj);
                     if (Globals.HasGameData && !another)
                         Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
                     break;
-                case GameObject.CommonEvent:
+                case GameObjectType.CommonEvent:
                     //Clients don't store event data, im an idiot.
                     break;
                 default:
@@ -1344,8 +1345,7 @@ namespace Intersect_Client.Classes.Networking
             Globals.MapGrid = new int[Globals.MapGridWidth, Globals.MapGridHeight];
             if (clearKnownMaps)
             {
-                var maps = MapInstance.Lookup;
-                foreach (var map in maps)
+                foreach (var map in MapInstance.Lookup.Copy)
                 {
                     map.Value.Dispose();
                 }

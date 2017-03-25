@@ -97,12 +97,9 @@ namespace Intersect_Server.Classes.General
 
         public static void KillItemsOf(ItemBase item)
         {
-            foreach (var map in MapInstance.Lookup)
+            foreach (var map in MapInstance.Lookup.Copy)
             {
-                if (map.Value != null)
-                {
-                    map.Value.DespawnItemsOf(item);
-                }
+                map.Value?.DespawnItemsOf(item);
             }
         }
     }

@@ -1,15 +1,9 @@
-﻿using System.Collections.Generic;
-using Intersect.GameObjects.Conditions;
+﻿using Intersect.GameObjects.Conditions;
 
 namespace Intersect.GameObjects
 {
     public class SpellBase : DatabaseObject<SpellBase>
     {
-        //Core Info
-        public new const string DATABASE_TABLE = "spells";
-        public new const GameObject OBJECT_TYPE = GameObject.Spell;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
         //Animations
         public int CastAnimation = -1;
 
@@ -165,7 +159,5 @@ namespace Intersect.GameObjects
         }
 
         public override byte[] BinaryData => SpellData();
-        public override string DatabaseTableName => DATABASE_TABLE;
-        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 }

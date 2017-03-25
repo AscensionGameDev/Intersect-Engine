@@ -1056,7 +1056,7 @@ namespace Intersect_Editor.Classes
             _graphicsDevice.SetRenderTarget(screenShot);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Transparent);
 
-            if (Globals.MapGrid.Contains(((DatabaseObject) Globals.CurrentMap).Id))
+            if (Globals.MapGrid.Contains(((IDatabaseObject) Globals.CurrentMap).Id))
             {
                 //Draw The lower maps
                 for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)

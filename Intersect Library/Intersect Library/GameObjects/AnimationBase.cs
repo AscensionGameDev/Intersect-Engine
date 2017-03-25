@@ -2,9 +2,6 @@
 {
     public class AnimationBase : DatabaseObject<AnimationBase>
     {
-        public new const string DATABASE_TABLE = "animations";
-        public new const GameObject OBJECT_TYPE = GameObject.Animation;
-
         public int LowerAnimFrameCount = 1;
         public int LowerAnimFrameSpeed = 100;
         public int LowerAnimLoopCount = 0;
@@ -112,7 +109,5 @@
         }
 
         public override byte[] BinaryData => AnimData();
-        public override string DatabaseTableName => DATABASE_TABLE;
-        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 }

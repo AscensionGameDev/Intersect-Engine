@@ -20,9 +20,6 @@ namespace Intersect_Server.Classes.Maps
 
         public new static MapInstances<MapInstance> Lookup => (sLookup = (sLookup ?? new MapInstances<MapInstance>(MapBase.Lookup)));
 
-        //Core
-        public new const GameObject OBJECT_TYPE = GameObject.Map;
-
         //Does the map have a player on or nearby it?
         public bool Active;
 
@@ -92,7 +89,7 @@ namespace Intersect_Server.Classes.Maps
             if (MapGrid >= 0)
             {
                 if (Database.MapGrids[MapGrid] != null &&
-                    Database.MapGrids[MapGrid].MyMaps.Contains(((DatabaseObject)this).Id))
+                    Database.MapGrids[MapGrid].MyMaps.Contains(((IDatabaseObject)this).Id))
                 {
                     for (int x = -1; x <= 1; x++)
                     {
@@ -772,7 +769,7 @@ namespace Intersect_Server.Classes.Maps
                 SendMapEntitiesTo(player);
                 PacketSender.SendMapItems(player.MyClient, Id);
                 AddEntity(player);
-                player.LastMapEntered = ((DatabaseObject)this).Id;
+                player.LastMapEntered = ((IDatabaseObject)this).Id;
                 if (SurroundingMaps.Count <= 0) return;
                 foreach (var t in SurroundingMaps)
                 {
@@ -865,10 +862,6 @@ namespace Intersect_Server.Classes.Maps
                 return GetMapData(false);
             }
         }
-
-        public override string DatabaseTableName => DATABASE_TABLE;
-
-        public override GameObject GameObjectType => OBJECT_TYPE;
 
         public override void Delete() => Lookup?.Delete(this);
     }

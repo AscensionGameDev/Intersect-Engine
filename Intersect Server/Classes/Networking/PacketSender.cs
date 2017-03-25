@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Intersect;
 using Intersect.Collections;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
@@ -475,16 +476,16 @@ namespace Intersect_Server.Classes.Networking
         public static void SendGameData(Client client)
         {
             //Send massive amounts of game data
-            foreach (var val in Enum.GetValues(typeof(GameObject)))
+            foreach (var val in Enum.GetValues(typeof(GameObjectType)))
             {
-                if ((GameObject) val == GameObject.Map) continue;
-                if (((GameObject) val == GameObject.Shop ||
-                     (GameObject) val == GameObject.CommonEvent ||
-                     (GameObject) val == GameObject.PlayerSwitch ||
-                     (GameObject) val == GameObject.PlayerVariable ||
-                     (GameObject) val == GameObject.ServerSwitch ||
-                     (GameObject) val == GameObject.ServerVariable) && !client.IsEditor) continue;
-                SendGameObjects(client, (GameObject) val);
+                if ((GameObjectType) val == GameObjectType.Map) continue;
+                if (((GameObjectType) val == GameObjectType.Shop ||
+                     (GameObjectType) val == GameObjectType.CommonEvent ||
+                     (GameObjectType) val == GameObjectType.PlayerSwitch ||
+                     (GameObjectType) val == GameObjectType.PlayerVariable ||
+                     (GameObjectType) val == GameObjectType.ServerSwitch ||
+                     (GameObjectType) val == GameObjectType.ServerVariable) && !client.IsEditor) continue;
+                SendGameObjects(client, (GameObjectType) val);
             }
             //Let the client/editor know they have everything now
             var bf = new ByteBuffer();
@@ -754,7 +755,7 @@ namespace Intersect_Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             IntObjectLookup<MapBase> gameMaps = new IntObjectLookup<MapBase>();
-            foreach (var pair in MapInstance.Lookup) gameMaps.Set(pair.Key, pair.Value);
+            foreach (var pair in MapInstance.Lookup.Copy) gameMaps.Set(pair.Key, pair.Value);
             bf.WriteLong((int) ServerPackets.MapList);
             bf.WriteBytes(MapList.GetList().Data(gameMaps));
             client.SendPacket(bf.ToArray());
@@ -765,7 +766,7 @@ namespace Intersect_Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             IntObjectLookup<MapBase> gameMaps = new IntObjectLookup<MapBase>();
-            foreach (var pair in MapInstance.Lookup) gameMaps.Set(pair.Key, pair.Value);
+            foreach (var pair in MapInstance.Lookup.Copy) gameMaps.Set(pair.Key, pair.Value);
             bf.WriteLong((int) ServerPackets.MapList);
             bf.WriteBytes(MapList.GetList().Data(gameMaps));
             SendDataToAll(bf.ToArray());
@@ -1201,89 +1202,89 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendGameObjects(Client client, GameObject type)
+        public static void SendGameObjects(Client client, GameObjectType type)
         {
             switch (type)
             {
-                case GameObject.Animation:
+                case GameObjectType.Animation:
                     foreach (var obj in AnimationBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Class:
+                case GameObjectType.Class:
                     foreach (var obj in ClassBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Item:
+                case GameObjectType.Item:
                     foreach (var obj in ItemBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Npc:
+                case GameObjectType.Npc:
                     foreach (var obj in NpcBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Projectile:
+                case GameObjectType.Projectile:
                     foreach (var obj in ProjectileBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Quest:
+                case GameObjectType.Quest:
                     foreach (var obj in QuestBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Resource:
+                case GameObjectType.Resource:
                     foreach (var obj in ResourceBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Shop:
+                case GameObjectType.Shop:
                     foreach (var obj in ShopBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Spell:
+                case GameObjectType.Spell:
                     foreach (var obj in SpellBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Bench:
+                case GameObjectType.Bench:
                     foreach (var obj in BenchBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Map:
+                case GameObjectType.Map:
                     throw new Exception("Maps are not sent as batches, use the proper send map functions");
-                case GameObject.CommonEvent:
+                case GameObjectType.CommonEvent:
                     foreach (var obj in EventBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.PlayerSwitch:
+                case GameObjectType.PlayerSwitch:
                     foreach (var obj in PlayerSwitchBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.PlayerVariable:
+                case GameObjectType.PlayerVariable:
                     foreach (var obj in PlayerVariableBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.ServerSwitch:
+                case GameObjectType.ServerSwitch:
                     foreach (var obj in ServerSwitchBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.ServerVariable:
+                case GameObjectType.ServerVariable:
                     foreach (var obj in ServerVariableBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Tileset:
+                case GameObjectType.Tileset:
                     foreach (var obj in TilesetBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Time:
+                case GameObjectType.Time:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
 
-        public static void SendGameObject(Client client, DatabaseObject obj, bool deleted = false, bool another = false)
+        public static void SendGameObject(Client client, IDatabaseObject obj, bool deleted = false, bool another = false)
         {
             if (client == null) return;
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.GameObject);
-            bf.WriteInteger((int) obj.GameObjectType);
+            bf.WriteInteger((int) obj.Type);
             bf.WriteInteger(obj.Id);
             bf.WriteInteger(Convert.ToInt32(another));
             bf.WriteInteger(Convert.ToInt32(deleted));
@@ -1292,13 +1293,13 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendGameObjectToAll(DatabaseObject obj, bool deleted = false, bool another = false)
+        public static void SendGameObjectToAll(IDatabaseObject obj, bool deleted = false, bool another = false)
         {
             foreach (var client in Globals.Clients)
                 SendGameObject(client, obj, deleted, another);
         }
 
-        public static void SendOpenEditor(Client client, GameObject type)
+        public static void SendOpenEditor(Client client, GameObjectType type)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.GameObjectEditor);

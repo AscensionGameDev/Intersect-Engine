@@ -5,10 +5,6 @@ namespace Intersect.GameObjects
 {
     public class ShopBase : DatabaseObject<ShopBase>
     {
-        //Core info
-        public new const string DATABASE_TABLE = "shops";
-        public new const GameObject OBJECT_TYPE = GameObject.Shop;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public List<ShopItem> BuyingItems = new List<ShopItem>();
 
         //Buying List
@@ -67,8 +63,6 @@ namespace Intersect.GameObjects
         }
 
         public override byte[] BinaryData => ShopData();
-        public override string DatabaseTableName => DATABASE_TABLE;
-        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 
     public class ShopItem

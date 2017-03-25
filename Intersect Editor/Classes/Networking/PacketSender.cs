@@ -1,5 +1,5 @@
 ﻿using Intersect;
-using Intersect.GameObjects;
+using Intersect.Enums;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 
@@ -39,7 +39,7 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             var mapData = map.GetMapData(false);
             bf.WriteLong((int) ClientPackets.SaveMap);
-            bf.WriteLong(((DatabaseObject) map).Id);
+            bf.WriteLong(((IDatabaseObject) map).Id);
             bf.WriteLong(mapData.Length);
             bf.WriteBytes(mapData);
             Network.SendPacket(bf.ToArray());
@@ -173,7 +173,7 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.UnlinkMap);
             bf.WriteLong(mapNum);
-            bf.WriteLong(((DatabaseObject) Globals.CurrentMap).Id);
+            bf.WriteLong(((IDatabaseObject) Globals.CurrentMap).Id);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -190,7 +190,7 @@ namespace Intersect_Editor.Classes
             bf.Dispose();
         }
 
-        public static void SendCreateObject(GameObject type, string value = "")
+        public static void SendCreateObject(GameObjectType type, string value = "")
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.NewGameObject);
@@ -200,7 +200,7 @@ namespace Intersect_Editor.Classes
             bf.Dispose();
         }
 
-        public static void SendOpenEditor(GameObject type)
+        public static void SendOpenEditor(GameObjectType type)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.OpenObjectEditor);
@@ -209,21 +209,21 @@ namespace Intersect_Editor.Classes
             bf.Dispose();
         }
 
-        public static void SendDeleteObject(DatabaseObject obj)
+        public static void SendDeleteObject(IDatabaseObject obj)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.DeleteGameObject);
-            bf.WriteInteger((int) obj.GameObjectType);
+            bf.WriteInteger((int) obj.Type);
             bf.WriteInteger(obj.Id);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendSaveObject(DatabaseObject obj)
+        public static void SendSaveObject(IDatabaseObject obj)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.SaveGameObject);
-            bf.WriteInteger((int) obj.GameObjectType);
+            bf.WriteInteger((int) obj.Type);
             bf.WriteInteger(obj.Id);
             bf.WriteBytes(obj.BinaryData);
             Network.SendPacket(bf.ToArray());

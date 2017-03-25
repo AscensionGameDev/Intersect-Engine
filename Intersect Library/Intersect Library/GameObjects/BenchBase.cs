@@ -4,9 +4,6 @@ namespace Intersect.GameObjects
 {
     public class BenchBase : DatabaseObject<BenchBase>
     {
-        public new const string DATABASE_TABLE = "crafts";
-        public new const GameObject OBJECT_TYPE = GameObject.Bench;
-
         public List<Craft> Crafts = new List<Craft>();
 
         public BenchBase(int id) : base(id)
@@ -50,8 +47,6 @@ namespace Intersect.GameObjects
         }
 
         public override byte[] BinaryData => CraftData();
-        public override string DatabaseTableName => DATABASE_TABLE;
-        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 
     public class Craft

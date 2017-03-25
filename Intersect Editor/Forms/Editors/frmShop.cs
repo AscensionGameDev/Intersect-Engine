@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Forms;
-using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using Intersect_Editor.Classes;
@@ -24,9 +24,9 @@ namespace Intersect_Editor.Forms.Editors
             lstShops.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObject type)
+        private void GameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (type == GameObject.Shop)
+            if (type == GameObjectType.Shop)
             {
                 InitEditor();
                 if (_editorItem != null && !ShopBase.Lookup.Values.Contains(_editorItem))
@@ -66,14 +66,14 @@ namespace Intersect_Editor.Forms.Editors
 
         private void lstShops_Click(object sender, EventArgs e)
         {
-            _editorItem = ShopBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Shop, lstShops.SelectedIndex));
+            _editorItem = ShopBase.Lookup.Get(Database.GameObjectIdFromList(GameObjectType.Shop, lstShops.SelectedIndex));
             UpdateEditor();
         }
 
         public void InitEditor()
         {
             lstShops.Items.Clear();
-            lstShops.Items.AddRange(Database.GetGameObjectList(GameObject.Shop));
+            lstShops.Items.AddRange(Database.GetGameObjectList(GameObjectType.Shop));
         }
 
         private void frmShop_Load(object sender, EventArgs e)
@@ -139,7 +139,7 @@ namespace Intersect_Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = _editorItem.Name;
-                cmbDefaultCurrency.SelectedIndex = Database.GameObjectListIndex(GameObject.Item,
+                cmbDefaultCurrency.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item,
                     _editorItem.DefaultCurrency);
                 if (_editorItem.BuyingWhitelist)
                 {
@@ -293,13 +293,13 @@ namespace Intersect_Editor.Forms.Editors
 
         private void cmbDefaultCurrency_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.DefaultCurrency = Database.GameObjectIdFromList(GameObject.Item,
+            _editorItem.DefaultCurrency = Database.GameObjectIdFromList(GameObjectType.Item,
                 cmbDefaultCurrency.SelectedIndex);
         }
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
         {
-            PacketSender.SendCreateObject(GameObject.Shop);
+            PacketSender.SendCreateObject(GameObjectType.Shop);
         }
 
         private void toolStripItemDelete_Click(object sender, EventArgs e)

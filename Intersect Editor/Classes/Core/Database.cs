@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
@@ -91,77 +92,77 @@ namespace Intersect_Editor.Classes
         }
 
         //Game Object Handling
-        public static string[] GetGameObjectList(GameObject type)
+        public static string[] GetGameObjectList(GameObjectType type)
         {
             var items = new List<string>();
             switch (type)
             {
-                case GameObject.Animation:
-                    foreach (var obj in AnimationBase.Lookup)
+                case GameObjectType.Animation:
+                    foreach (var obj in AnimationBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.Class:
-                    foreach (var obj in ClassBase.Lookup)
+                case GameObjectType.Class:
+                    foreach (var obj in ClassBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.Item:
-                    foreach (var obj in ItemBase.Lookup)
+                case GameObjectType.Item:
+                    foreach (var obj in ItemBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.Npc:
-                    foreach (var obj in NpcBase.Lookup)
+                case GameObjectType.Npc:
+                    foreach (var obj in NpcBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.Projectile:
-                    foreach (var obj in ProjectileBase.Lookup)
+                case GameObjectType.Projectile:
+                    foreach (var obj in ProjectileBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.Quest:
-                    foreach (var obj in QuestBase.Lookup)
+                case GameObjectType.Quest:
+                    foreach (var obj in QuestBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.Resource:
-                    foreach (var obj in ResourceBase.Lookup)
+                case GameObjectType.Resource:
+                    foreach (var obj in ResourceBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.Shop:
-                    foreach (var obj in ShopBase.Lookup)
+                case GameObjectType.Shop:
+                    foreach (var obj in ShopBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.Spell:
-                    foreach (var obj in SpellBase.Lookup)
+                case GameObjectType.Spell:
+                    foreach (var obj in SpellBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.Bench:
-                    foreach (var obj in BenchBase.Lookup)
+                case GameObjectType.Bench:
+                    foreach (var obj in BenchBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.Map:
-                    foreach (var obj in MapInstance.Lookup)
+                case GameObjectType.Map:
+                    foreach (var obj in MapInstance.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.CommonEvent:
-                    foreach (var obj in EventBase.Lookup)
+                case GameObjectType.CommonEvent:
+                    foreach (var obj in EventBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.PlayerSwitch:
-                    foreach (var obj in PlayerSwitchBase.Lookup)
+                case GameObjectType.PlayerSwitch:
+                    foreach (var obj in PlayerSwitchBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.PlayerVariable:
-                    foreach (var obj in PlayerVariableBase.Lookup)
+                case GameObjectType.PlayerVariable:
+                    foreach (var obj in PlayerVariableBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.ServerSwitch:
-                    foreach (var obj in ServerSwitchBase.Lookup)
+                case GameObjectType.ServerSwitch:
+                    foreach (var obj in ServerSwitchBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.ServerVariable:
-                    foreach (var obj in ServerVariableBase.Lookup)
+                case GameObjectType.ServerVariable:
+                    foreach (var obj in ServerVariableBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
-                case GameObject.Tileset:
-                    foreach (var obj in TilesetBase.Lookup)
+                case GameObjectType.Tileset:
+                    foreach (var obj in TilesetBase.Lookup.Copy)
                         items.Add(obj.Value.Name);
                     break;
                 default:
@@ -170,60 +171,60 @@ namespace Intersect_Editor.Classes
             return items.ToArray();
         }
 
-        public static int GameObjectIdFromList(GameObject type, int listIndex)
+        public static int GameObjectIdFromList(GameObjectType type, int listIndex)
         {
             if (listIndex < 0) return -1;
             switch (type)
             {
-                case GameObject.Animation:
+                case GameObjectType.Animation:
                     if (listIndex >= AnimationBase.Lookup.Count) return -1;
                     return AnimationBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.Class:
+                case GameObjectType.Class:
                     if (listIndex >= ClassBase.Lookup.Count) return -1;
                     return ClassBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.Item:
+                case GameObjectType.Item:
                     if (listIndex >= ItemBase.Lookup.Count) return -1;
                     return ItemBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.Npc:
+                case GameObjectType.Npc:
                     if (listIndex >= NpcBase.Lookup.Count) return -1;
                     return NpcBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.Projectile:
+                case GameObjectType.Projectile:
                     if (listIndex >= ProjectileBase.Lookup.Count) return -1;
                     return ProjectileBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.Quest:
+                case GameObjectType.Quest:
                     if (listIndex >= QuestBase.Lookup.Count) return -1;
                     return QuestBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.Resource:
+                case GameObjectType.Resource:
                     if (listIndex >= ResourceBase.Lookup.Count) return -1;
                     return ResourceBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.Shop:
+                case GameObjectType.Shop:
                     if (listIndex >= ShopBase.Lookup.Count) return -1;
                     return ShopBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.Spell:
+                case GameObjectType.Spell:
                     if (listIndex >= SpellBase.Lookup.Count) return -1;
                     return SpellBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.Bench:
+                case GameObjectType.Bench:
                     if (listIndex >= BenchBase.Lookup.Count) return -1;
                     return BenchBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.Map:
+                case GameObjectType.Map:
                     if (listIndex >= MapBase.Lookup.Count) return -1;
                     return MapBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.CommonEvent:
+                case GameObjectType.CommonEvent:
                     if (listIndex >= EventBase.Lookup.Count) return -1;
                     return EventBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.PlayerSwitch:
+                case GameObjectType.PlayerSwitch:
                     if (listIndex >= PlayerSwitchBase.Lookup.Count) return -1;
                     return PlayerSwitchBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.PlayerVariable:
+                case GameObjectType.PlayerVariable:
                     if (listIndex >= PlayerVariableBase.Lookup.Count) return -1;
                     return PlayerVariableBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.ServerSwitch:
+                case GameObjectType.ServerSwitch:
                     if (listIndex >= ServerSwitchBase.Lookup.Count) return -1;
                     return ServerSwitchBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.ServerVariable:
+                case GameObjectType.ServerVariable:
                     if (listIndex >= ServerVariableBase.Lookup.Count) return -1;
                     return ServerVariableBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.Tileset:
+                case GameObjectType.Tileset:
                     if (listIndex >= TilesetBase.Lookup.Count) return -1;
                     return TilesetBase.Lookup.Keys.ToList()[listIndex];
                 default:
@@ -231,43 +232,43 @@ namespace Intersect_Editor.Classes
             }
         }
 
-        public static int GameObjectListIndex(GameObject type, int id)
+        public static int GameObjectListIndex(GameObjectType type, int id)
         {
             switch (type)
             {
-                case GameObject.Animation:
+                case GameObjectType.Animation:
                     return AnimationBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.Class:
+                case GameObjectType.Class:
                     return ClassBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.Item:
+                case GameObjectType.Item:
                     return ItemBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.Npc:
+                case GameObjectType.Npc:
                     return NpcBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.Projectile:
+                case GameObjectType.Projectile:
                     return ProjectileBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.Quest:
+                case GameObjectType.Quest:
                     return QuestBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.Resource:
+                case GameObjectType.Resource:
                     return ResourceBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.Shop:
+                case GameObjectType.Shop:
                     return ShopBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.Spell:
+                case GameObjectType.Spell:
                     return SpellBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.Bench:
+                case GameObjectType.Bench:
                     return BenchBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.Map:
+                case GameObjectType.Map:
                     return MapBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.CommonEvent:
+                case GameObjectType.CommonEvent:
                     return EventBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.PlayerSwitch:
+                case GameObjectType.PlayerSwitch:
                     return PlayerSwitchBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.PlayerVariable:
+                case GameObjectType.PlayerVariable:
                     return PlayerVariableBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.ServerSwitch:
+                case GameObjectType.ServerSwitch:
                     return ServerSwitchBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.ServerVariable:
+                case GameObjectType.ServerVariable:
                     return ServerVariableBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.Tileset:
+                case GameObjectType.Tileset:
                     return TilesetBase.Lookup.Keys.ToList().IndexOf(id);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);

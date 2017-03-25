@@ -37,7 +37,6 @@ namespace Intersect_Client.Classes.Maps
         //Client Only Values
 
         //Map State Variables
-        public new const GameObject OBJECT_TYPE = GameObject.Map;
         public static Dictionary<int, long> MapRequests = new Dictionary<int, long>();
 
         //Map Attributes
@@ -233,7 +232,7 @@ namespace Intersect_Client.Classes.Maps
                                     var animInstance = new AnimationInstance(anim, true);
                                     animInstance.SetPosition(GetX() + x * Options.TileWidth + Options.TileWidth / 2,
                                         GetY() + y * Options.TileHeight + Options.TileHeight / 2, x, y,
-                                        ((DatabaseObject) this).Id, 0);
+                                        ((IDatabaseObject) this).Id, 0);
                                     _attributeAnimInstances.Add(Attributes[x, y], animInstance);
                                 }
                                 _attributeAnimInstances[Attributes[x, y]].Update();
@@ -295,7 +294,7 @@ namespace Intersect_Client.Classes.Maps
                 LocalAnimations.Add(anim);
                 anim.SetPosition(GetX() + tileX * Options.TileWidth + Options.TileWidth / 2,
                     GetY() + tileY * Options.TileHeight + Options.TileHeight / 2, tileX, tileY,
-                    ((DatabaseObject) this).Id, dir);
+                    ((IDatabaseObject) this).Id, dir);
             }
         }
 
@@ -823,11 +822,6 @@ namespace Intersect_Client.Classes.Maps
                 LocalEntities.Remove(evt.MyIndex);
                 evt.Dispose();
             }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
         }
 
         public override void Delete()

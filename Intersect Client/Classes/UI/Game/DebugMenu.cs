@@ -90,7 +90,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _zLabel.Text = Strings.Get("debug", "z", "Z: " + Globals.Me.CurrentZ);
             }
             int entityCount = Globals.Entities.Count;
-            foreach (var map in MapInstance.Lookup)
+            foreach (var map in MapInstance.Lookup.Copy)
             {
                 if (map.Value != null) entityCount += map.Value.LocalEntities.Count;
             }

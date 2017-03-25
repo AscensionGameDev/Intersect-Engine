@@ -5,10 +5,6 @@ namespace Intersect.GameObjects
 {
     public class NpcBase : DatabaseObject<NpcBase>
     {
-        //Core info
-        public new const string DATABASE_TABLE = "npcs";
-        public new const GameObject OBJECT_TYPE = GameObject.Npc;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public List<int> AggroList = new List<int>();
         public bool AttackAllies = false;
         public int AttackAnimation = -1;
@@ -155,8 +151,6 @@ namespace Intersect.GameObjects
         }
 
         public override byte[] BinaryData => NpcData();
-        public override string DatabaseTableName => DATABASE_TABLE;
-        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 
     public class NPCDrop

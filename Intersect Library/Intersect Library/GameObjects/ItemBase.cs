@@ -1,13 +1,9 @@
-﻿using System.Collections.Generic;
-using Intersect.GameObjects.Conditions;
+﻿using Intersect.GameObjects.Conditions;
 
 namespace Intersect.GameObjects
 {
     public class ItemBase : DatabaseObject<ItemBase>
     {
-        public new const string DATABASE_TABLE = "items";
-        public new const GameObject OBJECT_TYPE = GameObject.Item;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public int Animation;
         public int AttackAnimation = -1;
         public int Bound;
@@ -128,15 +124,5 @@ namespace Intersect.GameObjects
         }
 
         public override byte[] BinaryData => ItemData();
-
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Intersect.GameObjects;
 using Intersect.Logging;
+using System.Linq;
 
 namespace Intersect.Collections
 {
@@ -31,6 +32,7 @@ namespace Intersect.Collections
         public Type ValueType => typeof(TValue);
         public virtual int Count => mMutableMap?.Count ?? -1;
         public virtual IDictionary<TKey, TValue> ReadOnlyMap { get; }
+        public virtual IDictionary<TKey, TValue> Copy => ReadOnlyMap.ToDictionary(pair => pair.Key, pair => pair.Value);
         public virtual ICollection<KeyValuePair<TKey, TValue>> Pairs => ReadOnlyMap;
         public virtual ICollection<TKey> Keys => ReadOnlyMap?.Keys;
         public virtual ICollection<TValue> Values => ReadOnlyMap?.Values;

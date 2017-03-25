@@ -1,14 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Intersect.GameObjects
+﻿namespace Intersect.GameObjects
 {
     public class ServerVariableBase : DatabaseObject<ServerVariableBase>
     {
-        //Core info
-        public new const string DATABASE_TABLE = "server_variables";
-        public new const GameObject OBJECT_TYPE = GameObject.ServerVariable;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
         public int Value = 0;
 
         public ServerVariableBase(int id) : base(id)
@@ -34,7 +27,5 @@ namespace Intersect.GameObjects
         }
 
         public override byte[] BinaryData => Data();
-        public override string DatabaseTableName => DATABASE_TABLE;
-        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 }

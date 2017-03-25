@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
 using Intersect_Editor.Classes;
@@ -19,8 +19,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _eventEditor = editor;
             InitLocalization();
             cmbEvent.Items.Clear();
-            cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObject.CommonEvent));
-            cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObject.CommonEvent, refCommand.Ints[0]);
+            cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObjectType.CommonEvent));
+            cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CommonEvent, refCommand.Ints[0]);
         }
 
         private void InitLocalization()
@@ -33,7 +33,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.CommonEvent, cmbEvent.SelectedIndex);
+            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.CommonEvent, cmbEvent.SelectedIndex);
             _eventEditor.FinishCommandEdit();
         }
 

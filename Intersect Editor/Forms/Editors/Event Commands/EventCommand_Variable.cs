@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
 using Intersect_Editor.Classes;
@@ -55,13 +56,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             int varCount = 0;
             if (rdoPlayerVariable.Checked)
             {
-                cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObject.PlayerVariable));
-                cmbVariable.SelectedIndex = Database.GameObjectListIndex(GameObject.PlayerVariable, _myCommand.Ints[1]);
+                cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObjectType.PlayerVariable));
+                cmbVariable.SelectedIndex = Database.GameObjectListIndex(GameObjectType.PlayerVariable, _myCommand.Ints[1]);
             }
             else
             {
-                cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObject.ServerVariable));
-                cmbVariable.SelectedIndex = Database.GameObjectListIndex(GameObject.ServerVariable, _myCommand.Ints[1]);
+                cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObjectType.ServerVariable));
+                cmbVariable.SelectedIndex = Database.GameObjectListIndex(GameObjectType.ServerVariable, _myCommand.Ints[1]);
             }
             switch (_myCommand.Ints[2])
             {
@@ -101,13 +102,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             if (rdoPlayerVariable.Checked)
             {
                 _myCommand.Ints[0] = (int) SwitchVariableTypes.PlayerVariable;
-                _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.PlayerVariable,
+                _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObjectType.PlayerVariable,
                     cmbVariable.SelectedIndex);
             }
             if (rdoGlobalVariable.Checked)
             {
                 _myCommand.Ints[0] = (int) SwitchVariableTypes.ServerVariable;
-                _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.ServerVariable,
+                _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObjectType.ServerVariable,
                     cmbVariable.SelectedIndex);
             }
             if (optSet.Checked)

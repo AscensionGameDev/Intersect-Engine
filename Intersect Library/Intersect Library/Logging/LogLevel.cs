@@ -1,6 +1,6 @@
 ﻿namespace Intersect.Logging
 {
-    public enum LogLevel : int
+    public enum LogLevel : byte
     {
         Error,
         Warn,

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
@@ -301,7 +302,7 @@ namespace Intersect_Server.Classes.Networking
                             }
                             else
                             {
-                                PacketSender.SendGameObjects(client, GameObject.Class);
+                                PacketSender.SendGameObjects(client, GameObjectType.Class);
                                 PacketSender.SendCreateCharacter(client);
                             }
                         }
@@ -516,7 +517,7 @@ namespace Intersect_Server.Classes.Networking
             if (location == -1)
             {
                 var destType = bf.ReadInteger();
-                newMap = Database.AddGameObject(GameObject.Map).Id;
+                newMap = Database.AddGameObject(GameObjectType.Map).Id;
                 tmpMap = MapInstance.Lookup.Get(newMap);
                 Database.SaveGameObject(tmpMap);
                 Database.GenerateMapGrids();
@@ -565,7 +566,7 @@ namespace Intersect_Server.Classes.Networking
                     case 0:
                         if (MapInstance.Lookup.Get(MapInstance.Lookup.Get(relativeMap).Up) == null)
                         {
-                            newMap = Database.AddGameObject(GameObject.Map).Id;
+                            newMap = Database.AddGameObject(GameObjectType.Map).Id;
                             tmpMap = MapInstance.Lookup.Get(newMap);
                             tmpMap.MapGrid = MapInstance.Lookup.Get(relativeMap).MapGrid;
                             tmpMap.MapGridX = MapInstance.Lookup.Get(relativeMap).MapGridX;
@@ -577,7 +578,7 @@ namespace Intersect_Server.Classes.Networking
                     case 1:
                         if (MapInstance.Lookup.Get(MapInstance.Lookup.Get(relativeMap).Down) == null)
                         {
-                            newMap = Database.AddGameObject(GameObject.Map).Id;
+                            newMap = Database.AddGameObject(GameObjectType.Map).Id;
                             tmpMap = MapInstance.Lookup.Get(newMap);
                             tmpMap.MapGrid = MapInstance.Lookup.Get(relativeMap).MapGrid;
                             tmpMap.MapGridX = MapInstance.Lookup.Get(relativeMap).MapGridX;
@@ -589,7 +590,7 @@ namespace Intersect_Server.Classes.Networking
                     case 2:
                         if (MapInstance.Lookup.Get(MapInstance.Lookup.Get(relativeMap).Left) == null)
                         {
-                            newMap = Database.AddGameObject(GameObject.Map).Id;
+                            newMap = Database.AddGameObject(GameObjectType.Map).Id;
                             tmpMap = MapInstance.Lookup.Get(newMap);
                             tmpMap.MapGrid = MapInstance.Lookup.Get(relativeMap).MapGrid;
                             tmpMap.MapGridX = MapInstance.Lookup.Get(relativeMap).MapGridX - 1;
@@ -601,7 +602,7 @@ namespace Intersect_Server.Classes.Networking
                     case 3:
                         if (MapInstance.Lookup.Get(MapInstance.Lookup.Get(relativeMap).Right) == null)
                         {
-                            newMap = Database.AddGameObject(GameObject.Map).Id;
+                            newMap = Database.AddGameObject(GameObjectType.Map).Id;
                             tmpMap = MapInstance.Lookup.Get(newMap);
                             tmpMap.MapGrid = MapInstance.Lookup.Get(relativeMap).MapGrid;
                             tmpMap.MapGridX = MapInstance.Lookup.Get(relativeMap).MapGridX + 1;
@@ -863,7 +864,7 @@ namespace Intersect_Server.Classes.Networking
                 {
                     Database.CreateAccount(client, username, password, email);
                     PacketSender.SendServerConfig(client);
-                    PacketSender.SendGameObjects(client, GameObject.Class);
+                    PacketSender.SendGameObjects(client, GameObjectType.Class);
                     PacketSender.SendCreateCharacter(client);
                 }
             }
@@ -1725,7 +1726,7 @@ namespace Intersect_Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var type = (GameObject) bf.ReadInteger();
+            var type = (GameObjectType) bf.ReadInteger();
             var obj = Database.AddGameObject(type);
             PacketSender.SendGameObjectToAll(obj);
             bf.Dispose();
@@ -1735,7 +1736,7 @@ namespace Intersect_Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var type = (GameObject) bf.ReadInteger();
+            var type = (GameObjectType) bf.ReadInteger();
             PacketSender.SendGameObjects(client, type);
             PacketSender.SendOpenEditor(client, type);
             bf.Dispose();
@@ -1745,15 +1746,15 @@ namespace Intersect_Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var type = (GameObject) bf.ReadInteger();
+            var type = (GameObjectType) bf.ReadInteger();
             var id = bf.ReadInteger();
-            DatabaseObject obj = null;
+            IDatabaseObject obj = null;
             switch (type)
             {
-                case GameObject.Animation:
+                case GameObjectType.Animation:
                     obj = AnimationBase.Lookup.Get(id);
                     break;
-                case GameObject.Class:
+                case GameObjectType.Class:
                     if (ClassBase.Lookup.Count == 1)
                     {
                         PacketSender.SendAlert(client, Strings.Get("classes", "lastclass"),
@@ -1762,50 +1763,50 @@ namespace Intersect_Server.Classes.Networking
                     }
                     obj = DatabaseObject<ClassBase>.Lookup.Get(id);
                     break;
-                case GameObject.Item:
+                case GameObjectType.Item:
                     obj = ItemBase.Lookup.Get(id);
                     break;
-                case GameObject.Npc:
+                case GameObjectType.Npc:
                     obj = NpcBase.Lookup.Get(id);
                     break;
-                case GameObject.Projectile:
+                case GameObjectType.Projectile:
                     obj = ProjectileBase.Lookup.Get(id);
                     break;
-                case GameObject.Quest:
+                case GameObjectType.Quest:
                     obj = QuestBase.Lookup.Get(id);
                     break;
-                case GameObject.Resource:
+                case GameObjectType.Resource:
                     obj = ResourceBase.Lookup.Get(id);
                     break;
-                case GameObject.Shop:
+                case GameObjectType.Shop:
                     obj = ShopBase.Lookup.Get(id);
                     break;
-                case GameObject.Spell:
+                case GameObjectType.Spell:
                     obj = SpellBase.Lookup.Get(id);
                     break;
-                case GameObject.Bench:
+                case GameObjectType.Bench:
                     obj = DatabaseObject<BenchBase>.Lookup.Get(id);
                     break;
-                case GameObject.Map:
+                case GameObjectType.Map:
                     break;
-                case GameObject.CommonEvent:
+                case GameObjectType.CommonEvent:
                     obj = EventBase.Lookup.Get(id);
                     break;
-                case GameObject.PlayerSwitch:
+                case GameObjectType.PlayerSwitch:
                     obj = PlayerSwitchBase.Lookup.Get(id);
                     break;
-                case GameObject.PlayerVariable:
+                case GameObjectType.PlayerVariable:
                     obj = PlayerVariableBase.Lookup.Get(id);
                     break;
-                case GameObject.ServerSwitch:
+                case GameObjectType.ServerSwitch:
                     obj = ServerSwitchBase.Lookup.Get(id);
                     break;
-                case GameObject.ServerVariable:
+                case GameObjectType.ServerVariable:
                     obj = ServerVariableBase.Lookup.Get(id);
                     break;
-                case GameObject.Tileset:
+                case GameObjectType.Tileset:
                     break;
-                case GameObject.Time:
+                case GameObjectType.Time:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -1813,15 +1814,15 @@ namespace Intersect_Server.Classes.Networking
             if (obj != null)
             {
                 //if Item or Resource, kill all global entities of that kind
-                if (type == GameObject.Item)
+                if (type == GameObjectType.Item)
                 {
                     Globals.KillItemsOf((ItemBase) obj);
                 }
-                else if (type == GameObject.Resource)
+                else if (type == GameObjectType.Resource)
                 {
                     Globals.KillResourcesOf((ResourceBase) obj);
                 }
-                else if (type == GameObject.Npc)
+                else if (type == GameObjectType.Npc)
                 {
                     Globals.KillNpcsOf((NpcBase) obj);
                 }
@@ -1835,61 +1836,61 @@ namespace Intersect_Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var type = (GameObject) bf.ReadInteger();
+            var type = (GameObjectType) bf.ReadInteger();
             var id = bf.ReadInteger();
-            DatabaseObject obj = null;
+            IDatabaseObject obj = null;
             switch (type)
             {
-                case GameObject.Animation:
+                case GameObjectType.Animation:
                     obj = AnimationBase.Lookup.Get(id);
                     break;
-                case GameObject.Class:
+                case GameObjectType.Class:
                     obj = DatabaseObject<ClassBase>.Lookup.Get(id);
                     break;
-                case GameObject.Item:
+                case GameObjectType.Item:
                     obj = ItemBase.Lookup.Get(id);
                     break;
-                case GameObject.Npc:
+                case GameObjectType.Npc:
                     obj = NpcBase.Lookup.Get(id);
                     break;
-                case GameObject.Projectile:
+                case GameObjectType.Projectile:
                     obj = ProjectileBase.Lookup.Get(id);
                     break;
-                case GameObject.Quest:
+                case GameObjectType.Quest:
                     obj = QuestBase.Lookup.Get(id);
                     break;
-                case GameObject.Resource:
+                case GameObjectType.Resource:
                     obj = ResourceBase.Lookup.Get(id);
                     break;
-                case GameObject.Shop:
+                case GameObjectType.Shop:
                     obj = ShopBase.Lookup.Get(id);
                     break;
-                case GameObject.Spell:
+                case GameObjectType.Spell:
                     obj = SpellBase.Lookup.Get(id);
                     break;
-                case GameObject.Bench:
+                case GameObjectType.Bench:
                     obj = DatabaseObject<BenchBase>.Lookup.Get(id);
                     break;
-                case GameObject.Map:
+                case GameObjectType.Map:
                     break;
-                case GameObject.CommonEvent:
+                case GameObjectType.CommonEvent:
                     obj = EventBase.Lookup.Get(id);
                     break;
-                case GameObject.PlayerSwitch:
+                case GameObjectType.PlayerSwitch:
                     obj = PlayerSwitchBase.Lookup.Get(id);
                     break;
-                case GameObject.PlayerVariable:
+                case GameObjectType.PlayerVariable:
                     obj = PlayerVariableBase.Lookup.Get(id);
                     break;
-                case GameObject.ServerSwitch:
+                case GameObjectType.ServerSwitch:
                     obj = ServerSwitchBase.Lookup.Get(id);
                     break;
-                case GameObject.ServerVariable:
+                case GameObjectType.ServerVariable:
                     obj = ServerVariableBase.Lookup.Get(id);
                     break;
-                case GameObject.Tileset:
+                case GameObjectType.Tileset:
                     break;
-                case GameObject.Time:
+                case GameObjectType.Time:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -1897,15 +1898,15 @@ namespace Intersect_Server.Classes.Networking
             if (obj != null)
             {
                 //if Item or Resource, kill all global entities of that kind
-                if (type == GameObject.Item)
+                if (type == GameObjectType.Item)
                 {
                     Globals.KillItemsOf((ItemBase) obj);
                 }
-                else if (type == GameObject.Resource)
+                else if (type == GameObjectType.Resource)
                 {
                     Globals.KillResourcesOf((ResourceBase) obj);
                 }
-                else if (type == GameObject.Npc)
+                else if (type == GameObjectType.Npc)
                 {
                     Globals.KillNpcsOf((NpcBase) obj);
                 }
@@ -2147,7 +2148,7 @@ namespace Intersect_Server.Classes.Networking
         private static void HandleAddTilesets(Client client, byte[] packet)
         {
             var bf = new ByteBuffer();
-            var type = GameObject.Tileset;
+            var type = GameObjectType.Tileset;
             if (client.IsEditor)
             {
                 bf.WriteBytes(packet);
@@ -2155,13 +2156,13 @@ namespace Intersect_Server.Classes.Networking
                 for (int i = 0; i < count; i++)
                 {
                     var value = bf.ReadString();
-                    if (type == GameObject.Tileset)
+                    if (type == GameObjectType.Tileset)
                     {
                         foreach (var tileset in TilesetBase.Lookup)
                             if (tileset.Value.Name == value) return;
                     }
                     var obj = Database.AddGameObject(type);
-                    if (type == GameObject.Tileset)
+                    if (type == GameObjectType.Tileset)
                     {
                         ((TilesetBase)obj).Name = value;
                         Database.SaveGameObject(obj);

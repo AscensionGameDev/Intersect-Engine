@@ -4,9 +4,6 @@ namespace Intersect.GameObjects
 {
     public class ClassBase : DatabaseObject<ClassBase>
     {
-        //Core info
-        public new const string DATABASE_TABLE = "classes";
-        public new const GameObject OBJECT_TYPE = GameObject.Class;
         public int AttackAnimation = -1;
 
         //Exp Calculations
@@ -238,8 +235,6 @@ namespace Intersect.GameObjects
         }
 
         public override byte[] BinaryData => ClassData();
-        public override string DatabaseTableName => DATABASE_TABLE;
-        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 
     public class ClassItem

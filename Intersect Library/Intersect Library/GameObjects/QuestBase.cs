@@ -21,11 +21,6 @@ namespace Intersect.GameObjects
 
     public class QuestBase : DatabaseObject<QuestBase>
     {
-        //General
-        public new const string DATABASE_TABLE = "quests";
-        public new const GameObject OBJECT_TYPE = GameObject.Quest;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
         public string BeforeDesc = "";
         public string EndDesc = "";
         public EventBase EndEvent = new EventBase(-1, 0, 0, true);
@@ -158,8 +153,6 @@ namespace Intersect.GameObjects
         }
 
         public override byte[] BinaryData => QuestData();
-        public override string DatabaseTableName => DATABASE_TABLE;
-        public override GameObject GameObjectType => OBJECT_TYPE;
 
         public class QuestTask
         {

@@ -4,10 +4,6 @@ namespace Intersect.GameObjects.Events
 {
     public class EventBase : DatabaseObject<EventBase>
     {
-        public new const string DATABASE_TABLE = "events";
-        public new const GameObject OBJECT_TYPE = GameObject.CommonEvent;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
         internal EventBase(int id) : base(id)
         {
         }
@@ -76,8 +72,5 @@ namespace Intersect.GameObjects.Events
         }
 
         public override byte[] BinaryData => EventData();
-
-        public override string DatabaseTableName => DATABASE_TABLE;
-        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 }

@@ -1,14 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Intersect.GameObjects
+﻿namespace Intersect.GameObjects
 {
     public class PlayerSwitchBase : DatabaseObject<PlayerSwitchBase>
     {
-        //Core info
-        public new const string DATABASE_TABLE = "player_switches";
-        public new const GameObject OBJECT_TYPE = GameObject.PlayerSwitch;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
         public PlayerSwitchBase(int id) : base(id)
         {
             Name = "New Player Switch";
@@ -30,7 +23,5 @@ namespace Intersect.GameObjects
         }
 
         public override byte[] BinaryData => Data();
-        public override string DatabaseTableName => DATABASE_TABLE;
-        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 }

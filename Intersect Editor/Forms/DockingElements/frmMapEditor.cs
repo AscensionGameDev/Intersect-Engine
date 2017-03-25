@@ -877,7 +877,7 @@ namespace Intersect_Editor.Forms
                         {
                             SaveMap();
                         }
-                        PacketSender.SendCreateMap(dir, ((DatabaseObject) Globals.CurrentMap).Id, null);
+                        PacketSender.SendCreateMap(dir, ((IDatabaseObject) Globals.CurrentMap).Id, null);
                     }
                     else
                     {

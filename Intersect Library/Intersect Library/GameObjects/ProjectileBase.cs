@@ -5,13 +5,10 @@ namespace Intersect.GameObjects
 {
     public class ProjectileBase : DatabaseObject<ProjectileBase>
     {
-        public new const string DATABASE_TABLE = "projectiles";
-        public new const GameObject OBJECT_TYPE = GameObject.Projectile;
-
         public const int SpawnLocationsWidth = 5;
         public const int SpawnLocationsHeight = 5;
         public const int MaxProjectileDirections = 8;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        protected static Dictionary<int, IDatabaseObject> Objects = new Dictionary<int, IDatabaseObject>();
         public int Ammo = -1;
         public int AmmoRequired = 1;
         public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
@@ -135,8 +132,6 @@ namespace Intersect.GameObjects
         }
 
         public override byte[] BinaryData => ProjectileData();
-        public override string DatabaseTableName => DATABASE_TABLE;
-        public override GameObject GameObjectType => OBJECT_TYPE;
     }
 
     public class Location

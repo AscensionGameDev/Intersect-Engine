@@ -7,10 +7,6 @@ namespace Intersect.GameObjects
 {
     public class ResourceBase : DatabaseObject<ResourceBase>
     {
-        // General
-        public new const string DATABASE_TABLE = "resources";
-        public new const GameObject OBJECT_TYPE = GameObject.Resource;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public int Animation = 0;
 
         // Drops
@@ -92,8 +88,6 @@ namespace Intersect.GameObjects
         }
 
         public override byte[] BinaryData => ResourceData();
-        public override string DatabaseTableName => DATABASE_TABLE;
-        public override GameObject GameObjectType => OBJECT_TYPE;
 
         public class ResourceDrop
         {

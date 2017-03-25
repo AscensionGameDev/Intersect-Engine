@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
@@ -31,8 +32,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _currentMap = currentMap;
             InitLocalization();
             cmbNpc.Items.Clear();
-            cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
-            cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Npc, _myCommand.Ints[0]);
+            cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObjectType.Npc));
+            cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Npc, _myCommand.Ints[0]);
             cmbConditionType.SelectedIndex = _myCommand.Ints[1];
             nudWarpX.Maximum = Options.MapWidth;
             nudWarpY.Maximum = Options.MapHeight;
@@ -151,7 +152,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.Npc, cmbNpc.SelectedIndex);
+            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Npc, cmbNpc.SelectedIndex);
             _myCommand.Ints[1] = cmbConditionType.SelectedIndex;
             switch (_myCommand.Ints[1])
             {

@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Intersect.GameObjects;
+using Intersect;
 using Intersect.Localization;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.Maps;
@@ -24,7 +24,7 @@ namespace Intersect_Editor.Classes
         public static void StartLoop()
         {
             Globals.MainForm.Visible = true;
-            Globals.MainForm.EnterMap(Globals.CurrentMap == null ? 0 : ((DatabaseObject) Globals.CurrentMap).Id);
+            Globals.MainForm.EnterMap(Globals.CurrentMap == null ? 0 : ((IDatabaseObject) Globals.CurrentMap).Id);
             myForm = Globals.MainForm;
 
             if (mapThread == null)
@@ -99,8 +99,7 @@ namespace Intersect_Editor.Classes
                         new Task((() => progressForm.ShowDialog())).Start();
                         while (Globals.MapsToScreenshot.Count > 0)
                         {
-                            var maps = MapInstance.Lookup;
-                            foreach (var map in maps)
+                            foreach (var map in MapInstance.Lookup.Copy)
                             {
                                 if (!myForm.Disposing && progressForm.IsHandleCreated)
                                     progressForm.BeginInvoke(

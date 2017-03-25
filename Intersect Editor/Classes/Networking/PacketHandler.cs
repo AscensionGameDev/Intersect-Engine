@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
@@ -12,7 +13,7 @@ namespace Intersect_Editor.Classes
 {
     public static class PacketHandler
     {
-        public delegate void GameObjectUpdated(GameObject type);
+        public delegate void GameObjectUpdated(GameObjectType type);
 
         public delegate void MapUpdated();
 
@@ -149,7 +150,7 @@ namespace Intersect_Editor.Classes
                 {
                     if (Globals.FetchingMapPreviews || Globals.CurrentMap == map)
                     {
-                        int currentmap = ((DatabaseObject) Globals.CurrentMap).Id;
+                        int currentmap = ((IDatabaseObject) Globals.CurrentMap).Id;
                         if (Database.LoadMapCacheLegacy(mapNum, map.Revision) == null &&
                             !Globals.MapsToScreenshot.Contains(mapNum)) Globals.MapsToScreenshot.Add(mapNum);
                         if (Globals.FetchingMapPreviews)
@@ -292,14 +293,14 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var type = (GameObject) bf.ReadInteger();
+            var type = (GameObjectType) bf.ReadInteger();
             var id = bf.ReadInteger();
             var another = Convert.ToBoolean(bf.ReadInteger());
             var deleted = Convert.ToBoolean(bf.ReadInteger());
             var data = bf.ReadBytes(bf.Length());
             switch (type)
             {
-                case GameObject.Animation:
+                case GameObjectType.Animation:
                     if (deleted)
                     {
                         var anim = AnimationBase.Lookup.Get(id);
@@ -312,7 +313,7 @@ namespace Intersect_Editor.Classes
                         AnimationBase.Lookup.Set(id, anim);
                     }
                     break;
-                case GameObject.Class:
+                case GameObjectType.Class:
                     if (deleted)
                     {
                         var cls = ClassBase.Lookup.Get(id);
@@ -325,7 +326,7 @@ namespace Intersect_Editor.Classes
                         ClassBase.Lookup.Set(id, cls);
                     }
                     break;
-                case GameObject.Item:
+                case GameObjectType.Item:
                     if (deleted)
                     {
                         var itm = ItemBase.Lookup.Get(id);
@@ -338,7 +339,7 @@ namespace Intersect_Editor.Classes
                         ItemBase.Lookup.Set(id, itm);
                     }
                     break;
-                case GameObject.Npc:
+                case GameObjectType.Npc:
                     if (deleted)
                     {
                         var npc = NpcBase.Lookup.Get(id);
@@ -351,7 +352,7 @@ namespace Intersect_Editor.Classes
                         NpcBase.Lookup.Set(id, npc);
                     }
                     break;
-                case GameObject.Projectile:
+                case GameObjectType.Projectile:
                     if (deleted)
                     {
                         var proj = ProjectileBase.Lookup.Get(id);
@@ -364,7 +365,7 @@ namespace Intersect_Editor.Classes
                         ProjectileBase.Lookup.Set(id, proj);
                     }
                     break;
-                case GameObject.Quest:
+                case GameObjectType.Quest:
                     if (deleted)
                     {
                         var qst = QuestBase.Lookup.Get(id);
@@ -377,7 +378,7 @@ namespace Intersect_Editor.Classes
                         QuestBase.Lookup.Set(id, qst);
                     }
                     break;
-                case GameObject.Resource:
+                case GameObjectType.Resource:
                     if (deleted)
                     {
                         var res = ResourceBase.Lookup.Get(id);
@@ -390,7 +391,7 @@ namespace Intersect_Editor.Classes
                         ResourceBase.Lookup.Set(id, res);
                     }
                     break;
-                case GameObject.Shop:
+                case GameObjectType.Shop:
                     if (deleted)
                     {
                         var shp = ShopBase.Lookup.Get(id);
@@ -403,7 +404,7 @@ namespace Intersect_Editor.Classes
                         ShopBase.Lookup.Set(id, shp);
                     }
                     break;
-                case GameObject.Spell:
+                case GameObjectType.Spell:
                     if (deleted)
                     {
                         var spl = SpellBase.Lookup.Get(id);
@@ -416,7 +417,7 @@ namespace Intersect_Editor.Classes
                         SpellBase.Lookup.Set(id, spl);
                     }
                     break;
-                case GameObject.Bench:
+                case GameObjectType.Bench:
                     if (deleted)
                     {
                         var cft = BenchBase.Lookup.Get(id);
@@ -429,10 +430,10 @@ namespace Intersect_Editor.Classes
                         BenchBase.Lookup.Set(id, cft);
                     }
                     break;
-                case GameObject.Map:
+                case GameObjectType.Map:
                     //Handled in a different packet
                     break;
-                case GameObject.CommonEvent:
+                case GameObjectType.CommonEvent:
                     if (deleted)
                     {
                         var evt = EventBase.Lookup.Get(id);
@@ -445,7 +446,7 @@ namespace Intersect_Editor.Classes
                         EventBase.Lookup.Set(id, evt);
                     }
                     break;
-                case GameObject.PlayerSwitch:
+                case GameObjectType.PlayerSwitch:
                     if (deleted)
                     {
                         var pswtch = PlayerSwitchBase.Lookup.Get(id);
@@ -458,7 +459,7 @@ namespace Intersect_Editor.Classes
                         PlayerSwitchBase.Lookup.Set(id, pswtch);
                     }
                     break;
-                case GameObject.PlayerVariable:
+                case GameObjectType.PlayerVariable:
                     if (deleted)
                     {
                         var pvar = PlayerVariableBase.Lookup.Get(id);
@@ -471,7 +472,7 @@ namespace Intersect_Editor.Classes
                         PlayerVariableBase.Lookup.Set(id, pvar);
                     }
                     break;
-                case GameObject.ServerSwitch:
+                case GameObjectType.ServerSwitch:
                     if (deleted)
                     {
                         var sswtch = ServerSwitchBase.Lookup.Get(id);
@@ -484,7 +485,7 @@ namespace Intersect_Editor.Classes
                         ServerSwitchBase.Lookup.Set(id, sswtch);
                     }
                     break;
-                case GameObject.ServerVariable:
+                case GameObjectType.ServerVariable:
                     if (deleted)
                     {
                         var svar = ServerVariableBase.Lookup.Get(id);
@@ -497,7 +498,7 @@ namespace Intersect_Editor.Classes
                         ServerVariableBase.Lookup.Set(id, svar);
                     }
                     break;
-                case GameObject.Tileset:
+                case GameObjectType.Tileset:
                     var obj = new TilesetBase(id);
                     obj.Load(data);
                     TilesetBase.Lookup.Set(id, obj);
@@ -514,7 +515,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var type = (GameObject) bf.ReadInteger();
+            var type = (GameObjectType) bf.ReadInteger();
             Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, type);
             bf.Dispose();
         }

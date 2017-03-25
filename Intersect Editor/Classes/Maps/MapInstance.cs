@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
-using Intersect;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
@@ -16,8 +15,6 @@ namespace Intersect_Editor.Classes.Maps
         public new static MapInstances<MapInstance> Lookup => (sLookup = (sLookup ?? new MapInstances<MapInstance>(MapBase.Lookup)));
 
         //Map Attributes
-        public new const GameObject OBJECT_TYPE = GameObject.Map;
-
         private Dictionary<Attribute, AnimationInstance> _attributeAnimInstances =
             new Dictionary<Attribute, AnimationInstance>();
 
@@ -252,8 +249,6 @@ namespace Intersect_Editor.Classes.Maps
         }
 
         public override byte[] BinaryData => GetMapData(false);
-
-        public override GameObject GameObjectType => OBJECT_TYPE;
 
         public override void Delete() => Lookup?.Delete(this);
 
