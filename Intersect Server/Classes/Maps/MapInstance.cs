@@ -20,6 +20,7 @@ namespace Intersect_Server.Classes.Maps
         //Core
         public new const GameObject OBJECT_TYPE = GameObject.Map;
         protected static Dictionary<int, DatabaseObject> MapInstanceTable = new Dictionary<int, DatabaseObject>();
+        private static object TableLock = new object();
 
         //Does the map have a player on or nearby it?
         public bool Active;
@@ -925,20 +926,29 @@ namespace Intersect_Server.Classes.Maps
 
         public override void Delete()
         {
-            MapInstanceTable.Remove(((DatabaseObject) this).Id);
-            Objects.Remove(((DatabaseObject) this).Id);
+            lock (TableLock)
+            {
+                MapInstanceTable.Remove(((DatabaseObject) this).Id);
+                Objects.Remove(((DatabaseObject) this).Id);
+            }
         }
 
         public static void ClearObjects()
         {
-            MapInstanceTable.Clear();
-            MapBase.ClearObjects();
+            lock (TableLock)
+            {
+                MapInstanceTable.Clear();
+                MapBase.ClearObjects();
+            }
         }
 
         public static void AddObject(int index, DatabaseObject obj)
         {
-            MapInstanceTable.Add(index, obj);
-            Objects.Add(index, (MapBase) obj);
+            lock (TableLock)
+            {
+                MapInstanceTable.Add(index, obj);
+                Objects.Add(index, (MapBase) obj);
+            }
         }
 
         public static int ObjectCount()
@@ -948,8 +958,12 @@ namespace Intersect_Server.Classes.Maps
 
         public static Dictionary<int, MapInstance> GetObjects()
         {
-            Dictionary<int, MapInstance> objects = MapInstanceTable.ToDictionary(k => k.Key, v => (MapInstance) v.Value);
-            return objects;
+            lock (TableLock)
+            {
+                Dictionary<int, MapInstance> objects = MapInstanceTable.ToDictionary(k => k.Key,
+                    v => (MapInstance) v.Value);
+                return objects;
+            }
         }
     }
 }
