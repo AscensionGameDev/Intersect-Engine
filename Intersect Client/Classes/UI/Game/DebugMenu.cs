@@ -86,8 +86,8 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _mapLabel.Text = Strings.Get("debug", "map", MapInstance.Lookup.Get(Globals.Me.CurrentMap).Name);
                 _xLabel.Text = Strings.Get("debug", "x", Globals.Me.CurrentX);
-                _yLabel.Text = Strings.Get("debug", "y", "Y: " + Globals.Me.CurrentY);
-                _zLabel.Text = Strings.Get("debug", "z", "Z: " + Globals.Me.CurrentZ);
+                _yLabel.Text = Strings.Get("debug", "y", Globals.Me.CurrentY);
+                _zLabel.Text = Strings.Get("debug", "z", Globals.Me.CurrentZ);
             }
             int entityCount = Globals.Entities.Count;
             foreach (var map in MapInstance.Lookup.Copy)
