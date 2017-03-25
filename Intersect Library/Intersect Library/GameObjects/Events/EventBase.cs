@@ -8,6 +8,10 @@ namespace Intersect.GameObjects.Events
         public new const GameObject OBJECT_TYPE = GameObject.CommonEvent;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
+        internal EventBase(int id) : base(id)
+        {
+        }
+
         public EventBase(int index, int x, int y, bool isCommon = false, byte isGlobal = 0) : base(index)
         {
             Name = "";

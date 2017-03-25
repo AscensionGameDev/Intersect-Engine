@@ -9,11 +9,14 @@ namespace Intersect.Collections
 {
     public abstract class AbstractObjectLookup<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> where TValue : IGameObject<TKey, TValue>
     {
+        private readonly object mLock;
+
         private readonly Dictionary<TKey, TValue> mMutableMap;
         private readonly ConstructorInfo mConstructor;
 
         protected AbstractObjectLookup()
         {
+            mLock = new object();
             mMutableMap = new Dictionary<TKey, TValue>();
             ReadOnlyMap = new ReadOnlyDictionary<TKey, TValue>(mMutableMap);
 
@@ -49,7 +52,18 @@ namespace Intersect.Collections
                 throw new AccessViolationException("Internal map is null despite being set in the constructor.");
             }
 
-            return mMutableMap.TryGetValue(key, out TValue value) ? value : default(TValue);
+            lock (mLock)
+            {
+                return mMutableMap.TryGetValue(key, out TValue value) ? value : default(TValue);
+            }
+        }
+
+        public virtual bool TryGetValue(TKey key, out TValue value)
+        {
+            lock (mLock)
+            {
+                return mMutableMap.TryGetValue(key, out value);
+            }
         }
 
         private bool Add(TValue value)
@@ -74,7 +88,10 @@ namespace Intersect.Collections
                 throw new AccessViolationException("Internal map is null despite being set in the constructor.");
             }
 
-            if (!mMutableMap.ContainsKey(key)) return Set(key, value);
+            lock (mLock)
+            {
+                if (!mMutableMap.ContainsKey(key)) return Set(key, value);
+            }
 
             Log.Error("Collection already contains object with key '{0}'.", key);
             return false;
@@ -102,13 +119,29 @@ namespace Intersect.Collections
                 throw new AccessViolationException("Internal map is null despite being set in the constructor.");
             }
 
-            mMutableMap[key] = value;
+            lock (mLock)
+            {
+                mMutableMap[key] = value;
+            }
+
             return true;
         }
 
-        public virtual bool Delete(TValue value) => value != null && (mMutableMap?.Remove(value.Id) ?? false);
+        public virtual bool Delete(TValue value)
+        {
+            lock (mLock)
+            {
+                return value != null && (mMutableMap?.Remove(value.Id) ?? false);
+            }
+        }
 
-        public virtual void Clear() => mMutableMap?.Clear();
+        public virtual void Clear()
+        {
+            lock (mLock)
+            {
+                mMutableMap?.Clear();
+            }
+        }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -119,7 +152,10 @@ namespace Intersect.Collections
                 throw new AccessViolationException("Lookup pairs somehow null.");
             }
 
-            return Pairs.GetEnumerator();
+            lock (mLock)
+            {
+                return Pairs.GetEnumerator();
+            }
         }
     }
 }

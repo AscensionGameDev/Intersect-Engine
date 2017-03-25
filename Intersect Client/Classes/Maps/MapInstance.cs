@@ -25,7 +25,7 @@ namespace Intersect_Client.Classes.Maps
         {
             get
             {
-                if (sLookup != null)
+                if (sLookup == null)
                 {
                     sLookup = new MapInstances<MapInstance>(MapBase.Lookup);
                 }
