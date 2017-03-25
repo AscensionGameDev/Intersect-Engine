@@ -114,13 +114,11 @@ namespace Intersect_Editor.Forms
             this.picMask2 = new System.Windows.Forms.PictureBox();
             this.picMask = new System.Windows.Forms.PictureBox();
             this.picGround = new System.Windows.Forms.PictureBox();
-            this.pnlTilesetContainer = new Intersect_Editor.Forms.Controls.AutoDragPanel();
-            this.picTileset = new System.Windows.Forms.PictureBox();
             this.pnlEvents = new System.Windows.Forms.Panel();
             this.pnlLights = new System.Windows.Forms.Panel();
-            this.lightEditor = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.pnlAttributes = new System.Windows.Forms.Panel();
             this.pnlNpcs = new System.Windows.Forms.Panel();
+            this.picTileset = new System.Windows.Forms.PictureBox();
             this.grpResource.SuspendLayout();
             this.grpZResource.SuspendLayout();
             this.grpItem.SuspendLayout();
@@ -144,12 +142,11 @@ namespace Intersect_Editor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.picMask2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMask)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picGround)).BeginInit();
-            this.pnlTilesetContainer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
             this.pnlEvents.SuspendLayout();
             this.pnlLights.SuspendLayout();
             this.pnlAttributes.SuspendLayout();
             this.pnlNpcs.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
             this.SuspendLayout();
             // 
             // lblLayer
@@ -198,16 +195,18 @@ namespace Intersect_Editor.Forms
             this.cmbAutotile.FormattingEnabled = true;
             this.cmbAutotile.Items.AddRange(new object[] {
             "Normal",
-            "Autotile",
-            "Fake",
-            "Animated",
-            "Cliff",
-            "Waterfall"});
+            "Autotile    [VX Format]",
+            "Fake          [VX Format]",
+            "Animated [VX Format]",
+            "Cliff           [VX Format]",
+            "Waterfall   [VX Format]",
+            "Autotile     [XP Format]",
+            "Animated  [XP Format]"});
             this.cmbAutotile.Location = new System.Drawing.Point(84, 65);
             this.cmbAutotile.Name = "cmbAutotile";
             this.cmbAutotile.Size = new System.Drawing.Size(178, 21);
             this.cmbAutotile.TabIndex = 18;
-            this.cmbAutotile.Text = null;
+            this.cmbAutotile.Text = "Normal";
             this.cmbAutotile.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbAutotile.SelectedIndexChanged += new System.EventHandler(this.cmbAutotile_SelectedIndexChanged);
             // 
@@ -1138,7 +1137,6 @@ namespace Intersect_Editor.Forms
             this.pnlTiles.Controls.Add(this.lblTileType);
             this.pnlTiles.Controls.Add(this.cmbAutotile);
             this.pnlTiles.Controls.Add(this.lblTileset);
-            this.pnlTiles.Controls.Add(this.pnlTilesetContainer);
             this.pnlTiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlTiles.Location = new System.Drawing.Point(0, 0);
             this.pnlTiles.Name = "pnlTiles";
@@ -1195,30 +1193,6 @@ namespace Intersect_Editor.Forms
             this.picGround.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picMapLayer_MouseClick);
             this.picGround.MouseHover += new System.EventHandler(this.picMapLayer_MouseHover);
             // 
-            // pnlTilesetContainer
-            // 
-            this.pnlTilesetContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlTilesetContainer.AutoScroll = true;
-            this.pnlTilesetContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.pnlTilesetContainer.Controls.Add(this.picTileset);
-            this.pnlTilesetContainer.Location = new System.Drawing.Point(9, 96);
-            this.pnlTilesetContainer.Name = "pnlTilesetContainer";
-            this.pnlTilesetContainer.Size = new System.Drawing.Size(264, 318);
-            this.pnlTilesetContainer.TabIndex = 19;
-            // 
-            // picTileset
-            // 
-            this.picTileset.Location = new System.Drawing.Point(0, 0);
-            this.picTileset.Name = "picTileset";
-            this.picTileset.Size = new System.Drawing.Size(167, 148);
-            this.picTileset.TabIndex = 2;
-            this.picTileset.TabStop = false;
-            this.picTileset.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseDown);
-            this.picTileset.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseMove);
-            this.picTileset.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseUp);
-            // 
             // pnlEvents
             // 
             this.pnlEvents.Controls.Add(this.lblEventInstructions);
@@ -1230,23 +1204,12 @@ namespace Intersect_Editor.Forms
             // 
             // pnlLights
             // 
-            this.pnlLights.Controls.Add(this.lightEditor);
             this.pnlLights.Controls.Add(this.lblLightInstructions);
             this.pnlLights.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlLights.Location = new System.Drawing.Point(0, 0);
             this.pnlLights.Name = "pnlLights";
             this.pnlLights.Size = new System.Drawing.Size(276, 422);
             this.pnlLights.TabIndex = 1;
-            // 
-            // lightEditor
-            // 
-            this.lightEditor.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lightEditor.Location = new System.Drawing.Point(6, 6);
-            this.lightEditor.Name = "lightEditor";
-            this.lightEditor.Size = new System.Drawing.Size(256, 358);
-            this.lightEditor.TabIndex = 2;
-            this.lightEditor.Visible = false;
-            this.lightEditor.Load += new System.EventHandler(this.lightEditor_Load);
             // 
             // pnlAttributes
             // 
@@ -1283,6 +1246,17 @@ namespace Intersect_Editor.Forms
             this.pnlNpcs.Name = "pnlNpcs";
             this.pnlNpcs.Size = new System.Drawing.Size(276, 422);
             this.pnlNpcs.TabIndex = 1;
+            // 
+            // picTileset
+            // 
+            this.picTileset.Location = new System.Drawing.Point(0, 0);
+            this.picTileset.Name = "picTileset";
+            this.picTileset.Size = new System.Drawing.Size(167, 148);
+            this.picTileset.TabIndex = 2;
+            this.picTileset.TabStop = false;
+            this.picTileset.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseDown);
+            this.picTileset.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseMove);
+            this.picTileset.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseUp);
             // 
             // frmMapLayers
             // 
@@ -1343,14 +1317,13 @@ namespace Intersect_Editor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.picMask2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMask)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picGround)).EndInit();
-            this.pnlTilesetContainer.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).EndInit();
             this.pnlEvents.ResumeLayout(false);
             this.pnlEvents.PerformLayout();
             this.pnlLights.ResumeLayout(false);
             this.pnlAttributes.ResumeLayout(false);
             this.pnlAttributes.PerformLayout();
             this.pnlNpcs.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).EndInit();
             this.ResumeLayout(false);
 
         }
