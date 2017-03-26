@@ -136,7 +136,7 @@ namespace Intersect_Client.Classes.UI.Game
                 spellStats.AddText(stats, spellName.TextColor);
                 spellStats.AddLineBreak();
 
-                if (spell.Data2 > 0)
+                if (spell.Data3 > 0)
                 {
                     spellStats.AddText(Strings.Get("spelldesc", "effect" + spell.Data3), spellName.TextColor);
                     spellStats.AddLineBreak();
@@ -146,8 +146,8 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     stats = Strings.Get("spelldesc", "vital0",
                     (spell.VitalDiff[(int) Vitals.Health] > 0
-                        ? Strings.Get("spelldec", "addsymbol")
-                        : Strings.Get("spelldec", "removesymbol")), spell.VitalDiff[(int) Vitals.Health]);
+                        ? Strings.Get("spelldesc", "addsymbol")
+                        : Strings.Get("spelldecs", "removesymbol")), spell.VitalDiff[(int) Vitals.Health]);
                     spellStats.AddText(stats, spellName.TextColor);
                     spellStats.AddLineBreak();
                 }
@@ -156,8 +156,8 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     stats = Strings.Get("spelldesc", "vital1",
                     (spell.VitalDiff[(int) Vitals.Mana] > 0
-                        ? Strings.Get("spelldec", "addsymbol")
-                        : Strings.Get("spelldec", "removesymbol")), spell.VitalDiff[(int) Vitals.Mana]);
+                        ? Strings.Get("spelldesc", "addsymbol")
+                        : Strings.Get("spelldesc", "removesymbol")), spell.VitalDiff[(int) Vitals.Mana]);
                     spellStats.AddText(stats, spellName.TextColor);
                     spellStats.AddLineBreak();
                 }

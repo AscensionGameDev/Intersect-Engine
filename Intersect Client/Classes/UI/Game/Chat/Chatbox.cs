@@ -162,7 +162,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Chatbox Window
         void ChatBoxInput_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_chatboxInput.Text == "Press enter to chat.")
+            if (_chatboxInput.Text == Strings.Get("chatbox", "enterchat"))
             {
                 _chatboxInput.Text = "";
             }
@@ -170,24 +170,24 @@ namespace Intersect_Client.Classes.UI.Game
 
         void ChatBoxInput_SubmitPressed(Base sender, EventArgs arguments)
         {
-            if (_chatboxInput.Text.Trim().Length <= 0 || _chatboxInput.Text == "Press enter to chat.")
+            if (_chatboxInput.Text.Trim().Length <= 0 || _chatboxInput.Text == Strings.Get("chatbox", "enterchat"))
             {
-                _chatboxInput.Text = "Press enter to chat.";
+                _chatboxInput.Text = Strings.Get("chatbox", "enterchat");
                 return;
             }
             PacketSender.SendChatMsg(_chatboxInput.Text.Trim());
-            _chatboxInput.Text = "Press enter to chat.";
+            _chatboxInput.Text = Strings.Get("chatbox", "enterchat");
         }
 
         void ChatBoxSendBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_chatboxInput.Text.Trim().Length <= 0 || _chatboxInput.Text == "Press enter to chat.")
+            if (_chatboxInput.Text.Trim().Length <= 0 || _chatboxInput.Text == Strings.Get("chatbox", "enterchat"))
             {
-                _chatboxInput.Text = "Press enter to chat.";
+                _chatboxInput.Text = Strings.Get("chatbox", "enterchat");
                 return;
             }
             PacketSender.SendChatMsg(_chatboxInput.Text.Trim());
-            _chatboxInput.Text = "Press enter to chat.";
+            _chatboxInput.Text = Strings.Get("chatbox", "enterchat");
         }
     }
 }

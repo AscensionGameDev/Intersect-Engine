@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using DarkUI.Forms;
+using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
+using Intersect.Localization;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Forms.Editors;
 using Intersect_Editor.Forms.Editors.Quest;
@@ -23,6 +26,50 @@ namespace Intersect_Editor.Forms
             PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstQuests.LostFocus += itemList_FocusChanged;
             lstQuests.GotFocus += itemList_FocusChanged;
+            InitLocalization();
+        }
+
+        private void InitLocalization()
+        {
+            Text = Strings.Get("questeditor", "title");
+            toolStripItemNew.Text = Strings.Get("questeditor", "new");
+            toolStripItemDelete.Text = Strings.Get("questeditor", "delete");
+            toolStripItemCopy.Text = Strings.Get("questeditor", "copy");
+            toolStripItemPaste.Text = Strings.Get("questeditor", "paste");
+            toolStripItemUndo.Text = Strings.Get("questeditor", "undo");
+
+            grpQuests.Text = Strings.Get("questeditor", "quests");
+            grpGeneral.Text = Strings.Get("questeditor", "general");
+            lblName.Text = Strings.Get("questeditor", "name");
+
+            grpLogOptions.Text = Strings.Get("questeditor", "logoptions");
+            chkLogAfterComplete.Text = Strings.Get("questeditor", "showafter");
+            chkLogBeforeOffer.Text = Strings.Get("questeditor", "showbefore");
+
+            grpProgessionOptions.Text = Strings.Get("questeditor", "options");
+            chkRepeatable.Text = Strings.Get("questeditor", "repeatable");
+            chkQuittable.Text = Strings.Get("questeditor", "quit");
+
+            lblBeforeOffer.Text = Strings.Get("questeditor", "beforeofferdesc");
+            lblOffer.Text = Strings.Get("questeditor", "offerdesc");
+            lblInProgress.Text = Strings.Get("questeditor", "inprogressdesc");
+            lblCompleted.Text = Strings.Get("questeditor", "completeddesc");
+
+            grpQuestReqs.Text = Strings.Get("questeditor", "requirements");
+            btnEditRequirements.Text = Strings.Get("questeditor", "editrequirements");
+
+            grpQuestTasks.Text = Strings.Get("questeditor", "tasks");
+            btnAddTask.Text = Strings.Get("questeditor", "addtask");
+            btnRemoveTask.Text = Strings.Get("questeditor", "removetask");
+
+            grpActions.Text = Strings.Get("questeditor", "actions");
+            lblOnStart.Text = Strings.Get("questeditor", "onstart");
+            btnEditStartEvent.Text = Strings.Get("questeditor", "editstartevent");
+            lblOnEnd.Text = Strings.Get("questeditor", "onend");
+            btnEditCompletionEvent.Text = Strings.Get("questeditor", "editendevent");
+            
+            btnSave.Text = Strings.Get("questeditor", "save");
+            btnCancel.Text = Strings.Get("questeditor", "cancel");
         }
 
         private void GameObjectUpdatedDelegate(GameObjectType type)
@@ -134,13 +181,13 @@ namespace Intersect_Editor.Forms
 
         private void btnEditStartEvent_Click(object sender, EventArgs e)
         {
-            _editorItem.StartEvent.Name = "Quest " + _editorItem.Name + " Start Event";
+            _editorItem.StartEvent.Name = Strings.Get("questeditor", "startevent", _editorItem.Name);
             openQuestEvent(_editorItem.StartEvent);
         }
 
         private void btnEditCompletionEvent_Click(object sender, EventArgs e)
         {
-            _editorItem.EndEvent.Name = "Quest " + _editorItem.Name + " Completion Event";
+            _editorItem.EndEvent.Name = Strings.Get("questeditor", "endevent", _editorItem.Name);
             openQuestEvent(_editorItem.EndEvent);
         }
 
@@ -178,7 +225,7 @@ namespace Intersect_Editor.Forms
             var cmdWindow = new Quest_TaskEditor(task);
             var frm = new Form
             {
-                Text = "Add/Edit Quest Task"
+                Text = Strings.Get("taskeditor","title")
             };
             frm.Controls.Add(cmdWindow);
             frm.Size = new Size(0, 0);
@@ -277,9 +324,8 @@ namespace Intersect_Editor.Forms
         {
             if (_editorItem != null && lstQuests.Focused)
             {
-                if (
-                    MessageBox.Show("Are you sure you want to delete this game object? This action cannot be reverted!",
-                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("questeditor", "deleteprompt"),
+                        Strings.Get("questeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }
@@ -308,9 +354,9 @@ namespace Intersect_Editor.Forms
         {
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
-                if (MessageBox.Show(
-                        "Are you sure you want to undo changes made to this game object? This action cannot be reverted!",
-                        "Undo Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("questeditor", "undoprompt"),
+                        Strings.Get("questeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
                     UpdateEditor();

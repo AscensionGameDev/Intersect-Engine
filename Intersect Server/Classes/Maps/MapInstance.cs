@@ -534,13 +534,13 @@ namespace Intersect_Server.Classes.Maps
 
         //Spawn a projectile
         public void SpawnMapProjectile(Entity owner, ProjectileBase projectile, SpellBase parentSpell,
-            ItemBase parentItem, int Map, int X, int Y, int Z, int Direction, int Target = 0)
+            ItemBase parentItem, int Map, int X, int Y, int Z, int Direction, Entity target)
         {
             lock (GetMapLock())
             {
                 int n = Globals.FindOpenEntity();
                 MapProjectiles.Add(new Projectile(n, owner, parentSpell, parentItem, projectile, Map, X, Y, Z, Direction,
-                    Target));
+                    target));
                 Globals.Entities[n] = MapProjectiles[MapProjectiles.Count - 1];
                 PacketSender.SendEntityDataToProximity(Globals.Entities[n]);
             }

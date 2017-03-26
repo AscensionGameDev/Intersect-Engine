@@ -20,7 +20,7 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
     {
         private Entity mEntity;
         private PathfinderTarget mTarget;
-        private IEnumerable<AStarNode> mPath;
+        private IEnumerable<PathNode> mPath;
         private long mWaitTime = 0;
         private int mConsecutiveFails = 0;
 
@@ -45,9 +45,9 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
             var pathfindingRange = Math.Max(Options.MapWidth, Options.MapHeight); //Search as far as 1 map out.. maximum.
             //Do lots of logic eventually leading up to an A* pathfinding run if needed.
             PathfinderResult returnVal = PathfinderResult.Success;
-            AStarNode[,] mapGrid;
-            SpatialAStar<AStarNode, Object> aStar;
-            IEnumerable<AStarNode> path = mPath;
+            PathNode[,] mapGrid;
+            SpatialAStar aStar;
+            IEnumerable<PathNode> path = mPath;
             if (mWaitTime < timeMs)
             {
                 var currentMap = MapInstance.Lookup.Get(mEntity.CurrentMap);
@@ -95,15 +95,13 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
                             if (Math.Abs(sourceX - targetX) + Math.Abs(sourceY - targetY) < pathfindingRange)
                             {
                                 //Doing good...
-                                mapGrid = new AStarNode[Options.MapWidth * 3, Options.MapHeight * 3];
+                                mapGrid = new PathNode[Options.MapWidth * 3, Options.MapHeight * 3];
 
                                 for (int x = 0; x < Options.MapWidth * 3; x++)
                                 {
                                     for (int y = 0; y < Options.MapHeight * 3; y++)
                                     {
-                                        mapGrid[x, y] = new AStarNode();
-                                        mapGrid[x, y].X = x;
-                                        mapGrid[x, y].Y = y;
+                                        mapGrid[x, y] = new PathNode(x,y,false);
                                         if (x < sourceX - pathfindingRange || x > sourceX + pathfindingRange ||
                                             y < sourceY - pathfindingRange || y > sourceY + pathfindingRange)
                                         {
@@ -229,14 +227,21 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
                                     }
                                 }
 
-                                //TODO See if target and this entiy are both on the old path..
-                                //If so then see if each tile is open. If so just use the old path.
+                                //Optionally, move the along path check down here.. see if each tile is still open before returning success.
+                                //That would be more processor intensive but would also provide ai that recoginize blocks in their path quicker.
 
                                 //Finally done.. let's get a path from the pathfinder.
                                 mapGrid[targetX, targetY].IsWall = false;
-                                aStar = new SpatialAStar<AStarNode, Object>(mapGrid);
+                                aStar = new SpatialAStar(mapGrid);
                                 path = aStar.Search(new Point(sourceX, sourceY), new Point(targetX, targetY), null);
-                                returnVal = PathfinderResult.Success;
+                                if (path == null)
+                                {
+                                    returnVal = PathfinderResult.NoPathToTarget;
+                                }
+                                else
+                                {
+                                    returnVal = PathfinderResult.Success;
+                                }
                             }
                             else
                             {
@@ -291,7 +296,7 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
             return returnVal;
         }
 
-        private void FillArea(AStarNode[,] dest, int startX, int startY, int width, int height)
+        private void FillArea(PathNode[,] dest, int startX, int startY, int width, int height)
         {
             for (int x = startX; x < startX + width; x++)
             {
@@ -302,7 +307,7 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
             }
         }
 
-        public bool AlongPath(IEnumerable<AStarNode> path, int x, int y)
+        public bool AlongPath(IEnumerable<PathNode> path, int x, int y)
         {
             if (path == null) return false;
             var foundUs = false;
@@ -381,19 +386,7 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
         }
     }
 
-    public class AStarNode : IPathNode<Object>
-    {
-        public Int32 X { get; set; }
-        public Int32 Y { get; set; }
-        public Boolean IsWall { get; set; }
-
-        public bool IsWalkable(Object unused)
-        {
-            return !IsWall;
-        }
-    }
-
-    public class AStarSolver<TPathNode, TUserContext> : SpatialAStar<TPathNode, TUserContext> where TPathNode : IPathNode<TUserContext>
+    public class AStarSolver : SpatialAStar
     {
         protected override Double Heuristic(PathNode inStart, PathNode inEnd)
         {
@@ -405,8 +398,7 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
             return Heuristic(inStart, inEnd);
         }
 
-        public AStarSolver(TPathNode[,] inGrid)
-            : base(inGrid)
+        public AStarSolver(PathNode[,] inGrid) : base(inGrid)
         {
         }
     }
