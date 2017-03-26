@@ -101,6 +101,8 @@
 		<string id="helpusage">help</string>
 		<string id="helpdesc">help</string>
 		<string id="helphelp">displays list of available commands</string>
+
+		<string id="invalid">Invalid /command.</string>
 		
 		<string id="true">true</string>
 		<string id="false">false</string>

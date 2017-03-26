@@ -45,6 +45,7 @@ namespace Intersect_Server.Classes.Entities
         public List<Player> Party = new List<Player>();
         public Player PartyRequester = null;
         public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
+        public Player ChatTarget = null;
         public List<int> QuestOffers = new List<int>();
         public Dictionary<int, QuestProgressStruct> Quests = new Dictionary<int, QuestProgressStruct>();
         public long SaveTimer = Environment.TickCount;

@@ -408,7 +408,78 @@ namespace Intersect_Server.Classes.Networking
             //Check for /commands
             if (msg[0] == '/')
             {
+                string[] splitString = msg.Split();
+                msg = msg.Remove(0, splitString[0].Length + 1); //Chop off the /command at the start of the sentance
+                
+                switch (splitString[0])
+                {
+                    case "/all":
+                    case "/global":
+                        if (client.Power == 2)
+                        {
+                            PacketSender.SendGlobalMsg("[GLOBAL] " + client.Entity.MyName + ": " + msg, Color.Red, client.Entity.MyName);
+                        }
+                        else if (client.Power == 1)
+                        {
+                            PacketSender.SendGlobalMsg("[GLOBAL] " + client.Entity.MyName + ": " + msg, new Color(0, 70, 255), client.Entity.MyName);
+                        }
+                        else
+                        {
+                            PacketSender.SendGlobalMsg("[GLOBAL] " + client.Entity.MyName + ": " + msg, new Color(255, 220, 220, 220), client.Entity.MyName);
+                        }
+                        break;
+                    case "/announcement":
+                        if (client.Power > 0)
+                        {
+                            PacketSender.SendGlobalMsg("[ANNOUNCEMENT] " + client.Entity.MyName + ": " + msg, Color.Yellow, client.Entity.MyName);
+                        }
+                        break;
+                    case "/admin":
+                        if (client.Power > 0)
+                        {
+                            PacketSender.SendAdminMsg("[ADMIN] " + client.Entity.MyName + ": " + msg, Color.Cyan, client.Entity.MyName);
+                        }
+                        break;
+                    case "/party":
+                        PacketSender.SendPartyMsg(client, "[PARTY] " + client.Entity.MyName + ": " + msg, Color.Green, client.Entity.MyName);
+                        break;
+                    case "/pm":
+                    case "/message":
+                        msg = msg.Remove(0, splitString[1].Length + 1); //Chop off the player name parameter
 
+                        for (int i = 0; i < Globals.Clients.Count; i++)
+                        {
+                            if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
+                            {
+                                if (splitString[1].ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                                {
+                                    PacketSender.SendPlayerMsg(client, "[PM] " + client.Entity.MyName + ": " + msg, Color.Magenta, client.Entity.MyName);
+                                    PacketSender.SendPlayerMsg(Globals.Clients[i], "[PM] " + client.Entity.MyName + ": " + msg, Color.Magenta, client.Entity.MyName);
+                                    Globals.Clients[i].Entity.ChatTarget = client.Entity;
+                                    client.Entity.ChatTarget = Globals.Clients[i].Entity;
+                                    return;
+                                }
+                            }
+                        }
+                        PacketSender.SendPlayerMsg(client, Strings.Get("Player", "offline"), Color.Red);
+                        break;
+                    case "/reply":
+                    case "/r":
+                        if (client.Entity.ChatTarget != null)
+                        {
+                            PacketSender.SendPlayerMsg(client, "[PM] " + client.Entity.MyName + ": " + msg, Color.Magenta, client.Entity.MyName);
+                            PacketSender.SendPlayerMsg(client.Entity.ChatTarget.MyClient, "[PM] " + client.Entity.MyName + ": " + msg, Color.Magenta, client.Entity.MyName);
+                            client.Entity.ChatTarget.ChatTarget = client.Entity;
+                        }
+                        else
+                        {
+                            PacketSender.SendPlayerMsg(client, Strings.Get("Player", "offline"), Color.Red);
+                        }
+                        break;
+                    default:
+                        PacketSender.SendPlayerMsg(client, Strings.Get("Commands", "invalid"), Color.Red);
+                        break;
+                }
             }
             else //Talk in local normally
             {

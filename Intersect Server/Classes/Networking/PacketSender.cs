@@ -531,6 +531,40 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
+        public static void SendAdminMsg(string message, Color clr, string target = "")
+        {
+            foreach (var client in Globals.Clients)
+            {
+                if (client != null)
+                {
+                    if (client.IsEditor || client.Entity != null)
+                    {
+                        if (client.Power > 0)
+                        {
+                            SendPlayerMsg(client, message, clr, target);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void SendPartyMsg(Client client, string message, Color clr, string target = "")
+        {
+            foreach (var c in Globals.Clients)
+            {
+                if (c != null)
+                {
+                    if (c.IsEditor || c.Entity != null)
+                    {
+                        if (client.Entity.InParty(c.Entity))
+                        {
+                            SendPlayerMsg(c, message, clr, target);
+                        }
+                    }
+                }
+            }
+        }
+
         public static void SendDataToAllBut(Entity en, byte[] packet)
         {
             lock (Globals.ClientLock)
