@@ -136,7 +136,7 @@ namespace Intersect_Client.Classes.UI.Game
                 spellStats.AddText(stats, spellName.TextColor);
                 spellStats.AddLineBreak();
 
-                if (spell.Data2 > 0)
+                if (spell.Data3 > 0)
                 {
                     spellStats.AddText(Strings.Get("spelldesc", "effect" + spell.Data3), spellName.TextColor);
                     spellStats.AddLineBreak();
