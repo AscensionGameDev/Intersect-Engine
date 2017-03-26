@@ -212,11 +212,13 @@
 		<string id="layer3">Fringe</string>
 		<string id="layer4">Fringe 2</string>
 		<string id="normal">Normal</string>
-		<string id="autotile">Autotile</string>
-		<string id="fake">Fake</string>
-		<string id="animated">Animated</string>
-		<string id="cliff">Cliff</string>
-		<string id="waterfall">Waterfall</string>
+		<string id="autotile">Autotile     [VX Format]</string>
+		<string id="fake">Fake         [VX Format]</string>
+		<string id="animated">Animated  [VX Format]</string>
+		<string id="cliff">Cliff           [VX Format]</string>
+		<string id="waterfall">Waterfall   [VX Format]</string>
+		<string id="autotilexp">Autotile     [XP Format]</string>
+		<string id="animatedxp">Animated  [XP Format]</string>
 	</Tiles>
 	<Attributes>
 		<string id="blocked">Blocked</string>
