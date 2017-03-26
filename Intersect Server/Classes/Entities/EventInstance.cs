@@ -45,7 +45,7 @@ namespace Intersect_Server.Classes.Entities
             MyIndex = index;
             MyClient = client;
             MapNum = mapNum;
-            MyPlayer = (Player) Globals.Entities[MyClient.EntityIndex];
+            MyPlayer = client.Entity;
             SelfSwitch = new bool[4];
             BaseEvent = baseEvent;
             CurrentX = baseEvent.SpawnX;
@@ -232,6 +232,7 @@ namespace Intersect_Server.Classes.Entities
         public static bool MeetsConditionLists(ConditionLists lists, Player MyPlayer, EventInstance EventInstance,
             bool SingleList = true)
         {
+            if (MyPlayer == null) return false;
             //If no condition lists then this passes
             if (lists.Lists.Count == 0)
                 return true;
