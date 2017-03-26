@@ -201,7 +201,7 @@ namespace Intersect_Server.Classes.Entities
                             {
                                 //Look for event
                                 var foundEvent = EventExists(map.Id, mapEvent.SpawnX, mapEvent.SpawnY);
-                                if (foundEvent == -1)
+                                if (foundEvent == -1 || MyEvents[foundEvent] == null)
                                 {
                                     var tmpEvent = new EventInstance(MyEvents.Count, MyClient, mapEvent, map.Id)
                                     {
