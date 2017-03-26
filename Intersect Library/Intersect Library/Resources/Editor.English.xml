@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Intersect Editor Language File - Beta 3 -->
+<!-- Intersect Editor Language File - Beta 3.1 -->
 <Strings>
 	<Login>
 		<string id="title">Intersect Editor Login</string>
@@ -212,11 +212,13 @@
 		<string id="layer3">Fringe</string>
 		<string id="layer4">Fringe 2</string>
 		<string id="normal">Normal</string>
-		<string id="autotile">Autotile</string>
-		<string id="fake">Fake</string>
-		<string id="animated">Animated</string>
-		<string id="cliff">Cliff</string>
-		<string id="waterfall">Waterfall</string>
+		<string id="autotile">Autotile     [VX Format]</string>
+		<string id="fake">Fake         [VX Format]</string>
+		<string id="animated">Animated  [VX Format]</string>
+		<string id="cliff">Cliff           [VX Format]</string>
+		<string id="waterfall">Waterfall   [VX Format]</string>
+		<string id="autotilexp">Autotile     [XP Format]</string>
+		<string id="animatedxp">Animated  [XP Format]</string>
 	</Tiles>
 	<Attributes>
 		<string id="blocked">Blocked</string>
@@ -373,7 +375,7 @@
 		<string id="lowerplayback">Playback</string>
 		<string id="lowerframe">Frame: {00}</string>
 		<string id="lowerplay">Play Lower Animation</string>
-		<string id="lowerstop">Stop Lower Animation</string>
+		<string id="lowerstop">Stop Upper Animation</string>
 		<string id="lowerframeoptions">Frame Options</string>
 		<string id="lowerclone">Clone From Previous</string>
 		
@@ -750,6 +752,80 @@ Tick timer saved in server config.xml.</string>
 		<string id="save">Save</string>
 		<string id="cancel">Cancel</string>
 	</ProjectileEditor>
+	<QuestEditor>
+		<string id="title">Quest Editor</string>
+		<string id="new">New Quest</string>
+		<string id="delete">Delete Quest</string>
+		<string id="copy">Copy Quest</string>
+		<string id="paste">Paste Quest</string>
+		<string id="undo">Undo Changes</string>
+		
+		<string id="deletetitle">Delete Quest</string>
+		<string id="deleteprompt">Are you sure you want to delete this quest? This action cannot be reverted!</string>
+		<string id="undotitle">Undo Changes</string>
+		<string id="undoprompt">Are you sure you want to undo changes made to this quest? This action cannot be reverted!</string>
+		
+		<string id="quests">Quests</string>
+		
+		<string id="general">General</string>
+		<string id="name">Name:</string>
+		<string id="logoptions">Quest Log Options</string>
+		<string id="showbefore">Show in quest log before accepting quest?</string>
+		<string id="showafter">Show in quest log after completing quest?</string>
+		<string id="options">Progression Options</string>
+		<string id="repeatable">Quest Repeatable?</string>
+		<string id="quit">Can Quit Quest?</string>
+		<string id="beforeofferdesc">Before Offer Description:</string>
+		<string id="offerdesc">Offer Description:</string>
+		<string id="inprogressdesc">In Progress Description:</string>
+		<string id="completeddesc">Completed Description:</string>
+		
+		<string id="requirements">Quest Requirements</string>
+		<string id="editrequirements">Edit Quest Requirements</string>
+		
+		<string id="actions">Quest Actions:</string>
+		<string id="onstart">On Quest Start:</string>
+		<string id="editstartevent">Edit Quest Start Event</string>
+		<string id="onend">On Quest Completion:</string>
+		<string id="editendevent">Edit Quest Completion Event</string>
+		
+		<string id="startevent">Quest {00} Start Event</string>
+		<string id="endevent">Quest {00} Completion Event</string>
+		
+		<string id="tasks">Quest Tasks</string>
+		<string id="addtask">Add Task</string>
+		<string id="removetask">Remove Task</string>
+		
+		<string id="save">Save</string>
+		<string id="cancel">Cancel</string>
+	</QuestEditor>
+	<TaskEditor>
+		<string id="title">Add/Edit Quest Task</string>
+		<string id="editor">Task Editor</string>
+		
+		<string id="type">Task Type:</string>
+		<string id="type0">Event Driven</string>
+		<string id="type1">Gather Item(s)</string>
+		<string id="type2">Kill NPC(s)</string>
+		
+		<string id="desc">Desc:</string>
+		
+		<string id="killnpcs">Kill NPC(s)</string>
+		<string id="npc">NPC:</string>
+		<string id="npcamount">Amount:</string>
+		
+		<string id="gatheritems">Gather Item(s)</string>
+		<string id="item">Item:</string>
+		<string id="gatheramount">Amount:</string>
+		
+		<string id="eventdriven">Event Driven: The description should lead the player to an event. The event will then complete the task using the complete quest task command.</string>
+		
+		<string id="editcompletionevent">Edit Task Completion Event</string>
+		<string id="completionevent">Task Completion Event</string>
+		
+		<string id="ok">Ok</string>
+		<string id="cancel">Cancel</string>
+	</TaskEditor>
 	<ResourceEditor>
 		<string id="title">Resource Editor</string>
 		<string id="new">New Resource</string>
@@ -861,7 +937,7 @@ Tick timer saved in server config.xml.</string>
 		
 		<string id="cost">Spell Cost:</string>
 		<string id="hpcost">HP Cost:</string>
-		<string id="mpcost">Mana Cost:</string>
+		<string id="manacost">Mana Cost:</string>
 		<string id="casttime">Cast Time (ms):</string>
 		<string id="cooldown">Cooldown (ms):</string>
 		
@@ -913,7 +989,7 @@ Tick timer saved in server config.xml.</string>
 		<string id="magicresist">Magic Resist:</string>
 		
 		<string id="boostduration">Stat Boost/Effect Duration</string>
-		<string id="duration">Duration (ms)</string>
+		<string id="duration6">Stat Boost/Effect Duration</string>
 		<string id="effectgroup">Effect</string>
 		<string id="effectlabel">Extra Effect:</string>
 		<string id="effect0">None</string>

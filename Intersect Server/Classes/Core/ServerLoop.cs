@@ -13,17 +13,18 @@ namespace Intersect_Server.Classes.Core
             long cps = 0;
             while (Globals.ServerStarted)
             {
+                var timeMs = Globals.System.GetTimeMs();
                 var maps = MapInstance.GetObjects();
                 foreach (var map in maps)
                 {
-                    if (map.Value.Active) map.Value.Update();
+                    if (map.Value.Active) map.Value.Update(timeMs);
                 }
                 cps++;
-                if (Globals.System.GetTimeMs() >= cpsTimer)
+                if (timeMs >= cpsTimer)
                 {
                     Globals.CPS = cps;
                     cps = 0;
-                    cpsTimer = Globals.System.GetTimeMs() + 1000;
+                    cpsTimer = timeMs + 1000;
                 }
                 ServerTime.Update();
                 if (Globals.CPSLock)

@@ -66,6 +66,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -118,8 +119,9 @@
     <Compile Include="Classes\Maps\MapResourceSpawn.cs" />
     <Compile Include="Classes\Maps\TileHelper.cs" />
     <Compile Include="Classes\Misc\Pathfinding\Pathfinder.cs" />
-    <Compile Include="Classes\Misc\Pathfinding\PathfinderPoint.cs" />
+    <Compile Include="Classes\Misc\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Classes\Misc\Pathfinding\PathfinderTarget.cs" />
+    <Compile Include="Classes\Misc\Pathfinding\PriorityQueue.cs" />
     <Compile Include="Classes\Networking\GameSocket.cs" />
     <Compile Include="Classes\Networking\NetSocket.cs" />
     <Compile Include="Classes\Networking\NetSocketServer.cs" />

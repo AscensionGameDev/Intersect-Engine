@@ -451,7 +451,7 @@ namespace Intersect_Editor.Forms
 
         private void FrmEvent_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Globals.CurrentEditor = -1;
+
         }
 
         private void FrmEvent_VisibleChanged(object sender, EventArgs e)

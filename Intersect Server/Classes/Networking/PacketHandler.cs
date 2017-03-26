@@ -768,7 +768,7 @@ namespace Intersect_Server.Classes.Networking
                                         client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum),
                                     client.Entity.CurrentMap,
                                     client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ,
-                                    client.Entity.Dir);
+                                    client.Entity.Dir,null);
                             return;
                         }
                     }
@@ -1017,7 +1017,14 @@ namespace Intersect_Server.Classes.Networking
             bf.WriteBytes(packet);
             var slot = bf.ReadInteger();
             var target = bf.ReadInteger();
-            client.Entity.UseSpell(slot, target);
+            if (target > -1 && target <= Globals.Entities.Count)
+            {
+                client.Entity.UseSpell(slot, Globals.Entities[target]);
+            }
+            else
+            {
+                client.Entity.UseSpell(slot, null);
+            }
             bf.Dispose();
         }
 

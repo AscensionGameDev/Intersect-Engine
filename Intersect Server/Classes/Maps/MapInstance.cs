@@ -10,6 +10,7 @@ using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Items;
+using Intersect_Server.Classes.Misc.Pathfinding;
 using Intersect_Server.Classes.Networking;
 
 namespace Intersect_Server.Classes.Maps
@@ -19,6 +20,7 @@ namespace Intersect_Server.Classes.Maps
         //Core
         public new const GameObject OBJECT_TYPE = GameObject.Map;
         protected static Dictionary<int, DatabaseObject> MapInstanceTable = new Dictionary<int, DatabaseObject>();
+        private static object TableLock = new object();
 
         //Does the map have a player on or nearby it?
         public bool Active;
@@ -27,6 +29,8 @@ namespace Intersect_Server.Classes.Maps
         private List<Entity> Entities = new List<Entity>();
         public Dictionary<EventBase, EventInstance> GlobalEventInstances = new Dictionary<EventBase, EventInstance>();
         public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
+        private Point[] MapBlocks;
+        private Point[] NpcMapBlocks;
 
         //Location of Map in the current grid
         public int MapGrid;
@@ -78,8 +82,41 @@ namespace Intersect_Server.Classes.Maps
                 DespawnEverything();
                 base.Load(packet);
                 if (keepRevision > -1) Revision = keepRevision;
+                CacheMapBlocks();
                 RespawnEverything();
             }
+        }
+
+        private void CacheMapBlocks()
+        {
+            var blocks = new List<Point>();
+            var npcBlocks = new List<Point>();
+            for (int x = 0; x < Options.MapWidth; x++)
+            {
+                for (int y = 0; y < Options.MapHeight; y++)
+                {
+                    if (Attributes[x, y] != null)
+                    {
+                        if (Attributes[x, y].value == (int)MapAttributes.Blocked || Attributes[x, y].value == (int)MapAttributes.GrappleStone)
+                        {
+                            blocks.Add(new Point(x,y));
+                            npcBlocks.Add(new Point(x,y));
+                        }
+                        else if (Attributes[x, y].value == (int)MapAttributes.NPCAvoid)
+                        {
+                            npcBlocks.Add(new Point(x,y));
+                        }
+                    }
+                }
+            }
+            MapBlocks = blocks.ToArray();
+            NpcMapBlocks = npcBlocks.ToArray();
+        }
+
+        public Point[] GetCachedBlocks(bool isPlayer)
+        {
+            if (isPlayer) return MapBlocks;
+            return NpcMapBlocks;
         }
 
         //Autotile Caching (So Clients Don't have to calculate it)
@@ -498,13 +535,13 @@ namespace Intersect_Server.Classes.Maps
 
         //Spawn a projectile
         public void SpawnMapProjectile(Entity owner, ProjectileBase projectile, SpellBase parentSpell,
-            ItemBase parentItem, int Map, int X, int Y, int Z, int Direction, int Target = 0)
+            ItemBase parentItem, int Map, int X, int Y, int Z, int Direction, Entity target)
         {
             lock (GetMapLock())
             {
                 int n = Globals.FindOpenEntity();
                 MapProjectiles.Add(new Projectile(n, owner, parentSpell, parentItem, projectile, Map, X, Y, Z, Direction,
-                    Target));
+                    target));
                 Globals.Entities[n] = MapProjectiles[MapProjectiles.Count - 1];
                 PacketSender.SendEntityDataToProximity(Globals.Entities[n]);
             }
@@ -581,7 +618,7 @@ namespace Intersect_Server.Classes.Maps
         }
 
         //Update + Related Functions
-        public void Update()
+        public void Update(long timeMs)
         {
             lock (_mapLock)
             {
@@ -595,14 +632,14 @@ namespace Intersect_Server.Classes.Maps
                     for (int i = 0; i < MapItems.Count; i++)
                     {
                         if (MapItems[i] != null && MapItems[i].DespawnTime != -1 &&
-                            MapItems[i].DespawnTime < Globals.System.GetTimeMs())
+                            MapItems[i].DespawnTime < timeMs)
                         {
                             RemoveItem(i);
                         }
                     }
                     for (int i = 0; i < ItemRespawns.Count; i++)
                     {
-                        if (ItemRespawns[i].RespawnTime < Globals.System.GetTimeMs())
+                        if (ItemRespawns[i].RespawnTime < timeMs)
                         {
                             SpawnAttributeItem(ItemRespawns[i].AttributeSpawnX, ItemRespawns[i].AttributeSpawnY);
                             ItemRespawns.RemoveAt(i);
@@ -613,12 +650,8 @@ namespace Intersect_Server.Classes.Maps
                     {
                         if (Entities[i] != null)
                         {
-                            //Active Npcs On the Map
-                            if (Entities[i].GetType() == typeof(Npc))
-                            {
-                                ((Npc) Entities[i]).Update();
-                            }
-                        }
+                            Entities[i].Update(timeMs);
+                }
                     }
                     //Process NPC Respawns
                     for (int i = 0; i < Spawns.Count; i++)
@@ -685,7 +718,7 @@ namespace Intersect_Server.Classes.Maps
                                     if (eventInstance != null && eventInstance.CallStack.Count > 0) active = true;
                                 }
                             }
-                            evts[i].GlobalPageInstance[x].Update(active);
+                            evts[i].GlobalPageInstance[x].Update(active, timeMs);
                         }
                     }
                 }
@@ -893,20 +926,29 @@ namespace Intersect_Server.Classes.Maps
 
         public override void Delete()
         {
-            MapInstanceTable.Remove(((DatabaseObject) this).Id);
-            Objects.Remove(((DatabaseObject) this).Id);
+            lock (TableLock)
+            {
+                MapInstanceTable.Remove(((DatabaseObject) this).Id);
+                Objects.Remove(((DatabaseObject) this).Id);
+            }
         }
 
         public static void ClearObjects()
         {
-            MapInstanceTable.Clear();
-            MapBase.ClearObjects();
+            lock (TableLock)
+            {
+                MapInstanceTable.Clear();
+                MapBase.ClearObjects();
+            }
         }
 
         public static void AddObject(int index, DatabaseObject obj)
         {
-            MapInstanceTable.Add(index, obj);
-            Objects.Add(index, (MapBase) obj);
+            lock (TableLock)
+            {
+                MapInstanceTable.Add(index, obj);
+                Objects.Add(index, (MapBase) obj);
+            }
         }
 
         public static int ObjectCount()
@@ -916,8 +958,11 @@ namespace Intersect_Server.Classes.Maps
 
         public static Dictionary<int, MapInstance> GetObjects()
         {
-            Dictionary<int, MapInstance> objects = MapInstanceTable.ToDictionary(k => k.Key, v => (MapInstance) v.Value);
-            return objects;
+            lock (TableLock)
+            {
+                Dictionary<int, MapInstance> objects = MapInstanceTable.ToDictionary(k => k.Key,v => (MapInstance) v.Value);
+                return objects;
+            }
         }
     }
 }

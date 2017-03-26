@@ -31,38 +31,39 @@ namespace Intersect_Editor.Forms
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmQuest));
-            this.groupBox1 = new DarkUI.Controls.DarkGroupBox();
+            this.grpQuests = new DarkUI.Controls.DarkGroupBox();
             this.lstQuests = new System.Windows.Forms.ListBox();
-            this.groupBox2 = new DarkUI.Controls.DarkGroupBox();
-            this.groupBox7 = new DarkUI.Controls.DarkGroupBox();
+            this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
+            this.grpLogOptions = new DarkUI.Controls.DarkGroupBox();
             this.chkLogAfterComplete = new DarkUI.Controls.DarkCheckBox();
             this.chkLogBeforeOffer = new DarkUI.Controls.DarkCheckBox();
             this.txtBeforeDesc = new DarkUI.Controls.DarkTextBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.lblBeforeOffer = new System.Windows.Forms.Label();
             this.txtInProgressDesc = new DarkUI.Controls.DarkTextBox();
-            this.label6 = new System.Windows.Forms.Label();
+            this.lblInProgress = new System.Windows.Forms.Label();
             this.txtEndDesc = new DarkUI.Controls.DarkTextBox();
-            this.label5 = new System.Windows.Forms.Label();
+            this.lblCompleted = new System.Windows.Forms.Label();
             this.txtStartDesc = new DarkUI.Controls.DarkTextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lblOffer = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.groupBox5 = new DarkUI.Controls.DarkGroupBox();
+            this.lblName = new System.Windows.Forms.Label();
+            this.grpProgessionOptions = new DarkUI.Controls.DarkGroupBox();
             this.chkQuittable = new DarkUI.Controls.DarkCheckBox();
             this.chkRepeatable = new DarkUI.Controls.DarkCheckBox();
-            this.groupBox6 = new DarkUI.Controls.DarkGroupBox();
+            this.grpQuestTasks = new DarkUI.Controls.DarkGroupBox();
             this.btnShiftTaskDown = new DarkUI.Controls.DarkButton();
             this.btnShiftTaskUp = new DarkUI.Controls.DarkButton();
             this.btnRemoveTask = new DarkUI.Controls.DarkButton();
             this.lstTasks = new System.Windows.Forms.ListBox();
             this.btnAddTask = new DarkUI.Controls.DarkButton();
             this.pnlContainer = new System.Windows.Forms.Panel();
-            this.groupBox4 = new DarkUI.Controls.DarkGroupBox();
+            this.grpActions = new DarkUI.Controls.DarkGroupBox();
             this.btnEditCompletionEvent = new DarkUI.Controls.DarkButton();
             this.btnEditStartEvent = new DarkUI.Controls.DarkButton();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.groupBox3 = new DarkUI.Controls.DarkGroupBox();
+            this.lblOnEnd = new System.Windows.Forms.Label();
+            this.lblOnStart = new System.Windows.Forms.Label();
+            this.grpQuestReqs = new DarkUI.Controls.DarkGroupBox();
+            this.btnEditRequirements = new DarkUI.Controls.DarkButton();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.toolStrip = new DarkUI.Controls.DarkToolStrip();
@@ -74,30 +75,29 @@ namespace Intersect_Editor.Forms
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.btnEditRequirements = new DarkUI.Controls.DarkButton();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox7.SuspendLayout();
-            this.groupBox5.SuspendLayout();
-            this.groupBox6.SuspendLayout();
+            this.grpQuests.SuspendLayout();
+            this.grpGeneral.SuspendLayout();
+            this.grpLogOptions.SuspendLayout();
+            this.grpProgessionOptions.SuspendLayout();
+            this.grpQuestTasks.SuspendLayout();
             this.pnlContainer.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            this.groupBox3.SuspendLayout();
+            this.grpActions.SuspendLayout();
+            this.grpQuestReqs.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpQuests
             // 
-            this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox1.Controls.Add(this.lstQuests);
-            this.groupBox1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox1.Location = new System.Drawing.Point(12, 34);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(203, 374);
-            this.groupBox1.TabIndex = 14;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Quests";
+            this.grpQuests.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpQuests.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpQuests.Controls.Add(this.lstQuests);
+            this.grpQuests.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpQuests.Location = new System.Drawing.Point(12, 34);
+            this.grpQuests.Name = "grpQuests";
+            this.grpQuests.Size = new System.Drawing.Size(203, 374);
+            this.grpQuests.TabIndex = 14;
+            this.grpQuests.TabStop = false;
+            this.grpQuests.Text = "Quests";
             // 
             // lstQuests
             // 
@@ -112,43 +112,43 @@ namespace Intersect_Editor.Forms
             this.lstQuests.Click += new System.EventHandler(this.lstQuests_Click);
             this.lstQuests.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
-            // groupBox2
+            // grpGeneral
             // 
-            this.groupBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox2.Controls.Add(this.groupBox7);
-            this.groupBox2.Controls.Add(this.txtBeforeDesc);
-            this.groupBox2.Controls.Add(this.label7);
-            this.groupBox2.Controls.Add(this.txtInProgressDesc);
-            this.groupBox2.Controls.Add(this.label6);
-            this.groupBox2.Controls.Add(this.txtEndDesc);
-            this.groupBox2.Controls.Add(this.label5);
-            this.groupBox2.Controls.Add(this.txtStartDesc);
-            this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Controls.Add(this.txtName);
-            this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.groupBox5);
-            this.groupBox2.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox2.Location = new System.Drawing.Point(0, 0);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(580, 164);
-            this.groupBox2.TabIndex = 15;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "General";
+            this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGeneral.Controls.Add(this.grpLogOptions);
+            this.grpGeneral.Controls.Add(this.txtBeforeDesc);
+            this.grpGeneral.Controls.Add(this.lblBeforeOffer);
+            this.grpGeneral.Controls.Add(this.txtInProgressDesc);
+            this.grpGeneral.Controls.Add(this.lblInProgress);
+            this.grpGeneral.Controls.Add(this.txtEndDesc);
+            this.grpGeneral.Controls.Add(this.lblCompleted);
+            this.grpGeneral.Controls.Add(this.txtStartDesc);
+            this.grpGeneral.Controls.Add(this.lblOffer);
+            this.grpGeneral.Controls.Add(this.txtName);
+            this.grpGeneral.Controls.Add(this.lblName);
+            this.grpGeneral.Controls.Add(this.grpProgessionOptions);
+            this.grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpGeneral.Location = new System.Drawing.Point(0, 0);
+            this.grpGeneral.Name = "grpGeneral";
+            this.grpGeneral.Size = new System.Drawing.Size(580, 164);
+            this.grpGeneral.TabIndex = 15;
+            this.grpGeneral.TabStop = false;
+            this.grpGeneral.Text = "General";
             // 
-            // groupBox7
+            // grpLogOptions
             // 
-            this.groupBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox7.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox7.Controls.Add(this.chkLogAfterComplete);
-            this.groupBox7.Controls.Add(this.chkLogBeforeOffer);
-            this.groupBox7.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox7.Location = new System.Drawing.Point(167, 9);
-            this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(274, 60);
-            this.groupBox7.TabIndex = 37;
-            this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "Quest Log Options";
+            this.grpLogOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpLogOptions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpLogOptions.Controls.Add(this.chkLogAfterComplete);
+            this.grpLogOptions.Controls.Add(this.chkLogBeforeOffer);
+            this.grpLogOptions.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpLogOptions.Location = new System.Drawing.Point(167, 9);
+            this.grpLogOptions.Name = "grpLogOptions";
+            this.grpLogOptions.Size = new System.Drawing.Size(274, 60);
+            this.grpLogOptions.TabIndex = 37;
+            this.grpLogOptions.TabStop = false;
+            this.grpLogOptions.Text = "Quest Log Options";
             // 
             // chkLogAfterComplete
             // 
@@ -182,14 +182,14 @@ namespace Intersect_Editor.Forms
             this.txtBeforeDesc.TabIndex = 36;
             this.txtBeforeDesc.TextChanged += new System.EventHandler(this.txtBeforeDesc_TextChanged);
             // 
-            // label7
+            // lblBeforeOffer
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(7, 75);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(123, 13);
-            this.label7.TabIndex = 35;
-            this.label7.Text = "Before Offer Description:";
+            this.lblBeforeOffer.AutoSize = true;
+            this.lblBeforeOffer.Location = new System.Drawing.Point(7, 75);
+            this.lblBeforeOffer.Name = "lblBeforeOffer";
+            this.lblBeforeOffer.Size = new System.Drawing.Size(123, 13);
+            this.lblBeforeOffer.TabIndex = 35;
+            this.lblBeforeOffer.Text = "Before Offer Description:";
             // 
             // txtInProgressDesc
             // 
@@ -205,13 +205,13 @@ namespace Intersect_Editor.Forms
             this.txtInProgressDesc.TabIndex = 33;
             this.txtInProgressDesc.TextChanged += new System.EventHandler(this.txtInProgressDesc_TextChanged);
             // 
-            // label6
+            // lblInProgress
             // 
-            this.label6.Location = new System.Drawing.Point(291, 75);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(121, 13);
-            this.label6.TabIndex = 32;
-            this.label6.Text = "In Progress Description:";
+            this.lblInProgress.Location = new System.Drawing.Point(291, 75);
+            this.lblInProgress.Name = "lblInProgress";
+            this.lblInProgress.Size = new System.Drawing.Size(121, 13);
+            this.lblInProgress.TabIndex = 32;
+            this.lblInProgress.Text = "In Progress Description:";
             // 
             // txtEndDesc
             // 
@@ -227,13 +227,13 @@ namespace Intersect_Editor.Forms
             this.txtEndDesc.TabIndex = 28;
             this.txtEndDesc.TextChanged += new System.EventHandler(this.txtEndDesc_TextChanged);
             // 
-            // label5
+            // lblCompleted
             // 
-            this.label5.Location = new System.Drawing.Point(433, 75);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(128, 13);
-            this.label5.TabIndex = 27;
-            this.label5.Text = "Completed Description:";
+            this.lblCompleted.Location = new System.Drawing.Point(433, 75);
+            this.lblCompleted.Name = "lblCompleted";
+            this.lblCompleted.Size = new System.Drawing.Size(128, 13);
+            this.lblCompleted.TabIndex = 27;
+            this.lblCompleted.Text = "Completed Description:";
             // 
             // txtStartDesc
             // 
@@ -249,14 +249,14 @@ namespace Intersect_Editor.Forms
             this.txtStartDesc.TabIndex = 26;
             this.txtStartDesc.TextChanged += new System.EventHandler(this.txtStartDesc_TextChanged);
             // 
-            // label2
+            // lblOffer
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(149, 75);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 13);
-            this.label2.TabIndex = 25;
-            this.label2.Text = "Offer Description:";
+            this.lblOffer.AutoSize = true;
+            this.lblOffer.Location = new System.Drawing.Point(149, 75);
+            this.lblOffer.Name = "lblOffer";
+            this.lblOffer.Size = new System.Drawing.Size(89, 13);
+            this.lblOffer.TabIndex = 25;
+            this.lblOffer.Text = "Offer Description:";
             // 
             // txtName
             // 
@@ -269,28 +269,28 @@ namespace Intersect_Editor.Forms
             this.txtName.TabIndex = 1;
             this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
             // 
-            // label1
+            // lblName
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Name:";
+            this.lblName.AutoSize = true;
+            this.lblName.Location = new System.Drawing.Point(7, 20);
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(38, 13);
+            this.lblName.TabIndex = 0;
+            this.lblName.Text = "Name:";
             // 
-            // groupBox5
+            // grpProgessionOptions
             // 
-            this.groupBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox5.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox5.Controls.Add(this.chkQuittable);
-            this.groupBox5.Controls.Add(this.chkRepeatable);
-            this.groupBox5.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox5.Location = new System.Drawing.Point(446, 9);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(126, 60);
-            this.groupBox5.TabIndex = 34;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Progression Options";
+            this.grpProgessionOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpProgessionOptions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpProgessionOptions.Controls.Add(this.chkQuittable);
+            this.grpProgessionOptions.Controls.Add(this.chkRepeatable);
+            this.grpProgessionOptions.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpProgessionOptions.Location = new System.Drawing.Point(446, 9);
+            this.grpProgessionOptions.Name = "grpProgessionOptions";
+            this.grpProgessionOptions.Size = new System.Drawing.Size(126, 60);
+            this.grpProgessionOptions.TabIndex = 34;
+            this.grpProgessionOptions.TabStop = false;
+            this.grpProgessionOptions.Text = "Progression Options";
             // 
             // chkQuittable
             // 
@@ -312,22 +312,22 @@ namespace Intersect_Editor.Forms
             this.chkRepeatable.Text = "Quest Repeatable?";
             this.chkRepeatable.CheckedChanged += new System.EventHandler(this.chkRepeatable_CheckedChanged);
             // 
-            // groupBox6
+            // grpQuestTasks
             // 
-            this.groupBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox6.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox6.Controls.Add(this.btnShiftTaskDown);
-            this.groupBox6.Controls.Add(this.btnShiftTaskUp);
-            this.groupBox6.Controls.Add(this.btnRemoveTask);
-            this.groupBox6.Controls.Add(this.lstTasks);
-            this.groupBox6.Controls.Add(this.btnAddTask);
-            this.groupBox6.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox6.Location = new System.Drawing.Point(277, 168);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(480, 201);
-            this.groupBox6.TabIndex = 19;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Quest Tasks";
+            this.grpQuestTasks.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpQuestTasks.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpQuestTasks.Controls.Add(this.btnShiftTaskDown);
+            this.grpQuestTasks.Controls.Add(this.btnShiftTaskUp);
+            this.grpQuestTasks.Controls.Add(this.btnRemoveTask);
+            this.grpQuestTasks.Controls.Add(this.lstTasks);
+            this.grpQuestTasks.Controls.Add(this.btnAddTask);
+            this.grpQuestTasks.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpQuestTasks.Location = new System.Drawing.Point(277, 168);
+            this.grpQuestTasks.Name = "grpQuestTasks";
+            this.grpQuestTasks.Size = new System.Drawing.Size(480, 201);
+            this.grpQuestTasks.TabIndex = 19;
+            this.grpQuestTasks.TabStop = false;
+            this.grpQuestTasks.Text = "Quest Tasks";
             // 
             // btnShiftTaskDown
             // 
@@ -386,31 +386,31 @@ namespace Intersect_Editor.Forms
             // 
             // pnlContainer
             // 
-            this.pnlContainer.Controls.Add(this.groupBox4);
-            this.pnlContainer.Controls.Add(this.groupBox2);
-            this.pnlContainer.Controls.Add(this.groupBox3);
-            this.pnlContainer.Controls.Add(this.groupBox6);
+            this.pnlContainer.Controls.Add(this.grpActions);
+            this.pnlContainer.Controls.Add(this.grpGeneral);
+            this.pnlContainer.Controls.Add(this.grpQuestReqs);
+            this.pnlContainer.Controls.Add(this.grpQuestTasks);
             this.pnlContainer.Location = new System.Drawing.Point(221, 34);
             this.pnlContainer.Name = "pnlContainer";
             this.pnlContainer.Size = new System.Drawing.Size(765, 374);
             this.pnlContainer.TabIndex = 20;
             this.pnlContainer.Visible = false;
             // 
-            // groupBox4
+            // grpActions
             // 
-            this.groupBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox4.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox4.Controls.Add(this.btnEditCompletionEvent);
-            this.groupBox4.Controls.Add(this.btnEditStartEvent);
-            this.groupBox4.Controls.Add(this.label4);
-            this.groupBox4.Controls.Add(this.label3);
-            this.groupBox4.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox4.Location = new System.Drawing.Point(586, 0);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(171, 164);
-            this.groupBox4.TabIndex = 21;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Quest Actions:";
+            this.grpActions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpActions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpActions.Controls.Add(this.btnEditCompletionEvent);
+            this.grpActions.Controls.Add(this.btnEditStartEvent);
+            this.grpActions.Controls.Add(this.lblOnEnd);
+            this.grpActions.Controls.Add(this.lblOnStart);
+            this.grpActions.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpActions.Location = new System.Drawing.Point(586, 0);
+            this.grpActions.Name = "grpActions";
+            this.grpActions.Size = new System.Drawing.Size(171, 164);
+            this.grpActions.TabIndex = 21;
+            this.grpActions.TabStop = false;
+            this.grpActions.Text = "Quest Actions:";
             // 
             // btnEditCompletionEvent
             // 
@@ -432,36 +432,46 @@ namespace Intersect_Editor.Forms
             this.btnEditStartEvent.Text = "Edit Quest Start Event";
             this.btnEditStartEvent.Click += new System.EventHandler(this.btnEditStartEvent_Click);
             // 
-            // label4
+            // lblOnEnd
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(7, 86);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(110, 13);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "On Quest Completion:";
+            this.lblOnEnd.AutoSize = true;
+            this.lblOnEnd.Location = new System.Drawing.Point(7, 86);
+            this.lblOnEnd.Name = "lblOnEnd";
+            this.lblOnEnd.Size = new System.Drawing.Size(110, 13);
+            this.lblOnEnd.TabIndex = 1;
+            this.lblOnEnd.Text = "On Quest Completion:";
             // 
-            // label3
+            // lblOnStart
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(7, 20);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(80, 13);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "On Quest Start:";
+            this.lblOnStart.AutoSize = true;
+            this.lblOnStart.Location = new System.Drawing.Point(7, 20);
+            this.lblOnStart.Name = "lblOnStart";
+            this.lblOnStart.Size = new System.Drawing.Size(80, 13);
+            this.lblOnStart.TabIndex = 0;
+            this.lblOnStart.Text = "On Quest Start:";
             // 
-            // groupBox3
+            // grpQuestReqs
             // 
-            this.groupBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox3.Controls.Add(this.btnEditRequirements);
-            this.groupBox3.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox3.Location = new System.Drawing.Point(0, 168);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(271, 52);
-            this.groupBox3.TabIndex = 20;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Quest Requirements";
+            this.grpQuestReqs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpQuestReqs.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpQuestReqs.Controls.Add(this.btnEditRequirements);
+            this.grpQuestReqs.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpQuestReqs.Location = new System.Drawing.Point(0, 168);
+            this.grpQuestReqs.Name = "grpQuestReqs";
+            this.grpQuestReqs.Size = new System.Drawing.Size(271, 52);
+            this.grpQuestReqs.TabIndex = 20;
+            this.grpQuestReqs.TabStop = false;
+            this.grpQuestReqs.Text = "Quest Requirements";
+            // 
+            // btnEditRequirements
+            // 
+            this.btnEditRequirements.Location = new System.Drawing.Point(10, 20);
+            this.btnEditRequirements.Name = "btnEditRequirements";
+            this.btnEditRequirements.Padding = new System.Windows.Forms.Padding(5);
+            this.btnEditRequirements.Size = new System.Drawing.Size(255, 23);
+            this.btnEditRequirements.TabIndex = 0;
+            this.btnEditRequirements.Text = "Edit Quest Requirements";
+            this.btnEditRequirements.Click += new System.EventHandler(this.btnEditRequirements_Click);
             // 
             // btnCancel
             // 
@@ -585,16 +595,6 @@ namespace Intersect_Editor.Forms
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // btnEditRequirements
-            // 
-            this.btnEditRequirements.Location = new System.Drawing.Point(10, 20);
-            this.btnEditRequirements.Name = "btnEditRequirements";
-            this.btnEditRequirements.Padding = new System.Windows.Forms.Padding(5);
-            this.btnEditRequirements.Size = new System.Drawing.Size(255, 23);
-            this.btnEditRequirements.TabIndex = 0;
-            this.btnEditRequirements.Text = "Edit Quest Requirements";
-            this.btnEditRequirements.Click += new System.EventHandler(this.btnEditRequirements_Click);
-            // 
             // frmQuest
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -605,7 +605,7 @@ namespace Intersect_Editor.Forms
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.grpQuests);
             this.Controls.Add(this.pnlContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -615,17 +615,17 @@ namespace Intersect_Editor.Forms
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Quest Editor";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox7.ResumeLayout(false);
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            this.groupBox6.ResumeLayout(false);
+            this.grpQuests.ResumeLayout(false);
+            this.grpGeneral.ResumeLayout(false);
+            this.grpGeneral.PerformLayout();
+            this.grpLogOptions.ResumeLayout(false);
+            this.grpProgessionOptions.ResumeLayout(false);
+            this.grpProgessionOptions.PerformLayout();
+            this.grpQuestTasks.ResumeLayout(false);
             this.pnlContainer.ResumeLayout(false);
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
+            this.grpActions.ResumeLayout(false);
+            this.grpActions.PerformLayout();
+            this.grpQuestReqs.ResumeLayout(false);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -634,20 +634,20 @@ namespace Intersect_Editor.Forms
 
         #endregion
 
-        private DarkGroupBox groupBox1;
+        private DarkGroupBox grpQuests;
         private System.Windows.Forms.ListBox lstQuests;
-        private DarkGroupBox groupBox2;
+        private DarkGroupBox grpGeneral;
         private DarkTextBox txtName;
-        private System.Windows.Forms.Label label1;
-        private DarkGroupBox groupBox6;
+        private System.Windows.Forms.Label lblName;
+        private DarkGroupBox grpQuestTasks;
         private DarkTextBox txtEndDesc;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lblCompleted;
         private DarkTextBox txtStartDesc;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblOffer;
         private System.Windows.Forms.Panel pnlContainer;
         private DarkButton btnSave;
         private DarkButton btnCancel;
-        private DarkGroupBox groupBox3;
+        private DarkGroupBox grpQuestReqs;
         private DarkCheckBox chkRepeatable;
         private DarkCheckBox chkQuittable;
         private DarkButton btnShiftTaskDown;
@@ -655,19 +655,19 @@ namespace Intersect_Editor.Forms
         private DarkButton btnRemoveTask;
         private System.Windows.Forms.ListBox lstTasks;
         private DarkButton btnAddTask;
-        private DarkGroupBox groupBox4;
+        private DarkGroupBox grpActions;
         private DarkButton btnEditCompletionEvent;
         private DarkButton btnEditStartEvent;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblOnEnd;
+        private System.Windows.Forms.Label lblOnStart;
         private DarkTextBox txtInProgressDesc;
-        private System.Windows.Forms.Label label6;
-        private DarkGroupBox groupBox5;
-        private DarkGroupBox groupBox7;
+        private System.Windows.Forms.Label lblInProgress;
+        private DarkGroupBox grpProgessionOptions;
+        private DarkGroupBox grpLogOptions;
         private DarkCheckBox chkLogAfterComplete;
         private DarkCheckBox chkLogBeforeOffer;
         private DarkTextBox txtBeforeDesc;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label lblBeforeOffer;
         private DarkToolStrip toolStrip;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
