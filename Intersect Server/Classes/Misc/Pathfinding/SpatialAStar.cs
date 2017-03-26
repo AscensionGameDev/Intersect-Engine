@@ -28,20 +28,46 @@ using Intersect_Server.Classes.Misc.Pathfinding;
 
 namespace Intersect_Server.Classes.Misc
 {
-    public interface IPathNode<TUserContext>
-    {
-        Boolean IsWalkable(TUserContext inContext);
-    }
-
     public interface IIndexedObject
     {
         int Index { get; set; }
     }
 
+    public class PathNode : IComparer<PathNode>, IIndexedObject
+    {
+        public static readonly PathNode Comparer = new PathNode(0, 0, false);
+        
+        public Double G { get; internal set; }
+        public Double H { get; internal set; }
+        public Double F { get; internal set; }
+        public int Index { get; set; }
+
+        public int X { get; set; }
+        public int Y { get; set; }
+        public bool IsWall { get; set; }
+
+        public int Compare(PathNode x, PathNode y)
+        {
+            if (x.F < y.F)
+                return -1;
+            else if (x.F > y.F)
+                return 1;
+
+            return 0;
+        }
+
+        public PathNode(int inX, int inY, bool isWall)
+        {
+            X = inX;
+            Y = inY;
+            IsWall = isWall;
+        }
+    }
+
     /// <summary>
     /// Uses about 50 MB for a 1024x1024 grid.
     /// </summary>
-    public class SpatialAStar<TPathNode, TUserContext> where TPathNode : IPathNode<TUserContext>
+    public class SpatialAStar
     {
         private OpenCloseMap m_ClosedSet;
         private OpenCloseMap m_OpenSet;
@@ -50,68 +76,21 @@ namespace Intersect_Server.Classes.Misc
         private OpenCloseMap m_RuntimeGrid;
         private PathNode[,] m_SearchSpace;
 
-        public TPathNode[,] SearchSpace { get; private set; }
+        public PathNode[,] SearchSpace { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
 
-        protected class PathNode : IPathNode<TUserContext>, IComparer<PathNode>, IIndexedObject
-        {
-            public static readonly PathNode Comparer = new PathNode(0, 0, default(TPathNode));
-
-            public TPathNode UserContext { get; internal set; }
-            public Double G { get; internal set; }
-            public Double H { get; internal set; }
-            public Double F { get; internal set; }
-            public int Index { get; set; }
-
-            public Boolean IsWalkable(TUserContext inContext)
-            {
-                return UserContext.IsWalkable(inContext);
-            }
-
-            public int X { get; internal set; }
-            public int Y { get; internal set; }
-
-            public int Compare(PathNode x, PathNode y)
-            {
-                if (x.F < y.F)
-                    return -1;
-                else if (x.F > y.F)
-                    return 1;
-
-                return 0;
-            }
-
-            public PathNode(int inX, int inY, TPathNode inUserContext)
-            {
-                X = inX;
-                Y = inY;
-                UserContext = inUserContext;
-            }
-        }
-
-        public SpatialAStar(TPathNode[,] inGrid)
+        public SpatialAStar(PathNode[,] inGrid)
         {
             SearchSpace = inGrid;
             Width = inGrid.GetLength(0);
             Height = inGrid.GetLength(1);
-            m_SearchSpace = new PathNode[Width, Height];
+            m_SearchSpace = inGrid;
             m_ClosedSet = new OpenCloseMap(Width, Height);
             m_OpenSet = new OpenCloseMap(Width, Height);
             m_CameFrom = new PathNode[Width, Height];
             m_RuntimeGrid = new OpenCloseMap(Width, Height);
             m_OrderedOpenSet = new PriorityQueue<PathNode>(PathNode.Comparer);
-
-            for (int x = 0; x < Width; x++)
-            {
-                for (int y = 0; y < Height; y++)
-                {
-                    if (inGrid[x, y] == null)
-                        throw new ArgumentNullException();
-
-                    m_SearchSpace[x, y] = new PathNode(x, y, inGrid[x, y]);
-                }
-            }
         }
 
         protected virtual Double Heuristic(PathNode inStart, PathNode inEnd)
@@ -142,7 +121,7 @@ namespace Intersect_Server.Classes.Misc
         /// Returns null, if no path is found. Start- and End-Node are included in returned path. The user context
         /// is passed to IsWalkable().
         /// </summary>
-        public LinkedList<TPathNode> Search(Point inStartNode, Point inEndNode, TUserContext inUserContext)
+        public LinkedList<PathNode> Search(Point inStartNode, Point inEndNode, PathNode inUserContext)
         {
             PathNode startNode = m_SearchSpace[inStartNode.X, inStartNode.Y];
             PathNode endNode = m_SearchSpace[inEndNode.X, inEndNode.Y];
@@ -151,7 +130,7 @@ namespace Intersect_Server.Classes.Misc
             //watch.Start();
 
             if (startNode == endNode)
-                return new LinkedList<TPathNode>(new TPathNode[] { startNode.UserContext });
+                return new LinkedList<PathNode>(new PathNode[] { startNode });
 
             PathNode[] neighborNodes = new PathNode[8];
 
@@ -190,9 +169,9 @@ namespace Intersect_Server.Classes.Misc
 
                     //elapsed.Add(watch.ElapsedMilliseconds);
 
-                    LinkedList<TPathNode> result = ReconstructPath(m_CameFrom, m_CameFrom[endNode.X, endNode.Y]);
+                    LinkedList<PathNode> result = ReconstructPath(m_CameFrom, m_CameFrom[endNode.X, endNode.Y]);
 
-                    result.AddLast(endNode.UserContext);
+                    result.AddLast(endNode);
 
                     return result;
                 }
@@ -210,7 +189,7 @@ namespace Intersect_Server.Classes.Misc
                     if (y == null)
                         continue;
 
-                    if (!y.UserContext.IsWalkable(inUserContext))
+                    if (y.IsWall)
                         continue;
 
                     if (m_ClosedSet.Contains(y))
@@ -258,16 +237,16 @@ namespace Intersect_Server.Classes.Misc
             return null;
         }
 
-        private LinkedList<TPathNode> ReconstructPath(PathNode[,] came_from, PathNode current_node)
+        private LinkedList<PathNode> ReconstructPath(PathNode[,] came_from, PathNode current_node)
         {
-            LinkedList<TPathNode> result = new LinkedList<TPathNode>();
+            LinkedList<PathNode> result = new LinkedList<PathNode>();
 
             ReconstructPathRecursive(came_from, current_node, result);
 
             return result;
         }
 
-        private void ReconstructPathRecursive(PathNode[,] came_from, PathNode current_node, LinkedList<TPathNode> result)
+        private void ReconstructPathRecursive(PathNode[,] came_from, PathNode current_node, LinkedList<PathNode> result)
         {
             PathNode item = came_from[current_node.X, current_node.Y];
 
@@ -275,10 +254,10 @@ namespace Intersect_Server.Classes.Misc
             {
                 ReconstructPathRecursive(came_from, item, result);
 
-                result.AddLast(current_node.UserContext);
+                result.AddLast(current_node);
             }
             else
-                result.AddLast(current_node.UserContext);
+                result.AddLast(current_node);
         }
 
         private void StoreNeighborNodes(PathNode inAround, PathNode[] inNeighbors)
