@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
@@ -51,7 +52,7 @@ namespace Intersect_Editor.Forms
         private void txtEventname_TextChanged(object sender, EventArgs e)
         {
             MyEvent.Name = txtEventname.Text;
-            Text = Strings.Get("eventeditor", "title", MyEvent.MyIndex, txtEventname.Text);
+            Text = Strings.Get("eventeditor", "title", MyEvent.Id, txtEventname.Text);
         }
 
         private void lstEventCommands_SelectedIndexChanged(object sender, EventArgs e)
@@ -312,7 +313,7 @@ namespace Intersect_Editor.Forms
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.Animation = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex - 1);
+            CurrentPage.Animation = Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
         }
 
         private void chkIsGlobal_CheckedChanged(object sender, EventArgs e)
@@ -548,7 +549,7 @@ namespace Intersect_Editor.Forms
             _eventBackup = new ByteBuffer();
             _eventBackup.WriteBytes(MyEvent.EventData());
             txtEventname.Text = MyEvent.Name;
-            if (MyEvent.MyIndex < 0)
+            if (MyEvent.Id < 0)
             {
                 txtEventname.Enabled = false;
                 grpTriggers.Hide();
@@ -558,7 +559,7 @@ namespace Intersect_Editor.Forms
             cmbPreviewFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.Get("general", "none"));
-            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             if (MyEvent.CommonEvent)
             {
                 grpEntityOptions.Hide();
@@ -577,7 +578,7 @@ namespace Intersect_Editor.Forms
                 }
                 cmbTriggerVal.Items.Clear();
                 cmbTriggerVal.Items.Add(Strings.Get("general", "none"));
-                cmbTriggerVal.Items.AddRange(Database.GetGameObjectList(GameObject.Projectile));
+                cmbTriggerVal.Items.AddRange(Database.GetGameObjectList(GameObjectType.Projectile));
             }
             chkIsGlobal.Checked = Convert.ToBoolean(MyEvent.IsGlobal);
             if (MyEvent.CommonEvent) chkIsGlobal.Hide();
@@ -591,7 +592,7 @@ namespace Intersect_Editor.Forms
         /// <param name="pageNum">The index of the page to load.</param>
         public void LoadPage(int pageNum)
         {
-            Text = Strings.Get("eventeditor", "title", MyEvent.MyIndex, txtEventname.Text);
+            Text = Strings.Get("eventeditor", "title", MyEvent.Id, txtEventname.Text);
             CurrentPageIndex = pageNum;
             CurrentPage = MyEvent.MyPages[pageNum];
             for (int i = 0; i < _pageTabs.Count; i++)
@@ -628,7 +629,7 @@ namespace Intersect_Editor.Forms
                     lblTriggerVal.Show();
                     lblTriggerVal.Text = Strings.Get("eventeditor", "projectile");
                     cmbTriggerVal.Show();
-                    cmbTriggerVal.SelectedIndex = Database.GameObjectListIndex(GameObject.Projectile, CurrentPage.TriggerVal) + 1;
+                    cmbTriggerVal.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Projectile, CurrentPage.TriggerVal) + 1;
                 }
             }
             else
@@ -647,7 +648,7 @@ namespace Intersect_Editor.Forms
                 cmbPreviewFace.SelectedIndex = 0;
                 UpdateFacePreview();
             }
-            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, CurrentPage.Animation) + 1;
+            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, CurrentPage.Animation) + 1;
             chkHideName.Checked = Convert.ToBoolean(CurrentPage.HideName);
             chkDisableInspector.Checked = Convert.ToBoolean(CurrentPage.DisablePreview);
             chkDirectionFix.Checked = Convert.ToBoolean(CurrentPage.DirectionFix);
@@ -667,8 +668,8 @@ namespace Intersect_Editor.Forms
             }
             if (NewEvent)
             {
-                if (MyMap.EventIndex == MyEvent.MyIndex + 1) MyMap.EventIndex--;
-                MyMap.Events.Remove(MyEvent.MyIndex);
+                if (MyMap.EventIndex == MyEvent.Id + 1) MyMap.EventIndex--;
+                MyMap.Events.Remove(MyEvent.Id);
             }
             else
             {
@@ -684,7 +685,7 @@ namespace Intersect_Editor.Forms
             {
                 CancelCommandEdit();
             }
-            if (MyEvent.CommonEvent && MyEvent.MyIndex >= 0)
+            if (MyEvent.CommonEvent && MyEvent.Id >= 0)
             {
                 PacketSender.SendSaveObject(MyEvent);
             }
@@ -1353,7 +1354,7 @@ namespace Intersect_Editor.Forms
                             Strings.Get("eventcommandlist", "showoffer"));
                     }
                 case EventCommandType.CompleteQuestTask:
-                    var quest = QuestBase.GetQuest(command.Ints[0]);
+                    var quest = QuestBase.Lookup.Get(command.Ints[0]);
                     if (quest != null)
                     {
                         //Try to find task

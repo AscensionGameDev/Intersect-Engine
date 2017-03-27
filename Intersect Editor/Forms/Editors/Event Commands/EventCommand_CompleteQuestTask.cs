@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
@@ -20,8 +20,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _eventEditor = editor;
             InitLocalization();
             cmbQuests.Items.Clear();
-            cmbQuests.Items.AddRange(Database.GetGameObjectList(GameObject.Quest));
-            cmbQuests.SelectedIndex = Database.GameObjectListIndex(GameObject.Quest, refCommand.Ints[0]);
+            cmbQuests.Items.AddRange(Database.GetGameObjectList(GameObjectType.Quest));
+            cmbQuests.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Quest, refCommand.Ints[0]);
         }
 
         private void InitLocalization()
@@ -35,11 +35,11 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.Quest, cmbQuests.SelectedIndex);
+            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Quest, cmbQuests.SelectedIndex);
             _myCommand.Ints[1] = -1;
             if (cmbQuests.SelectedIndex > -1)
             {
-                var quest = QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, cmbQuests.SelectedIndex));
+                var quest = QuestBase.Lookup.Get(Database.GameObjectIdFromList(GameObjectType.Quest, cmbQuests.SelectedIndex));
                 if (quest != null)
                 {
                     var i = -1;
@@ -67,7 +67,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             lblTask.Hide();
             if (cmbQuests.SelectedIndex > -1)
             {
-                var quest = QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, cmbQuests.SelectedIndex));
+                var quest = QuestBase.Lookup.Get(Database.GameObjectIdFromList(GameObjectType.Quest, cmbQuests.SelectedIndex));
                 if (quest != null)
                 {
                     lblTask.Show();

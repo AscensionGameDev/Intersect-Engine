@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Intersect;
+using Intersect.Collections;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
@@ -19,11 +20,11 @@ namespace Intersect_Server.Classes.Networking
     {
         public static void SendDataToMap(int mapNum, byte[] data, Client except = null)
         {
-            if (!MapInstance.GetObjects().ContainsKey(mapNum))
+            if (!MapInstance.Lookup.Keys.Contains(mapNum))
             {
                 return;
             }
-            List<Player> Players = MapInstance.GetMap(mapNum).GetPlayersOnMap();
+            List<Player> Players = MapInstance.Lookup.Get(mapNum).GetPlayersOnMap();
             foreach (var player in Players)
             {
                 if (player != null && player.MyClient != except) player.MyClient.SendPacket(data);
@@ -32,14 +33,14 @@ namespace Intersect_Server.Classes.Networking
 
         public static void SendDataToProximity(int mapNum, byte[] data, Client except = null)
         {
-            if (!MapInstance.GetObjects().ContainsKey(mapNum))
+            if (!MapInstance.Lookup.Keys.Contains(mapNum))
             {
                 return;
             }
             SendDataToMap(mapNum, data);
-            for (int i = 0; i < MapInstance.GetMap(mapNum).SurroundingMaps.Count; i++)
+            for (int i = 0; i < MapInstance.Lookup.Get(mapNum).SurroundingMaps.Count; i++)
             {
-                SendDataToMap(MapInstance.GetMap(mapNum).SurroundingMaps[i], data, except);
+                SendDataToMap(MapInstance.Lookup.Get(mapNum).SurroundingMaps[i], data, except);
             }
         }
 
@@ -95,7 +96,7 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.MapData);
             bf.WriteLong(mapNum);
-            var map = MapInstance.GetMap(mapNum);
+            var map = MapInstance.Lookup.Get(mapNum);
             if (map == null)
             {
                 bf.WriteInteger(1);
@@ -114,29 +115,29 @@ namespace Intersect_Server.Classes.Networking
                 byte[] MapData = null;
                 if (client.IsEditor)
                 {
-                    MapData = MapInstance.GetMap(mapNum).GetMapData(false);
+                    MapData = MapInstance.Lookup.Get(mapNum).GetMapData(false);
                     bf.WriteLong(MapData.Length);
                     bf.WriteBytes(MapData);
-                    bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridX);
-                    bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridY);
+                    bf.WriteInteger(MapInstance.Lookup.Get(mapNum).MapGridX);
+                    bf.WriteInteger(MapInstance.Lookup.Get(mapNum).MapGridY);
                 }
                 else
                 {
                     if (client.SentMaps.ContainsKey(mapNum))
                     {
                         if (client.SentMaps[mapNum].Item1 > Globals.System.GetTimeMs() &&
-                            client.SentMaps[mapNum].Item2 == MapInstance.GetMap(mapNum).Revision) return;
+                            client.SentMaps[mapNum].Item2 == MapInstance.Lookup.Get(mapNum).Revision) return;
                         client.SentMaps.Remove(mapNum);
                     }
                     client.SentMaps.Add(mapNum,
-                        new Tuple<long, int>(Globals.System.GetTimeMs() + 5000, MapInstance.GetMap(mapNum).Revision));
-                    MapData = MapInstance.GetMap(mapNum).GetClientMapData();
+                        new Tuple<long, int>(Globals.System.GetTimeMs() + 5000, MapInstance.Lookup.Get(mapNum).Revision));
+                    MapData = MapInstance.Lookup.Get(mapNum).GetClientMapData();
                     bf.WriteLong(MapData.Length);
                     bf.WriteBytes(MapData);
-                    bf.WriteInteger(MapInstance.GetMap(mapNum).Revision);
-                    bf.WriteBytes(MapInstance.GetMap(mapNum).Autotiles.GetData());
-                    bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridX);
-                    bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridY);
+                    bf.WriteInteger(MapInstance.Lookup.Get(mapNum).Revision);
+                    bf.WriteBytes(MapInstance.Lookup.Get(mapNum).Autotiles.GetData());
+                    bf.WriteInteger(MapInstance.Lookup.Get(mapNum).MapGridX);
+                    bf.WriteInteger(MapInstance.Lookup.Get(mapNum).MapGridY);
                     if (Options.GameBorderStyle == 1)
                     {
                         bf.WriteInteger(1);
@@ -146,7 +147,7 @@ namespace Intersect_Server.Classes.Networking
                     }
                     else if (Options.GameBorderStyle == 0)
                     {
-                        if (0 == MapInstance.GetMap(mapNum).MapGridX)
+                        if (0 == MapInstance.Lookup.Get(mapNum).MapGridX)
                         {
                             bf.WriteInteger(1);
                         }
@@ -154,8 +155,8 @@ namespace Intersect_Server.Classes.Networking
                         {
                             bf.WriteInteger(0);
                         }
-                        if (Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].XMax - 1 ==
-                            MapInstance.GetMap(mapNum).MapGridX)
+                        if (Database.MapGrids[MapInstance.Lookup.Get(mapNum).MapGrid].XMax - 1 ==
+                            MapInstance.Lookup.Get(mapNum).MapGridX)
                         {
                             bf.WriteInteger(1);
                         }
@@ -163,7 +164,7 @@ namespace Intersect_Server.Classes.Networking
                         {
                             bf.WriteInteger(0);
                         }
-                        if (0 == MapInstance.GetMap(mapNum).MapGridY)
+                        if (0 == MapInstance.Lookup.Get(mapNum).MapGridY)
                         {
                             bf.WriteInteger(1);
                         }
@@ -171,8 +172,8 @@ namespace Intersect_Server.Classes.Networking
                         {
                             bf.WriteInteger(0);
                         }
-                        if (Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].YMax - 1 ==
-                            MapInstance.GetMap(mapNum).MapGridY)
+                        if (Database.MapGrids[MapInstance.Lookup.Get(mapNum).MapGrid].YMax - 1 ==
+                            MapInstance.Lookup.Get(mapNum).MapGridY)
                         {
                             bf.WriteInteger(1);
                         }
@@ -196,7 +197,7 @@ namespace Intersect_Server.Classes.Networking
                 }
                 else
                 {
-                    MapInstance.GetMap(mapNum).SendMapEntitiesTo(client.Entity);
+                    MapInstance.Lookup.Get(mapNum).SendMapEntitiesTo(client.Entity);
                     SendMapItems(client, mapNum);
                 }
             }
@@ -208,14 +209,14 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.MapData);
             bf.WriteLong(mapNum);
-            if (MapInstance.GetMap(mapNum) == null)
+            if (MapInstance.Lookup.Get(mapNum) == null)
             {
                 bf.WriteInteger(1);
             }
             else
             {
                 bf.WriteInteger(0);
-                byte[] MapData = MapInstance.GetMap(mapNum).GetMapData(false);
+                byte[] MapData = MapInstance.Lookup.Get(mapNum).GetMapData(false);
                 bf.WriteLong(MapData.Length);
                 bf.WriteBytes(MapData);
             }
@@ -475,16 +476,16 @@ namespace Intersect_Server.Classes.Networking
         public static void SendGameData(Client client)
         {
             //Send massive amounts of game data
-            foreach (var val in Enum.GetValues(typeof(GameObject)))
+            foreach (var val in Enum.GetValues(typeof(GameObjectType)))
             {
-                if ((GameObject) val == GameObject.Map) continue;
-                if (((GameObject) val == GameObject.Shop ||
-                     (GameObject) val == GameObject.CommonEvent ||
-                     (GameObject) val == GameObject.PlayerSwitch ||
-                     (GameObject) val == GameObject.PlayerVariable ||
-                     (GameObject) val == GameObject.ServerSwitch ||
-                     (GameObject) val == GameObject.ServerVariable) && !client.IsEditor) continue;
-                SendGameObjects(client, (GameObject) val);
+                if ((GameObjectType) val == GameObjectType.Map) continue;
+                if (((GameObjectType) val == GameObjectType.Shop ||
+                     (GameObjectType) val == GameObjectType.CommonEvent ||
+                     (GameObjectType) val == GameObjectType.PlayerSwitch ||
+                     (GameObjectType) val == GameObjectType.PlayerVariable ||
+                     (GameObjectType) val == GameObjectType.ServerSwitch ||
+                     (GameObjectType) val == GameObjectType.ServerVariable) && !client.IsEditor) continue;
+                SendGameObjects(client, (GameObjectType) val);
             }
             //Let the client/editor know they have everything now
             var bf = new ByteBuffer();
@@ -787,8 +788,8 @@ namespace Intersect_Server.Classes.Networking
         public static void SendMapList(Client client)
         {
             var bf = new ByteBuffer();
-            Dictionary<int, MapBase> gameMaps = MapInstance.GetObjects()
-                .ToDictionary(k => k.Key, v => (MapBase) v.Value);
+            IntObjectLookup<MapBase> gameMaps = new IntObjectLookup<MapBase>();
+            foreach (var pair in MapInstance.Lookup.Copy) gameMaps.Set(pair.Key, pair.Value);
             bf.WriteLong((int) ServerPackets.MapList);
             bf.WriteBytes(MapList.GetList().Data(gameMaps));
             client.SendPacket(bf.ToArray());
@@ -798,8 +799,8 @@ namespace Intersect_Server.Classes.Networking
         public static void SendMapListToAll()
         {
             var bf = new ByteBuffer();
-            Dictionary<int, MapBase> gameMaps = MapInstance.GetObjects()
-                .ToDictionary(k => k.Key, v => (MapBase) v.Value);
+            IntObjectLookup<MapBase> gameMaps = new IntObjectLookup<MapBase>();
+            foreach (var pair in MapInstance.Lookup.Copy) gameMaps.Set(pair.Key, pair.Value);
             bf.WriteLong((int) ServerPackets.MapList);
             bf.WriteBytes(MapList.GetList().Data(gameMaps));
             SendDataToAll(bf.ToArray());
@@ -820,13 +821,13 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.MapItems);
             bf.WriteInteger(mapNum);
-            bf.WriteInteger(MapInstance.GetMap(mapNum).MapItems.Count);
-            for (int i = 0; i < MapInstance.GetMap(mapNum).MapItems.Count; i++)
+            bf.WriteInteger(MapInstance.Lookup.Get(mapNum).MapItems.Count);
+            for (int i = 0; i < MapInstance.Lookup.Get(mapNum).MapItems.Count; i++)
             {
-                if (MapInstance.GetMap(mapNum).MapItems[i] != null)
+                if (MapInstance.Lookup.Get(mapNum).MapItems[i] != null)
                 {
                     bf.WriteInteger(i);
-                    bf.WriteBytes(MapInstance.GetMap(mapNum).MapItems[i].Data());
+                    bf.WriteBytes(MapInstance.Lookup.Get(mapNum).MapItems[i].Data());
                 }
                 else
                 {
@@ -842,10 +843,10 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.MapItems);
             bf.WriteInteger(mapNum);
-            bf.WriteInteger(MapInstance.GetMap(mapNum).MapItems.Count);
-            for (int i = 0; i < MapInstance.GetMap(mapNum).MapItems.Count; i++)
+            bf.WriteInteger(MapInstance.Lookup.Get(mapNum).MapItems.Count);
+            for (int i = 0; i < MapInstance.Lookup.Get(mapNum).MapItems.Count; i++)
             {
-                bf.WriteBytes(MapInstance.GetMap(mapNum).MapItems[i].Data());
+                bf.WriteBytes(MapInstance.Lookup.Get(mapNum).MapItems[i].Data());
             }
             SendDataToProximity(mapNum, bf.ToArray());
             bf.Dispose();
@@ -857,15 +858,15 @@ namespace Intersect_Server.Classes.Networking
             bf.WriteLong((int) ServerPackets.MapItemUpdate);
             bf.WriteInteger(mapNum);
             bf.WriteInteger(index);
-            if (MapInstance.GetMap(mapNum).MapItems[index] == null ||
-                MapInstance.GetMap(mapNum).MapItems[index].ItemNum == -1)
+            if (MapInstance.Lookup.Get(mapNum).MapItems[index] == null ||
+                MapInstance.Lookup.Get(mapNum).MapItems[index].ItemNum == -1)
             {
                 bf.WriteInteger(-1);
             }
             else
             {
                 bf.WriteInteger(1);
-                bf.WriteBytes(MapInstance.GetMap(mapNum).MapItems[index].Data());
+                bf.WriteBytes(MapInstance.Lookup.Get(mapNum).MapItems[index].Data());
             }
             SendDataToProximity(mapNum, bf.ToArray());
             bf.Dispose();
@@ -1032,13 +1033,13 @@ namespace Intersect_Server.Classes.Networking
             {
                 for (int y = 0; y < Database.MapGrids[gridIndex].Height; y++)
                 {
-                    if (MapInstance.GetMap(Database.MapGrids[gridIndex].MyGrid[x, y]) != null)
+                    if (MapInstance.Lookup.Get(Database.MapGrids[gridIndex].MyGrid[x, y]) != null)
                     {
                         bf.WriteInteger(Database.MapGrids[gridIndex].MyGrid[x, y]);
                         if (client.IsEditor)
                         {
-                            bf.WriteString(MapInstance.GetMap(Database.MapGrids[gridIndex].MyGrid[x, y]).Name);
-                            bf.WriteInteger(MapInstance.GetMap(Database.MapGrids[gridIndex].MyGrid[x, y]).Revision);
+                            bf.WriteString(MapInstance.Lookup.Get(Database.MapGrids[gridIndex].MyGrid[x, y]).Name);
+                            bf.WriteInteger(MapInstance.Lookup.Get(Database.MapGrids[gridIndex].MyGrid[x, y]).Revision);
                         }
                     }
                     else
@@ -1163,10 +1164,10 @@ namespace Intersect_Server.Classes.Networking
 
         public static void SendOpenShop(Client client, int shopNum)
         {
-            if (ShopBase.GetShop(shopNum) == null) return;
+            if (ShopBase.Lookup.Get(shopNum) == null) return;
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.OpenShop);
-            bf.WriteBytes(ShopBase.GetShop(shopNum).ShopData());
+            bf.WriteBytes(ShopBase.Lookup.Get(shopNum).ShopData());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1203,7 +1204,7 @@ namespace Intersect_Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.OpenCraftingBench);
-            bf.WriteBytes(BenchBase.GetCraft(benchNum).CraftData());
+            bf.WriteBytes(BenchBase.Lookup.Get(benchNum).CraftData());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1235,89 +1236,89 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendGameObjects(Client client, GameObject type)
+        public static void SendGameObjects(Client client, GameObjectType type)
         {
             switch (type)
             {
-                case GameObject.Animation:
+                case GameObjectType.Animation:
                     foreach (var obj in AnimationBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Class:
-                    foreach (var obj in ClassBase.GetObjects())
+                case GameObjectType.Class:
+                    foreach (var obj in ClassBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Item:
-                    foreach (var obj in ItemBase.GetObjects())
+                case GameObjectType.Item:
+                    foreach (var obj in ItemBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Npc:
-                    foreach (var obj in NpcBase.GetObjects())
+                case GameObjectType.Npc:
+                    foreach (var obj in NpcBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Projectile:
-                    foreach (var obj in ProjectileBase.GetObjects())
+                case GameObjectType.Projectile:
+                    foreach (var obj in ProjectileBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Quest:
-                    foreach (var obj in QuestBase.GetObjects())
+                case GameObjectType.Quest:
+                    foreach (var obj in QuestBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Resource:
-                    foreach (var obj in ResourceBase.GetObjects())
+                case GameObjectType.Resource:
+                    foreach (var obj in ResourceBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Shop:
-                    foreach (var obj in ShopBase.GetObjects())
+                case GameObjectType.Shop:
+                    foreach (var obj in ShopBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Spell:
-                    foreach (var obj in SpellBase.GetObjects())
+                case GameObjectType.Spell:
+                    foreach (var obj in SpellBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Bench:
-                    foreach (var obj in BenchBase.GetObjects())
+                case GameObjectType.Bench:
+                    foreach (var obj in BenchBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Map:
+                case GameObjectType.Map:
                     throw new Exception("Maps are not sent as batches, use the proper send map functions");
-                case GameObject.CommonEvent:
-                    foreach (var obj in EventBase.GetObjects())
+                case GameObjectType.CommonEvent:
+                    foreach (var obj in EventBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.PlayerSwitch:
-                    foreach (var obj in PlayerSwitchBase.GetObjects())
+                case GameObjectType.PlayerSwitch:
+                    foreach (var obj in PlayerSwitchBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.PlayerVariable:
-                    foreach (var obj in PlayerVariableBase.GetObjects())
+                case GameObjectType.PlayerVariable:
+                    foreach (var obj in PlayerVariableBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.ServerSwitch:
-                    foreach (var obj in ServerSwitchBase.GetObjects())
+                case GameObjectType.ServerSwitch:
+                    foreach (var obj in ServerSwitchBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.ServerVariable:
-                    foreach (var obj in ServerVariableBase.GetObjects())
+                case GameObjectType.ServerVariable:
+                    foreach (var obj in ServerVariableBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Tileset:
+                case GameObjectType.Tileset:
                     foreach (var obj in TilesetBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObject.Time:
+                case GameObjectType.Time:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
 
-        public static void SendGameObject(Client client, DatabaseObject obj, bool deleted = false, bool another = false)
+        public static void SendGameObject(Client client, IDatabaseObject obj, bool deleted = false, bool another = false)
         {
             if (client == null) return;
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.GameObject);
-            bf.WriteInteger((int) obj.GameObjectType);
+            bf.WriteInteger((int) obj.Type);
             bf.WriteInteger(obj.Id);
             bf.WriteInteger(Convert.ToInt32(another));
             bf.WriteInteger(Convert.ToInt32(deleted));
@@ -1326,13 +1327,13 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendGameObjectToAll(DatabaseObject obj, bool deleted = false, bool another = false)
+        public static void SendGameObjectToAll(IDatabaseObject obj, bool deleted = false, bool another = false)
         {
             foreach (var client in Globals.Clients)
                 SendGameObject(client, obj, deleted, another);
         }
 
-        public static void SendOpenEditor(Client client, GameObject type)
+        public static void SendOpenEditor(Client client, GameObjectType type)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.GameObjectEditor);
@@ -1376,20 +1377,20 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.EnterMap);
             bf.WriteLong(mapNum);
-            if (!(MapInstance.GetMap(mapNum).MapGridX == -1 || MapInstance.GetMap(mapNum).MapGridY == -1))
+            if (!(MapInstance.Lookup.Get(mapNum).MapGridX == -1 || MapInstance.Lookup.Get(mapNum).MapGridY == -1))
             {
-                for (var y = MapInstance.GetMap(mapNum).MapGridY - 1; y < MapInstance.GetMap(mapNum).MapGridY + 2; y++)
+                for (var y = MapInstance.Lookup.Get(mapNum).MapGridY - 1; y < MapInstance.Lookup.Get(mapNum).MapGridY + 2; y++)
                 {
-                    for (var x = MapInstance.GetMap(mapNum).MapGridX - 1;
-                        x < MapInstance.GetMap(mapNum).MapGridX + 2;
+                    for (var x = MapInstance.Lookup.Get(mapNum).MapGridX - 1;
+                        x < MapInstance.Lookup.Get(mapNum).MapGridX + 2;
                         x++)
                     {
-                        if (x >= Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].XMin &&
-                            x < Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].XMax &&
-                            y >= Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].YMin &&
-                            y < Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].YMax)
+                        if (x >= Database.MapGrids[MapInstance.Lookup.Get(mapNum).MapGrid].XMin &&
+                            x < Database.MapGrids[MapInstance.Lookup.Get(mapNum).MapGrid].XMax &&
+                            y >= Database.MapGrids[MapInstance.Lookup.Get(mapNum).MapGrid].YMin &&
+                            y < Database.MapGrids[MapInstance.Lookup.Get(mapNum).MapGrid].YMax)
                         {
-                            bf.WriteLong(Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].MyGrid[x, y]);
+                            bf.WriteLong(Database.MapGrids[MapInstance.Lookup.Get(mapNum).MapGrid].MyGrid[x, y]);
                         }
                         else
                         {

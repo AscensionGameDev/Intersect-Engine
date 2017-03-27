@@ -85,7 +85,7 @@ namespace Intersect_Migration_Tool
             {
                 writer.WriteLine("Message :" + ((Exception) e.ExceptionObject).Message + "<br/>" + Environment.NewLine +
                                  "StackTrace :" + ((Exception) e.ExceptionObject).StackTrace +
-                                 "" + Environment.NewLine + "Date :" + DateTime.Now.ToString());
+                                 "" + Environment.NewLine + "Date :" + DateTime.Now);
                 writer.WriteLine(Environment.NewLine +
                                  "-----------------------------------------------------------------------------" +
                                  Environment.NewLine);

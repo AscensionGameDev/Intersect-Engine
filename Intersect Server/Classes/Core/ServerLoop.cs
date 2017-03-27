@@ -14,8 +14,7 @@ namespace Intersect_Server.Classes.Core
             while (Globals.ServerStarted)
             {
                 var timeMs = Globals.System.GetTimeMs();
-                var maps = MapInstance.GetObjects();
-                foreach (var map in maps)
+                foreach (var map in MapInstance.Lookup.Copy)
                 {
                     if (map.Value.Active) map.Value.Update(timeMs);
                 }

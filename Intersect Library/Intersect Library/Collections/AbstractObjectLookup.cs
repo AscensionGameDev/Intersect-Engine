@@ -1,50 +1,81 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using Intersect.GameObjects;
 using Intersect.Logging;
+using System.Linq;
 
 namespace Intersect.Collections
 {
     public abstract class AbstractObjectLookup<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> where TValue : IGameObject<TKey, TValue>
     {
+        private readonly object mLock;
+
         private readonly Dictionary<TKey, TValue> mMutableMap;
+        private readonly ConstructorInfo mConstructor;
 
         protected AbstractObjectLookup()
         {
+            mLock = new object();
             mMutableMap = new Dictionary<TKey, TValue>();
             ReadOnlyMap = new ReadOnlyDictionary<TKey, TValue>(mMutableMap);
+
+            mConstructor = ValueType.GetConstructor(new[] {KeyType});
+            if (mConstructor == null)
+            {
+                //throw new ArgumentNullException($"Missing constructor with parameter '{KeyType.Name}'.");
+            }
         }
 
-        public int Count => mMutableMap.Count;
-        public IDictionary<TKey, TValue> ReadOnlyMap { get; }
-        public ICollection<KeyValuePair<TKey, TValue>> Pairs => ReadOnlyMap;
-        public ICollection<TKey> Keys => ReadOnlyMap.Keys;
-        public ICollection<TValue> Values => ReadOnlyMap.Values;
+        public Type KeyType => typeof(TKey);
+        public Type ValueType => typeof(TValue);
+        public virtual int Count => mMutableMap?.Count ?? -1;
+        public virtual IDictionary<TKey, TValue> ReadOnlyMap { get; }
+        public virtual IDictionary<TKey, TValue> Copy => ReadOnlyMap.ToDictionary(pair => pair.Key, pair => pair.Value);
+        public virtual ICollection<KeyValuePair<TKey, TValue>> Pairs => ReadOnlyMap;
+        public virtual ICollection<TKey> Keys => ReadOnlyMap?.Keys;
+        public virtual ICollection<TValue> Values => ReadOnlyMap?.Values;
 
         protected abstract bool Validate(TKey key);
 
-        public TValue this[TKey key]
+        public virtual TValue this[TKey key]
         {
             get { return Get(key); }
-            set { Add(key, value); }
+            set { Set(key, value); }
         }
 
-        public TValue Get(TKey key)
+        public virtual TValue Get(TKey key)
         {
-            if (Validate(key) && mMutableMap.TryGetValue(key, out TValue value))
-                return value;
+            if (!Validate(key)) return default(TValue);
 
-            return default(TValue);
+            if (mMutableMap == null)
+            {
+                throw new AccessViolationException("Internal map is null despite being set in the constructor.");
+            }
+
+            lock (mLock)
+            {
+                return mMutableMap.TryGetValue(key, out TValue value) ? value : default(TValue);
+            }
         }
 
-        public bool Add(TValue value)
+        public virtual bool TryGetValue(TKey key, out TValue value)
+        {
+            lock (mLock)
+            {
+                return mMutableMap.TryGetValue(key, out value);
+            }
+        }
+
+        private bool Add(TValue value)
         {
             if (value != null) return Add(value.Id, value);
             Log.Warn("Tried to add a null value to the collection.");
             return false;
         }
 
-        public bool Add(TKey key, TValue value)
+        private bool Add(TKey key, TValue value)
         {
             if (value == null)
             {
@@ -52,27 +83,81 @@ namespace Intersect.Collections
                 return false;
             }
 
-            if (!Validate(key))
+            if (!Validate(key)) return false;
+
+            if (mMutableMap == null)
+            {
+                throw new AccessViolationException("Internal map is null despite being set in the constructor.");
+            }
+
+            lock (mLock)
+            {
+                if (!mMutableMap.ContainsKey(key)) return Set(key, value);
+            }
+
+            Log.Error("Collection already contains object with key '{0}'.", key);
+            return false;
+        }
+
+        private TValue AddNew(TKey key)
+        {
+            var value = (TValue) mConstructor?.Invoke(new object[] {key});
+            if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType.Name}'.");
+            return Add(key, value) ? value : default(TValue);
+        }
+
+        public virtual bool Set(TKey key, TValue value)
+        {
+            if (value == null)
+            {
+                Log.Warn("Tried to set a null value for key '{0}'.", key);
                 return false;
+            }
 
-            if (mMutableMap.ContainsKey(key))
-                Log.Warn("Collection already contains object with key '{0}'.", key);
+            if (!Validate(key)) return false;
 
-            mMutableMap[key] = value;
+            if (mMutableMap == null)
+            {
+                throw new AccessViolationException("Internal map is null despite being set in the constructor.");
+            }
+
+            lock (mLock)
+            {
+                mMutableMap[key] = value;
+            }
+
             return true;
         }
 
-        public bool Delete(TValue value)
+        public virtual bool Delete(TValue value)
         {
-            return value != null && mMutableMap.Remove(value.Id);
+            lock (mLock)
+            {
+                return value != null && (mMutableMap?.Remove(value.Id) ?? false);
+            }
         }
 
-        public void Clear()
+        public virtual void Clear()
         {
-            mMutableMap.Clear();
+            lock (mLock)
+            {
+                mMutableMap?.Clear();
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => Pairs.GetEnumerator();
+
+        public virtual IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        {
+            if (Pairs == null)
+            {
+                throw new AccessViolationException("Lookup pairs somehow null.");
+            }
+
+            lock (mLock)
+            {
+                return Pairs.GetEnumerator();
+            }
+        }
     }
 }

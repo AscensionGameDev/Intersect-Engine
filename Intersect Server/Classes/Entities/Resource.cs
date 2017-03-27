@@ -87,7 +87,7 @@ namespace Intersect_Server.Classes.Entities
                     if (tileHelper.TryFix())
                     {
                         //Tile is valid.. let's see if its open
-                        var map = MapInstance.GetMap(tileHelper.GetMap());
+                        var map = MapInstance.Lookup.Get(tileHelper.GetMap());
                         if (map != null)
                         {
                             if (!map.TileBlocked(tileHelper.GetX(), tileHelper.GetY()))
@@ -126,9 +126,9 @@ namespace Intersect_Server.Classes.Entities
                 // Drop items
                 foreach (var item in Inventory)
                 {
-                    if (ItemBase.GetItem(item.ItemNum) != null)
+                    if (ItemBase.Lookup.Get(item.ItemNum) != null)
                     {
-                        MapInstance.GetMap(selectedTile.GetMap())
+                        MapInstance.Lookup.Get(selectedTile.GetMap())
                             .SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.ItemVal);
                     }
                 }

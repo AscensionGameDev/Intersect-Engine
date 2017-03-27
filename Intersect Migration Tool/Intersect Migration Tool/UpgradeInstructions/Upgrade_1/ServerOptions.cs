@@ -247,7 +247,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Failed to load config.xml. Exception info: " + ex.ToString());
+                    Console.WriteLine("Failed to load config.xml. Exception info: " + ex);
                     return false;
                 }
             }

@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows.Forms;
 using DarkUI.Forms;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using Intersect_Editor.Classes;
@@ -22,7 +23,7 @@ namespace Intersect_Editor.Forms
         public delegate void HandleDisconnect();
 
         //Cross Thread Delegates
-        public delegate void TryOpenEditor(GameObject type);
+        public delegate void TryOpenEditor(GameObjectType type);
 
         public delegate void UpdateTimeList();
 
@@ -306,7 +307,7 @@ namespace Intersect_Editor.Forms
 
         public void EnterMap(int mapNum)
         {
-            Globals.CurrentMap = MapInstance.GetMap(mapNum);
+            Globals.CurrentMap = MapInstance.Lookup.Get(mapNum);
             Globals.LoadingMap = mapNum;
             if (Globals.CurrentMap == null)
             {
@@ -681,7 +682,7 @@ namespace Intersect_Editor.Forms
             {
                 SaveMap();
             }
-            PacketSender.SendCreateMap(-1, ((DatabaseObject) Globals.CurrentMap).Id, null);
+            PacketSender.SendCreateMap(-1, ((IDatabaseObject) Globals.CurrentMap).Id, null);
         }
 
         private void exportMapToolStripMenuItem_Click(object sender, EventArgs e)
@@ -838,67 +839,67 @@ namespace Intersect_Editor.Forms
         //Content Editors
         private void itemEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObject.Item);
+            PacketSender.SendOpenEditor(GameObjectType.Item);
         }
 
         private void npcEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObject.Npc);
+            PacketSender.SendOpenEditor(GameObjectType.Npc);
         }
 
         private void spellEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObject.Spell);
+            PacketSender.SendOpenEditor(GameObjectType.Spell);
         }
 
         private void craftingEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObject.Bench);
+            PacketSender.SendOpenEditor(GameObjectType.Bench);
         }
 
         private void animationEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObject.Animation);
+            PacketSender.SendOpenEditor(GameObjectType.Animation);
         }
 
         private void resourceEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObject.Resource);
+            PacketSender.SendOpenEditor(GameObjectType.Resource);
         }
 
         private void classEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObject.Class);
+            PacketSender.SendOpenEditor(GameObjectType.Class);
         }
 
         private void questEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObject.Quest);
+            PacketSender.SendOpenEditor(GameObjectType.Quest);
         }
 
         private void projectileEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObject.Projectile);
+            PacketSender.SendOpenEditor(GameObjectType.Projectile);
         }
 
         private void commonEventEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObject.CommonEvent);
+            PacketSender.SendOpenEditor(GameObjectType.CommonEvent);
         }
 
         private void switchVariableEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObject.PlayerSwitch);
+            PacketSender.SendOpenEditor(GameObjectType.PlayerSwitch);
         }
 
         private void shopEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObject.Shop);
+            PacketSender.SendOpenEditor(GameObjectType.Shop);
         }
 
         private void timeEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObject.Time);
+            PacketSender.SendOpenEditor(GameObjectType.Time);
         }
 
         //Help
@@ -1150,13 +1151,13 @@ namespace Intersect_Editor.Forms
         }
 
         //Cross Threading Delegate Methods
-        private void TryOpenEditorMethod(GameObject type)
+        private void TryOpenEditorMethod(GameObjectType type)
         {
             if (Globals.CurrentEditor == -1)
             {
                 switch (type)
                 {
-                    case GameObject.Animation:
+                    case GameObjectType.Animation:
                         if (_animationEditor == null || _animationEditor.Visible == false)
                         {
                             _animationEditor = new frmAnimation();
@@ -1164,7 +1165,7 @@ namespace Intersect_Editor.Forms
                             _animationEditor.Show();
                         }
                         break;
-                    case GameObject.Item:
+                    case GameObjectType.Item:
                         if (_itemEditor == null || _itemEditor.Visible == false)
                         {
                             _itemEditor = new FrmItem();
@@ -1172,7 +1173,7 @@ namespace Intersect_Editor.Forms
                             _itemEditor.Show();
                         }
                         break;
-                    case GameObject.Npc:
+                    case GameObjectType.Npc:
                         if (_npcEditor == null || _npcEditor.Visible == false)
                         {
                             _npcEditor = new frmNpc();
@@ -1180,7 +1181,7 @@ namespace Intersect_Editor.Forms
                             _npcEditor.Show();
                         }
                         break;
-                    case GameObject.Resource:
+                    case GameObjectType.Resource:
                         if (_resourceEditor == null || _resourceEditor.Visible == false)
                         {
                             _resourceEditor = new frmResource();
@@ -1188,7 +1189,7 @@ namespace Intersect_Editor.Forms
                             _resourceEditor.Show();
                         }
                         break;
-                    case GameObject.Spell:
+                    case GameObjectType.Spell:
                         if (_spellEditor == null || _spellEditor.Visible == false)
                         {
                             _spellEditor = new frmSpell();
@@ -1196,7 +1197,7 @@ namespace Intersect_Editor.Forms
                             _spellEditor.Show();
                         }
                         break;
-                    case GameObject.Bench:
+                    case GameObjectType.Bench:
                         if (_craftEditor == null || _craftEditor.Visible == false)
                         {
                             _craftEditor = new frmCrafting();
@@ -1204,7 +1205,7 @@ namespace Intersect_Editor.Forms
                             _craftEditor.Show();
                         }
                         break;
-                    case GameObject.Class:
+                    case GameObjectType.Class:
                         if (_classEditor == null || _classEditor.Visible == false)
                         {
                             _classEditor = new frmClass();
@@ -1212,7 +1213,7 @@ namespace Intersect_Editor.Forms
                             _classEditor.Show();
                         }
                         break;
-                    case GameObject.Quest:
+                    case GameObjectType.Quest:
                         if (_questEditor == null || _questEditor.Visible == false)
                         {
                             _questEditor = new frmQuest();
@@ -1220,7 +1221,7 @@ namespace Intersect_Editor.Forms
                             _questEditor.Show();
                         }
                         break;
-                    case GameObject.Projectile:
+                    case GameObjectType.Projectile:
                         if (_projectileEditor == null || _projectileEditor.Visible == false)
                         {
                             _projectileEditor = new frmProjectile();
@@ -1228,14 +1229,14 @@ namespace Intersect_Editor.Forms
                             _projectileEditor.Show();
                         }
                         break;
-                    case GameObject.CommonEvent:
+                    case GameObjectType.CommonEvent:
                         if (_commonEventEditor == null || _commonEventEditor.Visible == false)
                         {
                             _commonEventEditor = new frmCommonEvent();
                             _commonEventEditor.Show();
                         }
                         break;
-                    case GameObject.PlayerSwitch:
+                    case GameObjectType.PlayerSwitch:
                         if (_switchVariableEditor == null || _switchVariableEditor.Visible == false)
                         {
                             _switchVariableEditor = new frmSwitchVariable();
@@ -1243,7 +1244,7 @@ namespace Intersect_Editor.Forms
                             _switchVariableEditor.Show();
                         }
                         break;
-                    case GameObject.Shop:
+                    case GameObjectType.Shop:
                         if (_shopEditor == null || _shopEditor.Visible == false)
                         {
                             _shopEditor = new frmShop();
@@ -1251,7 +1252,7 @@ namespace Intersect_Editor.Forms
                             _shopEditor.Show();
                         }
                         break;
-                    case GameObject.Time:
+                    case GameObjectType.Time:
                         if (_timeEditor == null || _timeEditor.Visible == false)
                         {
                             _timeEditor = new frmTime();

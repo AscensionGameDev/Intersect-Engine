@@ -24,11 +24,11 @@ namespace Intersect_Server.Classes.Maps
         public MapGrid(int startMap, int myGridIndex)
         {
             _myIndex = myGridIndex;
-            MapInstance.GetMap(startMap).MapGrid = myGridIndex;
-            MapInstance.GetMap(startMap).MapGridX = 0;
-            MapInstance.GetMap(startMap).MapGridY = 0;
+            MapInstance.Lookup.Get(startMap).MapGrid = myGridIndex;
+            MapInstance.Lookup.Get(startMap).MapGridX = 0;
+            MapInstance.Lookup.Get(startMap).MapGridY = 0;
             MyMaps.Clear();
-            CalculateBounds(MapInstance.GetMap(startMap), 0, 0);
+            CalculateBounds(MapInstance.Lookup.Get(startMap), 0, 0);
 
             Width = _botRight.X - _topLeft.X + 1;
             Height = _botRight.Y - _topLeft.Y + 1;
@@ -48,13 +48,13 @@ namespace Intersect_Server.Classes.Maps
                     MyGrid[x, y] = -1;
                     for (int i = 0; i < tmpMaps.Count; i++)
                     {
-                        if (MapInstance.GetMap(tmpMaps[i]).MapGridX + Math.Abs(_topLeft.X) == x &&
-                            MapInstance.GetMap(tmpMaps[i]).MapGridY + Math.Abs(_topLeft.Y) == y)
+                        if (MapInstance.Lookup.Get(tmpMaps[i]).MapGridX + Math.Abs(_topLeft.X) == x &&
+                            MapInstance.Lookup.Get(tmpMaps[i]).MapGridY + Math.Abs(_topLeft.Y) == y)
                         {
                             MyGrid[x, y] = tmpMaps[i];
-                            MapInstance.GetMap(tmpMaps[i]).MapGrid = myGridIndex;
-                            MapInstance.GetMap(tmpMaps[i]).MapGridX = (int) x;
-                            MapInstance.GetMap(tmpMaps[i]).MapGridY = (int) y;
+                            MapInstance.Lookup.Get(tmpMaps[i]).MapGrid = myGridIndex;
+                            MapInstance.Lookup.Get(tmpMaps[i]).MapGridX = (int) x;
+                            MapInstance.Lookup.Get(tmpMaps[i]).MapGridY = (int) y;
                             tmpMaps.RemoveAt(i);
                             break;
                         }
@@ -92,21 +92,21 @@ namespace Intersect_Server.Classes.Maps
             {
                 _botRight.Y = y;
             }
-            if (MapInstance.GetObjects().ContainsKey(map.Up) && MapInstance.GetMap(map.Up).Down == map.Id)
+            if (MapInstance.Lookup.Keys.Contains(map.Up) && MapInstance.Lookup.Get(map.Up).Down == map.Id)
             {
-                CalculateBounds(MapInstance.GetMap(map.Up), x, y - 1);
+                CalculateBounds(MapInstance.Lookup.Get(map.Up), x, y - 1);
             }
-            if (MapInstance.GetObjects().ContainsKey(map.Down) && MapInstance.GetMap(map.Down).Up == map.Id)
+            if (MapInstance.Lookup.Keys.Contains(map.Down) && MapInstance.Lookup.Get(map.Down).Up == map.Id)
             {
-                CalculateBounds(MapInstance.GetMap(map.Down), x, y + 1);
+                CalculateBounds(MapInstance.Lookup.Get(map.Down), x, y + 1);
             }
-            if (MapInstance.GetObjects().ContainsKey(map.Left) && MapInstance.GetMap(map.Left).Right == map.Id)
+            if (MapInstance.Lookup.Keys.Contains(map.Left) && MapInstance.Lookup.Get(map.Left).Right == map.Id)
             {
-                CalculateBounds(MapInstance.GetMap(map.Left), x - 1, y);
+                CalculateBounds(MapInstance.Lookup.Get(map.Left), x - 1, y);
             }
-            if (MapInstance.GetObjects().ContainsKey(map.Right) && MapInstance.GetMap(map.Right).Left == map.Id)
+            if (MapInstance.Lookup.Keys.Contains(map.Right) && MapInstance.Lookup.Get(map.Right).Left == map.Id)
             {
-                CalculateBounds(MapInstance.GetMap(map.Right), x + 1, y);
+                CalculateBounds(MapInstance.Lookup.Get(map.Right), x + 1, y);
             }
         }
 

@@ -196,7 +196,7 @@ namespace Intersect.GameObjects.Events
                 case 11: //Can Start Quest...
                     return Strings.Get("eventconditiondesc", "startquest", QuestBase.GetName(Ints[1]));
                 case 12: //Quest In Progress...
-                    var quest = QuestBase.GetQuest(Ints[1]);
+                    var quest = QuestBase.Lookup.Get(Ints[1]);
                     if (quest != null)
                     {
                         QuestBase.QuestTask task = null;
