@@ -563,7 +563,7 @@ namespace Intersect_Editor.Forms
             {
                 grpEntityOptions.Hide();
                 cmbTrigger.Items.Clear();
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 6; i++)
                 {
                     cmbTrigger.Items.Add(Strings.Get("eventeditor", "commontrigger" + i));
                 }
@@ -628,8 +628,17 @@ namespace Intersect_Editor.Forms
                     lblTriggerVal.Show();
                     lblTriggerVal.Text = Strings.Get("eventeditor", "projectile");
                     cmbTriggerVal.Show();
-                    cmbTriggerVal.SelectedIndex =
-                        Database.GameObjectListIndex(GameObject.Projectile, CurrentPage.TriggerVal) + 1;
+                    cmbTriggerVal.SelectedIndex = Database.GameObjectListIndex(GameObject.Projectile, CurrentPage.TriggerVal) + 1;
+                }
+            }
+            else
+            {
+                if (cmbTrigger.SelectedIndex == (int)EventPage.CommonEventTriggers.Command)
+                {
+                    txtCommand.Show();
+                    txtCommand.Text = CurrentPage.TriggerCommand;
+                    lblCommand.Show();
+                    lblCommand.Text = Strings.Get("eventeditor", "command");
                 }
             }
             cmbPreviewFace.SelectedIndex = cmbPreviewFace.Items.IndexOf(CurrentPage.FaceGraphic);
@@ -1681,6 +1690,9 @@ namespace Intersect_Editor.Forms
             CurrentPage.Trigger = cmbTrigger.SelectedIndex;
             cmbTriggerVal.Hide();
             lblTriggerVal.Hide();
+            txtCommand.Hide();
+            lblCommand.Hide();
+            
             if (!MyEvent.CommonEvent)
             {
                 if (cmbTrigger.SelectedIndex == (int) EventPage.EventTriggers.ProjectileHit)
@@ -1689,6 +1701,16 @@ namespace Intersect_Editor.Forms
                     lblTriggerVal.Show();
                     lblTriggerVal.Text = Strings.Get("eventeditor", "projectile");
                     cmbTriggerVal.SelectedIndex = 0;
+                }
+            }
+            else
+            {
+                if (cmbTrigger.SelectedIndex == (int)EventPage.CommonEventTriggers.Command)
+                {
+                    txtCommand.Show();
+                    txtCommand.Text = CurrentPage.TriggerCommand;
+                    lblCommand.Show();
+                    lblCommand.Text = Strings.Get("eventeditor", "command");
                 }
             }
         }
@@ -1758,6 +1780,11 @@ namespace Intersect_Editor.Forms
         }
 
         #endregion
+
+        private void txtCommand_TextChanged(object sender, EventArgs e)
+        {
+            CurrentPage.TriggerCommand = txtCommand.Text;
+        }
     }
 
     public class CommandListProperties
