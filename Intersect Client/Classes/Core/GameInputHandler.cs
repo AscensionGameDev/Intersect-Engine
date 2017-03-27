@@ -165,7 +165,7 @@ namespace Intersect_Client.Classes.Core
                                 (int)
                                 Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
 
-                            foreach (var map in MapInstance.Lookup.Values)
+                            foreach (MapInstance map in MapInstance.Lookup.Values)
                             {
                                 if (x >= map.GetX() && x <= map.GetX() + (Options.MapWidth * Options.TileWidth))
                                 {
@@ -178,7 +178,7 @@ namespace Intersect_Client.Classes.Core
                                         //transform pixel format to tile format
                                         x /= Options.TileWidth;
                                         y /= Options.TileHeight;
-                                        int mapNum = map.Id;
+                                        int mapNum = map.Index;
 
                                         if (Globals.Me.GetRealLocation(ref x, ref y, ref mapNum))
                                         {

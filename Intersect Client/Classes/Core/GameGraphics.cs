@@ -59,13 +59,13 @@ namespace Intersect_Client.Classes.Core
         public static List<Entity>[] Layer2Entities;
 
         public static bool PreRenderedMapLayer = false;
-        public static object GFXLock = new Object();
+        public static object GFXLock = new object();
         public static List<GameRenderTexture> MapReleaseQueue = new List<GameRenderTexture>();
         public static List<GameRenderTexture> FreeMapTextures = new List<GameRenderTexture>();
 
         //Animations
         public static List<AnimationInstance> LiveAnimations = new List<AnimationInstance>();
-        public static object AnimationLock = new Object();
+        public static object AnimationLock = new object();
 
         //Init Functions
         public static void InitGraphics()
@@ -109,12 +109,12 @@ namespace Intersect_Client.Classes.Core
 
         public static void DrawInGame()
         {
-            var currentMap = MapInstance.Lookup.Get(Globals.Me.CurrentMap);
+            var currentMap = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
             if (currentMap != null && Globals.NeedsMaps == false)
             {
                 if (GridSwitched)
                 {
-                    var map = MapInstance.Lookup.Get(Globals.Me.CurrentMap);
+                    var map = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
                     if (map != null)
                     {
                         //Brightness
@@ -269,7 +269,7 @@ namespace Intersect_Client.Classes.Core
                         if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
                             Globals.MapGrid[x, y] != -1)
                         {
-                            var map = MapInstance.Lookup.Get(Globals.MapGrid[x, y]);
+                            var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
                             if (map != null) map.DrawActionMsgs();
                         }
                     }
@@ -328,10 +328,10 @@ namespace Intersect_Client.Classes.Core
         private static void TryPreRendering()
         {
             if (Globals.Database.RenderCaching && Globals.Me != null &&
-                MapInstance.Lookup.Get(Globals.Me.CurrentMap) != null)
+                MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
             {
-                var gridX = MapInstance.Lookup.Get(Globals.Me.CurrentMap).MapGridX;
-                var gridY = MapInstance.Lookup.Get(Globals.Me.CurrentMap).MapGridY;
+                var gridX = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridX;
+                var gridY = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridY;
                 for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
                     for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -339,7 +339,7 @@ namespace Intersect_Client.Classes.Core
                         if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
                             Globals.MapGrid[x, y] != -1)
                         {
-                            var map = MapInstance.Lookup.Get(Globals.MapGrid[x, y]);
+                            var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
                             if (map != null && !map.MapRendered)
                             {
                                 if (!PreRenderedMapLayer)
@@ -355,7 +355,7 @@ namespace Intersect_Client.Classes.Core
 
         private static void DrawMap(int mapNum, int layer = 0)
         {
-            var map = MapInstance.Lookup.Get(mapNum);
+            var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
             if (map != null)
             {
                 if (
@@ -371,7 +371,7 @@ namespace Intersect_Client.Classes.Core
 
         private static void DrawMapPanorama(int mapNum)
         {
-            var map = MapInstance.Lookup.Get(mapNum);
+            var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
             if (map != null)
             {
                 if (
@@ -383,7 +383,7 @@ namespace Intersect_Client.Classes.Core
 
         public static void DrawOverlay()
         {
-            var map = MapInstance.Lookup.Get(Globals.Me.CurrentMap);
+            var map = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
             if (map != null)
             {
                 float ecTime = Globals.System.GetTimeMS() - _overlayUpdate;
@@ -533,7 +533,7 @@ namespace Intersect_Client.Classes.Core
                 CurrentView = new FloatRect(0, 0, Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
                 return;
             }
-            var map = MapInstance.Lookup.Get(Globals.Me.CurrentMap);
+            var map = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
             if (Globals.GameState == GameStates.InGame && map != null)
             {
                 Player en = Globals.Me;
@@ -642,7 +642,7 @@ namespace Intersect_Client.Classes.Core
 
         private static void GenerateLightMap()
         {
-            var map = MapInstance.Lookup.Get(Globals.Me.CurrentMap);
+            var map = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
             if (map == null) return;
             if (_darknessTexture == null)
             {
@@ -715,7 +715,7 @@ namespace Intersect_Client.Classes.Core
         public static void UpdatePlayerLight()
         {
             //Draw Light Around Player
-            var map = MapInstance.Lookup.Get(Globals.Me.CurrentMap);
+            var map = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
             if (map != null)
             {
                 float ecTime = Globals.System.GetTimeMS() - _lightUpdate;

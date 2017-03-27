@@ -503,7 +503,7 @@ namespace Intersect_Editor.Classes.Maps
             {
                 //Fetch and screenshot this singular map
                 Database.SaveMapCache(_contextMap.mapnum, _contextMap.revision, null);
-                if (MapInstance.Lookup.Get(_contextMap.mapnum) != null) MapInstance.Lookup.Get(_contextMap.mapnum).Delete();
+                if (MapInstance.Lookup.Get<MapInstance>(_contextMap.mapnum) != null) MapInstance.Lookup.Get<MapInstance>(_contextMap.mapnum).Delete();
                 Globals.MapsToFetch = new List<int>() {_contextMap.mapnum};
                 PacketSender.SendNeedMap(_contextMap.mapnum);
             }

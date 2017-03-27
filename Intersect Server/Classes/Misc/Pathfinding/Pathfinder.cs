@@ -50,7 +50,7 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
             IEnumerable<PathNode> path = mPath;
             if (mWaitTime < timeMs)
             {
-                var currentMap = MapInstance.Lookup.Get(mEntity.CurrentMap);
+                var currentMap = MapInstance.Lookup.Get<MapInstance>(mEntity.CurrentMap);
                 if (currentMap != null && mTarget != null)
                 {
                     var myGrid = currentMap.MapGrid;
@@ -133,7 +133,7 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
 
                                         if (Database.MapGrids[myGrid].MyGrid[x, y] > -1)
                                         {
-                                            var tmpMap = MapInstance.Lookup.Get(Database.MapGrids[myGrid].MyGrid[x, y]);
+                                            var tmpMap = MapInstance.Lookup.Get<MapInstance>(Database.MapGrids[myGrid].MyGrid[x, y]);
                                             if (tmpMap != null)
                                             {
                                                 //Copy the cached array of tile blocks
@@ -388,12 +388,12 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
 
     public class AStarSolver : SpatialAStar
     {
-        protected override Double Heuristic(PathNode inStart, PathNode inEnd)
+        protected override double Heuristic(PathNode inStart, PathNode inEnd)
         {
             return Math.Abs(inStart.X - inEnd.X) + Math.Abs(inStart.Y - inEnd.Y);
         }
 
-        protected override Double NeighborDistance(PathNode inStart, PathNode inEnd)
+        protected override double NeighborDistance(PathNode inStart, PathNode inEnd)
         {
             return Heuristic(inStart, inEnd);
         }

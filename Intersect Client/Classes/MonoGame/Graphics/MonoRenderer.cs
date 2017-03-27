@@ -424,7 +424,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             string[] parts = name.Split('_');
             if (parts.Length >= 1)
             {
-                if (Int32.TryParse(parts[parts.Length - 1], out int size))
+                if (int.TryParse(parts[parts.Length - 1], out int size))
                 {
                     name = "";
                     for (int i = 0; i <= parts.Length - 2; i++)

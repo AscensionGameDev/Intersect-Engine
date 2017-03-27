@@ -487,7 +487,7 @@ namespace Intersect_Server.Classes.Entities
                             break;
                         case MoveRouteEnum.SetAnimation:
                             Animations.Clear();
-                            var anim = AnimationBase.Lookup.Get(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);
+                            var anim = AnimationBase.Lookup.Get<AnimationBase>(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);
                             if (anim != null)
                             {
                                 Animations.Add(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);
@@ -589,7 +589,7 @@ namespace Intersect_Server.Classes.Entities
             }
             if (GlobalClone != null)
             {
-                var map = MapInstance.Lookup.Get(GlobalClone.CurrentMap);
+                var map = MapInstance.Lookup.Get<MapInstance>(GlobalClone.CurrentMap);
                 if (map == null || !map.FindEvent(GlobalClone.BaseEvent, GlobalClone)) return true;
             }
             return false;

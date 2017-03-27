@@ -13,6 +13,7 @@ using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
 using Intersect.Logging;
+using Intersect.Models;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Items;
@@ -169,7 +170,7 @@ namespace Intersect_Server.Classes.Core
         private const string BAG_ITEM_BAG_ID = "item_bag_id";
         private static SqliteConnection _dbConnection;
 
-        public static object MapGridLock = new Object();
+        public static object MapGridLock = new object();
         public static List<MapGrid> MapGrids = new List<MapGrid>();
 
         //Check Directories
@@ -1093,19 +1094,19 @@ namespace Intersect_Server.Classes.Core
                             var vitals = vitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
                             for (var i = 0; i < (int) Vitals.VitalCount && i < vitals.Length; i++)
                             {
-                                en.Vital[i] = Int32.Parse(vitals[i]);
+                                en.Vital[i] = int.Parse(vitals[i]);
                             }
                             var maxVitalString = dataReader[CHAR_MAX_VITALS].ToString();
                             var maxVitals = maxVitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
                             for (var i = 0; i < (int) Vitals.VitalCount && i < maxVitals.Length; i++)
                             {
-                                en.MaxVital[i] = Int32.Parse(maxVitals[i]);
+                                en.MaxVital[i] = int.Parse(maxVitals[i]);
                             }
                             var statsString = dataReader[CHAR_STATS].ToString();
                             var stats = statsString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
                             for (var i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
                             {
-                                en.Stat[i].Stat = Int32.Parse(stats[i]);
+                                en.Stat[i].Stat = int.Parse(stats[i]);
                                 if (en.Stat[i].Stat > Options.MaxStatValue) en.Stat[i].Stat = Options.MaxStatValue;
                             }
                             en.StatPoints = Convert.ToInt32(dataReader[CHAR_STAT_POINTS]);
@@ -1113,7 +1114,7 @@ namespace Intersect_Server.Classes.Core
                             var equipment = equipmentString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
                             for (var i = 0; i < (int) Options.EquipmentSlots.Count && i < equipment.Length; i++)
                             {
-                                en.Equipment[i] = Int32.Parse(equipment[i]);
+                                en.Equipment[i] = int.Parse(equipment[i]);
                             }
                             if (!LoadCharacterInventory(en)) return false;
                             if (!LoadCharacterSpells(en)) return false;
@@ -1161,9 +1162,9 @@ namespace Intersect_Server.Classes.Core
                                 var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
                                 for (int i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
                                 {
-                                    player.Inventory[slot].StatBoost[i] = Int32.Parse(stats[i]);
+                                    player.Inventory[slot].StatBoost[i] = int.Parse(stats[i]);
                                 }
-                                if (ItemBase.Lookup.Get(player.Inventory[slot].ItemNum) == null)
+                                if (ItemBase.Lookup.Get<ItemBase>(player.Inventory[slot].ItemNum) == null)
                                 {
                                     player.Inventory[slot].ItemNum = -1;
                                     player.Inventory[slot].ItemVal = 0;
@@ -1204,7 +1205,7 @@ namespace Intersect_Server.Classes.Core
                                 player.Spells[slot].SpellNum = Convert.ToInt32(dataReader[CHAR_SPELL_NUM]);
                                 player.Spells[slot].SpellCD = Globals.System.GetTimeMs() +
                                                               Convert.ToInt32(dataReader[CHAR_SPELL_CD]);
-                                if (SpellBase.Lookup.Get(player.Spells[slot].SpellNum) == null)
+                                if (SpellBase.Lookup.Get<SpellBase>(player.Spells[slot].SpellNum) == null)
                                 {
                                     player.Spells[slot].SpellNum = -1;
                                     player.Spells[slot].SpellCD = -1;
@@ -1246,9 +1247,9 @@ namespace Intersect_Server.Classes.Core
                                 var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
                                 for (int i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
                                 {
-                                    player.Bank[slot].StatBoost[i] = Int32.Parse(stats[i]);
+                                    player.Bank[slot].StatBoost[i] = int.Parse(stats[i]);
                                 }
-                                if (ItemBase.Lookup.Get(player.Bank[slot].ItemNum) == null)
+                                if (ItemBase.Lookup.Get<ItemBase>(player.Bank[slot].ItemNum) == null)
                                 {
                                     player.Bank[slot].ItemNum = -1;
                                     player.Bank[slot].ItemVal = 0;
@@ -1462,9 +1463,9 @@ namespace Intersect_Server.Classes.Core
                                 var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
                                 for (int i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
                                 {
-                                    bagItem.BagInstance.Items[slot].StatBoost[i] = Int32.Parse(stats[i]);
+                                    bagItem.BagInstance.Items[slot].StatBoost[i] = int.Parse(stats[i]);
                                 }
-                                if (ItemBase.Lookup.Get(bagItem.BagInstance.Items[slot].ItemNum) == null)
+                                if (ItemBase.Lookup.Get<ItemBase>(bagItem.BagInstance.Items[slot].ItemNum) == null)
                                 {
                                     bagItem.BagInstance.Items[slot].ItemNum = -1;
                                     bagItem.BagInstance.Items[slot].ItemVal = 0;
@@ -1489,7 +1490,7 @@ namespace Intersect_Server.Classes.Core
             {
                 if (bagItem.BagInstance.Items[i] != null)
                 {
-                    var item = ItemBase.Lookup.Get(bagItem.BagInstance.Items[i].ItemNum);
+                    var item = ItemBase.Lookup.Get<ItemBase>(bagItem.BagInstance.Items[i].ItemNum);
                     if (item != null)
                     {
                         return false;
@@ -1890,7 +1891,7 @@ namespace Intersect_Server.Classes.Core
                               GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
             {
-                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.Id));
+                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.Index));
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
                 if (gameObject.BinaryData != null)
                 {
@@ -2020,7 +2021,7 @@ namespace Intersect_Server.Classes.Core
                               GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
             {
-                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.Id));
+                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.Index));
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 1.ToString()));
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.BinaryData));
                 cmd.ExecuteNonQuery();
@@ -2041,9 +2042,9 @@ namespace Intersect_Server.Classes.Core
             LoadMapFolders();
             CheckAllMapConnections();
             
-            foreach (var map in MapInstance.Lookup.Copy)
+            foreach (MapInstance map in MapInstance.Lookup.IndexValues)
             {
-                map.Value.InitAutotiles();
+                map.InitAutotiles();
             }
         }
 
@@ -2081,31 +2082,31 @@ namespace Intersect_Server.Classes.Core
         //Extra Map Helper Functions
         public static void CheckAllMapConnections()
         {
-            foreach (var map in MapInstance.Lookup.Copy)
+            foreach (MapBase map in MapInstance.Lookup.IndexValues)
             {
-                CheckMapConnections(map.Value, MapInstance.Lookup);
+                CheckMapConnections(map, MapInstance.Lookup);
             }
         }
 
-        public static void CheckMapConnections(MapBase map, IntObjectLookup<MapInstance> maps)
+        public static void CheckMapConnections(MapBase map, DatabaseObjectLookup maps)
         {
             bool updated = false;
-            if (!maps.Keys.Contains(map.Up) && map.Up != -1)
+            if (!maps.IndexKeys.Contains(map.Up) && map.Up != -1)
             {
                 map.Up = -1;
                 updated = true;
             }
-            if (!maps.Keys.Contains(map.Down) && map.Down != -1)
+            if (!maps.IndexKeys.Contains(map.Down) && map.Down != -1)
             {
                 map.Down = -1;
                 updated = true;
             }
-            if (!maps.Keys.Contains(map.Left) && map.Left != -1)
+            if (!maps.IndexKeys.Contains(map.Left) && map.Left != -1)
             {
                 map.Left = -1;
                 updated = true;
             }
-            if (!maps.Keys.Contains(map.Right) && map.Right != -1)
+            if (!maps.IndexKeys.Contains(map.Right) && map.Right != -1)
             {
                 map.Right = -1;
                 updated = true;
@@ -2113,7 +2114,7 @@ namespace Intersect_Server.Classes.Core
             if (updated)
             {
                 SaveGameObject(map);
-                PacketSender.SendMapToEditors(map.Id);
+                PacketSender.SendMapToEditors(map.Index);
             }
         }
 
@@ -2122,20 +2123,20 @@ namespace Intersect_Server.Classes.Core
             lock (MapGridLock)
             {
                 MapGrids.Clear();
-                foreach (var map in MapInstance.Lookup.Copy)
+                foreach (var map in MapInstance.Lookup.IndexValues)
                 {
                     if (MapGrids.Count == 0)
                     {
-                        MapGrids.Add(new MapGrid(map.Value.Id, 0));
+                        MapGrids.Add(new MapGrid(map.Index, 0));
                     }
                     else
                     {
                         for (var y = 0; y < MapGrids.Count; y++)
                         {
-                            if (!MapGrids[y].HasMap(map.Value.Id))
+                            if (!MapGrids[y].HasMap(map.Index))
                             {
                                 if (y != MapGrids.Count - 1) continue;
-                                MapGrids.Add(new MapGrid(map.Value.Id, MapGrids.Count));
+                                MapGrids.Add(new MapGrid(map.Index, MapGrids.Count));
                                 break;
                             }
                             else
@@ -2145,20 +2146,20 @@ namespace Intersect_Server.Classes.Core
                         }
                     }
                 }
-                foreach (var map in MapInstance.Lookup.Copy)
+                foreach (MapInstance map in MapInstance.Lookup.IndexValues)
                 {
-                    map.Value.SurroundingMaps.Clear();
-                    var myGrid = map.Value.MapGrid;
-                    for (var x = map.Value.MapGridX - 1; x <= map.Value.MapGridX + 1; x++)
+                    map.SurroundingMaps.Clear();
+                    var myGrid = map.MapGrid;
+                    for (var x = map.MapGridX - 1; x <= map.MapGridX + 1; x++)
                     {
-                        for (var y = map.Value.MapGridY - 1; y <= map.Value.MapGridY + 1; y++)
+                        for (var y = map.MapGridY - 1; y <= map.MapGridY + 1; y++)
                         {
-                            if ((x == map.Value.MapGridX) && (y == map.Value.MapGridY))
+                            if ((x == map.MapGridX) && (y == map.MapGridY))
                                 continue;
                             if (x >= MapGrids[myGrid].XMin && x < MapGrids[myGrid].XMax && y >= MapGrids[myGrid].YMin &&
                                 y < MapGrids[myGrid].YMax && MapGrids[myGrid].MyGrid[x, y] > -1)
                             {
-                                map.Value.SurroundingMaps.Add(MapGrids[myGrid].MyGrid[x, y]);
+                                map.SurroundingMaps.Add(MapGrids[myGrid].MyGrid[x, y]);
                             }
                         }
                     }
@@ -2199,9 +2200,9 @@ namespace Intersect_Server.Classes.Core
             }
             foreach (var map in MapBase.Lookup)
             {
-                if (MapList.GetList().FindMap(map.Value.Id) == null)
+                if (MapList.GetList().FindMap(map.Value.Index) == null)
                 {
-                    MapList.GetList().AddMap(map.Value.Id, MapBase.Lookup);
+                    MapList.GetList().AddMap(map.Value.Index, MapBase.Lookup);
                 }
             }
             SaveMapFolders();

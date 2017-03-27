@@ -71,7 +71,7 @@ namespace Intersect_Editor.Forms
 
         private void lstClasses_Click(object sender, EventArgs e)
         {
-            _editorItem = ClassBase.Lookup.Get(Database.GameObjectIdFromList(GameObjectType.Class, lstClasses.SelectedIndex));
+            _editorItem = ClassBase.Lookup.Get<ClassBase>(Database.GameObjectIdFromList(GameObjectType.Class, lstClasses.SelectedIndex));
             UpdateEditor();
         }
 
@@ -91,7 +91,7 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstClasses.Items[Database.GameObjectListIndex(GameObjectType.Class, _editorItem.Id)] = txtName.Text;
+            lstClasses.Items[Database.GameObjectListIndex(GameObjectType.Class, _editorItem.Index)] = txtName.Text;
         }
 
         private void UpdateSpellList(bool keepIndex = true)

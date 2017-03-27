@@ -9,7 +9,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_3
         private const string TIME_TABLE = "time";
         private const string TIME_DATA = "data";
         private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
+        private object _dbLock = new object();
 
         public Upgrade3(SqliteConnection connection)
         {

@@ -284,21 +284,21 @@ namespace Intersect_Client.Classes.UI.Game
                 _currentItem = Globals.Me.Hotbar[myindex].Slot;
                 _currentType = Globals.Me.Hotbar[myindex].Type;
                 if (_currentType == 0 && _currentItem > -1 &&
-                    ItemBase.Lookup.Get(Globals.Me.Inventory[_currentItem].ItemNum) != null)
+                    ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[_currentItem].ItemNum) != null)
                 {
                     contentPanel.Show();
                     contentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                        ItemBase.Lookup.Get(Globals.Me.Inventory[_currentItem].ItemNum).Pic);
+                        ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[_currentItem].ItemNum).Pic);
                     equipPanel.IsHidden = !Globals.Me.IsEquipped(_currentItem);
                     _texLoaded = true;
                     _isEquipped = Globals.Me.IsEquipped(_currentItem);
                 }
                 else if (_currentType == 1 && _currentItem > -1 &&
-                         SpellBase.Lookup.Get(Globals.Me.Spells[_currentItem].SpellNum) != null)
+                         SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[_currentItem].SpellNum) != null)
                 {
                     contentPanel.Show();
                     contentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
-                        SpellBase.Lookup.Get(Globals.Me.Spells[_currentItem].SpellNum).Pic);
+                        SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[_currentItem].SpellNum).Pic);
                     equipPanel.IsHidden = true;
                     _isFaded = Globals.Me.Spells[_currentItem].SpellCD > Globals.System.GetTimeMS();
                     if (_isFaded)

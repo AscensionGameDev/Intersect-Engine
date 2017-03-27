@@ -118,7 +118,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     {
                         foreach (var evt in _currentMap.Events)
                         {
-                            cmbEntities.Items.Add(evt.Key == _editingEvent.Id
+                            cmbEntities.Items.Add(evt.Key == _editingEvent.Index
                                 ? Strings.Get("eventspawnnpc", "this") + " "
                                 : "" + evt.Value.Name);
                             if (_myCommand.Ints[2] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;

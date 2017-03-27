@@ -102,18 +102,18 @@ namespace Intersect_Server.Classes
                     }
                     else if (commandsplit[0] == Strings.Get("commands", "onlinelist")) //Online List Command
                     {
-                        Console.WriteLine(String.Format("{0,-10}", Strings.Get("commandoutput", "listid")) +
-                                          String.Format("{0,-28}", Strings.Get("commandoutput", "listaccount")) +
-                                          String.Format("{0,-28}", Strings.Get("commandoutput", "listcharacter")));
-                        Console.WriteLine(new String('-', 66));
+                        Console.WriteLine(string.Format("{0,-10}", Strings.Get("commandoutput", "listid")) +
+                                          string.Format("{0,-28}", Strings.Get("commandoutput", "listaccount")) +
+                                          string.Format("{0,-28}", Strings.Get("commandoutput", "listcharacter")));
+                        Console.WriteLine(new string('-', 66));
                         for (int i = 0; i < Globals.Clients.Count; i++)
                         {
                             if (Globals.Clients[i] != null)
                             {
                                 var name = Globals.Clients[i].Entity != null ? Globals.Clients[i].Entity.MyName : "";
-                                Console.WriteLine(String.Format("{0,-10}", "#" + i) +
-                                                  String.Format("{0,-28}", Globals.Clients[i].MyAccount) +
-                                                  String.Format("{0,-28}", name));
+                                Console.WriteLine(string.Format("{0,-10}", "#" + i) +
+                                                  string.Format("{0,-28}", Globals.Clients[i].MyAccount) +
+                                                  string.Format("{0,-28}", name));
                             }
                         }
                     }
@@ -432,7 +432,7 @@ namespace Intersect_Server.Classes
                                             if (user == commandsplit[1].ToLower())
                                             {
                                                 Database.SetPlayerPower(Globals.Clients[i].MyAccount,
-                                                    Int32.Parse(commandsplit[2]));
+                                                    int.Parse(commandsplit[2]));
                                                 PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
                                                 if (Globals.Clients[i].Power > 0)
                                                 {
@@ -492,7 +492,7 @@ namespace Intersect_Server.Classes
                                         {
                                             if (Database.AccountExists(commandsplit[1]))
                                             {
-                                                Database.SetPlayerPower(commandsplit[1], Int32.Parse(commandsplit[2]));
+                                                Database.SetPlayerPower(commandsplit[1], int.Parse(commandsplit[2]));
                                                 Console.WriteLine(@"    " +
                                                                   Strings.Get("commandoutput", "powerchanged",
                                                                       commandsplit[1]));
@@ -614,32 +614,32 @@ namespace Intersect_Server.Classes
                         else
                         {
                             Console.WriteLine(@"    " + Strings.Get("commandoutput", "helpheader"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "help")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "help")) +
                                               " - " + Strings.Get("commands", "helphelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "exit")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "exit")) +
                                               " - " + Strings.Get("commands", "exithelp"));
                             Console.WriteLine(@"    " +
-                                              String.Format("{0,-20}", Strings.Get("commands", "announcement")) + " - " +
+                                              string.Format("{0,-20}", Strings.Get("commands", "announcement")) + " - " +
                                               Strings.Get("commands", "announcementhelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "cps")) + " - " +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "cps")) + " - " +
                                               Strings.Get("commands", "cpshelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "power")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "power")) +
                                               " - " + Strings.Get("commands", "powerhelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "poweracc")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "poweracc")) +
                                               " - " + Strings.Get("commands", "poweracchelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "onlinelist")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "onlinelist")) +
                                               " - " + Strings.Get("commands", "onlinelisthelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "kick")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "kick")) +
                                               " - " + Strings.Get("commands", "kickhelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "ban")) + " - " +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "ban")) + " - " +
                                               Strings.Get("commands", "banhelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "unban")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "unban")) +
                                               " - " + Strings.Get("commands", "unbanhelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "mute")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "mute")) +
                                               " - " + Strings.Get("commands", "mutehelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "unmute")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "unmute")) +
                                               " - " + Strings.Get("commands", "unmutehelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "kill")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "kill")) +
                                               " - " + Strings.Get("commands", "killhelp"));
                             Console.WriteLine(@"    " +
                                               Strings.Get("commandoutput", "helpfooter",

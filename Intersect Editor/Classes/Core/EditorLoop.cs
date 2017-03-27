@@ -24,7 +24,7 @@ namespace Intersect_Editor.Classes
         public static void StartLoop()
         {
             Globals.MainForm.Visible = true;
-            Globals.MainForm.EnterMap(Globals.CurrentMap == null ? 0 : ((IDatabaseObject) Globals.CurrentMap).Id);
+            Globals.MainForm.EnterMap(Globals.CurrentMap == null ? 0 : Globals.CurrentMap.Index);
             myForm = Globals.MainForm;
 
             if (mapThread == null)
@@ -99,7 +99,7 @@ namespace Intersect_Editor.Classes
                         new Task((() => progressForm.ShowDialog())).Start();
                         while (Globals.MapsToScreenshot.Count > 0)
                         {
-                            foreach (var map in MapInstance.Lookup.Copy)
+                            foreach (MapInstance map in MapInstance.Lookup.IndexValues)
                             {
                                 if (!myForm.Disposing && progressForm.IsHandleCreated)
                                     progressForm.BeginInvoke(
@@ -107,9 +107,9 @@ namespace Intersect_Editor.Classes
                                         (() =>
                                             progressForm.SetProgress(
                                                 Globals.MapsToScreenshot.Count + " maps remaining.", -1, false)));
-                                if (map.Value != null)
+                                if (map != null)
                                 {
-                                    map.Value.Update();
+                                    map.Update();
                                 }
                                 Network.Update();
                                 Application.DoEvents();

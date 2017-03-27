@@ -2,6 +2,7 @@
 using Intersect.Enums;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
+using Intersect.Models;
 
 namespace Intersect_Editor.Classes
 {
@@ -39,7 +40,7 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             var mapData = map.GetMapData(false);
             bf.WriteLong((int) ClientPackets.SaveMap);
-            bf.WriteLong(((IDatabaseObject) map).Id);
+            bf.WriteLong(map.Index);
             bf.WriteLong(mapData.Length);
             bf.WriteBytes(mapData);
             Network.SendPacket(bf.ToArray());
@@ -173,7 +174,7 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.UnlinkMap);
             bf.WriteLong(mapNum);
-            bf.WriteLong(((IDatabaseObject) Globals.CurrentMap).Id);
+            bf.WriteLong(Globals.CurrentMap.Index);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -214,7 +215,7 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.DeleteGameObject);
             bf.WriteInteger((int) obj.Type);
-            bf.WriteInteger(obj.Id);
+            bf.WriteInteger(obj.Index);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -224,7 +225,7 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.SaveGameObject);
             bf.WriteInteger((int) obj.Type);
-            bf.WriteInteger(obj.Id);
+            bf.WriteInteger(obj.Index);
             bf.WriteBytes(obj.BinaryData);
             Network.SendPacket(bf.ToArray());
             bf.Dispose();

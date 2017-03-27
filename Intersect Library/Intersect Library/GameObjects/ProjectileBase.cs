@@ -8,7 +8,6 @@ namespace Intersect.GameObjects
         public const int SpawnLocationsWidth = 5;
         public const int SpawnLocationsHeight = 5;
         public const int MaxProjectileDirections = 8;
-        protected static Dictionary<int, IDatabaseObject> Objects = new Dictionary<int, IDatabaseObject>();
         public int Ammo = -1;
         public int AmmoRequired = 1;
         public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();

@@ -83,7 +83,7 @@ namespace Intersect_Editor.Forms
         private void lstAnimations_Click(object sender, EventArgs e)
         {
             _editorItem =
-                AnimationBase.Lookup.Get(Database.GameObjectIdFromList(GameObjectType.Animation, lstAnimations.SelectedIndex));
+                AnimationBase.Lookup.Get<AnimationBase>(Database.GameObjectIdFromList(GameObjectType.Animation, lstAnimations.SelectedIndex));
             UpdateEditor();
         }
 
@@ -222,7 +222,7 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstAnimations.Items[Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.Id)] = txtName.Text;
+            lstAnimations.Items[Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.Index)] = txtName.Text;
         }
 
         private void cmbSound_SelectedIndexChanged(object sender, EventArgs e)

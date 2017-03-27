@@ -33,7 +33,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             y = 12;
 
-            var item = ItemBase.Lookup.Get(itemnum);
+            var item = ItemBase.Lookup.Get<ItemBase>(itemnum);
             if (item != null)
             {
                 var innery = 8;

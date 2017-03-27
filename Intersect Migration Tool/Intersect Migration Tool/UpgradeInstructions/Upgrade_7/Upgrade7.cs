@@ -41,7 +41,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
         private const string CHAR_BANK_TABLE = "char_bank";
         private const string CHAR_BANK_ITEM_BAG_ID = "item_bag_id";
         private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
+        private object _dbLock = new object();
 
         public Upgrade7(SqliteConnection connection)
         {

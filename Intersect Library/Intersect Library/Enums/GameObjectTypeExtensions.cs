@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Intersect.Collections;
 using Intersect.Extensions;
+using Intersect.Models;
 
 namespace Intersect.Enums
 {
@@ -24,7 +26,13 @@ namespace Intersect.Enums
             }
         }
 
-        public static Type GetObjectType(this GameObjectType gameObjectType) => AttributeMap?[gameObjectType]?.Type;
-        public static string GetTable(this GameObjectType gameObjectType) => AttributeMap?[gameObjectType]?.Table;
+        public static Type GetObjectType(this GameObjectType gameObjectType)
+            => AttributeMap?[gameObjectType]?.Type;
+
+        public static string GetTable(this GameObjectType gameObjectType)
+            => AttributeMap?[gameObjectType]?.Table;
+
+        public static DatabaseObjectLookup GetLookup(this GameObjectType gameObjectType)
+            => LookupUtils.GetLookup(GetObjectType(gameObjectType));
     }
 }

@@ -1,63 +1,46 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Intersect.Collections;
 using Intersect.Enums;
-using Intersect.GameObjects;
+using Intersect.Models;
+using System;
+using System.Linq;
 
 namespace Intersect
 {
-    public abstract class DatabaseObject<TObject>
-        : IDatabaseObject, IGameObject<int, TObject>
-        where TObject : DatabaseObject<TObject>
+    public abstract class DatabaseObject<TObject> : IDatabaseObject where TObject : DatabaseObject<TObject>
     {
-        private static IntObjectLookup<TObject> sLookup;
-        private static Dictionary<Type, GameObjectType> sEnumMap;
+        public static DatabaseObjectLookup Lookup => Models.LookupUtils.GetLookup(typeof(TObject));
 
-        public static IntObjectLookup<TObject> Lookup =>
-            (sLookup = (sLookup ?? new IntObjectLookup<TObject>()));
-
-        private static Dictionary<Type, GameObjectType> EnumMap =>
-            (sEnumMap = (sEnumMap ?? new Dictionary<Type, GameObjectType>()));
-
-        public GameObjectType Type
-        {
-            get
-            {
-                if (EnumMap.ContainsKey(typeof(TObject)))
-                    return EnumMap[typeof(TObject)];
-
-                var values = Enum.GetValues(typeof(GameObjectType));
-                foreach (GameObjectType gameObjectType in values)
-                {
-                    if (typeof(TObject) != gameObjectType.GetObjectType())
-                        continue;
-
-                    EnumMap[typeof(TObject)] = gameObjectType;
-                    return gameObjectType;
-                }
-
-                return default(GameObjectType);
-            }
-        }
+        public GameObjectType Type => Models.LookupUtils.GetGameObjectType(typeof(TObject));
 
         public string DatabaseTable => Type.GetTable();
 
-        private byte[] mBackup = null;
+        private byte[] mBackup;
 
-        protected DatabaseObject(int id)
+        protected DatabaseObject(int index) : this(Guid.NewGuid(), index)
         {
-            Id = id;
         }
 
-        public int Id { get; }
+        protected DatabaseObject(Guid id) : this(id, Lookup?.NextIndex ?? -1)
+        {
+        }
+
+        protected DatabaseObject(Guid id, int index)
+        {
+            if (index < 0) throw new ArgumentOutOfRangeException();
+
+            Guid = id;
+            Index = index;
+        }
+
+        public Guid Guid { get; }
+        public int Index { get; }
         public string Name { get; set; }
 
         public abstract void Load(byte[] packet);
 
-        public virtual void MakeBackup() => mBackup = BinaryData;
-        public virtual void DeleteBackup() => mBackup = null;
-        public virtual void RestoreBackup()
+        public void MakeBackup() => mBackup = BinaryData;
+        public void DeleteBackup() => mBackup = null;
+        public void RestoreBackup()
         {
             if (mBackup != null)
             {
@@ -66,19 +49,12 @@ namespace Intersect
         }
 
         public abstract byte[] BinaryData { get; }
-        public virtual void Delete() => Lookup.Delete((TObject)this);
+        public virtual void Delete() => Lookup?.Delete((TObject)this);
 
         public static string GetName(int index) =>
-            Lookup.Get(index)?.Name ?? "Deleted";
+            Lookup?.Get(index)?.Name ?? "ERR_DELETED";
 
         public static string[] GetNameList() =>
-            Lookup.Select(pair => pair.Value.Name).ToArray();
-
-        public static int GetIdFromListIndex(int index) =>
-            (index < 0 || Lookup.Count < index)
-            ? -1 : Lookup.Keys.ToList()[index];
-
-        public static int GetIndexFromId(int id) =>
-            Lookup.Keys.ToList().IndexOf(id);
+            Lookup?.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
     }
 }

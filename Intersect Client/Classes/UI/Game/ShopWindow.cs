@@ -170,7 +170,7 @@ namespace Intersect_Client.Classes.UI.Game
             pnl.HoverEnter += pnl_HoverEnter;
             pnl.HoverLeave += pnl_HoverLeave;
             pnl.DoubleClicked += Pnl_DoubleClicked;
-            var item = ItemBase.Lookup.Get(Globals.GameShop.SellingItems[_mySlot].ItemNum);
+            var item = ItemBase.Lookup.Get<ItemBase>(Globals.GameShop.SellingItems[_mySlot].ItemNum);
             if (item != null)
             {
                 GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
@@ -184,7 +184,7 @@ namespace Intersect_Client.Classes.UI.Game
         private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
             //Confirm the purchase
-            var item = ItemBase.Lookup.Get(Globals.GameShop.SellingItems[_mySlot].ItemNum);
+            var item = ItemBase.Lookup.Get<ItemBase>(Globals.GameShop.SellingItems[_mySlot].ItemNum);
             if (item != null)
             {
                 if (item.IsStackable())
@@ -199,7 +199,7 @@ namespace Intersect_Client.Classes.UI.Game
             }
         }
 
-        private void BuyItemInputBoxOkay(Object sender, EventArgs e)
+        private void BuyItemInputBoxOkay(object sender, EventArgs e)
         {
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
@@ -227,7 +227,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _descWindow.Dispose();
                 _descWindow = null;
             }
-            var item = ItemBase.Lookup.Get(Globals.GameShop.SellingItems[_mySlot].CostItemNum);
+            var item = ItemBase.Lookup.Get<ItemBase>(Globals.GameShop.SellingItems[_mySlot].CostItemNum);
             if (item != null)
                 _descWindow = new ItemDescWindow(Globals.GameShop.SellingItems[_mySlot].ItemNum, 1, _shopWindow.X - 255,
                     _shopWindow.Y, null, "",

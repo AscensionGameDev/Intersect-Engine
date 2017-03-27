@@ -41,7 +41,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
         private const string MAP_LIST_TABLE = "map_list";
         private const string MAP_LIST_DATA = "data";
         private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
+        private object _dbLock = new object();
 
         public Upgrade2(SqliteConnection connection)
         {

@@ -12,7 +12,7 @@ namespace Intersect_Server.Classes.General
     {
         //Console Variables
         public static long CPS = 0;
-        public static Boolean CPSLock = true;
+        public static bool CPSLock = true;
         public static bool ServerStarted = true;
         public static ServerSystem System = new ServerSystem();
 
@@ -97,9 +97,9 @@ namespace Intersect_Server.Classes.General
 
         public static void KillItemsOf(ItemBase item)
         {
-            foreach (var map in MapInstance.Lookup.Copy)
+            foreach (MapInstance map in MapInstance.Lookup.IndexValues)
             {
-                map.Value?.DespawnItemsOf(item);
+                map?.DespawnItemsOf(item);
             }
         }
     }

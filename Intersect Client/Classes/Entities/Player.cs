@@ -68,13 +68,13 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (value != base.CurrentMap)
                 {
-                    var oldMap = MapInstance.Lookup.Get(base.CurrentMap);
-                    var newMap = MapInstance.Lookup.Get(value);
+                    var oldMap = MapInstance.Lookup.Get<MapInstance>(base.CurrentMap);
+                    var newMap = MapInstance.Lookup.Get<MapInstance>(value);
                     base.CurrentMap = value;
                     if (Globals.Me == this)
                     {
-                        if (MapInstance.Lookup.Get(Globals.Me.CurrentMap) != null)
-                            GameAudio.PlayMusic(MapInstance.Lookup.Get(Globals.Me.CurrentMap).Music, 3, 3, true);
+                        if (MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
+                            GameAudio.PlayMusic(MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).Music, 3, 3, true);
                         if (newMap != null && oldMap != null)
                         {
                             newMap.CompareEffects(oldMap);
@@ -154,12 +154,12 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryDropItem(int index)
         {
-            if (ItemBase.Lookup.Get(Inventory[index].ItemNum) != null)
+            if (ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum) != null)
             {
                 if (Inventory[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("inventory", "dropitem"),
-                        Strings.Get("inventory", "dropitemprompt", ItemBase.Lookup.Get(Inventory[index].ItemNum).Name),
+                        Strings.Get("inventory", "dropitemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name),
                         true, DropItemInputBoxOkay, null, index, true);
                 }
                 else
@@ -169,7 +169,7 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        private void DropItemInputBoxOkay(Object sender, EventArgs e)
+        private void DropItemInputBoxOkay(object sender, EventArgs e)
         {
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
@@ -212,7 +212,7 @@ namespace Intersect_Client.Classes.Entities
 
         public void TrySellItem(int index)
         {
-            if (ItemBase.Lookup.Get(Inventory[index].ItemNum) != null)
+            if (ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum) != null)
             {
                 int foundItem = -1;
                 for (int i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
@@ -229,7 +229,7 @@ namespace Intersect_Client.Classes.Entities
                     if (Inventory[index].ItemVal > 1)
                     {
                         InputBox iBox = new InputBox(Strings.Get("shop", "sellitem"),
-                            Strings.Get("shop", "sellitemprompt", ItemBase.Lookup.Get(Inventory[index].ItemNum).Name), true,
+                            Strings.Get("shop", "sellitemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
                             SellItemInputBoxOkay, null, index, true);
                     }
                     else
@@ -245,7 +245,7 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        private void SellItemInputBoxOkay(Object sender, EventArgs e)
+        private void SellItemInputBoxOkay(object sender, EventArgs e)
         {
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
@@ -257,12 +257,12 @@ namespace Intersect_Client.Classes.Entities
         //bank
         public void TryDepositItem(int index)
         {
-            if (ItemBase.Lookup.Get(Inventory[index].ItemNum) != null)
+            if (ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum) != null)
             {
                 if (Inventory[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("bank", "deposititem"),
-                        Strings.Get("bank", "deposititemprompt", ItemBase.Lookup.Get(Inventory[index].ItemNum).Name), true,
+                        Strings.Get("bank", "deposititemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
                         DepositItemInputBoxOkay, null, index, true);
                 }
                 else
@@ -272,7 +272,7 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        private void DepositItemInputBoxOkay(Object sender, EventArgs e)
+        private void DepositItemInputBoxOkay(object sender, EventArgs e)
         {
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
@@ -283,12 +283,12 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryWithdrawItem(int index)
         {
-            if (Globals.Bank[index] != null && ItemBase.Lookup.Get(Globals.Bank[index].ItemNum) != null)
+            if (Globals.Bank[index] != null && ItemBase.Lookup.Get<ItemBase>(Globals.Bank[index].ItemNum) != null)
             {
                 if (Globals.Bank[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("bank", "withdrawitem"),
-                        Strings.Get("bank", "withdrawitemprompt", ItemBase.Lookup.Get(Globals.Bank[index].ItemNum).Name),
+                        Strings.Get("bank", "withdrawitemprompt", ItemBase.Lookup.Get<ItemBase>(Globals.Bank[index].ItemNum).Name),
                         true, WithdrawItemInputBoxOkay, null, index, true);
                 }
                 else
@@ -298,7 +298,7 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        private void WithdrawItemInputBoxOkay(Object sender, EventArgs e)
+        private void WithdrawItemInputBoxOkay(object sender, EventArgs e)
         {
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
@@ -310,12 +310,12 @@ namespace Intersect_Client.Classes.Entities
         //Bag
         public void TryStoreBagItem(int index)
         {
-            if (ItemBase.Lookup.Get(Inventory[index].ItemNum) != null)
+            if (ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum) != null)
             {
                 if (Inventory[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("bags", "storeitem"),
-                        Strings.Get("bags", "storeitemprompt", ItemBase.Lookup.Get(Inventory[index].ItemNum).Name), true,
+                        Strings.Get("bags", "storeitemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
                         StoreBagItemInputBoxOkay, null, index, true);
                 }
                 else
@@ -325,7 +325,7 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        private void StoreBagItemInputBoxOkay(Object sender, EventArgs e)
+        private void StoreBagItemInputBoxOkay(object sender, EventArgs e)
         {
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
@@ -336,12 +336,12 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryRetreiveBagItem(int index)
         {
-            if (Globals.Bag[index] != null && ItemBase.Lookup.Get(Globals.Bag[index].ItemNum) != null)
+            if (Globals.Bag[index] != null && ItemBase.Lookup.Get<ItemBase>(Globals.Bag[index].ItemNum) != null)
             {
                 if (Globals.Bag[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("bags", "retreiveitem"),
-                        Strings.Get("bags", "retreiveitemprompt", ItemBase.Lookup.Get(Globals.Bag[index].ItemNum).Name),
+                        Strings.Get("bags", "retreiveitemprompt", ItemBase.Lookup.Get<ItemBase>(Globals.Bag[index].ItemNum).Name),
                         true, RetreiveBagItemInputBoxOkay, null, index, true);
                 }
                 else
@@ -351,7 +351,7 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        private void RetreiveBagItemInputBoxOkay(Object sender, EventArgs e)
+        private void RetreiveBagItemInputBoxOkay(object sender, EventArgs e)
         {
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
@@ -363,12 +363,12 @@ namespace Intersect_Client.Classes.Entities
         //Trade
         public void TryTradeItem(int index)
         {
-            if (ItemBase.Lookup.Get(Inventory[index].ItemNum) != null)
+            if (ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum) != null)
             {
                 if (Inventory[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("trading", "offeritem"),
-                        Strings.Get("trading", "offeritemprompt", ItemBase.Lookup.Get(Inventory[index].ItemNum).Name), true,
+                        Strings.Get("trading", "offeritemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
                         TradeItemInputBoxOkay, null, index, true);
                 }
                 else
@@ -378,7 +378,7 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        private void TradeItemInputBoxOkay(Object sender, EventArgs e)
+        private void TradeItemInputBoxOkay(object sender, EventArgs e)
         {
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
@@ -389,13 +389,13 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryRevokeItem(int index)
         {
-            if (Globals.Trade[0, index] != null && ItemBase.Lookup.Get(Globals.Trade[0, index].ItemNum) != null)
+            if (Globals.Trade[0, index] != null && ItemBase.Lookup.Get<ItemBase>(Globals.Trade[0, index].ItemNum) != null)
             {
                 if (Globals.Trade[0, index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("trading", "revokeitem"),
                         Strings.Get("trading", "revokeitemprompt",
-                            ItemBase.Lookup.Get(Globals.Trade[0, index].ItemNum).Name), true, RevokeItemInputBoxOkay, null,
+                            ItemBase.Lookup.Get<ItemBase>(Globals.Trade[0, index].ItemNum).Name), true, RevokeItemInputBoxOkay, null,
                         index, true);
                 }
                 else
@@ -405,7 +405,7 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        private void RevokeItemInputBoxOkay(Object sender, EventArgs e)
+        private void RevokeItemInputBoxOkay(object sender, EventArgs e)
         {
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
@@ -424,15 +424,15 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryForgetSpell(int index)
         {
-            if (SpellBase.Lookup.Get(Spells[index].SpellNum) != null)
+            if (SpellBase.Lookup.Get<SpellBase>(Spells[index].SpellNum) != null)
             {
                 InputBox iBox = new InputBox(Strings.Get("spells", "forgetspell"),
-                    Strings.Get("spells", "forgetspellprompt", SpellBase.Lookup.Get(Spells[index].SpellNum).Name), true,
+                    Strings.Get("spells", "forgetspellprompt", SpellBase.Lookup.Get<SpellBase>(Spells[index].SpellNum).Name), true,
                     ForgetSpellInputBoxOkay, null, index, false);
             }
         }
 
-        private void ForgetSpellInputBoxOkay(Object sender, EventArgs e)
+        private void ForgetSpellInputBoxOkay(object sender, EventArgs e)
         {
             PacketSender.SendForgetSpell(((InputBox) sender).Slot);
         }
@@ -460,15 +460,15 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (CurrentY < Options.MapHeight && CurrentY >= 0)
                 {
-                    if (MapInstance.Lookup.Get(CurrentMap) != null &&
-                        MapInstance.Lookup.Get(CurrentMap).Attributes[CurrentX, CurrentY] != null)
+                    if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) != null &&
+                        MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY] != null)
                     {
-                        if (MapInstance.Lookup.Get(CurrentMap).Attributes[CurrentX, CurrentY].value ==
+                        if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY].value ==
                             (int) MapAttributes.ZDimension)
                         {
-                            if (MapInstance.Lookup.Get(CurrentMap).Attributes[CurrentX, CurrentY].data1 > 0)
+                            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY].data1 > 0)
                             {
-                                CurrentZ = MapInstance.Lookup.Get(CurrentMap).Attributes[CurrentX, CurrentY].data1 - 1;
+                                CurrentZ = MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY].data1 - 1;
                             }
                         }
                     }
@@ -532,7 +532,7 @@ namespace Intersect_Client.Classes.Entities
 
             if (Options.ShieldIndex > -1 && Globals.Me.Equipment[Options.ShieldIndex] > -1)
             {
-                var item = ItemBase.Lookup.Get(Globals.Me.Inventory[Globals.Me.Equipment[Options.ShieldIndex]].ItemNum);
+                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[Globals.Me.Equipment[Options.ShieldIndex]].ItemNum);
                 if (item != null)
                 {
                     PacketSender.SendBlock(1);
@@ -581,7 +581,7 @@ namespace Intersect_Client.Classes.Entities
             }
             if (GetRealLocation(ref x, ref y, ref map))
             {
-                foreach (var eventMap in MapInstance.Lookup.Values)
+                foreach (MapInstance eventMap in MapInstance.Lookup.Values)
                 {
                     foreach (var en in eventMap.LocalEntities)
                     {
@@ -600,7 +600,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 if (Options.WeaponIndex > -1 && Globals.Me.Equipment[Options.WeaponIndex] > -1)
                 {
-                    var item = ItemBase.Lookup.Get(Globals.Me.Inventory[Globals.Me.Equipment[Options.WeaponIndex]].ItemNum);
+                    var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[Globals.Me.Equipment[Options.WeaponIndex]].ItemNum);
                     if (item != null && item.Projectile >= 0)
                     {
                         PacketSender.SendAttack(-1);
@@ -626,7 +626,7 @@ namespace Intersect_Client.Classes.Entities
             //If has a weapon with a projectile equiped, attack anyway
             if (Options.WeaponIndex > -1 && Globals.Me.Equipment[Options.WeaponIndex] > -1)
             {
-                var item = ItemBase.Lookup.Get(Globals.Me.Inventory[Globals.Me.Equipment[Options.WeaponIndex]].ItemNum);
+                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[Globals.Me.Equipment[Options.WeaponIndex]].ItemNum);
                 if (item != null && item.Projectile >= 0)
                 {
                     PacketSender.SendAttack(_targetIndex);
@@ -642,10 +642,10 @@ namespace Intersect_Client.Classes.Entities
             var tmpX = x;
             var tmpY = y;
             var tmpI = -1;
-            if (MapInstance.Lookup.Get(map) != null)
+            if (MapInstance.Lookup.Get<MapInstance>(map) != null)
             {
-                var gridX = MapInstance.Lookup.Get(map).MapGridX;
-                var gridY = MapInstance.Lookup.Get(map).MapGridY;
+                var gridX = MapInstance.Lookup.Get<MapInstance>(map).MapGridX;
+                var gridY = MapInstance.Lookup.Get<MapInstance>(map).MapGridY;
 
                 if (x < 0)
                 {
@@ -670,7 +670,7 @@ namespace Intersect_Client.Classes.Entities
 
                 if (gridX >= 0 && gridX < Globals.MapGridWidth && gridY >= 0 && gridY < Globals.MapGridHeight)
                 {
-                    if (MapInstance.Lookup.Get(Globals.MapGrid[gridX, gridY]) != null)
+                    if (MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[gridX, gridY]) != null)
                     {
                         x = tmpX;
                         y = tmpY;
@@ -687,7 +687,7 @@ namespace Intersect_Client.Classes.Entities
             var x = (int) Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
             var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
 
-            foreach (var map in MapInstance.Lookup.Values)
+            foreach (MapInstance map in MapInstance.Lookup.Values)
             {
                 if (x >= map.GetX() && x <= map.GetX() + (Options.MapWidth * Options.TileWidth))
                 {
@@ -700,7 +700,7 @@ namespace Intersect_Client.Classes.Entities
                         //transform pixel format to tile format
                         x /= Options.TileWidth;
                         y /= Options.TileHeight;
-                        int mapNum = map.Id;
+                        int mapNum = map.Index;
 
                         if (GetRealLocation(ref x, ref y, ref mapNum))
                         {
@@ -739,7 +739,7 @@ namespace Intersect_Client.Classes.Entities
                                     }
                                 }
                             }
-                            foreach (var eventMap in MapInstance.Lookup.Values)
+                            foreach (MapInstance eventMap in MapInstance.Lookup.Values)
                             {
                                 foreach (var en in eventMap.LocalEntities)
                                 {
@@ -791,7 +791,7 @@ namespace Intersect_Client.Classes.Entities
 
         public bool TryPickupItem()
         {
-            var map = MapInstance.Lookup.Get(CurrentMap);
+            var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
             if (map == null)
             {
                 return false;
@@ -900,8 +900,8 @@ namespace Intersect_Client.Classes.Entities
                         if (CurrentX < 0 || CurrentY < 0 || CurrentX > (Options.MapWidth - 1) ||
                             CurrentY > (Options.MapHeight - 1))
                         {
-                            var gridX = MapInstance.Lookup.Get(Globals.Me.CurrentMap).MapGridX;
-                            var gridY = MapInstance.Lookup.Get(Globals.Me.CurrentMap).MapGridY;
+                            var gridX = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridX;
+                            var gridY = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridY;
                             if (CurrentX < 0)
                             {
                                 gridX--;
@@ -950,10 +950,10 @@ namespace Intersect_Client.Classes.Entities
         public void FetchNewMaps()
         {
             if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0) return;
-            if (MapInstance.Lookup.Get(Globals.Me.CurrentMap) != null)
+            if (MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
             {
-                var gridX = MapInstance.Lookup.Get(Globals.Me.CurrentMap).MapGridX;
-                var gridY = MapInstance.Lookup.Get(Globals.Me.CurrentMap).MapGridY;
+                var gridX = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridX;
+                var gridY = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridY;
                 for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
                     for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -961,7 +961,7 @@ namespace Intersect_Client.Classes.Entities
                         if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
                             Globals.MapGrid[x, y] != -1)
                         {
-                            if (MapInstance.Lookup.Get(Globals.MapGrid[x, y]) == null)
+                            if (MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]) == null)
                             {
                                 PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
                             }
@@ -982,7 +982,7 @@ namespace Intersect_Client.Classes.Entities
         /// <returns></returns>
         public int IsTileBlocked(int x, int y, int z, int map)
         {
-            var mapInstance = MapInstance.Lookup.Get(map);
+            var mapInstance = MapInstance.Lookup.Get<MapInstance>(map);
             if (mapInstance == null) return -2;
             var gridX = mapInstance.MapGridX;
             var gridY = mapInstance.MapGridY;
@@ -1015,7 +1015,7 @@ namespace Intersect_Client.Classes.Entities
                 if (gridX < 0 || gridY < 0 || gridX >= Globals.MapGridWidth || gridY >= Globals.MapGridHeight)
                     return -2;
 
-                var gameMap = MapInstance.Lookup.Get(Globals.MapGrid[gridX, gridY]);
+                var gameMap = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[gridX, gridY]);
                 if (gameMap != null)
                 {
                     if (gameMap.Attributes[tmpX, tmpY] != null)
@@ -1068,7 +1068,7 @@ namespace Intersect_Client.Classes.Entities
                                 else if (en.Value.GetType() == typeof(Player))
                                 {
                                     //Return the entity key as this should block the player.  Only exception is if the MapZone this entity is on is passable.
-                                    var entityMap = MapInstance.Lookup.Get(en.Value.CurrentMap);
+                                    var entityMap = MapInstance.Lookup.Get<MapInstance>(en.Value.CurrentMap);
                                     if (Options.PlayerPassable[(int) entityMap.ZoneType]) continue;
                                 }
                                 return en.Key;
@@ -1076,9 +1076,9 @@ namespace Intersect_Client.Classes.Entities
                         }
                     }
                 }
-                if (MapInstance.Lookup.Get(tmpMap) != null)
+                if (MapInstance.Lookup.Get<MapInstance>(tmpMap) != null)
                 {
-                    foreach (var en in MapInstance.Lookup.Get(tmpMap).LocalEntities)
+                    foreach (var en in MapInstance.Lookup.Get<MapInstance>(tmpMap).LocalEntities)
                     {
                         if (en.Value == null) continue;
                         if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY &&
@@ -1143,12 +1143,12 @@ namespace Intersect_Client.Classes.Entities
                     }
                 }
             }
-            foreach (var eventMap in MapInstance.Lookup.Values)
+            foreach (MapInstance eventMap in MapInstance.Lookup.Values)
             {
                 foreach (var en in eventMap.LocalEntities)
                 {
                     if (en.Value == null) continue;
-                    if (en.Value.CurrentMap == eventMap.Id && ((Event) en.Value).DisablePreview == 0 &&
+                    if (en.Value.CurrentMap == eventMap.Index && ((Event) en.Value).DisablePreview == 0 &&
                         !en.Value.IsStealthed())
                     {
                         if (_targetType == 1 && _targetIndex == en.Value.MyIndex)
@@ -1162,7 +1162,7 @@ namespace Intersect_Client.Classes.Entities
             var x = (int) Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
             var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
 
-            foreach (var map in MapInstance.Lookup.Values)
+            foreach (MapInstance map in MapInstance.Lookup.Values)
             {
                 if (x >= map.GetX() && x <= map.GetX() + (Options.MapWidth * Options.TileWidth))
                 {
@@ -1175,7 +1175,7 @@ namespace Intersect_Client.Classes.Entities
                         //transform pixel format to tile format
                         x /= Options.TileWidth;
                         y /= Options.TileHeight;
-                        int mapNum = map.Id;
+                        int mapNum = map.Index;
 
                         if (GetRealLocation(ref x, ref y, ref mapNum))
                         {
@@ -1195,7 +1195,7 @@ namespace Intersect_Client.Classes.Entities
                                     }
                                 }
                             }
-                            foreach (var eventMap in MapInstance.Lookup.Values)
+                            foreach (MapInstance eventMap in MapInstance.Lookup.Values)
                             {
                                 foreach (var en in eventMap.LocalEntities)
                                 {

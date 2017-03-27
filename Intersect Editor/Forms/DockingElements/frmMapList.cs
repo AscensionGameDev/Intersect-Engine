@@ -141,18 +141,18 @@ namespace Intersect_Editor.Forms
             }
             if (mapTreeList.list.SelectedNode == null)
             {
-                PacketSender.SendCreateMap(-1, ((IDatabaseObject) Globals.CurrentMap).Id, null);
+                PacketSender.SendCreateMap(-1, Globals.CurrentMap.Index, null);
             }
             else
             {
-                PacketSender.SendCreateMap(-1, ((IDatabaseObject) Globals.CurrentMap).Id,
+                PacketSender.SendCreateMap(-1, Globals.CurrentMap.Index,
                     (MapListItem) mapTreeList.list.SelectedNode.Tag);
             }
         }
 
         private void toolSelectMap_Click(object sender, EventArgs e)
         {
-            mapTreeList.UpdateMapList(Globals.CurrentMap.Id);
+            mapTreeList.UpdateMapList(Globals.CurrentMap.Index);
         }
     }
 }

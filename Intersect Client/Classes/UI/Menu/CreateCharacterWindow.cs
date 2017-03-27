@@ -130,11 +130,11 @@ namespace Intersect_Client.Classes.UI.Menu
             //Class Combobox
             _classCombobox = new ComboBox(_classBackground);
             var classCount = 0;
-            foreach (var cls in ClassBase.Lookup)
+            foreach (ClassBase cls in ClassBase.Lookup.Values)
             {
-                if (cls.Value.Locked == 0)
+                if (cls.Locked == 0)
                 {
-                    _classCombobox.AddItem(cls.Value.Name);
+                    _classCombobox.AddItem(cls.Name);
                     classCount++;
                 }
             }
@@ -346,9 +346,9 @@ namespace Intersect_Client.Classes.UI.Menu
             if (_classCombobox.SelectedItem == null) return null;
             foreach (var cls in ClassBase.Lookup)
             {
-                if (_classCombobox.SelectedItem.Text == cls.Value.Name && cls.Value.Locked == 0)
+                if (_classCombobox.SelectedItem.Text == cls.Value.Name && ((ClassBase)cls.Value).Locked == 0)
                 {
-                    return cls.Value;
+                    return (ClassBase) cls.Value;
                 }
             }
             return null;
@@ -494,12 +494,12 @@ namespace Intersect_Client.Classes.UI.Menu
                 GameFade.FadeOut();
                 if (_maleChk.IsChecked)
                 {
-                    PacketSender.SendCreateCharacter(_charnameTextbox.Text, GetClass().Id,
+                    PacketSender.SendCreateCharacter(_charnameTextbox.Text, GetClass().Index,
                         _maleSprites[_displaySpriteIndex].Key);
                 }
                 else
                 {
-                    PacketSender.SendCreateCharacter(_charnameTextbox.Text, GetClass().Id,
+                    PacketSender.SendCreateCharacter(_charnameTextbox.Text, GetClass().Index,
                         _femaleSprites[_displaySpriteIndex].Key);
                 }
                 Globals.WaitingOnServer = true;

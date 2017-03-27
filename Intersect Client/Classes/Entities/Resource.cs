@@ -33,7 +33,7 @@ namespace Intersect_Client.Classes.Entities
             base.Load(bf);
             IsDead = Convert.ToBoolean(bf.ReadInteger());
             var baseIndex = bf.ReadInteger();
-            _baseResource = ResourceBase.Lookup.Get(baseIndex);
+            _baseResource = ResourceBase.Lookup.Get<ResourceBase>(baseIndex);
             HideName = 1;
         }
 
@@ -64,7 +64,7 @@ namespace Intersect_Client.Classes.Entities
 
         private void CalculateRenderBounds()
         {
-            var map = MapInstance.Lookup.Get(CurrentMap);
+            var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
             if (map == null)
             {
                 return;
@@ -92,7 +92,7 @@ namespace Intersect_Client.Classes.Entities
         //Rendering Resources
         public override void Draw()
         {
-            if (MapInstance.Lookup.Get(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
+            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
             GameTexture srcTexture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, MySprite);
             if (srcTexture != null)
             {

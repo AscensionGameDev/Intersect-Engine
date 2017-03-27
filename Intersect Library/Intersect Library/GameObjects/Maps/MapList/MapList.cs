@@ -21,7 +21,7 @@ namespace Intersect.GameObjects.Maps.MapList
             return _orderedMaps;
         }
 
-        public byte[] Data(IntObjectLookup<MapBase> gameMaps)
+        public byte[] Data(DatabaseObjectLookup gameMaps)
         {
             ByteBuffer myBuffer = new ByteBuffer();
             myBuffer.WriteInteger(Items.Count);
@@ -39,7 +39,7 @@ namespace Intersect.GameObjects.Maps.MapList
             return myBuffer.ToArray();
         }
 
-        public bool Load(ByteBuffer myBuffer, IntObjectLookup<MapBase> gameMaps, bool isServer = true,
+        public bool Load(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps, bool isServer = true,
             bool isTopLevel = false)
         {
             if (isTopLevel) _orderedMaps.Clear();
@@ -69,7 +69,7 @@ namespace Intersect.GameObjects.Maps.MapList
                     tmpMap = new MapListMap();
                     if (tmpMap.Load(myBuffer, gameMaps, isServer))
                     {
-                        if (gameMaps.Keys.Contains(tmpMap.MapNum) || !isServer)
+                        if (gameMaps.IndexKeys.Contains(tmpMap.MapNum) || !isServer)
                         {
                             Items.Add(tmpMap);
                             _orderedMaps.Add(tmpMap);
@@ -85,9 +85,9 @@ namespace Intersect.GameObjects.Maps.MapList
             return result;
         }
 
-        public void AddMap(int mapNum, IntObjectLookup<MapBase> gameMaps)
+        public void AddMap(int mapNum, DatabaseObjectLookup gameMaps)
         {
-            if (!gameMaps.Keys.Contains(mapNum)) return;
+            if (!gameMaps.IndexKeys.Contains(mapNum)) return;
             var tmp = new MapListMap()
             {
                 Name = gameMaps[mapNum].Name,

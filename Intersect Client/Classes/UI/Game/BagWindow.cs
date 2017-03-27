@@ -131,7 +131,7 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 if (Globals.Bag[i] != null && Globals.Bag[i].ItemNum > -1)
                 {
-                    var item = ItemBase.Lookup.Get(Globals.Bag[i].ItemNum);
+                    var item = ItemBase.Lookup.Get<ItemBase>(Globals.Bag[i].ItemNum);
                     if (item != null)
                     {
                         Items[i].pnl.IsHidden = false;
@@ -311,7 +311,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (Globals.Bag[_mySlot].ItemNum != _currentItem)
             {
                 _currentItem = Globals.Bag[_mySlot].ItemNum;
-                var item = ItemBase.Lookup.Get(Globals.Bag[_mySlot].ItemNum);
+                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Bag[_mySlot].ItemNum);
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,

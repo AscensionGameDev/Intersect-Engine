@@ -18,25 +18,25 @@ namespace Intersect.GameObjects.Maps.MapList
             return MapNum.CompareTo(obj.MapNum);
         }
 
-        public void GetData(ByteBuffer myBuffer, IntObjectLookup<MapBase> gameMaps)
+        public void GetData(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps)
         {
             base.GetData(myBuffer);
             myBuffer.WriteInteger(MapNum);
             myBuffer.WriteString(gameMaps[MapNum].Name);
         }
 
-        public bool Load(ByteBuffer myBuffer, IntObjectLookup<MapBase> gameMaps, bool isServer = true)
+        public bool Load(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps, bool isServer = true)
         {
             base.Load(myBuffer);
             MapNum = myBuffer.ReadInteger();
             Name = myBuffer.ReadString();
             if (isServer)
             {
-                if (!gameMaps.Keys.Contains(MapNum)) return false;
+                if (!gameMaps.IndexKeys.Contains(MapNum)) return false;
             }
             else
             {
-                if (gameMaps.Keys.Contains(MapNum))
+                if (gameMaps.IndexKeys.Contains(MapNum))
                 {
                     gameMaps[MapNum].Name = Name;
                 }

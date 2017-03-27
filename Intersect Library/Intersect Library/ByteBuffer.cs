@@ -99,7 +99,7 @@ namespace Intersect
 
         public void WriteString(string input)
         {
-            if (String.IsNullOrEmpty(input))
+            if (string.IsNullOrEmpty(input))
             {
                 WriteInteger(0);
             }

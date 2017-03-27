@@ -192,7 +192,7 @@ namespace Intersect_Editor.Forms
 
         private void externalToolItem_Click(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty((string) ((ToolStripItem) sender).Tag))
+            if (!string.IsNullOrEmpty((string) ((ToolStripItem) sender).Tag))
             {
                 var psi = new ProcessStartInfo(Path.GetFileName((string) ((ToolStripItem) sender).Tag))
                 {
@@ -307,7 +307,7 @@ namespace Intersect_Editor.Forms
 
         public void EnterMap(int mapNum)
         {
-            Globals.CurrentMap = MapInstance.Lookup.Get(mapNum);
+            Globals.CurrentMap = MapInstance.Lookup.Get<MapInstance>(mapNum);
             Globals.LoadingMap = mapNum;
             if (Globals.CurrentMap == null)
             {
@@ -682,7 +682,7 @@ namespace Intersect_Editor.Forms
             {
                 SaveMap();
             }
-            PacketSender.SendCreateMap(-1, ((IDatabaseObject) Globals.CurrentMap).Id, null);
+            PacketSender.SendCreateMap(-1, Globals.CurrentMap.Index, null);
         }
 
         private void exportMapToolStripMenuItem_Click(object sender, EventArgs e)

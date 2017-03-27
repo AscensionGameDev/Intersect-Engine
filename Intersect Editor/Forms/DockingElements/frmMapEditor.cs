@@ -283,7 +283,7 @@ namespace Intersect_Editor.Forms
                                         {
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                     Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex =
-                                                Globals.CurrentTileset.Id;
+                                                Globals.CurrentTileset.Index;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                     Globals.CurTileX + x, Globals.CurTileY + y].X =
                                                 Globals.CurSelX + x;
@@ -301,7 +301,7 @@ namespace Intersect_Editor.Forms
                             else
                             {
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY]
-                                    .TilesetIndex = Globals.CurrentTileset.Id;
+                                    .TilesetIndex = Globals.CurrentTileset.Index;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X
                                     = Globals.CurSelX;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y
@@ -360,7 +360,7 @@ namespace Intersect_Editor.Forms
                         EventBase tmpEvent;
                         if ((tmpEvent = Globals.CurrentMap.FindEventAt(Globals.CurTileX, Globals.CurTileY)) != null)
                         {
-                            Globals.CurrentMap.Events.Remove(tmpEvent.Id);
+                            Globals.CurrentMap.Events.Remove(tmpEvent.Index);
                             MapChanged = true;
                         }
                     }
@@ -390,23 +390,23 @@ namespace Intersect_Editor.Forms
             }
             if (Globals.CurTileX == 0)
             {
-                if (MapInstance.Lookup.Get(tmpMap.Left) != null)
-                    MapInstance.Lookup.Get(tmpMap.Left).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Left) != null)
+                    MapInstance.Lookup.Get<MapInstance>(tmpMap.Left).InitAutotiles();
             }
             if (Globals.CurTileY == 0)
             {
-                if (MapInstance.Lookup.Get(tmpMap.Up) != null)
-                    MapInstance.Lookup.Get(tmpMap.Up).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Up) != null)
+                    MapInstance.Lookup.Get<MapInstance>(tmpMap.Up).InitAutotiles();
             }
             if (Globals.CurTileX == Options.MapWidth - 1)
             {
-                if (MapInstance.Lookup.Get(tmpMap.Right) != null)
-                    MapInstance.Lookup.Get(tmpMap.Right).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Right) != null)
+                    MapInstance.Lookup.Get<MapInstance>(tmpMap.Right).InitAutotiles();
             }
             if (Globals.CurTileY == Options.MapHeight - 1)
             {
-                if (MapInstance.Lookup.Get(tmpMap.Down) != null)
-                    MapInstance.Lookup.Get(tmpMap.Down).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Down) != null)
+                    MapInstance.Lookup.Get<MapInstance>(tmpMap.Down).InitAutotiles();
             }
         }
 
@@ -519,7 +519,7 @@ namespace Intersect_Editor.Forms
                                         {
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                     Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex =
-                                                Globals.CurrentTileset.Id;
+                                                Globals.CurrentTileset.Index;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                 Globals.CurTileX + x, Globals.CurTileY + y].X = Globals.CurSelX + x;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
@@ -535,7 +535,7 @@ namespace Intersect_Editor.Forms
                             else
                             {
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY]
-                                    .TilesetIndex = Globals.CurrentTileset.Id;
+                                    .TilesetIndex = Globals.CurrentTileset.Index;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X =
                                     Globals.CurSelX;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y =
@@ -549,23 +549,23 @@ namespace Intersect_Editor.Forms
                         }
                         if (Globals.CurTileX == 0)
                         {
-                            if (MapInstance.Lookup.Get(tmpMap.Left) != null)
-                                MapInstance.Lookup.Get(tmpMap.Left).InitAutotiles();
+                            if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Left) != null)
+                                MapInstance.Lookup.Get<MapInstance>(tmpMap.Left).InitAutotiles();
                         }
                         if (Globals.CurTileY == 0)
                         {
-                            if (MapInstance.Lookup.Get(tmpMap.Up) != null)
-                                MapInstance.Lookup.Get(tmpMap.Up).InitAutotiles();
+                            if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Up) != null)
+                                MapInstance.Lookup.Get<MapInstance>(tmpMap.Up).InitAutotiles();
                         }
                         if (Globals.CurTileX == Options.MapWidth - 1)
                         {
-                            if (MapInstance.Lookup.Get(tmpMap.Right) != null)
-                                MapInstance.Lookup.Get(tmpMap.Right).InitAutotiles();
+                            if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Right) != null)
+                                MapInstance.Lookup.Get<MapInstance>(tmpMap.Right).InitAutotiles();
                         }
                         if (Globals.CurTileY == Options.MapHeight - 1)
                         {
-                            if (MapInstance.Lookup.Get(tmpMap.Down) != null)
-                                MapInstance.Lookup.Get(tmpMap.Down).InitAutotiles();
+                            if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Down) != null)
+                                MapInstance.Lookup.Get<MapInstance>(tmpMap.Down).InitAutotiles();
                         }
                     }
                 }
@@ -597,23 +597,23 @@ namespace Intersect_Editor.Forms
                     }
                     if (Globals.CurTileX == 0)
                     {
-                        if (MapInstance.Lookup.Get(tmpMap.Left) != null)
-                            MapInstance.Lookup.Get(tmpMap.Left).InitAutotiles();
+                        if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Left) != null)
+                            MapInstance.Lookup.Get<MapInstance>(tmpMap.Left).InitAutotiles();
                     }
                     if (Globals.CurTileY == 0)
                     {
-                        if (MapInstance.Lookup.Get(tmpMap.Up) != null)
-                            MapInstance.Lookup.Get(tmpMap.Up).InitAutotiles();
+                        if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Up) != null)
+                            MapInstance.Lookup.Get<MapInstance>(tmpMap.Up).InitAutotiles();
                     }
                     if (Globals.CurTileX == Options.MapWidth - 1)
                     {
-                        if (MapInstance.Lookup.Get(tmpMap.Right) != null)
-                            MapInstance.Lookup.Get(tmpMap.Right).InitAutotiles();
+                        if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Right) != null)
+                            MapInstance.Lookup.Get<MapInstance>(tmpMap.Right).InitAutotiles();
                     }
                     if (Globals.CurTileY == Options.MapHeight - 1)
                     {
-                        if (MapInstance.Lookup.Get(tmpMap.Down) != null)
-                            MapInstance.Lookup.Get(tmpMap.Down).InitAutotiles();
+                        if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Down) != null)
+                            MapInstance.Lookup.Get<MapInstance>(tmpMap.Down).InitAutotiles();
                     }
                 }
             }
@@ -702,7 +702,7 @@ namespace Intersect_Editor.Forms
                                         if (Globals.CurrentTileset != null)
                                         {
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex =
-                                                Globals.CurrentTileset.Id;
+                                                Globals.CurrentTileset.Index;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].X = Globals.CurSelX + x1;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Y = Globals.CurSelY + y1;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Autotile =
@@ -725,7 +725,7 @@ namespace Intersect_Editor.Forms
                                 if (Globals.MouseButton == 0)
                                 {
                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex =
-                                        Globals.CurrentTileset.Id;
+                                        Globals.CurrentTileset.Index;
                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].X = Globals.CurSelX;
                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Y = Globals.CurSelY;
                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Autotile =
@@ -815,7 +815,7 @@ namespace Intersect_Editor.Forms
                 }
                 if (dir != -1)
                 {
-                    if (Globals.MapGrid != null && Globals.MapGrid.Contains(Globals.CurrentMap.Id))
+                    if (Globals.MapGrid != null && Globals.MapGrid.Contains(Globals.CurrentMap.Index))
                     {
                         var x = gridX + Globals.CurrentMap.MapGridX;
                         var y = gridY + Globals.CurrentMap.MapGridY;
@@ -830,7 +830,7 @@ namespace Intersect_Editor.Forms
                 }
                 else
                 {
-                    if (Globals.MapGrid != null && Globals.MapGrid.Contains(Globals.CurrentMap.Id))
+                    if (Globals.MapGrid != null && Globals.MapGrid.Contains(Globals.CurrentMap.Index))
                     {
                         var x = gridX + Globals.CurrentMap.MapGridX;
                         var y = gridY + Globals.CurrentMap.MapGridY;
@@ -877,7 +877,7 @@ namespace Intersect_Editor.Forms
                         {
                             SaveMap();
                         }
-                        PacketSender.SendCreateMap(dir, ((IDatabaseObject) Globals.CurrentMap).Id, null);
+                        PacketSender.SendCreateMap(dir, Globals.CurrentMap.Index, null);
                     }
                     else
                     {
@@ -1030,7 +1030,7 @@ namespace Intersect_Editor.Forms
                                 x1 = (x) % (Globals.CurSelW + 1);
                                 y1 = (y) % (Globals.CurSelH + 1);
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY]
-                                    .TilesetIndex = Globals.CurrentTileset.Id;
+                                    .TilesetIndex = Globals.CurrentTileset.Index;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X =
                                     Globals.CurSelX + x1;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y =
@@ -1041,7 +1041,7 @@ namespace Intersect_Editor.Forms
                             else
                             {
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY]
-                                    .TilesetIndex = Globals.CurrentTileset.Id;
+                                    .TilesetIndex = Globals.CurrentTileset.Index;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X =
                                     Globals.CurSelX;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y =
@@ -1055,14 +1055,14 @@ namespace Intersect_Editor.Forms
                 tmpMap.InitAutotiles();
                 Globals.CurTileX = oldCurSelX;
                 Globals.CurTileY = oldCurSelY;
-                if (MapInstance.Lookup.Get(tmpMap.Left) != null)
-                    MapInstance.Lookup.Get(tmpMap.Left).InitAutotiles();
-                if (MapInstance.Lookup.Get(tmpMap.Up) != null)
-                    MapInstance.Lookup.Get(tmpMap.Up).InitAutotiles();
-                if (MapInstance.Lookup.Get(tmpMap.Right) != null)
-                    MapInstance.Lookup.Get(tmpMap.Right).InitAutotiles();
-                if (MapInstance.Lookup.Get(tmpMap.Down) != null)
-                    MapInstance.Lookup.Get(tmpMap.Down).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Left) != null)
+                    MapInstance.Lookup.Get<MapInstance>(tmpMap.Left).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Up) != null)
+                    MapInstance.Lookup.Get<MapInstance>(tmpMap.Up).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Right) != null)
+                    MapInstance.Lookup.Get<MapInstance>(tmpMap.Right).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Down) != null)
+                    MapInstance.Lookup.Get<MapInstance>(tmpMap.Down).InitAutotiles();
 
                 if (!CurrentMapState.SequenceEqual(tmpMap.GetMapData(false)))
                 {
@@ -1112,14 +1112,14 @@ namespace Intersect_Editor.Forms
                 tmpMap.InitAutotiles();
                 Globals.CurTileX = oldCurSelX;
                 Globals.CurTileY = oldCurSelY;
-                if (MapInstance.Lookup.Get(tmpMap.Left) != null)
-                    MapInstance.Lookup.Get(tmpMap.Left).InitAutotiles();
-                if (MapInstance.Lookup.Get(tmpMap.Up) != null)
-                    MapInstance.Lookup.Get(tmpMap.Up).InitAutotiles();
-                if (MapInstance.Lookup.Get(tmpMap.Right) != null)
-                    MapInstance.Lookup.Get(tmpMap.Right).InitAutotiles();
-                if (MapInstance.Lookup.Get(tmpMap.Down) != null)
-                    MapInstance.Lookup.Get(tmpMap.Down).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Left) != null)
+                    MapInstance.Lookup.Get<MapInstance>(tmpMap.Left).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Up) != null)
+                    MapInstance.Lookup.Get<MapInstance>(tmpMap.Up).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Right) != null)
+                    MapInstance.Lookup.Get<MapInstance>(tmpMap.Right).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Down) != null)
+                    MapInstance.Lookup.Get<MapInstance>(tmpMap.Down).InitAutotiles();
 
                 if (!CurrentMapState.SequenceEqual(tmpMap.GetMapData(false)))
                 {
@@ -1304,7 +1304,7 @@ namespace Intersect_Editor.Forms
                             {
                                 if (tmpMap.FindEventAt(x0, y0) != null)
                                 {
-                                    tmpMap.Events.Remove(tmpMap.FindEventAt(x0, y0).Id);
+                                    tmpMap.Events.Remove(tmpMap.FindEventAt(x0, y0).Index);
                                 }
                                 eventCopy = new EventBase(tmpMap.EventIndex,
                                     Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset))
@@ -1442,7 +1442,7 @@ namespace Intersect_Editor.Forms
                         {
                             if (((MapInstance) tmpMap).FindEventAt(x0, y0) != null)
                             {
-                                tmpMap.Events.Remove(((MapInstance) tmpMap).FindEventAt(x0, y0).Id);
+                                tmpMap.Events.Remove(((MapInstance) tmpMap).FindEventAt(x0, y0).Index);
                             }
                         }
                     }

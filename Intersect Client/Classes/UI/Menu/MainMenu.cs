@@ -150,7 +150,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _optionsButton = new Button(_menuCanvas);
             _optionsButton.Clicked += OptionsButton_Clicked;
             _optionsButton.SetText("");
-            if (!String.IsNullOrEmpty(Strings.Get("mainmenu", "options")))
+            if (!string.IsNullOrEmpty(Strings.Get("mainmenu", "options")))
                 _optionsButton.SetToolTipText(Strings.Get("mainmenu", "options"));
             _optionsButton.SetSize(48, 49);
             _optionsButton.SetPosition(_menuCanvas.Width - 50, 2);

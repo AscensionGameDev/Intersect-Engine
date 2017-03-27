@@ -17,7 +17,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5
         private const string GAME_OBJECT_DELETED = "deleted";
         private const string GAME_OBJECT_DATA = "data";
         private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
+        private object _dbLock = new object();
 
         public Upgrade5(SqliteConnection connection)
         {

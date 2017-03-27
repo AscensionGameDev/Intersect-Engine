@@ -383,7 +383,7 @@ namespace Intersect_Client.Classes.UI.Game
             }
         }
 
-        void MuteUser(Object sender, EventArgs e)
+        void MuteUser(object sender, EventArgs e)
         {
             PacketSender.SendAdminAction((int) AdminActions.Mute, _nameTextbox.Text,
                 _banMuteWindow.GetDuration().ToString(), _banMuteWindow.GetReason(),
@@ -391,7 +391,7 @@ namespace Intersect_Client.Classes.UI.Game
             _banMuteWindow.Dispose();
         }
 
-        void BanUser(Object sender, EventArgs e)
+        void BanUser(object sender, EventArgs e)
         {
             PacketSender.SendAdminAction((int) AdminActions.Ban, _nameTextbox.Text,
                 _banMuteWindow.GetDuration().ToString(), _banMuteWindow.GetReason(),
@@ -435,12 +435,12 @@ namespace Intersect_Client.Classes.UI.Game
             }
         }
 
-        void UnmuteUser(Object sender, EventArgs e)
+        void UnmuteUser(object sender, EventArgs e)
         {
             PacketSender.SendAdminAction((int) AdminActions.UnMute, _nameTextbox.Text);
         }
 
-        void UnbanUser(Object sender, EventArgs e)
+        void UnbanUser(object sender, EventArgs e)
         {
             PacketSender.SendAdminAction((int) AdminActions.UnBan, _nameTextbox.Text);
         }

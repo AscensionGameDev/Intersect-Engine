@@ -69,7 +69,7 @@ namespace Intersect_Editor.Forms
 
         private void lstNpcs_Click(object sender, EventArgs e)
         {
-            _editorItem = NpcBase.Lookup.Get(Database.GameObjectIdFromList(GameObjectType.Npc, lstNpcs.SelectedIndex));
+            _editorItem = NpcBase.Lookup.Get<NpcBase>(Database.GameObjectIdFromList(GameObjectType.Npc, lstNpcs.SelectedIndex));
             UpdateEditor();
         }
 
@@ -262,7 +262,7 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstNpcs.Items[Database.GameObjectListIndex(GameObjectType.Npc, _editorItem.Id)] = txtName.Text;
+            lstNpcs.Items[Database.GameObjectListIndex(GameObjectType.Npc, _editorItem.Index)] = txtName.Text;
         }
 
         private void cmbBehavior_SelectedIndexChanged(object sender, EventArgs e)

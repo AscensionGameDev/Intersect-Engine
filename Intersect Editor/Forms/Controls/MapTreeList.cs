@@ -29,7 +29,7 @@ namespace Intersect_Editor.Forms.Controls
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        internal static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+        internal static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
         private void treeMapList_ItemDrag(object sender, ItemDragEventArgs e)
         {
@@ -127,7 +127,7 @@ namespace Intersect_Editor.Forms.Controls
             if (!_canEdit) return;
             if (e.Node != null)
             {
-                if (!String.IsNullOrEmpty(e.Label))
+                if (!string.IsNullOrEmpty(e.Label))
                 {
                     if (e.Node.Tag.GetType() == typeof(MapListMap))
                     {

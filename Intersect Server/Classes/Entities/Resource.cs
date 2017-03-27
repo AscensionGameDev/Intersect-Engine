@@ -87,7 +87,7 @@ namespace Intersect_Server.Classes.Entities
                     if (tileHelper.TryFix())
                     {
                         //Tile is valid.. let's see if its open
-                        var map = MapInstance.Lookup.Get(tileHelper.GetMap());
+                        var map = MapInstance.Lookup.Get<MapInstance>(tileHelper.GetMap());
                         if (map != null)
                         {
                             if (!map.TileBlocked(tileHelper.GetX(), tileHelper.GetY()))
@@ -126,9 +126,9 @@ namespace Intersect_Server.Classes.Entities
                 // Drop items
                 foreach (var item in Inventory)
                 {
-                    if (ItemBase.Lookup.Get(item.ItemNum) != null)
+                    if (ItemBase.Lookup.Get<ItemBase>(item.ItemNum) != null)
                     {
-                        MapInstance.Lookup.Get(selectedTile.GetMap())
+                        MapInstance.Lookup.Get<MapInstance>(selectedTile.GetMap())
                             .SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.ItemVal);
                     }
                 }
@@ -141,7 +141,7 @@ namespace Intersect_Server.Classes.Entities
             ByteBuffer myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(base.Data());
             myBuffer.WriteInteger(Convert.ToInt32(IsDead));
-            myBuffer.WriteInteger(MyBase.Id);
+            myBuffer.WriteInteger(MyBase.Index);
             return myBuffer.ToArray();
         }
 

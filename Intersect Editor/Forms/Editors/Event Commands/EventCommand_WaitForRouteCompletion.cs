@@ -32,7 +32,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 if (_editingCommand.Ints[0] == -1) cmbEntities.SelectedIndex = -1;
                 foreach (var evt in _currentMap.Events)
                 {
-                    cmbEntities.Items.Add(evt.Key == _editingEvent.Id
+                    cmbEntities.Items.Add(evt.Key == _editingEvent.Index
                         ? Strings.Get("eventwaitforroutecompletion", "this") + " "
                         : "" + evt.Value.Name);
                     if (_editingCommand.Ints[0] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;

@@ -14,7 +14,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public SpellDescWindow(int spellnum, int x, int y)
         {
-            var spell = SpellBase.Lookup.Get(spellnum);
+            var spell = SpellBase.Lookup.Get<SpellBase>(spellnum);
             if (spell == null)
             {
                 return;

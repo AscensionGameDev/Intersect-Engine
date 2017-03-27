@@ -12,7 +12,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Conve
         protected static Dictionary<int, MapBase> Objects = new Dictionary<int, MapBase>();
 
         //SyncLock
-        protected Object _mapLock = new Object();
+        protected object _mapLock = new object();
 
         //Client/Editor Only
         public MapAutotiles Autotiles;

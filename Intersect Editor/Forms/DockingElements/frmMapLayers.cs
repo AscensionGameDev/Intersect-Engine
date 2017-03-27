@@ -212,7 +212,7 @@ namespace Intersect_Editor.Forms
             if (TilesetBase.Lookup.Count > 0)
             {
                 Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
-                Globals.CurrentTileset = TilesetBase.Lookup.Get(Database.GameObjectListIndex(GameObjectType.Tileset, 0));
+                Globals.CurrentTileset = TilesetBase.Lookup.Get<TilesetBase>(Database.GameObjectListIndex(GameObjectType.Tileset, 0));
             }
         }
 
@@ -221,7 +221,7 @@ namespace Intersect_Editor.Forms
             TilesetBase tSet = null;
             var tilesets = TilesetBase.Lookup;
             var index = -1;
-            foreach (var tileset in tilesets)
+            foreach (var tileset in tilesets.IndexClone)
             {
                 if (tileset.Value.Name.ToLower() == name.ToLower())
                 {
@@ -231,7 +231,7 @@ namespace Intersect_Editor.Forms
             }
             if (index > -1)
             {
-                tSet = TilesetBase.Lookup.Get(index);
+                tSet = TilesetBase.Lookup.Get<TilesetBase>(index);
             }
             if (tSet != null)
             {

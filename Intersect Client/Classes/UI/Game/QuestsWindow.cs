@@ -203,11 +203,11 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 new InputBox(Strings.Get("questlog", "abandontitle", _selectedQuest.Name),
                     Strings.Get("questlog", "abandonprompt", _selectedQuest.Name), true, AbandonQuest, null,
-                    _selectedQuest.Id, false);
+                    _selectedQuest.Index, false);
             }
         }
 
-        void AbandonQuest(Object sender, EventArgs e)
+        void AbandonQuest(object sender, EventArgs e)
         {
             PacketSender.SendCancelQuest(((InputBox) sender).Slot);
         }
@@ -233,10 +233,10 @@ namespace Intersect_Client.Classes.UI.Game
 
             if (_selectedQuest != null)
             {
-                if (Globals.Me.QuestProgress.ContainsKey(_selectedQuest.Id))
+                if (Globals.Me.QuestProgress.ContainsKey(_selectedQuest.Index))
                 {
-                    if (Globals.Me.QuestProgress[_selectedQuest.Id].completed == 1 &&
-                        Globals.Me.QuestProgress[_selectedQuest.Id].task == -1)
+                    if (Globals.Me.QuestProgress[_selectedQuest.Index].completed == 1 &&
+                        Globals.Me.QuestProgress[_selectedQuest.Index].task == -1)
                     {
                         //Completed
                         if (_selectedQuest.LogAfterComplete == 0)
@@ -264,40 +264,40 @@ namespace Intersect_Client.Classes.UI.Game
             _questList.RemoveAllRows();
             if (Globals.Me != null)
             {
-                var quests = QuestBase.Lookup;
-                foreach (var quest in quests)
+                var quests = QuestBase.Lookup.IndexValues;
+                foreach (QuestBase quest in quests)
                 {
-                    if (quest.Value != null)
+                    if (quest != null)
                     {
-                        if (Globals.Me.QuestProgress.ContainsKey(quest.Key))
+                        if (Globals.Me.QuestProgress.ContainsKey(quest.Index))
                         {
-                            if (Globals.Me.QuestProgress[quest.Key].task != -1)
+                            if (Globals.Me.QuestProgress[quest.Index].task != -1)
                             {
-                                AddQuestToList(quest.Value.Name, Color.Yellow, quest.Key);
+                                AddQuestToList(quest.Name, Color.Yellow, quest.Index);
                             }
                             else
                             {
-                                if (Globals.Me.QuestProgress[quest.Key].completed == 1)
+                                if (Globals.Me.QuestProgress[quest.Index].completed == 1)
                                 {
-                                    if (quest.Value.LogAfterComplete == 1)
+                                    if (quest.LogAfterComplete == 1)
                                     {
-                                        AddQuestToList(quest.Value.Name, Color.Green, quest.Key);
+                                        AddQuestToList(quest.Name, Color.Green, quest.Index);
                                     }
                                 }
                                 else
                                 {
-                                    if (quest.Value.LogBeforeOffer == 1)
+                                    if (quest.LogBeforeOffer == 1)
                                     {
-                                        AddQuestToList(quest.Value.Name, Color.Red, quest.Key);
+                                        AddQuestToList(quest.Name, Color.Red, quest.Index);
                                     }
                                 }
                             }
                         }
                         else
                         {
-                            if (quest.Value.LogBeforeOffer == 1)
+                            if (quest.LogBeforeOffer == 1)
                             {
-                                AddQuestToList(quest.Value.Name, Color.Red, quest.Key);
+                                AddQuestToList(quest.Name, Color.Red, quest.Index);
                             }
                         }
                     }
@@ -322,7 +322,7 @@ namespace Intersect_Client.Classes.UI.Game
         private void QuestListItem_Clicked(Base sender, ClickedEventArgs arguments)
         {
             var questNum = (int) ((ListBoxRow) sender).UserData;
-            var quest = QuestBase.Lookup.Get(questNum);
+            var quest = QuestBase.Lookup.Get<QuestBase>(questNum);
             if (quest != null)
             {
                 _selectedQuest = quest;
@@ -346,11 +346,11 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _questDesc.RemoveAllRows();
                 ListBoxRow rw;
-                String[] myText = null;
-                List<String> taskString = new List<string>();
-                if (Globals.Me.QuestProgress.ContainsKey(_selectedQuest.Id))
+                string[] myText = null;
+                List<string> taskString = new List<string>();
+                if (Globals.Me.QuestProgress.ContainsKey(_selectedQuest.Index))
                 {
-                    if (Globals.Me.QuestProgress[_selectedQuest.Id].task != -1)
+                    if (Globals.Me.QuestProgress[_selectedQuest.Index].task != -1)
                     {
                         //In Progress
                         _questStatus.Text = Strings.Get("questlog", "inprogress");
@@ -361,7 +361,7 @@ namespace Intersect_Client.Classes.UI.Game
                         taskString.Add(Strings.Get("questlog", "currenttask"));
                         for (int i = 0; i < _selectedQuest.Tasks.Count; i++)
                         {
-                            if (_selectedQuest.Tasks[i].Id == Globals.Me.QuestProgress[_selectedQuest.Id].task)
+                            if (_selectedQuest.Tasks[i].Id == Globals.Me.QuestProgress[_selectedQuest.Index].task)
                             {
                                 taskString.AddRange(Gui.WrapText(_selectedQuest.Tasks[i].Desc, _questDesc.Width - 12,
                                     _questDesc.Parent.Skin.DefaultFont));
@@ -369,14 +369,14 @@ namespace Intersect_Client.Classes.UI.Game
                                 {
                                     taskString.Add("");
                                     taskString.Add(Strings.Get("questlog", "taskitem",
-                                        Globals.Me.QuestProgress[_selectedQuest.Id].taskProgress,
+                                        Globals.Me.QuestProgress[_selectedQuest.Index].taskProgress,
                                         _selectedQuest.Tasks[i].Data2, ItemBase.GetName(_selectedQuest.Tasks[i].Data1)));
                                 }
                                 else if (_selectedQuest.Tasks[i].Objective == 2) //Kill Npcs
                                 {
                                     taskString.Add("");
                                     taskString.Add(Strings.Get("questlog", "tasknpc",
-                                        Globals.Me.QuestProgress[_selectedQuest.Id].taskProgress,
+                                        Globals.Me.QuestProgress[_selectedQuest.Index].taskProgress,
                                         _selectedQuest.Tasks[i].Data2, NpcBase.GetName(_selectedQuest.Tasks[i].Data1)));
                                 }
                             }
@@ -388,7 +388,7 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                     else
                     {
-                        if (Globals.Me.QuestProgress[_selectedQuest.Id].completed == 1)
+                        if (Globals.Me.QuestProgress[_selectedQuest.Index].completed == 1)
                         {
                             //Completed
                             if (_selectedQuest.LogAfterComplete == 1)

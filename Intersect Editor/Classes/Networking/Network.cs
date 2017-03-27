@@ -13,7 +13,7 @@ namespace Intersect_Editor.Classes
         public static bool Connecting;
         private static byte[] _tempBuff;
         private static ByteBuffer _myBuffer = new ByteBuffer();
-        private static Object _bufferLock = new Object();
+        private static object _bufferLock = new object();
 
         public static void InitNetwork()
         {

@@ -23,7 +23,7 @@ namespace Intersect_Migration_Tool
         private const string INFO_TABLE = "info";
         private const string DB_VERSION = "dbversion";
         private static SqliteConnection _dbConnection;
-        private static Object _dbLock = new Object();
+        private static object _dbLock = new object();
 
         //Config Info
         public static string GetLanguageFromConfig()

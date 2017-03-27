@@ -174,7 +174,7 @@ namespace Intersect_Editor.Classes
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
+                                    var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (map != null)
                                     {
                                         //Draw this map
@@ -203,7 +203,7 @@ namespace Intersect_Editor.Classes
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
+                                    var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (map != null)
                                     {
                                         DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
@@ -220,7 +220,7 @@ namespace Intersect_Editor.Classes
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
+                                    var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (map != null)
                                     {
                                         //Draw this map
@@ -238,7 +238,7 @@ namespace Intersect_Editor.Classes
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
+                                    var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (map != null)
                                     {
                                         DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
@@ -329,7 +329,7 @@ namespace Intersect_Editor.Classes
             }
             DrawTexture(
                 GetTexture(TextureType.Tileset,
-                    TilesetBase.Lookup.Get(map.Layers[layerNum].Tiles[x, y].TilesetIndex).Name),
+                    TilesetBase.Lookup.Get<TilesetBase>(map.Layers[layerNum].Tiles[x, y].TilesetIndex).Name),
                 destX, destY,
                 (int) map.Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
                 (int) map.Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
@@ -468,7 +468,7 @@ namespace Intersect_Editor.Classes
                                                 {
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                             Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex =
-                                                        Globals.CurrentTileset.Id;
+                                                        Globals.CurrentTileset.Index;
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                             Globals.CurTileX + x, Globals.CurTileY + y].X =
                                                         Globals.CurSelX + x;
@@ -487,7 +487,7 @@ namespace Intersect_Editor.Classes
                                     else
                                     {
                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY
-                                        ].TilesetIndex = Globals.CurrentTileset.Id;
+                                        ].TilesetIndex = Globals.CurrentTileset.Index;
                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY
                                         ].X = Globals.CurSelX;
                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY
@@ -518,7 +518,7 @@ namespace Intersect_Editor.Classes
                                                     {
                                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                                 x0, y0].TilesetIndex =
-                                                            Globals.CurrentTileset.Id;
+                                                            Globals.CurrentTileset.Index;
                                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                             x0, y0].X = Globals.CurSelX + x;
                                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[
@@ -547,7 +547,7 @@ namespace Intersect_Editor.Classes
                                                 if (Globals.MouseButton == 0)
                                                 {
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex =
-                                                        Globals.CurrentTileset.Id;
+                                                        Globals.CurrentTileset.Index;
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].X =
                                                         Globals.CurSelX;
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Y =
@@ -594,9 +594,9 @@ namespace Intersect_Editor.Classes
                                     .IntersectsWith(new System.Drawing.Rectangle(0, 0, CurrentView.Width,
                                         CurrentView.Height)))
                             {
-                                if (TilesetBase.Lookup.Get(tmpMap.Layers[z].Tiles[x, y].TilesetIndex) == null) continue;
+                                if (TilesetBase.Lookup.Get<TilesetBase>(tmpMap.Layers[z].Tiles[x, y].TilesetIndex) == null) continue;
                                 Texture2D tilesetTex = GetTexture(TextureType.Tileset,
-                                    TilesetBase.Lookup.Get(tmpMap.Layers[z].Tiles[x, y].TilesetIndex).Name);
+                                    TilesetBase.Lookup.Get<TilesetBase>(tmpMap.Layers[z].Tiles[x, y].TilesetIndex).Name);
                                 if (tilesetTex == null) continue;
                                 if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState !=
                                     MapAutotiles.RenderStateNormal)
@@ -986,7 +986,7 @@ namespace Intersect_Editor.Classes
                     {
                         if (tmpMap.Attributes[x, y].value == (int) MapAttributes.Resource && !upper)
                         {
-                            var resource = ResourceBase.Lookup.Get(tmpMap.Attributes[x, y].data1);
+                            var resource = ResourceBase.Lookup.Get<ResourceBase>(tmpMap.Attributes[x, y].data1);
                             if (resource != null)
                             {
                                 if (resource.Name != "" & resource.InitialGraphic != Strings.Get("general", "none"))
@@ -1012,7 +1012,7 @@ namespace Intersect_Editor.Classes
                         }
                         else if (tmpMap.Attributes[x, y].value == (int) MapAttributes.Animation)
                         {
-                            var animation = AnimationBase.Lookup.Get(tmpMap.Attributes[x, y].data1);
+                            var animation = AnimationBase.Lookup.Get<AnimationBase>(tmpMap.Attributes[x, y].data1);
                             if (animation != null)
                             {
                                 float xpos = x * Options.TileWidth + xoffset + Options.TileWidth / 2;
@@ -1025,7 +1025,7 @@ namespace Intersect_Editor.Classes
                                 if (tmpMap.Attributes[x, y] != null)
                                 {
                                     var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y],
-                                        animation.Id);
+                                        animation.Index);
                                     //Update if the animation isn't right!
                                     if (animInstance == null || animInstance.myBase != animation)
                                     {
@@ -1059,7 +1059,7 @@ namespace Intersect_Editor.Classes
             _graphicsDevice.SetRenderTarget(screenShot);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Transparent);
 
-            if (Globals.MapGrid.Contains(((IDatabaseObject) Globals.CurrentMap).Id))
+            if (Globals.MapGrid.Contains(Globals.CurrentMap.Index))
             {
                 //Draw The lower maps
                 for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
@@ -1068,7 +1068,7 @@ namespace Intersect_Editor.Classes
                     {
                         if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                         {
-                            var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
+                            var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                             if (map != null)
                             {
                                 lock (map.GetMapLock())
@@ -1090,7 +1090,7 @@ namespace Intersect_Editor.Classes
                     {
                         if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                         {
-                            var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
+                            var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                             if (map != null)
                             {
                                 lock (map.GetMapLock())
@@ -1111,7 +1111,7 @@ namespace Intersect_Editor.Classes
                     {
                         if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                         {
-                            var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
+                            var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                             if (map != null)
                             {
                                 lock (map.GetMapLock())
@@ -1133,7 +1133,7 @@ namespace Intersect_Editor.Classes
                     {
                         if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                         {
-                            var map = MapInstance.Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
+                            var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                             if (map != null)
                             {
                                 lock (map.GetMapLock())

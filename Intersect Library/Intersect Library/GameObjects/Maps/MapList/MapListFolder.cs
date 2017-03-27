@@ -14,14 +14,14 @@ namespace Intersect.GameObjects.Maps.MapList
             type = 0;
         }
 
-        public void GetData(ByteBuffer myBuffer, IntObjectLookup<MapBase> gameMaps)
+        public void GetData(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps)
         {
             base.GetData(myBuffer);
             myBuffer.WriteInteger(FolderId);
             myBuffer.WriteBytes(Children.Data(gameMaps));
         }
 
-        public bool Load(ByteBuffer myBuffer, IntObjectLookup<MapBase> gameMaps, bool isServer = true)
+        public bool Load(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps, bool isServer = true)
         {
             Children.Items.Clear();
             base.Load(myBuffer);

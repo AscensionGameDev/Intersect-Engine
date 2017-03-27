@@ -3,28 +3,29 @@ using System.Collections.Generic;
 using Intersect.Collections;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
+using Intersect.Models;
 
 namespace Intersect.GameObjects.Maps
 {
     public class MapBase : DatabaseObject<MapBase>
     {
-        public class MapInstances<TInstanceType> : IntObjectLookup<TInstanceType> where TInstanceType : MapBase, IGameObject<int, TInstanceType>
+        public class MapInstances : DatabaseObjectLookup
         {
-            private readonly IntObjectLookup<MapBase> mBaseLookup;
+            private readonly DatabaseObjectLookup mBaseLookup;
 
-            public MapInstances(IntObjectLookup<MapBase> baseLookup)
+            public MapInstances(DatabaseObjectLookup baseLookup)
             {
                 if (baseLookup == null) throw new ArgumentNullException();
                 mBaseLookup = baseLookup;
             }
 
-            public override bool Set(int key, TInstanceType value)
+            internal override bool InternalSet(IDatabaseObject value, bool overwrite)
             {
-                mBaseLookup?.Set(key, value);
-                return base.Set(key, value);
+                mBaseLookup?.InternalSet(value, overwrite);
+                return base.InternalSet(value, overwrite);
             }
 
-            public override bool Delete(TInstanceType value)
+            public override bool Delete(IDatabaseObject value)
             {
                 mBaseLookup?.Delete(value);
                 return base.Delete(value);
@@ -38,7 +39,7 @@ namespace Intersect.GameObjects.Maps
         }
 
         //SyncLock
-        protected Object _mapLock = new Object();
+        protected object _mapLock = new object();
 
         //Client/Editor Only
         public MapAutotiles Autotiles;
@@ -73,7 +74,7 @@ namespace Intersect.GameObjects.Maps
             }
         }
 
-        public MapBase(MapBase mapcopy) : base(mapcopy.Id)
+        public MapBase(MapBase mapcopy) : base(mapcopy.Index)
         {
             lock (GetMapLock())
             {

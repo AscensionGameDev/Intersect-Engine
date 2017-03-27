@@ -339,7 +339,7 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendPartyAccept(Object sender, EventArgs e)
+        public static void SendPartyAccept(object sender, EventArgs e)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.PartyAcceptInvite);
@@ -347,7 +347,7 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendPartyDecline(Object sender, EventArgs e)
+        public static void SendPartyDecline(object sender, EventArgs e)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.PartyDeclineInvite);
@@ -419,7 +419,7 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendTradeRequestAccept(Object sender, EventArgs e)
+        public static void SendTradeRequestAccept(object sender, EventArgs e)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.TradeRequestAccept);
@@ -427,7 +427,7 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendTradeRequestDecline(Object sender, EventArgs e)
+        public static void SendTradeRequestDecline(object sender, EventArgs e)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.TradeRequestDecline);

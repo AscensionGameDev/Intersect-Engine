@@ -90,7 +90,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             }
         }
 
-        private void Client_DownloadFileCompleted(Object sender, global::System.ComponentModel.AsyncCompletedEventArgs e)
+        private void Client_DownloadFileCompleted(object sender, global::System.ComponentModel.AsyncCompletedEventArgs e)
         {
             downloadCompleted = true;
             if (!e.Cancelled && e.Error == null)
@@ -119,7 +119,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             }
         }
 
-        private void Client_DownloadProgressChanged(Object sender, DownloadProgressChangedEventArgs e)
+        private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             loadingForm.SetProgress(e.ProgressPercentage);
         }

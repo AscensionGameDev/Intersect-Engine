@@ -116,7 +116,7 @@ namespace Intersect_Editor.Forms
 
         private void lstQuests_Click(object sender, EventArgs e)
         {
-            _editorItem = QuestBase.Lookup.Get(Database.GameObjectIdFromList(GameObjectType.Quest, lstQuests.SelectedIndex));
+            _editorItem = QuestBase.Lookup.Get<QuestBase>(Database.GameObjectIdFromList(GameObjectType.Quest, lstQuests.SelectedIndex));
             UpdateEditor();
         }
 
@@ -166,7 +166,7 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstQuests.Items[Database.GameObjectListIndex(GameObjectType.Quest, _editorItem.Id)] = txtName.Text;
+            lstQuests.Items[Database.GameObjectListIndex(GameObjectType.Quest, _editorItem.Index)] = txtName.Text;
         }
 
         private void txtStartDesc_TextChanged(object sender, EventArgs e)

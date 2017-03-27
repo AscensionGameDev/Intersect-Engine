@@ -21,7 +21,7 @@ namespace Intersect_Client.Classes.Entities
         private Rectangle _textBounds;
         private Rectangle _textureBounds;
 
-        public ChatBubble(Entity Owner, String text)
+        public ChatBubble(Entity Owner, string text)
         {
             _owner = Owner;
             _text = Gui.WrapText(text, 200, GameGraphics.GameFont);

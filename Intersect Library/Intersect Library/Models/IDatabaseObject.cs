@@ -1,13 +1,12 @@
-using Intersect.Enums;
+﻿using Intersect.Enums;
 
-namespace Intersect
+namespace Intersect.Models
 {
-    public interface IDatabaseObject
+    public interface IDatabaseObject : IIndexedGameObject
     {
         GameObjectType Type { get; }
         string DatabaseTable { get; }
-
-        int Id { get; }
+        
         string Name { get; set; }
 
         void Load(byte[] packet);

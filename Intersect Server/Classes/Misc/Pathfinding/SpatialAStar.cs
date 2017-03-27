@@ -37,9 +37,9 @@ namespace Intersect_Server.Classes.Misc
     {
         public static readonly PathNode Comparer = new PathNode(0, 0, false);
         
-        public Double G { get; internal set; }
-        public Double H { get; internal set; }
-        public Double F { get; internal set; }
+        public double G { get; internal set; }
+        public double H { get; internal set; }
+        public double F { get; internal set; }
         public int Index { get; set; }
 
         public int X { get; set; }
@@ -93,14 +93,14 @@ namespace Intersect_Server.Classes.Misc
             m_OrderedOpenSet = new PriorityQueue<PathNode>(PathNode.Comparer);
         }
 
-        protected virtual Double Heuristic(PathNode inStart, PathNode inEnd)
+        protected virtual double Heuristic(PathNode inStart, PathNode inEnd)
         {
             return Math.Sqrt((inStart.X - inEnd.X) * (inStart.X - inEnd.X) + (inStart.Y - inEnd.Y) * (inStart.Y - inEnd.Y));
         }
 
-        private static readonly Double SQRT_2 = Math.Sqrt(2);
+        private static readonly double SQRT_2 = Math.Sqrt(2);
 
-        protected virtual Double NeighborDistance(PathNode inStart, PathNode inEnd)
+        protected virtual double NeighborDistance(PathNode inStart, PathNode inEnd)
         {
             int diffX = Math.Abs(inStart.X - inEnd.X);
             int diffY = Math.Abs(inStart.Y - inEnd.Y);
@@ -184,7 +184,7 @@ namespace Intersect_Server.Classes.Misc
                 for (int i = 0; i < neighborNodes.Length; i++)
                 {
                     PathNode y = neighborNodes[i];
-                    Boolean tentative_is_better;
+                    bool tentative_is_better;
 
                     if (y == null)
                         continue;
@@ -197,8 +197,8 @@ namespace Intersect_Server.Classes.Misc
 
                     nodes++;
 
-                    Double tentative_g_score = m_RuntimeGrid[x].G + NeighborDistance(x, y);
-                    Boolean wasAdded = false;
+                    double tentative_g_score = m_RuntimeGrid[x].G + NeighborDistance(x, y);
+                    bool wasAdded = false;
 
                     if (!m_OpenSet.Contains(y))
                     {
@@ -303,7 +303,7 @@ namespace Intersect_Server.Classes.Misc
             public int Height { get; private set; }
             public int Count { get; private set; }
 
-            public PathNode this[Int32 x, Int32 y]
+            public PathNode this[int x, int y]
             {
                 get
                 {

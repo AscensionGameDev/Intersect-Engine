@@ -19,15 +19,15 @@ namespace Intersect_Client.Classes.Maps
 {
     public class MapInstance : MapBase, IGameObject<int, MapInstance>
     {
-        private static MapInstances<MapInstance> sLookup;
+        private static MapInstances sLookup;
 
-        public new static MapInstances<MapInstance> Lookup
+        public new static MapInstances Lookup
         {
             get
             {
                 if (sLookup == null)
                 {
-                    sLookup = new MapInstances<MapInstance>(MapBase.Lookup);
+                    sLookup = new MapInstances(MapBase.Lookup);
                 }
 
                 return sLookup;
@@ -126,7 +126,7 @@ namespace Intersect_Client.Classes.Maps
                 _lastUpdateTime = Globals.System.GetTimeMS() + 10000;
                 if (BackgroundSound == null && Sound != Strings.Get("general", "none") && Sound != "")
                 {
-                    BackgroundSound = GameAudio.AddMapSound(Sound, -1, -1, Id, true, 10);
+                    BackgroundSound = GameAudio.AddMapSound(Sound, -1, -1, Index, true, 10);
                 }
                 foreach (var anim in LocalAnimations)
                 {
@@ -157,15 +157,15 @@ namespace Intersect_Client.Classes.Maps
         {
             if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0 || Lookup.Get(Globals.Me.CurrentMap) == null)
                 return true;
-            var gridX = Lookup.Get(Globals.Me.CurrentMap).MapGridX;
-            var gridY = Lookup.Get(Globals.Me.CurrentMap).MapGridY;
+            var gridX = Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridX;
+            var gridY = Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridY;
             for (int x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (int y = gridY - 1; y <= gridY + 1; y++)
                 {
                     if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
                     {
-                        if (Globals.MapGrid[x, y] == Id) return true;
+                        if (Globals.MapGrid[x, y] == Index) return true;
                     }
                 }
             }
@@ -192,7 +192,7 @@ namespace Intersect_Client.Classes.Maps
                             }
                             else
                             {
-                                mapBase[x + 1, y + 1] = Lookup.Get(Globals.MapGrid[x1, y1]);
+                                mapBase[x + 1, y + 1] = Lookup.Get<MapInstance>(Globals.MapGrid[x1, y1]);
                             }
                         }
                     }
@@ -224,7 +224,7 @@ namespace Intersect_Client.Classes.Maps
                     {
                         if (Attributes[x, y].value == (int) MapAttributes.Animation)
                         {
-                            var anim = AnimationBase.Lookup.Get(Attributes[x, y].data1);
+                            var anim = AnimationBase.Lookup.Get<AnimationBase>(Attributes[x, y].data1);
                             if (anim != null)
                             {
                                 if (!_attributeAnimInstances.ContainsKey(Attributes[x, y]))
@@ -232,7 +232,7 @@ namespace Intersect_Client.Classes.Maps
                                     var animInstance = new AnimationInstance(anim, true);
                                     animInstance.SetPosition(GetX() + x * Options.TileWidth + Options.TileWidth / 2,
                                         GetY() + y * Options.TileHeight + Options.TileHeight / 2, x, y,
-                                        ((IDatabaseObject) this).Id, 0);
+                                        this.Index, 0);
                                     _attributeAnimInstances.Add(Attributes[x, y], animInstance);
                                 }
                                 _attributeAnimInstances[Attributes[x, y]].Update();
@@ -266,7 +266,7 @@ namespace Intersect_Client.Classes.Maps
                         {
                             if (Attributes[x, y].data4 != Strings.Get("general", "none") && Attributes[x, y].data4 != "")
                             {
-                                AttributeSounds.Add(GameAudio.AddMapSound(Attributes[x, y].data4, x, y, Id, true,
+                                AttributeSounds.Add(GameAudio.AddMapSound(Attributes[x, y].data4, x, y, Index, true,
                                     Attributes[x, y].data1));
                             }
                         }
@@ -287,14 +287,14 @@ namespace Intersect_Client.Classes.Maps
         //Animations
         public void AddTileAnimation(int animNum, int tileX, int tileY, int dir = -1)
         {
-            var animBase = AnimationBase.Lookup.Get(animNum);
+            var animBase = AnimationBase.Lookup.Get<AnimationBase>(animNum);
             if (animBase != null)
             {
                 var anim = new MapAnimationInstance(animBase, tileX, tileY, dir);
                 LocalAnimations.Add(anim);
                 anim.SetPosition(GetX() + tileX * Options.TileWidth + Options.TileWidth / 2,
                     GetY() + tileY * Options.TileHeight + Options.TileHeight / 2, tileX, tileY,
-                    ((IDatabaseObject) this).Id, dir);
+                    this.Index, dir);
             }
         }
 
@@ -364,7 +364,7 @@ namespace Intersect_Client.Classes.Maps
                 //Draw Map Items
                 foreach (var item in MapItems)
                 {
-                    var itemBase = ItemBase.Lookup.Get(item.Value.ItemNum);
+                    var itemBase = ItemBase.Lookup.Get<ItemBase>(item.Value.ItemNum);
                     if (itemBase != null)
                     {
                         GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
@@ -414,10 +414,10 @@ namespace Intersect_Client.Classes.Maps
                     yOffset = -Options.TileHeight;
                     break;
             }
-            if (TilesetBase.Lookup.Get(Layers[layerNum].Tiles[x, y].TilesetIndex) != null)
+            if (TilesetBase.Lookup.Get<TilesetBase>(Layers[layerNum].Tiles[x, y].TilesetIndex) != null)
             {
                 GameTexture tileset = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
-                    TilesetBase.Lookup.Get(Layers[layerNum].Tiles[x, y].TilesetIndex).Name);
+                    TilesetBase.Lookup.Get<TilesetBase>(Layers[layerNum].Tiles[x, y].TilesetIndex).Name);
                 GameGraphics.DrawGameTexture(tileset, destX, destY,
                     (int) Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
                     (int) Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
@@ -468,7 +468,7 @@ namespace Intersect_Client.Classes.Maps
             {
                 for (var y = ymin; y < ymax; y++)
                 {
-                    var tileset = TilesetBase.Lookup.Get(Layers[l].Tiles[x, y].TilesetIndex);
+                    var tileset = TilesetBase.Lookup.Get<TilesetBase>(Layers[l].Tiles[x, y].TilesetIndex);
                     if (tileset == null) continue;
                     GameTexture tilesetTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
                         tileset.Name);
@@ -570,7 +570,7 @@ namespace Intersect_Client.Classes.Maps
             if (Globals.Me == null || Lookup.Get(Globals.Me.CurrentMap) == null) return;
             float ecTime = Globals.System.GetTimeMS() - _fogUpdateTime;
             _fogUpdateTime = Globals.System.GetTimeMS();
-            if (Id == Globals.Me.CurrentMap)
+            if (Index == Globals.Me.CurrentMap)
             {
                 if (_curFogIntensity != 1)
                 {
@@ -665,7 +665,7 @@ namespace Intersect_Client.Classes.Maps
         {
             float ecTime = Globals.System.GetTimeMS() - _panoramaUpdateTime;
             _panoramaUpdateTime = Globals.System.GetTimeMS();
-            if (Id == Globals.Me.CurrentMap)
+            if (Index == Globals.Me.CurrentMap)
             {
                 if (_panoramaIntensity != 1)
                 {
@@ -698,7 +698,7 @@ namespace Intersect_Client.Classes.Maps
         {
             float ecTime = Globals.System.GetTimeMS() - _overlayUpdateTime;
             _overlayUpdateTime = Globals.System.GetTimeMS();
-            if (Id == Globals.Me.CurrentMap)
+            if (Index == Globals.Me.CurrentMap)
             {
                 if (_overlayIntensity != 1)
                 {
@@ -847,7 +847,7 @@ namespace Intersect_Client.Classes.Maps
             {
                 foreach (var en in Globals.Entities)
                 {
-                    if (en.Value.CurrentMap == Id && !Globals.Me.Party.Contains(en.Key))
+                    if (en.Value.CurrentMap == Index && !Globals.Me.Party.Contains(en.Key))
                     {
                         Globals.EntitiesToDispose.Add(en.Key);
                     }
@@ -915,7 +915,7 @@ namespace Intersect_Client.Classes.Maps
         {
             if (TransmittionTimer <= Globals.System.GetTimeMS())
             {
-                MapInstance.Lookup.Get(MapNum).ActionMsgs.Remove(this);
+                MapInstance.Lookup.Get<MapInstance>(MapNum).ActionMsgs.Remove(this);
             }
         }
     }
