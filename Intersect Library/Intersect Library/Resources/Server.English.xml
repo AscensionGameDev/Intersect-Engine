@@ -236,6 +236,7 @@
 		<string id="eventnamecommand">\en</string>
 		<string id="onlinelistcommand">\onlinelist</string>
 		<string id="onlinecountcommand">\onlinecount</string>
+		<string id="commandparameter">\param</string>
 	</Events>
 	<Combat>
 		<string id="critcal">CRITICAL HIT!</string>

@@ -6,6 +6,11 @@ using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
 
+/////////////////////////////////////////////////////
+/// Welcome to Kibbelz Boss ass projectile system ///
+///   Glad you took the time to view the code :)  ///
+/////////////////////////////////////////////////////
+
 namespace Intersect_Server.Classes.Entities
 {
     public class Projectile : Entity
@@ -248,6 +253,17 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
+        //Find the targets and give them the
+        //....................../´¯/) 
+        //....................,/¯../ 
+        //.................../..../ 
+        //............./´¯/'...'/´¯¯`·¸ 
+        //........../'/.../..../......./¨¯\ 
+        //........('(...´...´.... ¯~/'...') 
+        //.........\.................'...../ 
+        //..........''...\.......... _.·´ 
+        //............\..............(
+        //..............\.............\...
         public void CheckForCollision()
         {
             if (_spawnCount != 0 || Quantity < MyBase.Quantity)

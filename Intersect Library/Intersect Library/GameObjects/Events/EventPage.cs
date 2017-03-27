@@ -10,7 +10,8 @@ namespace Intersect.GameObjects.Events
             None,
             JoinGame,
             LevelUp,
-            LeaveGame,
+            OnRespawn,
+            Command,
             Autorun,
         }
 
@@ -40,6 +41,7 @@ namespace Intersect.GameObjects.Events
         public int Passable;
         public int Trigger;
         public int TriggerVal;
+        public string TriggerCommand;
         public int WalkingAnimation = 1;
 
         public EventPage()
@@ -65,6 +67,7 @@ namespace Intersect.GameObjects.Events
             Layer = curBuffer.ReadInteger();
             Trigger = curBuffer.ReadInteger();
             TriggerVal = curBuffer.ReadInteger();
+            TriggerCommand = curBuffer.ReadString();
             FaceGraphic = curBuffer.ReadString();
             Graphic.Load(curBuffer);
             HideName = curBuffer.ReadInteger();
@@ -92,6 +95,7 @@ namespace Intersect.GameObjects.Events
             myBuffer.WriteInteger(Layer);
             myBuffer.WriteInteger(Trigger);
             myBuffer.WriteInteger(TriggerVal);
+            myBuffer.WriteString(TriggerCommand);
             myBuffer.WriteString(FaceGraphic);
             Graphic.Save(myBuffer);
             myBuffer.WriteInteger(HideName);

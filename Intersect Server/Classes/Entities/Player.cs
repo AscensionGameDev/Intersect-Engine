@@ -124,6 +124,12 @@ namespace Intersect_Server.Classes.Entities
 
             base.Update();
 
+            //Check for autorun common events and run them
+            foreach (var evt in EventBase.GetObjects())
+            {
+                StartCommonEvent(evt.Value, (int)EventPage.CommonEventTriggers.Autorun);
+            }
+
             //If we have a move route then let's process it....
             if (MoveRoute != null && MoveTimer < Globals.System.GetTimeMs())
             {
@@ -303,6 +309,12 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
 
+            //Search death common event trigger
+            foreach (var evt in EventBase.GetObjects())
+            {
+                StartCommonEvent(evt.Value, (int)EventPage.CommonEventTriggers.OnRespawn);
+            }
+
             base.Die(dropitems, killer);
             Reset();
             Respawn();
@@ -424,7 +436,7 @@ namespace Intersect_Server.Classes.Entities
             PacketSender.SendPointsTo(MyClient);
             PacketSender.SendEntityDataToProximity(this);
 
-            //Search for login activated events and run them
+            //Search for levelup activated events and run them
             foreach (var evt in EventBase.GetObjects())
             {
                 StartCommonEvent(evt.Value, (int) EventPage.CommonEventTriggers.LevelUp);
@@ -2927,7 +2939,7 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
-        public bool StartCommonEvent(EventBase evt, int trigger = -1)
+        public bool StartCommonEvent(EventBase evt, int trigger = -1, string command = "", string param = "")
         {
             lock (EventLock)
             {
@@ -2945,8 +2957,21 @@ namespace Intersect_Server.Classes.Entities
                 tmpEvent.Update();
                 if (tmpEvent.PageInstance != null && (trigger == -1 || tmpEvent.PageInstance.MyPage.Trigger == trigger))
                 {
-                    var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage) {CommandIndex = 0, ListIndex = 0};
-                    tmpEvent.CallStack.Push(newStack);
+                    //Check for /command trigger
+                    if (trigger == (int)EventPage.CommonEventTriggers.Command)
+                    {
+                        if (command.ToLower() == tmpEvent.PageInstance.MyPage.TriggerCommand.ToLower())
+                        {
+                            var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage) { CommandIndex = 0, ListIndex = 0 };
+                            tmpEvent.PageInstance.Param = param;
+                            tmpEvent.CallStack.Push(newStack);
+                        }
+                    }
+                    else
+                    {
+                        var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage) { CommandIndex = 0, ListIndex = 0 };
+                        tmpEvent.CallStack.Push(newStack);
+                    }
                 }
                 else
                 {

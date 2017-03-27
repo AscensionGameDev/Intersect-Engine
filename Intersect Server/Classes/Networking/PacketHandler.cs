@@ -477,6 +477,16 @@ namespace Intersect_Server.Classes.Networking
                         }
                         break;
                     default:
+                        //Search for command activated events and run them
+                        foreach (var evt in EventBase.GetObjects())
+                        {
+                            if (client.Entity.StartCommonEvent(evt.Value, (int)EventPage.CommonEventTriggers.Command, splitString[0].TrimStart('/'), msg) == true)
+                            {
+                                return; //Found our /command, exit now :)
+                            }
+                        }
+
+                        //No common event /command, invalid command.
                         PacketSender.SendPlayerMsg(client, Strings.Get("Commands", "invalid"), Color.Red);
                         break;
                 }

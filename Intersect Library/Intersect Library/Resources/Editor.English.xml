@@ -1061,11 +1061,14 @@ Negative values for time to flow backwards.</string>
 		<string id="trigger3">Projectile Hit</string>
 		
 		<string id="projectile">Projectile:</string>
-		
+		<string id="command">/Command: /</string>
 		
 		<string id="commontrigger0">None</string>
 		<string id="commontrigger1">Login</string>
 		<string id="commontrigger2">Level Up</string>
+		<string id="commontrigger3">On Respawn</string>
+		<string id="commontrigger4">/Command</string>
+		<string id="commontrigger5">Autorun</string>
 		
 		<string id="commandlist">Commands:</string>
 		<string id="addcommand">Add Commands</string>
@@ -1406,7 +1409,8 @@ Negative values for time to flow backwards.</string>
 		<string id="condition13">Quest Completed....</string>
 		<string id="condition14">Player Death</string>
 		<string id="condition15">No NPCs on Map</string>
-		<string id="condition16">Gender Is...</string>
+		<string id="condition16">Gender is...</string>
+		<string id="condition17">/command is...</string>
 		
 		<!-- Shared Options -->
 		<string id="true">True</string>
@@ -1494,6 +1498,11 @@ Negative values for time to flow backwards.</string>
 		<string id="gender">Gender:</string>
 		<string id="male">Male</string>
 		<string id="female">Female</string>
+
+		<!-- /command is... -->
+		<string id ="commandis">/command is...</string>
+		<string id ="command">/command:   /</string>
+		<string id ="commoneventsonly">This condition works for Common Events activation only!</string>
 		
 		<string id="okay">Ok</string>
 		<string id="cancel">Cancel</string>
