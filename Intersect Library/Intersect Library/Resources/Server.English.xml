@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Intersect Server Language File - Beta 3 -->
+<!-- Intersect Server Language File - Beta 3.1 -->
 <Strings>
 	<Intro>
 		<string id="title">Intersect Server</string>
@@ -239,7 +239,7 @@
 		<string id="commandparameter">\param</string>
 	</Events>
 	<Combat>
-		<string id="critcal">CRITICAL HIT!</string>
+		<string id="critical">CRITICAL HIT!</string>
 		<string id="miss">MISS!</string>
 		<string id="blocked">BLOCKED!</string>
 		<string id="dash">DASH!</string>

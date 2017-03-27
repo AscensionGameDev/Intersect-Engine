@@ -103,10 +103,6 @@ namespace Intersect_Server.Classes.Networking
                 while (mySocket != null && IsConnected() && Globals.ServerStarted)
                 {
                     mySocket.Update();
-                    if (Entity != null)
-                    {
-                        Entity.Update();
-                    }
                     while (sendQueue.TryDequeue(out byte[] data))
                     {
                         if (data != null)

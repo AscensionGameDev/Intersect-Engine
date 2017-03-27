@@ -40,6 +40,7 @@ namespace Intersect_Server.Classes.Entities
         public int Level = 1;
         public Client MyClient;
         public List<EventInstance> MyEvents = new List<EventInstance>();
+        public Dictionary<Tuple<int,int,int>,int> EventLookup = new Dictionary<Tuple<int, int, int>, int>();
 
         public long MyId = -1;
         public List<Player> Party = new List<Player>();
@@ -100,29 +101,29 @@ namespace Intersect_Server.Classes.Entities
         }
 
         //Update
-        public override void Update()
+        public override void Update(long timeMs)
         {
             if (!InGame || CurrentMap == -1)
             {
                 return;
             }
 
-            if (SaveTimer + 120000 < Environment.TickCount)
+            if (SaveTimer + 120000 < timeMs)
             {
                 Task.Run(() => Database.SaveCharacter(this, false));
-                SaveTimer = Environment.TickCount;
+                SaveTimer = timeMs;
             }
 
             if (InCraft > -1 && CraftIndex > -1)
             {
                 BenchBase b = BenchBase.GetCraft(InCraft);
-                if (CraftTimer + b.Crafts[CraftIndex].Time < Environment.TickCount)
+                if (CraftTimer + b.Crafts[CraftIndex].Time < timeMs)
                 {
                     CraftItem(CraftIndex);
                 }
             }
 
-            base.Update();
+            base.Update(timeMs);
 
             //Check for autorun common events and run them
             foreach (var evt in EventBase.GetObjects())
@@ -131,7 +132,7 @@ namespace Intersect_Server.Classes.Entities
             }
 
             //If we have a move route then let's process it....
-            if (MoveRoute != null && MoveTimer < Globals.System.GetTimeMs())
+            if (MoveRoute != null && MoveTimer < timeMs)
             {
                 //Check to see if the event instance is still active for us... if not then let's remove this route
                 for (var i = 0; i < MyEvents.Count; i++)
@@ -141,7 +142,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (MoveRoute.ActionIndex < MoveRoute.Actions.Count)
                         {
-                            ProcessMoveRoute(MyClient);
+                            ProcessMoveRoute(MyClient, timeMs);
                         }
                         else
                         {
@@ -207,7 +208,7 @@ namespace Intersect_Server.Classes.Entities
                             {
                                 //Look for event
                                 var foundEvent = EventExists(map.Id, mapEvent.SpawnX, mapEvent.SpawnY);
-                                if (foundEvent == -1)
+                                if (foundEvent == -1 || MyEvents[foundEvent] == null)
                                 {
                                     var tmpEvent = new EventInstance(MyEvents.Count, MyClient, mapEvent, map.Id)
                                     {
@@ -217,10 +218,17 @@ namespace Intersect_Server.Classes.Entities
                                         SpawnY = mapEvent.SpawnY
                                     };
                                     MyEvents.Add(tmpEvent);
+                                    if (EventLookup.ContainsKey(new Tuple<int, int, int>(map.Id, mapEvent.SpawnX,mapEvent.SpawnY)))
+                                    {
+                                        EventLookup.Add(new Tuple<int, int, int>(map.Id,mapEvent.SpawnX,mapEvent.SpawnY),MyEvents.Count-1);
+                                    }
+                                    else
+                                    {
+                                        EventLookup[new Tuple<int, int, int>(map.Id, mapEvent.SpawnX, mapEvent.SpawnY)] = MyEvents.Count - 1;
+                                    }
                                 }
-                                else
-                                {
-                                    MyEvents[foundEvent].Update();
+                                else { 
+                                    MyEvents[foundEvent].Update(timeMs);
                                 }
                             }
                         }
@@ -237,7 +245,7 @@ namespace Intersect_Server.Classes.Entities
                     var eventFound = false;
                     if (evt.MapNum == -1)
                     {
-                        evt.Update();
+                        evt.Update(timeMs);
                         if (evt.CallStack.Count > 0)
                         {
                             eventFound = true;
@@ -259,6 +267,8 @@ namespace Intersect_Server.Classes.Entities
                     }
                     if (eventFound) continue;
                     PacketSender.SendEntityLeaveTo(MyClient, i, (int) EntityTypes.Event, evt.MapNum);
+                    EventLookup.Remove(new Tuple<int, int, int>(MyEvents[i].MapNum, MyEvents[i].BaseEvent.SpawnX,
+                        MyEvents[i].BaseEvent.SpawnY));
                     MyEvents[i] = null;
                 }
             }
@@ -581,7 +591,6 @@ namespace Intersect_Server.Classes.Entities
             if (weapon != null)
             {
                 var attackAnim = AnimationBase.Lookup.Get(weapon.AttackAnimation);
-                Console.WriteLine("attackAnim == null: {0}", attackAnim == null);
                 if (attackAnim != null)
                 {
                     deadAnimations.Add(new KeyValuePair<int, int>(weapon.AttackAnimation, Dir));
@@ -660,6 +669,8 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (MyEvents[i] != null && MyEvents[i].MapNum != -1 && MyEvents[i].MapNum != newMap)
                 {
+                    EventLookup.Remove(new Tuple<int, int, int>(MyEvents[i].MapNum, MyEvents[i].BaseEvent.SpawnX,
+                        MyEvents[i].BaseEvent.SpawnY));
                     MyEvents[i] = null;
                 }
             }
@@ -2243,7 +2254,7 @@ namespace Intersect_Server.Classes.Entities
             PacketSender.SendPlayerSpellUpdate(MyClient, spellSlot);
         }
 
-        public void UseSpell(int spellSlot, int target)
+        public void UseSpell(int spellSlot, Entity target)
         {
             int spellNum = Spells[spellSlot].SpellNum;
             Target = target;
@@ -2289,18 +2300,16 @@ namespace Intersect_Server.Classes.Entities
                     }
                 }
 
-                if (target == -1 &&
-                    ((spell.SpellType == (int) SpellTypes.CombatSpell &&
-                      spell.TargetType == (int) SpellTargetTypes.Single) || spell.SpellType == (int) SpellTypes.WarpTo))
+                if (target == null && ((spell.SpellType == (int) SpellTypes.CombatSpell &&  spell.TargetType == (int) SpellTargetTypes.Single) || spell.SpellType == (int) SpellTypes.WarpTo))
                 {
                     PacketSender.SendActionMsg(this, Strings.Get("combat", "notarget"), new Color(255, 255, 0, 0));
                     return;
                 }
 
                 //Check for range of a single target spell
-                if (spell.TargetType == (int) SpellTargetTypes.Single && Globals.Entities[Target] != this)
+                if (spell.SpellType == (int)SpellTypes.CombatSpell && spell.TargetType == (int) SpellTargetTypes.Single && Target != this)
                 {
-                    if (!InRangeOf(Globals.Entities[Target], spell.CastRange))
+                    if (!InRangeOf(Target, spell.CastRange))
                     {
                         PacketSender.SendActionMsg(this, Strings.Get("combat", "targetoutsiderange"),
                             new Color(255, 255, 0, 0));
@@ -2321,12 +2330,13 @@ namespace Intersect_Server.Classes.Entities
                                                              spell.VitalCost[(int) Vitals.Health];
                                 CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
                                 SpellCastSlot = spellSlot;
+                                CastTarget = Target;
 
                                 //Check if the caster has the right ammunition if a projectile
-                                if (spell.SpellType == (int) SpellTargetTypes.Projectile && spell.Projectile > -1)
+                                if (spell.SpellType == (int)SpellTypes.CombatSpell && spell.TargetType == (int)SpellTargetTypes.Projectile && spell.Projectile > -1)
                                 {
                                     var projectileBase = ProjectileBase.GetProjectile(spell.Projectile);
-                                    if (projectileBase.Ammo > -1)
+                                    if (projectileBase != null && projectileBase.Ammo > -1)
                                     {
                                         TakeItem(FindItem(projectileBase.Ammo, projectileBase.AmmoRequired),
                                             projectileBase.AmmoRequired);
@@ -2772,16 +2782,10 @@ namespace Intersect_Server.Classes.Entities
         }
 
         //Event Processing Methods
-        private int EventExists(int map, int x, int y)
+        public int EventExists(int map, int x, int y)
         {
-            for (var i = 0; i < MyEvents.Count; i++)
-            {
-                if (MyEvents[i] == null) continue;
-                if (map == MyEvents[i].MapNum && x == MyEvents[i].SpawnX && y == MyEvents[i].SpawnY)
-                {
-                    return i;
-                }
-            }
+            int index = -1;
+            if (EventLookup.TryGetValue(new Tuple<int, int, int>(map, x, y), out index)) return index;
             return -1;
         }
 
@@ -2954,7 +2958,7 @@ namespace Intersect_Server.Classes.Entities
                     SpawnY = -1
                 };
                 MyEvents.Add(tmpEvent);
-                tmpEvent.Update();
+                tmpEvent.Update(Globals.System.GetTimeMs());
                 if (tmpEvent.PageInstance != null && (trigger == -1 || tmpEvent.PageInstance.MyPage.Trigger == trigger))
                 {
                     //Check for /command trigger

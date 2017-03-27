@@ -208,13 +208,13 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
-        public void Update(bool isActive)
+        public void Update(bool isActive, long timeMs)
         {
             if (MoveTimer >= Globals.System.GetTimeMs() || GlobalClone != null ||
                 (isActive && MyPage.InteractionFreeze == 1)) return;
             if (MovementType == 2 && MoveRoute != null)
             {
-                ProcessMoveRoute(Client);
+                ProcessMoveRoute(Client, timeMs);
             }
             else
             {
@@ -231,9 +231,9 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
-        protected override bool ProcessMoveRoute(Client client)
+        protected override bool ProcessMoveRoute(Client client, long timeMs)
         {
-            if (!base.ProcessMoveRoute(client))
+            if (!base.ProcessMoveRoute(client,timeMs))
             {
                 var moved = false;
                 var shouldSendUpdate = false;
@@ -254,15 +254,20 @@ namespace Intersect_Server.Classes.Entities
                                     _pathFinder.SetTarget(new PathfinderTarget(client.Entity.CurrentMap,
                                         client.Entity.CurrentX, client.Entity.CurrentY));
                                 }
-                                else
+                                //Todo check if next to or on top of player.. if so don't run pathfinder.
+                                if (_pathFinder.Update(timeMs) == PathfinderResult.Success)
                                 {
-                                    if (_pathFinder.GetMove() > -1)
+                                    var pathDir = _pathFinder.GetMove();
+                                    if (pathDir > -1)
                                     {
-                                        if (CanMove(_pathFinder.GetMove()) == -1)
+                                        if (CanMove(pathDir) == -1)
                                         {
-                                            Move(_pathFinder.GetMove(), client);
-                                            _pathFinder.RemoveMove();
+                                            Move(pathDir, client);
                                             moved = true;
+                                        }
+                                        else
+                                        {
+                                            _pathFinder.PathFailed(timeMs);
                                         }
                                     }
                                 }

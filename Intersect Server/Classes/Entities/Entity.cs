@@ -24,6 +24,7 @@ namespace Intersect_Server.Classes.Entities
 
         //Combat Status
         public long CastTime = 0;
+        public Entity CastTarget = null;
 
         public long CollisionIndex;
         public long CombatTimer = 0;
@@ -70,7 +71,7 @@ namespace Intersect_Server.Classes.Entities
         //Status effects
         public List<StatusInstance> Status = new List<StatusInstance>();
 
-        public int Target = -1;
+        public Entity Target = null;
         public int[] Vital = new int[(int) Vitals.VitalCount];
 
         //Initialization
@@ -112,13 +113,14 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
-        public virtual void Update()
+        public virtual void Update(long timeMs)
         {
             //Cast timers
-            if (CastTime != 0 && CastTime < Globals.System.GetTimeMs())
+            if (CastTime != 0 && CastTime < timeMs)
             {
                 CastTime = 0;
                 CastSpell(Spells[SpellCastSlot].SpellNum, SpellCastSlot);
+                CastTarget = null;
             }
             //DoT/HoT timers
             for (int i = 0; i < DoT.Count; i++)
@@ -264,7 +266,7 @@ namespace Intersect_Server.Classes.Entities
             return -1;
         }
 
-        protected virtual bool ProcessMoveRoute(Client client)
+        protected virtual bool ProcessMoveRoute(Client client, long timeMs)
         {
             var moved = false;
             int lookDir = 0, moveDir = 0;
@@ -733,7 +735,7 @@ namespace Intersect_Server.Classes.Entities
                 {
                     var s = SpellBase.GetSpell(projectile.Spell);
                     if (s != null)
-                        HandleAoESpell(projectile.Spell, s.HitRadius, enemy.CurrentMap, enemy.CurrentX, enemy.CurrentY);
+                        HandleAoESpell(projectile.Spell, s.HitRadius, enemy.CurrentMap, enemy.CurrentX, enemy.CurrentY,null);
 
                     //Check that the npc has not been destroyed by the splash spell
                     //TODO: Actually implement this, since null check is wrong.
@@ -766,6 +768,9 @@ namespace Intersect_Server.Classes.Entities
                 //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
                 if (spellBase.Friendly == 0)
                 {
+                    //If about to hit self with an unfriendly spell (maybe aoe?) return
+                    if (enemy == this) return;
+
                     //Check for parties and safe zones, friendly fire off (unless its healing)
                     if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
                     {
@@ -788,6 +793,14 @@ namespace Intersect_Server.Classes.Entities
                     //If we took damage lets reset our combat timer
                     enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
                 }
+                else
+                {
+                    //Friendly Spell! Do not attack other players/npcs around us.
+                    if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
+                    {
+                        if (!((Player)this).InParty((Player)enemy) && this != enemy) return;
+                    }
+                }
 
                 if (spellBase.HitAnimation > -1)
                 {
@@ -795,31 +808,8 @@ namespace Intersect_Server.Classes.Entities
                     aliveAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimation, (int) Directions.Up));
                 }
 
-                bool shouldTakeDamage = true;
-                if (spellBase.TargetType == (int) SpellTargetTypes.AoE)
-                {
-                    if (spellBase.Friendly != 0)
-                    {
-                        if (this == enemy)
-                        {
-                            shouldTakeDamage = false;
-                        }
-                        else if (this is Player)
-                        {
-                            var player = (Player) this;
-                            foreach (var partyMember in player.Party)
-                            {
-                                if (enemy == partyMember)
-                                {
-                                    shouldTakeDamage = false;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                var damageHealth = shouldTakeDamage ? spellBase.VitalDiff[0] : Math.Min(0, spellBase.VitalDiff[0]);
-                var damageMana = shouldTakeDamage ? spellBase.VitalDiff[1] : Math.Min(0, spellBase.VitalDiff[1]);
+                var damageHealth = spellBase.VitalDiff[0];
+                var damageMana = spellBase.VitalDiff[1];
 
                 Attack(enemy, damageHealth, damageMana, (DamageType) spellBase.DamageType, (Stats) spellBase.ScalingStat,
                     spellBase.Scaling, spellBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
@@ -1103,18 +1093,19 @@ namespace Intersect_Server.Classes.Entities
                                 TryAttack(this, spellBase);
                                 break;
                             case (int) SpellTargetTypes.Single:
+                                if (CastTarget == null) return;
                                 if (spellBase.HitRadius > 0) //Single target spells with AoE hit radius'
                                 {
-                                    HandleAoESpell(SpellNum, spellBase.HitRadius, Globals.Entities[Target].CurrentMap,
-                                        Globals.Entities[Target].CurrentX, Globals.Entities[Target].CurrentY);
+                                    HandleAoESpell(SpellNum, spellBase.HitRadius, CastTarget.CurrentMap,
+                                        CastTarget.CurrentX, CastTarget.CurrentY,null);
                                 }
                                 else
                                 {
-                                    TryAttack(Globals.Entities[Target], spellBase);
+                                    TryAttack(CastTarget, spellBase);
                                 }
                                 break;
                             case (int) SpellTargetTypes.AoE:
-                                HandleAoESpell(SpellNum, spellBase.HitRadius, CurrentMap, CurrentX, CurrentY);
+                                HandleAoESpell(SpellNum, spellBase.HitRadius, CurrentMap, CurrentX, CurrentY,null);
                                 break;
                             case (int) SpellTargetTypes.Projectile:
                                 var projectileBase = ProjectileBase.GetProjectile(spellBase.Projectile);
@@ -1122,7 +1113,7 @@ namespace Intersect_Server.Classes.Entities
                                 {
                                     MapInstance.GetMap(CurrentMap).SpawnMapProjectile(this,
                                         projectileBase, spellBase, null, CurrentMap, CurrentX, CurrentY, CurrentZ,
-                                        Dir, Target);
+                                        Dir, CastTarget);
                                 }
                                 break;
                             default:
@@ -1139,7 +1130,7 @@ namespace Intersect_Server.Classes.Entities
                     case (int) SpellTypes.WarpTo:
                         if (GetType() == typeof(Player))
                         {
-                            HandleAoESpell(SpellNum, spellBase.CastRange, CurrentMap, CurrentX, CurrentY, Target);
+                            HandleAoESpell(SpellNum, spellBase.CastRange, CurrentMap, CurrentX, CurrentY, CastTarget);
                         }
                         break;
                     case (int) SpellTypes.Dash:
@@ -1160,13 +1151,13 @@ namespace Intersect_Server.Classes.Entities
                                                 (spellBase.CooldownDuration * 100);
                     if (GetType() == typeof(Player))
                     {
-                        PacketSender.SendSpellCooldown(((Player) Globals.Entities[MyIndex]).MyClient, SpellSlot);
+                        PacketSender.SendSpellCooldown(((Player)this).MyClient, SpellSlot);
                     }
                 }
             }
         }
 
-        private void HandleAoESpell(int SpellNum, int Range, int StartMap, int StartX, int StartY, int target = -1)
+        private void HandleAoESpell(int SpellNum, int Range, int StartMap, int StartX, int StartY, Entity spellTarget)
         {
             var spellBase = SpellBase.GetSpell(SpellNum);
             var targetsHit = new List<Entity>();
@@ -1211,19 +1202,21 @@ namespace Intersect_Server.Classes.Entities
                             {
                                 if (t.CurrentMap == tempMap.Id && t.CurrentX == x2 && t.CurrentY == y2)
                                 {
-                                    if (target == -1 || target == t.MyIndex)
+                                    if (spellTarget == null || spellTarget == t)
                                     {
                                         targetsHit.Add(t);
                                         //Warp or attack.
                                         if (spellBase.SpellType == (int) SpellTypes.CombatSpell)
                                         {
                                             TryAttack(t, spellBase);
-                                            if (target > -1) return;
+                                            if (spellTarget != null) return;
                                         }
                                         else
                                         {
-                                            Warp(Globals.Entities[Target].CurrentMap, Globals.Entities[Target].CurrentX,
-                                                Globals.Entities[Target].CurrentY, Dir);
+                                            if (spellTarget != null)
+                                            {
+                                                Warp(spellTarget.CurrentMap, spellTarget.CurrentX, spellTarget.CurrentY,Dir); //Spelltarget used to be Target. I don't know if this is correct or not.
+                                            }
                                         }
                                     }
                                 }
@@ -1274,13 +1267,23 @@ namespace Intersect_Server.Classes.Entities
 
         protected int GetDistanceTo(Entity target)
         {
-            //Calculate World Tile of Me
-            var x1 = CurrentX + (MapInstance.GetMap(CurrentMap).MapGridX * Options.MapWidth);
-            var y1 = CurrentY + (MapInstance.GetMap(CurrentMap).MapGridY * Options.MapHeight);
-            //Calculate world tile of target
-            var x2 = target.CurrentX + (MapInstance.GetMap(CurrentMap).MapGridX * Options.MapWidth);
-            var y2 = target.CurrentY + (MapInstance.GetMap(CurrentMap).MapGridY * Options.MapHeight);
-            return (int) Math.Sqrt(Math.Pow(x1 - x2, 2) + (Math.Pow(y1 - y2, 2)));
+            if (target != null)
+            {
+                var myMap = MapInstance.GetMap(CurrentMap);
+                var targetMap = MapInstance.GetMap(target.CurrentMap);
+                if (myMap != null && targetMap != null)
+                {
+                    //Calculate World Tile of Me
+                    var x1 = CurrentX + (myMap.MapGridX * Options.MapWidth);
+                    var y1 = CurrentY + (myMap.MapGridY * Options.MapHeight);
+                    //Calculate world tile of target
+                    var x2 = target.CurrentX + (targetMap.MapGridX * Options.MapWidth);
+                    var y2 = target.CurrentY + (targetMap.MapGridY * Options.MapHeight);
+                    return (int)Math.Sqrt(Math.Pow(x1 - x2, 2) + (Math.Pow(y1 - y2, 2)));
+                }
+            }
+            //Something is null.. return a value that is out of range :) 
+            return 9999;
         }
 
         protected bool InRangeOf(Entity target, int Range)

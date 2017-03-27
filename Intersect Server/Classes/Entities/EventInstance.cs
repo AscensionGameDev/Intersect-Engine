@@ -45,7 +45,7 @@ namespace Intersect_Server.Classes.Entities
             MyIndex = index;
             MyClient = client;
             MapNum = mapNum;
-            MyPlayer = (Player) Globals.Entities[MyClient.EntityIndex];
+            MyPlayer = client.Entity;
             SelfSwitch = new bool[4];
             BaseEvent = baseEvent;
             CurrentX = baseEvent.SpawnX;
@@ -70,7 +70,7 @@ namespace Intersect_Server.Classes.Entities
 
         public bool[] SelfSwitch { get; set; }
 
-        public void Update()
+        public void Update(long timeMs)
         {
             var sendLeave = false;
             if (PageInstance != null)
@@ -92,7 +92,7 @@ namespace Intersect_Server.Classes.Entities
                 else
                 {
                     if (!IsGlobal)
-                        PageInstance.Update(CallStack.Count > 0); //Process movement and stuff that is client specific
+                        PageInstance.Update(CallStack.Count > 0, timeMs); //Process movement and stuff that is client specific
                     if (CallStack.Count > 0)
                     {
                         if (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.Shop &&
@@ -232,6 +232,7 @@ namespace Intersect_Server.Classes.Entities
         public static bool MeetsConditionLists(ConditionLists lists, Player MyPlayer, EventInstance EventInstance,
             bool SingleList = true)
         {
+            if (MyPlayer == null) return false;
             //If no condition lists then this passes
             if (lists.Lists.Count == 0)
                 return true;

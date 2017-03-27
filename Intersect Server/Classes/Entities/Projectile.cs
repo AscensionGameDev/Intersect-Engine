@@ -27,10 +27,10 @@ namespace Intersect_Server.Classes.Entities
         // Individual Spawns
         public ProjectileSpawns[] Spawns;
         private long SpawnTime = 0;
-        public int Target = -1;
+        public Entity Target = null;
 
         public Projectile(int index, Entity owner, SpellBase parentSpell, ItemBase parentItem, ProjectileBase projectile,
-            int Map, int X, int Y, int Z, int Direction, int target = 0) : base(index)
+            int Map, int X, int Y, int Z, int Direction, Entity target) : base(index)
         {
             MyBase = projectile;
             MyName = MyBase.Name;
@@ -384,7 +384,7 @@ namespace Intersect_Server.Classes.Entities
                                     {
                                         if (TargetEntity.GetType() == typeof(Player)) //Player
                                         {
-                                            if (Owner.MyIndex != Target)
+                                            if (Owner != Target)
                                             {
                                                 Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem,
                                                     Spawns[i].Dir, new List<KeyValuePair<int, int>>(),
@@ -456,7 +456,14 @@ namespace Intersect_Server.Classes.Entities
             bf.WriteBytes(base.Data());
             bf.WriteInteger(MyBase.Id);
             bf.WriteInteger(Dir);
-            bf.WriteInteger(Target);
+            if (Target == null)
+            {
+                bf.WriteInteger(-1);
+            }
+            else
+            {
+                bf.WriteInteger(Target.MyIndex);
+            }
             return bf.ToArray();
         }
 
