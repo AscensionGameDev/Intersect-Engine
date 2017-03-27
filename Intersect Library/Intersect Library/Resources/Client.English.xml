@@ -228,7 +228,7 @@
 		<string id="offeritemprompt">How many/much {00} would you like to offer?</string>
 		<string id="revokeitem">Revoke Item</string>
 		<string id="revokeitemprompt">How many/much {00} would you like to revoke?</string>
-		<string id="traderequest">Party Invite</string>
+		<string id="traderequest">Trade Request</string>
 		<string id="requestprompt">{00} has invited you to trade items with them. Do you accept?</string>
 	</Trading>
 	<Spells>
