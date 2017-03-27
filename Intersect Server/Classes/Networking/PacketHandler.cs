@@ -1689,7 +1689,7 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             client.Entity.CraftIndex = bf.ReadInteger();
-            client.Entity.CraftTimer = Environment.TickCount;
+            client.Entity.CraftTimer = Globals.System.GetTimeMs();
             bf.Dispose();
         }
 
