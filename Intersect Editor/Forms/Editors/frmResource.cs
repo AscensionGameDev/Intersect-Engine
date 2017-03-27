@@ -449,7 +449,7 @@ namespace Intersect_Editor.Classes
 
         private void nudMaxHp_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.MinHP = (int) nudMaxHp.Value;
+            _editorItem.MaxHP = (int) nudMaxHp.Value;
         }
     }
 }
