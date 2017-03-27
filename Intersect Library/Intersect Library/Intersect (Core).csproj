@@ -46,14 +46,16 @@
     <Compile Include="Collections\IntObjectLookup.cs" />
     <Compile Include="Collections\ReadOnlyDictionary.cs" />
     <Compile Include="Compression.cs" />
+    <Compile Include="DatabaseObject.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Enums\GameObjectTypeExtensions.cs" />
+    <Compile Include="Extensions\GameObjectInfoAttribute.cs" />
     <Compile Include="FieldChecking.cs" />
     <Compile Include="GameObjects\AnimationBase.cs" />
     <Compile Include="GameObjects\ClassBase.cs" />
     <Compile Include="GameObjects\BenchBase.cs" />
     <Compile Include="GameObjects\Conditions\ConditionList.cs" />
     <Compile Include="GameObjects\Conditions\ConditionLists.cs" />
-    <Compile Include="GameObjects\DatabaseObject.cs" />
     <Compile Include="GameObjects\Events\Enums.cs" />
     <Compile Include="GameObjects\Events\EventCommand.cs" />
     <Compile Include="GameObjects\Events\EventCommandList.cs" />
@@ -62,6 +64,7 @@
     <Compile Include="GameObjects\Events\EventPage.cs" />
     <Compile Include="GameObjects\Events\EventBase.cs" />
     <Compile Include="GameObjects\Events\MoveRouteAction.cs" />
+    <Compile Include="Enums\GameObjectType.cs" />
     <Compile Include="GameObjects\IGameObject.cs" />
     <Compile Include="GameObjects\ItemBase.cs" />
     <Compile Include="GameObjects\LightBase.cs" />
@@ -90,6 +93,7 @@
     <Compile Include="Color.cs" />
     <Compile Include="GameObjects\TilesetBase.cs" />
     <Compile Include="GameObjects\TimeBase.cs" />
+    <Compile Include="IDatabaseObject.cs" />
     <Compile Include="Localization\Language.cs" />
     <Compile Include="Localization\Strings.cs" />
     <Compile Include="Logging\FileOutput.cs" />

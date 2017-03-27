@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using Intersect_Editor.Classes;
@@ -40,9 +40,9 @@ namespace Intersect_Editor.Forms
             lstAnimations.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObject type)
+        private void GameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (type == GameObject.Animation)
+            if (type == GameObjectType.Animation)
             {
                 InitEditor();
                 if (_editorItem != null && !AnimationBase.Lookup.Values.Contains(_editorItem))
@@ -83,7 +83,7 @@ namespace Intersect_Editor.Forms
         private void lstAnimations_Click(object sender, EventArgs e)
         {
             _editorItem =
-                AnimationBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Animation, lstAnimations.SelectedIndex));
+                AnimationBase.Lookup.Get(Database.GameObjectIdFromList(GameObjectType.Animation, lstAnimations.SelectedIndex));
             UpdateEditor();
         }
 
@@ -165,7 +165,7 @@ namespace Intersect_Editor.Forms
         public void InitEditor()
         {
             lstAnimations.Items.Clear();
-            lstAnimations.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            lstAnimations.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
         }
 
         private void UpdateEditor()
@@ -222,7 +222,7 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstAnimations.Items[Database.GameObjectListIndex(GameObject.Animation, _editorItem.Id)] = txtName.Text;
+            lstAnimations.Items[Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.Id)] = txtName.Text;
         }
 
         private void cmbSound_SelectedIndexChanged(object sender, EventArgs e)
@@ -514,7 +514,7 @@ namespace Intersect_Editor.Forms
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
         {
-            PacketSender.SendCreateObject(GameObject.Animation);
+            PacketSender.SendCreateObject(GameObjectType.Animation);
         }
 
         private void toolStripItemDelete_Click(object sender, EventArgs e)

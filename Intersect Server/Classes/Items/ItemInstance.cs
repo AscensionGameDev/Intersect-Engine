@@ -21,16 +21,16 @@ namespace Intersect_Server.Classes.Items
             ItemNum = itemNum;
             ItemVal = itemVal;
             BagId = bagId;
-            if (ItemBase.GetItem(ItemNum) != null)
+            if (ItemBase.Lookup.Get(ItemNum) != null)
             {
-                if (ItemBase.GetItem(ItemNum).ItemType == (int) ItemTypes.Equipment)
+                if (ItemBase.Lookup.Get(ItemNum).ItemType == (int) ItemTypes.Equipment)
                 {
                     itemVal = 1;
                     for (int i = 0; i < (int) Stats.StatCount; i++)
                     {
                         StatBoost[i] =
-                            Globals.Rand.Next(-1 * ItemBase.GetItem(ItemNum).StatGrowth,
-                                ItemBase.GetItem(ItemNum).StatGrowth + 1);
+                            Globals.Rand.Next(-1 * ItemBase.Lookup.Get(ItemNum).StatGrowth,
+                                ItemBase.Lookup.Get(ItemNum).StatGrowth + 1);
                     }
                 }
             }

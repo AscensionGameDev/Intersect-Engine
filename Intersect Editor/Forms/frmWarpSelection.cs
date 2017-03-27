@@ -93,7 +93,7 @@ namespace Intersect_Editor.Forms
                     }
                     else
                     {
-                        if (MapInstance.GetMap(_currentMap) != null) MapInstance.GetMap(_currentMap).Delete();
+                        if (MapInstance.Lookup.Get(_currentMap) != null) MapInstance.Lookup.Get(_currentMap).Delete();
                         Globals.MapsToFetch = new List<int>() {_currentMap};
                         if (!Globals.MapsToScreenshot.Contains(_currentMap)) Globals.MapsToScreenshot.Add(_currentMap);
                         PacketSender.SendNeedMap(_currentMap);

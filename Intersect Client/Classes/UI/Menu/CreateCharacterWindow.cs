@@ -130,7 +130,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Class Combobox
             _classCombobox = new ComboBox(_classBackground);
             var classCount = 0;
-            foreach (var cls in ClassBase.GetObjects())
+            foreach (var cls in ClassBase.Lookup)
             {
                 if (cls.Value.Locked == 0)
                 {
@@ -344,7 +344,7 @@ namespace Intersect_Client.Classes.UI.Menu
         private ClassBase GetClass()
         {
             if (_classCombobox.SelectedItem == null) return null;
-            foreach (var cls in ClassBase.GetObjects())
+            foreach (var cls in ClassBase.Lookup)
             {
                 if (_classCombobox.SelectedItem.Text == cls.Value.Name && cls.Value.Locked == 0)
                 {

@@ -7,28 +7,6 @@
         True
     }
 
-    public enum GameObject
-    {
-        Animation = 0,
-        Class,
-        Item,
-        Npc,
-        Projectile,
-        Quest,
-        Resource,
-        Shop,
-        Spell,
-        Bench,
-        Map,
-        CommonEvent,
-        PlayerSwitch,
-        PlayerVariable,
-        ServerSwitch,
-        ServerVariable,
-        Tileset,
-        Time,
-    }
-
     public enum ClientPackets
     {
         Ping = 0,

@@ -1,29 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using Intersect;
+﻿using Intersect;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
-using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
+using IntersectClientExtras.File_Management;
+using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.Maps
 {
-    public class MapInstance : MapBase
+    public class MapInstance : MapBase, IGameObject<int, MapInstance>
     {
+        private static MapInstances<MapInstance> sLookup;
+
+        public new static MapInstances<MapInstance> Lookup
+        {
+            get
+            {
+                if (sLookup == null)
+                {
+                    sLookup = new MapInstances<MapInstance>(MapBase.Lookup);
+                }
+
+                return sLookup;
+            }
+        }
+
         //Client Only Values
 
         //Map State Variables
-        public new const GameObject OBJECT_TYPE = GameObject.Map;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public static Dictionary<int, long> MapRequests = new Dictionary<int, long>();
 
         //Map Attributes
@@ -142,10 +155,10 @@ namespace Intersect_Client.Classes.Maps
 
         public bool InView()
         {
-            if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0 || GetMap(Globals.Me.CurrentMap) == null)
+            if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0 || Lookup.Get(Globals.Me.CurrentMap) == null)
                 return true;
-            var gridX = GetMap(Globals.Me.CurrentMap).MapGridX;
-            var gridY = GetMap(Globals.Me.CurrentMap).MapGridY;
+            var gridX = Lookup.Get(Globals.Me.CurrentMap).MapGridX;
+            var gridY = Lookup.Get(Globals.Me.CurrentMap).MapGridY;
             for (int x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -179,7 +192,7 @@ namespace Intersect_Client.Classes.Maps
                             }
                             else
                             {
-                                mapBase[x + 1, y + 1] = GetMap(Globals.MapGrid[x1, y1]);
+                                mapBase[x + 1, y + 1] = Lookup.Get(Globals.MapGrid[x1, y1]);
                             }
                         }
                     }
@@ -219,7 +232,7 @@ namespace Intersect_Client.Classes.Maps
                                     var animInstance = new AnimationInstance(anim, true);
                                     animInstance.SetPosition(GetX() + x * Options.TileWidth + Options.TileWidth / 2,
                                         GetY() + y * Options.TileHeight + Options.TileHeight / 2, x, y,
-                                        ((DatabaseObject) this).Id, 0);
+                                        ((IDatabaseObject) this).Id, 0);
                                     _attributeAnimInstances.Add(Attributes[x, y], animInstance);
                                 }
                                 _attributeAnimInstances[Attributes[x, y]].Update();
@@ -281,7 +294,7 @@ namespace Intersect_Client.Classes.Maps
                 LocalAnimations.Add(anim);
                 anim.SetPosition(GetX() + tileX * Options.TileWidth + Options.TileWidth / 2,
                     GetY() + tileY * Options.TileHeight + Options.TileHeight / 2, tileX, tileY,
-                    ((DatabaseObject) this).Id, dir);
+                    ((IDatabaseObject) this).Id, dir);
             }
         }
 
@@ -351,7 +364,7 @@ namespace Intersect_Client.Classes.Maps
                 //Draw Map Items
                 foreach (var item in MapItems)
                 {
-                    var itemBase = ItemBase.GetItem(item.Value.ItemNum);
+                    var itemBase = ItemBase.Lookup.Get(item.Value.ItemNum);
                     if (itemBase != null)
                     {
                         GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
@@ -554,7 +567,7 @@ namespace Intersect_Client.Classes.Maps
         //Fogs/Panorama/Overlay
         private void DrawFog()
         {
-            if (Globals.Me == null || GetMap(Globals.Me.CurrentMap) == null) return;
+            if (Globals.Me == null || Lookup.Get(Globals.Me.CurrentMap) == null) return;
             float ecTime = Globals.System.GetTimeMS() - _fogUpdateTime;
             _fogUpdateTime = Globals.System.GetTimeMS();
             if (Id == Globals.Me.CurrentMap)
@@ -811,56 +824,9 @@ namespace Intersect_Client.Classes.Maps
             }
         }
 
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public new static MapInstance GetMap(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (MapInstance) Objects[index];
-            }
-            return null;
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
         public override void Delete()
         {
-            Objects.Remove(((DatabaseObject) this).Id);
-            MapBase.GetObjects().Remove(((DatabaseObject) this).Id);
-        }
-
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-            MapBase.ClearObjects();
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            Objects.Add(index, obj);
-            MapBase.Objects.Add(index, (MapBase) obj);
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, MapInstance> GetObjects()
-        {
-            Dictionary<int, MapInstance> objects = Objects.ToDictionary(k => k.Key, v => (MapInstance) v.Value);
-            return objects;
+            if (Lookup != null) Lookup.Delete(this);
         }
 
         //Dispose
@@ -949,7 +915,7 @@ namespace Intersect_Client.Classes.Maps
         {
             if (TransmittionTimer <= Globals.System.GetTimeMS())
             {
-                MapInstance.GetMap(MapNum).ActionMsgs.Remove(this);
+                MapInstance.Lookup.Get(MapNum).ActionMsgs.Remove(this);
             }
         }
     }

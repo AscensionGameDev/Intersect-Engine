@@ -120,7 +120,7 @@ namespace Intersect_Client.Classes.UI.Game
             Y = _inventoryWindow.Y;
             for (int i = 0; i < Options.MaxInvItems; i++)
             {
-                var item = ItemBase.GetItem(Globals.Me.Inventory[i].ItemNum);
+                var item = ItemBase.Lookup.Get(Globals.Me.Inventory[i].ItemNum);
                 if (item != null)
                 {
                     Items[i].pnl.IsHidden = false;
@@ -338,7 +338,7 @@ namespace Intersect_Client.Classes.UI.Game
 
                 if (Globals.GameShop.BuyingWhitelist && shopItem != null)
                 {
-                    var hoveredItem = ItemBase.GetItem(shopItem.CostItemNum);
+                    var hoveredItem = ItemBase.Lookup.Get(shopItem.CostItemNum);
                     if (hoveredItem != null)
                     {
                         _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
@@ -349,8 +349,8 @@ namespace Intersect_Client.Classes.UI.Game
                 }
                 else if (shopItem == null)
                 {
-                    var hoveredItem = ItemBase.GetItem(invItem.ItemNum);
-                    var costItem = ItemBase.GetItem(Globals.GameShop.DefaultCurrency);
+                    var hoveredItem = ItemBase.Lookup.Get(invItem.ItemNum);
+                    var costItem = ItemBase.Lookup.Get(Globals.GameShop.DefaultCurrency);
                     if (hoveredItem != null && costItem != null)
                     {
                         _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
@@ -389,7 +389,7 @@ namespace Intersect_Client.Classes.UI.Game
                     equipped = true;
                 }
             }
-            var item = ItemBase.GetItem(Globals.Me.Inventory[_mySlot].ItemNum);
+            var item = ItemBase.Lookup.Get(Globals.Me.Inventory[_mySlot].ItemNum);
             if (Globals.Me.Inventory[_mySlot].ItemNum != _currentItem || equipped != _isEquipped ||
                 (item == null && texLoaded != "") || (item != null && texLoaded != item.Pic))
             {

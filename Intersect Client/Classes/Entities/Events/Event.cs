@@ -31,7 +31,7 @@ namespace Intersect_Client.Classes.Entities
 
         public Event(int index, long spawnTime, int mapNum, ByteBuffer bf) : base(index, spawnTime, bf, true)
         {
-            var map = MapInstance.GetMap(CurrentMap);
+            var map = MapInstance.Lookup.Get(CurrentMap);
             if (map != null)
             {
                 map.AddEvent(this);
@@ -74,8 +74,8 @@ namespace Intersect_Client.Classes.Entities
 
         public override void Draw()
         {
-            if (MapInstance.GetMap(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
-            var map = MapInstance.GetMap(CurrentMap);
+            if (MapInstance.Lookup.Get(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
+            var map = MapInstance.Lookup.Get(CurrentMap);
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
             GameTexture srcTexture = null;
@@ -162,13 +162,13 @@ namespace Intersect_Client.Classes.Entities
             {
                 renderList.Remove(this);
             }
-            var map = MapInstance.GetMap(CurrentMap);
+            var map = MapInstance.Lookup.Get(CurrentMap);
             if (map == null)
             {
                 return null;
             }
-            var gridX = MapInstance.GetMap(CurrentMap).MapGridX;
-            var gridY = MapInstance.GetMap(CurrentMap).MapGridY;
+            var gridX = MapInstance.Lookup.Get(CurrentMap).MapGridX;
+            var gridY = MapInstance.Lookup.Get(CurrentMap).MapGridY;
             for (int x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -218,7 +218,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
-            if (MapInstance.GetMap(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
+            if (MapInstance.Lookup.Get(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
             var y = (int) Math.Ceiling(GetCenterPos().Y);
             var x = (int) Math.Ceiling(GetCenterPos().X);
             switch (GraphicType)
@@ -233,7 +233,7 @@ namespace Intersect_Client.Classes.Entities
                     }
                     break;
                 case 2: //Tile
-                    foreach (var tileset in DatabaseObjectUtils.GetGameObjectList(GameObject.Tileset))
+                    foreach (var tileset in TilesetBase.GetNameList())
                     {
                         if (tileset == GraphicFile)
                         {
@@ -252,7 +252,7 @@ namespace Intersect_Client.Classes.Entities
 
         public override Pointf GetCenterPos()
         {
-            var map = MapInstance.GetMap(CurrentMap);
+            var map = MapInstance.Lookup.Get(CurrentMap);
             if (map == null)
             {
                 return new Pointf(0, 0);
@@ -271,7 +271,7 @@ namespace Intersect_Client.Classes.Entities
                     }
                     break;
                 case 2: //Tile
-                    foreach (var tileset in DatabaseObjectUtils.GetGameObjectList(GameObject.Tileset))
+                    foreach (var tileset in TilesetBase.GetNameList())
                     {
                         if (tileset == GraphicFile)
                         {

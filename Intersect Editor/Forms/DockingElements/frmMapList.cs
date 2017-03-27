@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using DarkUI.Forms;
-using Intersect.GameObjects;
+using Intersect;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
 using Intersect_Editor.Classes;
@@ -141,11 +141,11 @@ namespace Intersect_Editor.Forms
             }
             if (mapTreeList.list.SelectedNode == null)
             {
-                PacketSender.SendCreateMap(-1, ((DatabaseObject) Globals.CurrentMap).Id, null);
+                PacketSender.SendCreateMap(-1, ((IDatabaseObject) Globals.CurrentMap).Id, null);
             }
             else
             {
-                PacketSender.SendCreateMap(-1, ((DatabaseObject) Globals.CurrentMap).Id,
+                PacketSender.SendCreateMap(-1, ((IDatabaseObject) Globals.CurrentMap).Id,
                     (MapListItem) mapTreeList.list.SelectedNode.Tag);
             }
         }

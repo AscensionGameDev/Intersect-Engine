@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using Intersect_Editor.Classes;
@@ -26,12 +27,12 @@ namespace Intersect_Editor.Forms
             lstNpcs.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObject type)
+        private void GameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (type == GameObject.Npc)
+            if (type == GameObjectType.Npc)
             {
                 InitEditor();
-                if (_editorItem != null && !NpcBase.GetObjects().ContainsValue(_editorItem))
+                if (_editorItem != null && !NpcBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -68,7 +69,7 @@ namespace Intersect_Editor.Forms
 
         private void lstNpcs_Click(object sender, EventArgs e)
         {
-            _editorItem = NpcBase.GetNpc(Database.GameObjectIdFromList(GameObject.Npc, lstNpcs.SelectedIndex));
+            _editorItem = NpcBase.Lookup.Get(Database.GameObjectIdFromList(GameObjectType.Npc, lstNpcs.SelectedIndex));
             UpdateEditor();
         }
 
@@ -78,15 +79,15 @@ namespace Intersect_Editor.Forms
             cmbSprite.Items.Add(Strings.Get("general", "none"));
             cmbSprite.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
             cmbSpell.Items.Clear();
-            cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
+            cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
             cmbHostileNPC.Items.Clear();
-            cmbHostileNPC.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
+            cmbHostileNPC.Items.AddRange(Database.GetGameObjectList(GameObjectType.Npc));
             cmbDropItem.Items.Clear();
             cmbDropItem.Items.Add(Strings.Get("general", "none"));
-            cmbDropItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
+            cmbDropItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
             cmbAttackAnimation.Items.Clear();
             cmbAttackAnimation.Items.Add(Strings.Get("general", "none"));
-            cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbScalingStat.Items.Clear();
             for (int x = 0; x < Options.MaxStats; x++)
             {
@@ -173,7 +174,7 @@ namespace Intersect_Editor.Forms
         public void InitEditor()
         {
             lstNpcs.Items.Clear();
-            lstNpcs.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
+            lstNpcs.Items.AddRange(Database.GetGameObjectList(GameObjectType.Npc));
         }
 
         private void UpdateEditor()
@@ -205,7 +206,7 @@ namespace Intersect_Editor.Forms
                 cmbDamageType.SelectedIndex = _editorItem.DamageType;
                 cmbScalingStat.SelectedIndex = _editorItem.ScalingStat;
                 cmbAttackAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObject.Animation, _editorItem.AttackAnimation) + 1;
+                    Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.AttackAnimation) + 1;
 
                 // Add the spells to the list
                 lstSpells.Items.Clear();
@@ -223,7 +224,7 @@ namespace Intersect_Editor.Forms
                 if (lstSpells.Items.Count > 0)
                 {
                     lstSpells.SelectedIndex = 0;
-                    cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell,
+                    cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell,
                         _editorItem.Spells[lstSpells.SelectedIndex]);
                 }
                 cmbFreq.SelectedIndex = _editorItem.SpellFrequency;
@@ -261,7 +262,7 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstNpcs.Items[Database.GameObjectListIndex(GameObject.Npc, _editorItem.Id)] = txtName.Text;
+            lstNpcs.Items[Database.GameObjectListIndex(GameObjectType.Npc, _editorItem.Id)] = txtName.Text;
         }
 
         private void cmbBehavior_SelectedIndexChanged(object sender, EventArgs e)
@@ -303,7 +304,7 @@ namespace Intersect_Editor.Forms
             int index = scrlDropIndex.Value;
             lblDropIndex.Text = Strings.Get("npceditor", "dropindex", (scrlDropIndex.Value + 1));
             cmbDropItem.SelectedIndex =
-                Database.GameObjectListIndex(GameObject.Item, _editorItem.Drops[index].ItemNum) + 1;
+                Database.GameObjectListIndex(GameObjectType.Item, _editorItem.Drops[index].ItemNum) + 1;
             nudDropAmount.Value = _editorItem.Drops[index].Amount;
             nudDropChance.Value = _editorItem.Drops[index].Chance;
         }
@@ -320,7 +321,7 @@ namespace Intersect_Editor.Forms
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            _editorItem.Spells.Add(Database.GameObjectIdFromList(GameObject.Spell, cmbSpell.SelectedIndex));
+            _editorItem.Spells.Add(Database.GameObjectIdFromList(GameObjectType.Spell, cmbSpell.SelectedIndex));
             int n = lstSpells.SelectedIndex;
             lstSpells.Items.Clear();
             for (int i = 0; i < _editorItem.Spells.Count; i++)
@@ -357,7 +358,7 @@ namespace Intersect_Editor.Forms
 
         private void btnAddAggro_Click(object sender, EventArgs e)
         {
-            _editorItem.AggroList.Add(Database.GameObjectIdFromList(GameObject.Npc, cmbHostileNPC.SelectedIndex));
+            _editorItem.AggroList.Add(Database.GameObjectIdFromList(GameObjectType.Npc, cmbHostileNPC.SelectedIndex));
             lstAggro.Items.Clear();
             for (int i = 0; i < _editorItem.AggroList.Count; i++)
             {
@@ -384,7 +385,7 @@ namespace Intersect_Editor.Forms
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
         {
-            PacketSender.SendCreateObject(GameObject.Npc);
+            PacketSender.SendCreateObject(GameObjectType.Npc);
         }
 
         private void toolStripItemDelete_Click(object sender, EventArgs e)
@@ -484,7 +485,7 @@ namespace Intersect_Editor.Forms
 
         private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.AttackAnimation = Database.GameObjectIdFromList(GameObject.Animation,
+            _editorItem.AttackAnimation = Database.GameObjectIdFromList(GameObjectType.Animation,
                 cmbAttackAnimation.SelectedIndex - 1);
         }
 
@@ -500,7 +501,7 @@ namespace Intersect_Editor.Forms
 
         private void cmbDropItem_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value].ItemNum = Database.GameObjectIdFromList(GameObject.Item,
+            _editorItem.Drops[scrlDropIndex.Value].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item,
                 cmbDropItem.SelectedIndex - 1);
         }
 
@@ -508,7 +509,7 @@ namespace Intersect_Editor.Forms
         {
             if (lstSpells.SelectedIndex > -1)
             {
-                cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell,
+                cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell,
                     _editorItem.Spells[lstSpells.SelectedIndex]);
             }
         }
@@ -517,7 +518,7 @@ namespace Intersect_Editor.Forms
         {
             if (lstSpells.SelectedIndex > -1 && lstSpells.SelectedIndex < _editorItem.Spells.Count)
             {
-                _editorItem.Spells[lstSpells.SelectedIndex] = Database.GameObjectIdFromList(GameObject.Spell,
+                _editorItem.Spells[lstSpells.SelectedIndex] = Database.GameObjectIdFromList(GameObjectType.Spell,
                     cmbSpell.SelectedIndex);
             }
 

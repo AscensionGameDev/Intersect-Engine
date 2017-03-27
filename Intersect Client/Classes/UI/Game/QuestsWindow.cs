@@ -264,7 +264,7 @@ namespace Intersect_Client.Classes.UI.Game
             _questList.RemoveAllRows();
             if (Globals.Me != null)
             {
-                var quests = QuestBase.GetObjects();
+                var quests = QuestBase.Lookup;
                 foreach (var quest in quests)
                 {
                     if (quest.Value != null)
@@ -322,7 +322,7 @@ namespace Intersect_Client.Classes.UI.Game
         private void QuestListItem_Clicked(Base sender, ClickedEventArgs arguments)
         {
             var questNum = (int) ((ListBoxRow) sender).UserData;
-            var quest = QuestBase.GetQuest(questNum);
+            var quest = QuestBase.Lookup.Get(questNum);
             if (quest != null)
             {
                 _selectedQuest = quest;

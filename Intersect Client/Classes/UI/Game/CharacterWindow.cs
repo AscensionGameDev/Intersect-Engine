@@ -465,7 +465,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _descWindow.Dispose();
                 _descWindow = null;
             }
-            if (ItemBase.GetItem(_currentItem) == null) return;
+            if (ItemBase.Lookup.Get(_currentItem) == null) return;
             _descWindow = new ItemDescWindow(_currentItem, 1, _characterWindow.X - 255, _characterWindow.Y, _statBoost,
                 "Equipment Slot: " + Options.EquipmentSlots[myindex]);
         }
@@ -488,7 +488,7 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _currentItem = currentItem;
                 _statBoost = statBoost;
-                var item = ItemBase.GetItem(_currentItem);
+                var item = ItemBase.Lookup.Get(_currentItem);
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,

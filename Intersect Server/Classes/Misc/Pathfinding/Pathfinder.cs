@@ -50,7 +50,7 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
             IEnumerable<PathNode> path = mPath;
             if (mWaitTime < timeMs)
             {
-                var currentMap = MapInstance.GetMap(mEntity.CurrentMap);
+                var currentMap = MapInstance.Lookup.Get(mEntity.CurrentMap);
                 if (currentMap != null && mTarget != null)
                 {
                     var myGrid = currentMap.MapGrid;
@@ -133,7 +133,7 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
 
                                         if (Database.MapGrids[myGrid].MyGrid[x, y] > -1)
                                         {
-                                            var tmpMap = MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]);
+                                            var tmpMap = MapInstance.Lookup.Get(Database.MapGrids[myGrid].MyGrid[x, y]);
                                             if (tmpMap != null)
                                             {
                                                 //Copy the cached array of tile blocks

@@ -277,13 +277,13 @@ namespace Intersect_Server.Classes.Entities
                         int newx = Spawns[i].X + GetRangeX(Spawns[i].Dir, 1);
                         int newy = Spawns[i].Y + GetRangeY(Spawns[i].Dir, 1);
                         int newmap = Spawns[i].Map;
-                        var map = MapInstance.GetMap(Spawns[i].Map);
+                        var map = MapInstance.Lookup.Get(Spawns[i].Map);
 
                         if (newx < 0)
                         {
-                            if (MapInstance.GetMap(map.Left) != null)
+                            if (MapInstance.Lookup.Get(map.Left) != null)
                             {
-                                newmap = MapInstance.GetMap(Spawns[i].Map).Left;
+                                newmap = MapInstance.Lookup.Get(Spawns[i].Map).Left;
                                 newx = Options.MapWidth - 1;
                             }
                             else
@@ -293,9 +293,9 @@ namespace Intersect_Server.Classes.Entities
                         }
                         if (newx > Options.MapWidth - 1)
                         {
-                            if (MapInstance.GetMap(map.Right) != null)
+                            if (MapInstance.Lookup.Get(map.Right) != null)
                             {
-                                newmap = MapInstance.GetMap(Spawns[i].Map).Right;
+                                newmap = MapInstance.Lookup.Get(Spawns[i].Map).Right;
                                 newx = 0;
                             }
                             else
@@ -305,9 +305,9 @@ namespace Intersect_Server.Classes.Entities
                         }
                         if (newy < 0)
                         {
-                            if (MapInstance.GetMap(map.Up) != null)
+                            if (MapInstance.Lookup.Get(map.Up) != null)
                             {
-                                newmap = MapInstance.GetMap(Spawns[i].Map).Up;
+                                newmap = MapInstance.Lookup.Get(Spawns[i].Map).Up;
                                 newy = Options.MapHeight - 1;
                             }
                             else
@@ -317,9 +317,9 @@ namespace Intersect_Server.Classes.Entities
                         }
                         if (newy > Options.MapHeight - 1)
                         {
-                            if (MapInstance.GetMap(map.Down) != null)
+                            if (MapInstance.Lookup.Get(map.Down) != null)
                             {
-                                newmap = MapInstance.GetMap(Spawns[i].Map).Down;
+                                newmap = MapInstance.Lookup.Get(Spawns[i].Map).Down;
                                 newy = 0;
                             }
                             else
@@ -341,7 +341,7 @@ namespace Intersect_Server.Classes.Entities
                         Spawns[i].Map = newmap;
 
                         //Check Map Entities For Hits
-                        map = MapInstance.GetMap(Spawns[i].Map);
+                        map = MapInstance.Lookup.Get(Spawns[i].Map);
                         Attribute attribute = map.Attributes[Spawns[i].X, Spawns[i].Y];
                         //Check for Z-Dimension
                         if (!Spawns[i].ProjectileBase.IgnoreZDimension)
@@ -444,7 +444,7 @@ namespace Intersect_Server.Classes.Entities
             }
             else
             {
-                MapInstance.GetMap(CurrentMap).RemoveProjectile(this);
+                MapInstance.Lookup.Get(CurrentMap).RemoveProjectile(this);
                 PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Projectile, CurrentMap);
                 Globals.Entities[MyIndex] = null;
             }

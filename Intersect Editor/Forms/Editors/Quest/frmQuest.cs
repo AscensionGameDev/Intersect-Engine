@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using DarkUI.Forms;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
@@ -71,12 +72,12 @@ namespace Intersect_Editor.Forms
             btnCancel.Text = Strings.Get("questeditor", "cancel");
         }
 
-        private void GameObjectUpdatedDelegate(GameObject type)
+        private void GameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (type == GameObject.Quest)
+            if (type == GameObjectType.Quest)
             {
                 InitEditor();
-                if (_editorItem != null && !QuestBase.GetObjects().ContainsValue(_editorItem))
+                if (_editorItem != null && !QuestBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -115,14 +116,14 @@ namespace Intersect_Editor.Forms
 
         private void lstQuests_Click(object sender, EventArgs e)
         {
-            _editorItem = QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, lstQuests.SelectedIndex));
+            _editorItem = QuestBase.Lookup.Get(Database.GameObjectIdFromList(GameObjectType.Quest, lstQuests.SelectedIndex));
             UpdateEditor();
         }
 
         public void InitEditor()
         {
             lstQuests.Items.Clear();
-            foreach (var quest in QuestBase.GetObjects())
+            foreach (var quest in QuestBase.Lookup)
             {
                 lstQuests.Items.Add(quest.Value.Name);
             }
@@ -165,7 +166,7 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstQuests.Items[Database.GameObjectListIndex(GameObject.Quest, _editorItem.Id)] = txtName.Text;
+            lstQuests.Items[Database.GameObjectListIndex(GameObjectType.Quest, _editorItem.Id)] = txtName.Text;
         }
 
         private void txtStartDesc_TextChanged(object sender, EventArgs e)
@@ -316,7 +317,7 @@ namespace Intersect_Editor.Forms
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
         {
-            PacketSender.SendCreateObject(GameObject.Quest);
+            PacketSender.SendCreateObject(GameObjectType.Quest);
         }
 
         private void toolStripItemDelete_Click(object sender, EventArgs e)

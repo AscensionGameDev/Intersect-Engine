@@ -277,7 +277,7 @@ namespace Intersect_Client.Classes.Core
                 _sound.SetVolume(0);
                 return;
             }
-            var map = MapInstance.GetMap(_map);
+            var map = MapInstance.Lookup.Get(_map);
             if (map == null)
             {
                 Stop();
@@ -313,7 +313,7 @@ namespace Intersect_Client.Classes.Core
             float soundx = 0;
             float soundy = 0;
             int mapNum = _map;
-            var map = MapInstance.GetMap(mapNum);
+            var map = MapInstance.Lookup.Get(mapNum);
             if (map != null)
             {
                 if (_x == -1 || _y == -1 || _distance == -1)

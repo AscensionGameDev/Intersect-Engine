@@ -1,13 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Intersect.GameObjects
+﻿namespace Intersect.GameObjects
 {
     public class AnimationBase : DatabaseObject<AnimationBase>
     {
-        public new const string DATABASE_TABLE = "animations";
-        public new const GameObject OBJECT_TYPE = GameObject.Animation;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public int LowerAnimFrameCount = 1;
         public int LowerAnimFrameSpeed = 100;
         public int LowerAnimLoopCount = 0;
@@ -115,15 +109,5 @@ namespace Intersect.GameObjects
         }
 
         public override byte[] BinaryData => AnimData();
-
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
     }
 }

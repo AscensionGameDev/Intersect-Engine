@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
 using Intersect_Editor.Classes;
@@ -91,7 +92,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 lblGraphic.Show();
                 cmbGraphic.Show();
                 cmbGraphic.Items.Clear();
-                foreach (var filename in Database.GetGameObjectList(GameObject.Tileset))
+                foreach (var filename in Database.GetGameObjectList(GameObjectType.Tileset))
                 {
                     if (File.Exists("resources/tilesets/" + filename))
                     {
@@ -124,7 +125,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 lblGraphic.Show();
                 cmbGraphic.Show();
-                foreach (var filename in Database.GetGameObjectList(GameObject.Tileset))
+                foreach (var filename in Database.GetGameObjectList(GameObjectType.Tileset))
                 {
                     if (File.Exists("resources/tilesets/" + filename))
                     {

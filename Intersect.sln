@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Server", "Intersect Server\Intersect Server.csproj", "{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Library", "Intersect Library\Intersect Library\Intersect Library.csproj", "{BC304B43-1F2C-4454-9EDC-48F47357CA94}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect (Core)", "Intersect Library\Intersect Library\Intersect (Core).csproj", "{BC304B43-1F2C-4454-9EDC-48F47357CA94}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Client", "Intersect Client\Intersect Client.csproj", "{2240F3DD-3694-4606-B181-F204CBBCB971}"
 EndProject

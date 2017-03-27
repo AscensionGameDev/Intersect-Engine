@@ -129,28 +129,42 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             };
             if (LevelReq > 0)
             {
-                var req = new EventCommand()
+                var req = new EventCommand
                 {
-                    Type = EventCommandType.ConditionalBranch
+                    Type = EventCommandType.ConditionalBranch,
+                    Ints =
+                    {
+                        [0] = 7,
+                        [1] = 1,
+                        [2] = LevelReq,
+                        [3] = 0
+                    }
                 };
-                req.Ints[0] = 7; //Level or Stat is
-                req.Ints[1] = 1; //Greater than or equal to
-                req.Ints[2] = LevelReq; //Level To Compare
-                req.Ints[3] = 0; //Level not stat
+                //Level or Stat is
+                //Greater than or equal to
+                //Level To Compare
+                //Level not stat
                 cndList.Conditions.Add(req);
             }
             for (var i = 0; i < Options.MaxStats; i++)
             {
                 if (StatReq[i] > 0)
                 {
-                    var req = new EventCommand()
+                    var req = new EventCommand
                     {
-                        Type = EventCommandType.ConditionalBranch
+                        Type = EventCommandType.ConditionalBranch,
+                        Ints =
+                        {
+                            [0] = 7,
+                            [1] = 1,
+                            [2] = StatReq[i],
+                            [3] = i + 1
+                        }
                     };
-                    req.Ints[0] = 7; //Level or Stat is
-                    req.Ints[1] = 1; //Greater than or equal to
-                    req.Ints[2] = StatReq[i]; //Value To Compare
-                    req.Ints[3] = i + 1; //Stat index
+                    //Level or Stat is
+                    //Greater than or equal to
+                    //Value To Compare
+                    //Stat index
                     cndList.Conditions.Add(req);
                 }
             }

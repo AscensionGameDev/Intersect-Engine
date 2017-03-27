@@ -733,9 +733,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Intersect Library\Intersect Library\Intersect Library.csproj">
+    <ProjectReference Include="..\Intersect Library\Intersect Library\Intersect %28Core%29.csproj">
       <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
-      <Name>Intersect Library</Name>
+      <Name>Intersect %28Core%29</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
