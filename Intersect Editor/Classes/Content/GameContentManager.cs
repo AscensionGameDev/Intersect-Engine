@@ -48,21 +48,21 @@ namespace Intersect_Editor.Classes.Core
 
         //Game Content
         public static List<GameTexture> AllTextures = new List<GameTexture>();
-        static Dictionary<string, GameTexture> tilesetDict = new Dictionary<string, GameTexture>();
-        static Dictionary<string, GameTexture> itemDict = new Dictionary<string, GameTexture>();
-        static Dictionary<string, GameTexture> entityDict = new Dictionary<string, GameTexture>();
-        static Dictionary<string, GameTexture> spellDict = new Dictionary<string, GameTexture>();
-        static Dictionary<string, GameTexture> animationDict = new Dictionary<string, GameTexture>();
-        static Dictionary<string, GameTexture> faceDict = new Dictionary<string, GameTexture>();
-        static Dictionary<string, GameTexture> imageDict = new Dictionary<string, GameTexture>();
-        static Dictionary<string, GameTexture> fogDict = new Dictionary<string, GameTexture>();
-        static Dictionary<string, GameTexture> resourceDict = new Dictionary<string, GameTexture>();
-        static Dictionary<string, GameTexture> paperdollDict = new Dictionary<string, GameTexture>();
-        static Dictionary<string, GameTexture> guiDict = new Dictionary<string, GameTexture>();
-        static Dictionary<string, GameTexture> miscDict = new Dictionary<string, GameTexture>();
-        static Dictionary<string, Effect> shaderDict = new Dictionary<string, Effect>();
-        static Dictionary<string, object> musicDict = new Dictionary<string, object>();
-        static Dictionary<string, object> soundDict = new Dictionary<string, object>();
+        static IDictionary<string, GameTexture> tilesetDict = new SortedDictionary<string, GameTexture>(new AlphanumComparatorFast());
+        static IDictionary<string, GameTexture> itemDict = new SortedDictionary<string, GameTexture>(new AlphanumComparatorFast());
+        static IDictionary<string, GameTexture> entityDict = new SortedDictionary<string, GameTexture>(new AlphanumComparatorFast());
+        static IDictionary<string, GameTexture> spellDict = new SortedDictionary<string, GameTexture>(new AlphanumComparatorFast());
+        static IDictionary<string, GameTexture> animationDict = new SortedDictionary<string, GameTexture>(new AlphanumComparatorFast());
+        static IDictionary<string, GameTexture> faceDict = new SortedDictionary<string, GameTexture>(new AlphanumComparatorFast());
+        static IDictionary<string, GameTexture> imageDict = new SortedDictionary<string, GameTexture>(new AlphanumComparatorFast());
+        static IDictionary<string, GameTexture> fogDict = new SortedDictionary<string, GameTexture>(new AlphanumComparatorFast());
+        static IDictionary<string, GameTexture> resourceDict = new SortedDictionary<string, GameTexture>(new AlphanumComparatorFast());
+        static IDictionary<string, GameTexture> paperdollDict = new SortedDictionary<string, GameTexture>(new AlphanumComparatorFast());
+        static IDictionary<string, GameTexture> guiDict = new SortedDictionary<string, GameTexture>(new AlphanumComparatorFast());
+        static IDictionary<string, GameTexture> miscDict = new SortedDictionary<string, GameTexture>(new AlphanumComparatorFast());
+        static IDictionary<string, Effect> shaderDict = new SortedDictionary<string, Effect>(new AlphanumComparatorFast());
+        static IDictionary<string, object> musicDict = new SortedDictionary<string, object>(new AlphanumComparatorFast());
+        static IDictionary<string, object> soundDict = new SortedDictionary<string, object>(new AlphanumComparatorFast());
 
         //Resource Downloader
         public static void CheckForResources()
@@ -199,7 +199,7 @@ namespace Intersect_Editor.Classes.Core
         }
 
         //Loading Game Resources
-        public static void LoadTextureGroup(string directory, Dictionary<string, GameTexture> dict)
+        public static void LoadTextureGroup(string directory, IDictionary<string, GameTexture> dict)
         {
             dict.Clear();
             if (!Directory.Exists("resources/" + directory))
