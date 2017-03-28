@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using Intersect;
 using Intersect.GameObjects;
+using Intersect.Logging;
 using Intersect_Editor.Classes.Content;
 using Intersect_Editor.Forms;
 using Microsoft.Xna.Framework;
@@ -406,108 +407,99 @@ namespace Intersect_Editor.Classes.Core
         //Content Getters
         public static Texture2D GetTexture(TextureType type, string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                Log.Error("Tried to load {0} texture with null name.", Enum.GetName(typeof(TextureType), type));
+                return null;
+            }
+
+            IDictionary<string, GameTexture> textureDict = null;
             switch (type)
             {
-                case TextureType.Tileset:
-                    if (tilesetDict.ContainsKey(name.ToLower())) return tilesetDict[name.ToLower()].GetTexture();
-                    break;
-                case TextureType.Item:
-                    if (itemDict.ContainsKey(name.ToLower())) return itemDict[name.ToLower()].GetTexture();
-                    break;
-                case TextureType.Entity:
-                    if (entityDict.ContainsKey(name.ToLower())) return entityDict[name.ToLower()].GetTexture();
-                    break;
-                case TextureType.Spell:
-                    if (spellDict.ContainsKey(name.ToLower())) return spellDict[name.ToLower()].GetTexture();
-                    break;
-                case TextureType.Animation:
-                    if (animationDict.ContainsKey(name.ToLower())) return animationDict[name.ToLower()].GetTexture();
-                    break;
-                case TextureType.Face:
-                    if (faceDict.ContainsKey(name.ToLower())) return faceDict[name.ToLower()].GetTexture();
-                    break;
-                case TextureType.Image:
-                    if (imageDict.ContainsKey(name.ToLower())) return imageDict[name.ToLower()].GetTexture();
-                    break;
-                case TextureType.Fog:
-                    if (fogDict.ContainsKey(name.ToLower())) return fogDict[name.ToLower()].GetTexture();
-                    break;
-                case TextureType.Resource:
-                    if (resourceDict.ContainsKey(name.ToLower())) return resourceDict[name.ToLower()].GetTexture();
-                    break;
-                case TextureType.Paperdoll:
-                    if (paperdollDict.ContainsKey(name.ToLower())) return paperdollDict[name.ToLower()].GetTexture();
-                    break;
-                case TextureType.Gui:
-                    if (guiDict.ContainsKey(name.ToLower())) return guiDict[name.ToLower()].GetTexture();
-                    break;
-                case TextureType.Misc:
-                    if (miscDict.ContainsKey(name.ToLower())) return miscDict[name.ToLower()].GetTexture();
-                    break;
+                case TextureType.Tileset: textureDict = tilesetDict; break;
+                case TextureType.Item: textureDict = itemDict; break;
+                case TextureType.Entity: textureDict = entityDict; break;
+                case TextureType.Spell: textureDict = spellDict; break;
+                case TextureType.Animation: textureDict = animationDict; break;
+                case TextureType.Face: textureDict = faceDict; break;
+                case TextureType.Image: textureDict = imageDict; break;
+                case TextureType.Fog: textureDict = fogDict; break;
+                case TextureType.Resource: textureDict = resourceDict; break;
+                case TextureType.Paperdoll: textureDict = paperdollDict; break;
+                case TextureType.Gui: textureDict = guiDict; break;
+                case TextureType.Misc: textureDict = miscDict; break;
+                default:
+                    return null;
             }
-            return null;
+
+            if (textureDict == null) return null;
+            return textureDict.TryGetValue(name.ToLower(), out GameTexture texture) ? texture.GetTexture() : null;
         }
 
         public static Effect GetShader(string name)
         {
-            if (shaderDict.ContainsKey(name.ToLower())) return shaderDict[name.ToLower()];
-            return null;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                Log.Error("Tried to load shader with null name.");
+                return null;
+            }
+
+            if (shaderDict == null) return null;
+            return shaderDict.TryGetValue(name.ToLower(), out Effect effect) ? effect : null;
         }
 
         public static object GetMusic(string name)
         {
-            if (musicDict.ContainsKey(name.ToLower())) return musicDict[name.ToLower()];
-            return null;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                Log.Error("Tried to load music with null name.");
+                return null;
+            }
+
+            if (musicDict == null) return null;
+            return musicDict.TryGetValue(name.ToLower(), out object music) ? music : null;
         }
 
         public static object GetSound(string name)
         {
-            if (soundDict.ContainsKey(name.ToLower())) return soundDict[name.ToLower()];
-            return null;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                Log.Error("Tried to load sound with null name.");
+                return null;
+            }
+
+            if (soundDict == null) return null;
+            return soundDict.TryGetValue(name.ToLower(), out object sound) ? sound : null;
         }
 
         //Getting Filenames
         public static string[] GetTextureNames(TextureType type)
         {
+            IDictionary<string, GameTexture> textureDict = null;
             switch (type)
             {
-                case TextureType.Tileset:
-                    return tilesetDict.Keys.ToArray();
-                case TextureType.Item:
-                    return itemDict.Keys.ToArray();
-                case TextureType.Entity:
-                    return entityDict.Keys.ToArray();
-                case TextureType.Spell:
-                    return spellDict.Keys.ToArray();
-                case TextureType.Animation:
-                    return animationDict.Keys.ToArray();
-                case TextureType.Face:
-                    return faceDict.Keys.ToArray();
-                case TextureType.Image:
-                    return imageDict.Keys.ToArray();
-                case TextureType.Fog:
-                    return fogDict.Keys.ToArray();
-                case TextureType.Resource:
-                    return resourceDict.Keys.ToArray();
-                case TextureType.Paperdoll:
-                    return paperdollDict.Keys.ToArray();
-                case TextureType.Gui:
-                    return guiDict.Keys.ToArray();
-                case TextureType.Misc:
-                    return miscDict.Keys.ToArray();
+                case TextureType.Tileset: textureDict = tilesetDict; break;
+                case TextureType.Item: textureDict = itemDict; break;
+                case TextureType.Entity: textureDict = entityDict; break;
+                case TextureType.Spell: textureDict = spellDict; break;
+                case TextureType.Animation: textureDict = animationDict; break;
+                case TextureType.Face: textureDict = faceDict; break;
+                case TextureType.Image: textureDict = imageDict; break;
+                case TextureType.Fog: textureDict = fogDict; break;
+                case TextureType.Resource: textureDict = resourceDict; break;
+                case TextureType.Paperdoll: textureDict = paperdollDict; break;
+                case TextureType.Gui: textureDict = guiDict; break;
+                case TextureType.Misc: textureDict = miscDict; break;
+                default:
+                    return null;
             }
-            return null;
+            
+            return textureDict?.Keys.ToArray();
         }
 
-        public static string[] GetMusicNames()
-        {
-            return musicDict.Keys.ToArray();
-        }
+        public static string[] GetMusicNames() => musicDict?.Keys.ToArray();
 
-        public static string[] GetSoundNames()
-        {
-            return soundDict.Keys.ToArray();
-        }
+        public static string[] GetSoundNames() => soundDict?.Keys.ToArray();
     }
 
     internal class DummyGraphicsDeviceManager : IGraphicsDeviceService
