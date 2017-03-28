@@ -1,32 +1,26 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace Intersect
 {
-    public class AlphanumComparatorFast : IComparer
+    public class AlphanumComparatorFast : IComparer, IComparer<string>
     {
-        public int Compare(object x, object y)
-        {
-            string s1 = x as string;
-            if (s1 == null)
-            {
-                return 0;
-            }
-            string s2 = y as string;
-            if (s2 == null)
-            {
-                return 0;
-            }
+        public int Compare(object x, object y) => Compare(x as string, y as string);
 
-            int len1 = s1.Length;
-            int len2 = s2.Length;
+        public int Compare(string x, string y)
+        {
+            if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y)) return 0;
+
+            int len1 = x.Length;
+            int len2 = y.Length;
             int marker1 = 0;
             int marker2 = 0;
 
             // Walk through two the strings with two markers.
             while (marker1 < len1 && marker2 < len2)
             {
-                char ch1 = s1[marker1];
-                char ch2 = s2[marker2];
+                char ch1 = x[marker1];
+                char ch2 = y[marker2];
 
                 // Some buffers we can build up characters in for each chunk.
                 char[] space1 = new char[len1];
@@ -44,7 +38,7 @@ namespace Intersect
 
                     if (marker1 < len1)
                     {
-                        ch1 = s1[marker1];
+                        ch1 = x[marker1];
                     }
                     else
                     {
@@ -59,7 +53,7 @@ namespace Intersect
 
                     if (marker2 < len2)
                     {
-                        ch2 = s2[marker2];
+                        ch2 = y[marker2];
                     }
                     else
                     {
