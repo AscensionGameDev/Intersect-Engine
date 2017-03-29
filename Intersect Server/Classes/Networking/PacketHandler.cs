@@ -251,6 +251,12 @@ namespace Intersect_Server.Classes.Networking
                 case ClientPackets.RemoveFriend:
                     HandleRemoveFriend(client, packet);
                     break;
+                case ClientPackets.FriendRequestAccept:
+                    HandleFriendRequest(client, packet);
+                    break;
+                case ClientPackets.FriendRequestDecline:
+                    HandleFriendRequestDecline(client, packet);
+                    break;
                 default:
                     break;
             }
@@ -2331,27 +2337,82 @@ namespace Intersect_Server.Classes.Networking
             PacketSender.SendFriends(client);
         }
 
+        private static void HandleFriendRequest(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int target = bf.ReadInteger();
+            //Check if valid target
+            if (target < 0 || target > Globals.Entities.Count)
+            {
+                return;
+            }
+            if (Globals.Entities[target] != null && Globals.Entities[target].GetEntityType() == EntityTypes.Player && target != client.Entity.MyIndex)
+            {
+                var charId = Database.GetCharacterId(((Player)Globals.Entities[target]).MyName);
+                if (charId != -1)
+                {
+                    if (!client.Entity.Friends.ContainsKey(charId)) // Incase one user deleted friend then re-requested
+                    {
+                        client.Entity.Friends.Add(charId, ((Player)Globals.Entities[target]).MyName);
+                        PacketSender.SendPlayerMsg(client, Strings.Get("friends", "notification", ((Player)Globals.Entities[target]).MyName), Color.Green);
+                        PacketSender.SendFriends(client);
+                    }
+                }
+
+
+                charId = Database.GetCharacterId(client.Entity.MyName);
+                if (charId != -1)
+                {
+                    if (!client.Entity.Friends.ContainsKey(charId)) // Incase one user deleted friend then re-requested
+                    {
+                        ((Player)Globals.Entities[target]).Friends.Add(charId, client.Entity.MyName);
+                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[target]).MyClient, Strings.Get("friends", "accept", client.Entity.MyName), Color.Green);
+                        PacketSender.SendFriends(((Player)Globals.Entities[target]).MyClient);
+                    }
+                }
+
+                return;
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleFriendRequestDecline(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int target = bf.ReadInteger();
+            if (client.Entity.FriendRequester != null && client.Entity.FriendRequester.MyIndex == target)
+            {
+                if (client.Entity.FriendRequester.IsValidPlayer)
+                {
+                    if (client.Entity.FriendRequests.ContainsKey(client.Entity.FriendRequester))
+                    {
+                        client.Entity.FriendRequests[client.Entity.FriendRequester] = Globals.System.GetTimeMs() + Player.RequestDeclineTimeout;
+                    }
+                    else
+                    {
+                        client.Entity.FriendRequests.Add(client.Entity.FriendRequester, Globals.System.GetTimeMs() + Player.RequestDeclineTimeout);
+                    }
+                }
+                client.Entity.FriendRequester = null;
+            }
+        }
+
         private static void HandleAddFriend(Client client, byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             string name = bf.ReadString();
-            
+
             //Don't add yourself!
             if (name.ToLower() == client.Entity.MyName.ToLower())
             {
                 return;
             }
 
-            //TODO
-            //Query database for id of character where name == name
-            //Check if friends containskey(thatid) instead of containsvalue(name)
             var charId = Database.GetCharacterId(name);
-            if (charId == -1)
-            {
-                //Does not exist
-            }
-            else
+            if (charId != -1)
             {
                 if (!client.Entity.Friends.ContainsKey(charId))
                 {
@@ -2362,9 +2423,7 @@ namespace Intersect_Server.Classes.Networking
                         {
                             if (name.ToLower() == c.Entity.MyName.ToLower())
                             {
-                                client.Entity.Friends.Add(charId,name);
-                                PacketSender.SendPlayerMsg(client, Strings.Get("friends", "accept", name), Color.Green);
-                                PacketSender.SendFriends(client);
+                                c.Entity.FriendRequest(client.Entity);
                                 return;
                             }
                         }
@@ -2376,7 +2435,6 @@ namespace Intersect_Server.Classes.Networking
                     PacketSender.SendPlayerMsg(client, Strings.Get("friends", "alreadyfriends", name), Color.White);
                 }
             }
-
             bf.Dispose();
         }
 

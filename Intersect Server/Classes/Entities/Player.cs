@@ -47,6 +47,8 @@ namespace Intersect_Server.Classes.Entities
         public List<Player> Party = new List<Player>();
         public Player PartyRequester = null;
         public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
+        public Player FriendRequester = null;
+        public Dictionary<Player, long> FriendRequests = new Dictionary<Player, long>();
         public Player ChatTarget = null;
         public List<int> QuestOffers = new List<int>();
         public Dictionary<int, QuestProgressStruct> Quests = new Dictionary<int, QuestProgressStruct>();
@@ -1797,6 +1799,28 @@ namespace Intersect_Server.Classes.Entities
             PacketSender.SendBagUpdate(MyClient, item2, bag.Items[item2]);
         }
 
+        //Friends
+        public void FriendRequest(Player fromPlayer)
+        {
+            if (fromPlayer.FriendRequests.ContainsKey(this))
+            {
+                fromPlayer.FriendRequests.Remove(this);
+            }
+            if (!FriendRequests.ContainsKey(fromPlayer) || !(FriendRequests[fromPlayer] > Globals.System.GetTimeMs()))
+            {
+                if (TradeRequester == null && PartyRequester == null && FriendRequester == null)
+                {
+                    FriendRequester = fromPlayer;
+                    PacketSender.SendFriendRequest(MyClient, fromPlayer);
+                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Get("friends", "sent"), Color.Yellow);
+                }
+                else
+                {
+                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Get("friends", "busy", MyName), Color.Red);
+                }
+            }
+        }
+
         //Trading
         public void InviteToTrade(Player fromPlayer)
         {
@@ -1810,7 +1834,7 @@ namespace Intersect_Server.Classes.Entities
             }
             else
             {
-                if (TradeRequester == null && PartyRequester == null)
+                if (TradeRequester == null && PartyRequester == null && FriendRequester == null)
                 {
                     TradeRequester = fromPlayer;
                     PacketSender.SendTradeRequest(MyClient, fromPlayer);
@@ -2036,7 +2060,7 @@ namespace Intersect_Server.Classes.Entities
             }
             else
             {
-                if (TradeRequester == null && PartyRequester == null)
+                if (TradeRequester == null && PartyRequester == null && FriendRequester == null)
                 {
                     PartyRequester = fromPlayer;
                     PacketSender.SendPartyInvite(MyClient, fromPlayer);
