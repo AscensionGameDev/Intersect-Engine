@@ -20,6 +20,7 @@ namespace Intersect.Collections
         TValue AddNew(int index);
         TValue AddNew(Guid key, int index);
         bool Set(int index, TValue value);
+        bool DeleteAt(int key);
     }
 
     public interface IIndexLookup : IIndexLookup<IIndexedGameObject>

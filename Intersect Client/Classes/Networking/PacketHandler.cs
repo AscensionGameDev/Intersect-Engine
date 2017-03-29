@@ -1160,164 +1160,42 @@ namespace Intersect_Client.Classes.Networking
 
         private static void HandleGameObject(byte[] packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var type = (GameObjectType) bf.ReadInteger();
-            var id = bf.ReadInteger();
-            var another = Convert.ToBoolean(bf.ReadInteger());
-            var deleted = Convert.ToBoolean(bf.ReadInteger());
-            var data = bf.ReadBytes(bf.Length());
-            switch (type)
+            using (var bf = new ByteBuffer())
             {
-                case GameObjectType.Animation:
-                    if (deleted)
-                    {
-                        var anim = AnimationBase.Lookup.Get<AnimationBase>(id);
-                        anim.Delete();
-                    }
-                    else
-                    {
-                        var anim = new AnimationBase(id);
-                        anim.Load(data);
-                        AnimationBase.Lookup.Set(id, anim);
-                    }
-                    break;
-                case GameObjectType.Class:
-                    if (deleted)
-                    {
-                        var cls = ClassBase.Lookup.Get<ClassBase>(id);
-                        cls.Delete();
-                    }
-                    else
-                    {
-                        var cls = new ClassBase(id);
-                        cls.Load(data);
-                        ClassBase.Lookup.Set(id, cls);
-                    }
-                    break;
-                case GameObjectType.Item:
-                    if (deleted)
-                    {
-                        var itm = ItemBase.Lookup.Get<ItemBase>(id);
-                        itm.Delete();
-                    }
-                    else
-                    {
-                        var itm = new ItemBase(id);
-                        itm.Load(data);
-                        ItemBase.Lookup.Set(id, itm);
-                    }
-                    break;
-                case GameObjectType.Npc:
-                    if (deleted)
-                    {
-                        var npc = NpcBase.Lookup.Get<NpcBase>(id);
-                        npc.Delete();
-                    }
-                    else
-                    {
-                        var npc = new NpcBase(id);
-                        npc.Load(data);
-                        NpcBase.Lookup.Set(id, npc);
-                    }
-                    break;
-                case GameObjectType.Projectile:
-                    if (deleted)
-                    {
-                        var proj = ProjectileBase.Lookup.Get<ProjectileBase>(id);
-                        proj.Delete();
-                    }
-                    else
-                    {
-                        var proj = new ProjectileBase(id);
-                        proj.Load(data);
-                        ProjectileBase.Lookup.Set(id, proj);
-                    }
-                    break;
-                case GameObjectType.Quest:
-                    if (deleted)
-                    {
-                        var qst = QuestBase.Lookup.Get<QuestBase>(id);
-                        qst.Delete();
-                        Gui.GameUI.NotifyQuestsUpdated();
-                    }
-                    else
-                    {
-                        var qst = new QuestBase(id);
-                        qst.Load(data);
-                        QuestBase.Lookup.Set(id, qst);
-                        Gui.GameUI.NotifyQuestsUpdated();
-                    }
-                    break;
-                case GameObjectType.Resource:
-                    if (deleted)
-                    {
-                        var res = ResourceBase.Lookup.Get<ResourceBase>(id);
-                        res.Delete();
-                    }
-                    else
-                    {
-                        var res = new ResourceBase(id);
-                        res.Load(data);
-                        ResourceBase.Lookup.Set(id, res);
-                    }
-                    break;
-                case GameObjectType.Shop:
-                    if (deleted)
-                    {
-                        var shp = ShopBase.Lookup.Get<ShopBase>(id);
-                        shp.Delete();
-                    }
-                    else
-                    {
-                        var shp = new ShopBase(id);
-                        shp.Load(data);
-                        ShopBase.Lookup.Set(id, shp);
-                    }
-                    break;
-                case GameObjectType.Bench:
-                    if (deleted)
-                    {
-                        var bnc = BenchBase.Lookup.Get<BenchBase>(id);
-                        bnc.Delete();
-                    }
-                    else
-                    {
-                        var bnc = new BenchBase(id);
-                        bnc.Load(data);
-                        BenchBase.Lookup.Set(id, bnc);
-                    }
-                    break;
-                case GameObjectType.Spell:
-                    if (deleted)
-                    {
-                        var spl = SpellBase.Lookup.Get<SpellBase>(id);
-                        spl.Delete();
-                    }
-                    else
-                    {
-                        var spl = new SpellBase(id);
-                        spl.Load(data);
-                        SpellBase.Lookup.Set(id, spl);
-                    }
-                    break;
-                case GameObjectType.Map:
-                    //Handled in a different packet
-                    break;
-                case GameObjectType.Tileset:
-                    var obj = new TilesetBase(id);
-                    obj.Load(data);
-                    TilesetBase.Lookup.Set(id, obj);
-                    if (Globals.HasGameData && !another)
-                        Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
-                    break;
-                case GameObjectType.CommonEvent:
-                    //Clients don't store event data, im an idiot.
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                bf.WriteBytes(packet);
+                var type = (GameObjectType)bf.ReadInteger();
+                var id = bf.ReadInteger();
+                var another = Convert.ToBoolean(bf.ReadInteger());
+                var deleted = Convert.ToBoolean(bf.ReadInteger());
+                var data = bf.ReadBytes(bf.Length());
+
+                switch (type)
+                {
+                    case GameObjectType.Map:
+                        //Handled in a different packet
+                        break;
+                    case GameObjectType.Tileset:
+                        var obj = new TilesetBase(id);
+                        obj.Load(data);
+                        TilesetBase.Lookup.Set(id, obj);
+                        if (Globals.HasGameData && !another)
+                            Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
+                        break;
+                    case GameObjectType.CommonEvent:
+                        //Clients don't store event data, im an idiot.
+                        break;
+                    default:
+                        var lookup = type.GetLookup();
+                        if (deleted) lookup.Get(id).Delete();
+                        else
+                        {
+                            lookup.DeleteAt(id);
+                            var item = lookup.AddNew(id);
+                            item.Load(data);
+                        }
+                        break;
+                }
             }
-            bf.Dispose();
         }
 
         private static void HandleEntityDash(byte[] packet)

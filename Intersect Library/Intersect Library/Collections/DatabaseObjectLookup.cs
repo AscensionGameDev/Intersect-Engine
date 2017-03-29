@@ -259,6 +259,41 @@ namespace Intersect.Collections
             }
         }
 
+        public virtual bool DeleteAt(Guid guid)
+        {
+            if (guid == null) throw new ArgumentNullException();
+            if (!IsIdValid(guid)) throw new ArgumentOutOfRangeException();
+
+            if (mLock == null) throw new ArgumentNullException();
+            if (mIdMap == null) throw new ArgumentNullException();
+
+            IDatabaseObject obj;
+
+            lock (mLock)
+            {
+                mIdMap.TryGetValue(guid, out obj);
+            }
+
+            return Delete(obj);
+        }
+
+        public virtual bool DeleteAt(int index)
+        {
+            if (!IsIndexValid(index)) throw new ArgumentOutOfRangeException();
+
+            if (mLock == null) throw new ArgumentNullException();
+            if (mIndexMap == null) throw new ArgumentNullException();
+
+            IDatabaseObject obj;
+
+            lock (mLock)
+            {
+                mIndexMap.TryGetValue(index, out obj);
+            }
+
+            return Delete(obj);
+        }
+
         public virtual void Clear()
         {
             if (mLock == null) throw new ArgumentNullException();

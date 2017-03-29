@@ -21,6 +21,7 @@ namespace Intersect.Collections
         TValue AddNew(TKey key);
         bool Set(TKey key, TValue value);
         bool Delete(TValue value);
+        bool DeleteAt(TKey key);
         void Clear();
     }
 }
