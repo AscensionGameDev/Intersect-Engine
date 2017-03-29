@@ -1716,5 +1716,15 @@ namespace Intersect_Server.Classes.Networking
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendFriendRequest(Client client, Player partner)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((long)ServerPackets.FriendRequest);
+            bf.WriteString(partner.MyName);
+            bf.WriteInteger(partner.MyIndex);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
     }
 }

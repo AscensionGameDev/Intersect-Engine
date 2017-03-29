@@ -491,5 +491,21 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteString(name);
             GameNetwork.SendPacket(bf.ToArray());
         }
+
+        public static void SendFriendRequestAccept(Object sender, EventArgs e)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.FriendRequestAccept);
+            bf.WriteInteger((int)((InputBox)sender).Slot);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendFriendRequestDecline(Object sender, EventArgs e)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.FriendRequestDecline);
+            bf.WriteInteger((int)((InputBox)sender).Slot);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
     }
 }

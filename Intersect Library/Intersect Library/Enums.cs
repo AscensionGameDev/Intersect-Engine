@@ -79,6 +79,8 @@
         RequestFriends,
         AddFriend,
         RemoveFriend,
+        FriendRequestAccept,
+        FriendRequestDecline,
     }
 
     public enum ServerPackets
@@ -154,6 +156,7 @@
         BagUpdate,
         MoveRouteToggle,
         SendFriends,
+        FriendRequest,
     }
 
     public enum MapZones

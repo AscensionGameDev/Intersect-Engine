@@ -246,6 +246,9 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.SendFriends:
                         HandleFriends(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.FriendRequest:
+                        HandleFriendRequest(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -1676,6 +1679,18 @@ namespace Intersect_Client.Classes.Networking
 
             Gui.GameUI.UpdateFriendsList();
 
+            bf.Dispose();
+        }
+
+        private static void HandleFriendRequest(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            string partner = bf.ReadString();
+            int partnerId = bf.ReadInteger();
+            InputBox iBox = new InputBox(Strings.Get("friends", "request"),
+                Strings.Get("friends", "requestprompt", partner), true, PacketSender.SendFriendRequestAccept,
+                PacketSender.SendFriendRequestDecline, partnerId, false);
             bf.Dispose();
         }
     }

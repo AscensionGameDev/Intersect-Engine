@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Intersect Client Language File - Beta 3.1 -->
+<!-- Intersect Client Language File - Beta 3 -->
 <Strings>
 	<Main>
 		<string id="gamename">Intersect Client</string>
@@ -159,6 +159,7 @@
 		<string id="spells">Spell Book</string>
 		<string id="character">Character Info</string>
 		<string id="quest">Quest Log</string>
+		<string id="friends">Friends</string>
 		<string id="party">Party</string>
 		<string id="options">Options</string>
 		<string id="exit">Exit Game</string>
@@ -228,7 +229,7 @@
 		<string id="offeritemprompt">How many/much {00} would you like to offer?</string>
 		<string id="revokeitem">Revoke Item</string>
 		<string id="revokeitemprompt">How many/much {00} would you like to revoke?</string>
-		<string id="traderequest">Trade Request</string>
+		<string id="traderequest">Party Invite</string>
 		<string id="requestprompt">{00} has invited you to trade items with them. Do you accept?</string>
 	</Trading>
 	<Spells>
@@ -289,6 +290,13 @@
 		<string id="partyinvite">Party Invite</string>
 		<string id="inviteprompt">{00} has invited you to their party. Do you accept?</string>
 	</Parties>
+	<Friends>
+		<string id="title">Friends</string>
+		<string id="removefriend">Remove Friend</string>
+		<string id="removefriendprompt">Do you wish to remove {00} from your friends list?</string>
+		<string id="request">Friend Request</string>
+		<string id="requestprompt">{00} has sent you a friend request. Do you accept?</string>
+	</Friends>
 	<QuestOffer>
 		<string id="title">Quest Offer</string>
 		<string id="accept">Accept</string>
