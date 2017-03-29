@@ -243,6 +243,9 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.MoveRouteToggle:
                         HandleMoveRouteToggle(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.SendFriends:
+                        HandleFriends(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -1640,6 +1643,39 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Globals.MoveRouteActive = bf.ReadBoolean();
+            bf.Dispose();
+        }
+
+        private static void HandleFriends(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            Globals.Me.Friends.Clear();
+
+            //Online friends
+            int count = bf.ReadInteger();
+            for (int i = 0; i < count; i++)
+            {
+                FriendInstance f = new FriendInstance();
+                f.name = bf.ReadString();
+                f.map = bf.ReadString();
+                f.online = true;
+                Globals.Me.Friends.Add(f);
+            }
+
+            //Offline friends
+            count = bf.ReadInteger();
+            for (int i = 0; i < count; i++)
+            {
+                FriendInstance f = new FriendInstance();
+                f.name = bf.ReadString();
+                f.map = "Offline";
+                f.online = false;
+                Globals.Me.Friends.Add(f);
+            }
+
+            Gui.GameUI.UpdateFriendsList();
+
             bf.Dispose();
         }
     }

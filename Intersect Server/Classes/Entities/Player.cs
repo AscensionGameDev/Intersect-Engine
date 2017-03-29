@@ -25,6 +25,7 @@ namespace Intersect_Server.Classes.Entities
         public int CraftIndex = -1;
         public long CraftTimer = 0;
         public int[] Equipment = new int[Options.EquipmentSlots.Count];
+        public Dictionary<int,string> Friends = new Dictionary<int,string>();
 
         //Temporary Values
         private object EventLock = new object();

@@ -1667,5 +1667,54 @@ namespace Intersect_Server.Classes.Networking
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendFriends(Client client)
+        {
+            var bf = new ByteBuffer();
+            List<string> online = new List<string>();
+            List<string> offline = new List<string>();
+            List<string> map = new List<string>();
+            bool found = false;
+
+            foreach (var friend in client.Entity.Friends)
+            {
+                found = false;
+                foreach (var c in Globals.Clients)
+                {
+                    if (c != null && c.Entity != null)
+                    {
+                        if (friend.Value.ToLower() == c.Entity.MyName.ToLower())
+                        {
+                            online.Add(friend.Value);
+                            map.Add(MapList.GetList().FindMap(client.Entity.CurrentMap).Name);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (found == false)
+                {
+                    offline.Add(friend.Value);
+                }
+            }
+
+            bf.WriteLong((int)ServerPackets.SendFriends);
+
+            bf.WriteInteger(online.Count);
+            for (int i = 0; i < online.Count; i++)
+            {
+                bf.WriteString(online[i]);
+                bf.WriteString(map[i]);
+            }
+
+            bf.WriteInteger(offline.Count);
+            for (int i = 0; i < offline.Count; i++)
+            {
+                bf.WriteString(offline[i]);
+            }
+
+            SendDataTo(client, bf.ToArray());
+            bf.Dispose();
+        }
     }
 }

@@ -242,6 +242,15 @@ namespace Intersect_Server.Classes.Networking
                 case ClientPackets.MoveBagItem:
                     HandleMoveBagItem(client, packet);
                     break;
+                case ClientPackets.RequestFriends:
+                    HandleRequestFriends(client, packet);
+                    break;
+                case ClientPackets.AddFriend:
+                    HandleAddFriend(client, packet);
+                    break;
+                case ClientPackets.RemoveFriend:
+                    HandleRemoveFriend(client, packet);
+                    break;
                 default:
                     break;
             }
@@ -2314,6 +2323,79 @@ namespace Intersect_Server.Classes.Networking
             var item1 = bf.ReadInteger();
             var item2 = bf.ReadInteger();
             client.Entity.SwapBagItems(item1, item2);
+            bf.Dispose();
+        }
+
+        private static void HandleRequestFriends(Client client, byte[] packet)
+        {
+            PacketSender.SendFriends(client);
+        }
+
+        private static void HandleAddFriend(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            string name = bf.ReadString();
+            
+            //Don't add yourself!
+            if (name.ToLower() == client.Entity.MyName.ToLower())
+            {
+                return;
+            }
+
+            //TODO
+            //Query database for id of character where name == name
+            //Check if friends containskey(thatid) instead of containsvalue(name)
+            var charId = Database.GetCharacterId(name);
+            if (charId == -1)
+            {
+                //Does not exist
+            }
+            else
+            {
+                if (!client.Entity.Friends.ContainsKey(charId))
+                {
+                    //Add the friend
+                    foreach (var c in Globals.Clients) //Check the player is online
+                    {
+                        if (c != null && c.Entity != null)
+                        {
+                            if (name.ToLower() == c.Entity.MyName.ToLower())
+                            {
+                                client.Entity.Friends.Add(charId,name);
+                                PacketSender.SendPlayerMsg(client, Strings.Get("friends", "accept", name), Color.Green);
+                                PacketSender.SendFriends(client);
+                                return;
+                            }
+                        }
+                    }
+                    PacketSender.SendPlayerMsg(client, Strings.Get("player", "offline"), Color.Red);
+                }
+                else
+                {
+                    PacketSender.SendPlayerMsg(client, Strings.Get("friends", "alreadyfriends", name), Color.White);
+                }
+            }
+
+            bf.Dispose();
+        }
+
+        private static void HandleRemoveFriend(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            string name = bf.ReadString();
+            var charId = Database.GetCharacterId(name);
+            if (charId != -1)
+            {
+                if (client.Entity.Friends.ContainsKey(charId))
+                {
+                    Database.DeleteCharacterFriend(client.Entity, charId);
+                    client.Entity.Friends.Remove(charId);
+                    PacketSender.SendPlayerMsg(client, Strings.Get("friends", "remove"), Color.Red);
+                    PacketSender.SendFriends(client);
+                }
+            }
             bf.Dispose();
         }
     }

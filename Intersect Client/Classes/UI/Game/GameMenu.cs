@@ -4,6 +4,7 @@ using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -29,6 +30,9 @@ namespace Intersect_Client.Classes.UI.Game
         private ImagePanel _partyBackground;
         private Button _partyButton;
         private PartyWindow _partyWindow;
+        private ImagePanel _friendsBackground;
+        private Button _friendsButton;
+        private FriendsWindow _friendsWindow;
         private ImagePanel _questsBackground;
         private Button _questsButton;
         private QuestsWindow _questsWindow;
@@ -114,6 +118,28 @@ namespace Intersect_Client.Classes.UI.Game
             _partyButton.Clicked += PartyBtn_Clicked;
             _partyButton.HoverEnter += Button_HoverEnter;
             _partyButton.HoverLeave += Button_HoverLeave;
+            buttonCount++;
+
+            _friendsBackground = new ImagePanel(_gameCanvas)
+            {
+                MouseInputEnabled = false
+            };
+            _friendsBackground.SetSize(backgroundWidth, backgroundHeight);
+            _friendsBackground.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin),
+                _gameCanvas.Height - buttonMargin - backgroundHeight);
+            _friendsBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
+                "menuitem.png");
+            _friendsButton = new Button(_gameCanvas);
+            _friendsButton.SetSize(buttonWidth, buttonHeight);
+            _friendsButton.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin) + 4,
+                _gameCanvas.Height - buttonMargin - backgroundHeight + 4);
+            _friendsButton.SetImage(
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "friendsicon.png"),
+                Button.ControlState.Normal);
+            _friendsButton.SetToolTipText(Strings.Get("gamemenu", "friends"));
+            _friendsButton.Clicked += FriendsBtn_Clicked;
+            _friendsButton.HoverEnter += Button_HoverEnter;
+            _friendsButton.HoverLeave += Button_HoverLeave;
             buttonCount++;
 
             _questsBackground = new ImagePanel(_gameCanvas)
@@ -206,6 +232,7 @@ namespace Intersect_Client.Classes.UI.Game
             //Assign Window References
             _optionsWindow = new OptionsWindow(_gameCanvas, null, null);
             _partyWindow = new PartyWindow(_gameCanvas);
+            _friendsWindow = new FriendsWindow(_gameCanvas);
             _inventoryWindow = new InventoryWindow(_gameCanvas);
             _spellsWindow = new SpellWindow(_gameCanvas);
             _characterWindow = new CharacterWindow(_gameCanvas);
@@ -229,7 +256,13 @@ namespace Intersect_Client.Classes.UI.Game
             _spellsWindow.Update();
             _characterWindow.Update();
             _partyWindow.Update();
+            _friendsWindow.Update();
             _questsWindow.Update(updateQuestLog);
+        }
+
+        public void UpdateFriendsList()
+        {
+            _friendsWindow.updateList();
         }
 
         //Input Handlers
@@ -262,6 +295,19 @@ namespace Intersect_Client.Classes.UI.Game
             else
             {
                 _partyWindow.Show();
+            }
+        }
+
+        void FriendsBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (_friendsWindow.IsVisible())
+            {
+                _friendsWindow.Hide();
+            }
+            else
+            {
+                _friendsWindow.Show();
+                PacketSender.RequestFriends();
             }
         }
 
