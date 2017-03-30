@@ -94,6 +94,7 @@
     <Compile Include="Classes\UI\Game\Draggable.cs" />
     <Compile Include="Classes\UI\Game\EntityBox.cs" />
     <Compile Include="Classes\UI\Game\EventWindow.cs" />
+    <Compile Include="Classes\UI\Game\FriendsWindow.cs" />
     <Compile Include="Classes\UI\Game\GameGuiBase.cs" />
     <Compile Include="Classes\UI\Game\GameMenu.cs" />
     <Compile Include="Classes\UI\Game\HotBar.cs" />

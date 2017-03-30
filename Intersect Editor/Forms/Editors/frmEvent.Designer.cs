@@ -33,6 +33,7 @@ namespace Intersect_Editor.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmEvent));
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Show Text");
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Show Options");
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Add Chatbox Text");
@@ -125,7 +126,6 @@ namespace Intersect_Editor.Forms
             treeNode47,
             treeNode48,
             treeNode49});
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmEvent));
             this.lblName = new System.Windows.Forms.Label();
             this.txtEventname = new DarkUI.Controls.DarkTextBox();
             this.grpEntityOptions = new DarkUI.Controls.DarkGroupBox();
@@ -157,6 +157,8 @@ namespace Intersect_Editor.Forms
             this.lblType = new System.Windows.Forms.Label();
             this.cmbMoveType = new DarkUI.Controls.DarkComboBox();
             this.grpTriggers = new DarkUI.Controls.DarkGroupBox();
+            this.txtCommand = new DarkUI.Controls.DarkTextBox();
+            this.lblCommand = new System.Windows.Forms.Label();
             this.lblTriggerVal = new System.Windows.Forms.Label();
             this.cmbTriggerVal = new DarkUI.Controls.DarkComboBox();
             this.cmbTrigger = new DarkUI.Controls.DarkComboBox();
@@ -365,6 +367,10 @@ namespace Intersect_Editor.Forms
             this.cmbPreviewFace.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbPreviewFace.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbPreviewFace.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbPreviewFace.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbPreviewFace.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbPreviewFace.ButtonIcon")));
+            this.cmbPreviewFace.DrawDropdownHoverOutline = false;
+            this.cmbPreviewFace.DrawFocusRectangle = false;
             this.cmbPreviewFace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbPreviewFace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPreviewFace.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -374,6 +380,8 @@ namespace Intersect_Editor.Forms
             this.cmbPreviewFace.Name = "cmbPreviewFace";
             this.cmbPreviewFace.Size = new System.Drawing.Size(114, 21);
             this.cmbPreviewFace.TabIndex = 10;
+            this.cmbPreviewFace.Text = null;
+            this.cmbPreviewFace.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbPreviewFace.SelectedIndexChanged += new System.EventHandler(this.cmbPreviewFace_SelectedIndexChanged);
             // 
             // lblFace
@@ -414,6 +422,10 @@ namespace Intersect_Editor.Forms
             this.cmbAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbAnimation.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbAnimation.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbAnimation.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAnimation.ButtonIcon")));
+            this.cmbAnimation.DrawDropdownHoverOutline = false;
+            this.cmbAnimation.DrawFocusRectangle = false;
             this.cmbAnimation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -423,6 +435,8 @@ namespace Intersect_Editor.Forms
             this.cmbAnimation.Name = "cmbAnimation";
             this.cmbAnimation.Size = new System.Drawing.Size(125, 21);
             this.cmbAnimation.TabIndex = 1;
+            this.cmbAnimation.Text = null;
+            this.cmbAnimation.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbAnimation.SelectedIndexChanged += new System.EventHandler(this.cmbAnimation_SelectedIndexChanged);
             // 
             // pnlPreview
@@ -470,6 +484,10 @@ namespace Intersect_Editor.Forms
             this.cmbLayering.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbLayering.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbLayering.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbLayering.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbLayering.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbLayering.ButtonIcon")));
+            this.cmbLayering.DrawDropdownHoverOutline = false;
+            this.cmbLayering.DrawFocusRectangle = false;
             this.cmbLayering.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbLayering.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbLayering.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -483,6 +501,8 @@ namespace Intersect_Editor.Forms
             this.cmbLayering.Name = "cmbLayering";
             this.cmbLayering.Size = new System.Drawing.Size(101, 21);
             this.cmbLayering.TabIndex = 1;
+            this.cmbLayering.Text = "Below Player";
+            this.cmbLayering.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbLayering.SelectedIndexChanged += new System.EventHandler(this.cmbLayering_SelectedIndexChanged);
             // 
             // cmbEventFreq
@@ -490,6 +510,10 @@ namespace Intersect_Editor.Forms
             this.cmbEventFreq.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbEventFreq.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbEventFreq.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbEventFreq.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbEventFreq.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbEventFreq.ButtonIcon")));
+            this.cmbEventFreq.DrawDropdownHoverOutline = false;
+            this.cmbEventFreq.DrawFocusRectangle = false;
             this.cmbEventFreq.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbEventFreq.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbEventFreq.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -505,6 +529,8 @@ namespace Intersect_Editor.Forms
             this.cmbEventFreq.Name = "cmbEventFreq";
             this.cmbEventFreq.Size = new System.Drawing.Size(100, 21);
             this.cmbEventFreq.TabIndex = 6;
+            this.cmbEventFreq.Text = "Not Very Often";
+            this.cmbEventFreq.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbEventFreq.SelectedIndexChanged += new System.EventHandler(this.cmbEventFreq_SelectedIndexChanged);
             // 
             // cmbEventSpeed
@@ -512,6 +538,10 @@ namespace Intersect_Editor.Forms
             this.cmbEventSpeed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbEventSpeed.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbEventSpeed.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbEventSpeed.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbEventSpeed.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbEventSpeed.ButtonIcon")));
+            this.cmbEventSpeed.DrawDropdownHoverOutline = false;
+            this.cmbEventSpeed.DrawFocusRectangle = false;
             this.cmbEventSpeed.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbEventSpeed.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbEventSpeed.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -527,6 +557,8 @@ namespace Intersect_Editor.Forms
             this.cmbEventSpeed.Name = "cmbEventSpeed";
             this.cmbEventSpeed.Size = new System.Drawing.Size(100, 21);
             this.cmbEventSpeed.TabIndex = 5;
+            this.cmbEventSpeed.Text = "Slowest";
+            this.cmbEventSpeed.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbEventSpeed.SelectedIndexChanged += new System.EventHandler(this.cmbEventSpeed_SelectedIndexChanged);
             // 
             // lblFreq
@@ -573,6 +605,10 @@ namespace Intersect_Editor.Forms
             this.cmbMoveType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbMoveType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbMoveType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbMoveType.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbMoveType.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbMoveType.ButtonIcon")));
+            this.cmbMoveType.DrawDropdownHoverOutline = false;
+            this.cmbMoveType.DrawFocusRectangle = false;
             this.cmbMoveType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbMoveType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbMoveType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -586,12 +622,16 @@ namespace Intersect_Editor.Forms
             this.cmbMoveType.Name = "cmbMoveType";
             this.cmbMoveType.Size = new System.Drawing.Size(100, 21);
             this.cmbMoveType.TabIndex = 0;
+            this.cmbMoveType.Text = "None";
+            this.cmbMoveType.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbMoveType.SelectedIndexChanged += new System.EventHandler(this.cmbMoveType_SelectedIndexChanged);
             // 
             // grpTriggers
             // 
             this.grpTriggers.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpTriggers.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpTriggers.Controls.Add(this.txtCommand);
+            this.grpTriggers.Controls.Add(this.lblCommand);
             this.grpTriggers.Controls.Add(this.lblTriggerVal);
             this.grpTriggers.Controls.Add(this.cmbTriggerVal);
             this.grpTriggers.Controls.Add(this.cmbTrigger);
@@ -603,10 +643,32 @@ namespace Intersect_Editor.Forms
             this.grpTriggers.TabStop = false;
             this.grpTriggers.Text = "Trigger";
             // 
+            // txtCommand
+            // 
+            this.txtCommand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtCommand.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtCommand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtCommand.Location = new System.Drawing.Point(181, 13);
+            this.txtCommand.Name = "txtCommand";
+            this.txtCommand.Size = new System.Drawing.Size(130, 20);
+            this.txtCommand.TabIndex = 12;
+            this.txtCommand.Visible = false;
+            this.txtCommand.TextChanged += new System.EventHandler(this.txtCommand_TextChanged);
+            // 
+            // lblCommand
+            // 
+            this.lblCommand.AutoSize = true;
+            this.lblCommand.Location = new System.Drawing.Point(113, 17);
+            this.lblCommand.Name = "lblCommand";
+            this.lblCommand.Size = new System.Drawing.Size(70, 13);
+            this.lblCommand.TabIndex = 11;
+            this.lblCommand.Text = "/Command: /";
+            this.lblCommand.Visible = false;
+            // 
             // lblTriggerVal
             // 
             this.lblTriggerVal.AutoSize = true;
-            this.lblTriggerVal.Location = new System.Drawing.Point(174, 17);
+            this.lblTriggerVal.Location = new System.Drawing.Point(113, 17);
             this.lblTriggerVal.Name = "lblTriggerVal";
             this.lblTriggerVal.Size = new System.Drawing.Size(53, 13);
             this.lblTriggerVal.TabIndex = 10;
@@ -618,16 +680,23 @@ namespace Intersect_Editor.Forms
             this.cmbTriggerVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbTriggerVal.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbTriggerVal.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbTriggerVal.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbTriggerVal.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbTriggerVal.ButtonIcon")));
+            this.cmbTriggerVal.DrawDropdownHoverOutline = false;
+            this.cmbTriggerVal.DrawFocusRectangle = false;
             this.cmbTriggerVal.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbTriggerVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbTriggerVal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbTriggerVal.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbTriggerVal.FormattingEnabled = true;
-            this.cmbTriggerVal.Items.AddRange(new object[] { "None" });
-            this.cmbTriggerVal.Location = new System.Drawing.Point(230, 13);
+            this.cmbTriggerVal.Items.AddRange(new object[] {
+            "None"});
+            this.cmbTriggerVal.Location = new System.Drawing.Point(181, 13);
             this.cmbTriggerVal.Name = "cmbTriggerVal";
-            this.cmbTriggerVal.Size = new System.Drawing.Size(81, 21);
+            this.cmbTriggerVal.Size = new System.Drawing.Size(130, 21);
             this.cmbTriggerVal.TabIndex = 9;
+            this.cmbTriggerVal.Text = "None";
+            this.cmbTriggerVal.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbTriggerVal.Visible = false;
             // 
             // cmbTrigger
@@ -635,6 +704,10 @@ namespace Intersect_Editor.Forms
             this.cmbTrigger.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbTrigger.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbTrigger.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbTrigger.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbTrigger.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbTrigger.ButtonIcon")));
+            this.cmbTrigger.DrawDropdownHoverOutline = false;
+            this.cmbTrigger.DrawFocusRectangle = false;
             this.cmbTrigger.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbTrigger.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbTrigger.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -645,10 +718,12 @@ namespace Intersect_Editor.Forms
             "Player Touch",
             "Autorun",
             "Projectile Hit"});
-            this.cmbTrigger.Location = new System.Drawing.Point(62, 13);
+            this.cmbTrigger.Location = new System.Drawing.Point(6, 13);
             this.cmbTrigger.Name = "cmbTrigger";
             this.cmbTrigger.Size = new System.Drawing.Size(101, 21);
             this.cmbTrigger.TabIndex = 2;
+            this.cmbTrigger.Text = "Action Button";
+            this.cmbTrigger.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbTrigger.SelectedIndexChanged += new System.EventHandler(this.cmbTrigger_SelectedIndexChanged);
             // 
             // grpEventConditions
@@ -1220,5 +1295,7 @@ namespace Intersect_Editor.Forms
         private Panel pnlTabs;
         private TreeView lstCommands;
         private DarkButton btnEditConditions;
+        private DarkTextBox txtCommand;
+        private Label lblCommand;
     }
 }

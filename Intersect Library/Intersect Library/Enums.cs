@@ -76,6 +76,11 @@
         RetreiveBagItem,
         MoveBagItem,
         CloseBag,
+        RequestFriends,
+        AddFriend,
+        RemoveFriend,
+        FriendRequestAccept,
+        FriendRequestDecline,
     }
 
     public enum ServerPackets
@@ -150,6 +155,8 @@
         CloseBag,
         BagUpdate,
         MoveRouteToggle,
+        SendFriends,
+        FriendRequest,
     }
 
     public enum MapZones
