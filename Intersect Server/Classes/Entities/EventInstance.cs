@@ -500,6 +500,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 input = input.Replace(Strings.Get("events", "playernamecommand"), MyClient.Entity.MyName);
                 input = input.Replace(Strings.Get("events", "eventnamecommand"), PageInstance.MyName);
+                input = input.Replace(Strings.Get("events", "commandparameter"), PageInstance.Param);
                 if (input.Contains(Strings.Get("events", "onlinelistcommand")) ||
                     input.Contains(Strings.Get("events", "onlinecountcommand")))
                 {

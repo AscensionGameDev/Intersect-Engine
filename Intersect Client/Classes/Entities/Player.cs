@@ -31,6 +31,7 @@ namespace Intersect_Client.Classes.Entities
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
 
         private List<int> mParty = null;
+        public List<FriendInstance> Friends = new List<FriendInstance>();
 
         public bool NoClip = false;
         public Dictionary<int, QuestProgressStruct> QuestProgress = new Dictionary<int, QuestProgressStruct>();
@@ -1218,6 +1219,13 @@ namespace Intersect_Client.Classes.Entities
                 }
             }
         }
+    }
+
+    public class FriendInstance
+    {
+        public string name;
+        public string map;
+        public bool online = false;
     }
 
     public class HotbarInstance

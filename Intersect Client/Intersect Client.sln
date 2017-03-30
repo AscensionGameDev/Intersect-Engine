@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Client", "Intersect Client.csproj", "{2240F3DD-3694-4606-B181-F204CBBCB971}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Library", "..\Intersect Library\Intersect Library\Intersect Library.csproj", "{BC304B43-1F2C-4454-9EDC-48F47357CA94}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect (Core)", "..\Intersect Library\Intersect Library\Intersect (Core).csproj", "{BC304B43-1F2C-4454-9EDC-48F47357CA94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

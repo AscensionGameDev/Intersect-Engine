@@ -142,6 +142,11 @@ namespace Intersect.Server.Classes.Core
         private const string CHAR_QUEST_TASK_PROGRESS = "task_progress";
         private const string CHAR_QUEST_COMPLETED = "completed";
 
+        //Char Friendss Table Constants
+        private const string CHAR_FRIENDS_TABLE = "char_friends";
+        private const string CHAR_FRIEND_CHAR_ID = "char_id";
+        private const string CHAR_FRIEND_ID = "friend_id";
+
         //GameObject Table Constants
         private const string GAME_OBJECT_ID = "id";
         private const string GAME_OBJECT_DELETED = "deleted";
@@ -229,6 +234,7 @@ namespace Intersect.Server.Classes.Core
             CreateCharacterSwitchesTable();
             CreateCharacterVariablesTable();
             CreateCharacterQuestsTable();
+            CreateCharacterFriendsTable();
             CreateGameObjectTables();
             CreateMapListTable();
             CreateTimeTable();
@@ -468,6 +474,20 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
+        private static void CreateCharacterFriendsTable()
+        {
+            var cmd = "CREATE TABLE " + CHAR_FRIENDS_TABLE + " ("
+                      + CHAR_FRIEND_CHAR_ID + " INTEGER,"
+                      + CHAR_FRIEND_ID + " INTEGER,"
+                      + " unique('" + CHAR_FRIEND_CHAR_ID + "','" + CHAR_FRIEND_ID + "')"
+                      + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+
         private static void CreateBagsTable()
         {
             var cmd = "CREATE TABLE " + BAGS_TABLE + " ("
@@ -662,6 +682,26 @@ namespace Intersect.Server.Classes.Core
             }
 
             return (count > 0);
+        }
+
+        public static int GetCharacterId(string name)
+        {
+            int id = -1;
+            var query = "SELECT " + CHAR_ID + " from " + CHAR_TABLE + " WHERE LOWER(" + CHAR_NAME + ")=@" + CHAR_NAME +
+                        ";";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + CHAR_NAME, name.ToLower().Trim()));
+                using (var dataReader = cmd.ExecuteReader())
+                {
+                    if (dataReader.HasRows && dataReader.Read())
+                    {
+                        id = Convert.ToInt32(dataReader[CHAR_ID]);
+                    }
+                }
+            }
+
+            return id;
         }
 
         public static long GetRegisteredPlayers()
@@ -881,6 +921,7 @@ namespace Intersect.Server.Classes.Core
                 SaveCharacterSwitches(player);
                 SaveCharacterVariables(player);
                 SaveCharacterQuests(player);
+                SaveCharacterFriends(player);
                 rowId = GetLastInsertRowId();
                 transaction.Commit();
             }
@@ -1061,6 +1102,22 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
+        private static void SaveCharacterFriends(Player player)
+        {
+            foreach (var friend in player.Friends)
+            {
+                var query = "INSERT OR REPLACE into " + CHAR_FRIENDS_TABLE + " (" + CHAR_FRIEND_CHAR_ID + "," +
+                            CHAR_FRIEND_ID + ")" + " VALUES " + " (@" + CHAR_FRIEND_CHAR_ID + ",@" +
+                            CHAR_FRIEND_ID + ");";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FRIEND_CHAR_ID, player.MyId));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FRIEND_ID, friend.Key));
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
         public static bool LoadCharacter(Client client)
         {
             var en = client.Entity;
@@ -1123,6 +1180,7 @@ namespace Intersect.Server.Classes.Core
                             if (!LoadCharacterSwitches(en)) return false;
                             if (!LoadCharacterVariables(en)) return false;
                             if (!LoadCharacterQuests(en)) return false;
+                            if (!LoadCharacterFriends(en)) return false;
                             return true;
                         }
                     }
@@ -1407,6 +1465,45 @@ namespace Intersect.Server.Classes.Core
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        private static bool LoadCharacterFriends(Player player)
+        {
+            player.Friends.Clear();
+
+            try
+            {
+                var query = "SELECT " + CHAR_TABLE + "." + CHAR_NAME + "," + CHAR_FRIENDS_TABLE + "." + 
+                    CHAR_FRIEND_ID + " FROM " + CHAR_FRIENDS_TABLE + " INNER JOIN " + CHAR_TABLE + " ON " + 
+                    CHAR_FRIENDS_TABLE + "." + CHAR_FRIEND_ID + " = " + CHAR_TABLE + "." + CHAR_ID + " WHERE " + 
+                    CHAR_FRIEND_CHAR_ID + "=@" + CHAR_FRIEND_CHAR_ID + ";";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FRIEND_CHAR_ID, player.MyId));
+                    using (var dataReader = cmd.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            player.Friends.Add(Convert.ToInt32(dataReader[CHAR_FRIEND_ID]), dataReader[CHAR_NAME].ToString());
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static void DeleteCharacterFriend(Player player, int key)
+        {
+            var insertQuery = "DELETE FROM " + CHAR_FRIENDS_TABLE + " WHERE " + CHAR_FRIEND_ID + "=@" + CHAR_FRIEND_ID + ";";
+            using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FRIEND_ID, key));
+                cmd.ExecuteNonQuery();
             }
         }
 

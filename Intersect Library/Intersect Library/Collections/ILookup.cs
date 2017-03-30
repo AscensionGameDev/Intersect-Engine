@@ -18,7 +18,7 @@ namespace Intersect.Collections
         bool TryGetValue<TObject>(TKey key, out TObject value) where TObject : TValue;
         bool TryGetValue(TKey key, out TValue value);
         bool Add(TValue value);
-        TValue AddNew(TKey key);
+        TValue AddNew(Type type, TKey key);
         bool Set(TKey key, TValue value);
         bool Delete(TValue value);
         bool DeleteAt(TKey key);

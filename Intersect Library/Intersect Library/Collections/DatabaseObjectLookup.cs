@@ -13,9 +13,6 @@ namespace Intersect.Collections
 
         private readonly Dictionary<Guid, IDatabaseObject> mIdMap;
         private readonly Dictionary<int, IDatabaseObject> mIndexMap;
-        private readonly ConstructorInfo mIdConstructor;
-        private readonly ConstructorInfo mIndexConstructor;
-        private readonly ConstructorInfo mMixedConstructor;
 
         public DatabaseObjectLookup()
         {
@@ -23,11 +20,6 @@ namespace Intersect.Collections
 
             mIdMap = new Dictionary<Guid, IDatabaseObject>();
             mIndexMap = new Dictionary<int, IDatabaseObject>();
-
-            mIdConstructor = ValueType?.GetConstructor(new[] { KeyType });
-            mIndexConstructor = ValueType?.GetConstructor(new[] { IndexKeyType });
-            mMixedConstructor = ValueType?.GetConstructor(new[] { KeyType, IndexKeyType });
-
         }
 
         public Type KeyType => typeof(Guid);
@@ -208,25 +200,36 @@ namespace Intersect.Collections
 
         public bool Add(IDatabaseObject value) => InternalSet(value, false);
 
-        public IDatabaseObject AddNew(Guid id)
+        public IDatabaseObject AddNew(Type type, Guid id)
         {
-            if (mMixedConstructor != null) return AddNew(id, NextIndex);
-            var value = (IDatabaseObject)mIdConstructor?.Invoke(new object[] { id });
+            var mixedConstructor = type?.GetConstructor(new[] { KeyType, IndexKeyType });
+            if (mixedConstructor != null) return AddNew(type, id, NextIndex);
+
+            var idConstructor = type?.GetConstructor(new[] { IndexKeyType });
+            if (idConstructor == null) throw new ArgumentNullException($"No (Guid) constructor for type '{type?.Name}'.");
+
+            var value = (IDatabaseObject)idConstructor?.Invoke(new object[] { id });
             if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the (Guid) constructor.");
             return InternalSet(value, false) ? value : default(IDatabaseObject);
         }
 
-        public IDatabaseObject AddNew(int index)
+        public IDatabaseObject AddNew(Type type, int index)
         {
-            if (mMixedConstructor != null) return AddNew(Guid.NewGuid(), index);
-            var value = (IDatabaseObject)mIndexConstructor?.Invoke(new object[] { index });
+            var mixedConstructor = type?.GetConstructor(new[] { KeyType, IndexKeyType });
+            if (mixedConstructor != null) return AddNew(type, Guid.NewGuid(), index);
+
+            var indexConstructor = type?.GetConstructor(new[] { IndexKeyType });
+            if (indexConstructor == null) throw new ArgumentNullException($"No (int) constructor for type '{type?.Name}'.");
+
+            var value = (IDatabaseObject)indexConstructor.Invoke(new object[] { index });
             if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the (int) constructor.");
             return InternalSet(value, false) ? value : default(IDatabaseObject);
         }
 
-        public IDatabaseObject AddNew(Guid id, int index)
+        public IDatabaseObject AddNew(Type type, Guid id, int index)
         {
-            var value = (IDatabaseObject)mMixedConstructor?.Invoke(new object[] { id, index });
+            var mixedConstructor = ValueType?.GetConstructor(new[] { KeyType, IndexKeyType });
+            var value = (IDatabaseObject)mixedConstructor?.Invoke(new object[] { id, index });
             if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the (Guid, int) constructor.");
             return InternalSet(value, false) ? value : default(IDatabaseObject);
         }
@@ -271,7 +274,7 @@ namespace Intersect.Collections
 
             lock (mLock)
             {
-                mIdMap.TryGetValue(guid, out obj);
+                if (!mIdMap.TryGetValue(guid, out obj)) return false;
             }
 
             return Delete(obj);
@@ -288,7 +291,7 @@ namespace Intersect.Collections
 
             lock (mLock)
             {
-                mIndexMap.TryGetValue(index, out obj);
+                if (!mIndexMap.TryGetValue(index, out obj)) return false;
             }
 
             return Delete(obj);

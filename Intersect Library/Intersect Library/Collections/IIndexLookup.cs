@@ -17,8 +17,8 @@ namespace Intersect.Collections
         TObject Get<TObject>(int index) where TObject : TValue;
         bool TryGetValue(int index, out TValue value);
         bool TryGetValue<TObject>(int index, out TObject value) where TObject : TValue;
-        TValue AddNew(int index);
-        TValue AddNew(Guid key, int index);
+        TValue AddNew(Type type, int index);
+        TValue AddNew(Type type, Guid key, int index);
         bool Set(int index, TValue value);
         bool DeleteAt(int key);
     }

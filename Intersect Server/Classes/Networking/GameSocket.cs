@@ -156,10 +156,10 @@ namespace Intersect.Server.Classes.Networking
                         _myClient.Entity.CancelTrade();
 
                         //Search for logout activated events and run them
-                        foreach (EventBase evt in EventBase.Lookup.IndexValues)
+                        /*foreach (var evt in EventBase.Lookup)
                         {
-                            _myClient.Entity.StartCommonEvent(evt, (int) EventPage.CommonEventTriggers.LeaveGame);
-                        }
+                            _myClient.Entity.StartCommonEvent(evt.Value, (int) EventPage.CommonEventTriggers.LeaveGame);
+                        }*/
 
                         PacketSender.SendEntityLeave(_myClient.Entity.MyIndex, (int) EntityTypes.Player,
                             Globals.Entities[_entityIndex].CurrentMap);

@@ -243,6 +243,21 @@ namespace Intersect.Server.Classes.Networking
                 case ClientPackets.MoveBagItem:
                     HandleMoveBagItem(client, packet);
                     break;
+                case ClientPackets.RequestFriends:
+                    HandleRequestFriends(client, packet);
+                    break;
+                case ClientPackets.AddFriend:
+                    HandleAddFriend(client, packet);
+                    break;
+                case ClientPackets.RemoveFriend:
+                    HandleRemoveFriend(client, packet);
+                    break;
+                case ClientPackets.FriendRequestAccept:
+                    HandleFriendRequest(client, packet);
+                    break;
+                case ClientPackets.FriendRequestDecline:
+                    HandleFriendRequestDecline(client, packet);
+                    break;
                 default:
                     break;
             }
@@ -407,21 +422,110 @@ namespace Intersect.Server.Classes.Networking
                 return;
             }
 
-            if (client.Power == 2)
+            //Check for /commands
+            if (msg[0] == '/')
             {
-                PacketSender.SendGlobalMsg(client.Entity.MyName + ": " + msg, Color.Red, client.Entity.MyName);
+                string[] splitString = msg.Split();
+                msg = msg.Remove(0, splitString[0].Length + 1); //Chop off the /command at the start of the sentance
+                
+                switch (splitString[0])
+                {
+                    case "/all":
+                    case "/global":
+                        if (client.Power == 2)
+                        {
+                            PacketSender.SendGlobalMsg("[GLOBAL] " + client.Entity.MyName + ": " + msg, Color.Red, client.Entity.MyName);
+                        }
+                        else if (client.Power == 1)
+                        {
+                            PacketSender.SendGlobalMsg("[GLOBAL] " + client.Entity.MyName + ": " + msg, new Color(0, 70, 255), client.Entity.MyName);
+                        }
+                        else
+                        {
+                            PacketSender.SendGlobalMsg("[GLOBAL] " + client.Entity.MyName + ": " + msg, new Color(255, 220, 220, 220), client.Entity.MyName);
+                        }
+                        break;
+                    case "/announcement":
+                        if (client.Power > 0)
+                        {
+                            PacketSender.SendGlobalMsg("[ANNOUNCEMENT] " + client.Entity.MyName + ": " + msg, Color.Yellow, client.Entity.MyName);
+                        }
+                        break;
+                    case "/admin":
+                        if (client.Power > 0)
+                        {
+                            PacketSender.SendAdminMsg("[ADMIN] " + client.Entity.MyName + ": " + msg, Color.Cyan, client.Entity.MyName);
+                        }
+                        break;
+                    case "/party":
+                        PacketSender.SendPartyMsg(client, "[PARTY] " + client.Entity.MyName + ": " + msg, Color.Green, client.Entity.MyName);
+                        break;
+                    case "/pm":
+                    case "/message":
+                        msg = msg.Remove(0, splitString[1].Length + 1); //Chop off the player name parameter
+
+                        for (int i = 0; i < Globals.Clients.Count; i++)
+                        {
+                            if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
+                            {
+                                if (splitString[1].ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                                {
+                                    PacketSender.SendPlayerMsg(client, "[PM] " + client.Entity.MyName + ": " + msg, Color.Magenta, client.Entity.MyName);
+                                    PacketSender.SendPlayerMsg(Globals.Clients[i], "[PM] " + client.Entity.MyName + ": " + msg, Color.Magenta, client.Entity.MyName);
+                                    Globals.Clients[i].Entity.ChatTarget = client.Entity;
+                                    client.Entity.ChatTarget = Globals.Clients[i].Entity;
+                                    return;
+                                }
+                            }
+                        }
+                        PacketSender.SendPlayerMsg(client, Strings.Get("Player", "offline"), Color.Red);
+                        break;
+                    case "/reply":
+                    case "/r":
+                        if (client.Entity.ChatTarget != null)
+                        {
+                            PacketSender.SendPlayerMsg(client, "[PM] " + client.Entity.MyName + ": " + msg, Color.Magenta, client.Entity.MyName);
+                            PacketSender.SendPlayerMsg(client.Entity.ChatTarget.MyClient, "[PM] " + client.Entity.MyName + ": " + msg, Color.Magenta, client.Entity.MyName);
+                            client.Entity.ChatTarget.ChatTarget = client.Entity;
+                        }
+                        else
+                        {
+                            PacketSender.SendPlayerMsg(client, Strings.Get("Player", "offline"), Color.Red);
+                        }
+                        break;
+                    default:
+                        //Search for command activated events and run them
+                        foreach (var evt in EventBase.Lookup)
+                        {
+                            if (client.Entity.StartCommonEvent((EventBase) evt.Value, (int)EventPage.CommonEventTriggers.Command, splitString[0].TrimStart('/'), msg) == true)
+                            {
+                                return; //Found our /command, exit now :)
+                            }
+                        }
+
+                        //No common event /command, invalid command.
+                        PacketSender.SendPlayerMsg(client, Strings.Get("Commands", "invalid"), Color.Red);
+                        break;
+                }
             }
-            else if (client.Power == 1)
+            else //Talk in local normally
             {
-                PacketSender.SendGlobalMsg(client.Entity.MyName + ": " + msg, new Color(0, 70, 255),
-                    client.Entity.MyName);
+                if (client.Power == 2)
+                {
+                    PacketSender.SendProximityMsg(client.Entity.MyName + ": " + msg, client.Entity.CurrentMap, Color.Red, client.Entity.MyName);
+                }
+                else if (client.Power == 1)
+                {
+                    PacketSender.SendProximityMsg(client.Entity.MyName + ": " + msg, client.Entity.CurrentMap, new Color(0, 70, 255), client.Entity.MyName);
+                }
+                else
+                {
+                    PacketSender.SendProximityMsg(client.Entity.MyName + ": " + msg, client.Entity.CurrentMap, new Color(255, 220, 220, 220), client.Entity.MyName);
+                }
+                PacketSender.SendChatBubble(client.Entity.MyIndex, (int)EntityTypes.GlobalEntity, msg, client.Entity.CurrentMap);
             }
-            else
-            {
-                PacketSender.SendGlobalMsg(client.Entity.MyName + ": " + msg, client.Entity.MyName);
-            }
-            PacketSender.SendChatBubble(client.Entity.MyIndex, (int) EntityTypes.GlobalEntity, msg,
-                client.Entity.CurrentMap);
+
+
             bf.Dispose();
         }
 
@@ -2227,6 +2331,131 @@ namespace Intersect.Server.Classes.Networking
             var item1 = bf.ReadInteger();
             var item2 = bf.ReadInteger();
             client.Entity.SwapBagItems(item1, item2);
+            bf.Dispose();
+        }
+
+        private static void HandleRequestFriends(Client client, byte[] packet)
+        {
+            PacketSender.SendFriends(client);
+        }
+
+        private static void HandleFriendRequest(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int target = bf.ReadInteger();
+            //Check if valid target
+            if (target < 0 || target > Globals.Entities.Count)
+            {
+                return;
+            }
+            if (Globals.Entities[target] != null && Globals.Entities[target].GetEntityType() == EntityTypes.Player && target != client.Entity.MyIndex)
+            {
+                var charId = Database.GetCharacterId(((Player)Globals.Entities[target]).MyName);
+                if (charId != -1)
+                {
+                    if (!client.Entity.Friends.ContainsKey(charId)) // Incase one user deleted friend then re-requested
+                    {
+                        client.Entity.Friends.Add(charId, ((Player)Globals.Entities[target]).MyName);
+                        PacketSender.SendPlayerMsg(client, Strings.Get("friends", "notification", ((Player)Globals.Entities[target]).MyName), Color.Green);
+                        PacketSender.SendFriends(client);
+                    }
+                }
+
+
+                charId = Database.GetCharacterId(client.Entity.MyName);
+                if (charId != -1)
+                {
+                    if (!client.Entity.Friends.ContainsKey(charId)) // Incase one user deleted friend then re-requested
+                    {
+                        ((Player)Globals.Entities[target]).Friends.Add(charId, client.Entity.MyName);
+                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[target]).MyClient, Strings.Get("friends", "accept", client.Entity.MyName), Color.Green);
+                        PacketSender.SendFriends(((Player)Globals.Entities[target]).MyClient);
+                    }
+                }
+
+                return;
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleFriendRequestDecline(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int target = bf.ReadInteger();
+            if (client.Entity.FriendRequester != null && client.Entity.FriendRequester.MyIndex == target)
+            {
+                if (client.Entity.FriendRequester.IsValidPlayer)
+                {
+                    if (client.Entity.FriendRequests.ContainsKey(client.Entity.FriendRequester))
+                    {
+                        client.Entity.FriendRequests[client.Entity.FriendRequester] = Globals.System.GetTimeMs() + Player.RequestDeclineTimeout;
+                    }
+                    else
+                    {
+                        client.Entity.FriendRequests.Add(client.Entity.FriendRequester, Globals.System.GetTimeMs() + Player.RequestDeclineTimeout);
+                    }
+                }
+                client.Entity.FriendRequester = null;
+            }
+        }
+
+        private static void HandleAddFriend(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            string name = bf.ReadString();
+
+            //Don't add yourself!
+            if (name.ToLower() == client.Entity.MyName.ToLower())
+            {
+                return;
+            }
+
+            var charId = Database.GetCharacterId(name);
+            if (charId != -1)
+            {
+                if (!client.Entity.Friends.ContainsKey(charId))
+                {
+                    //Add the friend
+                    foreach (var c in Globals.Clients) //Check the player is online
+                    {
+                        if (c != null && c.Entity != null)
+                        {
+                            if (name.ToLower() == c.Entity.MyName.ToLower())
+                            {
+                                c.Entity.FriendRequest(client.Entity);
+                                return;
+                            }
+                        }
+                    }
+                    PacketSender.SendPlayerMsg(client, Strings.Get("player", "offline"), Color.Red);
+                }
+                else
+                {
+                    PacketSender.SendPlayerMsg(client, Strings.Get("friends", "alreadyfriends", name), Color.White);
+                }
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleRemoveFriend(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            string name = bf.ReadString();
+            var charId = Database.GetCharacterId(name);
+            if (charId != -1)
+            {
+                if (client.Entity.Friends.ContainsKey(charId))
+                {
+                    Database.DeleteCharacterFriend(client.Entity, charId);
+                    client.Entity.Friends.Remove(charId);
+                    PacketSender.SendPlayerMsg(client, Strings.Get("friends", "remove"), Color.Red);
+                    PacketSender.SendFriends(client);
+                }
+            }
             bf.Dispose();
         }
     }

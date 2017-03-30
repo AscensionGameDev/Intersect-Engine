@@ -59,6 +59,18 @@ namespace Intersect_Client.Classes.UI.Game
             }
         }
 
+        //Chatbox
+        public void SetChatboxText(string msg)
+        {
+            _chatBox.SetChatboxText(msg);
+        }
+
+        //Friends Window
+        public void UpdateFriendsList()
+        {
+            GameMenu.UpdateFriendsList();
+        }
+
         //Admin Window
         public void NotifyOpenAdminWindow()
         {

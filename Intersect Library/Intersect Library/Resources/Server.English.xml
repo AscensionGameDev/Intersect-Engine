@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Intersect Server Language File - Beta 3.1 -->
+<!-- Intersect Server Language File - Beta 3 -->
 <Strings>
 	<Intro>
 		<string id="title">Intersect Server</string>
@@ -101,6 +101,8 @@
 		<string id="helpusage">help</string>
 		<string id="helpdesc">help</string>
 		<string id="helphelp">displays list of available commands</string>
+
+		<string id="invalid">Invalid /command.</string>
 		
 		<string id="true">true</string>
 		<string id="false">false</string>
@@ -229,14 +231,23 @@
 		<string id="busy">{00} is busy. Please try again later!</string>
 		<string id="declined">{00} has declined your party invitation!</string>
 	</Parties>
+	<Friends>
+		<string id="accept">{00} has accepted your friend request!</string>
+		<string id="sent">Friend request sent.</string>
+		<string id="remove">Friend removed.</string>
+		<string id="alreadyfriends">You are already friends with {00}.</string>
+		<string id="busy">{00} is busy. Please try again later!</string>
+		<string id="notification">You are now friends with {00}!</string>
+	</Friends>
 	<Events>
 		<string id="playernamecommand">\pn</string>
 		<string id="eventnamecommand">\en</string>
 		<string id="onlinelistcommand">\onlinelist</string>
 		<string id="onlinecountcommand">\onlinecount</string>
+		<string id="commandparameter">\param</string>
 	</Events>
 	<Combat>
-		<string id="critical">CRITICAL HIT!</string>
+		<string id="critcal">CRITICAL HIT!</string>
 		<string id="miss">MISS!</string>
 		<string id="blocked">BLOCKED!</string>
 		<string id="dash">DASH!</string>

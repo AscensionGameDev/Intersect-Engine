@@ -244,6 +244,12 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.MoveRouteToggle:
                         HandleMoveRouteToggle(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.SendFriends:
+                        HandleFriends(bf.ReadBytes(bf.Length()));
+                        break;
+                    case ServerPackets.FriendRequest:
+                        HandleFriendRequest(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -1190,7 +1196,7 @@ namespace Intersect_Client.Classes.Networking
                         else
                         {
                             lookup.DeleteAt(id);
-                            var item = lookup.AddNew(id);
+                            var item = lookup.AddNew(type.GetObjectType(), id);
                             item.Load(data);
                         }
                         break;
@@ -1519,6 +1525,51 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Globals.MoveRouteActive = bf.ReadBoolean();
+            bf.Dispose();
+        }
+
+        private static void HandleFriends(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            Globals.Me.Friends.Clear();
+
+            //Online friends
+            int count = bf.ReadInteger();
+            for (int i = 0; i < count; i++)
+            {
+                FriendInstance f = new FriendInstance();
+                f.name = bf.ReadString();
+                f.map = bf.ReadString();
+                f.online = true;
+                Globals.Me.Friends.Add(f);
+            }
+
+            //Offline friends
+            count = bf.ReadInteger();
+            for (int i = 0; i < count; i++)
+            {
+                FriendInstance f = new FriendInstance();
+                f.name = bf.ReadString();
+                f.map = "Offline";
+                f.online = false;
+                Globals.Me.Friends.Add(f);
+            }
+
+            Gui.GameUI.UpdateFriendsList();
+
+            bf.Dispose();
+        }
+
+        private static void HandleFriendRequest(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            string partner = bf.ReadString();
+            int partnerId = bf.ReadInteger();
+            InputBox iBox = new InputBox(Strings.Get("friends", "request"),
+                Strings.Get("friends", "requestprompt", partner), true, PacketSender.SendFriendRequestAccept,
+                PacketSender.SendFriendRequestDecline, partnerId, false);
             bf.Dispose();
         }
     }

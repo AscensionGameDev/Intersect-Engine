@@ -69,5 +69,10 @@ namespace Intersect.Enums
         RetreiveBagItem,
         MoveBagItem,
         CloseBag,
+        RequestFriends,
+        AddFriend,
+        RemoveFriend,
+        FriendRequestAccept,
+        FriendRequestDecline,
     }
 }

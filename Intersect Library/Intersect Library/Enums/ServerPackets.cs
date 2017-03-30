@@ -72,5 +72,7 @@ namespace Intersect.Enums
         CloseBag,
         BagUpdate,
         MoveRouteToggle,
+        SendFriends,
+        FriendRequest,
     }
 }

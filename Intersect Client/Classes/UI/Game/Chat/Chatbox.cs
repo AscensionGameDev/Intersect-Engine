@@ -135,6 +135,12 @@ namespace Intersect_Client.Classes.UI.Game
             }
         }
 
+        public void SetChatboxText(string msg)
+        {
+            _chatboxInput.Text = msg;
+            _chatboxInput.Focus();
+        }
+
         private void ChatboxRow_Clicked(Base sender, ClickedEventArgs arguments)
         {
             ListBoxRow rw = (ListBoxRow) sender;

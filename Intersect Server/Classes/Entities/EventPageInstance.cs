@@ -28,6 +28,7 @@ namespace Intersect.Server.Classes.Entities
         private int RenderLevel = 1;
         public int Trigger;
         private int WalkingAnim;
+        public string Param;
 
         public EventPageInstance(EventBase myEvent, EventPage myPage, int myIndex, int mapNum, EventInstance eventIndex,
             Client client) : base(myIndex)
