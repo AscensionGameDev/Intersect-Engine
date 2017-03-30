@@ -4,15 +4,15 @@ using System.Drawing;
 using System.Windows.Forms;
 using DarkUI.Forms;
 using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Forms.Editors;
+using Intersect.Editor.Forms.Editors.Quest;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Forms.Editors;
-using Intersect_Editor.Forms.Editors.Quest;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class frmQuest : Form
     {

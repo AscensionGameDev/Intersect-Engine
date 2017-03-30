@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Windows.Forms;
 using Intersect;
+using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Classes.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Classes.Maps;
 
-namespace Intersect_Editor.Classes
+namespace Intersect.Editor.Classes
 {
     public static class PacketHandler
     {

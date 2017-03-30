@@ -1,9 +1,9 @@
 ﻿using System.Windows.Forms;
 using DarkUI.Controls;
-using Intersect_Editor.Forms.Controls;
+using Intersect.Editor.Forms.Controls;
 using Intersect.Localization;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     partial class frmMapLayers
     {
@@ -114,11 +114,11 @@ namespace Intersect_Editor.Forms
             this.picMask2 = new System.Windows.Forms.PictureBox();
             this.picMask = new System.Windows.Forms.PictureBox();
             this.picGround = new System.Windows.Forms.PictureBox();
-            this.pnlTilesetContainer = new Intersect_Editor.Forms.Controls.AutoDragPanel();
+            this.pnlTilesetContainer = new AutoDragPanel();
             this.picTileset = new System.Windows.Forms.PictureBox();
             this.pnlEvents = new System.Windows.Forms.Panel();
             this.pnlLights = new System.Windows.Forms.Panel();
-            this.lightEditor = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
+            this.lightEditor = new LightEditorCtrl();
             this.pnlAttributes = new System.Windows.Forms.Panel();
             this.pnlNpcs = new System.Windows.Forms.Panel();
             this.grpResource.SuspendLayout();

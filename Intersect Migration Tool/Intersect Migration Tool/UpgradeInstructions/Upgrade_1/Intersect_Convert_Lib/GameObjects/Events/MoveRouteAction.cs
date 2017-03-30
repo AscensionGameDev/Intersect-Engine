@@ -1,6 +1,6 @@
 ﻿using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Events
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Events
 {
     public class MoveRouteAction
     {

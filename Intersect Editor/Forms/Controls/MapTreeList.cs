@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Intersect.Editor.Classes;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Controls
+namespace Intersect.Editor.Forms.Controls
 {
     public partial class MapTreeList : UserControl
     {

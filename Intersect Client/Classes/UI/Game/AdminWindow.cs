@@ -1,5 +1,6 @@
 ﻿using System;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
 using IntersectClientExtras.Gwen;

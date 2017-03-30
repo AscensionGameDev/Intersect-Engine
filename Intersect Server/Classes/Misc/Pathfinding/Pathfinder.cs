@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect;
-using Intersect_Server.Classes.Core;
-using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Maps;
+using Intersect.Enums;
+using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.Entities;
+using Intersect.Server.Classes.Maps;
+using Intersect.Server.Classes.General;
 
-namespace Intersect_Server.Classes.Misc.Pathfinding
+namespace Intersect.Server.Classes.Misc.Pathfinding
 {
     public enum PathfinderResult
     {

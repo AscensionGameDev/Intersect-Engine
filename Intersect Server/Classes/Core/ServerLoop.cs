@@ -1,9 +1,9 @@
 ﻿using System.Threading;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Networking;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Maps;
+using Intersect.Server.Classes.Networking;
 
-namespace Intersect_Server.Classes.Core
+namespace Intersect.Server.Classes.Core
 {
     public static class ServerLoop
     {

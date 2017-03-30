@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Intersect.Enums;
 
 namespace Intersect.GameObjects
 {

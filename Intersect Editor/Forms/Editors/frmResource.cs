@@ -6,13 +6,13 @@ using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect;
+using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
-using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Forms.Editors;
 
-namespace Intersect_Editor.Classes
+namespace Intersect.Editor.Classes
 {
     public partial class frmResource : Form
     {

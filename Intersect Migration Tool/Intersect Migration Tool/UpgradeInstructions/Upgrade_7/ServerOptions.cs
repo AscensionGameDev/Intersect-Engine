@@ -2,10 +2,10 @@
 using System.IO;
 using System.Xml;
 using Intersect;
-using MapZones = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.MapZones;
-using Options = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.Options;
+using MapZones = Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.MapZones;
+using Options = Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.Options;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
 {
     public static class ServerOptions
     {
@@ -38,24 +38,24 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                     options.LoadXml(ConfigXml);
 
                     //General Options
-                    Options.Language = GetXmlStr(options, "//Config/Language", false);
-                    if (Options.Language == "") Options.Language = "English";
-                    Options.GameName = GetXmlStr(options, "//Config/GameName", false);
-                    Options.ServerPort = GetXmlInt(options, "//Config/ServerPort");
+                    Intersect_Convert_Lib.Options.Language = GetXmlStr(options, "//Config/Language", false);
+                    if (Intersect_Convert_Lib.Options.Language == "") Intersect_Convert_Lib.Options.Language = "English";
+                    Intersect_Convert_Lib.Options.GameName = GetXmlStr(options, "//Config/GameName", false);
+                    Intersect_Convert_Lib.Options.ServerPort = GetXmlInt(options, "//Config/ServerPort");
 
                     //Player Options
-                    Options.MaxStatValue = GetXmlInt(options, "//Config/Player/MaxStat");
-                    Options.MaxLevel = GetXmlInt(options, "//Config/Player/MaxLevel");
-                    Options.MaxInvItems = GetXmlInt(options, "//Config/Player/MaxInventory");
-                    Options.MaxPlayerSkills = GetXmlInt(options, "//Config/Player/MaxSpells");
-                    Options.MaxBankSlots = GetXmlInt(options, "//Config/Player/MaxBank");
+                    Intersect_Convert_Lib.Options.MaxStatValue = GetXmlInt(options, "//Config/Player/MaxStat");
+                    Intersect_Convert_Lib.Options.MaxLevel = GetXmlInt(options, "//Config/Player/MaxLevel");
+                    Intersect_Convert_Lib.Options.MaxInvItems = GetXmlInt(options, "//Config/Player/MaxInventory");
+                    Intersect_Convert_Lib.Options.MaxPlayerSkills = GetXmlInt(options, "//Config/Player/MaxSpells");
+                    Intersect_Convert_Lib.Options.MaxBankSlots = GetXmlInt(options, "//Config/Player/MaxBank");
 
                     //Equipment
                     int slot = 0;
                     while (!string.IsNullOrEmpty(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false)))
                     {
                         if (
-                            Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false)) >
+                            Intersect_Convert_Lib.Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false)) >
                             -1)
                         {
                             Console.WriteLine(
@@ -65,19 +65,19 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                         }
                         else
                         {
-                            Options.EquipmentSlots.Add(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false));
+                            Intersect_Convert_Lib.Options.EquipmentSlots.Add(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false));
                         }
                         slot++;
                     }
-                    Options.WeaponIndex = GetXmlInt(options, "//Config/Equipment/WeaponSlot");
-                    if (Options.WeaponIndex < -1 || Options.WeaponIndex > Options.EquipmentSlots.Count - 1)
+                    Intersect_Convert_Lib.Options.WeaponIndex = GetXmlInt(options, "//Config/Equipment/WeaponSlot");
+                    if (Intersect_Convert_Lib.Options.WeaponIndex < -1 || Intersect_Convert_Lib.Options.WeaponIndex > Intersect_Convert_Lib.Options.EquipmentSlots.Count - 1)
                     {
                         Console.WriteLine(
                             "Weapon Slot is out of bounds! Make sure the slot exists and you are counting starting from zero! Use -1 if you do not wish to have equipable weapons in-game!  (Path: " +
                             "//Config/Equipment/WeaponSlot)");
                     }
-                    Options.ShieldIndex = GetXmlInt(options, "//Config/Equipment/ShieldSlot");
-                    if (Options.ShieldIndex < -1 || Options.ShieldIndex > Options.EquipmentSlots.Count - 1)
+                    Intersect_Convert_Lib.Options.ShieldIndex = GetXmlInt(options, "//Config/Equipment/ShieldSlot");
+                    if (Intersect_Convert_Lib.Options.ShieldIndex < -1 || Intersect_Convert_Lib.Options.ShieldIndex > Intersect_Convert_Lib.Options.EquipmentSlots.Count - 1)
                     {
                         Console.WriteLine(
                             "Shield Slot is out of bounds! Make sure the slot exists and you are counting starting from zero! Use -1 if you do not wish to have equipable shields in-game!  (Path: " +
@@ -89,11 +89,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                     while (!string.IsNullOrEmpty(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)))
                     {
                         if (
-                            Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)) >
+                            Intersect_Convert_Lib.Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)) >
                             -1)
                         {
                             if (
-                                Options.PaperdollOrder.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot,
+                                Intersect_Convert_Lib.Options.PaperdollOrder.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot,
                                     false)) > -1)
                             {
                                 Console.WriteLine(
@@ -103,7 +103,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                             }
                             else
                             {
-                                Options.PaperdollOrder.Add(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false));
+                                Intersect_Convert_Lib.Options.PaperdollOrder.Add(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false));
                             }
                         }
                         else
@@ -120,7 +120,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                     slot = 0;
                     while (!string.IsNullOrEmpty(GetXmlStr(options, "//Config/ToolTypes/Slot" + slot, false)))
                     {
-                        if (Options.ToolTypes.IndexOf(GetXmlStr(options, "//Config/ToolTypes/Slot" + slot, false)) > -1)
+                        if (Intersect_Convert_Lib.Options.ToolTypes.IndexOf(GetXmlStr(options, "//Config/ToolTypes/Slot" + slot, false)) > -1)
                         {
                             Console.WriteLine(
                                 "Tried to add the same type of tool twice, this is not permitted.  (Path: " +
@@ -129,7 +129,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                         }
                         else
                         {
-                            Options.ToolTypes.Add(GetXmlStr(options, "//Config/ToolTypes/Slot" + slot, false));
+                            Intersect_Convert_Lib.Options.ToolTypes.Add(GetXmlStr(options, "//Config/ToolTypes/Slot" + slot, false));
                         }
                         slot++;
                     }
@@ -140,31 +140,31 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
 
                     //Combat
                     RegenTime = GetXmlInt(options, "//Config/Combat/RegenTime");
-                    Options.MinAttackRate = GetXmlInt(options, "//Config/Combat/MinAttackRate");
-                    Options.MaxAttackRate = GetXmlInt(options, "//Config/Combat/MaxAttackRate");
-                    Options.BlockingSlow = GetXmlInt(options, "//Config/Combat/BlockingSlow") / 100;
-                    Options.CritChance = GetXmlInt(options, "//Config/Combat/CritChance");
-                    Options.BlockingSlow = GetXmlInt(options, "//Config/Combat/CritMultiplier") / 100;
-                    Options.MaxDashSpeed = GetXmlInt(options, "//Config/Combat/MaxDashSpeed");
+                    Intersect_Convert_Lib.Options.MinAttackRate = GetXmlInt(options, "//Config/Combat/MinAttackRate");
+                    Intersect_Convert_Lib.Options.MaxAttackRate = GetXmlInt(options, "//Config/Combat/MaxAttackRate");
+                    Intersect_Convert_Lib.Options.BlockingSlow = GetXmlInt(options, "//Config/Combat/BlockingSlow") / 100;
+                    Intersect_Convert_Lib.Options.CritChance = GetXmlInt(options, "//Config/Combat/CritChance");
+                    Intersect_Convert_Lib.Options.BlockingSlow = GetXmlInt(options, "//Config/Combat/CritMultiplier") / 100;
+                    Intersect_Convert_Lib.Options.MaxDashSpeed = GetXmlInt(options, "//Config/Combat/MaxDashSpeed");
 
                     //Map
-                    Options.GameBorderStyle = GetXmlInt(options, "//Config/Map/BorderStyle");
+                    Intersect_Convert_Lib.Options.GameBorderStyle = GetXmlInt(options, "//Config/Map/BorderStyle");
                     var zdimension = GetXmlStr(options, "//Config/Map/ZDimensionVisible", false);
                     if (zdimension != "")
                     {
-                        Options.ZDimensionVisible = Convert.ToBoolean(zdimension);
+                        Intersect_Convert_Lib.Options.ZDimensionVisible = Convert.ToBoolean(zdimension);
                     }
-                    Options.MapWidth = GetXmlInt(options, "//Config/Map/MapWidth");
-                    Options.MapHeight = GetXmlInt(options, "//Config/Map/MapHeight");
-                    if (Options.MapWidth < 10 || Options.MapWidth > 64 || Options.MapHeight < 10 ||
-                        Options.MapHeight > 64)
+                    Intersect_Convert_Lib.Options.MapWidth = GetXmlInt(options, "//Config/Map/MapWidth");
+                    Intersect_Convert_Lib.Options.MapHeight = GetXmlInt(options, "//Config/Map/MapHeight");
+                    if (Intersect_Convert_Lib.Options.MapWidth < 10 || Intersect_Convert_Lib.Options.MapWidth > 64 || Intersect_Convert_Lib.Options.MapHeight < 10 ||
+                        Intersect_Convert_Lib.Options.MapHeight > 64)
                     {
                         Console.WriteLine(
                             "MapWidth and/or MapHeight are out of bounds. Must be between 10 and 64. The client loads 9 maps at a time, having large map sizes really hurts performance.");
                         ConfigFailed = true;
                     }
-                    Options.TileWidth = GetXmlInt(options, "//Config/Map/TileWidth");
-                    Options.TileHeight = GetXmlInt(options, "//Config/Map/TileHeight");
+                    Intersect_Convert_Lib.Options.TileWidth = GetXmlInt(options, "//Config/Map/TileWidth");
+                    Intersect_Convert_Lib.Options.TileHeight = GetXmlInt(options, "//Config/Map/TileHeight");
 
                     if (ConfigFailed)
                     {
@@ -183,66 +183,66 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
         public static byte[] GetServerConfig()
         {
             ByteBuffer bf = new ByteBuffer();
-            bf.WriteString(Options.GameName);
+            bf.WriteString(Intersect_Convert_Lib.Options.GameName);
 
             //Game Objects
-            bf.WriteInteger(Options.MaxNpcDrops);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.MaxNpcDrops);
 
             //Player Objects
-            bf.WriteInteger(Options.MaxStatValue);
-            bf.WriteInteger(Options.MaxLevel);
-            bf.WriteInteger(Options.MaxHotbar);
-            bf.WriteInteger(Options.MaxInvItems);
-            bf.WriteInteger(Options.MaxPlayerSkills);
-            bf.WriteInteger(Options.MaxBankSlots);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.MaxStatValue);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.MaxLevel);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.MaxHotbar);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.MaxInvItems);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.MaxPlayerSkills);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.MaxBankSlots);
 
             //Passability
-            for (int i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
+            for (int i = 0; i < Enum.GetNames(typeof(Intersect_Convert_Lib.MapZones)).Length; i++)
             {
-                bf.WriteBoolean(Options.PlayerPassable[i]);
+                bf.WriteBoolean(Intersect_Convert_Lib.Options.PlayerPassable[i]);
             }
 
             //Equipment
-            bf.WriteInteger(Options.EquipmentSlots.Count);
-            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+            bf.WriteInteger(Intersect_Convert_Lib.Options.EquipmentSlots.Count);
+            for (int i = 0; i < Intersect_Convert_Lib.Options.EquipmentSlots.Count; i++)
             {
-                bf.WriteString(Options.EquipmentSlots[i]);
+                bf.WriteString(Intersect_Convert_Lib.Options.EquipmentSlots[i]);
             }
-            bf.WriteInteger(Options.WeaponIndex);
-            bf.WriteInteger(Options.ShieldIndex);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.WeaponIndex);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.ShieldIndex);
 
             //Paperdoll
-            for (int i = 0; i < Options.NewPaperdollOrder.Length; i++)
+            for (int i = 0; i < Intersect_Convert_Lib.Options.NewPaperdollOrder.Length; i++)
             {
-                bf.WriteInteger(Options.NewPaperdollOrder[i].Count);
-                for (int x = 0; x < Options.NewPaperdollOrder[i].Count; x++)
+                bf.WriteInteger(Intersect_Convert_Lib.Options.NewPaperdollOrder[i].Count);
+                for (int x = 0; x < Intersect_Convert_Lib.Options.NewPaperdollOrder[i].Count; x++)
                 {
-                    bf.WriteString(Options.NewPaperdollOrder[i][x]);
+                    bf.WriteString(Intersect_Convert_Lib.Options.NewPaperdollOrder[i][x]);
                 }
             }
 
             //Tool Types
-            bf.WriteInteger(Options.ToolTypes.Count);
-            for (int i = 0; i < Options.ToolTypes.Count; i++)
+            bf.WriteInteger(Intersect_Convert_Lib.Options.ToolTypes.Count);
+            for (int i = 0; i < Intersect_Convert_Lib.Options.ToolTypes.Count; i++)
             {
-                bf.WriteString(Options.ToolTypes[i]);
+                bf.WriteString(Intersect_Convert_Lib.Options.ToolTypes[i]);
             }
 
             //Combat
-            bf.WriteInteger(Options.MinAttackRate);
-            bf.WriteInteger(Options.MaxAttackRate);
-            bf.WriteDouble(Options.BlockingSlow);
-            bf.WriteInteger(Options.CritChance);
-            bf.WriteDouble(Options.CritMultiplier);
-            bf.WriteInteger(Options.MaxDashSpeed);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.MinAttackRate);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.MaxAttackRate);
+            bf.WriteDouble(Intersect_Convert_Lib.Options.BlockingSlow);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.CritChance);
+            bf.WriteDouble(Intersect_Convert_Lib.Options.CritMultiplier);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.MaxDashSpeed);
 
             //Map
-            bf.WriteInteger(Options.GameBorderStyle);
-            bf.WriteBoolean(Options.ZDimensionVisible);
-            bf.WriteInteger(Options.MapWidth);
-            bf.WriteInteger(Options.MapHeight);
-            bf.WriteInteger(Options.TileWidth);
-            bf.WriteInteger(Options.TileHeight);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.GameBorderStyle);
+            bf.WriteBoolean(Intersect_Convert_Lib.Options.ZDimensionVisible);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.MapWidth);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.MapHeight);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.TileWidth);
+            bf.WriteInteger(Intersect_Convert_Lib.Options.TileHeight);
 
             return bf.ToArray();
         }

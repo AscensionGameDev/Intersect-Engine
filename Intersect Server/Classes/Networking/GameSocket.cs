@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
 using Intersect.Logging;
-using Intersect_Server.Classes.Core;
-using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Maps;
+using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.Entities;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Maps;
 
-namespace Intersect_Server.Classes.Networking
+namespace Intersect.Server.Classes.Networking
 {
     public abstract class GameSocket
     {

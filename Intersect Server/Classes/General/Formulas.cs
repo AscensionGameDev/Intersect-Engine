@@ -2,12 +2,13 @@
 using System.IO;
 using System.Xml;
 using Intersect;
+using Intersect.Enums;
 using Intersect.Localization;
 using Intersect.Logging;
-using Intersect_Server.Classes.Entities;
+using Intersect.Server.Classes.Entities;
 using NCalc;
 
-namespace Intersect_Server.Classes.General
+namespace Intersect.Server.Classes.General
 {
     public static class Formulas
     {

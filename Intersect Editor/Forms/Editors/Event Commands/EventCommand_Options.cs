@@ -2,11 +2,11 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using Intersect.Editor.Classes.Core;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes.Core;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_Options : UserControl
     {

@@ -1,6 +1,6 @@
 ﻿using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects
 {
     public class LightBase
     {

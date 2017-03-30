@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Intersect;
+using Intersect.Enums;
 
-namespace Intersect_Server.Classes.General
+namespace Intersect.Server.Classes.General
 {
     public static class ServerOptions
     {

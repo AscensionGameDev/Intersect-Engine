@@ -4,13 +4,13 @@ using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Forms;
 using Intersect;
+using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using Intersect.Models;
-using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Editors
+namespace Intersect.Editor.Forms.Editors
 {
     public partial class frmSwitchVariable : Form
     {

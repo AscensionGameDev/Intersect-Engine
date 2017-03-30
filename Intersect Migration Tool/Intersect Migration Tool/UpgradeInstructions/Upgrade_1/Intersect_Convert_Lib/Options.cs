@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib
 {
     public static class Options
     {

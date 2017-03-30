@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Events
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Events
 {
     public class EventMoveRoute
     {

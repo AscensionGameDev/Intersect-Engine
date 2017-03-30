@@ -1,15 +1,16 @@
 ﻿using System;
 using Intersect;
 using Intersect.Logging;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Events;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Maps;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Maps.MapList;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
+using Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib;
+using Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects;
+using Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Events;
+using Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Maps;
+using Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Maps.MapList;
+using Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 using Mono.Data.Sqlite;
-using GameObject = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObject;
+using GameObject = Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObject;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
 {
     public class Upgrade4
     {
@@ -48,17 +49,17 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4
         //Game Object Saving/Loading
         private void LoadAllGameObjects()
         {
-            foreach (var val in Enum.GetValues(typeof(GameObject)))
+            foreach (var val in Enum.GetValues(typeof(Intersect_Convert_Lib.GameObject)))
             {
-                if ((GameObject) val != GameObject.Time)
+                if ((Intersect_Convert_Lib.GameObject) val != GameObject.Time)
                 {
-                    LoadGameObjects((GameObject) val);
+                    LoadGameObjects((Intersect_Convert_Lib.GameObject) val);
                 }
             }
         }
 
         //Game Object Saving/Loading
-        private string GetGameObjectTable(GameObject type)
+        private string GetGameObjectTable(Intersect_Convert_Lib.GameObject type)
         {
             var tableName = "";
             switch (type)
@@ -117,7 +118,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4
             return tableName;
         }
 
-        private void ClearGameObjects(GameObject type)
+        private void ClearGameObjects(Intersect_Convert_Lib.GameObject type)
         {
             switch (type)
             {
@@ -174,7 +175,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4
             }
         }
 
-        private void LoadGameObject(GameObject type, int index, byte[] data)
+        private void LoadGameObject(Intersect_Convert_Lib.GameObject type, int index, byte[] data)
         {
             switch (type)
             {
@@ -281,7 +282,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4
             }
         }
 
-        public void LoadGameObjects(GameObject type)
+        public void LoadGameObjects(Intersect_Convert_Lib.GameObject type)
         {
             var nullIssues = "";
             lock (_dbLock)

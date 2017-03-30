@@ -1,8 +1,9 @@
 ﻿using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect_Server.Classes.General;
+using Intersect.Server.Classes.General;
 
-namespace Intersect_Server.Classes.Items
+namespace Intersect.Server.Classes.Items
 {
     public class ItemInstance
     {

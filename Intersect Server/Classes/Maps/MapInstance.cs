@@ -2,19 +2,20 @@
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
-using Intersect_Server.Classes.Core;
-using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Items;
-using Intersect_Server.Classes.Misc.Pathfinding;
-using Intersect_Server.Classes.Networking;
+using Intersect.Server.Classes.Misc.Pathfinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Intersect.Enums;
 using Intersect.Models;
+using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.Entities;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Items;
+using Intersect.Server.Classes.Networking;
 
-namespace Intersect_Server.Classes.Maps
+namespace Intersect.Server.Classes.Maps
 {
     public class MapInstance : MapBase
     {

@@ -1,13 +1,14 @@
 ﻿using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Misc;
-using Intersect_Server.Classes.Misc.Pathfinding;
-using Intersect_Server.Classes.Networking;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Maps;
+using Intersect.Server.Classes.Misc.Pathfinding;
+using Intersect.Server.Classes.Networking;
+using Intersect.Server.Classes.Misc;
 
-namespace Intersect_Server.Classes.Entities
+namespace Intersect.Server.Classes.Entities
 {
     public class EventPageInstance : Entity
     {

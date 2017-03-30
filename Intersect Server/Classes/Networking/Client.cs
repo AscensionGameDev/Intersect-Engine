@@ -5,10 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Intersect;
 using Intersect.Logging;
-using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.General;
+using Intersect.Server.Classes.Entities;
+using Intersect.Server.Classes.General;
 
-namespace Intersect_Server.Classes.Networking
+namespace Intersect.Server.Classes.Networking
 {
     public class Client
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using Intersect;
 using Intersect.GameObjects;
-using Intersect_Server.Classes.Networking;
+using Intersect.Server.Classes.Networking;
 
-namespace Intersect_Server.Classes.General
+namespace Intersect.Server.Classes.General
 {
     public static class ServerTime
     {

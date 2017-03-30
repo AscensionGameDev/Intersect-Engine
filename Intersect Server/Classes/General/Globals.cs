@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Intersect.GameObjects;
-using Intersect_Server.Classes.Core;
-using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Networking;
+using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.Entities;
+using Intersect.Server.Classes.Maps;
+using Intersect.Server.Classes.Networking;
 
-namespace Intersect_Server.Classes.General
+namespace Intersect.Server.Classes.General
 {
     public static class Globals
     {

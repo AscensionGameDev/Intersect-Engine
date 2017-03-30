@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using Intersect.Localization;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class frmProgress : Form
     {

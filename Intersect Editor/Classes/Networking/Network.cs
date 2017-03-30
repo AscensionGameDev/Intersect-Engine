@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using Intersect;
 
-namespace Intersect_Editor.Classes
+namespace Intersect.Editor.Classes
 {
     public static class Network
     {

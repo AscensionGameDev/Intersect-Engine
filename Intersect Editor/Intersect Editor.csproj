@@ -9,7 +9,7 @@
     <ProjectGuid>{5AC53DF1-8152-466D-B7D0-238657F013F7}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Intersect_Editor</RootNamespace>
+    <RootNamespace>Intersect.Editor</RootNamespace>
     <AssemblyName>Intersect Editor</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>Windows</MonoGamePlatform>
@@ -44,7 +44,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Intersect_Editor.Classes.Program</StartupObject>
+    <StartupObject>Intersect.Editor.Classes.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Classes\Content\GameContentManager.cs" />

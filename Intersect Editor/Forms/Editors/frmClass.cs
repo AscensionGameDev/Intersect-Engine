@@ -6,14 +6,14 @@ using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Core;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class frmClass : Form
     {

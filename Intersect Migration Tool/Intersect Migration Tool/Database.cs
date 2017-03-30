@@ -3,16 +3,16 @@ using System.IO;
 using System.Xml;
 using Intersect.Localization;
 using Intersect.Logging;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_3;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7;
+using Intersect.Migration.UpgradeInstructions.Upgrade_1;
+using Intersect.Migration.UpgradeInstructions.Upgrade_2;
+using Intersect.Migration.UpgradeInstructions.Upgrade_3;
+using Intersect.Migration.UpgradeInstructions.Upgrade_4;
+using Intersect.Migration.UpgradeInstructions.Upgrade_5;
+using Intersect.Migration.UpgradeInstructions.Upgrade_6;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7;
 using Mono.Data.Sqlite;
 
-namespace Intersect_Migration_Tool
+namespace Intersect.Migration
 {
     public static class Database
     {

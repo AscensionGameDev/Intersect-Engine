@@ -1,5 +1,6 @@
 ﻿using System;
 using Intersect;
+using Intersect.Enums;
 using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;

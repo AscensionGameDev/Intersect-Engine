@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
 using Intersect;
+using Intersect.Editor.Classes;
 using Intersect.GameObjects;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Controls
+namespace Intersect.Editor.Forms.Controls
 {
     public partial class LightEditorCtrl : UserControl
     {

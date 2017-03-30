@@ -1,7 +1,7 @@
 ﻿using Intersect;
 using WebSocketSharp.Server;
 
-namespace Intersect_Server.Classes.Networking
+namespace Intersect.Server.Classes.Networking
 {
     public static class WebSocketServer
     {

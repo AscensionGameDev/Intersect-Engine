@@ -14,14 +14,14 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
 using Intersect.Logging;
 using Intersect.Models;
-using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Items;
-using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Networking;
+using Intersect.Server.Classes.Entities;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Items;
+using Intersect.Server.Classes.Maps;
+using Intersect.Server.Classes.Networking;
 using Mono.Data.Sqlite;
 
-namespace Intersect_Server.Classes.Core
+namespace Intersect.Server.Classes.Core
 {
     public static class Database
     {

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Intersect;
-using Intersect_Server.Classes.Core;
+using Intersect.Server.Classes.Core;
 
-namespace Intersect_Server.Classes.Maps
+namespace Intersect.Server.Classes.Maps
 {
     public class MapGrid
     {

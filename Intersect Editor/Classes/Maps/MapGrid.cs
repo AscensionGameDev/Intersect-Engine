@@ -7,14 +7,14 @@ using System.Windows.Forms;
 using DarkUI.Forms;
 using Hjg.Pngcs;
 using Intersect;
+using Intersect.Editor.Classes.General;
+using Intersect.Editor.Forms;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using Intersect_Editor.Classes.General;
-using Intersect_Editor.Forms;
 using Microsoft.Xna.Framework.Graphics;
 using Color = System.Drawing.Color;
 
-namespace Intersect_Editor.Classes.Maps
+namespace Intersect.Editor.Classes.Maps
 {
     public class MapGrid
     {
@@ -267,7 +267,7 @@ namespace Intersect_Editor.Classes.Maps
                             //Get the pixel color we need
                             for (int x1 = (x) * colSize; x1 < (x) * colSize + colSize; x1++)
                             {
-                                Color clr = reader.GetPixel(x1 - (x) * colSize, rowNum);
+                                System.Drawing.Color clr = reader.GetPixel(x1 - (x) * colSize, rowNum);
                                     // Color.FromArgb(ImageLineHelper.GetPixelToARGB8(line, x1 - (x) * colSize));
                                 row[x1 * 4] = clr.R;
                                 row[x1 * 4 + 1] = clr.G;
@@ -290,10 +290,10 @@ namespace Intersect_Editor.Classes.Maps
                     {
                         for (int x1 = (x) * colSize; x1 < (x) * colSize + colSize; x1++)
                         {
-                            row[x1 * 4] = Color.Gray.R;
-                            row[x1 * 4 + 1] = Color.Gray.G;
-                            row[x1 * 4 + 2] = Color.Gray.B;
-                            row[x1 * 4 + 3] = Color.Gray.A;
+                            row[x1 * 4] = System.Drawing.Color.Gray.R;
+                            row[x1 * 4 + 1] = System.Drawing.Color.Gray.G;
+                            row[x1 * 4 + 2] = System.Drawing.Color.Gray.B;
+                            row[x1 * 4 + 3] = System.Drawing.Color.Gray.A;
                         }
                     }
                 }
@@ -357,12 +357,12 @@ namespace Intersect_Editor.Classes.Maps
                     if (EditorGraphics.LightColor != null)
                     {
                         Database.GridLightColor =
-                            Color.FromArgb(EditorGraphics.LightColor.A, EditorGraphics.LightColor.R,
+                            System.Drawing.Color.FromArgb(EditorGraphics.LightColor.A, EditorGraphics.LightColor.R,
                                 EditorGraphics.LightColor.G, EditorGraphics.LightColor.B).ToArgb();
                     }
                     else
                     {
-                        Database.GridLightColor = Color.FromArgb(255, 255, 255, 255).ToArgb();
+                        Database.GridLightColor = System.Drawing.Color.FromArgb(255, 255, 255, 255).ToArgb();
                     }
                 }
                 else
@@ -371,7 +371,7 @@ namespace Intersect_Editor.Classes.Maps
                     Database.GridHideDarkness = true;
                     Database.GridHideFog = true;
                     Database.GridHideResources = false;
-                    Database.GridLightColor = Color.White.ToArgb();
+                    Database.GridLightColor = System.Drawing.Color.White.ToArgb();
                 }
                 Database.SaveGridOptions();
                 Database.ClearAllMapCache();

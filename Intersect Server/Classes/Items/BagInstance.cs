@@ -1,4 +1,4 @@
-﻿namespace Intersect_Server.Classes.Items
+﻿namespace Intersect.Server.Classes.Items
 {
     public class BagInstance
     {

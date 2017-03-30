@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using DarkUI.Controls;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     partial class FrmItem
     {

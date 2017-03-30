@@ -24,9 +24,9 @@ THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using Intersect;
-using Intersect_Server.Classes.Misc.Pathfinding;
+using Intersect.Server.Classes.Misc.Pathfinding;
 
-namespace Intersect_Server.Classes.Misc
+namespace Intersect.Server.Classes.Misc
 {
     public interface IIndexedObject
     {

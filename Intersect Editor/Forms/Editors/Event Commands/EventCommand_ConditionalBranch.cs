@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Windows.Forms;
 using Intersect;
+using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_ConditionalBranch : UserControl
     {

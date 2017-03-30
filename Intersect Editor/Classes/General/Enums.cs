@@ -1,4 +1,4 @@
-﻿namespace Intersect_Editor.Classes.General
+﻿namespace Intersect.Editor.Classes.General
 {
     public enum EditorTypes
     {

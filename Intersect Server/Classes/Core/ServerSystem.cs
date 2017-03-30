@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Intersect_Server.Classes.Core
+namespace Intersect.Server.Classes.Core
 {
     public class ServerSystem
     {

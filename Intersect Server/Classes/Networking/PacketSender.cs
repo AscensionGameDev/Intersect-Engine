@@ -6,15 +6,15 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
 using Intersect.Models;
-using Intersect_Server.Classes.Core;
-using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Items;
-using Intersect_Server.Classes.Maps;
 using System;
 using System.Collections.Generic;
+using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.Entities;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Items;
+using Intersect.Server.Classes.Maps;
 
-namespace Intersect_Server.Classes.Networking
+namespace Intersect.Server.Classes.Networking
 {
     public static class PacketSender
     {

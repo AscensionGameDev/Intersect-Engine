@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Events;
+using Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Events;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Maps
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Maps
 {
     public class MapBase : DatabaseObject
     {

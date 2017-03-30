@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
+using Intersect.Editor.Classes.Core;
 using Intersect.Localization;
-using Intersect_Editor.Classes.Core;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class frmOptions : Form
     {

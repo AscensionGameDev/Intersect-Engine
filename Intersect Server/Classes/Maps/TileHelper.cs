@@ -1,8 +1,9 @@
 ﻿using System;
 using Intersect;
-using Intersect_Server.Classes.Core;
+using Intersect.Enums;
+using Intersect.Server.Classes.Core;
 
-namespace Intersect_Server.Classes.Maps
+namespace Intersect.Server.Classes.Maps
 {
     public class TileHelper
     {

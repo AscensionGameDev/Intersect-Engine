@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using Intersect.Localization;
 using Intersect.Logging;
 
-namespace Intersect_Server.Classes.Networking
+namespace Intersect.Server.Classes.Networking
 {
     public class NetSocket : GameSocket
     {

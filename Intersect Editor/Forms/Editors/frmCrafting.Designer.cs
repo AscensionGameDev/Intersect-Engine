@@ -1,6 +1,6 @@
 ﻿using DarkUI.Controls;
 
-namespace Intersect_Editor.Forms.Editors
+namespace Intersect.Editor.Forms.Editors
 {
     partial class frmCrafting
     {

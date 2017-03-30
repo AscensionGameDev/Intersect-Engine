@@ -1,7 +1,8 @@
 ﻿using DarkUI.Controls;
+using Intersect.Editor.Forms.Controls;
 using Intersect.Localization;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     partial class frmAnimation
     {
@@ -51,7 +52,7 @@ namespace Intersect_Editor.Forms
             this.nudLowerHorizontalFrames = new DarkUI.Controls.DarkNumericUpDown();
             this.grpLowerFrameOpts = new DarkUI.Controls.DarkGroupBox();
             this.btnLowerClone = new DarkUI.Controls.DarkButton();
-            this.lightEditorLower = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
+            this.lightEditorLower = new LightEditorCtrl();
             this.grpLowerPlayback = new DarkUI.Controls.DarkGroupBox();
             this.btnPlayLower = new DarkUI.Controls.DarkButton();
             this.scrlLowerFrame = new DarkUI.Controls.DarkScrollBar();
@@ -76,7 +77,7 @@ namespace Intersect_Editor.Forms
             this.lblUpperFrame = new System.Windows.Forms.Label();
             this.grpUpperFrameOpts = new DarkUI.Controls.DarkGroupBox();
             this.btnUpperClone = new DarkUI.Controls.DarkButton();
-            this.lightEditorUpper = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
+            this.lightEditorUpper = new LightEditorCtrl();
             this.lblUpperLoopCount = new System.Windows.Forms.Label();
             this.lblUpperFrameDuration = new System.Windows.Forms.Label();
             this.lblUpperFrameCount = new System.Windows.Forms.Label();

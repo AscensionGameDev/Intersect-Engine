@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using Intersect.Localization;
 
-namespace Intersect_Migration_Tool
+namespace Intersect.Migration
 {
     class MainClass
     {

@@ -2,13 +2,13 @@
 using System.Windows.Forms;
 using DarkUI.Forms;
 using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.General;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.General;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class frmMapList : DockContent
     {

@@ -1,6 +1,6 @@
 ﻿using DarkUI.Controls;
 
-namespace Intersect_Editor.Classes
+namespace Intersect.Editor.Classes
 {
     partial class frmProjectile
     {

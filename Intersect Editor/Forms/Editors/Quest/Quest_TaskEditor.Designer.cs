@@ -1,6 +1,6 @@
 ﻿using DarkUI.Controls;
 
-namespace Intersect_Editor.Forms.Editors.Quest
+namespace Intersect.Editor.Forms.Editors.Quest
 {
     partial class Quest_TaskEditor
     {

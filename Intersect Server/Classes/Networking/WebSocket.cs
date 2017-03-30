@@ -2,7 +2,7 @@
 using Intersect.Logging;
 using WebSocketSharp.Net.WebSockets;
 
-namespace Intersect_Server.Classes.Networking
+namespace Intersect.Server.Classes.Networking
 {
     public class WebSocket : GameSocket
     {

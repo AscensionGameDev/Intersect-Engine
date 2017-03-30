@@ -1,4 +1,5 @@
 ﻿using Intersect;
+using Intersect.Enums;
 
 namespace Intersect_Client.Classes.Items
 {

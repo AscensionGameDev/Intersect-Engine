@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
+using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Editors
+namespace Intersect.Editor.Forms.Editors
 {
     public partial class frmCommonEvent : Form
     {

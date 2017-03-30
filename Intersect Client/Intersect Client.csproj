@@ -9,7 +9,7 @@
     <ProjectGuid>{2240F3DD-3694-4606-B181-F204CBBCB971}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Intersect_Client</RootNamespace>
+    <RootNamespace>Intersect.Client</RootNamespace>
     <AssemblyName>Intersect Client</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>DesktopGL</MonoGamePlatform>

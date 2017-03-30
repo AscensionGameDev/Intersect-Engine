@@ -3,14 +3,14 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.Core;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Core;
 using Color = System.Drawing.Color;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class Event_GraphicSelector : UserControl
     {
@@ -161,11 +161,11 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 pnlGraphic.Width = sourceBitmap.Width;
                 pnlGraphic.Height = sourceBitmap.Height;
                 graphics = Graphics.FromImage(destBitmap);
-                graphics.Clear(Color.FromArgb(60, 63, 65));
+                graphics.Clear(System.Drawing.Color.FromArgb(60, 63, 65));
                 graphics.DrawImage(sourceBitmap, new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height));
                 if (cmbGraphicType.SelectedIndex == 1)
                 {
-                    graphics.DrawRectangle(new Pen(Color.White, 2f),
+                    graphics.DrawRectangle(new Pen(System.Drawing.Color.White, 2f),
                         new Rectangle(_tmpGraphic.X * sourceBitmap.Width / 4, _tmpGraphic.Y * sourceBitmap.Height / 4,
                             sourceBitmap.Width / 4, sourceBitmap.Height / 4));
                 }
@@ -185,7 +185,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                         selY -= Math.Abs(selH);
                         selH = Math.Abs(selH);
                     }
-                    graphics.DrawRectangle(new Pen(Color.White, 2f),
+                    graphics.DrawRectangle(new Pen(System.Drawing.Color.White, 2f),
                         new Rectangle(selX * Options.TileWidth, selY * Options.TileHeight,
                             Options.TileWidth + (selW * Options.TileWidth),
                             Options.TileHeight + (selH * Options.TileHeight)));

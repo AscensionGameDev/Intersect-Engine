@@ -4,19 +4,21 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using Intersect;
+using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Classes.Entities;
+using Intersect.Editor.Classes.General;
+using Intersect.Editor.Classes.Maps;
+using Intersect.Editor.Forms;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Localization;
-using Intersect_Editor.Classes.Entities;
-using Intersect_Editor.Classes.General;
-using Intersect_Editor.Classes.Maps;
-using Intersect_Editor.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using static Intersect_Editor.Classes.Core.GameContentManager;
+using static Intersect.Editor.Classes.Core.GameContentManager;
 using Color = System.Drawing.Color;
 
-namespace Intersect_Editor.Classes
+namespace Intersect.Editor.Classes
 {
     public static class EditorGraphics
     {
@@ -39,7 +41,7 @@ namespace Intersect_Editor.Classes
             new List<KeyValuePair<Microsoft.Xna.Framework.Point, LightBase>>();
 
         //Overlay Stuff
-        public static Color OverlayColor = Color.Transparent;
+        public static System.Drawing.Color OverlayColor = System.Drawing.Color.Transparent;
         public static bool HideOverlay = false;
 
         //Fog Stuff
@@ -289,7 +291,7 @@ namespace Intersect_Editor.Classes
 
         private static void DrawTransparentBorders(int gridX, int gridY)
         {
-            var transTex = GetTexture(TextureType.Misc, "transtile.png");
+            var transTex = GetTexture(GameContentManager.TextureType.Misc, "transtile.png");
             var xoffset = CurrentView.Left + (gridX) * (Options.TileWidth * Options.MapWidth);
             var yoffset = CurrentView.Top + (gridY) * (Options.TileHeight * Options.MapHeight);
             for (int x = 0; x < Options.MapWidth; x++)
@@ -301,7 +303,7 @@ namespace Intersect_Editor.Classes
                         .IntersectsWith(new System.Drawing.Rectangle(0, 0, CurrentView.Width, CurrentView.Height)))
                         DrawTexture(transTex, new RectangleF(0, 0, transTex.Width, transTex.Height),
                             new RectangleF(xoffset + x * Options.TileWidth, yoffset + y * Options.TileHeight,
-                                Options.TileWidth, Options.TileHeight), Color.White, null);
+                                Options.TileWidth, Options.TileHeight), System.Drawing.Color.White, null);
                 }
             }
         }
@@ -328,7 +330,7 @@ namespace Intersect_Editor.Classes
                     break;
             }
             DrawTexture(
-                GetTexture(TextureType.Tileset,
+                GetTexture(GameContentManager.TextureType.Tileset,
                     TilesetBase.Lookup.Get<TilesetBase>(map.Layers[layerNum].Tiles[x, y].TilesetIndex).Name),
                 destX, destY,
                 (int) map.Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
@@ -595,7 +597,7 @@ namespace Intersect_Editor.Classes
                                         CurrentView.Height)))
                             {
                                 if (TilesetBase.Lookup.Get<TilesetBase>(tmpMap.Layers[z].Tiles[x, y].TilesetIndex) == null) continue;
-                                Texture2D tilesetTex = GetTexture(TextureType.Tileset,
+                                Texture2D tilesetTex = GetTexture(GameContentManager.TextureType.Tileset,
                                     TilesetBase.Lookup.Get<TilesetBase>(tmpMap.Layers[z].Tiles[x, y].TilesetIndex).Name);
                                 if (tilesetTex == null) continue;
                                 if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState !=
@@ -697,7 +699,7 @@ namespace Intersect_Editor.Classes
                             {
                                 if (tmpMap.Attributes[x, y].value > 0)
                                 {
-                                    var attributesTex = GetTexture(TextureType.Misc, "attributes.png");
+                                    var attributesTex = GetTexture(GameContentManager.TextureType.Misc, "attributes.png");
                                     if (attributesTex != null)
                                     {
                                         DrawTexture(attributesTex,
@@ -705,7 +707,7 @@ namespace Intersect_Editor.Classes
                                                 attributesTex.Width, attributesTex.Width),
                                             new RectangleF(CurrentView.Left + x * Options.TileWidth,
                                                 CurrentView.Top + y * Options.TileHeight, Options.TileWidth,
-                                                Options.TileHeight), Color.FromArgb(150, 255, 255, 255), null);
+                                                Options.TileHeight), System.Drawing.Color.FromArgb(150, 255, 255, 255), null);
                                     }
                                 }
                             }
@@ -722,13 +724,13 @@ namespace Intersect_Editor.Classes
                         for (var y = 0; y < Options.MapHeight; y++)
                         {
                             if (tmpMap.FindEventAt(x, y) == null) continue;
-                            var eventTex = GetTexture(TextureType.Misc, "eventicon.png");
+                            var eventTex = GetTexture(GameContentManager.TextureType.Misc, "eventicon.png");
                             if (eventTex != null)
                             {
                                 DrawTexture(eventTex, new RectangleF(0, 0, eventTex.Width, eventTex.Height),
                                     new RectangleF(CurrentView.Left + x * Options.TileWidth,
                                         CurrentView.Top + y * Options.TileHeight, Options.TileWidth, Options.TileHeight),
-                                    Color.White, null);
+                                    System.Drawing.Color.White, null);
                             }
                         }
                     }
@@ -739,13 +741,13 @@ namespace Intersect_Editor.Classes
                     {
                         if (tmpMap.Spawns[i].X >= 0 && tmpMap.Spawns[i].Y >= 0)
                         {
-                            var spawnTex = GetTexture(TextureType.Misc, "spawnicon.png");
+                            var spawnTex = GetTexture(GameContentManager.TextureType.Misc, "spawnicon.png");
                             if (spawnTex != null)
                             {
                                 DrawTexture(spawnTex, new RectangleF(0, 0, spawnTex.Width, spawnTex.Height),
                                     new RectangleF(CurrentView.Left + tmpMap.Spawns[i].X * Options.TileWidth,
                                         CurrentView.Top + tmpMap.Spawns[i].Y * Options.TileHeight, Options.TileWidth,
-                                        Options.TileHeight), Color.White, null);
+                                        Options.TileHeight), System.Drawing.Color.White, null);
                             }
                         }
                     }
@@ -758,7 +760,7 @@ namespace Intersect_Editor.Classes
             {
                 DrawBoxOutline(CurrentView.Left + Globals.CurTileX * Options.TileWidth,
                     CurrentView.Top + Globals.CurTileY * Options.TileHeight, Options.TileWidth, Options.TileHeight,
-                    Color.White, null);
+                    System.Drawing.Color.White, null);
             }
             if (Globals.CurrentTool == (int) EdittingTool.Rectangle ||
                 Globals.CurrentTool == (int) EdittingTool.Selection)
@@ -766,17 +768,17 @@ namespace Intersect_Editor.Classes
                 DrawBoxOutline(CurrentView.Left + (selX + dragxoffset) * Options.TileWidth,
                     CurrentView.Top + (selY + dragyoffset) * Options.TileHeight, (selW + 1) * Options.TileWidth,
                     (selH + 1) * Options.TileHeight,
-                    Color.Blue, null);
+                    System.Drawing.Color.Blue, null);
             }
             else
             {
                 DrawBoxOutline(CurrentView.Left + Globals.CurTileX * Options.TileWidth,
                     CurrentView.Top + Globals.CurTileY * Options.TileHeight, Options.TileWidth, Options.TileHeight,
-                    Color.White, null);
+                    System.Drawing.Color.White, null);
             }
         }
 
-        private static void DrawBoxOutline(int x, int y, int w, int h, Color clr, RenderTarget2D target)
+        private static void DrawBoxOutline(int x, int y, int w, int h, System.Drawing.Color clr, RenderTarget2D target)
         {
             //Draw Top of Box
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(x, y, w, 1), clr, target);
@@ -811,7 +813,7 @@ namespace Intersect_Editor.Classes
                             DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                                 new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
                                     grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, grid.TileHeight),
-                                Color.FromArgb(45, 45, 48), _mapGridChain);
+                                System.Drawing.Color.FromArgb(45, 45, 48), _mapGridChain);
                         }
                         else
                         {
@@ -829,7 +831,7 @@ namespace Intersect_Editor.Classes
                                     DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                                         new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
                                             grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, grid.TileHeight),
-                                        Color.Green, _mapGridChain);
+                                        System.Drawing.Color.Green, _mapGridChain);
                                 }
                             }
                             else
@@ -837,27 +839,27 @@ namespace Intersect_Editor.Classes
                                 DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                                     new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
                                         grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, grid.TileHeight),
-                                    Color.Gray, _mapGridChain);
+                                    System.Drawing.Color.Gray, _mapGridChain);
                             }
                         }
                         if (Globals.MapGrid.ShowLines)
                         {
                             DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                                 new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
-                                    grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, 1), Color.DarkGray,
+                                    grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, 1), System.Drawing.Color.DarkGray,
                                 _mapGridChain);
                             DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                                 new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
-                                    grid.ContentRect.Y + y * grid.TileHeight, 1, grid.TileHeight), Color.DarkGray,
+                                    grid.ContentRect.Y + y * grid.TileHeight, 1, grid.TileHeight), System.Drawing.Color.DarkGray,
                                 _mapGridChain);
                             DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                                 new RectangleF(grid.ContentRect.X + x * grid.TileWidth + grid.TileWidth,
-                                    grid.ContentRect.Y + y * grid.TileHeight, 1, grid.TileHeight), Color.DarkGray,
+                                    grid.ContentRect.Y + y * grid.TileHeight, 1, grid.TileHeight), System.Drawing.Color.DarkGray,
                                 _mapGridChain);
                             DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                                 new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
                                     grid.ContentRect.Y + y * grid.TileHeight + grid.TileHeight, grid.TileWidth, 1),
-                                Color.DarkGray, _mapGridChain);
+                                System.Drawing.Color.DarkGray, _mapGridChain);
                         }
                     }
                 }
@@ -873,7 +875,7 @@ namespace Intersect_Editor.Classes
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (Globals.CurrentTileset != null)
             {
-                Texture2D tilesetTex = GetTexture(TextureType.Tileset, Globals.CurrentTileset.Name);
+                Texture2D tilesetTex = GetTexture(GameContentManager.TextureType.Tileset, Globals.CurrentTileset.Name);
                 if (tilesetTex != null)
                 {
                     DrawTexture(tilesetTex, 0, 0, _tilesetChain);
@@ -893,7 +895,7 @@ namespace Intersect_Editor.Classes
                     }
                     DrawBoxOutline(selX * Options.TileWidth, selY * Options.TileHeight,
                         Options.TileWidth + (selW * Options.TileWidth), Options.TileHeight + (selH * Options.TileHeight),
-                        Color.White, _tilesetChain);
+                        System.Drawing.Color.White, _tilesetChain);
                 }
             }
             _tilesetChain.Present();
@@ -903,35 +905,35 @@ namespace Intersect_Editor.Classes
         {
             //Horizontal Top
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
-                new RectangleF(0, CurrentView.Y - 1, CurrentView.Width, 3), Color.DimGray);
+                new RectangleF(0, CurrentView.Y - 1, CurrentView.Width, 3), System.Drawing.Color.DimGray);
             //Horizontal Buttom
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                 new RectangleF(0, CurrentView.Y + (Options.TileHeight * Options.MapHeight) - 1, CurrentView.Width, 3),
-                Color.DimGray);
+                System.Drawing.Color.DimGray);
             //Vertical Left
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
-                new RectangleF(CurrentView.Left - 1, 0, 3, CurrentView.Height), Color.DimGray);
+                new RectangleF(CurrentView.Left - 1, 0, 3, CurrentView.Height), System.Drawing.Color.DimGray);
             //Vertical Right
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                 new RectangleF(CurrentView.Left + (Options.TileWidth * Options.MapWidth) - 1, 0, 3, CurrentView.Height),
-                Color.DimGray);
+                System.Drawing.Color.DimGray);
 
             //Horizontal Top
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                 new RectangleF(CurrentView.Left, CurrentView.Y - 1, Options.TileWidth * Options.MapWidth, 3),
-                Color.DimGray);
+                System.Drawing.Color.DimGray);
             //Horizontal Buttom
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                 new RectangleF(CurrentView.Left, CurrentView.Y + (Options.TileHeight * Options.MapHeight) - 1,
-                    Options.TileWidth * Options.MapWidth, 3), Color.DimGray);
+                    Options.TileWidth * Options.MapWidth, 3), System.Drawing.Color.DimGray);
             //Vertical Left
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                 new RectangleF(CurrentView.Left - 1, CurrentView.Y, 3, Options.MapHeight * Options.TileHeight),
-                Color.DimGray);
+                System.Drawing.Color.DimGray);
             //Vertical Right
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                 new RectangleF(CurrentView.Left + (Options.TileWidth * Options.MapWidth) - 1, CurrentView.Y, 3,
-                    Options.MapHeight * Options.TileHeight), Color.DimGray);
+                    Options.MapHeight * Options.TileHeight), System.Drawing.Color.DimGray);
         }
 
         private static void DrawMapAttributes(MapInstance map, int gridX, int gridY, bool screenShotting,
@@ -991,7 +993,7 @@ namespace Intersect_Editor.Classes
                             {
                                 if (resource.Name != "" & resource.InitialGraphic != Strings.Get("general", "none"))
                                 {
-                                    Texture2D res = GetTexture(TextureType.Resource, resource.InitialGraphic);
+                                    Texture2D res = GetTexture(GameContentManager.TextureType.Resource, resource.InitialGraphic);
                                     if (res != null)
                                     {
                                         float xpos = x * Options.TileWidth + xoffset;
@@ -1048,7 +1050,7 @@ namespace Intersect_Editor.Classes
         {
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                 new RectangleF(0, 0, CurrentView.Width, CurrentView.Height),
-                Color.FromArgb(Globals.CurrentMap.AHue, Globals.CurrentMap.RHue, Globals.CurrentMap.GHue,
+                System.Drawing.Color.FromArgb(Globals.CurrentMap.AHue, Globals.CurrentMap.RHue, Globals.CurrentMap.GHue,
                     Globals.CurrentMap.BHue), target);
         }
 
@@ -1189,8 +1191,8 @@ namespace Intersect_Editor.Classes
                 {
                     for (int x = 0; x < screenShot.Width; ++x)
                     {
-                        Color bitmapColor =
-                            Color.FromArgb(data[y * screenShot.Width + x]);
+                        System.Drawing.Color bitmapColor =
+                            System.Drawing.Color.FromArgb(data[y * screenShot.Width + x]);
                         dstPointer[0] = bitmapColor.R;
                         dstPointer[1] = bitmapColor.G;
                         dstPointer[2] = bitmapColor.B;
@@ -1212,7 +1214,7 @@ namespace Intersect_Editor.Classes
             _fogUpdateTime = Globals.System.GetTimeMs();
             if (Globals.CurrentMap.Fog.Length > 0)
             {
-                Texture2D fogTex = GetTexture(TextureType.Fog, Globals.CurrentMap.Fog);
+                Texture2D fogTex = GetTexture(GameContentManager.TextureType.Fog, Globals.CurrentMap.Fog);
                 if (fogTex != null)
                 {
                     int xCount = (int) (Globals.MapEditorWindow.picMap.Width / fogTex.Width) + 1;
@@ -1250,7 +1252,7 @@ namespace Intersect_Editor.Classes
                                 new RectangleF(x * fogTex.Width + drawX,
                                     y * fogTex.Height + drawY, fogTex.Width,
                                     fogTex.Height),
-                                Color.FromArgb(Globals.CurrentMap.FogTransparency, 255, 255, 255), target);
+                                System.Drawing.Color.FromArgb(Globals.CurrentMap.FogTransparency, 255, 255, 255), target);
                         }
                     }
                 }
@@ -1274,22 +1276,22 @@ namespace Intersect_Editor.Classes
             if (tmpMap == null) return;
             if (screenShotting)
             {
-                Color gridLightColor = Color.FromArgb(Database.GridLightColor);
+                System.Drawing.Color gridLightColor = System.Drawing.Color.FromArgb(Database.GridLightColor);
                 if (!tmpMap.IsIndoors)
                 {
                     DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                         new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),
-                        Color.FromArgb(255, 255, 255, 255), DarknessTexture, BlendState.Additive);
+                        System.Drawing.Color.FromArgb(255, 255, 255, 255), DarknessTexture, BlendState.Additive);
                     DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                         new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),
-                        Color.FromArgb(gridLightColor.A, gridLightColor.R, gridLightColor.G, gridLightColor.B),
+                        System.Drawing.Color.FromArgb(gridLightColor.A, gridLightColor.R, gridLightColor.G, gridLightColor.B),
                         DarknessTexture, BlendState.NonPremultiplied);
                 }
                 else
                 {
                     DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                         new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),
-                        Color.FromArgb((byte) (((float) tmpMap.Brightness / 100f) * 255f), 255, 255, 255),
+                        System.Drawing.Color.FromArgb((byte) (((float) tmpMap.Brightness / 100f) * 255f), 255, 255, 255),
                         DarknessTexture, BlendState.Additive);
                 }
             }
@@ -1299,17 +1301,17 @@ namespace Intersect_Editor.Classes
                 {
                     DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                         new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),
-                        Color.FromArgb(255, 255, 255, 255), DarknessTexture, BlendState.Additive);
+                        System.Drawing.Color.FromArgb(255, 255, 255, 255), DarknessTexture, BlendState.Additive);
                     DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                         new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),
-                        Color.FromArgb(LightColor.A, LightColor.R, LightColor.G, LightColor.B), DarknessTexture,
+                        System.Drawing.Color.FromArgb(LightColor.A, LightColor.R, LightColor.G, LightColor.B), DarknessTexture,
                         BlendState.NonPremultiplied);
                 }
                 else if (tmpMap.IsIndoors)
                 {
                     DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                         new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),
-                        Color.FromArgb((byte) (((float) tmpMap.Brightness / 100f) * 255f), 255, 255, 255),
+                        System.Drawing.Color.FromArgb((byte) (((float) tmpMap.Brightness / 100f) * 255f), 255, 255, 255),
                         DarknessTexture,
                         BlendState.Additive);
                 }
@@ -1317,7 +1319,7 @@ namespace Intersect_Editor.Classes
                 {
                     DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                         new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),
-                        Color.FromArgb(255, 255, 255, 255), DarknessTexture,
+                        System.Drawing.Color.FromArgb(255, 255, 255, 255), DarknessTexture,
                         BlendState.Additive);
                 }
             }
@@ -1340,7 +1342,7 @@ namespace Intersect_Editor.Classes
 
             DrawTexture(DarknessTexture, new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),
                 new RectangleF(-Options.MapWidth * Options.TileWidth, -Options.MapHeight * Options.TileHeight,
-                    DarknessTexture.Width, DarknessTexture.Height), Color.FromArgb(255, 255, 255, 255), target,
+                    DarknessTexture.Width, DarknessTexture.Height), System.Drawing.Color.FromArgb(255, 255, 255, 255), target,
                 MultiplyState);
 
             ////Draw Light Attribute Icons
@@ -1352,19 +1354,19 @@ namespace Intersect_Editor.Classes
                     for (var y = 0; y < Options.MapHeight; y++)
                     {
                         if (tmpMap.FindLightAt(x, y) == null) continue;
-                        var lightTex = GetTexture(TextureType.Misc, "lighticon.png");
+                        var lightTex = GetTexture(GameContentManager.TextureType.Misc, "lighticon.png");
                         if (lightTex != null)
                         {
                             DrawTexture(lightTex, new RectangleF(0, 0, lightTex.Width, lightTex.Height),
                                 new RectangleF(CurrentView.Left + x * Options.TileWidth,
                                     CurrentView.Top + y * Options.TileHeight, Options.TileWidth, Options.TileHeight),
-                                Color.White, target);
+                                System.Drawing.Color.White, target);
                         }
                     }
                 }
                 DrawBoxOutline(CurrentView.Left + Globals.CurTileX * Options.TileWidth,
                     CurrentView.Top + Globals.CurTileY * Options.TileHeight, Options.TileWidth, Options.TileHeight,
-                    Color.White, target);
+                    System.Drawing.Color.White, target);
             }
         }
 
@@ -1389,7 +1391,7 @@ namespace Intersect_Editor.Classes
             y -= light.Size;
             x -= light.Size;
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(x, y, light.Size * 2, light.Size * 2),
-                Color.White,
+                System.Drawing.Color.White,
                 target, BlendState.Additive, shader);
         }
 
@@ -1418,7 +1420,7 @@ namespace Intersect_Editor.Classes
         {
             var destRectangle = new RectangleF(x, y, (int) tex.Width, (int) tex.Height);
             var srcRectangle = new RectangleF(0, 0, (int) tex.Width, (int) tex.Height);
-            DrawTexture(tex, srcRectangle, destRectangle, Color.White, RenderTarget2D, blendMode);
+            DrawTexture(tex, srcRectangle, destRectangle, System.Drawing.Color.White, RenderTarget2D, blendMode);
         }
 
         public static void DrawTexture(Texture2D tex, float dx, float dy, float sx, float sy, float w, float h,
@@ -1432,10 +1434,10 @@ namespace Intersect_Editor.Classes
         public static void DrawTexture(Texture2D tex, RectangleF srcRectangle, RectangleF targetRect,
             RenderTarget2D RenderTarget2D)
         {
-            DrawTexture(tex, srcRectangle, targetRect, Color.White, RenderTarget2D, BlendState.AlphaBlend);
+            DrawTexture(tex, srcRectangle, targetRect, System.Drawing.Color.White, RenderTarget2D, BlendState.AlphaBlend);
         }
 
-        public static void DrawTexture(Texture2D tex, RectangleF srcRectangle, RectangleF targetRect, Color renderColor,
+        public static void DrawTexture(Texture2D tex, RectangleF srcRectangle, RectangleF targetRect, System.Drawing.Color renderColor,
             RenderTarget2D renderTarget = null, BlendState blendMode = null, Effect shader = null,
             float rotationDegrees = 0)
         {
@@ -1464,7 +1466,7 @@ namespace Intersect_Editor.Classes
         }
 
         //Extra MonoGame Stuff
-        public static Microsoft.Xna.Framework.Color ConvertColor(Color clr)
+        public static Microsoft.Xna.Framework.Color ConvertColor(System.Drawing.Color clr)
         {
             return new Microsoft.Xna.Framework.Color(new Vector4(clr.R / 255f, clr.G / 255f, clr.B / 255f, clr.A / 255f));
         }

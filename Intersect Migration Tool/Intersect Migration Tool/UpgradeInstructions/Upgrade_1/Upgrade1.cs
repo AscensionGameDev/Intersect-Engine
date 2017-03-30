@@ -1,14 +1,15 @@
 ﻿using System;
 using Intersect;
 using Intersect.Logging;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Events;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Maps;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
+using Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib;
+using Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects;
+using Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Events;
+using Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Maps;
+using Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 using Mono.Data.Sqlite;
-using GameObject = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObject;
+using GameObject = Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObject;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_1
 {
     public class Upgrade1
     {
@@ -135,7 +136,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
         }
 
         //Game Object Saving/Loading
-        private string GetGameObjectTable(GameObject type)
+        private string GetGameObjectTable(Intersect_Convert_Lib.GameObject type)
         {
             var tableName = "";
             switch (type)
@@ -194,7 +195,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
             return tableName;
         }
 
-        private void ClearGameObjects(GameObject type)
+        private void ClearGameObjects(Intersect_Convert_Lib.GameObject type)
         {
             switch (type)
             {
@@ -251,7 +252,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
             }
         }
 
-        private void LoadGameObject(GameObject type, int index, byte[] data)
+        private void LoadGameObject(Intersect_Convert_Lib.GameObject type, int index, byte[] data)
         {
             switch (type)
             {
@@ -342,7 +343,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
             }
         }
 
-        public void LoadGameObjects(GameObject type)
+        public void LoadGameObjects(Intersect_Convert_Lib.GameObject type)
         {
             var nullIssues = "";
             lock (_dbLock)

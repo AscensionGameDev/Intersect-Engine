@@ -3,12 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Intersect;
+using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Classes.Maps;
+using Intersect.Editor.Forms;
 using Intersect.Localization;
-using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Classes.Maps;
-using Intersect_Editor.Forms;
 
-namespace Intersect_Editor.Classes
+namespace Intersect.Editor.Classes
 {
     public static class EditorLoop
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Maps
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Maps
 {
     public class MapAutotiles
     {

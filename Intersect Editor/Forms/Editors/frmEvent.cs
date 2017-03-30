@@ -6,19 +6,19 @@ using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Forms.Editors;
+using Intersect.Editor.Forms.Editors.Event_Commands;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Forms.Editors;
-using Intersect_Editor.Forms.Editors.Event_Commands;
 using Color = System.Drawing.Color;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class FrmEvent : Form
     {
@@ -121,7 +121,7 @@ namespace Intersect_Editor.Forms
             Bitmap destBitmap = null;
             destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
             graphics = Graphics.FromImage(destBitmap);
-            graphics.Clear(Color.FromArgb(60, 63, 65));
+            graphics.Clear(System.Drawing.Color.FromArgb(60, 63, 65));
 
             if (CurrentPage.Graphic.Type == 1) //Sprite
             {
@@ -599,11 +599,11 @@ namespace Intersect_Editor.Forms
             {
                 if (i == CurrentPageIndex)
                 {
-                    _pageTabs[i].BackColor = Color.FromArgb(90, 90, 90);
+                    _pageTabs[i].BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
                 }
                 else
                 {
-                    _pageTabs[i].BackColor = Color.FromArgb(45, 45, 48);
+                    _pageTabs[i].BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
                 }
             }
             cmbMoveType.SelectedIndex = CurrentPage.MovementType;

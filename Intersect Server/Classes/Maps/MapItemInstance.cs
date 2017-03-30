@@ -1,7 +1,7 @@
 ﻿using Intersect;
-using Intersect_Server.Classes.Items;
+using Intersect.Server.Classes.Items;
 
-namespace Intersect_Server.Classes.Maps
+namespace Intersect.Server.Classes.Maps
 {
     public class MapItemInstance : ItemInstance
     {

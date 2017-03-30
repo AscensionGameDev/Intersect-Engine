@@ -1,6 +1,6 @@
 ﻿using Intersect;
 
-namespace Intersect_Server.Classes.Spells
+namespace Intersect.Server.Classes.Spells
 {
     public class SpellInstance
     {

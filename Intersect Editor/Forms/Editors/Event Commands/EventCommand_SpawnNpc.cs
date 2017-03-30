@@ -3,15 +3,15 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Intersect;
+using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
 using Color = System.Drawing.Color;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_SpawnNpc : UserControl
     {
@@ -134,7 +134,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             Bitmap destBitmap = new Bitmap(pnlSpawnLoc.Width, pnlSpawnLoc.Height);
             Font renderFont = new Font(new FontFamily("Arial"), 14);
             Graphics g = Graphics.FromImage(destBitmap);
-            g.Clear(Color.White);
+            g.Clear(System.Drawing.Color.White);
             g.FillRectangle(Brushes.Red, new Rectangle((spawnX + 2) * 32, (spawnY + 2) * 32, 32, 32));
             for (int x = 0; x < 5; x++)
             {

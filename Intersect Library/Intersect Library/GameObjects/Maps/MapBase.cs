@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.Collections;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
 using Intersect.Models;

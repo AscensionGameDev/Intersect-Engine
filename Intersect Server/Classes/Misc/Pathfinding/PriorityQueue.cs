@@ -19,7 +19,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Intersect_Server.Classes.Misc.Pathfinding
+namespace Intersect.Server.Classes.Misc.Pathfinding
 {
     internal class PriorityQueue<T> where T : IIndexedObject
     {

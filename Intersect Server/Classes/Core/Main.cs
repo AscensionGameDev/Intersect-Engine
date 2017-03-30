@@ -7,11 +7,11 @@ using System.Threading;
 using Intersect;
 using Intersect.Localization;
 using Intersect.Logging;
-using Intersect_Server.Classes.Core;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Networking;
+using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Networking;
 
-namespace Intersect_Server.Classes
+namespace Intersect.Server.Classes
 {
     public class MainClass
     {

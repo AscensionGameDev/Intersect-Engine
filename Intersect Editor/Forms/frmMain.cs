@@ -5,18 +5,18 @@ using System.IO;
 using System.Windows.Forms;
 using DarkUI.Forms;
 using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Classes.General;
+using Intersect.Editor.Classes.Maps;
+using Intersect.Editor.Forms.DockingElements;
+using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Classes.General;
-using Intersect_Editor.Classes.Maps;
-using Intersect_Editor.Forms.DockingElements;
-using Intersect_Editor.Forms.Editors;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class frmMain : Form
     {

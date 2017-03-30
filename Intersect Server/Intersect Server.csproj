@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Intersect_Server</RootNamespace>
+    <RootNamespace>Intersect.Server</RootNamespace>
     <AssemblyName>Intersect Server</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
@@ -35,7 +35,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Intersect_Server.Classes.MainClass</StartupObject>
+    <StartupObject>Intersect.Server.Classes.MainClass</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Icon.ico</ApplicationIcon>

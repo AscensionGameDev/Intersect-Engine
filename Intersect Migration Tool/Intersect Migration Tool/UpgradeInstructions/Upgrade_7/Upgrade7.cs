@@ -3,15 +3,16 @@ using System.IO;
 using System.Xml;
 using Intersect;
 using Intersect.Logging;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Maps;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Maps;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 using Mono.Data.Sqlite;
-using GameObject = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObject;
-using Options = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.Options;
+using GameObject = Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObject;
+using Options = Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.Options;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
 {
     public class Upgrade7
     {
@@ -85,10 +86,10 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                     doc.CreateComment("Paperdoll is rendered in the following order when facing " + dir +
                                       ". If you want to change when each piece of equipment gets rendered simply swap the equipment names.");
                 dirElement.AppendChild(comment);
-                for (int i = 0; i < Options.PaperdollOrder.Count; i++)
+                for (int i = 0; i < Intersect_Convert_Lib.Options.PaperdollOrder.Count; i++)
                 {
                     XmlElement slot = doc.CreateElement("Slot" + i);
-                    slot.InnerText = Options.PaperdollOrder[i];
+                    slot.InnerText = Intersect_Convert_Lib.Options.PaperdollOrder[i];
                     dirElement.AppendChild(slot);
                 }
                 eleNew.AppendChild(dirElement);
@@ -119,17 +120,17 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
         //Game Object Saving/Loading
         private void LoadAllGameObjects()
         {
-            foreach (var val in Enum.GetValues(typeof(GameObject)))
+            foreach (var val in Enum.GetValues(typeof(Intersect_Convert_Lib.GameObject)))
             {
-                if ((GameObject) val != GameObject.Time)
+                if ((Intersect_Convert_Lib.GameObject) val != GameObject.Time)
                 {
-                    LoadGameObjects((GameObject) val);
+                    LoadGameObjects((Intersect_Convert_Lib.GameObject) val);
                 }
             }
         }
 
         //Game Object Saving/Loading
-        private string GetGameObjectTable(GameObject type)
+        private string GetGameObjectTable(Intersect_Convert_Lib.GameObject type)
         {
             var tableName = "";
             switch (type)
@@ -191,7 +192,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
             return tableName;
         }
 
-        private void ClearGameObjects(GameObject type)
+        private void ClearGameObjects(Intersect_Convert_Lib.GameObject type)
         {
             switch (type)
             {
@@ -251,7 +252,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
             }
         }
 
-        private void LoadGameObject(GameObject type, int index, byte[] data)
+        private void LoadGameObject(Intersect_Convert_Lib.GameObject type, int index, byte[] data)
         {
             switch (type)
             {
@@ -364,7 +365,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
             }
         }
 
-        public void LoadGameObjects(GameObject type)
+        public void LoadGameObjects(Intersect_Convert_Lib.GameObject type)
         {
             var nullIssues = "";
             lock (_dbLock)

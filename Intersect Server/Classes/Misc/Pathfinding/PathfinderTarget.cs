@@ -1,4 +1,4 @@
-﻿namespace Intersect_Server.Classes.Misc.Pathfinding
+﻿namespace Intersect.Server.Classes.Misc.Pathfinding
 {
     public class PathfinderTarget
     {

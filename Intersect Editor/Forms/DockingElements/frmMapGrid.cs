@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Windows.Forms;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.Maps;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Maps;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace Intersect_Editor.Forms.DockingElements
+namespace Intersect.Editor.Forms.DockingElements
 {
     public partial class frmMapGrid : DockContent
     {

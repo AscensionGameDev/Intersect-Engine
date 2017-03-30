@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Server.Classes.Core;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Items;
-using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Networking;
-using Intersect_Server.Classes.Spells;
+using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Items;
+using Intersect.Server.Classes.Maps;
+using Intersect.Server.Classes.Networking;
+using Intersect.Server.Classes.Spells;
 using Attribute = Intersect.GameObjects.Maps.Attribute;
 
-namespace Intersect_Server.Classes.Entities
+namespace Intersect.Server.Classes.Entities
 {
     public class Entity
     {

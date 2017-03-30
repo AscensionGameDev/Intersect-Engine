@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Intersect.Editor.Forms.Editors.Event_Commands;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Forms.Editors.Event_Commands;
 
-namespace Intersect_Editor.Forms.Editors
+namespace Intersect.Editor.Forms.Editors
 {
     public enum RequirementType
     {

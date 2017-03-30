@@ -1,4 +1,5 @@
-﻿using Intersect.GameObjects.Conditions;
+﻿using Intersect.Enums;
+using Intersect.GameObjects.Conditions;
 
 namespace Intersect.GameObjects
 {

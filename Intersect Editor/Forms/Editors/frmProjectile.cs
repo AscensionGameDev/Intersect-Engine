@@ -8,7 +8,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
 
-namespace Intersect_Editor.Classes
+namespace Intersect.Editor.Classes
 {
     public partial class frmProjectile : Form
     {

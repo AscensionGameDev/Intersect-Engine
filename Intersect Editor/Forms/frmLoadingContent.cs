@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class frmLoadingContent : Form
     {

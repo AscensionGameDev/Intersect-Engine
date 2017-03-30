@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Intersect;
+using Intersect.Enums;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;

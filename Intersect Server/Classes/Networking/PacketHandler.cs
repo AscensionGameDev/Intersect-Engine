@@ -9,15 +9,15 @@ using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
 using Intersect.Models;
+using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.Entities;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Items;
+using Intersect.Server.Classes.Maps;
+using Intersect.Server.Classes.Spells;
 using Intersect_Client.Classes.Misc;
-using Intersect_Server.Classes.Core;
-using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Items;
-using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Spells;
 
-namespace Intersect_Server.Classes.Networking
+namespace Intersect.Server.Classes.Networking
 {
     public class PacketHandler
     {

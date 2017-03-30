@@ -9,16 +9,16 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Intersect;
+using Intersect.Editor.Classes.Content;
+using Intersect.Editor.Forms;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Logging;
-using Intersect_Editor.Classes.Content;
-using Intersect_Editor.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Intersect_Editor.Classes.Core
+namespace Intersect.Editor.Classes.Core
 {
     public static class GameContentManager
     {

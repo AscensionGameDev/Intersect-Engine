@@ -4,15 +4,15 @@ using System.Drawing;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Core;
 using Microsoft.Xna.Framework.Graphics;
 using Color = System.Drawing.Color;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class frmAnimation : Form
     {
@@ -318,7 +318,7 @@ namespace Intersect_Editor.Forms
             }
             EditorGraphics.DrawTexture(EditorGraphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                 new RectangleF(0, 0, lowerDarkness.Width, lowerDarkness.Height),
-                Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255, 255), lowerDarkness,
+                System.Drawing.Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255, 255), lowerDarkness,
                 BlendState.Additive);
 
             graphicsDevice.SetRenderTarget(lowerWindow);
@@ -362,7 +362,7 @@ namespace Intersect_Editor.Forms
             }
             EditorGraphics.DrawTexture(EditorGraphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                 new RectangleF(0, 0, upperDarkness.Width, upperDarkness.Height),
-                Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255, 255), upperDarkness,
+                System.Drawing.Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255, 255), upperDarkness,
                 BlendState.Additive);
 
             graphicsDevice.SetRenderTarget(upperWindow);

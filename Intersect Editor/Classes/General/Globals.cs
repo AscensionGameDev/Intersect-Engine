@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using Intersect;
+using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Classes.General;
+using Intersect.Editor.Classes.Maps;
+using Intersect.Editor.Forms;
+using Intersect.Editor.Forms.DockingElements;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
-using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Classes.General;
-using Intersect_Editor.Classes.Maps;
-using Intersect_Editor.Forms;
-using Intersect_Editor.Forms.DockingElements;
 
-namespace Intersect_Editor.Classes
+namespace Intersect.Editor.Classes
 {
     public static class Globals
     {

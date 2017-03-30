@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Networking;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Maps;
+using Intersect.Server.Classes.Networking;
 
-namespace Intersect_Server.Classes.Entities
+namespace Intersect.Server.Classes.Entities
 {
     public class Projectile : Entity
     {

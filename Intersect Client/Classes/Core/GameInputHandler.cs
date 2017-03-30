@@ -1,5 +1,6 @@
 ﻿using System;
 using Intersect;
+using Intersect.Enums;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Input;
 using Intersect_Client.Classes.General;

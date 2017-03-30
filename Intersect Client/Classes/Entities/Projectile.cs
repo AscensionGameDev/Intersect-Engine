@@ -1,4 +1,5 @@
 ﻿using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;

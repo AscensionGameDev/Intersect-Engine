@@ -2,13 +2,13 @@
 using System.Windows.Forms;
 using DarkUI.Controls;
 using Intersect;
+using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Editors.Quest
+namespace Intersect.Editor.Forms.Editors.Quest
 {
     public partial class Quest_TaskEditor : UserControl
     {

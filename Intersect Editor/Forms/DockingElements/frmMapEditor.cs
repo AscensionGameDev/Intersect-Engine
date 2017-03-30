@@ -5,17 +5,18 @@ using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Forms;
 using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.General;
+using Intersect.Editor.Classes.Maps;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.General;
-using Intersect_Editor.Classes.Maps;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class frmMapEditor : DockContent
     {

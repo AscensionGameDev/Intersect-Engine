@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Maps.MapList
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Maps.MapList
 {
     public class MapList
     {
