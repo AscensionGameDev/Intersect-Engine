@@ -123,6 +123,7 @@
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IntersectGame.cs" />
+    <Compile Include="Network\ClientNetwork.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

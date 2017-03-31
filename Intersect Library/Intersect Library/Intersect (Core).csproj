@@ -127,6 +127,24 @@
     <Compile Include="Models\IDatabaseObject.cs" />
     <Compile Include="Models\IGameObject.cs" />
     <Compile Include="Models\IIndexedGameObject.cs" />
+    <Compile Include="Network\AbstractNetwork.cs" />
+    <Compile Include="Network\AbstractPacket.cs" />
+    <Compile Include="Network\AbstractExtendedPacket.cs" />
+    <Compile Include="Network\HandlePacket.cs" />
+    <Compile Include="Network\IExtendedPacket.cs" />
+    <Compile Include="Network\INetwork.cs" />
+    <Compile Include="Network\IPacket.cs" />
+    <Compile Include="Network\IPacketGroup.cs" />
+    <Compile Include="Network\NetworkThread.cs" />
+    <Compile Include="Network\PacketDispatcher.cs" />
+    <Compile Include="Network\PacketGroups.cs" />
+    <Compile Include="Network\PacketQueue.cs" />
+    <Compile Include="Network\PacketRegistry.cs" />
+    <Compile Include="Network\Packets\Ping\PingPacket.cs" />
+    <Compile Include="Network\Packets\Ping\PingPacketGroup.cs" />
+    <Compile Include="Network\Packets\Utility\AbstractUtilityPacket.cs" />
+    <Compile Include="Network\Packets\Utility\ServerConfigurationPacket.cs" />
+    <Compile Include="Network\Packets\Utility\UtilityPackets.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -136,6 +154,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="TextUtils.cs" />
+    <Compile Include="Threading\IThreadYield.cs" />
+    <Compile Include="Threading\ThreadYieldNet35.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
