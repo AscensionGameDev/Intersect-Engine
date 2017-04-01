@@ -2138,11 +2138,6 @@ namespace Intersect.Server.Classes.Core
             GenerateMapGrids();
             LoadMapFolders();
             CheckAllMapConnections();
-            
-            foreach (MapInstance map in MapInstance.Lookup.IndexValues)
-            {
-                map.InitAutotiles();
-            }
         }
 
         private static void OnClassesLoaded()

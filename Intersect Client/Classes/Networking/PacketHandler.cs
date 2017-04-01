@@ -314,13 +314,14 @@ namespace Intersect_Client.Classes.Networking
             {
                 GameAudio.PlayMusic(map.Music, 3, 3, true);
             }
-            map.Autotiles.LoadData(bf);
             map.MapGridX = bf.ReadInteger();
             map.MapGridY = bf.ReadInteger();
             map.HoldLeft = bf.ReadInteger();
             map.HoldRight = bf.ReadInteger();
             map.HoldUp = bf.ReadInteger();
             map.HoldDown = bf.ReadInteger();
+            map.Autotiles.InitAutotiles(map.GenerateAutotileGrid());
+            if (MapInstance.OnMapLoaded != null) MapInstance.OnMapLoaded(map);
             Globals.Me.FetchNewMaps();
         }
 

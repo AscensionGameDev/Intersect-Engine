@@ -11,6 +11,7 @@ using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using Intersect.Enums;
@@ -36,6 +37,8 @@ namespace Intersect_Client.Classes.Maps
         }
 
         //Client Only Values
+        public delegate void MapLoadedDelegate(MapInstance map);
+        public static MapLoadedDelegate OnMapLoaded;
 
         //Map State Variables
         public static Dictionary<int, long> MapRequests = new Dictionary<int, long>();
@@ -75,16 +78,22 @@ namespace Intersect_Client.Classes.Maps
         public List<MapAnimationInstance> LocalAnimations = new List<MapAnimationInstance>();
         public Dictionary<int, Entity> LocalEntities = new Dictionary<int, Entity>();
 
-        public List<int> LocalEntitiesToDispose = new List<int>();
-        public GameRenderTexture[] LowerTextures = new GameRenderTexture[3];
-
         //Map Items
         public Dictionary<int, MapItemInstance> MapItems = new Dictionary<int, MapItemInstance>();
 
         //Map Players/Events/Npcs
+        public List<int> LocalEntitiesToDispose = new List<int>();
         private List<Event> mEvents = new List<Event>();
+
+        //Map Textures (If RenderCache is on)
         public GameRenderTexture[] PeakTextures = new GameRenderTexture[3];
         public GameRenderTexture[] UpperTextures = new GameRenderTexture[3];
+        public GameRenderTexture[] LowerTextures = new GameRenderTexture[3];
+
+        //Autotile Redraws
+        public List<Intersect.Point> LowerAutotileRedraws = new List<Intersect.Point>();
+        public List<Intersect.Point> UpperAutotileRedraws = new List<Intersect.Point>();
+        public List<Intersect.Point> PeakAutotileRedraws = new List<Intersect.Point>();
 
         //Initialization
         public MapInstance(int mapNum) : base(mapNum, true)
@@ -117,6 +126,7 @@ namespace Intersect_Client.Classes.Maps
             Autotiles = new MapAutotiles(this);
             CreateMapSounds();
             MapRendered = false;
+            OnMapLoaded += HandleMapLoaded;
         }
 
         //Updating
@@ -177,7 +187,7 @@ namespace Intersect_Client.Classes.Maps
         public MapBase[,] GenerateAutotileGrid()
         {
             MapBase[,] mapBase = new MapBase[3, 3];
-            if (Globals.MapGrid != null)
+            if (Globals.MapGrid != null && Globals.GridMaps.Contains(Index))
             {
                 for (int x = -1; x <= 1; x++)
                 {
@@ -347,6 +357,16 @@ namespace Intersect_Client.Classes.Maps
             }
             else
             {
+                //If we have autotiles that recalculated then let's redraw them without redrawing the whole map....
+                var autotileUpdates = LowerAutotileRedraws.ToArray();
+                LowerAutotileRedraws.Clear();
+                RedrawAutotiles(autotileUpdates, LowerTextures, 0);
+                autotileUpdates = UpperAutotileRedraws.ToArray();
+                UpperAutotileRedraws.Clear();
+                RedrawAutotiles(autotileUpdates, UpperTextures, 1);
+                autotileUpdates = PeakAutotileRedraws.ToArray();
+                PeakAutotileRedraws.Clear();
+                RedrawAutotiles(autotileUpdates, PeakTextures, 2);
                 if (layer == 0)
                 {
                     GameGraphics.DrawGameTexture(LowerTextures[Globals.AnimFrame], GetX(), GetY());
@@ -395,6 +415,143 @@ namespace Intersect_Client.Classes.Maps
             }
         }
 
+        private void HandleMapLoaded(MapInstance map)
+        {
+            //See if this new map is on the same grid as us
+            if (map != this && Globals.GridMaps.Contains(map.Index) && Globals.GridMaps.Contains(this.Index))
+            {
+                var surroundingMaps = GenerateAutotileGrid();
+                if (map.MapGridX == MapGridX - 1)
+                {
+                    if (map.MapGridY == MapGridY - 1)
+                    {
+                        //Check Northwest
+                        CheckAutotile(0, 0, surroundingMaps);
+                    }
+                    else if (map.MapGridY == MapGridY)
+                    {
+                        //Check West
+                        for (int y = 0; y < Options.MapHeight; y++)
+                        {
+                            CheckAutotile(0, y, surroundingMaps);
+                        }
+                    }
+                    else if (map.MapGridY == MapGridY + 1)
+                    {
+                        //Check Southwest
+                        CheckAutotile(0, Options.MapHeight -1, surroundingMaps);
+                    }
+                }
+                else if (map.MapGridX == MapGridX)
+                {
+                    if (map.MapGridY == MapGridY - 1)
+                    {
+                        //Check North
+                        for (int x = 0; x < Options.MapWidth; x++)
+                        {
+                            CheckAutotile(x, 0, surroundingMaps);
+                        }
+                    }
+                    else if (map.MapGridY == MapGridY + 1)
+                    {
+                        //Check South
+                        for (int x = 0; x < Options.MapWidth; x++)
+                        {
+                            CheckAutotile(x, Options.MapHeight -1, surroundingMaps);
+                        }
+                    }
+                }
+                else if (map.MapGridX == MapGridX + 1)
+                {
+                    if (map.MapGridY == MapGridY - 1)
+                    {
+                        //Check Northeast
+                        CheckAutotile(Options.MapWidth -1, Options.MapHeight, surroundingMaps);
+                    }
+                    else if (map.MapGridY == MapGridY)
+                    {
+                        //Check East
+                        for (int y = 0; y < Options.MapHeight; y++)
+                        {
+                            CheckAutotile(Options.MapWidth -1, y, surroundingMaps);
+                        }
+                    }
+                    else if (map.MapGridY == MapGridY + 1)
+                    {
+                        //Check Southeast
+                        CheckAutotile(Options.MapWidth -1, Options.MapHeight - 1, surroundingMaps);
+                    }
+                }
+            }
+        }
+
+        private void CheckAutotile(int x, int y, MapBase[,] surroundingMaps)
+        {
+            var addedLower = false;
+            for (int layer = 0; layer < 5; layer++)
+            {
+                if (Autotiles.UpdateAutoTile(x, y, layer, surroundingMaps) && Globals.Database.RenderCaching)
+                {
+                    Intersect.Point pnt;
+                    pnt.X = x;
+                    pnt.Y = y;
+                    if (layer == 3)
+                    {
+                        if (!UpperAutotileRedraws.Contains(pnt)) UpperAutotileRedraws.Add(pnt);
+                    }
+                    else if (layer == 4)
+                    {
+                        if (!PeakAutotileRedraws.Contains(pnt)) PeakAutotileRedraws.Add(pnt);
+                    }
+                    else
+                    {
+                        if (!LowerAutotileRedraws.Contains(pnt)) LowerAutotileRedraws.Add(pnt);
+                    }
+                }
+            }
+        }
+
+        private void RedrawAutotiles(Intersect.Point[] points, GameRenderTexture[] textures, int layer)
+        {
+            int layerMin = 0;
+            int layerMax = 0;
+            switch (layer)
+            {
+                case 0: //Lower 3 layers
+                    layerMax = 2;
+                    break;
+                case 1: //Upper Layers
+                    layerMin = 3;
+                    layerMax = 3;
+                    break;
+                case 2: //Peak Layers
+                    layerMin = 4;
+                    layerMax = 4;
+                    break;
+            }
+            if (points == null || points.Length == 0) return;
+            //We want to run this in such a way that we are switching textures as little as possible
+            for (int animFrame = 0; animFrame < 3; animFrame++)
+            {
+                //Clear all of the layers
+                for (layer = layerMin; layer <= layerMax; layer++)
+                {
+                    foreach (var pnt in points)
+                    {
+                        GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(pnt.X * Options.TileWidth, pnt.Y * Options.TileHeight, Options.TileWidth, Options.TileHeight), Color.White, textures[animFrame], GameBlendModes.Cutout, null, 0f);
+                    }
+                }
+                //Then draw all of the layers
+                for (layer = layerMin; layer <= layerMax; layer++)
+                {
+                    foreach (var pnt in points)
+                    {
+                        DrawTile(pnt.X, pnt.Y, layer, animFrame, 0, 0, textures[animFrame]);
+                    }
+                }
+            }
+        }
+
         private void DrawAutoTile(int layerNum, float destX, float destY, int quarterNum, int x, int y, int forceFrame,
             GameRenderTexture tex)
         {
@@ -426,7 +583,7 @@ namespace Intersect_Client.Classes.Maps
             }
         }
 
-        private void DrawMapLayer(GameRenderTexture tex, int l, int z, float xoffset = 0, float yoffset = 0)
+        private void DrawMapLayer(GameRenderTexture tex, int layer, int animFrame, float xoffset = 0, float yoffset = 0)
         {
             int xmin = 0;
             int xmax = Options.MapWidth;
@@ -469,30 +626,35 @@ namespace Intersect_Client.Classes.Maps
             {
                 for (var y = ymin; y < ymax; y++)
                 {
-                    var tileset = TilesetBase.Lookup.Get<TilesetBase>(Layers[l].Tiles[x, y].TilesetIndex);
-                    if (tileset == null) continue;
-                    GameTexture tilesetTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
-                        tileset.Name);
-                    if (tilesetTex == null) continue;
-                    switch (Autotiles.Autotile[x, y].Layer[l].RenderState)
-                    {
-                        case MapAutotiles.RenderStateNormal:
-                            GameGraphics.DrawGameTexture(tilesetTex, x * Options.TileWidth + xoffset,
-                                y * Options.TileHeight + yoffset, Layers[l].Tiles[x, y].X * Options.TileWidth,
-                                Layers[l].Tiles[x, y].Y * Options.TileHeight, Options.TileWidth, Options.TileHeight, tex);
-                            break;
-                        case MapAutotiles.RenderStateAutotile:
-                            DrawAutoTile(l, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x, y,
-                                z, tex);
-                            DrawAutoTile(l, x * Options.TileWidth + (Options.TileWidth / 2) + xoffset,
-                                y * Options.TileHeight + yoffset, 2, x, y, z, tex);
-                            DrawAutoTile(l, x * Options.TileWidth + xoffset,
-                                y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 3, x, y, z, tex);
-                            DrawAutoTile(l, +x * Options.TileWidth + (Options.TileWidth / 2) + xoffset,
-                                y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 4, x, y, z, tex);
-                            break;
-                    }
+                    DrawTile(x, y, layer, animFrame, xoffset, yoffset,tex);
                 }
+            }
+        }
+
+        private void DrawTile(int x, int y, int layer, int animFrame, float xoffset, float yoffset, GameRenderTexture tex)
+        {
+            var tileset = TilesetBase.Lookup.Get<TilesetBase>(Layers[layer].Tiles[x, y].TilesetIndex);
+            if (tileset == null) return;
+            GameTexture tilesetTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
+                tileset.Name);
+            if (tilesetTex == null) return;
+            switch (Autotiles.Autotile[x, y].Layer[layer].RenderState)
+            {
+                case MapAutotiles.RenderStateNormal:
+                    GameGraphics.DrawGameTexture(tilesetTex, x * Options.TileWidth + xoffset,
+                        y * Options.TileHeight + yoffset, Layers[layer].Tiles[x, y].X * Options.TileWidth,
+                        Layers[layer].Tiles[x, y].Y * Options.TileHeight, Options.TileWidth, Options.TileHeight, tex);
+                    break;
+                case MapAutotiles.RenderStateAutotile:
+                    DrawAutoTile(layer, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x, y,
+                        animFrame, tex);
+                    DrawAutoTile(layer, x * Options.TileWidth + (Options.TileWidth / 2) + xoffset,
+                        y * Options.TileHeight + yoffset, 2, x, y, animFrame, tex);
+                    DrawAutoTile(layer, x * Options.TileWidth + xoffset,
+                        y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 3, x, y, animFrame, tex);
+                    DrawAutoTile(layer, +x * Options.TileWidth + (Options.TileWidth / 2) + xoffset,
+                        y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 4, x, y, animFrame, tex);
+                    break;
             }
         }
 

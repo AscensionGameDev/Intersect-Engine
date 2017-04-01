@@ -135,7 +135,6 @@ namespace Intersect.Server.Classes.Networking
                     bf.WriteLong(MapData.Length);
                     bf.WriteBytes(MapData);
                     bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).Revision);
-                    bf.WriteBytes(MapInstance.Lookup.Get<MapInstance>(mapNum).Autotiles.GetData());
                     bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).MapGridX);
                     bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).MapGridY);
                     if (Options.GameBorderStyle == 1)
