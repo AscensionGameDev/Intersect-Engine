@@ -47,6 +47,7 @@ namespace Intersect.Server.Classes.Maps
 
         //Temporary Values
         public List<int> SurroundingMaps = new List<int>();
+        public long TileAccessTime;
 
         //Init
         public MapInstance() : base(-1, false)
@@ -123,13 +124,34 @@ namespace Intersect.Server.Classes.Maps
         {
             return GetMapData(forClient);
         }
-        public byte[] GetTileData()
+        public byte[] GetTileData(bool shouldCache = true)
         {
-            //if (TileData == null)
-            //{
-            //    TileData = Database.GetMapTiles(Index);
-            //}
-            return Database.GetMapTiles(Index);
+            //If the tile data is cached then send it
+            //Else grab it (and maybe cache it)
+            lock (GetMapLock())
+            {
+                if (TileData != null)
+                {
+                    if (shouldCache)
+                    {
+                        TileAccessTime = Globals.System.GetTimeMs();
+                    }
+                    return TileData;
+                }
+                else
+                {
+                    if (shouldCache)
+                    {
+                        TileData = Database.GetMapTiles(Index);
+                        TileAccessTime = Globals.System.GetTimeMs();
+                        return TileData;
+                    }
+                    else
+                    {
+                        return Database.GetMapTiles(Index);
+                    }
+                }
+            }
         }
 
         //Items & Resources
@@ -566,9 +588,14 @@ namespace Intersect.Server.Classes.Maps
         //Update + Related Functions
         public void Update(long timeMs)
         {
-            lock (_mapLock)
+            lock (GetMapLock())
             {
-                if (CheckActive() == false)
+                //See if we should dispose of tile data
+                if (TileAccessTime + 30000 < timeMs && TileData != null)
+                {
+                    TileData = null;
+                }
+                if (!Active || CheckActive() == false)
                 {
                     return;
                 }

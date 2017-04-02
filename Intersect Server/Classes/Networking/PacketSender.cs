@@ -118,7 +118,7 @@ namespace Intersect.Server.Classes.Networking
                     MapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetMapPacket(false);
                     bf.WriteInteger(MapData.Length);
                     bf.WriteBytes(MapData);
-                    var tileData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetTileData();
+                    var tileData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetTileData(false);
                     bf.WriteInteger(tileData.Length);
                     bf.WriteBytes(tileData);
                     bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).MapGridX);
@@ -224,7 +224,7 @@ namespace Intersect.Server.Classes.Networking
                 byte[] MapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetMapPacket(false);
                 bf.WriteInteger(MapData.Length);
                 bf.WriteBytes(MapData);
-                var tileData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetTileData();
+                var tileData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetTileData(false);
                 bf.WriteInteger(tileData.Length);
                 bf.WriteBytes(tileData);
             }
