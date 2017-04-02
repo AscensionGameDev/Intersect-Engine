@@ -141,6 +141,7 @@ namespace Intersect_Client.Classes.Core
                 ClearDarknessTexture();
 
                 TryPreRendering();
+                FixAutotiles();
 
                 GenerateLightMap();
 
@@ -346,6 +347,31 @@ namespace Intersect_Client.Classes.Core
                                 {
                                     map.PreRenderMap();
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void FixAutotiles()
+        {
+            if (Globals.Database.RenderCaching && Globals.Me != null &&
+                MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
+            {
+                var gridX = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridX;
+                var gridY = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridY;
+                for (int x = gridX - 1; x <= gridX + 1; x++)
+                {
+                    for (int y = gridY - 1; y <= gridY + 1; y++)
+                    {
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                            Globals.MapGrid[x, y] != -1)
+                        {
+                            var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
+                            if (map != null && map.MapRendered)
+                            {
+                                map.FixAutotiles();
                             }
                         }
                     }

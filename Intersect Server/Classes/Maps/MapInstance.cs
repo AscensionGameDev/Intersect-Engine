@@ -125,11 +125,11 @@ namespace Intersect.Server.Classes.Maps
         }
         public byte[] GetTileData()
         {
-            if (TileData == null)
-            {
-                TileData = Database.GetMapTiles(Index);
-            }
-            return TileData;
+            //if (TileData == null)
+            //{
+            //    TileData = Database.GetMapTiles(Index);
+            //}
+            return Database.GetMapTiles(Index);
         }
 
         //Items & Resources

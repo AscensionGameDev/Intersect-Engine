@@ -344,6 +344,20 @@ namespace Intersect_Client.Classes.Maps
             ClearMapAttributes();
         }
 
+        public void FixAutotiles()
+        {
+            //If we have autotiles that recalculated then let's redraw them without redrawing the whole map....
+            var autotileUpdates = LowerAutotileRedraws.ToArray();
+            LowerAutotileRedraws.Clear();
+            RedrawAutotiles(autotileUpdates, LowerTextures, 0);
+            autotileUpdates = UpperAutotileRedraws.ToArray();
+            UpperAutotileRedraws.Clear();
+            RedrawAutotiles(autotileUpdates, UpperTextures, 1);
+            autotileUpdates = PeakAutotileRedraws.ToArray();
+            PeakAutotileRedraws.Clear();
+            RedrawAutotiles(autotileUpdates, PeakTextures, 2);
+        }
+
         //Rendering/Drawing Code
         public void Draw(int layer = 0)
         {
@@ -378,16 +392,6 @@ namespace Intersect_Client.Classes.Maps
             }
             else
             {
-                //If we have autotiles that recalculated then let's redraw them without redrawing the whole map....
-                var autotileUpdates = LowerAutotileRedraws.ToArray();
-                LowerAutotileRedraws.Clear();
-                RedrawAutotiles(autotileUpdates, LowerTextures, 0);
-                autotileUpdates = UpperAutotileRedraws.ToArray();
-                UpperAutotileRedraws.Clear();
-                RedrawAutotiles(autotileUpdates, UpperTextures, 1);
-                autotileUpdates = PeakAutotileRedraws.ToArray();
-                PeakAutotileRedraws.Clear();
-                RedrawAutotiles(autotileUpdates, PeakTextures, 2);
                 if (layer == 0)
                 {
                     GameGraphics.DrawGameTexture(LowerTextures[Globals.AnimFrame], GetX(), GetY());
