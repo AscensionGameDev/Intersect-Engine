@@ -1,4 +1,5 @@
-﻿using Intersect.GameObjects;
+﻿using System.Linq;
+using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;
@@ -202,7 +203,8 @@ namespace Intersect_Client.Classes.Core
             Globals.EntitiesToDispose.Clear();
 
             //Update Maps
-            foreach (MapInstance map in MapInstance.Lookup.Values)
+            var maps = MapInstance.Lookup.Values.ToArray();
+            foreach (MapInstance map in maps)
             {
                 if (map == null) continue;
                 map.Update(map.InView());

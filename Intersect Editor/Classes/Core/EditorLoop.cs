@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -99,7 +100,8 @@ namespace Intersect.Editor.Classes
                         new Task((() => progressForm.ShowDialog())).Start();
                         while (Globals.MapsToScreenshot.Count > 0)
                         {
-                            foreach (MapInstance map in MapInstance.Lookup.IndexValues)
+                            var maps = MapInstance.Lookup.IndexValues.ToArray();
+                            foreach (MapInstance map in maps)
                             {
                                 if (!myForm.Disposing && progressForm.IsHandleCreated)
                                     progressForm.BeginInvoke(

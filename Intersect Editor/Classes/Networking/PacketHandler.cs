@@ -126,8 +126,10 @@ namespace Intersect.Editor.Classes
             }
             else
             {
-                var mapLength = bf.ReadLong();
-                var mapData = bf.ReadBytes((int) mapLength);
+                var mapLength = bf.ReadInteger();
+                var mapData = bf.ReadBytes(mapLength);
+                var tileLength = bf.ReadInteger();
+                var tileData = bf.ReadBytes(tileLength);
                 var map = new MapInstance((int) mapNum);
                 if (MapInstance.Lookup.Get<MapInstance>(mapNum) != null)
                 {
@@ -137,6 +139,8 @@ namespace Intersect.Editor.Classes
                 }
                 MapInstance.Lookup.Set(mapNum, map);
                 map.Load(mapData);
+                map.LoadTileData(tileData);
+                map.SaveStateAsUnchanged();
                 map.MapGridX = bf.ReadInteger();
                 map.MapGridY = bf.ReadInteger();
                 map.InitAutotiles();

@@ -695,7 +695,7 @@ namespace Intersect.Editor.Forms
             fileDialog.ShowDialog();
             var buff = new ByteBuffer();
             buff.WriteString(Application.ProductVersion);
-            buff.WriteBytes(Globals.CurrentMap.GetMapData(false));
+            buff.WriteBytes(Globals.CurrentMap.SaveInternal());
             if (fileDialog.FileName != "")
             {
                 File.WriteAllBytes(fileDialog.FileName, buff.ToArray());
@@ -720,7 +720,7 @@ namespace Intersect.Editor.Forms
                 if (buff.ReadString() == Application.ProductVersion)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    Globals.CurrentMap.Load(buff.ReadBytes(buff.Length(), true));
+                    Globals.CurrentMap.LoadInternal(buff.ReadBytes(buff.Length(), true));
                     Globals.MapEditorWindow.AddUndoState();
                 }
                 else
@@ -935,7 +935,7 @@ namespace Intersect.Editor.Forms
             var tmpMap = Globals.CurrentMap;
             if (Globals.MapEditorWindow.MapUndoStates.Count > 0)
             {
-                tmpMap.Load(Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1]);
+                tmpMap.LoadInternal(Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1]);
                 Globals.MapEditorWindow.MapRedoStates.Add(Globals.MapEditorWindow.CurrentMapState);
                 Globals.MapEditorWindow.CurrentMapState =
                     Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1];
@@ -950,7 +950,7 @@ namespace Intersect.Editor.Forms
             var tmpMap = Globals.CurrentMap;
             if (Globals.MapEditorWindow.MapRedoStates.Count > 0)
             {
-                tmpMap.Load(Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1]);
+                tmpMap.LoadInternal(Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1]);
                 Globals.MapEditorWindow.MapUndoStates.Add(Globals.MapEditorWindow.CurrentMapState);
                 Globals.MapEditorWindow.CurrentMapState =
                     Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1];
