@@ -115,9 +115,12 @@ namespace Intersect.Server.Classes.Networking
                 byte[] MapData = null;
                 if (client.IsEditor)
                 {
-                    MapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetMapData(false);
-                    bf.WriteLong(MapData.Length);
+                    MapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetMapPacket(false);
+                    bf.WriteInteger(MapData.Length);
                     bf.WriteBytes(MapData);
+                    var tileData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetTileData();
+                    bf.WriteInteger(tileData.Length);
+                    bf.WriteBytes(tileData);
                     bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).MapGridX);
                     bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).MapGridY);
                 }
@@ -131,9 +134,12 @@ namespace Intersect.Server.Classes.Networking
                     }
                     client.SentMaps.Add(mapNum,
                         new Tuple<long, int>(Globals.System.GetTimeMs() + 5000, MapInstance.Lookup.Get<MapInstance>(mapNum).Revision));
-                    MapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetClientMapData();
-                    bf.WriteLong(MapData.Length);
+                    MapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetMapPacket(true);
+                    bf.WriteInteger(MapData.Length);
                     bf.WriteBytes(MapData);
+                    var tileData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetTileData();
+                    bf.WriteInteger(tileData.Length);
+                    bf.WriteBytes(tileData);
                     bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).Revision);
                     bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).MapGridX);
                     bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).MapGridY);
@@ -215,9 +221,12 @@ namespace Intersect.Server.Classes.Networking
             else
             {
                 bf.WriteInteger(0);
-                byte[] MapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetMapData(false);
-                bf.WriteLong(MapData.Length);
+                byte[] MapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetMapPacket(false);
+                bf.WriteInteger(MapData.Length);
                 bf.WriteBytes(MapData);
+                var tileData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetTileData();
+                bf.WriteInteger(tileData.Length);
+                bf.WriteBytes(tileData);
             }
             SendDataToEditors(bf.ToArray());
             bf.Dispose();

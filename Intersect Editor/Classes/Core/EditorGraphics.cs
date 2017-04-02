@@ -179,10 +179,14 @@ namespace Intersect.Editor.Classes
                                     var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (map != null)
                                     {
-                                        //Draw this map
-                                        DrawMap(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
-                                            false,
-                                            0, null);
+                                        lock (map.GetMapLock())
+                                        {
+                                            //Draw this map
+                                            DrawMap(map, x - Globals.CurrentMap.MapGridX,
+                                                y - Globals.CurrentMap.MapGridY,
+                                                false,
+                                                0, null);
+                                        }
                                     }
                                     else
                                     {
@@ -208,8 +212,11 @@ namespace Intersect.Editor.Classes
                                     var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (map != null)
                                     {
-                                        DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
-                                            y - Globals.CurrentMap.MapGridY, false, null, false);
+                                        lock (map.GetMapLock())
+                                        {
+                                            DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
+                                                y - Globals.CurrentMap.MapGridY, false, null, false);
+                                        }
                                     }
                                 }
                             }
@@ -225,9 +232,13 @@ namespace Intersect.Editor.Classes
                                     var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (map != null)
                                     {
-                                        //Draw this map
-                                        DrawMap(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
-                                            false, 1, null);
+                                        lock (map.GetMapLock())
+                                        {
+                                            //Draw this map
+                                            DrawMap(map, x - Globals.CurrentMap.MapGridX,
+                                                y - Globals.CurrentMap.MapGridY,
+                                                false, 1, null);
+                                        }
                                     }
                                 }
                             }
@@ -243,8 +254,11 @@ namespace Intersect.Editor.Classes
                                     var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (map != null)
                                     {
-                                        DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
-                                            y - Globals.CurrentMap.MapGridY, false, null, true);
+                                        lock (map.GetMapLock())
+                                        {
+                                            DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
+                                                y - Globals.CurrentMap.MapGridY, false, null, true);
+                                        }
                                     }
                                 }
                             }
@@ -599,7 +613,7 @@ namespace Intersect.Editor.Classes
                                 if (TilesetBase.Lookup.Get<TilesetBase>(tmpMap.Layers[z].Tiles[x, y].TilesetIndex) == null) continue;
                                 Texture2D tilesetTex = GetTexture(GameContentManager.TextureType.Tileset,
                                     TilesetBase.Lookup.Get<TilesetBase>(tmpMap.Layers[z].Tiles[x, y].TilesetIndex).Name);
-                                if (tilesetTex == null) continue;
+                                if (tilesetTex == null || tmpMap.Autotiles == null || tmpMap.Autotiles.Autotile == null) continue;
                                 if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState !=
                                     MapAutotiles.RenderStateNormal)
                                 {

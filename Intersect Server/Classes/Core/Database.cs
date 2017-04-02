@@ -25,7 +25,7 @@ namespace Intersect.Server.Classes.Core
 {
     public static class Database
     {
-        private const int DbVersion = 8;
+        private const int DbVersion = 9;
         private const string DbFilename = "resources/intersect.db";
 
         //Database Variables
@@ -152,6 +152,11 @@ namespace Intersect.Server.Classes.Core
         private const string GAME_OBJECT_DELETED = "deleted";
         private const string GAME_OBJECT_DATA = "data";
 
+        //Map Tiles Table
+        private const string MAP_TILES_TABLE = "map_tiles";
+        private const string MAP_TILES_MAP_ID = "map_id";
+        private const string MAP_TILES_DATA = "data";
+
         //Map List Table Constants
         private const string MAP_LIST_TABLE = "map_list";
         private const string MAP_LIST_DATA = "data";
@@ -235,6 +240,7 @@ namespace Intersect.Server.Classes.Core
             CreateCharacterVariablesTable();
             CreateCharacterQuestsTable();
             CreateCharacterFriendsTable();
+            CreateMapTilesTable();
             CreateGameObjectTables();
             CreateMapListTable();
             CreateTimeTable();
@@ -536,6 +542,16 @@ namespace Intersect.Server.Classes.Core
                       + GAME_OBJECT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                       + GAME_OBJECT_DELETED + " INTEGER NOT NULL DEFAULT 0,"
                       + GAME_OBJECT_DATA + " BLOB" + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+
+        private static void CreateMapTilesTable()
+        {
+            var cmd = "CREATE TABLE " + MAP_TILES_TABLE + " (" + MAP_TILES_MAP_ID + " INTEGER UNIQUE, " + MAP_TILES_DATA + " BLOB);";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
@@ -1959,7 +1975,7 @@ namespace Intersect.Server.Classes.Core
                     while (dataReader.Read())
                     {
                         var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
-                        if (dataReader[MAP_LIST_DATA].GetType() != typeof(DBNull))
+                        if (dataReader[GAME_OBJECT_DATA].GetType() != typeof(DBNull))
                         {
                             LoadGameObject(gameObjectType, index, (byte[]) dataReader[GAME_OBJECT_DATA]);
                         }
@@ -1994,6 +2010,15 @@ namespace Intersect.Server.Classes.Core
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.BinaryData));
                     cmd.ExecuteNonQuery();
+                }
+            }
+
+            if (gameObject.Type == GameObjectType.Map)
+            {
+                var map = (MapBase)gameObject;
+                if (map.TileData != null)
+                {
+                    SaveMapTiles(map.Index, map.TileData);
                 }
             }
         }
@@ -2124,6 +2149,35 @@ namespace Intersect.Server.Classes.Core
                 cmd.ExecuteNonQuery();
             }
             gameObject.Delete();
+        }
+
+        //Map Tiles Saving/Loading
+        public static byte[] GetMapTiles(int index)
+        {
+            var query = "SELECT * from " + MAP_TILES_TABLE + " WHERE " + MAP_TILES_MAP_ID + "=@" + MAP_TILES_MAP_ID + ";";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + MAP_TILES_MAP_ID, index));
+                using (var dataReader = cmd.ExecuteReader())
+                {
+                    if (dataReader.HasRows && dataReader.Read())
+                    {
+                        return (byte[])dataReader[MAP_TILES_DATA];
+                    }
+                }
+            }
+            return null;
+        }
+        public static void SaveMapTiles(int index, byte[] data)
+        {
+            if (data == null) return;
+            var query = "INSERT OR REPLACE into " + MAP_TILES_TABLE + " (" + MAP_TILES_MAP_ID + "," + MAP_TILES_DATA + ")" + " VALUES " + " (@" + MAP_TILES_MAP_ID + ",@" + MAP_TILES_DATA + ")";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + MAP_TILES_MAP_ID, index));
+                cmd.Parameters.Add(new SqliteParameter("@" + MAP_TILES_DATA, data));
+                cmd.ExecuteNonQuery();
+            }
         }
 
         //Post Loading Functions

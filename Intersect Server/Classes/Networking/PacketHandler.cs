@@ -581,13 +581,17 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var mapNum = (int) bf.ReadLong();
-            var mapLength = bf.ReadLong();
+            var mapNum = (int) bf.ReadInteger();
+            var mapLength = bf.ReadInteger();
             var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
             if (map != null)
             {
                 MapInstance.Lookup.Get<MapInstance>(mapNum).Load(bf.ReadBytes((int) mapLength), MapInstance.Lookup.Get<MapInstance>(mapNum).Revision + 1);
                 Database.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(mapNum));
+                var tileDataLength = bf.ReadInteger();
+                var tileData = bf.ReadBytes(tileDataLength);
+                if (map.TileData != null) map.TileData = tileData;
+                Database.SaveMapTiles(map.Index,tileData);
                 foreach (var t in Globals.Clients)
                 {
                     if (t == null) continue;

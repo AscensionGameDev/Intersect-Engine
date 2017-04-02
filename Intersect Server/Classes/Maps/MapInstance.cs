@@ -25,8 +25,6 @@ namespace Intersect.Server.Classes.Maps
 
         //Does the map have a player on or nearby it?
         public bool Active;
-
-        private byte[] ClientMapData = null;
         private List<Entity> Entities = new List<Entity>();
         public Dictionary<EventBase, EventInstance> GlobalEventInstances = new Dictionary<EventBase, EventInstance>();
         public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
@@ -53,7 +51,7 @@ namespace Intersect.Server.Classes.Maps
         //Init
         public MapInstance() : base(-1, false)
         {
-
+            Layers = null;
         }
 
         public MapInstance(int mapNum) : base(mapNum, false)
@@ -62,6 +60,7 @@ namespace Intersect.Server.Classes.Maps
             {
                 return;
             }
+            Layers = null;
         }
 
         public object GetMapLock()
@@ -78,7 +77,6 @@ namespace Intersect.Server.Classes.Maps
         {
             lock (_mapLock)
             {
-                ClientMapData = null;
                 DespawnEverything();
                 base.Load(packet);
                 if (keepRevision > -1) Revision = keepRevision;
@@ -120,14 +118,18 @@ namespace Intersect.Server.Classes.Maps
         }
 
 
-        //Get Map Data
-        public byte[] GetClientMapData()
+        //Get Map Packet
+        public byte[] GetMapPacket(bool forClient)
         {
-            if (ClientMapData == null)
+            return GetMapData(forClient);
+        }
+        public byte[] GetTileData()
+        {
+            if (TileData == null)
             {
-                ClientMapData = GetMapData(true);
+                TileData = Database.GetMapTiles(Index);
             }
-            return ClientMapData;
+            return TileData;
         }
 
         //Items & Resources
@@ -832,7 +834,6 @@ namespace Intersect.Server.Classes.Maps
         {
             get
             {
-                ClientMapData = null;
                 return GetMapData(false);
             }
         }

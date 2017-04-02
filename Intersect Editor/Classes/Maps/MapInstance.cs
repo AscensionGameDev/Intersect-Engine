@@ -22,18 +22,24 @@ namespace Intersect.Editor.Classes.Maps
 
         public MapInstance(int mapNum) : base(mapNum, false)
         {
-            Autotiles = new MapAutotiles(this);
+            lock (GetMapLock())
+            {
+                Autotiles = new MapAutotiles(this);
+            }
         }
 
         public MapInstance(MapBase mapStruct) : base(mapStruct)
         {
-            Autotiles = new MapAutotiles(this);
-            if (typeof(MapInstance) == mapStruct.GetType())
+            lock (GetMapLock())
             {
-                MapGridX = ((MapInstance) mapStruct).MapGridX;
-                MapGridY = ((MapInstance) mapStruct).MapGridY;
+                Autotiles = new MapAutotiles(this);
+                if (typeof(MapInstance) == mapStruct.GetType())
+                {
+                    MapGridX = ((MapInstance) mapStruct).MapGridX;
+                    MapGridY = ((MapInstance) mapStruct).MapGridY;
+                }
+                InitAutotiles();
             }
-            InitAutotiles();
         }
 
         //World Position
@@ -42,26 +48,101 @@ namespace Intersect.Editor.Classes.Maps
 
         public void Load(byte[] myArr, bool import = false)
         {
-            var up = Up;
-            var down = Down;
-            var left = Left;
-            var right = Right;
-            loadedData = myArr;
-            base.Load(myArr);
-            if (import)
+            lock (GetMapLock())
             {
-                Up = up;
-                Down = down;
-                Left = left;
-                Right = right;
+                var up = Up;
+                var down = Down;
+                var left = Left;
+                var right = Right;
+                base.Load(myArr);
+                if (import)
+                {
+                    Up = up;
+                    Down = down;
+                    Left = left;
+                    Right = right;
+                }
             }
+        }
+        public void LoadTileData(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            lock (GetMapLock())
+            {
+                Layers = new TileArray[Options.LayerCount];
+                for (var i = 0; i < Options.LayerCount; i++)
+                {
+                    Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
+                    for (var x = 0; x < Options.MapWidth; x++)
+                    {
+                        for (var y = 0; y < Options.MapHeight; y++)
+                        {
+                            Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].X = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].Y = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
+                        }
+                    }
+                }
+            }
+            bf.Dispose();
+        }
+
+        public void SaveStateAsUnchanged()
+        {
+            loadedData = SaveInternal();
+        }
+
+        public void LoadInternal(byte[] myArr, bool import = false)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(myArr);
+            var mapDataLength = bf.ReadInteger();
+            var mapData = bf.ReadBytes(mapDataLength);
+            var tileDataLength = bf.ReadInteger();
+            var tileData = bf.ReadBytes(tileDataLength);
+            Load(mapData, import);
+            LoadTileData(tileData);
+            bf.Dispose();
+        }
+
+        public byte[] SaveInternal()
+        {
+            var bf = new ByteBuffer();
+            var mapData = GetMapData(false);
+            bf.WriteInteger(mapData.Length);
+            bf.WriteBytes(mapData);
+            var tileData = GenerateTileData();
+            bf.WriteInteger(tileData.Length);
+            bf.WriteBytes(tileData);
+            return bf.ToArray();
+        }
+
+        public byte[] GenerateTileData()
+        {
+            var bf = new ByteBuffer();
+            for (var i = 0; i < Options.LayerCount; i++)
+            {
+                for (var x = 0; x < Options.MapWidth; x++)
+                {
+                    for (var y = 0; y < Options.MapHeight; y++)
+                    {
+                        bf.WriteInteger(Layers[i].Tiles[x, y].TilesetIndex);
+                        bf.WriteInteger(Layers[i].Tiles[x, y].X);
+                        bf.WriteInteger(Layers[i].Tiles[x, y].Y);
+                        bf.WriteByte(Layers[i].Tiles[x, y].Autotile);
+                    }
+                }
+            }
+            return bf.ToArray();
         }
 
         public bool Changed()
         {
             if (loadedData != null)
             {
-                var newData = GetMapData(false);
+                var newData = SaveInternal();
                 if (newData.Length == loadedData.Length)
                 {
                     for (int i = 0; i < newData.Length; i++)
