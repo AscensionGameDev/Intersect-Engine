@@ -2154,6 +2154,7 @@ namespace Intersect.Server.Classes.Core
         //Map Tiles Saving/Loading
         public static byte[] GetMapTiles(int index)
         {
+            var nullIssues = "";
             var query = "SELECT * from " + MAP_TILES_TABLE + " WHERE " + MAP_TILES_MAP_ID + "=@" + MAP_TILES_MAP_ID + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
@@ -2162,9 +2163,24 @@ namespace Intersect.Server.Classes.Core
                 {
                     if (dataReader.HasRows && dataReader.Read())
                     {
-                        return (byte[])dataReader[MAP_TILES_DATA];
+                        if (dataReader[MAP_TILES_DATA].GetType() != typeof(DBNull))
+                        {
+                            return (byte[])dataReader[MAP_TILES_DATA];
+                        }
+                        else
+                        {
+                            nullIssues += Strings.Get("database", "nullfound", index, MAP_TILES_TABLE) + Environment.NewLine;
+                        }
+                    }
+                    else
+                    {
+                        return new byte[Options.LayerCount * Options.MapWidth * Options.MapHeight * 13];
                     }
                 }
+            }
+            if (nullIssues != "")
+            {
+                throw (new Exception(Strings.Get("database", "nullerror") + Environment.NewLine + nullIssues));
             }
             return null;
         }
