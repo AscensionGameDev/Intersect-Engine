@@ -252,6 +252,24 @@ namespace Intersect.Editor.Forms
                         Globals.CurMapSelW = 0;
                         Globals.CurMapSelH = 0;
                     }
+                    else if (Globals.CurrentTool == (int)EdittingTool.Fill)
+                    {
+                        if (Globals.CurrentLayer == Options.LayerCount)
+                        {
+                            Globals.MapEditorWindow.SmartFillAttribute(Globals.CurSelX, Globals.CurSelY, tmpMap.Attributes[Globals.CurSelX, Globals.CurSelY].value);
+                        }
+                        else if (Globals.CurrentLayer < Options.LayerCount)
+                        {
+                            Globals.MapEditorWindow.SmartFillLayer(Globals.CurSelX, Globals.CurSelY, tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurSelX, Globals.CurSelY]);
+                        }
+                    }
+                    else if (Globals.CurrentTool == (int)EdittingTool.Erase)
+                    {
+                        if (Globals.CurrentLayer <= Options.LayerCount)
+                        {
+                            //Globals.MapEditorWindow.SmartEraseLayer();
+                        }
+                    }
                     else
                     {
                         if (Globals.CurrentLayer == Options.LayerCount) //Attributes
@@ -327,7 +345,21 @@ namespace Intersect.Editor.Forms
                             PlaceSelection();
                         }
                     }
-                    if (Globals.CurrentLayer == Options.LayerCount) //Attributes
+                    if (Globals.CurrentTool == (int)EdittingTool.Fill)
+                    {
+                        if (Globals.CurrentLayer <= Options.LayerCount)
+                        {
+                            Globals.MapEditorWindow.FillLayer();
+                        }
+                    }
+                    else if (Globals.CurrentTool == (int)EdittingTool.Erase)
+                    {
+                        if (Globals.CurrentLayer <= Options.LayerCount)
+                        {
+                            Globals.MapEditorWindow.EraseLayer();
+                        }
+                    }
+                    else if (Globals.CurrentLayer == Options.LayerCount) //Attributes
                     {
                         if (Globals.CurrentTool == (int) EdittingTool.Pen)
                         {
@@ -1102,8 +1134,7 @@ namespace Intersect.Editor.Forms
                         }
                         else if (Globals.CurrentLayer < Options.LayerCount)
                         {
-                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex =
-                                -1;
+                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = -1;
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = 0;
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = 0;
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
@@ -1129,6 +1160,101 @@ namespace Intersect.Editor.Forms
                     CurrentMapState = tmpMap.SaveInternal();
                 }
             }
+        }
+
+        public void SmartFillLayer(int x, int y, Tile target)
+        {
+            int x1, y1;
+            var tmpMap = Globals.CurrentMap;
+
+            if ( x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
+            {
+                return;
+            }
+
+            if (Globals.CurrentTileset.Index == target.TilesetIndex &&
+            Globals.CurSelX == target.X && Globals.CurSelY == target.Y) { return; }
+
+            Tile selected = tmpMap.Layers[Globals.CurrentLayer].Tiles[x, y];
+
+            if (selected.TilesetIndex != target.TilesetIndex ||
+                selected.X != target.X || selected.Y != target.Y) { return; }
+
+            if (Globals.Autotilemode == 0)
+            {
+                x1 = (x) % (Globals.CurSelW + 1);
+                y1 = (y) % (Globals.CurSelH + 1);
+                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = Globals.CurrentTileset.Index;
+                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = Globals.CurSelX + x1;
+                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY + y1;
+                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
+            }
+            else
+            {
+                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = Globals.CurrentTileset.Index;
+                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = Globals.CurSelX;
+                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY;
+                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = (byte)Globals.Autotilemode;
+            }
+
+            tmpMap.InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Left) != null)
+                MapInstance.Lookup.Get<MapInstance>(tmpMap.Left).InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Up) != null)
+                MapInstance.Lookup.Get<MapInstance>(tmpMap.Up).InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Right) != null)
+                MapInstance.Lookup.Get<MapInstance>(tmpMap.Right).InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Down) != null)
+                MapInstance.Lookup.Get<MapInstance>(tmpMap.Down).InitAutotiles();
+
+            if (!CurrentMapState.SequenceEqual(tmpMap.SaveInternal()))
+            {
+                if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
+                MapRedoStates.Clear();
+                CurrentMapState = tmpMap.SaveInternal();
+            }
+
+            SmartFillLayer(x, y - 1, target);
+            SmartFillLayer(x, y + 1, target);
+            SmartFillLayer(x - 1, y, target);
+            SmartFillLayer(x + 1, y, target);
+        }
+
+        public void SmartFillAttribute(int x, int y, int attribute)
+        {
+            var tmpMap = Globals.CurrentMap;
+
+            if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
+            {
+                return;
+            }
+
+            if (Globals.MapLayersWindow.GetAttributeFromEditor() == attribute) { return; }
+            if (tmpMap.Attributes[x, y].value != attribute) { return; }
+
+            Globals.MapLayersWindow.PlaceAttribute(Globals.CurrentMap, Globals.CurTileX, Globals.CurTileY);
+
+            tmpMap.InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Left) != null)
+                MapInstance.Lookup.Get<MapInstance>(tmpMap.Left).InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Up) != null)
+                MapInstance.Lookup.Get<MapInstance>(tmpMap.Up).InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Right) != null)
+                MapInstance.Lookup.Get<MapInstance>(tmpMap.Right).InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Down) != null)
+                MapInstance.Lookup.Get<MapInstance>(tmpMap.Down).InitAutotiles();
+
+            if (!CurrentMapState.SequenceEqual(tmpMap.SaveInternal()))
+            {
+                if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
+                MapRedoStates.Clear();
+                CurrentMapState = tmpMap.SaveInternal();
+            }
+
+            SmartFillAttribute(x, y - 1, attribute);
+            SmartFillAttribute(x, y + 1, attribute);
+            SmartFillAttribute(x - 1, y, attribute);
+            SmartFillAttribute(x + 1, y, attribute);
         }
 
         //Selection/Movement Function

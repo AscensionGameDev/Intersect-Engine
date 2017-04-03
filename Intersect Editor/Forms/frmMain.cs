@@ -460,6 +460,14 @@ namespace Intersect.Editor.Forms
                     {
                         toolStripBtnRect.Checked = false;
                     }
+                    if (toolStripBtnFill.Checked)
+                    {
+                        toolStripBtnFill.Checked = false;
+                    }
+                    if (toolStripBtnErase.Checked)
+                    {
+                        toolStripBtnErase.Checked = false;
+                    }
                     if (toolStripBtnEyeDrop.Checked)
                     {
                         toolStripBtnEyeDrop.Checked = false;
@@ -494,6 +502,14 @@ namespace Intersect.Editor.Forms
                     if (toolStripBtnRect.Checked)
                     {
                         toolStripBtnRect.Checked = false;
+                    }
+                    if (toolStripBtnFill.Checked)
+                    {
+                        toolStripBtnFill.Checked = false;
+                    }
+                    if (toolStripBtnErase.Checked)
+                    {
+                        toolStripBtnErase.Checked = false;
                     }
                     if (toolStripBtnEyeDrop.Checked)
                     {
@@ -530,6 +546,100 @@ namespace Intersect.Editor.Forms
                     {
                         toolStripBtnRect.Checked = true;
                     }
+                    if (toolStripBtnFill.Checked)
+                    {
+                        toolStripBtnFill.Checked = false;
+                    }
+                    if (toolStripBtnErase.Checked)
+                    {
+                        toolStripBtnErase.Checked = false;
+                    }
+                    if (toolStripBtnEyeDrop.Checked)
+                    {
+                        toolStripBtnEyeDrop.Checked = false;
+                    }
+
+                    if (toolStripBtnCut.Enabled)
+                    {
+                        toolStripBtnCut.Enabled = false;
+                    }
+                    if (toolStripBtnCopy.Enabled)
+                    {
+                        toolStripBtnCopy.Enabled = false;
+                    }
+                    if (cutToolStripMenuItem.Enabled)
+                    {
+                        cutToolStripMenuItem.Enabled = false;
+                    }
+                    if (copyToolStripMenuItem.Enabled)
+                    {
+                        copyToolStripMenuItem.Enabled = false;
+                    }
+                    break;
+                case (int)EdittingTool.Fill:
+                    if (toolStripBtnPen.Checked)
+                    {
+                        toolStripBtnPen.Checked = false;
+                    }
+                    if (toolStripBtnSelect.Checked)
+                    {
+                        toolStripBtnSelect.Checked = false;
+                    }
+                    if (toolStripBtnRect.Checked)
+                    {
+                        toolStripBtnRect.Checked = false;
+                    }
+                    if (!toolStripBtnFill.Checked)
+                    {
+                        toolStripBtnFill.Checked = true;
+                    }
+                    if (toolStripBtnErase.Checked)
+                    {
+                        toolStripBtnErase.Checked = false;
+                    }
+                    if (toolStripBtnEyeDrop.Checked)
+                    {
+                        toolStripBtnEyeDrop.Checked = false;
+                    }
+
+                    if (toolStripBtnCut.Enabled)
+                    {
+                        toolStripBtnCut.Enabled = false;
+                    }
+                    if (toolStripBtnCopy.Enabled)
+                    {
+                        toolStripBtnCopy.Enabled = false;
+                    }
+                    if (cutToolStripMenuItem.Enabled)
+                    {
+                        cutToolStripMenuItem.Enabled = false;
+                    }
+                    if (copyToolStripMenuItem.Enabled)
+                    {
+                        copyToolStripMenuItem.Enabled = false;
+                    }
+                    break;
+                case (int)EdittingTool.Erase:
+                    if (toolStripBtnPen.Checked)
+                    {
+                        toolStripBtnPen.Checked = false;
+                    }
+                    if (toolStripBtnSelect.Checked)
+                    {
+                        toolStripBtnSelect.Checked = false;
+                    }
+                    if (toolStripBtnRect.Checked)
+                    {
+                        toolStripBtnRect.Checked = false;
+                    }
+                    if (toolStripBtnFill.Checked)
+                    {
+                        toolStripBtnFill.Checked = false;
+                    }
+                    if (!toolStripBtnErase.Checked)
+                    {
+                        toolStripBtnErase.Checked = true;
+                    }
                     if (toolStripBtnEyeDrop.Checked)
                     {
                         toolStripBtnEyeDrop.Checked = false;
@@ -564,6 +674,14 @@ namespace Intersect.Editor.Forms
                     if (toolStripBtnRect.Checked)
                     {
                         toolStripBtnRect.Checked = false;
+                    }
+                    if (toolStripBtnFill.Checked)
+                    {
+                        toolStripBtnFill.Checked = false;
+                    }
+                    if (toolStripBtnErase.Checked)
+                    {
+                        toolStripBtnErase.Checked = false;
                     }
                     if (!toolStripBtnEyeDrop.Checked)
                     {
@@ -962,18 +1080,12 @@ namespace Intersect.Editor.Forms
 
         private void toolStripBtnFill_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentLayer <= Options.LayerCount)
-            {
-                Globals.MapEditorWindow.FillLayer();
-            }
+            Globals.CurrentTool = (int)EdittingTool.Fill;
         }
 
         private void toolStripBtnErase_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentLayer <= Options.LayerCount)
-            {
-                Globals.MapEditorWindow.EraseLayer();
-            }
+            Globals.CurrentTool = (int)EdittingTool.Erase;
         }
 
         private void toolStripBtnScreenshot_Click(object sender, EventArgs e)

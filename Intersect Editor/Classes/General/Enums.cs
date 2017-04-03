@@ -29,7 +29,9 @@
         Pen = 0,
         Selection = 1,
         Rectangle = 2,
-        Droppler = 3,
+        Fill = 3,
+        Erase = 4,
+        Droppler = 5,
     }
 
     public enum SelectionTypes
