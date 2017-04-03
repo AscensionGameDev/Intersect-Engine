@@ -1,4 +1,4 @@
-﻿using Lidgren.Network;
+﻿using Intersect.Memory;
 
 namespace Intersect.Network
 {
@@ -6,6 +6,6 @@ namespace Intersect.Network
     {
         PacketGroups Group { get; }
 
-        IPacket Create(NetIncomingMessage message);
+        IPacket Create(IConnection connection, IBuffer message);
     }
 }

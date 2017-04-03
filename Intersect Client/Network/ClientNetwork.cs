@@ -1,4 +1,5 @@
 ﻿using System;
+using Intersect.Memory;
 using Intersect.Network;
 using Intersect.Threading;
 using Lidgren.Network;
@@ -26,7 +27,8 @@ namespace Intersect.Client.Network
         public override bool Send(IPacket packet)
         {
             var message = Peer.CreateMessage();
-            if (!packet.Write(ref message)) throw new Exception();
+            IBuffer buffer = new LidgrenBuffer(message);
+            if (!packet.Write(ref buffer)) throw new Exception();
 
             var result = Peer.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
             switch (result)

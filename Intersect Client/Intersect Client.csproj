@@ -211,6 +211,10 @@
       <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
       <Name>Intersect %28Core%29</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj">
+      <Project>{e8f288cb-51df-4d9d-a3b3-a61bd4fd3f45}</Project>
+      <Name>Intersect.Network</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />

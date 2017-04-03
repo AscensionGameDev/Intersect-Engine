@@ -5,7 +5,7 @@ using Intersect;
 
 namespace Intersect.Editor.Classes
 {
-    public static class Network
+    public static class EditorNetwork
     {
         public static TcpClient MySocket;
         private static NetworkStream _myStream;

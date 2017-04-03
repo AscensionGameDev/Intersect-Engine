@@ -1,5 +1,4 @@
-﻿using System;
-using Lidgren.Network;
+﻿using Intersect.Memory;
 
 namespace Intersect.Network.Packets.Ping
 {
@@ -7,7 +6,7 @@ namespace Intersect.Network.Packets.Ping
     {
         public PacketGroups Group => PacketGroups.Ping;
 
-        public IPacket Create(NetIncomingMessage message)
-            => new PingPacket(message?.SenderConnection);
+        public IPacket Create(IConnection connection, IBuffer buffer)
+            => new PingPacket(connection);
     }
 }

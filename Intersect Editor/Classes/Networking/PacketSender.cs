@@ -12,7 +12,7 @@ namespace Intersect.Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.Ping);
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -22,7 +22,7 @@ namespace Intersect.Editor.Classes
             bf.WriteLong((int) ClientPackets.EditorLogin);
             bf.WriteString(username);
             bf.WriteString(password);
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -31,7 +31,7 @@ namespace Intersect.Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.NeedMap);
             bf.WriteLong(mapNum);
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -43,7 +43,7 @@ namespace Intersect.Editor.Classes
             bf.WriteLong(map.Index);
             bf.WriteLong(mapData.Length);
             bf.WriteBytes(mapData);
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -77,7 +77,7 @@ namespace Intersect.Editor.Classes
                     }
                 }
             }
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -90,7 +90,7 @@ namespace Intersect.Editor.Classes
             bf.WriteInteger(srcId);
             bf.WriteInteger(destType);
             bf.WriteInteger(destId);
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -117,7 +117,7 @@ namespace Intersect.Editor.Classes
                     bf.WriteInteger(((MapListFolder) parent).FolderId);
                 }
             }
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -137,7 +137,7 @@ namespace Intersect.Editor.Classes
                 bf.WriteInteger(((MapListFolder) parent).FolderId);
             }
             bf.WriteString(name);
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -156,7 +156,7 @@ namespace Intersect.Editor.Classes
                 bf.WriteInteger(0);
                 bf.WriteInteger(((MapListFolder) target).FolderId);
             }
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -165,7 +165,7 @@ namespace Intersect.Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.NeedGrid);
             bf.WriteLong(mapNum);
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -175,7 +175,7 @@ namespace Intersect.Editor.Classes
             bf.WriteLong((int) ClientPackets.UnlinkMap);
             bf.WriteLong(mapNum);
             bf.WriteLong(Globals.CurrentMap.Index);
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -187,7 +187,7 @@ namespace Intersect.Editor.Classes
             bf.WriteLong(linkMap);
             bf.WriteLong(gridX);
             bf.WriteLong(gridY);
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -197,7 +197,7 @@ namespace Intersect.Editor.Classes
             bf.WriteLong((int) ClientPackets.NewGameObject);
             bf.WriteInteger((int) type);
             bf.WriteString(value);
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -206,7 +206,7 @@ namespace Intersect.Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.OpenObjectEditor);
             bf.WriteInteger((int) type);
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -216,7 +216,7 @@ namespace Intersect.Editor.Classes
             bf.WriteLong((int) ClientPackets.DeleteGameObject);
             bf.WriteInteger((int) obj.Type);
             bf.WriteInteger(obj.Index);
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -227,7 +227,7 @@ namespace Intersect.Editor.Classes
             bf.WriteInteger((int) obj.Type);
             bf.WriteInteger(obj.Index);
             bf.WriteBytes(obj.BinaryData);
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -236,7 +236,7 @@ namespace Intersect.Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.SaveTime);
             bf.WriteBytes(data);
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -249,7 +249,7 @@ namespace Intersect.Editor.Classes
             {
                 bf.WriteString(tilesets[i]);
             }
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -258,7 +258,7 @@ namespace Intersect.Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.EnterMap);
             bf.WriteInteger(mapNum);
-            Network.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
     }

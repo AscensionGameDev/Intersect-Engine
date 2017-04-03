@@ -1,49 +1,48 @@
 ﻿using System;
-using Lidgren.Network;
+using Intersect.Memory;
 
 namespace Intersect.Network
 {
     public abstract class AbstractPacket : IPacket
     {
-        public NetConnection Connection { get; }
+        public IConnection Connection { get; }
 
         public PacketGroups Group { get; }
 
-        protected AbstractPacket(NetConnection connection, PacketGroups group)
+        protected AbstractPacket(IConnection connection, PacketGroups group)
         {
             Connection = connection;
             Group = group;
         }
 
-        protected virtual NetOutgoingMessage CreateNewMessage()
+        protected virtual IBuffer CreateNewMessage()
         {
-            var message = Connection?.Peer?.CreateMessage();
+            var buffer = Connection?.CreateBuffer();
 
-            return WriteHeader(ref message);
+            return WriteHeader(ref buffer);
         }
 
-        protected virtual NetOutgoingMessage WriteHeader(ref NetOutgoingMessage message)
+        protected virtual IBuffer WriteHeader(ref IBuffer buffer)
         {
-            if (!TryWriteHeader(ref message)) throw new ArgumentNullException();
-            
-            return message;
+            if (TryWriteHeader(ref buffer)) return buffer;
+            throw new ArgumentNullException();
         }
 
-        protected virtual bool TryWriteHeader(ref NetOutgoingMessage message)
+        protected virtual bool TryWriteHeader(ref IBuffer buffer)
         {
-            if (message == null) return false;
+            if (buffer == null) return false;
 
-            message.Write((ushort)0);
-            message.Write((byte)Group);
+            buffer.Write((ushort)0);
+            buffer.Write((byte)Group);
 
             return true;
         }
 
-        public virtual bool Read(ref NetIncomingMessage message) => (message != null);
+        public virtual bool Read(ref IBuffer buffer) => (buffer != null);
 
-        public virtual bool Write(ref NetOutgoingMessage message)
+        public virtual bool Write(ref IBuffer buffer)
         {
-            if (message == null) message = CreateNewMessage();
+            if (buffer == null) buffer = CreateNewMessage();
             return true;
         }
     }

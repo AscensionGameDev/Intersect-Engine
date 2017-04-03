@@ -1,14 +1,14 @@
-﻿using Lidgren.Network;
+﻿using Intersect.Memory;
 
 namespace Intersect.Network
 {
     public interface IPacket
     {
-        NetConnection Connection { get; }
+        IConnection Connection { get; }
 
         PacketGroups Group { get; }
 
-        bool Read(ref NetIncomingMessage message);
-        bool Write(ref NetOutgoingMessage message);
+        bool Read(ref IBuffer buffer);
+        bool Write(ref IBuffer buffer);
     }
 }

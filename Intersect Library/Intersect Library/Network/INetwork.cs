@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Net;
-using Lidgren.Network;
 
 namespace Intersect.Network
 {
     public interface INetwork : IDisposable
     {
-        NetPeer Peer { get; }
+        Guid Guid { get; }
 
         bool IsRunning { get; }
 
@@ -20,5 +18,7 @@ namespace Intersect.Network
 
         bool Send(IPacket packet);
         bool Send(Guid guid, IPacket packet);
+
+        IConnection FindConnection(Guid guid);
     }
 }

@@ -1,4 +1,4 @@
-﻿using Lidgren.Network;
+﻿using Intersect.Memory;
 
 namespace Intersect.Network.Packets.Ping
 {
@@ -6,22 +6,22 @@ namespace Intersect.Network.Packets.Ping
     {
         public bool RequestPong { get; set; }
     
-        public PingPacket(NetConnection connection)
+        public PingPacket(IConnection connection)
             : base(connection, PacketGroups.Ping)
         {
             RequestPong = false;
         }
 
-        public override bool Read(ref NetIncomingMessage message)
+        public override bool Read(ref IBuffer buffer)
         {
-            RequestPong = message.ReadBoolean();
+            RequestPong = buffer.ReadBoolean();
 
             return true;
         }
 
-        public override bool Write(ref NetOutgoingMessage message)
+        public override bool Write(ref IBuffer buffer)
         {
-            message.Write(RequestPong);
+            buffer.Write(RequestPong);
 
             return false;
         }

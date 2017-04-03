@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
-using Intersect;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.Core;
 using Intersect.Localization;
@@ -60,14 +59,14 @@ namespace Intersect.Editor.Forms
 
         private void tmrSocket_Tick(object sender, EventArgs e)
         {
-            Network.Update();
+            EditorNetwork.Update();
             var statusString = Strings.Get("login", "connecting");
-            if (Network.Connected)
+            if (EditorNetwork.Connected)
             {
                 statusString = Strings.Get("login", "connected");
                 btnLogin.Enabled = true;
             }
-            else if (Network.Connecting)
+            else if (EditorNetwork.Connecting)
             {
             }
             else
@@ -89,7 +88,7 @@ namespace Intersect.Editor.Forms
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            if (!Network.Connected || !btnLogin.Enabled) return;
+            if (!EditorNetwork.Connected || !btnLogin.Enabled) return;
             if (txtUsername.Text.Trim().Length > 0 && txtPassword.Text.Trim().Length > 0)
             {
                 var sha = new SHA256Managed();

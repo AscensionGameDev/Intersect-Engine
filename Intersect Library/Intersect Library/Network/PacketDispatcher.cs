@@ -6,7 +6,7 @@ namespace Intersect.Network
 {
     public sealed class PacketDispatcher
     {
-        private IDictionary<Type, IList<HandlePacket>> mHandlers;
+        private readonly IDictionary<Type, IList<HandlePacket>> mHandlers;
 
         public PacketDispatcher()
         {
@@ -16,6 +16,7 @@ namespace Intersect.Network
         private IList<HandlePacket> GetHandlers(Type type)
         {
             if (mHandlers == null) throw new ArgumentNullException();
+            if (type == null) throw new ArgumentNullException();
 
             if (!mHandlers.TryGetValue(type, out IList<HandlePacket> handlers))
             {

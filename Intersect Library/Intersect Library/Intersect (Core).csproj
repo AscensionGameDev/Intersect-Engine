@@ -33,9 +33,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Lidgren.Network">
-      <HintPath>..\..\lib\Lidgren.Network.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -51,6 +48,7 @@
     <Compile Include="Collections\ILookup.cs" />
     <Compile Include="Collections\ReadOnlyDictionary.cs" />
     <Compile Include="Compression.cs" />
+    <Compile Include="Crypto\RsaUtils.cs" />
     <Compile Include="DatabaseObject.cs" />
     <Compile Include="Enums\AdminActions.cs" />
     <Compile Include="Enums\ClientPackets.cs" />
@@ -116,6 +114,7 @@
     <Compile Include="Color.cs" />
     <Compile Include="GameObjects\TilesetBase.cs" />
     <Compile Include="GameObjects\TimeBase.cs" />
+    <Compile Include="Memory\IBuffer.cs" />
     <Compile Include="Localization\Language.cs" />
     <Compile Include="Localization\Strings.cs" />
     <Compile Include="Logging\FileOutput.cs" />
@@ -123,14 +122,16 @@
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Logging\LogLevel.cs" />
+    <Compile Include="Logging\MemoryDump.cs" />
+    <Compile Include="Memory\MemoryBuffer.cs" />
     <Compile Include="Models\LookupUtils.cs" />
     <Compile Include="Models\IDatabaseObject.cs" />
     <Compile Include="Models\IGameObject.cs" />
     <Compile Include="Models\IIndexedGameObject.cs" />
-    <Compile Include="Network\AbstractNetwork.cs" />
     <Compile Include="Network\AbstractPacket.cs" />
     <Compile Include="Network\AbstractExtendedPacket.cs" />
     <Compile Include="Network\HandlePacket.cs" />
+    <Compile Include="Network\IConnection.cs" />
     <Compile Include="Network\IExtendedPacket.cs" />
     <Compile Include="Network\INetwork.cs" />
     <Compile Include="Network\IPacket.cs" />

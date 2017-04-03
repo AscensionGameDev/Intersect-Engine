@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using Intersect.Logging;
 using Intersect.Threading;
 
 namespace Intersect.Network
@@ -6,8 +7,8 @@ namespace Intersect.Network
     public sealed class NetworkThread
     {
         private bool mStarted;
-        private IThreadYield mThreadYield;
-        private PacketDispatcher mDispatcher;
+        private readonly IThreadYield mThreadYield;
+        private readonly PacketDispatcher mDispatcher;
 
         public string Name { get; }
 
@@ -51,8 +52,14 @@ namespace Intersect.Network
             {
                 lock (this)
                 {
+                    // ReSharper disable once PossibleNullReferenceException
                     if (Queue.TryNext(out IPacket packet))
-                        mDispatcher?.Dispatch(packet);
+                    {
+                        if (!(mDispatcher?.Dispatch(packet) ?? false))
+                        {
+                            Log.Warn($"Failed to dispatch packet '{packet}'.");
+                        }
+                    }
 
                     mThreadYield?.Yield();
                 }

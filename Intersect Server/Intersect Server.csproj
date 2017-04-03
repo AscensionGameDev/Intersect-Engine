@@ -152,6 +152,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="s3auxSt4RhVSbr7p5Vrkw9w9NwAMjbHUmsxZ7vSv3bQt9RXY" />
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -182,6 +183,10 @@
     <ProjectReference Include="..\Intersect Library\Intersect Library\Intersect %28Core%29.csproj">
       <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
       <Name>Intersect %28Core%29</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj">
+      <Project>{e8f288cb-51df-4d9d-a3b3-a61bd4fd3f45}</Project>
+      <Name>Intersect.Network</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -11,7 +11,7 @@ namespace Intersect.Network
         private readonly object mQueueLock;
         private bool mDisposed;
 
-        private Queue<IPacket> mQueue;
+        private readonly Queue<IPacket> mQueue;
 
         public PacketQueue()
         {
@@ -24,6 +24,9 @@ namespace Intersect.Network
         {
             if (mDisposed) return false;
 
+            if (mQueueLock == null) throw new ArgumentNullException();
+            if (mQueue == null) throw new ArgumentNullException();
+
             lock (mQueueLock)
             {
                 mQueue.Enqueue(packet);
@@ -35,6 +38,10 @@ namespace Intersect.Network
 
         public bool TryNext(out IPacket packet)
         {
+            if (mDequeLock == null) throw new ArgumentNullException();
+            if (mQueueLock == null) throw new ArgumentNullException();
+            if (mQueue == null) throw new ArgumentNullException();
+
             lock (mDequeLock)
             {
                 while (mQueue.Count < 1)
@@ -58,9 +65,9 @@ namespace Intersect.Network
         {
             if (mDisposed) return;
 
-            Monitor.PulseAll(mQueue);
-            Monitor.PulseAll(mDequeLock);
-            Monitor.PulseAll(mQueueLock);
+            if (mQueue != null) Monitor.PulseAll(mQueue);
+            if (mQueueLock != null) Monitor.PulseAll(mQueueLock);
+            if (mDequeLock != null) Monitor.PulseAll(mDequeLock);
 
             mDisposed = true;
         }

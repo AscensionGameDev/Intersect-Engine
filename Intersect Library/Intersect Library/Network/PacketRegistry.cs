@@ -6,7 +6,8 @@ namespace Intersect.Network
     public sealed class PacketRegistry
     {
         private static PacketRegistry sInstance;
-        public static PacketRegistry Instance => (sInstance ?? new PacketRegistry());
+        public static PacketRegistry Instance
+            => (sInstance ?? new PacketRegistry());
         
         private IDictionary<PacketGroups, IPacketGroup> mGroupMap;
 
@@ -20,7 +21,10 @@ namespace Intersect.Network
             mGroupMap = new SortedDictionary<PacketGroups, IPacketGroup>();
         }
 
-        public IPacketGroup GetGroup(PacketGroups group) => (mGroupMap.TryGetValue(group, out IPacketGroup packetGroup)) ? null : packetGroup;
+        // ReSharper disable once PossibleNullReferenceException
+        public IPacketGroup GetGroup(PacketGroups group)
+            => (mGroupMap.TryGetValue(group, out IPacketGroup packetGroup))
+            ? null : packetGroup;
 
         public bool Register(IPacketGroup packetGroup)
         {

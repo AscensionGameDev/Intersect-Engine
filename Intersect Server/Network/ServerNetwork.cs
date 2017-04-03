@@ -1,5 +1,10 @@
 ﻿using System;
+using System.IO;
+using System.IO.Compression;
+using System.Reflection;
+using System.Security.Cryptography;
 using Intersect.Logging;
+using Intersect.Memory;
 using Intersect.Network;
 using Intersect.Threading;
 using Lidgren.Network;
@@ -27,7 +32,8 @@ namespace Intersect.Server.Network
         public override bool Send(IPacket packet)
         {
             var message = Peer.CreateMessage();
-            if (!packet.Write(ref message)) throw new Exception();
+            IBuffer buffer = new LidgrenBuffer(message);
+            if (!packet.Write(ref buffer)) throw new Exception();
 
             try
             {
@@ -39,6 +45,11 @@ namespace Intersect.Server.Network
                 Log.Trace(exception);
                 return false;
             }
+        }
+
+        protected override void RegisterHandlers()
+        {
+            throw new NotImplementedException();
         }
 
         protected override void Poll()
@@ -60,5 +71,11 @@ namespace Intersect.Server.Network
 
         protected override IThreadYield CreateThreadYield()
             => new ThreadYieldNet40();
+
+        static ServerNetwork()
+        {
+            var rsa = LoadKeyFromAssembly(Assembly.GetExecutingAssembly(), "Intersect.Server.s3auxSt4RhVSbr7p5Vrkw9w9NwAMjbHUmsxZ7vSv3bQt9RXY", true);
+            rsa.GetHashCode();
+        }
     }
 }

@@ -71,7 +71,7 @@ namespace Intersect.Editor.Classes
             }
             EditorGraphics.Render();
             GameContentManager.Update();
-            Network.Update();
+            EditorNetwork.Update();
             Application.DoEvents(); // handle form events
 
             _fpsCount++;
@@ -111,7 +111,7 @@ namespace Intersect.Editor.Classes
                                 {
                                     map.Update();
                                 }
-                                Network.Update();
+                                EditorNetwork.Update();
                                 Application.DoEvents();
                             }
                             Thread.Sleep(50);
