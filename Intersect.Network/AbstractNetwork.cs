@@ -429,7 +429,8 @@ namespace Intersect.Network
 
         private void CreateThreads()
         {
-            for (var i = 0; i < CalculateNumberOfThreads(); i++)
+            var threadCount = CalculateNumberOfThreads();
+            for (var i = 0; i < threadCount; i++)
                 mThreads?.Add(new NetworkThread(Dispatcher, CreateThreadYield(), $"Network Thread #{i}"));
         }
 

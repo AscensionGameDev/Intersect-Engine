@@ -104,7 +104,7 @@ namespace Intersect.Server.Network
             var numTotalThreads = Environment.ProcessorCount;
             var numAvailableThreads = Math.Max(1, numTotalThreads - numReservedThreads);
             var numTotalClients = Config.MaximumConnections;
-            var numSuggestedThreads = numTotalClients / numSuggestClientsPerThread;
+            var numSuggestedThreads = (int)Math.Ceiling((float)numTotalClients / numSuggestClientsPerThread);
             return Math.Max(1, Math.Min(numAvailableThreads, numSuggestedThreads));
         }
 
