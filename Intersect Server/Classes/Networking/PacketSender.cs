@@ -8,6 +8,7 @@ using Intersect.Logging;
 using Intersect.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
@@ -655,11 +656,12 @@ namespace Intersect.Server.Classes.Networking
                 bf.WriteInteger(en.MaxVital[i]);
                 bf.WriteInteger(en.Vital[i]);
             }
-            bf.WriteInteger(en.Status.Count);
-            for (var i = 0; i < en.Status.Count; i++)
+            var statuses = en.Statuses.Values.ToArray();
+            bf.WriteInteger(statuses.Length);
+            foreach (var status in statuses)
             {
-                bf.WriteInteger(en.Status[i].Type);
-                bf.WriteString(en.Status[i].Data);
+                bf.WriteInteger(status.Type);
+                bf.WriteString(status.Data);
             }
             //If player and in party send vitals to party just in case party members are not in the proximity
             if (en.GetType() == typeof(Player))
@@ -701,11 +703,12 @@ namespace Intersect.Server.Classes.Networking
                 bf.WriteInteger(en.MaxVital[i]);
                 bf.WriteInteger(en.Vital[i]);
             }
-            bf.WriteInteger(en.Status.Count);
-            for (var i = 0; i < en.Status.Count; i++)
+            var statuses = en.Statuses.Values.ToArray();
+            bf.WriteInteger(statuses.Length);
+            foreach (var status in statuses)
             {
-                bf.WriteInteger(en.Status[i].Type);
-                bf.WriteString(en.Status[i].Data);
+                bf.WriteInteger(status.Type);
+                bf.WriteString(status.Data);
             }
             SendDataTo(client, bf.ToArray());
             bf.Dispose();

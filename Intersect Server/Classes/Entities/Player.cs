@@ -632,9 +632,10 @@ namespace Intersect.Server.Classes.Entities
         public override bool CanAttack(Entity en, SpellBase spell)
         {
             //Check if the attacker is stunned or blinded.
-            for (var n = 0; n < Status.Count; n++)
+            var statuses = Statuses.Values.ToArray();
+            foreach (var status in statuses)
             {
-                if (Status[n].Type == (int) StatusTypes.Stun)
+                if (status.Type == (int)StatusTypes.Stun)
                 {
                     return false;
                 }
@@ -857,9 +858,10 @@ namespace Intersect.Server.Classes.Entities
             if (itemBase != null)
             {
                 //Check if the user is silenced or stunned
-                for (var n = 0; n < Status.Count; n++)
+                var statuses = Statuses.Values.ToArray();
+                foreach (var status in statuses)
                 {
-                    if (Status[n].Type == (int) StatusTypes.Stun)
+                    if (status.Type == (int)StatusTypes.Stun)
                     {
                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "stunned"));
                         return;
@@ -2296,14 +2298,15 @@ namespace Intersect.Server.Classes.Entities
                 }
 
                 //Check if the caster is silenced or stunned
-                for (var n = 0; n < Status.Count; n++)
+                var statuses = Statuses.Values.ToArray();
+                foreach (var status in statuses)
                 {
-                    if (Status[n].Type == (int) StatusTypes.Silence)
+                    if (status.Type == (int) StatusTypes.Silence)
                     {
                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "silenced"));
                         return;
                     }
-                    if (Status[n].Type == (int) StatusTypes.Stun)
+                    if (status.Type == (int) StatusTypes.Stun)
                     {
                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "stunned"));
                         return;
