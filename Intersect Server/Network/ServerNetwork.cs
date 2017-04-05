@@ -84,24 +84,6 @@ namespace Intersect.Server.Network
             }
         }
 
-        public override bool Send(IPacket packet)
-        {
-            var message = Peer.CreateMessage();
-            IBuffer buffer = new LidgrenBuffer(message);
-            if (!packet.Write(ref buffer)) throw new Exception();
-
-            try
-            {
-                Peer.SendToAll(message, NetDeliveryMethod.ReliableOrdered);
-                return true;
-            }
-            catch (Exception exception)
-            {
-                Log.Trace(exception);
-                return false;
-            }
-        }
-
         protected override void RegisterHandlers()
         {
             throw new NotImplementedException();

@@ -65,26 +65,6 @@ namespace Intersect.Client.Network
             Log.Info("Stopping the client...");
         }
 
-        public override bool Send(IPacket packet)
-        {
-            var message = Peer.CreateMessage();
-            IBuffer buffer = new LidgrenBuffer(message);
-            if (!packet.Write(ref buffer)) throw new Exception();
-
-            var result = Peer.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
-            switch (result)
-            {
-                case NetSendResult.Sent:
-                case NetSendResult.Queued:
-                    return true;
-
-                default:
-                    return false;
-            }
-        }
-
-        public override bool Send(Guid guid, IPacket packet) => Send(packet);
-
         protected override void RegisterHandlers()
         {
             

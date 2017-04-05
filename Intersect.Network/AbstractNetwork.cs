@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -116,17 +117,19 @@ namespace Intersect.Network
             Stop();
         }
 
-        public abstract bool Send(IPacket packet);
+        public virtual bool Send(IPacket packet)
+            => SendToAll(packet);
 
         public virtual bool Send(Guid guid, IPacket packet)
         {
-            if (!mConnectionLookup.TryGetValue(guid, out ConnectionMetadata connectionMetadata)) return false;
+            if (!mConnectionLookup.TryGetValue(guid, out ConnectionMetadata metadata)) return false;
 
             var message = Peer.CreateMessage();
             IBuffer buffer = new LidgrenBuffer(message);
             if (!packet.Write(ref buffer)) throw new Exception();
 
-            var result = Peer.SendMessage(message, connectionMetadata.Connection, NetDeliveryMethod.ReliableOrdered);
+            metadata.Aes.Encrypt(message);
+            var result = Peer.SendMessage(message, metadata.Connection, NetDeliveryMethod.ReliableOrdered);
             switch (result)
             {
                 case NetSendResult.Sent:
@@ -137,6 +140,9 @@ namespace Intersect.Network
                     return false;
             }
         }
+
+        public virtual bool SendToAll(IPacket packet)
+            => mConnectionLookup?.Keys.All(guid => Send(guid, packet)) ?? false;
 
         protected virtual void RegisterPackets()
         {
