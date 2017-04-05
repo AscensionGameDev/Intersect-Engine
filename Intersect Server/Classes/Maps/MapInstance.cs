@@ -25,8 +25,6 @@ namespace Intersect.Server.Classes.Maps
 
         //Does the map have a player on or nearby it?
         public bool Active;
-
-        private byte[] ClientMapData = null;
         private List<Entity> Entities = new List<Entity>();
         public Dictionary<EventBase, EventInstance> GlobalEventInstances = new Dictionary<EventBase, EventInstance>();
         public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
@@ -49,11 +47,12 @@ namespace Intersect.Server.Classes.Maps
 
         //Temporary Values
         public List<int> SurroundingMaps = new List<int>();
+        public long TileAccessTime;
 
         //Init
         public MapInstance() : base(-1, false)
         {
-            Autotiles = new MapAutotiles(this);
+            Layers = null;
         }
 
         public MapInstance(int mapNum) : base(mapNum, false)
@@ -62,7 +61,7 @@ namespace Intersect.Server.Classes.Maps
             {
                 return;
             }
-            Autotiles = new MapAutotiles(this);
+            Layers = null;
         }
 
         public object GetMapLock()
@@ -79,7 +78,6 @@ namespace Intersect.Server.Classes.Maps
         {
             lock (_mapLock)
             {
-                ClientMapData = null;
                 DespawnEverything();
                 base.Load(packet);
                 if (keepRevision > -1) Revision = keepRevision;
@@ -120,71 +118,40 @@ namespace Intersect.Server.Classes.Maps
             return NpcMapBlocks;
         }
 
-        //Autotile Caching (So Clients Don't have to calculate it)
-        public MapBase[,] GenerateAutotileGrid()
-        {
-            MapBase[,] mapBase = new MapBase[3, 3];
-            if (MapGrid >= 0)
-            {
-                if (Database.MapGrids[MapGrid] != null &&
-                    Database.MapGrids[MapGrid].MyMaps.Contains(this.Index))
-                {
-                    for (int x = -1; x <= 1; x++)
-                    {
-                        for (int y = -1; y <= 1; y++)
-                        {
-                            var x1 = MapGridX + x;
-                            var y1 = MapGridY + y;
-                            if (x1 >= 0 && y1 >= 0 && x1 < Database.MapGrids[MapGrid].Width &&
-                                y1 < Database.MapGrids[MapGrid].Height)
-                            {
-                                if (x == 0 && y == 0)
-                                {
-                                    mapBase[x + 1, y + 1] = this;
-                                }
-                                else
-                                {
-                                    mapBase[x + 1, y + 1] = Lookup.Get<MapInstance>(Database.MapGrids[MapGrid].MyGrid[x1, y1]);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return mapBase;
-        }
 
-        public void UpdateSurroundingTiles()
+        //Get Map Packet
+        public byte[] GetMapPacket(bool forClient)
         {
-            var grid = GenerateAutotileGrid();
-            for (int x = 0; x < 3; x++)
-            {
-                for (int y = 0; y < 3; y++)
-                {
-                    if (grid[x, y] != null)
-                    {
-                        ((MapInstance)grid[x, y]).InitAutotiles();
-                    }
-                }
-            }
+            return GetMapData(forClient);
         }
-
-        public void InitAutotiles()
+        public byte[] GetTileData(bool shouldCache = true)
         {
+            //If the tile data is cached then send it
+            //Else grab it (and maybe cache it)
             lock (GetMapLock())
             {
-                Autotiles.InitAutotiles(GenerateAutotileGrid());
+                if (TileData != null)
+                {
+                    if (shouldCache)
+                    {
+                        TileAccessTime = Globals.System.GetTimeMs();
+                    }
+                    return TileData;
+                }
+                else
+                {
+                    if (shouldCache)
+                    {
+                        TileData = Database.GetMapTiles(Index);
+                        TileAccessTime = Globals.System.GetTimeMs();
+                        return TileData;
+                    }
+                    else
+                    {
+                        return Database.GetMapTiles(Index);
+                    }
+                }
             }
-        }
-
-        //Get Map Data
-        public byte[] GetClientMapData()
-        {
-            if (ClientMapData == null)
-            {
-                ClientMapData = GetMapData(true);
-            }
-            return ClientMapData;
         }
 
         //Items & Resources
@@ -621,9 +588,14 @@ namespace Intersect.Server.Classes.Maps
         //Update + Related Functions
         public void Update(long timeMs)
         {
-            lock (_mapLock)
+            lock (GetMapLock())
             {
-                if (CheckActive() == false)
+                //See if we should dispose of tile data
+                if (TileAccessTime + 30000 < timeMs && TileData != null)
+                {
+                    TileData = null;
+                }
+                if (!Active || CheckActive() == false)
                 {
                     return;
                 }
@@ -889,7 +861,6 @@ namespace Intersect.Server.Classes.Maps
         {
             get
             {
-                ClientMapData = null;
                 return GetMapData(false);
             }
         }

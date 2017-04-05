@@ -26,7 +26,7 @@ namespace Intersect
 
         protected DatabaseObject(Guid id, int index)
         {
-            if (index < 0) throw new ArgumentOutOfRangeException();
+            //if (index < 0)throw new ArgumentOutOfRangeException();
 
             Guid = id;
             Index = index;

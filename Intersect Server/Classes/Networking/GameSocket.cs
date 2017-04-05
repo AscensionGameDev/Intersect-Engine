@@ -142,38 +142,38 @@ namespace Intersect.Server.Classes.Networking
             {
                 try
                 {
-                    if (_myClient.Entity != null)
-                    {
-                        var en = _myClient.Entity;
-                        Task.Run(() => Database.SaveCharacter(en));
-                        var map = MapInstance.Lookup.Get<MapInstance>(_myClient.Entity.CurrentMap);
-                        if (map != null) map.RemoveEntity(_myClient.Entity);
-
-                        //Update parties
-                        _myClient.Entity.LeaveParty();
-
-                        //Update trade
-                        _myClient.Entity.CancelTrade();
-
-                        //Search for logout activated events and run them
-                        /*foreach (var evt in EventBase.Lookup)
-                        {
-                            _myClient.Entity.StartCommonEvent(evt.Value, (int) EventPage.CommonEventTriggers.LeaveGame);
-                        }*/
-
-                        PacketSender.SendEntityLeave(_myClient.Entity.MyIndex, (int) EntityTypes.Player,
-                            Globals.Entities[_entityIndex].CurrentMap);
-                        if (!_myClient.IsEditor)
-                        {
-                            PacketSender.SendGlobalMsg(Strings.Get("player", "left", _myClient.Entity.MyName,
-                                Options.GameName));
-                        }
-                        _myClient.Entity.Dispose();
-                        _myClient.Entity = null;
-                        Globals.Entities[_entityIndex] = null;
-                    }
                     lock (Globals.ClientLock)
                     {
+                        if (_myClient.Entity != null)
+                        {
+                            var en = _myClient.Entity;
+                            Task.Run(() => Database.SaveCharacter(en));
+                            var map = MapInstance.Lookup.Get<MapInstance>(_myClient.Entity.CurrentMap);
+                            if (map != null) map.RemoveEntity(_myClient.Entity);
+
+                            //Update parties
+                            _myClient.Entity.LeaveParty();
+
+                            //Update trade
+                            _myClient.Entity.CancelTrade();
+
+                            //Search for logout activated events and run them
+                            /*foreach (var evt in EventBase.Lookup)
+                            {
+                                _myClient.Entity.StartCommonEvent(evt.Value, (int) EventPage.CommonEventTriggers.LeaveGame);
+                            }*/
+
+                            PacketSender.SendEntityLeave(_myClient.Entity.MyIndex, (int)EntityTypes.Player,
+                                Globals.Entities[_entityIndex].CurrentMap);
+                            if (!_myClient.IsEditor)
+                            {
+                                PacketSender.SendGlobalMsg(Strings.Get("player", "left", _myClient.Entity.MyName,
+                                    Options.GameName));
+                            }
+                            _myClient.Entity.Dispose();
+                            _myClient.Entity = null;
+                            Globals.Entities[_entityIndex] = null;
+                        }
                         Globals.Clients.Remove(_myClient);
                         _myClient = null;
                     }

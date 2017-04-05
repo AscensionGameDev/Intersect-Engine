@@ -245,6 +245,18 @@
 		<string id="onlinelistcommand">\onlinelist</string>
 		<string id="onlinecountcommand">\onlinecount</string>
 		<string id="commandparameter">\param</string>
+		<string id="playervar">\pv</string>
+		<string id="playerswitch">\ps</string>
+		<string id="globalvar">\gv</string>
+		<string id="globalswitch">\gs</string>
+		<string id="timehour">\hour</string>
+		<string id="militaryhour">\24hour</string>
+		<string id="timeminute">\minute</string>
+		<string id="timesecond">\second</string>
+		<string id="timeperiod">\period</string>
+		
+		<string id="periodmorning">AM</string>
+		<string id="periodevening">PM</string>
 	</Events>
 	<Combat>
 		<string id="critcal">CRITICAL HIT!</string>

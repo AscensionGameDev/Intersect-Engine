@@ -269,11 +269,13 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     lblObject.Text = Strings.Get("switchvariableeditor", "playerswitch");
                     txtObjectName.Text = ((PlayerSwitchBase) _editorItem).Name;
+                    lblId.Text = _editorItem.Index.ToString();
                 }
                 else if (rdoPlayerVariables.Checked)
                 {
                     lblObject.Text = Strings.Get("switchvariableeditor", "playervariable");
                     txtObjectName.Text = ((PlayerVariableBase) _editorItem).Name;
+                    lblId.Text = _editorItem.Index.ToString();
                 }
                 else if (rdoGlobalSwitches.Checked)
                 {
@@ -282,6 +284,7 @@ namespace Intersect.Editor.Forms.Editors
                     cmbSwitchValue.Show();
                     cmbSwitchValue.SelectedIndex =
                         cmbSwitchValue.Items.IndexOf(((ServerSwitchBase) _editorItem).Value.ToString());
+                    lblId.Text = _editorItem.Index.ToString();
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
@@ -289,6 +292,7 @@ namespace Intersect.Editor.Forms.Editors
                     txtObjectName.Text = ((ServerVariableBase) _editorItem).Name;
                     txtVariableVal.Show();
                     txtVariableVal.Text = ((ServerVariableBase) _editorItem).Value.ToString();
+                    lblId.Text = _editorItem.Index.ToString();
                 }
             }
             else

@@ -1,4 +1,5 @@
 ﻿using Intersect;
+using Intersect.Editor.Classes.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
@@ -35,14 +36,17 @@ namespace Intersect.Editor.Classes
             bf.Dispose();
         }
 
-        public static void SendMap(MapBase map)
+        public static void SendMap(MapInstance map)
         {
             var bf = new ByteBuffer();
             var mapData = map.GetMapData(false);
             bf.WriteLong((int) ClientPackets.SaveMap);
-            bf.WriteLong(map.Index);
-            bf.WriteLong(mapData.Length);
+            bf.WriteInteger(map.Index);
+            bf.WriteInteger(mapData.Length);
             bf.WriteBytes(mapData);
+            var tileData = map.GenerateTileData();
+            bf.WriteInteger(tileData.Length);
+            bf.WriteBytes(tileData);
             EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
