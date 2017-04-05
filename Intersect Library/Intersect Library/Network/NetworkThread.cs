@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using Intersect.Logging;
 using Intersect.Threading;
 
@@ -14,6 +15,7 @@ namespace Intersect.Network
 
         public Thread CurrentThread { get; }
         public PacketQueue Queue { get; }
+        public IList<IConnection> Connections { get; }
 
         public bool IsRunning { get; private set; }
         
@@ -24,6 +26,7 @@ namespace Intersect.Network
             CurrentThread = new Thread(Loop);
             Queue = new PacketQueue();
             mDispatcher = dispatcher;
+            Connections = new List<IConnection>();
         }
 
         public void Start()

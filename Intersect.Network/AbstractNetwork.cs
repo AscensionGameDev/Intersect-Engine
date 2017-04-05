@@ -30,7 +30,7 @@ namespace Intersect.Network
 
         protected NetPeerConfiguration Config { get; }
         public NetPeer Peer { get; }
-        
+
         protected RSACryptoServiceProvider Rsa { get; }
         protected RandomNumberGenerator Rng { get; }
 
@@ -146,7 +146,7 @@ namespace Intersect.Network
 
         protected virtual void RegisterPackets()
         {
-            
+
         }
 
         protected abstract void RegisterHandlers();
@@ -185,6 +185,29 @@ namespace Intersect.Network
                 && mConnectionLookup.ContainsKey(guid);
         }
 
+        private NetworkThread PickThread()
+        {
+            lock (mThreads)
+            {
+                NetworkThread emptiest = null;
+                foreach (var thread in mThreads)
+                {
+                    if (emptiest == null)
+                    {
+                        emptiest = thread;
+                        continue;
+                    }
+
+                    if (emptiest.Connections.Count > thread.Connections.Count)
+                    {
+                        emptiest = thread;
+                        continue;
+                    }
+                }
+                return emptiest;
+            }
+        }
+
         protected void AddConnection(ConnectionMetadata metadata)
         {
             if (metadata?.Connection == null) return;
@@ -193,6 +216,10 @@ namespace Intersect.Network
 
             mConnectionLookup.Add(metadata.Guid, metadata);
             mConnectionGuidLookup.Add(metadata.Connection.RemoteUniqueIdentifier, metadata.Guid);
+
+            var thread = PickThread();
+            thread.Connections.Add(metadata);
+            mThreadLookup.Add(metadata.Guid, thread);
         }
 
         protected void RemoveConnection(long lidgrenId)
@@ -210,6 +237,10 @@ namespace Intersect.Network
 
             mConnectionLookup.Remove(metadata.Guid);
             mConnectionGuidLookup.Remove(metadata.Connection.RemoteUniqueIdentifier);
+
+            if (!mThreadLookup.TryGetValue(metadata.Guid, out NetworkThread thread)) return;
+            thread.Connections.Remove(metadata);
+            mThreadLookup.Remove(metadata.Guid);
         }
 
         protected virtual bool HandleStatusChanged(NetIncomingMessage request)
@@ -262,7 +293,7 @@ namespace Intersect.Network
                             message.SenderConnection.Deny();
                         }
                         break;
-                    
+
                     case NetIncomingMessageType.Data:
                         var lidgrenId = message.SenderConnection?.RemoteUniqueIdentifier ?? -1;
                         if (mConnectionGuidLookup.TryGetValue(lidgrenId, out Guid guid))
