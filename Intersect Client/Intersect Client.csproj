@@ -7,7 +7,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2240F3DD-3694-4606-B181-F204CBBCB971}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Intersect.Client</RootNamespace>
     <AssemblyName>Intersect Client</AssemblyName>
@@ -40,6 +40,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Intersect.Client.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Classes\Core\GameAudio.cs" />
@@ -124,6 +127,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IntersectGame.cs" />
     <Compile Include="Network\ClientNetwork.cs" />
+    <Compile Include="ClientMain.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -195,6 +199,7 @@
       <Link>MonoGame.Framework.dll.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="PJPjjxJEkTWn7qyhSBqhg24CRy9smykBt2TMMwA4TYQZmujB" />
     <None Include="App.config" />
     <None Include="app.manifest" />
   </ItemGroup>

@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using Intersect.Logging;
 using Intersect.Memory;
@@ -28,10 +29,11 @@ namespace Intersect.Network
 
         protected NetPeerConfiguration Config { get; }
         public NetPeer Peer { get; }
+        
+        protected RSACryptoServiceProvider Rsa { get; }
+        protected RandomNumberGenerator Rng { get; }
 
-        protected RSAParameters RsaParameters { get; set; }
-
-        public Guid Guid { get; internal set; }
+        public Guid Guid { get; protected set; }
 
         protected AbstractNetwork(NetPeerConfiguration config, NetPeer peer)
         {
@@ -40,6 +42,7 @@ namespace Intersect.Network
             mThreads = new List<NetworkThread>();
             mThreadLookup = new Dictionary<Guid, NetworkThread>();
             mConnectionLookup = new Dictionary<Guid, ConnectionMetadata>();
+            mConnectionGuidLookup = new Dictionary<long, Guid>();
 
             Dispatcher = new PacketDispatcher();
             CurrentThread = new Thread(Loop);
@@ -48,7 +51,14 @@ namespace Intersect.Network
             Peer = peer;
 
             Guid = Guid.NewGuid();
+
+            Rng = new RNGCryptoServiceProvider();
+
+            Rsa = new RSACryptoServiceProvider();
+            Rsa.ImportParameters(GetRsaKey());
         }
+
+        protected abstract RSAParameters GetRsaKey();
 
         public bool IsRunning { get; private set; }
 
@@ -76,8 +86,8 @@ namespace Intersect.Network
 
                 IsRunning = true;
 
-                RegisterPackets();
-                RegisterHandlers();
+                //RegisterPackets();
+                //RegisterHandlers();
 
                 CurrentThread?.Start();
 
@@ -96,9 +106,9 @@ namespace Intersect.Network
             }
         }
 
-        public abstract void Connect();
+        protected abstract void OnStart();
 
-        public abstract void Listen();
+        protected abstract void OnStop();
 
         public virtual void Disconnect(string message = "")
         {
@@ -135,85 +145,199 @@ namespace Intersect.Network
 
         protected abstract void RegisterHandlers();
 
-        protected abstract void Poll();
-        
+        protected virtual bool HandleConnectionApproval(NetIncomingMessage request)
+        {
+            Log.Info($"{request.MessageType}: {request}");
+            return false;
+        }
+
+        protected virtual bool HandleConnected(NetIncomingMessage request) => true;
+
+        protected bool HasConnection(ConnectionMetadata metadata)
+        {
+            if (metadata?.Connection == null) throw new ArgumentNullException();
+            if (mConnectionLookup == null) throw new ArgumentNullException();
+            if (mConnectionGuidLookup == null) throw new ArgumentNullException();
+
+            return mConnectionLookup.ContainsKey(metadata.Guid)
+                && mConnectionGuidLookup.ContainsKey(metadata.Connection.RemoteUniqueIdentifier);
+        }
+
+        protected bool HasConnection(Guid guid)
+        {
+            if (mConnectionLookup == null) throw new ArgumentNullException();
+            if (mConnectionGuidLookup == null) throw new ArgumentNullException();
+            return mConnectionLookup.TryGetValue(guid, out ConnectionMetadata metadata)
+                && mConnectionGuidLookup.ContainsKey(metadata.Connection.RemoteUniqueIdentifier);
+        }
+
+        protected bool HasConnection(long lidgrenId)
+        {
+            if (mConnectionLookup == null) throw new ArgumentNullException();
+            if (mConnectionGuidLookup == null) throw new ArgumentNullException();
+            return mConnectionGuidLookup.TryGetValue(lidgrenId, out Guid guid)
+                && mConnectionLookup.ContainsKey(guid);
+        }
+
+        protected void AddConnection(ConnectionMetadata metadata)
+        {
+            if (metadata?.Connection == null) return;
+            if (mConnectionLookup == null) throw new ArgumentNullException();
+            if (mConnectionGuidLookup == null) throw new ArgumentNullException();
+
+            mConnectionLookup.Add(metadata.Guid, metadata);
+            mConnectionGuidLookup.Add(metadata.Connection.RemoteUniqueIdentifier, metadata.Guid);
+        }
+
+        protected void RemoveConnection(long lidgrenId)
+        {
+            if (!mConnectionGuidLookup.TryGetValue(lidgrenId, out Guid guid)) return;
+            if (!mConnectionLookup.TryGetValue(guid, out ConnectionMetadata metadata)) return;
+            RemoveConnection(metadata);
+        }
+
+        protected void RemoveConnection(ConnectionMetadata metadata)
+        {
+            if (metadata?.Connection == null) return;
+            if (mConnectionLookup == null) throw new ArgumentNullException();
+            if (mConnectionGuidLookup == null) throw new ArgumentNullException();
+
+            mConnectionLookup.Remove(metadata.Guid);
+            mConnectionGuidLookup.Remove(metadata.Connection.RemoteUniqueIdentifier);
+        }
+
+        protected virtual bool HandleStatusChanged(NetIncomingMessage request)
+        {
+            if (request?.SenderConnection == null) return false;
+            var lidgrenId = request.SenderConnection.RemoteUniqueIdentifier;
+            var status = (NetConnectionStatus)request.ReadByte();
+            Log.Info($"Status of {request.SenderConnection}: {status}");
+            switch (status)
+            {
+                case NetConnectionStatus.Connected:
+                    return HandleConnected(request);
+
+                case NetConnectionStatus.Disconnecting:
+                    Log.Info("Disconnecting...");
+                    Log.Info("'{request.ReadString()}'");
+                    return true;
+
+                case NetConnectionStatus.Disconnected:
+                    if (mConnectionGuidLookup.TryGetValue(lidgrenId, out Guid guid))
+                    {
+                        Log.Info($"Removing endpoint {NetUtility.ToHexString(lidgrenId)} ({guid})...");
+                        mConnectionGuidLookup.Remove(lidgrenId);
+                        mConnectionLookup.Remove(guid);
+                    }
+
+                    Log.Info($"Disconnected from endpoint {NetUtility.ToHexString(lidgrenId)} .");
+                    return true;
+
+                default:
+                    return true;
+            }
+
+            return false;
+        }
+
         private void Loop()
         {
+            OnStart();
+
             while (IsRunning)
             {
-                if (Peer.ReadMessage(out NetIncomingMessage message))
+                //Log.Info("Waiting for message...");
+                if (!Peer.ReadMessage(out NetIncomingMessage message)) continue;
+                switch (message.MessageType)
                 {
-                    var lidgrenId = message.SenderConnection.RemoteUniqueIdentifier;
-                    Guid guid;
-                    switch (message.MessageType)
-                    {
-                        case NetIncomingMessageType.Data:
-                            if (mConnectionGuidLookup.TryGetValue(lidgrenId, out guid))
+                    case NetIncomingMessageType.ConnectionApproval:
+                        if (!HandleConnectionApproval(message))
+                        {
+                            message.SenderConnection.Deny();
+                        }
+                        break;
+                    
+                    case NetIncomingMessageType.Data:
+                        var lidgrenId = message.SenderConnection?.RemoteUniqueIdentifier ?? -1;
+                        if (mConnectionGuidLookup.TryGetValue(lidgrenId, out Guid guid))
+                        {
+                            if (mConnectionLookup.TryGetValue(guid, out ConnectionMetadata connection))
                             {
-                                if (mConnectionLookup.TryGetValue(guid, out ConnectionMetadata connection))
+                                if (connection.Aes.Decrypt(message))
                                 {
                                     EnqueueIncomingDataMessage(connection, message);
                                     break;
                                 }
 
-                                Log.Error($"Error reading from Intersect:{guid}.");
+                                Log.Error($"Error decrypting from Lidgren:{guid}.");
                             }
 
-                            Log.Error($"Error reading from Lidgren:{lidgrenId}.");
-                            break;
+                            Log.Error($"Error reading from Lidgren:{guid}.");
+                        }
 
-                        case NetIncomingMessageType.VerboseDebugMessage:
-                            Log.Verbose(message.ReadString());
-                            break;
+                        Log.Error($"Error reading from Lidgren Remote:{lidgrenId}.");
+                        break;
 
-                        case NetIncomingMessageType.DebugMessage:
-                            Log.Debug(message.ReadString());
-                            break;
+                    case NetIncomingMessageType.VerboseDebugMessage:
+                        Log.Verbose(message.ReadString());
+                        break;
 
-                        case NetIncomingMessageType.WarningMessage:
-                            Log.Warn(message.ReadString());
-                            break;
+                    case NetIncomingMessageType.DebugMessage:
+                        Log.Debug(message.ReadString());
+                        break;
 
-                        case NetIncomingMessageType.ErrorMessage:
-                            Log.Error(message.ReadString());
-                            break;
+                    case NetIncomingMessageType.WarningMessage:
+                        Log.Warn(message.ReadString());
+                        break;
 
-                        case NetIncomingMessageType.StatusChanged:
-                            var status = (NetConnectionStatus) message.ReadByte();
-                            switch (status)
-                            {
-                                case NetConnectionStatus.Connected:
-                                    if (mConnectionGuidLookup.ContainsKey(lidgrenId))
-                                    {
-                                        Log.Error("Client connection already exists, terminating request...");
-                                        message.SenderConnection.Disconnect("Error, are you trying to reconnect?");
-                                        break;
-                                    }
+                    case NetIncomingMessageType.ErrorMessage:
+                        Log.Error(message.ReadString());
+                        break;
 
-                                    var metadata = new ConnectionMetadata(message.SenderConnection);
-                                    mConnectionLookup.Add(metadata.Guid, metadata);
-                                    mConnectionGuidLookup.Add(lidgrenId, metadata.Guid);
+                    case NetIncomingMessageType.StatusChanged:
+                        if (!HandleStatusChanged(message))
+                        {
+                            message.SenderConnection.Disconnect("Error occurred processing status change.");
+                        }
+                        break;
 
-                                    metadata.NegotiateEncryption(message, RsaParameters);
+                    case NetIncomingMessageType.Error:
+                        Log.Info($"{message.MessageType}: {message}");
+                        break;
 
-                                    break;
+                    case NetIncomingMessageType.UnconnectedData:
+                        Log.Info($"{message.MessageType}: {message}");
+                        break;
 
-                                case NetConnectionStatus.Disconnected:
-                                case NetConnectionStatus.Disconnecting:
-                                    if (mConnectionGuidLookup.TryGetValue(lidgrenId, out guid))
-                                    {
-                                        Log.Info($"Disconnecting client {NetUtility.ToHexString(lidgrenId)} ({guid})...");
-                                        mConnectionGuidLookup.Remove(lidgrenId);
-                                        mConnectionLookup.Remove(guid);
-                                    }
-                                    break;
-                            }
-                            break;
-                    }
+                    case NetIncomingMessageType.Receipt:
+                        Log.Info($"{message.MessageType}: {message}");
+                        break;
 
-                    Peer.Recycle(message);
+                    case NetIncomingMessageType.DiscoveryRequest:
+                        Log.Info($"{message.MessageType}: {message}");
+                        break;
+
+                    case NetIncomingMessageType.DiscoveryResponse:
+                        Log.Info($"{message.MessageType}: {message}");
+                        break;
+
+                    case NetIncomingMessageType.NatIntroductionSuccess:
+                        Log.Info($"{message.MessageType}: {message}");
+                        break;
+
+                    case NetIncomingMessageType.ConnectionLatencyUpdated:
+                        Log.Info($"{message.MessageType}: {message}");
+                        break;
+
+                    default:
+                        Log.Info($"{message.MessageType}: {message}");
+                        break;
                 }
+
+                Peer.Recycle(message);
             }
+
+            OnStop();
         }
 
         protected void AssignNetworkThread(Guid guid, NetworkThread networkThread)
@@ -262,7 +386,7 @@ namespace Intersect.Network
                 mThreads?.Add(new NetworkThread(Dispatcher, CreateThreadYield(), $"Network Thread #{i}"));
         }
 
-        protected static RSACryptoServiceProvider LoadKeyFromAssembly(Assembly pa, string pb, bool pc)
+        protected static RSAParameters LoadKeyFromAssembly(Assembly pa, string pb, bool pc)
         {
             if (pa == null) throw new ArgumentNullException();
             if (string.IsNullOrEmpty(pb?.Trim())) throw new ArgumentNullException();
@@ -277,9 +401,7 @@ namespace Intersect.Network
 
                     b.Close();
 
-                    var e = new RSACryptoServiceProvider();
-                    e.ImportParameters(d);
-                    return e;
+                    return d;
                 }
             }
         }

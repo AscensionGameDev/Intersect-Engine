@@ -21,6 +21,11 @@ namespace Intersect.Memory
         {
         }
 
+        public MemoryBuffer(byte[] data)
+            : base(data)
+        {
+        }
+
         public new int Length
             => (int)base.Length;
 
@@ -81,7 +86,7 @@ namespace Intersect.Memory
         }
 
         public bool Read(ref byte[] value, int offset, int count)
-            => (count != base.Read(value, offset, count));
+            => (count == base.Read(value, offset, count));
 
         public bool Read(out char value)
         {

@@ -114,6 +114,7 @@
     <Compile Include="Color.cs" />
     <Compile Include="GameObjects\TilesetBase.cs" />
     <Compile Include="GameObjects\TimeBase.cs" />
+    <Compile Include="Logging\ConsoleOutput.cs" />
     <Compile Include="Memory\IBuffer.cs" />
     <Compile Include="Localization\Language.cs" />
     <Compile Include="Localization\Strings.cs" />
@@ -154,6 +155,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SharedConstants.cs" />
     <Compile Include="TextUtils.cs" />
     <Compile Include="Threading\IThreadYield.cs" />
     <Compile Include="Threading\ThreadYieldNet35.cs" />

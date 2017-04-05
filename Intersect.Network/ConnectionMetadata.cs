@@ -11,105 +11,34 @@ namespace Intersect.Network
     {
         public Guid Guid { get; }
         public NetConnection Connection { get; }
-        public NetworkMetaStatus Status { get; private set; }
         public RSACryptoServiceProvider Rsa { get; private set; }
         public NetAESEncryption Aes { get; private set; }
-        public RandomNumberGenerator Rng { get; }
 
         private byte[] mRsaSecret;
 
-        public ConnectionMetadata(NetConnection connection)
+        public ConnectionMetadata(NetConnection connection, byte[] aesKey)
+            : this(Guid.NewGuid(), connection, aesKey, null)
         {
-            Guid = Guid.NewGuid();
-            Connection = connection;
-            Status = NetworkMetaStatus.ConnectionEstablished;
-            Rng = new RNGCryptoServiceProvider();
         }
 
-        public NetIncomingMessage NegotiateEncryption(NetIncomingMessage message, RSAParameters? rsaParameters = null)
+        public ConnectionMetadata(NetConnection connection, byte[] aesKey, RSAParameters rsaParameters)
+            : this(Guid.NewGuid(), connection, aesKey, rsaParameters)
         {
+
+        }
+
+        public ConnectionMetadata(Guid guid, NetConnection connection, byte[] aesKey, RSAParameters? rsaParameters = null)
+        {
+            Guid = guid;
+            Connection = connection;
+            Aes = new NetAESEncryption(Connection.Peer, aesKey, 0, aesKey.Length);
+            Rsa = new RSACryptoServiceProvider(2048);
             if (rsaParameters.HasValue)
             {
-                Rsa = new RSACryptoServiceProvider();
                 Rsa.ImportParameters(rsaParameters.Value);
             }
-
-            switch (Status)
-            {
-                case NetworkMetaStatus.ConnectionEstablished:
-                    if (Rsa?.PublicOnly ?? false)
-                    {
-                        Status = NetworkMetaStatus.HandshakeReceived;
-                        break;
-                    }
-
-                    Status = NetworkMetaStatus.HandshakeRequested;
-
-                    var encryptionKey = new byte[32];
-                    Rng.GetNonZeroBytes(encryptionKey);
-                    Aes = new NetAESEncryption(Connection.Peer, encryptionKey, 0, 32);
-
-                    mRsaSecret = new byte[32];
-                    Rng.GetNonZeroBytes(mRsaSecret);
-
-                    byte[] rsaMessage;
-                    using (var memMessage = new MemoryStream())
-                    {
-                        memMessage.Write(Guid.ToByteArray(), 0, 16);
-                        memMessage.Write(encryptionKey, 0, 32);
-                        memMessage.Write(mRsaSecret, 0, 32);
-
-                        rsaMessage = Rsa.Encrypt(memMessage.ToArray(), true);
-                        memMessage.Close();
-                    }
-
-                    var handshakeRequest = Connection.Peer.CreateMessage(rsaMessage.Length + sizeof(int));
-                    handshakeRequest.Write(rsaMessage.Length);
-                    handshakeRequest.Write(rsaMessage);
-                    Connection.SendMessage(handshakeRequest, NetDeliveryMethod.ReliableOrdered, 0);
-                    break;
-
-                case NetworkMetaStatus.Connected:
-                    if (message.Decrypt(Aes))
-                    {
-                        return message;
-                    }
-
-                    Log.Error($"[{Guid}] Failed to decrypt message.");
-                    break;
-
-                case NetworkMetaStatus.HandshakeCompleted:
-                    if (message.Decrypt(Aes))
-                    {
-                        return message;
-                    }
-
-                    Log.Error($"[{Guid}] Failed to decrypt message.");
-                    break;
-
-                case NetworkMetaStatus.HandshakeReceived:
-                    var packetData = message.ReadBytes(message.LengthBytes - 1);
-                    break;
-
-                case NetworkMetaStatus.HandshakeRequested:
-                    if (Aes != null)
-                    {
-                        Status = NetworkMetaStatus.HandshakeCompleted;
-                    }
-                    break;
-
-                case NetworkMetaStatus.Unknown:
-                    Log.Error($"[{Guid}] Bad network state, terminating.");
-                    Connection.Disconnect("Bye.");
-                    break;
-
-                default:
-                    break;
-            }
-
-            return null;
         }
-        
+
         public void Dispose()
         {
             Connection.Disconnect("status_disposing");

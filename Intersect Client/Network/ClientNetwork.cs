@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Reflection;
+using System.Security.Cryptography;
+using Intersect.Logging;
 using Intersect.Memory;
 using Intersect.Network;
 using Intersect.Threading;
 using Lidgren.Network;
+using System.Linq;
 
 namespace Intersect.Client.Network
 {
@@ -10,18 +14,55 @@ namespace Intersect.Client.Network
     {
         public new NetClient Peer => (NetClient)base.Peer;
 
+        private byte[] mHandshakeSecret;
+        private RSACryptoServiceProvider mRsa;
+
         public ClientNetwork(NetPeerConfiguration config) : base(config, new NetClient(config))
         {
+            mRsa = new RSACryptoServiceProvider(2048);
         }
 
-        public override void Connect()
+        protected override RSAParameters GetRsaKey()
+            => LoadKeyFromAssembly(Assembly.GetExecutingAssembly(), "Intersect.Client.PJPjjxJEkTWn7qyhSBqhg24CRy9smykBt2TMMwA4TYQZmujB", false);
+
+        private const int sizeHandshakeSecret = 32;
+        private const int sizeRsa = 2 + 3 + 256;
+        private static readonly int sizeSharedSecret = SharedConstants.VERSION_DATA.Length;
+        private static readonly int sizeSecret = 4 + sizeHandshakeSecret + sizeSharedSecret + sizeRsa;
+
+        protected override void OnStart()
         {
-            Peer.Connect(Config.LocalAddress.ToString(), Config.Port);
+            Log.Info("Starting the client...");
+            Peer.Start();
+            
+            using (var hailBuffer = new MemoryBuffer(sizeSecret))
+            {
+                hailBuffer.Write(SharedConstants.VERSION_DATA);
+
+                mHandshakeSecret = new byte[32];
+                Rng.GetNonZeroBytes(mHandshakeSecret);
+                hailBuffer.Write(mHandshakeSecret, 32);
+
+                var publicKey = mRsa.ExportParameters(false);
+                hailBuffer.Write((short)(publicKey.Modulus.Length * 8));
+                hailBuffer.Write(publicKey.Exponent, 3);
+                hailBuffer.Write(publicKey.Modulus, publicKey.Modulus.Length);
+
+                Log.Verbose($"Exponent: {BitConverter.ToString(publicKey.Exponent)}");
+                Log.Verbose($"Modulus: {BitConverter.ToString(publicKey.Modulus)}");
+
+                var encryptedMessage = Rsa.Encrypt(hailBuffer.ToArray(), true);
+                var hail = Peer.CreateMessage(sizeof(int) + encryptedMessage.Length);
+                hail.Write(encryptedMessage.Length);
+                hail.Write(encryptedMessage, 0, encryptedMessage.Length);
+
+                Peer.Connect("localhost", 14232, hail);
+            }
         }
 
-        public override void Listen()
+        protected override void OnStop()
         {
-            throw new NotImplementedException();
+            Log.Info("Stopping the client...");
         }
 
         public override bool Send(IPacket packet)
@@ -49,9 +90,32 @@ namespace Intersect.Client.Network
             
         }
 
-        protected override void Poll()
+        protected override bool HandleConnected(NetIncomingMessage request)
         {
-            
+            var lidgrenId = request.SenderConnection.RemoteUniqueIdentifier;
+            var remoteHail = request.SenderConnection.RemoteHailMessage;
+
+            if (HasConnection(lidgrenId)) return true;
+
+            var encryptedSize = remoteHail.ReadInt32();
+            var encryptedData = remoteHail.ReadBytes(encryptedSize);
+            var decryptedData = mRsa.Decrypt(encryptedData, true);
+            using (var requestBuffer = new MemoryBuffer(decryptedData))
+            {
+                byte[] handshakeSecret;
+                if (!requestBuffer.Read(out handshakeSecret, 32)) return false;
+                if (!mHandshakeSecret.SequenceEqual(handshakeSecret)) return false;
+
+                byte[] aesKey;
+                if (!requestBuffer.Read(out aesKey, 32)) return false;
+
+                byte[] guidData;
+                if (!requestBuffer.Read(out guidData, 16)) return false;
+                Guid = new Guid(guidData);
+                var metadata = new ConnectionMetadata(Guid, request.SenderConnection, aesKey);
+                AddConnection(metadata);
+                return true;
+            }
         }
 
         protected override int CalculateNumberOfThreads() => 1;

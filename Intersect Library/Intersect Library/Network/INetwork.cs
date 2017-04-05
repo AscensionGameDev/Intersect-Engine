@@ -12,8 +12,6 @@ namespace Intersect.Network
 
         bool Stop();
 
-        void Connect();
-
         void Disconnect(string message = "");
 
         bool Send(IPacket packet);
