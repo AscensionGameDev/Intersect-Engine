@@ -6,13 +6,11 @@ using System.Threading;
 using System.Windows.Forms;
 using DarkUI.Forms;
 using Hjg.Pngcs;
-using Intersect;
 using Intersect.Editor.Classes.General;
 using Intersect.Editor.Forms;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
 using Microsoft.Xna.Framework.Graphics;
-using Color = System.Drawing.Color;
 
 namespace Intersect.Editor.Classes.Maps
 {

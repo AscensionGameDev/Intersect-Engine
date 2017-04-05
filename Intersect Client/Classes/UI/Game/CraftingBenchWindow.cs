@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;

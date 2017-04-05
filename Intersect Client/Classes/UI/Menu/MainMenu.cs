@@ -1,5 +1,4 @@
-﻿using System;
-using Intersect.Localization;
+﻿using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;

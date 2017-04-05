@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Intersect;
 using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen;

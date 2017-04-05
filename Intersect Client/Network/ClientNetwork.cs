@@ -1,13 +1,12 @@
-﻿using System;
-using System.Reflection;
-using System.Security.Cryptography;
-using Intersect.Logging;
+﻿using Intersect.Logging;
 using Intersect.Memory;
 using Intersect.Network;
+using Intersect.Network.Packets.Ping;
 using Intersect.Threading;
 using Lidgren.Network;
+using System;
 using System.Linq;
-using Intersect.Network.Packets.Ping;
+using System.Security.Cryptography;
 
 namespace Intersect.Client.Network
 {

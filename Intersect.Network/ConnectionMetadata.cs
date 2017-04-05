@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
 using System.Security.Cryptography;
-using Intersect.Logging;
 using Intersect.Memory;
 using Lidgren.Network;
 

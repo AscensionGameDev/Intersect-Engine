@@ -1,7 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Xml;
-using Intersect;
 using Intersect.Logging;
 using Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Lib.Enums;
 using Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Lib.GameObjects;

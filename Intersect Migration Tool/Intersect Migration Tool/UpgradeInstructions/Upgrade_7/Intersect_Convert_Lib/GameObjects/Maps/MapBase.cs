@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
 using Intersect.Localization;
 using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
 

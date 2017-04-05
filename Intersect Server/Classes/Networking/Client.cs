@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Intersect;
 using Intersect.Logging;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;

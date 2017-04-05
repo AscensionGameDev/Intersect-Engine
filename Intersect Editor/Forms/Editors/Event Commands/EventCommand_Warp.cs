@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using DarkUI.Controls;
-using Intersect;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using Intersect;
 using Intersect.Editor.Classes.Core;
 using Intersect.Editor.Classes.Entities;
 using Intersect.Editor.Classes.General;
@@ -16,7 +15,6 @@ using Intersect.Localization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using static Intersect.Editor.Classes.Core.GameContentManager;
-using Color = System.Drawing.Color;
 
 namespace Intersect.Editor.Classes
 {

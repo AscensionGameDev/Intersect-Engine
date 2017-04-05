@@ -1,7 +1,5 @@
-﻿using Intersect;
-using Intersect.Editor.Classes.Maps;
+﻿using Intersect.Editor.Classes.Maps;
 using Intersect.Enums;
-using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
 

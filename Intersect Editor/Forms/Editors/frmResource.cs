@@ -5,7 +5,6 @@ using System.IO;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect;
 using Intersect.Editor.Classes.Core;
 using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;

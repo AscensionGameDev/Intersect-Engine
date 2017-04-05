@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using Intersect;
 
 namespace Intersect.Server.Classes.Networking
 {

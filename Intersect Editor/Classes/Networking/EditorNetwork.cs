@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Windows.Forms;
-using Intersect;
 
 namespace Intersect.Editor.Classes
 {

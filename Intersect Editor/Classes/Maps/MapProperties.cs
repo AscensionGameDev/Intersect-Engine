@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Intersect;
 using Intersect.Editor.Classes.Core;
 using Intersect.Enums;
 using Intersect.GameObjects.Maps;
 using Intersect.Localization;
-using Color = System.Drawing.Color;
 
 namespace Intersect.Editor.Classes.Maps
 {

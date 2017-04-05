@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using Intersect;
 using Intersect.Enums;
 using Intersect.Localization;
 using Intersect.Logging;

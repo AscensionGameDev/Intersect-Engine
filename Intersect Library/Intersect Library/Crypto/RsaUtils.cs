@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-
-namespace Intersect.Crypto
+﻿namespace Intersect.Crypto
 {
     public static class RsaUtils
     {

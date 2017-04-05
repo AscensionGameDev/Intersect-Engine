@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Intersect;
 using Intersect.Enums;
-using Intersect.GameObjects.Events;
 using Intersect.Localization;
 using Intersect.Logging;
 using Intersect.Server.Classes.Core;

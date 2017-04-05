@@ -1,5 +1,4 @@
 ﻿using System;
-using Intersect;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects
 {

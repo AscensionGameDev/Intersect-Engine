@@ -10,7 +10,6 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using Microsoft.Xna.Framework.Graphics;
-using Color = System.Drawing.Color;
 
 namespace Intersect.Editor.Forms
 {

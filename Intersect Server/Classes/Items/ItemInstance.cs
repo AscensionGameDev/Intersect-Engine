@@ -1,5 +1,4 @@
-﻿using Intersect;
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Server.Classes.General;
 

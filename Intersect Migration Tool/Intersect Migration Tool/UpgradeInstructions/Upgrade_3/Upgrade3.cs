@@ -1,5 +1,4 @@
-﻿using System;
-using Mono.Data.Sqlite;
+﻿using Mono.Data.Sqlite;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_3
 {

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Drawing;
-using Intersect;
 using Intersect.Editor.Classes.Core;
 using Intersect.GameObjects;
 using Microsoft.Xna.Framework.Graphics;
-using Color = System.Drawing.Color;
 
 namespace Intersect.Editor.Classes.Entities
 {

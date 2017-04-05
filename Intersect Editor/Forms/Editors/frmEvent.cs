@@ -5,7 +5,6 @@ using System.IO;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.Core;
 using Intersect.Editor.Forms.Editors;
@@ -16,7 +15,6 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using Color = System.Drawing.Color;
 
 namespace Intersect.Editor.Forms
 {

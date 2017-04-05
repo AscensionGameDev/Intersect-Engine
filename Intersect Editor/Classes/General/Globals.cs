@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
-using Intersect;
 using Intersect.Editor.Classes.Core;
 using Intersect.Editor.Classes.General;
 using Intersect.Editor.Classes.Maps;

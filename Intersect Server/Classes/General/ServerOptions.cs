@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using Intersect;
 using Intersect.Enums;
 
 namespace Intersect.Server.Classes.General

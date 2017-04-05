@@ -5,7 +5,6 @@ using Intersect.Threading;
 using Lidgren.Network;
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Security.Cryptography;
 
 namespace Intersect.Server.Network

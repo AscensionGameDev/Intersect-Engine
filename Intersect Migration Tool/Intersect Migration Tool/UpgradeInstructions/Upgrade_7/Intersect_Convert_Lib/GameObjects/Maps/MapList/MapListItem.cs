@@ -1,6 +1,4 @@
-﻿using Intersect;
-
-namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Maps.MapList
+﻿namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Maps.MapList
 {
     public class MapListItem
     {

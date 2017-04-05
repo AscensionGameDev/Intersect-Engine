@@ -1,16 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using Intersect;
 using Intersect.Logging;
-using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib;
 using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects;
 using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
 using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Maps;
 using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 using Mono.Data.Sqlite;
 using GameObject = Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObject;
-using Options = Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.Options;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
 {
