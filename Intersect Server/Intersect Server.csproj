@@ -153,7 +153,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="s3auxSt4RhVSbr7p5Vrkw9w9NwAMjbHUmsxZ7vSv3bQt9RXY" />
+    <None Include="private.bk1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>

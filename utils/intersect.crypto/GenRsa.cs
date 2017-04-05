@@ -22,7 +22,7 @@ namespace Intersect.Crypto
 
                 using (var privateWriter = new StreamWriter(new FileStream($"{timestamp}_private.key", FileMode.CreateNew)))
                 {
-                    Pem.ExportPrivateKey(rsa, privateWriter);
+                    PemUtils.ExportPrivateKey(rsa, privateWriter);
                     privateWriter.Close();
                 }
 
@@ -66,7 +66,7 @@ namespace Intersect.Crypto
 
                 using (var publicWriter = new StreamWriter(new FileStream($"{timestamp}_public.key", FileMode.CreateNew)))
                 {
-                    Pem.ExportPublicKey(rsa, publicWriter);
+                    PemUtils.ExportPublicKey(rsa, publicWriter);
                     publicWriter.Close();
                 }
 

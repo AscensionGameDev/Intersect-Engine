@@ -434,40 +434,56 @@ namespace Intersect.Network
                 mThreads?.Add(new NetworkThread(Dispatcher, CreateThreadYield(), $"Network Thread #{i}"));
         }
 
-        protected static RSAParameters LoadKeyFromAssembly(Assembly pa, string pb, bool pc)
+        protected static RSAParameters LoadKeyFromAssembly(Assembly assembly, string resourceName, bool isPublic)
         {
-            if (pa == null) throw new ArgumentNullException();
-            if (string.IsNullOrEmpty(pb?.Trim())) throw new ArgumentNullException();
+            if (assembly == null) throw new ArgumentNullException();
+            if (string.IsNullOrWhiteSpace(resourceName)) throw new ArgumentNullException();
 
-            using (var a = pa.GetManifestResourceStream(pb))
+            using (var stream = assembly.GetManifestResourceStream(resourceName))
             {
-                if (a == null) throw new ArgumentNullException();
-
-                using (var b = new BinaryReader(new GZipStream(a, CompressionMode.Decompress)))
-                {
-                    var d = (pc ? ReadPrivateKey(b) : ReadPublicKey(b));
-
-                    b.Close();
-
-                    return d;
-                }
+                return LoadKeyFromStream(stream, isPublic);
             }
         }
 
-        private static RSAParameters ReadPrivateKey(BinaryReader pa)
+        protected static RSAParameters LoadKeyFromFile(string filepath, bool isPublic)
         {
-            var c = pa.ReadInt16();
+            if (string.IsNullOrWhiteSpace(filepath)) throw new ArgumentNullException();
+            using (var stream = new FileStream(filepath, FileMode.Open))
+            {
+                return LoadKeyFromStream(stream, isPublic);
+            }
+        }
+
+        protected static RSAParameters LoadKeyFromStream(Stream stream, bool isPublic)
+        {
+            if (stream == null) throw new ArgumentNullException();
+
+            using (var reader = new BinaryReader(new GZipStream(stream, CompressionMode.Decompress)))
+            {
+                var rsaParameters = (isPublic ? ReadPublicKey(reader) : ReadPrivateKey(reader));
+
+                DumpKey(rsaParameters, isPublic);
+
+                reader.Close();
+
+                return rsaParameters;
+            }
+        }
+
+        private static RSAParameters ReadPrivateKey(BinaryReader reader)
+        {
+            var c = reader.ReadInt16();
 
             return new RSAParameters
             {
-                D = pa.ReadBytes(c >> 3),
-                DP = pa.ReadBytes(c >> 4),
-                DQ = pa.ReadBytes(c >> 4),
-                Exponent = pa.ReadBytes(3),
-                InverseQ = pa.ReadBytes(c >> 4),
-                Modulus = pa.ReadBytes(c >> 3),
-                P = pa.ReadBytes(c >> 4),
-                Q = pa.ReadBytes(c >> 4)
+                D = reader.ReadBytes(c >> 3),
+                DP = reader.ReadBytes(c >> 4),
+                DQ = reader.ReadBytes(c >> 4),
+                Exponent = reader.ReadBytes(3),
+                InverseQ = reader.ReadBytes(c >> 4),
+                Modulus = reader.ReadBytes(c >> 3),
+                P = reader.ReadBytes(c >> 4),
+                Q = reader.ReadBytes(c >> 4)
             };
         }
 
@@ -489,5 +505,21 @@ namespace Intersect.Network
         public IConnection FindConnection(Guid guid)
             => mConnectionLookup.TryGetValue(guid, out ConnectionMetadata connection)
             ? connection : null;
+
+        protected static void DumpKey(RSAParameters parameters, bool isPublic)
+        {
+#if DEBUG
+            Log.Verbose($"Exponent: {BitConverter.ToString(parameters.Exponent)}");
+            Log.Verbose($"Modulus: {BitConverter.ToString(parameters.Modulus)}");
+
+            if (isPublic) return;
+            Log.Verbose($"D: {BitConverter.ToString(parameters.D)}");
+            Log.Verbose($"DP: {BitConverter.ToString(parameters.DP)}");
+            Log.Verbose($"DQ: {BitConverter.ToString(parameters.DQ)}");
+            Log.Verbose($"InverseQ: {BitConverter.ToString(parameters.InverseQ)}");
+            Log.Verbose($"P: {BitConverter.ToString(parameters.P)}");
+            Log.Verbose($"Q: {BitConverter.ToString(parameters.Q)}");
+#endif
+        }
     }
 }

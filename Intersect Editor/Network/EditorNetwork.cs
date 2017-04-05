@@ -9,16 +9,16 @@ using Lidgren.Network;
 using System.Linq;
 using Intersect.Network.Packets.Ping;
 
-namespace Intersect.Client.Network
+namespace Intersect.Editor.Network
 {
-    public class ClientNetwork : AbstractNetwork
+    public class EditorNetwork : AbstractNetwork
     {
         public new NetClient Peer => (NetClient)base.Peer;
 
         private byte[] mHandshakeSecret;
         private RSACryptoServiceProvider mRsa;
 
-        public ClientNetwork(NetPeerConfiguration config) : base(config, new NetClient(config))
+        public EditorNetwork(NetPeerConfiguration config) : base(config, new NetClient(config))
         {
             mRsa = new RSACryptoServiceProvider(2048);
         }

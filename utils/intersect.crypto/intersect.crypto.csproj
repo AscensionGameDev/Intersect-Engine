@@ -45,8 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BKey.cs" />
-    <Compile Include="Pem.cs" />
+    <Compile Include="RawUtils.cs" />
+    <Compile Include="PemUtils.cs" />
     <Compile Include="PrivateKeyPair.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

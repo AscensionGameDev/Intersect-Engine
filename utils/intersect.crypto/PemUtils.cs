@@ -4,8 +4,19 @@ using System.Security.Cryptography;
 
 namespace Intersect.Crypto
 {
-    public static class Pem
+    public static class PemUtils
     {
+        public static void Export(RSACryptoServiceProvider csp, TextWriter writer)
+        {
+            if (csp.PublicOnly)
+            {
+                ExportPublicKey(csp, writer);
+                return;
+            }
+
+            ExportPrivateKey(csp, writer);
+        }
+
         public static void ExportPublicKey(RSACryptoServiceProvider csp, TextWriter outputStream)
         {
             var parameters = csp.ExportParameters(false);

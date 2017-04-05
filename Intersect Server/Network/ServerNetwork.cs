@@ -20,7 +20,8 @@ namespace Intersect.Server.Network
         }
 
         protected override RSAParameters GetRsaKey()
-            => LoadKeyFromAssembly(Assembly.GetExecutingAssembly(), "Intersect.Server.s3auxSt4RhVSbr7p5Vrkw9w9NwAMjbHUmsxZ7vSv3bQt9RXY", true);
+            //=> LoadKeyFromAssembly(Assembly.GetExecutingAssembly(), "Intersect.Server.s3auxSt4RhVSbr7p5Vrkw9w9NwAMjbHUmsxZ7vSv3bQt9RXY", true);
+            => LoadKeyFromFile("private.bk1", false);
 
         protected override void OnStart()
         {
@@ -57,8 +58,7 @@ namespace Intersect.Server.Network
                     if (!requestBuffer.Read(out rsaParameters.Exponent, 3)) return false;
                     if (!requestBuffer.Read(out rsaParameters.Modulus, rsaBits / 8)) return false;
 
-                    Log.Verbose($"Exponent: {BitConverter.ToString(rsaParameters.Exponent)}");
-                    Log.Verbose($"Modulus: {BitConverter.ToString(rsaParameters.Modulus)}");
+                    DumpKey(rsaParameters, true);
 
                     responseBuffer.Write(handshakeSecret, 32);
 

@@ -46,7 +46,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Crypto Keygen\intersect.crypto.csproj">
+    <ProjectReference Include="..\intersect.crypto\intersect.crypto.csproj">
       <Project>{5e5c0d15-c174-4aa2-abbc-241bb13348e5}</Project>
       <Name>intersect.crypto</Name>
     </ProjectReference>

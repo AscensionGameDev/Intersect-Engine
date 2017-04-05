@@ -199,7 +199,9 @@
       <Link>MonoGame.Framework.dll.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <EmbeddedResource Include="PJPjjxJEkTWn7qyhSBqhg24CRy9smykBt2TMMwA4TYQZmujB" />
+    <None Include="public.bk1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="App.config" />
     <None Include="app.manifest" />
   </ItemGroup>
