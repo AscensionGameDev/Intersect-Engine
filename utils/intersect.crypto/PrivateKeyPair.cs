@@ -1,4 +1,4 @@
-﻿namespace Crypto_Keygen
+﻿namespace Intersect.Crypto
 {
     public struct PrivateKeyPair
     {

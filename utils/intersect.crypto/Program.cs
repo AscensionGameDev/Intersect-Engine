@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Crypto_Keygen
+namespace Intersect.Crypto
 {
     class Program
     {

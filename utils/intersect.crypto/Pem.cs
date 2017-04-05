@@ -2,7 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 
-namespace Crypto_Keygen
+namespace Intersect.Crypto
 {
     public static class Pem
     {
