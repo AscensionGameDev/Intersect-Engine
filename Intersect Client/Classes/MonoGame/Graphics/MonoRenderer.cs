@@ -30,6 +30,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         private GraphicsDevice _graphicsDevice;
         private bool _initialized;
         private BlendState _multiplyState;
+        private BlendState _cutoutState;
         RasterizerState _rasterizerState = new RasterizerState() {ScissorTestEnable = true};
         private int _screenHeight;
         private int _screenWidth;
@@ -55,6 +56,16 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 ColorBlendFunction = BlendFunction.Add,
                 ColorSourceBlend = Blend.DestinationColor,
                 ColorDestinationBlend = Blend.Zero
+            };
+
+            _cutoutState = new BlendState()
+            {
+                ColorBlendFunction = BlendFunction.Add,
+                ColorSourceBlend = Blend.Zero,
+                ColorDestinationBlend = Blend.InverseSourceAlpha,
+                AlphaBlendFunction = BlendFunction.Add,
+                AlphaSourceBlend = Blend.Zero,
+                AlphaDestinationBlend = Blend.InverseSourceAlpha
             };
             _gameWindow = monoGame.Window;
             centerScreenX = _gameWindow.ClientBounds.Center.X;
@@ -155,6 +166,12 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                         break;
                     case (GameBlendModes.Add):
                         blend = BlendState.Additive;
+                        break;
+                    case (GameBlendModes.Opaque):
+                        blend = BlendState.Opaque;
+                        break;
+                    case GameBlendModes.Cutout:
+                        blend = _cutoutState;
                         break;
                 }
 

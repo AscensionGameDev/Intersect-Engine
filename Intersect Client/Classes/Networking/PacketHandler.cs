@@ -292,8 +292,10 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             var mapNum = (int) bf.ReadLong();
             bf.ReadInteger();
-            var mapLength = bf.ReadLong();
-            var mapData = bf.ReadBytes((int) mapLength);
+            var mapLength = bf.ReadInteger();
+            var mapData = bf.ReadBytes(mapLength);
+            var tileLength = bf.ReadInteger();
+            var tileData = bf.ReadBytes(tileLength);
             var revision = bf.ReadInteger();
             var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
             if (map != null)
@@ -310,17 +312,19 @@ namespace Intersect_Client.Classes.Networking
             map = new MapInstance((int) mapNum);
             MapInstance.Lookup.Set(mapNum, map);
             map.Load(mapData);
+            map.LoadTileData(tileData);
             if ((mapNum) == Globals.Me.CurrentMap)
             {
                 GameAudio.PlayMusic(map.Music, 3, 3, true);
             }
-            map.Autotiles.LoadData(bf);
             map.MapGridX = bf.ReadInteger();
             map.MapGridY = bf.ReadInteger();
             map.HoldLeft = bf.ReadInteger();
             map.HoldRight = bf.ReadInteger();
             map.HoldUp = bf.ReadInteger();
             map.HoldDown = bf.ReadInteger();
+            map.Autotiles.InitAutotiles(map.GenerateAutotileGrid());
+            if (MapInstance.OnMapLoaded != null) MapInstance.OnMapLoaded(map);
             Globals.Me.FetchNewMaps();
         }
 

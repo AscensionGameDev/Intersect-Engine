@@ -117,7 +117,7 @@ namespace Intersect.Editor.Forms
             var tmpMap = Globals.CurrentMap;
             if (CurrentMapState == null)
             {
-                CurrentMapState = tmpMap.GetMapData(false);
+                CurrentMapState = tmpMap.SaveInternal();
             }
         }
 
@@ -128,7 +128,7 @@ namespace Intersect.Editor.Forms
             {
                 MapUndoStates.Add(CurrentMapState);
                 MapRedoStates.Clear();
-                CurrentMapState = tmpMap.GetMapData(false);
+                CurrentMapState = tmpMap.SaveInternal();
             }
             MapChanged = false;
         }
@@ -153,7 +153,7 @@ namespace Intersect.Editor.Forms
 
             if (CurrentMapState == null)
             {
-                CurrentMapState = tmpMap.GetMapData(false);
+                CurrentMapState = tmpMap.SaveInternal();
             }
 
             switch (e.Button)
@@ -752,7 +752,7 @@ namespace Intersect.Editor.Forms
             {
                 if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
                 MapRedoStates.Clear();
-                CurrentMapState = tmpMap.GetMapData(false);
+                CurrentMapState = tmpMap.SaveInternal();
                 MapChanged = false;
             }
             if (Globals.CurrentTool != (int) EdittingTool.Selection)
@@ -1003,7 +1003,7 @@ namespace Intersect.Editor.Forms
             var tmpMap = Globals.CurrentMap;
             if (CurrentMapState == null)
             {
-                CurrentMapState = tmpMap.GetMapData(false);
+                CurrentMapState = tmpMap.SaveInternal();
             }
             if (
                 DarkMessageBox.ShowWarning(Strings.Get("mapping", "filllayerdialogue"),
@@ -1065,11 +1065,11 @@ namespace Intersect.Editor.Forms
                 if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Down) != null)
                     MapInstance.Lookup.Get<MapInstance>(tmpMap.Down).InitAutotiles();
 
-                if (!CurrentMapState.SequenceEqual(tmpMap.GetMapData(false)))
+                if (!CurrentMapState.SequenceEqual(tmpMap.SaveInternal()))
                 {
                     if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
                     MapRedoStates.Clear();
-                    CurrentMapState = tmpMap.GetMapData(false);
+                    CurrentMapState = tmpMap.SaveInternal();
                 }
             }
         }
@@ -1081,7 +1081,7 @@ namespace Intersect.Editor.Forms
             var tmpMap = Globals.CurrentMap;
             if (CurrentMapState == null)
             {
-                CurrentMapState = tmpMap.GetMapData(false);
+                CurrentMapState = tmpMap.SaveInternal();
             }
             if (
                 DarkMessageBox.ShowWarning(Strings.Get("mapping", "eraselayerdialogue"),
@@ -1122,11 +1122,11 @@ namespace Intersect.Editor.Forms
                 if (MapInstance.Lookup.Get<MapInstance>(tmpMap.Down) != null)
                     MapInstance.Lookup.Get<MapInstance>(tmpMap.Down).InitAutotiles();
 
-                if (!CurrentMapState.SequenceEqual(tmpMap.GetMapData(false)))
+                if (!CurrentMapState.SequenceEqual(tmpMap.SaveInternal()))
                 {
                     if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
                     MapRedoStates.Clear();
-                    CurrentMapState = tmpMap.GetMapData(false);
+                    CurrentMapState = tmpMap.SaveInternal();
                 }
             }
         }
@@ -1479,7 +1479,7 @@ namespace Intersect.Editor.Forms
             EditorGraphics.TilePreviewUpdated = true;
             if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
             MapRedoStates.Clear();
-            CurrentMapState = Globals.CurrentMap.GetMapData(false);
+            CurrentMapState = Globals.CurrentMap.SaveInternal();
             MapChanged = false;
         }
 

@@ -50,6 +50,8 @@ namespace Intersect.GameObjects.Maps
 
         //Temporary Values
         public bool IsClient = false;
+        //For server only
+        public byte[] TileData;
 
         //Core Data
         public TileArray[] Layers = new TileArray[Options.LayerCount];
@@ -58,21 +60,6 @@ namespace Intersect.GameObjects.Maps
         {
             Name = "New Map";
             IsClient = isClient;
-            for (var i = 0; i < Options.LayerCount; i++)
-            {
-                Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
-                for (var x = 0; x < Options.MapWidth; x++)
-                {
-                    for (var y = 0; y < Options.MapHeight; y++)
-                    {
-                        Layers[i].Tiles[x, y].TilesetIndex = -1;
-                        if (i == 0)
-                        {
-                            Attributes[x, y] = new Attribute();
-                        }
-                    }
-                }
-            }
         }
 
         public MapBase(MapBase mapcopy) : base(mapcopy.Index)
@@ -83,31 +70,40 @@ namespace Intersect.GameObjects.Maps
                 Name = mapcopy.Name;
                 Brightness = mapcopy.Brightness;
                 IsIndoors = mapcopy.IsIndoors;
-                for (var i = 0; i < Options.LayerCount; i++)
+                if (Layers != null)
                 {
-                    Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
-                    for (var x = 0; x < Options.MapWidth; x++)
+                    for (var i = 0; i < Options.LayerCount; i++)
                     {
-                        for (var y = 0; y < Options.MapHeight; y++)
+                        Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
+                        for (var x = 0; x < Options.MapWidth; x++)
                         {
-                            Layers[i].Tiles[x, y] = new Tile
+                            for (var y = 0; y < Options.MapHeight; y++)
                             {
-                                TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex,
-                                X = mapcopy.Layers[i].Tiles[x, y].X,
-                                Y = mapcopy.Layers[i].Tiles[x, y].Y,
-                                Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile
-                            };
-                            if (i == 0 && mapcopy.Attributes[x, y] != null)
-                            {
-                                Attributes[x, y] = new Attribute
+                                Layers[i].Tiles[x, y] = new Tile
                                 {
-                                    value = mapcopy.Attributes[x, y].value,
-                                    data1 = mapcopy.Attributes[x, y].data1,
-                                    data2 = mapcopy.Attributes[x, y].data2,
-                                    data3 = mapcopy.Attributes[x, y].data3,
-                                    data4 = mapcopy.Attributes[x, y].data4
+                                    TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex,
+                                    X = mapcopy.Layers[i].Tiles[x, y].X,
+                                    Y = mapcopy.Layers[i].Tiles[x, y].Y,
+                                    Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile
                                 };
                             }
+                        }
+                    }
+                }
+                for (var x = 0; x < Options.MapWidth; x++)
+                {
+                    for (var y = 0; y < Options.MapHeight; y++)
+                    {
+                        if (mapcopy.Attributes[x, y] != null)
+                        {
+                            Attributes[x, y] = new Attribute
+                            {
+                                value = mapcopy.Attributes[x, y].value,
+                                data1 = mapcopy.Attributes[x, y].data1,
+                                data2 = mapcopy.Attributes[x, y].data2,
+                                data3 = mapcopy.Attributes[x, y].data3,
+                                data4 = mapcopy.Attributes[x, y].data4
+                            };
                         }
                     }
                 }
@@ -134,7 +130,7 @@ namespace Intersect.GameObjects.Maps
         public int Left { get; set; } = -1;
         public int Right { get; set; } = -1;
         public int Revision { get; set; }
-        public Attribute[,] Attributes { get; set; } = new Attribute[Options.MapWidth, Options.MapHeight];
+        public Attribute[,]  Attributes { get; set; } = new Attribute[Options.MapWidth, Options.MapHeight];
         public List<LightBase> Lights { get; set; } = new List<LightBase>();
         public Dictionary<int, EventBase> Events { get; set; } = new Dictionary<int, EventBase>();
         public List<NpcSpawn> Spawns { get; set; } = new List<NpcSpawn>();
@@ -197,20 +193,6 @@ namespace Intersect.GameObjects.Maps
                 PlayerLightExpand = (float) bf.ReadDouble();
                 PlayerLightIntensity = bf.ReadByte();
                 PlayerLightColor = Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
-
-                for (var i = 0; i < Options.LayerCount; i++)
-                {
-                    for (var x = 0; x < Options.MapWidth; x++)
-                    {
-                        for (var y = 0; y < Options.MapHeight; y++)
-                        {
-                            Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
-                            Layers[i].Tiles[x, y].X = bf.ReadInteger();
-                            Layers[i].Tiles[x, y].Y = bf.ReadInteger();
-                            Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
-                        }
-                    }
-                }
 
                 for (var x = 0; x < Options.MapWidth; x++)
                 {
@@ -304,19 +286,6 @@ namespace Intersect.GameObjects.Maps
             bf.WriteByte(PlayerLightColor.G);
             bf.WriteByte(PlayerLightColor.B);
 
-            for (var i = 0; i < Options.LayerCount; i++)
-            {
-                for (var x = 0; x < Options.MapWidth; x++)
-                {
-                    for (var y = 0; y < Options.MapHeight; y++)
-                    {
-                        bf.WriteInteger(Layers[i].Tiles[x, y].TilesetIndex);
-                        bf.WriteInteger(Layers[i].Tiles[x, y].X);
-                        bf.WriteInteger(Layers[i].Tiles[x, y].Y);
-                        bf.WriteByte(Layers[i].Tiles[x, y].Autotile);
-                    }
-                }
-            }
             for (var x = 0; x < Options.MapWidth; x++)
             {
                 for (var y = 0; y < Options.MapHeight; y++)

@@ -581,14 +581,17 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var mapNum = (int) bf.ReadLong();
-            var mapLength = bf.ReadLong();
+            var mapNum = (int) bf.ReadInteger();
+            var mapLength = bf.ReadInteger();
             var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
             if (map != null)
             {
                 MapInstance.Lookup.Get<MapInstance>(mapNum).Load(bf.ReadBytes((int) mapLength), MapInstance.Lookup.Get<MapInstance>(mapNum).Revision + 1);
                 Database.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(mapNum));
-                MapInstance.Lookup.Get<MapInstance>(mapNum).InitAutotiles();
+                var tileDataLength = bf.ReadInteger();
+                var tileData = bf.ReadBytes(tileDataLength);
+                if (map.TileData != null) map.TileData = tileData;
+                Database.SaveMapTiles(map.Index,tileData);
                 foreach (var t in Globals.Clients)
                 {
                     if (t == null) continue;
@@ -626,7 +629,6 @@ namespace Intersect.Server.Classes.Networking
                 tmpMap = MapInstance.Lookup.Get<MapInstance>(newMap);
                 Database.SaveGameObject(tmpMap);
                 Database.GenerateMapGrids();
-                tmpMap.UpdateSurroundingTiles();
                 PacketSender.SendMap(client, newMap, true);
                 PacketSender.SendMapGridToAll(tmpMap.MapGrid);
                 //FolderDirectory parent = null;
@@ -769,7 +771,6 @@ namespace Intersect.Server.Classes.Networking
 
                     Database.SaveGameObject(tmpMap);
                     Database.GenerateMapGrids();
-                    MapInstance.Lookup.Get<MapInstance>(newMap).UpdateSurroundingTiles();
                     PacketSender.SendMap(client, newMap, true);
                     PacketSender.SendMapGridToAll(MapInstance.Lookup.Get<MapInstance>(newMap).MapGrid);
                     PacketSender.SendEnterMap(client, newMap);
@@ -1628,7 +1629,6 @@ namespace Intersect.Server.Classes.Networking
                         if (MapInstance.Lookup.IndexKeys.Contains(curMap))
                         {
                             mapGrid = MapInstance.Lookup.Get<MapInstance>(curMap).MapGrid;
-                            MapInstance.Lookup.Get<MapInstance>(curMap).UpdateSurroundingTiles();
                         }
                     }
                     PacketSender.SendMapGridToAll(mapGrid);
@@ -1753,7 +1753,6 @@ namespace Intersect.Server.Classes.Networking
                         }
                         Database.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(linkMap));
                         Database.GenerateMapGrids();
-                        MapInstance.Lookup.Get<MapInstance>(linkMap).UpdateSurroundingTiles();
                         PacketSender.SendMapGridToAll(MapInstance.Lookup.Get<MapInstance>(adjacentMap).MapGrid);
                     }
                 }
