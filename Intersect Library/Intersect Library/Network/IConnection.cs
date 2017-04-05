@@ -8,5 +8,8 @@ namespace Intersect.Network
         Guid Guid { get; }
 
         IBuffer CreateBuffer();
+
+        bool Send(IPacket packet);
+        bool Send(Guid guid, IPacket packet);
     }
 }

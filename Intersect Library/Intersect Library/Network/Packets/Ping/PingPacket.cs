@@ -14,6 +14,8 @@ namespace Intersect.Network.Packets.Ping
 
         public override bool Read(ref IBuffer buffer)
         {
+            if (!base.Read(ref buffer)) return false;
+
             RequestPong = buffer.ReadBoolean();
 
             return true;
@@ -21,9 +23,11 @@ namespace Intersect.Network.Packets.Ping
 
         public override bool Write(ref IBuffer buffer)
         {
+            if (!base.Write(ref buffer)) return false;
+
             buffer.Write(RequestPong);
 
-            return false;
+            return true;
         }
     }
 }

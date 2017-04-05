@@ -21,6 +21,7 @@ namespace Intersect.Network
             if (!mHandlers.TryGetValue(type, out IList<HandlePacket> handlers))
             {
                 handlers = new List<HandlePacket>();
+                mHandlers.Add(type, handlers);
             }
 
             return handlers;

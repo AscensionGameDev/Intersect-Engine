@@ -7,6 +7,7 @@ using Intersect.Network;
 using Intersect.Threading;
 using Lidgren.Network;
 using System.Linq;
+using Intersect.Network.Packets.Ping;
 
 namespace Intersect.Client.Network
 {
@@ -67,7 +68,7 @@ namespace Intersect.Client.Network
 
         protected override void RegisterHandlers()
         {
-            
+
         }
 
         protected override bool HandleConnected(NetIncomingMessage request)
@@ -92,8 +93,13 @@ namespace Intersect.Client.Network
                 byte[] guidData;
                 if (!requestBuffer.Read(out guidData, 16)) return false;
                 Guid = new Guid(guidData);
-                var metadata = new ConnectionMetadata(Guid, request.SenderConnection, aesKey);
+                var metadata = new ConnectionMetadata(this, Guid, request.SenderConnection, aesKey);
                 AddConnection(metadata);
+
+                var ping = new PingPacket(metadata);
+                ping.RequestPong = true;
+                metadata.Send(ping);
+
                 return true;
             }
         }

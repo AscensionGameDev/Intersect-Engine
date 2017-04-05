@@ -30,7 +30,7 @@ namespace Intersect.Network
             lock (mQueueLock)
             {
                 mQueue.Enqueue(packet);
-                Monitor.Pulse(mQueue);
+                Monitor.Pulse(mQueueLock);
             }
 
             return true;
@@ -44,17 +44,12 @@ namespace Intersect.Network
 
             lock (mDequeLock)
             {
-                while (mQueue.Count < 1)
-                {
-                    if (mDisposed) break;
-                    Monitor.Wait(mQueue);
-                }
-
                 lock (mQueueLock)
                 {
+                    Monitor.Wait(mQueueLock);
                     packet = mQueue.Dequeue();
                     if (mQueue.Count > 0)
-                        Monitor.Pulse(mQueue);
+                        Monitor.Pulse(mQueueLock);
                 }
 
                 return true;

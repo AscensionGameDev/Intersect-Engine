@@ -4,12 +4,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using Intersect.Logging;
 using Intersect.Memory;
+using Intersect.Network.Packets.Ping;
 using Intersect.Threading;
 using Lidgren.Network;
 
@@ -57,6 +59,8 @@ namespace Intersect.Network
 
             Rsa = new RSACryptoServiceProvider();
             Rsa.ImportParameters(GetRsaKey());
+
+            CreateThreads();
         }
 
         protected abstract RSAParameters GetRsaKey();
@@ -87,10 +91,12 @@ namespace Intersect.Network
 
                 IsRunning = true;
 
-                //RegisterPackets();
-                //RegisterHandlers();
+                RegisterPackets();
+                RegisterHandlers();
 
                 CurrentThread?.Start();
+
+                foreach (var thread in mThreads) thread.Start();
 
                 return IsRunning;
             }
@@ -118,7 +124,7 @@ namespace Intersect.Network
         }
 
         public virtual bool Send(IPacket packet)
-            => SendToAll(packet);
+            => mConnectionLookup?.Keys.All(guid => Send(guid, packet)) ?? false;
 
         public virtual bool Send(Guid guid, IPacket packet)
         {
@@ -126,6 +132,7 @@ namespace Intersect.Network
 
             var message = Peer.CreateMessage();
             IBuffer buffer = new LidgrenBuffer(message);
+            buffer.Write(guid.ToByteArray(), 16);
             if (!packet.Write(ref buffer)) throw new Exception();
 
             metadata.Aes.Encrypt(message);
@@ -134,19 +141,18 @@ namespace Intersect.Network
             {
                 case NetSendResult.Sent:
                 case NetSendResult.Queued:
+                    Log.Debug($"Sent '{packet.GetType().Name}'.");
                     return true;
 
                 default:
+                    Log.Debug($"Failed to send '{packet.GetType().Name}'.");
                     return false;
             }
         }
 
-        public virtual bool SendToAll(IPacket packet)
-            => mConnectionLookup?.Keys.All(guid => Send(guid, packet)) ?? false;
-
         protected virtual void RegisterPackets()
         {
-
+            if (!PacketRegistry.Instance.Register(new PingPacketGroup())) throw new Exception();
         }
 
         protected abstract void RegisterHandlers();

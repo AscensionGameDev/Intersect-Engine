@@ -43,6 +43,7 @@ namespace Intersect.Network
         public virtual bool Write(ref IBuffer buffer)
         {
             if (buffer == null) buffer = CreateNewMessage();
+            buffer.Write((byte) Group);
             return true;
         }
     }

@@ -9,6 +9,8 @@ using Intersect.Network;
 using Intersect.Threading;
 using Lidgren.Network;
 using System.Linq;
+using Intersect.Network.Packets.Ping;
+using Intersect.Server.Network.Handlers;
 
 namespace Intersect.Server.Network
 {
@@ -68,7 +70,7 @@ namespace Intersect.Server.Network
                     Rng.GetNonZeroBytes(aesKey);
                     responseBuffer.Write(aesKey, 32);
 
-                    var metadata = new ConnectionMetadata(request.SenderConnection, aesKey, rsaParameters);
+                    var metadata = new ConnectionMetadata(this, request.SenderConnection, aesKey, rsaParameters);
                     AddConnection(metadata);
 
                     responseBuffer.Write(metadata.Guid.ToByteArray(), 16);
@@ -86,7 +88,7 @@ namespace Intersect.Server.Network
 
         protected override void RegisterHandlers()
         {
-            throw new NotImplementedException();
+            Dispatcher.RegisterHandler(typeof(PingPacket), new PingHandler().HandlePing);
         }
 
         protected override bool HandleConnected(NetIncomingMessage request)

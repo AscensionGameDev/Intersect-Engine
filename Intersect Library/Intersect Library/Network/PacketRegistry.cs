@@ -24,7 +24,7 @@ namespace Intersect.Network
         // ReSharper disable once PossibleNullReferenceException
         public IPacketGroup GetGroup(PacketGroups group)
             => (mGroupMap.TryGetValue(group, out IPacketGroup packetGroup))
-            ? null : packetGroup;
+            ? packetGroup : null;
 
         public bool Register(IPacketGroup packetGroup)
         {
