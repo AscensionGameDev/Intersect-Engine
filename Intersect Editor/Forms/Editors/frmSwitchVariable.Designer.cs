@@ -50,6 +50,7 @@ namespace Intersect.Editor.Forms.Editors
             this.txtVariableVal = new DarkUI.Controls.DarkTextBox();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
+            this.lblId = new System.Windows.Forms.Label();
             this.grpTypes.SuspendLayout();
             this.grpList.SuspendLayout();
             this.grpEditor.SuspendLayout();
@@ -178,6 +179,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpEditor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpEditor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpEditor.Controls.Add(this.lblId);
             this.grpEditor.Controls.Add(this.lblValue);
             this.grpEditor.Controls.Add(this.txtObjectName);
             this.grpEditor.Controls.Add(this.lblName);
@@ -236,9 +238,14 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbSwitchValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbSwitchValue.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSwitchValue.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSwitchValue.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbSwitchValue.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSwitchValue.ButtonIcon")));
+            this.cmbSwitchValue.DrawDropdownHoverOutline = false;
+            this.cmbSwitchValue.DrawFocusRectangle = false;
             this.cmbSwitchValue.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSwitchValue.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSwitchValue.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbSwitchValue.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSwitchValue.FormattingEnabled = true;
             this.cmbSwitchValue.Items.AddRange(new object[] {
             "False",
@@ -247,6 +254,8 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbSwitchValue.Name = "cmbSwitchValue";
             this.cmbSwitchValue.Size = new System.Drawing.Size(224, 21);
             this.cmbSwitchValue.TabIndex = 5;
+            this.cmbSwitchValue.Text = "False";
+            this.cmbSwitchValue.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbSwitchValue.SelectedIndexChanged += new System.EventHandler(this.cmbSwitchValue_SelectedIndexChanged);
             // 
             // txtVariableVal
@@ -280,6 +289,15 @@ namespace Intersect.Editor.Forms.Editors
             this.btnSave.TabIndex = 51;
             this.btnSave.Text = "Save";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // lblId
+            // 
+            this.lblId.Location = new System.Drawing.Point(209, 20);
+            this.lblId.Name = "lblId";
+            this.lblId.Size = new System.Drawing.Size(69, 13);
+            this.lblId.TabIndex = 6;
+            this.lblId.Text = "1";
+            this.lblId.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // frmSwitchVariable
             // 
@@ -330,5 +348,6 @@ namespace Intersect.Editor.Forms.Editors
         private DarkButton btnDelete;
         private DarkButton btnSave;
         private DarkButton btnCancel;
+        private System.Windows.Forms.Label lblId;
     }
 }

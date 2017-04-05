@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -501,8 +502,7 @@ namespace Intersect.Server.Classes.Entities
                 input = input.Replace(Strings.Get("events", "playernamecommand"), MyClient.Entity.MyName);
                 input = input.Replace(Strings.Get("events", "eventnamecommand"), PageInstance.MyName);
                 input = input.Replace(Strings.Get("events", "commandparameter"), PageInstance.Param);
-                if (input.Contains(Strings.Get("events", "onlinelistcommand")) ||
-                    input.Contains(Strings.Get("events", "onlinecountcommand")))
+                if (input.Contains(Strings.Get("events", "onlinelistcommand")) || input.Contains(Strings.Get("events", "onlinecountcommand")))
                 {
                     var onlineList = Globals.GetOnlineList();
                     input = input.Replace(Strings.Get("events", "onlinecountcommand"), onlineList.Count.ToString());
@@ -513,6 +513,93 @@ namespace Intersect.Server.Classes.Entities
                     }
                     input = input.Replace(Strings.Get("events", "onlinelistcommand"), sb.ToString());
                 }
+
+                //Time Stuff
+                input = input.Replace(Strings.Get("events", "timehour"), ServerTime.GetTime().ToString("%h"));
+                input = input.Replace(Strings.Get("events", "militaryhour"), ServerTime.GetTime().ToString("HH"));
+                input = input.Replace(Strings.Get("events", "timeminute"), ServerTime.GetTime().ToString("mm"));
+                input = input.Replace(Strings.Get("events", "timesecond"), ServerTime.GetTime().ToString("ss"));
+                if (ServerTime.GetTime().Hour >= 12)
+                {
+                    input = input.Replace(Strings.Get("events", "timeperiod"), Strings.Get("events", "periodevening"));
+                }
+                else
+                {
+                    input = input.Replace(Strings.Get("events", "timeperiod"), Strings.Get("events", "periodmorning"));
+                }
+
+                //Have to accept a numeric parameter after each of the following (player switch/var and server switch/var)
+                MatchCollection matches = Regex.Matches(input, Regex.Escape(Strings.Get("events", "playervar")) + " ([0-9]+)");
+                foreach (Match m in matches)
+                {
+                    if (m.Success)
+                    {
+                        int id = Convert.ToInt32(m.Groups[1].Value);
+                        if (MyPlayer.Variables.ContainsKey(id))
+                        {
+                            input = input.Replace(Strings.Get("events", "playervar") + " " + m.Groups[1].Value, MyPlayer.Variables[id].ToString());
+
+                        }
+                        else
+                        {
+                            input = input.Replace(Strings.Get("events", "playervar") + " " + m.Groups[1].Value, 0.ToString());
+                        }
+                    }
+                }
+                matches = Regex.Matches(input, Regex.Escape(Strings.Get("events", "playerswitch")) + " ([0-9]+)");
+                foreach (Match m in matches)
+                {
+                    if (m.Success)
+                    {
+                        int id = Convert.ToInt32(m.Groups[1].Value);
+                        if (MyPlayer.Switches.ContainsKey(id))
+                        {
+                            input = input.Replace(Strings.Get("events", "playerswitch") + " " + m.Groups[1].Value, MyPlayer.Switches[id].ToString());
+
+                        }
+                        else
+                        {
+                            input = input.Replace(Strings.Get("events", "playerswitch") + " " + m.Groups[1].Value, false.ToString());
+                        }
+                    }
+                }
+                matches = Regex.Matches(input, Regex.Escape(Strings.Get("events", "globalvar")) + " ([0-9]+)");
+                foreach (Match m in matches)
+                {
+                    if (m.Success)
+                    {
+                        int id = Convert.ToInt32(m.Groups[1].Value);
+                        var globalvar = ServerVariableBase.Lookup.Get<ServerVariableBase>(id);
+                        if (globalvar != null)
+                        {
+                            input = input.Replace(Strings.Get("events", "globalvar") + " " + m.Groups[1].Value, globalvar.Value.ToString());
+
+                        }
+                        else
+                        {
+                            input = input.Replace(Strings.Get("events", "globalvar") + " " + m.Groups[1].Value, 0.ToString());
+                        }
+                    }
+                }
+                matches = Regex.Matches(input, Regex.Escape(Strings.Get("events", "globalswitch")) + " ([0-9]+)");
+                foreach (Match m in matches)
+                {
+                    if (m.Success)
+                    {
+                        int id = Convert.ToInt32(m.Groups[1].Value);
+                        var globalswitch = ServerSwitchBase.Lookup.Get<ServerSwitchBase>(id);
+                        if (globalswitch != null)
+                        {
+                            input = input.Replace(Strings.Get("events", "globalswitch") + " " + m.Groups[1].Value, globalswitch.Value.ToString());
+                        }
+                        else
+                        {
+                            input = input.Replace(Strings.Get("events", "globalswitch") + " " + m.Groups[1].Value, false.ToString());
+                        }
+                    }
+                }
+
+
             }
             return input;
         }
