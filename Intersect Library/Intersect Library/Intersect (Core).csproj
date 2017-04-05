@@ -132,6 +132,7 @@
     <Compile Include="Network\AbstractPacket.cs" />
     <Compile Include="Network\AbstractExtendedPacket.cs" />
     <Compile Include="Network\HandlePacket.cs" />
+    <Compile Include="Network\Handlers\PingHandler.cs" />
     <Compile Include="Network\IConnection.cs" />
     <Compile Include="Network\IExtendedPacket.cs" />
     <Compile Include="Network\INetwork.cs" />

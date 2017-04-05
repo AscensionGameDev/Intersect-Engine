@@ -1,16 +1,12 @@
-﻿using System;
-using System.IO;
-using System.IO.Compression;
-using System.Reflection;
-using System.Security.Cryptography;
-using Intersect.Logging;
+﻿using Intersect.Logging;
 using Intersect.Memory;
 using Intersect.Network;
 using Intersect.Threading;
 using Lidgren.Network;
+using System;
 using System.Linq;
-using Intersect.Network.Packets.Ping;
-using Intersect.Server.Network.Handlers;
+using System.Reflection;
+using System.Security.Cryptography;
 
 namespace Intersect.Server.Network
 {
@@ -88,7 +84,7 @@ namespace Intersect.Server.Network
 
         protected override void RegisterHandlers()
         {
-            Dispatcher.RegisterHandler(typeof(PingPacket), new PingHandler().HandlePing);
+            base.RegisterHandlers();
         }
 
         protected override bool HandleConnected(NetIncomingMessage request)

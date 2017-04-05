@@ -68,7 +68,7 @@ namespace Intersect.Client.Network
 
         protected override void RegisterHandlers()
         {
-
+            base.RegisterHandlers();
         }
 
         protected override bool HandleConnected(NetIncomingMessage request)

@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using Intersect.Logging;
 using Intersect.Memory;
+using Intersect.Network.Handlers;
 using Intersect.Network.Packets.Ping;
 using Intersect.Threading;
 using Lidgren.Network;
@@ -155,7 +156,10 @@ namespace Intersect.Network
             if (!PacketRegistry.Instance.Register(new PingPacketGroup())) throw new Exception();
         }
 
-        protected abstract void RegisterHandlers();
+        protected virtual void RegisterHandlers()
+        {
+            if (!Dispatcher.RegisterHandler(typeof(PingPacket), new PingHandler().HandlePing)) throw new Exception();
+        }
 
         protected virtual bool HandleConnectionApproval(NetIncomingMessage request)
         {
