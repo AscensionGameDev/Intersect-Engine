@@ -256,11 +256,11 @@ namespace Intersect.Editor.Forms
                     {
                         if (Globals.CurrentLayer == Options.LayerCount)
                         {
-                            Globals.MapEditorWindow.SmartFillAttributes(Globals.CurTileX, Globals.CurTileY, tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value);
+                            Globals.MapEditorWindow.SmartFillAttributes(Globals.CurTileX, Globals.CurTileY);
                         }
                         else if (Globals.CurrentLayer < Options.LayerCount)
                         {
-                            Globals.MapEditorWindow.SmartFillLayer(Globals.CurTileX, Globals.CurTileY, tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY]);
+                            Globals.MapEditorWindow.SmartFillLayer(Globals.CurTileX, Globals.CurTileY);
                         }
                     }
                     else if (Globals.CurrentTool == (int)EdittingTool.Erase)
@@ -269,11 +269,11 @@ namespace Intersect.Editor.Forms
                         {
                             if (Globals.CurrentLayer == Options.LayerCount)
                             {
-                                //Globals.MapEditorWindow.SmartEraseAttributes(Globals.CurTileX, Globals.CurTileY, tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value);
+                                Globals.MapEditorWindow.SmartEraseAttributes(Globals.CurTileX, Globals.CurTileY);
                             }
                             else if (Globals.CurrentLayer < Options.LayerCount)
                             {
-                                //Globals.MapEditorWindow.SmartEraseLayer(Globals.CurTileX, Globals.CurTileY, tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY]);
+                                Globals.MapEditorWindow.SmartEraseLayer(Globals.CurTileX, Globals.CurTileY);
                             }
                         }
                     }
@@ -1207,8 +1207,9 @@ namespace Intersect.Editor.Forms
             }
         }
 
-        public void SmartFillLayer(int x, int y, Tile target)
+        public void SmartFillLayer(int x, int y)
         {
+            Tile target = Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y];
             SmartFillTile(x, y, target);
 
             Globals.CurrentMap.InitAutotiles();
@@ -1231,14 +1232,21 @@ namespace Intersect.Editor.Forms
 
         private void SmartFillAttribute(int x, int y, int attribute)
         {
+            int a = 0;
+
             if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
             {
                 return;
             }
 
-            if (Globals.CurrentMap.Attributes[x, y].value == attribute)
+            if (Globals.CurrentMap.Attributes[x, y] != null)
             {
-                Globals.MapLayersWindow.PlaceAttribute(Globals.CurrentMap, Globals.CurTileX, Globals.CurTileY);
+                a = Globals.CurrentMap.Attributes[x, y].value;
+            }
+
+            if (a == attribute)
+            {
+                Globals.MapLayersWindow.PlaceAttribute(Globals.CurrentMap, x, y);
 
                 SmartFillAttribute(x, y - 1, attribute);
                 SmartFillAttribute(x, y + 1, attribute);
@@ -1247,9 +1255,107 @@ namespace Intersect.Editor.Forms
             }
         }
 
-        public void SmartFillAttributes(int x, int y, int attribute)
+        public void SmartFillAttributes(int x, int y)
         {
+            int attribute = 0;
+
+            if (Globals.CurrentMap.Attributes[x, y] != null)
+            {
+                attribute = Globals.CurrentMap.Attributes[x, y].value;
+            }
+
             SmartFillAttribute(x, y, attribute);
+
+            if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+            {
+                if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
+                MapRedoStates.Clear();
+                CurrentMapState = Globals.CurrentMap.SaveInternal();
+            }
+        }
+
+        private void SmartEraseTile(int x, int y, Tile target)
+        {
+            if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
+            {
+                return;
+            }
+
+            Tile selected = Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y];
+
+            if (selected.TilesetIndex == target.TilesetIndex && selected.X == target.X &&
+                selected.Y == target.Y && selected.Autotile == target.Autotile)
+            {
+                Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].TilesetIndex = 0;
+                Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].X = 0;
+                Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].Y = 0;
+                Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].Autotile = 0;
+
+                SmartEraseTile(x, y - 1, target);
+                SmartEraseTile(x, y + 1, target);
+                SmartEraseTile(x - 1, y, target);
+                SmartEraseTile(x + 1, y, target);
+            }
+        }
+
+        public void SmartEraseLayer(int x, int y)
+        {
+            Tile target = Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y];
+            SmartEraseTile(x, y, target);
+
+            Globals.CurrentMap.InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Left) != null)
+                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Left).InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Up) != null)
+                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Up).InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Right) != null)
+                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Right).InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Down) != null)
+                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Down).InitAutotiles();
+
+            if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+            {
+                if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
+                MapRedoStates.Clear();
+                CurrentMapState = Globals.CurrentMap.SaveInternal();
+            }
+        }
+
+        private void SmartEraseAttribute(int x, int y, int attribute)
+        {
+            int a = 0;
+
+            if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
+            {
+                return;
+            }
+
+            if (Globals.CurrentMap.Attributes[x, y] != null)
+            {
+                a = Globals.CurrentMap.Attributes[x, y].value;
+            }
+
+            if (a == attribute)
+            {
+                Globals.MapLayersWindow.RemoveAttribute(Globals.CurrentMap, x, y);
+
+                SmartEraseAttribute(x, y - 1, attribute);
+                SmartEraseAttribute(x, y + 1, attribute);
+                SmartEraseAttribute(x - 1, y, attribute);
+                SmartEraseAttribute(x + 1, y, attribute);
+            }
+        }
+
+        public void SmartEraseAttributes(int x, int y)
+        {
+            int attribute = 0;
+
+            if (Globals.CurrentMap.Attributes[x, y] != null)
+            {
+                attribute = Globals.CurrentMap.Attributes[x, y].value;
+            }
+
+            SmartEraseAttribute(x, y, attribute);
 
             if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
             {
