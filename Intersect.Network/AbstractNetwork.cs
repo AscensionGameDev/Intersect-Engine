@@ -20,10 +20,10 @@ namespace Intersect.Network
         private readonly object mLock;
         private bool mDisposed;
 
-        private IList<NetworkThread> mThreads;
-        private IDictionary<Guid, NetworkThread> mThreadLookup;
-        private IDictionary<Guid, ConnectionMetadata> mConnectionLookup;
-        private IDictionary<long, Guid> mConnectionGuidLookup;
+        private readonly IList<NetworkThread> mThreads;
+        private readonly IDictionary<Guid, NetworkThread> mThreadLookup;
+        private readonly IDictionary<Guid, ConnectionMetadata> mConnectionLookup;
+        private readonly IDictionary<long, Guid> mConnectionGuidLookup;
 
         public Thread CurrentThread { get; }
         public PacketDispatcher Dispatcher { get; }
@@ -205,11 +205,9 @@ namespace Intersect.Network
                         continue;
                     }
 
-                    if (emptiest.Connections.Count > thread.Connections.Count)
-                    {
-                        emptiest = thread;
-                        continue;
-                    }
+                    if (emptiest.Connections.Count <= thread.Connections.Count) continue;
+                    emptiest = thread;
+                    continue;
                 }
                 return emptiest;
             }
@@ -280,8 +278,6 @@ namespace Intersect.Network
                 default:
                     return true;
             }
-
-            return false;
         }
 
         private void Loop()
