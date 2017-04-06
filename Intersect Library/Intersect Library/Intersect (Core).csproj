@@ -145,6 +145,10 @@
     <Compile Include="Network\PacketGroups.cs" />
     <Compile Include="Network\PacketQueue.cs" />
     <Compile Include="Network\PacketRegistry.cs" />
+    <Compile Include="Network\Packets\Authentication\AbstractAuthenticationPacket.cs" />
+    <Compile Include="Network\Packets\Authentication\AuthenticationPacketGroup.cs" />
+    <Compile Include="Network\Packets\Authentication\AuthenticationPackets.cs" />
+    <Compile Include="Network\Packets\Authentication\LoginPacket.cs" />
     <Compile Include="Network\Packets\Ping\PingPacket.cs" />
     <Compile Include="Network\Packets\Ping\PingPacketGroup.cs" />
     <Compile Include="Network\Packets\Utility\AbstractUtilityPacket.cs" />

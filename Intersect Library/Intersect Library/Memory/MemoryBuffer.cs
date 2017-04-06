@@ -204,10 +204,24 @@ namespace Intersect.Memory
         public bool Read(out string value, Encoding encoding)
         {
             if (encoding == null) throw new ArgumentNullException();
-            
-            if (Read(out int length) && Read(out byte[] bytes, length))
+
+            if (Read(out int length))
             {
-                value = encoding.GetString(bytes, 0, length);
+                switch (length)
+                {
+                    case 0:
+                        value = "";
+                        break;
+
+                    case -1:
+                        value = null;
+                        break;
+
+                    default:
+                        value = Read(out byte[] bytes, length) ? encoding.GetString(bytes, 0, length) : null;
+                        break;
+                }
+
                 return true;
             }
 
@@ -487,13 +501,14 @@ namespace Intersect.Memory
             => Write(BitConverter.GetBytes(value), 0, sizeof(short));
 
         public void Write(string value)
-            => Write(value ?? "", Encoding.UTF8);
+            => Write(value, Encoding.UTF8);
 
         public void Write(string value, Encoding encoding)
         {
             if (encoding == null) throw new ArgumentNullException();
-            Write(value?.Length ?? 0);
-            if (!(value?.Length > 0)) return;
+            Write(value?.Length ?? -1);
+            if (value == null) return;
+            if (value.Length < 1) return;
             var bytes = encoding.GetBytes(value);
             Write(bytes, bytes.Length);
         }

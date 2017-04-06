@@ -4,7 +4,7 @@ namespace Intersect.Network.Packets.Ping
 {
     public class PingPacket : AbstractPacket
     {
-        public bool RequestPong { get; set; }
+        public bool RequestPong;
     
         public PingPacket(IConnection connection)
             : base(connection, PacketGroups.Ping)
@@ -15,8 +15,8 @@ namespace Intersect.Network.Packets.Ping
         public override bool Read(ref IBuffer buffer)
         {
             if (!base.Read(ref buffer)) return false;
-
-            RequestPong = buffer.ReadBoolean();
+            
+            buffer.Read(out RequestPong);
 
             return true;
         }
