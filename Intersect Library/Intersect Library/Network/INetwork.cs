@@ -6,6 +6,8 @@ namespace Intersect.Network
     {
         Guid Guid { get; }
 
+        NetworkConfiguration Config { get; }
+
         bool IsRunning { get; }
 
         bool Start();

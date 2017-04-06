@@ -17,7 +17,7 @@ namespace Intersect.Client.Network
         private byte[] mHandshakeSecret;
         private RSACryptoServiceProvider mRsa;
 
-        public ClientNetwork(NetPeerConfiguration config) : base(config, new NetClient(config))
+        public ClientNetwork(NetworkConfiguration config) : base(config, typeof(NetClient))
         {
             mRsa = new RSACryptoServiceProvider(2048);
         }
@@ -56,7 +56,7 @@ namespace Intersect.Client.Network
                 hail.Write(encryptedMessage.Length);
                 hail.Write(encryptedMessage, 0, encryptedMessage.Length);
 
-                Peer.Connect("localhost", 14232, hail);
+                Peer.Connect(Config.Host, Config.Port, hail);
             }
         }
 

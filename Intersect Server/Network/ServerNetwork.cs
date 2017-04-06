@@ -13,9 +13,8 @@ namespace Intersect.Server.Network
     {
         public new NetServer Peer => (NetServer)base.Peer;
 
-        public ServerNetwork(NetPeerConfiguration config) : base(config, new NetServer(config))
+        public ServerNetwork(NetworkConfiguration config) : base(config, typeof(NetServer))
         {
-            
         }
 
         protected override RSAParameters GetRsaKey()

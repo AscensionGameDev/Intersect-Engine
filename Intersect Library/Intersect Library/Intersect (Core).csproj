@@ -131,6 +131,7 @@
     <Compile Include="Models\IIndexedGameObject.cs" />
     <Compile Include="Network\AbstractPacket.cs" />
     <Compile Include="Network\AbstractExtendedPacket.cs" />
+    <Compile Include="Network\DnsUtils.cs" />
     <Compile Include="Network\HandlePacket.cs" />
     <Compile Include="Network\Handlers\PingHandler.cs" />
     <Compile Include="Network\IConnection.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="Network\INetwork.cs" />
     <Compile Include="Network\IPacket.cs" />
     <Compile Include="Network\IPacketGroup.cs" />
+    <Compile Include="Network\NetworkConfiguration.cs" />
     <Compile Include="Network\NetworkThread.cs" />
     <Compile Include="Network\PacketDispatcher.cs" />
     <Compile Include="Network\PacketGroups.cs" />

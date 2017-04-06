@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using Intersect.Localization;
 using Intersect.Logging;
+using Intersect.Network;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Networking;
@@ -19,7 +20,6 @@ namespace Intersect.Server.Classes
 
         public static void Main(string[] args)
         {
-            new ServerNetwork(new Lidgren.Network.NetPeerConfiguration("Intersect"));
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             Thread logicThread;
@@ -29,6 +29,8 @@ namespace Intersect.Server.Classes
                 Console.ReadKey();
                 return;
             }
+            var network = new ServerNetwork(new NetworkConfiguration(Options.ServerPort));
+
             Strings.Init(Strings.IntersectComponent.Server, Options.Language);
             Console.WriteLine(@"  _____       _                          _   ");
             Console.WriteLine(@" |_   _|     | |                        | |  ");

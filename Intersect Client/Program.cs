@@ -1,7 +1,7 @@
-﻿using System.Threading;
-using Intersect.Client.Network;
+﻿using Intersect.Client.Network;
 using Intersect.Logging;
-using Lidgren.Network;
+using Intersect.Network;
+using System.Threading;
 
 namespace Intersect.Client
 {
@@ -10,15 +10,7 @@ namespace Intersect.Client
         static void Main(string[] args)
         {
             Log.Global.AddOutput(new ConsoleOutput());
-
-            var config = new NetPeerConfiguration("intersect-beta-4.0");
-            config.AcceptIncomingConnections = false;
-            /*config.LocalAddress =
-                Dns.GetHostEntry("localhost")?
-                    .AddressList?.First(
-                        ip =>
-                            (ip.AddressFamily == AddressFamily.InterNetwork));
-            config.Port = 14232;*/
+            var config = new NetworkConfiguration("localhost", 4500);
             var network = new ClientNetwork(config);
             Thread.Sleep(1000);
             network.Start();

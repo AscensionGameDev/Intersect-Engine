@@ -17,7 +17,7 @@ namespace Intersect.Editor.Network
         private byte[] mHandshakeSecret;
         private RSACryptoServiceProvider mRsa;
 
-        public EditorNetwork(NetPeerConfiguration config) : base(config, new NetClient(config))
+        public EditorNetwork(NetworkConfiguration config) : base(config, typeof(NetClient))
         {
             mRsa = new RSACryptoServiceProvider(2048);
         }

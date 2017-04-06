@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading;
@@ -25,10 +27,12 @@ namespace Intersect.Network
         private readonly IDictionary<Guid, ConnectionMetadata> mConnectionLookup;
         private readonly IDictionary<long, Guid> mConnectionGuidLookup;
 
+        public NetworkConfiguration Config { get; }
+
         public Thread CurrentThread { get; }
         public PacketDispatcher Dispatcher { get; }
 
-        protected NetPeerConfiguration Config { get; }
+        protected NetPeerConfiguration LidgrenConfig { get; }
         public NetPeer Peer { get; }
 
         protected RSACryptoServiceProvider Rsa { get; }
@@ -36,8 +40,11 @@ namespace Intersect.Network
 
         public Guid Guid { get; protected set; }
 
-        protected AbstractNetwork(NetPeerConfiguration config, NetPeer peer)
+        protected AbstractNetwork(NetworkConfiguration config, Type peerType)
         {
+            if (config == null) throw new ArgumentNullException();
+            if (peerType == null) throw new ArgumentNullException();
+
             mLock = new object();
 
             mThreads = new List<NetworkThread>();
@@ -49,7 +56,20 @@ namespace Intersect.Network
             CurrentThread = new Thread(Loop);
 
             Config = config;
-            Peer = peer;
+            LidgrenConfig = new NetPeerConfiguration(SharedConstants.VERSION_NAME)
+            {
+                AcceptIncomingConnections = config.IsServer
+            };
+
+            if (config.IsServer)
+            {
+                LidgrenConfig.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
+                LidgrenConfig.MaximumConnections = config.MaximumConnections;
+                LidgrenConfig.LocalAddress = DnsUtils.Resolve(config.Host);
+                LidgrenConfig.Port = config.Port;
+            }
+
+            Peer = peerType.GetConstructor(new[] { typeof(NetPeerConfiguration) }).Invoke(new object[] { LidgrenConfig }) as NetPeer;
 
             Guid = Guid.NewGuid();
 

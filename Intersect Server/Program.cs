@@ -1,4 +1,5 @@
 ﻿using Intersect.Logging;
+using Intersect.Network;
 using Intersect.Server.Network;
 using Lidgren.Network;
 
@@ -10,11 +11,7 @@ namespace Intersect.Server
         {
             Log.Global.AddOutput(new ConsoleOutput());
 
-            var config = new NetPeerConfiguration("intersect-beta-4.0");
-            config.AcceptIncomingConnections = true;
-            config.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
-            config.MaximumConnections = 100;
-            config.Port = 14232;
+            var config = new NetworkConfiguration(4500);
             var network = new ServerNetwork(config);
             network.Start();
         }
