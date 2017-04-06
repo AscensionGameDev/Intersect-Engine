@@ -19,11 +19,7 @@ namespace Intersect.Network.Packets.Authentication
             if (!base.Read(ref buffer)) return false;
 
             buffer.Read(out Success);
-
-            if (!Success)
-            {
-                buffer.Read(out Message);
-            }
+            buffer.Read(out Message);
 
             return true;
         }
@@ -33,11 +29,7 @@ namespace Intersect.Network.Packets.Authentication
             if (!base.Write(ref buffer)) return false;
 
             buffer.Write(Success);
-
-            if (!Success)
-            {
-                buffer.Write(Message);
-            }
+            buffer.Write(Message);
 
             return true;
         }
