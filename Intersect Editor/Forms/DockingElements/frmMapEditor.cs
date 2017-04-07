@@ -1545,7 +1545,7 @@ namespace Intersect.Editor.Forms
 
         private void pnlMapContainer_Scroll(object sender, ScrollEventArgs e)
         {
-            EditorLoop.RunFrame();
+            EditorLoop.DrawFrame();
         }
 
         private void picMap_Resize(object sender, EventArgs e)
