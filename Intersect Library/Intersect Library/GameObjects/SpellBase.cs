@@ -1,5 +1,6 @@
 ﻿using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
+using Intersect.Models;
 
 namespace Intersect.GameObjects
 {

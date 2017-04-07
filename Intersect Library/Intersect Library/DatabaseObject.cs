@@ -1,10 +1,9 @@
 using Intersect.Collections;
 using Intersect.Enums;
-using Intersect.Models;
 using System;
 using System.Linq;
 
-namespace Intersect
+namespace Intersect.Models
 {
     public abstract class DatabaseObject<TObject> : IDatabaseObject where TObject : DatabaseObject<TObject>
     {

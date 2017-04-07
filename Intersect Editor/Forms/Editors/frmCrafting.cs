@@ -6,6 +6,7 @@ using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
+using Intersect.Models;
 
 namespace Intersect.Editor.Forms.Editors
 {

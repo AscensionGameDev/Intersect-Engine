@@ -1,4 +1,6 @@
-﻿namespace Intersect.GameObjects
+﻿using Intersect.Models;
+
+namespace Intersect.GameObjects
 {
     public class PlayerVariableBase : DatabaseObject<PlayerVariableBase>
     {

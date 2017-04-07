@@ -763,14 +763,18 @@ namespace Intersect.Server.Classes.Core
         {
             if (client == null) return -1;
 
-            var insertQuery = "INSERT into " + USERS_TABLE + " (" + USER_NAME + "," + USER_EMAIL + "," + USER_PASS +
-                              "," + USER_SALT + "," + USER_POWER + ")" + "VALUES (@" + USER_NAME + ",@" + USER_EMAIL +
-                              ",@" + USER_PASS + ",@" + USER_SALT + ",@" + USER_POWER + ");";
-            var updateQuery = "UPDATE " + USERS_TABLE + " SET " + USER_NAME + "=@" + USER_NAME + "," + USER_EMAIL +
-                              "=@" + USER_EMAIL + "," + USER_PASS + "=@" + USER_PASS + "," + USER_SALT + "=@" +
-                              USER_SALT + "," + USER_POWER + "=@" + USER_POWER + " WHERE " + USER_ID + "=@" + USER_ID +
-                              ";";
-            using (SqliteCommand cmd = new SqliteCommand(newUser ? insertQuery : updateQuery, _dbConnection))
+            var insertQuery = $"INSERT into {USERS_TABLE} ({USER_NAME}, {USER_EMAIL}, {USER_PASS}, {USER_SALT}, {USER_POWER})" +
+                              $"VALUES (@{USER_NAME}, @{USER_EMAIL}, @{USER_PASS}, @{USER_SALT}, @{USER_POWER});";
+
+            var updateQuery = $"UPDATE {USERS_TABLE} SET " +
+                                $"{USER_NAME}=@{USER_NAME}, " +
+                                $"{USER_EMAIL}=@{USER_EMAIL}, " +
+                                $"{USER_PASS}=@{USER_PASS}, " +
+                                $"{USER_SALT}=@{USER_SALT}, " +
+                                $"{USER_POWER}=@{USER_POWER} " +
+                              $"WHERE {USER_ID}=@{USER_ID};";
+
+            using (var cmd = new SqliteCommand(newUser ? insertQuery : updateQuery, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + USER_NAME, client.MyAccount));
                 cmd.Parameters.Add(new SqliteParameter("@" + USER_EMAIL, client.MyEmail));
