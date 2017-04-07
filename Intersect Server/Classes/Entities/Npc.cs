@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -95,9 +96,10 @@ namespace Intersect.Server.Classes.Entities
         public override bool CanAttack(Entity en, SpellBase spell)
         {
             //Check if the attacker is stunned or blinded.
-            for (var n = 0; n < Status.Count; n++)
+            var statuses = Statuses.Values.ToArray();
+            foreach (var status in statuses)
             {
-                if (Status[n].Type == (int) StatusTypes.Stun)
+                if (status.Type == (int)StatusTypes.Stun)
                 {
                     return false;
                 }
@@ -164,9 +166,10 @@ namespace Intersect.Server.Classes.Entities
         private void TryCastSpells()
         {
             //check if NPC is stunned
-            for (var n = 0; n < Status.Count; n++)
+            var statuses = Statuses.Values.ToArray();
+            foreach (var status in statuses)
             {
-                if (Status[n].Type == (int) StatusTypes.Stun)
+                if (status.Type == (int)StatusTypes.Stun)
                 {
                     return;
                 }
@@ -180,9 +183,9 @@ namespace Intersect.Server.Classes.Entities
             {
                 var CC = false;
                 //Check if the NPC is silenced or stunned
-                for (var n = 0; n < Status.Count; n++)
+                foreach (var status in statuses)
                 {
-                    if (Status[n].Type == (int) StatusTypes.Silence || Status[n].Type == (int) StatusTypes.Stun)
+                    if (status.Type == (int)StatusTypes.Silence || status.Type == (int)StatusTypes.Stun)
                     {
                         CC = true;
                         break;
@@ -293,9 +296,10 @@ namespace Intersect.Server.Classes.Entities
                         targetMap = MyTarget.CurrentMap;
                         targetX = MyTarget.CurrentX;
                         targetY = MyTarget.CurrentY;
-                        for (var n = 0; n < MyTarget.Status.Count; n++)
+                        var targetStatuses = MyTarget.Statuses.Values.ToArray();
+                        foreach (var targetStatus in targetStatuses)
                         {
-                            if (MyTarget.Status[n].Type == (int) StatusTypes.Stealth)
+                            if (targetStatus.Type == (int)StatusTypes.Stealth)
                             {
                                 targetMap = -1;
                                 targetX = 0;
@@ -402,10 +406,11 @@ namespace Intersect.Server.Classes.Entities
                                         if (CanMove(dir) == -1 || CanMove(dir) == -4)
                                         {
                                             //check if NPC is snared or stunned
-                                            for (var n = 0; n < Status.Count; n++)
+                                            var statuses = Statuses.Values.ToArray();
+                                            foreach (var status in statuses)
                                             {
-                                                if (Status[n].Type == (int) StatusTypes.Stun ||
-                                                    Status[n].Type == (int) StatusTypes.Snare)
+                                                if (status.Type == (int)StatusTypes.Stun ||
+                                                     status.Type == (int)StatusTypes.Snare)
                                                 {
                                                     return;
                                                 }
@@ -472,9 +477,10 @@ namespace Intersect.Server.Classes.Entities
                     if (CanMove(i) == -1)
                     {
                         //check if NPC is snared or stunned
-                        for (var n = 0; n < Status.Count; n++)
+                        var statuses = Statuses.Values.ToArray();
+                        foreach (var status in statuses)
                         {
-                            if (Status[n].Type == (int) StatusTypes.Stun || Status[n].Type == (int) StatusTypes.Snare)
+                            if (status.Type == (int)StatusTypes.Stun || status.Type == (int)StatusTypes.Snare)
                             {
                                 return;
                             }

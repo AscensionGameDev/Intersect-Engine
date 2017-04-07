@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -69,7 +71,7 @@ namespace Intersect.Server.Classes.Entities
         public EntityStat[] Stat = new EntityStat[(int) Stats.StatCount];
 
         //Status effects
-        public List<StatusInstance> Status = new List<StatusInstance>();
+        public Dictionary<SpellBase,StatusInstance> Statuses = new Dictionary<SpellBase,StatusInstance>();
 
         public Entity Target = null;
         public int[] Vital = new int[(int) Vitals.VitalCount];
@@ -141,13 +143,13 @@ namespace Intersect.Server.Classes.Entities
                 RegenTimer = Globals.System.GetTimeMs() + ServerOptions.RegenTime;
             }
             //Status timers
-            int count = Status.Count;
-            for (int i = 0; i < Status.Count; i++)
+            var statusArray = Statuses.ToArray();
+            foreach (var status in statusArray)
             {
-                Status[i].TryRemoveStatus();
+                status.Value.TryRemoveStatus();
             }
             //If there is a removal of a status, update it client sided.
-            if (count > Status.Count)
+            if (Statuses.Count != statusArray.Count())
             {
                 PacketSender.SendEntityVitals(this);
             }
@@ -816,17 +818,13 @@ namespace Intersect.Server.Classes.Entities
 
                 for (int i = 0; i < (int) Stats.StatCount; i++)
                 {
-                    enemy.Stat[i].AddBuff(
-                        new EntityBuff(spellBase.StatDiff[i],
-                            (spellBase.Data2 * 100)));
+                    enemy.Stat[i].AddBuff(new EntityBuff(spellBase, spellBase.StatDiff[i],  (spellBase.Data2 * 100)));
                 }
 
                 //Handle other status effects
                 if (spellBase.Data3 > 0)
                 {
-                    enemy.Status.Add(new StatusInstance(enemy.MyIndex,
-                        spellBase.Data3, (spellBase.Data2 * 100),
-                        spellBase.Data5));
+                    new StatusInstance(enemy,spellBase,spellBase.Data3, (spellBase.Data2 * 100),spellBase.Data5);
                     PacketSender.SendActionMsg(enemy, Options.StatusActionMsgs[spellBase.Data3],
                         new Color(255, 255, 255, 0));
                 }
@@ -887,12 +885,13 @@ namespace Intersect.Server.Classes.Entities
             //Check if the attacker is blinded.
             if (IsOneBlockAway(enemy))
             {
-                for (var n = 0; n < Status.Count; n++)
+                var statuses = Statuses.Values.ToArray();
+                foreach (var status in statuses)
                 {
-                    if (Status[n].Type == (int) StatusTypes.Stun || Status[n].Type == (int) StatusTypes.Blind)
+                    if (status.Type == (int)StatusTypes.Stun || status.Type == (int)StatusTypes.Blind)
                     {
                         PacketSender.SendActionMsg(this, Strings.Get("combat", "miss"), new Color(255, 255, 255, 255));
-                        PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, CurrentMap,
+                        PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, CurrentMap,
                             CalculateAttackTime());
                         return;
                     }
@@ -1386,11 +1385,12 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
             DoT.Clear();
-            Status.Clear();
+            Statuses.Clear();
             for (int i = 0; i < (int) Stats.StatCount; i++)
             {
                 Stat[i].Reset();
             }
+            PacketSender.SendEntityVitals(this);
             Dead = true;
         }
 
@@ -1442,11 +1442,12 @@ namespace Intersect.Server.Classes.Entities
                 bf.WriteInteger(MaxVital[i]);
                 bf.WriteInteger(Vital[i]);
             }
-            bf.WriteInteger(Status.Count);
-            for (var i = 0; i < Status.Count; i++)
+            var statuses = Statuses.ToArray();
+            bf.WriteInteger(statuses.Count());
+            foreach (var status in statuses)
             {
-                bf.WriteInteger(Status[i].Type);
-                bf.WriteString(Status[i].Data);
+                bf.WriteInteger(status.Value.Type);
+                bf.WriteString(status.Value.Data);
             }
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
@@ -1479,7 +1480,7 @@ namespace Intersect.Server.Classes.Entities
     {
         private Player _player = null;
         private int _statType;
-        private List<EntityBuff> mBuff = new List<EntityBuff>();
+        private Dictionary<SpellBase, EntityBuff> mBuff = new Dictionary<SpellBase, EntityBuff>();
         private bool mChanged;
         public int Stat = 0;
 
@@ -1494,9 +1495,10 @@ namespace Intersect.Server.Classes.Entities
         {
             int s = Stat;
 
-            for (int i = 0; i < mBuff.Count; i++)
+            var buffs = mBuff.Values.ToArray();
+            foreach (var buff in buffs)
             {
-                s += mBuff[i].Buff;
+                s += buff.Buff;
             }
 
             if (_player != null)
@@ -1527,11 +1529,12 @@ namespace Intersect.Server.Classes.Entities
         public bool Update()
         {
             var changed = false;
-            for (int i = 0; i < mBuff.Count; i++)
+            var buffs = mBuff.ToArray();
+            foreach (var buff in buffs)
             {
-                if (mBuff[i].Duration <= Globals.System.GetTimeMs())
+                if (buff.Value.Duration <= Globals.System.GetTimeMs())
                 {
-                    mBuff.RemoveAt(i);
+                    mBuff.Remove(buff.Key);
                     changed = true;
                 }
             }
@@ -1544,7 +1547,14 @@ namespace Intersect.Server.Classes.Entities
 
         public void AddBuff(EntityBuff buff)
         {
-            mBuff.Add(buff);
+            if (mBuff.ContainsKey(buff.Spell))
+            {
+                mBuff[buff.Spell].Duration = buff.Duration;
+            }
+            else
+            {
+                mBuff.Add(buff.Spell,buff);
+            }
             mChanged = true;
         }
 
@@ -1558,9 +1568,11 @@ namespace Intersect.Server.Classes.Entities
     {
         public int Buff = 0;
         public long Duration = 0;
+        public SpellBase Spell;
 
-        public EntityBuff(int buff, int duration)
+        public EntityBuff(SpellBase spell, int buff, int duration)
         {
+            Spell = spell;
             Buff = buff;
             Duration = Globals.System.GetTimeMs() + duration;
         }
@@ -1616,25 +1628,41 @@ namespace Intersect.Server.Classes.Entities
     public class StatusInstance
     {
         public string Data = "";
+        private SpellBase _spell;
         public long Duration = 0;
-        private int EntityID = -1;
+        private Entity entity;
         public int Type = 0;
 
-        public StatusInstance(int entityID, int type, int duration, string data)
+        public StatusInstance(Entity en, SpellBase spell, int type, int duration, string data)
         {
-            EntityID = entityID;
+            entity = en;
+            _spell = spell;
             Type = type;
             Duration = Globals.System.GetTimeMs() + duration;
             Data = data;
-            PacketSender.SendEntityVitals(Globals.Entities[EntityID]);
+            if (en.Statuses.ContainsKey(spell))
+            {
+                en.Statuses[spell].Duration = Duration;
+            }
+            else
+            {
+                en.Statuses.Add(_spell, this);
+            }
+            PacketSender.SendEntityVitals(entity);
         }
 
         public void TryRemoveStatus()
         {
             if (Duration <= Globals.System.GetTimeMs()) //Check the timer
             {
-                Globals.Entities[EntityID].Status.Remove(this);
+                RemoveStatus();
             }
+        }
+
+        public void RemoveStatus()
+        {
+            entity.Statuses.Remove(_spell);
+            PacketSender.SendEntityVitals(entity);
         }
     }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -371,10 +372,10 @@ namespace Intersect.Server.Classes.Networking
             int dir = bf.ReadInteger();
 
             //check if player is stunned or snared, if so don't let them move.
-            for (var n = 0; n < client.Entity.Status.Count; n++)
+            var statuses = client.Entity.Statuses.Values.ToArray();
+            foreach (var status in statuses)
             {
-                if (client.Entity.Status[n].Type == (int) StatusTypes.Stun ||
-                    client.Entity.Status[n].Type == (int) StatusTypes.Snare)
+                if (status.Type == (int) StatusTypes.Stun || status.Type == (int) StatusTypes.Snare)
                 {
                     bf.Dispose();
                     return;
@@ -795,9 +796,10 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteBytes(packet);
 
             //check if player is blinded or stunned
-            for (var n = 0; n < client.Entity.Status.Count; n++)
+            var statuses = client.Entity.Statuses.Values.ToArray();
+            foreach (var status in statuses)
             {
-                if (client.Entity.Status[n].Type == (int) StatusTypes.Stun)
+                if (status.Type == (int) StatusTypes.Stun)
                 {
                     PacketSender.SendPlayerMsg(client, Strings.Get("combat", "stunblocking"));
                     bf.Dispose();
@@ -824,14 +826,15 @@ namespace Intersect.Server.Classes.Networking
                 }
 
                 //check if player is blinded or stunned
-                for (var n = 0; n < client.Entity.Status.Count; n++)
+                var statuses = client.Entity.Statuses.Values.ToArray();
+                foreach (var status in statuses)
                 {
-                    if (client.Entity.Status[n].Type == (int) StatusTypes.Stun)
+                    if (status.Type == (int) StatusTypes.Stun)
                     {
                         PacketSender.SendPlayerMsg(client, Strings.Get("combat", "stunattacking"));
                         return;
                     }
-                    if (client.Entity.Status[n].Type == (int) StatusTypes.Blind)
+                    if (status.Type == (int) StatusTypes.Blind)
                     {
                         PacketSender.SendActionMsg(client.Entity, Strings.Get("combat", "miss"),
                             new Color(255, 255, 255, 255));
