@@ -40,6 +40,16 @@ namespace Intersect_Editor.Classes
             }
         }
 
+        public static void DrawFrame()
+        {
+            //Check Editors
+            if (Globals.ResourceEditor != null && Globals.ResourceEditor.IsDisposed == false)
+            {
+                Globals.ResourceEditor.Render();
+            }
+            EditorGraphics.Render();
+        }
+
         public static void RunFrame()
         {
             //Shooting for 30fps
@@ -64,12 +74,9 @@ namespace Intersect_Editor.Classes
                 }
                 animationTimer = Globals.System.GetTimeMs() + 600;
             }
-            //Check Editors
-            if (Globals.ResourceEditor != null && Globals.ResourceEditor.IsDisposed == false)
-            {
-                Globals.ResourceEditor.Render();
-            }
-            EditorGraphics.Render();
+
+            DrawFrame();
+
             GameContentManager.Update();
             Network.Update();
             Application.DoEvents(); // handle form events
