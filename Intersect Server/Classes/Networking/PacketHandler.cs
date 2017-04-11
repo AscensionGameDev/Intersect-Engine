@@ -2208,7 +2208,15 @@ namespace Intersect.Server.Classes.Networking
             {
                 if (client.Entity.TradeRequester.IsValidPlayer)
                 {
-                    client.Entity.TradeRequester.StartTrade((Player) client.Entity);
+                    if (client.Entity.TradeRequester.Trading == -1) //They could have accepted another trade since.
+                    {
+                        client.Entity.TradeRequester.StartTrade((Player)client.Entity);
+                    }
+                    else
+                    {
+                        PacketSender.SendPlayerMsg(client, Strings.Get("trading", "busy", 
+                            client.Entity.TradeRequester.MyName), Color.Red);
+                    }
                 }
 
                 client.Entity.TradeRequester = null;

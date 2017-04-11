@@ -724,6 +724,7 @@ namespace Intersect.Server.Classes.Entities
                     {
                         return;
                     }
+                    if (((Player)this).InParty((Player)enemy) == true) return;
                 }
                 Attack(enemy, parentItem.Damage, 0, (DamageType) parentItem.DamageType, (Stats) parentItem.ScalingStat,
                     parentItem.Scaling, parentItem.CritChance, Options.CritMultiplier);
