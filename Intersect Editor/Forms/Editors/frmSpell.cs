@@ -159,7 +159,7 @@ namespace Intersect.Editor.Forms
             lblHitRadius.Text = Strings.Get("spelleditor", "hitradius");
 
             grpCombat.Text = Strings.Get("spelleditor", "combatspell");
-            grpDamage.Text = Strings.Get("spelleditor", "combat");
+            grpDamage.Text = Strings.Get("spelleditor", "damagegroup");
             lblCritChance.Text = Strings.Get("spelleditor", "critchance");
             lblDamageType.Text = Strings.Get("spelleditor", "damagetype");
             lblHPDamage.Text = Strings.Get("spelleditor", "hpdamage");
@@ -206,7 +206,7 @@ namespace Intersect.Editor.Forms
             grpWarp.Text = Strings.Get("spelleditor", "warptomap");
             lblMap.Text = Strings.Get("warping", "map", "");
             lblX.Text = Strings.Get("warping", "x", "");
-            lblY.Text = Strings.Get("warping", "y");
+            lblY.Text = Strings.Get("warping", "y", "");
             lblWarpDir.Text = Strings.Get("warping", "direction", "");
             cmbDirection.Items.Clear();
             for (int i = -1; i < 4; i++)
