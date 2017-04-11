@@ -1018,7 +1018,7 @@ namespace Intersect_Client.Classes.Networking
                         if (animBase != null)
                         {
                             AnimationInstance animInstance = new AnimationInstance(animBase, false,
-                                dir == -1 ? true : false);
+                                dir == -1 ? false : true);
                             if (dir > -1) animInstance.SetDir(dir);
                             Globals.Entities[entityIndex].Animations.Add(animInstance);
                         }

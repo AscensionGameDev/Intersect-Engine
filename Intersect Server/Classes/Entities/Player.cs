@@ -591,39 +591,25 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
 
-            var deadAnimations = new List<KeyValuePair<int, int>>();
-            var aliveAnimations = new List<KeyValuePair<int, int>>();
             if (weapon != null)
             {
-                var attackAnim = AnimationBase.Lookup.Get<AnimationBase>(weapon.AttackAnimation);
-                if (attackAnim != null)
-                {
-                    deadAnimations.Add(new KeyValuePair<int, int>(weapon.AttackAnimation, Dir));
-                    aliveAnimations.Add(new KeyValuePair<int, int>(weapon.AttackAnimation, Dir));
-                }
-                base.TryAttack(enemy, weapon.Damage == 0 ? 1 : weapon.Damage, (DamageType) weapon.DamageType,
-                    (Stats) weapon.ScalingStat,
-                    weapon.Scaling, weapon.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
+                base.TryAttack(enemy, weapon.Damage == 0 ? 1 : weapon.Damage, (DamageType)weapon.DamageType,
+                    (Stats)weapon.ScalingStat,
+                    weapon.Scaling, weapon.CritChance, Options.CritMultiplier);
             }
             else
             {
                 var classBase = ClassBase.Lookup.Get<ClassBase>(Class);
                 if (classBase != null)
                 {
-                    var attackAnim = AnimationBase.Lookup.Get<AnimationBase>(classBase.AttackAnimation);
-                    if (attackAnim != null)
-                    {
-                        deadAnimations.Add(new KeyValuePair<int, int>(classBase.AttackAnimation, Dir));
-                        aliveAnimations.Add(new KeyValuePair<int, int>(classBase.AttackAnimation, Dir));
-                    }
                     base.TryAttack(enemy, classBase.Damage == 0 ? 1 : classBase.Damage,
-                        (DamageType) classBase.DamageType, (Stats) classBase.ScalingStat,
-                        classBase.Scaling, classBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
+                        (DamageType)classBase.DamageType, (Stats)classBase.ScalingStat,
+                        classBase.Scaling, classBase.CritChance, Options.CritMultiplier);
                 }
                 else
                 {
-                    base.TryAttack(enemy, 1, (DamageType) DamageType.Physical, Stats.Attack,
-                        100, 10, Options.CritMultiplier, deadAnimations, aliveAnimations);
+                    base.TryAttack(enemy, 1, (DamageType)DamageType.Physical, Stats.Attack,
+                        100, 10, Options.CritMultiplier);
                 }
             }
             PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());

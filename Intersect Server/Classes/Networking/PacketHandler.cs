@@ -815,6 +815,8 @@ namespace Intersect.Server.Classes.Networking
 
         private static void HandleTryAttack(Client client, byte[] packet)
         {
+            bool UnequippedAttack = false;
+
             using (var buffer = new ByteBuffer())
             {
                 buffer.WriteBytes(packet);
@@ -850,11 +852,21 @@ namespace Intersect.Server.Classes.Networking
                         ItemBase.Lookup.Get<ItemBase>(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum) !=
                         null)
                     {
+                        //Check for animation
+                        var attackAnim = AnimationBase.Lookup.Get<AnimationBase>(ItemBase.Lookup.Get<ItemBase>(
+                            client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum).AttackAnimation);
+                        if (attackAnim != null)
+                        {
+                            PacketSender.SendAnimationToProximity(attackAnim.Index, 1, client.Entity.MyIndex,
+                                client.Entity.CurrentMap, client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.Dir);
+                        }
+
                         var projectileBase =
                             ProjectileBase.Lookup.Get<ProjectileBase>(
                                 ItemBase.Lookup.Get<ItemBase>(
                                         client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum)
                                     .Projectile);
+
                         if (projectileBase != null)
                         {
                             if (projectileBase.Ammo > -1)
@@ -880,6 +892,25 @@ namespace Intersect.Server.Classes.Networking
                                     client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ,
                                     client.Entity.Dir,null);
                             return;
+                        }
+                    }
+                    else
+                    {
+                        UnequippedAttack = true;
+                    }
+                }
+                
+                if (UnequippedAttack == true)
+                {
+                    var classBase = ClassBase.Lookup.Get<ClassBase>(client.Entity.Class);
+                    if (classBase != null)
+                    {
+                        //Check for animation
+                        var attackAnim = AnimationBase.Lookup.Get<AnimationBase>(classBase.AttackAnimation);
+                        if (attackAnim != null)
+                        {
+                            PacketSender.SendAnimationToProximity(attackAnim.Index, 1, client.Entity.MyIndex,
+                                client.Entity.CurrentMap, client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.Dir);
                         }
                     }
                 }

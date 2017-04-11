@@ -21,12 +21,18 @@ namespace Intersect_Client.Classes.Core
                     if (Globals.Me != null)
                     {
                         Globals.Me.TryAttack();
+                        if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
+                            Globals.Me.AttackTimer = Globals.System.GetTimeMS() + Globals.Me.CalculateAttackTime();
+                    }
+                }
+                else if (key == Keys.Space)
+                {
+                    if (Globals.Me != null)
+                    {
                         if (Globals.Me.TryPickupItem())
                         {
                             return;
                         }
-                        if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
-                            Globals.Me.AttackTimer = Globals.System.GetTimeMS() + Globals.Me.CalculateAttackTime();
                     }
                 }
                 else if (key == Keys.Q)
