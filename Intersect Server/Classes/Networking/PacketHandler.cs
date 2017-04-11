@@ -498,9 +498,12 @@ namespace Intersect.Server.Classes.Networking
                         //Search for command activated events and run them
                         foreach (var evt in EventBase.Lookup)
                         {
-                            if (client.Entity.StartCommonEvent((EventBase) evt.Value, (int)EventPage.CommonEventTriggers.Command, splitString[0].TrimStart('/'), msg) == true)
+                            if ((EventBase)evt.Value != null)
                             {
-                                return; //Found our /command, exit now :)
+                                if (client.Entity.StartCommonEvent((EventBase)evt.Value, (int)EventPage.CommonEventTriggers.Command, splitString[0].TrimStart('/'), msg) == true)
+                                {
+                                    return; //Found our /command, exit now :)
+                                }
                             }
                         }
 
@@ -952,7 +955,10 @@ namespace Intersect.Server.Classes.Networking
             //Search for login activated events and run them
             foreach (EventBase evt in EventBase.Lookup.IndexValues)
             {
-                ((Player) client.Entity).StartCommonEvent(evt, (int) EventPage.CommonEventTriggers.JoinGame);
+                if (evt != null)
+                {
+                    ((Player)client.Entity).StartCommonEvent(evt, (int)EventPage.CommonEventTriggers.JoinGame);
+                }
             }
         }
 

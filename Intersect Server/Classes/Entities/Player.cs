@@ -131,9 +131,12 @@ namespace Intersect.Server.Classes.Entities
             base.Update(timeMs);
 
             //Check for autorun common events and run them
-            foreach (var evt in EventBase.Lookup)
+            foreach (EventBase evt in EventBase.Lookup.IndexValues)
             {
-                StartCommonEvent((EventBase) evt.Value, (int)EventPage.CommonEventTriggers.Autorun);
+                if (evt != null)
+                {
+                    StartCommonEvent(evt, (int)EventPage.CommonEventTriggers.Autorun);
+                }
             }
 
             //If we have a move route then let's process it....
@@ -325,9 +328,12 @@ namespace Intersect.Server.Classes.Entities
             }
 
             //Search death common event trigger
-            foreach (var evt in EventBase.Lookup)
+            foreach (EventBase evt in EventBase.Lookup.IndexValues)
             {
-                StartCommonEvent((EventBase) evt.Value, (int)EventPage.CommonEventTriggers.OnRespawn);
+                if (evt != null)
+                {
+                    StartCommonEvent(evt, (int)EventPage.CommonEventTriggers.OnRespawn);
+                }
             }
 
             base.Die(dropitems, killer);
@@ -454,7 +460,10 @@ namespace Intersect.Server.Classes.Entities
             //Search for login activated events and run them
             foreach (EventBase evt in EventBase.Lookup.IndexValues)
             {
-                StartCommonEvent(evt, (int) EventPage.CommonEventTriggers.LevelUp);
+                if (evt != null)
+                {
+                    StartCommonEvent(evt, (int)EventPage.CommonEventTriggers.LevelUp);
+                }
             }
         }
 
@@ -2597,7 +2606,10 @@ namespace Intersect.Server.Classes.Entities
                 {
                     UpdateGatherItemQuests(quest.Tasks[0].Data1);
                 }
-                StartCommonEvent(quest.StartEvent);
+                if (quest.StartEvent != null)
+                {
+                    StartCommonEvent(quest.StartEvent);
+                }
                 PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests", "started", quest.Name), Color.Cyan);
                 PacketSender.SendQuestProgress(this, quest.Index);
             }
@@ -2725,8 +2737,14 @@ namespace Intersect.Server.Classes.Entities
                                     questProgress.task = -1;
                                     questProgress.taskProgress = -1;
                                     Quests[questId] = questProgress;
-                                    StartCommonEvent(quest.Tasks[i].CompletionEvent);
-                                    StartCommonEvent(quest.EndEvent);
+                                    if (quest.Tasks[i].CompletionEvent != null)
+                                    {
+                                        StartCommonEvent(quest.Tasks[i].CompletionEvent);
+                                    }
+                                    if (quest.EndEvent != null)
+                                    {
+                                        StartCommonEvent(quest.EndEvent);
+                                    }
                                     PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests", "completed", quest.Name),
                                         Color.Green);
                                 }
@@ -2736,7 +2754,10 @@ namespace Intersect.Server.Classes.Entities
                                     questProgress.task = quest.Tasks[i + 1].Id;
                                     questProgress.taskProgress = 0;
                                     Quests[questId] = questProgress;
-                                    StartCommonEvent(quest.Tasks[i].CompletionEvent);
+                                    if (quest.Tasks[i].CompletionEvent != null)
+                                    {
+                                        StartCommonEvent(quest.Tasks[i].CompletionEvent);
+                                    }
                                     if (quest.Tasks[i + 1].Objective == 1) //Gather Items
                                     {
                                         UpdateGatherItemQuests(quest.Tasks[i + 1].Data1);
