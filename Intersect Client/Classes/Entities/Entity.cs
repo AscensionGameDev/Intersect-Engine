@@ -87,6 +87,10 @@ namespace Intersect_Client.Classes.Entities
         public int[] Vital = new int[(int) Vitals.VitalCount];
         public int WalkFrame;
 
+        //Animation Timer (for animated sprites)
+        public long AnimationTimer;
+        public int AnimationFrame = 0;
+
         public Entity(int index, long spawnTime, ByteBuffer bf, bool isEvent = false)
         {
             CurrentMap = -1;
@@ -106,7 +110,7 @@ namespace Intersect_Client.Classes.Entities
                     Equipment[i] = -1;
                 }
             }
-
+            AnimationTimer = Globals.System.GetTimeMS() + Globals.Random.Next(0, 500);
             MyIndex = index;
             Load(bf);
         }
@@ -339,6 +343,12 @@ namespace Intersect_Client.Classes.Entities
                     _chatBubbles.Remove(chatbubble);
                 }
             }
+            if (AnimationTimer < Globals.System.GetTimeMS())
+            {
+                AnimationTimer = Globals.System.GetTimeMS() + 200;
+                AnimationFrame++;
+                if (AnimationFrame >= 4) AnimationFrame = 0;
+            }
             _lastUpdate = Globals.System.GetTimeMS();
             return true;
         }
@@ -486,16 +496,24 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.X = (int) Math.Ceiling(destRectangle.X);
                 destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
-                if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMS() || Blocking)
+                if (Options.AnimatedSprites.Contains(sprite))
                 {
-                    srcRectangle = new FloatRect(3 * (int) entityTex.GetWidth() / 4, d * (int) entityTex.GetHeight() / 4,
-                        (int) entityTex.GetWidth() / 4, (int) entityTex.GetHeight() / 4);
+                    srcRectangle = new FloatRect(AnimationFrame * (int)entityTex.GetWidth() / 4, d * (int)entityTex.GetHeight() / 4,
+                            (int)entityTex.GetWidth() / 4, (int)entityTex.GetHeight() / 4);
                 }
                 else
                 {
-                    srcRectangle = new FloatRect(WalkFrame * (int) entityTex.GetWidth() / 4,
-                        d * (int) entityTex.GetHeight() / 4, (int) entityTex.GetWidth() / 4,
-                        (int) entityTex.GetHeight() / 4);
+                    if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMS() || Blocking)
+                    {
+                        srcRectangle = new FloatRect(3 * (int)entityTex.GetWidth() / 4, d * (int)entityTex.GetHeight() / 4,
+                            (int)entityTex.GetWidth() / 4, (int)entityTex.GetHeight() / 4);
+                    }
+                    else
+                    {
+                        srcRectangle = new FloatRect(WalkFrame * (int)entityTex.GetWidth() / 4,
+                            d * (int)entityTex.GetHeight() / 4, (int)entityTex.GetWidth() / 4,
+                            (int)entityTex.GetHeight() / 4);
+                    }
                 }
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;

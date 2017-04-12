@@ -165,6 +165,10 @@ namespace Intersect.Server.Classes.General
                     ItemDespawnTime = GetXmlInt(options, "//Config/Misc/ItemDespawnTime");
                     ItemRespawnTime = GetXmlInt(options, "//Config/Misc/ItemSpawnTime");
 
+                    Options.AnimatedSprites.Clear();
+                    Options.AnimatedSprites.AddRange(
+                        GetXmlStr(options, "//Config/Misc/AnimatedSprites", false).Split(','));
+
                     //Combat
                     RegenTime = GetXmlInt(options, "//Config/Combat/RegenTime");
                     Options.MinAttackRate = GetXmlInt(options, "//Config/Combat/MinAttackRate");
@@ -253,6 +257,13 @@ namespace Intersect.Server.Classes.General
             for (int i = 0; i < Options.ToolTypes.Count; i++)
             {
                 bf.WriteString(Options.ToolTypes[i]);
+            }
+
+            //Animated Sprites
+            bf.WriteInteger(Options.AnimatedSprites.Count);
+            for (int i = 0; i < Options.AnimatedSprites.Count; i++)
+            {
+                bf.WriteString(Options.AnimatedSprites[i]);
             }
 
             //Combat

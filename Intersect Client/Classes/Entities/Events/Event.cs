@@ -114,9 +114,18 @@ namespace Intersect_Client.Classes.Entities
                         }
                         int frame = GraphicX;
                         if (WalkingAnim == 1) frame = WalkFrame;
-                        srcRectangle = new FloatRect(frame * (int) srcTexture.GetWidth() / 4,
-                            d * (int) srcTexture.GetHeight() / 4, (int) srcTexture.GetWidth() / 4,
-                            (int) srcTexture.GetHeight() / 4);
+                        if (Options.AnimatedSprites.Contains(GraphicFile))
+                        {
+                            srcRectangle = new FloatRect(AnimationFrame * (int) entityTex.GetWidth() / 4,
+                                d * (int) entityTex.GetHeight() / 4,
+                                (int) entityTex.GetWidth() / 4, (int) entityTex.GetHeight() / 4);
+                        }
+                        else
+                        {
+                            srcRectangle = new FloatRect(frame * (int) srcTexture.GetWidth() / 4,
+                                d * (int) srcTexture.GetHeight() / 4, (int) srcTexture.GetWidth() / 4,
+                                (int) srcTexture.GetHeight() / 4);
+                        }
                     }
                     break;
                 case 2: //Tile

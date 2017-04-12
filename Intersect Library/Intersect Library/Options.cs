@@ -33,6 +33,9 @@ namespace Intersect
         public static List<string>[] PaperdollOrder = new List<string>[Enum.GetNames(typeof(Directions)).Length];
         public static List<string> ToolTypes = new List<string>();
 
+        //Constantly Animated Sprites
+        public static List<string> AnimatedSprites = new List<string>();
+
         public static List<string> StatusActionMsgs = new List<string>
         {
             "NONE!",
@@ -107,6 +110,14 @@ namespace Intersect
             for (int i = 0; i < count; i++)
             {
                 ToolTypes.Add(bf.ReadString());
+            }
+
+            //Animated Sprites
+            count = bf.ReadInteger();
+            AnimatedSprites.Clear();
+            for (int i = 0; i < count; i++)
+            {
+                AnimatedSprites.Add(bf.ReadString());
             }
 
             //Combat

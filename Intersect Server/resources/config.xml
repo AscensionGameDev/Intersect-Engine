@@ -73,6 +73,7 @@
   <Misc>
     <ItemDespawnTime>15000</ItemDespawnTime>
     <ItemSpawnTime>15000</ItemSpawnTime>
+		<AnimatedSprites></AnimatedSprites>
   </Misc>
   <Combat>
     <RegenTime>3000</RegenTime>
