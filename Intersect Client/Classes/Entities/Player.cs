@@ -14,6 +14,7 @@ using Intersect_Client.Classes.Spells;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
 using Color = IntersectClientExtras.GenericClasses.Color;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -487,19 +488,19 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
-            if (Globals.InputManager.KeyDown(Keys.W) || Globals.InputManager.KeyDown(Keys.Up))
+            if (GameControls.KeyDown(Controls.MoveUp))
             {
                 movey = 1;
             }
-            if (Globals.InputManager.KeyDown(Keys.S) || Globals.InputManager.KeyDown(Keys.Down))
+            if (GameControls.KeyDown(Controls.MoveDown))
             {
                 movey = -1;
             }
-            if (Globals.InputManager.KeyDown(Keys.A) || Globals.InputManager.KeyDown(Keys.Left))
+            if (GameControls.KeyDown(Controls.MoveLeft))
             {
                 movex = -1;
             }
-            if (Globals.InputManager.KeyDown(Keys.D) || Globals.InputManager.KeyDown(Keys.Right))
+            if (GameControls.KeyDown(Controls.MoveRight))
             {
                 movex = 1;
             }

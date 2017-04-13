@@ -43,6 +43,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Classes\Core\GameAudio.cs" />
+    <Compile Include="Classes\Core\GameControls.cs" />
     <Compile Include="Classes\Core\GameFade.cs" />
     <Compile Include="Classes\Core\GameGraphics.cs" />
     <Compile Include="Classes\Core\GameInputHandler.cs" />
