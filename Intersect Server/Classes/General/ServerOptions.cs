@@ -166,8 +166,7 @@ namespace Intersect.Server.Classes.General
                     ItemRespawnTime = GetXmlInt(options, "//Config/Misc/ItemSpawnTime");
 
                     Options.AnimatedSprites.Clear();
-                    Options.AnimatedSprites.AddRange(
-                        GetXmlStr(options, "//Config/Misc/AnimatedSprites", false).Split(','));
+                    Options.AnimatedSprites.AddRange(GetXmlStr(options, "//Config/Misc/AnimatedSprites", false).Split(','));
 
                     //Combat
                     RegenTime = GetXmlInt(options, "//Config/Combat/RegenTime");
