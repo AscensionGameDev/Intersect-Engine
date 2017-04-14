@@ -517,7 +517,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
-                GameGraphics.DrawGameTexture(entityTex, srcRectangle, destRectangle, new Color(alpha, 255, 255, 255));
+                GameGraphics.DrawGameTexture(entityTex, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255));
 
                 //Don't render the paperdolls if they have transformed.
                 if (sprite == MySprite)
@@ -632,7 +632,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
-                GameGraphics.DrawGameTexture(paperdollTex, srcRectangle, destRectangle, new Color(alpha, 255, 255, 255));
+                GameGraphics.DrawGameTexture(paperdollTex, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255));
             }
         }
 
@@ -689,22 +689,22 @@ namespace Intersect_Client.Classes.Entities
                 switch (type)
                 {
                     case -1: //When entity has a target (showing aggression)
-                        color = Color.Red;
+                        color = Color.FromArgb(CustomColors.AgressiveNpcName.A, CustomColors.AgressiveNpcName.R, CustomColors.AgressiveNpcName.G, CustomColors.AgressiveNpcName.B);
                         break;
                     case 0: //Attack when attacked
-                        color = new Color(128, 128, 128); // Gray
+                        color = Color.FromArgb(CustomColors.AttackWhenAttackedName.A, CustomColors.AttackWhenAttackedName.R, CustomColors.AttackWhenAttackedName.G, CustomColors.AttackWhenAttackedName.B);
                         break;
                     case 1: //Attack on sight
-                        color = new Color(128, 0, 0); //Maroon
+                        color = Color.FromArgb(CustomColors.AttackOnSightName.A, CustomColors.AttackOnSightName.R, CustomColors.AttackOnSightName.G, CustomColors.AttackOnSightName.B);
                         break;
                     case 2: //Neutral
-                        color = Color.White;
+                        color = Color.FromArgb(CustomColors.NeutralName.A, CustomColors.NeutralName.R, CustomColors.NeutralName.G, CustomColors.NeutralName.B);
                         break;
                     case 3: //Guard
-                        color = Color.Black;
+                        color = Color.FromArgb(CustomColors.GuardName.A, CustomColors.GuardName.R, CustomColors.GuardName.G, CustomColors.GuardName.B);
                         break;
                     default:
-                        color = Color.White;
+                        color = Color.FromArgb(CustomColors.NeutralName.A, CustomColors.NeutralName.R, CustomColors.NeutralName.G, CustomColors.NeutralName.B);
                         break;
                 }
             }
@@ -777,9 +777,9 @@ namespace Intersect_Client.Classes.Entities
             }
 
             GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                new FloatRect((int) (x - 1 - width / 2), (int) (y - 1), width, 6), Color.Black);
+                new FloatRect((int) (x - 1 - width / 2), (int) (y - 1), width, 6), CustomColors.HpBackground);
             GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                new FloatRect((int) (x - width / 2), (int) (y), fillWidth - 2, 4), Color.Red);
+                new FloatRect((int) (x - width / 2), (int) (y), fillWidth - 2, 4), CustomColors.HpForeground);
         }
 
         public void DrawCastingBar()
@@ -810,9 +810,9 @@ namespace Intersect_Client.Classes.Entities
                 }
 
                 GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                    new FloatRect((int) (x - 1 - width / 2), (int) (y - 1), width, 6), Color.Black);
+                    new FloatRect((int) (x - 1 - width / 2), (int) (y - 1), width, 6), CustomColors.CastingBackground);
                 GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                    new FloatRect((int) (x - width / 2), (int) (y), fillWidth - 2, 4), new Color(255, 0, 255, 255));
+                    new FloatRect((int) (x - width / 2), (int) (y), fillWidth - 2, 4), CustomColors.CastingForeground);
             }
         }
 
@@ -836,7 +836,7 @@ namespace Intersect_Client.Classes.Entities
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
 
-                GameGraphics.DrawGameTexture(targetTex, srcRectangle, destRectangle, Color.White);
+                GameGraphics.DrawGameTexture(targetTex, srcRectangle, destRectangle, Intersect.Color.White);
             }
         }
 

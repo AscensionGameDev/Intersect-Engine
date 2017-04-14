@@ -1,4 +1,6 @@
-﻿namespace Intersect
+﻿using System;
+
+namespace Intersect
 {
     public class Color
     {
@@ -109,6 +111,16 @@
         public static Color FromArgb(int r, int g, int b)
         {
             return new Color(255, r, g, b);
+        }
+
+        public int ToArgb()
+        {
+            return (int)((uint)A << 24) + (R << 16) + (G << 8) + B;
+        }
+
+        public static Color FromArgb(int argb)
+        {
+            return FromArgb((argb >> 24) & 0x0FF, (argb >> 16) & 0x0FF, (argb >> 8) & 0x0FF, argb & 0x0FF);
         }
     }
 }

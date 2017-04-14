@@ -1118,15 +1118,15 @@ namespace Intersect_Client.Classes.Entities
         {
             if (type == 1)
             {
-                base.DrawName(new Color(0, 70, 255)); //blue
+                base.DrawName(new Color(CustomColors.PlayerNameMod.A, CustomColors.PlayerNameMod.R, CustomColors.PlayerNameMod.G, CustomColors.PlayerNameMod.B)); //blue
             }
             else if (type == 2)
             {
-                base.DrawName(Color.Red); //red
+                base.DrawName(new Color(CustomColors.PlayerNameAdmin.A, CustomColors.PlayerNameAdmin.R, CustomColors.PlayerNameAdmin.G, CustomColors.PlayerNameAdmin.B)); //red
             }
             else
             {
-                base.DrawName(new Color(205, 133, 63)); //light brown
+                base.DrawName(new Color(CustomColors.PlayerNameNormal.A, CustomColors.PlayerNameNormal.R, CustomColors.PlayerNameNormal.G, CustomColors.PlayerNameNormal.B)); //light brown
             }
         }
 

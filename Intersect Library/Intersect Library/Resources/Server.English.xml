@@ -190,6 +190,7 @@
 	</Shops>
 	<Crafting>
 		<string id="crafted">You successfully crafted {00}!</string>
+		<string id="nospace">You do not have enough inventory space to craft {00}!</string>
 	</Crafting>
 	<Banks>
 		<string id="banknospace">There is no space left in your bank for that item!</string>
@@ -272,8 +273,8 @@
 		<string id="stunned">You cannot cast this ability whilst stunned.</string>
 		<string id="levelreq">You are not a high enough level to use this ability.</string>
 		<string id="notarget">No Target!</string>
-        <string id="channeling">You are currently channeling another skill.</string>
-        <string id="channelingnoattack">You are currently channeling a spell, you cannot attack.</string>
+    <string id="channeling">You are currently channeling another skill.</string>
+    <string id="channelingnoattack">You are currently channeling a spell, you cannot attack.</string>
 		<string id="cooldown">This skill is on cooldown.</string>
 		<string id="lowhealth">Not enough health.</string>
 		<string id="lowmana">Not enough mana.</string>
@@ -281,6 +282,13 @@
 		<string id="stunattacking">You are stunned and can't attack.</string>
 		<string id="dynamicreq">You do not meet the requirements to cast the spell!</string>
 		<string id="resourcereqs">You do not meet the requirements to harvest this resource!</string>
+		<string id="status0">NONE!</string>
+		<string id="status1">SILENCED!</string>
+		<string id="status2">STUNNED!</string>
+		<string id="status3">SNARED!</string>
+		<string id="status4">BLINDED!</string>
+		<string id="status5">STEALTH!</string>
+		<string id="status6">TRANSFORMED!</string>
 	</Combat>
 	<Mapping>
 		<string id="newfolder">New Folder</string>

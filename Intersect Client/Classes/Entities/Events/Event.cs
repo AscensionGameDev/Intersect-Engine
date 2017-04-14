@@ -161,7 +161,7 @@ namespace Intersect_Client.Classes.Entities
                 destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
-                GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Color.White);
+                GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Intersect.Color.White);
             }
         }
 
@@ -257,7 +257,7 @@ namespace Intersect_Client.Classes.Entities
 
             float textWidth = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 1).X;
             GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
-                (int) (x - (int) Math.Ceiling(textWidth / 2)), (int) (y), 1, Color.White);
+                (int) (x - (int) Math.Ceiling(textWidth / 2)), (int) (y), 1, new Color(CustomColors.EventName.A,CustomColors.EventName.R, CustomColors.EventName.G, CustomColors.EventName.B));
         }
 
         public override Pointf GetCenterPos()

@@ -689,22 +689,22 @@ namespace Intersect.Server.Classes.Entities
 
                 if (enemy.Dir == (int) Directions.Left && d == (int) Directions.Right)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), CustomColors.Blocked);
                     return;
                 }
                 else if (enemy.Dir == (int) Directions.Right && d == (int) Directions.Left)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), CustomColors.Blocked);
                     return;
                 }
                 else if (enemy.Dir == (int) Directions.Up && d == (int) Directions.Down)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), CustomColors.Blocked);
                     return;
                 }
                 else if (enemy.Dir == (int) Directions.Down && d == (int) Directions.Up)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), CustomColors.Blocked);
                     return;
                 }
             }
@@ -825,8 +825,7 @@ namespace Intersect.Server.Classes.Entities
                 if (spellBase.Data3 > 0)
                 {
                     new StatusInstance(enemy,spellBase,spellBase.Data3, (spellBase.Data2 * 100),spellBase.Data5);
-                    PacketSender.SendActionMsg(enemy, Options.StatusActionMsgs[spellBase.Data3],
-                        new Color(255, 255, 255, 0));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat","status" + spellBase.Data3), CustomColors.Status);
                 }
 
                 //Handle DoT/HoT spells]
@@ -890,7 +889,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (status.Type == (int)StatusTypes.Stun || status.Type == (int)StatusTypes.Blind)
                     {
-                        PacketSender.SendActionMsg(this, Strings.Get("combat", "miss"), new Color(255, 255, 255, 255));
+                        PacketSender.SendActionMsg(this, Strings.Get("combat", "miss"), CustomColors.Missed);
                         PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, CurrentMap,
                             CalculateAttackTime());
                         return;
@@ -956,7 +955,7 @@ namespace Intersect.Server.Classes.Entities
             }
             else
             {
-                PacketSender.SendActionMsg(enemy, Strings.Get("combat", "critical"), new Color(255, 255, 255, 0));
+                PacketSender.SendActionMsg(enemy, Strings.Get("combat", "critical"), CustomColors.Critical);
             }
 
             //Calculate Damages
@@ -971,22 +970,22 @@ namespace Intersect.Server.Classes.Entities
                     {
                         case DamageType.Physical:
                             PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int) baseDamage,
-                                new Color(255, 255, 0, 0));
+                                CustomColors.PhysicalDamage);
                             break;
                         case DamageType.Magic:
                             PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int) baseDamage,
-                                new Color(255, 255, 0, 255));
+                                CustomColors.MagicDamage);
                             break;
                         case DamageType.True:
                             PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int) baseDamage,
-                                new Color(255, 255, 255, 255));
+                                CustomColors.TrueDamage);
                             break;
                     }
                 }
                 else
                 {
                     PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) baseDamage,
-                        new Color(255, 0, 255, 0));
+                        CustomColors.Heal);
                 }
             }
             if (secondaryDamage != 0)
@@ -999,12 +998,12 @@ namespace Intersect.Server.Classes.Entities
                     //If we took damage lets reset our combat timer
                     CombatTimer = Globals.System.GetTimeMs() + 5000;
                     PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int) baseDamage,
-                        new Color(255, 255, 127, 80));
+                        CustomColors.RemoveMana);
                 }
                 else
                 {
                     PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) baseDamage,
-                        new Color(255, 0, 0, 255));
+                        CustomColors.AddMana);
                 }
             }
 
@@ -1133,7 +1132,7 @@ namespace Intersect.Server.Classes.Entities
                         }
                         break;
                     case (int) SpellTypes.Dash:
-                        PacketSender.SendActionMsg(this, Strings.Get("combat", "dash"), new Color(255, 0, 0, 255));
+                        PacketSender.SendActionMsg(this, Strings.Get("combat", "dash"), CustomColors.Dash);
                         var dash = new DashInstance(this, spellBase.CastRange, Dir, Convert.ToBoolean(spellBase.Data1),
                             Convert.ToBoolean(spellBase.Data2), Convert.ToBoolean(spellBase.Data3),
                             Convert.ToBoolean(spellBase.Data4));

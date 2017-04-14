@@ -36,17 +36,6 @@ namespace Intersect
         //Constantly Animated Sprites
         public static List<string> AnimatedSprites = new List<string>();
 
-        public static List<string> StatusActionMsgs = new List<string>
-        {
-            "NONE!",
-            "SILENCED!",
-            "STUNNED!",
-            "SNARED!",
-            "BLINDED!",
-            "STEALTH!",
-            "TRANSFORMED!"
-        };
-
         //Combat
         public static int MinAttackRate = 500; //2 attacks per second
         public static int MaxAttackRate = 200; //5 attacks per second

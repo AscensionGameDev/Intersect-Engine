@@ -515,6 +515,9 @@ namespace Intersect_Client.Classes.Networking
 
         private static void HandleGameData(byte[] packet)
         {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            CustomColors.Load(bf);
             Globals.HasGameData = true;
         }
 
@@ -1271,7 +1274,7 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             DateTime time = DateTime.FromBinary(bf.ReadLong());
             float rate = (float) bf.ReadDouble();
-            Intersect.Color clr = Intersect.Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
+            Color clr = Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
             ClientTime.LoadTime(time, clr, rate);
         }
 

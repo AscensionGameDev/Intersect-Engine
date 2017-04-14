@@ -97,7 +97,7 @@ namespace Intersect_Client.Classes.Entities
             GameTexture srcTexture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, MySprite);
             if (srcTexture != null)
             {
-                GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Color.White);
+                GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Intersect.Color.White);
             }
         }
     }
