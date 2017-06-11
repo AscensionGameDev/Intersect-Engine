@@ -601,16 +601,6 @@ namespace Intersect_Client.Classes.Entities
                         }
                     }
                 }
-                if (Options.WeaponIndex > -1 && Globals.Me.Equipment[Options.WeaponIndex] > -1)
-                {
-                    var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[Globals.Me.Equipment[Options.WeaponIndex]].ItemNum);
-                    if (item != null && item.Projectile >= 0)
-                    {
-                        PacketSender.SendAttack(-1);
-                        AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
-                        return true;
-                    }
-                }
                 foreach (var en in Globals.Entities)
                 {
                     if (en.Value == null) continue;
@@ -626,18 +616,11 @@ namespace Intersect_Client.Classes.Entities
                     }
                 }
             }
-            //If has a weapon with a projectile equiped, attack anyway
-            if (Options.WeaponIndex > -1 && Globals.Me.Equipment[Options.WeaponIndex] > -1)
-            {
-                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[Globals.Me.Equipment[Options.WeaponIndex]].ItemNum);
-                if (item != null && item.Projectile >= 0)
-                {
-                    PacketSender.SendAttack(_targetIndex);
-                    AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
-                    return true;
-                }
-            }
-            return false;
+
+            //Projectile/empty swing for animations
+            PacketSender.SendAttack(-1);
+            AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+            return true;
         }
 
         public bool GetRealLocation(ref int x, ref int y, ref int map)

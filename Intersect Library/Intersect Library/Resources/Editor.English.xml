@@ -1752,7 +1752,7 @@ Negative values for time to flow backwards.</string>
 	</EventSetVariable>
 	<EventWait>
 		<string id="title">Wait</string>
-		<string id="label">Wait: {00}ms</string>
+		<string id="label">Wait (ms):</string>
 		<string id="okay">Ok</string>
 		<string id="cancel">Cancel</string>
 	</EventWait>

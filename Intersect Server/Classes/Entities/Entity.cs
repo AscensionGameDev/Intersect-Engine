@@ -674,8 +674,7 @@ namespace Intersect.Server.Classes.Entities
 
         //Attacking with projectile
         public virtual void TryAttack(Entity enemy, ProjectileBase projectile, SpellBase parentSpell,
-            ItemBase parentItem, int projectileDir, List<KeyValuePair<int, int>> deadAnimations,
-            List<KeyValuePair<int, int>> aliveAnimations)
+            ItemBase parentItem, int projectileDir)
         {
             //Check if the target is blocking facing in the direction against you
             if (enemy.Blocking)
@@ -725,9 +724,10 @@ namespace Intersect.Server.Classes.Entities
                     {
                         return;
                     }
+                    if (((Player)this).InParty((Player)enemy) == true) return;
                 }
                 Attack(enemy, parentItem.Damage, 0, (DamageType) parentItem.DamageType, (Stats) parentItem.ScalingStat,
-                    parentItem.Scaling, parentItem.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
+                    parentItem.Scaling, parentItem.CritChance, Options.CritMultiplier);
             }
 
             //If projectile, check if a splash spell is applied
@@ -856,8 +856,8 @@ namespace Intersect.Server.Classes.Entities
 
         //Attack using a weapon or unarmed
         public virtual void TryAttack(Entity enemy, int baseDamage, DamageType damageType, Stats scalingStat,
-            int scaling, int critChance, double critMultiplier, List<KeyValuePair<int, int>> deadAnimations,
-            List<KeyValuePair<int, int>> aliveAnimations)
+            int scaling, int critChance, double critMultiplier, List<KeyValuePair<int, int>> deadAnimations = null,
+            List<KeyValuePair<int, int>> aliveAnimations = null)
         {
             if ((AttackTimer > Globals.System.GetTimeMs() || Blocking)) return;
 
@@ -897,16 +897,15 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
 
-            Attack(enemy, baseDamage, 0, damageType, scalingStat, scaling, critChance, critMultiplier, deadAnimations,
-                aliveAnimations);
+            Attack(enemy, baseDamage, 0, damageType, scalingStat, scaling, critChance, critMultiplier, deadAnimations, aliveAnimations);
 
             //If we took damage lets reset our combat timer
             enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
         }
 
         public void Attack(Entity enemy, int baseDamage, int secondaryDamage, DamageType damageType, Stats scalingStat,
-            int scaling, int critChance, double critMultiplier, List<KeyValuePair<int, int>> deadAnimations,
-            List<KeyValuePair<int, int>> aliveAnimations)
+            int scaling, int critChance, double critMultiplier, List<KeyValuePair<int, int>> deadAnimations = null,
+            List<KeyValuePair<int, int>> aliveAnimations = null)
         {
             if (enemy == null) return;
 
@@ -1043,10 +1042,13 @@ namespace Intersect.Server.Classes.Entities
                     //todo make this an option in the server config
                     enemy.Die(false);
                 }
-                foreach (var anim in deadAnimations)
+                if (deadAnimations != null)
                 {
-                    PacketSender.SendAnimationToProximity(anim.Key, -1, -1, enemy.CurrentMap, enemy.CurrentX,
-                        enemy.CurrentY, anim.Value);
+                    foreach (var anim in deadAnimations)
+                    {
+                        PacketSender.SendAnimationToProximity(anim.Key, -1, -1, enemy.CurrentMap, enemy.CurrentX,
+                            enemy.CurrentY, anim.Value);
+                    }
                 }
             }
             else
@@ -1054,10 +1056,13 @@ namespace Intersect.Server.Classes.Entities
                 //Hit him, make him mad and send the vital update.
                 PacketSender.SendEntityVitals(enemy);
                 PacketSender.SendEntityStats(enemy);
-                foreach (var anim in aliveAnimations)
+                if (aliveAnimations != null)
                 {
-                    PacketSender.SendAnimationToProximity(anim.Key, 1, enemy.MyIndex, enemy.CurrentMap, -1, -1,
-                        anim.Value);
+                    foreach (var anim in aliveAnimations)
+                    {
+                        PacketSender.SendAnimationToProximity(anim.Key, 1, enemy.MyIndex, enemy.CurrentMap, -1, -1,
+                            anim.Value);
+                    }
                 }
             }
             // Add a timer before able to make the next move.

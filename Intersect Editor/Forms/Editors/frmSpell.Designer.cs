@@ -1451,7 +1451,7 @@ namespace Intersect.Editor.Forms
             this.cmbDirection.Name = "cmbDirection";
             this.cmbDirection.Size = new System.Drawing.Size(189, 21);
             this.cmbDirection.TabIndex = 32;
-            this.cmbDirection.Text = null;
+            this.cmbDirection.Text = "Retain Direction";
             this.cmbDirection.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbDirection.SelectedIndexChanged += new System.EventHandler(this.cmbDirection_SelectedIndexChanged);
             // 

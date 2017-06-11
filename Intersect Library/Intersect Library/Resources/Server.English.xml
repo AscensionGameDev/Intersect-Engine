@@ -213,7 +213,7 @@
 		<string id="inventorynospace">There is no space left in your inventory for that item!</string>
 		<string id="revokeinvalid">Invalid item selected to revoke!</string>
 		<string id="itemsdropped">Out of inventory space. Some of your items have been dropped on the ground!</string>
-		<string id="declined">Out of inventory space. Some of your items have been dropped on the ground!</string>
+		<string id="declined">The trade was declined!</string>
 		<string id="accepted">The trade was successful!</string>
 		<string id="alreadydenied">Your trade request has already been denied!</string>
 		<string id="busy">{00} is busy. Please try again later!</string>

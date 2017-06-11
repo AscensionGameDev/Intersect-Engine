@@ -188,7 +188,7 @@ namespace Intersect.Editor.Forms
             grpEvent.Text = Strings.Get("itemeditor", "eventpanel");
             lblEvent.Text = Strings.Get("itemeditor", "event");
 
-            grpConsumable.Text = Strings.Get("itemeditor", "consumablepanel");
+            grpConsumable.Text = Strings.Get("itemeditor", "consumeablepanel");
             lblVital.Text = Strings.Get("itemeditor", "vital");
             lblInterval.Text = Strings.Get("itemeditor", "consumeinterval");
             cmbConsume.Items.Clear();

@@ -387,9 +387,7 @@ namespace Intersect.Server.Classes.Entities
                                         {
                                             if (Owner != Target)
                                             {
-                                                Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem,
-                                                    Spawns[i].Dir, new List<KeyValuePair<int, int>>(),
-                                                    new List<KeyValuePair<int, int>>());
+                                                Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir);
                                                 killSpawn = true; //Remove from the list being processed
                                             }
                                         }
@@ -402,17 +400,14 @@ namespace Intersect.Server.Classes.Entities
                                             {
                                                 if (Owner.GetType() == typeof(Player))
                                                 {
-                                                    Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem,
-                                                        Spawns[i].Dir, new List<KeyValuePair<int, int>>(),
-                                                        new List<KeyValuePair<int, int>>());
+                                                    Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir);
                                                     killSpawn = true; //Remove from the list being processed
                                                 }
                                             }
                                         }
                                         else //Any other target
                                         {
-                                            Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir,
-                                                new List<KeyValuePair<int, int>>(), new List<KeyValuePair<int, int>>());
+                                            Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir);
                                             killSpawn = true; //Remove from the list being processed
                                         }
                                     }
