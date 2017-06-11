@@ -190,6 +190,7 @@
 	</Shops>
 	<Crafting>
 		<string id="crafted">You successfully crafted {00}!</string>
+		<string id="nospace">You do not have enough inventory space to craft {00}!</string>
 	</Crafting>
 	<Banks>
 		<string id="banknospace">There is no space left in your bank for that item!</string>
@@ -272,8 +273,8 @@
 		<string id="stunned">You cannot cast this ability whilst stunned.</string>
 		<string id="levelreq">You are not a high enough level to use this ability.</string>
 		<string id="notarget">No Target!</string>
-        <string id="channeling">You are currently channeling another skill.</string>
-        <string id="channelingnoattack">You are currently channeling a spell, you cannot attack.</string>
+    <string id="channeling">You are currently channeling another skill.</string>
+    <string id="channelingnoattack">You are currently channeling a spell, you cannot attack.</string>
 		<string id="cooldown">This skill is on cooldown.</string>
 		<string id="lowhealth">Not enough health.</string>
 		<string id="lowmana">Not enough mana.</string>
@@ -281,6 +282,13 @@
 		<string id="stunattacking">You are stunned and can't attack.</string>
 		<string id="dynamicreq">You do not meet the requirements to cast the spell!</string>
 		<string id="resourcereqs">You do not meet the requirements to harvest this resource!</string>
+		<string id="status0">NONE!</string>
+		<string id="status1">SILENCED!</string>
+		<string id="status2">STUNNED!</string>
+		<string id="status3">SNARED!</string>
+		<string id="status4">BLINDED!</string>
+		<string id="status5">STEALTH!</string>
+		<string id="status6">TRANSFORMED!</string>
 	</Combat>
 	<Mapping>
 		<string id="newfolder">New Folder</string>
@@ -298,10 +306,27 @@
 		<string id="badpacket">Error handling client packet. Disconnecting client. More info logged to errors.log</string>
 	</Networking>
 	<Formulas>
-				<string id="loadfailed">Failed to load formulas! Press any key to shut down.</string>
-				<string id="missing">Formulas.xml missing. Generated default formulas file.</string>
-				<string id="syntax">Error loading formulas! Please make sure the file exists and is free on syntax errors.</string>
+		<string id="loadfailed">Failed to load formulas! Press any key to shut down.</string>
+		<string id="missing">Formulas.xml missing. Generated default formulas file.</string>
+		<string id="syntax">Error loading formulas! Please make sure the file exists and is free on syntax errors.</string>
 	</Formulas>
+	<Chat>
+		<string id="global">[GLOBAL] {00}: {01}</string>
+		<string id="announcement">[ANNOUNCEMENT] {00}: {01}</string>
+		<string id="private">[PM] {00}: {01}</string>
+		<string id="admin">[ADMIN] {00}: {01}</string>
+		<string id="party">[PARTY] {00}: {01}</string>
+		<string id="local">{00}: {01}</string>
+		<string id="globalcmd">/global</string>
+		<string id="allcmd">/all</string>
+		<string id="announcementcmd">/announcement</string>
+		<string id="admincmd">/admin</string>
+		<string id="partycmd">/party</string>
+		<string id="pmcmd">/pm</string>
+		<string id="messagecmd">/message</string>
+		<string id="replycmd">/reply</string>
+		<string id="rcmd">/r</string>
+	</Chat>
 	<Regex>
 		<string id="email">^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|([a-zA-Z]+[\w-]+\.)+[a-zA-Z]{2,4})$</string>
 		<string id="username">^[a-zA-Z0-9]{2,20}$</string>

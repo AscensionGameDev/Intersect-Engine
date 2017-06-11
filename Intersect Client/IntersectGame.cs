@@ -16,6 +16,7 @@ using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 using Intersect_Client_MonoGame.Classes.SFML.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client_MonoGame
 {
@@ -43,6 +44,7 @@ namespace Intersect_Client_MonoGame
             Globals.System = new MonoSystem();
             Gui.GwenRenderer = new IntersectRenderer(null, GameGraphics.Renderer);
             Gui.GwenInput = new IntersectInput();
+            GameControls.Init();
             Window.IsBorderless = false;
         }
 

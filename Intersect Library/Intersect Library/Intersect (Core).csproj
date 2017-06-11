@@ -48,6 +48,7 @@
     <Compile Include="Collections\ILookup.cs" />
     <Compile Include="Collections\ReadOnlyDictionary.cs" />
     <Compile Include="Compression.cs" />
+    <Compile Include="CustomColors.cs" />
     <Compile Include="DatabaseObject.cs" />
     <Compile Include="Enums\AdminActions.cs" />
     <Compile Include="Enums\ClientPackets.cs" />
