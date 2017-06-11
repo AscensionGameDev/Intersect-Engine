@@ -676,8 +676,10 @@ namespace Intersect.Server.Classes.Entities
         public virtual void TryAttack(Entity enemy, ProjectileBase projectile, SpellBase parentSpell,
             ItemBase parentItem, int projectileDir)
         {
-            //Check if the target is blocking facing in the direction against you
-            if (enemy.Blocking)
+			if (enemy.GetType() == typeof(Resource) && parentSpell != null) return;
+
+			//Check if the target is blocking facing in the direction against you
+			if (enemy.Blocking)
             {
                 int d = Dir;
 
@@ -764,11 +766,11 @@ namespace Intersect.Server.Classes.Entities
             if (enemy.GetType() == typeof(Resource)) return;
             if (spellBase != null)
             {
-                List<KeyValuePair<int, int>> deadAnimations = new List<KeyValuePair<int, int>>();
+               List<KeyValuePair<int, int>> deadAnimations = new List<KeyValuePair<int, int>>();
                 List<KeyValuePair<int, int>> aliveAnimations = new List<KeyValuePair<int, int>>();
 
                 //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
-                if (spellBase.Friendly == 0)
+               if (spellBase.Friendly == 0 && spellBase.TargetType != (int)SpellTargetTypes.Self)
                 {
                     //If about to hit self with an unfriendly spell (maybe aoe?) return
                     if (enemy == this) return;
@@ -957,8 +959,8 @@ namespace Intersect.Server.Classes.Entities
                 PacketSender.SendActionMsg(enemy, Strings.Get("combat", "critical"), CustomColors.Critical);
             }
 
-            //Calculate Damages
-            if (baseDamage != 0)
+			//Calculate Damages
+			if (baseDamage != 0)
             {
                 baseDamage = Formulas.CalculateDamage(baseDamage, damageType, scalingStat, scaling, critMultiplier, this,
                     enemy);
@@ -981,7 +983,7 @@ namespace Intersect.Server.Classes.Entities
                             break;
                     }
                 }
-                else
+                else if (baseDamage < 0)
                 {
                     PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) baseDamage,
                         CustomColors.Heal);
@@ -999,7 +1001,7 @@ namespace Intersect.Server.Classes.Entities
                     PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int) baseDamage,
                         CustomColors.RemoveMana);
                 }
-                else
+                else if (baseDamage < 0)
                 {
                     PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) baseDamage,
                         CustomColors.AddMana);

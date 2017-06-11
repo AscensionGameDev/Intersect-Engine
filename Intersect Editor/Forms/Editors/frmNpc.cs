@@ -149,7 +149,7 @@ namespace Intersect.Editor.Forms
             btnRemoveAggro.Text = Strings.Get("npceditor", "removehostility");
 
             grpDrops.Text = Strings.Get("npceditor", "drops");
-            lblDropIndex.Text = Strings.Get("npceditor", "dropindex", (scrlDropIndex.Value + 1));
+            lblDropIndex.Text = Strings.Get("npceditor", "dropindex");
             lblDropItem.Text = Strings.Get("npceditor", "dropitem");
             lblDropAmount.Text = Strings.Get("npceditor", "dropamount");
             lblDropChance.Text = Strings.Get("npceditor", "dropchance");
@@ -243,7 +243,7 @@ namespace Intersect.Editor.Forms
                     }
                 }
 
-                scrlDropIndex.Value = 0;
+                nudDropIndex.Value = 1;
                 UpdateDropValues();
                 DrawNpcSprite();
                 if (_changed.IndexOf(_editorItem) == -1)
@@ -301,17 +301,11 @@ namespace Intersect.Editor.Forms
 
         private void UpdateDropValues()
         {
-            int index = scrlDropIndex.Value;
-            lblDropIndex.Text = Strings.Get("npceditor", "dropindex", (scrlDropIndex.Value + 1));
+            int index = (int)nudDropIndex.Value - 1;
             cmbDropItem.SelectedIndex =
                 Database.GameObjectListIndex(GameObjectType.Item, _editorItem.Drops[index].ItemNum) + 1;
             nudDropAmount.Value = _editorItem.Drops[index].Amount;
             nudDropChance.Value = _editorItem.Drops[index].Chance;
-        }
-
-        private void scrlDropIndex_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            UpdateDropValues();
         }
 
         private void frmNpc_FormClosed(object sender, FormClosedEventArgs e)
@@ -501,7 +495,7 @@ namespace Intersect.Editor.Forms
 
         private void cmbDropItem_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item,
+            _editorItem.Drops[(int)nudDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item,
                 cmbDropItem.SelectedIndex - 1);
         }
 
@@ -583,7 +577,7 @@ namespace Intersect.Editor.Forms
 
         private void nudDropChance_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value].Chance = (int) nudDropChance.Value;
+            _editorItem.Drops[(int)nudDropIndex.Value - 1].Chance = (int) nudDropChance.Value;
         }
 
         private void nudHp_ValueChanged(object sender, EventArgs e)
@@ -603,7 +597,12 @@ namespace Intersect.Editor.Forms
 
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value].Amount = (int) nudDropAmount.Value;
+            _editorItem.Drops[(int)nudDropIndex.Value - 1].Amount = (int) nudDropAmount.Value;
         }
-    }
+
+		private void nudDropIndex_ValueChanged(object sender, EventArgs e)
+		{
+			UpdateDropValues();
+		}
+	}
 }

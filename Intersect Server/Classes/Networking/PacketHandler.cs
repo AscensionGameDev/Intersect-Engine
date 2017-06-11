@@ -818,9 +818,9 @@ namespace Intersect.Server.Classes.Networking
 
         private static void HandleTryAttack(Client client, byte[] packet)
         {
-            bool UnequippedAttack = false;
+			bool UnequippedAttack = false;
 
-            using (var buffer = new ByteBuffer())
+			using (var buffer = new ByteBuffer())
             {
                 buffer.WriteBytes(packet);
                 long target = buffer.ReadLong();
@@ -855,8 +855,10 @@ namespace Intersect.Server.Classes.Networking
                         ItemBase.Lookup.Get<ItemBase>(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum) !=
                         null)
                     {
-                        //Check for animation
-                        var attackAnim = AnimationBase.Lookup.Get<AnimationBase>(ItemBase.Lookup.Get<ItemBase>(
+						ItemBase WeaponItem = ItemBase.Lookup.Get<ItemBase>(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum);
+
+						//Check for animation
+						var attackAnim = AnimationBase.Lookup.Get<AnimationBase>(ItemBase.Lookup.Get<ItemBase>(
                             client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum).AttackAnimation);
                         if (attackAnim != null)
                         {
@@ -888,9 +890,7 @@ namespace Intersect.Server.Classes.Networking
                                 }
                             }
                             MapInstance.Lookup.Get<MapInstance>(client.Entity.CurrentMap)
-                                .SpawnMapProjectile(client.Entity, projectileBase, null,
-                                    ItemBase.Lookup.Get<ItemBase>(
-                                        client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum),
+                                .SpawnMapProjectile(client.Entity, projectileBase, null, WeaponItem,
                                     client.Entity.CurrentMap,
                                     client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ,
                                     client.Entity.Dir,null);

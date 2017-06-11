@@ -817,7 +817,15 @@ namespace Intersect.Server.Classes.Entities
                     PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "bound"), CustomColors.ItemBound);
                     return;
                 }
-                if (itemBase.IsStackable())
+				for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+				{
+					if (Equipment[i] == slot)
+					{
+						PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "equipped"), CustomColors.ItemBound);
+						return;
+					}
+				}
+				if (itemBase.IsStackable())
                 {
                     if (amount >= Inventory[slot].ItemVal)
                     {
@@ -2446,7 +2454,8 @@ namespace Intersect.Server.Classes.Entities
                     Equipment[i] = -1;
             }
             PacketSender.SendPlayerEquipmentToProximity(this);
-        }
+			PacketSender.SendEntityStats(this);
+		}
 
         //Stats
         public void UpgradeStat(int statIndex)

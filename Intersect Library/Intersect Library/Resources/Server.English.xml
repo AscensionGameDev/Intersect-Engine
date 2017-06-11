@@ -182,6 +182,8 @@
 		<string id="cannotuse">You cannot use this item!</string>
 		<string id="notenough">Not enough {00}s!</string>
 		<string id="notimplemented">Use of this item type is not yet implemented.</string>
+		<string id="bound">You cannot drop this item.</string>
+		<string id="equipped">You cannot drop equipped items.</string>
 	</Items>
 	<Shops>
 		<string id="doesnotaccept">This shop does not accept that item!</string>

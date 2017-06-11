@@ -631,7 +631,7 @@ namespace Intersect.Editor.Forms
         private void nudLowerFrameDuration_ValueChanged(object sender, EventArgs e)
         {
             _editorItem.LowerAnimFrameSpeed = (int) nudLowerFrameDuration.Value / 10;
-            tmrLowerAnimation.Interval = (int) nudLowerFrameDuration.Value / 10;
+            tmrLowerAnimation.Interval = (int) nudLowerFrameDuration.Value;
         }
 
         private void nudLowerLoopCount_ValueChanged(object sender, EventArgs e)
@@ -658,7 +658,7 @@ namespace Intersect.Editor.Forms
         private void nudUpperFrameDuration_ValueChanged(object sender, EventArgs e)
         {
             _editorItem.UpperAnimFrameSpeed = (int) nudUpperFrameDuration.Value / 10;
-            tmrUpperAnimation.Interval = (int) nudUpperFrameDuration.Value / 10;
+            tmrUpperAnimation.Interval = (int) nudUpperFrameDuration.Value;
         }
 
         private void nudUpperLoopCount_ValueChanged(object sender, EventArgs e)

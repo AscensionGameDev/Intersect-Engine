@@ -129,7 +129,7 @@ namespace Intersect.Editor.Classes
             btnRequirements.Text = Strings.Get("resourceeditor", "requirements");
 
             grpDrops.Text = Strings.Get("resourceeditor", "drops");
-            lblDropIndex.Text = Strings.Get("resourceeditor", "dropindex", scrlDropIndex.Value);
+            lblDropIndex.Text = Strings.Get("resourceeditor", "dropindex");
             lblDropItem.Text = Strings.Get("resourceeditor", "dropitem");
             lblDropAmount.Text = Strings.Get("resourceeditor", "dropamount");
             lblDropChance.Text = Strings.Get("resourceeditor", "dropchance");
@@ -169,7 +169,7 @@ namespace Intersect.Editor.Classes
                 cmbInitialSprite.SelectedIndex =
                     cmbInitialSprite.FindString(_editorItem.InitialGraphic);
                 cmbEndSprite.SelectedIndex = cmbEndSprite.FindString(_editorItem.EndGraphic);
-                scrlDropIndex.Value = 1;
+                nudDropIndex.Value = 1;
                 UpdateDropValues();
                 Render();
                 if (_changed.IndexOf(_editorItem) == -1)
@@ -187,16 +187,10 @@ namespace Intersect.Editor.Classes
 
         private void UpdateDropValues()
         {
-            int index = scrlDropIndex.Value - 1;
-            lblDropIndex.Text = Strings.Get("resourceeditor", "dropindex", index + 1);
+            int index = (int)nudDropIndex.Value - 1;
             cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, _editorItem.Drops[index].ItemNum) + 1;
             nudDropAmount.Value = _editorItem.Drops[index].Amount;
             nudDropChance.Value = _editorItem.Drops[index].Chance;
-        }
-
-        private void scrlDropIndex_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            UpdateDropValues();
         }
 
         private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)
@@ -206,10 +200,10 @@ namespace Intersect.Editor.Classes
 
         private void nudDropChance_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value - 1].Chance = (int) nudDropChance.Value;
+            _editorItem.Drops[(int)nudDropIndex.Value - 1].Chance = (int) nudDropChance.Value;
         }
 
-        private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)
+		private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Tool = cmbToolType.SelectedIndex - 1;
         }
@@ -429,7 +423,7 @@ namespace Intersect.Editor.Classes
 
         private void cmbItem_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item,
+            _editorItem.Drops[(int)nudDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item,
                 cmbItem.SelectedIndex - 1);
         }
 
@@ -440,7 +434,7 @@ namespace Intersect.Editor.Classes
 
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value - 1].Amount = (int) nudDropAmount.Value;
+            _editorItem.Drops[(int)nudDropIndex.Value - 1].Amount = (int) nudDropAmount.Value;
         }
 
         private void nudMinHp_ValueChanged(object sender, EventArgs e)
@@ -452,5 +446,10 @@ namespace Intersect.Editor.Classes
         {
             _editorItem.MaxHP = (int) nudMaxHp.Value;
         }
-    }
+
+		private void nudDropIndex_ValueChanged(object sender, EventArgs e)
+		{
+			UpdateDropValues();
+		}
+	}
 }

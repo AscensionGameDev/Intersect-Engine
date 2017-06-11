@@ -36,6 +36,7 @@ namespace Intersect_Client.Classes.Entities
             var baseIndex = bf.ReadInteger();
             _baseResource = ResourceBase.Lookup.Get<ResourceBase>(baseIndex);
             HideName = 1;
+			if (IsDead) { MySprite = _baseResource.EndGraphic; }
         }
 
         public override EntityTypes GetEntityType()
