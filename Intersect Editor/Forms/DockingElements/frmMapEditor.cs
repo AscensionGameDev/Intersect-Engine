@@ -252,6 +252,31 @@ namespace Intersect.Editor.Forms
                         Globals.CurMapSelW = 0;
                         Globals.CurMapSelH = 0;
                     }
+                    else if (Globals.CurrentTool == (int)EdittingTool.Fill)
+                    {
+                        if (Globals.CurrentLayer == Options.LayerCount)
+                        {
+                            Globals.MapEditorWindow.SmartFillAttributes(Globals.CurTileX, Globals.CurTileY);
+                        }
+                        else if (Globals.CurrentLayer < Options.LayerCount)
+                        {
+                            Globals.MapEditorWindow.SmartFillLayer(Globals.CurTileX, Globals.CurTileY);
+                        }
+                    }
+                    else if (Globals.CurrentTool == (int)EdittingTool.Erase)
+                    {
+                        if (Globals.CurrentLayer <= Options.LayerCount)
+                        {
+                            if (Globals.CurrentLayer == Options.LayerCount)
+                            {
+                                Globals.MapEditorWindow.SmartEraseAttributes(Globals.CurTileX, Globals.CurTileY);
+                            }
+                            else if (Globals.CurrentLayer < Options.LayerCount)
+                            {
+                                Globals.MapEditorWindow.SmartEraseLayer(Globals.CurTileX, Globals.CurTileY);
+                            }
+                        }
+                    }
                     else
                     {
                         if (Globals.CurrentLayer == Options.LayerCount) //Attributes
@@ -327,7 +352,21 @@ namespace Intersect.Editor.Forms
                             PlaceSelection();
                         }
                     }
-                    if (Globals.CurrentLayer == Options.LayerCount) //Attributes
+                    if (Globals.CurrentTool == (int)EdittingTool.Fill)
+                    {
+                        if (Globals.CurrentLayer <= Options.LayerCount)
+                        {
+                            Globals.MapEditorWindow.FillLayer();
+                        }
+                    }
+                    else if (Globals.CurrentTool == (int)EdittingTool.Erase)
+                    {
+                        if (Globals.CurrentLayer <= Options.LayerCount)
+                        {
+                            Globals.MapEditorWindow.EraseLayer();
+                        }
+                    }
+                    else if (Globals.CurrentLayer == Options.LayerCount) //Attributes
                     {
                         if (Globals.CurrentTool == (int) EdittingTool.Pen)
                         {
@@ -1102,8 +1141,7 @@ namespace Intersect.Editor.Forms
                         }
                         else if (Globals.CurrentLayer < Options.LayerCount)
                         {
-                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex =
-                                -1;
+                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = -1;
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = 0;
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = 0;
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
@@ -1128,6 +1166,202 @@ namespace Intersect.Editor.Forms
                     MapRedoStates.Clear();
                     CurrentMapState = tmpMap.SaveInternal();
                 }
+            }
+        }
+
+        private void SmartFillTile(int x, int y, Tile target)
+        {
+            int x1, y1;
+
+            if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
+            {
+                return;
+            }
+
+            Tile selected = Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y];
+
+            if (selected.TilesetIndex == target.TilesetIndex && selected.X == target.X &&
+                selected.Y == target.Y && selected.Autotile == target.Autotile)
+            {
+                if (Globals.Autotilemode == 0)
+                {
+                    x1 = (x) % (Globals.CurSelW + 1);
+                    y1 = (y) % (Globals.CurSelH + 1);
+                    Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].TilesetIndex = Globals.CurrentTileset.Index;
+                    Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].X = Globals.CurSelX + x1;
+                    Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].Y = Globals.CurSelY + y1;
+                    Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].Autotile = 0;
+                }
+                else
+                {
+                    Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].TilesetIndex = Globals.CurrentTileset.Index;
+                    Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].X = Globals.CurSelX;
+                    Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].Y = Globals.CurSelY;
+                    Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].Autotile = (byte)Globals.Autotilemode;
+                }
+
+                SmartFillTile(x, y - 1, target);
+                SmartFillTile(x, y + 1, target);
+                SmartFillTile(x - 1, y, target);
+                SmartFillTile(x + 1, y, target);
+            }
+        }
+
+        public void SmartFillLayer(int x, int y)
+        {
+            Tile target = Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y];
+            SmartFillTile(x, y, target);
+
+            Globals.CurrentMap.InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Left) != null)
+                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Left).InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Up) != null)
+                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Up).InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Right) != null)
+                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Right).InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Down) != null)
+                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Down).InitAutotiles();
+
+            if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+            {
+                if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
+                MapRedoStates.Clear();
+                CurrentMapState = Globals.CurrentMap.SaveInternal();
+            }
+        }
+
+        private void SmartFillAttribute(int x, int y, int attribute)
+        {
+            int a = 0;
+
+            if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
+            {
+                return;
+            }
+
+            if (Globals.CurrentMap.Attributes[x, y] != null)
+            {
+                a = Globals.CurrentMap.Attributes[x, y].value;
+            }
+
+            if (a == attribute)
+            {
+                Globals.MapLayersWindow.PlaceAttribute(Globals.CurrentMap, x, y);
+
+                SmartFillAttribute(x, y - 1, attribute);
+                SmartFillAttribute(x, y + 1, attribute);
+                SmartFillAttribute(x - 1, y, attribute);
+                SmartFillAttribute(x + 1, y, attribute);
+            }
+        }
+
+        public void SmartFillAttributes(int x, int y)
+        {
+            int attribute = 0;
+
+            if (Globals.CurrentMap.Attributes[x, y] != null)
+            {
+                attribute = Globals.CurrentMap.Attributes[x, y].value;
+            }
+
+            SmartFillAttribute(x, y, attribute);
+
+            if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+            {
+                if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
+                MapRedoStates.Clear();
+                CurrentMapState = Globals.CurrentMap.SaveInternal();
+            }
+        }
+
+        private void SmartEraseTile(int x, int y, Tile target)
+        {
+            if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
+            {
+                return;
+            }
+
+            Tile selected = Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y];
+
+            if (selected.TilesetIndex == target.TilesetIndex && selected.X == target.X &&
+                selected.Y == target.Y && selected.Autotile == target.Autotile)
+            {
+                Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].TilesetIndex = 0;
+                Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].X = 0;
+                Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].Y = 0;
+                Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].Autotile = 0;
+
+                SmartEraseTile(x, y - 1, target);
+                SmartEraseTile(x, y + 1, target);
+                SmartEraseTile(x - 1, y, target);
+                SmartEraseTile(x + 1, y, target);
+            }
+        }
+
+        public void SmartEraseLayer(int x, int y)
+        {
+            Tile target = Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y];
+            SmartEraseTile(x, y, target);
+
+            Globals.CurrentMap.InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Left) != null)
+                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Left).InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Up) != null)
+                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Up).InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Right) != null)
+                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Right).InitAutotiles();
+            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Down) != null)
+                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Down).InitAutotiles();
+
+            if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+            {
+                if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
+                MapRedoStates.Clear();
+                CurrentMapState = Globals.CurrentMap.SaveInternal();
+            }
+        }
+
+        private void SmartEraseAttribute(int x, int y, int attribute)
+        {
+            int a = 0;
+
+            if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
+            {
+                return;
+            }
+
+            if (Globals.CurrentMap.Attributes[x, y] != null)
+            {
+                a = Globals.CurrentMap.Attributes[x, y].value;
+            }
+
+            if (a == attribute)
+            {
+                Globals.MapLayersWindow.RemoveAttribute(Globals.CurrentMap, x, y);
+
+                SmartEraseAttribute(x, y - 1, attribute);
+                SmartEraseAttribute(x, y + 1, attribute);
+                SmartEraseAttribute(x - 1, y, attribute);
+                SmartEraseAttribute(x + 1, y, attribute);
+            }
+        }
+
+        public void SmartEraseAttributes(int x, int y)
+        {
+            int attribute = 0;
+
+            if (Globals.CurrentMap.Attributes[x, y] != null)
+            {
+                attribute = Globals.CurrentMap.Attributes[x, y].value;
+            }
+
+            SmartEraseAttribute(x, y, attribute);
+
+            if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+            {
+                if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
+                MapRedoStates.Clear();
+                CurrentMapState = Globals.CurrentMap.SaveInternal();
             }
         }
 
