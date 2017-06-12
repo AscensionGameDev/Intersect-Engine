@@ -40,7 +40,6 @@ namespace Intersect.Server.Classes.Entities
         public bool InGame;
         public int InShop = -1;
         public int LastMapEntered = -1;
-        public int Level = 1;
         public Client MyClient;
         public List<EventInstance> MyEvents = new List<EventInstance>();
         public Dictionary<Tuple<int,int,int>,int> EventLookup = new Dictionary<Tuple<int, int, int>, int>();
@@ -287,7 +286,6 @@ namespace Intersect.Server.Classes.Entities
         {
             ByteBuffer bf = new ByteBuffer();
             bf.WriteBytes(base.Data());
-            bf.WriteInteger(Level);
             bf.WriteInteger(Gender);
             bf.WriteInteger(Class);
             return bf.ToArray();

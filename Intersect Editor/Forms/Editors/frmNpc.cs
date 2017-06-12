@@ -186,6 +186,7 @@ namespace Intersect.Editor.Forms
                 txtName.Text = _editorItem.Name;
                 cmbBehavior.SelectedIndex = _editorItem.Behavior;
                 cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Sprite);
+				nudLevel.Value = _editorItem.Level;
                 nudSightRange.Value = _editorItem.SightRange;
                 nudSpawnDuration.Value = _editorItem.SpawnDuration;
                 nudStr.Value = _editorItem.Stat[(int) Stats.Attack];
@@ -603,6 +604,11 @@ namespace Intersect.Editor.Forms
 		private void nudDropIndex_ValueChanged(object sender, EventArgs e)
 		{
 			UpdateDropValues();
+		}
+
+		private void nudLevel_ValueChanged(object sender, EventArgs e)
+		{
+			_editorItem.Level = (int)nudLevel.Value;
 		}
 	}
 }

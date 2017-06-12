@@ -51,8 +51,9 @@ namespace Intersect.Server.Classes.Entities
 
         //Vitals & Stats
         public int[] MaxVital = new int[(int) Vitals.VitalCount];
+		public int Level = 1;
 
-        public EventMoveRoute MoveRoute = null;
+		public EventMoveRoute MoveRoute = null;
         public EventPageInstance MoveRouteSetter = null;
 
         public long MoveTimer;
@@ -1432,7 +1433,8 @@ namespace Intersect.Server.Classes.Entities
             bf.WriteString(MyName);
             bf.WriteString(MySprite);
             bf.WriteString(Face);
-            bf.WriteInteger(CurrentX);
+			bf.WriteInteger(Level);
+			bf.WriteInteger(CurrentX);
             bf.WriteInteger(CurrentY);
             bf.WriteInteger(CurrentZ);
             bf.WriteInteger(Dir);

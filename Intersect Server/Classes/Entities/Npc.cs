@@ -42,6 +42,7 @@ namespace Intersect.Server.Classes.Entities
         {
             MyName = myBase.Name;
             MySprite = myBase.Sprite;
+			Level = myBase.Level;
             MyBase = myBase;
             Despawnable = despawnable;
 
