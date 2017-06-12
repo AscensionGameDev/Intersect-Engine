@@ -127,7 +127,6 @@ namespace Intersect_Client.Classes.Entities
         public override void Load(ByteBuffer bf)
         {
             base.Load(bf);
-            Level = bf.ReadInteger();
             Gender = bf.ReadInteger();
             Class = bf.ReadInteger();
 

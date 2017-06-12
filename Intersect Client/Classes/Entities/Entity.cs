@@ -129,6 +129,7 @@ namespace Intersect_Client.Classes.Entities
             MyName = bf.ReadString();
             MySprite = bf.ReadString();
             Face = bf.ReadString();
+			Level = bf.ReadInteger();
             CurrentX = bf.ReadInteger();
             CurrentY = bf.ReadInteger();
             CurrentZ = bf.ReadInteger();

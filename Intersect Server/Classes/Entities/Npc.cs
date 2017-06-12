@@ -42,6 +42,7 @@ namespace Intersect.Server.Classes.Entities
         {
             MyName = myBase.Name;
             MySprite = myBase.Sprite;
+			Level = myBase.Level;
             MyBase = myBase;
             Despawnable = despawnable;
 
@@ -139,7 +140,7 @@ namespace Intersect.Server.Classes.Entities
             PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
         }
 
-        private bool CanNpcCombat(Entity enemy)
+        public bool CanNpcCombat(Entity enemy)
         {
             //Check for NpcVsNpc Combat, both must be enabled and the attacker must have it as an enemy or attack all types of npc.
             if (enemy != null && enemy.GetType() == typeof(Npc) && MyBase != null)
@@ -202,9 +203,10 @@ namespace Intersect.Server.Classes.Entities
                         var spell = SpellBase.Lookup.Get<SpellBase>((MyBase.Spells[s]));
                         if (spell != null)
                         {
-                            if (spell.SpellType == (int) SpellTypes.CombatSpell &&
+							var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spell.Projectile);
+							if (spell.SpellType == (int) SpellTypes.CombatSpell &&
                                 spell.TargetType == (int) SpellTargetTypes.Projectile &&
-                                InRangeOf(MyTarget, spell.CastRange))
+								InRangeOf(MyTarget, projectileBase.Range))
                             {
                                 if (DirToEnemy(MyTarget) != Dir)
                                 {
@@ -220,58 +222,61 @@ namespace Intersect.Server.Classes.Entities
                                 }
                             }
 
-                            if (spell.VitalCost[(int) Vitals.Mana] <= Vital[(int) Vitals.Mana])
+							if (spell.VitalCost[(int) Vitals.Mana] <= Vital[(int) Vitals.Mana])
                             {
                                 if (spell.VitalCost[(int) Vitals.Health] <= Vital[(int) Vitals.Health])
                                 {
                                     if (Spells[s].SpellCD < Globals.System.GetTimeMs())
                                     {
-                                        Vital[(int) Vitals.Mana] = Vital[(int) Vitals.Mana] -
-                                                                   spell.VitalCost[(int) Vitals.Mana];
-                                        Vital[(int) Vitals.Health] = Vital[(int) Vitals.Health] -
-                                                                     spell.VitalCost[(int) Vitals.Health
-                                                                     ];
-                                        CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
-                                        if (spell.Friendly == 1)
-                                        {
-                                            CastTarget = this;
-                                        }
-                                        else
-                                        {
-                                            CastTarget = MyTarget;
-                                        }
+										if (InRangeOf(MyTarget, spell.CastRange))
+										{
+											Vital[(int)Vitals.Mana] = Vital[(int)Vitals.Mana] -
+																	   spell.VitalCost[(int)Vitals.Mana];
+											Vital[(int)Vitals.Health] = Vital[(int)Vitals.Health] -
+																		 spell.VitalCost[(int)Vitals.Health
+																		 ];
+											CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
+											if (spell.Friendly == 1)
+											{
+												CastTarget = this;
+											}
+											else
+											{
+												CastTarget = MyTarget;
+											}
 
-                                        switch (MyBase.SpellFrequency)
-                                        {
-                                            case 0:
-                                                CastFreq = Globals.System.GetTimeMs() + 30000;
-                                                break;
-                                            case 1:
-                                                CastFreq = Globals.System.GetTimeMs() + 15000;
-                                                break;
-                                            case 2:
-                                                CastFreq = Globals.System.GetTimeMs() + 8000;
-                                                break;
-                                            case 3:
-                                                CastFreq = Globals.System.GetTimeMs() + 4000;
-                                                break;
-                                            case 4:
-                                                CastFreq = Globals.System.GetTimeMs() + 2000;
-                                                break;
-                                        }
+											switch (MyBase.SpellFrequency)
+											{
+												case 0:
+													CastFreq = Globals.System.GetTimeMs() + 30000;
+													break;
+												case 1:
+													CastFreq = Globals.System.GetTimeMs() + 15000;
+													break;
+												case 2:
+													CastFreq = Globals.System.GetTimeMs() + 8000;
+													break;
+												case 3:
+													CastFreq = Globals.System.GetTimeMs() + 4000;
+													break;
+												case 4:
+													CastFreq = Globals.System.GetTimeMs() + 2000;
+													break;
+											}
 
-                                        SpellCastSlot = s;
+											SpellCastSlot = s;
 
-                                        if (spell.CastAnimation > -1)
-                                        {
-                                            PacketSender.SendAnimationToProximity(spell.CastAnimation, 1,
-                                                MyIndex, CurrentMap, 0, 0, Dir);
-                                            //Target Type 1 will be global entity
-                                        }
+											if (spell.CastAnimation > -1)
+											{
+												PacketSender.SendAnimationToProximity(spell.CastAnimation, 1,
+													MyIndex, CurrentMap, 0, 0, Dir);
+												//Target Type 1 will be global entity
+											}
 
-                                        PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
-                                        PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
-                                        PacketSender.SendEntityCastTime(this, (MyBase.Spells[s]));
+											PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
+											PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
+											PacketSender.SendEntityCastTime(this, (MyBase.Spells[s]));
+										}
                                     }
                                 }
                             }

@@ -166,7 +166,16 @@ namespace Intersect.Editor.Forms
                 nudBaseExp.Value = _editorItem.BaseExp;
                 nudExpIncrease.Value = _editorItem.ExpIncrease;
 
-                //Stat Increases
+				//Stat Increases
+				if (_editorItem.IncreasePercentage == 0)
+				{
+					rdoStaticIncrease.Checked = true;
+				}
+				else
+				{
+					rdoPercentageIncrease.Checked = true;
+				}
+
                 UpdateIncreases();
 
                 UpdateSpellList(false);

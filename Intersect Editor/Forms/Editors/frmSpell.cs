@@ -143,7 +143,7 @@ namespace Intersect.Editor.Forms
 
             grpSpellCost.Text = Strings.Get("spelleditor", "cost");
             lblHPCost.Text = Strings.Get("spelleditor", "hpcost");
-            lblMPCost.Text = Strings.Get("spelleditor", "mpcost");
+            lblMPCost.Text = Strings.Get("spelleditor", "manacost");
             lblCastDuration.Text = Strings.Get("spelleditor", "casttime");
             lblCooldownDuration.Text = Strings.Get("spelleditor", "cooldown");
 

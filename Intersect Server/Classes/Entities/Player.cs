@@ -40,7 +40,6 @@ namespace Intersect.Server.Classes.Entities
         public bool InGame;
         public int InShop = -1;
         public int LastMapEntered = -1;
-        public int Level = 1;
         public Client MyClient;
         public List<EventInstance> MyEvents = new List<EventInstance>();
         public Dictionary<Tuple<int,int,int>,int> EventLookup = new Dictionary<Tuple<int, int, int>, int>();
@@ -287,7 +286,6 @@ namespace Intersect.Server.Classes.Entities
         {
             ByteBuffer bf = new ByteBuffer();
             bf.WriteBytes(base.Data());
-            bf.WriteInteger(Level);
             bf.WriteInteger(Gender);
             bf.WriteInteger(Class);
             return bf.ToArray();
@@ -817,7 +815,15 @@ namespace Intersect.Server.Classes.Entities
                     PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "bound"), CustomColors.ItemBound);
                     return;
                 }
-                if (itemBase.IsStackable())
+				for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+				{
+					if (Equipment[i] == slot)
+					{
+						PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "equipped"), CustomColors.ItemBound);
+						return;
+					}
+				}
+				if (itemBase.IsStackable())
                 {
                     if (amount >= Inventory[slot].ItemVal)
                     {
@@ -2446,7 +2452,8 @@ namespace Intersect.Server.Classes.Entities
                     Equipment[i] = -1;
             }
             PacketSender.SendPlayerEquipmentToProximity(this);
-        }
+			PacketSender.SendEntityStats(this);
+		}
 
         //Stats
         public void UpgradeStat(int statIndex)
