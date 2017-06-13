@@ -311,7 +311,7 @@ namespace Intersect.Server.Classes.Entities
             PacketSender.SendEntityDataToProximity(this);
         }
 
-        public override void Die(bool dropitems = false, Entity killer = null)
+        public override void Die(int dropitems = 0, Entity killer = null)
         {
             //Flag death to the client
             PacketSender.SendPlayerDeath(this);
@@ -337,6 +337,7 @@ namespace Intersect.Server.Classes.Entities
             base.Die(dropitems, killer);
             Reset();
             Respawn();
+			PacketSender.SendInventory(MyClient);
         }
 
         //Vitals

@@ -30,19 +30,19 @@ namespace Intersect.Server.Classes.Entities
             HideName = 1;
         }
 
-        public void Destroy(bool dropitems = false, Entity killer = null)
+        public void Destroy(int dropitems = 0, Entity killer = null)
         {
             Die(dropitems, killer);
             PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Resource, CurrentMap);
         }
 
-        public override void Die(bool dropitems = false, Entity killer = null)
+        public override void Die(int dropitems = 100, Entity killer = null)
         {
-            base.Die(false, killer);
+            base.Die(0, killer);
             MySprite = MyBase.EndGraphic;
             Passable = Convert.ToInt32(MyBase.WalkableAfter);
             IsDead = true;
-            if (dropitems)
+            if (dropitems > 0)
             {
                 SpawnResourceItems(killer);
                 if (MyBase.Animation > -1)
