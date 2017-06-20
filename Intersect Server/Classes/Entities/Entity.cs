@@ -1037,13 +1037,11 @@ namespace Intersect.Server.Classes.Entities
                 KilledEntity(enemy);
                 if (enemy.GetType() == typeof(Npc) || enemy.GetType() == typeof(Resource))
                 {
-                    enemy.Die(true, this);
+                    enemy.Die(100, this);
                 }
                 else
                 {
-                    //Set this false to true if you want players to lose items on death
-                    //todo make this an option in the server config
-                    enemy.Die(false);
+                    enemy.Die(Options.ItemDropChance);
                 }
                 if (deadAnimations != null)
                 {
@@ -1365,17 +1363,22 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Spawning/Dying
-        public virtual void Die(bool dropitems = false, Entity killer = null)
+        public virtual void Die(int dropitems = 0, Entity killer = null)
         {
-            if (dropitems)
+            if (dropitems > 0)
             {
-                // Drop items
-                foreach (var item in Inventory)
+				// Drop items
+				for (int n = 0; n < Inventory.Count; n++)
                 {
-                    if (ItemBase.Lookup.Get<ItemBase>(item.ItemNum) != null)
+					ItemInstance item = Inventory[n];
+					if (ItemBase.Lookup.Get<ItemBase>(item.ItemNum) != null && Globals.Rand.Next(1, 101) < dropitems)
                     {
                         MapInstance.Lookup.Get<MapInstance>(CurrentMap).SpawnItem(CurrentX, CurrentY, item, item.ItemVal);
-                    }
+						if (GetType() == typeof(Player))
+						{
+							((Player)this).TakeItem(n, item.ItemVal);
+						}
+					}
                 }
             }
             var currentMap = MapInstance.Lookup.Get<MapInstance>(CurrentMap);

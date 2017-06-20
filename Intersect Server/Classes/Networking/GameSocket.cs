@@ -165,7 +165,7 @@ namespace Intersect.Server.Classes.Networking
 								{
 									if (((Npc)entities[i]).Despawnable == true)
 									{
-										((Npc)entities[i]).Die(false);
+										((Npc)entities[i]).Die(0);
 									}
 								}
 							}

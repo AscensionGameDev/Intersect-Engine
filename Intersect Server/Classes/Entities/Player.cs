@@ -311,7 +311,7 @@ namespace Intersect.Server.Classes.Entities
             PacketSender.SendEntityDataToProximity(this);
         }
 
-        public override void Die(bool dropitems = false, Entity killer = null)
+        public override void Die(int dropitems = 0, Entity killer = null)
         {
             //Flag death to the client
             PacketSender.SendPlayerDeath(this);
@@ -337,6 +337,7 @@ namespace Intersect.Server.Classes.Entities
             base.Die(dropitems, killer);
             Reset();
             Respawn();
+			PacketSender.SendInventory(MyClient);
         }
 
         //Vitals
@@ -664,6 +665,7 @@ namespace Intersect.Server.Classes.Entities
             }
             CurrentX = newX;
             CurrentY = newY;
+			Dir = newDir;
             for (int i = 0; i < MyEvents.Count; i++)
             {
                 if (MyEvents[i] != null && MyEvents[i].MapNum != -1 && MyEvents[i].MapNum != newMap)
@@ -3055,8 +3057,16 @@ namespace Intersect.Server.Classes.Entities
                     Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
             if (attribute != null && attribute.value == (int) MapAttributes.Warp)
             {
-                Globals.Entities[index].Warp(attribute.data1, attribute.data2, attribute.data3,
-                    Globals.Entities[index].Dir);
+				if (Convert.ToInt32(attribute.data4) == 0)
+				{
+					Globals.Entities[index].Warp(attribute.data1, attribute.data2, attribute.data3,
+						Globals.Entities[index].Dir);
+				}
+				else
+				{
+					Globals.Entities[index].Warp(attribute.data1, attribute.data2, attribute.data3,
+						Convert.ToInt32(attribute.data4) - 1);
+				}
             }
 
             //Check for slide tiles

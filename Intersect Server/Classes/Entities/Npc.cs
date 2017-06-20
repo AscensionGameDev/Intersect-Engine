@@ -68,7 +68,7 @@ namespace Intersect.Server.Classes.Entities
             return EntityTypes.GlobalEntity;
         }
 
-        public override void Die(bool dropitems = false, Entity killer = null)
+        public override void Die(int dropitems = 100, Entity killer = null)
         {
             base.Die(dropitems, killer);
             MapInstance.Lookup.Get<MapInstance>(CurrentMap).RemoveEntity(this);
