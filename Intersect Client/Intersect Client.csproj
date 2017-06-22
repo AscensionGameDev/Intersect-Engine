@@ -42,7 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Intersect.Client.Program</StartupObject>
+    <StartupObject>Intersect_MonoGameDx.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Classes\Core\GameAudio.cs" />

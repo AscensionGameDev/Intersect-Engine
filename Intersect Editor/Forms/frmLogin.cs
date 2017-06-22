@@ -59,14 +59,14 @@ namespace Intersect.Editor.Forms
 
         private void tmrSocket_Tick(object sender, EventArgs e)
         {
-            EditorNetwork.Update();
+            LegacyEditorNetwork.Update();
             var statusString = Strings.Get("login", "connecting");
-            if (EditorNetwork.Connected)
+            if (LegacyEditorNetwork.Connected)
             {
                 statusString = Strings.Get("login", "connected");
                 btnLogin.Enabled = true;
             }
-            else if (EditorNetwork.Connecting)
+            else if (LegacyEditorNetwork.Connecting)
             {
             }
             else
@@ -88,7 +88,7 @@ namespace Intersect.Editor.Forms
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            if (!EditorNetwork.Connected || !btnLogin.Enabled) return;
+            if (!LegacyEditorNetwork.Connected || !btnLogin.Enabled) return;
             if (txtUsername.Text.Trim().Length > 0 && txtPassword.Text.Trim().Length > 0)
             {
                 var sha = new SHA256Managed();
@@ -171,6 +171,26 @@ namespace Intersect.Editor.Forms
             if (e.KeyCode == Keys.F1)
             {
                 new frmOptions().ShowDialog();
+            }
+        }
+
+        public void HideSafe() => ShowSafe(false);
+
+        public void ShowSafe(bool show = true)
+        {
+            var doShow = new Action<Form>(instance =>
+            {
+                if (show) instance?.Show();
+                else instance?.Hide();
+            });
+
+            if (!InvokeRequired)
+            {
+                doShow(this);
+            }
+            else
+            {
+                Invoke(doShow, this);
             }
         }
     }

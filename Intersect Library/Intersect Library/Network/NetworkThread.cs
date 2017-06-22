@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using Intersect.Logging;
+using Intersect.Network.Packets;
 using Intersect.Threading;
 
 namespace Intersect.Network
@@ -47,26 +48,27 @@ namespace Intersect.Network
             {
                 IsRunning = false;
             }
+
+            Queue?.Interrupt();
         }
 
         private void Loop()
         {
             while (IsRunning)
             {
-                lock (this)
-                {
-                    // ReSharper disable once PossibleNullReferenceException
-                    if (Queue.TryNext(out IPacket packet))
-                    {
-                        if (!(mDispatcher?.Dispatch(packet) ?? false))
-                        {
-                            Log.Warn($"Failed to dispatch packet '{packet}'.");
-                        }
-                    }
+                // ReSharper disable once PossibleNullReferenceException
+                if (!Queue.TryNext(out IPacket packet)) continue;
 
-                    mThreadYield?.Yield();
+                Log.Debug($"Dispatching packet '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer?.Length() ?? -1}).");
+                if (!(mDispatcher?.Dispatch(packet) ?? false))
+                {
+                    Log.Warn($"Failed to dispatch packet '{packet}'.");
                 }
+
+                mThreadYield?.Yield();
             }
+
+            Log.Debug($"Exiting network thread ({Name}).");
         }
     }
 }

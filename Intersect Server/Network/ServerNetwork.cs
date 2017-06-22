@@ -6,12 +6,16 @@ using Lidgren.Network;
 using System;
 using System.Linq;
 using System.Security.Cryptography;
+using Intersect.Network.Packets;
+using Intersect.Server.Classes.Networking;
 
 namespace Intersect.Server.Network
 {
     public class ServerNetwork : AbstractNetwork
     {
         public new NetServer Peer => (NetServer)base.Peer;
+
+        private PacketHandler packetHandler = new PacketHandler();
 
         public ServerNetwork(NetworkConfiguration config) : base(config, typeof(NetServer))
         {
@@ -64,7 +68,7 @@ namespace Intersect.Server.Network
                     Rng.GetNonZeroBytes(aesKey);
                     responseBuffer.Write(aesKey, 32);
 
-                    var metadata = new ConnectionMetadata(this, request.SenderConnection, aesKey, rsaParameters);
+                    var metadata = new LidgrenConnection(this, request.SenderConnection, aesKey, rsaParameters);
                     AddConnection(metadata);
 
                     responseBuffer.Write(metadata.Guid.ToByteArray(), 16);
@@ -74,15 +78,26 @@ namespace Intersect.Server.Network
                     response.Write(encryptedResponse.Length);
                     response.Write(encryptedResponse, 0, encryptedResponse.Length);
 
+                    Client.CreateBeta4Client(metadata);
+
                     request.SenderConnection.Approve(response);
                     return true;
                 }
             }
         }
 
+        protected override void RemoveConnection(LidgrenConnection metadata)
+        {
+            base.RemoveConnection(metadata);
+
+            Client.RemoveBeta4Client(metadata);
+        }
+
         protected override void RegisterHandlers()
         {
             base.RegisterHandlers();
+
+            Dispatcher.RegisterHandler(typeof(BinaryPacket), packetHandler.HandlePacket);
         }
 
         protected override bool HandleConnected(NetIncomingMessage request)

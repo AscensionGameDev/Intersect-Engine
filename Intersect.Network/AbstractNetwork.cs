@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading;
 using Intersect.Logging;
 using Intersect.Memory;
-using Intersect.Network.Handlers;
-using Intersect.Network.Packets.Ping;
+using Intersect.Network.Packets;
 using Intersect.Threading;
 using Lidgren.Network;
 
@@ -24,7 +21,7 @@ namespace Intersect.Network
 
         private readonly IList<NetworkThread> mThreads;
         private readonly IDictionary<Guid, NetworkThread> mThreadLookup;
-        private readonly IDictionary<Guid, ConnectionMetadata> mConnectionLookup;
+        private readonly IDictionary<Guid, LidgrenConnection> mConnectionLookup;
         private readonly IDictionary<long, Guid> mConnectionGuidLookup;
 
         public NetworkConfiguration Config { get; }
@@ -49,7 +46,7 @@ namespace Intersect.Network
 
             mThreads = new List<NetworkThread>();
             mThreadLookup = new Dictionary<Guid, NetworkThread>();
-            mConnectionLookup = new Dictionary<Guid, ConnectionMetadata>();
+            mConnectionLookup = new Dictionary<Guid, LidgrenConnection>();
             mConnectionGuidLookup = new Dictionary<long, Guid>();
 
             Dispatcher = new PacketDispatcher();
@@ -127,6 +124,7 @@ namespace Intersect.Network
             {
                 if (!IsRunning) return false;
                 IsRunning = false;
+                foreach (var thread in mThreads) thread.Stop();
                 return true;
             }
         }
@@ -146,7 +144,7 @@ namespace Intersect.Network
 
         public virtual bool Send(Guid guid, IPacket packet)
         {
-            if (!mConnectionLookup.TryGetValue(guid, out ConnectionMetadata metadata)) return false;
+            if (!mConnectionLookup.TryGetValue(guid, out LidgrenConnection metadata)) return false;
 
             var message = Peer.CreateMessage();
             IBuffer buffer = new LidgrenBuffer(message);
@@ -154,12 +152,12 @@ namespace Intersect.Network
             if (!packet.Write(ref buffer)) throw new Exception();
 
             metadata.Aes.Encrypt(message);
-            var result = Peer.SendMessage(message, metadata.Connection, NetDeliveryMethod.ReliableOrdered);
+            var result = Peer.SendMessage(message, metadata.NetConnection, NetDeliveryMethod.ReliableOrdered);
             switch (result)
             {
                 case NetSendResult.Sent:
                 case NetSendResult.Queued:
-                    Log.Debug($"Sent '{packet.GetType().Name}'.");
+                    Log.Debug($"Sent '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer.Length() ?? -1}).");
                     return true;
 
                 default:
@@ -170,12 +168,12 @@ namespace Intersect.Network
 
         protected virtual void RegisterPackets()
         {
-            if (!PacketRegistry.Instance.Register(new PingPacketGroup())) throw new Exception();
+            if (!PacketRegistry.Instance.Register(typeof(BinaryPacket))) throw new Exception();
         }
 
         protected virtual void RegisterHandlers()
         {
-            if (!Dispatcher.RegisterHandler(typeof(PingPacket), new PingHandler().HandlePing)) throw new Exception();
+            /* Each application needs to do this... */
         }
 
         protected virtual bool HandleConnectionApproval(NetIncomingMessage request)
@@ -186,22 +184,24 @@ namespace Intersect.Network
 
         protected virtual bool HandleConnected(NetIncomingMessage request) => true;
 
-        protected bool HasConnection(ConnectionMetadata metadata)
+        protected virtual bool HandleDisconnected(NetIncomingMessage request) => true;
+
+        protected bool HasConnection(LidgrenConnection metadata)
         {
-            if (metadata?.Connection == null) throw new ArgumentNullException();
+            if (metadata?.NetConnection == null) throw new ArgumentNullException();
             if (mConnectionLookup == null) throw new ArgumentNullException();
             if (mConnectionGuidLookup == null) throw new ArgumentNullException();
 
             return mConnectionLookup.ContainsKey(metadata.Guid)
-                && mConnectionGuidLookup.ContainsKey(metadata.Connection.RemoteUniqueIdentifier);
+                && mConnectionGuidLookup.ContainsKey(metadata.NetConnection.RemoteUniqueIdentifier);
         }
 
         protected bool HasConnection(Guid guid)
         {
             if (mConnectionLookup == null) throw new ArgumentNullException();
             if (mConnectionGuidLookup == null) throw new ArgumentNullException();
-            return mConnectionLookup.TryGetValue(guid, out ConnectionMetadata metadata)
-                && mConnectionGuidLookup.ContainsKey(metadata.Connection.RemoteUniqueIdentifier);
+            return mConnectionLookup.TryGetValue(guid, out LidgrenConnection metadata)
+                && mConnectionGuidLookup.ContainsKey(metadata.NetConnection.RemoteUniqueIdentifier);
         }
 
         protected bool HasConnection(long lidgrenId)
@@ -233,14 +233,14 @@ namespace Intersect.Network
             }
         }
 
-        protected void AddConnection(ConnectionMetadata metadata)
+        protected void AddConnection(LidgrenConnection metadata)
         {
-            if (metadata?.Connection == null) return;
+            if (metadata?.NetConnection == null) return;
             if (mConnectionLookup == null) throw new ArgumentNullException();
             if (mConnectionGuidLookup == null) throw new ArgumentNullException();
 
             mConnectionLookup.Add(metadata.Guid, metadata);
-            mConnectionGuidLookup.Add(metadata.Connection.RemoteUniqueIdentifier, metadata.Guid);
+            mConnectionGuidLookup.Add(metadata.NetConnection.RemoteUniqueIdentifier, metadata.Guid);
 
             var thread = PickThread();
             thread.Connections.Add(metadata);
@@ -250,25 +250,25 @@ namespace Intersect.Network
         protected void RemoveConnection(long lidgrenId)
         {
             if (!mConnectionGuidLookup.TryGetValue(lidgrenId, out Guid guid)) return;
-            if (!mConnectionLookup.TryGetValue(guid, out ConnectionMetadata metadata)) return;
+            if (!mConnectionLookup.TryGetValue(guid, out LidgrenConnection metadata)) return;
             RemoveConnection(metadata);
         }
 
-        protected void RemoveConnection(ConnectionMetadata metadata)
+        protected virtual void RemoveConnection(LidgrenConnection metadata)
         {
-            if (metadata?.Connection == null) return;
+            if (metadata?.NetConnection == null) return;
             if (mConnectionLookup == null) throw new ArgumentNullException();
             if (mConnectionGuidLookup == null) throw new ArgumentNullException();
 
             mConnectionLookup.Remove(metadata.Guid);
-            mConnectionGuidLookup.Remove(metadata.Connection.RemoteUniqueIdentifier);
+            mConnectionGuidLookup.Remove(metadata.NetConnection.RemoteUniqueIdentifier);
 
             if (!mThreadLookup.TryGetValue(metadata.Guid, out NetworkThread thread)) return;
             thread.Connections.Remove(metadata);
             mThreadLookup.Remove(metadata.Guid);
         }
 
-        protected virtual bool HandleStatusChanged(NetIncomingMessage request)
+        protected bool HandleStatusChanged(NetIncomingMessage request)
         {
             if (request?.SenderConnection == null) return false;
             var lidgrenId = request.SenderConnection.RemoteUniqueIdentifier;
@@ -293,7 +293,8 @@ namespace Intersect.Network
                     }
 
                     Log.Info($"Disconnected from endpoint {NetUtility.ToHexString(lidgrenId)} .");
-                    return true;
+
+                    return HandleDisconnected(request);
 
                 default:
                     return true;
@@ -321,7 +322,7 @@ namespace Intersect.Network
                         var lidgrenId = message.SenderConnection?.RemoteUniqueIdentifier ?? -1;
                         if (mConnectionGuidLookup.TryGetValue(lidgrenId, out Guid guid))
                         {
-                            if (mConnectionLookup.TryGetValue(guid, out ConnectionMetadata connection))
+                            if (mConnectionLookup.TryGetValue(guid, out LidgrenConnection connection))
                             {
                                 if (connection.Aes.Decrypt(message))
                                 {
@@ -419,16 +420,18 @@ namespace Intersect.Network
             var guid = new Guid(guidBuffer);
             if (!mThreadLookup.TryGetValue(guid, out NetworkThread thread)) return;
 
-            var packetGroup = (PacketGroups)message.ReadByte();
-            var group = PacketRegistry.Instance.GetGroup(packetGroup);
-            if (group == null) return;
+            var packetCode = (PacketCodes)message.ReadByte();
+            var packetType = PacketRegistry.Instance.GetPacketType(packetCode);
+            if (packetType == null) return;
 
             IBuffer buffer = new LidgrenBuffer(message);
-            var packet = group.Create(connection, buffer);
+            var packet = packetType.CreateInstance(connection);
             if (packet.Read(ref buffer))
             {
                 if (thread.Queue == null) throw new ArgumentNullException();
-                thread.Queue.Enqueue(packet);
+                Log.Debug($"Received packet '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer.Length() ?? -1}).");
+                var queued = thread.Queue.Enqueue(packet);
+                Log.Debug($"thread={thread.Name} queued={queued} queueSize={thread.Queue.Size}");
             }
             else
             {
@@ -516,7 +519,7 @@ namespace Intersect.Network
             ? FindConnection(guid) : null;
 
         public IConnection FindConnection(Guid guid)
-            => mConnectionLookup.TryGetValue(guid, out ConnectionMetadata connection)
+            => mConnectionLookup.TryGetValue(guid, out LidgrenConnection connection)
             ? connection : null;
 
         protected static void DumpKey(RSAParameters parameters, bool isPublic)

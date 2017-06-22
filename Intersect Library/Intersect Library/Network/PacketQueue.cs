@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Intersect.Logging;
 
 namespace Intersect.Network
 {
@@ -13,11 +14,26 @@ namespace Intersect.Network
 
         private readonly Queue<IPacket> mQueue;
 
+        public int Size => mQueue?.Count ?? -1;
+
         public PacketQueue()
         {
             mDequeLock = new object();
             mQueueLock = new object();
             mQueue = new Queue<IPacket>();
+        }
+
+        public void Interrupt()
+        {
+            lock (mQueueLock)
+            {
+                Monitor.PulseAll(mQueueLock);
+            }
+
+            lock (mDequeLock)
+            {
+                Monitor.PulseAll(mDequeLock);
+            }
         }
 
         public bool Enqueue(IPacket packet)
@@ -27,9 +43,11 @@ namespace Intersect.Network
             if (mQueueLock == null) throw new ArgumentNullException();
             if (mQueue == null) throw new ArgumentNullException();
 
+            Log.Debug("Waiting on queue lock...");
             lock (mQueueLock)
             {
                 mQueue.Enqueue(packet);
+                Log.Debug($"enqueuedSize={mQueue.Count}");
                 Monitor.Pulse(mQueueLock);
             }
 
@@ -42,11 +60,27 @@ namespace Intersect.Network
             if (mQueueLock == null) throw new ArgumentNullException();
             if (mQueue == null) throw new ArgumentNullException();
 
+            Log.Debug("Waiting on deque lock...");
             lock (mDequeLock)
             {
+                Log.Debug("Waiting on queue lock...");
                 lock (mQueueLock)
                 {
-                    Monitor.Wait(mQueueLock);
+                    Log.Debug("Checking if blocked...");
+
+                    if (mQueue.Count < 1)
+                    {
+                        Log.Debug("Blocked... waiting for new packets...");
+                        Monitor.Wait(mQueueLock);
+                    }
+
+                    if (mQueue.Count < 1)
+                    {
+                        packet = null;
+                        return false;
+                    }
+
+                    Log.Debug($"size={mQueue.Count}");
                     packet = mQueue.Dequeue();
                     if (mQueue.Count > 0)
                         Monitor.Pulse(mQueueLock);

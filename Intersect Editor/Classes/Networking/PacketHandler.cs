@@ -7,6 +7,8 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
+using Intersect.Network;
+using Intersect.Network.Packets;
 
 namespace Intersect.Editor.Classes
 {
@@ -18,6 +20,13 @@ namespace Intersect.Editor.Classes
 
         public static GameObjectUpdated GameObjectUpdatedDelegate;
         public static MapUpdated MapUpdatedDelegate;
+
+        public static bool HandlePacket(IPacket packet)
+        {
+            var binaryPacket = packet as BinaryPacket;
+            HandlePacket(binaryPacket.Buffer.ToArray());
+            return true;
+        }
 
         public static void HandlePacket(byte[] packet)
         {
@@ -103,7 +112,7 @@ namespace Intersect.Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Globals.LoginForm.TryRemembering();
-            Globals.LoginForm.Hide();
+            Globals.LoginForm.HideSafe();
         }
 
         private static void HandleMapData(byte[] packet)

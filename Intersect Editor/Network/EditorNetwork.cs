@@ -6,7 +6,8 @@ using Intersect.Network;
 using Intersect.Threading;
 using Lidgren.Network;
 using System.Linq;
-using Intersect.Network.Packets.Ping;
+using Intersect.Editor.Classes;
+using Intersect.Network.Packets;
 
 namespace Intersect.Editor.Network
 {
@@ -33,9 +34,9 @@ namespace Intersect.Editor.Network
 
         protected override void OnStart()
         {
-            Log.Info("Starting the client...");
+            Log.Info("Starting the editor...");
             Peer.Start();
-            
+
             using (var hailBuffer = new MemoryBuffer(sizeSecret))
             {
                 hailBuffer.Write(SharedConstants.VERSION_DATA);
@@ -56,18 +57,20 @@ namespace Intersect.Editor.Network
                 hail.Write(encryptedMessage.Length);
                 hail.Write(encryptedMessage, 0, encryptedMessage.Length);
 
-                Peer.Connect("localhost", 14232, hail);
+                Peer.Connect(Config.Host, Config.Port, hail);
             }
         }
 
         protected override void OnStop()
         {
-            Log.Info("Stopping the client...");
+            Log.Info("Stopping the editor...");
         }
 
         protected override void RegisterHandlers()
         {
             base.RegisterHandlers();
+
+            Dispatcher.RegisterHandler(typeof(BinaryPacket), PacketHandler.HandlePacket);
         }
 
         protected override bool HandleConnected(NetIncomingMessage request)
@@ -92,15 +95,22 @@ namespace Intersect.Editor.Network
                 byte[] guidData;
                 if (!requestBuffer.Read(out guidData, 16)) return false;
                 Guid = new Guid(guidData);
-                var metadata = new ConnectionMetadata(this, Guid, request.SenderConnection, aesKey);
+                var metadata = new LidgrenConnection(this, Guid, request.SenderConnection, aesKey);
                 AddConnection(metadata);
-
-                var ping = new PingPacket(metadata);
-                ping.RequestPong = true;
-                metadata.Send(ping);
 
                 return true;
             }
+        }
+
+        protected override bool HandleDisconnected(NetIncomingMessage request)
+        {
+            if (!base.HandleDisconnected(request)) return false;
+
+            LegacyEditorNetwork.HandleDc();
+
+            Stop();
+
+            return true;
         }
 
         protected override int CalculateNumberOfThreads() => 1;

@@ -1,12 +1,14 @@
 ﻿using Intersect.Logging;
 using Intersect.Memory;
 using Intersect.Network;
-using Intersect.Network.Packets.Ping;
 using Intersect.Threading;
 using Lidgren.Network;
 using System;
 using System.Linq;
 using System.Security.Cryptography;
+using Intersect.Network.Packets;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Networking;
 
 namespace Intersect.Client.Network
 {
@@ -68,6 +70,8 @@ namespace Intersect.Client.Network
         protected override void RegisterHandlers()
         {
             base.RegisterHandlers();
+
+            Dispatcher.RegisterHandler(typeof(BinaryPacket), PacketHandler.HandlePacket);
         }
 
         protected override bool HandleConnected(NetIncomingMessage request)
@@ -92,15 +96,22 @@ namespace Intersect.Client.Network
                 byte[] guidData;
                 if (!requestBuffer.Read(out guidData, 16)) return false;
                 Guid = new Guid(guidData);
-                var metadata = new ConnectionMetadata(this, Guid, request.SenderConnection, aesKey);
+                var metadata = new LidgrenConnection(this, Guid, request.SenderConnection, aesKey);
                 AddConnection(metadata);
-
-                var ping = new PingPacket(metadata);
-                ping.RequestPong = true;
-                metadata.Send(ping);
 
                 return true;
             }
+        }
+
+        protected override bool HandleDisconnected(NetIncomingMessage request)
+        {
+            if (!base.HandleDisconnected(request)) return false;
+
+            Globals.IsRunning = false;
+
+            Stop();
+
+            return true;
         }
 
         protected override int CalculateNumberOfThreads() => 1;

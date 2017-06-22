@@ -18,6 +18,8 @@ namespace Intersect.Server.Classes
     {
         private static bool _errorHalt = true;
 
+        public static ServerNetwork network;
+
         public static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -29,7 +31,6 @@ namespace Intersect.Server.Classes
                 Console.ReadKey();
                 return;
             }
-            var network = new ServerNetwork(new NetworkConfiguration(Options.ServerPort));
 
             Strings.Init(Strings.IntersectComponent.Server, Options.Language);
             Console.WriteLine(@"  _____       _                          _   ");
@@ -58,6 +59,9 @@ namespace Intersect.Server.Classes
             Console.WriteLine(Strings.Get("commandoutput", "playercount", Database.GetRegisteredPlayers()));
             SocketServer.Init();
             Console.WriteLine(Strings.Get("intro", "started", Options.ServerPort));
+            Log.Global.AddOutput(new ConsoleOutput());
+            network = new ServerNetwork(new NetworkConfiguration(Options.ServerPort));
+            network.Start();
 #if websockets
             WebSocketServer.Init();
             Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort + 1));
@@ -594,6 +598,8 @@ namespace Intersect.Server.Classes
                         else
                         {
                             Globals.ServerStarted = false;
+                            network.Stop();
+                            
                             return;
                         }
                     }

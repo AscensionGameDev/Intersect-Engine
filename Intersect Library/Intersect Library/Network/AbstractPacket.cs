@@ -7,12 +7,14 @@ namespace Intersect.Network
     {
         public IConnection Connection { get; }
 
-        public PacketGroups Group { get; }
+        public PacketType Type => PacketType.Of(this);
 
-        protected AbstractPacket(IConnection connection, PacketGroups group)
+        public PacketCodes Code { get; }
+
+        protected AbstractPacket(IConnection connection, PacketCodes code)
         {
             Connection = connection;
-            Group = group;
+            Code = code;
         }
 
         protected virtual IBuffer CreateNewMessage()
@@ -33,7 +35,7 @@ namespace Intersect.Network
             if (buffer == null) return false;
 
             buffer.Write((ushort)0);
-            buffer.Write((byte)Group);
+            buffer.Write((byte)Code);
 
             return true;
         }
@@ -43,7 +45,9 @@ namespace Intersect.Network
         public virtual bool Write(ref IBuffer buffer)
         {
             if (buffer == null) buffer = CreateNewMessage();
-            buffer.Write((byte) Group);
+
+            buffer.Write((byte)Code);
+
             return true;
         }
     }

@@ -6,7 +6,9 @@ namespace Intersect.Network
     {
         IConnection Connection { get; }
 
-        PacketGroups Group { get; }
+        PacketCodes Code { get; }
+
+        PacketType Type { get; }
 
         bool Read(ref IBuffer buffer);
         bool Write(ref IBuffer buffer);

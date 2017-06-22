@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractNetwork.cs" />
-    <Compile Include="ConnectionMetadata.cs" />
+    <Compile Include="LidgrenConnection.cs" />
     <Compile Include="LidgrenBuffer.cs" />
     <Compile Include="NetworkMetaStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

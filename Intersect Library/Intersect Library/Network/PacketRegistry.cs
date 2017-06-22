@@ -9,7 +9,7 @@ namespace Intersect.Network
         public static PacketRegistry Instance
             => (sInstance ?? new PacketRegistry());
         
-        private IDictionary<PacketGroups, IPacketGroup> mGroupMap;
+        private IDictionary<PacketCodes, PacketType> mLookup;
 
         private PacketRegistry()
         {
@@ -18,34 +18,44 @@ namespace Intersect.Network
                 sInstance = this;
             }
 
-            mGroupMap = new SortedDictionary<PacketGroups, IPacketGroup>();
+            mLookup = new SortedDictionary<PacketCodes, PacketType>();
         }
 
         // ReSharper disable once PossibleNullReferenceException
-        public IPacketGroup GetGroup(PacketGroups group)
-            => (mGroupMap.TryGetValue(group, out IPacketGroup packetGroup))
-            ? packetGroup : null;
+        public PacketType GetPacketType(PacketCodes code)
+            => (mLookup.TryGetValue(code, out PacketType packetType))
+            ? packetType : null;
 
-        public bool Register(IPacketGroup packetGroup)
+        public bool Register(Type type)
         {
-            if (mGroupMap == null) throw new ArgumentNullException();
-            if (packetGroup == null) throw new ArgumentNullException();
+            return Register(PacketType.Of(type));
+        }
 
-            if (mGroupMap.ContainsKey(packetGroup.Group)) return false;
-            mGroupMap.Add(packetGroup.Group, packetGroup);
+        public bool Register(PacketType packetType)
+        {
+            if (mLookup == null) throw new ArgumentNullException();
+            if (packetType == null) throw new ArgumentNullException();
+
+            if (mLookup.ContainsKey(packetType.Code)) return false;
+            mLookup.Add(packetType.Code, packetType);
             return true;
         }
 
-        public bool Deregister(IPacketGroup packetGroup)
+        public bool Deregister(PacketType packetType)
         {
-            if (packetGroup == null) throw new ArgumentNullException();
-            return Deregister(packetGroup.Group);
+            if (packetType == null) throw new ArgumentNullException();
+            return Deregister(packetType.Code);
         }
 
-        public bool Deregister(PacketGroups group)
+        public bool Deregister(PacketCodes code)
         {
-            if (mGroupMap == null) throw new ArgumentNullException();
-            return mGroupMap.Remove(group);
+            if (mLookup == null) throw new ArgumentNullException();
+            return mLookup.Remove(code);
+        }
+
+        public PacketCodes GetPacketCode(PacketType packetType)
+        {
+            return packetType?.Code ?? PacketCodes.Unknown;
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
+using Intersect.Client.Network;
 using Intersect.Localization;
 using Intersect.Logging;
+using Intersect.Network;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Gwen.Renderer;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database;
@@ -65,7 +67,8 @@ namespace Intersect_Client_MonoGame
         {
             //Setup SFML Classes
             ((MonoRenderer) GameGraphics.Renderer).Init(GraphicsDevice);
-            GameNetwork.MySocket = new MonoSocket();
+            // TODO: Remove old netcode
+            //GameNetwork.MySocket = new MonoSocket();
 
             GameMain.Start();
             base.Initialize();
