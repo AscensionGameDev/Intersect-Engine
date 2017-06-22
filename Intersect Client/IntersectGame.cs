@@ -1,24 +1,21 @@
-﻿using System;
-using System.Windows.Forms;
-using Intersect.Client.Network;
+﻿using Intersect.Client.Classes.Core;
 using Intersect.Localization;
 using Intersect.Logging;
-using Intersect.Network;
-using IntersectClientExtras.Gwen.Input;
-using IntersectClientExtras.Gwen.Renderer;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management;
-using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.System;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
 using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 using Intersect_Client_MonoGame.Classes.SFML.Input;
+using IntersectClientExtras.Gwen.Input;
+using IntersectClientExtras.Gwen.Renderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Intersect.Client.Classes.Core;
+using System;
+using System.Windows.Forms;
+using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client_MonoGame
 {
@@ -112,6 +109,13 @@ namespace Intersect_Client_MonoGame
                 Exit();
             }
             base.Draw(gameTime);
+        }
+
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            base.OnExiting(sender, args);
+
+            GameNetwork.clientNetwork?.Stop();
         }
     }
 }

@@ -115,6 +115,7 @@ namespace Intersect.Editor.Forms
 
         protected override void OnClosed(EventArgs e)
         {
+            LegacyEditorNetwork.editorNetwork.Stop();
             base.OnClosed(e);
             Application.Exit();
         }
