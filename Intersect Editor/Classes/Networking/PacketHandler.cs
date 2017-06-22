@@ -519,7 +519,7 @@ namespace Intersect.Editor.Classes
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            if (GameObjectUpdatedDelegate != null) GameObjectUpdatedDelegate(type);
+            GameObjectUpdatedDelegate?.Invoke(type);
             bf.Dispose();
         }
 

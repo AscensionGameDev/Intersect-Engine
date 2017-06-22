@@ -11,7 +11,7 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms
 {
-    public partial class FrmItem : Form
+    public partial class FrmItem : EditorForm
     {
         private List<ItemBase> _changed = new List<ItemBase>();
         private byte[] _copiedItem = null;
@@ -19,13 +19,13 @@ namespace Intersect.Editor.Forms
 
         public FrmItem()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstItems.LostFocus += itemList_FocusChanged;
             lstItems.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObjectType type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
             if (type == GameObjectType.Item)
             {

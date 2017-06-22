@@ -13,7 +13,7 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms
 {
-    public partial class frmQuest : Form
+    public partial class frmQuest : EditorForm
     {
         private List<QuestBase> _changed = new List<QuestBase>();
         private byte[] _copiedItem = null;
@@ -21,8 +21,8 @@ namespace Intersect.Editor.Forms
 
         public frmQuest()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstQuests.LostFocus += itemList_FocusChanged;
             lstQuests.GotFocus += itemList_FocusChanged;
             InitLocalization();
@@ -71,7 +71,7 @@ namespace Intersect.Editor.Forms
             btnCancel.Text = Strings.Get("questeditor", "cancel");
         }
 
-        private void GameObjectUpdatedDelegate(GameObjectType type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
             if (type == GameObjectType.Quest)
             {

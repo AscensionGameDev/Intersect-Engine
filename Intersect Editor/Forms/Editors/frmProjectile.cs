@@ -4,13 +4,14 @@ using System.Drawing;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
+using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
 
 namespace Intersect.Editor.Classes
 {
-    public partial class frmProjectile : Form
+    public partial class frmProjectile : EditorForm
     {
         private List<ProjectileBase> _changed = new List<ProjectileBase>();
         private byte[] _copiedItem = null;
@@ -20,13 +21,13 @@ namespace Intersect.Editor.Classes
 
         public frmProjectile()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstProjectiles.LostFocus += itemList_FocusChanged;
             lstProjectiles.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObjectType type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
             if (type == GameObjectType.Projectile)
             {

@@ -7,6 +7,7 @@ using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps.MapList;
@@ -14,7 +15,7 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms
 {
-    public partial class frmClass : Form
+    public partial class frmClass : EditorForm
     {
         private List<ClassBase> _changed = new List<ClassBase>();
         private byte[] _copiedItem = null;
@@ -22,13 +23,13 @@ namespace Intersect.Editor.Forms
 
         public frmClass()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstClasses.LostFocus += itemList_FocusChanged;
             lstClasses.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObjectType type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
             if (type == GameObjectType.Class)
             {
@@ -165,15 +166,15 @@ namespace Intersect.Editor.Forms
                 nudBaseExp.Value = _editorItem.BaseExp;
                 nudExpIncrease.Value = _editorItem.ExpIncrease;
 
-				//Stat Increases
-				if (_editorItem.IncreasePercentage == 0)
-				{
-					rdoStaticIncrease.Checked = true;
-				}
-				else
-				{
-					rdoPercentageIncrease.Checked = true;
-				}
+                //Stat Increases
+                if (_editorItem.IncreasePercentage == 0)
+                {
+                    rdoStaticIncrease.Checked = true;
+                }
+                else
+                {
+                    rdoPercentageIncrease.Checked = true;
+                }
 
                 UpdateIncreases();
 

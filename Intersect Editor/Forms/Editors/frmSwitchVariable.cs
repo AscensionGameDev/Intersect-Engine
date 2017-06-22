@@ -10,15 +10,15 @@ using Intersect.Models;
 
 namespace Intersect.Editor.Forms.Editors
 {
-    public partial class frmSwitchVariable : Form
+    public partial class frmSwitchVariable : EditorForm
     {
         private List<IDatabaseObject> _changed = new List<IDatabaseObject>();
         private IDatabaseObject _editorItem = null;
 
         public frmSwitchVariable()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             InitLocalization();
         }
 
@@ -44,7 +44,7 @@ namespace Intersect.Editor.Forms.Editors
             btnCancel.Text = Strings.Get("switchvariableeditor", "cancel");
         }
 
-        private void GameObjectUpdatedDelegate(GameObjectType type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
             if (type == GameObjectType.PlayerSwitch)
             {

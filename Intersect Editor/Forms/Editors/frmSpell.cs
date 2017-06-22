@@ -14,7 +14,7 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms
 {
-    public partial class frmSpell : Form
+    public partial class frmSpell : EditorForm
     {
         private List<SpellBase> _changed = new List<SpellBase>();
         private byte[] _copiedItem = null;
@@ -22,13 +22,13 @@ namespace Intersect.Editor.Forms
 
         public frmSpell()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstSpells.LostFocus += itemList_FocusChanged;
             lstSpells.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObjectType type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
             if (type == GameObjectType.Spell)
             {
