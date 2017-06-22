@@ -51,8 +51,9 @@ namespace Intersect.Server.Classes.Entities
 
         //Vitals & Stats
         public int[] MaxVital = new int[(int) Vitals.VitalCount];
+		public int Level = 1;
 
-        public EventMoveRoute MoveRoute = null;
+		public EventMoveRoute MoveRoute = null;
         public EventPageInstance MoveRouteSetter = null;
 
         public long MoveTimer;
@@ -674,11 +675,12 @@ namespace Intersect.Server.Classes.Entities
 
         //Attacking with projectile
         public virtual void TryAttack(Entity enemy, ProjectileBase projectile, SpellBase parentSpell,
-            ItemBase parentItem, int projectileDir, List<KeyValuePair<int, int>> deadAnimations,
-            List<KeyValuePair<int, int>> aliveAnimations)
+            ItemBase parentItem, int projectileDir)
         {
-            //Check if the target is blocking facing in the direction against you
-            if (enemy.Blocking)
+			if (enemy.GetType() == typeof(Resource) && parentSpell != null) return;
+
+			//Check if the target is blocking facing in the direction against you
+			if (enemy.Blocking)
             {
                 int d = Dir;
 
@@ -689,22 +691,22 @@ namespace Intersect.Server.Classes.Entities
 
                 if (enemy.Dir == (int) Directions.Left && d == (int) Directions.Right)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), CustomColors.Blocked);
                     return;
                 }
                 else if (enemy.Dir == (int) Directions.Right && d == (int) Directions.Left)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), CustomColors.Blocked);
                     return;
                 }
                 else if (enemy.Dir == (int) Directions.Up && d == (int) Directions.Down)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), CustomColors.Blocked);
                     return;
                 }
                 else if (enemy.Dir == (int) Directions.Down && d == (int) Directions.Up)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), CustomColors.Blocked);
                     return;
                 }
             }
@@ -725,9 +727,10 @@ namespace Intersect.Server.Classes.Entities
                     {
                         return;
                     }
+                    if (((Player)this).InParty((Player)enemy) == true) return;
                 }
                 Attack(enemy, parentItem.Damage, 0, (DamageType) parentItem.DamageType, (Stats) parentItem.ScalingStat,
-                    parentItem.Scaling, parentItem.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
+                    parentItem.Scaling, parentItem.CritChance, Options.CritMultiplier);
             }
 
             //If projectile, check if a splash spell is applied
@@ -764,11 +767,11 @@ namespace Intersect.Server.Classes.Entities
             if (enemy.GetType() == typeof(Resource)) return;
             if (spellBase != null)
             {
-                List<KeyValuePair<int, int>> deadAnimations = new List<KeyValuePair<int, int>>();
+               List<KeyValuePair<int, int>> deadAnimations = new List<KeyValuePair<int, int>>();
                 List<KeyValuePair<int, int>> aliveAnimations = new List<KeyValuePair<int, int>>();
 
                 //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
-                if (spellBase.Friendly == 0)
+               if (spellBase.Friendly == 0 && spellBase.TargetType != (int)SpellTargetTypes.Self)
                 {
                     //If about to hit self with an unfriendly spell (maybe aoe?) return
                     if (enemy == this) return;
@@ -825,8 +828,7 @@ namespace Intersect.Server.Classes.Entities
                 if (spellBase.Data3 > 0)
                 {
                     new StatusInstance(enemy,spellBase,spellBase.Data3, (spellBase.Data2 * 100),spellBase.Data5);
-                    PacketSender.SendActionMsg(enemy, Options.StatusActionMsgs[spellBase.Data3],
-                        new Color(255, 255, 255, 0));
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat","status" + spellBase.Data3), CustomColors.Status);
                 }
 
                 //Handle DoT/HoT spells]
@@ -857,8 +859,8 @@ namespace Intersect.Server.Classes.Entities
 
         //Attack using a weapon or unarmed
         public virtual void TryAttack(Entity enemy, int baseDamage, DamageType damageType, Stats scalingStat,
-            int scaling, int critChance, double critMultiplier, List<KeyValuePair<int, int>> deadAnimations,
-            List<KeyValuePair<int, int>> aliveAnimations)
+            int scaling, int critChance, double critMultiplier, List<KeyValuePair<int, int>> deadAnimations = null,
+            List<KeyValuePair<int, int>> aliveAnimations = null)
         {
             if ((AttackTimer > Globals.System.GetTimeMs() || Blocking)) return;
 
@@ -890,7 +892,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (status.Type == (int)StatusTypes.Stun || status.Type == (int)StatusTypes.Blind)
                     {
-                        PacketSender.SendActionMsg(this, Strings.Get("combat", "miss"), new Color(255, 255, 255, 255));
+                        PacketSender.SendActionMsg(this, Strings.Get("combat", "miss"), CustomColors.Missed);
                         PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, CurrentMap,
                             CalculateAttackTime());
                         return;
@@ -898,16 +900,15 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
 
-            Attack(enemy, baseDamage, 0, damageType, scalingStat, scaling, critChance, critMultiplier, deadAnimations,
-                aliveAnimations);
+            Attack(enemy, baseDamage, 0, damageType, scalingStat, scaling, critChance, critMultiplier, deadAnimations, aliveAnimations);
 
             //If we took damage lets reset our combat timer
             enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
         }
 
         public void Attack(Entity enemy, int baseDamage, int secondaryDamage, DamageType damageType, Stats scalingStat,
-            int scaling, int critChance, double critMultiplier, List<KeyValuePair<int, int>> deadAnimations,
-            List<KeyValuePair<int, int>> aliveAnimations)
+            int scaling, int critChance, double critMultiplier, List<KeyValuePair<int, int>> deadAnimations = null,
+            List<KeyValuePair<int, int>> aliveAnimations = null)
         {
             if (enemy == null) return;
 
@@ -956,11 +957,11 @@ namespace Intersect.Server.Classes.Entities
             }
             else
             {
-                PacketSender.SendActionMsg(enemy, Strings.Get("combat", "critical"), new Color(255, 255, 255, 0));
+                PacketSender.SendActionMsg(enemy, Strings.Get("combat", "critical"), CustomColors.Critical);
             }
 
-            //Calculate Damages
-            if (baseDamage != 0)
+			//Calculate Damages
+			if (baseDamage != 0)
             {
                 baseDamage = Formulas.CalculateDamage(baseDamage, damageType, scalingStat, scaling, critMultiplier, this,
                     enemy);
@@ -971,22 +972,22 @@ namespace Intersect.Server.Classes.Entities
                     {
                         case DamageType.Physical:
                             PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int) baseDamage,
-                                new Color(255, 255, 0, 0));
+                                CustomColors.PhysicalDamage);
                             break;
                         case DamageType.Magic:
                             PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int) baseDamage,
-                                new Color(255, 255, 0, 255));
+                                CustomColors.MagicDamage);
                             break;
                         case DamageType.True:
                             PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int) baseDamage,
-                                new Color(255, 255, 255, 255));
+                                CustomColors.TrueDamage);
                             break;
                     }
                 }
-                else
+                else if (baseDamage < 0)
                 {
                     PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) baseDamage,
-                        new Color(255, 0, 255, 0));
+                        CustomColors.Heal);
                 }
             }
             if (secondaryDamage != 0)
@@ -999,12 +1000,12 @@ namespace Intersect.Server.Classes.Entities
                     //If we took damage lets reset our combat timer
                     CombatTimer = Globals.System.GetTimeMs() + 5000;
                     PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int) baseDamage,
-                        new Color(255, 255, 127, 80));
+                        CustomColors.RemoveMana);
                 }
-                else
+                else if (baseDamage < 0)
                 {
                     PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) baseDamage,
-                        new Color(255, 0, 0, 255));
+                        CustomColors.AddMana);
                 }
             }
 
@@ -1036,18 +1037,19 @@ namespace Intersect.Server.Classes.Entities
                 KilledEntity(enemy);
                 if (enemy.GetType() == typeof(Npc) || enemy.GetType() == typeof(Resource))
                 {
-                    enemy.Die(true, this);
+                    enemy.Die(100, this);
                 }
                 else
                 {
-                    //Set this false to true if you want players to lose items on death
-                    //todo make this an option in the server config
-                    enemy.Die(false);
+                    enemy.Die(Options.ItemDropChance);
                 }
-                foreach (var anim in deadAnimations)
+                if (deadAnimations != null)
                 {
-                    PacketSender.SendAnimationToProximity(anim.Key, -1, -1, enemy.CurrentMap, enemy.CurrentX,
-                        enemy.CurrentY, anim.Value);
+                    foreach (var anim in deadAnimations)
+                    {
+                        PacketSender.SendAnimationToProximity(anim.Key, -1, -1, enemy.CurrentMap, enemy.CurrentX,
+                            enemy.CurrentY, anim.Value);
+                    }
                 }
             }
             else
@@ -1055,10 +1057,13 @@ namespace Intersect.Server.Classes.Entities
                 //Hit him, make him mad and send the vital update.
                 PacketSender.SendEntityVitals(enemy);
                 PacketSender.SendEntityStats(enemy);
-                foreach (var anim in aliveAnimations)
+                if (aliveAnimations != null)
                 {
-                    PacketSender.SendAnimationToProximity(anim.Key, 1, enemy.MyIndex, enemy.CurrentMap, -1, -1,
-                        anim.Value);
+                    foreach (var anim in aliveAnimations)
+                    {
+                        PacketSender.SendAnimationToProximity(anim.Key, 1, enemy.MyIndex, enemy.CurrentMap, -1, -1,
+                            anim.Value);
+                    }
                 }
             }
             // Add a timer before able to make the next move.
@@ -1133,7 +1138,7 @@ namespace Intersect.Server.Classes.Entities
                         }
                         break;
                     case (int) SpellTypes.Dash:
-                        PacketSender.SendActionMsg(this, Strings.Get("combat", "dash"), new Color(255, 0, 0, 255));
+                        PacketSender.SendActionMsg(this, Strings.Get("combat", "dash"), CustomColors.Dash);
                         var dash = new DashInstance(this, spellBase.CastRange, Dir, Convert.ToBoolean(spellBase.Data1),
                             Convert.ToBoolean(spellBase.Data2), Convert.ToBoolean(spellBase.Data3),
                             Convert.ToBoolean(spellBase.Data4));
@@ -1358,17 +1363,22 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Spawning/Dying
-        public virtual void Die(bool dropitems = false, Entity killer = null)
+        public virtual void Die(int dropitems = 0, Entity killer = null)
         {
-            if (dropitems)
+            if (dropitems > 0)
             {
-                // Drop items
-                foreach (var item in Inventory)
+				// Drop items
+				for (int n = 0; n < Inventory.Count; n++)
                 {
-                    if (ItemBase.Lookup.Get<ItemBase>(item.ItemNum) != null)
+					ItemInstance item = Inventory[n];
+					if (ItemBase.Lookup.Get<ItemBase>(item.ItemNum) != null && Globals.Rand.Next(1, 101) < dropitems)
                     {
                         MapInstance.Lookup.Get<MapInstance>(CurrentMap).SpawnItem(CurrentX, CurrentY, item, item.ItemVal);
-                    }
+						if (GetType() == typeof(Player))
+						{
+							((Player)this).TakeItem(n, item.ItemVal);
+						}
+					}
                 }
             }
             var currentMap = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
@@ -1426,7 +1436,8 @@ namespace Intersect.Server.Classes.Entities
             bf.WriteString(MyName);
             bf.WriteString(MySprite);
             bf.WriteString(Face);
-            bf.WriteInteger(CurrentX);
+			bf.WriteInteger(Level);
+			bf.WriteInteger(CurrentX);
             bf.WriteInteger(CurrentY);
             bf.WriteInteger(CurrentZ);
             bf.WriteInteger(Dir);

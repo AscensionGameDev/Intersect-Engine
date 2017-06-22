@@ -56,6 +56,7 @@ namespace Intersect.Server.Classes
                 Console.ReadKey();
                 return;
             }
+            CustomColors.Load();
             Console.WriteLine(Strings.Get("commandoutput", "playercount", Database.GetRegisteredPlayers()));
             SocketServer.Init();
             Console.WriteLine(Strings.Get("intro", "started", Options.ServerPort));

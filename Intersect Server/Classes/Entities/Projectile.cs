@@ -368,8 +368,13 @@ namespace Intersect.Server.Classes.Entities
                         if (attribute != null && attribute.value == (int) MapAttributes.Blocked &&
                             !Spawns[i].ProjectileBase.IgnoreMapBlocks)
                         {
-                            killSpawn = true;
-                        }
+							if (Spawns[i].Dir <= 3) //Don't handle directional projectile grapplehooks
+							{
+								Owner.Dir = Spawns[i].Dir;
+								new DashInstance(Owner, Spawns[i].Distance, Owner.Dir);
+								killSpawn = true;
+							}
+						}
 
                         if (!killSpawn && map != null)
                         {
@@ -386,11 +391,14 @@ namespace Intersect.Server.Classes.Entities
                                         {
                                             if (Owner != Target)
                                             {
-                                                Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem,
-                                                    Spawns[i].Dir, new List<KeyValuePair<int, int>>(),
-                                                    new List<KeyValuePair<int, int>>());
-                                                killSpawn = true; //Remove from the list being processed
-                                            }
+                                                Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir);
+												if (Spawns[i].Dir <= 3 && MyBase.GrappleHook == true) //Don't handle directional projectile grapplehooks
+												{
+													Owner.Dir = Spawns[i].Dir;
+													new DashInstance(Owner, Spawns[i].Distance, Owner.Dir);
+													killSpawn = true;
+												}
+											}
                                         }
                                         else if (TargetEntity.GetType() == typeof(Resource))
                                         {
@@ -401,19 +409,29 @@ namespace Intersect.Server.Classes.Entities
                                             {
                                                 if (Owner.GetType() == typeof(Player))
                                                 {
-                                                    Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem,
-                                                        Spawns[i].Dir, new List<KeyValuePair<int, int>>(),
-                                                        new List<KeyValuePair<int, int>>());
-                                                    killSpawn = true; //Remove from the list being processed
-                                                }
+                                                    Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir);
+													if (Spawns[i].Dir <= 3 && MyBase.GrappleHook == true) //Don't handle directional projectile grapplehooks
+													{
+														Owner.Dir = Spawns[i].Dir;
+														new DashInstance(Owner, Spawns[i].Distance, Owner.Dir);
+														killSpawn = true;
+													}
+												}
                                             }
                                         }
                                         else //Any other target
                                         {
-                                            Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir,
-                                                new List<KeyValuePair<int, int>>(), new List<KeyValuePair<int, int>>());
-                                            killSpawn = true; //Remove from the list being processed
-                                        }
+											if (((Npc)Owner).CanNpcCombat(TargetEntity))
+											{
+												Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir);
+												if (Spawns[i].Dir <= 3 && MyBase.GrappleHook == true) //Don't handle directional projectile grapplehooks
+												{
+													Owner.Dir = Spawns[i].Dir;
+													new DashInstance(Owner, Spawns[i].Distance, Owner.Dir);
+													killSpawn = true;
+												}
+											}
+										}
                                     }
                                 }
                                 else

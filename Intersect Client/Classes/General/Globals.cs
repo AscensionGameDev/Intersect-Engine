@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Intersect;
 using Intersect.GameObjects;
 using IntersectClientExtras.Database;
@@ -86,6 +87,8 @@ namespace Intersect_Client.Classes.General
         public static int AnimFrame = 0;
 
         public static bool LoggedIn = false;
+
+        public static Random Random = new Random();
 
         //Control Objects
         public static List<EventDialog> EventDialogs = new List<EventDialog>();

@@ -118,11 +118,7 @@ namespace Intersect.GameObjects
 
         public bool IsStackable()
         {
-            //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-            return (ItemType == (int) ItemTypes.Consumable ||
-                    ItemType == (int) ItemTypes.Currency ||
-                    ItemType == (int) ItemTypes.None ||
-                    ItemType == (int) ItemTypes.Spell) && Stackable > 0;
+            return ItemType == (int) ItemTypes.Currency || Stackable > 0;
         }
 
         public override byte[] BinaryData => ItemData();

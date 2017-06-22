@@ -562,7 +562,7 @@ namespace Intersect_Client.Classes.Maps
                 {
                     foreach (var pnt in points)
                     {
-                        GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(pnt.X * Options.TileWidth, pnt.Y * Options.TileHeight, Options.TileWidth, Options.TileHeight), Color.White, textures[animFrame], GameBlendModes.Cutout, null, 0f);
+                        GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(pnt.X * Options.TileWidth, pnt.Y * Options.TileHeight, Options.TileWidth, Options.TileHeight), Intersect.Color.White, textures[animFrame], GameBlendModes.Cutout, null, 0f);
                     }
                 }
                 //Then draw all of the layers
@@ -834,7 +834,7 @@ namespace Intersect_Client.Classes.Maps
                             GameGraphics.DrawGameTexture(fogTex, new FloatRect(0, 0, fogW, fogH),
                                 new FloatRect(GetX() - (Options.MapWidth * Options.TileWidth * 1f) + x * fogW + drawX,
                                     GetY() - (Options.MapHeight * Options.TileHeight * 1f) + y * fogH + drawY, fogW,
-                                    fogH), new Color((byte) (FogTransparency * _curFogIntensity), 255, 255, 255), null,
+                                    fogH), new Intersect.Color((byte) (FogTransparency * _curFogIntensity), 255, 255, 255), null,
                                 GameBlendModes.Alpha);
                         }
                     }

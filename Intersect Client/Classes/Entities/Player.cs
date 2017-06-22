@@ -14,6 +14,7 @@ using Intersect_Client.Classes.Spells;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
 using Color = IntersectClientExtras.GenericClasses.Color;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -126,7 +127,6 @@ namespace Intersect_Client.Classes.Entities
         public override void Load(ByteBuffer bf)
         {
             base.Load(bf);
-            Level = bf.ReadInteger();
             Gender = bf.ReadInteger();
             Class = bf.ReadInteger();
 
@@ -487,19 +487,19 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
-            if (Globals.InputManager.KeyDown(Keys.W) || Globals.InputManager.KeyDown(Keys.Up))
+            if (GameControls.KeyDown(Controls.MoveUp))
             {
                 movey = 1;
             }
-            if (Globals.InputManager.KeyDown(Keys.S) || Globals.InputManager.KeyDown(Keys.Down))
+            if (GameControls.KeyDown(Controls.MoveDown))
             {
                 movey = -1;
             }
-            if (Globals.InputManager.KeyDown(Keys.A) || Globals.InputManager.KeyDown(Keys.Left))
+            if (GameControls.KeyDown(Controls.MoveLeft))
             {
                 movex = -1;
             }
-            if (Globals.InputManager.KeyDown(Keys.D) || Globals.InputManager.KeyDown(Keys.Right))
+            if (GameControls.KeyDown(Controls.MoveRight))
             {
                 movex = 1;
             }
@@ -600,16 +600,6 @@ namespace Intersect_Client.Classes.Entities
                         }
                     }
                 }
-                if (Options.WeaponIndex > -1 && Globals.Me.Equipment[Options.WeaponIndex] > -1)
-                {
-                    var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[Globals.Me.Equipment[Options.WeaponIndex]].ItemNum);
-                    if (item != null && item.Projectile >= 0)
-                    {
-                        PacketSender.SendAttack(-1);
-                        AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
-                        return true;
-                    }
-                }
                 foreach (var en in Globals.Entities)
                 {
                     if (en.Value == null) continue;
@@ -625,18 +615,11 @@ namespace Intersect_Client.Classes.Entities
                     }
                 }
             }
-            //If has a weapon with a projectile equiped, attack anyway
-            if (Options.WeaponIndex > -1 && Globals.Me.Equipment[Options.WeaponIndex] > -1)
-            {
-                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[Globals.Me.Equipment[Options.WeaponIndex]].ItemNum);
-                if (item != null && item.Projectile >= 0)
-                {
-                    PacketSender.SendAttack(_targetIndex);
-                    AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
-                    return true;
-                }
-            }
-            return false;
+
+            //Projectile/empty swing for animations
+            PacketSender.SendAttack(-1);
+            AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+            return true;
         }
 
         public bool GetRealLocation(ref int x, ref int y, ref int map)
@@ -1117,15 +1100,15 @@ namespace Intersect_Client.Classes.Entities
         {
             if (type == 1)
             {
-                base.DrawName(new Color(0, 70, 255)); //blue
+                base.DrawName(new Color(CustomColors.PlayerNameMod.A, CustomColors.PlayerNameMod.R, CustomColors.PlayerNameMod.G, CustomColors.PlayerNameMod.B)); //blue
             }
             else if (type == 2)
             {
-                base.DrawName(Color.Red); //red
+                base.DrawName(new Color(CustomColors.PlayerNameAdmin.A, CustomColors.PlayerNameAdmin.R, CustomColors.PlayerNameAdmin.G, CustomColors.PlayerNameAdmin.B)); //red
             }
             else
             {
-                base.DrawName(new Color(205, 133, 63)); //light brown
+                base.DrawName(new Color(CustomColors.PlayerNameNormal.A, CustomColors.PlayerNameNormal.R, CustomColors.PlayerNameNormal.G, CustomColors.PlayerNameNormal.B)); //light brown
             }
         }
 

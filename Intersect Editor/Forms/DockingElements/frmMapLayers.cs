@@ -395,6 +395,51 @@ namespace Intersect.Editor.Forms
             return 0;
         }
 
+        public int GetAttributeFromEditor()
+        {
+            if (rbBlocked.Checked == true)
+            {
+                return (int)MapAttributes.Blocked;
+            }
+            else if (rbItem.Checked == true)
+            {
+                return (int)MapAttributes.Item;
+            }
+            else if (rbZDimension.Checked == true)
+            {
+                return (int)MapAttributes.ZDimension;
+            }
+            else if (rbNPCAvoid.Checked == true)
+            {
+                return (int)MapAttributes.NPCAvoid;
+            }
+            else if (rbWarp.Checked == true)
+            {
+                return (int)MapAttributes.Warp;
+            }
+            else if (rbSound.Checked == true)
+            {
+                return (int)MapAttributes.Sound;
+            }
+            else if (rbResource.Checked == true)
+            {
+                return (int)MapAttributes.Resource;
+            }
+            else if (rbAnimation.Checked == true)
+            {
+                return (int)MapAttributes.Animation;
+            }
+            else if (rbGrappleStone.Checked == true)
+            {
+                return (int)MapAttributes.GrappleStone;
+            }
+            else if (rbSlide.Checked == true)
+            {
+                return (int)MapAttributes.Slide;
+            }
+            return (int)MapAttributes.Walkable;
+        }
+
         public void PlaceAttribute(MapBase tmpMap, int x, int y)
         {
             tmpMap.Attributes[x, y] = new Intersect.GameObjects.Maps.Attribute();

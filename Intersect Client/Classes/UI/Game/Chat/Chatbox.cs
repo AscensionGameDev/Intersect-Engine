@@ -9,6 +9,7 @@ using IntersectClientExtras.Gwen.ControlInternal;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI.Game.Chat;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -79,7 +80,7 @@ namespace Intersect_Client.Classes.UI.Game
             _chatboxInput.SetPosition(18, 144);
             _chatboxInput.SetSize(314, 16);
             _chatboxInput.SubmitPressed += ChatBoxInput_SubmitPressed;
-            _chatboxInput.Text = Strings.Get("chatbox", "enterchat");
+            _chatboxInput.Text = GetDefaultInputText();
             _chatboxInput.Clicked += ChatBoxInput_Clicked;
             _chatboxInput.ShouldDrawBackground = false;
             _chatboxInput.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Normal);
@@ -168,7 +169,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Chatbox Window
         void ChatBoxInput_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_chatboxInput.Text == Strings.Get("chatbox", "enterchat"))
+            if (_chatboxInput.Text == GetDefaultInputText())
             {
                 _chatboxInput.Text = "";
             }
@@ -176,24 +177,43 @@ namespace Intersect_Client.Classes.UI.Game
 
         void ChatBoxInput_SubmitPressed(Base sender, EventArgs arguments)
         {
-            if (_chatboxInput.Text.Trim().Length <= 0 || _chatboxInput.Text == Strings.Get("chatbox", "enterchat"))
+            if (_chatboxInput.Text.Trim().Length <= 0 || _chatboxInput.Text == GetDefaultInputText())
             {
-                _chatboxInput.Text = Strings.Get("chatbox", "enterchat");
+                _chatboxInput.Text = GetDefaultInputText();
                 return;
             }
             PacketSender.SendChatMsg(_chatboxInput.Text.Trim());
-            _chatboxInput.Text = Strings.Get("chatbox", "enterchat");
+            _chatboxInput.Text = GetDefaultInputText();
         }
 
         void ChatBoxSendBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_chatboxInput.Text.Trim().Length <= 0 || _chatboxInput.Text == Strings.Get("chatbox", "enterchat"))
+            if (_chatboxInput.Text.Trim().Length <= 0 || _chatboxInput.Text == GetDefaultInputText())
             {
-                _chatboxInput.Text = Strings.Get("chatbox", "enterchat");
+                _chatboxInput.Text = GetDefaultInputText();
                 return;
             }
             PacketSender.SendChatMsg(_chatboxInput.Text.Trim());
-            _chatboxInput.Text = Strings.Get("chatbox", "enterchat");
+            _chatboxInput.Text = GetDefaultInputText();
+        }
+
+        string GetDefaultInputText()
+        {
+            var key1 = GameControls.ActiveControls.ControlMapping[Controls.Enter].key1;
+            var key2 = GameControls.ActiveControls.ControlMapping[Controls.Enter].key2;
+            if (key1 == Keys.None && key2 != Keys.None)
+            {
+                return Strings.Get("chatbox", "enterchat1", Strings.Get("keys",Enum.GetName(typeof(Keys),key2)));
+            }
+            else if (key1 != Keys.None && key2 == Keys.None)
+            {
+                return Strings.Get("chatbox", "enterchat1", Strings.Get("keys", Enum.GetName(typeof(Keys), key1)));
+            }
+            else if (key1 != Keys.None && key2 != Keys.None)
+            {
+                return Strings.Get("chatbox", "enterchat1", Strings.Get("keys", Enum.GetName(typeof(Keys), key1)), Strings.Get("keys", Enum.GetName(typeof(Keys), key2)));
+            }
+            return Strings.Get("chatbox", "enterchat");
         }
     }
 }

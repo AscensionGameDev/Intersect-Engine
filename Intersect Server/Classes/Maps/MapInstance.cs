@@ -340,7 +340,7 @@ namespace Intersect.Server.Classes.Maps
             {
                 if (resourceSpawn.Value != null && resourceSpawn.Value.Entity != null)
                 {
-                    resourceSpawn.Value.Entity.Destroy(false);
+                    resourceSpawn.Value.Entity.Destroy(0);
                     Entities.Remove(resourceSpawn.Value.Entity);
                 }
             }
@@ -409,7 +409,7 @@ namespace Intersect.Server.Classes.Maps
             //Kill all npcs spawned from this map
             foreach (var npcSpawn in NpcSpawnInstances)
             {
-                npcSpawn.Value.Entity.Die(false);
+                npcSpawn.Value.Entity.Die(0);
             }
             NpcSpawnInstances.Clear();
             Spawns.Clear();
@@ -419,7 +419,7 @@ namespace Intersect.Server.Classes.Maps
             {
                 if (entity.GetType() == typeof(Npc))
                 {
-                    entity.Die(false);
+                    entity.Die(0);
                 }
             }
         }

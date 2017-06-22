@@ -104,7 +104,7 @@ namespace Intersect_Client.Classes.Entities
                                 frameWidth,
                                 frameHeight),
                             new FloatRect(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth, frameHeight),
-                            Color.White, null, GameBlendModes.None, null, rotationDegrees);
+                            Intersect.Color.White, null, GameBlendModes.None, null, rotationDegrees);
                     }
                 }
                 int offsetX = myBase.LowerLights[lowerFrame].OffsetX;
@@ -142,7 +142,7 @@ namespace Intersect_Client.Classes.Entities
                                 frameWidth,
                                 frameHeight),
                             new FloatRect(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth, frameHeight),
-                            Color.White, null, GameBlendModes.None, null, rotationDegrees);
+                            Intersect.Color.White, null, GameBlendModes.None, null, rotationDegrees);
                     }
                 }
                 int offsetX = myBase.LowerLights[lowerFrame].OffsetX;

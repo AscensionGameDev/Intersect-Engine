@@ -258,6 +258,7 @@ namespace Intersect_Client.Classes.UI.Game
             _partyWindow.Update();
             _friendsWindow.Update();
             _questsWindow.Update(updateQuestLog);
+            _optionsWindow.Update();
         }
 
         public void UpdateFriendsList()

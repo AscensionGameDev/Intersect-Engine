@@ -22,9 +22,10 @@ namespace Intersect
         public static int MaxInvItems = 35;
         public static int MaxPlayerSkills = 35;
         public static int MaxBankSlots = 100;
+		public static int ItemDropChance = 0;
 
-        //Passability Based on MapZones
-        public static bool[] PlayerPassable = new bool[Enum.GetNames(typeof(MapZones)).Length];
+		//Passability Based on MapZones
+		public static bool[] PlayerPassable = new bool[Enum.GetNames(typeof(MapZones)).Length];
 
         //Equipment
         public static int WeaponIndex = -1;
@@ -33,16 +34,8 @@ namespace Intersect
         public static List<string>[] PaperdollOrder = new List<string>[Enum.GetNames(typeof(Directions)).Length];
         public static List<string> ToolTypes = new List<string>();
 
-        public static List<string> StatusActionMsgs = new List<string>
-        {
-            "NONE!",
-            "SILENCED!",
-            "STUNNED!",
-            "SNARED!",
-            "BLINDED!",
-            "STEALTH!",
-            "TRANSFORMED!"
-        };
+        //Constantly Animated Sprites
+        public static List<string> AnimatedSprites = new List<string>();
 
         //Combat
         public static int MinAttackRate = 500; //2 attacks per second
@@ -76,8 +69,9 @@ namespace Intersect
             MaxInvItems = bf.ReadInteger();
             MaxPlayerSkills = bf.ReadInteger();
             MaxBankSlots = bf.ReadInteger();
+			ItemDropChance = bf.ReadInteger();
 
-            for (int i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
+			for (int i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
             {
                 PlayerPassable[i] = bf.ReadBoolean();
             }
@@ -107,6 +101,14 @@ namespace Intersect
             for (int i = 0; i < count; i++)
             {
                 ToolTypes.Add(bf.ReadString());
+            }
+
+            //Animated Sprites
+            count = bf.ReadInteger();
+            AnimatedSprites.Clear();
+            for (int i = 0; i < count; i++)
+            {
+                AnimatedSprites.Add(bf.ReadString());
             }
 
             //Combat

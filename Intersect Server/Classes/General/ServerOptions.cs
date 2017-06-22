@@ -50,8 +50,9 @@ namespace Intersect.Server.Classes.General
                     Options.MaxInvItems = GetXmlInt(options, "//Config/Player/MaxInventory");
                     Options.MaxPlayerSkills = GetXmlInt(options, "//Config/Player/MaxSpells");
                     Options.MaxBankSlots = GetXmlInt(options, "//Config/Player/MaxBank");
+					Options.ItemDropChance = GetXmlInt(options, "//Config/Player/ItemDropChance");
 
-                    Options.PlayerPassable[(int) MapZones.Normal] =
+					Options.PlayerPassable[(int) MapZones.Normal] =
                         Convert.ToBoolean(GetXmlStr(options, "//Config/Passability/Normal", true));
                     Options.PlayerPassable[(int) MapZones.Safe] =
                         Convert.ToBoolean(GetXmlStr(options, "//Config/Passability/Safe", true));
@@ -164,6 +165,9 @@ namespace Intersect.Server.Classes.General
                     ItemDespawnTime = GetXmlInt(options, "//Config/Misc/ItemDespawnTime");
                     ItemRespawnTime = GetXmlInt(options, "//Config/Misc/ItemSpawnTime");
 
+                    Options.AnimatedSprites.Clear();
+                    Options.AnimatedSprites.AddRange(GetXmlStr(options, "//Config/Misc/AnimatedSprites", false).Split(','));
+
                     //Combat
                     RegenTime = GetXmlInt(options, "//Config/Combat/RegenTime");
                     Options.MinAttackRate = GetXmlInt(options, "//Config/Combat/MinAttackRate");
@@ -221,6 +225,7 @@ namespace Intersect.Server.Classes.General
             bf.WriteInteger(Options.MaxInvItems);
             bf.WriteInteger(Options.MaxPlayerSkills);
             bf.WriteInteger(Options.MaxBankSlots);
+			bf.WriteInteger(Options.ItemDropChance);
 
             //Passability
             for (int i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
@@ -252,6 +257,13 @@ namespace Intersect.Server.Classes.General
             for (int i = 0; i < Options.ToolTypes.Count; i++)
             {
                 bf.WriteString(Options.ToolTypes[i]);
+            }
+
+            //Animated Sprites
+            bf.WriteInteger(Options.AnimatedSprites.Count);
+            for (int i = 0; i < Options.AnimatedSprites.Count; i++)
+            {
+                bf.WriteString(Options.AnimatedSprites[i]);
             }
 
             //Combat

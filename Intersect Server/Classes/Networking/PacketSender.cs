@@ -464,7 +464,7 @@ namespace Intersect.Server.Classes.Networking
 
         public static void SendPlayerMsg(Client client, string message, string target = "")
         {
-            SendPlayerMsg(client, message, new Color(255, 220, 220, 220), target);
+            SendPlayerMsg(client, message, CustomColors.PlayerMsg, target);
         }
 
         public static void SendPlayerMsg(Client client, string message, Color clr, string target = "")
@@ -498,13 +498,14 @@ namespace Intersect.Server.Classes.Networking
             //Let the client/editor know they have everything now
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.GameData);
+            bf.WriteBytes(CustomColors.GetData());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
         public static void SendGlobalMsg(string message, string target = "")
         {
-            SendGlobalMsg(message, new Color(255, 220, 220, 220), target);
+            SendGlobalMsg(message, CustomColors.GlobalMsg, target);
         }
 
         public static void SendGlobalMsg(string message, Color clr, string target = "")
@@ -523,7 +524,7 @@ namespace Intersect.Server.Classes.Networking
 
         public static void SendProximityMsg(string message, int centerMap, string target = "")
         {
-            SendProximityMsg(message, centerMap, new Color(255, 220, 220, 220));
+            SendProximityMsg(message, centerMap, CustomColors.ProximityMsg);
         }
 
         public static void SendProximityMsg(string message, int centerMap, Color clr, string target = "")

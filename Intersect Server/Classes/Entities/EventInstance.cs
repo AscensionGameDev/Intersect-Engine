@@ -1089,7 +1089,7 @@ namespace Intersect.Server.Classes.Entities
                         {
                             if (((Npc) entities[i]).Despawnable == true)
                             {
-                                ((Npc) entities[i]).Die(false);
+                                ((Npc) entities[i]).Die(100);
                             }
                         }
                     }

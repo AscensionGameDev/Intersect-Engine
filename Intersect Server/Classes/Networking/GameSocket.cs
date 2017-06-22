@@ -155,13 +155,21 @@ namespace Intersect.Server.Classes.Networking
                             //Update trade
                             _myClient.Entity.CancelTrade();
 
-                            //Search for logout activated events and run them
-                            /*foreach (var evt in EventBase.Lookup)
-                            {
-                                _myClient.Entity.StartCommonEvent(evt.Value, (int) EventPage.CommonEventTriggers.LeaveGame);
-                            }*/
+							//Clear all event spawned NPC's
+							var entities = _myClient.Entity.SpawnedNpcs.ToArray();
+							for (int i = 0; i < entities.Length; i++)
+							{
+								if (entities[i] != null && entities[i].GetType() == typeof(Npc))
+								{
+									if (((Npc)entities[i]).Despawnable == true)
+									{
+										((Npc)entities[i]).Die(0);
+									}
+								}
+							}
+							_myClient.Entity.SpawnedNpcs.Clear();
 
-                            PacketSender.SendEntityLeave(_myClient.Entity.MyIndex, (int)EntityTypes.Player,
+							PacketSender.SendEntityLeave(_myClient.Entity.MyIndex, (int)EntityTypes.Player,
                                 Globals.Entities[_entityIndex].CurrentMap);
                             if (!_myClient.IsEditor)
                             {

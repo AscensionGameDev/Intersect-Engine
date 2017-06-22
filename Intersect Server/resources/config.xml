@@ -14,6 +14,8 @@
     <MaxInventory>35</MaxInventory>
     <MaxSpells>35</MaxSpells>
     <MaxBank>100</MaxBank>
+    <!--Percentage chance of each item being dropped on player death. e.g. 50 = 50% drop chance per item.-->
+    <ItemDropChance>50</ItemDropChance>
   </Player>
 	<!--Trigger player passability based on map moralites. True = Passable, False = Blocked-->
 	<Passability>
@@ -73,6 +75,7 @@
   <Misc>
     <ItemDespawnTime>15000</ItemDespawnTime>
     <ItemSpawnTime>15000</ItemSpawnTime>
+		<AnimatedSprites></AnimatedSprites>
   </Misc>
   <Combat>
     <RegenTime>3000</RegenTime>

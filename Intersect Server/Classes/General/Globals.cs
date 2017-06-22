@@ -74,7 +74,7 @@ namespace Intersect.Server.Classes.General
             }
             foreach (var en in resources)
             {
-                en.Die(false);
+                en.Die(0);
                 en.Spawn();
             }
         }
@@ -91,7 +91,7 @@ namespace Intersect.Server.Classes.General
             }
             foreach (var en in npcs)
             {
-                en.Die(false);
+                en.Die(0);
             }
         }
 

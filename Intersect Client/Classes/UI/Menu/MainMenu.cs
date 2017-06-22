@@ -180,6 +180,7 @@ namespace Intersect_Client.Classes.UI.Menu
             {
                 CreateCharacterCreation();
             }
+            _optionsWindow.Update();
         }
 
         public void Reset()
