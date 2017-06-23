@@ -115,15 +115,16 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             var msgs = ChatboxMsg.GetMessages();
-            for (int i = _messageIndex; i < msgs.Count; i++)
+            for (var i = _messageIndex; i < msgs.Count; i++)
             {
-                var myText = Gui.WrapText(msgs[i].GetMessage(), 340, _chatboxWindow.Parent.Skin.DefaultFont);
+                var msg = msgs[i];
+                var myText = Gui.WrapText(msg.GetMessage(), 340, _chatboxWindow.Parent.Skin.DefaultFont);
                 foreach (var t in myText)
                 {
                     var rw = _chatboxMessages.AddRow(t.Trim());
-                    rw.SetTextColor(msgs[i].GetColor());
+                    rw.SetTextColor(msg.GetColor());
                     rw.ShouldDrawBackground = false;
-                    rw.UserData = msgs[i].GetTarget();
+                    rw.UserData = msg.GetTarget();
                     rw.Clicked += ChatboxRow_Clicked;
                     _receivedMessage = true;
 
