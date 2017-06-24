@@ -4,11 +4,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Intersect.Enums;
+using Intersect.Localization;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets;
+using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Maps;
 
 namespace Intersect.Server.Classes.Networking
 {
@@ -186,6 +190,7 @@ namespace Intersect.Server.Classes.Networking
             lock (Globals.ClientLock)
             {
                 Globals.Clients.Add(client);
+                Globals.ClientLookup.Add(connection.Guid, client);
             }
         }
 
@@ -195,7 +200,40 @@ namespace Intersect.Server.Classes.Networking
             lock (Globals.ClientLock)
             {
                 Globals.Clients.Remove(client);
+                Globals.ClientLookup.Remove(connection.Guid);
             }
+
+            if (client.Entity == null) return;
+
+            var en = client.Entity;
+            Task.Run(() => Database.SaveCharacter(en));
+            var map = MapInstance.Lookup.Get<MapInstance>(client.Entity.CurrentMap);
+            map?.RemoveEntity(client.Entity);
+
+            //Update parties
+            client.Entity.LeaveParty();
+
+            //Update trade
+            client.Entity.CancelTrade();
+
+            //Clear all event spawned NPC's
+            var entities = client.Entity.SpawnedNpcs.ToArray();
+            foreach (var t in entities)
+            {
+                if (t == null || t.GetType() != typeof(Npc)) continue;
+                if (t.Despawnable) t.Die(0);
+            }
+            client.Entity.SpawnedNpcs.Clear();
+
+            PacketSender.SendEntityLeave(client.Entity.MyIndex, (int)EntityTypes.Player,
+            Globals.Entities[client.EntityIndex].CurrentMap);
+            if (!client.IsEditor)
+            {
+                PacketSender.SendGlobalMsg(Strings.Get("player", "left", client.Entity.MyName, Options.GameName));
+            }
+            client.Entity.Dispose();
+            client.Entity = null;
+            Globals.Entities[client.EntityIndex] = null;
         }
 
         public static Client FindBeta4Client(IConnection connection)

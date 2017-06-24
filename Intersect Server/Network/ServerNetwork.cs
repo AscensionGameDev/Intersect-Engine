@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Security.Cryptography;
 using Intersect.Network.Packets;
+using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Networking;
 
 namespace Intersect.Server.Network
@@ -86,11 +87,11 @@ namespace Intersect.Server.Network
             }
         }
 
-        protected override void RemoveConnection(LidgrenConnection metadata)
+        protected override void RemoveConnection(LidgrenConnection connection)
         {
-            base.RemoveConnection(metadata);
+            base.RemoveConnection(connection);
 
-            Client.RemoveBeta4Client(metadata);
+            Client.RemoveBeta4Client(connection);
         }
 
         protected override void RegisterHandlers()
@@ -106,7 +107,7 @@ namespace Intersect.Server.Network
             if (HasConnection(lidgrenId)) return true;
             Log.Error($"Disconnected client that isn't listed ({lidgrenId}).");
             request.SenderConnection.Disconnect("You weren't approved?");
-            return false;
+            return true;
         }
 
         protected override int CalculateNumberOfThreads()

@@ -62,7 +62,8 @@ namespace Intersect.Network
             {
                 LidgrenConfig.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
                 LidgrenConfig.MaximumConnections = config.MaximumConnections;
-                LidgrenConfig.LocalAddress = DnsUtils.Resolve(config.Host);
+                //LidgrenConfig.LocalAddress = DnsUtils.Resolve(config.Host);
+                //LidgrenConfig.EnableUPnP = true;
                 LidgrenConfig.Port = config.Port;
             }
 
@@ -227,7 +228,6 @@ namespace Intersect.Network
 
                     if (emptiest.Connections.Count <= thread.Connections.Count) continue;
                     emptiest = thread;
-                    continue;
                 }
                 return emptiest;
             }
@@ -250,22 +250,26 @@ namespace Intersect.Network
         protected void RemoveConnection(long lidgrenId)
         {
             if (!mConnectionGuidLookup.TryGetValue(lidgrenId, out Guid guid)) return;
-            if (!mConnectionLookup.TryGetValue(guid, out LidgrenConnection metadata)) return;
-            RemoveConnection(metadata);
+            if (!mConnectionLookup.TryGetValue(guid, out LidgrenConnection connection)) return;
+            RemoveConnection(connection);
         }
 
-        protected virtual void RemoveConnection(LidgrenConnection metadata)
+        protected virtual void RemoveConnection(LidgrenConnection connection)
         {
-            if (metadata?.NetConnection == null) return;
+            if (connection?.NetConnection == null) return;
             if (mConnectionLookup == null) throw new ArgumentNullException();
             if (mConnectionGuidLookup == null) throw new ArgumentNullException();
 
-            mConnectionLookup.Remove(metadata.Guid);
-            mConnectionGuidLookup.Remove(metadata.NetConnection.RemoteUniqueIdentifier);
+            var guid = connection.Guid;
+            var lidgrenId = connection.NetConnection.RemoteUniqueIdentifier;
+            Log.Info($"Removing endpoint {NetUtility.ToHexString(lidgrenId)} ({guid})...");
 
-            if (!mThreadLookup.TryGetValue(metadata.Guid, out NetworkThread thread)) return;
-            thread.Connections.Remove(metadata);
-            mThreadLookup.Remove(metadata.Guid);
+            mConnectionLookup.Remove(guid);
+            mConnectionGuidLookup.Remove(lidgrenId);
+
+            if (!mThreadLookup.TryGetValue(connection.Guid, out NetworkThread thread)) return;
+            thread.Connections.Remove(connection);
+            mThreadLookup.Remove(connection.Guid);
         }
 
         protected bool HandleStatusChanged(NetIncomingMessage request)
@@ -285,15 +289,8 @@ namespace Intersect.Network
                     return true;
 
                 case NetConnectionStatus.Disconnected:
-                    if (mConnectionGuidLookup.TryGetValue(lidgrenId, out Guid guid))
-                    {
-                        Log.Info($"Removing endpoint {NetUtility.ToHexString(lidgrenId)} ({guid})...");
-                        mConnectionGuidLookup.Remove(lidgrenId);
-                        mConnectionLookup.Remove(guid);
-                    }
-
                     Log.Info($"Disconnected from endpoint {NetUtility.ToHexString(lidgrenId)} .");
-
+                    RemoveConnection(lidgrenId);
                     return HandleDisconnected(request);
 
                 default:
