@@ -59,7 +59,7 @@ namespace Intersect.Network
                 // ReSharper disable once PossibleNullReferenceException
                 if (!Queue.TryNext(out IPacket packet)) continue;
 
-                Log.Debug($"Dispatching packet '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer?.Length() ?? -1}).");
+                //Log.Debug($"Dispatching packet '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer?.Length() ?? -1}).");
                 if (!(mDispatcher?.Dispatch(packet) ?? false))
                 {
                     Log.Warn($"Failed to dispatch packet '{packet}'.");

@@ -912,51 +912,51 @@ namespace Intersect.GameObjects.Maps
         {
             var tmpTile = new bool[5];
             byte situation = 1;
-			int tileLayer = 0;
+            int tileLayer = 0;
 
-			//Check side tile.
-			if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
-			{
-				int i = y - 1;
+            //Check side tile.
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
+            {
+                int i = y - 1;
 
-				while (tileLayer == 0)
-				{
-					if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-					{
-						tileLayer = 1;
-					}
+                while (tileLayer == 0)
+                {
+                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
+                    {
+                        tileLayer = 1;
+                    }
 
-					if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps) && CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
-					{
-						tileLayer = 2;
-					}
+                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps) && CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
+                    {
+                        tileLayer = 2;
+                    }
 
-					i--;
-				}
-			}
-			else
-			{
-				int i = y + 1;
+                    i--;
+                }
+            }
+            else
+            {
+                int i = y + 1;
 
-				while (tileLayer == 0)
-				{
-					if (CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
-					{
-						tileLayer = 2;
-					}
+                while (tileLayer == 0)
+                {
+                    if (CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
+                    {
+                        tileLayer = 2;
+                    }
 
-					if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-					{
-						tileLayer = 1;
-					}
+                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
+                    {
+                        tileLayer = 1;
+                    }
 
-					i++;
-				}
-			}
+                    i++;
+                }
+            }
 
 
-			// North West
-			if (CheckTileMatch(layerNum, x, y, x - 1, y - 1, surroundingMaps))
+            // North West
+            if (CheckTileMatch(layerNum, x, y, x - 1, y - 1, surroundingMaps))
             {
                 tmpTile[1] = true;
             }
@@ -973,14 +973,14 @@ namespace Intersect.GameObjects.Maps
                 tmpTile[3] = true;
             }
 
-			//Center
-			if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps) && !CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
-			{
-				tmpTile[4] = true;
-			}
+            //Center
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps) && !CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
+            {
+                tmpTile[4] = true;
+            }
 
-			// Calculate Situation - Horizontal
-			if (!tmpTile[2] && tmpTile[3])
+            // Calculate Situation - Horizontal
+            if (!tmpTile[2] && tmpTile[3])
             {
                 situation = AutoTileHorizontal;
             }
@@ -994,45 +994,45 @@ namespace Intersect.GameObjects.Maps
             {
                 situation = AutoTileFill;
             }
-			// Inner
-			if ((!tmpTile[2] && !tmpTile[3]))
+            // Inner
+            if ((!tmpTile[2] && !tmpTile[3]))
             {
                 situation = AutoTileInner;
             }
 
-			//Horizontal
-			if (tmpTile[4])
-			{
-				situation = AutoTileHorizontal;
-			}
+            //Horizontal
+            if (tmpTile[4])
+            {
+                situation = AutoTileHorizontal;
+            }
 
-			//check for edge of cliff for cliff layering.
-			if (tileLayer == 2)
-			{
-				if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
-				{
-					situation = AutoTileVertical;
-				}
-				else
-				{
-					if (!CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
-					{
-						situation = AutoTileHorizontal;
-					}
-					else
-					{
-						situation = AutoTileFill;
-					}
-				}
-			}
+            //check for edge of cliff for cliff layering.
+            if (tileLayer == 2)
+            {
+                if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
+                {
+                    situation = AutoTileVertical;
+                }
+                else
+                {
+                    if (!CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
+                    {
+                        situation = AutoTileHorizontal;
+                    }
+                    else
+                    {
+                        situation = AutoTileFill;
+                    }
+                }
+            }
 
-			if (!tmpTile[2] && tmpTile[3] && tmpTile[1])
-			{
-				situation = AutoTileInner;
-			}
+            if (!tmpTile[2] && tmpTile[3] && tmpTile[1])
+            {
+                situation = AutoTileInner;
+            }
 
-			// Actually place the subtile
-			switch (situation)
+            // Actually place the subtile
+            switch (situation)
             {
                 case AutoTileInner:
                     PlaceAutotile(layerNum, x, y, 1, "e");
@@ -1053,50 +1053,50 @@ namespace Intersect.GameObjects.Maps
         {
             var tmpTile = new bool[5];
             byte situation = 1;
-			int tileLayer = 0;
+            int tileLayer = 0;
 
-			//Check side tile.
-			if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
-			{
-				int i = y - 1;
+            //Check side tile.
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
+            {
+                int i = y - 1;
 
-				while (tileLayer == 0)
-				{
-					if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-					{
-						tileLayer = 1;
-					}
+                while (tileLayer == 0)
+                {
+                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
+                    {
+                        tileLayer = 1;
+                    }
 
-					if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps) && CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
-					{
-						tileLayer = 2;
-					}
+                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps) && CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
+                    {
+                        tileLayer = 2;
+                    }
 
-					i--;
-				}
-			}
-			else
-			{
-				int i = y + 1;
+                    i--;
+                }
+            }
+            else
+            {
+                int i = y + 1;
 
-				while (tileLayer == 0)
-				{
-					if (CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
-					{
-						tileLayer = 2;
-					}
+                while (tileLayer == 0)
+                {
+                    if (CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
+                    {
+                        tileLayer = 2;
+                    }
 
-					if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-					{
-						tileLayer = 1;
-					}
+                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
+                    {
+                        tileLayer = 1;
+                    }
 
-					i++;
-				}
-			}
+                    i++;
+                }
+            }
 
-			// North
-			if (CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
+            // North
+            if (CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
             {
                 tmpTile[1] = true;
             }
@@ -1113,14 +1113,14 @@ namespace Intersect.GameObjects.Maps
                 tmpTile[3] = true;
             }
 
-			//Center
-			if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps) && !CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
-			{
-				tmpTile[4] = true;
-			}
+            //Center
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps) && !CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
+            {
+                tmpTile[4] = true;
+            }
 
-			// Calculate Situation - Horizontal
-			if (!tmpTile[1] && tmpTile[3])
+            // Calculate Situation - Horizontal
+            if (!tmpTile[1] && tmpTile[3])
             {
                 situation = AutoTileHorizontal;
             }
@@ -1140,40 +1140,40 @@ namespace Intersect.GameObjects.Maps
                 situation = AutoTileInner;
             }
 
-			//Horizontal
-			if (tmpTile[4])
-			{
-				situation = AutoTileHorizontal;
-			}
+            //Horizontal
+            if (tmpTile[4])
+            {
+                situation = AutoTileHorizontal;
+            }
 
-			//check for edge of cliff for cliff layering.
-			if (tileLayer == 2)
-			{
-				if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
-				{
-					situation = AutoTileVertical;
-				}
-				else
-				{
-					if (!CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
-					{
-						situation = AutoTileHorizontal;
-					}
-					else
-					{
-						situation = AutoTileFill;
-					}
-				}
-			}
+            //check for edge of cliff for cliff layering.
+            if (tileLayer == 2)
+            {
+                if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
+                {
+                    situation = AutoTileVertical;
+                }
+                else
+                {
+                    if (!CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
+                    {
+                        situation = AutoTileHorizontal;
+                    }
+                    else
+                    {
+                        situation = AutoTileFill;
+                    }
+                }
+            }
 
-			if (!tmpTile[1] && tmpTile[3] && tmpTile[2])
-			{
-				situation = AutoTileInner;
-			}
+            if (!tmpTile[1] && tmpTile[3] && tmpTile[2])
+            {
+                situation = AutoTileInner;
+            }
 
 
-			// Actually place the subtile
-			switch (situation)
+            // Actually place the subtile
+            switch (situation)
             {
                 case AutoTileInner:
                     PlaceAutotile(layerNum, x, y, 2, "j");
@@ -1194,50 +1194,50 @@ namespace Intersect.GameObjects.Maps
         {
             var tmpTile = new bool[5];
             byte situation = 1;
-			int tileLayer = 0;
+            int tileLayer = 0;
 
-			//Check side tile.
-			if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
-			{
-				int i = y - 1;
+            //Check side tile.
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
+            {
+                int i = y - 1;
 
-				while (tileLayer == 0)
-				{
-					if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-					{
-						tileLayer = 1;
-					}
+                while (tileLayer == 0)
+                {
+                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
+                    {
+                        tileLayer = 1;
+                    }
 
-					if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps) && CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
-					{
-						tileLayer = 2;
-					}
+                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps) && CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
+                    {
+                        tileLayer = 2;
+                    }
 
-					i--;
-				}
-			}
-			else
-			{
-				int i = y + 1;
+                    i--;
+                }
+            }
+            else
+            {
+                int i = y + 1;
 
-				while (tileLayer == 0)
-				{
-					if (CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
-					{
-						tileLayer = 2;
-					}
+                while (tileLayer == 0)
+                {
+                    if (CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
+                    {
+                        tileLayer = 2;
+                    }
 
-					if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-					{
-						tileLayer = 1;
-					}
+                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
+                    {
+                        tileLayer = 1;
+                    }
 
-					i++;
-				}
-			}
+                    i++;
+                }
+            }
 
-			// West
-			if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
+            // West
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
             {
                 tmpTile[1] = true;
             }
@@ -1254,14 +1254,14 @@ namespace Intersect.GameObjects.Maps
                 tmpTile[3] = true;
             }
 
-			//Center
-			if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps) && !CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
-			{
-				tmpTile[4] = true;
-			}
+            //Center
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps) && !CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
+            {
+                tmpTile[4] = true;
+            }
 
-			// Calculate Situation - Horizontal
-			if (tmpTile[1] && !tmpTile[3])
+            // Calculate Situation - Horizontal
+            if (tmpTile[1] && !tmpTile[3])
             {
                 situation = AutoTileHorizontal;
             }
@@ -1281,21 +1281,21 @@ namespace Intersect.GameObjects.Maps
                 situation = AutoTileInner;
             }
 
-			//check for edge of cliff for cliff layering.
-			if (tileLayer == 2)
-			{
-				if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
-				{
-					situation = AutoTileVertical;
-				}
-				else
-				{
-					situation = AutoTileFill;
-				}
-			}
+            //check for edge of cliff for cliff layering.
+            if (tileLayer == 2)
+            {
+                if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
+                {
+                    situation = AutoTileVertical;
+                }
+                else
+                {
+                    situation = AutoTileFill;
+                }
+            }
 
-			// Actually place the subtile
-			switch (situation)
+            // Actually place the subtile
+            switch (situation)
             {
                 case AutoTileInner:
                     PlaceAutotile(layerNum, x, y, 3, "o");
@@ -1316,50 +1316,50 @@ namespace Intersect.GameObjects.Maps
         {
             var tmpTile = new bool[5];
             byte situation = 1;
-			int tileLayer = 0;
+            int tileLayer = 0;
 
-			//Check side tile.
-			if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
-			{
-				int i = y - 1;
+            //Check side tile.
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
+            {
+                int i = y - 1;
 
-				while (tileLayer == 0)
-				{
-					if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-					{
-						tileLayer = 1;
-					}
+                while (tileLayer == 0)
+                {
+                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
+                    {
+                        tileLayer = 1;
+                    }
 
-					if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps) && CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
-					{
-						tileLayer = 2;
-					}
+                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps) && CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
+                    {
+                        tileLayer = 2;
+                    }
 
-					i--;
-				}
-			}
-			else
-			{
-				int i = y + 1;
+                    i--;
+                }
+            }
+            else
+            {
+                int i = y + 1;
 
-				while (tileLayer == 0)
-				{
-					if (CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
-					{
-						tileLayer = 2;
-					}
+                while (tileLayer == 0)
+                {
+                    if (CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
+                    {
+                        tileLayer = 2;
+                    }
 
-					if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-					{
-						tileLayer = 1;
-					}
+                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
+                    {
+                        tileLayer = 1;
+                    }
 
-					i++;
-				}
-			}
+                    i++;
+                }
+            }
 
-			// South
-			if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps))
+            // South
+            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps))
             {
                 tmpTile[1] = true;
             }
@@ -1376,14 +1376,14 @@ namespace Intersect.GameObjects.Maps
                 tmpTile[3] = true;
             }
 
-			//Center
-			if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps) && !CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
-			{
-				tmpTile[4] = true;
-			}
+            //Center
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps) && !CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
+            {
+                tmpTile[4] = true;
+            }
 
-			// Calculate Situation -  Horizontal
-			if (!tmpTile[1] && tmpTile[3])
+            // Calculate Situation -  Horizontal
+            if (!tmpTile[1] && tmpTile[3])
             {
                 situation = AutoTileHorizontal;
             }
@@ -1403,21 +1403,21 @@ namespace Intersect.GameObjects.Maps
                 situation = AutoTileInner;
             }
 
-			//check for edge of cliff for cliff layering.
-			if (tileLayer == 2)
-			{
-				if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
-				{
-					situation = AutoTileVertical;
-				}
-				else
-				{
-					situation = AutoTileFill; situation = AutoTileFill;
-				}
-			}
+            //check for edge of cliff for cliff layering.
+            if (tileLayer == 2)
+            {
+                if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
+                {
+                    situation = AutoTileVertical;
+                }
+                else
+                {
+                    situation = AutoTileFill; situation = AutoTileFill;
+                }
+            }
 
-			// Actually place the subtile
-			switch (situation)
+            // Actually place the subtile
+            switch (situation)
             {
                 case AutoTileInner:
                     PlaceAutotile(layerNum, x, y, 4, "t");

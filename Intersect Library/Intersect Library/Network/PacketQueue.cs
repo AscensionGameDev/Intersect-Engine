@@ -43,11 +43,11 @@ namespace Intersect.Network
             if (mQueueLock == null) throw new ArgumentNullException();
             if (mQueue == null) throw new ArgumentNullException();
 
-            Log.Debug("Waiting on queue lock...");
+            //Log.Debug("Waiting on queue lock...");
             lock (mQueueLock)
             {
                 mQueue.Enqueue(packet);
-                Log.Debug($"enqueuedSize={mQueue.Count}");
+                //Log.Debug($"enqueuedSize={mQueue.Count}");
                 Monitor.Pulse(mQueueLock);
             }
 
@@ -60,17 +60,17 @@ namespace Intersect.Network
             if (mQueueLock == null) throw new ArgumentNullException();
             if (mQueue == null) throw new ArgumentNullException();
 
-            Log.Debug("Waiting on deque lock...");
+            //Log.Debug("Waiting on deque lock...");
             lock (mDequeLock)
             {
-                Log.Debug("Waiting on queue lock...");
+                //Log.Debug("Waiting on queue lock...");
                 lock (mQueueLock)
                 {
-                    Log.Debug("Checking if blocked...");
+                    //Log.Debug("Checking if blocked...");
 
                     if (mQueue.Count < 1)
                     {
-                        Log.Debug("Blocked... waiting for new packets...");
+                        //Log.Debug("Blocked... waiting for new packets...");
                         Monitor.Wait(mQueueLock);
                     }
 
@@ -80,7 +80,7 @@ namespace Intersect.Network
                         return false;
                     }
 
-                    Log.Debug($"size={mQueue.Count}");
+                    //Log.Debug($"size={mQueue.Count}");
                     packet = mQueue.Dequeue();
                     if (mQueue.Count > 0)
                         Monitor.Pulse(mQueueLock);

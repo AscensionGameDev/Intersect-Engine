@@ -51,9 +51,9 @@ namespace Intersect.Server.Classes.Entities
 
         //Vitals & Stats
         public int[] MaxVital = new int[(int) Vitals.VitalCount];
-		public int Level = 1;
+        public int Level = 1;
 
-		public EventMoveRoute MoveRoute = null;
+        public EventMoveRoute MoveRoute = null;
         public EventPageInstance MoveRouteSetter = null;
 
         public long MoveTimer;
@@ -677,10 +677,10 @@ namespace Intersect.Server.Classes.Entities
         public virtual void TryAttack(Entity enemy, ProjectileBase projectile, SpellBase parentSpell,
             ItemBase parentItem, int projectileDir)
         {
-			if (enemy.GetType() == typeof(Resource) && parentSpell != null) return;
+            if (enemy.GetType() == typeof(Resource) && parentSpell != null) return;
 
-			//Check if the target is blocking facing in the direction against you
-			if (enemy.Blocking)
+            //Check if the target is blocking facing in the direction against you
+            if (enemy.Blocking)
             {
                 int d = Dir;
 
@@ -960,8 +960,8 @@ namespace Intersect.Server.Classes.Entities
                 PacketSender.SendActionMsg(enemy, Strings.Get("combat", "critical"), CustomColors.Critical);
             }
 
-			//Calculate Damages
-			if (baseDamage != 0)
+            //Calculate Damages
+            if (baseDamage != 0)
             {
                 baseDamage = Formulas.CalculateDamage(baseDamage, damageType, scalingStat, scaling, critMultiplier, this,
                     enemy);
@@ -1367,18 +1367,18 @@ namespace Intersect.Server.Classes.Entities
         {
             if (dropitems > 0)
             {
-				// Drop items
-				for (int n = 0; n < Inventory.Count; n++)
+                // Drop items
+                for (int n = 0; n < Inventory.Count; n++)
                 {
-					ItemInstance item = Inventory[n];
-					if (ItemBase.Lookup.Get<ItemBase>(item.ItemNum) != null && Globals.Rand.Next(1, 101) < dropitems)
+                    ItemInstance item = Inventory[n];
+                    if (ItemBase.Lookup.Get<ItemBase>(item.ItemNum) != null && Globals.Rand.Next(1, 101) < dropitems)
                     {
                         MapInstance.Lookup.Get<MapInstance>(CurrentMap).SpawnItem(CurrentX, CurrentY, item, item.ItemVal);
-						if (GetType() == typeof(Player))
-						{
-							((Player)this).TakeItem(n, item.ItemVal);
-						}
-					}
+                        if (GetType() == typeof(Player))
+                        {
+                            ((Player)this).TakeItem(n, item.ItemVal);
+                        }
+                    }
                 }
             }
             var currentMap = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
@@ -1436,8 +1436,8 @@ namespace Intersect.Server.Classes.Entities
             bf.WriteString(MyName);
             bf.WriteString(MySprite);
             bf.WriteString(Face);
-			bf.WriteInteger(Level);
-			bf.WriteInteger(CurrentX);
+            bf.WriteInteger(Level);
+            bf.WriteInteger(CurrentX);
             bf.WriteInteger(CurrentY);
             bf.WriteInteger(CurrentZ);
             bf.WriteInteger(Dir);

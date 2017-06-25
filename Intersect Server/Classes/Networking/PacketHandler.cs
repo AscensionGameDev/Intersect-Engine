@@ -833,9 +833,9 @@ namespace Intersect.Server.Classes.Networking
 
         private static void HandleTryAttack(Client client, byte[] packet)
         {
-			bool UnequippedAttack = false;
+            bool UnequippedAttack = false;
 
-			using (var buffer = new ByteBuffer())
+            using (var buffer = new ByteBuffer())
             {
                 buffer.WriteBytes(packet);
                 long target = buffer.ReadLong();
@@ -870,10 +870,10 @@ namespace Intersect.Server.Classes.Networking
                         ItemBase.Lookup.Get<ItemBase>(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum) !=
                         null)
                     {
-						ItemBase WeaponItem = ItemBase.Lookup.Get<ItemBase>(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum);
+                        ItemBase WeaponItem = ItemBase.Lookup.Get<ItemBase>(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum);
 
-						//Check for animation
-						var attackAnim = AnimationBase.Lookup.Get<AnimationBase>(ItemBase.Lookup.Get<ItemBase>(
+                        //Check for animation
+                        var attackAnim = AnimationBase.Lookup.Get<AnimationBase>(ItemBase.Lookup.Get<ItemBase>(
                             client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum).AttackAnimation);
                         if (attackAnim != null)
                         {

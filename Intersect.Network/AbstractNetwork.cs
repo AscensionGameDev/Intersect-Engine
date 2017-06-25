@@ -67,6 +67,15 @@ namespace Intersect.Network
                 LidgrenConfig.Port = config.Port;
             }
 
+#if DEBUG
+            LidgrenConfig.ConnectionTimeout = 60;
+#else
+            LidgrenConfig.ConnectionTimeout = 5;
+#endif
+
+            LidgrenConfig.PingInterval = 2.5f;
+            LidgrenConfig.UseMessageRecycling = true;
+
             Peer = peerType.GetConstructor(new[] { typeof(NetPeerConfiguration) }).Invoke(new object[] { LidgrenConfig }) as NetPeer;
 
             Guid = Guid.NewGuid();
@@ -158,7 +167,7 @@ namespace Intersect.Network
             {
                 case NetSendResult.Sent:
                 case NetSendResult.Queued:
-                    Log.Debug($"Sent '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer.Length() ?? -1}).");
+                    //Log.Debug($"Sent '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer.Length() ?? -1}).");
                     return true;
 
                 default:
@@ -284,8 +293,7 @@ namespace Intersect.Network
                     return HandleConnected(request);
 
                 case NetConnectionStatus.Disconnecting:
-                    Log.Info("Disconnecting...");
-                    Log.Info("'{request.ReadString()}'");
+                    Log.Info($"Disconnecting: '{request.ReadString()}' (EP {NetUtility.ToHexString(lidgrenId)})");
                     return true;
 
                 case NetConnectionStatus.Disconnected:
@@ -426,9 +434,9 @@ namespace Intersect.Network
             if (packet.Read(ref buffer))
             {
                 if (thread.Queue == null) throw new ArgumentNullException();
-                Log.Debug($"Received packet '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer.Length() ?? -1}).");
+                //Log.Debug($"Received packet '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer.Length() ?? -1}).");
                 var queued = thread.Queue.Enqueue(packet);
-                Log.Debug($"thread={thread.Name} queued={queued} queueSize={thread.Queue.Size}");
+                //Log.Debug($"thread={thread.Name} queued={queued} queueSize={thread.Queue.Size}");
             }
             else
             {
