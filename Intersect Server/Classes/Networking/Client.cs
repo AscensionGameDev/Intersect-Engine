@@ -197,11 +197,18 @@ namespace Intersect.Server.Classes.Networking
         public static void RemoveBeta4Client(IConnection connection)
         {
             var client = FindBeta4Client(connection);
+
+            Debug.Assert(client != null, "client != null");
             lock (Globals.ClientLock)
             {
                 Globals.Clients.Remove(client);
                 Globals.ClientLookup.Remove(connection.Guid);
             }
+
+            Log.Debug(string.IsNullOrWhiteSpace(client.MyAccount)
+                //? $"Client disconnected ({(client.IsEditor ? "[editor]" : "[client]")})"
+                ? $"Client disconnected ([menu])"
+                : $"Client disconnected ({client.MyAccount}->{client.Entity?.MyName ?? "[editor]"})");
 
             if (client.Entity == null) return;
 

@@ -143,7 +143,7 @@ namespace Intersect.Network
 
         protected abstract void OnStop();
 
-        public virtual void Disconnect(string message = "")
+        public virtual void Disconnect(string message = "network_disconnect")
         {
             Peer?.Shutdown(message);
             Stop();
@@ -402,6 +402,8 @@ namespace Intersect.Network
 
                 Peer.Recycle(message);
             }
+
+            Disconnect("network_shutdown");
 
             OnStop();
         }
