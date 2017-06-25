@@ -207,6 +207,7 @@ namespace Intersect.Server.Classes.Networking
 
             Log.Debug(string.IsNullOrWhiteSpace(client.MyAccount)
                 //? $"Client disconnected ({(client.IsEditor ? "[editor]" : "[client]")})"
+                // TODO: Transmit client information on network start so we can determine editor vs client
                 ? $"Client disconnected ([menu])"
                 : $"Client disconnected ({client.MyAccount}->{client.Entity?.MyName ?? "[editor]"})");
 
