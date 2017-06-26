@@ -89,3 +89,73 @@
 /processorParam:DebugMode=Auto
 /build:Shaders/radialgradient.fx
 
+#begin Fonts/notosansui_8.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=Color
+/build:Fonts/notosansui_8.spritefont
+
+#begin Fonts/notosansui_10.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=Color
+/build:Fonts/notosansui_10.spritefont
+
+#begin Fonts/notosansui_12.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=Color
+/build:Fonts/notosansui_12.spritefont
+
+#begin Fonts/notosansui_14.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=Color
+/build:Fonts/notosansui_14.spritefont
+
+#begin Fonts/notosansui_16.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=Color
+/build:Fonts/notosansui_16.spritefont
+
+#begin Fonts/notosansui_18.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=Color
+/build:Fonts/notosansui_18.spritefont
+
+#begin Fonts/notosansui_20.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=Color
+/build:Fonts/notosansui_20.spritefont
+
+#begin Fonts/notosansui_22.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=Color
+/build:Fonts/notosansui_22.spritefont
+
+#begin Fonts/notosansui_24.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=Color
+/build:Fonts/notosansui_24.spritefont
+
+#begin Fonts/notosansui_26.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=Color
+/build:Fonts/notosansui_26.spritefont
+
