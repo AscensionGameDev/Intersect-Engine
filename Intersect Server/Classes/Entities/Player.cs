@@ -3057,7 +3057,7 @@ namespace Intersect.Server.Classes.Entities
                     Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
             if (attribute != null && attribute.value == (int) MapAttributes.Warp)
             {
-				if (Convert.ToInt32(attribute.data4) == 0)
+				if (Convert.ToInt32(attribute.data4) == -1)
 				{
 					Globals.Entities[index].Warp(attribute.data1, attribute.data2, attribute.data3,
 						Globals.Entities[index].Dir);
@@ -3065,7 +3065,7 @@ namespace Intersect.Server.Classes.Entities
 				else
 				{
 					Globals.Entities[index].Warp(attribute.data1, attribute.data2, attribute.data3,
-						Convert.ToInt32(attribute.data4) - 1);
+						Convert.ToInt32(attribute.data4));
 				}
             }
 
