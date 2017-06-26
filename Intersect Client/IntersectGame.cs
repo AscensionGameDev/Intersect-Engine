@@ -32,6 +32,7 @@ namespace Intersect_Client_MonoGame
             //Setup an error handler
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             graphics = new GraphicsDeviceManager(this);
+
             Content.RootDirectory = "";
             IsMouseVisible = true;
             Globals.ContentManager = new MonoContentManager();
@@ -41,11 +42,17 @@ namespace Intersect_Client_MonoGame
             Strings.Init(Strings.IntersectComponent.Client, Globals.Database.Language);
             Gui.ActiveFont = TextUtils.StripToLower(Globals.Database.Font);
             Globals.InputManager = new MonoInput(this);
-            GameGraphics.Renderer = new MonoRenderer(graphics, Content, this);
+
+            var renderer = new MonoRenderer(graphics, Content, this);
+            GameGraphics.Renderer = renderer;
+            if (renderer == null) throw new NullReferenceException("No renderer.");
+
             Globals.System = new MonoSystem();
             Gui.GwenRenderer = new IntersectRenderer(null, GameGraphics.Renderer);
             Gui.GwenInput = new IntersectInput();
             GameControls.Init();
+
+            Window.Position = new Microsoft.Xna.Framework.Point(-20, -2000);
             Window.IsBorderless = false;
         }
 
@@ -65,11 +72,8 @@ namespace Intersect_Client_MonoGame
         /// </summary>
         protected override void Initialize()
         {
-            //Setup SFML Classes
-            var monoRenderer = (MonoRenderer) GameGraphics.Renderer;
-            if (monoRenderer == null) throw new NullReferenceException("No renderer.");
-            monoRenderer.Init(GraphicsDevice);
-            
+            (GameGraphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
+
             // TODO: Remove old netcode
             //GameNetwork.MySocket = new MonoSocket();
 

@@ -75,7 +75,7 @@
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Maps\MapAnimationInstance.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
-    <Compile Include="Classes\Misc\MathHelper.cs" />
+    <Compile Include="MathHelper.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicInstance.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicSource.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoSoundInstance.cs" />
@@ -135,6 +135,7 @@
       <DependentUpon>frmLoadingContent.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Interface\Resolution.cs" />
     <Compile Include="IntersectGame.cs" />
     <Compile Include="Network\ClientNetwork.cs" />
     <Compile Include="ClientMain.cs" />
