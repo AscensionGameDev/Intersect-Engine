@@ -89,7 +89,7 @@ namespace Intersect_Client.Classes.UI
                 AutoSizeToContents = false
             };
             _menuHeader.SetText(Strings.Get("options", "title"));
-            _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);
+            _menuHeader.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 24);
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Alignment = Pos.CenterH;
             _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
@@ -118,7 +118,7 @@ namespace Intersect_Client.Classes.UI
             _resolutionLabel.SetSize(178, 60);
             _resolutionLabel.Alignment = Pos.Center;
             _resolutionLabel.TextColorOverride = new Color(255, 30, 30, 30);
-            _resolutionLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _resolutionLabel.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
 
             _resolutionList = new ComboBox(_resolutionBackground);
             _resolutionList.SetPosition(190, 8);
@@ -129,7 +129,7 @@ namespace Intersect_Client.Classes.UI
             _resolutionList.SetMenuMaxSize(260, 200);
             _resolutionList.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
             _resolutionList.SetTextColor(new Color(255, 220, 220, 220), Label.ControlState.Hovered);
-            _resolutionList.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _resolutionList.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
             var myModes = GameGraphics.Renderer.GetValidVideoModes();
             for (var i = 0; i < myModes.Count; i++)
             {
@@ -153,7 +153,7 @@ namespace Intersect_Client.Classes.UI
             _fpsLabel.SetSize(176, 55);
             _fpsLabel.Alignment = Pos.Center;
             _fpsLabel.TextColorOverride = new Color(255, 30, 30, 30);
-            _fpsLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _fpsLabel.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
 
             //Options - FPS List
             _fpsList = new ComboBox(_fpsBackground);
@@ -171,7 +171,7 @@ namespace Intersect_Client.Classes.UI
             _fpsList.ShouldDrawBackground = false;
             _fpsList.SetMenuBackgroundColor(new Color(220, 0, 0, 0));
             _fpsList.SetMenuMaxSize(260, 200);
-            _fpsList.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _fpsList.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
 
             //Options - Fullscreen Checkbox
             _fullscreen = new LabeledCheckBox(_optionsContainer) { Text = Strings.Get("options", "fullscreen") };
@@ -187,7 +187,7 @@ namespace Intersect_Client.Classes.UI
             _fullscreen.SetLabelDistance(12);
             _fullscreen.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
             _fullscreen.SetTextColor(new Color(255, 140, 140, 140), Label.ControlState.Hovered);
-            _fullscreen.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 20));
+            _fullscreen.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 20));
 
             _editKeybindingsBtn = new Button(_optionsContainer) { Text = Strings.Get("controls", "edit") };
             _editKeybindingsBtn.SetSize(200, 36);
@@ -196,7 +196,7 @@ namespace Intersect_Client.Classes.UI
             _editKeybindingsBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _editKeybindingsBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
             _editKeybindingsBtn.TextPadding = new Padding(0, 3, 0, 0);
-            _editKeybindingsBtn.Font = (Globals.ContentManager.GetFont(Gui.DefaultFont, 18));
+            _editKeybindingsBtn.Font = (Globals.ContentManager.GetFont(Gui.ActiveFont, 18));
             _editKeybindingsBtn.Clicked += _editKeybindingsBtn_Clicked;
             _editKeybindingsBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "editcontrolsnormal.png"),Button.ControlState.Normal);
             _editKeybindingsBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "editcontrolshover.png"),Button.ControlState.Hovered);
@@ -210,7 +210,7 @@ namespace Intersect_Client.Classes.UI
             _soundLabel.SetPosition(_resolutionBackground.X, _fullscreen.Bottom + 16);
             _soundLabel.Alignment = Pos.Center;
             _soundLabel.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
-            _soundLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 16);
+            _soundLabel.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 16);
 
             //Options - Sound Slider
             _soundSlider = new HorizontalSlider(_optionsContainer);
@@ -240,7 +240,7 @@ namespace Intersect_Client.Classes.UI
             _musicLabel.SetPosition(_resolutionBackground.Right - _musicLabel.Width, _fullscreen.Bottom + 16);
             _musicLabel.Alignment = Pos.Center;
             _musicLabel.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
-            _musicLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 16);
+            _musicLabel.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 16);
 
             //Options - Music Slider
             _musicSlider = new HorizontalSlider(_optionsContainer);
@@ -280,7 +280,7 @@ namespace Intersect_Client.Classes.UI
             _applyBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _applyBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _applyBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            _applyBtn.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _applyBtn.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
 
             //Options - Back Button
             _backBtn = new Button(_optionsContainer);
@@ -299,7 +299,7 @@ namespace Intersect_Client.Classes.UI
             _backBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _backBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _backBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            _backBtn.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _backBtn.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
 
             //Controls Get Stored in the Controls Scroll Control
             _controlsContainer = new ScrollControl(_menuPanel);
@@ -361,13 +361,13 @@ namespace Intersect_Client.Classes.UI
             foreach (Controls control in Enum.GetValues(typeof(Controls)))
             {
                 var label = new Label(_controlsContainer);
-                label.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 16);
+                label.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 16);
                 label.Text = Strings.Get("controls", Enum.GetName(typeof(Controls), control).ToLower());
                 label.SetPosition(8, controlsY);
                 label.SetTextColor(Color.White, Label.ControlState.Normal);
 
                 var key1 = new Button(_controlsContainer);
-                key1.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 16);
+                key1.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 16);
                 key1.SetTextColor(Color.Black, Label.ControlState.Normal);
                 key1.Text = "";
                 key1.SetSize(120, 28);
@@ -383,7 +383,7 @@ namespace Intersect_Client.Classes.UI
 
 
                 var key2 = new Button(_controlsContainer);
-                key2.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 16);
+                key2.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 16);
                 key2.SetTextColor(Color.Black, Label.ControlState.Normal);
                 key2.Text = "";
                 key2.SetSize(120, 28);

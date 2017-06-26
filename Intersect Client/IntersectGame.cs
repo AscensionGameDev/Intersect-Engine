@@ -15,6 +15,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Windows.Forms;
+using Intersect;
 using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client_MonoGame
@@ -38,6 +39,7 @@ namespace Intersect_Client_MonoGame
             Globals.Database.LoadConfig();
             Globals.Database.LoadPreferences();
             Strings.Init(Strings.IntersectComponent.Client, Globals.Database.Language);
+            Gui.ActiveFont = TextUtils.StripToLower(Globals.Database.Font);
             Globals.InputManager = new MonoInput(this);
             GameGraphics.Renderer = new MonoRenderer(graphics, Content, this);
             Globals.System = new MonoSystem();

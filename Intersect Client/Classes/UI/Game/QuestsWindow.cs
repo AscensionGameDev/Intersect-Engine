@@ -52,7 +52,7 @@ namespace Intersect_Client.Classes.UI.Game
             _questsWindow.SetCloseButtonImage(
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"),
                 Button.ControlState.Clicked);
-            _questsWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
+            _questsWindow.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 14));
             _questsWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
             _questList = new ListBox(_questsWindow) {IsDisabled = true};
@@ -101,7 +101,7 @@ namespace Intersect_Client.Classes.UI.Game
                 AutoSizeToContents = false
             };
             _questTitle.SetText("");
-            _questTitle.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
+            _questTitle.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 12);
             _questTitle.SetSize(_questsWindow.Width, 32);
             _questTitle.Alignment = Pos.CenterH;
             _questTitle.SetTextColor(Color.White, Label.ControlState.Normal);
@@ -112,7 +112,7 @@ namespace Intersect_Client.Classes.UI.Game
                 AutoSizeToContents = false
             };
             _questStatus.SetText("");
-            _questStatus.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 10);
+            _questStatus.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 10);
             _questStatus.SetSize(_questsWindow.Width, 32);
             _questStatus.Y = 18;
             _questStatus.Alignment = Pos.CenterH;
@@ -180,7 +180,7 @@ namespace Intersect_Client.Classes.UI.Game
             _quitButton.SetSize(49, 18);
             _quitButton.SetText(Strings.Get("questlog", "abandon"));
             _quitButton.SetPosition(159, 256);
-            _quitButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 8);
+            _quitButton.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 8);
             _quitButton.SetImage(
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "quitnormal.png"),
                 Button.ControlState.Normal);

@@ -60,7 +60,7 @@ namespace Intersect_Client.Classes.UI.Game
             _entityName.SetPosition(16, 7);
             _entityName.SetText(myEntity.MyName);
             _entityName.SetTextColor(Color.White, Label.ControlState.Normal);
-            _entityName.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 14);
+            _entityName.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 14);
 
             _entityFaceContainer = new ImagePanel(_entityBox);
             _entityFaceContainer.SetSize(64, 64);
@@ -83,7 +83,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _entityLevel = new Label(_entityBox);
                 _entityLevel.SetPosition(0, 0);
                 _entityLevel.SetTextColor(Color.White, Label.ControlState.Normal);
-                _entityLevel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
+                _entityLevel.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 12);
             }
 
             if (myEntity.GetType() != typeof(Event))

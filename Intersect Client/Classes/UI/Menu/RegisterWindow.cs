@@ -60,7 +60,7 @@ namespace Intersect_Client.Classes.UI.Menu
                 AutoSizeToContents = false
             };
             _menuHeader.SetText(Strings.Get("registration", "title"));
-            _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);
+            _menuHeader.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 24);
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Alignment = Pos.CenterH;
             _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
@@ -76,7 +76,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Register Username Label
             _usernameLabel = new Label(_usernameBackground);
             _usernameLabel.SetText(Strings.Get("registration", "username"));
-            _usernameLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _usernameLabel.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
             _usernameLabel.AutoSizeToContents = false;
             _usernameLabel.SetSize(176, 55);
             _usernameLabel.Alignment = Pos.Center;
@@ -89,7 +89,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _usernameTextbox.SetSize(248, 38);
             _usernameTextbox.ShouldDrawBackground = false;
             _usernameTextbox.TextColorOverride = new Color(255, 220, 220, 220);
-            _usernameTextbox.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _usernameTextbox.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
 
             //Register Email Background
             _emailBackground = new ImagePanel(_menuPanel)
@@ -107,7 +107,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _emailLabel.SetSize(176, 55);
             _emailLabel.Alignment = Pos.Center;
             _emailLabel.TextColorOverride = new Color(255, 30, 30, 30);
-            _emailLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _emailLabel.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
 
             //Register Email Textbox
             _emailTextbox = new TextBox(_emailBackground);
@@ -116,7 +116,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _emailTextbox.SetSize(248, 38);
             _emailTextbox.ShouldDrawBackground = false;
             _emailTextbox.TextColorOverride = new Color(255, 220, 220, 220);
-            _emailTextbox.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _emailTextbox.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
 
             //Register Password Background
             _passwordBackground = new ImagePanel(_menuPanel)
@@ -134,7 +134,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _passwordLabel.SetSize(176, 55);
             _passwordLabel.Alignment = Pos.Center;
             _passwordLabel.TextColorOverride = new Color(255, 30, 30, 30);
-            _passwordLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _passwordLabel.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
 
             //Register Password Textbox
             _passwordTextbox = new TextBoxPassword(_passwordBackground);
@@ -143,7 +143,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _passwordTextbox.SetSize(248, 38);
             _passwordTextbox.ShouldDrawBackground = false;
             _passwordTextbox.TextColorOverride = new Color(255, 220, 220, 220);
-            _passwordTextbox.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _passwordTextbox.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
 
             //Register Password Background
             _passwordBackground2 = new ImagePanel(_menuPanel)
@@ -163,7 +163,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _passwordLabel2.SetSize(176, 55);
             _passwordLabel2.Alignment = Pos.Center;
             _passwordLabel2.TextColorOverride = new Color(255, 30, 30, 30);
-            _passwordLabel2.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 18);
+            _passwordLabel2.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 18);
 
             //Register Password Textbox2
             _passwordTextbox2 = new TextBoxPassword(_passwordBackground2);
@@ -172,7 +172,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _passwordTextbox2.SetSize(248, 38);
             _passwordTextbox2.ShouldDrawBackground = false;
             _passwordTextbox2.TextColorOverride = new Color(255, 220, 220, 220);
-            _passwordTextbox2.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _passwordTextbox2.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
 
             //Register - Send Registration Button
             _registerBtn = new Button(_menuPanel);
@@ -192,7 +192,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _registerBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _registerBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _registerBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            _registerBtn.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _registerBtn.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
 
             //Register - Back Button
             _backBtn = new Button(_menuPanel);
@@ -211,7 +211,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _backBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _backBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _backBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            _backBtn.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _backBtn.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
         }
 
         //Methods

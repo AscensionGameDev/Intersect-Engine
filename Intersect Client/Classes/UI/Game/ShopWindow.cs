@@ -57,7 +57,7 @@ namespace Intersect_Client.Classes.UI.Game
             _shopWindow.SetCloseButtonImage(
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"),
                 Button.ControlState.Clicked);
-            _shopWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
+            _shopWindow.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 14));
             _shopWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
             _itemContainer = new ScrollControl(_shopWindow);

@@ -37,13 +37,13 @@ namespace Intersect_Client.Classes.UI.Game
             spellName.SetPosition(4, 8);
             spellName.Text = spell.Name;
             spellName.SetTextColor(IntersectClientExtras.GenericClasses.Color.White, Label.ControlState.Normal);
-            spellName.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
+            spellName.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 12);
             Align.CenterHorizontally(spellName);
 
             Label spellType = new Label(_descWindow);
             spellType.SetPosition(4, 24);
             spellType.SetTextColor(IntersectClientExtras.GenericClasses.Color.White, Label.ControlState.Normal);
-            spellType.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 10);
+            spellType.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 10);
             spellType.Text = Strings.Get("spelldesc", "spelltype" + spell.SpellType);
 
             y = 44;

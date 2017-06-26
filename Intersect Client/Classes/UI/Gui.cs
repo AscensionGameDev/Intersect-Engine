@@ -28,7 +28,7 @@ namespace Intersect_Client.Classes.UI
         public static GameGuiBase GameUI;
         public static MenuGuiBase MenuUI;
         public static ErrorMessageHandler ErrorMsgHandler;
-        public static string DefaultFont = "arial";
+        public static string ActiveFont = "arial";
 
         //Input Handling
         public static List<IntersectClientExtras.Gwen.Control.Base> FocusElements;
@@ -43,12 +43,12 @@ namespace Intersect_Client.Classes.UI
             _gwenSkin = new TexturedBase(GwenRenderer,
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
             {
-                DefaultFont = Globals.ContentManager.GetFont(DefaultFont, 10)
+                DefaultFont = Globals.ContentManager.GetFont(ActiveFont, 10)
             };
             var _gameSkin = new TexturedBase(GwenRenderer,
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
             {
-                DefaultFont = Globals.ContentManager.GetFont(DefaultFont, 10)
+                DefaultFont = Globals.ContentManager.GetFont(ActiveFont, 10)
             };
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)

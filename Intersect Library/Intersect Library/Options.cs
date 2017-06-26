@@ -22,10 +22,10 @@ namespace Intersect
         public static int MaxInvItems = 35;
         public static int MaxPlayerSkills = 35;
         public static int MaxBankSlots = 100;
-		public static int ItemDropChance = 0;
+        public static int ItemDropChance = 0;
 
-		//Passability Based on MapZones
-		public static bool[] PlayerPassable = new bool[Enum.GetNames(typeof(MapZones)).Length];
+        //Passability Based on MapZones
+        public static bool[] PlayerPassable = new bool[Enum.GetNames(typeof(MapZones)).Length];
 
         //Equipment
         public static int WeaponIndex = -1;
@@ -69,9 +69,9 @@ namespace Intersect
             MaxInvItems = bf.ReadInteger();
             MaxPlayerSkills = bf.ReadInteger();
             MaxBankSlots = bf.ReadInteger();
-			ItemDropChance = bf.ReadInteger();
+            ItemDropChance = bf.ReadInteger();
 
-			for (int i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
+            for (int i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
             {
                 PlayerPassable[i] = bf.ReadBoolean();
             }

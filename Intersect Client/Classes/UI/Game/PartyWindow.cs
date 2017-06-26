@@ -51,7 +51,7 @@ namespace Intersect_Client.Classes.UI.Game
             _partyWindow.SetCloseButtonImage(
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"),
                 Button.ControlState.Clicked);
-            _partyWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
+            _partyWindow.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 14));
             _partyWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
             //Add the icon representing party leader (ALWAYS member 1 in the party list)

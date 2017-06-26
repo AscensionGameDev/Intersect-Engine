@@ -46,7 +46,7 @@ namespace Intersect_Client.Classes.UI.Game
             _questOfferWindow.SetCloseButtonImage(
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"),
                 Button.ControlState.Clicked);
-            _questOfferWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
+            _questOfferWindow.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 14));
             _questOfferWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
             //Menu Header
@@ -55,7 +55,7 @@ namespace Intersect_Client.Classes.UI.Game
                 AutoSizeToContents = false
             };
             _questTitle.SetText("");
-            _questTitle.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 18);
+            _questTitle.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 18);
             _questTitle.SetSize(_questOfferWindow.Width, _questOfferWindow.Height);
             _questTitle.Alignment = Pos.CenterH;
             _questTitle.TextColorOverride = new Color(255, 200, 200, 200);
@@ -105,7 +105,7 @@ namespace Intersect_Client.Classes.UI.Game
             //Accept Button
             _acceptButton = new Button(_questOfferWindow);
             _acceptButton.SetText(Strings.Get("questoffer", "accept"));
-            _acceptButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _acceptButton.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
             _acceptButton.Clicked += _acceptButton_Clicked;
             _acceptButton.SetPosition(_questOfferWindow.Width / 2 - _acceptButton.Width / 2 - _acceptButton.Width, 340);
             _acceptButton.SetSize(86, 39);
@@ -121,12 +121,12 @@ namespace Intersect_Client.Classes.UI.Game
             _acceptButton.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _acceptButton.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _acceptButton.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            _acceptButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
+            _acceptButton.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 12);
 
             //Decline Button
             _declineButton = new Button(_questOfferWindow);
             _declineButton.SetText(Strings.Get("questoffer", "decline"));
-            _declineButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _declineButton.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
             _declineButton.Clicked += _declineButton_Clicked;
             _declineButton.SetPosition(_questOfferWindow.Width / 2 + _acceptButton.Width / 2, 340);
             _declineButton.SetSize(86, 39);
@@ -142,7 +142,7 @@ namespace Intersect_Client.Classes.UI.Game
             _declineButton.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _declineButton.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _declineButton.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            _declineButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
+            _declineButton.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 12);
 
             Gui.InputBlockingElements.Add(_questOfferWindow);
         }

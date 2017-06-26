@@ -48,14 +48,14 @@ namespace Intersect_Client.Classes.UI.Game
             _myWindow.SetCloseButtonImage(
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"),
                 Button.ControlState.Clicked);
-            _myWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
+            _myWindow.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 14));
             _myWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
             Label promptLabel = new Label(_myWindow);
             promptLabel.SetText(prompt);
             promptLabel.SetPosition(_myWindow.Width / 2 - promptLabel.TextWidth / 2, 8);
             promptLabel.TextColorOverride = Color.White;
-            promptLabel.Font = (Globals.ContentManager.GetFont(Gui.DefaultFont, 12));
+            promptLabel.Font = (Globals.ContentManager.GetFont(Gui.ActiveFont, 12));
 
             int y = promptLabel.Y + promptLabel.Height + 20;
             if (textInput)
@@ -95,7 +95,7 @@ namespace Intersect_Client.Classes.UI.Game
             okayBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             okayBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             okayBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            okayBtn.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
+            okayBtn.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 12);
 
             Button cancelBtn = new Button(_myWindow);
             cancelBtn.SetSize(86, 41);
@@ -114,7 +114,7 @@ namespace Intersect_Client.Classes.UI.Game
             cancelBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             cancelBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             cancelBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            cancelBtn.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
+            cancelBtn.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 12);
 
             if (!textInput)
             {
