@@ -37,7 +37,13 @@ namespace Intersect.Server.Classes.Entities
         public int CurrentY;
         public int CurrentZ = 0;
         public bool Dead = false;
-        public int Dir;
+
+        private int _dir;
+        public int Dir
+        {
+            get => _dir;
+            set => _dir = (value + 4) % 4;
+        }
 
         //DoT/HoT Spells
         public List<DoTInstance> DoT = new List<DoTInstance>();

@@ -179,7 +179,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 {
                     useEffect = (Effect) shader.GetShader();
                 }
-                _spriteBatch.Begin(SpriteSortMode.Immediate, blend, null, null, rs, useEffect,
+                _spriteBatch.Begin(SpriteSortMode.Immediate, blend, SamplerState.PointClamp, null, rs, useEffect,
                     Matrix.CreateRotationZ(0f) * Matrix.CreateScale(new Vector3(1, 1, 1)) *
                     Matrix.CreateTranslation(-view.X, -view.Y, 0));
                 _currentSpriteView = view;
@@ -192,7 +192,11 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         private void EndSpriteBatch()
         {
-            _spriteBatch.End();
+            if (_spriteBatchBegan)
+            {
+                _spriteBatch.End();
+            }
+
             _spriteBatchBegan = false;
         }
 
