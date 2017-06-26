@@ -5,6 +5,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
+using Intersect.Localization;
 using Intersect.Models;
 using System;
 using System.Collections.Generic;
@@ -84,7 +85,12 @@ namespace Intersect.Server.Classes.Networking
             SendEntityDataTo(client, client.Entity);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
-        }
+
+			if (!client.IsEditor)
+			{
+				PacketSender.SendGlobalMsg(Strings.Get("player", "joined", client.Entity.MyName, Options.GameName));
+			}
+		}
 
         public static void SendMap(Client client, int mapNum, bool allEditors = false)
         {

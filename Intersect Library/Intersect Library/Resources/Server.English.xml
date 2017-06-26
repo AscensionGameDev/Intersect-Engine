@@ -152,6 +152,7 @@
 		<string id="levelup">You have leveled up! You are now level {00}!</string>
 		<string id="statpoints">You have {00} stat points available to be spent!</string>
 		<string id="left">{00} has left {01}.</string>
+		<string id="joined">{00} has joined {01}.</string>
 		<string id="modjoined">You are a moderator! Press Insert at any time to access the administration menu or F2 for debug information.</string>
 		<string id="adminjoined">You are an administrator! Press Insert at any time to access the administration menu or F2 for debug information.</string>
 		<string id="warpedto">Warped to {00}.</string>
