@@ -74,7 +74,7 @@ namespace Intersect_Client.Classes.UI.Game
             _tradeWindow.SetCloseButtonImage(
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"),
                 Button.ControlState.Clicked);
-            _tradeWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
+            _tradeWindow.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 14));
             _tradeWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
             _yourOffer = new Label(_tradeWindow)
@@ -112,7 +112,7 @@ namespace Intersect_Client.Classes.UI.Game
             _trade.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _trade.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _trade.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            _trade.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
+            _trade.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 12);
 
             for (int i = 0; i < 2; i++)
             {

@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Editor.Network;
+using Intersect.Logging;
+using Intersect.Network;
+using Intersect.Network.Packets;
 
 namespace Intersect.Editor.Classes
 {
-    public static class Network
+    public static class LegacyEditorNetwork
     {
+
+        public static EditorNetwork editorNetwork;
+
         public static TcpClient MySocket;
         private static NetworkStream _myStream;
-        public static bool Connected;
+        private static bool _connected;
+        public static bool Connected => editorNetwork?.IsRunning ?? _connected;
         public static bool Connecting;
         private static byte[] _tempBuff;
         private static ByteBuffer _myBuffer = new ByteBuffer();
@@ -17,10 +24,16 @@ namespace Intersect.Editor.Classes
 
         public static void InitNetwork()
         {
-            if (MySocket != null)
-            {
-                MySocket.Close();
-            }
+            if (editorNetwork != null) return;
+
+            Log.Global.AddOutput(new ConsoleOutput());
+            var config = new NetworkConfiguration(Globals.ServerHost, (ushort)Globals.ServerPort);
+            editorNetwork = new EditorNetwork(config);
+            editorNetwork.Start();
+
+            if (editorNetwork != null) return;
+
+            MySocket?.Close();
 
             MySocket = new TcpClient()
             {
@@ -51,20 +64,20 @@ namespace Intersect.Editor.Classes
                 MySocket.EndConnect(result);
                 if (MySocket.Connected)
                 {
-                    Connected = true;
+                    _connected = true;
                     Connecting = false;
                     _myStream = MySocket.GetStream();
                     _myStream.BeginRead(_tempBuff, 0, MySocket.ReceiveBufferSize, ReceiveCb, null);
                 }
                 else
                 {
-                    Connected = false;
+                    _connected = false;
                     Connecting = false;
                 }
             }
             catch (Exception)
             {
-                Connected = false;
+                _connected = false;
                 Connecting = false;
             }
         }
@@ -120,7 +133,7 @@ namespace Intersect.Editor.Classes
             }
         }
 
-        private static void HandleDc()
+        public static void HandleDc()
         {
             if (Globals.MainForm != null && Globals.MainForm.Visible)
             {
@@ -130,12 +143,12 @@ namespace Intersect.Editor.Classes
                     Globals.MainForm.DisconnectDelegate = null;
                 }
             }
-            else if (Globals.LoginForm.Visible)
+            /*else if (Globals.LoginForm.Visible)
             {
-                Connected = false;
+                _connected = false;
                 Connecting = false;
                 InitNetwork();
-            }
+            }*/
             else
             {
                 MessageBox.Show(@"Disconnected!");
@@ -161,6 +174,17 @@ namespace Intersect.Editor.Classes
                     buff.WriteByte(0); //Not Compressed
                     buff.WriteBytes(packet);
                 }
+
+                if (editorNetwork != null)
+                {
+                    if (!editorNetwork.Send(new BinaryPacket(null) { Buffer = buff }))
+                    {
+                        throw new Exception("Beta 4 network send failed.");
+                    }
+
+                    return;
+                }
+
                 _myStream.Write(buff.ToArray(), 0, buff.Count());
             }
             catch (Exception)

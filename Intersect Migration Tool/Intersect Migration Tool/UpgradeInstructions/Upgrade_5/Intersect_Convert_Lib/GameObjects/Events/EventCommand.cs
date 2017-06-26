@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
 using Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Events

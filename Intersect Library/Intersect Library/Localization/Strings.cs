@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace Intersect.Localization
 {
@@ -64,28 +65,28 @@ namespace Intersect.Localization
 
         public static string Get(string section, string id, params object[] args)
         {
-            if (SelectedLanguage != null && SelectedLanguage.Loaded() && SelectedLanguage.HasString(section, id))
+            if (SelectedLanguage != null && SelectedLanguage.IsLoaded && SelectedLanguage.HasString(section, id))
             {
                 return SelectedLanguage.GetString(section, id, args);
             }
-            if (DefaultLanguage != null && DefaultLanguage.Loaded() && DefaultLanguage.HasString(section, id))
+            if (DefaultLanguage != null && DefaultLanguage.IsLoaded && DefaultLanguage.HasString(section, id))
             {
                 return DefaultLanguage.GetString(section, id, args);
             }
-            return "Not Found";
+            return $"//{section}/{id} ({string.Join(",", args.Cast<string>().ToArray())})";
         }
 
         public static string Get(string section, string id)
         {
-            if (SelectedLanguage != null && SelectedLanguage.Loaded() && SelectedLanguage.HasString(section, id))
+            if (SelectedLanguage != null && SelectedLanguage.IsLoaded && SelectedLanguage.HasString(section, id))
             {
                 return SelectedLanguage.GetString(section, id);
             }
-            if (DefaultLanguage != null && DefaultLanguage.Loaded() && DefaultLanguage.HasString(section, id))
+            if (DefaultLanguage != null && DefaultLanguage.IsLoaded && DefaultLanguage.HasString(section, id))
             {
                 return DefaultLanguage.GetString(section, id);
             }
-            return "Not Found";
+            return $"//{section}/{id}";
         }
     }
 }

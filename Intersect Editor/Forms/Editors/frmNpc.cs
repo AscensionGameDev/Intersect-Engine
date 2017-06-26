@@ -4,16 +4,16 @@ using System.Drawing;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
 
 namespace Intersect.Editor.Forms
 {
-    public partial class frmNpc : Form
+    public partial class frmNpc : EditorForm
     {
         private List<NpcBase> _changed = new List<NpcBase>();
         private byte[] _copiedItem = null;
@@ -21,13 +21,13 @@ namespace Intersect.Editor.Forms
 
         public frmNpc()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstNpcs.LostFocus += itemList_FocusChanged;
             lstNpcs.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObjectType type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
             if (type == GameObjectType.Npc)
             {
@@ -186,7 +186,7 @@ namespace Intersect.Editor.Forms
                 txtName.Text = _editorItem.Name;
                 cmbBehavior.SelectedIndex = _editorItem.Behavior;
                 cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Sprite);
-				nudLevel.Value = _editorItem.Level;
+                nudLevel.Value = _editorItem.Level;
                 nudSightRange.Value = _editorItem.SightRange;
                 nudSpawnDuration.Value = _editorItem.SpawnDuration;
                 nudStr.Value = _editorItem.Stat[(int) Stats.Attack];
@@ -601,14 +601,14 @@ namespace Intersect.Editor.Forms
             _editorItem.Drops[(int)nudDropIndex.Value - 1].Amount = (int) nudDropAmount.Value;
         }
 
-		private void nudDropIndex_ValueChanged(object sender, EventArgs e)
-		{
-			UpdateDropValues();
-		}
+        private void nudDropIndex_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateDropValues();
+        }
 
-		private void nudLevel_ValueChanged(object sender, EventArgs e)
-		{
-			_editorItem.Level = (int)nudLevel.Value;
-		}
-	}
+        private void nudLevel_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Level = (int)nudLevel.Value;
+        }
+    }
 }

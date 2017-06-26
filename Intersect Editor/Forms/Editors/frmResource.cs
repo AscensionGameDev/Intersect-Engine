@@ -5,7 +5,6 @@ using System.IO;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect;
 using Intersect.Editor.Classes.Core;
 using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
@@ -14,7 +13,7 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Classes
 {
-    public partial class frmResource : Form
+    public partial class frmResource : EditorForm
     {
         private List<ResourceBase> _changed = new List<ResourceBase>();
         private byte[] _copiedItem = null;
@@ -29,13 +28,13 @@ namespace Intersect.Editor.Classes
 
         public frmResource()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstResources.LostFocus += itemList_FocusChanged;
             lstResources.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObjectType type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
             if (type == GameObjectType.Resource)
             {
@@ -203,7 +202,7 @@ namespace Intersect.Editor.Classes
             _editorItem.Drops[(int)nudDropIndex.Value - 1].Chance = (int) nudDropChance.Value;
         }
 
-		private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)
+        private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Tool = cmbToolType.SelectedIndex - 1;
         }
@@ -447,9 +446,9 @@ namespace Intersect.Editor.Classes
             _editorItem.MaxHP = (int) nudMaxHp.Value;
         }
 
-		private void nudDropIndex_ValueChanged(object sender, EventArgs e)
-		{
-			UpdateDropValues();
-		}
-	}
+        private void nudDropIndex_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateDropValues();
+        }
+    }
 }

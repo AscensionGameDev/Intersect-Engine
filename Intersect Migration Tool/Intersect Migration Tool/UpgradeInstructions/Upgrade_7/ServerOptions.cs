@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using Intersect;
-using MapZones = Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.MapZones;
-using Options = Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.Options;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
 {

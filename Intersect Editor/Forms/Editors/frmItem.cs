@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using DarkUI.Forms;
-using Intersect;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.Core;
 using Intersect.Editor.Forms.Editors;
@@ -12,7 +11,7 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms
 {
-    public partial class FrmItem : Form
+    public partial class FrmItem : EditorForm
     {
         private List<ItemBase> _changed = new List<ItemBase>();
         private byte[] _copiedItem = null;
@@ -20,13 +19,13 @@ namespace Intersect.Editor.Forms
 
         public FrmItem()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstItems.LostFocus += itemList_FocusChanged;
             lstItems.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObjectType type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
             if (type == GameObjectType.Item)
             {
@@ -242,14 +241,10 @@ namespace Intersect.Editor.Forms
                 nudRange.Value = _editorItem.StatGrowth;
                 chkBound.Checked = Convert.ToBoolean(_editorItem.Bound);
                 chkStackable.Checked = Convert.ToBoolean(_editorItem.Stackable);
-                if (_editorItem.Data1 < -1 || _editorItem.Data1 >= cmbEquipmentSlot.Items.Count)
-                {
-                    _editorItem.Data1 = 0;
-                }
-                cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
                 cmbToolType.SelectedIndex = _editorItem.Tool + 1;
                 cmbAttackAnimation.SelectedIndex =
                     Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.AttackAnimation) + 1;
+                RefreshExtendedData();
                 if (_editorItem.ItemType == (int) ItemTypes.Equipment)
                     cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
                 nudEffectPercent.Value = _editorItem.Data3;
@@ -311,7 +306,7 @@ namespace Intersect.Editor.Forms
             UpdateToolStripItems();
         }
 
-        private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
+        private void RefreshExtendedData()
         {
             grpConsumable.Visible = false;
             grpSpell.Visible = false;
@@ -329,29 +324,33 @@ namespace Intersect.Editor.Forms
                 _editorItem.Data4 = 0;
             }
 
-            if (cmbType.SelectedIndex == (int) ItemTypes.Consumable)
+            if (cmbType.SelectedIndex == (int)ItemTypes.Consumable)
             {
                 cmbConsume.SelectedIndex = _editorItem.Data1;
                 nudInterval.Value = _editorItem.Data2;
                 grpConsumable.Visible = true;
             }
-            else if (cmbType.SelectedIndex == (int) ItemTypes.Spell)
+            else if (cmbType.SelectedIndex == (int)ItemTypes.Spell)
             {
                 cmbTeachSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell, _editorItem.Data1) + 1;
                 grpSpell.Visible = true;
             }
-            else if (cmbType.SelectedIndex == (int) ItemTypes.Event)
+            else if (cmbType.SelectedIndex == (int)ItemTypes.Event)
             {
                 cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CommonEvent, _editorItem.Data1) + 1;
                 grpEvent.Visible = true;
             }
-            else if (cmbType.SelectedIndex == (int) ItemTypes.Equipment)
+            else if (cmbType.SelectedIndex == (int)ItemTypes.Equipment)
             {
                 grpEquipment.Visible = true;
+                if (_editorItem.Data1 < -1 || _editorItem.Data1 >= cmbEquipmentSlot.Items.Count)
+                {
+                    _editorItem.Data1 = 0;
+                }
                 cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
                 cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
             }
-            else if (cmbType.SelectedIndex == (int) ItemTypes.Bag)
+            else if (cmbType.SelectedIndex == (int)ItemTypes.Bag)
             {
                 if (_editorItem.Data1 < 1)
                 {
@@ -362,6 +361,11 @@ namespace Intersect.Editor.Forms
             }
 
             _editorItem.ItemType = cmbType.SelectedIndex;
+        }
+
+        private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RefreshExtendedData();
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)

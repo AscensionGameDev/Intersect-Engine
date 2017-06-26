@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using Intersect;
 using Intersect.Enums;
 
 namespace Intersect.Server.Classes.General
@@ -43,7 +42,7 @@ namespace Intersect.Server.Classes.General
                     Options.Language = GetXmlStr(options, "//Config/Language", false);
                     if (Options.Language == "") Options.Language = "English";
                     Options.GameName = GetXmlStr(options, "//Config/GameName", false);
-                    Options.ServerPort = GetXmlInt(options, "//Config/ServerPort");
+                    Options.ServerPort = (ushort)GetXmlInt(options, "//Config/ServerPort");
 
                     //Player Options
                     Options.MaxStatValue = GetXmlInt(options, "//Config/Player/MaxStat");

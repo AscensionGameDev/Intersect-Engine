@@ -1,34 +1,19 @@
-﻿using System;
-using Intersect.Localization;
-using Intersect_Client_MonoGame;
+﻿using Intersect.Client.Network;
+using Intersect.Logging;
+using Intersect.Network;
+using System.Threading;
 
-namespace Intersect_MonoGameDx
+namespace Intersect.Client
 {
-#if WINDOWS || LINUX
-    /// <summary>
-    ///     The main class.
-    /// </summary>
-    public static class Program
+    public class Program
     {
-        /// <summary>
-        ///     The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            using (var game = new IntersectGame())
-            {
-                try
-                {
-                    game.Run();
-                }
-                catch (PlatformNotSupportedException)
-                {
-                    System.Windows.Forms.MessageBox.Show(Strings.Get("errors", "openglerror"),
-                        Strings.Get("errors", "notsupported"));
-                }
-            }
+            Log.Global.AddOutput(new ConsoleOutput());
+            var config = new NetworkConfiguration("localhost", 4500);
+            var network = new ClientNetwork(config);
+            Thread.Sleep(1000);
+            network.Start();
         }
     }
-#endif
 }

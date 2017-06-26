@@ -6,15 +6,15 @@ using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using Microsoft.Xna.Framework.Graphics;
-using Color = System.Drawing.Color;
 
 namespace Intersect.Editor.Forms
 {
-    public partial class frmAnimation : Form
+    public partial class frmAnimation : EditorForm
     {
         private List<AnimationBase> _changed = new List<AnimationBase>();
         private byte[] _copiedItem = null;
@@ -34,23 +34,19 @@ namespace Intersect.Editor.Forms
 
         public frmAnimation()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstAnimations.LostFocus += itemList_FocusChanged;
             lstAnimations.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObjectType type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (type == GameObjectType.Animation)
-            {
-                InitEditor();
-                if (_editorItem != null && !AnimationBase.Lookup.Values.Contains(_editorItem))
-                {
-                    _editorItem = null;
-                    UpdateEditor();
-                }
-            }
+            if (type != GameObjectType.Animation) return;
+            InitEditor();
+            if (_editorItem == null || AnimationBase.Lookup.Values.Contains(_editorItem)) return;
+            _editorItem = null;
+            UpdateEditor();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

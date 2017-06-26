@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using DarkUI.Forms;
-using Intersect;
 using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
+using Intersect.Models;
 
 namespace Intersect.Editor.Forms.Editors
 {
-    public partial class frmCrafting : Form
+    public partial class frmCrafting : EditorForm
     {
         private List<BenchBase> _changed = new List<BenchBase>();
         private byte[] _copiedItem = null;
@@ -19,8 +19,8 @@ namespace Intersect.Editor.Forms.Editors
 
         public frmCrafting()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstCrafts.LostFocus += itemList_FocusChanged;
             lstCrafts.GotFocus += itemList_FocusChanged;
             cmbResult.Items.Clear();
@@ -31,7 +31,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbIngredient.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
         }
 
-        private void GameObjectUpdatedDelegate(GameObjectType type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
             if (type == GameObjectType.Bench)
             {

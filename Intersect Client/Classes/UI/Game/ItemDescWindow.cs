@@ -52,7 +52,7 @@ namespace Intersect_Client.Classes.UI.Game
                 itemName.SetPosition(4, innery);
                 itemName.Text = title;
                 itemName.SetTextColor(IntersectClientExtras.GenericClasses.Color.White, Label.ControlState.Normal);
-                itemName.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
+                itemName.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 12);
 
                 innery += 18;
                 if (amount > 1)
@@ -65,7 +65,7 @@ namespace Intersect_Client.Classes.UI.Game
                 Label itemType = new Label(_descWindow);
                 itemType.SetPosition(4, innery);
                 itemType.SetTextColor(IntersectClientExtras.GenericClasses.Color.White, Label.ControlState.Normal);
-                itemType.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 10);
+                itemType.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 10);
                 innery += 16;
 
                 if (valueLabel != "")

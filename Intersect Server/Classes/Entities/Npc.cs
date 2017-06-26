@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Server.Classes.General;
@@ -10,7 +9,6 @@ using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Misc.Pathfinding;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Classes.Spells;
-using Intersect.Server.Classes.Misc;
 
 namespace Intersect.Server.Classes.Entities
 {

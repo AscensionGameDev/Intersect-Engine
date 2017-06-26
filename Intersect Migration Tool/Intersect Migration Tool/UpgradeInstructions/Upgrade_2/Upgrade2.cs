@@ -1,7 +1,5 @@
 ﻿using System;
-using Intersect;
 using Intersect.Logging;
-using Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib;
 using Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects;
 using Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects.Events;
 using Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects.Maps;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect;
 using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects;

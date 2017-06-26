@@ -23,7 +23,6 @@ THE SOFTWARE.
 */
 using System;
 using System.Collections.Generic;
-using Intersect;
 using Intersect.Server.Classes.Misc.Pathfinding;
 
 namespace Intersect.Server.Classes.Misc

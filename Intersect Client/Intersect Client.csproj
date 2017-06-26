@@ -17,7 +17,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\build\debug\client\</OutputPath>
     <DefineConstants>DEBUG;TRACE;LINUX</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -26,7 +26,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\build\release\client\</OutputPath>
     <DefineConstants>TRACE;LINUX</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -40,6 +40,18 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Intersect_MonoGameDx.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Tespia|AnyCPU'">
+    <OutputPath>..\build\tespia\client\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;LINUX</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Classes\Core\GameAudio.cs" />
@@ -63,7 +75,7 @@
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Maps\MapAnimationInstance.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
-    <Compile Include="Classes\Misc\MathHelper.cs" />
+    <Compile Include="MathHelper.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicInstance.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicSource.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoSoundInstance.cs" />
@@ -123,13 +135,20 @@
       <DependentUpon>frmLoadingContent.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Interface\Resolution.cs" />
     <Compile Include="IntersectGame.cs" />
+    <Compile Include="Network\ClientNetwork.cs" />
+    <Compile Include="ClientMain.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="IntersectClientExtras">
       <HintPath>.\IntersectClientExtras.dll</HintPath>
+    </Reference>
+    <Reference Include="Lidgren.Network, Version=3.6.0.1271, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Lidgren.Network.dll</HintPath>
     </Reference>
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\MonoGame.Framework.dll</HintPath>
@@ -191,6 +210,9 @@
       <Link>MonoGame.Framework.dll.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="public.bk1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="App.config" />
     <None Include="app.manifest" />
   </ItemGroup>
@@ -206,6 +228,10 @@
     <ProjectReference Include="..\Intersect Library\Intersect Library\Intersect %28Core%29.csproj">
       <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
       <Name>Intersect %28Core%29</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj">
+      <Project>{e8f288cb-51df-4d9d-a3b3-a61bd4fd3f45}</Project>
+      <Name>Intersect.Network</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

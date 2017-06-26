@@ -77,19 +77,12 @@ namespace Intersect.Logging
             {
                 return;
             }
+            
+            var line = string.IsNullOrEmpty(tag)
+                ? $"{DateTime.UtcNow.ToString(TIMESTAMP_FORMAT)} [{logLevel}] {message}"
+                : $"{DateTime.UtcNow.ToString(TIMESTAMP_FORMAT)} [{logLevel}] {tag}: {message}";
 
-            if (string.IsNullOrEmpty(tag))
-            {
-                Writer.WriteLine(
-                    $"{{0:{TIMESTAMP_FORMAT}}} [{{1}}] {{2}}",
-                    DateTime.UtcNow, logLevel, message);
-            }
-            else
-            {
-                Writer.WriteLine(
-                    $"{{0:{TIMESTAMP_FORMAT}}} [{{1}}] {{2}}: {{3}}",
-                    DateTime.UtcNow, logLevel, tag, message);
-            }
+            Writer.WriteLine(line);
         }
 
         public void Write(string tag, LogLevel logLevel, string format,

@@ -3,10 +3,11 @@ using Intersect;
 using Intersect.Collections;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using Intersect.Models;
+using Intersect.Logging;
+using Intersect.Network;
+using Intersect.Network.Packets;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
@@ -23,6 +24,14 @@ namespace Intersect_Client.Classes.Networking
     {
         public static long Ping = 0;
         public static long PingTime = 0;
+
+        public static bool HandlePacket(IPacket packet)
+        {
+            var binaryPacket = packet as BinaryPacket;
+            Log.Debug($"Handling packet (size={binaryPacket.Buffer.Length()}).");
+            HandlePacket(binaryPacket?.Buffer?.ToArray());
+            return true;
+        }
 
         public static void HandlePacket(byte[] packet)
         {

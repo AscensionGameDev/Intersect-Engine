@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
+using Intersect.Models;
 
 namespace Intersect.GameObjects
 {

@@ -18,6 +18,7 @@ namespace Intersect.Server.Classes.General
 
         public static object ClientLock = new object();
         public static List<Client> Clients = new List<Client>();
+        public static IDictionary<Guid, Client> ClientLookup = new Dictionary<Guid, Client>();
 
         public static List<Entity> Entities = new List<Entity>();
 

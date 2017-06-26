@@ -13,11 +13,8 @@
 // each item is now carrying an index, so that updating can be performed
 // efficiently.
 //
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Intersect.Server.Classes.Misc.Pathfinding
 {

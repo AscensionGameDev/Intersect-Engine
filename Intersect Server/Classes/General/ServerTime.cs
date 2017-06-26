@@ -1,5 +1,4 @@
 ﻿using System;
-using Intersect;
 using Intersect.GameObjects;
 using Intersect.Server.Classes.Networking;
 

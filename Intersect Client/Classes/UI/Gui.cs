@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
@@ -27,7 +28,7 @@ namespace Intersect_Client.Classes.UI
         public static GameGuiBase GameUI;
         public static MenuGuiBase MenuUI;
         public static ErrorMessageHandler ErrorMsgHandler;
-        public static string DefaultFont = "arial";
+        public static string ActiveFont = "arial";
 
         //Input Handling
         public static List<IntersectClientExtras.Gwen.Control.Base> FocusElements;
@@ -42,12 +43,12 @@ namespace Intersect_Client.Classes.UI
             _gwenSkin = new TexturedBase(GwenRenderer,
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
             {
-                DefaultFont = Globals.ContentManager.GetFont(DefaultFont, 10)
+                DefaultFont = Globals.ContentManager.GetFont(ActiveFont, 10)
             };
             var _gameSkin = new TexturedBase(GwenRenderer,
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
             {
-                DefaultFont = Globals.ContentManager.GetFont(DefaultFont, 10)
+                DefaultFont = Globals.ContentManager.GetFont(ActiveFont, 10)
             };
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)
@@ -184,27 +185,39 @@ namespace Intersect_Client.Classes.UI
             var lastSpace = 0;
             var curPos = 0;
             var curLen = 1;
+            var lastOk = 0;
             input = input.Replace("\r\n", "\n");
+            float measured;
+            string line;
             while (curPos + curLen < input.Length)
             {
-                if (GameGraphics.Renderer.MeasureText(input.Substring(curPos, curLen), font, 1).X < width)
+                line = input.Substring(curPos, curLen);
+                measured = GameGraphics.Renderer.MeasureText(line, font, 1).X;
+                Debug.WriteLine($"w:{width},m:{measured},p:{curPos},l:{curLen},s:{lastSpace},t:'{line}'");
+                if (measured < width)
                 {
-                    if (input[curPos + curLen] == ' ' || input[curPos + curLen] == '-')
+                    lastOk = curLen;
+                    switch (input[curPos + curLen])
                     {
-                        lastSpace = curLen;
-                    }
-                    else if (input[curPos + curLen] == '\n')
-                    {
-                        myOutput.Add(input.Substring(curPos, curLen).Trim());
-                        curPos = curPos + curLen + 1;
-                        curLen = 1;
+                        case ' ':
+                        case '-':
+                            lastSpace = curLen;
+                            break;
+
+                        case '\n':
+                            myOutput.Add(input.Substring(curPos, curLen).Trim());
+                            curPos = curPos + curLen + 1;
+                            curLen = 1;
+                            break;
                     }
                 }
                 else
                 {
-                    myOutput.Add(input.Substring(curPos, lastSpace).Trim());
-                    if (lastSpace == 0) lastSpace = curLen - 1;
-                    curPos = curPos + lastSpace;
+                    line = input.Substring(curPos, lastOk).Trim();
+                    Debug.WriteLine($"line={line}");
+                    myOutput.Add(line);
+                    if (lastOk == 0) lastOk = curLen - 1;
+                    curPos = curPos + lastOk;
                     curLen = 1;
                 }
                 curLen++;

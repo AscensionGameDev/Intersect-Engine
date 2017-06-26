@@ -1,4 +1,5 @@
 ﻿using System;
+using Intersect.Models;
 
 namespace Intersect.GameObjects
 {

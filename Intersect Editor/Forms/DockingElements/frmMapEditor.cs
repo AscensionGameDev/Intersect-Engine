@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Forms;
-using Intersect;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.General;
 using Intersect.Editor.Classes.Maps;

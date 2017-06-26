@@ -8,7 +8,6 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using Intersect;
 using Intersect.Editor.Classes.Content;
 using Intersect.Editor.Forms;
 using Intersect.Enums;

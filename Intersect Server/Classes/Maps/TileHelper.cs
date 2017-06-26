@@ -1,6 +1,4 @@
-﻿using System;
-using Intersect;
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.Server.Classes.Core;
 
 namespace Intersect.Server.Classes.Maps

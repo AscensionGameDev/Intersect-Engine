@@ -73,7 +73,7 @@ namespace Intersect_Client.Classes.Core
             Renderer.Init();
             contentManager = Globals.ContentManager;
             contentManager.LoadAll();
-            GameFont = contentManager.GetFont("arial", 8);
+            GameFont = contentManager.GetFont(Gui.ActiveFont, 8);
         }
 
         public static void InitInGame()

@@ -60,7 +60,7 @@ namespace Intersect_Client.Classes.UI.Menu
                 AutoSizeToContents = false
             };
             _menuHeader.SetText(Strings.Get("login", "title"));
-            _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);
+            _menuHeader.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 24);
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Alignment = Pos.CenterH;
             _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
@@ -75,7 +75,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Login Username Label
             _usernameLabel = new Label(_usernameBackground);
             _usernameLabel.SetText(Strings.Get("login", "username"));
-            _usernameLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _usernameLabel.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
             _usernameLabel.AutoSizeToContents = false;
             _usernameLabel.SetSize(176, 55);
             _usernameLabel.Alignment = Pos.Center;
@@ -88,7 +88,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _usernameTextbox.SubmitPressed += UsernameTextbox_SubmitPressed;
             _usernameTextbox.ShouldDrawBackground = false;
             _usernameTextbox.TextColorOverride = new Color(255, 220, 220, 220);
-            _usernameTextbox.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _usernameTextbox.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
             _usernameTextbox.Clicked += _usernameTextbox_Clicked;
 
             _passwordBackground = new ImagePanel(_menuPanel)
@@ -102,7 +102,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Login Password Label
             _passwordLabel = new Label(_passwordBackground);
             _passwordLabel.SetText(Strings.Get("login", "password"));
-            _passwordLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _passwordLabel.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
             _passwordLabel.AutoSizeToContents = false;
             _passwordLabel.SetSize(176, 55);
             _passwordLabel.Alignment = Pos.Center;
@@ -111,7 +111,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Login Password Textbox
             _passwordTextbox = new TextBoxPassword(_passwordBackground)
             {
-                Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20)
+                Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20)
             };
             _passwordTextbox.SubmitPressed += PasswordTextbox_SubmitPressed;
             _passwordTextbox.TextChanged += _passwordTextbox_TextChanged;
@@ -122,7 +122,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Login Save Pass Checkbox
             _savePassChk = new LabeledCheckBox(_menuPanel) {Text = Strings.Get("login", "savepass")};
-            _savePassChk.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 20));
+            _savePassChk.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 20));
             _savePassChk.SetSize(300, 36);
             _savePassChk.SetPosition(_passwordBackground.X + 24, _passwordBackground.Bottom + 16);
             _savePassChk.SetImage(
@@ -139,7 +139,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Login - Send Login Button
             _loginBtn = new Button(_menuPanel);
             _loginBtn.SetText(Strings.Get("login", "login"));
-            _loginBtn.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _loginBtn.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
             _loginBtn.Clicked += LoginBtn_Clicked;
             _loginBtn.SetPosition(_usernameBackground.X, _savePassChk.Bottom + 16);
             _loginBtn.SetSize(211, 61);
@@ -159,7 +159,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Login - Back Button
             _backBtn = new Button(_menuPanel);
             _backBtn.SetText(Strings.Get("login", "back"));
-            _backBtn.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _backBtn.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
             _backBtn.SetSize(211, 61);
             _backBtn.SetPosition(_usernameBackground.Right - _backBtn.Width, _savePassChk.Bottom + 16);
             _backBtn.Clicked += BackBtn_Clicked;

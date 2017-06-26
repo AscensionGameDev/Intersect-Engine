@@ -1,6 +1,9 @@
 ﻿using System;
 using Intersect;
+using Intersect.Client.Network;
 using Intersect.Logging;
+using Intersect.Network;
+using Intersect.Network.Packets;
 using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
 
@@ -8,9 +11,13 @@ namespace Intersect_Client.Classes.Networking
 {
     public static class GameNetwork
     {
+
+        public static ClientNetwork clientNetwork;
+
         public static GameSocket MySocket;
 
-        public static bool Connected;
+        private static bool _connected;
+        public static bool Connected => clientNetwork?.IsRunning ?? _connected;
         public static bool Connecting;
         private static byte[] _tempBuff;
         private static ByteBuffer _myBuffer = new ByteBuffer();
@@ -19,14 +26,19 @@ namespace Intersect_Client.Classes.Networking
 
         public static void InitNetwork()
         {
-            if (MySocket != null)
-            {
-                MySocket.Connected += MySocket_OnConnected;
-                MySocket.Disconnected += MySocket_OnDisconnected;
-                MySocket.DataReceived += MySocket_OnDataReceived;
-                MySocket.ConnectionFailed += MySocket_OnConnectionFailed;
-                TryConnect();
-            }
+            Log.Global.AddOutput(new ConsoleOutput());
+            var config = new NetworkConfiguration(Globals.Database.ServerHost, (ushort)Globals.Database.ServerPort);
+            clientNetwork = new ClientNetwork(config);
+            clientNetwork.Start();
+
+            if (clientNetwork != null) return;
+
+            if (MySocket == null) return;
+            MySocket.Connected += MySocket_OnConnected;
+            MySocket.Disconnected += MySocket_OnDisconnected;
+            MySocket.DataReceived += MySocket_OnDataReceived;
+            MySocket.ConnectionFailed += MySocket_OnConnectionFailed;
+            TryConnect();
         }
 
         private static void TryConnect()
@@ -66,14 +78,14 @@ namespace Intersect_Client.Classes.Networking
         private static void MySocket_OnConnected()
         {
             //Not sure how to handle this yet!
-            Connected = true;
+            _connected = true;
         }
 
         public static void Close()
         {
             try
             {
-                Connected = false;
+                _connected = false;
                 Connecting = false;
                 MySocket.Disconnect();
                 MySocket.Dispose();
@@ -103,7 +115,18 @@ namespace Intersect_Client.Classes.Networking
                     buff.WriteByte(0); //Not Compressed
                     buff.WriteBytes(packet);
                 }
-                MySocket.SendData(buff.ToArray());
+
+                if (clientNetwork != null)
+                {
+                    if (!clientNetwork.Send(new BinaryPacket(null) {Buffer = buff}))
+                    {
+                        throw new Exception("Beta 4 network send failed.");
+                    }
+
+                    return;
+                }
+
+                MySocket?.SendData(buff.ToArray());
             }
             catch (Exception exception)
             {
@@ -113,10 +136,7 @@ namespace Intersect_Client.Classes.Networking
 
         public static void Update()
         {
-            if (MySocket != null)
-            {
-                MySocket.Update();
-            }
+            MySocket?.Update();
         }
 
         private static void TryHandleData()

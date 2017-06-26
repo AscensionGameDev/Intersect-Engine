@@ -1,14 +1,11 @@
-﻿using Intersect;
-using Intersect.GameObjects;
+﻿using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
-using Intersect.Server.Classes.Misc.Pathfinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Intersect.Enums;
-using Intersect.Models;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;

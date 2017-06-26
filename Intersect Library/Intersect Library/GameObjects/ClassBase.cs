@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Intersect.Enums;
+using Intersect.Models;
 
 namespace Intersect.GameObjects
 {

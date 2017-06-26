@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
@@ -76,7 +75,7 @@ namespace Intersect_Client.Classes.UI.Game
             _craftWindow.SetCloseButtonImage(
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"),
                 Button.ControlState.Clicked);
-            _craftWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
+            _craftWindow.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 14));
             _craftWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
             _itemContainer = new ScrollControl(_craftWindow);
@@ -186,7 +185,7 @@ namespace Intersect_Client.Classes.UI.Game
             _craft.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _craft.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _craft.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            _craft.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
+            _craft.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 12);
 
             Gui.InputBlockingElements.Add(_craftWindow);
         }

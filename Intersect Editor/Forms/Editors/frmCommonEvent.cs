@@ -7,14 +7,14 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors
 {
-    public partial class frmCommonEvent : Form
+    public partial class frmCommonEvent : EditorForm
     {
         public frmCommonEvent()
         {
+            ApplyHooks();
             InitializeComponent();
             InitLocalization();
             ListCommonEvents();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
         }
 
         private void InitLocalization()
@@ -25,7 +25,7 @@ namespace Intersect.Editor.Forms.Editors
             btnDelete.Text = Strings.Get("commoneventeditor", "delete");
         }
 
-        private void GameObjectUpdatedDelegate(GameObjectType type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
             if (type == GameObjectType.CommonEvent)
             {

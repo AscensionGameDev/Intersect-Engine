@@ -4,18 +4,21 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using Intersect;
 using Intersect.Localization;
 using Intersect.Logging;
+using Intersect.Network;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Networking;
+using Intersect.Server.Network;
 
 namespace Intersect.Server.Classes
 {
     public class MainClass
     {
         private static bool _errorHalt = true;
+
+        public static ServerNetwork network;
 
         public static void Main(string[] args)
         {
@@ -28,6 +31,7 @@ namespace Intersect.Server.Classes
                 Console.ReadKey();
                 return;
             }
+
             Strings.Init(Strings.IntersectComponent.Server, Options.Language);
             Console.WriteLine(@"  _____       _                          _   ");
             Console.WriteLine(@" |_   _|     | |                        | |  ");
@@ -56,6 +60,9 @@ namespace Intersect.Server.Classes
             Console.WriteLine(Strings.Get("commandoutput", "playercount", Database.GetRegisteredPlayers()));
             SocketServer.Init();
             Console.WriteLine(Strings.Get("intro", "started", Options.ServerPort));
+            Log.Global.AddOutput(new ConsoleOutput());
+            network = new ServerNetwork(new NetworkConfiguration(Options.ServerPort));
+            network.Start();
 #if websockets
             WebSocketServer.Init();
             Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort + 1));
@@ -592,6 +599,8 @@ namespace Intersect.Server.Classes
                         else
                         {
                             Globals.ServerStarted = false;
+                            network.Stop();
+                            
                             return;
                         }
                     }

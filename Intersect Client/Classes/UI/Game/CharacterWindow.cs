@@ -81,7 +81,7 @@ namespace Intersect_Client.Classes.UI.Game
             _characterWindow.SetCloseButtonImage(
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"),
                 Button.ControlState.Clicked);
-            _characterWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
+            _characterWindow.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 14));
             _characterWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
             _characterName = new Label(_characterWindow);
@@ -91,7 +91,7 @@ namespace Intersect_Client.Classes.UI.Game
             _characterName.SetSize(200, 24);
             _characterName.SetText("");
             _characterName.SetTextColor(Color.White, Label.ControlState.Normal);
-            _characterName.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
+            _characterName.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 12);
 
             _characterLevelAndClass = new Label(_characterWindow);
             _characterLevelAndClass.SetPosition(4, 28);
@@ -100,7 +100,7 @@ namespace Intersect_Client.Classes.UI.Game
             _characterLevelAndClass.SetSize(200, 12);
             _characterLevelAndClass.SetText("");
             _characterLevelAndClass.SetTextColor(Color.White, Label.ControlState.Normal);
-            _characterLevelAndClass.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 10);
+            _characterLevelAndClass.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 10);
 
             _characterContainer = new ImagePanel(_characterWindow);
             _characterContainer.SetSize(100, 100);

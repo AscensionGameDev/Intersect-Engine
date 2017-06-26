@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Intersect;
 using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen;
@@ -42,7 +40,7 @@ namespace Intersect_Client.Classes.UI.Game
             _friendsWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"), Button.ControlState.Normal);
             _friendsWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"), Button.ControlState.Hovered);
             _friendsWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"), Button.ControlState.Clicked);
-            _friendsWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
+            _friendsWindow.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 14));
             _friendsWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
             _searchTextbox = new TextBox(_friendsWindow);
@@ -59,7 +57,7 @@ namespace Intersect_Client.Classes.UI.Game
             _addButton.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _addButton.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _addButton.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            _addButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
+            _addButton.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 12);
             _addButton.Clicked += addButton_Clicked;
 
             updateList();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Intersect.GameObjects.Conditions;
 using Intersect.Localization;
+using Intersect.Models;
 
 namespace Intersect.GameObjects
 {

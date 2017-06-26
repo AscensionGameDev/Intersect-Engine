@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
-using Intersect;
 using Intersect.Editor.Classes.Core;
 using Intersect.Editor.Classes.General;
 using Intersect.Editor.Classes.Maps;
@@ -29,6 +28,7 @@ namespace Intersect.Editor.Classes
         public static FrmLogin LoginForm;
         public static bool HasGameData = false;
         public static bool InEditor;
+
         public static bool ClosingEditor;
 
         //Animation Frame Variables

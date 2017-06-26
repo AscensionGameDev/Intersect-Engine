@@ -1,5 +1,4 @@
-﻿using Intersect;
-using Intersect.Server.Classes.Items;
+﻿using Intersect.Server.Classes.Items;
 
 namespace Intersect.Server.Classes.Maps
 {

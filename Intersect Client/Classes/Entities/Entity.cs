@@ -44,7 +44,14 @@ namespace Intersect_Client.Classes.Entities
         public DashInstance Dashing = null;
         public Queue<DashInstance> DashQueue = new Queue<DashInstance>();
         public long DashTimer = 0;
-        public int Dir;
+
+        private int _dir;
+        public int Dir
+        {
+            get => _dir;
+            set => _dir = (value + 4) % 4;
+        }
+
         public int[] Equipment = new int[Options.EquipmentSlots.Count];
 
         //Extras
@@ -129,7 +136,7 @@ namespace Intersect_Client.Classes.Entities
             MyName = bf.ReadString();
             MySprite = bf.ReadString();
             Face = bf.ReadString();
-			Level = bf.ReadInteger();
+            Level = bf.ReadInteger();
             CurrentX = bf.ReadInteger();
             CurrentY = bf.ReadInteger();
             CurrentZ = bf.ReadInteger();
@@ -493,6 +500,10 @@ namespace Intersect_Client.Classes.Entities
                         break;
                     case 3:
                         d = 2;
+                        break;
+                    default:
+                        Dir = 0;
+                        d = 3;
                         break;
                 }
                 destRectangle.X = (int) Math.Ceiling(destRectangle.X);

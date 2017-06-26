@@ -1,106 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Intersect Server Language File - Beta 3 -->
 <Strings>
-	<Intro>
-		<string id="title">Intersect Server</string>
-		<string id="tagline">                          free 2d orpg engine</string>
-		<string id="version">Version {00}</string>
-		<string id="exit">Press any key to exit.</string>
-		<string id="support">For help, support, and updates visit: http://ascensiongamedev.com</string>
-		<string id="loading">Loading, please wait.</string>
-		<string id="started">Server Started. Using Port #{00}</string>
-		<string id="websocketstarted">Websocket listener started for Unity WebGL Clients using Port #{00}</string>
-		<string id="consoleactive">Type exit to shutdown the server, or help for a list of commands.</string>
-	</Intro>
-	<CommandOutput>
-		<string id="playercount">Server has {00} registered players.</string>
-		<string id="gametime">Game time is now: {00}</string>
-		<string id="listid">ID</string>
-		<string id="listaccount">Account</string>
-		<string id="listcharacter">Character</string>
-		<string id="killsuccess">{00} has been killed!</string>
-		<string id="parseerror">Parse Error: Parameter could not be read. Type {00} {01} for usage information.</string>
-		<string id="syntaxerror">Syntax Error: Expected parameter not found. Type {00} {01} for usage information.</string>
-		<string id="invalidparameters">Invalid parameters provided! Use {00} to get more info about a command.</string>
-		<string id="powerchanged">{00} has had their power updated!</string>
-		<string id="powerlevel">{00}'s power has been set to {01}!</string>
-		<string id="cps">Current CPS: {00}</string>
-		<string id="cpslocked">CPS Locked</string>
-		<string id="cpsunlocked">CPS Unlocked</string>
-		<string id="helpheader">List of available commands:</string>
-		<string id="helpfooter">Type in any command followed by {00} for parameters and usage information.</string>
-		<string id="notfound">Command not recoginized. Enter help for a list of commands. Remember console commands are case sensitive!</string>
-	</CommandOutput>
-	<Commands>
-		<string id="commandinfo">/?</string>
-		
-		<string id="announcement">announcement</string>
-		<string id="announcementusage">Usage: announcement [message] {00}</string>
-		<string id="announcementdesc">Desc: Sends a global message to all users playing the game.</string>
-		<string id="announcementhelp">sends a global message to all players</string>
-		
-		<string id="onlinelist">onlinelist</string>
-		<string id="onlinelisthelp">shows all players online</string>
-		
-		<string id="kill">kill</string>
-		<string id="killusage">Usage: kill [username] {00}</string>
-		<string id="killdesc">Desc: Kills a player on the server.</string>
-		<string id="killhelp">kills a player on the server</string>
-		
-		<string id="kick">kick</string>
-		<string id="kickusage">Usage: kick [username] {00}</string>
-		<string id="kickdesc">Desc: Kicks a player from the server.</string>
-		<string id="kickhelp">kicks a player from the server</string>
-		
-		<string id="unban">unban</string>
-		<string id="unbanusage">Usage: unban [account] {00}</string>
-		<string id="unbandesc">Desc: Unbans a player from the server.</string>
-		<string id="unbanhelp">unbans a player from the server</string>
-		
-		<string id="ban">ban</string>
-		<string id="banuser">console</string>
-		<string id="unbanusage">Usage: ban [username] [duration (days)] [IP Ban? ({00}/{01})] [reason] {02}</string>
-		<string id="unbandesc">Desc: Bans a player from the server.</string>
-		<string id="banhelp">bans a player from the server</string>
-		
-		<string id="unmute">unmute</string>
-		<string id="unmuteusage">Usage: unmute [username] {00}</string>
-		<string id="unmutedesc">Desc: unmutes a player allowing them to talk.</string>
-		<string id="unmutehelp">unmutes a player allowing them to talk</string>
-		
-		<string id="mute">mute</string>
-		<string id="muteuser">console</string>
-		<string id="muteusage">Usage: mute [username] [duration (days)] [IP Ban? ({00}/{01})] [reason] {02}</string>
-		<string id="mutedesc">Desc: mutes a player preventing them from talking.</string>
-		<string id="mutehelp">mutes a player preventing them from talking</string>
-		
-		<string id="power">power</string>
-		<string id="powerusage">Usage: power [username] [level] {00}</string>
-		<string id="powerdesc">Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.</string>
-		<string id="powerhelp">sets the administrative access of a user</string>
-		
-		<string id="poweracc">poweracc</string>
-		<string id="poweraccusage">Usage: power [login] [level] {00}</string>
-		<string id="poweraccdesc">Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.</string>
-		<string id="poweracchelp">sets the administrative access of an account</string>
-		
-		<string id="cps">cps</string>
-		<string id="cpsusage">Usage: cps [status] [lock] [unlock] {00}</string>
-		<string id="cpsdesc">Desc: Prints the current CPS. The status flag tells if the server loop is locked or unlocked. The lock flag locks the cps while the unlock flag unlocks it.</string>
-		<string id="cpslock">lock</string>
-		<string id="cpsunlock">unlock</string>
-		<string id="cpsstatus">status</string>
-		<string id="cpshelp">prints the current server cps</string>
-		
-		<string id="exit">exit</string>
-		<string id="exitusage">Usage: exit {00}</string>
-		<string id="exitdesc">Desc: Closes down the server.</string>
-		<string id="exithelp">closes the server</string>
-		
-		<string id="help">help</string>
-		<string id="helpusage">help</string>
-		<string id="helpdesc">help</string>
-		<string id="helphelp">displays list of available commands</string>
+    <Intro>
+        <string id="title">Intersect Server</string>
+        <string id="tagline">                          free 2d orpg engine</string>
+        <string id="version">Version {00}</string>
+        <string id="exit">Press any key to exit.</string>
+        <string id="support">For help, support, and updates visit: http://ascensiongamedev.com</string>
+        <string id="loading">Loading, please wait.</string>
+        <string id="started">Server Started. Using Port #{00}</string>
+        <string id="websocketstarted">Websocket listener started for Unity WebGL Clients using Port #{00}</string>
+        <string id="consoleactive">Type exit to shutdown the server, or help for a list of commands.</string>
+    </Intro>
+    <CommandOutput>
+        <string id="playercount">Server has {00} registered players.</string>
+        <string id="gametime">Game time is now: {00}</string>
+        <string id="listid">ID</string>
+        <string id="listaccount">Account</string>
+        <string id="listcharacter">Character</string>
+        <string id="killsuccess">{00} has been killed!</string>
+        <string id="parseerror">Parse Error: Parameter could not be read. Type {00} {01} for usage information.</string>
+        <string id="syntaxerror">Syntax Error: Expected parameter not found. Type {00} {01} for usage information.</string>
+        <string id="invalidparameters">Invalid parameters provided! Use {00} to get more info about a command.</string>
+        <string id="powerchanged">{00} has had their power updated!</string>
+        <string id="powerlevel">{00}'s power has been set to {01}!</string>
+        <string id="cps">Current CPS: {00}</string>
+        <string id="cpslocked">CPS Locked</string>
+        <string id="cpsunlocked">CPS Unlocked</string>
+        <string id="helpheader">List of available commands:</string>
+        <string id="helpfooter">Type in any command followed by {00} for parameters and usage information.</string>
+        <string id="notfound">Command not recoginized. Enter help for a list of commands. Remember console commands are case sensitive!</string>
+    </CommandOutput>
+    <Commands>
+        <string id="commandinfo">/?</string>
+        
+        <string id="announcement">announcement</string>
+        <string id="announcementusage">Usage: announcement [message] {00}</string>
+        <string id="announcementdesc">Desc: Sends a global message to all users playing the game.</string>
+        <string id="announcementhelp">sends a global message to all players</string>
+        
+        <string id="onlinelist">onlinelist</string>
+        <string id="onlinelisthelp">shows all players online</string>
+        
+        <string id="kill">kill</string>
+        <string id="killusage">Usage: kill [username] {00}</string>
+        <string id="killdesc">Desc: Kills a player on the server.</string>
+        <string id="killhelp">kills a player on the server</string>
+        
+        <string id="kick">kick</string>
+        <string id="kickusage">Usage: kick [username] {00}</string>
+        <string id="kickdesc">Desc: Kicks a player from the server.</string>
+        <string id="kickhelp">kicks a player from the server</string>
+        
+        <string id="unban">unban</string>
+        <string id="unbanusage">Usage: unban [account] {00}</string>
+        <string id="unbandesc">Desc: Unbans a player from the server.</string>
+        <string id="unbanhelp">unbans a player from the server</string>
+        
+        <string id="ban">ban</string>
+        <string id="banuser">console</string>
+        <string id="unbanusage">Usage: ban [username] [duration (days)] [IP Ban? ({00}/{01})] [reason] {02}</string>
+        <string id="unbandesc">Desc: Bans a player from the server.</string>
+        <string id="banhelp">bans a player from the server</string>
+        
+        <string id="unmute">unmute</string>
+        <string id="unmuteusage">Usage: unmute [username] {00}</string>
+        <string id="unmutedesc">Desc: unmutes a player allowing them to talk.</string>
+        <string id="unmutehelp">unmutes a player allowing them to talk</string>
+        
+        <string id="mute">mute</string>
+        <string id="muteuser">console</string>
+        <string id="muteusage">Usage: mute [username] [duration (days)] [IP Ban? ({00}/{01})] [reason] {02}</string>
+        <string id="mutedesc">Desc: mutes a player preventing them from talking.</string>
+        <string id="mutehelp">mutes a player preventing them from talking</string>
+        
+        <string id="power">power</string>
+        <string id="powerusage">Usage: power [username] [level] {00}</string>
+        <string id="powerdesc">Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.</string>
+        <string id="powerhelp">sets the administrative access of a user</string>
+        
+        <string id="poweracc">poweracc</string>
+        <string id="poweraccusage">Usage: power [login] [level] {00}</string>
+        <string id="poweraccdesc">Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.</string>
+        <string id="poweracchelp">sets the administrative access of an account</string>
+        
+        <string id="cps">cps</string>
+        <string id="cpsusage">Usage: cps [status] [lock] [unlock] {00}</string>
+        <string id="cpsdesc">Desc: Prints the current CPS. The status flag tells if the server loop is locked or unlocked. The lock flag locks the cps while the unlock flag unlocks it.</string>
+        <string id="cpslock">lock</string>
+        <string id="cpsunlock">unlock</string>
+        <string id="cpsstatus">status</string>
+        <string id="cpshelp">prints the current server cps</string>
+        
+        <string id="exit">exit</string>
+        <string id="exitusage">Usage: exit {00}</string>
+        <string id="exitdesc">Desc: Closes down the server.</string>
+        <string id="exithelp">closes the server</string>
+        
+        <string id="help">help</string>
+        <string id="helpusage">help</string>
+        <string id="helpdesc">help</string>
+        <string id="helphelp">displays list of available commands</string>
 
 		<string id="invalid">Invalid /command.</string>
 		
@@ -278,67 +278,67 @@
 		<string id="notarget">No Target!</string>
     <string id="channeling">You are currently channeling another skill.</string>
     <string id="channelingnoattack">You are currently channeling a spell, you cannot attack.</string>
-		<string id="cooldown">This skill is on cooldown.</string>
-		<string id="lowhealth">Not enough health.</string>
-		<string id="lowmana">Not enough mana.</string>
-		<string id="stunblocking">You are stunned and can't block.</string>
-		<string id="stunattacking">You are stunned and can't attack.</string>
-		<string id="dynamicreq">You do not meet the requirements to cast the spell!</string>
-		<string id="resourcereqs">You do not meet the requirements to harvest this resource!</string>
-		<string id="status0">NONE!</string>
-		<string id="status1">SILENCED!</string>
-		<string id="status2">STUNNED!</string>
-		<string id="status3">SNARED!</string>
-		<string id="status4">BLINDED!</string>
-		<string id="status5">STEALTH!</string>
-		<string id="status6">TRANSFORMED!</string>
-	</Combat>
-	<Mapping>
-		<string id="newfolder">New Folder</string>
-		<string id="lastmap">Last Map</string>
-		<string id="lastmaperror">Failed to delete map, you must have at least one map at all times!</string>
-		<string id="linkfail">Map Link Failure</string>
-		<string id="linkfailerror">Failed to link map {00} to map {01}. If this merge were to happen, maps {02} and {03} would occupy the same space in the world.</string>
-	</Mapping>
-	<Classes>
-		<string id="lastclass">Last Class</string>
-		<string id="lastclasserror">Failed to delete class, you must have at least one class at all times!</string>
-	</Classes>
-	<Networking>
-		<string id="disconnected">Client disconnected.</string>
-		<string id="badpacket">Error handling client packet. Disconnecting client. More info logged to errors.log</string>
-	</Networking>
-	<Formulas>
-		<string id="loadfailed">Failed to load formulas! Press any key to shut down.</string>
-		<string id="missing">Formulas.xml missing. Generated default formulas file.</string>
-		<string id="syntax">Error loading formulas! Please make sure the file exists and is free on syntax errors.</string>
-	</Formulas>
-	<Chat>
-		<string id="global">[GLOBAL] {00}: {01}</string>
-		<string id="announcement">[ANNOUNCEMENT] {00}: {01}</string>
-		<string id="private">[PM] {00}: {01}</string>
-		<string id="admin">[ADMIN] {00}: {01}</string>
-		<string id="party">[PARTY] {00}: {01}</string>
-		<string id="local">{00}: {01}</string>
-		<string id="globalcmd">/global</string>
-		<string id="allcmd">/all</string>
-		<string id="announcementcmd">/announcement</string>
-		<string id="admincmd">/admin</string>
-		<string id="partycmd">/party</string>
-		<string id="pmcmd">/pm</string>
-		<string id="messagecmd">/message</string>
-		<string id="replycmd">/reply</string>
-		<string id="rcmd">/r</string>
-	</Chat>
-	<Regex>
-		<string id="email">^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|([a-zA-Z]+[\w-]+\.)+[a-zA-Z]{2,4})$</string>
-		<string id="username">^[a-zA-Z0-9]{2,20}$</string>
-		<string id="password">^[a-zA-Z0-9]{4,20}$</string>
-	</Regex>
-	<Errors>
-		<string id="warpfail">Failed to warp player to new map -- warping to spawn.</string>
-		<string id="errorlogged">An error was logged into errors.log</string>
-		<string id="errorservercrashnohalt">The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log.</string>
-		<string id="errorservercrash">The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log. Press any key to exit.</string>
-	</Errors>
+        <string id="cooldown">This skill is on cooldown.</string>
+        <string id="lowhealth">Not enough health.</string>
+        <string id="lowmana">Not enough mana.</string>
+        <string id="stunblocking">You are stunned and can't block.</string>
+        <string id="stunattacking">You are stunned and can't attack.</string>
+        <string id="dynamicreq">You do not meet the requirements to cast the spell!</string>
+        <string id="resourcereqs">You do not meet the requirements to harvest this resource!</string>
+        <string id="status0">NONE!</string>
+        <string id="status1">SILENCED!</string>
+        <string id="status2">STUNNED!</string>
+        <string id="status3">SNARED!</string>
+        <string id="status4">BLINDED!</string>
+        <string id="status5">STEALTH!</string>
+        <string id="status6">TRANSFORMED!</string>
+    </Combat>
+    <Mapping>
+        <string id="newfolder">New Folder</string>
+        <string id="lastmap">Last Map</string>
+        <string id="lastmaperror">Failed to delete map, you must have at least one map at all times!</string>
+        <string id="linkfail">Map Link Failure</string>
+        <string id="linkfailerror">Failed to link map {00} to map {01}. If this merge were to happen, maps {02} and {03} would occupy the same space in the world.</string>
+    </Mapping>
+    <Classes>
+        <string id="lastclass">Last Class</string>
+        <string id="lastclasserror">Failed to delete class, you must have at least one class at all times!</string>
+    </Classes>
+    <Networking>
+        <string id="disconnected">Client disconnected.</string>
+        <string id="badpacket">Error handling client packet. Disconnecting client. More info logged to errors.log</string>
+    </Networking>
+    <Formulas>
+        <string id="loadfailed">Failed to load formulas! Press any key to shut down.</string>
+        <string id="missing">Formulas.xml missing. Generated default formulas file.</string>
+        <string id="syntax">Error loading formulas! Please make sure the file exists and is free on syntax errors.</string>
+    </Formulas>
+    <Chat>
+        <string id="global">[GLOBAL] {00}: {01}</string>
+        <string id="announcement">[ANNOUNCEMENT] {00}: {01}</string>
+        <string id="private">[PM] {00}: {01}</string>
+        <string id="admin">[ADMIN] {00}: {01}</string>
+        <string id="party">[PARTY] {00}: {01}</string>
+        <string id="local">{00}: {01}</string>
+        <string id="globalcmd">/global</string>
+        <string id="allcmd">/all</string>
+        <string id="announcementcmd">/announcement</string>
+        <string id="admincmd">/admin</string>
+        <string id="partycmd">/party</string>
+        <string id="pmcmd">/pm</string>
+        <string id="messagecmd">/message</string>
+        <string id="replycmd">/reply</string>
+        <string id="rcmd">/r</string>
+    </Chat>
+    <Regex>
+        <string id="email">^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|([a-zA-Z]+[\w-]+\.)+[a-zA-Z]{2,4})$</string>
+        <string id="username">^[a-zA-Z0-9]{2,20}$</string>
+        <string id="password">^[a-zA-Z0-9]{4,20}$</string>
+    </Regex>
+    <Errors>
+        <string id="warpfail">Failed to warp player to new map -- warping to spawn.</string>
+        <string id="errorlogged">An error was logged into errors.log</string>
+        <string id="errorservercrashnohalt">The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log.</string>
+        <string id="errorservercrash">The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log. Press any key to exit.</string>
+    </Errors>
 </Strings>

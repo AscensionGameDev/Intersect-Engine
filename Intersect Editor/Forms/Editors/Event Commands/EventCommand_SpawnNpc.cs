@@ -2,14 +2,12 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Intersect;
 using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using Color = System.Drawing.Color;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using Intersect;
 using Intersect.Editor.Classes.Core;
 using Intersect.Editor.Classes.Entities;
 using Intersect.Editor.Classes.General;
@@ -13,10 +12,10 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Localization;
+using Intersect.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using static Intersect.Editor.Classes.Core.GameContentManager;
-using Color = System.Drawing.Color;
 
 namespace Intersect.Editor.Classes
 {
@@ -176,7 +175,17 @@ namespace Intersect.Editor.Classes
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
+                                    MapInstance map = null;
+                                    try
+                                    {
+                                        map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
+                                    }
+                                    catch (Exception exception)
+                                    {
+                                        Log.Error(
+                                            $"{Globals.MapGrid.Grid.GetLength(0)}x{Globals.MapGrid.Grid.GetLength(1)} -- {x},{y}");
+                                        Log.Error(exception);
+                                    }
                                     if (map != null)
                                     {
                                         lock (map.GetMapLock())
@@ -610,7 +619,17 @@ namespace Intersect.Editor.Classes
                                     .IntersectsWith(new System.Drawing.Rectangle(0, 0, CurrentView.Width,
                                         CurrentView.Height)))
                             {
-                                if (TilesetBase.Lookup.Get<TilesetBase>(tmpMap.Layers[z].Tiles[x, y].TilesetIndex) == null) continue;
+                                try
+                                {
+                                    if (TilesetBase.Lookup.Get<TilesetBase>(tmpMap.Layers[z].Tiles[x, y]
+                                            .TilesetIndex) == null) continue;
+                                }
+                                catch (Exception exception)
+                                {
+                                    Log.Error($"map={tmpMap != null},layer{z}.tiles={tmpMap.Layers[z].Tiles != null}");
+                                    Log.Error(exception);
+                                    continue;
+                                }
                                 Texture2D tilesetTex = GetTexture(GameContentManager.TextureType.Tileset,
                                     TilesetBase.Lookup.Get<TilesetBase>(tmpMap.Layers[z].Tiles[x, y].TilesetIndex).Name);
                                 if (tilesetTex == null || tmpMap.Autotiles == null || tmpMap.Autotiles.Autotile == null) continue;

@@ -1,16 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Xml;
-using Intersect;
 using Intersect.Enums;
-using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Maps;
-using Intersect.Models;
-using Intersect.Editor.Classes.Maps;
 using Mono.Data.Sqlite;
 
 namespace Intersect.Editor.Classes

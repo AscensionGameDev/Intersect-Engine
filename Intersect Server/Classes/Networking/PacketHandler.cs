@@ -2,14 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
+using Intersect.Logging;
 using Intersect.Models;
+using Intersect.Network;
+using Intersect.Network.Packets;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
@@ -22,12 +24,25 @@ namespace Intersect.Server.Classes.Networking
 {
     public class PacketHandler
     {
+        public bool HandlePacket(IPacket packet)
+        {
+            var binaryPacket = packet as BinaryPacket;
+            HandlePacket(Client.FindBeta4Client(packet.Connection), binaryPacket.Buffer.ToArray());
+            return true;
+        }
+
         public void HandlePacket(Client client, byte[] packet)
         {
+            if (client == null)
+            {
+                Log.Debug("Client missing... >.>");
+                return;
+            }
+
+            if (packet == null || packet.Length == 0) return;
+
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-
-            if (client == null || packet == null || packet.Length == 0) return;
 
             //Compressed?
             if (bf.ReadByte() == 1)
@@ -818,9 +833,9 @@ namespace Intersect.Server.Classes.Networking
 
         private static void HandleTryAttack(Client client, byte[] packet)
         {
-			bool UnequippedAttack = false;
+            bool UnequippedAttack = false;
 
-			using (var buffer = new ByteBuffer())
+            using (var buffer = new ByteBuffer())
             {
                 buffer.WriteBytes(packet);
                 long target = buffer.ReadLong();
@@ -855,10 +870,10 @@ namespace Intersect.Server.Classes.Networking
                         ItemBase.Lookup.Get<ItemBase>(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum) !=
                         null)
                     {
-						ItemBase WeaponItem = ItemBase.Lookup.Get<ItemBase>(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum);
+                        ItemBase WeaponItem = ItemBase.Lookup.Get<ItemBase>(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum);
 
-						//Check for animation
-						var attackAnim = AnimationBase.Lookup.Get<AnimationBase>(ItemBase.Lookup.Get<ItemBase>(
+                        //Check for animation
+                        var attackAnim = AnimationBase.Lookup.Get<AnimationBase>(ItemBase.Lookup.Get<ItemBase>(
                             client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum).AttackAnimation);
                         if (attackAnim != null)
                         {

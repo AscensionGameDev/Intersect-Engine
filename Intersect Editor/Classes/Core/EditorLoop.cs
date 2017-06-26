@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Intersect;
 using Intersect.Editor.Classes.Core;
 using Intersect.Editor.Classes.Maps;
 using Intersect.Editor.Forms;
@@ -79,7 +78,7 @@ namespace Intersect.Editor.Classes
             DrawFrame();
 
             GameContentManager.Update();
-            Network.Update();
+            LegacyEditorNetwork.Update();
             Application.DoEvents(); // handle form events
 
             _fpsCount++;
@@ -120,7 +119,7 @@ namespace Intersect.Editor.Classes
                                 {
                                     map.Update();
                                 }
-                                Network.Update();
+                                LegacyEditorNetwork.Update();
                                 Application.DoEvents();
                             }
                             Thread.Sleep(50);

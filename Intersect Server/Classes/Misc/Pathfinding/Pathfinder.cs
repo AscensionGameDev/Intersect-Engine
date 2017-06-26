@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
 using Intersect.Enums;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.Maps;
-using Intersect.Server.Classes.General;
 
 namespace Intersect.Server.Classes.Misc.Pathfinding
 {

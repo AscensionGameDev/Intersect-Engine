@@ -1,5 +1,4 @@
-﻿using System;
-using Intersect.Localization;
+﻿using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
@@ -59,7 +58,7 @@ namespace Intersect_Client.Classes.UI.Menu
             };
             _menuHeader.SetText(Strings.Get("mainmenu", "title"));
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
-            _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);
+            _menuHeader.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 24);
             _menuHeader.Alignment = Pos.CenterH;
             _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
 
@@ -89,7 +88,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Login Button
             _loginButton = new Button(_menuPanel);
             _loginButton.SetText(Strings.Get("mainmenu", "login"));
-            _loginButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _loginButton.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
             _loginButton.SetSize(211, 61);
             _loginButton.SetPosition(_menuPanel.Width / 2 - _loginButton.Width / 2, 60);
             _loginButton.Clicked += LoginButton_Clicked;
@@ -109,7 +108,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Register Button
             _registerButton = new Button(_menuPanel);
             _registerButton.SetText(Strings.Get("mainmenu", "register"));
-            _registerButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _registerButton.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
             _registerButton.SetSize(211, 61);
             _registerButton.SetPosition(_menuPanel.Width / 2 - _registerButton.Width / 2, 130);
             _registerButton.Clicked += RegisterButton_Clicked;
@@ -129,7 +128,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Exit Button
             _exitButton = new Button(_menuPanel);
             _exitButton.SetText(Strings.Get("mainmenu", "exit"));
-            _exitButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _exitButton.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
             _exitButton.SetSize(211, 61);
             _exitButton.SetPosition(_menuPanel.Width / 2 - _exitButton.Width / 2, 200);
             _exitButton.Clicked += ExitButton_Clicked;

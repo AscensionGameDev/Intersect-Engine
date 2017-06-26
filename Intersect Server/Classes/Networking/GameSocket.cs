@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Intersect;
 using Intersect.Enums;
-using Intersect.GameObjects.Events;
 using Intersect.Localization;
 using Intersect.Logging;
 using Intersect.Server.Classes.Core;
@@ -157,21 +155,21 @@ namespace Intersect.Server.Classes.Networking
                             //Update trade
                             _myClient.Entity.CancelTrade();
 
-							//Clear all event spawned NPC's
-							var entities = _myClient.Entity.SpawnedNpcs.ToArray();
-							for (int i = 0; i < entities.Length; i++)
-							{
-								if (entities[i] != null && entities[i].GetType() == typeof(Npc))
-								{
-									if (((Npc)entities[i]).Despawnable == true)
-									{
-										((Npc)entities[i]).Die(0);
-									}
-								}
-							}
-							_myClient.Entity.SpawnedNpcs.Clear();
+                            //Clear all event spawned NPC's
+                            var entities = _myClient.Entity.SpawnedNpcs.ToArray();
+                            for (int i = 0; i < entities.Length; i++)
+                            {
+                                if (entities[i] != null && entities[i].GetType() == typeof(Npc))
+                                {
+                                    if (((Npc)entities[i]).Despawnable == true)
+                                    {
+                                        ((Npc)entities[i]).Die(0);
+                                    }
+                                }
+                            }
+                            _myClient.Entity.SpawnedNpcs.Clear();
 
-							PacketSender.SendEntityLeave(_myClient.Entity.MyIndex, (int)EntityTypes.Player,
+                            PacketSender.SendEntityLeave(_myClient.Entity.MyIndex, (int)EntityTypes.Player,
                                 Globals.Entities[_entityIndex].CurrentMap);
                             if (!_myClient.IsEditor)
                             {

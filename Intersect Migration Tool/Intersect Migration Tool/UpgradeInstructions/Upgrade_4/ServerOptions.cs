@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using Intersect;
-using Options = Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.Options;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
 {

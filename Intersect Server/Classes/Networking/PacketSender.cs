@@ -1,5 +1,4 @@
-﻿using Intersect;
-using Intersect.Collections;
+﻿using Intersect.Collections;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
