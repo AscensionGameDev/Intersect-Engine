@@ -50,11 +50,10 @@ namespace Intersect_Client_MonoGame
         }
 
         //Really basic error handler for debugging purposes
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs exception)
         {
-            Log.Error((Exception) e.ExceptionObject);
-            MessageBox.Show(
-                "The Intersect Client has encountered an error and must close. Error information can be found in resources/logs/errors.log");
+            Log.Error((Exception) exception?.ExceptionObject);
+            MessageBox.Show(@"The Intersect Client has encountered an error and must close. Error information can be found in logs/errors.log");
             Environment.Exit(-1);
         }
 
@@ -67,7 +66,10 @@ namespace Intersect_Client_MonoGame
         protected override void Initialize()
         {
             //Setup SFML Classes
-            ((MonoRenderer) GameGraphics.Renderer).Init(GraphicsDevice);
+            var monoRenderer = (MonoRenderer) GameGraphics.Renderer;
+            if (monoRenderer == null) throw new NullReferenceException("No renderer.");
+            monoRenderer.Init(GraphicsDevice);
+            
             // TODO: Remove old netcode
             //GameNetwork.MySocket = new MonoSocket();
 
