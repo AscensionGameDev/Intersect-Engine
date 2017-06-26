@@ -102,179 +102,180 @@
         <string id="helpdesc">help</string>
         <string id="helphelp">displays list of available commands</string>
 
-        <string id="invalid">Invalid /command.</string>
-        
-        <string id="true">true</string>
-        <string id="false">false</string>
-    </Commands>
-    <General>
-      <!-- Used everywhere. Sounds on map, resource graphics, panoramas, item types, etc. English is None or No Selection. Choose whatever fits best in your language. Try to keep this the same across the client, editor, and server language files as well. -->
-        <string id="none">None</string>
-    </General>
-    <Database>
-        <string id="outofdate">Database is out of date! Version: {00} Expected Version: {01}. Please run the included migration tool!</string>
-        <string id="usingsqlite">Using SQLite database for account and data storage.</string>
-        <string id="nullfound">Tried to load null value for index {00} of {01}</string>
-        <string id="nullerror">Tried to load one or more null game objects!</string>
-        <string id="nomaps">No maps found! - Creating an empty map!</string>
-        <string id="noclasses">No classes found! - Creating a default class!</string>
-        <string id="default">Default</string>
-    </Database>
-    <Account>
-        <string id="doesnotexist">Account does not exist.</string>
-        <string id="notfound">Error: Account {00} was not found!</string>
-        <string id="unbanned">Account {00} has been unbanned!</string>
-        <string id="banned">{00} has been banned!</string>
-        <string id="muted">{00} has been muted!</string>
-        <string id="unmuted">{00} has been unmuted!</string>
-        <string id="mutestatus">Your account has been muted since: {00} by {01}. Mute expires: {02}. Reason for mute: {03}</string>
-        <string id="banstatus">Your account has been banned since: {00} by {01}. Ban expires: {02}. Reason for ban: {03}</string>
-        <string id="loadfail">Failed to load account. Please try logging in again.</string>
-        <string id="badlogin">Username or password incorrect.</string>
-        <string id="badaccess">Access denied! Invalid power level!</string>
-        <string id="exists">Account already exists!</string>
-        <string id="emailexists">An account with this email address already exists.</string>
-        <string id="invalidclass">Invalid class selected. Try again.</string>
-        <string id="characterexists">An account with this character name exists. Please choose another.</string>
-        <string id="invalidname">The chosen name does not meet requirements set by the server.</string>
-        <string id="invalidemail">The chosen email does not meet requirements set by the server.</string>
-    </Account>
-    <Player>
-        <string id="offline">User not online!</string>
-        <string id="serverkilled">{00} has been killed by the server!</string>
-        <string id="serverkicked">{00} has been kicked by the server!</string>
-        <string id="admin">{00} has been given administrative powers!</string>
-        <string id="mod">{00} has been given moderation powers!</string>
-        <string id="deadmin">{00} has had their administrative powers revoked!</string>
-        <string id="demod">{00} has had their moderation powers revoked!</string>
-        <string id="powerchanged">Your power has been modified!</string>
-        <string id="saved">Your progress has been automatically saved.</string>
-        <string id="levelup">You have leveled up! You are now level {00}!</string>
-        <string id="statpoints">You have {00} stat points available to be spent!</string>
-        <string id="left">{00} has left {01}.</string>
-        <string id="modjoined">You are a moderator! Press Insert at any time to access the administration menu or F2 for debug information.</string>
-        <string id="adminjoined">You are an administrator! Press Insert at any time to access the administration menu or F2 for debug information.</string>
-        <string id="warpedto">Warped to {00}.</string>
-        <string id="warpedtoyou">{00} warped to you.</string>
-        <string id="haswarpedto">{00} has been warped to you.</string>
-        <string id="beenwarpedto">You have been warped to {00}.</string>
-        <string id="killed">{00} has been killed by {01}!</string>
-        <string id="kicked">{00} has been kicked by {01}!</string>
-        <string id="adminsetpower">Only admins can set power!</string>
-        <string id="changeownpower">You cannot alter your own power!</string>
-        <string id="notarget">You need to select a valid target.</string>
-        <string id="targetoutsiderange">Target not in range.</string>
-    </Player>
-    <Quests>
-        <string id="started">Quest Started: {00}!</string>
-        <string id="completed">Quest: {00} completed!</string>
-        <string id="updated">Quest: {00} updated!</string>
-        <string id="declined">Quest Declined: {00}!</string>
-        <string id="abandoned">Quest Abandoned: {00}!</string>
-        <string id="npctask">{00}  updated! {01}/{02} {03}(s) slain!</string>
-        <string id="itemtask">{00}  updated! {01}/{02} {03}(s) gathered!</string>
-        <string id="taskcompleted">Task Completed!</string>
-    </Quests>
-    <Items>
-        <string id="statreq">You do not possess the correct combat stats to use this item.</string>
-        <string id="stunned">You cannot use this item whilst stunned.</string>
-        <string id="dynamicreq">You do not meet the requirements to use this item!</string>
-        <string id="cannotuse">You cannot use this item!</string>
-        <string id="notenough">Not enough {00}s!</string>
-        <string id="notimplemented">Use of this item type is not yet implemented.</string>
-        <string id="bound">You cannot drop this item.</string>
-        <string id="equipped">You cannot drop equipped items.</string>
-    </Items>
-    <Shops>
-        <string id="doesnotaccept">This shop does not accept that item!</string>
-        <string id="inventoryfull">You do not have space to purchase that item!</string>
-        <string id="cantafford">Transaction failed due to insufficent funds.</string>
-    </Shops>
-    <Crafting>
-        <string id="crafted">You successfully crafted {00}!</string>
-        <string id="nospace">You do not have enough inventory space to craft {00}!</string>
-    </Crafting>
-    <Banks>
-        <string id="banknospace">There is no space left in your bank for that item!</string>
-        <string id="depositinvalid">Invalid item selected to deposit!</string>
-        <string id="inventorynospace">There is no space left in your inventory for that item!</string>
-        <string id="withdrawinvalid">Invalid item selected to withdraw!</string>
-    </Banks>
-    <Bags>
-        <string id="bagnospace">There is no space left in your bag for that item!</string>
-        <string id="baginself">You cannot store a bag in within itself!</string>
-        <string id="depositinvalid">Invalid item selected to store!</string>
-        <string id="inventorynospace">There is no space left in your inventory for that item!</string>
-        <string id="withdrawinvalid">Invalid item selected to retreive!</string>
-        <string id="onlysellempty">Cannot sell bag unless it's empty!</string>
-        <string id="onlytradeempty">Cannot trade bag unless it's empty!</string>
-    </Bags>
-    <Trading>
-        <string id="tradenospace">There is no space left in the trade window for that item!</string>
-        <string id="offerinvalid">Invalid item selected to offer!</string>
-        <string id="inventorynospace">There is no space left in your inventory for that item!</string>
-        <string id="revokeinvalid">Invalid item selected to revoke!</string>
-        <string id="itemsdropped">Out of inventory space. Some of your items have been dropped on the ground!</string>
-        <string id="declined">The trade was declined!</string>
-        <string id="accepted">The trade was successful!</string>
-        <string id="alreadydenied">Your trade request has already been denied!</string>
-        <string id="busy">{00} is busy. Please try again later!</string>
-        <string id="declined">{00} has declined your request to trade!</string>
-    </Trading>
-    <Parties>
-        <string id="leaderinvonly">Only the party leader can send invitations to your party.</string>
-        <string id="joined">{00} has joined the party!</string>
-        <string id="limitedreached">You have reached the maximum limit of party members. Kick another member before adding more.</string>
-        <string id="kicked">You have been kicked from the party!</string>
-        <string id="memberkicked">{00} has been kicked from the party!</string>
-        <string id="disbanded">The party has been disbanded.</string>
-        <string id="left">You have left the party.</string>
-        <string id="memberleft">{00} has left the party!</string>
-        <string id="alreadydenied">Your party invitation has already been rejected!</string>
-        <string id="busy">{00} is busy. Please try again later!</string>
-        <string id="declined">{00} has declined your party invitation!</string>
-    </Parties>
-    <Friends>
-        <string id="accept">{00} has accepted your friend request!</string>
-        <string id="sent">Friend request sent.</string>
-        <string id="remove">Friend removed.</string>
-        <string id="alreadyfriends">You are already friends with {00}.</string>
-        <string id="busy">{00} is busy. Please try again later!</string>
-        <string id="notification">You are now friends with {00}!</string>
-    </Friends>
-    <Events>
-        <string id="playernamecommand">\pn</string>
-        <string id="eventnamecommand">\en</string>
-        <string id="onlinelistcommand">\onlinelist</string>
-        <string id="onlinecountcommand">\onlinecount</string>
-        <string id="commandparameter">\param</string>
-        <string id="playervar">\pv</string>
-        <string id="playerswitch">\ps</string>
-        <string id="globalvar">\gv</string>
-        <string id="globalswitch">\gs</string>
-        <string id="timehour">\hour</string>
-        <string id="militaryhour">\24hour</string>
-        <string id="timeminute">\minute</string>
-        <string id="timesecond">\second</string>
-        <string id="timeperiod">\period</string>
-        
-        <string id="periodmorning">AM</string>
-        <string id="periodevening">PM</string>
-    </Events>
-    <Combat>
-        <string id="critcal">CRITICAL HIT!</string>
-        <string id="miss">MISS!</string>
-        <string id="blocked">BLOCKED!</string>
-        <string id="dash">DASH!</string>
-        <string id="levelup">LEVEL UP!</string>
-        <string id="toolrequired">You require a {00} to interact with this resource!</string>
-        <string id="addsymbol">+</string>
-        <string id="removesymbol">-</string>
-        <string id="statreq">You do not possess the correct combat stats to use this ability.</string>
-        <string id="silenced">You cannot cast this ability whilst silenced.</string>
-        <string id="stunned">You cannot cast this ability whilst stunned.</string>
-        <string id="levelreq">You are not a high enough level to use this ability.</string>
-        <string id="notarget">No Target!</string>
+		<string id="invalid">Invalid /command.</string>
+		
+		<string id="true">true</string>
+		<string id="false">false</string>
+	</Commands>
+	<General>
+	  <!-- Used everywhere. Sounds on map, resource graphics, panoramas, item types, etc. English is None or No Selection. Choose whatever fits best in your language. Try to keep this the same across the client, editor, and server language files as well. -->
+		<string id="none">None</string>
+	</General>
+	<Database>
+		<string id="outofdate">Database is out of date! Version: {00} Expected Version: {01}. Please run the included migration tool!</string>
+		<string id="usingsqlite">Using SQLite database for account and data storage.</string>
+		<string id="nullfound">Tried to load null value for index {00} of {01}</string>
+		<string id="nullerror">Tried to load one or more null game objects!</string>
+		<string id="nomaps">No maps found! - Creating an empty map!</string>
+		<string id="noclasses">No classes found! - Creating a default class!</string>
+		<string id="default">Default</string>
+	</Database>
+	<Account>
+		<string id="doesnotexist">Account does not exist.</string>
+		<string id="notfound">Error: Account {00} was not found!</string>
+		<string id="unbanned">Account {00} has been unbanned!</string>
+		<string id="banned">{00} has been banned!</string>
+		<string id="muted">{00} has been muted!</string>
+		<string id="unmuted">{00} has been unmuted!</string>
+		<string id="mutestatus">Your account has been muted since: {00} by {01}. Mute expires: {02}. Reason for mute: {03}</string>
+		<string id="banstatus">Your account has been banned since: {00} by {01}. Ban expires: {02}. Reason for ban: {03}</string>
+		<string id="loadfail">Failed to load account. Please try logging in again.</string>
+		<string id="badlogin">Username or password incorrect.</string>
+		<string id="badaccess">Access denied! Invalid power level!</string>
+		<string id="exists">Account already exists!</string>
+		<string id="emailexists">An account with this email address already exists.</string>
+		<string id="invalidclass">Invalid class selected. Try again.</string>
+		<string id="characterexists">An account with this character name exists. Please choose another.</string>
+		<string id="invalidname">The chosen name does not meet requirements set by the server.</string>
+		<string id="invalidemail">The chosen email does not meet requirements set by the server.</string>
+	</Account>
+	<Player>
+		<string id="offline">User not online!</string>
+		<string id="serverkilled">{00} has been killed by the server!</string>
+		<string id="serverkicked">{00} has been kicked by the server!</string>
+		<string id="admin">{00} has been given administrative powers!</string>
+		<string id="mod">{00} has been given moderation powers!</string>
+		<string id="deadmin">{00} has had their administrative powers revoked!</string>
+		<string id="demod">{00} has had their moderation powers revoked!</string>
+		<string id="powerchanged">Your power has been modified!</string>
+		<string id="saved">Your progress has been automatically saved.</string>
+		<string id="levelup">You have leveled up! You are now level {00}!</string>
+		<string id="statpoints">You have {00} stat points available to be spent!</string>
+		<string id="left">{00} has left {01}.</string>
+		<string id="joined">{00} has joined {01}.</string>
+		<string id="modjoined">You are a moderator! Press Insert at any time to access the administration menu or F2 for debug information.</string>
+		<string id="adminjoined">You are an administrator! Press Insert at any time to access the administration menu or F2 for debug information.</string>
+		<string id="warpedto">Warped to {00}.</string>
+		<string id="warpedtoyou">{00} warped to you.</string>
+		<string id="haswarpedto">{00} has been warped to you.</string>
+		<string id="beenwarpedto">You have been warped to {00}.</string>
+		<string id="killed">{00} has been killed by {01}!</string>
+		<string id="kicked">{00} has been kicked by {01}!</string>
+		<string id="adminsetpower">Only admins can set power!</string>
+		<string id="changeownpower">You cannot alter your own power!</string>
+		<string id="notarget">You need to select a valid target.</string>
+		<string id="targetoutsiderange">Target not in range.</string>
+	</Player>
+	<Quests>
+		<string id="started">Quest Started: {00}!</string>
+		<string id="completed">Quest: {00} completed!</string>
+		<string id="updated">Quest: {00} updated!</string>
+		<string id="declined">Quest Declined: {00}!</string>
+		<string id="abandoned">Quest Abandoned: {00}!</string>
+		<string id="npctask">{00}  updated! {01}/{02} {03}(s) slain!</string>
+		<string id="itemtask">{00}  updated! {01}/{02} {03}(s) gathered!</string>
+		<string id="taskcompleted">Task Completed!</string>
+	</Quests>
+	<Items>
+		<string id="statreq">You do not possess the correct combat stats to use this item.</string>
+		<string id="stunned">You cannot use this item whilst stunned.</string>
+		<string id="dynamicreq">You do not meet the requirements to use this item!</string>
+		<string id="cannotuse">You cannot use this item!</string>
+		<string id="notenough">Not enough {00}s!</string>
+		<string id="notimplemented">Use of this item type is not yet implemented.</string>
+		<string id="bound">You cannot drop this item.</string>
+		<string id="equipped">You cannot drop equipped items.</string>
+	</Items>
+	<Shops>
+		<string id="doesnotaccept">This shop does not accept that item!</string>
+		<string id="inventoryfull">You do not have space to purchase that item!</string>
+		<string id="cantafford">Transaction failed due to insufficent funds.</string>
+	</Shops>
+	<Crafting>
+		<string id="crafted">You successfully crafted {00}!</string>
+		<string id="nospace">You do not have enough inventory space to craft {00}!</string>
+	</Crafting>
+	<Banks>
+		<string id="banknospace">There is no space left in your bank for that item!</string>
+		<string id="depositinvalid">Invalid item selected to deposit!</string>
+		<string id="inventorynospace">There is no space left in your inventory for that item!</string>
+		<string id="withdrawinvalid">Invalid item selected to withdraw!</string>
+	</Banks>
+	<Bags>
+		<string id="bagnospace">There is no space left in your bag for that item!</string>
+		<string id="baginself">You cannot store a bag in within itself!</string>
+		<string id="depositinvalid">Invalid item selected to store!</string>
+		<string id="inventorynospace">There is no space left in your inventory for that item!</string>
+		<string id="withdrawinvalid">Invalid item selected to retreive!</string>
+		<string id="onlysellempty">Cannot sell bag unless it's empty!</string>
+		<string id="onlytradeempty">Cannot trade bag unless it's empty!</string>
+	</Bags>
+	<Trading>
+		<string id="tradenospace">There is no space left in the trade window for that item!</string>
+		<string id="offerinvalid">Invalid item selected to offer!</string>
+		<string id="inventorynospace">There is no space left in your inventory for that item!</string>
+		<string id="revokeinvalid">Invalid item selected to revoke!</string>
+		<string id="itemsdropped">Out of inventory space. Some of your items have been dropped on the ground!</string>
+		<string id="declined">The trade was declined!</string>
+		<string id="accepted">The trade was successful!</string>
+		<string id="alreadydenied">Your trade request has already been denied!</string>
+		<string id="busy">{00} is busy. Please try again later!</string>
+		<string id="declined">{00} has declined your request to trade!</string>
+	</Trading>
+	<Parties>
+		<string id="leaderinvonly">Only the party leader can send invitations to your party.</string>
+		<string id="joined">{00} has joined the party!</string>
+		<string id="limitedreached">You have reached the maximum limit of party members. Kick another member before adding more.</string>
+		<string id="kicked">You have been kicked from the party!</string>
+		<string id="memberkicked">{00} has been kicked from the party!</string>
+		<string id="disbanded">The party has been disbanded.</string>
+		<string id="left">You have left the party.</string>
+		<string id="memberleft">{00} has left the party!</string>
+		<string id="alreadydenied">Your party invitation has already been rejected!</string>
+		<string id="busy">{00} is busy. Please try again later!</string>
+		<string id="declined">{00} has declined your party invitation!</string>
+	</Parties>
+	<Friends>
+		<string id="accept">{00} has accepted your friend request!</string>
+		<string id="sent">Friend request sent.</string>
+		<string id="remove">Friend removed.</string>
+		<string id="alreadyfriends">You are already friends with {00}.</string>
+		<string id="busy">{00} is busy. Please try again later!</string>
+		<string id="notification">You are now friends with {00}!</string>
+	</Friends>
+	<Events>
+		<string id="playernamecommand">\pn</string>
+		<string id="eventnamecommand">\en</string>
+		<string id="onlinelistcommand">\onlinelist</string>
+		<string id="onlinecountcommand">\onlinecount</string>
+		<string id="commandparameter">\param</string>
+		<string id="playervar">\pv</string>
+		<string id="playerswitch">\ps</string>
+		<string id="globalvar">\gv</string>
+		<string id="globalswitch">\gs</string>
+		<string id="timehour">\hour</string>
+		<string id="militaryhour">\24hour</string>
+		<string id="timeminute">\minute</string>
+		<string id="timesecond">\second</string>
+		<string id="timeperiod">\period</string>
+		
+		<string id="periodmorning">AM</string>
+		<string id="periodevening">PM</string>
+	</Events>
+	<Combat>
+		<string id="critcal">CRITICAL HIT!</string>
+		<string id="miss">MISS!</string>
+		<string id="blocked">BLOCKED!</string>
+		<string id="dash">DASH!</string>
+		<string id="levelup">LEVEL UP!</string>
+		<string id="toolrequired">You require a {00} to interact with this resource!</string>
+		<string id="addsymbol">+</string>
+		<string id="removesymbol">-</string>
+		<string id="statreq">You do not possess the correct combat stats to use this ability.</string>
+		<string id="silenced">You cannot cast this ability whilst silenced.</string>
+		<string id="stunned">You cannot cast this ability whilst stunned.</string>
+		<string id="levelreq">You are not a high enough level to use this ability.</string>
+		<string id="notarget">No Target!</string>
     <string id="channeling">You are currently channeling another skill.</string>
     <string id="channelingnoattack">You are currently channeling a spell, you cannot attack.</string>
         <string id="cooldown">This skill is on cooldown.</string>
