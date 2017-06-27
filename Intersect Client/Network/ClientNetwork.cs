@@ -19,6 +19,7 @@ namespace Intersect.Client.Network
 
         private byte[] mHandshakeSecret;
         private RSACryptoServiceProvider mRsa;
+        private bool everConnected = false;
 
         public ClientNetwork(NetworkConfiguration config) : base(config, typeof(NetClient))
         {
@@ -38,7 +39,11 @@ namespace Intersect.Client.Network
         {
             Log.Info("Starting the client...");
             Peer.Start();
-            
+            TryConnect();
+        }
+
+        private void TryConnect()
+        {
             using (var hailBuffer = new MemoryBuffer(sizeSecret))
             {
                 hailBuffer.Write(SharedConstants.VERSION_DATA);
@@ -99,7 +104,7 @@ namespace Intersect.Client.Network
                 Guid = new Guid(guidData);
                 var metadata = new LidgrenConnection(this, Guid, request.SenderConnection, aesKey);
                 AddConnection(metadata);
-
+                everConnected = true;
                 return true;
             }
         }
@@ -107,7 +112,11 @@ namespace Intersect.Client.Network
         protected override bool HandleDisconnected(NetIncomingMessage request)
         {
             if (!base.HandleDisconnected(request)) return false;
-
+            if (!everConnected)
+            {
+                TryConnect();
+                return false;
+            }
             Globals.IsRunning = false;
 
             Stop();
