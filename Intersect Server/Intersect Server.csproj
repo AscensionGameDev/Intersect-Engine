@@ -172,9 +172,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="private.bk1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="private-intersect.bek" />
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>

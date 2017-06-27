@@ -6,6 +6,7 @@ using Intersect.Network;
 using Intersect.Threading;
 using Lidgren.Network;
 using System.Linq;
+using System.Reflection;
 using Intersect.Editor.Classes;
 using Intersect.Network.Packets;
 
@@ -24,8 +25,8 @@ namespace Intersect.Editor.Network
         }
 
         protected override RSAParameters GetRsaKey()
-            //=> LoadKeyFromAssembly(Assembly.GetExecutingAssembly(), "Intersect.Client.PJPjjxJEkTWn7qyhSBqhg24CRy9smykBt2TMMwA4TYQZmujB", false);
-            => LoadKeyFromFile("public.bk1", true);
+            => LoadKeyFromAssembly(Assembly.GetExecutingAssembly(), "Intersect.Editor.public-intersect.bek", true);
+            //=> LoadKeyFromFile("public.bk1", true);
 
         private const int sizeHandshakeSecret = 32;
         private const int sizeRsa = 2 + 3 + 256;

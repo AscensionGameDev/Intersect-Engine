@@ -135,6 +135,7 @@
     <Compile Include="Logging\LogLevel.cs" />
     <Compile Include="Logging\MemoryDump.cs" />
     <Compile Include="Memory\MemoryBuffer.cs" />
+    <Compile Include="Memory\StreamWrapper.cs" />
     <Compile Include="Models\LookupUtils.cs" />
     <Compile Include="Models\IDatabaseObject.cs" />
     <Compile Include="Models\IGameObject.cs" />

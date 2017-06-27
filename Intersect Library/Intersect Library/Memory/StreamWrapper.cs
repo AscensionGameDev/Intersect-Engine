@@ -1,94 +1,121 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
-using Intersect.Memory;
-using Lidgren.Network;
 
-namespace Intersect.Network
+namespace Intersect.Memory
 {
-    public class LidgrenBuffer : IBuffer
+    public class StreamWrapper : Stream, IBuffer
     {
-        public NetBuffer Buffer { get; }
+        public Stream Stream { get; }
 
-        public LidgrenBuffer(NetBuffer buffer)
+        public StreamWrapper(Stream stream)
         {
-            Buffer = buffer;
+            Stream = stream;
         }
 
-        public void Dispose()
+        public override bool CanRead
+            => Stream?.CanRead ?? false;
+
+        public override bool CanSeek
+            => Stream?.CanSeek ?? false;
+
+        public override bool CanWrite
+            => Stream?.CanWrite ?? false;
+
+        public override void Flush()
+            => Stream?.Flush();
+
+        public override long Seek(long offset, SeekOrigin origin)
         {
-            
+            if (Stream == null) throw new NullReferenceException();
+            return Stream.Seek(offset, origin);
         }
 
-        public long Length
-            => Buffer?.LengthBytes ?? -1;
+        public override void SetLength(long value)
+            => Stream?.SetLength(value);
 
-        public long Position
-            => Buffer?.PositionInBytes ?? -1;
+        public override long Length
+            => Stream?.Length ?? -1;
+
+        public override long Position
+        {
+            get => Stream?.Position ?? -1;
+            set
+            {
+                Debug.Assert(Stream != null, "Stream != null");
+                Stream.Position = value;
+            }
+        }
 
         public long Remaining
             => Length - Position;
 
         public byte[] ToBytes()
-            => Buffer?.Data;
+        {
+            var length = (int)(Stream?.Length - Stream?.Position ?? 0);
+            var data = new byte[length];
+            Stream?.Read(data, 0, length);
+            return data;
+        }
 
         public bool Has(long bytes)
             => bytes <= Remaining;
 
         public bool Read(out bool value)
         {
-            try
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                value = Buffer.ReadBoolean();
-                return true;
-            }
-            catch (Exception)
+            if (!Has(sizeof(bool)))
             {
                 value = default(bool);
                 return false;
             }
+
+            var bytes = new byte[sizeof(bool)];
+            Stream?.Read(bytes, 0, sizeof(bool));
+            value = BitConverter.ToBoolean(bytes, 0);
+            return true;
         }
 
         public bool Read(out byte value)
         {
-            try
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                value = Buffer.ReadByte();
-                return true;
-            }
-            catch (Exception)
+            if (!Has(sizeof(byte)))
             {
                 value = default(byte);
                 return false;
             }
+
+            Debug.Assert(Stream != null, "Stream != null");
+            value = (byte)(Stream.ReadByte() & 0xFF);
+            return true;
         }
 
         public bool Read(out byte[] value)
         {
-            if (Read(out int count)) return Read(out value, count);
-            value = default(byte[]);
-            return false;
+            if (!Read(out int count))
+            {
+                value = default(byte[]);
+                return false;
+            }
+
+            value = new byte[count];
+            return Read(ref value, 0, count);
         }
 
         public bool Read(out byte[] value, long count)
         {
             value = new byte[count];
-            return count < 1 || Read(ref value, 0, count);
+            return Read(ref value, 0, count);
+        }
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            return Stream?.Read(buffer, offset, count) ?? -1;
         }
 
         public bool Read(ref byte[] value, long offset, long count)
         {
-            try
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                Buffer.ReadBytes(value, (int) offset, (int) count);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            if (value == null) value = new byte[offset + count];
+            return count == Stream?.Read(value, (int)offset, (int)count);
         }
 
         public bool Read(out char value)
@@ -119,92 +146,86 @@ namespace Intersect.Network
 
         public bool Read(out double value)
         {
-            try
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                value = Buffer.ReadDouble();
-                return true;
-            }
-            catch (Exception)
+            if (!Has(sizeof(double)))
             {
                 value = default(double);
                 return false;
             }
+
+            var bytes = new byte[sizeof(double)];
+            Stream?.Read(bytes, 0, sizeof(double));
+            value = BitConverter.ToDouble(bytes, 0);
+            return true;
         }
 
         public bool Read(out float value)
         {
-            try
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                value = Buffer.ReadFloat();
-                return true;
-            }
-            catch (Exception)
+            if (!Has(sizeof(float)))
             {
                 value = default(float);
                 return false;
             }
+
+            var bytes = new byte[sizeof(float)];
+            Stream?.Read(bytes, 0, sizeof(float));
+            value = BitConverter.ToSingle(bytes, 0);
+            return true;
         }
 
         public bool Read(out int value)
         {
-            try
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                value = Buffer.ReadInt32();
-                return true;
-            }
-            catch (Exception)
+            if (!Has(sizeof(int)))
             {
                 value = default(int);
                 return false;
             }
+
+            var bytes = new byte[sizeof(int)];
+            Stream?.Read(bytes, 0, sizeof(int));
+            value = BitConverter.ToInt32(bytes, 0);
+            return true;
         }
 
         public bool Read(out long value)
         {
-            try
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                value = Buffer.ReadInt64();
-                return true;
-            }
-            catch (Exception)
+            if (!Has(sizeof(long)))
             {
                 value = default(long);
                 return false;
             }
+
+            var bytes = new byte[sizeof(long)];
+            Stream?.Read(bytes, 0, sizeof(long));
+            value = BitConverter.ToInt64(bytes, 0);
+            return true;
         }
 
         public bool Read(out sbyte value)
         {
-            try
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                value = Buffer.ReadSByte();
-                return true;
-            }
-            catch (Exception)
+            if (!Has(sizeof(sbyte)))
             {
                 value = default(sbyte);
                 return false;
             }
+
+            var bytes = new byte[sizeof(sbyte)];
+            Stream?.Read(bytes, 0, sizeof(sbyte));
+            value = (sbyte)bytes[0];
+            return true;
         }
 
         public bool Read(out short value)
         {
-            try
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                value = Buffer.ReadInt16();
-                return true;
-            }
-            catch (Exception)
+            if (!Has(sizeof(short)))
             {
                 value = default(short);
                 return false;
             }
+
+            var bytes = new byte[sizeof(short)];
+            Stream?.Read(bytes, 0, sizeof(short));
+            value = BitConverter.ToInt16(bytes, 0);
+            return true;
         }
 
         public bool Read(out string value)
@@ -213,19 +234,30 @@ namespace Intersect.Network
         public bool Read(out string value, Encoding encoding, bool nullTerminated = false)
         {
             if (encoding == null) throw new ArgumentNullException();
+            if (Stream == null)
+            {
+                value = default(string);
+                return false;
+            }
 
             int length;
             if (nullTerminated)
             {
-                var position = Buffer?.PositionInBytes ?? int.MaxValue;
-                var buffer = Buffer?.PeekDataBuffer() ?? new byte[0];
-                while (Buffer?.LengthBytes - position > 0)
+                if (!CanSeek)
                 {
-                    if (buffer[position] == 0) break;
-                    position++;
+                    throw new InvalidOperationException(
+                        "Unable to read null-terminated strings on a Stream without seek.");
                 }
 
-                length = Buffer?.LengthBytes - Buffer?.PositionInBytes ?? -1;
+                var originalPosition = Stream.Position;
+                while (Length - Position > 0)
+                {
+                    if (Stream.ReadByte() == 0) break;
+                    Stream.Position++;
+                }
+
+                Stream.Position = originalPosition;
+                length = (int)(Length - originalPosition);
             }
             else if (!Read(out length))
             {
@@ -253,47 +285,44 @@ namespace Intersect.Network
 
         public bool Read(out uint value)
         {
-            try
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                value = Buffer.ReadUInt32();
-                return true;
-            }
-            catch (Exception)
+            if (!Has(sizeof(uint)))
             {
                 value = default(uint);
                 return false;
             }
+
+            var bytes = new byte[sizeof(uint)];
+            Stream?.Read(bytes, 0, sizeof(uint));
+            value = BitConverter.ToUInt32(bytes, 0);
+            return true;
         }
 
         public bool Read(out ulong value)
         {
-            try
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                value = Buffer.ReadUInt64();
-                return true;
-            }
-            catch (Exception)
+            if (!Has(sizeof(ulong)))
             {
                 value = default(ulong);
                 return false;
             }
+
+            var bytes = new byte[sizeof(ulong)];
+            Stream?.Read(bytes, 0, sizeof(ulong));
+            value = BitConverter.ToUInt64(bytes, 0);
+            return true;
         }
 
         public bool Read(out ushort value)
         {
-            try
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                value = Buffer.ReadUInt16();
-                return true;
-            }
-            catch (Exception)
+            if (!Has(sizeof(ushort)))
             {
                 value = default(ushort);
                 return false;
             }
+
+            var bytes = new byte[sizeof(ushort)];
+            Stream?.Read(bytes, 0, sizeof(ushort));
+            value = BitConverter.ToUInt16(bytes, 0);
+            return true;
         }
 
         public bool ReadBool()
@@ -308,10 +337,10 @@ namespace Intersect.Network
             throw new OutOfMemoryException();
         }
 
-        public byte ReadByte()
+        public new byte ReadByte()
         {
-            if (Read(out byte value)) return value;
-            throw new OutOfMemoryException();
+            Debug.Assert(Stream != null, "Stream != null");
+            return (byte) (Stream.ReadByte() & 0xFF);
         }
 
         public byte ReadUInt8()
@@ -483,22 +512,29 @@ namespace Intersect.Network
         }
 
         public void Write(bool value)
-            => Buffer?.Write(value);
+            => Write(BitConverter.GetBytes(value), 0, sizeof(bool));
 
         public void Write(byte value)
-            => Buffer?.Write(value);
+            => WriteByte(value);
 
         public void Write(byte[] value)
-            => Buffer?.Write(value);
+        {
+            if (value == null) throw new ArgumentNullException();
+            Write(value.Length);
+            Write(value, 0, value.Length);
+        }
 
         public void Write(byte[] value, long count)
             => Write(value, 0, count);
+        
+        public override void Write(byte[] buffer, int offset, int count)
+            => Stream?.Write(buffer, offset, count);
 
         public void Write(byte[] value, long offset, long count)
-            => Buffer?.Write(value, (int) offset, (int) count);
+            => Stream?.Write(value ?? new byte[0], (int) offset, (int)count);
 
         public void Write(char value)
-            => Buffer?.Write(BitConverter.GetBytes(value));
+            => Write(BitConverter.GetBytes(value), 0, sizeof(char));
 
         public void Write(decimal value)
         {
@@ -510,22 +546,22 @@ namespace Intersect.Network
         }
 
         public void Write(double value)
-            => Buffer?.Write(value);
+            => Write(BitConverter.GetBytes(value), 0, sizeof(double));
 
         public void Write(float value)
-            => Buffer?.Write(value);
+            => Write(BitConverter.GetBytes(value), 0, sizeof(float));
 
         public void Write(int value)
-            => Buffer?.Write(value);
+            => Write(BitConverter.GetBytes(value), 0, sizeof(int));
 
         public void Write(long value)
-            => Buffer?.Write(value);
+            => Write(BitConverter.GetBytes(value), 0, sizeof(long));
 
         public void Write(sbyte value)
-            => Buffer?.Write(value);
+            => WriteByte((byte)value);
 
         public void Write(short value)
-            => Buffer?.Write(value);
+            => Write(BitConverter.GetBytes(value), 0, sizeof(short));
 
         public void Write(string value)
             => Write(value, Encoding.UTF8);
@@ -544,12 +580,12 @@ namespace Intersect.Network
         }
 
         public void Write(uint value)
-            => Buffer?.Write(value);
+            => Write(BitConverter.GetBytes(value), 0, sizeof(uint));
 
         public void Write(ulong value)
-            => Buffer?.Write(value);
+            => Write(BitConverter.GetBytes(value), 0, sizeof(ulong));
 
         public void Write(ushort value)
-            => Buffer?.Write(value);
+            => Write(BitConverter.GetBytes(value), 0, sizeof(ushort));
     }
 }
