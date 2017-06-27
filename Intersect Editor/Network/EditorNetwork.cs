@@ -17,6 +17,7 @@ namespace Intersect.Editor.Network
 
         private byte[] mHandshakeSecret;
         private RSACryptoServiceProvider mRsa;
+        private bool everConnected;
 
         public EditorNetwork(NetworkConfiguration config) : base(config, typeof(NetClient))
         {
@@ -36,7 +37,11 @@ namespace Intersect.Editor.Network
         {
             Log.Info("Starting the editor...");
             Peer.Start();
+            TryConnect();
+        }
 
+        private void TryConnect()
+        {
             using (var hailBuffer = new MemoryBuffer(sizeSecret))
             {
                 hailBuffer.Write(SharedConstants.VERSION_DATA);
@@ -97,7 +102,7 @@ namespace Intersect.Editor.Network
                 Guid = new Guid(guidData);
                 var metadata = new LidgrenConnection(this, Guid, request.SenderConnection, aesKey);
                 AddConnection(metadata);
-
+                everConnected = true;
                 return true;
             }
         }
@@ -105,7 +110,11 @@ namespace Intersect.Editor.Network
         protected override bool HandleDisconnected(NetIncomingMessage request)
         {
             if (!base.HandleDisconnected(request)) return false;
-
+            if (!everConnected)
+            {
+                TryConnect();
+                return false;
+            }
             LegacyEditorNetwork.HandleDc();
 
             Stop();
