@@ -4,46 +4,46 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Intersect.Network</RootNamespace>
-    <AssemblyName>Intersect.Network</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <ProjectGuid>{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Intersect.Utilities</RootNamespace>
+    <AssemblyName>intersectutils</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\build\debug\network\</OutputPath>
+    <OutputPath>..\build\debug\utils\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\build\release\network\</OutputPath>
+    <OutputPath>..\build\release\utils\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Tespia|AnyCPU'">
-    <OutputPath>..\build\tespia\network\</OutputPath>
+    <OutputPath>..\build\tespia\utils\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Lidgren.Network, Version=3.6.0.1271, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Lidgren.Network.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -54,24 +54,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractNetwork.cs" />
-    <Compile Include="Crypto\EncryptionKey.cs" />
-    <Compile Include="Crypto\KeyFormat.cs" />
-    <Compile Include="Crypto\Formats\RsaKey.cs" />
-    <Compile Include="Crypto\Formats\AesKey.cs" />
-    <Compile Include="Crypto\IKeyEncoder.cs" />
-    <Compile Include="KeyFactory.cs" />
-    <Compile Include="LidgrenConnection.cs" />
-    <Compile Include="LidgrenBuffer.cs" />
-    <Compile Include="NetworkMetaStatus.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Script.cs" />
+    <Compile Include="Scripts\Exit.cs" />
+    <Compile Include="Scripts\GenRsa.cs" />
+    <Compile Include="Scripts\Help.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Intersect Library\Intersect Library\Intersect %28Core%29.csproj">
-      <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
+      <Project>{BC304B43-1F2C-4454-9EDC-48F47357CA94}</Project>
       <Name>Intersect %28Core%29</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj">
+      <Project>{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}</Project>
+      <Name>Intersect.Network</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

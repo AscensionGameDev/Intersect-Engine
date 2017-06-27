@@ -1,24 +1,25 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace Intersect.Memory
 {
-    public interface IBuffer
+    public interface IBuffer : IDisposable
     {
-        int Length { get; }
-        int Position { get; }
-        int Remaining { get; }
+        long Length { get; }
+        long Position { get; }
+        long Remaining { get; }
 
         byte[] ToBytes();
 
-        bool Has(int bytes);
+        bool Has(long bytes);
 
         #region Read(out)
 
         bool Read(out bool value);
         bool Read(out byte value);
         bool Read(out byte[] value);
-        bool Read(out byte[] value, int count);
-        bool Read(ref byte[] value, int offset, int count);
+        bool Read(out byte[] value, long count);
+        bool Read(ref byte[] value, long offset, long count);
         bool Read(out char value);
         bool Read(out decimal value);
         bool Read(out double value);
@@ -28,7 +29,7 @@ namespace Intersect.Memory
         bool Read(out sbyte value);
         bool Read(out short value);
         bool Read(out string value);
-        bool Read(out string value, Encoding encoding);
+        bool Read(out string value, Encoding encoding, bool nullTerminated = false);
         bool Read(out uint value);
         bool Read(out ulong value);
         bool Read(out ushort value);
@@ -42,8 +43,8 @@ namespace Intersect.Memory
         byte ReadByte();
         byte ReadUInt8();
         byte[] ReadBytes();
-        byte[] ReadBytes(int count);
-        byte[] ReadBytes(ref byte[] bytes, int offset, int count);
+        byte[] ReadBytes(long count);
+        byte[] ReadBytes(ref byte[] bytes, long offset, long count);
         char ReadChar();
         char ReadCharacter();
         decimal ReadDecimal();
@@ -60,7 +61,7 @@ namespace Intersect.Memory
         short ReadInt16();
         short ReadShort();
         string ReadString();
-        string ReadString(Encoding encoding);
+        string ReadString(Encoding encoding, bool nullTerminated = false);
         uint ReadUInt();
         uint ReadUInt32();
         uint ReadUnsignedInteger();
@@ -76,8 +77,8 @@ namespace Intersect.Memory
         void Write(bool value);
         void Write(byte value);
         void Write(byte[] value);
-        void Write(byte[] value, int count);
-        void Write(byte[] value, int offset, int count);
+        void Write(byte[] value, long count);
+        void Write(byte[] value, long offset, long count);
         void Write(char value);
         void Write(decimal value);
         void Write(double value);
@@ -87,7 +88,7 @@ namespace Intersect.Memory
         void Write(sbyte value);
         void Write(short value);
         void Write(string value);
-        void Write(string value, Encoding encoding);
+        void Write(string value, Encoding encoding, bool nullTerminated = false);
         void Write(uint value);
         void Write(ulong value);
         void Write(ushort value);
