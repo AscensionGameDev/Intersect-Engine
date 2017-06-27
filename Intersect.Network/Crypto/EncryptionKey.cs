@@ -34,16 +34,10 @@ namespace Intersect.Network.Crypto
             }
         }
 
-        public bool Write(IBuffer buffer)
-        {
-            if (buffer == null) throw new ArgumentNullException();
-
-            return InternalWrite(buffer);
-        }
-
         public bool Write(Stream stream)
         {
             var buffer = new StreamWrapper(stream);
+
             buffer.Write((byte)Format);
             buffer.Write(Compressed);
 
