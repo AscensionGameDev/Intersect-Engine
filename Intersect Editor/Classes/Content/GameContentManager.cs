@@ -43,7 +43,7 @@ namespace Intersect.Editor.Classes.Core
         //Initial Resource Downloading
         private static string resourceRelayer = "http://ascensiongamedev.com/resources/Intersect/findResources.php";
         private static frmLoadingContent loadingForm;
-        private static bool downloadCompleted = false;
+        private static bool downloadCompleted;
         private static string errorString = "";
 
         //Game Content

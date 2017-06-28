@@ -15,8 +15,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
     public class MonoInput : GameInput
     {
         private Dictionary<Keys, Microsoft.Xna.Framework.Input.Keys> _keyDictionary;
-        private int _mouseX = 0;
-        private int _mouseY = 0;
+        private int _mouseX;
+        private int _mouseY;
         private Game _myGame;
         private KeyboardState lastKeyboardState;
         private MouseState lastMouseState;

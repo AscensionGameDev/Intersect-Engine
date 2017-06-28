@@ -45,10 +45,10 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         public MapAutotiles Autotiles;
 
         //Server/Editor Only
-        public int EventIndex = 0;
+        public int EventIndex;
 
         //Temporary Values
-        public bool IsClient = false;
+        public bool IsClient;
         //For server only
         public byte[] TileData;
 
@@ -148,18 +148,18 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         public bool IsIndoors { get; set; }
         public string Panorama { get; set; } = Strings.Get("general", "none");
         public string Fog { get; set; } = Strings.Get("general", "none");
-        public int FogXSpeed { get; set; } = 0;
-        public int FogYSpeed { get; set; } = 0;
-        public int FogTransparency { get; set; } = 0;
-        public int RHue { get; set; } = 0;
-        public int GHue { get; set; } = 0;
-        public int BHue { get; set; } = 0;
-        public int AHue { get; set; } = 0;
+        public int FogXSpeed { get; set; }
+        public int FogYSpeed { get; set; }
+        public int FogTransparency { get; set; }
+        public int RHue { get; set; }
+        public int GHue { get; set; }
+        public int BHue { get; set; }
+        public int AHue { get; set; }
         public int Brightness { get; set; } = 100;
         public MapZones ZoneType { get; set; } = MapZones.Normal;
         public int PlayerLightSize { get; set; } = 300;
         public byte PlayerLightIntensity { get; set; } = 255;
-        public float PlayerLightExpand { get; set; } = 0f;
+        public float PlayerLightExpand { get; set; }
         public Color PlayerLightColor { get; set; } = Color.White;
         public string OverlayGraphic { get; set; } = Strings.Get("general", "none");
 

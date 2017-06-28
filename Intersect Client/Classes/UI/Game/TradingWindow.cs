@@ -224,14 +224,14 @@ namespace Intersect_Client.Classes.UI.Game
         private TradingWindow _tradeWindow;
 
         //Dragging
-        private bool CanDrag = false;
-        private long ClickTime = 0;
+        private bool CanDrag;
+        private long ClickTime;
         public ImagePanel container;
         private Draggable dragIcon;
         public bool IsDragging;
 
         //Mouse Event Variables
-        private bool MouseOver = false;
+        private bool MouseOver;
         private int MouseX = -1;
         private int MouseY = -1;
         public ImagePanel pnl;

@@ -22,7 +22,7 @@ namespace Intersect
         public static int MaxInvItems = 35;
         public static int MaxPlayerSkills = 35;
         public static int MaxBankSlots = 100;
-        public static int ItemDropChance = 0;
+        public static int ItemDropChance;
 
         //Passability Based on MapZones
         public static bool[] PlayerPassable = new bool[Enum.GetNames(typeof(MapZones)).Length];
@@ -46,8 +46,8 @@ namespace Intersect
         public static int MaxDashSpeed = 200;
 
         //Maps
-        public static int GameBorderStyle = 0; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
-        public static bool ZDimensionVisible = false;
+        public static int GameBorderStyle; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
+        public static bool ZDimensionVisible;
         public static int MapWidth = 32;
         public static int MapHeight = 26;
         public static int TileWidth = 32;

@@ -16,8 +16,8 @@ namespace Intersect.Editor.Classes
     public partial class frmResource : EditorForm
     {
         private List<ResourceBase> _changed = new List<ResourceBase>();
-        private byte[] _copiedItem = null;
-        private ResourceBase _editorItem = null;
+        private byte[] _copiedItem;
+        private ResourceBase _editorItem;
         private Bitmap _endBitmap;
         private Bitmap _endTileset;
         private Bitmap _initialBitmap;

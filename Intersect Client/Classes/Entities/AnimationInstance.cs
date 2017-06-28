@@ -10,12 +10,12 @@ namespace Intersect_Client.Classes.Entities
 {
     public class AnimationInstance
     {
-        private int _renderDir = 0;
-        private float _renderX = 0;
-        private float _renderY = 0;
-        public bool AutoRotate = false;
-        public bool Hidden = false;
-        private bool infiniteLoop = false;
+        private int _renderDir;
+        private float _renderX;
+        private float _renderY;
+        public bool AutoRotate;
+        public bool Hidden;
+        private bool infiniteLoop;
         private int lowerFrame;
         private int lowerLoop;
         private long lowerTimer;

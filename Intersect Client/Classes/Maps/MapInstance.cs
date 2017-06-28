@@ -1072,12 +1072,12 @@ namespace Intersect_Client.Classes.Maps
     public class ActionMsgInstance
     {
         public Color clr = new Color();
-        public int MapNum = 0;
+        public int MapNum;
         public string msg = "";
-        public long TransmittionTimer = 0;
-        public int X = 0;
-        public long xOffset = 0;
-        public int Y = 0;
+        public long TransmittionTimer;
+        public int X;
+        public long xOffset;
+        public int Y;
 
         public ActionMsgInstance(int mapNum, int x, int y, string message, Color color)
         {

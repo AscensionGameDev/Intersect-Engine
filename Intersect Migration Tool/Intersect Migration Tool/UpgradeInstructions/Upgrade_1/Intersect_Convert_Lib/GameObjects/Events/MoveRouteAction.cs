@@ -3,7 +3,7 @@
     public class MoveRouteAction
     {
         public int AnimationIndex = -1;
-        public EventGraphic Graphic = null;
+        public EventGraphic Graphic;
         public MoveRouteEnum Type;
 
         public void Save(ByteBuffer myBuffer)

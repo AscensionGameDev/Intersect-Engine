@@ -17,8 +17,8 @@ namespace Intersect.Editor.Forms
     public partial class frmAnimation : EditorForm
     {
         private List<AnimationBase> _changed = new List<AnimationBase>();
-        private byte[] _copiedItem = null;
-        private AnimationBase _editorItem = null;
+        private byte[] _copiedItem;
+        private AnimationBase _editorItem;
 
         private int _lowerFrame;
 

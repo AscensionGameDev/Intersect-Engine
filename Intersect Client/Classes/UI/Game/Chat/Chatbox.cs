@@ -22,8 +22,8 @@ namespace Intersect_Client.Classes.UI.Game
         //Window Controls
         private ImagePanel _chatboxWindow;
         private GameGuiBase _gameUi;
-        private int _messageIndex = 0;
-        private bool _receivedMessage = false;
+        private int _messageIndex;
+        private bool _receivedMessage;
 
         //Init
         public Chatbox(Canvas _gameCanvas, GameGuiBase gameUi)

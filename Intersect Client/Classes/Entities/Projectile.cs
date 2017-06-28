@@ -9,18 +9,18 @@ namespace Intersect_Client.Classes.Entities
 {
     public class Projectile : Entity
     {
-        private bool _loaded = false;
-        private ProjectileBase _myBase = null;
-        private int _spawnCount = 0;
-        private int _spawnedAmount = 0;
-        private int _totalSpawns = 0;
-        public int ProjectileNum = 0;
-        private int Quantity = 0;
+        private bool _loaded;
+        private ProjectileBase _myBase;
+        private int _spawnCount;
+        private int _spawnedAmount;
+        private int _totalSpawns;
+        public int ProjectileNum;
+        private int Quantity;
 
         // Individual Spawns
         public ProjectileSpawns[] Spawns;
-        private long SpawnTime = 0;
-        public int Target = 0;
+        private long SpawnTime;
+        public int Target;
 
         /// <summary>
         ///     The constructor for the inherated projectile class
@@ -507,19 +507,19 @@ namespace Intersect_Client.Classes.Entities
     public class ProjectileSpawns
     {
         public AnimationInstance Anim;
-        public bool AutoRotate = false;
+        public bool AutoRotate;
         public int Dir;
-        public int Distance = 0;
+        public int Distance;
         public int Map;
 
         //Clientside variables
-        public float OffsetX = 0;
-        public float OffsetY = 0;
+        public float OffsetX;
+        public float OffsetY;
         public ProjectileBase ProjectileBase;
-        public int SpawnMap = 0;
+        public int SpawnMap;
         public long SpawnTime = Globals.System.GetTimeMS();
-        public int SpawnX = 0;
-        public int SpawnY = 0;
+        public int SpawnX;
+        public int SpawnY;
         public long TransmittionTimer = Globals.System.GetTimeMS();
         public int X;
         public int Y;

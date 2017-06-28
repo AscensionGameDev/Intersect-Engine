@@ -17,8 +17,8 @@ namespace Intersect.Editor.Forms
     public partial class frmSpell : EditorForm
     {
         private List<SpellBase> _changed = new List<SpellBase>();
-        private byte[] _copiedItem = null;
-        private SpellBase _editorItem = null;
+        private byte[] _copiedItem;
+        private SpellBase _editorItem;
 
         public frmSpell()
         {

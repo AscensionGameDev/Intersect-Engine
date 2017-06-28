@@ -10,7 +10,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         //Buying List
         public bool BuyingWhitelist = true;
 
-        public int DefaultCurrency = 0;
+        public int DefaultCurrency;
 
         //Selling List
         public List<ShopItem> SellingItems = new List<ShopItem>();

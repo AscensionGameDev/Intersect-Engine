@@ -10,7 +10,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
     public partial class EventCommand_Variable : UserControl
     {
         private readonly FrmEvent _eventEditor;
-        private bool _loading = false;
+        private bool _loading;
         private EventCommand _myCommand;
 
         public EventCommand_Variable(EventCommand refCommand, FrmEvent editor)

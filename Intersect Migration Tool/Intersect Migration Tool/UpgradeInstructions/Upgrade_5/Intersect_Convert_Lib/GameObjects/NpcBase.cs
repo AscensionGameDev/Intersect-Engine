@@ -11,12 +11,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
         public new const GameObject OBJECT_TYPE = GameObject.Npc;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public List<int> AggroList = new List<int>();
-        public bool AttackAllies = false;
-        public byte Behavior = 0;
+        public bool AttackAllies;
+        public byte Behavior;
 
         //Drops
         public List<NPCDrop> Drops = new List<NPCDrop>();
-        public int Experience = 0;
+        public int Experience;
 
         //Vitals & Stats
         public int[] MaxVital = new int[(int) Vitals.VitalCount];
@@ -24,11 +24,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
         public string Name = "New Npc";
 
         //NPC vs NPC Combat
-        public bool NpcVsNpcEnabled = false;
-        public int SightRange = 0;
+        public bool NpcVsNpcEnabled;
+        public int SightRange;
 
         //Basic Info
-        public int SpawnDuration = 0;
+        public int SpawnDuration;
         public int SpellFrequency = 2;
 
         //Spells

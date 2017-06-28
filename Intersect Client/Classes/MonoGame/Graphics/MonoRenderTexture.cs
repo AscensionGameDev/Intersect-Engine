@@ -8,9 +8,9 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
     public class MonoRenderTexture : GameRenderTexture
     {
         private GraphicsDevice _graphicsDevice;
-        private int _height = 0;
+        private int _height;
         private RenderTarget2D _renderTexture;
-        private int _width = 0;
+        private int _width;
 
         public MonoRenderTexture(GraphicsDevice graphicsDevice, int width, int height) : base(width, height)
         {

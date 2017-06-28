@@ -31,7 +31,7 @@ namespace Intersect_Client.Classes.Entities
         public int ExperienceToNextLevel = 0;
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
 
-        private List<int> mParty = null;
+        private List<int> mParty;
         public List<FriendInstance> Friends = new List<FriendInstance>();
 
         public bool NoClip = false;

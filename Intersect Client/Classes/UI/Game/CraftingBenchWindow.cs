@@ -41,9 +41,9 @@ namespace Intersect_Client.Classes.UI.Game
         private ListBox _Recepies;
         private List<Label> _values = new List<Label>();
 
-        private long BarTimer = 0;
-        private int craftIndex = 0;
-        public bool crafting = false;
+        private long BarTimer;
+        private int craftIndex;
+        public bool crafting;
 
         //Location
         public int X;
@@ -343,13 +343,13 @@ namespace Intersect_Client.Classes.UI.Game
         CraftIngredient _ingredient;
 
         //Dragging
-        private bool CanDrag = false;
+        private bool CanDrag;
         public ImagePanel container;
         private Draggable dragIcon;
         public bool IsDragging;
 
         //Mouse Event Variables
-        private bool MouseOver = false;
+        private bool MouseOver;
         private int MouseX = -1;
         private int MouseY = -1;
         public ImagePanel pnl;

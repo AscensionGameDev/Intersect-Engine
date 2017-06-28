@@ -13,9 +13,9 @@ namespace Intersect.Editor.Forms.Editors
     public partial class frmCrafting : EditorForm
     {
         private List<BenchBase> _changed = new List<BenchBase>();
-        private byte[] _copiedItem = null;
+        private byte[] _copiedItem;
         private Craft _currentCraft;
-        private BenchBase _editorItem = null;
+        private BenchBase _editorItem;
 
         public frmCrafting()
         {

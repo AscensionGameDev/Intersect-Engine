@@ -16,8 +16,8 @@ namespace Intersect.Editor.Forms
     public partial class frmNpc : EditorForm
     {
         private List<NpcBase> _changed = new List<NpcBase>();
-        private byte[] _copiedItem = null;
-        private NpcBase _editorItem = null;
+        private byte[] _copiedItem;
+        private NpcBase _editorItem;
 
         public frmNpc()
         {

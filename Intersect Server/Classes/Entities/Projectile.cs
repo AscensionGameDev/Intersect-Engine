@@ -15,19 +15,19 @@ namespace Intersect.Server.Classes.Entities
 {
     public class Projectile : Entity
     {
-        private int _spawnCount = 0;
-        private int _spawnedAmount = 0;
-        private int _totalSpawns = 0;
+        private int _spawnCount;
+        private int _spawnedAmount;
+        private int _totalSpawns;
         private ProjectileBase MyBase;
         public Entity Owner;
         private ItemBase ParentItem;
         private SpellBase ParentSpell;
-        private int Quantity = 0;
+        private int Quantity;
 
         // Individual Spawns
         public ProjectileSpawns[] Spawns;
-        private long SpawnTime = 0;
-        public Entity Target = null;
+        private long SpawnTime;
+        public Entity Target;
 
         public Projectile(int index, Entity owner, SpellBase parentSpell, ItemBase parentItem, ProjectileBase projectile,
             int Map, int X, int Y, int Z, int Direction, Entity target) : base(index)
@@ -495,7 +495,7 @@ namespace Intersect.Server.Classes.Entities
     {
         private int _baseEntityIndex;
         public int Dir;
-        public int Distance = 0;
+        public int Distance;
         public int Map;
         public ProjectileBase ProjectileBase;
         public long TransmittionTimer = Globals.System.GetTimeMs();

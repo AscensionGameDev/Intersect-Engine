@@ -22,7 +22,7 @@ namespace Intersect.Editor.Forms
         //MonoGame Swap Chain
         private SwapChainRenderTarget _chain;
         public byte[] CurrentMapState;
-        private bool MapChanged = false;
+        private bool MapChanged;
         public List<byte[]> MapRedoStates = new List<byte[]>();
 
         //Map States

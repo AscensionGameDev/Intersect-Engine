@@ -148,7 +148,7 @@ namespace Intersect_Client.Classes.UI.Game
         public ImagePanel container;
 
         //Mouse Event Variables
-        private bool MouseOver = false;
+        private bool MouseOver;
         private int MouseX = -1;
         private int MouseY = -1;
         public ImagePanel pnl;

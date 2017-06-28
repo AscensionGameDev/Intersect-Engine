@@ -13,7 +13,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         public string Name = "New Global Switch";
-        public bool Value = false;
+        public bool Value;
 
         public ServerSwitchBase(int id) : base(id)
         {

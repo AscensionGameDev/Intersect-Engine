@@ -11,7 +11,7 @@ namespace Intersect.GameObjects
         //Buying List
         public bool BuyingWhitelist = true;
 
-        public int DefaultCurrency = 0;
+        public int DefaultCurrency;
 
         //Selling List
         public List<ShopItem> SellingItems = new List<ShopItem>();

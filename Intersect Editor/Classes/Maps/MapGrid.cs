@@ -16,7 +16,7 @@ namespace Intersect.Editor.Classes.Maps
 {
     public class MapGrid
     {
-        private MapGridItem _contextMap = null;
+        private MapGridItem _contextMap;
         private ContextMenuStrip _contextMenu;
 
         private int _currentCellX = -1;
@@ -25,27 +25,27 @@ namespace Intersect.Editor.Classes.Maps
         private ToolStripMenuItem _dropDownLinkItem;
         private ToolStripMenuItem _dropDownUnlinkItem;
         private ToolStripMenuItem _recacheMapItem;
-        public Rectangle ContentRect = new Rectangle();
-        private bool createTextures = false;
+        public Rectangle ContentRect;
+        private bool createTextures;
         private List<Texture2D> freeTextures = new List<Texture2D>();
         public MapGridItem[,] Grid;
         public int GridHeight = 50;
         public int GridWidth = 50;
 
         private List<int> LinkMaps = new List<int>();
-        public bool Loaded = false;
+        public bool Loaded;
 
         private float MaxZoom = 1f;
-        private float MinZoom = 0f;
+        private float MinZoom;
         public bool ShowLines = true;
         private bool sizeChanged = true;
 
         private object texLock = new object();
         private List<Texture2D> textures = new List<Texture2D>();
-        public int TileHeight = 0;
-        public int TileWidth = 0;
+        public int TileHeight;
+        public int TileWidth;
         private List<MapGridItem> toLoad = new List<MapGridItem>();
-        public Rectangle ViewRect = new Rectangle();
+        public Rectangle ViewRect;
         private Thread workerThread;
 
         public float Zoom = 1;

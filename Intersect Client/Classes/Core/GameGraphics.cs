@@ -21,8 +21,8 @@ namespace Intersect_Client.Classes.Core
         private static GameContentManager contentManager;
 
         //Resolution
-        private static int _oldWidth = 0;
-        private static int _oldHeight = 0;
+        private static int _oldWidth;
+        private static int _oldHeight;
 
         //Screen Values
         public static GameFont GameFont;
@@ -34,31 +34,31 @@ namespace Intersect_Client.Classes.Core
 
         //Overlay Stuff
         public static Intersect.Color OverlayColor = Intersect.Color.Transparent;
-        private static long _overlayUpdate = 0;
+        private static long _overlayUpdate;
 
         //Player Spotlight Values
-        private static long _lightUpdate = 0;
+        private static long _lightUpdate;
         private static float _playerLightIntensity = 255;
-        private static float _playerLightSize = 0;
-        private static float _playerLightExpand = 0f;
+        private static float _playerLightSize;
+        private static float _playerLightExpand;
         public static ColorF _playerLightColor = ColorF.White;
         private static List<LightBase> _lightQueue = new List<LightBase>();
         private static long _fadeTimer;
 
         //Grid Switched
-        public static bool GridSwitched = false;
+        public static bool GridSwitched;
 
         //Rendering Variables
-        public static int DrawCalls = 0;
-        public static int EntitiesDrawn = 0;
-        public static int LightsDrawn = 0;
-        public static int MapsDrawn = 0;
+        public static int DrawCalls;
+        public static int EntitiesDrawn;
+        public static int LightsDrawn;
+        public static int MapsDrawn;
 
         //Cache the Y based rendering
         public static List<Entity>[] Layer1Entities;
         public static List<Entity>[] Layer2Entities;
 
-        public static bool PreRenderedMapLayer = false;
+        public static bool PreRenderedMapLayer;
         public static object GFXLock = new object();
         public static List<GameRenderTexture> MapReleaseQueue = new List<GameRenderTexture>();
         public static List<GameRenderTexture> FreeMapTextures = new List<GameRenderTexture>();

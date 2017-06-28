@@ -7,9 +7,9 @@ namespace Intersect.Server.Classes.Items
     public class ItemInstance
     {
         public int BagId = -1;
-        public BagInstance BagInstance = null;
+        public BagInstance BagInstance;
         public int ItemNum = -1;
-        public int ItemVal = 0;
+        public int ItemVal;
         public int[] StatBoost = new int[(int) Stats.StatCount];
 
         public ItemInstance()

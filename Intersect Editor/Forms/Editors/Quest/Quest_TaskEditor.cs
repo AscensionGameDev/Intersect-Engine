@@ -12,7 +12,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
     {
         private ByteBuffer _eventBackup = new ByteBuffer();
         private QuestBase.QuestTask _myTask;
-        public bool Cancelled = false;
+        public bool Cancelled;
 
         public Quest_TaskEditor(QuestBase.QuestTask refTask)
         {

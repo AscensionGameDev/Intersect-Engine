@@ -52,8 +52,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         public static int MaxDashSpeed = 200;
 
         //Maps
-        public static int GameBorderStyle = 0; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
-        public static bool ZDimensionVisible = false;
+        public static int GameBorderStyle; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
+        public static bool ZDimensionVisible;
         public static int MapWidth = 32;
         public static int MapHeight = 26;
         public static int TileWidth = 32;

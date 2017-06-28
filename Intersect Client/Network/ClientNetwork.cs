@@ -19,7 +19,7 @@ namespace Intersect.Client.Network
 
         private byte[] mHandshakeSecret;
         private RSACryptoServiceProvider mRsa;
-        private bool everConnected = false;
+        private bool everConnected;
 
         public ClientNetwork(NetworkConfiguration config) : base(config, typeof(NetClient))
         {

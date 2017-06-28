@@ -23,7 +23,7 @@ namespace Intersect_Client.Classes.Networking
     public static class PacketHandler
     {
         public static long Ping = 0;
-        public static long PingTime = 0;
+        public static long PingTime;
 
         public static bool HandlePacket(IPacket packet)
         {

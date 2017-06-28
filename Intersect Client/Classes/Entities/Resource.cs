@@ -15,9 +15,9 @@ namespace Intersect_Client.Classes.Entities
     {
         public ResourceBase _baseResource;
         private bool _hasRenderBounds;
-        FloatRect destRectangle = new FloatRect();
+        FloatRect destRectangle;
         public bool IsDead;
-        FloatRect srcRectangle = new FloatRect();
+        FloatRect srcRectangle;
 
         public Resource(int index, long spawnTime, ByteBuffer bf) : base(index, spawnTime, bf)
         {

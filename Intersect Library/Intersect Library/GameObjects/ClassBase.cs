@@ -10,7 +10,7 @@ namespace Intersect.GameObjects
 
         //Exp Calculations
         public int BaseExp = 100;
-        public int BasePoints = 0;
+        public int BasePoints;
         public int[] BaseStat = new int[(int) Stats.StatCount];
 
         //Starting Vitals & Stats
@@ -23,22 +23,22 @@ namespace Intersect.GameObjects
         public int ExpIncrease = 50;
 
         //Level Up Info
-        public int IncreasePercentage = 0;
+        public int IncreasePercentage;
 
         //Starting Items
         public List<ClassItem> Items = new List<ClassItem>();
 
         //Locked - Can the class be chosen from character select?
-        public int Locked = 0;
-        public int PointIncrease = 0;
+        public int Locked;
+        public int PointIncrease;
         public int Scaling;
         public int ScalingStat;
-        public int SpawnDir = 0;
+        public int SpawnDir;
 
         //Spawn Info
-        public int SpawnMap = 0;
-        public int SpawnX = 0;
-        public int SpawnY = 0;
+        public int SpawnMap;
+        public int SpawnX;
+        public int SpawnY;
 
         //Starting Spells
         public List<ClassSpell> Spells = new List<ClassSpell>();

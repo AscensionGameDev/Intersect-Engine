@@ -13,7 +13,7 @@ namespace Intersect.Editor.Forms.Editors
     public partial class frmSwitchVariable : EditorForm
     {
         private List<IDatabaseObject> _changed = new List<IDatabaseObject>();
-        private IDatabaseObject _editorItem = null;
+        private IDatabaseObject _editorItem;
 
         public frmSwitchVariable()
         {

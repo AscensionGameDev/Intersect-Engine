@@ -15,22 +15,22 @@ namespace Intersect.Server.Classes.Entities
     public class Npc : Entity
     {
         //Behaviour
-        public byte Behaviour = 0;
+        public byte Behaviour;
 
         //Spell casting
-        public long CastFreq = 0;
+        public long CastFreq;
         public bool Despawnable;
 
         //Moving
         public long LastRandomMove;
-        public NpcBase MyBase = null;
+        public NpcBase MyBase;
         //Targetting
-        public Entity MyTarget = null;
+        public Entity MyTarget;
 
         //Pathfinding
         private Pathfinder pathFinder;
         private Task pathfindingTask;
-        public byte Range = 0;
+        public byte Range;
 
         //Respawn/Despawn
         public long RespawnTime;

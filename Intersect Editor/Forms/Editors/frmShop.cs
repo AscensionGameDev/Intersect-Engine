@@ -13,8 +13,8 @@ namespace Intersect.Editor.Forms.Editors
     public partial class frmShop : EditorForm
     {
         private List<ShopBase> _changed = new List<ShopBase>();
-        private byte[] _copiedItem = null;
-        private ShopBase _editorItem = null;
+        private byte[] _copiedItem;
+        private ShopBase _editorItem;
 
         public frmShop()
         {

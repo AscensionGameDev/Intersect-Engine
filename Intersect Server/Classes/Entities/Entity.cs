@@ -21,22 +21,22 @@ namespace Intersect.Server.Classes.Entities
         //Active Animations -- for events mainly
         public List<int> Animations = new List<int>();
 
-        public long AttackTimer = 0;
-        public bool Blocking = false;
+        public long AttackTimer;
+        public bool Blocking;
 
         //Combat Status
-        public long CastTime = 0;
-        public Entity CastTarget = null;
+        public long CastTime;
+        public Entity CastTarget;
 
         public long CollisionIndex;
-        public long CombatTimer = 0;
+        public long CombatTimer;
         public int CurrentMap = -1;
 
         //Location Info
         public int CurrentX;
         public int CurrentY;
-        public int CurrentZ = 0;
-        public bool Dead = false;
+        public int CurrentZ;
+        public bool Dead;
 
         private int _dir;
         public int Dir
@@ -1495,11 +1495,11 @@ namespace Intersect.Server.Classes.Entities
 
     public class EntityStat
     {
-        private Player _player = null;
+        private Player _player;
         private int _statType;
         private Dictionary<SpellBase, EntityBuff> mBuff = new Dictionary<SpellBase, EntityBuff>();
         private bool mChanged;
-        public int Stat = 0;
+        public int Stat;
 
         public EntityStat(int stat, int statType, Player owner = null)
         {
@@ -1583,8 +1583,8 @@ namespace Intersect.Server.Classes.Entities
 
     public class EntityBuff
     {
-        public int Buff = 0;
-        public long Duration = 0;
+        public int Buff;
+        public long Duration;
         public SpellBase Spell;
 
         public EntityBuff(SpellBase spell, int buff, int duration)
@@ -1597,10 +1597,10 @@ namespace Intersect.Server.Classes.Entities
 
     public class DoTInstance
     {
-        public int Count = 0;
-        private long Interval = 0;
+        public int Count;
+        private long Interval;
         public int OwnerID = -1;
-        public SpellBase SpellBase = null;
+        public SpellBase SpellBase;
         public Entity Target;
 
         public DoTInstance(int ownerID, int spellNum, Entity target)
@@ -1646,9 +1646,9 @@ namespace Intersect.Server.Classes.Entities
     {
         public string Data = "";
         private SpellBase _spell;
-        public long Duration = 0;
+        public long Duration;
         private Entity entity;
-        public int Type = 0;
+        public int Type;
 
         public StatusInstance(Entity en, SpellBase spell, int type, int duration, string data)
         {
@@ -1685,16 +1685,16 @@ namespace Intersect.Server.Classes.Entities
 
     public class DashInstance
     {
-        public bool ActiveResourcePass = false;
+        public bool ActiveResourcePass;
 
-        public bool BlockPass = false;
-        public bool DeadResourcePass = false;
-        public int Direction = 0;
-        public int DistanceTraveled = 0;
-        public int Facing = 0;
-        public int Range = 0;
-        public long TransmittionTimer = 0;
-        public bool ZDimensionPass = false;
+        public bool BlockPass;
+        public bool DeadResourcePass;
+        public int Direction;
+        public int DistanceTraveled;
+        public int Facing;
+        public int Range;
+        public long TransmittionTimer;
+        public bool ZDimensionPass;
 
         public DashInstance(Entity en, int range, int direction, bool blockPass = false, bool activeResourcePass = false,
             bool deadResourcePass = false, bool zdimensionPass = false)

@@ -12,11 +12,11 @@ namespace Intersect.Editor.Forms.DockingElements
     {
         //MonoGame Swap Chain
         private SwapChainRenderTarget _chain;
-        private bool _dragging = false;
-        private int _dragX = 0;
-        private int _dragY = 0;
-        private int _posX = 0;
-        private int _posY = 0;
+        private bool _dragging;
+        private int _dragX;
+        private int _dragY;
+        private int _posX;
+        private int _posY;
         private ToolTip _toolTip = new ToolTip();
         private MapGridItem _toolTipItem;
 

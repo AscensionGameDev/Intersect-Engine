@@ -7,7 +7,7 @@ namespace Intersect.Server.Classes.Networking
     public static class SocketServer
     {
         static TcpListener _tcpServer;
-        private static bool _started = false;
+        private static bool _started;
 
         public static void Init()
         {

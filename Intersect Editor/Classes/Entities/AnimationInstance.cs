@@ -8,10 +8,10 @@ namespace Intersect.Editor.Classes.Entities
 {
     public class AnimationInstance
     {
-        private int _renderDir = 0;
-        private float _renderX = 0;
-        private float _renderY = 0;
-        private bool infiniteLoop = false;
+        private int _renderDir;
+        private float _renderX;
+        private float _renderY;
+        private bool infiniteLoop;
         private int lowerFrame;
         private int lowerLoop;
         private long lowerTimer;

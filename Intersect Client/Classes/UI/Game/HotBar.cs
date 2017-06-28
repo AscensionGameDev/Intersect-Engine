@@ -102,18 +102,18 @@ namespace Intersect_Client.Classes.UI.Game
         //Textures
         private GameTexture _hotbarBG;
         private Base _hotbarWindow;
-        private bool _isEquipped = false;
-        private bool _isFaded = false;
+        private bool _isEquipped;
+        private bool _isFaded;
 
         private ItemDescWindow _itemDescWindow;
         private SpellDescWindow _spellDescWindow;
 
         private int[] _statBoost = new int[Options.MaxStats];
-        private bool _texLoaded = false;
+        private bool _texLoaded;
 
         //Dragging
-        private bool CanDrag = false;
-        private long ClickTime = 0;
+        private bool CanDrag;
+        private long ClickTime;
 
         //pnl is the background iamge
         private ImagePanel contentPanel;
@@ -123,7 +123,7 @@ namespace Intersect_Client.Classes.UI.Game
         public Label keyLabel;
 
         //Mouse Event Variables
-        private bool MouseOver = false;
+        private bool MouseOver;
         private int MouseX = -1;
         private int MouseY = -1;
 

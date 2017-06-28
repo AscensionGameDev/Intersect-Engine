@@ -21,9 +21,9 @@ namespace Intersect_Client.Classes.Core
         private static long _fadeTimer;
         private static GameAudioInstance _myMusic;
         private static bool _musicLoop;
-        private static bool _fadingOut = false;
-        private static bool _queuedLoop = false;
-        private static float _queuedFade = 0f;
+        private static bool _fadingOut;
+        private static bool _queuedLoop;
+        private static float _queuedFade;
 
         //Sounds
         private static List<MapSound> _gameSounds = new List<MapSound>();

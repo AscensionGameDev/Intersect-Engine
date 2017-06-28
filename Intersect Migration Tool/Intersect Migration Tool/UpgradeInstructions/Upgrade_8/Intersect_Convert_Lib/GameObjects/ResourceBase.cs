@@ -7,7 +7,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 {
     public class ResourceBase : DatabaseObject<ResourceBase>
     {
-        public int Animation = 0;
+        public int Animation;
 
         // Drops
         public List<ResourceDrop> Drops = new List<ResourceDrop>();
@@ -17,13 +17,13 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         // Graphics
         public string InitialGraphic = Strings.Get("general", "none");
-        public int MaxHP = 0;
+        public int MaxHP;
 
-        public int MinHP = 0;
-        public int SpawnDuration = 0;
+        public int MinHP;
+        public int SpawnDuration;
         public int Tool = -1;
-        public bool WalkableAfter = false;
-        public bool WalkableBefore = false;
+        public bool WalkableAfter;
+        public bool WalkableBefore;
 
         public ResourceBase(int id) : base(id)
         {

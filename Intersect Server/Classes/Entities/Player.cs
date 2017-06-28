@@ -44,9 +44,9 @@ namespace Intersect.Server.Classes.Entities
 
         public long MyId = -1;
         public List<Player> Party = new List<Player>();
-        public Player PartyRequester = null;
+        public Player PartyRequester;
         public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
-        public Player FriendRequester = null;
+        public Player FriendRequester;
         public Dictionary<Player, long> FriendRequests = new Dictionary<Player, long>();
         public Player ChatTarget = null;
         public List<int> QuestOffers = new List<int>();
@@ -57,8 +57,8 @@ namespace Intersect.Server.Classes.Entities
         public int StatPoints;
         public Dictionary<int, bool> Switches = new Dictionary<int, bool>();
         public ItemInstance[] Trade = new ItemInstance[Options.MaxInvItems];
-        public bool TradeAccepted = false;
-        public Player TradeRequester = null;
+        public bool TradeAccepted;
+        public Player TradeRequester;
         public Dictionary<Player, long> TradeRequests = new Dictionary<Player, long>();
         public int Trading = -1;
         public Dictionary<int, int> Variables = new Dictionary<int, int>();

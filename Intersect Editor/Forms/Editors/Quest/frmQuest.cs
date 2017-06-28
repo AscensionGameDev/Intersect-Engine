@@ -16,8 +16,8 @@ namespace Intersect.Editor.Forms
     public partial class frmQuest : EditorForm
     {
         private List<QuestBase> _changed = new List<QuestBase>();
-        private byte[] _copiedItem = null;
-        private QuestBase _editorItem = null;
+        private byte[] _copiedItem;
+        private QuestBase _editorItem;
 
         public frmQuest()
         {

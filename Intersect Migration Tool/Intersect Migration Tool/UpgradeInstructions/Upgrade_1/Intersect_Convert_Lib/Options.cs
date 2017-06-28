@@ -34,7 +34,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
         public static int MaxAttackRate = 400; //1 attack per 400ms
 
         //Maps
-        public static int GameBorderStyle = 0; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
+        public static int GameBorderStyle; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
         public static int MapWidth = 32;
         public static int MapHeight = 26;
         public static int TileWidth = 32;

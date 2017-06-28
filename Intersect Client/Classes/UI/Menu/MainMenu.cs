@@ -27,7 +27,7 @@ namespace Intersect_Client.Classes.UI.Menu
         private bool _shouldOpenCharacterCreation;
 
         //Character creation feild check
-        private bool HasMadeCharacterCreation = false;
+        private bool HasMadeCharacterCreation;
         //Controls
         private Canvas MenuCanvas;
 

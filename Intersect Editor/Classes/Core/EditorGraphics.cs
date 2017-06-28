@@ -46,8 +46,8 @@ namespace Intersect.Editor.Classes
         //Fog Stuff
         public static bool HideFog = false;
         private static long _fogUpdateTime = Globals.System.GetTimeMs();
-        private static float _fogCurrentX = 0;
-        private static float _fogCurrentY = 0;
+        private static float _fogCurrentX;
+        private static float _fogCurrentY;
 
         //Resources
         public static bool HideResources = false;
@@ -55,15 +55,15 @@ namespace Intersect.Editor.Classes
         //Advanced Editing Features
         public static bool HideTilePreview = false;
         public static bool HideGrid = true;
-        public static bool TilePreviewUpdated = false;
+        public static bool TilePreviewUpdated;
         public static MapInstance TilePreviewStruct;
 
         //Rendering Variables
         private static SpriteBatch _spriteBatch;
         private static bool _spriteBatchBegan;
         private static BlendState _currentBlendmode = BlendState.AlphaBlend;
-        private static Effect _currentShader = null;
-        private static RenderTarget2D _currentTarget = null;
+        private static Effect _currentShader;
+        private static RenderTarget2D _currentTarget;
 
         //Editor Viewing Rect
         public static System.Drawing.Rectangle CurrentView;

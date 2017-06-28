@@ -25,10 +25,10 @@ namespace Intersect.Editor.Classes
         private static SqliteConnection _dbConnection;
 
         //Grid Variables
-        public static bool GridHideDarkness = false;
-        public static bool GridHideFog = false;
-        public static bool GridHideOverlay = false;
-        public static bool GridHideResources = false;
+        public static bool GridHideDarkness;
+        public static bool GridHideFog;
+        public static bool GridHideOverlay;
+        public static bool GridHideResources;
         public static int GridLightColor = System.Drawing.Color.White.ToArgb();
 
         //Options File

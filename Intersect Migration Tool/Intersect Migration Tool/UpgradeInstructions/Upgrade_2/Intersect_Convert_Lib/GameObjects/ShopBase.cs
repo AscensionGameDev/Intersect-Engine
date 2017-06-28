@@ -14,7 +14,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
 
         //Buying List
         public bool BuyingWhitelist = true;
-        public int DefaultCurrency = 0;
+        public int DefaultCurrency;
 
         public string Name = "New Shop";
 

@@ -12,7 +12,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
         public const string DATABASE_TABLE = "";
         public const GameObject OBJECT_TYPE = GameObject.Animation;
         private int _id = -1;
-        private byte[] backup = null;
+        private byte[] backup;
 
         protected DatabaseObject(int id)
         {

@@ -16,9 +16,9 @@ namespace Intersect.Editor.Forms
         private int _currentX;
         private int _currentY;
         private int _drawnMap = -1;
-        private Image _mapImage = null;
-        private List<int> _restrictMaps = null;
-        private bool _result = false;
+        private Image _mapImage;
+        private List<int> _restrictMaps;
+        private bool _result;
         private bool _tileSelection = true;
 
         public frmWarpSelection()
