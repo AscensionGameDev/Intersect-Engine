@@ -247,29 +247,23 @@ namespace Intersect_Client.Classes.Maps
         //Attribute References
         private void UpdateMapAttributes()
         {
-            for (int x = 0; x < Options.MapWidth; x++)
+            for (var x = 0; x < Options.MapWidth; x++)
             {
-                for (int y = 0; y < Options.MapHeight; y++)
+                for (var y = 0; y < Options.MapHeight; y++)
                 {
-                    if (Attributes[x, y] != null)
+                    if (Attributes[x, y] == null) continue;
+                    if (Attributes[x, y].value != (int) MapAttributes.Animation) continue;
+                    var anim = AnimationBase.Lookup.Get<AnimationBase>(Attributes[x, y].data1);
+                    if (anim == null) continue;
+                    if (!_attributeAnimInstances.ContainsKey(Attributes[x, y]))
                     {
-                        if (Attributes[x, y].value == (int) MapAttributes.Animation)
-                        {
-                            var anim = AnimationBase.Lookup.Get<AnimationBase>(Attributes[x, y].data1);
-                            if (anim != null)
-                            {
-                                if (!_attributeAnimInstances.ContainsKey(Attributes[x, y]))
-                                {
-                                    var animInstance = new AnimationInstance(anim, true);
-                                    animInstance.SetPosition(GetX() + x * Options.TileWidth + Options.TileWidth / 2,
-                                        GetY() + y * Options.TileHeight + Options.TileHeight / 2, x, y,
-                                        this.Index, 0);
-                                    _attributeAnimInstances.Add(Attributes[x, y], animInstance);
-                                }
-                                _attributeAnimInstances[Attributes[x, y]].Update();
-                            }
-                        }
+                        var animInstance = new AnimationInstance(anim, true);
+                        animInstance.SetPosition(GetX() + x * Options.TileWidth + Options.TileWidth / 2,
+                            GetY() + y * Options.TileHeight + Options.TileHeight / 2, x, y,
+                            Index, 0);
+                        _attributeAnimInstances.Add(Attributes[x, y], animInstance);
                     }
+                    _attributeAnimInstances[Attributes[x, y]].Update();
                 }
             }
         }
@@ -325,7 +319,7 @@ namespace Intersect_Client.Classes.Maps
                 LocalAnimations.Add(anim);
                 anim.SetPosition(GetX() + tileX * Options.TileWidth + Options.TileWidth / 2,
                     GetY() + tileY * Options.TileHeight + Options.TileHeight / 2, tileX, tileY,
-                    this.Index, dir);
+                    Index, dir);
             }
         }
 
@@ -442,7 +436,7 @@ namespace Intersect_Client.Classes.Maps
         private void HandleMapLoaded(MapInstance map)
         {
             //See if this new map is on the same grid as us
-            if (map != this && Globals.GridMaps.Contains(map.Index) && Globals.GridMaps.Contains(this.Index))
+            if (map != this && Globals.GridMaps.Contains(map.Index) && Globals.GridMaps.Contains(Index))
             {
                 var surroundingMaps = GenerateAutotileGrid();
                 if (map.MapGridX == MapGridX - 1)

@@ -77,7 +77,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2
         }
 
         //Game Object Saving/Loading
-        private string GetGameObjectTable(Intersect_Convert_Lib.GameObject type)
+        private string GetGameObjectTable(GameObject type)
         {
             var tableName = "";
             switch (type)
@@ -136,7 +136,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2
             return tableName;
         }
 
-        private void ClearGameObjects(Intersect_Convert_Lib.GameObject type)
+        private void ClearGameObjects(GameObject type)
         {
             switch (type)
             {
@@ -193,7 +193,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2
             }
         }
 
-        private void LoadGameObject(Intersect_Convert_Lib.GameObject type, int index, byte[] data)
+        private void LoadGameObject(GameObject type, int index, byte[] data)
         {
             switch (type)
             {
@@ -284,7 +284,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2
             }
         }
 
-        public void LoadGameObjects(Intersect_Convert_Lib.GameObject type)
+        public void LoadGameObjects(GameObject type)
         {
             var nullIssues = "";
             lock (_dbLock)

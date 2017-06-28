@@ -8,7 +8,6 @@ using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
-using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -36,7 +35,10 @@ namespace Intersect_Client.Classes.Entities
             var baseIndex = bf.ReadInteger();
             _baseResource = ResourceBase.Lookup.Get<ResourceBase>(baseIndex);
             HideName = 1;
-			if (IsDead) { MySprite = _baseResource.EndGraphic; }
+            if (IsDead)
+            {
+                MySprite = _baseResource.EndGraphic;
+            }
         }
 
         public override EntityTypes GetEntityType()
@@ -71,7 +73,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
-            GameTexture srcTexture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, MySprite);
+            GameTexture srcTexture =
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, MySprite);
             if (srcTexture != null)
             {
                 srcRectangle = new FloatRect(0, 0, srcTexture.GetWidth(), srcTexture.GetHeight());
@@ -94,8 +97,10 @@ namespace Intersect_Client.Classes.Entities
         //Rendering Resources
         public override void Draw()
         {
-            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
-            GameTexture srcTexture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, MySprite);
+            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) == null ||
+                !Globals.GridMaps.Contains(CurrentMap)) return;
+            GameTexture srcTexture =
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, MySprite);
             if (srcTexture != null)
             {
                 GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Intersect.Color.White);

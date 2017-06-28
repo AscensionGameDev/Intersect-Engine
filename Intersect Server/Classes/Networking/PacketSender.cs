@@ -87,7 +87,7 @@ namespace Intersect.Server.Classes.Networking
 
 			if (!client.IsEditor)
 			{
-				PacketSender.SendGlobalMsg(Strings.Get("player", "joined", client.Entity.MyName, Options.GameName));
+				SendGlobalMsg(Strings.Get("player", "joined", client.Entity.MyName, Options.GameName));
 			}
 		}
 

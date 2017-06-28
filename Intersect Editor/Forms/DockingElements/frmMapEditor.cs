@@ -1467,7 +1467,7 @@ namespace Intersect.Editor.Forms
                         {
                             if (Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset] != null)
                             {
-                                tmpMap.Attributes[x0, y0] = new Intersect.GameObjects.Maps.Attribute()
+                                tmpMap.Attributes[x0, y0] = new GameObjects.Maps.Attribute()
                                 {
                                     value =
                                         Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].value,
