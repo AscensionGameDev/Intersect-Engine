@@ -29,12 +29,12 @@ namespace Intersect.GameObjects
         {
             Name = "New Animation";
             LowerLights = new LightBase[LowerAnimFrameCount];
-            for (int i = 0; i < LowerAnimFrameCount; i++)
+            for (var i = 0; i < LowerAnimFrameCount; i++)
             {
                 LowerLights[i] = new LightBase();
             }
             UpperLights = new LightBase[UpperAnimFrameCount];
-            for (int i = 0; i < UpperAnimFrameCount; i++)
+            for (var i = 0; i < UpperAnimFrameCount; i++)
             {
                 UpperLights[i] = new LightBase();
             }
@@ -56,7 +56,7 @@ namespace Intersect.GameObjects
             LowerAnimFrameSpeed = myBuffer.ReadInteger();
             LowerAnimLoopCount = myBuffer.ReadInteger();
             LowerLights = new LightBase[LowerAnimFrameCount];
-            for (int i = 0; i < LowerAnimFrameCount; i++)
+            for (var i = 0; i < LowerAnimFrameCount; i++)
             {
                 LowerLights[i] = new LightBase(myBuffer);
             }
@@ -69,7 +69,7 @@ namespace Intersect.GameObjects
             UpperAnimFrameSpeed = myBuffer.ReadInteger();
             UpperAnimLoopCount = myBuffer.ReadInteger();
             UpperLights = new LightBase[UpperAnimFrameCount];
-            for (int i = 0; i < UpperAnimFrameCount; i++)
+            for (var i = 0; i < UpperAnimFrameCount; i++)
             {
                 UpperLights[i] = new LightBase(myBuffer);
             }
@@ -77,7 +77,7 @@ namespace Intersect.GameObjects
             myBuffer.Dispose();
         }
 
-        public byte[] AnimData()
+        private byte[] AnimData()
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
@@ -90,7 +90,7 @@ namespace Intersect.GameObjects
             myBuffer.WriteInteger(LowerAnimFrameCount);
             myBuffer.WriteInteger(LowerAnimFrameSpeed);
             myBuffer.WriteInteger(LowerAnimLoopCount);
-            for (int i = 0; i < LowerAnimFrameCount; i++)
+            for (var i = 0; i < LowerAnimFrameCount; i++)
             {
                 myBuffer.WriteBytes(LowerLights[i].LightData());
             }
@@ -102,7 +102,7 @@ namespace Intersect.GameObjects
             myBuffer.WriteInteger(UpperAnimFrameCount);
             myBuffer.WriteInteger(UpperAnimFrameSpeed);
             myBuffer.WriteInteger(UpperAnimLoopCount);
-            for (int i = 0; i < UpperAnimFrameCount; i++)
+            for (var i = 0; i < UpperAnimFrameCount; i++)
             {
                 myBuffer.WriteBytes(UpperLights[i].LightData());
             }
