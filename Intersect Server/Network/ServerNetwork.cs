@@ -42,7 +42,19 @@ namespace Intersect.Server.Network
         {
             var encryptedSize = request.ReadInt32();
             var encryptedData = request.ReadBytes(encryptedSize);
-            var decryptedData = Rsa.Decrypt(encryptedData, true);
+
+            byte[] decryptedData;
+            try
+            {
+                decryptedData = Rsa.Decrypt(encryptedData, true);
+            }
+            catch (Exception exception)
+            {
+                Log.Debug(exception);
+
+                request.SenderConnection?.Deny("bad_public_key");
+                return true;
+            }
             
             using (var requestBuffer = new MemoryBuffer(decryptedData))
             {

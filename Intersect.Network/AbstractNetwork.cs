@@ -321,7 +321,7 @@ namespace Intersect.Network
                     case NetIncomingMessageType.ConnectionApproval:
                         if (!HandleConnectionApproval(message))
                         {
-                            message.SenderConnection.Deny();
+                            message.SenderConnection?.Deny("unknown_approval_error");
                         }
                         break;
 
