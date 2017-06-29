@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Intersect;
 using Intersect.Collections;
 using Intersect.Enums;
@@ -28,7 +30,7 @@ namespace Intersect_Client.Classes.Networking
         public static bool HandlePacket(IPacket packet)
         {
             var binaryPacket = packet as BinaryPacket;
-            Log.Debug($"Handling packet (size={binaryPacket.Buffer.Length()}).");
+            //Log.Debug($"Handling packet (size={binaryPacket.Buffer.Length()}).");
             HandlePacket(binaryPacket?.Buffer?.ToArray());
             return true;
         }
@@ -259,9 +261,99 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.FriendRequest:
                         HandleFriendRequest(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.Shit:
+                        HandleShit(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
+                }
+            }
+        }
+
+        private struct ShitMeasurement
+        {
+            public int taken;
+            public long totalsize;
+            public long elapsed;
+
+            public double ShitRate => taken / (elapsed / (double)TimeSpan.TicksPerSecond);
+            public double DataRate => totalsize / (elapsed / (double)TimeSpan.TicksPerSecond);
+        }
+
+        private static List<ShitMeasurement> measurements = new List<ShitMeasurement>();
+
+        private static int shitstaken;
+        private static long timespentshitting;
+        private static long totalshitsize;
+        private static Stopwatch ShitTimer = new Stopwatch();
+        private static void HandleShit(byte[] packet)
+        {
+            using (var bf = new ByteBuffer())
+            {
+                bf.WriteBytes(packet);
+                var shitting = bf.ReadBoolean();
+                var packetNum = bf.ReadInteger();
+                if (packetNum > -1)
+                {
+                    var isData = bf.ReadBoolean();
+                    if (isData)
+                    {
+                        //Console.WriteLine($"START PACKET #{packetNum}");
+                        //Console.WriteLine($"SHIT LENGTH: {bf.ReadString().Length}");
+                        var shitSize = bf.ReadInteger();
+                        //Console.WriteLine($"SHIT SIZE: {shitSize} bytes.");
+                        //Console.WriteLine($"END PACKET #{packetNum}");
+                        totalshitsize += shitSize;
+                    }
+                    else
+                    {
+                        var isStarting = bf.ReadBoolean();
+                        if (isStarting)
+                        {
+                            //Console.WriteLine($"Starting timer...");
+                            ShitTimer.Restart();
+                        }
+                        else
+                        {
+                            ShitTimer.Stop();
+                            //Console.WriteLine($"Timer done. {ShitTimer.ElapsedMilliseconds}ms elapsed.");
+                            timespentshitting += ShitTimer.ElapsedTicks;
+                            shitstaken++;
+                            measurements.Add(new ShitMeasurement { elapsed = ShitTimer.ElapsedTicks, taken = 1, totalsize = 0 });
+                        }
+                    }
+                }
+                else
+                {
+                    if (packetNum == -2)
+                    {
+                        foreach (var m in measurements)
+                        {
+                            if (m.taken < 2) continue;
+                            Console.WriteLine($"Shits: {m.taken}, Shitrate: {m.ShitRate}s/s, Datarate: {m.DataRate / 1048576}MiB/s");
+                        }
+                    }
+                    else
+                    {
+                        if (shitting)
+                        {
+                            shitstaken = 0;
+                            timespentshitting = 0;
+                            totalshitsize = 0;
+                            Console.WriteLine("Starting to shit...");
+                        }
+                        else
+                        {
+                            double diff = 1000.0 * TimeSpan.TicksPerMillisecond;
+                            Console.WriteLine("Just flushed the toilet.");
+                            Console.WriteLine($"I took {shitstaken} shit(s).");
+                            Console.WriteLine($"It took me a total of {timespentshitting / diff}s to shit.");
+                            Console.WriteLine($"Each shit took {timespentshitting / (diff * shitstaken)}s per shit.");
+                            Console.WriteLine($"I shit at approximately {(totalshitsize / (timespentshitting / diff)) / 1024}KiB/s.");
+                            measurements.Add(new ShitMeasurement { elapsed = timespentshitting, taken = shitstaken, totalsize = totalshitsize });
+                        }
+                    }
                 }
             }
         }

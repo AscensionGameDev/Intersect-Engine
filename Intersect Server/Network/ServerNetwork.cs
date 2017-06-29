@@ -92,7 +92,7 @@ namespace Intersect.Server.Network
                     response.Write(encryptedResponse.Length);
                     response.Write(encryptedResponse, 0, encryptedResponse.Length);
 
-                    Client.CreateBeta4Client(metadata);
+                    var client = Client.CreateBeta4Client(metadata);
 
                     request.SenderConnection.Approve(response);
                     return true;
@@ -117,6 +117,10 @@ namespace Intersect.Server.Network
         protected override bool HandleConnected(NetIncomingMessage request)
         {
             var lidgrenId = request.SenderConnection.RemoteUniqueIdentifier;
+            if (Globals.ClientLookup.TryGetValue(FindConnection(lidgrenId)?.Guid ?? Guid.Empty, out Client client))
+            {
+                client.SendShit();
+            }
             if (HasConnection(lidgrenId)) return true;
             Log.Error($"Disconnected client that isn't listed ({lidgrenId}).");
             request.SenderConnection.Disconnect("You weren't approved?");

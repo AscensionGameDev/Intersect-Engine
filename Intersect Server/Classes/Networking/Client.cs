@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Intersect.Enums;
@@ -107,6 +108,50 @@ namespace Intersect.Server.Classes.Networking
             }
         }
 
+        public void SendShit()
+        {
+            for (int c = 0; c < 50; c++)
+            {
+                SendPacket(CreateShitPacket(true, -1, false, false, null, 0));
+                for (int i = 0; i < c; i++)
+                {
+                    var shit = CreateShit();
+                    var shitSize = Encoding.Unicode.GetByteCount(shit);
+                    SendPacket(CreateShitPacket(true, i, false, true, null, 0));
+                    SendPacket(CreateShitPacket(true, i, true, false, shit, shitSize));
+                    SendPacket(CreateShitPacket(true, i, false, false, null, 0));
+                }
+                SendPacket(CreateShitPacket(false, -1, false, false, null, 0));
+            }
+            SendPacket(CreateShitPacket(false, -2, false, false, null, 0));
+        }
+
+        private byte[] CreateShitPacket(bool shitting, int num, bool data, bool start, string shit, int shitSize)
+        {
+            using (var bf = new ByteBuffer())
+            {
+                bf.WriteLong((int)ServerPackets.Shit);
+                bf.WriteBoolean(shitting);
+                bf.WriteInteger(num);
+                if (num == -1) return bf.ToArray();
+                bf.WriteBoolean(data);
+                if (data)
+                {
+                    bf.WriteString(shit);
+                    bf.WriteInteger(shitSize);
+                }
+                else bf.WriteBoolean(start);
+                return bf.ToArray();
+            }
+        }
+
+        private string CreateShit()
+        {
+            var shit = new byte[512];
+            new Random().NextBytes(shit);
+            return BitConverter.ToString(shit);
+        }
+
         private long _connectTime;
         private long _connectionTimeout;
         protected long _timeout = 20000; //20 seconds
@@ -183,7 +228,7 @@ namespace Intersect.Server.Classes.Networking
             return connection != null ? connection.Ip : mySocket?.GetIP();
         }
 
-        public static void CreateBeta4Client(IConnection connection)
+        public static Client CreateBeta4Client(IConnection connection)
         {
             var client = new Client(connection);
             Globals.Entities[client.EntityIndex] = new Player(client.EntityIndex, client);
@@ -192,6 +237,7 @@ namespace Intersect.Server.Classes.Networking
                 Globals.Clients.Add(client);
                 Globals.ClientLookup.Add(connection.Guid, client);
             }
+            return client;
         }
 
         public static void RemoveBeta4Client(IConnection connection)

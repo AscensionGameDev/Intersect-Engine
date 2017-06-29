@@ -163,7 +163,7 @@ namespace Intersect.Network
             buffer.Write(guid.ToByteArray(), 16);
             if (!packet.Write(ref buffer)) throw new Exception();
 
-            metadata.Aes.Encrypt(message);
+            //metadata.Aes.Encrypt(message);
             var result = Peer.SendMessage(message, metadata.NetConnection, NetDeliveryMethod.ReliableOrdered);
             switch (result)
             {
@@ -173,7 +173,7 @@ namespace Intersect.Network
                     return true;
 
                 default:
-                    Log.Debug($"Failed to send '{packet.GetType().Name}'.");
+                    Log.Debug($"Failed to send '{packet.GetType().Name}' (Reason: {result}).");
                     return false;
             }
         }
@@ -331,7 +331,7 @@ namespace Intersect.Network
                         {
                             if (mConnectionLookup.TryGetValue(guid, out LidgrenConnection connection))
                             {
-                                if (connection.Aes.Decrypt(message))
+                                //if (connection.Aes.Decrypt(message))
                                 {
                                     EnqueueIncomingDataMessage(connection, message);
                                     break;

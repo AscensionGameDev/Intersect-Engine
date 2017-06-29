@@ -442,7 +442,7 @@ namespace Intersect.Server.Classes.Networking
             if (msg[0] == '/')
             {
                 string[] splitString = msg.Split();
-                msg = msg.Remove(0, splitString[0].Length + 1); //Chop off the /command at the start of the sentance
+                msg = msg.Remove(0, Math.Min(msg.Length, splitString[0].Length + 1)); //Chop off the /command at the start of the sentance
                 
                 switch (splitString[0].ToLower())
                 {
