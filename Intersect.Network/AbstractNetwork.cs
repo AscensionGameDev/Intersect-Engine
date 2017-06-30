@@ -52,7 +52,7 @@ namespace Intersect.Network
             mConnectionGuidLookup = new Dictionary<long, Guid>();
 
             Dispatcher = new PacketDispatcher();
-            CurrentThread = new Thread(Loop);
+            //CurrentThread = new Thread(Loop);
 
             Config = config;
             LidgrenConfig = new NetPeerConfiguration(SharedConstants.VERSION_NAME)
@@ -60,8 +60,13 @@ namespace Intersect.Network
                 AcceptIncomingConnections = config.IsServer
             };
 
+            LidgrenConfig.EnableMessageType(NetIncomingMessageType.Receipt);
+            LidgrenConfig.EnableMessageType(NetIncomingMessageType.UnconnectedData);
+            LidgrenConfig.EnableMessageType(NetIncomingMessageType.ErrorMessage);
+
             if (config.IsServer)
             {
+                LidgrenConfig.EnableMessageType(NetIncomingMessageType.DiscoveryRequest);
                 LidgrenConfig.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
                 LidgrenConfig.MaximumConnections = config.MaximumConnections;
                 //LidgrenConfig.LocalAddress = DnsUtils.Resolve(config.Host);
@@ -121,9 +126,10 @@ namespace Intersect.Network
                 RegisterPackets();
                 RegisterHandlers();
 
-                CurrentThread?.Start();
-
                 foreach (var thread in mThreads) thread.Start();
+
+                //CurrentThread?.Start();
+                Loop();
 
                 return IsRunning;
             }
@@ -136,6 +142,7 @@ namespace Intersect.Network
             {
                 if (!IsRunning) return false;
                 IsRunning = false;
+                Disconnect();
                 foreach (var thread in mThreads) thread.Stop();
                 return true;
             }
@@ -158,12 +165,13 @@ namespace Intersect.Network
         {
             if (!mConnectionLookup.TryGetValue(guid, out LidgrenConnection metadata)) return false;
 
-            var message = Peer.CreateMessage();
+            var size = 16 + packet.EstimatedSize;
+            var message = Peer.CreateMessage(size);
             IBuffer buffer = new LidgrenBuffer(message);
             buffer.Write(guid.ToByteArray(), 16);
             if (!packet.Write(ref buffer)) throw new Exception();
 
-            //metadata.Aes.Encrypt(message);
+            metadata.Aes.Encrypt(message);
             var result = Peer.SendMessage(message, metadata.NetConnection, NetDeliveryMethod.ReliableOrdered);
             switch (result)
             {
@@ -308,106 +316,138 @@ namespace Intersect.Network
             }
         }
 
-        private void Loop()
+        private void HandleIncomingMessage(NetIncomingMessage message)
         {
-            OnStart();
-
-            while (IsRunning)
+            if (message == null) return;
+            switch (message.MessageType)
             {
-                //Log.Info("Waiting for message...");
-                if (!Peer.ReadMessage(out NetIncomingMessage message)) continue;
-                switch (message.MessageType)
-                {
-                    case NetIncomingMessageType.ConnectionApproval:
-                        if (!HandleConnectionApproval(message))
-                        {
-                            message.SenderConnection?.Deny("unknown_approval_error");
-                        }
-                        break;
+                case NetIncomingMessageType.ConnectionApproval:
+                    if (!HandleConnectionApproval(message))
+                    {
+                        message.SenderConnection?.Deny("unknown_approval_error");
+                    }
+                    break;
 
-                    case NetIncomingMessageType.Data:
-                        var lidgrenId = message.SenderConnection?.RemoteUniqueIdentifier ?? -1;
-                        if (mConnectionGuidLookup.TryGetValue(lidgrenId, out Guid guid))
-                        {
-                            if (mConnectionLookup.TryGetValue(guid, out LidgrenConnection connection))
-                            {
-                                //if (connection.Aes.Decrypt(message))
-                                {
-                                    EnqueueIncomingDataMessage(connection, message);
-                                    break;
-                                }
-
-                                Log.Error($"Error decrypting from Lidgren:{guid}.");
-                            }
-
-                            Log.Error($"Error reading from Lidgren:{guid}.");
-                        }
-
+                case NetIncomingMessageType.Data:
+                    var lidgrenId = message.SenderConnection?.RemoteUniqueIdentifier ?? -1;
+                    if (!mConnectionGuidLookup.TryGetValue(lidgrenId, out Guid guid))
+                    {
                         Log.Error($"Error reading from Lidgren Remote:{lidgrenId}.");
                         break;
+                    }
 
-                    case NetIncomingMessageType.VerboseDebugMessage:
-                        Log.Verbose(message.ReadString());
+                    if (!mConnectionLookup.TryGetValue(guid, out LidgrenConnection connection))
+                    {
+                        Log.Error($"Error reading from Lidgren:{guid}.");
                         break;
+                    }
 
-                    case NetIncomingMessageType.DebugMessage:
-                        Log.Debug(message.ReadString());
+                    if (!connection.Aes.Decrypt(message))
+                    {
+                        Log.Error($"Error decrypting from Lidgren:{guid}.");
                         break;
+                    }
 
-                    case NetIncomingMessageType.WarningMessage:
-                        Log.Warn(message.ReadString());
-                        break;
+                    EnqueueIncomingDataMessage(connection, message);
+                    break;
 
-                    case NetIncomingMessageType.ErrorMessage:
-                        Log.Error(message.ReadString());
-                        break;
+                case NetIncomingMessageType.VerboseDebugMessage:
+                    Log.Verbose(message.ReadString());
+                    break;
 
-                    case NetIncomingMessageType.StatusChanged:
-                        if (!HandleStatusChanged(message))
-                        {
-                            message.SenderConnection.Disconnect("Error occurred processing status change.");
-                        }
-                        break;
+                case NetIncomingMessageType.DebugMessage:
+                    Log.Debug(message.ReadString());
+                    break;
 
-                    case NetIncomingMessageType.Error:
-                        Log.Info($"{message.MessageType}: {message}");
-                        break;
+                case NetIncomingMessageType.WarningMessage:
+                    Log.Warn(message.ReadString());
+                    break;
 
-                    case NetIncomingMessageType.UnconnectedData:
-                        Log.Info($"{message.MessageType}: {message}");
-                        break;
+                case NetIncomingMessageType.ErrorMessage:
+                    Log.Error(message.ReadString());
+                    break;
 
-                    case NetIncomingMessageType.Receipt:
-                        Log.Info($"{message.MessageType}: {message}");
-                        break;
+                case NetIncomingMessageType.StatusChanged:
+                    Log.Diagnostic($"Status changed: {message.SenderConnection.Status}");
+                    if (!HandleStatusChanged(message))
+                    {
+                        message.SenderConnection.Disconnect("Error occurred processing status change.");
+                    }
+                    break;
 
-                    case NetIncomingMessageType.DiscoveryRequest:
-                        Log.Info($"{message.MessageType}: {message}");
-                        break;
+                case NetIncomingMessageType.Error:
+                    Log.Info($"{message.MessageType}: {message}");
+                    break;
 
-                    case NetIncomingMessageType.DiscoveryResponse:
-                        Log.Info($"{message.MessageType}: {message}");
-                        break;
+                case NetIncomingMessageType.UnconnectedData:
+                    Log.Info($"{message.MessageType}: {message}");
+                    break;
 
-                    case NetIncomingMessageType.NatIntroductionSuccess:
-                        Log.Info($"{message.MessageType}: {message}");
-                        break;
+                case NetIncomingMessageType.Receipt:
+                    Log.Info($"{message.MessageType}: {message}");
+                    break;
 
-                    case NetIncomingMessageType.ConnectionLatencyUpdated:
-                        Log.Info($"{message.MessageType}: {message}");
-                        break;
+                case NetIncomingMessageType.DiscoveryRequest:
+                    Log.Info($"{message.MessageType}: {message}");
+                    break;
 
-                    default:
-                        Log.Info($"{message.MessageType}: {message}");
-                        break;
-                }
+                case NetIncomingMessageType.DiscoveryResponse:
+                    Log.Info($"{message.MessageType}: {message}");
+                    break;
 
-                Peer.Recycle(message);
+                case NetIncomingMessageType.NatIntroductionSuccess:
+                    Log.Info($"{message.MessageType}: {message}");
+                    break;
+
+                case NetIncomingMessageType.ConnectionLatencyUpdated:
+                    Log.Info($"{message.MessageType}: {message}");
+                    break;
+
+                default:
+                    Log.Info($"{message.MessageType}: {message}");
+                    break;
             }
 
-            Disconnect("network_shutdown");
+            Peer.Recycle(message);
+        }
 
-            OnStop();
+        private void Loop()
+        {
+            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
+
+            IList<NetIncomingMessage> initialMessageQueue = new List<NetIncomingMessage>();
+            var readLock = new object();
+            var queueLock = new object();
+            var isQueuing = false;
+            Peer.RegisterReceivedCallback(peer =>
+            {
+
+                lock (readLock)
+                {
+                    if (isQueuing) return;
+                    isQueuing = true;
+                }
+
+                while (Peer.ReadMessage(out NetIncomingMessage message))
+                    HandleIncomingMessage(message);
+
+                lock (readLock)
+                {
+                    isQueuing = false;
+                }
+            });
+
+            OnStart();
+
+            //while (IsRunning)
+            //{
+                //Log.Info("Waiting for message...");
+                //if (!Peer.ReadMessage(out NetIncomingMessage message)) continue;
+            //}
+
+            //Disconnect("network_shutdown");
+
+            //OnStop();
         }
 
         protected void AssignNetworkThread(Guid guid, NetworkThread networkThread)
@@ -420,6 +460,7 @@ namespace Intersect.Network
             mThreadLookup?.Add(guid, networkThread);
         }
 
+        private double last = 0;
         private void EnqueueIncomingDataMessage(IConnection connection, NetIncomingMessage message)
         {
             if (message == null) throw new ArgumentNullException();
@@ -435,17 +476,20 @@ namespace Intersect.Network
 
             IBuffer buffer = new LidgrenBuffer(message);
             var packet = packetType.CreateInstance(connection);
-            if (packet.Read(ref buffer))
-            {
-                if (thread.Queue == null) throw new ArgumentNullException();
-                //Log.Debug($"Received packet '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer.Length() ?? -1}).");
-                var queued = thread.Queue.Enqueue(packet);
-                //Log.Debug($"thread={thread.Name} queued={queued} queueSize={thread.Queue.Size}");
-            }
-            else
+            if (!packet.Read(ref buffer))
             {
                 MemoryDump.Dump(message.Data);
+                return;
             }
+
+            if (thread.Queue == null) throw new ArgumentNullException();
+
+            //if (last > message.ReceiveTime)
+                //Log.Diagnostic($"Enqueing message received at {message.ReceiveTime} (out of order == {last > message.ReceiveTime}).");
+            //last = Math.Max(last, message.ReceiveTime);
+            //Log.Debug($"Received packet '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer.Length() ?? -1}).");
+            var queued = thread.Queue.Enqueue(packet);
+            //Log.Debug($"thread={thread.Name} queued={queued} queueSize={thread.Queue.Size}");
         }
 
         protected abstract int CalculateNumberOfThreads();
@@ -503,7 +547,7 @@ namespace Intersect.Network
         private static RSAParameters ReadPrivateKey(BinaryReader reader)
         {
             var c = reader.ReadInt16();
-
+            
             return new RSAParameters
             {
                 D = reader.ReadBytes(c >> 3),

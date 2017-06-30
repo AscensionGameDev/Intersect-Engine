@@ -57,6 +57,17 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Diagnostic|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\build\diagnostic\editor\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;WINDOWS;INTERSECT_DIAGNOSTIC</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Classes\Content\GameContentManager.cs" />
     <Compile Include="Classes\Content\GameTexture.cs" />

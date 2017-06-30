@@ -10,8 +10,6 @@ namespace Intersect.Network
         bool IsConnected { get; }
         string Ip { get; }
 
-        IBuffer CreateBuffer();
-
         bool Send(IPacket packet);
         bool Send(Guid guid, IPacket packet);
     }

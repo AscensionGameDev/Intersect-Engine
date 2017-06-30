@@ -48,9 +48,6 @@ namespace Intersect.Network
             NetConnection.Disconnect("status_disposing");
         }
 
-        public IBuffer CreateBuffer()
-            => new LidgrenBuffer(NetConnection.Peer.CreateMessage());
-
         public bool Send(IPacket packet)
             => Network.Send(Guid, packet);
 

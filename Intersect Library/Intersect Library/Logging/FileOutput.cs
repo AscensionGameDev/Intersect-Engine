@@ -91,11 +91,12 @@ namespace Intersect.Logging
             Write(tag, logLevel, string.Format(format, args));
         }
 
-        public void Write(string tag, LogLevel logLevel, Exception exception)
+        public void Write(string tag, LogLevel logLevel, Exception exception, string message)
         {
             Write(tag, logLevel, $"Message: {exception?.Message}");
             Write(tag, logLevel, $"Stack Trace: {exception?.StackTrace}");
             Write(tag, logLevel, $"Time: {DateTime.UtcNow}");
+            if (!string.IsNullOrEmpty(message)) Write(tag, logLevel, $"Note: {message}");
             Writer?.WriteLine(SPACER);
             Writer?.Flush();
         }

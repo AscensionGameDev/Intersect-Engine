@@ -6,6 +6,8 @@ namespace Intersect.Network.Packets
     {
         public ByteBuffer Buffer;
 
+        public override int EstimatedSize => Buffer?.Length() + sizeof(int) ?? sizeof(int);
+
         public BinaryPacket(IConnection connection)
             : base(connection, PacketCodes.BinaryPacket)
         {

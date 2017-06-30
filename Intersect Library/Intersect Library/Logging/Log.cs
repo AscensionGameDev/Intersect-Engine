@@ -39,7 +39,7 @@ namespace Intersect.Logging
             Global.Write(logLevel, format, args);
         }
 
-        public static void Write(LogLevel logLevel, Exception exception)
+        public static void Write(LogLevel logLevel, Exception exception, string message = null)
         {
             Global.Write(logLevel, exception);
         }
@@ -54,9 +54,9 @@ namespace Intersect.Logging
             Global.Write(format, args);
         }
 
-        public static void Write(Exception exception)
+        public static void Write(Exception exception, string message = null)
         {
-            Global.Write(exception);
+            Global.Write(exception, message);
         }
 
         public static void All(string message)
@@ -69,9 +69,9 @@ namespace Intersect.Logging
             Global.All(format, args);
         }
 
-        public static void All(Exception exception)
+        public static void All(Exception exception, string message = null)
         {
-            Global.All(exception);
+            Global.All(exception, message);
         }
 
         public static void Error(string message)
@@ -84,9 +84,9 @@ namespace Intersect.Logging
             Global.Error(format, args);
         }
 
-        public static void Error(Exception exception)
+        public static void Error(Exception exception, string message = null)
         {
-            Global.Error(exception);
+            Global.Error(exception, message);
         }
 
         public static void Warn(string message)
@@ -99,9 +99,9 @@ namespace Intersect.Logging
             Global.Warn(format, args);
         }
 
-        public static void Warn(Exception exception)
+        public static void Warn(Exception exception, string message = null)
         {
-            Global.Warn(exception);
+            Global.Warn(exception, message);
         }
 
         public static void Info(string message)
@@ -114,9 +114,9 @@ namespace Intersect.Logging
             Global.Info(format, args);
         }
 
-        public static void Info(Exception exception)
+        public static void Info(Exception exception, string message = null)
         {
-            Global.Info(exception);
+            Global.Info(exception, message);
         }
 
         public static void Trace(string message)
@@ -129,9 +129,9 @@ namespace Intersect.Logging
             Global.Trace(format, args);
         }
 
-        public static void Trace(Exception exception)
+        public static void Trace(Exception exception, string message = null)
         {
-            Global.Trace(exception);
+            Global.Trace(exception, message);
         }
 
         public static void Debug(string message)
@@ -144,9 +144,24 @@ namespace Intersect.Logging
             Global.Debug(format, args);
         }
 
-        public static void Debug(Exception exception)
+        public static void Debug(Exception exception, string message = null)
         {
-            Global.Debug(exception);
+            Global.Debug(exception, message);
+        }
+
+        public static void Diagnostic(string message)
+        {
+            Global.Diagnostic(message);
+        }
+
+        public static void Diagnostic(string format, params object[] args)
+        {
+            Global.Diagnostic(format, args);
+        }
+
+        public static void Diagnostic(Exception exception, string message = null)
+        {
+            Global.Diagnostic(exception, message);
         }
 
         public static void Verbose(string message)
@@ -159,9 +174,9 @@ namespace Intersect.Logging
             Global.Verbose(format, args);
         }
 
-        public static void Verbose(Exception exception)
+        public static void Verbose(Exception exception, string message = null)
         {
-            Global.Verbose(exception);
+            Global.Verbose(exception, message);
         }
 
         #endregion

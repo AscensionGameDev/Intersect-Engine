@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 using Intersect;
 using Intersect.Collections;
 using Intersect.Enums;
@@ -287,8 +289,16 @@ namespace Intersect_Client.Classes.Networking
         private static long timespentshitting;
         private static long totalshitsize;
         private static Stopwatch ShitTimer = new Stopwatch();
+
+        private static TextWriter writer;
+
         private static void HandleShit(byte[] packet)
         {
+            if (writer == null)
+            {
+                writer = new StreamWriter(new FileStream($"shits{DateTime.Now:yyyy-MM-dd_HH-mm-ss-fff}.csv", FileMode.Create, FileAccess.Write), Encoding.UTF8);
+            }
+
             using (var bf = new ByteBuffer())
             {
                 bf.WriteBytes(packet);
@@ -326,33 +336,44 @@ namespace Intersect_Client.Classes.Networking
                 }
                 else
                 {
-                    if (packetNum == -2)
+                    switch (packetNum)
                     {
-                        foreach (var m in measurements)
-                        {
-                            if (m.taken < 2) continue;
-                            Console.WriteLine($"Shits: {m.taken}, Shitrate: {m.ShitRate}s/s, Datarate: {m.DataRate / 1048576}MiB/s");
-                        }
-                    }
-                    else
-                    {
-                        if (shitting)
-                        {
-                            shitstaken = 0;
-                            timespentshitting = 0;
-                            totalshitsize = 0;
-                            Console.WriteLine("Starting to shit...");
-                        }
-                        else
-                        {
-                            double diff = 1000.0 * TimeSpan.TicksPerMillisecond;
-                            Console.WriteLine("Just flushed the toilet.");
-                            Console.WriteLine($"I took {shitstaken} shit(s).");
-                            Console.WriteLine($"It took me a total of {timespentshitting / diff}s to shit.");
-                            Console.WriteLine($"Each shit took {timespentshitting / (diff * shitstaken)}s per shit.");
-                            Console.WriteLine($"I shit at approximately {(totalshitsize / (timespentshitting / diff)) / 1024}KiB/s.");
-                            measurements.Add(new ShitMeasurement { elapsed = timespentshitting, taken = shitstaken, totalsize = totalshitsize });
-                        }
+                        case -2:
+                            foreach (var m in measurements)
+                            {
+                                if (m.taken < 2) continue;
+                                Console.WriteLine($"Shits: {m.taken}, Shitrate: {m.ShitRate}s/s, Datarate: {m.DataRate / 1048576}MiB/s");
+                            }
+                            break;
+                        case -3:
+                            writer.Close();
+                            writer.Dispose();
+                            writer = null;
+                            break;
+                        default:
+                            if (shitting)
+                            {
+                                shitstaken = 0;
+                                timespentshitting = 0;
+                                totalshitsize = 0;
+                                //Console.WriteLine("Starting to shit...");
+                            }
+                            else
+                            {
+                                var diff = 1000.0 * TimeSpan.TicksPerMillisecond;
+                                //Console.WriteLine("Just flushed the toilet.");
+                                //Console.WriteLine($"I took {shitstaken} shit(s).");
+                                //Console.WriteLine($"It took me a total of {timespentshitting / diff}s to shit.");
+                                //Console.WriteLine($"Each shit took {timespentshitting / (diff * shitstaken)}s per shit.");
+                                //Console.WriteLine($"I shit at approximately {(totalshitsize / (timespentshitting / diff)) / 1024}KiB/s.");
+                                measurements.Add(new ShitMeasurement { elapsed = timespentshitting, taken = shitstaken, totalsize = totalshitsize });
+                                if (shitstaken > 0)
+                                {
+                                    writer.WriteLine($"{timespentshitting},{shitstaken},{totalshitsize}");
+                                    writer.Flush();
+                                }
+                            }
+                            break;
                     }
                 }
             }

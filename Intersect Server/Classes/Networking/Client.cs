@@ -14,6 +14,7 @@ using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
+using Lidgren.Network;
 
 namespace Intersect.Server.Classes.Networking
 {
@@ -110,20 +111,32 @@ namespace Intersect.Server.Classes.Networking
 
         public void SendShit()
         {
-            for (int c = 0; c < 50; c++)
+            //var timer = new System.Timers.Timer(5000);
+            //timer.Elapsed += (source, args) =>
+            //{
+            var random = new CryptoRandom();
+            var b = 25000;
+            for (var a = 0; a < b; a++)
             {
-                SendPacket(CreateShitPacket(true, -1, false, false, null, 0));
-                for (int i = 0; i < c; i++)
+                Log.Diagnostic($"Sending shit... {a}/{b}");
+                for (var c = 10; c < 50; c++)
                 {
-                    var shit = CreateShit();
-                    var shitSize = Encoding.Unicode.GetByteCount(shit);
-                    SendPacket(CreateShitPacket(true, i, false, true, null, 0));
-                    SendPacket(CreateShitPacket(true, i, true, false, shit, shitSize));
-                    SendPacket(CreateShitPacket(true, i, false, false, null, 0));
+                    var cap = 10 + (c + random.NextDouble() * 25) % 40;
+                    SendPacket(CreateShitPacket(true, -1, false, false, null, 0));
+                    for (var i = 0; i < cap; i++)
+                    {
+                        var shit = CreateShit();
+                        var shitSize = Encoding.Unicode.GetByteCount(shit);
+                        SendPacket(CreateShitPacket(true, i, false, true, null, 0));
+                        SendPacket(CreateShitPacket(true, i, true, false, shit, shitSize));
+                        SendPacket(CreateShitPacket(true, i, false, false, null, 0));
+                    }
+                    SendPacket(CreateShitPacket(false, -1, false, false, null, 0));
                 }
-                SendPacket(CreateShitPacket(false, -1, false, false, null, 0));
+                SendPacket(CreateShitPacket(false, -2, false, false, null, 0));
             }
-            SendPacket(CreateShitPacket(false, -2, false, false, null, 0));
+            //};
+            //timer.Start();
         }
 
         private byte[] CreateShitPacket(bool shitting, int num, bool data, bool start, string shit, int shitSize)

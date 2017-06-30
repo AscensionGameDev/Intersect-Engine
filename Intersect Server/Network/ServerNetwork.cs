@@ -94,6 +94,7 @@ namespace Intersect.Server.Network
 
                     var client = Client.CreateBeta4Client(metadata);
 
+                    Log.Diagnostic($"Approving {request.SenderConnection}");
                     request.SenderConnection.Approve(response);
                     return true;
                 }

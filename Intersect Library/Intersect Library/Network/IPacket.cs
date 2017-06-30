@@ -6,6 +6,10 @@ namespace Intersect.Network
     {
         IConnection Connection { get; }
 
+        double Timestamp { get; }
+
+        int EstimatedSize { get; }
+
         PacketCodes Code { get; }
 
         PacketType Type { get; }

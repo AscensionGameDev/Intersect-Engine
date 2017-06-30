@@ -89,7 +89,7 @@ namespace Intersect.Logging
             }
         }
 
-        public void Write(LogLevel logLevel, Exception exception)
+        public void Write(LogLevel logLevel, Exception exception, string message = null)
         {
             if (LogLevel < logLevel)
             {
@@ -98,7 +98,7 @@ namespace Intersect.Logging
 
             foreach (var output in Outputs)
             {
-                output.Write(Tag, logLevel, exception);
+                output.Write(Tag, logLevel, exception, message);
             }
         }
 
@@ -112,9 +112,9 @@ namespace Intersect.Logging
             Write(LogLevel, format, args);
         }
 
-        public void Write(Exception exception)
+        public void Write(Exception exception, string message = null)
         {
-            Write(LogLevel, exception);
+            Write(LogLevel, exception, message);
         }
 
         public void All(string message)
@@ -127,9 +127,9 @@ namespace Intersect.Logging
             Write(LogLevel.All, format, args);
         }
 
-        public void All(Exception exception)
+        public void All(Exception exception, string message = null)
         {
-            Write(LogLevel.All, exception);
+            Write(LogLevel.All, exception, message);
         }
 
         public void Error(string message)
@@ -142,9 +142,9 @@ namespace Intersect.Logging
             Write(LogLevel.Error, format, args);
         }
 
-        public void Error(Exception exception)
+        public void Error(Exception exception, string message = null)
         {
-            Write(LogLevel.Error, exception);
+            Write(LogLevel.Error, exception, message);
         }
 
         public void Warn(string message)
@@ -157,9 +157,9 @@ namespace Intersect.Logging
             Write(LogLevel.Warn, format, args);
         }
 
-        public void Warn(Exception exception)
+        public void Warn(Exception exception, string message = null)
         {
-            Write(LogLevel.Warn, exception);
+            Write(LogLevel.Warn, exception, message);
         }
 
         public void Info(string message)
@@ -172,9 +172,9 @@ namespace Intersect.Logging
             Write(LogLevel.Info, format, args);
         }
 
-        public void Info(Exception exception)
+        public void Info(Exception exception, string message = null)
         {
-            Write(LogLevel.Info, exception);
+            Write(LogLevel.Info, exception, message);
         }
 
         public void Trace(string message)
@@ -187,9 +187,9 @@ namespace Intersect.Logging
             Write(LogLevel.Trace, format, args);
         }
 
-        public void Trace(Exception exception)
+        public void Trace(Exception exception, string message = null)
         {
-            Write(LogLevel.Trace, exception);
+            Write(LogLevel.Trace, exception, message);
         }
 
         public void Debug(string message)
@@ -202,9 +202,30 @@ namespace Intersect.Logging
             Write(LogLevel.Debug, format, args);
         }
 
-        public void Debug(Exception exception)
+        public void Debug(Exception exception, string message = null)
         {
-            Write(LogLevel.Debug, exception);
+            Write(LogLevel.Debug, exception, message);
+        }
+
+        public void Diagnostic(string message)
+        {
+#if INTERSECT_DIAGNOSTIC
+            Write(LogLevel.Diagnostic, message);
+#endif
+        }
+
+        public void Diagnostic(string format, params object[] args)
+        {
+#if INTERSECT_DIAGNOSTIC
+            Write(LogLevel.Diagnostic, format, args);
+#endif
+        }
+
+        public void Diagnostic(Exception exception, string message = null)
+        {
+#if INTERSECT_DIAGNOSTIC
+            Write(LogLevel.Diagnostic, exception, message);
+#endif
         }
 
         public void Verbose(string message)
@@ -217,9 +238,9 @@ namespace Intersect.Logging
             Write(LogLevel.Verbose, format, args);
         }
 
-        public void Verbose(Exception exception)
+        public void Verbose(Exception exception, string message = null)
         {
-            Write(LogLevel.Verbose, exception);
+            Write(LogLevel.Verbose, exception, message);
         }
     }
 }
