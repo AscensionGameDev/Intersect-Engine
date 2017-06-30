@@ -40,5 +40,10 @@ namespace Intersect.Network.Packets
 
             return true;
         }
+
+        public override void Dispose()
+        {
+            Buffer?.Dispose();
+        }
     }
 }

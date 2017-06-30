@@ -29,5 +29,10 @@ namespace Intersect.Network
 
             return true;
         }
+
+        public virtual void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

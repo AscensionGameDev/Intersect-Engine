@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using Intersect.Logging;
 using Intersect.Network.Packets;
@@ -54,6 +56,9 @@ namespace Intersect.Network
 
         private void Loop()
         {
+            var sw = new Stopwatch();
+            var last = 0L;
+            sw.Start();
             while (IsRunning)
             {
                 // ReSharper disable once PossibleNullReferenceException
@@ -65,8 +70,17 @@ namespace Intersect.Network
                     Log.Warn($"Failed to dispatch packet '{packet}'.");
                 }
 
+                if (last + (1 * TimeSpan.TicksPerSecond) < sw.ElapsedTicks)
+                {
+                    last = sw.ElapsedTicks;
+                    Console.Title = $"Queue size: {Queue.Size}";
+                }
+
+                packet.Dispose();
+
                 mThreadYield?.Yield();
             }
+            sw.Stop();
 
             Log.Debug($"Exiting network thread ({Name}).");
         }

@@ -115,7 +115,7 @@ namespace Intersect.Server.Classes.Networking
             //timer.Elapsed += (source, args) =>
             //{
             var random = new CryptoRandom();
-            var b = 25000;
+            var b = 0;
             for (var a = 0; a < b; a++)
             {
                 Log.Diagnostic($"Sending shit... {a}/{b}");

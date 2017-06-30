@@ -1,8 +1,9 @@
-﻿using Intersect.Memory;
+﻿using System;
+using Intersect.Memory;
 
 namespace Intersect.Network
 {
-    public interface IPacket
+    public interface IPacket : IDisposable
     {
         IConnection Connection { get; }
 
