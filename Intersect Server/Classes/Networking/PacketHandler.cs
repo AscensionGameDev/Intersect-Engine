@@ -1025,8 +1025,9 @@ namespace Intersect.Server.Classes.Networking
                 {
                     Database.CreateAccount(client, username, password, email);
                     PacketSender.SendServerConfig(client);
-                    PacketSender.SendGameObjects(client, GameObjectType.Class);
-                    PacketSender.SendCreateCharacter(client);
+					PacketSender.SendPlayerCharacters(client);
+                    //PacketSender.SendGameObjects(client, GameObjectType.Class);
+                    //PacketSender.SendCreateCharacter(client);
                 }
             }
             bf.Dispose();

@@ -1,15 +1,19 @@
-﻿using Intersect.Localization;
+﻿using System.Collections.Generic;
+using Intersect;
+using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
+using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
     public class MainMenu
     {
+		private SelectCharacterWindow _selectCharacterWindow;
         private CreateCharacterWindow _createCharacterWindow;
         private Button _exitButton;
 
@@ -24,7 +28,8 @@ namespace Intersect_Client.Classes.UI.Menu
         private Button _registerButton;
         private RegisterWindow _registerWindow;
 
-        private bool _shouldOpenCharacterCreation;
+		private bool _shouldOpenCharacterSelection;
+		private bool _shouldOpenCharacterCreation;
 
         //Character creation feild check
         private bool HasMadeCharacterCreation;
@@ -176,7 +181,11 @@ namespace Intersect_Client.Classes.UI.Menu
         //Methods
         public void Update()
         {
-            if (_shouldOpenCharacterCreation)
+			if (_shouldOpenCharacterSelection)
+			{
+				CreateCharacterSelection();
+			}
+			if (_shouldOpenCharacterCreation)
             {
                 CreateCharacterCreation();
             }
@@ -189,7 +198,8 @@ namespace Intersect_Client.Classes.UI.Menu
             _registerWindow.Hide();
             _optionsWindow.Hide();
             if (_createCharacterWindow != null) _createCharacterWindow.Hide();
-            _menuPanel.Show();
+			if (_selectCharacterWindow != null) _selectCharacterWindow.Hide();
+			_menuPanel.Show();
             _optionsButton.Show();
         }
 
@@ -205,7 +215,25 @@ namespace Intersect_Client.Classes.UI.Menu
             _optionsButton.IsHidden = true;
         }
 
-        public void NotifyOpenCharacterCreation()
+		public void NotifyOpenCharacterSelection(List<Character> Characters)
+		{
+			_shouldOpenCharacterSelection = true;
+			_selectCharacterWindow.Characters = Characters;
+		}
+
+		public void CreateCharacterSelection()
+		{
+			Hide();
+			_loginWindow.Hide();
+			_registerWindow.Hide();
+			_optionsWindow.Hide();
+			_createCharacterWindow.Hide();
+			_selectCharacterWindow = new SelectCharacterWindow(MenuCanvas, this, _menuPanel);
+			_selectCharacterWindow.Show();
+			_shouldOpenCharacterSelection = false;
+		}
+
+		public void NotifyOpenCharacterCreation()
         {
             _shouldOpenCharacterCreation = true;
         }

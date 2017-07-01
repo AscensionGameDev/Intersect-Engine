@@ -75,6 +75,7 @@
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Maps\MapAnimationInstance.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
+    <Compile Include="Classes\UI\Menu\CreateCharacterWindow.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicInstance.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicSource.cs" />
@@ -122,7 +123,7 @@
     <Compile Include="Classes\UI\Game\SpellWindow.cs" />
     <Compile Include="Classes\UI\Game\TradingWindow.cs" />
     <Compile Include="Classes\UI\Gui.cs" />
-    <Compile Include="Classes\UI\Menu\CreateCharacterWindow.cs" />
+    <Compile Include="Classes\UI\Menu\SelectCharacterWindow.cs" />
     <Compile Include="Classes\UI\Menu\LoginWindow.cs" />
     <Compile Include="Classes\UI\Menu\MainMenu.cs" />
     <Compile Include="Classes\UI\Menu\MenuGuiBase.cs" />

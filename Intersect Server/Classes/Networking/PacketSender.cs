@@ -1003,7 +1003,15 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendOpenAdminWindow(Client client)
+		public static void SendPlayerCharacters(Client client)
+		{
+			var bf = new ByteBuffer();
+			bf.WriteLong((int)ServerPackets.PlayerCharacters);
+			client.SendPacket(bf.ToArray());
+			bf.Dispose();
+		}
+
+		public static void SendOpenAdminWindow(Client client)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.OpenAdminWindow);
