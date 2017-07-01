@@ -20,7 +20,8 @@ namespace Intersect.Server.Classes.Networking
     {
         public int EditorMap = -1;
         public Player Entity;
-        public int EntityIndex;
+		public List<Character> Characters = new List<Character>();
+		public int EntityIndex;
 
         //Client Properties
         public bool IsEditor;
@@ -32,8 +33,8 @@ namespace Intersect.Server.Classes.Networking
         //Game Incorperation Variables
         public string MyAccount = "";
         public string MyEmail = "";
-        public long MyId = -1;
-        public string MyPassword = "";
+		public long MyId = -1;
+		public string MyPassword = "";
         public string MySalt = "";
 
         //Network Variables
@@ -252,4 +253,29 @@ namespace Intersect.Server.Classes.Networking
             }
         }
     }
+
+	public class Character
+	{
+		public int Slot = 1;
+		public string Name = "";
+		public string Sprite = "";
+		public string Face = "";
+		public int Level = 1;
+		public int Class = 0;
+		public int[] Equipment = new int[Options.EquipmentSlots.Count];
+
+		public Character(int slot, string name, string sprite, string face, int level, int charClass)
+		{
+			for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+			{
+				Equipment[i] = -1;
+			}
+			Slot = slot;
+			Name = name;
+			Sprite = sprite;
+			Face = face;
+			Level = level;
+			Class = charClass;
+		}
+	}
 }

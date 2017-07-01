@@ -1007,6 +1007,20 @@ namespace Intersect.Server.Classes.Networking
 		{
 			var bf = new ByteBuffer();
 			bf.WriteLong((int)ServerPackets.PlayerCharacters);
+			bf.WriteLong(client.Characters.Count);
+			for (int i = 0; i < client.Characters.Count; i++)
+			{
+				bf.WriteString(client.Characters[i].Name);
+				bf.WriteString(client.Characters[i].Sprite);
+				bf.WriteString(client.Characters[i].Face);
+				bf.WriteInteger(client.Characters[i].Level);
+				bf.WriteInteger(client.Characters[i].Class);
+
+				for (int n = 0; n < Options.EquipmentSlots.Count; n++)
+				{
+					bf.WriteInteger(client.Characters[i].Equipment[n]);
+				}
+			}
 			client.SendPacket(bf.ToArray());
 			bf.Dispose();
 		}

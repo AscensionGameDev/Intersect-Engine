@@ -17,6 +17,9 @@ namespace Intersect.Server.Classes.Entities
 {
     public class Player : Entity
     {
+		//Multichar slot
+		public int CharSlot = 1;
+
         //5 minute timeout before someone can send a trade/party request after it has been declined
         public const long RequestDeclineTimeout = 300000;
         private bool _sentMap;
