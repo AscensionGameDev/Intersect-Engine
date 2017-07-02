@@ -6,6 +6,7 @@ using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
+using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
@@ -161,7 +162,7 @@ namespace Intersect_Client.Classes.Entities
             Status.Clear();
             for (int i = 0; i < count; i++)
             {
-                Status.Add(new StatusInstance(bf.ReadInteger(), bf.ReadString()));
+                Status.Add(new StatusInstance(bf.ReadInteger(), bf.ReadInteger(), bf.ReadString()));
             }
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
@@ -170,7 +171,20 @@ namespace Intersect_Client.Classes.Entities
             type = bf.ReadInteger();
 
             _disposed = false;
-        }
+
+			//Status effects box update
+			if (Globals.Me != null)
+			{
+				if (MyIndex == Globals.Me.MyIndex)
+				{
+					if (Gui.GameUI != null) { Gui.GameUI._playerBox.updateSpellStatus(); }
+				}
+				else if (MyIndex == Globals.Me._targetIndex)
+				{
+					Globals.Me._targetBox.updateSpellStatus();
+				}
+			}
+		}
 
         public void ClearAnimations()
         {
@@ -866,12 +880,14 @@ namespace Intersect_Client.Classes.Entities
 
     public class StatusInstance
     {
+		public int SpellNum;
         public string Data = "";
         public int Type = -1;
 
-        public StatusInstance(int type, string data)
+        public StatusInstance(int spellNum, int type, string data)
         {
-            Type = type;
+			SpellNum = spellNum;
+			Type = type;
             Data = data;
         }
     }

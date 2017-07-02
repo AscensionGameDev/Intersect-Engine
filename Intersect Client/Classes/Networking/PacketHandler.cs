@@ -670,9 +670,19 @@ namespace Intersect_Client.Classes.Networking
             en.Status.Clear();
             for (int i = 0; i < count; i++)
             {
-                en.Status.Add(new StatusInstance(bf.ReadInteger(), bf.ReadString()));
+                en.Status.Add(new StatusInstance(bf.ReadInteger(), bf.ReadInteger(), bf.ReadString()));
             }
-        }
+
+			//If its you or your target, update the entity box.
+			if (index == Globals.Me.MyIndex)
+			{
+				Gui.GameUI._playerBox.updateSpellStatus();
+			}
+			else if (index == Globals.Me._targetIndex)
+			{
+				Globals.Me._targetBox.updateSpellStatus();
+			}
+		}
 
         private static void HandleStats(byte[] packet)
         {
