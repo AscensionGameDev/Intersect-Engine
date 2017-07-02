@@ -56,11 +56,12 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendChatMsg(string msg)
+        public static void SendChatMsg(string msg, string channel)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.LocalMessage);
             bf.WriteString(msg);
+			bf.WriteString(channel);
             GameNetwork.SendPacket(bf.ToArray());
         }
 

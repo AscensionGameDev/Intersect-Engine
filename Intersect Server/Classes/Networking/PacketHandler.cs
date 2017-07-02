@@ -432,21 +432,43 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var msg = bf.ReadString();
+			string channel = bf.ReadString();
             if (client.Muted == true) //Don't let the toungless toxic kids speak.
             {
                 PacketSender.SendPlayerMsg(client, client.MuteReason);
                 return;
             }
 
-            //Check for /commands
-            if (msg[0] == '/')
+			//If no /command, then use the designated channel.
+			if (msg[0] != '/')
+			{
+				msg = "/" + channel + " " + msg;
+			}
+
+			//Check for /commands
+			if (msg[0] == '/')
             {
                 string[] splitString = msg.Split();
                 msg = msg.Remove(0, splitString[0].Length + 1); //Chop off the /command at the start of the sentance
                 
                 switch (splitString[0].ToLower())
                 {
-                    case "/all":
+					case "/local":
+						if (client.Power == 2)
+						{
+							PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.AdminLocalChat, client.Entity.MyName);
+						}
+						else if (client.Power == 1)
+						{
+							PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.ModLocalChat, client.Entity.MyName);
+						}
+						else
+						{
+							PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.LocalChat, client.Entity.MyName);
+						}
+						PacketSender.SendChatBubble(client.Entity.MyIndex, (int)EntityTypes.GlobalEntity, msg, client.Entity.CurrentMap);
+						break;
+					case "/all":
                     case "/global":
                         if (client.Power == 2)
                         {
@@ -474,7 +496,14 @@ namespace Intersect.Server.Classes.Networking
                         }
                         break;
                     case "/party":
-                        PacketSender.SendPartyMsg(client, Strings.Get("party", "announcement", client.Entity.MyName, msg), CustomColors.PartyChat, client.Entity.MyName);
+						if (client.Entity.InParty(client.Entity))
+						{
+							PacketSender.SendPartyMsg(client, Strings.Get("party", "announcement", client.Entity.MyName, msg), CustomColors.PartyChat, client.Entity.MyName);
+						}
+						else
+						{
+							PacketSender.SendPlayerMsg(client, Strings.Get("Commands", "invalid"), CustomColors.Error);
+						}
                         break;
                     case "/pm":
                     case "/message":
@@ -527,23 +556,6 @@ namespace Intersect.Server.Classes.Networking
                         break;
                 }
             }
-            else //Talk in local normally
-            {
-                if (client.Power == 2)
-                {
-                    PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.AdminLocalChat, client.Entity.MyName);
-                }
-                else if (client.Power == 1)
-                {
-                    PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.ModLocalChat, client.Entity.MyName);
-                }
-                else
-                {
-                    PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.LocalChat, client.Entity.MyName);
-                }
-                PacketSender.SendChatBubble(client.Entity.MyIndex, (int)EntityTypes.GlobalEntity, msg, client.Entity.CurrentMap);
-            }
-
 
             bf.Dispose();
         }

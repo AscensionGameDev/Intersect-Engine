@@ -16,7 +16,8 @@ namespace Intersect_Client.Classes.UI.Game
     public class Chatbox
     {
         private TextBox _chatboxInput;
-        private ListBox _chatboxMessages;
+		private ComboBox _channelCombobox;
+		private ListBox _chatboxMessages;
         private ScrollBar _chatboxScrollBar;
         private Button _chatboxSendButton;
         //Window Controls
@@ -76,7 +77,24 @@ namespace Intersect_Client.Classes.UI.Game
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowhover.png"),
                 Button.ControlState.Hovered);
 
-            _chatboxInput = new TextBox(_chatboxWindow);
+			_channelCombobox = new ComboBox(_chatboxWindow);
+			_channelCombobox.SetPosition(8, 0);
+			_channelCombobox.SetSize(64, 16);
+			_channelCombobox.ShouldDrawBackground = false;
+			_channelCombobox.SetMenuBackgroundColor(new Color(220, 0, 0, 0));
+			_channelCombobox.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
+			_channelCombobox.SetTextColor(new Color(255, 220, 220, 220), Label.ControlState.Hovered);
+			for (int i = 1; i < 4; i++)
+			{
+				_channelCombobox.AddItem(Strings.Get("chatbox", "channel" + i));
+			}
+			//Add admin channel only if power > 0.
+			if (Globals.Me.type > 0)
+			{
+				_channelCombobox.AddItem(Strings.Get("chatbox", "channeladmin"));
+			}
+
+			_chatboxInput = new TextBox(_chatboxWindow);
             _chatboxInput.SetPosition(18, 144);
             _chatboxInput.SetSize(314, 16);
             _chatboxInput.SubmitPressed += ChatBoxInput_SubmitPressed;
@@ -183,7 +201,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _chatboxInput.Text = GetDefaultInputText();
                 return;
             }
-            PacketSender.SendChatMsg(_chatboxInput.Text.Trim());
+            PacketSender.SendChatMsg(_chatboxInput.Text.Trim(), _channelCombobox.SelectedItem.Text);
             _chatboxInput.Text = GetDefaultInputText();
         }
 
@@ -194,7 +212,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _chatboxInput.Text = GetDefaultInputText();
                 return;
             }
-            PacketSender.SendChatMsg(_chatboxInput.Text.Trim());
+            PacketSender.SendChatMsg(_chatboxInput.Text.Trim(), _channelCombobox.SelectedItem.Text);
             _chatboxInput.Text = GetDefaultInputText();
         }
 
