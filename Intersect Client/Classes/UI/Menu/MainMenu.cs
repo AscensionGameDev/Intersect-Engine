@@ -138,7 +138,7 @@ namespace Intersect_Client.Classes.UI.Menu
 			_registerWindow.Hide();
 			_optionsWindow.Hide();
 			_createCharacterWindow.Hide();
-			_selectCharacterWindow = new SelectCharacterWindow(MenuCanvas, this, _menuPanel);
+			_selectCharacterWindow = new SelectCharacterWindow(MenuCanvas, this, _menuWindow);
 			_selectCharacterWindow.Show();
 			_shouldOpenCharacterSelection = false;
 		}
