@@ -13,6 +13,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         private long _lastAccessTime = 0;
         private bool _loadError = false;
         private string _path = "";
+        private string _name = "";
         private Texture2D _tex;
         private int _width = -1;
 
@@ -20,6 +21,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         {
             _graphicsDevice = graphicsDevice;
             _path = filename;
+            _name = Path.GetFileName(filename);
         }
 
         public void LoadTexture()
@@ -47,6 +49,11 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         public void ResetAccessTime()
         {
             _lastAccessTime = Globals.System.GetTimeMS() + 15000;
+        }
+
+        public override string GetName()
+        {
+            return _name;
         }
 
         public override int GetWidth()

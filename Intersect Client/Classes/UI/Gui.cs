@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Xml;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
@@ -52,7 +54,7 @@ namespace Intersect_Client.Classes.UI
             };
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)
-            _menuCanvas = new Canvas(_gwenSkin)
+            _menuCanvas = new Canvas(_gwenSkin, "MainMenu")
             {
                 Scale = 1f //(GameGraphics.Renderer.GetScreenWidth()/1920f);
             };
@@ -63,7 +65,7 @@ namespace Intersect_Client.Classes.UI
             _menuCanvas.KeyboardInputEnabled = true;
 
             // Create the game Canvas (it's root, on which all other GWEN controls are created)
-            _gameCanvas = new Canvas(_gameSkin);
+            _gameCanvas = new Canvas(_gameSkin, "InGame");
             //_gameCanvas.Scale = (GameGraphics.Renderer.GetScreenWidth() / 1920f);
             _gameCanvas.SetSize((int) (GameGraphics.Renderer.GetScreenWidth() / _gameCanvas.Scale),
                 (int) (GameGraphics.Renderer.GetScreenHeight() / _gameCanvas.Scale));
@@ -91,6 +93,33 @@ namespace Intersect_Client.Classes.UI
             else
             {
                 GameUI = new GameGuiBase(_gameCanvas);
+            }
+
+            XmlReaderSettings readerSettings = new XmlReaderSettings();
+            readerSettings.IgnoreWhitespace = true;
+            readerSettings.IgnoreComments = true;
+            using (XmlReader reader = XmlReader.Create(Path.Combine("resources","ui.xml"), readerSettings))
+            {
+                while (reader.Read())
+                {
+                    if (reader.Name == "MainMenu")
+                    {
+                        _menuCanvas.LoadUIXml(reader);
+                        _menuCanvas.ProcessAlignments();
+                    }
+                }
+            }
+
+            //Create XML Doc with UI 
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.NewLineOnAttributes = true;
+
+            using (XmlWriter writer = XmlWriter.Create(Path.Combine("resources", "ui.xml"), settings))
+            {
+                writer.WriteStartDocument();
+                _menuCanvas.WriteBaseUIXml(writer, false);
+                writer.WriteEndDocument();
             }
 
             GwenInitialized = true;

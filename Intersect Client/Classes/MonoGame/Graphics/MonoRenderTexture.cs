@@ -24,6 +24,11 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             _height = height;
         }
 
+        public override string GetName()
+        {
+            return "";
+        }
+
         public override int GetWidth()
         {
             return _width;
