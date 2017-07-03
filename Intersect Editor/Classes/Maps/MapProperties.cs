@@ -268,7 +268,7 @@ namespace Intersect.Editor.Classes.Maps
                     _myMap.PlayerLightColor.G != value.G || _myMap.PlayerLightColor.B != value.B)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.PlayerLightColor = Intersect.Color.FromArgb(value.A, value.R, value.G, value.B);
+                    _myMap.PlayerLightColor = Color.FromArgb(value.A, value.R, value.G, value.B);
                     EditorGraphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }

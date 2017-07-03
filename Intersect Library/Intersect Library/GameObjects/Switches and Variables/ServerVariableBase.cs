@@ -4,7 +4,7 @@ namespace Intersect.GameObjects
 {
     public class ServerVariableBase : DatabaseObject<ServerVariableBase>
     {
-        public int Value = 0;
+        public int Value;
 
         public ServerVariableBase(int id) : base(id)
         {

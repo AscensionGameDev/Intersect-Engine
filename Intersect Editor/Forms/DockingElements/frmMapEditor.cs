@@ -22,7 +22,7 @@ namespace Intersect.Editor.Forms
         //MonoGame Swap Chain
         private SwapChainRenderTarget _chain;
         public byte[] CurrentMapState;
-        private bool MapChanged = false;
+        private bool MapChanged;
         public List<byte[]> MapRedoStates = new List<byte[]>();
 
         //Map States
@@ -1467,7 +1467,7 @@ namespace Intersect.Editor.Forms
                         {
                             if (Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset] != null)
                             {
-                                tmpMap.Attributes[x0, y0] = new Intersect.GameObjects.Maps.Attribute()
+                                tmpMap.Attributes[x0, y0] = new GameObjects.Maps.Attribute()
                                 {
                                     value =
                                         Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].value,

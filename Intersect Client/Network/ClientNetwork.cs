@@ -5,6 +5,7 @@ using Intersect.Threading;
 using Lidgren.Network;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using Intersect.Network.Packets;
 using Intersect_Client.Classes.General;
@@ -18,7 +19,7 @@ namespace Intersect.Client.Network
 
         private byte[] mHandshakeSecret;
         private RSACryptoServiceProvider mRsa;
-        private bool everConnected = false;
+        private bool everConnected;
 
         public ClientNetwork(NetworkConfiguration config) : base(config, typeof(NetClient))
         {
@@ -26,8 +27,8 @@ namespace Intersect.Client.Network
         }
 
         protected override RSAParameters GetRsaKey()
-            //=> LoadKeyFromAssembly(Assembly.GetExecutingAssembly(), "Intersect.Client.PJPjjxJEkTWn7qyhSBqhg24CRy9smykBt2TMMwA4TYQZmujB", false);
-            => LoadKeyFromFile("public.bk1", true);
+            => LoadKeyFromAssembly(Assembly.GetExecutingAssembly(), "Intersect.Client.public-intersect.bek", true);
+            //=> LoadKeyFromFile("public.bk1", true);
 
         private const int sizeHandshakeSecret = 32;
         private const int sizeRsa = 2 + 3 + 256;

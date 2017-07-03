@@ -21,8 +21,8 @@ namespace Intersect_Client.Classes.Core
         private static GameContentManager contentManager;
 
         //Resolution
-        private static int _oldWidth = 0;
-        private static int _oldHeight = 0;
+        private static int _oldWidth;
+        private static int _oldHeight;
 
         //Screen Values
         public static GameFont GameFont;
@@ -34,31 +34,31 @@ namespace Intersect_Client.Classes.Core
 
         //Overlay Stuff
         public static Intersect.Color OverlayColor = Intersect.Color.Transparent;
-        private static long _overlayUpdate = 0;
+        private static long _overlayUpdate;
 
         //Player Spotlight Values
-        private static long _lightUpdate = 0;
+        private static long _lightUpdate;
         private static float _playerLightIntensity = 255;
-        private static float _playerLightSize = 0;
-        private static float _playerLightExpand = 0f;
+        private static float _playerLightSize;
+        private static float _playerLightExpand;
         public static ColorF _playerLightColor = ColorF.White;
         private static List<LightBase> _lightQueue = new List<LightBase>();
         private static long _fadeTimer;
 
         //Grid Switched
-        public static bool GridSwitched = false;
+        public static bool GridSwitched;
 
         //Rendering Variables
-        public static int DrawCalls = 0;
-        public static int EntitiesDrawn = 0;
-        public static int LightsDrawn = 0;
-        public static int MapsDrawn = 0;
+        public static int DrawCalls;
+        public static int EntitiesDrawn;
+        public static int LightsDrawn;
+        public static int MapsDrawn;
 
         //Cache the Y based rendering
         public static List<Entity>[] Layer1Entities;
         public static List<Entity>[] Layer2Entities;
 
-        public static bool PreRenderedMapLayer = false;
+        public static bool PreRenderedMapLayer;
         public static object GFXLock = new object();
         public static List<GameRenderTexture> MapReleaseQueue = new List<GameRenderTexture>();
         public static List<GameRenderTexture> FreeMapTextures = new List<GameRenderTexture>();
@@ -110,220 +110,218 @@ namespace Intersect_Client.Classes.Core
         public static void DrawInGame()
         {
             var currentMap = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
-            if (currentMap != null && Globals.NeedsMaps == false)
+            if (currentMap == null || Globals.NeedsMaps) return;
+            if (GridSwitched)
             {
-                if (GridSwitched)
+                var map = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
+                if (map != null)
                 {
-                    var map = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
-                    if (map != null)
-                    {
-                        //Brightness
-                        byte brightnessTarget = (byte) ((map.Brightness / 100f) * 255);
-                        _brightnessLevel = brightnessTarget;
-                        _playerLightColor.R = map.PlayerLightColor.R;
-                        _playerLightColor.G = map.PlayerLightColor.G;
-                        _playerLightColor.B = map.PlayerLightColor.B;
-                        _playerLightSize = map.PlayerLightSize;
-                        _playerLightIntensity = map.PlayerLightIntensity;
-                        _playerLightExpand = map.PlayerLightExpand;
+                    //Brightness
+                    byte brightnessTarget = (byte) ((map.Brightness / 100f) * 255);
+                    _brightnessLevel = brightnessTarget;
+                    _playerLightColor.R = map.PlayerLightColor.R;
+                    _playerLightColor.G = map.PlayerLightColor.G;
+                    _playerLightColor.B = map.PlayerLightColor.B;
+                    _playerLightSize = map.PlayerLightSize;
+                    _playerLightIntensity = map.PlayerLightIntensity;
+                    _playerLightExpand = map.PlayerLightExpand;
 
-                        //Overlay
-                        OverlayColor.A = (byte) map.AHue;
-                        OverlayColor.R = (byte) map.RHue;
-                        OverlayColor.G = (byte) map.GHue;
-                        OverlayColor.B = (byte) map.BHue;
+                    //Overlay
+                    OverlayColor.A = (byte) map.AHue;
+                    OverlayColor.R = (byte) map.RHue;
+                    OverlayColor.G = (byte) map.GHue;
+                    OverlayColor.B = (byte) map.BHue;
 
-                        //Fog && Panorama
-                        map.GridSwitched();
-                    }
-                    GridSwitched = false;
+                    //Fog && Panorama
+                    map.GridSwitched();
                 }
-                ClearDarknessTexture();
-
-                TryPreRendering();
-                FixAutotiles();
-
-                GenerateLightMap();
-
-                var gridX = currentMap.MapGridX;
-                var gridY = currentMap.MapGridY;
-                //Draw Panoramas First...
-                for (int x = gridX - 1; x <= gridX + 1; x++)
-                {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
-                    {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != -1)
-                        {
-                            DrawMapPanorama(Globals.MapGrid[x, y]);
-                        }
-                    }
-                }
-
-                for (int x = gridX - 1; x <= gridX + 1; x++)
-                {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
-                    {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != -1)
-                        {
-                            DrawMap(Globals.MapGrid[x, y], 0);
-                        }
-                    }
-                }
-
-                lock (AnimationLock)
-                {
-                    foreach (AnimationInstance animInstance in LiveAnimations)
-                    {
-                        animInstance.Draw(false);
-                    }
-                }
-
-                for (int x = 0; x < Layer1Entities.Length; x++)
-                {
-                    for (int y = 0; y < Layer1Entities[x].Count; y++)
-                    {
-                        Layer1Entities[x][y].Draw();
-                        EntitiesDrawn++;
-                    }
-                }
-
-                for (int x = gridX - 1; x <= gridX + 1; x++)
-                {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
-                    {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != -1)
-                        {
-                            DrawMap(Globals.MapGrid[x, y], 1);
-                        }
-                    }
-                }
-
-                for (int x = 0; x < Layer2Entities.Length; x++)
-                {
-                    for (int y = 0; y < Layer2Entities[x].Count; y++)
-                    {
-                        Layer2Entities[x][y].Draw();
-                        EntitiesDrawn++;
-                    }
-                }
-
-                for (int x = gridX - 1; x <= gridX + 1; x++)
-                {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
-                    {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != -1)
-                        {
-                            DrawMap(Globals.MapGrid[x, y], 2);
-                        }
-                    }
-                }
-
-                lock (AnimationLock)
-                {
-                    foreach (AnimationInstance animInstance in LiveAnimations)
-                    {
-                        animInstance.Draw(true);
-                    }
-                }
-
-                //Draw the players targets
-                Globals.Me.DrawTargets();
-
-                DrawOverlay();
-
-                for (int x = 0; x < Layer1Entities.Length; x++)
-                {
-                    for (int y = 0; y < Layer1Entities[x].Count; y++)
-                    {
-                        Layer1Entities[x][y].DrawName(null);
-                        if (Layer1Entities[x][y].GetType() != typeof(Event))
-                        {
-                            Layer1Entities[x][y].DrawHpBar();
-                            Layer1Entities[x][y].DrawCastingBar();
-                        }
-                        Layer1Entities[x][y].DrawChatBubbles();
-                    }
-                }
-                for (int x = 0; x < Layer2Entities.Length; x++)
-                {
-                    for (int y = 0; y < Layer2Entities[x].Count; y++)
-                    {
-                        Layer2Entities[x][y].DrawName(null);
-                        if (Layer2Entities[x][y].GetType() != typeof(Event))
-                        {
-                            Layer2Entities[x][y].DrawHpBar();
-                            Layer2Entities[x][y].DrawCastingBar();
-                        }
-                        Layer2Entities[x][y].DrawChatBubbles();
-                    }
-                }
-
-                //Draw action msg's
-                for (int x = gridX - 1; x <= gridX + 1; x++)
-                {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
-                    {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != -1)
-                        {
-                            var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
-                            if (map != null) map.DrawActionMsgs();
-                        }
-                    }
-                }
-
-                DrawDarkness();
+                GridSwitched = false;
             }
+            ClearDarknessTexture();
+
+            TryPreRendering();
+            FixAutotiles();
+
+            GenerateLightMap();
+
+            var gridX = currentMap.MapGridX;
+            var gridY = currentMap.MapGridY;
+            //Draw Panoramas First...
+            for (var x = gridX - 1; x <= gridX + 1; x++)
+            {
+                for (var y = gridY - 1; y <= gridY + 1; y++)
+                {
+                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                        Globals.MapGrid[x, y] != -1)
+                    {
+                        DrawMapPanorama(Globals.MapGrid[x, y]);
+                    }
+                }
+            }
+
+            for (var x = gridX - 1; x <= gridX + 1; x++)
+            {
+                for (var y = gridY - 1; y <= gridY + 1; y++)
+                {
+                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                        Globals.MapGrid[x, y] != -1)
+                    {
+                        DrawMap(Globals.MapGrid[x, y], 0);
+                    }
+                }
+            }
+
+            lock (AnimationLock)
+            {
+                foreach (AnimationInstance animInstance in LiveAnimations)
+                {
+                    animInstance.Draw(false);
+                }
+            }
+
+            foreach (var entities in Layer1Entities)
+            {
+                foreach (var entity in entities)
+                {
+                    entity.Draw();
+                    EntitiesDrawn++;
+                }
+            }
+
+            for (var x = gridX - 1; x <= gridX + 1; x++)
+            {
+                for (var y = gridY - 1; y <= gridY + 1; y++)
+                {
+                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                        Globals.MapGrid[x, y] != -1)
+                    {
+                        DrawMap(Globals.MapGrid[x, y], 1);
+                    }
+                }
+            }
+
+            foreach (var entities in Layer2Entities)
+            {
+                foreach (var entity in entities)
+                {
+                    entity.Draw();
+                    EntitiesDrawn++;
+                }
+            }
+
+            for (var x = gridX - 1; x <= gridX + 1; x++)
+            {
+                for (var y = gridY - 1; y <= gridY + 1; y++)
+                {
+                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                        Globals.MapGrid[x, y] != -1)
+                    {
+                        DrawMap(Globals.MapGrid[x, y], 2);
+                    }
+                }
+            }
+
+            lock (AnimationLock)
+            {
+                foreach (AnimationInstance animInstance in LiveAnimations)
+                {
+                    animInstance.Draw(true);
+                }
+            }
+
+            //Draw the players targets
+            Globals.Me.DrawTargets();
+
+            DrawOverlay();
+
+            foreach (var entities in Layer1Entities)
+            {
+                foreach (var entity in entities)
+                {
+                    entity.DrawName(null);
+                    if (entity.GetType() != typeof(Event))
+                    {
+                        entity.DrawHpBar();
+                        entity.DrawCastingBar();
+                    }
+                    entity.DrawChatBubbles();
+                }
+            }
+
+            foreach (var entities in Layer2Entities)
+            {
+                foreach (var entity in entities)
+                {
+                    entity.DrawName(null);
+                    if (entity.GetType() != typeof(Event))
+                    {
+                        entity.DrawHpBar();
+                        entity.DrawCastingBar();
+                    }
+                    entity.DrawChatBubbles();
+                }
+            }
+
+            //Draw action msg's
+            for (var x = gridX - 1; x <= gridX + 1; x++)
+            {
+                for (var y = gridY - 1; y <= gridY + 1; y++)
+                {
+                    if (x < 0 || x >= Globals.MapGridWidth || y < 0 || y >= Globals.MapGridHeight ||
+                        Globals.MapGrid[x, y] == -1) continue;
+                    var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
+                    map?.DrawActionMsgs();
+                }
+            }
+
+            DrawDarkness();
         }
 
         //Game Rendering
         public static void Render()
         {
-            if (Renderer.Begin())
+            if (!(Renderer?.Begin() ?? false)) return;
+            if (Renderer.GetScreenWidth() != _oldWidth || Renderer.GetScreenHeight() != _oldHeight)
             {
-                if (Renderer.GetScreenWidth() != _oldWidth || Renderer.GetScreenHeight() != _oldHeight)
-                {
-                    _darknessTexture = null;
-                    Gui.DestroyGwen();
-                    Gui.InitGwen();
-                    _oldWidth = Renderer.GetScreenWidth();
-                    _oldHeight = Renderer.GetScreenHeight();
-                }
-                Renderer.Clear(Color.Black);
-                DrawCalls = 0;
-                MapsDrawn = 0;
-                EntitiesDrawn = 0;
-                LightsDrawn = 0;
-                PreRenderedMapLayer = false;
-
-                UpdateView();
-
-                if (Globals.GameState == GameStates.Intro)
-                {
-                    DrawIntro();
-                }
-                else if (Globals.GameState == GameStates.Menu)
-                {
-                    DrawMenu();
-                }
-                else if (Globals.GameState == GameStates.Loading)
-                {
-                }
-                if (Globals.GameState == GameStates.InGame)
-                {
-                    DrawInGame();
-                }
-
-                Gui.DrawGui();
-
-                DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,
-                    new Intersect.Color((int) GameFade.GetFade(), 0, 0, 0), null, GameBlendModes.Alpha);
-                Renderer.End();
+                _darknessTexture = null;
+                Gui.DestroyGwen();
+                Gui.InitGwen();
+                _oldWidth = Renderer.GetScreenWidth();
+                _oldHeight = Renderer.GetScreenHeight();
             }
+            Renderer.Clear(Color.Black);
+            DrawCalls = 0;
+            MapsDrawn = 0;
+            EntitiesDrawn = 0;
+            LightsDrawn = 0;
+            PreRenderedMapLayer = false;
+
+            UpdateView();
+
+            switch (Globals.GameState)
+            {
+                case GameStates.Intro:
+                    DrawIntro();
+                    break;
+                case GameStates.Menu:
+                    DrawMenu();
+                    break;
+                case GameStates.Loading:
+                    break;
+                case GameStates.InGame:
+                    DrawInGame();
+                    break;
+                case GameStates.Error:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            Gui.DrawGui();
+
+            DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,
+                new Intersect.Color((int) GameFade.GetFade(), 0, 0, 0), null, GameBlendModes.Alpha);
+            Renderer.End();
         }
 
         private static void TryPreRendering()
@@ -382,16 +380,14 @@ namespace Intersect_Client.Classes.Core
         private static void DrawMap(int mapNum, int layer = 0)
         {
             var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
-            if (map != null)
+            if (map == null) return;
+            if (
+                !new FloatRect(map.GetX(), map.GetY(), Options.TileWidth * Options.MapWidth,
+                    Options.TileHeight * Options.MapHeight).IntersectsWith(CurrentView)) return;
+            map.Draw(layer);
+            if (layer == 0)
             {
-                if (
-                    !new FloatRect(map.GetX(), map.GetY(), Options.TileWidth * Options.MapWidth,
-                        Options.TileHeight * Options.MapHeight).IntersectsWith(CurrentView)) return;
-                map.Draw(layer);
-                if (layer == 0)
-                {
-                    MapsDrawn++;
-                }
+                MapsDrawn++;
             }
         }
 

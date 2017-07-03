@@ -75,6 +75,7 @@
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Maps\MapAnimationInstance.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
+    <Compile Include="Classes\UI\Menu\CreateCharacterWindow.cs" />
     <Compile Include="Classes\UI\Menu\CreditsParser.cs" />
     <Compile Include="Classes\UI\Menu\CreditsWindow.cs" />
     <Compile Include="MathHelper.cs" />
@@ -124,7 +125,7 @@
     <Compile Include="Classes\UI\Game\SpellWindow.cs" />
     <Compile Include="Classes\UI\Game\TradingWindow.cs" />
     <Compile Include="Classes\UI\Gui.cs" />
-    <Compile Include="Classes\UI\Menu\CreateCharacterWindow.cs" />
+    <Compile Include="Classes\UI\Menu\SelectCharacterWindow.cs" />
     <Compile Include="Classes\UI\Menu\LoginWindow.cs" />
     <Compile Include="Classes\UI\Menu\MainMenu.cs" />
     <Compile Include="Classes\UI\Menu\MenuGuiBase.cs" />
@@ -209,9 +210,7 @@
       <Link>MonoGame.Framework.dll.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="public.bk1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="public-intersect.bek" />
     <None Include="App.config" />
     <None Include="app.manifest" />
   </ItemGroup>

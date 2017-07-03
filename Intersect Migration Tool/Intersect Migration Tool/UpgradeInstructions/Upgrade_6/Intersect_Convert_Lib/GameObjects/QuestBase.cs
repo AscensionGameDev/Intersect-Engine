@@ -29,16 +29,16 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
         public string EndDesc = "";
         public EventBase EndEvent = new EventBase(-1, 0, 0, true);
         public string InProgressDesc = "";
-        public byte LogAfterComplete = 0;
-        public byte LogBeforeOffer = 0;
+        public byte LogAfterComplete;
+        public byte LogBeforeOffer;
 
         public string Name = "New Quest";
 
         //Tasks
-        public int NextTaskID = 0;
-        public byte Quitable = 0;
+        public int NextTaskID;
+        public byte Quitable;
 
-        public byte Repeatable = 0;
+        public byte Repeatable;
 
         //Requirements
         //I am cheating here and using event commands as conditional branches instead of having a lot of duplicate code.
@@ -240,11 +240,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
         public class QuestTask
         {
             public EventBase CompletionEvent = new EventBase(-1, 0, 0, true);
-            public int Data1 = 0;
-            public int Data2 = 0;
+            public int Data1;
+            public int Data2;
             public string Desc = "";
-            public int Id = 0;
-            public int Objective = 0;
+            public int Id;
+            public int Objective;
 
             public QuestTask(int id)
             {

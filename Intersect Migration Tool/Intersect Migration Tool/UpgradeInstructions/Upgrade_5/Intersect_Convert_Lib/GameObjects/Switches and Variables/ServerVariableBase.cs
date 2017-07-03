@@ -12,7 +12,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         public string Name = "New Global Variable";
-        public int Value = 0;
+        public int Value;
 
         public ServerVariableBase(int id) : base(id)
         {

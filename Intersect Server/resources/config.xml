@@ -14,6 +14,7 @@
     <MaxInventory>35</MaxInventory>
     <MaxSpells>35</MaxSpells>
     <MaxBank>100</MaxBank>
+    <MaxCharacters>3</MaxCharacters>
     <!--Percentage chance of each item being dropped on player death. e.g. 50 = 50% drop chance per item.-->
     <ItemDropChance>50</ItemDropChance>
   </Player>

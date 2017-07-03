@@ -20,8 +20,8 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
         private Entity mEntity;
         private PathfinderTarget mTarget;
         private IEnumerable<PathNode> mPath;
-        private long mWaitTime = 0;
-        private int mConsecutiveFails = 0;
+        private long mWaitTime;
+        private int mConsecutiveFails;
 
         public Pathfinder(Entity parent)
         {
@@ -43,10 +43,10 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
             //TODO: Pull this out into server config :) 
             var pathfindingRange = Math.Max(Options.MapWidth, Options.MapHeight); //Search as far as 1 map out.. maximum.
             //Do lots of logic eventually leading up to an A* pathfinding run if needed.
-            PathfinderResult returnVal = PathfinderResult.Success;
+            PathfinderResult returnVal;
             PathNode[,] mapGrid;
             SpatialAStar aStar;
-            IEnumerable<PathNode> path = mPath;
+            var path = mPath;
             if (mWaitTime < timeMs)
             {
                 var currentMap = MapInstance.Lookup.Get<MapInstance>(mEntity.CurrentMap);

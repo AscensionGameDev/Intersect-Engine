@@ -47,17 +47,17 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
         //Game Object Saving/Loading
         private void LoadAllGameObjects()
         {
-            foreach (var val in Enum.GetValues(typeof(Intersect_Convert_Lib.GameObject)))
+            foreach (var val in Enum.GetValues(typeof(GameObject)))
             {
-                if ((Intersect_Convert_Lib.GameObject) val != GameObject.Time)
+                if ((GameObject) val != GameObject.Time)
                 {
-                    LoadGameObjects((Intersect_Convert_Lib.GameObject) val);
+                    LoadGameObjects((GameObject) val);
                 }
             }
         }
 
         //Game Object Saving/Loading
-        private string GetGameObjectTable(Intersect_Convert_Lib.GameObject type)
+        private string GetGameObjectTable(GameObject type)
         {
             var tableName = "";
             switch (type)
@@ -116,7 +116,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
             return tableName;
         }
 
-        private void ClearGameObjects(Intersect_Convert_Lib.GameObject type)
+        private void ClearGameObjects(GameObject type)
         {
             switch (type)
             {
@@ -173,7 +173,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
             }
         }
 
-        private void LoadGameObject(Intersect_Convert_Lib.GameObject type, int index, byte[] data)
+        private void LoadGameObject(GameObject type, int index, byte[] data)
         {
             switch (type)
             {
@@ -280,7 +280,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
             }
         }
 
-        public void LoadGameObjects(Intersect_Convert_Lib.GameObject type)
+        public void LoadGameObjects(GameObject type)
         {
             var nullIssues = "";
             lock (_dbLock)

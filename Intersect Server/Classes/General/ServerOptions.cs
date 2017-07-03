@@ -10,7 +10,7 @@ namespace Intersect.Server.Classes.General
     {
         //Config XML String
         public static string ConfigXml = "";
-        private static bool ConfigFailed = false;
+        private static bool ConfigFailed;
 
         //Misc
         public static int ItemDespawnTime = 15000; //15 seconds
@@ -50,6 +50,7 @@ namespace Intersect.Server.Classes.General
                     Options.MaxInvItems = GetXmlInt(options, "//Config/Player/MaxInventory");
                     Options.MaxPlayerSkills = GetXmlInt(options, "//Config/Player/MaxSpells");
                     Options.MaxBankSlots = GetXmlInt(options, "//Config/Player/MaxBank");
+					Options.MaxCharacters = GetXmlInt(options, "//Config/Player/MaxCharacters");
 					Options.ItemDropChance = GetXmlInt(options, "//Config/Player/ItemDropChance");
 
 					Options.PlayerPassable[(int) MapZones.Normal] =
@@ -225,6 +226,7 @@ namespace Intersect.Server.Classes.General
             bf.WriteInteger(Options.MaxInvItems);
             bf.WriteInteger(Options.MaxPlayerSkills);
             bf.WriteInteger(Options.MaxBankSlots);
+			bf.WriteInteger(Options.MaxCharacters);
 			bf.WriteInteger(Options.ItemDropChance);
 
             //Passability

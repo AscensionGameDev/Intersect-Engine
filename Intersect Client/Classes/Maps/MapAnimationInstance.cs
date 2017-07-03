@@ -5,9 +5,9 @@ namespace Intersect_Client.Classes.Maps
 {
     public class MapAnimationInstance : AnimationInstance
     {
-        private int _dir = -1;
-        private int _tileX = 0;
-        private int _tileY = 0;
+        private int _dir;
+        private int _tileX;
+        private int _tileY;
 
         public MapAnimationInstance(AnimationBase animBase, int tileX, int tileY, int dir) : base(animBase, false)
         {

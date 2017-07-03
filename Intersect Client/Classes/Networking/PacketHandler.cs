@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Intersect;
 using Intersect.Collections;
 using Intersect.Enums;
@@ -16,6 +17,7 @@ using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
 using Intersect_Client.Classes.UI.Game.Chat;
+using Intersect_Client.Classes.UI.Menu;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.Networking
@@ -23,7 +25,7 @@ namespace Intersect_Client.Classes.Networking
     public static class PacketHandler
     {
         public static long Ping = 0;
-        public static long PingTime = 0;
+        public static long PingTime;
 
         public static bool HandlePacket(IPacket packet)
         {
@@ -259,7 +261,10 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.FriendRequest:
                         HandleFriendRequest(bf.ReadBytes(bf.Length()));
                         break;
-                    default:
+					case ServerPackets.PlayerCharacters:
+						HandlePlayerCharacters(bf.ReadBytes(bf.Length()));
+						break;
+					default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
                 }
@@ -1588,5 +1593,25 @@ namespace Intersect_Client.Classes.Networking
                 PacketSender.SendFriendRequestDecline, partnerId, false);
             bf.Dispose();
         }
-    }
+
+		private static void HandlePlayerCharacters(byte[] packet)
+		{
+			List<Character> Characters = new List<Character>();
+			var bf = new ByteBuffer();
+			bf.WriteBytes(packet);
+
+			int count = bf.ReadInteger();
+
+			for (int i = 0; i < count; i++)
+			{
+				Characters.Add(new Character(bf.ReadInteger(), bf.ReadString(), bf.ReadString(), bf.ReadString(),
+											bf.ReadInteger(), bf.ReadInteger()));
+			}
+
+			bf.Dispose();
+			Globals.WaitingOnServer = false;
+			GameFade.FadeIn();
+			Gui.MenuUI._mainMenu.NotifyOpenCharacterSelection(Characters);
+		}
+	}
 }

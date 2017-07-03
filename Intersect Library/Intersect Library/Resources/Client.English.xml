@@ -109,6 +109,13 @@
 		<string id="create">Create</string>
 		<string id="invalidname">Character name is invalid. Please use alphanumeric characters with a length between 2 and 20.</string>
 	</CharacterCreation>
+	<CharacterSelection>
+		<string id="title">Select a Character</string>
+		<string id="info">level {00} {01}</string>
+		<string id="play">Play</string>
+		<string id="delete">Delete</string>
+		<string id="new">Create a new Character</string>
+	</CharacterSelection>
 	<Chatbox>
 		<string id="enterchat">Click here to chat.</string>
 		<string id="enterchat1">Press {00} to chat.</string>

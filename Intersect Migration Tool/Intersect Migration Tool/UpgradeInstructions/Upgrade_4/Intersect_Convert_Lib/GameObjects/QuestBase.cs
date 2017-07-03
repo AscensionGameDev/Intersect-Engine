@@ -11,20 +11,20 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         //Requirements
-        public int ClassReq = 0;
+        public int ClassReq;
         public string EndDesc = "";
-        public int ItemReq = 0;
-        public int LevelReq = 0;
+        public int ItemReq;
+        public int LevelReq;
 
         public string Name = "New Quest";
-        public int QuestReq = 0;
+        public int QuestReq;
         public string StartDesc = "";
-        public int SwitchReq = 0;
+        public int SwitchReq;
 
         //Tasks
         public List<QuestTask> Tasks = new List<QuestTask>();
-        public int VariableReq = 0;
-        public int VariableValue = 0;
+        public int VariableReq;
+        public int VariableValue;
 
         public QuestBase(int id) : base(id)
         {
@@ -171,11 +171,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
 
         public class QuestTask
         {
-            public int Data1 = 0;
-            public int Data2 = 0;
+            public int Data1;
+            public int Data2;
             public string Desc = "";
-            public int Experience = 0;
-            public int Objective = 0;
+            public int Experience;
+            public int Objective;
             public List<QuestReward> Rewards = new List<QuestReward>();
 
             public QuestTask()
@@ -189,8 +189,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
 
         public class QuestReward
         {
-            public int Amount = 0;
-            public int ItemNum = 0;
+            public int Amount;
+            public int ItemNum;
         }
     }
 }

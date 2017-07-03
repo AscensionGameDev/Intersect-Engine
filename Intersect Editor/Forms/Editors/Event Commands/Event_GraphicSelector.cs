@@ -14,14 +14,14 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
     {
         private EventGraphic _editingGraphic;
         private FrmEvent _eventEditor;
-        private bool _loading = false;
+        private bool _loading;
 
         private bool _mouseDown;
-        private bool _newRouteAction = false;
-        private Event_MoveRouteDesigner _routeDesigner = null;
-        private int _spriteHeight = 0;
+        private bool _newRouteAction;
+        private Event_MoveRouteDesigner _routeDesigner;
+        private int _spriteHeight;
 
-        private int _spriteWidth = 0;
+        private int _spriteWidth;
         private EventGraphic _tmpGraphic = new EventGraphic();
 
         public Event_GraphicSelector(EventGraphic editingGraphic, FrmEvent eventEditor,

@@ -18,7 +18,7 @@ namespace Intersect_Client.Classes.UI
     {
         //Parent Windows
         private bool _gameWindow = false;
-        private MainMenu _mainMenu = null;
+        private MainMenu _mainMenu;
 
         //Panels
         private ScrollControl _optionsContainer;

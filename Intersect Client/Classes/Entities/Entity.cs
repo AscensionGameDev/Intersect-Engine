@@ -38,12 +38,12 @@ namespace Intersect_Client.Classes.Entities
         //Location Info
         public int CurrentX;
         public int CurrentY;
-        public int CurrentZ = 0;
+        public int CurrentZ;
 
         //Dashing instance
-        public DashInstance Dashing = null;
+        public DashInstance Dashing;
         public Queue<DashInstance> DashQueue = new Queue<DashInstance>();
-        public long DashTimer = 0;
+        public long DashTimer;
 
         private int _dir;
         public int Dir
@@ -57,7 +57,7 @@ namespace Intersect_Client.Classes.Entities
         //Extras
         public string Face = "";
         public int Gender = 0;
-        public int HideName = 0;
+        public int HideName;
 
         //Inventory/Spells/Equipment
         public ItemInstance[] Inventory = new ItemInstance[Options.MaxInvItems];
@@ -76,10 +76,10 @@ namespace Intersect_Client.Classes.Entities
         public string MySprite = "";
         public float OffsetX;
         public float OffsetY;
-        public int Passable = 0;
+        public int Passable;
 
         //Rendering Variables
-        public List<Entity> RenderList = null;
+        public List<Entity> RenderList;
         public long SpawnTime;
         public int SpellCast = 0;
         public SpellInstance[] Spells = new SpellInstance[Options.MaxPlayerSkills];
@@ -90,13 +90,13 @@ namespace Intersect_Client.Classes.Entities
         //Status effects
         public List<StatusInstance> Status = new List<StatusInstance>();
         public int Target = -1;
-        public int type = 0;
+        public int type;
         public int[] Vital = new int[(int) Vitals.VitalCount];
         public int WalkFrame;
 
         //Animation Timer (for animated sprites)
         public long AnimationTimer;
-        public int AnimationFrame = 0;
+        public int AnimationFrame;
 
         public Entity(int index, long spawnTime, ByteBuffer bf, bool isEvent = false)
         {

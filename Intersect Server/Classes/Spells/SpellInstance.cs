@@ -2,7 +2,7 @@
 {
     public class SpellInstance
     {
-        public long SpellCD = 0;
+        public long SpellCD;
         public int SpellNum = -1;
 
         public SpellInstance()

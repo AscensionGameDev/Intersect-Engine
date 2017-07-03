@@ -24,7 +24,7 @@ namespace Intersect.Server.Classes.Networking
         protected long _pingTime;
         protected long _timeout = 20000; //20 seconds
 
-        public GameSocket()
+        protected GameSocket()
         {
             _connectTime = Globals.System.GetTimeMs();
             _connectionTimeout = Globals.System.GetTimeMs() + _timeout;

@@ -19,9 +19,9 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
     {
         private ContentManager _contentManager;
         private GameBlendModes _currentBlendmode = GameBlendModes.Alpha;
-        private GameShader _currentShader = null;
+        private GameShader _currentShader;
         private FloatRect _currentSpriteView;
-        private GameRenderTexture _currentTarget = null;
+        private GameRenderTexture _currentTarget;
         private FloatRect mCurrentView;
         private int _fps;
         private int _fpsCount;

@@ -8,6 +8,8 @@ using System.Security.Cryptography;
 using System.Threading;
 using Intersect.Logging;
 using Intersect.Memory;
+using Intersect.Network.Crypto;
+using Intersect.Network.Crypto.Formats;
 using Intersect.Network.Packets;
 using Intersect.Threading;
 using Lidgren.Network;
@@ -319,7 +321,7 @@ namespace Intersect.Network
                     case NetIncomingMessageType.ConnectionApproval:
                         if (!HandleConnectionApproval(message))
                         {
-                            message.SenderConnection.Deny();
+                            message.SenderConnection?.Deny("unknown_approval_error");
                         }
                         break;
 
@@ -481,7 +483,12 @@ namespace Intersect.Network
         {
             if (stream == null) throw new ArgumentNullException();
 
-            using (var reader = new BinaryReader(new GZipStream(stream, CompressionMode.Decompress)))
+            var rsaKey = EncryptionKey.FromStream(stream) as RsaKey;
+
+            DumpKey(rsaKey.Parameters, rsaKey.IsPublic);
+
+            return rsaKey.Parameters;
+            /*using (var reader = new BinaryReader(new GZipStream(stream, CompressionMode.Decompress)))
             {
                 var rsaParameters = (isPublic ? ReadPublicKey(reader) : ReadPrivateKey(reader));
 
@@ -490,7 +497,7 @@ namespace Intersect.Network
                 reader.Close();
 
                 return rsaParameters;
-            }
+            }*/
         }
 
         private static RSAParameters ReadPrivateKey(BinaryReader reader)

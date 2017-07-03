@@ -10,7 +10,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
     public partial class Event_MoveRouteAnimationSelector : UserControl
     {
         private MoveRouteAction _myAction;
-        private bool _newAction = false;
+        private bool _newAction;
         private Event_MoveRouteDesigner _routeDesigner;
 
         public Event_MoveRouteAnimationSelector(Event_MoveRouteDesigner moveRouteDesigner, MoveRouteAction action,

@@ -10,7 +10,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public int LowerAnimFrameCount = 1;
         public int LowerAnimFrameSpeed = 100;
-        public int LowerAnimLoopCount = 0;
+        public int LowerAnimLoopCount;
 
         //Lower Animation
         public string LowerAnimSprite = "";
@@ -22,7 +22,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
         public string Sound = "";
         public int UpperAnimFrameCount = 1;
         public int UpperAnimFrameSpeed = 100;
-        public int UpperAnimLoopCount = 0;
+        public int UpperAnimLoopCount;
 
         //Upper Animation
         public string UpperAnimSprite = "";

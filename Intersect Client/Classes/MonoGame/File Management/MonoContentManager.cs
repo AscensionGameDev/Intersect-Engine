@@ -17,7 +17,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
 {
     public class MonoContentManager : GameContentManager
     {
-        private bool downloadCompleted = false;
+        private bool downloadCompleted;
         private string errorString = "";
         private frmLoadingContent loadingForm;
         //Initial Resource Downloading

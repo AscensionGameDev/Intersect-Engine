@@ -7,7 +7,7 @@ namespace Intersect_Client.Classes.UI.Menu
         private readonly Canvas _menuCanvas;
 
         public MainMenu _mainMenu;
-        private bool shouldReset = false;
+        private bool shouldReset;
 
         public MenuGuiBase(Canvas myCanvas)
         {

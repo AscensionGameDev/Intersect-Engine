@@ -9,20 +9,20 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
         public new const string DATABASE_TABLE = "npcs";
         public new const GameObject OBJECT_TYPE = GameObject.Npc;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        public byte Behavior = 0;
+        public byte Behavior;
 
         //Drops
         public List<NPCDrop> Drops = new List<NPCDrop>();
-        public int Experience = 0;
+        public int Experience;
 
         //Vitals & Stats
         public int[] MaxVital = new int[(int) Vitals.VitalCount];
 
         public string Name = "New Npc";
-        public int SightRange = 0;
+        public int SightRange;
 
         //Basic Info
-        public int SpawnDuration = 0;
+        public int SpawnDuration;
 
         //Spells
         public List<int> Spells = new List<int>();

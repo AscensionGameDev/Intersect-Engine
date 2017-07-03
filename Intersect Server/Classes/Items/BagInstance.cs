@@ -2,8 +2,8 @@
 {
     public class BagInstance
     {
-        public ItemInstance[] Items = null;
-        public int Slots = 0;
+        public ItemInstance[] Items;
+        public int Slots;
 
         public BagInstance(int slots)
         {

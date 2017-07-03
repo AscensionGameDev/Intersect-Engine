@@ -727,9 +727,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon.ico" />
-    <None Include="public.bk1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="public-intersect.bek" />
     <None Include="Resources\1_A.png" />
     <None Include="Resources\1_B Hide.png" />
     <None Include="Resources\1_B.png" />

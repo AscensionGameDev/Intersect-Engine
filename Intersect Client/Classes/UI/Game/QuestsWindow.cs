@@ -24,7 +24,7 @@ namespace Intersect_Client.Classes.UI.Game
         private WindowControl _questsWindow;
         private Label _questTitle;
         private Button _quitButton;
-        private QuestBase _selectedQuest = null;
+        private QuestBase _selectedQuest;
 
         //Init
         public QuestsWindow(Canvas _gameCanvas)

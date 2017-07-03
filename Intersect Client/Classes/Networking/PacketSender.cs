@@ -508,5 +508,28 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteInteger((int)((InputBox)sender).Slot);
             GameNetwork.SendPacket(bf.ToArray());
         }
-    }
+
+		public static void PlayGame(int charSlot)
+		{
+			var bf = new ByteBuffer();
+			bf.WriteLong((int)ClientPackets.PlayGame);
+			bf.WriteInteger(charSlot);
+			GameNetwork.SendPacket(bf.ToArray());
+		}
+
+		public static void DeleteChar(int charSlot)
+		{
+			var bf = new ByteBuffer();
+			bf.WriteLong((int)ClientPackets.DeleteChar);
+			bf.WriteInteger(charSlot);
+			GameNetwork.SendPacket(bf.ToArray());
+		}
+
+		public static void CreateNewCharacter()
+		{
+			var bf = new ByteBuffer();
+			bf.WriteLong((int)ClientPackets.CreateNewChar);
+			GameNetwork.SendPacket(bf.ToArray());
+		}
+	}
 }

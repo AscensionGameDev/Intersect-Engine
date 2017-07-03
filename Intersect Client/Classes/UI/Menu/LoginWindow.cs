@@ -37,7 +37,7 @@ namespace Intersect_Client.Classes.UI.Menu
         private Label _usernameLabel;
         private TextBox _usernameTextbox;
 
-        private bool _useSavedPass = false;
+        private bool _useSavedPass;
 
         //Init
         public LoginWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)

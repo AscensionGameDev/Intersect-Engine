@@ -14,10 +14,10 @@ namespace Intersect.Editor.Classes
     public partial class frmProjectile : EditorForm
     {
         private List<ProjectileBase> _changed = new List<ProjectileBase>();
-        private byte[] _copiedItem = null;
+        private byte[] _copiedItem;
 
         private Bitmap _directionGrid;
-        private ProjectileBase _editorItem = null;
+        private ProjectileBase _editorItem;
 
         public frmProjectile()
         {

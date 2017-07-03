@@ -13,7 +13,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private readonly FrmEvent _eventEditor;
         private EventPage _currentPage;
         private EventCommand _myCommand;
-        public bool Cancelled = false;
+        public bool Cancelled;
 
         public EventCommand_ConditionalBranch(EventCommand refCommand, EventPage refPage, FrmEvent editor)
         {

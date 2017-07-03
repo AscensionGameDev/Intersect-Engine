@@ -15,12 +15,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
         public int Delay = 1;
-        public bool GrappleHook = false;
-        public bool Homing = false;
-        public bool IgnoreActiveResources = false;
-        public bool IgnoreExhaustedResources = false;
-        public bool IgnoreMapBlocks = false;
-        public bool IgnoreZDimension = false;
+        public bool GrappleHook;
+        public bool Homing;
+        public bool IgnoreActiveResources;
+        public bool IgnoreExhaustedResources;
+        public bool IgnoreMapBlocks;
+        public bool IgnoreZDimension;
         public int Knockback = 0;
 
         public string Name = "New Projectile";
@@ -28,7 +28,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
         public int Range = 1;
         public Location[,] SpawnLocations = new Location[SpawnLocationsWidth, SpawnLocationsHeight];
         public int Speed = 1;
-        public int Spell = 0;
+        public int Spell;
 
         //Init
         public ProjectileBase(int id) : base(id)
@@ -206,7 +206,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
     public class ProjectileAnimation
     {
         public int Animation = -1;
-        public bool AutoRotate = false;
+        public bool AutoRotate;
         public int SpawnRange = 1;
 
         public ProjectileAnimation(int animation, int spawnRange, bool autoRotate)

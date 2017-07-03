@@ -25,21 +25,21 @@ namespace Intersect.Server.Classes.Entities
         public int CurrentX;
         public int CurrentY;
         public EventPageInstance[] GlobalPageInstance;
-        public bool HoldingPlayer = false;
+        public bool HoldingPlayer;
         public bool IsGlobal;
         public int MapNum;
         public Client MyClient;
         public int MyIndex;
         public Player MyPlayer;
-        public bool NPCDeathTriggerd = false;
+        public bool NPCDeathTriggerd;
         public int PageIndex;
         public EventPageInstance PageInstance;
 
         //Special conditions
-        public bool PlayerHasDied = false;
+        public bool PlayerHasDied;
         public int SpawnX;
         public int SpawnY;
-        public long WaitTimer = 0;
+        public long WaitTimer;
 
         public EventInstance(int index, Client client, EventBase baseEvent, int mapNum)
         {

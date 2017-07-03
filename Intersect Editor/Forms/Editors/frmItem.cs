@@ -14,8 +14,8 @@ namespace Intersect.Editor.Forms
     public partial class FrmItem : EditorForm
     {
         private List<ItemBase> _changed = new List<ItemBase>();
-        private byte[] _copiedItem = null;
-        private ItemBase _editorItem = null;
+        private byte[] _copiedItem;
+        private ItemBase _editorItem;
 
         public FrmItem()
         {

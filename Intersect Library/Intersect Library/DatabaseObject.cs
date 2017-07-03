@@ -7,9 +7,9 @@ namespace Intersect.Models
 {
     public abstract class DatabaseObject<TObject> : IDatabaseObject where TObject : DatabaseObject<TObject>
     {
-        public static DatabaseObjectLookup Lookup => Models.LookupUtils.GetLookup(typeof(TObject));
+        public static DatabaseObjectLookup Lookup => LookupUtils.GetLookup(typeof(TObject));
 
-        public GameObjectType Type => Models.LookupUtils.GetGameObjectType(typeof(TObject));
+        public GameObjectType Type => LookupUtils.GetGameObjectType(typeof(TObject));
 
         public string DatabaseTable => Type.GetTable();
 

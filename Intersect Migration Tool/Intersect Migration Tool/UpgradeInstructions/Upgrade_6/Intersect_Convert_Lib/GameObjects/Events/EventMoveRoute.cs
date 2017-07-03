@@ -4,11 +4,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
 {
     public class EventMoveRoute
     {
-        public int ActionIndex = 0;
+        public int ActionIndex;
         public List<MoveRouteAction> Actions = new List<MoveRouteAction>();
-        public bool Complete = false;
-        public bool IgnoreIfBlocked = false;
-        public bool RepeatRoute = false;
+        public bool Complete;
+        public bool IgnoreIfBlocked;
+        public bool RepeatRoute;
         public int Target = -1;
 
         public EventMoveRoute()

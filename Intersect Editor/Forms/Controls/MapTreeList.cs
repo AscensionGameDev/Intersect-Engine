@@ -12,8 +12,8 @@ namespace Intersect.Editor.Forms.Controls
         //Cross Thread Delegates
         public delegate void TryUpdateMapList(int selectMap = -1, List<int> restrictMaps = null);
 
-        private bool _canEdit = false;
-        private List<int> _restrictMaps = null;
+        private bool _canEdit;
+        private List<int> _restrictMaps;
         public bool Chronological = false;
         public TryUpdateMapList MapListDelegate;
         private List<int> OpenFolders = new List<int>();

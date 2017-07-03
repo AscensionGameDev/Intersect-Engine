@@ -10,8 +10,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
     {
         private GraphicsDevice _graphicsDevice;
         private int _height = -1;
-        private long _lastAccessTime = 0;
-        private bool _loadError = false;
+        private long _lastAccessTime;
+        private bool _loadError;
         private string _path = "";
         private string _name = "";
         private Texture2D _tex;

@@ -14,19 +14,24 @@ namespace Intersect.Network
             Buffer = buffer;
         }
 
-        public int Length
+        public void Dispose()
+        {
+            
+        }
+
+        public long Length
             => Buffer?.LengthBytes ?? -1;
 
-        public int Position
+        public long Position
             => Buffer?.PositionInBytes ?? -1;
 
-        public int Remaining
+        public long Remaining
             => Length - Position;
 
         public byte[] ToBytes()
             => Buffer?.Data;
 
-        public bool Has(int bytes)
+        public bool Has(long bytes)
             => bytes <= Remaining;
 
         public bool Read(out bool value)
@@ -66,18 +71,18 @@ namespace Intersect.Network
             return false;
         }
 
-        public bool Read(out byte[] value, int count)
+        public bool Read(out byte[] value, long count)
         {
             value = new byte[count];
             return count < 1 || Read(ref value, 0, count);
         }
 
-        public bool Read(ref byte[] value, int offset, int count)
+        public bool Read(ref byte[] value, long offset, long count)
         {
             try
             {
                 // ReSharper disable once PossibleNullReferenceException
-                Buffer.ReadBytes(value, offset, count);
+                Buffer.ReadBytes(value, (int) offset, (int) count);
                 return true;
             }
             catch (Exception)
@@ -205,32 +210,45 @@ namespace Intersect.Network
         public bool Read(out string value)
             => Read(out value, Encoding.UTF8);
 
-        public bool Read(out string value, Encoding encoding)
+        public bool Read(out string value, Encoding encoding, bool nullTerminated = false)
         {
             if (encoding == null) throw new ArgumentNullException();
 
-            if (Read(out int length))
+            int length;
+            if (nullTerminated)
             {
-                switch (length)
+                var position = Buffer?.PositionInBytes ?? int.MaxValue;
+                var buffer = Buffer?.PeekDataBuffer() ?? new byte[0];
+                while (Buffer?.LengthBytes - position > 0)
                 {
-                    case 0:
-                        value = "";
-                        break;
-
-                    case -1:
-                        value = null;
-                        break;
-
-                    default:
-                        value = Read(out byte[] bytes, length) ? encoding.GetString(bytes, 0, length) : null;
-                        break;
+                    if (buffer[position] == 0) break;
+                    position++;
                 }
 
-                return true;
+                length = Buffer?.LengthBytes - Buffer?.PositionInBytes ?? -1;
+            }
+            else if (!Read(out length))
+            {
+                value = default(string);
+                return false;
             }
 
-            value = default(string);
-            return false;
+            switch (length)
+            {
+                case 0:
+                    value = "";
+                    break;
+
+                case -1:
+                    value = null;
+                    break;
+
+                default:
+                    value = Read(out byte[] bytes, length) ? encoding.GetString(bytes, 0, length) : null;
+                    break;
+            }
+
+            return true;
         }
 
         public bool Read(out uint value)
@@ -308,13 +326,13 @@ namespace Intersect.Network
             throw new OutOfMemoryException();
         }
 
-        public byte[] ReadBytes(int count)
+        public byte[] ReadBytes(long count)
         {
             if (Read(out byte[] value, count)) return value;
             throw new OutOfMemoryException();
         }
 
-        public byte[] ReadBytes(ref byte[] bytes, int offset, int count)
+        public byte[] ReadBytes(ref byte[] bytes, long offset, long count)
         {
             if (Read(ref bytes, offset, count)) return bytes;
             throw new OutOfMemoryException();
@@ -416,9 +434,9 @@ namespace Intersect.Network
             throw new OutOfMemoryException();
         }
 
-        public string ReadString(Encoding encoding)
+        public string ReadString(Encoding encoding, bool nullTerminated = false)
         {
-            if (Read(out string value, encoding)) return value;
+            if (Read(out string value, encoding, nullTerminated)) return value;
             throw new OutOfMemoryException();
         }
 
@@ -473,11 +491,11 @@ namespace Intersect.Network
         public void Write(byte[] value)
             => Buffer?.Write(value);
 
-        public void Write(byte[] value, int count)
+        public void Write(byte[] value, long count)
             => Write(value, 0, count);
 
-        public void Write(byte[] value, int offset, int count)
-            => Buffer?.Write(value, offset, count);
+        public void Write(byte[] value, long offset, long count)
+            => Buffer?.Write(value, (int) offset, (int) count);
 
         public void Write(char value)
             => Buffer?.Write(BitConverter.GetBytes(value));
@@ -512,10 +530,13 @@ namespace Intersect.Network
         public void Write(string value)
             => Write(value, Encoding.UTF8);
 
-        public void Write(string value, Encoding encoding)
+        public void Write(string value, Encoding encoding, bool nullTerminated = false)
         {
             if (encoding == null) throw new ArgumentNullException();
-            Write(value?.Length ?? -1);
+
+            if (!nullTerminated)
+                Write(value?.Length ?? -1);
+
             if (value == null) return;
             if (value.Length < 1) return;
             var bytes = encoding.GetBytes(value);

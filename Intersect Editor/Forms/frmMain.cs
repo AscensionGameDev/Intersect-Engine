@@ -1248,7 +1248,7 @@ namespace Intersect.Editor.Forms
             }
             else
             {
-                EditorGraphics.LightColor = (Intersect.Color) ((ToolStripDropDownButton) sender).Tag;
+                EditorGraphics.LightColor = (Color) ((ToolStripDropDownButton) sender).Tag;
             }
         }
 

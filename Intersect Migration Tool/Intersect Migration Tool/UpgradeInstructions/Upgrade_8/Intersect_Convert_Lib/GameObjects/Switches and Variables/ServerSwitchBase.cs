@@ -4,7 +4,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 {
     public class ServerSwitchBase : DatabaseObject<ServerSwitchBase>
     {
-        public bool Value = false;
+        public bool Value;
 
         public ServerSwitchBase(int id) : base(id)
         {

@@ -19,7 +19,7 @@ namespace Intersect_Client.Classes.UI
     public static class Gui
     {
         //GWEN GUI
-        public static bool GwenInitialized = false;
+        public static bool GwenInitialized;
         public static InputBase GwenInput;
         public static Base GwenRenderer;
         private static Canvas _gameCanvas;

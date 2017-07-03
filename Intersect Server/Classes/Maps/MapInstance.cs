@@ -769,7 +769,7 @@ namespace Intersect.Server.Classes.Maps
                 SendMapEntitiesTo(player);
                 PacketSender.SendMapItems(player.MyClient, Index);
                 AddEntity(player);
-                player.LastMapEntered = this.Index;
+                player.LastMapEntered = Index;
                 if (SurroundingMaps.Count <= 0) return;
                 foreach (var t in SurroundingMaps)
                 {

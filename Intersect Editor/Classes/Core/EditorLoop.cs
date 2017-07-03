@@ -12,9 +12,9 @@ namespace Intersect.Editor.Classes
 {
     public static class EditorLoop
     {
-        private static int _fps = 0;
-        private static int _fpsCount = 0;
-        private static long _fpsTime = 0;
+        private static int _fps;
+        private static int _fpsCount;
+        private static long _fpsTime;
         private static frmMain myForm;
         private static long animationTimer = Globals.System.GetTimeMs();
         private static long waterfallTimer = Globals.System.GetTimeMs();

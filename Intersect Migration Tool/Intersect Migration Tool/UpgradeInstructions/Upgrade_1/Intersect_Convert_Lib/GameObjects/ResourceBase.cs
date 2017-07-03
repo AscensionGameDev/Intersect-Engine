@@ -10,7 +10,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
         public new const string DATABASE_TABLE = "resources";
         public new const GameObject OBJECT_TYPE = GameObject.Resource;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        public int Animation = 0;
+        public int Animation;
 
         // Drops
         public List<ResourceDrop> Drops = new List<ResourceDrop>();
@@ -18,14 +18,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
 
         // Graphics
         public string InitialGraphic = "None";
-        public int MaxHP = 0;
-        public int MinHP = 0;
+        public int MaxHP;
+        public int MinHP;
 
         public string Name = "New Resource";
-        public int SpawnDuration = 0;
-        public int Tool = 0;
-        public bool WalkableAfter = false;
-        public bool WalkableBefore = false;
+        public int SpawnDuration;
+        public int Tool;
+        public bool WalkableAfter;
+        public bool WalkableBefore;
 
         public ResourceBase(int id) : base(id)
         {

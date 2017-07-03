@@ -442,7 +442,7 @@ namespace Intersect.Editor.Forms
 
         public void PlaceAttribute(MapBase tmpMap, int x, int y)
         {
-            tmpMap.Attributes[x, y] = new Intersect.GameObjects.Maps.Attribute();
+            tmpMap.Attributes[x, y] = new GameObjects.Maps.Attribute();
             if (rbBlocked.Checked == true)
             {
                 tmpMap.Attributes[x, y].value = (int) MapAttributes.Blocked;

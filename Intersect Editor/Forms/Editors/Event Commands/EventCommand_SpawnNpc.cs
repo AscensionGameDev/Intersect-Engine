@@ -17,8 +17,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private MapBase _currentMap;
         private EventBase _editingEvent;
         private EventCommand _myCommand;
-        private int spawnX = 0;
-        private int spawnY = 0;
+        private int spawnX;
+        private int spawnY;
 
         public EventCommand_SpawnNpc(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent,
             EventCommand editingCommand)

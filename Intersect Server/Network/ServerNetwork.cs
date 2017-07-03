@@ -5,6 +5,7 @@ using Intersect.Threading;
 using Lidgren.Network;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using Intersect.Network.Packets;
 using Intersect.Server.Classes.General;
@@ -23,8 +24,8 @@ namespace Intersect.Server.Network
         }
 
         protected override RSAParameters GetRsaKey()
-            //=> LoadKeyFromAssembly(Assembly.GetExecutingAssembly(), "Intersect.Server.s3auxSt4RhVSbr7p5Vrkw9w9NwAMjbHUmsxZ7vSv3bQt9RXY", true);
-            => LoadKeyFromFile("private.bk1", false);
+            => LoadKeyFromAssembly(Assembly.GetExecutingAssembly(), "Intersect.Server.private-intersect.bek", false);
+            //=> LoadKeyFromFile("private.bk1", false);
 
         protected override void OnStart()
         {
@@ -41,7 +42,19 @@ namespace Intersect.Server.Network
         {
             var encryptedSize = request.ReadInt32();
             var encryptedData = request.ReadBytes(encryptedSize);
-            var decryptedData = Rsa.Decrypt(encryptedData, true);
+
+            byte[] decryptedData;
+            try
+            {
+                decryptedData = Rsa.Decrypt(encryptedData, true);
+            }
+            catch (Exception exception)
+            {
+                Log.Debug(exception);
+
+                request.SenderConnection?.Deny("bad_public_key");
+                return true;
+            }
             
             using (var requestBuffer = new MemoryBuffer(decryptedData))
             {

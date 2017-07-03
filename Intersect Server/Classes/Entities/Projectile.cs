@@ -6,28 +6,28 @@ using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
 
-/////////////////////////////////////////////////////
-/// Welcome to Kibbelz Boss ass projectile system ///
-///   Glad you took the time to view the code :)  ///
-/////////////////////////////////////////////////////
+///////////////////////////////////////////////////
+// Welcome to Kibbelz Boss ass projectile system //
+//   Glad you took the time to view the code :)  //
+///////////////////////////////////////////////////
 
 namespace Intersect.Server.Classes.Entities
 {
     public class Projectile : Entity
     {
-        private int _spawnCount = 0;
-        private int _spawnedAmount = 0;
-        private int _totalSpawns = 0;
+        private int _spawnCount;
+        private int _spawnedAmount;
+        private int _totalSpawns;
         private ProjectileBase MyBase;
         public Entity Owner;
         private ItemBase ParentItem;
         private SpellBase ParentSpell;
-        private int Quantity = 0;
+        private int Quantity;
 
         // Individual Spawns
         public ProjectileSpawns[] Spawns;
-        private long SpawnTime = 0;
-        public Entity Target = null;
+        private long SpawnTime;
+        public Entity Target;
 
         public Projectile(int index, Entity owner, SpellBase parentSpell, ItemBase parentItem, ProjectileBase projectile,
             int Map, int X, int Y, int Z, int Direction, Entity target) : base(index)
@@ -368,13 +368,13 @@ namespace Intersect.Server.Classes.Entities
                         if (attribute != null && attribute.value == (int) MapAttributes.Blocked &&
                             !Spawns[i].ProjectileBase.IgnoreMapBlocks)
                         {
-							if (Spawns[i].Dir <= 3) //Don't handle directional projectile grapplehooks
-							{
-								Owner.Dir = Spawns[i].Dir;
-								new DashInstance(Owner, Spawns[i].Distance, Owner.Dir);
-								killSpawn = true;
-							}
-						}
+                            if (Spawns[i].Dir <= 3) //Don't handle directional projectile grapplehooks
+                            {
+                                Owner.Dir = Spawns[i].Dir;
+                                new DashInstance(Owner, Spawns[i].Distance, Owner.Dir);
+                                killSpawn = true;
+                            }
+                        }
 
                         if (!killSpawn && map != null)
                         {
@@ -392,13 +392,13 @@ namespace Intersect.Server.Classes.Entities
                                             if (Owner != Target)
                                             {
                                                 Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir);
-												if (Spawns[i].Dir <= 3 && MyBase.GrappleHook == true) //Don't handle directional projectile grapplehooks
-												{
-													Owner.Dir = Spawns[i].Dir;
-													new DashInstance(Owner, Spawns[i].Distance, Owner.Dir);
-													killSpawn = true;
-												}
-											}
+                                                if (Spawns[i].Dir <= 3 && MyBase.GrappleHook == true) //Don't handle directional projectile grapplehooks
+                                                {
+                                                    Owner.Dir = Spawns[i].Dir;
+                                                    new DashInstance(Owner, Spawns[i].Distance, Owner.Dir);
+                                                    killSpawn = true;
+                                                }
+                                            }
                                         }
                                         else if (TargetEntity.GetType() == typeof(Resource))
                                         {
@@ -410,28 +410,28 @@ namespace Intersect.Server.Classes.Entities
                                                 if (Owner.GetType() == typeof(Player))
                                                 {
                                                     Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir);
-													if (Spawns[i].Dir <= 3 && MyBase.GrappleHook == true) //Don't handle directional projectile grapplehooks
-													{
-														Owner.Dir = Spawns[i].Dir;
-														new DashInstance(Owner, Spawns[i].Distance, Owner.Dir);
-														killSpawn = true;
-													}
-												}
+                                                    if (Spawns[i].Dir <= 3 && MyBase.GrappleHook == true) //Don't handle directional projectile grapplehooks
+                                                    {
+                                                        Owner.Dir = Spawns[i].Dir;
+                                                        new DashInstance(Owner, Spawns[i].Distance, Owner.Dir);
+                                                        killSpawn = true;
+                                                    }
+                                                }
                                             }
                                         }
                                         else //Any other target
                                         {
-											if (((Npc)Owner).CanNpcCombat(TargetEntity))
-											{
-												Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir);
-												if (Spawns[i].Dir <= 3 && MyBase.GrappleHook == true) //Don't handle directional projectile grapplehooks
-												{
-													Owner.Dir = Spawns[i].Dir;
-													new DashInstance(Owner, Spawns[i].Distance, Owner.Dir);
-													killSpawn = true;
-												}
-											}
-										}
+                                            if (((Npc)Owner).CanNpcCombat(TargetEntity))
+                                            {
+                                                Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir);
+                                                if (Spawns[i].Dir <= 3 && MyBase.GrappleHook == true) //Don't handle directional projectile grapplehooks
+                                                {
+                                                    Owner.Dir = Spawns[i].Dir;
+                                                    new DashInstance(Owner, Spawns[i].Distance, Owner.Dir);
+                                                    killSpawn = true;
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                                 else
@@ -495,7 +495,7 @@ namespace Intersect.Server.Classes.Entities
     {
         private int _baseEntityIndex;
         public int Dir;
-        public int Distance = 0;
+        public int Distance;
         public int Map;
         public ProjectileBase ProjectileBase;
         public long TransmittionTimer = Globals.System.GetTimeMs();

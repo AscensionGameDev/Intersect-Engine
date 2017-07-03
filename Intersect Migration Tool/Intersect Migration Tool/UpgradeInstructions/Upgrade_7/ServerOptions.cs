@@ -8,7 +8,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
     {
         //Config XML String
         public static string ConfigXml = "";
-        private static bool ConfigFailed = false;
+        private static bool ConfigFailed;
 
         //Misc
         public static int ItemDespawnTime = 15000; //15 seconds

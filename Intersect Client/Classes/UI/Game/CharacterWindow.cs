@@ -414,7 +414,7 @@ namespace Intersect_Client.Classes.UI.Game
         private ItemDescWindow _descWindow;
         private GameTexture _equipmentBG;
         private int[] _statBoost = new int[Options.MaxStats];
-        private bool _texLoaded = false;
+        private bool _texLoaded;
         public ImagePanel contentPanel;
         private int myindex;
         public ImagePanel pnl;

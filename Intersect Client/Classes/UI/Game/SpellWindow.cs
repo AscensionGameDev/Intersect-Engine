@@ -193,15 +193,15 @@ namespace Intersect_Client.Classes.UI.Game
         //Drag/Drop References
         private SpellWindow _spellWindow;
 
-        private bool CanDrag = false;
-        private long ClickTime = 0;
+        private bool CanDrag;
+        private long ClickTime;
         public ImagePanel container;
         private int currentSpell = -1;
         private Draggable dragIcon;
-        private bool iconCD = false;
+        private bool iconCD;
         public bool IsDragging;
 
-        private bool MouseOver = false;
+        private bool MouseOver;
         private int MouseX = -1;
         private int MouseY = -1;
 
