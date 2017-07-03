@@ -525,7 +525,7 @@ namespace Intersect_Client.Classes.Networking
 			GameNetwork.SendPacket(bf.ToArray());
 		}
 
-		public static void CreateNewChar()
+		public static void CreateNewCharacter()
 		{
 			var bf = new ByteBuffer();
 			bf.WriteLong((int)ClientPackets.CreateNewChar);
