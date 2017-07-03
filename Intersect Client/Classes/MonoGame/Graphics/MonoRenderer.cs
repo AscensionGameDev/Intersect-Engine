@@ -70,22 +70,6 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 AlphaDestinationBlend = Blend.InverseSourceAlpha
             };
 
-            var database = Globals.Database;
-            var validVideoModes = GetValidVideoModes();
-            var targetResolution = database?.TargetResolution ?? 0;
-
-            if (targetResolution < 0 || validVideoModes?.Count <= targetResolution)
-            {
-                Debug.Assert(database != null, "database != null");
-                database.TargetResolution = 0;
-                database.SavePreference("Resolution", database.TargetResolution.ToString());
-            }
-
-            var targetVideoMode = validVideoModes?[targetResolution];
-            var resolution = Resolution.Parse(targetVideoMode);
-            mGraphics.PreferredBackBufferWidth = resolution.X;
-            mGraphics.PreferredBackBufferHeight = resolution.Y;
-
             _gameWindow = monoGame.Window;
         }
 
@@ -433,6 +417,22 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         {
             if (mInitializing) return;
             mInitializing = true;
+
+            var database = Globals.Database;
+            var validVideoModes = GetValidVideoModes();
+            var targetResolution = database?.TargetResolution ?? 0;
+
+            if (targetResolution < 0 || validVideoModes?.Count <= targetResolution)
+            {
+                Debug.Assert(database != null, "database != null");
+                database.TargetResolution = 0;
+                database.SavePreference("Resolution", database.TargetResolution.ToString());
+            }
+
+            var targetVideoMode = validVideoModes?[targetResolution];
+            var resolution = Resolution.Parse(targetVideoMode);
+            mGraphics.PreferredBackBufferWidth = resolution.X;
+            mGraphics.PreferredBackBufferHeight = resolution.Y;
 
             UpdateGraphicsState(mGraphics?.PreferredBackBufferWidth ?? 800, mGraphics?.PreferredBackBufferHeight ?? 600);
 

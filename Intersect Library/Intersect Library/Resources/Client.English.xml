@@ -210,10 +210,15 @@
 		<string id="login">Login</string>
 		<string id="back">Back</string>
 	</Login>
+	<Credits>
+		<string id="title">Credits</string>
+		<string id="back"></string>
+	</Credits>
 	<MainMenu>
 		<string id="title">Main Menu</string>
 		<string id="login">Login</string>
 		<string id="register">Register</string>
+		<string id="credits">Credits</string>
 		<string id="exit">Exit</string>
 		<string id="options"></string>
 	</MainMenu>

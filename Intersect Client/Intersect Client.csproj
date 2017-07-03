@@ -76,6 +76,8 @@
     <Compile Include="Classes\Maps\MapAnimationInstance.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Classes\UI\Menu\CreateCharacterWindow.cs" />
+    <Compile Include="Classes\UI\Menu\CreditsParser.cs" />
+    <Compile Include="Classes\UI\Menu\CreditsWindow.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicInstance.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicSource.cs" />
@@ -144,9 +146,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="IntersectClientExtras">
-      <HintPath>.\IntersectClientExtras.dll</HintPath>
-    </Reference>
     <Reference Include="Lidgren.Network, Version=3.6.0.1271, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Lidgren.Network.dll</HintPath>
@@ -224,6 +223,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Intersect-Client-Extras\IntersectClientExtras\IntersectClientExtras.csproj">
+      <Project>{40973f13-3339-4548-9008-ff76a0c8cd79}</Project>
+      <Name>IntersectClientExtras</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Intersect Library\Intersect Library\Intersect %28Core%29.csproj">
       <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
       <Name>Intersect %28Core%29</Name>

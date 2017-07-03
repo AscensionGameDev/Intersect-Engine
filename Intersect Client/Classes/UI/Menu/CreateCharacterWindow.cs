@@ -43,9 +43,9 @@ namespace Intersect_Client.Classes.UI.Menu
 
         //Class Info
         private List<KeyValuePair<int, ClassSprite>> _maleSprites = new List<KeyValuePair<int, ClassSprite>>();
-        private Label _menuHeader;
+        private Label _charCreationHeader;
         //Controls
-        private ImagePanel _menuPanel;
+        private ImagePanel _charCreationPanel;
         private Button _nextSpriteButton;
         private Button _prevSpriteButton;
 
@@ -56,79 +56,76 @@ namespace Intersect_Client.Classes.UI.Menu
             _mainMenu = mainMenu;
 
             //Main Menu Window
-            _menuPanel = new ImagePanel(parent)
-            {
-                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png")
-            };
-            _menuPanel.SetSize(512, 393);
-            if (_mainMenu != null && parentPanel != null)
-            {
-                _menuPanel.SetPosition(parentPanel.X, parentPanel.Y);
-            }
-            else
-            {
-                _menuPanel.SetPosition(parent.Width / 2 - _menuPanel.Width / 2,
-                    parent.Height / 2 - _menuPanel.Height / 2);
-            }
-            _menuPanel.IsHidden = true;
+            _charCreationPanel = new ImagePanel(parent, "CharacterCreationPanel");
+            _charCreationPanel.IsHidden = true;
 
             //Menu Header
-            _menuHeader = new Label(_menuPanel)
-            {
-                AutoSizeToContents = false
-            };
-            _menuHeader.SetText(Strings.Get("charactercreation", "title"));
-            _menuHeader.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 24);
-            _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
-            _menuHeader.Alignment = Pos.CenterH;
-            _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
+            _charCreationHeader = new Label(_charCreationPanel, "CharacterCreationHeader");
+            _charCreationHeader.SetText(Strings.Get("charactercreation", "title"));
 
             //Character Name Background
-            _characterNameBackground = new ImagePanel(_menuPanel)
-            {
-                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfieldshort.png")
-            };
-            _characterNameBackground.SetSize(_characterNameBackground.Texture.GetWidth(),
-                _characterNameBackground.Texture.GetHeight());
-            _characterNameBackground.SetPosition(15, 44);
+            _characterNameBackground = new ImagePanel(_charCreationPanel, "CharacterNamePanel");
 
             //Character name Label
-            _charnameLabel = new Label(_characterNameBackground);
+            _charnameLabel = new Label(_characterNameBackground,"CharacterNameLabel");
             _charnameLabel.SetText(Strings.Get("charactercreation", "name"));
-            _charnameLabel.AutoSizeToContents = false;
-            _charnameLabel.SetSize(178, 60);
-            _charnameLabel.Alignment = Pos.Center;
-            _charnameLabel.TextColorOverride = new Color(255, 30, 30, 30);
-            _charnameLabel.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
 
             //Character name Textbox
-            _charnameTextbox = new TextBox(_characterNameBackground);
+            _charnameTextbox = new TextBox(_characterNameBackground,"CharacterNameField");
             _charnameTextbox.SubmitPressed += CharnameTextbox_SubmitPressed;
-            _charnameTextbox.SetPosition(190, 8);
-            _charnameTextbox.SetSize(188, 38);
-            _charnameTextbox.ShouldDrawBackground = false;
-            _charnameTextbox.TextColorOverride = new Color(255, 220, 220, 220);
-            _charnameTextbox.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
 
             //Class Background
-            _classBackground = new ImagePanel(_menuPanel)
-            {
-                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfieldshort.png")
-            };
-            _classBackground.SetSize(_classBackground.Texture.GetWidth(), _classBackground.Texture.GetHeight());
-            _classBackground.SetPosition(15, _characterNameBackground.Bottom + 16);
+            _classBackground = new ImagePanel(_charCreationPanel, "ClassPanel");
 
             //Class Label
-            _classLabel = new Label(_classBackground);
+            _classLabel = new Label(_classBackground,"ClassLabel");
             _classLabel.SetText(Strings.Get("charactercreation", "class"));
-            _classLabel.AutoSizeToContents = false;
-            _classLabel.SetSize(178, 60);
-            _classLabel.Alignment = Pos.Center;
-            _classLabel.TextColorOverride = new Color(255, 30, 30, 30);
-            _classLabel.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
 
             //Class Combobox
-            _classCombobox = new ComboBox(_classBackground);
+            _classCombobox = new ComboBox(_classBackground,"ClassCombobox");
+            _classCombobox.ItemSelected += classCombobox_ItemSelected;
+
+            //Character Container
+            _characterContainer = new ImagePanel(_charCreationPanel,"CharacterContainer");
+
+            //Character sprite
+            _characterPortrait = new ImagePanel(_characterContainer,"CharacterPortait");
+            _characterPortrait.SetSize(48, 48);
+
+            //Next Sprite Button
+            _nextSpriteButton = new Button(_characterContainer,"NextSpriteButton");
+            _nextSpriteButton.Clicked += _nextSpriteButton_Clicked;
+
+            //Prev Sprite Button
+            _prevSpriteButton = new Button(_characterContainer,"PreviousSpriteButton");
+
+            //Class Background
+            _genderBackground = new ImagePanel(_charCreationPanel, "GeneralPanel");
+
+            //Gender Label
+            _genderLabel = new Label(_genderBackground,"GenderLabel");
+            _genderLabel.SetText(Strings.Get("charactercreation", "gender"));
+
+            //Male Checkbox
+            _maleChk = new LabeledCheckBox(_genderBackground,"MaleCheckbox") {Text = Strings.Get("charactercreation", "male")};
+            _maleChk.IsChecked = true;
+            _maleChk.Checked += maleChk_Checked;
+            _maleChk.UnChecked += femaleChk_Checked; // If you notice this, feel free to hate us ;)
+
+            //Female Checkbox
+            _femaleChk = new LabeledCheckBox(_genderBackground,"FemaleCheckbox") {Text = Strings.Get("charactercreation", "female")};
+            _femaleChk.Checked += femaleChk_Checked;
+            _femaleChk.UnChecked += maleChk_Checked;
+
+            //Register - Send Registration Button
+            _createButton = new Button(_charCreationPanel,"CreateButton");
+            _createButton.SetText(Strings.Get("charactercreation", "create"));
+            _createButton.Clicked += CreateButton_Clicked;
+        }
+
+        public void Init()
+        {
+            _classCombobox.DeleteAll();
             var classCount = 0;
             foreach (ClassBase cls in ClassBase.Lookup.Values)
             {
@@ -138,133 +135,6 @@ namespace Intersect_Client.Classes.UI.Menu
                     classCount++;
                 }
             }
-            _classCombobox.ItemSelected += classCombobox_ItemSelected;
-            _classCombobox.SetPosition(190, 8);
-            _classCombobox.SetSize(200, 38);
-            _classCombobox.Alignment = Pos.Center;
-            _classCombobox.ShouldDrawBackground = false;
-            _classCombobox.SetMenuBackgroundColor(new Color(220, 0, 0, 0));
-            _classCombobox.SetMenuMaxSize(260, 200);
-            _classCombobox.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
-            _classCombobox.SetTextColor(new Color(255, 220, 220, 220), Label.ControlState.Hovered);
-            _classCombobox.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
-
-            //Character Container
-            _characterContainer = new ImagePanel(_menuPanel);
-            _characterContainer.SetSize(74, 74);
-            _characterContainer.SetPosition(_menuPanel.Width - 15 - _characterContainer.Width, 44);
-            _characterContainer.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
-                "charview.png");
-
-            //Character sprite
-            _characterPortrait = new ImagePanel(_characterContainer);
-            _characterPortrait.SetSize(48, 48);
-
-            //Next Sprite Button
-            _nextSpriteButton = new Button(_characterContainer);
-            _nextSpriteButton.SetSize(15, 15);
-            _nextSpriteButton.SetPosition(74 - 15, _characterContainer.Height / 2 - 15 / 2);
-            _nextSpriteButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrownormal.png"),
-                Button.ControlState.Normal);
-            _nextSpriteButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrowhover.png"),
-                Button.ControlState.Hovered);
-            _nextSpriteButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrowclicked.png"),
-                Button.ControlState.Clicked);
-            _nextSpriteButton.Clicked += _nextSpriteButton_Clicked;
-
-            //Prev Sprite Button
-            _prevSpriteButton = new Button(_characterContainer);
-            _prevSpriteButton.SetSize(15, 15);
-            _prevSpriteButton.SetPosition(0, _characterContainer.Height / 2 - 15 / 2);
-            _prevSpriteButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrownormal.png"),
-                Button.ControlState.Normal);
-            _prevSpriteButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrowhover.png"),
-                Button.ControlState.Hovered);
-            _prevSpriteButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrowclicked.png"),
-                Button.ControlState.Clicked);
-            _prevSpriteButton.Clicked += _prevSpriteButton_Clicked;
-
-            //Class Background
-            _genderBackground = new ImagePanel(_menuPanel)
-            {
-                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
-            };
-            _genderBackground.SetSize(_genderBackground.Texture.GetWidth(), _genderBackground.Texture.GetHeight());
-            _genderBackground.SetPosition(15, _classBackground.Bottom + 16);
-
-            //Gender Label
-            _genderLabel = new Label(_genderBackground);
-            _genderLabel.SetText(Strings.Get("charactercreation", "gender"));
-            _genderLabel.AutoSizeToContents = false;
-            _genderLabel.SetSize(178, 60);
-            _genderLabel.Alignment = Pos.Center;
-            _genderLabel.TextColorOverride = new Color(255, 30, 30, 30);
-            _genderLabel.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
-
-            //Male Checkbox
-            _maleChk = new LabeledCheckBox(_genderBackground) {Text = Strings.Get("charactercreation", "male")};
-            _maleChk.SetSize(200, 36);
-            _maleChk.SetPosition(180, 8);
-            _maleChk.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxempty.png"),
-                CheckBox.ControlState.Normal);
-            _maleChk.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxfull.png"),
-                CheckBox.ControlState.CheckedNormal);
-            _maleChk.SetCheckSize(32, 32);
-            _maleChk.SetLabelDistance(8);
-            _maleChk.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
-            _maleChk.SetTextColor(new Color(255, 140, 140, 140), Label.ControlState.Hovered);
-            _maleChk.IsChecked = true;
-            _maleChk.Checked += maleChk_Checked;
-            _maleChk.UnChecked += femaleChk_Checked; // If you notice this, feel free to hate us ;)
-            _maleChk.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 20));
-
-            //Female Checkbox
-            _femaleChk = new LabeledCheckBox(_genderBackground) {Text = Strings.Get("charactercreation", "female")};
-            _femaleChk.Checked += femaleChk_Checked;
-            _femaleChk.UnChecked += maleChk_Checked;
-            _femaleChk.SetSize(200, 36);
-            _femaleChk.SetPosition(300, 8);
-            _femaleChk.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxempty.png"),
-                CheckBox.ControlState.Normal);
-            _femaleChk.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxfull.png"),
-                CheckBox.ControlState.CheckedNormal);
-            _femaleChk.SetCheckSize(32, 32);
-            _femaleChk.SetLabelDistance(8);
-            _femaleChk.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
-            _femaleChk.SetTextColor(new Color(255, 140, 140, 140), Label.ControlState.Hovered);
-            _femaleChk.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 20));
-
-            //Register - Send Registration Button
-            _createButton = new Button(_menuPanel);
-            _createButton.SetText(Strings.Get("charactercreation", "create"));
-            _createButton.Clicked += CreateButton_Clicked;
-            _createButton.SetSize(211, 61);
-            _createButton.SetPosition(_menuPanel.Width / 2 - _createButton.Width / 2,
-                _menuPanel.Height - 40 - _createButton.Height);
-            _createButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"),
-                Button.ControlState.Normal);
-            _createButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"),
-                Button.ControlState.Hovered);
-            _createButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"),
-                Button.ControlState.Clicked);
-            _createButton.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
-            _createButton.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
-            _createButton.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            _createButton.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
-
             LoadClass();
             Update();
         }
@@ -333,12 +203,12 @@ namespace Intersect_Client.Classes.UI.Menu
 
         public void Show()
         {
-            _menuPanel.Show();
+            _charCreationPanel.Show();
         }
 
         public void Hide()
         {
-            _menuPanel.Hide();
+            _charCreationPanel.Hide();
         }
 
         private ClassBase GetClass()
