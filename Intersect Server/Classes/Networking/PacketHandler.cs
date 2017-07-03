@@ -2599,7 +2599,7 @@ namespace Intersect.Server.Classes.Networking
 			var bf = new ByteBuffer();
 			bf.WriteBytes(packet);
 			var charSlot = bf.ReadInteger();
-			Database.DeleteCharacter(client, charSlot);
+			Database.DeleteCharacterSlot(client, charSlot);
 			PacketSender.SendLoginError(client, Strings.Get("account", "deletechar"));
 			bf.Dispose();
 		}

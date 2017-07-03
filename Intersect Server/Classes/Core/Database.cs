@@ -1254,10 +1254,11 @@ namespace Intersect.Server.Classes.Core
 			if (client.MyId == -1) return false;
 			try
 			{
-				var query = "SELECT * from " + CHAR_TABLE + " WHERE " + CHAR_USER_ID + "=@" + CHAR_USER_ID + ";";
+				var query = "SELECT * from " + CHAR_TABLE + " WHERE " + CHAR_USER_ID + "=@" + CHAR_USER_ID + " AND " + CHAR_USER_SLOT + "=@" + CHAR_USER_SLOT + ";";
 				using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
 				{
 					cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_ID, client.MyId));
+					cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_SLOT, slot));
 					using (var dataReader = cmd.ExecuteReader())
 					{
 						if (dataReader.HasRows && dataReader.Read())
@@ -1325,6 +1326,39 @@ namespace Intersect.Server.Classes.Core
 			}
 		}
 
+		public static void DeleteCharacterSlot(Client client, int slot)
+		{
+			var en = client.Entity;
+			var commaSep = new char[1];
+			commaSep[0] = ',';
+			if (client.MyId == -1) return;
+			try
+			{
+				var query = "DELETE * from " + CHAR_TABLE + " WHERE " + CHAR_USER_ID + "=@" + CHAR_USER_ID + " AND " + CHAR_USER_SLOT + "=@" + CHAR_USER_SLOT + ";";
+				using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+				{
+					cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_ID, client.MyId));
+					cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_SLOT, slot));
+
+					DeleteCharacterInventory(en);
+					DeleteCharacterSpells(en);
+					DeleteCharacterBank(en);
+					DeleteCharacterHotbar(en);
+					DeleteCharacterSwitches(en);
+					DeleteCharacterVariables(en);
+					DeleteCharacterQuests(en);
+					DeleteCharacterFriends(en);
+				}
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+			finally
+			{
+			}
+		}
+
 		private static bool LoadCharacterInventory(Player player)
         {
             var commaSep = new char[1];
@@ -1373,7 +1407,26 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-        private static bool LoadCharacterSpells(Player player)
+		private static void DeleteCharacterInventory(Player player)
+		{
+			var commaSep = new char[1];
+			commaSep[0] = ',';
+			try
+			{
+				var query = "DELETE * from " + CHAR_INV_TABLE + " WHERE " + CHAR_INV_CHAR_ID + "=@" +
+							CHAR_INV_CHAR_ID + ";";
+				using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+				{
+					cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_CHAR_ID, player.MyId));
+				}
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+		}
+
+		private static bool LoadCharacterSpells(Player player)
         {
             try
             {
@@ -1409,7 +1462,24 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-        private static bool LoadCharacterBank(Player player)
+		private static void DeleteCharacterSpells(Player player)
+		{
+			try
+			{
+				var query = "DELETE * from " + CHAR_SPELL_TABLE + " WHERE " + CHAR_SPELL_CHAR_ID + "=@" +
+							CHAR_SPELL_CHAR_ID + ";";
+				using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+				{
+					cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_CHAR_ID, player.MyId));
+				}
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+		}
+
+		private static bool LoadCharacterBank(Player player)
         {
             var commaSep = new char[1];
             commaSep[0] = ',';
@@ -1458,7 +1528,26 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-        private static bool LoadCharacterHotbar(Player player)
+		private static void DeleteCharacterBank(Player player)
+		{
+			var commaSep = new char[1];
+			commaSep[0] = ',';
+			try
+			{
+				var query = "DELETE * from " + CHAR_BANK_TABLE + " WHERE " + CHAR_BANK_CHAR_ID + "=@" +
+							CHAR_BANK_CHAR_ID + ";";
+				using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+				{
+					cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_CHAR_ID, player.MyId));
+				}
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+		}
+
+		private static bool LoadCharacterHotbar(Player player)
         {
             try
             {
@@ -1488,7 +1577,24 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-        private static bool LoadCharacterSwitches(Player player)
+		private static void DeleteCharacterHotbar(Player player)
+		{
+			try
+			{
+				var query = "DELETE * from " + CHAR_HOTBAR_TABLE + " WHERE " + CHAR_HOTBAR_CHAR_ID + "=@" +
+							CHAR_HOTBAR_CHAR_ID + ";";
+				using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+				{
+					cmd.Parameters.Add(new SqliteParameter("@" + CHAR_HOTBAR_CHAR_ID, player.MyId));
+				}
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+		}
+
+		private static bool LoadCharacterSwitches(Player player)
         {
             try
             {
@@ -1521,7 +1627,24 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-        private static bool LoadCharacterVariables(Player player)
+		private static void DeleteCharacterSwitches(Player player)
+		{
+			try
+			{
+				var query = "DELETE * from " + CHAR_SWITCHES_TABLE + " WHERE " + CHAR_SWITCH_CHAR_ID + "=@" +
+							CHAR_SWITCH_CHAR_ID + ";";
+				using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+				{
+					cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SWITCH_CHAR_ID, player.MyId));
+				}
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+		}
+
+		private static bool LoadCharacterVariables(Player player)
         {
             try
             {
@@ -1554,7 +1677,24 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-        private static bool LoadCharacterQuests(Player player)
+		private static void DeleteCharacterVariables(Player player)
+		{
+			try
+			{
+				var query = "DELETE * from " + CHAR_VARIABLES_TABLE + " WHERE " + CHAR_VARIABLE_CHAR_ID + "=@" +
+							CHAR_VARIABLE_CHAR_ID + ";";
+				using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+				{
+					cmd.Parameters.Add(new SqliteParameter("@" + CHAR_VARIABLE_CHAR_ID, player.MyId));
+				}
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+		}
+
+		private static bool LoadCharacterQuests(Player player)
         {
             try
             {
@@ -1597,7 +1737,24 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-        private static bool LoadCharacterFriends(Player player)
+		private static void DeleteCharacterQuests(Player player)
+		{
+			try
+			{
+				var query = "DELETE * from " + CHAR_QUESTS_TABLE + " WHERE " + CHAR_QUEST_CHAR_ID + "=@" +
+							CHAR_QUEST_CHAR_ID + ";";
+				using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+				{
+					cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_CHAR_ID, player.MyId));
+				}
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+		}
+
+		private static bool LoadCharacterFriends(Player player)
         {
             player.Friends.Clear();
 
@@ -1625,6 +1782,25 @@ namespace Intersect.Server.Classes.Core
                 throw ex;
             }
         }
+
+		private static void DeleteCharacterFriends(Player player)
+		{
+			try
+			{
+				var query = "DELETE " + CHAR_TABLE + "." + CHAR_NAME + "," + CHAR_FRIENDS_TABLE + "." +
+					CHAR_FRIEND_ID + " FROM " + CHAR_FRIENDS_TABLE + " INNER JOIN " + CHAR_TABLE + " ON " +
+					CHAR_FRIENDS_TABLE + "." + CHAR_FRIEND_ID + " = " + CHAR_TABLE + "." + CHAR_ID + " WHERE " +
+					CHAR_FRIEND_CHAR_ID + "=@" + CHAR_FRIEND_CHAR_ID + ";";
+				using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+				{
+					cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FRIEND_CHAR_ID, player.MyId));
+				}
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+		}
 
 		public static void DeleteCharacterFriend(Player player, int key)
         {
