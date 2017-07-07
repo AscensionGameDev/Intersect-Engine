@@ -85,11 +85,11 @@ namespace Intersect.Server.Classes.Networking
             client.SendPacket(bf.ToArray());
             bf.Dispose();
 
-			if (!client.IsEditor)
-			{
-				SendGlobalMsg(Strings.Get("player", "joined", client.Entity.MyName, Options.GameName));
-			}
-		}
+            if (!client.IsEditor)
+            {
+                SendGlobalMsg(Strings.Get("player", "joined", client.Entity.MyName, Options.GameName));
+            }
+        }
 
         public static void SendMap(Client client, int mapNum, bool allEditors = false)
         {

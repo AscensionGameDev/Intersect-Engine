@@ -3,36 +3,51 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using Intersect.Logging;
-using Intersect.Network;
-using Intersect.Server.Classes.Networking;
 using Lidgren.Network;
 
-namespace Intersect.Server.Network
+namespace Intersect.Network
 {
-    public class ServerNetwork : AbstractNetwork, IServer
+    public class ClientNetwork : AbstractNetwork, IClient
     {
         public HandleConnectionEvent OnConnected { get; set; }
         public HandleConnectionEvent OnConnectionApproved { get; set; }
         public HandleConnectionEvent OnDisconnected { get; set; }
 
-        public override Guid Guid { get; }
+        public bool IsConnected { get; private set; }
+        public bool IsServerOnline { get; }
 
-        public ServerNetwork(NetworkConfiguration configuration, RSAParameters rsaParameters)
+        private Guid mGuid;
+        public override Guid Guid => mGuid;
+
+        private readonly LidgrenInterface mLidgrenInterface;
+
+        public ClientNetwork(NetworkConfiguration configuration, RSAParameters rsaParameters)
             : base(configuration)
         {
-            Guid = Guid.NewGuid();
+            mGuid = Guid.Empty;
 
-            var lidgrenInterface = new LidgrenInterface(this, typeof(NetServer), rsaParameters);
-            lidgrenInterface.OnConnected += HandleInterfaceOnConnected;
-            lidgrenInterface.OnConnectionApproved += HandleInterfaceOnConnectonApproved;
-            lidgrenInterface.OnDisconnected += HandleInterfaceOnDisconnected;
-            AddNetworkLayerInterface(lidgrenInterface);
+            IsConnected = false;
+            IsServerOnline = false;
+
+            mLidgrenInterface = new LidgrenInterface(this, typeof(NetClient), rsaParameters);
+            mLidgrenInterface.OnConnected += HandleInterfaceOnConnected;
+            mLidgrenInterface.OnConnectionApproved += HandleInterfaceOnConnectonApproved;
+            mLidgrenInterface.OnDisconnected += HandleInterfaceOnDisconnected;
+            AddNetworkLayerInterface(mLidgrenInterface);
+        }
+
+        public bool Connect()
+        {
+            if (IsConnected) Disconnect("client_starting_connection");
+            if (mLidgrenInterface == null) return false;
+            StartInterfaces();
+            return true;
         }
 
         protected virtual void HandleInterfaceOnConnected(IConnection connection)
         {
             Log.Info($"Connected [{connection?.Guid}].");
-            Client.CreateBeta4Client(connection);
+            IsConnected = true;
             OnConnected?.Invoke(connection);
         }
 
@@ -45,30 +60,24 @@ namespace Intersect.Server.Network
         protected virtual void HandleInterfaceOnDisconnected(IConnection connection)
         {
             Log.Info($"Disconnected [{connection?.Guid}].");
+            IsConnected = false;
             OnDisconnected?.Invoke(connection);
         }
 
+        internal void AssignGuid(Guid guid) => mGuid = guid;
+
         public override bool Send(IPacket packet)
-            => Send(Connections, packet);
+            => mLidgrenInterface?.SendPacket(packet) ?? false;
 
         public override bool Send(IConnection connection, IPacket packet)
-            => Send(new[] {connection}, packet);
+            => Send(packet);
 
         public override bool Send(ICollection<IConnection> connections, IPacket packet)
-        {
-            SendPacket(packet, connections, TransmissionMode.All);
-            return true;
-        }
+            => Send(packet);
 
         protected override IDictionary<TKey, TValue> CreateDictionaryLegacy<TKey, TValue>()
         {
             return new ConcurrentDictionary<TKey, TValue>();
-        }
-
-        public bool Listen()
-        {
-            StartInterfaces();
-            return true;
         }
     }
 }

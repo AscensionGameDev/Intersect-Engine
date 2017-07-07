@@ -300,7 +300,7 @@ namespace Intersect.Editor.Forms
 
         protected override void OnClosed(EventArgs e)
         {
-            LegacyEditorNetwork.editorNetwork.Stop();
+            LegacyEditorNetwork.EditorLidgrenNetwork?.Disconnect("quitting");
             base.OnClosed(e);
             Application.Exit();
         }

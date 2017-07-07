@@ -11,7 +11,7 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
 using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Network.Packets;
+using Intersect.Network.Packets.Reflectable;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
@@ -41,6 +41,8 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
+
+            bf.ReadInteger();
 
             //Compressed?
             if (bf.ReadByte() == 1)

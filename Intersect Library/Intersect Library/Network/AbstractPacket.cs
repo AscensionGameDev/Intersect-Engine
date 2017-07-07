@@ -13,9 +13,9 @@ namespace Intersect.Network
 
         public PacketType Type => PacketType.Of(this);
 
-        public PacketCodes Code { get; }
+        public PacketCode Code { get; }
 
-        protected AbstractPacket(IConnection connection, PacketCodes code)
+        protected AbstractPacket(IConnection connection, PacketCode code)
         {
             Connection = connection;
             Code = code;

@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\build\debug\core\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;COMPILER_LEGACY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -27,14 +27,14 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\build\release\core\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;COMPILER_LEGACY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Tespia|AnyCPU'">
     <OutputPath>..\build\tespia\core\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;COMPILER_LEGACY</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -44,7 +44,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Diagnostic|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\build\diagnostic\core\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;INTERSECT_DIAGNOSTIC</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;COMPILER_LEGACY;INTERSECT_DIAGNOSTIC</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -149,21 +149,31 @@
     <Compile Include="Models\IDatabaseObject.cs" />
     <Compile Include="Models\IGameObject.cs" />
     <Compile Include="Models\IIndexedGameObject.cs" />
+    <Compile Include="Network\AbstractConnection.cs" />
+    <Compile Include="Network\AbstractNetwork.cs" />
     <Compile Include="Network\AbstractPacket.cs" />
+    <Compile Include="Network\AbstractPacketFactory.cs" />
+    <Compile Include="Network\ConnectionPacket.cs" />
     <Compile Include="Network\DnsUtils.cs" />
     <Compile Include="Network\HandlePacket.cs" />
+    <Compile Include="Network\IClient.cs" />
     <Compile Include="Network\IConnection.cs" />
-    <Compile Include="Network\IExtendedPacket.cs" />
     <Compile Include="Network\INetwork.cs" />
+    <Compile Include="Network\INetworkLayerInterface.cs" />
     <Compile Include="Network\IPacket.cs" />
+    <Compile Include="Network\IPacketFactory.cs" />
     <Compile Include="Network\NetworkConfiguration.cs" />
     <Compile Include="Network\NetworkThread.cs" />
     <Compile Include="Network\PacketDispatcher.cs" />
-    <Compile Include="Network\PacketCodes.cs" />
+    <Compile Include="Network\PacketCode.cs" />
     <Compile Include="Network\PacketQueue.cs" />
     <Compile Include="Network\PacketRegistry.cs" />
-    <Compile Include="Network\Packets\BinaryPacket.cs" />
+    <Compile Include="Network\Packets\ApprovalPacket.cs" />
+    <Compile Include="Network\Packets\HailPacket.cs" />
+    <Compile Include="Network\Packets\Reflectable\BinaryPacket.cs" />
     <Compile Include="Network\PacketType.cs" />
+    <Compile Include="Network\ReflectablePacketFactory.cs" />
+    <Compile Include="Network\TransmissionMode.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -176,6 +186,7 @@
     <Compile Include="TextUtils.cs" />
     <Compile Include="Threading\IThreadYield.cs" />
     <Compile Include="Threading\ThreadYieldNet35.cs" />
+    <Compile Include="Utilities\CSharpFeatures.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -197,7 +208,9 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Factories\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

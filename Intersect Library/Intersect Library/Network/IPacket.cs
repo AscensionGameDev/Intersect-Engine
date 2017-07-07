@@ -11,7 +11,7 @@ namespace Intersect.Network
 
         int EstimatedSize { get; }
 
-        PacketCodes Code { get; }
+        PacketCode Code { get; }
 
         PacketType Type { get; }
 

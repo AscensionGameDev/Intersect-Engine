@@ -1,6 +1,6 @@
 ﻿using Intersect.Memory;
 
-namespace Intersect.Network.Packets
+namespace Intersect.Network.Packets.Reflectable
 {
     public class BinaryPacket : AbstractPacket
     {
@@ -9,7 +9,7 @@ namespace Intersect.Network.Packets
         public override int EstimatedSize => Buffer?.Length() + sizeof(int) ?? sizeof(int);
 
         public BinaryPacket(IConnection connection)
-            : base(connection, PacketCodes.BinaryPacket)
+            : base(connection, PacketCode.BinaryPacket)
         {
         }
 

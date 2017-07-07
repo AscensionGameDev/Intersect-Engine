@@ -9,7 +9,7 @@ namespace Intersect.Network
         public static PacketRegistry Instance
             => (sInstance ?? new PacketRegistry());
         
-        private IDictionary<PacketCodes, PacketType> mLookup;
+        private IDictionary<PacketCode, PacketType> mLookup;
 
         private PacketRegistry()
         {
@@ -18,11 +18,11 @@ namespace Intersect.Network
                 sInstance = this;
             }
 
-            mLookup = new SortedDictionary<PacketCodes, PacketType>();
+            mLookup = new SortedDictionary<PacketCode, PacketType>();
         }
 
         // ReSharper disable once PossibleNullReferenceException
-        public PacketType GetPacketType(PacketCodes code)
+        public PacketType GetPacketType(PacketCode code)
             => (mLookup.TryGetValue(code, out PacketType packetType))
             ? packetType : null;
 
@@ -47,15 +47,15 @@ namespace Intersect.Network
             return Deregister(packetType.Code);
         }
 
-        public bool Deregister(PacketCodes code)
+        public bool Deregister(PacketCode code)
         {
             if (mLookup == null) throw new ArgumentNullException();
             return mLookup.Remove(code);
         }
 
-        public PacketCodes GetPacketCode(PacketType packetType)
+        public PacketCode GetPacketCode(PacketType packetType)
         {
-            return packetType?.Code ?? PacketCodes.Unknown;
+            return packetType?.Code ?? PacketCode.Unknown;
         }
     }
 }

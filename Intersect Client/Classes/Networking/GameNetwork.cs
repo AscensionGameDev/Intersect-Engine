@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using Intersect;
-using Intersect.Client.Network;
 using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Network.Packets;
+using Intersect.Network.Crypto;
+using Intersect.Network.Crypto.Formats;
+using Intersect.Network.Packets.Reflectable;
 using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
 
@@ -12,12 +16,12 @@ namespace Intersect_Client.Classes.Networking
     public static class GameNetwork
     {
 
-        public static ClientNetwork clientNetwork;
+        public static ClientNetwork ClientLidgrenNetwork;
 
         public static GameSocket MySocket;
 
         private static bool _connected;
-        public static bool Connected => clientNetwork?.IsRunning ?? _connected;
+        public static bool Connected => ClientLidgrenNetwork?.IsConnected ?? _connected;
         public static bool Connecting;
         private static byte[] _tempBuff;
         private static ByteBuffer _myBuffer = new ByteBuffer();
@@ -28,10 +32,22 @@ namespace Intersect_Client.Classes.Networking
         {
             Log.Global.AddOutput(new ConsoleOutput());
             var config = new NetworkConfiguration(Globals.Database.ServerHost, (ushort)Globals.Database.ServerPort);
-            clientNetwork = new ClientNetwork(config);
-            clientNetwork.Start();
+            var assembly = Assembly.GetExecutingAssembly();
+            using (var stream = assembly.GetManifestResourceStream("Intersect.Client.public-intersect.bek"))
+            {
+                var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
+                Debug.Assert(rsaKey != null, "rsaKey != null");
+                ClientLidgrenNetwork = new ClientNetwork(config, rsaKey.Parameters);
+            }
 
-            if (clientNetwork != null) return;
+            ClientLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = PacketHandler.HandlePacket;
+
+            if (!ClientLidgrenNetwork.Connect())
+            {
+                Log.Error("An error occurred while attempting to connect.");
+            }
+
+            if (ClientLidgrenNetwork != null) return;
 
             if (MySocket == null) return;
             MySocket.Connected += MySocket_OnConnected;
@@ -116,9 +132,9 @@ namespace Intersect_Client.Classes.Networking
                     buff.WriteBytes(packet);
                 }
 
-                if (clientNetwork != null)
+                if (ClientLidgrenNetwork != null)
                 {
-                    if (!clientNetwork.Send(new BinaryPacket(null) {Buffer = buff}))
+                    if (!ClientLidgrenNetwork.Send(new BinaryPacket(null) {Buffer = buff}))
                     {
                         throw new Exception("Beta 4 network send failed.");
                     }

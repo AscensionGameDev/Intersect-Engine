@@ -8,7 +8,7 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Network;
-using Intersect.Network.Packets;
+using Intersect.Network.Packets.Reflectable;
 
 namespace Intersect.Editor.Classes
 {

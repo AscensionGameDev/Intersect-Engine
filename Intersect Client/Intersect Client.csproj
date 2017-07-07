@@ -146,9 +146,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Interface\Resolution.cs" />
     <Compile Include="IntersectGame.cs" />
-    <Compile Include="Network\ClientNetwork.cs" />
     <Compile Include="ClientMain.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -222,6 +220,7 @@
     <EmbeddedResource Include="public-intersect.bek" />
     <None Include="App.config" />
     <None Include="app.manifest" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icon.bmp">

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Intersect.Logging;
-using Intersect.Network.Packets;
 using Intersect.Threading;
 
 namespace Intersect.Network
@@ -70,11 +69,13 @@ namespace Intersect.Network
                     Log.Warn($"Failed to dispatch packet '{packet}'.");
                 }
 
+#if DIAGNOSTIC
                 if (last + (1 * TimeSpan.TicksPerSecond) < sw.ElapsedTicks)
                 {
                     last = sw.ElapsedTicks;
                     Console.Title = $"Queue size: {Queue.Size}";
                 }
+#endif
 
                 packet.Dispose();
 
