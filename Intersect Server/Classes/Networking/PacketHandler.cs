@@ -2586,7 +2586,7 @@ namespace Intersect.Server.Classes.Networking
 			bf.WriteBytes(packet);
 			var charSlot = bf.ReadInteger();
 
-			if (Database.LoadCharacterSlot(client, charSlot))
+			if (Database.LoadCharacter(client, charSlot))
 			{
 				PacketSender.SendJoinGame(client);
 			}

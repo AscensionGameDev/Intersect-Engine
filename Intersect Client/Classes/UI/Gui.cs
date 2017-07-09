@@ -110,16 +110,19 @@ namespace Intersect_Client.Classes.UI
                 }
             }
 
-            //Create XML Doc with UI 
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.NewLineOnAttributes = true;
-
-            using (XmlWriter writer = XmlWriter.Create(Path.Combine("resources", "ui.xml"), settings))
+            if (GameUI == null)
             {
-                writer.WriteStartDocument();
-                _menuCanvas.WriteBaseUIXml(writer, false);
-                writer.WriteEndDocument();
+                //Create XML Doc with UI 
+                XmlWriterSettings settings = new XmlWriterSettings();
+                settings.Indent = true;
+                settings.NewLineOnAttributes = true;
+
+                using (XmlWriter writer = XmlWriter.Create(Path.Combine("resources", "ui.xml"), settings))
+                {
+                    writer.WriteStartDocument();
+                    _menuCanvas.WriteBaseUIXml(writer, false);
+                    writer.WriteEndDocument();
+                }
             }
 
             GwenInitialized = true;

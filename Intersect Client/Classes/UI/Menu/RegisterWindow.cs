@@ -46,7 +46,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _mainMenu = mainMenu;
 
             //Main Menu Window
-            _registrationPanel = new ImagePanel(parent, "RegistrationPanel");
+            _registrationPanel = new ImagePanel(parent, "RegistrationWindow");
 
             //Menu Header
             _registrationHeader = new Label(_registrationPanel, "RegistrationLabel");

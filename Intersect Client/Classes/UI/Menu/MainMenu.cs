@@ -11,7 +11,7 @@ namespace Intersect_Client.Classes.UI.Menu
 {
     public class MainMenu
     {
-		private SelectCharacterWindow _selectCharacterWindow;
+        private SelectCharacterWindow _selectCharacterWindow;
         private CreateCharacterWindow _createCharacterWindow;
         private Button _exitButton;
 
@@ -24,8 +24,8 @@ namespace Intersect_Client.Classes.UI.Menu
         private OptionsWindow _optionsWindow;
         private Button _registerButton;
         private RegisterWindow _registerWindow;
-		    private bool _shouldOpenCharacterSelection;
-		    private bool _shouldOpenCharacterCreation;
+        private bool _shouldOpenCharacterSelection;
+        private bool _shouldOpenCharacterCreation;
         private Button _creditsButton;
         private CreditsWindow _creditsWindow;
 
@@ -43,7 +43,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Main Menu Window
             _menuWindow = new ImagePanel(_menuCanvas, "MenuWindow");
-            
+
             //Menu Header
             _menuHeader = new Label(_menuWindow, "Title");
             _menuHeader.SetText(Strings.Get("mainmenu", "title"));
@@ -83,6 +83,8 @@ namespace Intersect_Client.Classes.UI.Menu
             _registerWindow = new RegisterWindow(_menuCanvas, this, _menuWindow);
             //Character Creation Controls
             _createCharacterWindow = new CreateCharacterWindow(MenuCanvas, this, _menuWindow);
+            //Character Selection Controls
+            _selectCharacterWindow = new SelectCharacterWindow(MenuCanvas, this, _menuWindow);
             //Credits Controls
             _creditsWindow = new CreditsWindow(MenuCanvas, this);
         }
@@ -90,11 +92,11 @@ namespace Intersect_Client.Classes.UI.Menu
         //Methods
         public void Update()
         {
-			if (_shouldOpenCharacterSelection)
-			{
-				CreateCharacterSelection();
-			}
-			if (_shouldOpenCharacterCreation)
+            if (_shouldOpenCharacterSelection)
+            {
+                CreateCharacterSelection();
+            }
+            if (_shouldOpenCharacterCreation)
             {
                 CreateCharacterCreation();
             }
@@ -108,7 +110,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _optionsWindow.Hide();
             _creditsWindow.Hide();
             if (_createCharacterWindow != null) _createCharacterWindow.Hide();
-			      if (_selectCharacterWindow != null) _selectCharacterWindow.Hide();
+            if (_selectCharacterWindow != null) _selectCharacterWindow.Hide();
             _menuWindow.Show();
             _optionsButton.Show();
         }
@@ -125,25 +127,24 @@ namespace Intersect_Client.Classes.UI.Menu
             _optionsButton.IsHidden = true;
         }
 
-		public void NotifyOpenCharacterSelection(List<Character> Characters)
-		{
-			_shouldOpenCharacterSelection = true;
-			_selectCharacterWindow.Characters = Characters;
-		}
+        public void NotifyOpenCharacterSelection(List<Character> Characters)
+        {
+            _shouldOpenCharacterSelection = true;
+            _selectCharacterWindow.Characters = Characters;
+        }
 
-		public void CreateCharacterSelection()
-		{
-			Hide();
-			_loginWindow.Hide();
-			_registerWindow.Hide();
-			_optionsWindow.Hide();
-			_createCharacterWindow.Hide();
-			_selectCharacterWindow = new SelectCharacterWindow(MenuCanvas, this, _menuWindow);
-			_selectCharacterWindow.Show();
-			_shouldOpenCharacterSelection = false;
-		}
+        public void CreateCharacterSelection()
+        {
+            Hide();
+            _loginWindow.Hide();
+            _registerWindow.Hide();
+            _optionsWindow.Hide();
+            _createCharacterWindow.Hide();
+            _selectCharacterWindow.Show();
+            _shouldOpenCharacterSelection = false;
+        }
 
-		public void NotifyOpenCharacterCreation()
+        public void NotifyOpenCharacterCreation()
         {
             _shouldOpenCharacterCreation = true;
         }

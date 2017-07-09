@@ -56,7 +56,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _mainMenu = mainMenu;
 
             //Main Menu Window
-            _charCreationPanel = new ImagePanel(parent, "CharacterCreationPanel");
+            _charCreationPanel = new ImagePanel(parent, "CharacterCreationWindow");
             _charCreationPanel.IsHidden = true;
 
             //Menu Header
