@@ -1,15 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using Intersect.Enums;
+using Intersect.GameObjects;
 using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
+using IntersectClientExtras.GenericClasses;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Color = IntersectClientExtras.GenericClasses.Color;
+using Point = IntersectClientExtras.GenericClasses.Point;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -40,7 +44,10 @@ namespace Intersect_Client.Classes.UI.Game
         public Label _mpLbl;
         public Label _mpTitle;
 
-        private Entity _myEntity;
+		//Spell List
+		public List<SpellStatus> Items = new List<SpellStatus>();
+
+		public Entity _myEntity;
 
         private long lastUpdateTime;
         public Label PartyLabel;
@@ -52,7 +59,7 @@ namespace Intersect_Client.Classes.UI.Game
             _myEntity = myEntity;
 
             _entityBox = new ImagePanel(_gameCanvas);
-            _entityBox.SetSize(314, 126);
+            _entityBox.SetSize(314, 158);
             _entityBox.SetPosition(x, y);
             _entityBox.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "entitybox.png");
 
@@ -192,7 +199,9 @@ namespace Intersect_Client.Classes.UI.Game
                 PartyLabel.IsHidden = Globals.Me.IsInMyParty(_myEntity);
             }
 
-            lastUpdateTime = Globals.System.GetTimeMS();
+			updateSpellStatus();
+
+			lastUpdateTime = Globals.System.GetTimeMS();
         }
 
         //Update
@@ -379,9 +388,35 @@ namespace Intersect_Client.Classes.UI.Game
                     PartyLabel.IsHidden = Globals.Me.IsInMyParty(_myEntity);
             }
 
-            //Eventually draw icons for buffs and debuffs?
-            lastUpdateTime = Globals.System.GetTimeMS();
+			//Update each status item
+			for (int i = 0; i < Items.Count; i++)
+			{
+				Items[i].Update();
+			}
+
+			lastUpdateTime = Globals.System.GetTimeMS();
         }
+
+		public void updateSpellStatus()
+		{
+			foreach (SpellStatus s in Items)
+			{
+				s.pnl.Texture = null;
+				s.container.Texture = null;
+			}
+			Items.Clear();
+
+			//Add all of the spell status effects
+			for (int i = 0; i < _myEntity.Status.Count; i++)
+			{
+				Items.Add(new SpellStatus(this, i));
+				Items[i].container = new ImagePanel(_entityBox);
+				Items[i].container.SetSize(34, 34);
+				Items[i].container.SetPosition(8 + (36 * i), 118);
+				Items[i].container.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "skillitem.png");
+				Items[i].Setup();
+			}
+		}
 
         public void Dispose()
         {
@@ -408,4 +443,103 @@ namespace Intersect_Client.Classes.UI.Game
             }
         }
     }
+
+	public class SpellStatus
+	{
+		private SpellDescWindow _descWindow;
+
+		//Drag/Drop References
+		private EntityBox _entityBox;
+
+		public ImagePanel container;
+		private int currentSpell = -1;
+
+		private int myindex;
+		public ImagePanel pnl;
+
+		private string texLoaded = "";
+
+		public SpellStatus(EntityBox entityBox, int index)
+		{
+			_entityBox = entityBox;
+			myindex = index;
+		}
+
+		public void Setup()
+		{
+			pnl = new ImagePanel(container);
+			pnl.SetSize(32, 32);
+			pnl.SetPosition(1, 1);
+			pnl.IsHidden = true;
+			pnl.HoverEnter += pnl_HoverEnter;
+			pnl.HoverLeave += pnl_HoverLeave;
+		}
+
+		void pnl_HoverLeave(Base sender, EventArgs arguments)
+		{
+			if (_descWindow != null)
+			{
+				_descWindow.Dispose();
+				_descWindow = null;
+			}
+		}
+
+		void pnl_HoverEnter(Base sender, EventArgs arguments)
+		{
+			if (myindex >= _entityBox._myEntity.Status.Count) { return; }
+			if (_descWindow != null)
+			{
+				_descWindow.Dispose();
+				_descWindow = null;
+			}
+			_descWindow = new SpellDescWindow(_entityBox._myEntity.Status[myindex].SpellNum, _entityBox._entityBox.X + 316, _entityBox._entityBox.Y);
+		}
+
+		public FloatRect RenderBounds()
+		{
+			FloatRect rect = new FloatRect()
+			{
+				X = pnl.LocalPosToCanvas(new Point(0, 0)).X,
+				Y = pnl.LocalPosToCanvas(new Point(0, 0)).Y,
+				Width = pnl.Width,
+				Height = pnl.Height
+			};
+			return rect;
+		}
+
+		public void Update()
+		{
+			var spell = SpellBase.Lookup.Get<SpellBase>(_entityBox._myEntity.Status[myindex].SpellNum);
+			if ((texLoaded != "" && spell == null) || (spell != null && texLoaded != spell.Pic) ||
+				 currentSpell != _entityBox._myEntity.Status[myindex].SpellNum)
+			{
+				if (spell != null)
+				{
+					GameTexture spellTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Pic);
+					if (spellTex != null)
+					{
+						pnl.Texture = spellTex;
+						pnl.IsHidden = false;
+					}
+					else
+					{
+						if (pnl.Texture != null)
+						{
+							pnl.Texture = null;
+						}
+					}
+					texLoaded = spell.Pic;
+					currentSpell = _entityBox._myEntity.Status[myindex].SpellNum;
+				}
+				else
+				{
+					if (pnl.Texture != null)
+					{
+						pnl.Texture = null;
+					}
+					texLoaded = "";
+				}
+			}
+		}
+	}
 }

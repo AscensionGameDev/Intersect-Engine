@@ -236,6 +236,7 @@
         <string id="alreadydenied">Your party invitation has already been rejected!</string>
         <string id="busy">{00} is busy. Please try again later!</string>
         <string id="declined">{00} has declined your party invitation!</string>
+	<string id="notinparty">You are not in a party.</string>
     </Parties>
     <Friends>
         <string id="accept">{00} has accepted your friend request!</string>

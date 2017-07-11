@@ -15,7 +15,7 @@ namespace Intersect_Client.Classes.UI.Game
         private DebugMenu _debugMenu;
 
         private EventWindow _eventWindow;
-        private EntityBox _playerBox;
+        public EntityBox _playerBox;
         private QuestOfferWindow _questOfferWindow;
         private ShopWindow _shopWindow;
         private bool _shouldCloseBag;

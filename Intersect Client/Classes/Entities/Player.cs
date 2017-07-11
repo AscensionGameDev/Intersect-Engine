@@ -21,7 +21,7 @@ namespace Intersect_Client.Classes.Entities
     public class Player : Entity
     {
         private ItemDescWindow _itemTargetBox;
-        private EntityBox _targetBox;
+        public EntityBox _targetBox;
 
         public int _targetIndex = -1;
         public int _targetType;
@@ -704,7 +704,7 @@ namespace Intersect_Client.Classes.Entities
                                             _targetBox = null;
                                         }
                                         if (en.Value != Globals.Me)
-                                            _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 122);
+                                            _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 154);
                                         if (_targetType == 0 && _targetIndex == en.Value.MyIndex)
                                         {
                                             ClearTarget();
@@ -738,7 +738,7 @@ namespace Intersect_Client.Classes.Entities
                                             _targetBox.Dispose();
                                             _targetBox = null;
                                         }
-                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 122);
+                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 154);
                                         if (_targetType == 1 && _targetIndex == en.Value.MyIndex)
                                         {
                                             ClearTarget();

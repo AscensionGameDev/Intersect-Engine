@@ -667,6 +667,7 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(statuses.Length);
             foreach (var status in statuses)
             {
+				bf.WriteInteger(status._spell.Index);
                 bf.WriteInteger(status.Type);
                 bf.WriteString(status.Data);
             }
@@ -714,7 +715,8 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(statuses.Length);
             foreach (var status in statuses)
             {
-                bf.WriteInteger(status.Type);
+				bf.WriteInteger(status._spell.Index);
+				bf.WriteInteger(status.Type);
                 bf.WriteString(status.Data);
             }
             SendDataTo(client, bf.ToArray());

@@ -1463,8 +1463,9 @@ namespace Intersect.Server.Classes.Entities
             bf.WriteInteger(statuses.Count());
             foreach (var status in statuses)
             {
-                bf.WriteInteger(status.Value.Type);
-                bf.WriteString(status.Value.Data);
+				bf.WriteInteger(status.Value._spell.Index);
+				bf.WriteInteger(status.Value.Type);
+				bf.WriteString(status.Value.Data);
             }
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
@@ -1645,7 +1646,7 @@ namespace Intersect.Server.Classes.Entities
     public class StatusInstance
     {
         public string Data = "";
-        private SpellBase _spell;
+        public SpellBase _spell;
         public long Duration;
         private Entity entity;
         public int Type;
