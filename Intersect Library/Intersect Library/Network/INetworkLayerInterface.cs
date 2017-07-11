@@ -4,8 +4,8 @@ using Intersect.Memory;
 
 namespace Intersect.Network
 {
-    public delegate void HandlePacketAvailable(INetworkLayerInterface sender, object packet);
-    public delegate void HandleConnectionEvent(IConnection connection);
+    public delegate void HandlePacketAvailable(INetworkLayerInterface sender);
+    public delegate void HandleConnectionEvent(INetworkLayerInterface sender, IConnection connection);
 
     public interface INetworkLayerInterface
     {
@@ -14,7 +14,7 @@ namespace Intersect.Network
         HandleConnectionEvent OnConnected { get; set; }
         HandleConnectionEvent OnDisconnected { get; set; }
 
-        bool TryGetInboundBuffer(out IBuffer buffer, out IConnection connection, object packet);
+        bool TryGetInboundBuffer(out IBuffer buffer, out IConnection connection);
 
         void ReleaseInboundBuffer(IBuffer buffer);
 

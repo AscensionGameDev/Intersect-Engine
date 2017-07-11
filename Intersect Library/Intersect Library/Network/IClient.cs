@@ -6,5 +6,6 @@
 
         bool IsConnected { get; }
         bool IsServerOnline { get; }
+        int Ping { get; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Intersect.Logging;
 
 namespace Intersect.GameObjects.Maps
 {
@@ -446,9 +447,29 @@ namespace Intersect.GameObjects.Maps
                 return;
             }
 
+            if (_myMap == null)
+            {
+                Log.Error($"{nameof(_myMap)}=null");
+                return;
+            }
+
+            if (_myMap.Layers == null)
+            {
+                Log.Error($"{nameof(_myMap.Layers)}=null");
+                return;
+            }
+
+            var layer = _myMap.Layers[layerNum];
+            if (_myMap.Layers[layerNum].Tiles == null)
+            {
+                Log.Error($"{nameof(layer.Tiles)}=null");
+                return;
+            }
+
+            var tile = layer.Tiles[x, y];
+
             // check if it needs to be rendered as an autotile
-            if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == AutotileNone ||
-                _myMap.Layers[layerNum].Tiles[x, y].Autotile == AutotileFake)
+            if (tile.Autotile == AutotileNone || tile.Autotile == AutotileFake)
             {
                 // default to... default
                 Autotile[x, y].Layer[layerNum].RenderState = RenderStateNormal;
@@ -461,14 +482,8 @@ namespace Intersect.GameObjects.Maps
                 int quarterNum;
                 for (quarterNum = 1; quarterNum < 5; quarterNum++)
                 {
-                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X = (Int16)((_myMap.Layers[layerNum].Tiles[x, y].X *
-                                                                                Options.TileWidth) +
-                                                                               Autotile[x, y].Layer[layerNum]
-                                                                                   .QuarterTile[quarterNum].X);
-                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y = (Int16)((_myMap.Layers[layerNum].Tiles[x, y].Y *
-                                                                                Options.TileHeight) +
-                                                                               Autotile[x, y].Layer[layerNum]
-                                                                                   .QuarterTile[quarterNum].Y);
+                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X = (short)((tile.X * Options.TileWidth) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X);
+                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y = (short)((tile.Y * Options.TileHeight) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y);
                 }
             }
         }
@@ -485,13 +500,33 @@ namespace Intersect.GameObjects.Maps
             // The situations are "inner", "outer", "horizontal", "vertical" and "fill".
 
             // Exit out if we don//t have an auatotile
-            if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == 0)
+            if (_myMap == null)
+            {
+                Log.Error($"{nameof(_myMap)}=null");
+                return;
+            }
+
+            if (_myMap.Layers == null)
+            {
+                Log.Error($"{nameof(_myMap.Layers)}=null");
+                return;
+            }
+
+            var layer = _myMap.Layers[layerNum];
+            if (_myMap.Layers[layerNum].Tiles == null)
+            {
+                Log.Error($"{nameof(layer.Tiles)}=null");
+                return;
+            }
+
+            var tile = layer.Tiles[x, y];
+            if (tile.Autotile == 0)
             {
                 return;
             }
 
             // Okay, we have autotiling but which one?
-            switch (_myMap.Layers[layerNum].Tiles[x, y].Autotile)
+            switch (tile.Autotile)
             {
                 // Normal or animated - same difference
                 case AutotileNormal:
@@ -1917,7 +1952,21 @@ namespace Intersect.GameObjects.Maps
 
             if (surroundingMaps[gridX + 1, gridY + 1] != null)
             {
-                targetTile = surroundingMaps[gridX + 1, gridY + 1].Layers[layerNum].Tiles[x2, y2];
+                var layers = surroundingMaps[gridX + 1, gridY + 1].Layers;
+                if (layers == null)
+                {
+                    Log.Debug($"Layers are null [{gridX}/{gridX + 1},{gridY}/{gridY + 1}]");
+                    return false;
+                }
+
+                var tiles = layers[layerNum].Tiles;
+                if (tiles == null)
+                {
+                    Log.Debug($"Layer {layerNum}'s tiles are null.");
+                    return false;
+                }
+
+                targetTile = tiles[x2, y2];
             }
             var sourceTile = _myMap.Layers[layerNum].Tiles[x1, y1];
             if (targetTile.X == -1) return true;

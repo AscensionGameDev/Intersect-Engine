@@ -181,7 +181,7 @@ namespace Intersect.Server.Classes.Entities
         {
             var xOffset = 0;
             var yOffset = 0;
-            if (MoveTimer > Globals.System.GetTimeMs()) return -5;
+            //if (MoveTimer > Globals.System.GetTimeMs()) return -5;
             var tile = new TileHelper(CurrentMap, CurrentX, CurrentY);
             switch (moveDir)
             {

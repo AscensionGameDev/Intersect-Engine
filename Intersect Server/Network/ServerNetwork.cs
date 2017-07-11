@@ -29,23 +29,24 @@ namespace Intersect.Server.Network
             AddNetworkLayerInterface(lidgrenInterface);
         }
 
-        protected virtual void HandleInterfaceOnConnected(IConnection connection)
+        protected virtual void HandleInterfaceOnConnected(INetworkLayerInterface sender, IConnection connection)
         {
             Log.Info($"Connected [{connection?.Guid}].");
             Client.CreateBeta4Client(connection);
-            OnConnected?.Invoke(connection);
+            OnConnected?.Invoke(sender, connection);
         }
 
-        protected virtual void HandleInterfaceOnConnectonApproved(IConnection connection)
+        protected virtual void HandleInterfaceOnConnectonApproved(INetworkLayerInterface sender, IConnection connection)
         {
             Log.Info($"Connection approved [{connection?.Guid}].");
-            OnConnectionApproved?.Invoke(connection);
+            OnConnectionApproved?.Invoke(sender, connection);
         }
 
-        protected virtual void HandleInterfaceOnDisconnected(IConnection connection)
+        protected virtual void HandleInterfaceOnDisconnected(INetworkLayerInterface sender, IConnection connection)
         {
             Log.Info($"Disconnected [{connection?.Guid}].");
-            OnDisconnected?.Invoke(connection);
+            Client.RemoveBeta4Client(connection);
+            OnDisconnected?.Invoke(sender, connection);
         }
 
         public override bool Send(IPacket packet)

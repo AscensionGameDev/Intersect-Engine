@@ -95,9 +95,6 @@ namespace Intersect.Network
         }
 
         public override bool Send(IPacket packet)
-            => Network?.Send(Guid, packet) ?? false;
-
-        public override bool Send(Guid guid, IPacket packet)
-            => Network?.Send(guid, packet) ?? false;
+            => Network?.Send(this, packet) ?? false;
     }
 }

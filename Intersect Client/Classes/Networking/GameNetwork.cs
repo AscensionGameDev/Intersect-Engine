@@ -26,7 +26,13 @@ namespace Intersect_Client.Classes.Networking
         private static byte[] _tempBuff;
         private static ByteBuffer _myBuffer = new ByteBuffer();
         private static object _bufferLock = new object();
-        public static int Ping = 0;
+
+        private static int mPing;
+        public static int Ping
+        {
+            get => ClientLidgrenNetwork?.Ping ?? mPing;
+            set => mPing = value;
+        }
 
         public static void InitNetwork()
         {
@@ -121,13 +127,13 @@ namespace Intersect_Client.Classes.Networking
                 if (packet.Length > 800)
                 {
                     packet = Compression.CompressPacket(packet);
-                    buff.WriteInteger(packet.Length + 1);
+                    buff.WriteInteger(packet.Length);
                     buff.WriteByte(1); //Compressed
                     buff.WriteBytes(packet);
                 }
                 else
                 {
-                    buff.WriteInteger(packet.Length + 1);
+                    buff.WriteInteger(packet.Length);
                     buff.WriteByte(0); //Not Compressed
                     buff.WriteBytes(packet);
                 }

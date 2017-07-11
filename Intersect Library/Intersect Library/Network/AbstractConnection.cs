@@ -32,8 +32,6 @@ namespace Intersect.Network
 
         public abstract bool Send(IPacket packet);
 
-        public abstract bool Send(Guid guid, IPacket packet);
-
         public virtual void HandleConnected()
         {
             IsConnected = true;

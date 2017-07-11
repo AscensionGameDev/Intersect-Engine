@@ -13,7 +13,6 @@ namespace Intersect.Network
         int Port { get; }
 
         bool Send(IPacket packet);
-        bool Send(Guid guid, IPacket packet);
 
         void HandleConnected();
         void HandleApproved();

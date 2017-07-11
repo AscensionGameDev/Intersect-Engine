@@ -42,15 +42,27 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
 
-            bf.ReadInteger();
+            var length = bf.ReadInteger();
+            var compressed = bf.ReadBoolean();
 
-            //Compressed?
-            if (bf.ReadByte() == 1)
+            try
             {
-                packet = bf.ReadBytes(bf.Length());
-                var data = Compression.DecompressPacket(packet);
-                bf = new ByteBuffer();
-                bf.WriteBytes(data);
+                //Compressed?
+                if (compressed)
+                {
+                    packet = bf.ReadBytes(length);
+                    var data = Compression.DecompressPacket(packet);
+                    bf = new ByteBuffer();
+                    bf.WriteBytes(data);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Error($"Buffer length: {bf.Length()}");
+                Log.Error($"Packet length: {length}");
+                Log.Error($"Is Compressed: {compressed}");
+                Log.Error(exception);
+                return;
             }
 
             var packetHeader = (ServerPackets) bf.ReadLong();
@@ -1019,7 +1031,12 @@ namespace Intersect_Client.Classes.Networking
                 {
                     for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                     {
-                        (Globals.Entities[entityIndex]).Equipment[i] = bf.ReadInteger();
+                        if (entity.Equipment.Length <= i)
+                        {
+                            Log.Debug($"Bad equipment index, aborting ({i}/{entity.Equipment.Length}).");
+                            break;
+                        }
+                        entity.Equipment[i] = bf.ReadInteger();
                     }
                 }
             }
@@ -1043,8 +1060,25 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             for (int i = 0; i < Options.MaxHotbar; i++)
             {
-                Globals.Me.Hotbar[i].Type = bf.ReadInteger();
-                Globals.Me.Hotbar[i].Slot = bf.ReadInteger();
+                if (Globals.Me == null)
+                {
+                    Log.Debug("Can't set hotbar, Globals.Me is null!");
+                    break;
+                }
+
+                if (Globals.Me.Hotbar == null)
+                {
+                    Log.Debug("Can't set hotbar, hotbar is null!");
+                    break;
+                }
+
+                var hotbarEntry = Globals.Me.Hotbar[i];
+                if (hotbarEntry == null)
+                {
+                    Log.Error(BitConverter.ToString(packet));
+                }
+                hotbarEntry.Type = bf.ReadInteger();
+                hotbarEntry.Slot = bf.ReadInteger();
             }
             bf.Dispose();
         }

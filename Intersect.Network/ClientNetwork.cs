@@ -16,6 +16,17 @@ namespace Intersect.Network
         public bool IsConnected { get; private set; }
         public bool IsServerOnline { get; }
 
+        public int Ping
+        {
+            get
+            {
+                var connection = FindConnection<LidgrenConnection>(Guid.Empty);
+                //Log.Debug($"connection={connection},ping={connection?.NetConnection?.AverageRoundtripTime ?? -1}");
+                if (connection == null) return -1;
+                return (int) (1000 * connection.NetConnection.AverageRoundtripTime);
+            }
+        }
+
         private Guid mGuid;
         public override Guid Guid => mGuid;
 
@@ -44,24 +55,24 @@ namespace Intersect.Network
             return true;
         }
 
-        protected virtual void HandleInterfaceOnConnected(IConnection connection)
+        protected virtual void HandleInterfaceOnConnected(INetworkLayerInterface sender, IConnection connection)
         {
             Log.Info($"Connected [{connection?.Guid}].");
             IsConnected = true;
-            OnConnected?.Invoke(connection);
+            OnConnected?.Invoke(sender, connection);
         }
 
-        protected virtual void HandleInterfaceOnConnectonApproved(IConnection connection)
+        protected virtual void HandleInterfaceOnConnectonApproved(INetworkLayerInterface sender, IConnection connection)
         {
             Log.Info($"Connection approved [{connection?.Guid}].");
-            OnConnectionApproved?.Invoke(connection);
+            OnConnectionApproved?.Invoke(sender, connection);
         }
 
-        protected virtual void HandleInterfaceOnDisconnected(IConnection connection)
+        protected virtual void HandleInterfaceOnDisconnected(INetworkLayerInterface sender, IConnection connection)
         {
             Log.Info($"Disconnected [{connection?.Guid}].");
             IsConnected = false;
-            OnDisconnected?.Invoke(connection);
+            OnDisconnected?.Invoke(sender, connection);
         }
 
         internal void AssignGuid(Guid guid) => mGuid = guid;

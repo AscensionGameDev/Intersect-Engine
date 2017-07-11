@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Intersect.Collections;
 using Intersect.Enums;
+using Intersect.Logging;
 
 namespace Intersect.Models
 {
     public static class LookupUtils
     {
+        private const string sLock = "";
+
         private static Dictionary<Type, DatabaseObjectLookup> sLookupMap;
         private static Dictionary<Type, GameObjectType> sEnumMap;
         
@@ -16,12 +19,31 @@ namespace Intersect.Models
 
         public static DatabaseObjectLookup GetLookup(Type type)
         {
-            if (type == null) throw new ArgumentNullException();
-            if (LookupMap == null) throw new ArgumentNullException();
+            if (type == null) throw new ArgumentNullException(nameof(type));
+            if (LookupMap == null) throw new ArgumentNullException(nameof(LookupMap));
 
-            if (!LookupMap.ContainsKey(type)) LookupMap[type] = new DatabaseObjectLookup();
+            lock (sLock)
+            {
+                DatabaseObjectLookup lookup;
+                try
+                {
+                    if (!LookupMap.ContainsKey(type))
+                    {
+                        lookup = new DatabaseObjectLookup();
+                        LookupMap[type] = lookup;
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Log.Error($"Impossible NPE... [LookupMap={LookupMap}, type={type}]");
+                    if (exception.InnerException != null) Log.Error(exception.InnerException);
+                    Log.Error(exception);
+                    Log.Error($"{nameof(LookupMap)}={LookupMap},{nameof(type)}={type}");
+                    throw;
+                }
 
-            return LookupMap[type];
+                return LookupMap[type];
+            }
         }
 
         public static GameObjectType GetGameObjectType(Type type)

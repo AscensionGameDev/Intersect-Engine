@@ -6,8 +6,11 @@ namespace Intersect.Logging
 {
     public static class Log
     {
-        public static string SuggestFilename(DateTime? time = null)
-            => $"{Path.GetFileNameWithoutExtension(Process.GetCurrentProcess().MainModule.FileName)}-{time ?? DateTime.Now:yyyy_MM_dd-HH_mm_ss_fff}.log";
+        private static string ExecutableName =>
+            Path.GetFileNameWithoutExtension(Process.GetCurrentProcess().MainModule.FileName);
+
+    public static string SuggestFilename(DateTime? time = null)
+            => $"{ExecutableName}-{time ?? DateTime.Now:yyyy_MM_dd-HH_mm_ss_fff}.log";
 
         #region Global
 
@@ -21,7 +24,7 @@ namespace Intersect.Logging
                 {
                     sGlobal = new Logger();
                     sGlobal.AddOutput(new FileOutput());
-                    sGlobal.AddOutput(new FileOutput("errors.log", LogLevel.Error));
+                    sGlobal.AddOutput(new FileOutput($"errors-{ExecutableName}.log", LogLevel.Error));
                     // TODO: Add console output
                 }
 

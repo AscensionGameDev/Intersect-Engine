@@ -47,12 +47,12 @@ namespace Intersect.Network
             mNetworkLayerInterfaces.Add(networkLayerInterface);
         }
 
-        private void HandleInboundMessageAvailable(INetworkLayerInterface sender, object packet)
+        private void HandleInboundMessageAvailable(INetworkLayerInterface sender)
         {
             if (sender == null) throw new ArgumentNullException(nameof(sender));
-            if (!sender.TryGetInboundBuffer(out IBuffer buffer, out IConnection connection, packet))
+            if (!sender.TryGetInboundBuffer(out IBuffer buffer, out IConnection connection))
             {
-                Log.Error($"Failed to obtain packet when told a packet was available. [packet={packet}]");
+                Log.Error($"Failed to obtain packet when told a packet was available.");
                 return;
             }
 
@@ -103,11 +103,11 @@ namespace Intersect.Network
             connection?.HandleDisconnected();
         }
 
-        protected void HandleInboundData(IBuffer buffer, IConnection connection)
+        private void HandleInboundData(IBuffer buffer, IConnection connection)
         {
             Debug.Assert(PacketFactories != null, "PacketFactories != null");
 
-            if (buffer == null) return;
+            if (buffer == default(IBuffer)) return;
             if (buffer.Length < 1) return;
 
             //if (!buffer.Read(out byte[] guidData, 16)) return;
@@ -147,7 +147,7 @@ namespace Intersect.Network
                 return;
             }
 
-            Log.Diagnostic($"Handled inbound {packet.Code} successfully.");
+            //Log.Diagnostic($"Handled inbound {packet.Code} successfully.");
         }
 
         protected abstract IDictionary<TKey, TValue> CreateDictionaryLegacy<TKey, TValue>();
@@ -186,7 +186,10 @@ namespace Intersect.Network
         public abstract bool Send(IPacket packet);
 
         public bool Send(Guid guid, IPacket packet)
-            => Send(FindConnection(guid), packet);
+        {
+            var connection = FindConnection(guid);
+            return connection != null && Send(connection, packet);
+        }
 
         public abstract bool Send(IConnection connection, IPacket packet);
 
@@ -200,7 +203,7 @@ namespace Intersect.Network
             Debug.Assert(ConnectionLookup != null, "ConnectionLookup != null");
             if (ConnectionLookup.TryGetValue(guid, out IConnection connection)) return connection;
 
-            Log.Debug($"Could not find connection for guid {guid}.");
+            Log.Diagnostic($"Could not find connection for guid {guid}.");
             return null;
         }
 
@@ -232,6 +235,11 @@ namespace Intersect.Network
         protected void StartInterfaces()
         {
             mNetworkLayerInterfaces?.ForEach(networkLayerInterface => networkLayerInterface?.Start());
+        }
+
+        protected void SendPacket(IPacket packet, IConnection connection, TransmissionMode transmissionMode = TransmissionMode.All)
+        {
+            mNetworkLayerInterfaces?.ForEach(networkLayerInterface => networkLayerInterface?.SendPacket(packet, connection, transmissionMode));
         }
 
         protected void SendPacket(IPacket packet, ICollection<IConnection> connections, TransmissionMode transmissionMode = TransmissionMode.All)

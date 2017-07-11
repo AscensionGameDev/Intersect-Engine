@@ -44,12 +44,12 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
 
-            bf.ReadInteger();
+            var length = bf.ReadInteger();
 
             //Compressed?
             if (bf.ReadByte() == 1)
             {
-                packet = bf.ReadBytes(bf.Length());
+                packet = bf.ReadBytes(length);
                 var data = Compression.DecompressPacket(packet);
                 bf = new ByteBuffer();
                 bf.WriteBytes(data);
@@ -332,10 +332,12 @@ namespace Intersect.Server.Classes.Networking
                             PacketSender.SendServerConfig(client);
                             if (Database.LoadCharacter(client))
                             {
+                                Log.Debug($"Client connected ({client.MyAccount}->{client.Entity?.MyName})");
                                 PacketSender.SendJoinGame(client);
                             }
                             else
                             {
+                                Log.Debug($"Client connected ({client.MyAccount}->[editor])");
                                 PacketSender.SendGameObjects(client, GameObjectType.Class);
                                 PacketSender.SendCreateCharacter(client);
                             }
@@ -419,7 +421,8 @@ namespace Intersect.Server.Classes.Networking
             }
             else
             {
-                PacketSender.SendEntityPositionTo(client, client.Entity);
+                Log.Debug($"Detected speedhack for [{client.MyAccount}->{client.Entity.MyName}]");
+                //PacketSender.SendEntityPositionTo(client, client.Entity);
                 return;
             }
             if (map != client.Entity.CurrentMap || x != client.Entity.CurrentX || y != client.Entity.CurrentY)

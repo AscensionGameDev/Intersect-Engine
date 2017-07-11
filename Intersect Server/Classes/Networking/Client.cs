@@ -88,13 +88,13 @@ namespace Intersect.Server.Classes.Networking
             if (packetData.Length > 800)
             {
                 packetData = Compression.CompressPacket(packetData);
-                buff.WriteInteger(packetData.Length + 1);
+                buff.WriteInteger(packetData.Length);
                 buff.WriteByte(1); //Compressed
                 buff.WriteBytes(packetData);
             }
             else
             {
-                buff.WriteInteger(packetData.Length + 1);
+                buff.WriteInteger(packetData.Length);
                 buff.WriteByte(0); //Not Compressed
                 buff.WriteBytes(packetData);
             }
@@ -244,13 +244,20 @@ namespace Intersect.Server.Classes.Networking
         public static Client CreateBeta4Client(IConnection connection)
         {
             var client = new Client(connection);
-            Globals.Entities[client.EntityIndex] = new Player(client.EntityIndex, client);
-            lock (Globals.ClientLock)
+            try
             {
-                Globals.Clients.Add(client);
-                Globals.ClientLookup.Add(connection.Guid, client);
+                Globals.Entities[client.EntityIndex] = new Player(client.EntityIndex, client);
+                lock (Globals.ClientLock)
+                {
+                    Globals.Clients.Add(client);
+                    Globals.ClientLookup.Add(connection.Guid, client);
+                }
+                return client;
             }
-            return client;
+            finally
+            {
+                client.SendShit();
+            }
         }
 
         public static void RemoveBeta4Client(IConnection connection)
