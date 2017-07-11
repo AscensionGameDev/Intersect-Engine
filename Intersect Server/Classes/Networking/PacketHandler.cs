@@ -337,16 +337,15 @@ namespace Intersect.Server.Classes.Networking
                             Globals.Entities[index] = new Player(index, client);
                             client.Entity = (Player) Globals.Entities[index];
                             PacketSender.SendServerConfig(client);
-
-							//Character selection if more than one.
-							if (Options.MaxCharacters > 1)
+                            Database.GetCharacters(client);
+                            //Character selection if more than one.
+                            if (Options.MaxCharacters > 1)
 							{
-								Database.GetCharacters(client);
 								PacketSender.SendPlayerCharacters(client);
 							}
 							else
 							{
-								if (Database.LoadCharacter(client))
+								if (client.Characters.Count > 0 &&  Database.LoadCharacter(client,client.Characters[0].Slot))
 								{
 									PacketSender.SendJoinGame(client);
 								}
@@ -1104,7 +1103,7 @@ namespace Intersect.Server.Classes.Networking
 					}
 					if (foundChar == false)
 					{
-						player.CharSlot = i;
+						player.MyId = i;
 						space = true;
 						break;
 					}
@@ -2599,8 +2598,10 @@ namespace Intersect.Server.Classes.Networking
 			var bf = new ByteBuffer();
 			bf.WriteBytes(packet);
 			var charSlot = bf.ReadInteger();
-			Database.DeleteCharacterSlot(client, charSlot);
-			PacketSender.SendLoginError(client, Strings.Get("account", "deletechar"));
+			Database.DeleteCharacter(client, charSlot);
+		    Database.GetCharacters(client);
+            PacketSender.SendLoginError(client, Strings.Get("account", "deletechar"), Strings.Get("account", "deleted"));
+            PacketSender.SendPlayerCharacters(client);
 			bf.Dispose();
 		}
 

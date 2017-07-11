@@ -423,7 +423,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (_nameTextbox.Text.Trim().Length > 0)
             {
                 var confirmWindow = new InputBox(Strings.Get("admin", "unmutecaption", _nameTextbox.Text),
-                    Strings.Get("admin", "unmuteprompt", _nameTextbox.Text), true, UnmuteUser, null, -1, false);
+                    Strings.Get("admin", "unmuteprompt", _nameTextbox.Text), true, InputBox.InputType.YesNo, UnmuteUser, null, -1);
             }
         }
 
@@ -432,7 +432,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (_nameTextbox.Text.Trim().Length > 0)
             {
                 var confirmWindow = new InputBox(Strings.Get("admin", "unbancaption", _nameTextbox.Text),
-                    Strings.Get("admin", "unbanprompt", _nameTextbox.Text), true, UnbanUser, null, -1, false);
+                    Strings.Get("admin", "unbanprompt", _nameTextbox.Text), true, InputBox.InputType.YesNo, UnbanUser, null, -1);
             }
         }
 

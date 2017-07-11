@@ -202,14 +202,14 @@ namespace Intersect_Client.Classes.UI.Game
             if (_selectedQuest != null)
             {
                 new InputBox(Strings.Get("questlog", "abandontitle", _selectedQuest.Name),
-                    Strings.Get("questlog", "abandonprompt", _selectedQuest.Name), true, AbandonQuest, null,
-                    _selectedQuest.Index, false);
+                    Strings.Get("questlog", "abandonprompt", _selectedQuest.Name), true, InputBox.InputType.YesNo, AbandonQuest, null,
+                    _selectedQuest.Index);
             }
         }
 
         void AbandonQuest(object sender, EventArgs e)
         {
-            PacketSender.SendCancelQuest(((InputBox) sender).Slot);
+            PacketSender.SendCancelQuest(((InputBox) sender).UserData);
         }
 
         private void _backButton_Clicked(Base sender, ClickedEventArgs arguments)

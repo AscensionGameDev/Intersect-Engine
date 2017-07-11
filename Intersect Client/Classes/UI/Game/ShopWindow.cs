@@ -190,7 +190,7 @@ namespace Intersect_Client.Classes.UI.Game
                 if (item.IsStackable())
                 {
                     InputBox iBox = new InputBox(Strings.Get("shop", "buyitem"),
-                        Strings.Get("shop", "buyitemprompt", item.Name), true, BuyItemInputBoxOkay, null, _mySlot, true);
+                        Strings.Get("shop", "buyitemprompt", item.Name), true,InputBox.InputType.TextInput, BuyItemInputBoxOkay, null, _mySlot);
                 }
                 else
                 {
@@ -204,7 +204,7 @@ namespace Intersect_Client.Classes.UI.Game
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendBuyItem(((InputBox) sender).Slot, value);
+                PacketSender.SendBuyItem(((InputBox) sender).UserData, value);
             }
         }
 

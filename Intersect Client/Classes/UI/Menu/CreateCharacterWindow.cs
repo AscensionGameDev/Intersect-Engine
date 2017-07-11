@@ -376,7 +376,7 @@ namespace Intersect_Client.Classes.UI.Menu
             }
             else
             {
-                Gui.MsgboxErrors.Add(Strings.Get("charactercreation", "invalidname"));
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("charactercreation", "invalidname")));
             }
         }
 

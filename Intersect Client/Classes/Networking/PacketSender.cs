@@ -344,7 +344,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.PartyAcceptInvite);
-            bf.WriteInteger((int) ((InputBox) sender).Slot);
+            bf.WriteInteger((int) ((InputBox) sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -352,7 +352,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.PartyDeclineInvite);
-            bf.WriteInteger((int) ((InputBox) sender).Slot);
+            bf.WriteInteger((int) ((InputBox) sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -424,7 +424,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.TradeRequestAccept);
-            bf.WriteInteger((int) ((InputBox) sender).Slot);
+            bf.WriteInteger((int) ((InputBox) sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -432,7 +432,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.TradeRequestDecline);
-            bf.WriteInteger((int) ((InputBox) sender).Slot);
+            bf.WriteInteger((int) ((InputBox) sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -497,7 +497,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.FriendRequestAccept);
-            bf.WriteInteger((int)((InputBox)sender).Slot);
+            bf.WriteInteger((int)((InputBox)sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -505,7 +505,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.FriendRequestDecline);
-            bf.WriteInteger((int)((InputBox)sender).Slot);
+            bf.WriteInteger((int)((InputBox)sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
 

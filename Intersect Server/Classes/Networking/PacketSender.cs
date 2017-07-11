@@ -9,6 +9,7 @@ using Intersect.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
@@ -824,11 +825,12 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendLoginError(Client client, string error)
+        public static void SendLoginError(Client client, string error, string header = "")
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.LoginError);
             bf.WriteString(error);
+            bf.WriteString(header);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1007,21 +1009,34 @@ namespace Intersect.Server.Classes.Networking
 		{
 			var bf = new ByteBuffer();
 			bf.WriteLong((int)ServerPackets.PlayerCharacters);
-			bf.WriteLong(client.Characters.Count);
-			for (int i = 0; i < client.Characters.Count; i++)
-			{
-				bf.WriteString(client.Characters[i].Name);
-				bf.WriteString(client.Characters[i].Sprite);
-				bf.WriteString(client.Characters[i].Face);
-				bf.WriteInteger(client.Characters[i].Level);
-				bf.WriteInteger(client.Characters[i].Class);
+		    if (client.Characters.Count < Options.MaxCharacters)
+		    {
+		        bf.WriteInteger(client.Characters.Count + 1);
+		    }
+		    else
+		    {
+                bf.WriteInteger(client.Characters.Count);
+            }
+		    foreach (var character in client.Characters)
+		    {
+		        bf.WriteInteger(character.Slot);
+                bf.WriteString(character.Name);
+                bf.WriteString(character.Sprite);
+                bf.WriteString(character.Face);
+                bf.WriteInteger(character.Level);
+                bf.WriteString(ClassBase.GetName(character.Class));
 
-				for (int n = 0; n < Options.EquipmentSlots.Count; n++)
-				{
-					bf.WriteInteger(client.Characters[i].Equipment[n]);
-				}
-			}
-			client.SendPacket(bf.ToArray());
+
+                for (int n = 0; n < Options.EquipmentSlots.Count; n++)
+                {
+                    bf.WriteString(character.Equipment[n]);
+                }
+            }
+            if (client.Characters.Count < Options.MaxCharacters)
+            {
+                bf.WriteInteger(-1);
+            }
+            client.SendPacket(bf.ToArray());
 			bf.Dispose();
 		}
 

@@ -815,9 +815,10 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var error = bf.ReadString();
+            var header = bf.ReadString();
             GameFade.FadeIn();
             Globals.WaitingOnServer = false;
-            Gui.MsgboxErrors.Add(error);
+            Gui.MsgboxErrors.Add(new KeyValuePair<string,string>(header,error));
             Gui.MenuUI.Reset();
         }
 
@@ -1314,8 +1315,8 @@ namespace Intersect_Client.Classes.Networking
             string leader = bf.ReadString();
             int leaderId = bf.ReadInteger();
             InputBox iBox = new InputBox(Strings.Get("parties", "partyinvite"),
-                Strings.Get("parties", "inviteprompt", leader), true, PacketSender.SendPartyAccept,
-                PacketSender.SendPartyDecline, leaderId, false);
+                Strings.Get("parties", "inviteprompt", leader), true, InputBox.InputType.YesNo, PacketSender.SendPartyAccept,
+                PacketSender.SendPartyDecline, leaderId);
             bf.Dispose();
         }
 
@@ -1464,8 +1465,8 @@ namespace Intersect_Client.Classes.Networking
             string partner = bf.ReadString();
             int partnerId = bf.ReadInteger();
             InputBox iBox = new InputBox(Strings.Get("trading", "traderequest"),
-                Strings.Get("trading", "requestprompt", partner), true, PacketSender.SendTradeRequestAccept,
-                PacketSender.SendTradeRequestDecline, partnerId, false);
+                Strings.Get("trading", "requestprompt", partner), true, InputBox.InputType.YesNo, PacketSender.SendTradeRequestAccept,
+                PacketSender.SendTradeRequestDecline, partnerId);
             bf.Dispose();
         }
 
@@ -1589,8 +1590,8 @@ namespace Intersect_Client.Classes.Networking
             string partner = bf.ReadString();
             int partnerId = bf.ReadInteger();
             InputBox iBox = new InputBox(Strings.Get("friends", "request"),
-                Strings.Get("friends", "requestprompt", partner), true, PacketSender.SendFriendRequestAccept,
-                PacketSender.SendFriendRequestDecline, partnerId, false);
+                Strings.Get("friends", "requestprompt", partner), true, InputBox.InputType.YesNo, PacketSender.SendFriendRequestAccept,
+                PacketSender.SendFriendRequestDecline, partnerId);
             bf.Dispose();
         }
 
@@ -1600,12 +1601,24 @@ namespace Intersect_Client.Classes.Networking
 			var bf = new ByteBuffer();
 			bf.WriteBytes(packet);
 
-			int count = bf.ReadInteger();
+			int charCount = bf.ReadInteger();
 
-			for (int i = 0; i < count; i++)
+			for (int i = 0; i < charCount; i++)
 			{
-				Characters.Add(new Character(bf.ReadInteger(), bf.ReadString(), bf.ReadString(), bf.ReadString(),
-											bf.ReadInteger(), bf.ReadInteger()));
+			    var index = bf.ReadInteger();
+			    if (index > -1)
+			    {
+                    Characters.Add(new Character(index, bf.ReadString(), bf.ReadString(), bf.ReadString(),
+                                            bf.ReadInteger(), bf.ReadString()));
+			        for (int x = 0; x < Options.EquipmentSlots.Count; x++)
+			        {
+			            Characters[Characters.Count-1].Equipment[x] = bf.ReadString();
+			        }
+                }
+			    else
+			    {
+			        Characters.Add(new Character(-1));
+			    }
 			}
 
 			bf.Dispose();

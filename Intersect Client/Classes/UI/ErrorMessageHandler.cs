@@ -7,6 +7,7 @@ using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.UI.Game;
 
 namespace Intersect_Client.Classes.UI
 {
@@ -30,7 +31,7 @@ namespace Intersect_Client.Classes.UI
         {
             if (Gui.MsgboxErrors.Count > 0)
             {
-                _errors.Add(new GUIError(_gameCanvas, _menuCanvas, Gui.MsgboxErrors[0], Strings.Get("errors", "title")));
+                _errors.Add(new GUIError(_gameCanvas, _menuCanvas, Gui.MsgboxErrors[0].Value, !string.IsNullOrEmpty(Gui.MsgboxErrors[0].Key) ? Gui.MsgboxErrors[0].Key : Strings.Get("errors", "title")));
                 Gui.MsgboxErrors.RemoveAt(0);
             }
             for (int i = 0; i < _errors.Count; i++)
@@ -45,7 +46,7 @@ namespace Intersect_Client.Classes.UI
 
     class GUIError
     {
-        List<WindowControl> errorWindows = new List<WindowControl>();
+        List<InputBox> errorWindows = new List<InputBox>();
 
         public GUIError(Canvas _gameCanvas, Canvas _menuCanvas, string error, string header)
         {
@@ -55,74 +56,15 @@ namespace Intersect_Client.Classes.UI
 
         private void CreateErrorWindow(Canvas canvas, string error, string header)
         {
-            var window = new WindowControl(canvas, header);
-            window.DisableResizing();
-            window.SetSize(760, 150);
-            window.SetTitleBarHeight(24);
-            window.SetCloseButtonSize(20, 20);
-            window.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "erroractive.png"),
-                WindowControl.ControlState.Active);
-            window.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "errorinactive.png"),
-                WindowControl.ControlState.Inactive);
-            window.SetCloseButtonImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"),
-                Button.ControlState.Normal);
-            window.SetCloseButtonImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"),
-                Button.ControlState.Hovered);
-            window.SetCloseButtonImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"),
-                Button.ControlState.Clicked);
-            window.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 14));
-
-            var text = Gui.WrapText(error, 740, Globals.ContentManager.GetFont(Gui.ActiveFont, 16));
-            int y = 2;
-            foreach (string s in text)
-            {
-                var label = new Label(window)
-                {
-                    Text = s,
-                    TextColorOverride = new Color(255, 220, 220, 220),
-                    Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 16)
-                };
-                label.SetPosition(0, y);
-                y += label.Height;
-                Align.CenterHorizontally(label);
-            }
-
-            var m_Button = new Button(window)
-            {
-                Text = "Ok" // todo: parametrize buttons
-            };
-            m_Button.Clicked += OkayClicked;
-            m_Button.Margin = Margin.Four;
-            m_Button.SetSize(86, 41);
-            m_Button.SetPosition(window.Width / 2 - m_Button.Width / 2, window.Height - 50 - m_Button.Height);
-            m_Button.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonnormal.png"),
-                Button.ControlState.Normal);
-            m_Button.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonhover.png"),
-                Button.ControlState.Hovered);
-            m_Button.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonclicked.png"),
-                Button.ControlState.Clicked);
-            m_Button.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
-            m_Button.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
-            m_Button.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            m_Button.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 16);
-
-            Align.Center(window);
+            var window = new InputBox(header, error, false, InputBox.InputType.OkayOnly, OkayClicked, null, -1, canvas);
             errorWindows.Add(window);
-            window.MakeModal(true);
         }
 
-        private void OkayClicked(Base control, EventArgs args)
+        private void OkayClicked(Object sender, EventArgs args)
         {
-            foreach (WindowControl window in errorWindows)
+            foreach (InputBox window in errorWindows)
             {
-                window.RemoveModal();
-                window.Parent.RemoveChild(window, false);
+                window.Dispose();
             }
         }
 

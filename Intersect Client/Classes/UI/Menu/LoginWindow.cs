@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using Intersect.Localization;
@@ -169,18 +170,18 @@ namespace Intersect_Client.Classes.UI.Menu
                         }
                         else
                         {
-                            Gui.MsgboxErrors.Add(Strings.Get("errors", "passwordinvalid"));
+                            Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("errors", "passwordinvalid")));
                         }
                     }
                 }
                 else
                 {
-                    Gui.MsgboxErrors.Add(Strings.Get("errors", "usernameinvalid"));
+                    Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("errors", "usernameinvalid")));
                 }
             }
             else
             {
-                Gui.MsgboxErrors.Add(Strings.Get("errors", "notconnected"));
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("errors", "notconnected")));
             }
         }
 

@@ -151,7 +151,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             InputBox iBox = new InputBox(Strings.Get("friends", "removefriend"),
                         Strings.Get("friends", "removefriendprompt", TempName),
-                        true, RemoveFriend, null, 0, false);
+                        true, InputBox.InputType.YesNo, RemoveFriend, null, 0);
         }
 
         private void RemoveFriend(Object sender, EventArgs e)

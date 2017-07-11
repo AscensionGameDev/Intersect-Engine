@@ -155,6 +155,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _loginWindow.Hide();
             _registerWindow.Hide();
             _optionsWindow.Hide();
+            _selectCharacterWindow.Hide();
             _createCharacterWindow.Show();
             _createCharacterWindow.Init();
             HasMadeCharacterCreation = true;

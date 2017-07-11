@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
@@ -146,27 +147,27 @@ namespace Intersect_Client.Classes.UI.Menu
                             }
                             else
                             {
-                                Gui.MsgboxErrors.Add(Strings.Get("registration", "emailinvalid"));
+                                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("",Strings.Get("registration", "emailinvalid")));
                             }
                         }
                         else
                         {
-                            Gui.MsgboxErrors.Add(Strings.Get("errors", "passwordinvalid"));
+                            Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("errors", "passwordinvalid")));
                         }
                     }
                     else
                     {
-                        Gui.MsgboxErrors.Add(Strings.Get("registration", "passwordmatch"));
+                        Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("registration", "passwordmatch")));
                     }
                 }
                 else
                 {
-                    Gui.MsgboxErrors.Add(Strings.Get("errors", "usernameinvalid"));
+                    Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("errors", "usernameinvalid")));
                 }
             }
             else
             {
-                Gui.MsgboxErrors.Add(Strings.Get("errors", "notconnected"));
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("errors", "notconnected")));
             }
         }
 

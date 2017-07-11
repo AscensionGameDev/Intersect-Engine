@@ -25,7 +25,7 @@ namespace Intersect_Client.Classes.UI
         private static Canvas _gameCanvas;
         private static Canvas _menuCanvas;
         private static TexturedBase _gwenSkin;
-        public static List<string> MsgboxErrors = new List<string>();
+        public static List<KeyValuePair<string,string>> MsgboxErrors = new List<KeyValuePair<string, string>>();
         public static bool SetupHandlers;
         public static GameGuiBase GameUI;
         public static MenuGuiBase MenuUI;
@@ -95,37 +95,45 @@ namespace Intersect_Client.Classes.UI
                 GameUI = new GameGuiBase(_gameCanvas);
             }
 
+            if (GameUI == null) LoadRootUIData(_menuCanvas, "MainMenu.xml");
+            if (MenuUI == null) LoadRootUIData(_gameCanvas, "InGame.xml");
+            SaveRootUIData(_gameCanvas, "InGame.xml");
+
+            GwenInitialized = true;
+        }
+
+        public static void SaveRootUIData(IntersectClientExtras.Gwen.Control.Base control, string xmlname)
+        {
+            //Create XML Doc with UI 
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.NewLineOnAttributes = true;
+
+            using (XmlWriter writer = XmlWriter.Create(Path.Combine("resources","gui", xmlname), settings))
+            {
+                writer.WriteStartDocument();
+                control.WriteBaseUIXml(writer, false);
+                writer.WriteEndDocument();
+            }
+        }
+
+        public static void LoadRootUIData(IntersectClientExtras.Gwen.Control.Base control, string xmlname)
+        {
             XmlReaderSettings readerSettings = new XmlReaderSettings();
             readerSettings.IgnoreWhitespace = true;
             readerSettings.IgnoreComments = true;
-            using (XmlReader reader = XmlReader.Create(Path.Combine("resources","ui.xml"), readerSettings))
+            if (!File.Exists(Path.Combine("resources","gui", xmlname))) return;
+            using (XmlReader reader = XmlReader.Create(Path.Combine("resources","gui", xmlname), readerSettings))
             {
                 while (reader.Read())
                 {
-                    if (reader.Name == "MainMenu")
+                    if (reader.Name == control.Name)
                     {
-                        _menuCanvas.LoadUIXml(reader);
-                        _menuCanvas.ProcessAlignments();
+                        control.LoadUIXml(reader);
+                        control.ProcessAlignments();
                     }
                 }
             }
-
-            if (GameUI == null)
-            {
-                //Create XML Doc with UI 
-                XmlWriterSettings settings = new XmlWriterSettings();
-                settings.Indent = true;
-                settings.NewLineOnAttributes = true;
-
-                using (XmlWriter writer = XmlWriter.Create(Path.Combine("resources", "ui.xml"), settings))
-                {
-                    writer.WriteStartDocument();
-                    _menuCanvas.WriteBaseUIXml(writer, false);
-                    writer.WriteEndDocument();
-                }
-            }
-
-            GwenInitialized = true;
         }
 
         public static void DestroyGwen()
