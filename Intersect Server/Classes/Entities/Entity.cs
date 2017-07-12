@@ -825,9 +825,11 @@ namespace Intersect.Server.Classes.Entities
                 Attack(enemy, damageHealth, damageMana, (DamageType) spellBase.DamageType, (Stats) spellBase.ScalingStat,
                     spellBase.Scaling, spellBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
 
+                var statBuffTime = -1;
                 for (int i = 0; i < (int) Stats.StatCount; i++)
                 {
                     enemy.Stat[i].AddBuff(new EntityBuff(spellBase, spellBase.StatDiff[i],  (spellBase.Data2 * 100)));
+                    if (spellBase.StatDiff[i] != 0 && spellBase.Data2 * 100 != null) statBuffTime = spellBase.Data2 * 100;
                 }
 
                 //Handle other status effects
@@ -835,6 +837,9 @@ namespace Intersect.Server.Classes.Entities
                 {
                     new StatusInstance(enemy,spellBase,spellBase.Data3, (spellBase.Data2 * 100),spellBase.Data5);
                     PacketSender.SendActionMsg(enemy, Strings.Get("combat","status" + spellBase.Data3), CustomColors.Status);
+                }
+                else {
+                    if (statBuffTime > -1) new StatusInstance(enemy,spellBase,-1,statBuffTime,"");
                 }
 
                 //Handle DoT/HoT spells]
@@ -1466,6 +1471,8 @@ namespace Intersect.Server.Classes.Entities
 				bf.WriteInteger(status.Value._spell.Index);
 				bf.WriteInteger(status.Value.Type);
 				bf.WriteString(status.Value.Data);
+                bf.WriteInteger((int)(status.Value.Duration - Globals.System.GetTimeMs()));
+                bf.WriteInteger((int)(status.Value.Duration - status.Value.StartTime));
             }
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
@@ -1648,6 +1655,7 @@ namespace Intersect.Server.Classes.Entities
         public string Data = "";
         public SpellBase _spell;
         public long Duration;
+        public long StartTime;
         private Entity entity;
         public int Type;
 
@@ -1657,6 +1665,7 @@ namespace Intersect.Server.Classes.Entities
             _spell = spell;
             Type = type;
             Duration = Globals.System.GetTimeMs() + duration;
+            StartTime = Globals.System.GetTimeMs();
             Data = data;
             if (en.Statuses.ContainsKey(spell))
             {

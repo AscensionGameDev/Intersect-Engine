@@ -236,7 +236,7 @@
         <string id="alreadydenied">Your party invitation has already been rejected!</string>
         <string id="busy">{00} is busy. Please try again later!</string>
         <string id="declined">{00} has declined your party invitation!</string>
-	<string id="notinparty">You are not in a party.</string>
+				<string id="notinparty">You are not in a party.</string>
     </Parties>
     <Friends>
         <string id="accept">{00} has accepted your friend request!</string>
@@ -323,6 +323,7 @@
         <string id="admin">[ADMIN] {00}: {01}</string>
         <string id="party">[PARTY] {00}: {01}</string>
         <string id="local">{00}: {01}</string>
+				<string id="localcmd">/global</string>
         <string id="globalcmd">/global</string>
         <string id="allcmd">/all</string>
         <string id="announcementcmd">/announcement</string>

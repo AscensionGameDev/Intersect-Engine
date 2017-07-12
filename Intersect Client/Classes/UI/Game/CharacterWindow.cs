@@ -36,6 +36,9 @@ namespace Intersect_Client.Classes.UI.Game
 
         private Label _characterName;
         private ImagePanel _characterPortrait;
+        public ImagePanel[] _paperdollPanels;
+        public string[] _paperdollTextures;
+
 
         private string _characterPortraitImg = "";
         //Controls
@@ -109,6 +112,15 @@ namespace Intersect_Client.Classes.UI.Game
             _characterPortrait = new ImagePanel(_characterContainer);
             _characterPortrait.SetSize(100, 100);
             _characterPortrait.SetPosition(200 / 2 - 100 / 2, 36);
+
+            _paperdollPanels = new ImagePanel[Options.EquipmentSlots.Count];
+            _paperdollTextures = new string[Options.EquipmentSlots.Count];
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+            {
+                _paperdollPanels[i] = new ImagePanel(_characterContainer);
+                _paperdollTextures[i] = "";
+                _paperdollPanels[i].Hide();
+            }
 
             Label equipmentLabel = new Label(_characterWindow);
             equipmentLabel.SetPosition(4, 126);
@@ -334,6 +346,10 @@ namespace Intersect_Client.Classes.UI.Game
                 _characterPortrait.SizeToContents();
                 Align.Center(_characterPortrait);
                 _characterPortrait.IsHidden = false;
+                for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                {
+                    _paperdollPanels[i].Hide();
+                }
             }
             else if (Globals.Me.MySprite != "" && Globals.Me.MySprite != _currentSprite && entityTex != null)
             {
@@ -342,10 +358,65 @@ namespace Intersect_Client.Classes.UI.Game
                 _characterPortrait.SizeToContents();
                 Align.Center(_characterPortrait);
                 _characterPortrait.IsHidden = false;
+                for (int z = 0; z < Options.PaperdollOrder[1].Count; z++)
+                {
+                    var paperdoll = "";
+                    if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1)
+                    {
+                        var Equipment = Globals.Me.Equipment;
+                        if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
+                            Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
+                            Options.MaxInvItems)
+                        {
+                            var itemNum = Globals.Me.Inventory[
+                                    Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])
+                                    ]]
+                                .ItemNum;
+                            if (ItemBase.Lookup.Get<ItemBase>(itemNum) != null)
+                            {
+                                var itemdata = ItemBase.Lookup.Get<ItemBase>(itemNum);
+                                if (Globals.Me.Gender == 0)
+                                {
+                                    paperdoll = itemdata.MalePaperdoll;
+                                }
+                                else
+                                {
+                                    paperdoll = itemdata.FemalePaperdoll;
+                                }
+                            }
+                        }
+                    }
+                    if (paperdoll == "" && _paperdollTextures[z] != "")
+                    {
+                        _paperdollPanels[z].Texture = null;
+                        _paperdollPanels[z].Hide();
+                        _paperdollTextures[z] = "";
+                    }
+                    else if (paperdoll != "" && paperdoll != _paperdollTextures[z])
+                    {
+                        var _paperdollTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll,
+                            paperdoll);
+                        _paperdollPanels[z].Texture = _paperdollTex;
+                        _paperdollPanels[z].SetTextureRect(0, 0,
+                            _paperdollPanels[z].Texture.GetWidth() / 4,
+                            _paperdollPanels[z].Texture.GetHeight() / 4);
+                        _paperdollPanels[z].SetSize(_paperdollPanels[z].Texture.GetWidth() / 4,
+                            _paperdollPanels[z].Texture.GetHeight() / 4);
+                        _paperdollPanels[z].SetPosition(
+                            _characterContainer.Width / 2 - _paperdollPanels[z].Width / 2,
+                            _characterContainer.Height / 2 - _paperdollPanels[z].Height / 2);
+                        _paperdollPanels[z].Show();
+                        _paperdollTextures[z] = paperdoll;
+                    }
+                }
             }
             else if (Globals.Me.MySprite != _currentSprite && Globals.Me.Face != _currentSprite)
             {
                 _characterPortrait.IsHidden = true;
+                for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                {
+                    _paperdollPanels[i].Hide();
+                }
             }
 
             _attackLabel.SetText(Strings.Get("character", "stat0", Strings.Get("combat", "stat0"),

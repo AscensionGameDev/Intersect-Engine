@@ -77,22 +77,6 @@ namespace Intersect_Client.Classes.UI.Game
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowhover.png"),
                 Button.ControlState.Hovered);
 
-			_channelCombobox = new ComboBox(_chatboxWindow);
-			_channelCombobox.SetPosition(8, 0);
-			_channelCombobox.SetSize(64, 16);
-			_channelCombobox.ShouldDrawBackground = false;
-			_channelCombobox.SetMenuBackgroundColor(new Color(220, 0, 0, 0));
-			_channelCombobox.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
-			_channelCombobox.SetTextColor(new Color(255, 220, 220, 220), Label.ControlState.Hovered);
-			for (int i = 1; i < 4; i++)
-			{
-				_channelCombobox.AddItem(Strings.Get("chatbox", "channel" + i));
-			}
-			//Add admin channel only if power > 0.
-			if (Globals.Me.type > 0)
-			{
-				_channelCombobox.AddItem(Strings.Get("chatbox", "channeladmin"));
-			}
 
 			_chatboxInput = new TextBox(_chatboxWindow);
             _chatboxInput.SetPosition(18, 144);
@@ -103,6 +87,26 @@ namespace Intersect_Client.Classes.UI.Game
             _chatboxInput.ShouldDrawBackground = false;
             _chatboxInput.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Normal);
             Gui.FocusElements.Add(_chatboxInput);
+
+            _channelCombobox = new ComboBox(_chatboxWindow);
+            _channelCombobox.SetPosition(272, 143);
+            _channelCombobox.SetSize(64, 16);
+            _channelCombobox.ShouldDrawBackground = false;
+            _channelCombobox.SetMenuBackgroundColor(new Color(220, 0, 0, 0));
+            _channelCombobox.SetMenuAbove();
+            for (int i = 1; i < 4; i++)
+            {
+                var menuItem = _channelCombobox.AddItem(Strings.Get("chatbox", "channel" + i));
+                menuItem.UserData = i - 1;
+            }
+            //Add admin channel only if power > 0.
+            if (Globals.Me.type > 0)
+            {
+                var menuItem = _channelCombobox.AddItem(Strings.Get("chatbox", "channeladmin"));
+                menuItem.UserData = 3;
+            }
+            _channelCombobox.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
+            _channelCombobox.SetTextColor(new Color(255, 220, 220, 220), Label.ControlState.Hovered);
 
             _chatboxSendButton = new Button(_chatboxWindow);
             _chatboxSendButton.SetSize(49, 18);
@@ -196,23 +200,23 @@ namespace Intersect_Client.Classes.UI.Game
 
         void ChatBoxInput_SubmitPressed(Base sender, EventArgs arguments)
         {
-            if (_chatboxInput.Text.Trim().Length <= 0 || _chatboxInput.Text == GetDefaultInputText())
-            {
-                _chatboxInput.Text = GetDefaultInputText();
-                return;
-            }
-            PacketSender.SendChatMsg(_chatboxInput.Text.Trim(), _channelCombobox.SelectedItem.Text);
-            _chatboxInput.Text = GetDefaultInputText();
+            TrySendMessage();
         }
 
         void ChatBoxSendBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            TrySendMessage();
+        }
+
+        void TrySendMessage()
         {
             if (_chatboxInput.Text.Trim().Length <= 0 || _chatboxInput.Text == GetDefaultInputText())
             {
                 _chatboxInput.Text = GetDefaultInputText();
                 return;
             }
-            PacketSender.SendChatMsg(_chatboxInput.Text.Trim(), _channelCombobox.SelectedItem.Text);
+
+            PacketSender.SendChatMsg(_chatboxInput.Text.Trim(), (int)_channelCombobox.SelectedItem.UserData);
             _chatboxInput.Text = GetDefaultInputText();
         }
 

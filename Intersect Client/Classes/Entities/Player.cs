@@ -704,7 +704,7 @@ namespace Intersect_Client.Classes.Entities
                                             _targetBox = null;
                                         }
                                         if (en.Value != Globals.Me)
-                                            _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 154);
+                                            _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 200);
                                         if (_targetType == 0 && _targetIndex == en.Value.MyIndex)
                                         {
                                             ClearTarget();

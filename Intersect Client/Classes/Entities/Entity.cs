@@ -162,7 +162,7 @@ namespace Intersect_Client.Classes.Entities
             Status.Clear();
             for (int i = 0; i < count; i++)
             {
-                Status.Add(new StatusInstance(bf.ReadInteger(), bf.ReadInteger(), bf.ReadString()));
+                Status.Add(new StatusInstance(bf.ReadInteger(), bf.ReadInteger(), bf.ReadString(), bf.ReadInteger(), bf.ReadInteger()));
             }
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
@@ -177,12 +177,12 @@ namespace Intersect_Client.Classes.Entities
 			{
 				if (MyIndex == Globals.Me.MyIndex)
 				{
-					if (Gui.GameUI != null) { Gui.GameUI._playerBox.updateSpellStatus(); }
+					if (Gui.GameUI != null) { Gui.GameUI._playerBox.UpdateStatuses = true; }
 				}
 				else if (MyIndex == Globals.Me._targetIndex)
 				{
-					Globals.Me._targetBox.updateSpellStatus();
-				}
+					Globals.Me._targetBox.UpdateStatuses = true;
+                }
 			}
 		}
 
@@ -883,12 +883,18 @@ namespace Intersect_Client.Classes.Entities
 		public int SpellNum;
         public string Data = "";
         public int Type = -1;
+        public int TimeRemaining = 0;
+        public int TotalDuration = 1;
+        public long TimeRecevied = 0;
 
-        public StatusInstance(int spellNum, int type, string data)
+        public StatusInstance(int spellNum, int type, string data, int timeRemaining, int totalDuration)
         {
 			SpellNum = spellNum;
 			Type = type;
             Data = data;
+            TimeRemaining = timeRemaining;
+            TotalDuration = totalDuration;
+            TimeRecevied = Globals.System.GetTimeMS();
         }
     }
 

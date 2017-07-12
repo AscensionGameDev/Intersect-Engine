@@ -450,7 +450,7 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var msg = bf.ReadString();
-			string channel = bf.ReadString();
+			string channel = bf.ReadInteger().ToString();
             if (client.Muted == true) //Don't let the toungless toxic kids speak.
             {
                 PacketSender.SendPlayerMsg(client, client.MuteReason);
@@ -468,110 +468,116 @@ namespace Intersect.Server.Classes.Networking
             {
                 string[] splitString = msg.Split();
                 msg = msg.Remove(0, splitString[0].Length + 1); //Chop off the /command at the start of the sentance
-                
-                switch (splitString[0].ToLower())
+                var cmd = splitString[0].ToLower();
+
+                if (cmd == Strings.Get("chat", "localcmd") || cmd == "/0")
                 {
-					case "/local":
-						if (client.Power == 2)
-						{
-							PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.AdminLocalChat, client.Entity.MyName);
-						}
-						else if (client.Power == 1)
-						{
-							PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.ModLocalChat, client.Entity.MyName);
-						}
-						else
-						{
-							PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.LocalChat, client.Entity.MyName);
-						}
-						PacketSender.SendChatBubble(client.Entity.MyIndex, (int)EntityTypes.GlobalEntity, msg, client.Entity.CurrentMap);
-						break;
-					case "/all":
-                    case "/global":
-                        if (client.Power == 2)
-                        {
-                            PacketSender.SendGlobalMsg(Strings.Get("chat","global",client.Entity.MyName,msg), CustomColors.AdminGlobalChat, client.Entity.MyName);
-                        }
-                        else if (client.Power == 1)
-                        {
-                            PacketSender.SendGlobalMsg(Strings.Get("chat", "global", client.Entity.MyName, msg), CustomColors.ModGlobalChat, client.Entity.MyName);
-                        }
-                        else
-                        {
-                            PacketSender.SendGlobalMsg(Strings.Get("chat", "global", client.Entity.MyName, msg), CustomColors.GlobalChat, client.Entity.MyName);
-                        }
-                        break;
-                    case "/announcement":
-                        if (client.Power > 0)
-                        {
-                            PacketSender.SendGlobalMsg(Strings.Get("chat", "announcement", client.Entity.MyName, msg), CustomColors.AnnouncementChat, client.Entity.MyName);
-                        }
-                        break;
-                    case "/admin":
-                        if (client.Power > 0)
-                        {
-                            PacketSender.SendAdminMsg(Strings.Get("chat", "admin", client.Entity.MyName, msg), CustomColors.AdminChat, client.Entity.MyName);
-                        }
-                        break;
-                    case "/party":
-						if (client.Entity.InParty(client.Entity))
-						{
-							PacketSender.SendPartyMsg(client, Strings.Get("party", "announcement", client.Entity.MyName, msg), CustomColors.PartyChat, client.Entity.MyName);
-						}
-						else
-						{
-							PacketSender.SendPlayerMsg(client, Strings.Get("Commands", "invalid"), CustomColors.Error);
-						}
-                        break;
-                    case "/pm":
-                    case "/message":
-                        msg = msg.Remove(0, splitString[1].Length + 1); //Chop off the player name parameter
+                    if (client.Power == 2)
+                    {
+                        PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.AdminLocalChat, client.Entity.MyName);
+                    }
+                    else if (client.Power == 1)
+                    {
+                        PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.ModLocalChat, client.Entity.MyName);
+                    }
+                    else
+                    {
+                        PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.LocalChat, client.Entity.MyName);
+                    }
+                    PacketSender.SendChatBubble(client.Entity.MyIndex, (int)EntityTypes.GlobalEntity, msg, client.Entity.CurrentMap);
+                }
+                else if (cmd == Strings.Get("chat", "allcmd") || cmd == "/1" || cmd == Strings.Get("chat", "globalcmd"))
+                {
+                    if (client.Power == 2)
+                    {
+                        PacketSender.SendGlobalMsg(Strings.Get("chat", "global", client.Entity.MyName, msg), CustomColors.AdminGlobalChat, client.Entity.MyName);
+                    }
+                    else if (client.Power == 1)
+                    {
+                        PacketSender.SendGlobalMsg(Strings.Get("chat", "global", client.Entity.MyName, msg), CustomColors.ModGlobalChat, client.Entity.MyName);
+                    }
+                    else
+                    {
+                        PacketSender.SendGlobalMsg(Strings.Get("chat", "global", client.Entity.MyName, msg), CustomColors.GlobalChat, client.Entity.MyName);
+                    }
+                }
+                else if (cmd == Strings.Get("chat", "partycmd") || cmd == "/2")
+                {
+                    if (client.Entity.InParty(client.Entity))
+                    {
+                        PacketSender.SendPartyMsg(client, Strings.Get("party", "announcement", client.Entity.MyName, msg), CustomColors.PartyChat, client.Entity.MyName);
+                    }
+                    else
+                    {
+                        PacketSender.SendPlayerMsg(client, Strings.Get("parties", "notinparty"), CustomColors.Error);
+                    }
+                }
+                else if (cmd == Strings.Get("chat", "admincmd") || cmd == "/3")
+                {
+                    if (client.Power > 0)
+                    {
+                        PacketSender.SendAdminMsg(Strings.Get("chat", "admin", client.Entity.MyName, msg), CustomColors.AdminChat, client.Entity.MyName);
+                    }
+                }
+                else if (cmd == Strings.Get("chat", "announcementcmd"))
+                {
+                    if (client.Power > 0)
+                    {
+                        PacketSender.SendGlobalMsg(Strings.Get("chat", "announcement", client.Entity.MyName, msg), CustomColors.AnnouncementChat, client.Entity.MyName);
+                    }
+                }
+                else if (cmd == Strings.Get("chat", "pmcmd") || cmd == Strings.Get("chat", "messagecmd"))
+                {
+                    msg = msg.Remove(0, splitString[1].Length + 1); //Chop off the player name parameter
 
-                        for (int i = 0; i < Globals.Clients.Count; i++)
+                    for (int i = 0; i < Globals.Clients.Count; i++)
+                    {
+                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
+                            if (splitString[1].ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
                             {
-                                if (splitString[1].ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
-                                {
-                                    PacketSender.SendPlayerMsg(client, Strings.Get("chat", "private", client.Entity.MyName, msg), CustomColors.PrivateChat, client.Entity.MyName);
-                                    PacketSender.SendPlayerMsg(Globals.Clients[i], Strings.Get("chat", "private", client.Entity.MyName, msg), CustomColors.PrivateChat, client.Entity.MyName);
-                                    Globals.Clients[i].Entity.ChatTarget = client.Entity;
-                                    client.Entity.ChatTarget = Globals.Clients[i].Entity;
-                                    return;
-                                }
+                                PacketSender.SendPlayerMsg(client, Strings.Get("chat", "private", client.Entity.MyName, msg), CustomColors.PrivateChat, client.Entity.MyName);
+                                PacketSender.SendPlayerMsg(Globals.Clients[i], Strings.Get("chat", "private", client.Entity.MyName, msg), CustomColors.PrivateChat, client.Entity.MyName);
+                                Globals.Clients[i].Entity.ChatTarget = client.Entity;
+                                client.Entity.ChatTarget = Globals.Clients[i].Entity;
+                                return;
                             }
                         }
+                    }
+                    PacketSender.SendPlayerMsg(client, Strings.Get("Player", "offline"), CustomColors.Error);
+                }
+                else if (cmd == Strings.Get("chat", "replycmd") || cmd == Strings.Get("chat", "rcmd"))
+                {
+                    if (client.Entity.ChatTarget != null)
+                    {
+                        PacketSender.SendPlayerMsg(client, Strings.Get("chat", "private", client.Entity.MyName, msg),
+                            CustomColors.PrivateChat, client.Entity.MyName);
+                        PacketSender.SendPlayerMsg(client.Entity.ChatTarget.MyClient,
+                            Strings.Get("chat", "private", client.Entity.MyName, msg), CustomColors.PrivateChat,
+                            client.Entity.MyName);
+                        client.Entity.ChatTarget.ChatTarget = client.Entity;
+                    }
+                    else
+                    {
                         PacketSender.SendPlayerMsg(client, Strings.Get("Player", "offline"), CustomColors.Error);
-                        break;
-                    case "/reply":
-                    case "/r":
-                        if (client.Entity.ChatTarget != null)
+                    }
+                }
+                else
+                {
+                    //Search for command activated events and run them
+                    foreach (var evt in EventBase.Lookup)
+                    {
+                        if ((EventBase)evt.Value != null)
                         {
-                            PacketSender.SendPlayerMsg(client, Strings.Get("chat", "private", client.Entity.MyName, msg), CustomColors.PrivateChat, client.Entity.MyName);
-                            PacketSender.SendPlayerMsg(client.Entity.ChatTarget.MyClient, Strings.Get("chat", "private", client.Entity.MyName, msg), CustomColors.PrivateChat, client.Entity.MyName);
-                            client.Entity.ChatTarget.ChatTarget = client.Entity;
-                        }
-                        else
-                        {
-                            PacketSender.SendPlayerMsg(client, Strings.Get("Player", "offline"), CustomColors.Error);
-                        }
-                        break;
-                    default:
-                        //Search for command activated events and run them
-                        foreach (var evt in EventBase.Lookup)
-                        {
-                            if ((EventBase)evt.Value != null)
+                            if (client.Entity.StartCommonEvent((EventBase)evt.Value, (int)EventPage.CommonEventTriggers.Command, splitString[0].TrimStart('/'), msg) == true)
                             {
-                                if (client.Entity.StartCommonEvent((EventBase)evt.Value, (int)EventPage.CommonEventTriggers.Command, splitString[0].TrimStart('/'), msg) == true)
-                                {
-                                    return; //Found our /command, exit now :)
-                                }
+                                return; //Found our /command, exit now :)
                             }
                         }
+                    }
 
-                        //No common event /command, invalid command.
-                        PacketSender.SendPlayerMsg(client, Strings.Get("Commands", "invalid"), CustomColors.Error);
-                        break;
+                    //No common event /command, invalid command.
+                    PacketSender.SendPlayerMsg(client, Strings.Get("Commands", "invalid"), CustomColors.Error);
                 }
             }
 

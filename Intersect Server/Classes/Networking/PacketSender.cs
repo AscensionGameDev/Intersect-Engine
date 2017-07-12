@@ -670,6 +670,8 @@ namespace Intersect.Server.Classes.Networking
 				bf.WriteInteger(status._spell.Index);
                 bf.WriteInteger(status.Type);
                 bf.WriteString(status.Data);
+                bf.WriteInteger((int)(status.Duration - Globals.System.GetTimeMs()));
+                bf.WriteInteger((int)(status.Duration - status.StartTime));
             }
             //If player and in party send vitals to party just in case party members are not in the proximity
             if (en.GetType() == typeof(Player))
