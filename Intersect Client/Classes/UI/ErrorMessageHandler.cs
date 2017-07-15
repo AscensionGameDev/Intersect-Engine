@@ -50,13 +50,13 @@ namespace Intersect_Client.Classes.UI
 
         public GUIError(Canvas _gameCanvas, Canvas _menuCanvas, string error, string header)
         {
-            CreateErrorWindow(_gameCanvas, error, header);
-            CreateErrorWindow(_menuCanvas, error, header);
+            CreateErrorWindow(_gameCanvas, error, header,"InGame.xml");
+            CreateErrorWindow(_menuCanvas, error, header,"MainMenu.xml");
         }
 
-        private void CreateErrorWindow(Canvas canvas, string error, string header)
+        private void CreateErrorWindow(Canvas canvas, string error, string header, string uiDataFile)
         {
-            var window = new InputBox(header, error, false, InputBox.InputType.OkayOnly, OkayClicked, null, -1, canvas);
+            var window = new InputBox(header, error, false, InputBox.InputType.OkayOnly, OkayClicked, null, -1, canvas, uiDataFile);
             errorWindows.Add(window);
         }
 

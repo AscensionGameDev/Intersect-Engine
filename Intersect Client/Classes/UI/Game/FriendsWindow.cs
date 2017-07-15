@@ -15,6 +15,7 @@ namespace Intersect_Client.Classes.UI.Game
     {
         private ListBox _friends;
         private Button _addButton;
+        private ImagePanel _textboxContainer;
         private TextBox _searchTextbox;
 
         //Controls
@@ -26,38 +27,15 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public FriendsWindow(Canvas _gameCanvas)
         {
-            _friendsWindow = new WindowControl(_gameCanvas, Strings.Get("friends", "title"));
-            _friendsWindow.SetSize(228, 320);
-            _friendsWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 210, GameGraphics.Renderer.GetScreenHeight() - 500);
+            _friendsWindow = new WindowControl(_gameCanvas, Strings.Get("friends", "title"),false,"FriendsWindow");
             _friendsWindow.DisableResizing();
-            _friendsWindow.Margin = Margin.Zero;
-            _friendsWindow.Padding = new Padding(8, 5, 9, 11);
-            _friendsWindow.IsHidden = true;
 
-            _friendsWindow.SetTitleBarHeight(24);
-            _friendsWindow.SetCloseButtonSize(20, 20);
-            _friendsWindow.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "friendsactive.png"), WindowControl.ControlState.Active);
-            _friendsWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"), Button.ControlState.Normal);
-            _friendsWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"), Button.ControlState.Hovered);
-            _friendsWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"), Button.ControlState.Clicked);
-            _friendsWindow.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 14));
-            _friendsWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
-
-            _searchTextbox = new TextBox(_friendsWindow);
-            _searchTextbox.SetBounds(6, 6, _friendsWindow.Width - 42, 18);
+            _textboxContainer = new ImagePanel(_friendsWindow,"SearchContainer");
+            _searchTextbox = new TextBox(_textboxContainer,"SearchTextbox");
             Gui.FocusElements.Add(_searchTextbox);
 
-            _addButton = new Button(_friendsWindow);
-            _addButton.SetSize(18, 18);
+            _addButton = new Button(_friendsWindow,"AddFriendButton");
             _addButton.SetText("+");
-            _addButton.SetPosition(_friendsWindow.Width - 34, 6);
-            _addButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonnormal.png"), Button.ControlState.Normal);
-            _addButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonhover.png"), Button.ControlState.Hovered);
-            _addButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonclicked.png"), Button.ControlState.Clicked);
-            _addButton.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
-            _addButton.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
-            _addButton.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            _addButton.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 12);
             _addButton.Clicked += addButton_Clicked;
 
             updateList();

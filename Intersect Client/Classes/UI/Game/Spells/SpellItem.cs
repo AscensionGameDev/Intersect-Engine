@@ -1,197 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Intersect.GameObjects;
-using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using IntersectClientExtras.Gwen.ControlInternal;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Input;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
-using Color = IntersectClientExtras.GenericClasses.Color;
-using Point = IntersectClientExtras.GenericClasses.Point;
+using Intersect_Client.Classes.UI;
+using Intersect_Client.Classes.UI.Game;
 
-namespace Intersect_Client.Classes.UI.Game
+namespace Intersect.Client.Classes.UI.Game.Spells
 {
-    public class SpellWindow
-    {
-        //Item/Spell Rendering
-        private static int ItemXPadding = 4;
-        private static int ItemYPadding = 4;
-        private ScrollControl _itemContainer;
-
-        //Controls
-        private WindowControl _spellWindow;
-
-        //Spell List
-        public List<SpellItem> Items = new List<SpellItem>();
-
-        //Location
-        public int X;
-        public int Y;
-
-        //Init
-        public SpellWindow(Canvas _gameCanvas)
-        {
-            _spellWindow = new WindowControl(_gameCanvas, Strings.Get("spells", "title"));
-            _spellWindow.SetSize(228, 320);
-            _spellWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 210,
-                GameGraphics.Renderer.GetScreenHeight() - 500);
-            _spellWindow.DisableResizing();
-            _spellWindow.Margin = Margin.Zero;
-            _spellWindow.Padding = new Padding(8, 5, 9, 11);
-            _spellWindow.IsHidden = true;
-
-            _spellWindow.SetTitleBarHeight(24);
-            _spellWindow.SetCloseButtonSize(20, 20);
-            _spellWindow.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "spellsactive.png"),
-                WindowControl.ControlState.Active);
-            _spellWindow.SetCloseButtonImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"),
-                Button.ControlState.Normal);
-            _spellWindow.SetCloseButtonImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"),
-                Button.ControlState.Hovered);
-            _spellWindow.SetCloseButtonImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"),
-                Button.ControlState.Clicked);
-            _spellWindow.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 14));
-            _spellWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
-
-            _itemContainer = new ScrollControl(_spellWindow);
-            _itemContainer.SetPosition(0, 0);
-            _itemContainer.SetSize(_spellWindow.Width - _spellWindow.Padding.Left - _spellWindow.Padding.Right,
-                _spellWindow.Height - 24 - _spellWindow.Padding.Top - _spellWindow.Padding.Bottom);
-            _itemContainer.EnableScroll(false, true);
-            _itemContainer.AutoHideBars = false;
-
-            var scrollbar = _itemContainer.GetVerticalScrollBar();
-            scrollbar.RenderColor = new Color(200, 40, 40, 40);
-            scrollbar.SetScrollBarImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarnormal.png"),
-                Dragger.ControlState.Normal);
-            scrollbar.SetScrollBarImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarhover.png"),
-                Dragger.ControlState.Hovered);
-            scrollbar.SetScrollBarImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarclicked.png"),
-                Dragger.ControlState.Clicked);
-
-            var upButton = scrollbar.GetScrollBarButton(Pos.Top);
-            upButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrownormal.png"),
-                Button.ControlState.Normal);
-            upButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowclicked.png"),
-                Button.ControlState.Clicked);
-            upButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowhover.png"),
-                Button.ControlState.Hovered);
-            var downButton = scrollbar.GetScrollBarButton(Pos.Bottom);
-            downButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrownormal.png"),
-                Button.ControlState.Normal);
-            downButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowclicked.png"),
-                Button.ControlState.Clicked);
-            downButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowhover.png"),
-                Button.ControlState.Hovered);
-            InitItemContainer();
-        }
-
-        //Methods
-        public void Update()
-        {
-            if (_spellWindow.IsHidden == true)
-            {
-                return;
-            }
-            X = _spellWindow.X;
-            Y = _spellWindow.Y;
-            for (int i = 0; i < Options.MaxPlayerSkills; i++)
-            {
-                if (Globals.Me.Spells[i].SpellNum > -1)
-                {
-                    Items[i].pnl.IsHidden = false;
-                    Items[i].Update();
-                    if (Items[i].IsDragging)
-                    {
-                        Items[i].pnl.IsHidden = true;
-                    }
-                }
-                else
-                {
-                    Items[i].pnl.IsHidden = true;
-                }
-            }
-        }
-
-        private void InitItemContainer()
-        {
-            for (int i = 0; i < Options.MaxPlayerSkills; i++)
-            {
-                Items.Add(new SpellItem(this, i));
-                Items[i].container = new ImagePanel(_itemContainer);
-                Items[i].container.SetSize(34, 34);
-                Items[i].container.SetPosition(
-                    (i % (_itemContainer.Width / (34 + ItemXPadding))) * (34 + ItemXPadding) + ItemXPadding,
-                    (i / (_itemContainer.Width / (34 + ItemXPadding))) * (34 + ItemYPadding) + ItemYPadding);
-                Items[i].container.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
-                    "skillitem.png");
-                Items[i].Setup();
-                Items[i].pnl.Clicked += SpellWindow_Clicked;
-            }
-        }
-
-        void SpellWindow_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-        }
-
-        public void Show()
-        {
-            _spellWindow.IsHidden = false;
-        }
-
-        public bool IsVisible()
-        {
-            return !_spellWindow.IsHidden;
-        }
-
-        public void Hide()
-        {
-            _spellWindow.IsHidden = true;
-        }
-
-        public FloatRect RenderBounds()
-        {
-            FloatRect rect = new FloatRect()
-            {
-                X = _spellWindow.LocalPosToCanvas(new Point(0, 0)).X - ItemXPadding / 2,
-                Y = _spellWindow.LocalPosToCanvas(new Point(0, 0)).Y - ItemYPadding / 2,
-                Width = _spellWindow.Width + ItemXPadding,
-                Height = _spellWindow.Height + ItemYPadding
-            };
-            return rect;
-        }
-    }
-
     public class SpellItem
     {
-        private static int ItemXPadding = 4;
-        private static int ItemYPadding = 4;
         private SpellDescWindow _descWindow;
 
         //Drag/Drop References
-        private SpellWindow _spellWindow;
+        private SpellsWindow _spellWindow;
 
         private bool CanDrag;
         private long ClickTime;
@@ -210,7 +42,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         private string texLoaded = "";
 
-        public SpellItem(SpellWindow spellWindow, int index)
+        public SpellItem(SpellsWindow spellWindow, int index)
         {
             _spellWindow = spellWindow;
             myindex = index;
@@ -218,10 +50,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Setup()
         {
-            pnl = new ImagePanel(container);
-            pnl.SetSize(32, 32);
-            pnl.SetPosition(1, 1);
-            pnl.IsHidden = true;
+            pnl = new ImagePanel(container,"SpellIcon");
             pnl.HoverEnter += pnl_HoverEnter;
             pnl.HoverLeave += pnl_HoverLeave;
             pnl.RightClicked += pnl_RightClicked;
@@ -271,8 +100,8 @@ namespace Intersect_Client.Classes.UI.Game
         {
             FloatRect rect = new FloatRect()
             {
-                X = pnl.LocalPosToCanvas(new Point(0, 0)).X,
-                Y = pnl.LocalPosToCanvas(new Point(0, 0)).Y,
+                X = pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X,
+                Y = pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y,
                 Width = pnl.Width,
                 Height = pnl.Height
             };
@@ -296,11 +125,11 @@ namespace Intersect_Client.Classes.UI.Game
                         pnl.Texture = spellTex;
                         if ((Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMS()))
                         {
-                            pnl.RenderColor = new Color(100, 255, 255, 255);
+                            pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color(100, 255, 255, 255);
                         }
                         else
                         {
-                            pnl.RenderColor = new Color(255, 255, 255, 255);
+                            pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color(255, 255, 255, 255);
                         }
                     }
                     else
@@ -344,20 +173,20 @@ namespace Intersect_Client.Classes.UI.Game
                         {
                             if (MouseX == -1 || MouseY == -1)
                             {
-                                MouseX = InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new Point(0, 0)).X;
-                                MouseY = InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new Point(0, 0)).Y;
+                                MouseX = InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X;
+                                MouseY = InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y;
                             }
                             else
                             {
                                 int xdiff = MouseX -
-                                            (InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new Point(0, 0)).X);
+                                            (InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X);
                                 int ydiff = MouseY -
-                                            (InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new Point(0, 0)).Y);
+                                            (InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y);
                                 if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                 {
                                     IsDragging = true;
-                                    dragIcon = new Draggable(pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseX,
-                                        pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseY, pnl.Texture);
+                                    dragIcon = new Draggable(pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X + MouseX,
+                                        pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X + MouseY, pnl.Texture);
                                     texLoaded = "";
                                 }
                             }
@@ -371,8 +200,8 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     //Drug the item and now we stopped
                     IsDragging = false;
-                    FloatRect dragRect = new FloatRect(dragIcon.x - ItemXPadding / 2, dragIcon.y - ItemYPadding / 2,
-                        ItemXPadding / 2 + 32, ItemYPadding / 2 + 32);
+                    FloatRect dragRect = new FloatRect(dragIcon.X - (container.Padding.Left + container.Padding.Right) / 2, dragIcon.Y - (container.Padding.Top + container.Padding.Bottom) / 2,
+                        (container.Padding.Left + container.Padding.Right) / 2 + pnl.Width, (container.Padding.Top + container.Padding.Bottom) / 2 + pnl.Height);
 
                     float bestIntersect = 0;
                     int bestIntersectIndex = -1;

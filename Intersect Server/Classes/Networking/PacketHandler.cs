@@ -2220,7 +2220,7 @@ namespace Intersect.Server.Classes.Networking
                 if (client.Entity.PartyRequester.IsValidPlayer)
                 {
                     PacketSender.SendPlayerMsg(client.Entity.PartyRequester.MyClient,
-                        Strings.Get("parties,declined", client.Entity.MyName), CustomColors.Declined);
+                        Strings.Get("parties","declined", client.Entity.MyName), CustomColors.Declined);
 
                     if (client.Entity.PartyRequests.ContainsKey(client.Entity.PartyRequester))
                     {

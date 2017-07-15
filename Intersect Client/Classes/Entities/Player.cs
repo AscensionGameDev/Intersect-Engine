@@ -704,7 +704,16 @@ namespace Intersect_Client.Classes.Entities
                                             _targetBox = null;
                                         }
                                         if (en.Value != Globals.Me)
-                                            _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 200);
+                                        {
+                                            if (en.Value.GetType() == typeof(Player))
+                                            {
+                                                _targetBox = new EntityBox(Gui.GameUI.GameCanvas, EntityTypes.Player, en.Value);
+                                            }
+                                            else
+                                            {
+                                                _targetBox = new EntityBox(Gui.GameUI.GameCanvas, EntityTypes.GlobalEntity, en.Value);
+                                            }
+                                        }
                                         if (_targetType == 0 && _targetIndex == en.Value.MyIndex)
                                         {
                                             ClearTarget();
@@ -738,7 +747,7 @@ namespace Intersect_Client.Classes.Entities
                                             _targetBox.Dispose();
                                             _targetBox = null;
                                         }
-                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 154);
+                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas,EntityTypes.Event, en.Value);
                                         if (_targetType == 1 && _targetIndex == en.Value.MyIndex)
                                         {
                                             ClearTarget();

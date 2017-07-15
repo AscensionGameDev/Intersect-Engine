@@ -89,20 +89,25 @@ namespace Intersect_Client.Classes.UI
             if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
             {
                 MenuUI = new MenuGuiBase(_menuCanvas);
+                GameUI = null;
             }
             else
             {
                 GameUI = new GameGuiBase(_gameCanvas);
+                MenuUI = null;
             }
 
             if (GameUI == null) LoadRootUIData(_menuCanvas, "MainMenu.xml");
-            if (MenuUI == null) LoadRootUIData(_gameCanvas, "InGame.xml");
-            SaveRootUIData(_gameCanvas, "InGame.xml");
+            if (MenuUI == null)
+            {
+                LoadRootUIData(_gameCanvas, "InGame.xml");
+            }
+
 
             GwenInitialized = true;
         }
 
-        public static void SaveRootUIData(IntersectClientExtras.Gwen.Control.Base control, string xmlname)
+        public static void SaveRootUIData(IntersectClientExtras.Gwen.Control.Base control, string xmlname, bool bounds = false)
         {
             //Create XML Doc with UI 
             XmlWriterSettings settings = new XmlWriterSettings();
@@ -112,7 +117,7 @@ namespace Intersect_Client.Classes.UI
             using (XmlWriter writer = XmlWriter.Create(Path.Combine("resources","gui", xmlname), settings))
             {
                 writer.WriteStartDocument();
-                control.WriteBaseUIXml(writer, false);
+                control.WriteBaseUIXml(writer, bounds);
                 writer.WriteEndDocument();
             }
         }

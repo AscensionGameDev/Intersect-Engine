@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Intersect.Client.Classes.Core;
 using Intersect.GameObjects;
+using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
@@ -11,86 +15,12 @@ using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Input;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
-using Color = IntersectClientExtras.GenericClasses.Color;
-using Point = IntersectClientExtras.GenericClasses.Point;
+using Intersect_Client.Classes.UI;
+using Intersect_Client.Classes.UI.Game;
 
-namespace Intersect_Client.Classes.UI.Game
+namespace Intersect.Client.Classes.UI.Game.Hotbar
 {
-    public class HotBarWindow
-    {
-        private static int ItemXPadding = 4;
-        private static int ItemYPadding = 4;
-        private GameTexture _hotbarBG;
-        //Controls
-        public ImagePanel _hotbarWindow;
-
-        //Item List
-        public List<HotBarItem> Items = new List<HotBarItem>();
-
-        //Init
-        public HotBarWindow(Canvas _gameCanvas)
-        {
-            _hotbarWindow = new ImagePanel(_gameCanvas);
-            _hotbarWindow.SetSize(384, 54);
-            _hotbarWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 4 - _hotbarWindow.Width, 4);
-            _hotbarWindow.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "hotbar.png");
-            _hotbarBG = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "hotbaritem.png");
-
-            InitHotbarItems();
-        }
-
-        private void InitHotbarItems()
-        {
-            int x = 12;
-            for (int i = 0; i < Options.MaxHotbar; i++)
-            {
-                Items.Add(new HotBarItem(i, _hotbarBG, _hotbarWindow));
-                Items[i].pnl = new ImagePanel(_hotbarWindow);
-                Items[i].pnl.SetSize(34, 34);
-                Items[i].pnl.SetPosition(x + i * 36, 10);
-                Items[i].pnl.IsHidden = false;
-                Items[i].keyLabel = new Label(_hotbarWindow);
-                if (i + 1 == 10)
-                {
-                    Items[i].keyLabel.SetText("0");
-                }
-                else
-                {
-                    Items[i].keyLabel.SetText("" + (i + 1));
-                }
-                Items[i].keyLabel.SetTextColor(Color.White, Label.ControlState.Normal);
-                Items[i].keyLabel.SetPosition(Items[i].pnl.X + Items[i].pnl.Width - Items[i].keyLabel.Width,
-                    Items[i].pnl.Y + Items[i].pnl.Height - Items[i].keyLabel.Height);
-                Items[i].Setup();
-            }
-        }
-
-        public void Update()
-        {
-            if (Globals.Me == null)
-            {
-                return;
-            }
-            for (int i = 0; i < Options.MaxHotbar; i++)
-            {
-                Items[i].Update();
-            }
-        }
-
-        public FloatRect RenderBounds()
-        {
-            FloatRect rect = new FloatRect()
-            {
-                X = _hotbarWindow.LocalPosToCanvas(new Point(0, 0)).X - ItemXPadding / 2,
-                Y = _hotbarWindow.LocalPosToCanvas(new Point(0, 0)).Y - ItemYPadding / 2,
-                Width = _hotbarWindow.Width + ItemXPadding,
-                Height = _hotbarWindow.Height + ItemYPadding
-            };
-            return rect;
-        }
-    }
-
-    public class HotBarItem
+    public class HotbarItem
     {
         private static int ItemXPadding = 4;
         private static int ItemYPadding = 4;
@@ -100,7 +30,6 @@ namespace Intersect_Client.Classes.UI.Game
         private int _currentType = -1; //0 for item, 1 for spell
 
         //Textures
-        private GameTexture _hotbarBG;
         private Base _hotbarWindow;
         private bool _isEquipped;
         private bool _isFaded;
@@ -126,14 +55,14 @@ namespace Intersect_Client.Classes.UI.Game
         private bool MouseOver;
         private int MouseX = -1;
         private int MouseY = -1;
+        private Keys hotKey;
 
         private int myindex;
         public ImagePanel pnl;
 
-        public HotBarItem(int index, GameTexture hotbarBG, Base hotbarWindow)
+        public HotbarItem(int index, Base hotbarWindow)
         {
             myindex = index;
-            _hotbarBG = hotbarBG;
             _hotbarWindow = hotbarWindow;
         }
 
@@ -146,19 +75,10 @@ namespace Intersect_Client.Classes.UI.Game
 
             //Content Panel is layered on top of the container.
             //Shows the Item or Spell Icon
-            contentPanel = new ImagePanel(pnl);
-            contentPanel.SetSize(32, 32);
-            contentPanel.SetPosition(2, 2);
-            contentPanel.MouseInputEnabled = false;
+            contentPanel = new ImagePanel(pnl,"HotbarIcon" + myindex);
 
-            equipPanel = new ImagePanel(contentPanel);
-            equipPanel.SetSize(2, 2);
-            equipPanel.RenderColor = Color.Red;
-            equipPanel.SetPosition(26, 2);
+            equipPanel = new ImagePanel(contentPanel,"HotbarEquipedIcon" + myindex);
             equipPanel.Texture = GameGraphics.Renderer.GetWhiteTexture();
-            equipPanel.MouseInputEnabled = false;
-
-            pnl.Texture = _hotbarBG;
         }
 
         public void Activate()
@@ -239,8 +159,8 @@ namespace Intersect_Client.Classes.UI.Game
         {
             FloatRect rect = new FloatRect()
             {
-                X = pnl.LocalPosToCanvas(new Point(0, 0)).X,
-                Y = pnl.LocalPosToCanvas(new Point(0, 0)).Y,
+                X = pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X,
+                Y = pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y,
                 Width = pnl.Width,
                 Height = pnl.Height
             };
@@ -252,6 +172,12 @@ namespace Intersect_Client.Classes.UI.Game
             if (Globals.Me == null)
             {
                 return;
+            }
+            //See if Label Should be changed
+            if (hotKey != GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + myindex].key1)
+            {
+                keyLabel.SetText(Strings.Get("keys", Enum.GetName(typeof(Keys), GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + myindex].key1)));
+                hotKey = GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + myindex].key1;
             }
             //See if we lost our hotbar item
             if (Globals.Me.Hotbar[myindex].Type == 0)
@@ -303,11 +229,11 @@ namespace Intersect_Client.Classes.UI.Game
                     _isFaded = Globals.Me.Spells[_currentItem].SpellCD > Globals.System.GetTimeMS();
                     if (_isFaded)
                     {
-                        contentPanel.RenderColor = new Color(100, 255, 255, 255);
+                        contentPanel.RenderColor = new IntersectClientExtras.GenericClasses.Color(100, 255, 255, 255);
                     }
                     else
                     {
-                        contentPanel.RenderColor = Color.White;
+                        contentPanel.RenderColor = IntersectClientExtras.GenericClasses.Color.White;
                     }
                     _texLoaded = true;
                     _isEquipped = false;
@@ -342,21 +268,21 @@ namespace Intersect_Client.Classes.UI.Game
                             {
                                 if (MouseX == -1 || MouseY == -1)
                                 {
-                                    MouseX = InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new Point(0, 0)).X;
-                                    MouseY = InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new Point(0, 0)).Y;
+                                    MouseX = InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X;
+                                    MouseY = InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y;
                                 }
                                 else
                                 {
                                     int xdiff = MouseX -
-                                                (InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new Point(0, 0)).X);
+                                                (InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X);
                                     int ydiff = MouseY -
-                                                (InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new Point(0, 0)).Y);
+                                                (InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y);
                                     if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                     {
                                         IsDragging = true;
-                                        dragIcon = new Draggable(pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseX,
-                                                pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseY, contentPanel.Texture);
-                                            //SOMETHING SHOULD BE RENDERED HERE, RIGHT?
+                                        dragIcon = new Draggable(pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X + MouseX,
+                                            pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X + MouseY, contentPanel.Texture);
+                                        //SOMETHING SHOULD BE RENDERED HERE, RIGHT?
                                     }
                                 }
                             }
@@ -370,7 +296,7 @@ namespace Intersect_Client.Classes.UI.Game
                         contentPanel.IsHidden = false;
                         //Drug the item and now we stopped
                         IsDragging = false;
-                        FloatRect dragRect = new FloatRect(dragIcon.x - ItemXPadding / 2, dragIcon.y - ItemYPadding / 2,
+                        FloatRect dragRect = new FloatRect(dragIcon.X - ItemXPadding / 2, dragIcon.Y - ItemYPadding / 2,
                             ItemXPadding / 2 + 32, ItemYPadding / 2 + 32);
 
                         float bestIntersect = 0;

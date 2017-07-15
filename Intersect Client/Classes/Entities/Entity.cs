@@ -179,7 +179,7 @@ namespace Intersect_Client.Classes.Entities
 				{
 					if (Gui.GameUI != null) { Gui.GameUI._playerBox.UpdateStatuses = true; }
 				}
-				else if (MyIndex == Globals.Me._targetIndex)
+				else if (MyIndex > -1 && MyIndex == Globals.Me._targetIndex)
 				{
 					Globals.Me._targetBox.UpdateStatuses = true;
                 }

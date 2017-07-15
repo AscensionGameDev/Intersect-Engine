@@ -234,7 +234,7 @@ namespace Intersect_Client.Classes.UI.Menu
         {
             InputBox iBox = new InputBox(Strings.Get("characterselection", "deletetitle",Characters[selectedChar].Name),
                         Strings.Get("characterselection", "deleteprompt", Characters[selectedChar].Name),
-                        true, InputBox.InputType.YesNo, DeleteCharacter, null, Characters[selectedChar].Id,_characterSelectionPanel.Parent);
+                        true, InputBox.InputType.YesNo, DeleteCharacter, null, Characters[selectedChar].Id,_characterSelectionPanel.Parent,"MainMenu.xml");
             
         }
 
