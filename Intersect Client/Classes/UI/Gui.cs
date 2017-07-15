@@ -241,7 +241,7 @@ namespace Intersect_Client.Classes.UI
                 Debug.WriteLine($"w:{width},m:{measured},p:{curPos},l:{curLen},s:{lastSpace},t:'{line}'");
                 if (measured < width)
                 {
-                    lastOk = curLen;
+                    lastOk = lastSpace;
                     switch (input[curPos + curLen])
                     {
                         case ' ':

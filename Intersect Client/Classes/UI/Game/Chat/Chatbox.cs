@@ -73,7 +73,7 @@ namespace Intersect_Client.Classes.UI.Game
             for (var i = _messageIndex; i < msgs.Count; i++)
             {
                 var msg = msgs[i];
-                var myText = Gui.WrapText(msg.GetMessage(), 340, _chatboxWindow.Parent.Skin.DefaultFont);
+                var myText = Gui.WrapText(msg.GetMessage(), _chatboxMessages.Width - _chatboxMessages.GetVerticalScrollBar().Width - 8, _chatboxWindow.Parent.Skin.DefaultFont);
                 foreach (var t in myText)
                 {
                     var rw = _chatboxMessages.AddRow(t.Trim());
