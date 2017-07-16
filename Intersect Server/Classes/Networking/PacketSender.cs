@@ -39,7 +39,7 @@ namespace Intersect.Server.Classes.Networking
             {
                 return;
             }
-            SendDataToMap(mapNum, data);
+            SendDataToMap(mapNum, data,except);
             for (int i = 0; i < MapInstance.Lookup.Get<MapInstance>(mapNum).SurroundingMaps.Count; i++)
             {
                 SendDataToMap(MapInstance.Lookup.Get<MapInstance>(mapNum).SurroundingMaps[i], data, except);
@@ -337,7 +337,7 @@ namespace Intersect.Server.Classes.Networking
             }
         }
 
-        public static void SendEntityDataToProximity(Entity en)
+        public static void SendEntityDataToProximity(Entity en, Client except = null)
         {
             if (en == null)
             {
@@ -349,7 +349,7 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteLong(en.MyIndex);
             bf.WriteInteger((int) en.GetEntityType());
             bf.WriteBytes(en.Data());
-            SendDataToProximity(en.CurrentMap, bf.ToArray());
+            SendDataToProximity(en.CurrentMap, bf.ToArray(), except);
             bf.Dispose();
             SendEntityVitals(en);
             SendEntityStats(en);

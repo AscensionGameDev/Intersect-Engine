@@ -91,7 +91,6 @@ namespace Intersect.Server.Network
                     var response = Peer.CreateMessage(encryptedResponse.Length + sizeof(int));
                     response.Write(encryptedResponse.Length);
                     response.Write(encryptedResponse, 0, encryptedResponse.Length);
-
                     Client.CreateBeta4Client(metadata);
 
                     request.SenderConnection.Approve(response);

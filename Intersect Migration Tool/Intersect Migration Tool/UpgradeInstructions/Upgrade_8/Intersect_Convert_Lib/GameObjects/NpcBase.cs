@@ -105,6 +105,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
             myBuffer.WriteString(Sprite);
+            myBuffer.WriteInteger(1); //Level
             for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 myBuffer.WriteInteger(MaxVital[i]);

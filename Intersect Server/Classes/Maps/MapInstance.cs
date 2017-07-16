@@ -777,7 +777,7 @@ namespace Intersect.Server.Classes.Maps
                     Lookup.Get<MapInstance>(t).SendMapEntitiesTo(player);
                     PacketSender.SendMapItems(player.MyClient, t);
                 }
-                PacketSender.SendEntityDataToProximity(player);
+                PacketSender.SendEntityDataToProximity(player,player.MyClient);
             }
         }
 

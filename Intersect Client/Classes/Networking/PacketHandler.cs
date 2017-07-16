@@ -678,16 +678,19 @@ namespace Intersect_Client.Classes.Networking
                 en.Status.Add(new StatusInstance(bf.ReadInteger(), bf.ReadInteger(), bf.ReadString(), bf.ReadInteger(), bf.ReadInteger()));
             }
 
-			//If its you or your target, update the entity box.
-			if (index == Globals.Me.MyIndex && Gui.GameUI._playerBox != null)
-			{
-				Gui.GameUI._playerBox.UpdateStatuses = true;
+            if (Gui.GameUI != null)
+            {
+                //If its you or your target, update the entity box.
+                if (index == Globals.Me.MyIndex && Gui.GameUI._playerBox != null)
+                {
+                    Gui.GameUI._playerBox.UpdateStatuses = true;
+                }
+                else if (index == Globals.Me._targetIndex && Globals.Me._targetBox != null)
+                {
+                    Globals.Me._targetBox.UpdateStatuses = true;
+                }
             }
-			else if (index == Globals.Me._targetIndex && Globals.Me._targetBox != null)
-			{
-				Globals.Me._targetBox.UpdateStatuses = true;
-            }
-		}
+        }
 
         private static void HandleStats(byte[] packet)
         {
