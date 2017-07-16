@@ -1,22 +1,25 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Windows.Forms;
-using Intersect.Editor.Network;
 using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Network.Packets;
+using Intersect.Network.Crypto;
+using Intersect.Network.Crypto.Formats;
+using Intersect.Network.Packets.Reflectable;
 
 namespace Intersect.Editor.Classes
 {
     public static class LegacyEditorNetwork
     {
 
-        public static EditorNetwork editorNetwork;
+        public static ClientNetwork EditorLidgrenNetwork;
 
         public static TcpClient MySocket;
         private static NetworkStream _myStream;
         private static bool _connected;
-        public static bool Connected => editorNetwork?.IsRunning ?? _connected;
+        public static bool Connected => EditorLidgrenNetwork?.IsConnected ?? _connected;
         public static bool Connecting;
         private static byte[] _tempBuff;
         private static ByteBuffer _myBuffer = new ByteBuffer();
@@ -24,14 +27,26 @@ namespace Intersect.Editor.Classes
 
         public static void InitNetwork()
         {
-            if (editorNetwork != null) return;
+            if (EditorLidgrenNetwork != null) return;
 
             Log.Global.AddOutput(new ConsoleOutput());
             var config = new NetworkConfiguration(Globals.ServerHost, (ushort)Globals.ServerPort);
-            editorNetwork = new EditorNetwork(config);
-            editorNetwork.Start();
+            var assembly = Assembly.GetExecutingAssembly();
+            using (var stream = assembly.GetManifestResourceStream("Intersect.Editor.public-intersect.bek"))
+            {
+                var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
+                Debug.Assert(rsaKey != null, "rsaKey != null");
+                EditorLidgrenNetwork = new ClientNetwork(config, rsaKey.Parameters);
+            }
 
-            if (editorNetwork != null) return;
+            EditorLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = PacketHandler.HandlePacket;
+
+            if (!EditorLidgrenNetwork.Connect())
+            {
+                Log.Error("An error occurred while attempting to connect.");
+            }
+
+            if (EditorLidgrenNetwork != null) return;
 
             MySocket?.Close();
 
@@ -164,20 +179,20 @@ namespace Intersect.Editor.Classes
                 if (packet.Length > 800)
                 {
                     packet = Compression.CompressPacket(packet);
-                    buff.WriteInteger(packet.Length + 1);
+                    buff.WriteInteger(packet.Length);
                     buff.WriteByte(1); //Compressed
                     buff.WriteBytes(packet);
                 }
                 else
                 {
-                    buff.WriteInteger(packet.Length + 1);
+                    buff.WriteInteger(packet.Length);
                     buff.WriteByte(0); //Not Compressed
                     buff.WriteBytes(packet);
                 }
 
-                if (editorNetwork != null)
+                if (EditorLidgrenNetwork != null)
                 {
-                    if (!editorNetwork.Send(new BinaryPacket(null) { Buffer = buff }))
+                    if (!EditorLidgrenNetwork.Send(new BinaryPacket(null) { Buffer = buff }))
                     {
                         throw new Exception("Beta 4 network send failed.");
                     }

@@ -6,8 +6,9 @@
         Warn,
         Info,
         Trace,
-        Debug,
         Verbose,
+        Debug,
+        Diagnostic,
         All
     }
 }

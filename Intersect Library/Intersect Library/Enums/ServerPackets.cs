@@ -75,5 +75,6 @@ namespace Intersect.Enums
         SendFriends,
         FriendRequest,
 		PlayerCharacters,
+        Shit
     }
 }

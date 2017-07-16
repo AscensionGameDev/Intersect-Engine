@@ -21,6 +21,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         //Vitals & Stats
         public int[] MaxVital = new int[(int) Vitals.VitalCount];
+        public int Level = 1;
 
         //NPC vs NPC Combat
         public bool NpcVsNpcEnabled;
@@ -105,12 +106,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
             myBuffer.WriteString(Sprite);
-            myBuffer.WriteInteger(1); //Level
-            for (int i = 0; i < (int) Vitals.VitalCount; i++)
+            myBuffer.WriteInteger(Level);
+            for (int i = 0; i < (int)Vitals.VitalCount; i++)
             {
                 myBuffer.WriteInteger(MaxVital[i]);
             }
-            for (int i = 0; i < (int) Stats.StatCount; i++)
+            for (int i = 0; i < (int)Stats.StatCount; i++)
             {
                 myBuffer.WriteInteger(Stat[i]);
             }

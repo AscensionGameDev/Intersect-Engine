@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
 using Intersect;
 using Intersect.Collections;
 using Intersect.Enums;
@@ -8,7 +11,7 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
 using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Network.Packets;
+using Intersect.Network.Packets.Reflectable;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
@@ -30,7 +33,7 @@ namespace Intersect_Client.Classes.Networking
         public static bool HandlePacket(IPacket packet)
         {
             var binaryPacket = packet as BinaryPacket;
-            Log.Debug($"Handling packet (size={binaryPacket.Buffer.Length()}).");
+            //Log.Debug($"Handling packet (size={binaryPacket.Buffer.Length()}).");
             HandlePacket(binaryPacket?.Buffer?.ToArray());
             return true;
         }
@@ -39,14 +42,27 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
+            
+            var compressed = bf.ReadBoolean();
 
-            //Compressed?
-            if (bf.ReadByte() == 1)
+            try
             {
-                packet = bf.ReadBytes(bf.Length());
-                var data = Compression.DecompressPacket(packet);
-                bf = new ByteBuffer();
-                bf.WriteBytes(data);
+                //Compressed?
+                if (compressed)
+                {
+                    packet = bf.ReadBytes(bf.Length());
+                    var data = Compression.DecompressPacket(packet);
+                    bf = new ByteBuffer();
+                    bf.WriteBytes(data);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Error($"Buffer length: {bf.Length()}");
+                Log.Error($"Packet length: {packet.Length}");
+                Log.Error($"Is Compressed: {compressed}");
+                Log.Error(exception);
+                return;
             }
 
             var packetHeader = (ServerPackets) bf.ReadLong();
@@ -264,9 +280,118 @@ namespace Intersect_Client.Classes.Networking
 					case ServerPackets.PlayerCharacters:
 						HandlePlayerCharacters(bf.ReadBytes(bf.Length()));
 						break;
-					default:
+                    case ServerPackets.Shit:
+                        HandleShit(bf.ReadBytes(bf.Length()));
+                        break;
+                    default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
+                }
+            }
+        }
+
+        private struct ShitMeasurement
+        {
+            public int taken;
+            public long totalsize;
+            public long elapsed;
+
+            public double ShitRate => taken / (elapsed / (double)TimeSpan.TicksPerSecond);
+            public double DataRate => totalsize / (elapsed / (double)TimeSpan.TicksPerSecond);
+        }
+
+        private static List<ShitMeasurement> measurements = new List<ShitMeasurement>();
+
+        private static int shitstaken;
+        private static long timespentshitting;
+        private static long totalshitsize;
+        private static Stopwatch ShitTimer = new Stopwatch();
+
+        private static TextWriter writer;
+
+        private static void HandleShit(byte[] packet)
+        {
+            if (writer == null)
+            {
+                writer = new StreamWriter(new FileStream($"shits{DateTime.Now:yyyy-MM-dd_HH-mm-ss-fff}.csv", FileMode.Create, FileAccess.Write), Encoding.UTF8);
+            }
+
+            using (var bf = new ByteBuffer())
+            {
+                bf.WriteBytes(packet);
+                var shitting = bf.ReadBoolean();
+                var packetNum = bf.ReadInteger();
+                if (packetNum > -1)
+                {
+                    var isData = bf.ReadBoolean();
+                    if (isData)
+                    {
+                        //Console.WriteLine($"START PACKET #{packetNum}");
+                        //Console.WriteLine($"SHIT LENGTH: {bf.ReadString().Length}");
+                        var shitSize = bf.ReadInteger();
+                        //Console.WriteLine($"SHIT SIZE: {shitSize} bytes.");
+                        //Console.WriteLine($"END PACKET #{packetNum}");
+                        totalshitsize += shitSize;
+                    }
+                    else
+                    {
+                        var isStarting = bf.ReadBoolean();
+                        if (isStarting)
+                        {
+                            //Console.WriteLine($"Starting timer...");
+                            ShitTimer.Restart();
+                        }
+                        else
+                        {
+                            ShitTimer.Stop();
+                            //Console.WriteLine($"Timer done. {ShitTimer.ElapsedMilliseconds}ms elapsed.");
+                            timespentshitting += ShitTimer.ElapsedTicks;
+                            shitstaken++;
+                            measurements.Add(new ShitMeasurement { elapsed = ShitTimer.ElapsedTicks, taken = 1, totalsize = 0 });
+                        }
+                    }
+                }
+                else
+                {
+                    switch (packetNum)
+                    {
+                        case -2:
+                            foreach (var m in measurements)
+                            {
+                                if (m.taken < 2) continue;
+                                Console.WriteLine($"Shits: {m.taken}, Shitrate: {m.ShitRate}s/s, Datarate: {m.DataRate / 1048576}MiB/s");
+                            }
+                            break;
+                        case -3:
+                            writer.Close();
+                            writer.Dispose();
+                            writer = null;
+                            break;
+                        default:
+                            if (shitting)
+                            {
+                                shitstaken = 0;
+                                timespentshitting = 0;
+                                totalshitsize = 0;
+                                //Console.WriteLine("Starting to shit...");
+                            }
+                            else
+                            {
+                                var diff = 1000.0 * TimeSpan.TicksPerMillisecond;
+                                //Console.WriteLine("Just flushed the toilet.");
+                                //Console.WriteLine($"I took {shitstaken} shit(s).");
+                                //Console.WriteLine($"It took me a total of {timespentshitting / diff}s to shit.");
+                                //Console.WriteLine($"Each shit took {timespentshitting / (diff * shitstaken)}s per shit.");
+                                //Console.WriteLine($"I shit at approximately {(totalshitsize / (timespentshitting / diff)) / 1024}KiB/s.");
+                                measurements.Add(new ShitMeasurement { elapsed = timespentshitting, taken = shitstaken, totalsize = totalshitsize });
+                                if (shitstaken > 0)
+                                {
+                                    writer.WriteLine($"{timespentshitting},{shitstaken},{totalshitsize}");
+                                    writer.Flush();
+                                }
+                            }
+                            break;
+                    }
                 }
             }
         }
@@ -923,7 +1048,12 @@ namespace Intersect_Client.Classes.Networking
                 {
                     for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                     {
-                        (Globals.Entities[entityIndex]).Equipment[i] = bf.ReadInteger();
+                        if (entity.Equipment.Length <= i)
+                        {
+                            Log.Debug($"Bad equipment index, aborting ({i}/{entity.Equipment.Length}).");
+                            break;
+                        }
+                        entity.Equipment[i] = bf.ReadInteger();
                     }
                 }
             }
@@ -947,8 +1077,25 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             for (int i = 0; i < Options.MaxHotbar; i++)
             {
-                Globals.Me.Hotbar[i].Type = bf.ReadInteger();
-                Globals.Me.Hotbar[i].Slot = bf.ReadInteger();
+                if (Globals.Me == null)
+                {
+                    Log.Debug("Can't set hotbar, Globals.Me is null!");
+                    break;
+                }
+
+                if (Globals.Me.Hotbar == null)
+                {
+                    Log.Debug("Can't set hotbar, hotbar is null!");
+                    break;
+                }
+
+                var hotbarEntry = Globals.Me.Hotbar[i];
+                if (hotbarEntry == null)
+                {
+                    Log.Error(BitConverter.ToString(packet));
+                }
+                hotbarEntry.Type = bf.ReadInteger();
+                hotbarEntry.Slot = bf.ReadInteger();
             }
             bf.Dispose();
         }

@@ -335,7 +335,7 @@ namespace Intersect.Server.Classes.Entities
             base.Die(dropitems, killer);
             Reset();
             Respawn();
-			PacketSender.SendInventory(MyClient);
+            PacketSender.SendInventory(MyClient);
         }
 
         //Vitals
@@ -663,7 +663,8 @@ namespace Intersect.Server.Classes.Entities
             }
             CurrentX = newX;
             CurrentY = newY;
-			Dir = newDir;
+            CurrentZ = 0;
+            Dir = newDir;
             for (int i = 0; i < MyEvents.Count; i++)
             {
                 if (MyEvents[i] != null && MyEvents[i].MapNum != -1 && MyEvents[i].MapNum != newMap)
@@ -815,15 +816,15 @@ namespace Intersect.Server.Classes.Entities
                     PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "bound"), CustomColors.ItemBound);
                     return;
                 }
-				for (int i = 0; i < Options.EquipmentSlots.Count; i++)
-				{
-					if (Equipment[i] == slot)
-					{
-						PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "equipped"), CustomColors.ItemBound);
-						return;
-					}
-				}
-				if (itemBase.IsStackable())
+                for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                {
+                    if (Equipment[i] == slot)
+                    {
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "equipped"), CustomColors.ItemBound);
+                        return;
+                    }
+                }
+                if (itemBase.IsStackable())
                 {
                     if (amount >= Inventory[slot].ItemVal)
                     {
@@ -2452,8 +2453,8 @@ namespace Intersect.Server.Classes.Entities
                     Equipment[i] = -1;
             }
             PacketSender.SendPlayerEquipmentToProximity(this);
-			PacketSender.SendEntityStats(this);
-		}
+            PacketSender.SendEntityStats(this);
+        }
 
         //Stats
         public void UpgradeStat(int statIndex)
@@ -3055,16 +3056,16 @@ namespace Intersect.Server.Classes.Entities
                     Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
             if (attribute != null && attribute.value == (int) MapAttributes.Warp)
             {
-				if (Convert.ToInt32(attribute.data4) == -1)
-				{
-					Globals.Entities[index].Warp(attribute.data1, attribute.data2, attribute.data3,
-						Globals.Entities[index].Dir);
-				}
-				else
-				{
-					Globals.Entities[index].Warp(attribute.data1, attribute.data2, attribute.data3,
-						Convert.ToInt32(attribute.data4));
-				}
+                if (Convert.ToInt32(attribute.data4) == -1)
+                {
+                    Globals.Entities[index].Warp(attribute.data1, attribute.data2, attribute.data3,
+                        Globals.Entities[index].Dir);
+                }
+                else
+                {
+                    Globals.Entities[index].Warp(attribute.data1, attribute.data2, attribute.data3,
+                        Convert.ToInt32(attribute.data4));
+                }
             }
 
             //Check for slide tiles

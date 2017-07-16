@@ -421,7 +421,8 @@ namespace Intersect.Server.Classes.Entities
                                         }
                                         else //Any other target
                                         {
-                                            if (((Npc)Owner).CanNpcCombat(TargetEntity))
+                                            var ownerNpc = Owner as Npc;
+                                            if (ownerNpc == null || ownerNpc.CanNpcCombat(TargetEntity))
                                             {
                                                 Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir);
                                                 if (Spawns[i].Dir <= 3 && MyBase.GrappleHook == true) //Don't handle directional projectile grapplehooks

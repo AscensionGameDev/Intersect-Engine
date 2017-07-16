@@ -1,12 +1,17 @@
-﻿using Intersect.Memory;
+﻿using System;
+using Intersect.Memory;
 
 namespace Intersect.Network
 {
-    public interface IPacket
+    public interface IPacket : IDisposable
     {
         IConnection Connection { get; }
 
-        PacketCodes Code { get; }
+        double Timestamp { get; }
+
+        int EstimatedSize { get; }
+
+        PacketCode Code { get; }
 
         PacketType Type { get; }
 

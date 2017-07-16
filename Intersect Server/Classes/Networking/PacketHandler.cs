@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Intersect.Enums;
@@ -12,6 +13,7 @@ using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Network;
 using Intersect.Network.Packets;
+using Intersect.Network.Packets.Reflectable;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
@@ -467,7 +469,7 @@ namespace Intersect.Server.Classes.Networking
 			if (msg[0] == '/')
             {
                 string[] splitString = msg.Split();
-                msg = msg.Remove(0, splitString[0].Length - 1); //Chop off the /command at the start of the sentance
+                msg = msg.Remove(0, splitString[0].Length); //Chop off the /command at the start of the sentance
                 var cmd = splitString[0].ToLower();
 
                 if (cmd == Strings.Get("chat", "localcmd") || cmd == "/0")

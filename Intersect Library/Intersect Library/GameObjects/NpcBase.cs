@@ -23,7 +23,7 @@ namespace Intersect.GameObjects
 
         //Vitals & Stats
         public int[] MaxVital = new int[(int) Vitals.VitalCount];
-		public int Level = 1;
+        public int Level = 1;
 
         //NPC vs NPC Combat
         public bool NpcVsNpcEnabled;
@@ -56,7 +56,7 @@ namespace Intersect.GameObjects
             myBuffer.WriteBytes(packet);
             Name = myBuffer.ReadString();
             Sprite = myBuffer.ReadString();
-			Level = myBuffer.ReadInteger();
+            Level = myBuffer.ReadInteger();
             for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 MaxVital[i] = myBuffer.ReadInteger();
@@ -109,7 +109,7 @@ namespace Intersect.GameObjects
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
             myBuffer.WriteString(Sprite);
-			myBuffer.WriteInteger(Level);
+            myBuffer.WriteInteger(Level);
             for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 myBuffer.WriteInteger(MaxVital[i]);

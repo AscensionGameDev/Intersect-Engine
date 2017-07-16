@@ -86,11 +86,11 @@ namespace Intersect.Server.Classes.Networking
             client.SendPacket(bf.ToArray());
             bf.Dispose();
 
-			if (!client.IsEditor)
-			{
-				SendGlobalMsg(Strings.Get("player", "joined", client.Entity.MyName, Options.GameName));
-			}
-		}
+            if (!client.IsEditor)
+            {
+                SendGlobalMsg(Strings.Get("player", "joined", client.Entity.MyName, Options.GameName));
+            }
+        }
 
         public static void SendMap(Client client, int mapNum, bool allEditors = false)
         {
@@ -139,8 +139,19 @@ namespace Intersect.Server.Classes.Networking
                             client.SentMaps[mapNum].Item2 == MapInstance.Lookup.Get<MapInstance>(mapNum).Revision) return;
                         client.SentMaps.Remove(mapNum);
                     }
-                    client.SentMaps.Add(mapNum,
-                        new Tuple<long, int>(Globals.System.GetTimeMs() + 5000, MapInstance.Lookup.Get<MapInstance>(mapNum).Revision));
+                    try
+                    {
+                        client.SentMaps.Add(mapNum,
+                            new Tuple<long, int>(Globals.System.GetTimeMs() + 5000,
+                                MapInstance.Lookup.Get<MapInstance>(mapNum).Revision));
+                    }
+                    catch (Exception exception)
+                    {
+                        Log.Error($"Current Map #: {mapNum}");
+                        Log.Error($"# Sent maps: {client.SentMaps.Count}");
+                        Log.Error($"# Maps: {MapInstance.Lookup.Count}");
+                        throw exception;
+                    }
                     MapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetMapPacket(true);
                     bf.WriteInteger(MapData.Length);
                     bf.WriteBytes(MapData);

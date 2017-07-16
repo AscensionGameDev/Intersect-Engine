@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -1905,19 +1906,22 @@ namespace Intersect.Server.Classes.Core
         //Game Object Saving/Loading
         private static void LoadAllGameObjects()
         {
-            foreach (var val in Enum.GetValues(typeof(GameObjectType)))
+            foreach (var value in Enum.GetValues(typeof(GameObjectType)))
             {
-                if ((GameObjectType) val != GameObjectType.Time)
+                Debug.Assert(value != null, "value != null");
+                var type = (GameObjectType)value;
+                if (type == GameObjectType.Time) continue;
+
+                LoadGameObjects(type);
+                switch ((GameObjectType) value)
                 {
-                    LoadGameObjects((GameObjectType) val);
-                    if ((GameObjectType) val == GameObjectType.Map)
-                    {
-                        OnMapsLoaded();
-                    }
-                    else if ((GameObjectType) val == GameObjectType.Class)
-                    {
+                    case GameObjectType.Class:
                         OnClassesLoaded();
-                    }
+                        break;
+
+                    case GameObjectType.Map:
+                        OnMapsLoaded();
+                        break;
                 }
             }
         }
@@ -2082,14 +2086,14 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-        public static void LoadGameObjects(GameObjectType gameObjectType)
+        private static void LoadGameObjects(GameObjectType gameObjectType)
         {
             var nullIssues = "";
             var tableName = gameObjectType.GetTable();
             ClearGameObjects(gameObjectType);
             var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" + GAME_OBJECT_DELETED +
                         ";";
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            using (var cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
                 using (var dataReader = cmd.ExecuteReader())
@@ -2124,32 +2128,38 @@ namespace Intersect.Server.Classes.Core
             var insertQuery = "UPDATE " + gameObject.DatabaseTable + " set " + GAME_OBJECT_DELETED + "=@" +
                               GAME_OBJECT_DELETED + "," + GAME_OBJECT_DATA + "=@" + GAME_OBJECT_DATA + " WHERE " +
                               GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
-            using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+            using (var cmd = new SqliteCommand(insertQuery, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.Index));
-                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
+                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, "0"));
                 if (gameObject.BinaryData != null)
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.BinaryData));
-                    cmd.ExecuteNonQuery();
+                    try
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception exception)
+                    {
+                        Log.Error(exception);
+                        throw exception;
+                    }
                 }
             }
 
-            if (gameObject.Type == GameObjectType.Map)
+            if (gameObject.Type != GameObjectType.Map) return;
+            var map = (MapBase)gameObject;
+            if (map.TileData != null)
             {
-                var map = (MapBase)gameObject;
-                if (map.TileData != null)
-                {
-                    SaveMapTiles(map.Index, map.TileData);
-                }
+                SaveMapTiles(map.Index, map.TileData);
             }
         }
 
         public static IDatabaseObject AddGameObject(GameObjectType gameObjectType)
         {
             var insertQuery = "INSERT into " + gameObjectType.GetTable() + " DEFAULT VALUES" + ";";
-            int index = -1;
-            using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+            int index;
+            using (var cmd = new SqliteCommand(insertQuery, _dbConnection))
             {
                 cmd.ExecuteNonQuery();
                 cmd.CommandText = "SELECT last_insert_rowid()";

@@ -1,6 +1,6 @@
 ﻿namespace Intersect.Network
 {
-    public enum PacketCodes : byte
+    public enum PacketCode : byte
     {
         Unknown = 0,
 

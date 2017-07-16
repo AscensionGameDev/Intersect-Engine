@@ -53,6 +53,15 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Diagnostic|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\build\diagnostic\client\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;LINUX;INTERSECT_DIAGNOSTIC</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Classes\Core\GameAudio.cs" />
     <Compile Include="Classes\Core\GameControls.cs" />
@@ -151,9 +160,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Interface\Resolution.cs" />
     <Compile Include="IntersectGame.cs" />
-    <Compile Include="Network\ClientNetwork.cs" />
     <Compile Include="ClientMain.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -227,6 +234,7 @@
     <EmbeddedResource Include="public-intersect.bek" />
     <None Include="App.config" />
     <None Include="app.manifest" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icon.bmp">
