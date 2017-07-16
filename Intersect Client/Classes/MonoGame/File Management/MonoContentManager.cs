@@ -26,6 +26,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
         public MonoContentManager()
         {
             ServicePointManager.Expect100Continue = false;
+            Init(this);
             if (!Directory.Exists("resources"))
             {
                 loadingForm = new frmLoadingContent();

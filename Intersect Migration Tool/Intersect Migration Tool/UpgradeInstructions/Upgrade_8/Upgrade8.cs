@@ -22,10 +22,15 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
         private const string MAP_TILES_MAP_ID = "map_id";
         private const string MAP_TILES_DATA = "data";
 
-        //Char Friendss Table Constants
+        //Char Friends Table Constants
         private const string CHAR_FRIENDS_TABLE = "char_friends";
         private const string CHAR_FRIEND_CHAR_ID = "char_id";
         private const string CHAR_FRIEND_ID = "friend_id";
+
+        //Character Table Constants
+        private const string CHAR_TABLE = "characters";
+        private const string CHAR_DELETED = "deleted";
+        private const string CHAR_LAST_ONLINE_TIME = "last_online";
 
         private SqliteConnection _dbConnection;
         private object _dbLock = new object();
@@ -42,6 +47,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
             CreateMapTilesTable();
             LoadAllGameObjects();
             CreateCharacterFriendsTable();
+            AddDeletedColumnToCharacters();
+            AddLastOnlineColumnToCharacters();
         }
 
         //Game Object Saving/Loading
@@ -339,6 +346,42 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_TILES_MAP_ID, index));
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_TILES_DATA, data));
                 cmd.ExecuteNonQuery();
+            }
+        }
+
+        private void AddDeletedColumnToCharacters()
+        {
+            var cmd = "ALTER TABLE " + CHAR_TABLE + " ADD " + CHAR_DELETED + " INTEGER;";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+
+            cmd = "UPDATE " + CHAR_TABLE + " set " + CHAR_DELETED + " = @" + CHAR_DELETED + ";";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.Parameters.Add(new SqliteParameter("@" + CHAR_DELETED, 0));
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+
+        private void AddLastOnlineColumnToCharacters()
+        {
+            var cmd = "ALTER TABLE " + CHAR_TABLE + " ADD " + CHAR_LAST_ONLINE_TIME + " INTEGER;";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+
+            cmd = "UPDATE " + CHAR_TABLE + " set " + CHAR_LAST_ONLINE_TIME + " = @" + CHAR_LAST_ONLINE_TIME + ";";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.Parameters.Add(new SqliteParameter("@" + CHAR_LAST_ONLINE_TIME, DateTime.UtcNow.ToBinary()));
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
             }
         }
     }

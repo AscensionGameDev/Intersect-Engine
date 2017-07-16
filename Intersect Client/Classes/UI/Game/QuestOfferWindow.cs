@@ -15,7 +15,9 @@ namespace Intersect_Client.Classes.UI.Game
     {
         private Button _acceptButton;
         private Button _declineButton;
-        private ListBox _questOffer;
+        private ScrollControl _questPromptArea;
+        private Label _questPromptTemplate;
+        private RichLabel _questPromptLabel;
         private string _questOfferText = "";
         //Controls
         private WindowControl _questOfferWindow;
@@ -23,127 +25,30 @@ namespace Intersect_Client.Classes.UI.Game
 
         public QuestOfferWindow(Canvas _gameCanvas)
         {
-            _questOfferWindow = new WindowControl(_gameCanvas, Strings.Get("questoffer", "title"));
-            _questOfferWindow.SetSize(415, 424);
-            _questOfferWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 200,
-                GameGraphics.Renderer.GetScreenHeight() / 2 - 200);
+            _questOfferWindow = new WindowControl(_gameCanvas, Strings.Get("questoffer", "title"),false,"QuestOfferWindow");
             _questOfferWindow.DisableResizing();
-            _questOfferWindow.Margin = Margin.Zero;
-            _questOfferWindow.Padding = new Padding(8, 5, 9, 11);
             _questOfferWindow.IsClosable = false;
 
-            _questOfferWindow.SetTitleBarHeight(24);
-            _questOfferWindow.SetCloseButtonSize(20, 20);
-            _questOfferWindow.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "questwindow.png"),
-                WindowControl.ControlState.Active);
-            _questOfferWindow.SetCloseButtonImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"),
-                Button.ControlState.Normal);
-            _questOfferWindow.SetCloseButtonImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"),
-                Button.ControlState.Hovered);
-            _questOfferWindow.SetCloseButtonImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"),
-                Button.ControlState.Clicked);
-            _questOfferWindow.SetFont(Globals.ContentManager.GetFont(Gui.ActiveFont, 14));
-            _questOfferWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
-
             //Menu Header
-            _questTitle = new Label(_questOfferWindow)
-            {
-                AutoSizeToContents = false
-            };
-            _questTitle.SetText("");
-            _questTitle.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 18);
-            _questTitle.SetSize(_questOfferWindow.Width, _questOfferWindow.Height);
-            _questTitle.Alignment = Pos.CenterH;
-            _questTitle.TextColorOverride = new Color(255, 200, 200, 200);
+            _questTitle = new Label(_questOfferWindow, "QuestTitle");
 
-            _questOffer = new ListBox(_questOfferWindow)
-            {
-                IsDisabled = true
-            };
-            _questOffer.SetPosition(8 + _questOfferWindow.Padding.Left, 32 + _questOfferWindow.Padding.Top);
-            _questOffer.SetSize(372, 260);
-            _questOffer.ShouldDrawBackground = false;
-            _questOffer.RenderColor = Color.White;
+            _questPromptArea = new ScrollControl(_questOfferWindow, "QuestOfferArea");
 
-            var scrollBar = _questOffer.GetVerticalScrollBar();
-            scrollBar.RenderColor = new Color(200, 40, 40, 40);
-            scrollBar.SetScrollBarImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarnormal.png"),
-                Dragger.ControlState.Normal);
-            scrollBar.SetScrollBarImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarhover.png"),
-                Dragger.ControlState.Hovered);
-            scrollBar.SetScrollBarImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarclicked.png"),
-                Dragger.ControlState.Clicked);
+            _questPromptTemplate = new Label(_questPromptArea, "QuestOfferTemplate");
 
-            var upButton = scrollBar.GetScrollBarButton(Pos.Top);
-            upButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrownormal.png"),
-                Button.ControlState.Normal);
-            upButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowclicked.png"),
-                Button.ControlState.Clicked);
-            upButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowhover.png"),
-                Button.ControlState.Hovered);
-            var downButton = scrollBar.GetScrollBarButton(Pos.Bottom);
-            downButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrownormal.png"),
-                Button.ControlState.Normal);
-            downButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowclicked.png"),
-                Button.ControlState.Clicked);
-            downButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowhover.png"),
-                Button.ControlState.Hovered);
+            _questPromptLabel = new RichLabel(_questPromptArea);
 
             //Accept Button
-            _acceptButton = new Button(_questOfferWindow);
+            _acceptButton = new Button(_questOfferWindow,"AcceptButton");
             _acceptButton.SetText(Strings.Get("questoffer", "accept"));
-            _acceptButton.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
             _acceptButton.Clicked += _acceptButton_Clicked;
-            _acceptButton.SetPosition(_questOfferWindow.Width / 2 - _acceptButton.Width / 2 - _acceptButton.Width, 340);
-            _acceptButton.SetSize(86, 39);
-            _acceptButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonnormal.png"),
-                Button.ControlState.Normal);
-            _acceptButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonhover.png"),
-                Button.ControlState.Hovered);
-            _acceptButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonclicked.png"),
-                Button.ControlState.Clicked);
-            _acceptButton.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
-            _acceptButton.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
-            _acceptButton.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            _acceptButton.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 12);
 
             //Decline Button
-            _declineButton = new Button(_questOfferWindow);
+            _declineButton = new Button(_questOfferWindow,"DeclineButton");
             _declineButton.SetText(Strings.Get("questoffer", "decline"));
-            _declineButton.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 20);
             _declineButton.Clicked += _declineButton_Clicked;
-            _declineButton.SetPosition(_questOfferWindow.Width / 2 + _acceptButton.Width / 2, 340);
-            _declineButton.SetSize(86, 39);
-            _declineButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonnormal.png"),
-                Button.ControlState.Normal);
-            _declineButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonhover.png"),
-                Button.ControlState.Hovered);
-            _declineButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonclicked.png"),
-                Button.ControlState.Clicked);
-            _declineButton.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
-            _declineButton.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
-            _declineButton.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            _declineButton.Font = Globals.ContentManager.GetFont(Gui.ActiveFont, 12);
 
+            Gui.LoadRootUIData(_questOfferWindow, "InGame.xml");
             Gui.InputBlockingElements.Add(_questOfferWindow);
         }
 
@@ -179,14 +84,11 @@ namespace Intersect_Client.Classes.UI.Game
                 _questTitle.Text = quest.Name;
                 if (_questOfferText != quest.StartDesc)
                 {
-                    var myText = Gui.WrapText(quest.StartDesc, _questOffer.Width - 12,
-                        _questOfferWindow.Parent.Skin.DefaultFont);
-                    foreach (var t in myText)
-                    {
-                        var rw = _questOffer.AddRow(t);
-                        rw.SetTextColor(Color.White);
-                        rw.MouseInputEnabled = false;
-                    }
+                    _questPromptLabel.DeleteAllChildren();
+                    _questPromptLabel.Width = _questPromptArea.Width -
+                                              _questPromptArea.GetVerticalScrollBar().Width;
+                    _questPromptLabel.AddText(quest.StartDesc, _questPromptTemplate.TextColor, _questPromptTemplate.CurAlignments.Count > 0 ? _questPromptTemplate.CurAlignments[0] : Alignments.Left, _questPromptTemplate.Font);
+                    _questPromptLabel.SizeToChildren(false, true);
                     _questOfferText = quest.StartDesc;
                 }
             }

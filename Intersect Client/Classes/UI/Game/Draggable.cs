@@ -1,4 +1,5 @@
-﻿using IntersectClientExtras.Graphics;
+﻿using System.IO;
+using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Input;
@@ -9,22 +10,20 @@ namespace Intersect_Client.Classes.UI.Game
     class Draggable
     {
         ImagePanel pnl;
-        public int x;
-        public int y;
+        public int X { get { return pnl.X; } set { pnl.X = value; } }
+        public int Y { get { return pnl.Y; } set { pnl.Y = value; } }
 
         public Draggable(int x, int y, GameTexture tex)
         {
-            pnl = new ImagePanel(Gui.GameUI.GameCanvas);
-            pnl.SetPosition(x, y);
-            pnl.SetSize(32, 32);
+            pnl = new ImagePanel(Gui.GameUI.GameCanvas,"Draggable");
+            Gui.LoadRootUIData(pnl, "InGame.xml");
+            pnl.SetPosition(InputHandler.MousePosition.X - pnl.Width / 2, InputHandler.MousePosition.Y - pnl.Height / 2);
             pnl.Texture = tex;
         }
 
         public bool Update()
         {
-            pnl.SetPosition(InputHandler.MousePosition.X - 16, InputHandler.MousePosition.Y - 16);
-            x = InputHandler.MousePosition.X - 16;
-            y = InputHandler.MousePosition.Y - 16;
+            pnl.SetPosition(InputHandler.MousePosition.X - pnl.Width/2, InputHandler.MousePosition.Y - pnl.Height/2);
             if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
             {
                 return true;

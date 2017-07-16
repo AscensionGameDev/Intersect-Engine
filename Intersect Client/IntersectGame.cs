@@ -123,7 +123,7 @@ namespace Intersect_Client_MonoGame
         {
             base.OnExiting(sender, args);
 
-            GameNetwork.clientNetwork?.Stop();
+            GameNetwork.ClientLidgrenNetwork?.Disconnect("quitting");
         }
     }
 }

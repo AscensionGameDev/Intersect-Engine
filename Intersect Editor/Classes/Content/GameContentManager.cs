@@ -258,27 +258,27 @@ namespace Intersect.Editor.Classes.Core
             var badTilesets = new List<string>();
             for (var i = 0; i < TilesetBase.Lookup.Count; i++)
             {
-                if (
-                    File.Exists("resources/tilesets/" +
-                                TilesetBase.Lookup.Get<TilesetBase>(Database.GameObjectIdFromList(GameObjectType.Tileset, i)).Name))
+                var tileset = TilesetBase.Lookup.Get<TilesetBase>(Database.GameObjectIdFromList(GameObjectType.Tileset, i));
+                if (File.Exists("resources/tilesets/" + tileset.Name))
                 {
-                    tilesetDict.Add(
-                        TilesetBase.Lookup.Get<TilesetBase>(Database.GameObjectIdFromList(GameObjectType.Tileset, i)).Name.ToLower(),
-                        new GameTexture("resources/tilesets/" +
-                                        TilesetBase.Lookup.Get<TilesetBase>(Database.GameObjectIdFromList(GameObjectType.Tileset, i))
-                                            .Name));
+                    try
+                    {
+                        tilesetDict[tileset.Name.ToLower()] = new GameTexture("resources/tilesets/" + tileset.Name);
+                    }
+                    catch (Exception exception)
+                    {
+                        Log.Error($"Fake methods! ({tileset.Name})");
+                        if (exception.InnerException != null) Log.Error(exception.InnerException);
+                        Log.Error(exception);
+                        throw;
+                    }
                     if (!tilesetWarning)
                     {
-                        using (
-                            var img =
-                                Image.FromFile("resources/tilesets/" +
-                                               TilesetBase.Lookup.Get<TilesetBase>(Database.GameObjectIdFromList(GameObjectType.Tileset,
-                                                   i)).Name))
+                        using (var img = Image.FromFile("resources/tilesets/" + tileset.Name))
                         {
                             if (img.Width > 2048 || img.Height > 2048)
                             {
-                                badTilesets.Add(
-                                    TilesetBase.Lookup.Get<TilesetBase>(Database.GameObjectIdFromList(GameObjectType.Tileset, i)).Name);
+                                badTilesets.Add(tileset.Name);
                             }
                         }
                     }

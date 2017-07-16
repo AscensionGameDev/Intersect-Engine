@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Intersect.Enums;
@@ -12,6 +13,7 @@ using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Network;
 using Intersect.Network.Packets;
+using Intersect.Network.Packets.Reflectable;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
@@ -274,7 +276,16 @@ namespace Intersect.Server.Classes.Networking
                 case ClientPackets.FriendRequestDecline:
                     HandleFriendRequestDecline(client, packet);
                     break;
-                default:
+				case ClientPackets.PlayGame:
+					HandlePlayGame(client, packet);
+					break;
+				case ClientPackets.DeleteChar:
+					HandleDeleteChar(client, packet);
+					break;
+				case ClientPackets.CreateNewChar:
+					HandleCreateNewChar(client, packet);
+					break;
+				default:
                     break;
             }
         }
@@ -328,15 +339,24 @@ namespace Intersect.Server.Classes.Networking
                             Globals.Entities[index] = new Player(index, client);
                             client.Entity = (Player) Globals.Entities[index];
                             PacketSender.SendServerConfig(client);
-                            if (Database.LoadCharacter(client))
-                            {
-                                PacketSender.SendJoinGame(client);
-                            }
-                            else
-                            {
-                                PacketSender.SendGameObjects(client, GameObjectType.Class);
-                                PacketSender.SendCreateCharacter(client);
-                            }
+                            Database.GetCharacters(client);
+                            //Character selection if more than one.
+                            if (Options.MaxCharacters > 1)
+							{
+								PacketSender.SendPlayerCharacters(client);
+							}
+							else
+							{
+								if (client.Characters.Count > 0 &&  Database.LoadCharacter(client,client.Characters[0].Slot))
+								{
+									PacketSender.SendJoinGame(client);
+								}
+								else
+								{
+									PacketSender.SendGameObjects(client, GameObjectType.Class);
+									PacketSender.SendCreateCharacter(client);
+								}
+							}
                         }
                         else
                         {
@@ -432,118 +452,136 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var msg = bf.ReadString();
+			string channel = bf.ReadInteger().ToString();
             if (client.Muted == true) //Don't let the toungless toxic kids speak.
             {
                 PacketSender.SendPlayerMsg(client, client.MuteReason);
                 return;
             }
 
-            //Check for /commands
-            if (msg[0] == '/')
+			//If no /command, then use the designated channel.
+			if (msg[0] != '/')
+			{
+				msg = "/" + channel + " " + msg;
+			}
+
+			//Check for /commands
+			if (msg[0] == '/')
             {
                 string[] splitString = msg.Split();
-                msg = msg.Remove(0, splitString[0].Length + 1); //Chop off the /command at the start of the sentance
-                
-                switch (splitString[0].ToLower())
+                msg = msg.Remove(0, splitString[0].Length); //Chop off the /command at the start of the sentance
+                var cmd = splitString[0].ToLower();
+
+                if (cmd == Strings.Get("chat", "localcmd") || cmd == "/0")
                 {
-                    case "/all":
-                    case "/global":
-                        if (client.Power == 2)
-                        {
-                            PacketSender.SendGlobalMsg(Strings.Get("chat","global",client.Entity.MyName,msg), CustomColors.AdminGlobalChat, client.Entity.MyName);
-                        }
-                        else if (client.Power == 1)
-                        {
-                            PacketSender.SendGlobalMsg(Strings.Get("chat", "global", client.Entity.MyName, msg), CustomColors.ModGlobalChat, client.Entity.MyName);
-                        }
-                        else
-                        {
-                            PacketSender.SendGlobalMsg(Strings.Get("chat", "global", client.Entity.MyName, msg), CustomColors.GlobalChat, client.Entity.MyName);
-                        }
-                        break;
-                    case "/announcement":
-                        if (client.Power > 0)
-                        {
-                            PacketSender.SendGlobalMsg(Strings.Get("chat", "announcement", client.Entity.MyName, msg), CustomColors.AnnouncementChat, client.Entity.MyName);
-                        }
-                        break;
-                    case "/admin":
-                        if (client.Power > 0)
-                        {
-                            PacketSender.SendAdminMsg(Strings.Get("chat", "admin", client.Entity.MyName, msg), CustomColors.AdminChat, client.Entity.MyName);
-                        }
-                        break;
-                    case "/party":
+                    if (client.Power == 2)
+                    {
+                        PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.AdminLocalChat, client.Entity.MyName);
+                    }
+                    else if (client.Power == 1)
+                    {
+                        PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.ModLocalChat, client.Entity.MyName);
+                    }
+                    else
+                    {
+                        PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.LocalChat, client.Entity.MyName);
+                    }
+                    PacketSender.SendChatBubble(client.Entity.MyIndex, (int)EntityTypes.GlobalEntity, msg, client.Entity.CurrentMap);
+                }
+                else if (cmd == Strings.Get("chat", "allcmd") || cmd == "/1" || cmd == Strings.Get("chat", "globalcmd"))
+                {
+                    if (client.Power == 2)
+                    {
+                        PacketSender.SendGlobalMsg(Strings.Get("chat", "global", client.Entity.MyName, msg), CustomColors.AdminGlobalChat, client.Entity.MyName);
+                    }
+                    else if (client.Power == 1)
+                    {
+                        PacketSender.SendGlobalMsg(Strings.Get("chat", "global", client.Entity.MyName, msg), CustomColors.ModGlobalChat, client.Entity.MyName);
+                    }
+                    else
+                    {
+                        PacketSender.SendGlobalMsg(Strings.Get("chat", "global", client.Entity.MyName, msg), CustomColors.GlobalChat, client.Entity.MyName);
+                    }
+                }
+                else if (cmd == Strings.Get("chat", "partycmd") || cmd == "/2")
+                {
+                    if (client.Entity.InParty(client.Entity))
+                    {
                         PacketSender.SendPartyMsg(client, Strings.Get("party", "announcement", client.Entity.MyName, msg), CustomColors.PartyChat, client.Entity.MyName);
-                        break;
-                    case "/pm":
-                    case "/message":
-                        msg = msg.Remove(0, splitString[1].Length + 1); //Chop off the player name parameter
+                    }
+                    else
+                    {
+                        PacketSender.SendPlayerMsg(client, Strings.Get("parties", "notinparty"), CustomColors.Error);
+                    }
+                }
+                else if (cmd == Strings.Get("chat", "admincmd") || cmd == "/3")
+                {
+                    if (client.Power > 0)
+                    {
+                        PacketSender.SendAdminMsg(Strings.Get("chat", "admin", client.Entity.MyName, msg), CustomColors.AdminChat, client.Entity.MyName);
+                    }
+                }
+                else if (cmd == Strings.Get("chat", "announcementcmd"))
+                {
+                    if (client.Power > 0)
+                    {
+                        PacketSender.SendGlobalMsg(Strings.Get("chat", "announcement", client.Entity.MyName, msg), CustomColors.AnnouncementChat, client.Entity.MyName);
+                    }
+                }
+                else if (cmd == Strings.Get("chat", "pmcmd") || cmd == Strings.Get("chat", "messagecmd"))
+                {
+                    msg = msg.Remove(0, splitString[1].Length + 1); //Chop off the player name parameter
 
-                        for (int i = 0; i < Globals.Clients.Count; i++)
+                    for (int i = 0; i < Globals.Clients.Count; i++)
+                    {
+                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
+                            if (splitString[1].ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
                             {
-                                if (splitString[1].ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
-                                {
-                                    PacketSender.SendPlayerMsg(client, Strings.Get("chat", "private", client.Entity.MyName, msg), CustomColors.PrivateChat, client.Entity.MyName);
-                                    PacketSender.SendPlayerMsg(Globals.Clients[i], Strings.Get("chat", "private", client.Entity.MyName, msg), CustomColors.PrivateChat, client.Entity.MyName);
-                                    Globals.Clients[i].Entity.ChatTarget = client.Entity;
-                                    client.Entity.ChatTarget = Globals.Clients[i].Entity;
-                                    return;
-                                }
+                                PacketSender.SendPlayerMsg(client, Strings.Get("chat", "private", client.Entity.MyName, msg), CustomColors.PrivateChat, client.Entity.MyName);
+                                PacketSender.SendPlayerMsg(Globals.Clients[i], Strings.Get("chat", "private", client.Entity.MyName, msg), CustomColors.PrivateChat, client.Entity.MyName);
+                                Globals.Clients[i].Entity.ChatTarget = client.Entity;
+                                client.Entity.ChatTarget = Globals.Clients[i].Entity;
+                                return;
                             }
                         }
+                    }
+                    PacketSender.SendPlayerMsg(client, Strings.Get("Player", "offline"), CustomColors.Error);
+                }
+                else if (cmd == Strings.Get("chat", "replycmd") || cmd == Strings.Get("chat", "rcmd"))
+                {
+                    if (client.Entity.ChatTarget != null)
+                    {
+                        PacketSender.SendPlayerMsg(client, Strings.Get("chat", "private", client.Entity.MyName, msg),
+                            CustomColors.PrivateChat, client.Entity.MyName);
+                        PacketSender.SendPlayerMsg(client.Entity.ChatTarget.MyClient,
+                            Strings.Get("chat", "private", client.Entity.MyName, msg), CustomColors.PrivateChat,
+                            client.Entity.MyName);
+                        client.Entity.ChatTarget.ChatTarget = client.Entity;
+                    }
+                    else
+                    {
                         PacketSender.SendPlayerMsg(client, Strings.Get("Player", "offline"), CustomColors.Error);
-                        break;
-                    case "/reply":
-                    case "/r":
-                        if (client.Entity.ChatTarget != null)
-                        {
-                            PacketSender.SendPlayerMsg(client, Strings.Get("chat", "private", client.Entity.MyName, msg), CustomColors.PrivateChat, client.Entity.MyName);
-                            PacketSender.SendPlayerMsg(client.Entity.ChatTarget.MyClient, Strings.Get("chat", "private", client.Entity.MyName, msg), CustomColors.PrivateChat, client.Entity.MyName);
-                            client.Entity.ChatTarget.ChatTarget = client.Entity;
-                        }
-                        else
-                        {
-                            PacketSender.SendPlayerMsg(client, Strings.Get("Player", "offline"), CustomColors.Error);
-                        }
-                        break;
-                    default:
-                        //Search for command activated events and run them
-                        foreach (var evt in EventBase.Lookup)
-                        {
-                            if ((EventBase)evt.Value != null)
-                            {
-                                if (client.Entity.StartCommonEvent((EventBase)evt.Value, (int)EventPage.CommonEventTriggers.Command, splitString[0].TrimStart('/'), msg) == true)
-                                {
-                                    return; //Found our /command, exit now :)
-                                }
-                            }
-                        }
-
-                        //No common event /command, invalid command.
-                        PacketSender.SendPlayerMsg(client, Strings.Get("Commands", "invalid"), CustomColors.Error);
-                        break;
-                }
-            }
-            else //Talk in local normally
-            {
-                if (client.Power == 2)
-                {
-                    PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.AdminLocalChat, client.Entity.MyName);
-                }
-                else if (client.Power == 1)
-                {
-                    PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.ModLocalChat, client.Entity.MyName);
+                    }
                 }
                 else
                 {
-                    PacketSender.SendProximityMsg(Strings.Get("chat", "local", client.Entity.MyName, msg), client.Entity.CurrentMap, CustomColors.LocalChat, client.Entity.MyName);
-                }
-                PacketSender.SendChatBubble(client.Entity.MyIndex, (int)EntityTypes.GlobalEntity, msg, client.Entity.CurrentMap);
-            }
+                    //Search for command activated events and run them
+                    foreach (var evt in EventBase.Lookup)
+                    {
+                        if ((EventBase)evt.Value != null)
+                        {
+                            if (client.Entity.StartCommonEvent((EventBase)evt.Value, (int)EventPage.CommonEventTriggers.Command, splitString[0].TrimStart('/'), msg) == true)
+                            {
+                                return; //Found our /command, exit now :)
+                            }
+                        }
+                    }
 
+                    //No common event /command, invalid command.
+                    PacketSender.SendPlayerMsg(client, Strings.Get("Commands", "invalid"), CustomColors.Error);
+                }
+            }
 
             bf.Dispose();
         }
@@ -1025,8 +1063,18 @@ namespace Intersect.Server.Classes.Networking
                 {
                     Database.CreateAccount(client, username, password, email);
                     PacketSender.SendServerConfig(client);
-                    PacketSender.SendGameObjects(client, GameObjectType.Class);
-                    PacketSender.SendCreateCharacter(client);
+
+					//Character selection if more than one.
+					if (Options.MaxCharacters > 1)
+					{
+						Database.GetCharacters(client);
+						PacketSender.SendPlayerCharacters(client);
+					}
+					else
+					{
+						PacketSender.SendGameObjects(client, GameObjectType.Class);
+						PacketSender.SendCreateCharacter(client);
+					}
                 }
             }
             bf.Dispose();
@@ -1042,7 +1090,8 @@ namespace Intersect.Server.Classes.Networking
                 PacketSender.SendLoginError(client, Strings.Get("account", "invalidname"));
                 return;
             }
-            var Class = bf.ReadInteger();
+
+			var Class = bf.ReadInteger();
             var Sprite = bf.ReadInteger();
             var index = client.EntityIndex;
             var classBase = ClassBase.Lookup.Get<ClassBase>(Class);
@@ -1051,52 +1100,81 @@ namespace Intersect.Server.Classes.Networking
                 PacketSender.SendLoginError(client, Strings.Get("account", "invalidclass"));
                 return;
             }
-            if (Database.CharacterNameInUse(Name))
-            {
-                PacketSender.SendLoginError(client, Strings.Get("account", "characterexists"));
-            }
-            else
-            {
-                var player = (Player) Globals.Entities[index];
-                client.Entity = player;
-                player.MyName = Name;
-                player.Class = Class;
-                if (classBase.Sprites.Count > 0)
-                {
-                    player.MySprite = classBase.Sprites[Sprite].Sprite;
-                    player.Face = classBase.Sprites[Sprite].Face;
-                    player.Gender = classBase.Sprites[Sprite].Gender;
-                }
-                PacketSender.SendJoinGame(client);
-                player.WarpToSpawn();
-                player.Vital[(int) Vitals.Health] = classBase.BaseVital[(int) Vitals.Health];
-                player.Vital[(int) Vitals.Mana] = classBase.BaseVital[(int) Vitals.Mana];
-                player.MaxVital[(int) Vitals.Health] = classBase.BaseVital[(int) Vitals.Health];
-                player.MaxVital[(int) Vitals.Mana] = classBase.BaseVital[(int) Vitals.Mana];
+			if (Database.CharacterNameInUse(Name))
+			{
+				PacketSender.SendLoginError(client, Strings.Get("account", "characterexists"));
+			}
+			else
+			{
+				var player = (Player)Globals.Entities[index];
 
-                for (int i = 0; i < (int) Stats.StatCount; i++)
-                {
-                    player.Stat[i].Stat = classBase.BaseStat[i];
-                }
-                player.StatPoints = classBase.BasePoints;
+				//Find the next free slot to put the character
+				bool space = false;
+				for (int i = 0; i < Options.MaxCharacters; i++)
+				{
+					bool foundChar = false;
+					foreach (Character c in client.Characters)
+					{
+						if (c.Slot == i)
+						{
+							foundChar = true;
+							break;
+						}
+					}
+					if (foundChar == false)
+					{
+						player.MyId = i;
+						space = true;
+						break;
+					}
+				}
 
-                for (int i = 0; i < classBase.Spells.Count; i++)
-                {
-                    if (classBase.Spells[i].Level <= 1)
-                    {
-                        SpellInstance TempSpell = new SpellInstance()
-                        {
-                            SpellNum = classBase.Spells[i].SpellNum
-                        };
-                        player.TryTeachSpell(TempSpell, false);
-                    }
-                }
+				if (space == false) //No space for new chars
+				{
+					PacketSender.SendLoginError(client, Strings.Get("account", "maxchars"));
+					return;
+				}
 
-                for (int i = 0; i < Options.MaxNpcDrops; i++)
-                {
-                    ItemInstance TempItem = new ItemInstance(classBase.Items[i].ItemNum, classBase.Items[i].Amount, -1);
-                    player.TryGiveItem(TempItem, false);
-                }
+				client.Entity = player;
+				player.MyName = Name;
+				player.Class = Class;
+				if (classBase.Sprites.Count > 0)
+				{
+					player.MySprite = classBase.Sprites[Sprite].Sprite;
+					player.Face = classBase.Sprites[Sprite].Face;
+					player.Gender = classBase.Sprites[Sprite].Gender;
+				}
+				PacketSender.SendJoinGame(client);
+				player.WarpToSpawn();
+				player.Vital[(int)Vitals.Health] = classBase.BaseVital[(int)Vitals.Health];
+				player.Vital[(int)Vitals.Mana] = classBase.BaseVital[(int)Vitals.Mana];
+				player.MaxVital[(int)Vitals.Health] = classBase.BaseVital[(int)Vitals.Health];
+				player.MaxVital[(int)Vitals.Mana] = classBase.BaseVital[(int)Vitals.Mana];
+
+				for (int i = 0; i < (int)Stats.StatCount; i++)
+				{
+					player.Stat[i].Stat = classBase.BaseStat[i];
+				}
+				player.StatPoints = classBase.BasePoints;
+
+				for (int i = 0; i < classBase.Spells.Count; i++)
+				{
+					if (classBase.Spells[i].Level <= 1)
+					{
+						SpellInstance TempSpell = new SpellInstance()
+						{
+							SpellNum = classBase.Spells[i].SpellNum
+						};
+						player.TryTeachSpell(TempSpell, false);
+					}
+				}
+
+				for (int i = 0; i < Options.MaxNpcDrops; i++)
+				{
+					ItemInstance TempItem = new ItemInstance(classBase.Items[i].ItemNum, classBase.Items[i].Amount, -1);
+					player.TryGiveItem(TempItem, false);
+				}
+
                 Task.Run(() => Database.SaveCharacter(client.Entity, true));
             }
             bf.Dispose();
@@ -2144,7 +2222,7 @@ namespace Intersect.Server.Classes.Networking
                 if (client.Entity.PartyRequester.IsValidPlayer)
                 {
                     PacketSender.SendPlayerMsg(client.Entity.PartyRequester.MyClient,
-                        Strings.Get("parties,declined", client.Entity.MyName), CustomColors.Declined);
+                        Strings.Get("parties","declined", client.Entity.MyName), CustomColors.Declined);
 
                     if (client.Entity.PartyRequests.ContainsKey(client.Entity.PartyRequester))
                     {
@@ -2520,5 +2598,44 @@ namespace Intersect.Server.Classes.Networking
             }
             bf.Dispose();
         }
-    }
+
+		private static void HandlePlayGame(Client client, byte[] packet)
+		{
+			var bf = new ByteBuffer();
+			bf.WriteBytes(packet);
+			var charSlot = bf.ReadInteger();
+
+			if (Database.LoadCharacter(client, charSlot))
+			{
+				PacketSender.SendJoinGame(client);
+			}
+
+			bf.Dispose();
+		}
+
+		private static void HandleDeleteChar(Client client, byte[] packet)
+		{
+			var bf = new ByteBuffer();
+			bf.WriteBytes(packet);
+			var charSlot = bf.ReadInteger();
+			Database.DeleteCharacter(client, charSlot);
+		    Database.GetCharacters(client);
+            PacketSender.SendLoginError(client, Strings.Get("account", "deletechar"), Strings.Get("account", "deleted"));
+            PacketSender.SendPlayerCharacters(client);
+			bf.Dispose();
+		}
+
+		private static void HandleCreateNewChar(Client client, byte[] packet)
+		{
+			if (client.Characters.Count < Options.MaxCharacters)
+			{
+				PacketSender.SendGameObjects(client, GameObjectType.Class);
+				PacketSender.SendCreateCharacter(client);
+			}
+			else
+			{
+				PacketSender.SendLoginError(client, Strings.Get("account", "maxchars"));
+			}
+		}
+	}
 }

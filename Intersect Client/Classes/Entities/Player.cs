@@ -21,7 +21,7 @@ namespace Intersect_Client.Classes.Entities
     public class Player : Entity
     {
         private ItemDescWindow _itemTargetBox;
-        private EntityBox _targetBox;
+        public EntityBox _targetBox;
 
         public int _targetIndex = -1;
         public int _targetType;
@@ -162,7 +162,7 @@ namespace Intersect_Client.Classes.Entities
                 {
                     InputBox iBox = new InputBox(Strings.Get("inventory", "dropitem"),
                         Strings.Get("inventory", "dropitemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name),
-                        true, DropItemInputBoxOkay, null, index, true);
+                        true, InputBox.InputType.TextInput, DropItemInputBoxOkay, null, index);
                 }
                 else
                 {
@@ -176,7 +176,7 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendDropItem(((InputBox) sender).Slot, value);
+                PacketSender.SendDropItem(((InputBox) sender).UserData, value);
             }
         }
 
@@ -231,8 +231,8 @@ namespace Intersect_Client.Classes.Entities
                     if (Inventory[index].ItemVal > 1)
                     {
                         InputBox iBox = new InputBox(Strings.Get("shop", "sellitem"),
-                            Strings.Get("shop", "sellitemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
-                            SellItemInputBoxOkay, null, index, true);
+                            Strings.Get("shop", "sellitemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true, InputBox.InputType.TextInput,
+                            SellItemInputBoxOkay, null, index);
                     }
                     else
                     {
@@ -242,7 +242,7 @@ namespace Intersect_Client.Classes.Entities
                 else
                 {
                     InputBox iBox = new InputBox(Strings.Get("shop", "sellitem"), Strings.Get("shop", "cannotsell"),
-                        true, null, null, -1, false);
+                        true, InputBox.InputType.YesNo, null, null, -1);
                 }
             }
         }
@@ -252,7 +252,7 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendSellItem(((InputBox) sender).Slot, value);
+                PacketSender.SendSellItem(((InputBox) sender).UserData, value);
             }
         }
 
@@ -264,8 +264,8 @@ namespace Intersect_Client.Classes.Entities
                 if (Inventory[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("bank", "deposititem"),
-                        Strings.Get("bank", "deposititemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
-                        DepositItemInputBoxOkay, null, index, true);
+                        Strings.Get("bank", "deposititemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true, InputBox.InputType.TextInput,
+                        DepositItemInputBoxOkay, null, index);
                 }
                 else
                 {
@@ -279,7 +279,7 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendDepositItem(((InputBox) sender).Slot, value);
+                PacketSender.SendDepositItem(((InputBox) sender).UserData, value);
             }
         }
 
@@ -291,7 +291,7 @@ namespace Intersect_Client.Classes.Entities
                 {
                     InputBox iBox = new InputBox(Strings.Get("bank", "withdrawitem"),
                         Strings.Get("bank", "withdrawitemprompt", ItemBase.Lookup.Get<ItemBase>(Globals.Bank[index].ItemNum).Name),
-                        true, WithdrawItemInputBoxOkay, null, index, true);
+                        true, InputBox.InputType.TextInput, WithdrawItemInputBoxOkay, null, index);
                 }
                 else
                 {
@@ -305,7 +305,7 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendWithdrawItem(((InputBox) sender).Slot, value);
+                PacketSender.SendWithdrawItem(((InputBox) sender).UserData, value);
             }
         }
 
@@ -317,8 +317,8 @@ namespace Intersect_Client.Classes.Entities
                 if (Inventory[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("bags", "storeitem"),
-                        Strings.Get("bags", "storeitemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
-                        StoreBagItemInputBoxOkay, null, index, true);
+                        Strings.Get("bags", "storeitemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true, InputBox.InputType.TextInput,
+                        StoreBagItemInputBoxOkay, null, index);
                 }
                 else
                 {
@@ -332,7 +332,7 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendStoreBagItem(((InputBox) sender).Slot, value);
+                PacketSender.SendStoreBagItem(((InputBox) sender).UserData, value);
             }
         }
 
@@ -344,7 +344,7 @@ namespace Intersect_Client.Classes.Entities
                 {
                     InputBox iBox = new InputBox(Strings.Get("bags", "retreiveitem"),
                         Strings.Get("bags", "retreiveitemprompt", ItemBase.Lookup.Get<ItemBase>(Globals.Bag[index].ItemNum).Name),
-                        true, RetreiveBagItemInputBoxOkay, null, index, true);
+                        true, InputBox.InputType.TextInput, RetreiveBagItemInputBoxOkay, null, index);
                 }
                 else
                 {
@@ -358,7 +358,7 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendRetreiveBagItem(((InputBox) sender).Slot, value);
+                PacketSender.SendRetreiveBagItem(((InputBox) sender).UserData, value);
             }
         }
 
@@ -370,8 +370,8 @@ namespace Intersect_Client.Classes.Entities
                 if (Inventory[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("trading", "offeritem"),
-                        Strings.Get("trading", "offeritemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
-                        TradeItemInputBoxOkay, null, index, true);
+                        Strings.Get("trading", "offeritemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true, InputBox.InputType.TextInput,
+                        TradeItemInputBoxOkay, null, index);
                 }
                 else
                 {
@@ -385,7 +385,7 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendOfferItem(((InputBox) sender).Slot, value);
+                PacketSender.SendOfferItem(((InputBox) sender).UserData, value);
             }
         }
 
@@ -397,8 +397,8 @@ namespace Intersect_Client.Classes.Entities
                 {
                     InputBox iBox = new InputBox(Strings.Get("trading", "revokeitem"),
                         Strings.Get("trading", "revokeitemprompt",
-                            ItemBase.Lookup.Get<ItemBase>(Globals.Trade[0, index].ItemNum).Name), true, RevokeItemInputBoxOkay, null,
-                        index, true);
+                            ItemBase.Lookup.Get<ItemBase>(Globals.Trade[0, index].ItemNum).Name), true, InputBox.InputType.TextInput, RevokeItemInputBoxOkay, null,
+                        index);
                 }
                 else
                 {
@@ -412,7 +412,7 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendRevokeItem(((InputBox) sender).Slot, value);
+                PacketSender.SendRevokeItem(((InputBox) sender).UserData, value);
             }
         }
 
@@ -429,14 +429,14 @@ namespace Intersect_Client.Classes.Entities
             if (SpellBase.Lookup.Get<SpellBase>(Spells[index].SpellNum) != null)
             {
                 InputBox iBox = new InputBox(Strings.Get("spells", "forgetspell"),
-                    Strings.Get("spells", "forgetspellprompt", SpellBase.Lookup.Get<SpellBase>(Spells[index].SpellNum).Name), true,
-                    ForgetSpellInputBoxOkay, null, index, false);
+                    Strings.Get("spells", "forgetspellprompt", SpellBase.Lookup.Get<SpellBase>(Spells[index].SpellNum).Name), true, InputBox.InputType.YesNo,
+                    ForgetSpellInputBoxOkay, null, index);
             }
         }
 
         private void ForgetSpellInputBoxOkay(object sender, EventArgs e)
         {
-            PacketSender.SendForgetSpell(((InputBox) sender).Slot);
+            PacketSender.SendForgetSpell(((InputBox) sender).UserData);
         }
 
         public void TryUseSpell(int index)
@@ -704,7 +704,16 @@ namespace Intersect_Client.Classes.Entities
                                             _targetBox = null;
                                         }
                                         if (en.Value != Globals.Me)
-                                            _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 122);
+                                        {
+                                            if (en.Value.GetType() == typeof(Player))
+                                            {
+                                                _targetBox = new EntityBox(Gui.GameUI.GameCanvas, EntityTypes.Player, en.Value);
+                                            }
+                                            else
+                                            {
+                                                _targetBox = new EntityBox(Gui.GameUI.GameCanvas, EntityTypes.GlobalEntity, en.Value);
+                                            }
+                                        }
                                         if (_targetType == 0 && _targetIndex == en.Value.MyIndex)
                                         {
                                             ClearTarget();
@@ -738,7 +747,7 @@ namespace Intersect_Client.Classes.Entities
                                             _targetBox.Dispose();
                                             _targetBox = null;
                                         }
-                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 122);
+                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas,EntityTypes.Event, en.Value);
                                         if (_targetType == 1 && _targetIndex == en.Value.MyIndex)
                                         {
                                             ClearTarget();

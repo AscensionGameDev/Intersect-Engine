@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading;
+using System.Threading.Tasks;
 using Intersect.Logging;
 using Intersect.Memory;
 using Intersect.Network.Crypto;
@@ -13,6 +14,7 @@ using Intersect.Network.Crypto.Formats;
 using Intersect.Network.Packets;
 using Intersect.Threading;
 using Lidgren.Network;
+using Open.Nat;
 
 namespace Intersect.Network
 {
@@ -88,6 +90,24 @@ namespace Intersect.Network
             Rsa.ImportParameters(GetRsaKey());
 
             CreateThreads();
+            OpenServerPort();
+        }
+
+        private async Task<NatDevice> OpenServerPort()
+        {
+            try
+            {
+                var nat = new NatDiscoverer();
+                var cts = new CancellationTokenSource(5000);
+                var device = await nat.DiscoverDeviceAsync(PortMapper.Upnp, cts);
+                await device.CreatePortMapAsync(new Mapping(Protocol.Udp, Config.Port, Config.Port, "Intersect"));
+                Log.Info("Successfully port forwarded using upnp.");
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("Failed to auto port forward using upnp.");  
+            }
+            return null;
         }
 
         protected abstract RSAParameters GetRsaKey();

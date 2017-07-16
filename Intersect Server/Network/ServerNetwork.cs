@@ -1,141 +1,75 @@
-﻿using Intersect.Logging;
-using Intersect.Memory;
-using Intersect.Network;
-using Intersect.Threading;
-using Lidgren.Network;
-using System;
-using System.Linq;
-using System.Reflection;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Security.Cryptography;
-using Intersect.Network.Packets;
-using Intersect.Server.Classes.General;
+using Intersect.Logging;
+using Intersect.Network;
 using Intersect.Server.Classes.Networking;
+using Lidgren.Network;
 
 namespace Intersect.Server.Network
 {
-    public class ServerNetwork : AbstractNetwork
+    public class ServerNetwork : AbstractNetwork, IServer
     {
-        public new NetServer Peer => (NetServer)base.Peer;
+        public HandleConnectionEvent OnConnected { get; set; }
+        public HandleConnectionEvent OnConnectionApproved { get; set; }
+        public HandleConnectionEvent OnDisconnected { get; set; }
 
-        private PacketHandler packetHandler = new PacketHandler();
+        public override Guid Guid { get; }
 
-        public ServerNetwork(NetworkConfiguration config) : base(config, typeof(NetServer))
+        public ServerNetwork(NetworkConfiguration configuration, RSAParameters rsaParameters)
+            : base(configuration)
         {
+            Guid = Guid.NewGuid();
+
+            var lidgrenInterface = new LidgrenInterface(this, typeof(NetServer), rsaParameters);
+            lidgrenInterface.OnConnected += HandleInterfaceOnConnected;
+            lidgrenInterface.OnConnectionApproved += HandleInterfaceOnConnectonApproved;
+            lidgrenInterface.OnDisconnected += HandleInterfaceOnDisconnected;
+            AddNetworkLayerInterface(lidgrenInterface);
         }
 
-        protected override RSAParameters GetRsaKey()
-            => LoadKeyFromAssembly(Assembly.GetExecutingAssembly(), "Intersect.Server.private-intersect.bek", false);
-            //=> LoadKeyFromFile("private.bk1", false);
-
-        protected override void OnStart()
+        protected virtual void HandleInterfaceOnConnected(INetworkLayerInterface sender, IConnection connection)
         {
-            Log.Info("Starting the server...");
-            Peer.Start();
+            Log.Info($"Connected [{connection?.Guid}].");
+            Client.CreateBeta4Client(connection);
+            OnConnected?.Invoke(sender, connection);
         }
 
-        protected override void OnStop()
+        protected virtual void HandleInterfaceOnConnectonApproved(INetworkLayerInterface sender, IConnection connection)
         {
-            Log.Info("Stopping the server...");
+            Log.Info($"Connection approved [{connection?.Guid}].");
+            OnConnectionApproved?.Invoke(sender, connection);
         }
 
-        protected override bool HandleConnectionApproval(NetIncomingMessage request)
+        protected virtual void HandleInterfaceOnDisconnected(INetworkLayerInterface sender, IConnection connection)
         {
-            var encryptedSize = request.ReadInt32();
-            var encryptedData = request.ReadBytes(encryptedSize);
-
-            byte[] decryptedData;
-            try
-            {
-                decryptedData = Rsa.Decrypt(encryptedData, true);
-            }
-            catch (Exception exception)
-            {
-                Log.Debug(exception);
-
-                request.SenderConnection?.Deny("bad_public_key");
-                return true;
-            }
-            
-            using (var requestBuffer = new MemoryBuffer(decryptedData))
-            {
-                using (var responseBuffer = new MemoryBuffer())
-                {
-                    byte[] sharedSecret;
-                    if (!requestBuffer.Read(out sharedSecret)) return false;
-                    if (!SharedConstants.VERSION_DATA.SequenceEqual(sharedSecret)) return false;
-                    
-                    byte[] handshakeSecret;
-                    if (!requestBuffer.Read(out handshakeSecret, 32)) return false;
-
-                    short rsaBits;
-                    if (!requestBuffer.Read(out rsaBits)) return false;
-
-                    var rsaParameters = new RSAParameters();
-                    if (!requestBuffer.Read(out rsaParameters.Exponent, 3)) return false;
-                    if (!requestBuffer.Read(out rsaParameters.Modulus, rsaBits / 8)) return false;
-
-                    DumpKey(rsaParameters, true);
-
-                    responseBuffer.Write(handshakeSecret, 32);
-
-                    var aesKey = new byte[32];
-                    Rng.GetNonZeroBytes(aesKey);
-                    responseBuffer.Write(aesKey, 32);
-
-                    var metadata = new LidgrenConnection(this, request.SenderConnection, aesKey, rsaParameters);
-                    AddConnection(metadata);
-
-                    responseBuffer.Write(metadata.Guid.ToByteArray(), 16);
-
-                    var encryptedResponse = metadata.Rsa.Encrypt(responseBuffer.ToArray(), true);
-                    var response = Peer.CreateMessage(encryptedResponse.Length + sizeof(int));
-                    response.Write(encryptedResponse.Length);
-                    response.Write(encryptedResponse, 0, encryptedResponse.Length);
-
-                    Client.CreateBeta4Client(metadata);
-
-                    request.SenderConnection.Approve(response);
-                    return true;
-                }
-            }
-        }
-
-        protected override void RemoveConnection(LidgrenConnection connection)
-        {
-            base.RemoveConnection(connection);
-
+            Log.Info($"Disconnected [{connection?.Guid}].");
             Client.RemoveBeta4Client(connection);
+            OnDisconnected?.Invoke(sender, connection);
         }
 
-        protected override void RegisterHandlers()
-        {
-            base.RegisterHandlers();
+        public override bool Send(IPacket packet)
+            => Send(Connections, packet);
 
-            Dispatcher.RegisterHandler(typeof(BinaryPacket), packetHandler.HandlePacket);
-        }
+        public override bool Send(IConnection connection, IPacket packet)
+            => Send(new[] {connection}, packet);
 
-        protected override bool HandleConnected(NetIncomingMessage request)
+        public override bool Send(ICollection<IConnection> connections, IPacket packet)
         {
-            var lidgrenId = request.SenderConnection.RemoteUniqueIdentifier;
-            if (HasConnection(lidgrenId)) return true;
-            Log.Error($"Disconnected client that isn't listed ({lidgrenId}).");
-            request.SenderConnection.Disconnect("You weren't approved?");
+            SendPacket(packet, connections, TransmissionMode.All);
             return true;
         }
 
-        protected override int CalculateNumberOfThreads()
+        protected override IDictionary<TKey, TValue> CreateDictionaryLegacy<TKey, TValue>()
         {
-            const int numReservedThreads = 2;
-            const int numSuggestClientsPerThread = 32;
-
-            var numTotalThreads = Environment.ProcessorCount;
-            var numAvailableThreads = Math.Max(1, numTotalThreads - numReservedThreads);
-            var numTotalClients = Config.MaximumConnections;
-            var numSuggestedThreads = (int)Math.Ceiling((float)numTotalClients / numSuggestClientsPerThread);
-            return Math.Max(1, Math.Min(numAvailableThreads, numSuggestedThreads));
+            return new ConcurrentDictionary<TKey, TValue>();
         }
 
-        protected override IThreadYield CreateThreadYield()
-            => new ThreadYieldNet40();
+        public bool Listen()
+        {
+            StartInterfaces();
+            return true;
+        }
     }
 }

@@ -138,6 +138,8 @@
         <string id="characterexists">An account with this character name exists. Please choose another.</string>
         <string id="invalidname">The chosen name does not meet requirements set by the server.</string>
         <string id="invalidemail">The chosen email does not meet requirements set by the server.</string>
+				<string id="deletechar">The character has been deleted.</string>
+				<string id="maxchars">You have already created the maximum number of characters. Delete one before creating a new one.</string>
     </Account>
     <Player>
         <string id="offline">User not online!</string>
@@ -234,6 +236,7 @@
         <string id="alreadydenied">Your party invitation has already been rejected!</string>
         <string id="busy">{00} is busy. Please try again later!</string>
         <string id="declined">{00} has declined your party invitation!</string>
+				<string id="notinparty">You are not in a party.</string>
     </Parties>
     <Friends>
         <string id="accept">{00} has accepted your friend request!</string>
@@ -320,6 +323,7 @@
         <string id="admin">[ADMIN] {00}: {01}</string>
         <string id="party">[PARTY] {00}: {01}</string>
         <string id="local">{00}: {01}</string>
+				<string id="localcmd">/global</string>
         <string id="globalcmd">/global</string>
         <string id="allcmd">/all</string>
         <string id="announcementcmd">/announcement</string>

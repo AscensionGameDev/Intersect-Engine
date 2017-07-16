@@ -1,5 +1,6 @@
 #define websockets
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -7,6 +8,8 @@ using System.Threading;
 using Intersect.Localization;
 using Intersect.Logging;
 using Intersect.Network;
+using Intersect.Network.Crypto;
+using Intersect.Network.Crypto.Formats;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Networking;
@@ -18,7 +21,7 @@ namespace Intersect.Server.Classes
     {
         private static bool _errorHalt = true;
 
-        public static ServerNetwork network;
+        public static ServerNetwork ServerNetwork;
 
         public static void Main(string[] args)
         {
@@ -61,8 +64,22 @@ namespace Intersect.Server.Classes
             SocketServer.Init();
             Console.WriteLine(Strings.Get("intro", "started", Options.ServerPort));
             Log.Global.AddOutput(new ConsoleOutput());
-            network = new ServerNetwork(new NetworkConfiguration(Options.ServerPort));
-            network.Start();
+            var assembly = Assembly.GetExecutingAssembly();
+            using (var stream = assembly.GetManifestResourceStream("Intersect.Server.private-intersect.bek"))
+            {
+                var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
+                Debug.Assert(rsaKey != null, "rsaKey != null");
+                ServerNetwork = new ServerNetwork(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
+            }
+
+            var packetHandler = new PacketHandler();
+            ServerNetwork.Handlers[PacketCode.BinaryPacket] = packetHandler.HandlePacket;
+
+            if (!ServerNetwork.Listen())
+            {
+                Log.Error("An error occurred while attempting to connect.");
+            }
+
 #if websockets
             WebSocketServer.Init();
             Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort + 1));
@@ -599,7 +616,7 @@ namespace Intersect.Server.Classes
                         else
                         {
                             Globals.ServerStarted = false;
-                            network.Stop();
+                            ServerNetwork.Dispose();
                             
                             return;
                         }

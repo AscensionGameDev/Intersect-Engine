@@ -1,4 +1,5 @@
-﻿using Intersect.GameObjects;
+﻿using Intersect.Enums;
+using Intersect.GameObjects;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
@@ -11,11 +12,11 @@ namespace Intersect_Client.Classes.UI.Game
         private BagWindow _bagWindow;
         private BankWindow _bankWindow;
         private Chatbox _chatBox;
-        private CraftingBenchWindow _CraftingBenchWindow;
+        private CraftingWindow _CraftingBenchWindow;
         private DebugMenu _debugMenu;
 
         private EventWindow _eventWindow;
-        private EntityBox _playerBox;
+        public EntityBox _playerBox;
         private QuestOfferWindow _questOfferWindow;
         private ShopWindow _shopWindow;
         private bool _shouldCloseBag;
@@ -53,10 +54,7 @@ namespace Intersect_Client.Classes.UI.Game
             Hotbar = new HotBarWindow(GameCanvas);
             _debugMenu = new DebugMenu(GameCanvas);
             _questOfferWindow = new QuestOfferWindow(GameCanvas);
-            if (Globals.Me != null)
-            {
-                TryAddPlayerBox();
-            }
+            _playerBox = new EntityBox(GameCanvas,EntityTypes.Player, Globals.Me, true);
         }
 
         //Chatbox
@@ -167,7 +165,7 @@ namespace Intersect_Client.Classes.UI.Game
         public void OpenCraftingBench()
         {
             if (_CraftingBenchWindow != null) _CraftingBenchWindow.Close();
-            _CraftingBenchWindow = new CraftingBenchWindow(GameCanvas);
+            _CraftingBenchWindow = new CraftingWindow(GameCanvas);
             _shouldOpenCraftingBench = false;
             Globals.InCraft = true;
         }
@@ -196,15 +194,6 @@ namespace Intersect_Client.Classes.UI.Game
             _TradingWindow = new TradingWindow(GameCanvas, _tradingTarget);
             _shouldOpenTrading = false;
             Globals.InTrade = true;
-        }
-
-        public void TryAddPlayerBox()
-        {
-            if (_playerBox != null || Globals.Me == null)
-            {
-                return;
-            }
-            _playerBox = new EntityBox(GameCanvas, Globals.Me, 4, 4);
         }
 
         public void ShowHideDebug()
@@ -241,9 +230,9 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Draw()
         {
-            if (Globals.Me != null)
+            if (Globals.Me != null && _playerBox._myEntity != Globals.Me)
             {
-                TryAddPlayerBox();
+                _playerBox.SetEntity(Globals.Me);
             }
             _eventWindow.Update();
             _chatBox.Update();
@@ -332,7 +321,7 @@ namespace Intersect_Client.Classes.UI.Game
                 }
                 else
                 {
-                    _CraftingBenchWindow.UpdateCraftBar();
+                    _CraftingBenchWindow.Update();
                 }
             }
             _shouldCloseCraftingBench = false;

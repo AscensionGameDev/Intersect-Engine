@@ -22,12 +22,12 @@ namespace Intersect_Client.Classes.UI.Menu
 
         public void Draw()
         {
-            _mainMenu.Update();
             if (shouldReset)
             {
                 _mainMenu.Reset();
                 shouldReset = false;
             }
+            _mainMenu.Update();
             _menuCanvas.RenderCanvas();
         }
 

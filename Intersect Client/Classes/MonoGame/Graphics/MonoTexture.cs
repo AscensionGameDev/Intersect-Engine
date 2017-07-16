@@ -13,6 +13,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         private long _lastAccessTime;
         private bool _loadError;
         private string _path = "";
+        private string _name = "";
         private Texture2D _tex;
         private int _width = -1;
 
@@ -20,6 +21,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         {
             _graphicsDevice = graphicsDevice;
             _path = filename;
+            _name = Path.GetFileName(filename);
         }
 
         public void LoadTexture()
@@ -27,7 +29,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             _loadError = true;
             if (File.Exists(_path))
             {
-                using (var fileStream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var fileStream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     _tex = Texture2D.FromStream(_graphicsDevice, fileStream);
                     if (_path.Contains("g7"))
@@ -47,6 +49,11 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         public void ResetAccessTime()
         {
             _lastAccessTime = Globals.System.GetTimeMS() + 15000;
+        }
+
+        public override string GetName()
+        {
+            return _name;
         }
 
         public override int GetWidth()

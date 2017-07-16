@@ -9,6 +9,7 @@ using Intersect.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
@@ -38,7 +39,7 @@ namespace Intersect.Server.Classes.Networking
             {
                 return;
             }
-            SendDataToMap(mapNum, data);
+            SendDataToMap(mapNum, data,except);
             for (int i = 0; i < MapInstance.Lookup.Get<MapInstance>(mapNum).SurroundingMaps.Count; i++)
             {
                 SendDataToMap(MapInstance.Lookup.Get<MapInstance>(mapNum).SurroundingMaps[i], data, except);
@@ -85,11 +86,11 @@ namespace Intersect.Server.Classes.Networking
             client.SendPacket(bf.ToArray());
             bf.Dispose();
 
-			if (!client.IsEditor)
-			{
-				SendGlobalMsg(Strings.Get("player", "joined", client.Entity.MyName, Options.GameName));
-			}
-		}
+            if (!client.IsEditor)
+            {
+                SendGlobalMsg(Strings.Get("player", "joined", client.Entity.MyName, Options.GameName));
+            }
+        }
 
         public static void SendMap(Client client, int mapNum, bool allEditors = false)
         {
@@ -138,8 +139,19 @@ namespace Intersect.Server.Classes.Networking
                             client.SentMaps[mapNum].Item2 == MapInstance.Lookup.Get<MapInstance>(mapNum).Revision) return;
                         client.SentMaps.Remove(mapNum);
                     }
-                    client.SentMaps.Add(mapNum,
-                        new Tuple<long, int>(Globals.System.GetTimeMs() + 5000, MapInstance.Lookup.Get<MapInstance>(mapNum).Revision));
+                    try
+                    {
+                        client.SentMaps.Add(mapNum,
+                            new Tuple<long, int>(Globals.System.GetTimeMs() + 5000,
+                                MapInstance.Lookup.Get<MapInstance>(mapNum).Revision));
+                    }
+                    catch (Exception exception)
+                    {
+                        Log.Error($"Current Map #: {mapNum}");
+                        Log.Error($"# Sent maps: {client.SentMaps.Count}");
+                        Log.Error($"# Maps: {MapInstance.Lookup.Count}");
+                        throw exception;
+                    }
                     MapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetMapPacket(true);
                     bf.WriteInteger(MapData.Length);
                     bf.WriteBytes(MapData);
@@ -336,7 +348,7 @@ namespace Intersect.Server.Classes.Networking
             }
         }
 
-        public static void SendEntityDataToProximity(Entity en)
+        public static void SendEntityDataToProximity(Entity en, Client except = null)
         {
             if (en == null)
             {
@@ -348,7 +360,7 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteLong(en.MyIndex);
             bf.WriteInteger((int) en.GetEntityType());
             bf.WriteBytes(en.Data());
-            SendDataToProximity(en.CurrentMap, bf.ToArray());
+            SendDataToProximity(en.CurrentMap, bf.ToArray(), except);
             bf.Dispose();
             SendEntityVitals(en);
             SendEntityStats(en);
@@ -666,8 +678,11 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(statuses.Length);
             foreach (var status in statuses)
             {
+				bf.WriteInteger(status._spell.Index);
                 bf.WriteInteger(status.Type);
                 bf.WriteString(status.Data);
+                bf.WriteInteger((int)(status.Duration - Globals.System.GetTimeMs()));
+                bf.WriteInteger((int)(status.Duration - status.StartTime));
             }
             //If player and in party send vitals to party just in case party members are not in the proximity
             if (en.GetType() == typeof(Player))
@@ -713,7 +728,8 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(statuses.Length);
             foreach (var status in statuses)
             {
-                bf.WriteInteger(status.Type);
+				bf.WriteInteger(status._spell.Index);
+				bf.WriteInteger(status.Type);
                 bf.WriteString(status.Data);
             }
             SendDataTo(client, bf.ToArray());
@@ -824,11 +840,12 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendLoginError(Client client, string error)
+        public static void SendLoginError(Client client, string error, string header = "")
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.LoginError);
             bf.WriteString(error);
+            bf.WriteString(header);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1003,7 +1020,42 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendOpenAdminWindow(Client client)
+		public static void SendPlayerCharacters(Client client)
+		{
+			var bf = new ByteBuffer();
+			bf.WriteLong((int)ServerPackets.PlayerCharacters);
+		    if (client.Characters.Count < Options.MaxCharacters)
+		    {
+		        bf.WriteInteger(client.Characters.Count + 1);
+		    }
+		    else
+		    {
+                bf.WriteInteger(client.Characters.Count);
+            }
+		    foreach (var character in client.Characters)
+		    {
+		        bf.WriteInteger(character.Slot);
+                bf.WriteString(character.Name);
+                bf.WriteString(character.Sprite);
+                bf.WriteString(character.Face);
+                bf.WriteInteger(character.Level);
+                bf.WriteString(ClassBase.GetName(character.Class));
+
+
+                for (int n = 0; n < Options.EquipmentSlots.Count; n++)
+                {
+                    bf.WriteString(character.Equipment[n]);
+                }
+            }
+            if (client.Characters.Count < Options.MaxCharacters)
+            {
+                bf.WriteInteger(-1);
+            }
+            client.SendPacket(bf.ToArray());
+			bf.Dispose();
+		}
+
+		public static void SendOpenAdminWindow(Client client)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.OpenAdminWindow);

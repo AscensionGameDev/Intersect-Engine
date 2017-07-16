@@ -53,6 +53,15 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Diagnostic|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\build\diagnostic\client\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;LINUX;INTERSECT_DIAGNOSTIC</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Classes\Core\GameAudio.cs" />
     <Compile Include="Classes\Core\GameControls.cs" />
@@ -75,6 +84,20 @@
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Maps\MapAnimationInstance.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
+    <Compile Include="Classes\UI\Game\Bag\BagItem.cs" />
+    <Compile Include="Classes\UI\Game\Bank\BankItem.cs" />
+    <Compile Include="Classes\UI\Game\Character\EquipmentItem.cs" />
+    <Compile Include="Classes\UI\Game\Crafting\RecipeItem.cs" />
+    <Compile Include="Classes\UI\Game\EntityBox\SpellStatus.cs" />
+    <Compile Include="Classes\UI\Game\Hotbar\HotbarItem.cs" />
+    <Compile Include="Classes\UI\Game\Inventory\InventoryItem.cs" />
+    <Compile Include="Classes\UI\Game\Shop\ShopItem.cs" />
+    <Compile Include="Classes\UI\Game\Spells\SpellItem.cs" />
+    <Compile Include="Classes\UI\Game\Trades\TradeItem.cs" />
+    <Compile Include="Classes\UI\Game\Trades\TradeSegment.cs" />
+    <Compile Include="Classes\UI\Menu\CreateCharacterWindow.cs" />
+    <Compile Include="Classes\UI\Menu\CreditsParser.cs" />
+    <Compile Include="Classes\UI\Menu\CreditsWindow.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicInstance.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicSource.cs" />
@@ -96,33 +119,33 @@
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\UI\ErrorMessageHandler.cs" />
     <Compile Include="Classes\UI\Game\AdminWindow.cs" />
-    <Compile Include="Classes\UI\Game\BagWindow.cs" />
-    <Compile Include="Classes\UI\Game\BankWindow.cs" />
+    <Compile Include="Classes\UI\Game\Bag\BagWindow.cs" />
+    <Compile Include="Classes\UI\Game\Bank\BankWindow.cs" />
     <Compile Include="Classes\UI\Game\BanMuteBox.cs" />
-    <Compile Include="Classes\UI\Game\CharacterWindow.cs" />
+    <Compile Include="Classes\UI\Game\Character\CharacterWindow.cs" />
     <Compile Include="Classes\UI\Game\Chat\Chatbox.cs" />
     <Compile Include="Classes\UI\Game\Chat\ChatboxMsg.cs" />
-    <Compile Include="Classes\UI\Game\CraftingBenchWindow.cs" />
+    <Compile Include="Classes\UI\Game\Crafting\CraftingWindow.cs" />
     <Compile Include="Classes\UI\Game\DebugMenu.cs" />
     <Compile Include="Classes\UI\Game\Draggable.cs" />
-    <Compile Include="Classes\UI\Game\EntityBox.cs" />
+    <Compile Include="Classes\UI\Game\EntityBox\EntityBox.cs" />
     <Compile Include="Classes\UI\Game\EventWindow.cs" />
     <Compile Include="Classes\UI\Game\FriendsWindow.cs" />
     <Compile Include="Classes\UI\Game\GameGuiBase.cs" />
     <Compile Include="Classes\UI\Game\GameMenu.cs" />
-    <Compile Include="Classes\UI\Game\HotBar.cs" />
+    <Compile Include="Classes\UI\Game\Hotbar\HotBar.cs" />
     <Compile Include="Classes\UI\Game\InputBox.cs" />
-    <Compile Include="Classes\UI\Game\InventoryWindow.cs" />
+    <Compile Include="Classes\UI\Game\Inventory\InventoryWindow.cs" />
     <Compile Include="Classes\UI\Game\ItemDescWindow.cs" />
     <Compile Include="Classes\UI\Game\PartyWindow.cs" />
     <Compile Include="Classes\UI\Game\QuestOfferWindow.cs" />
     <Compile Include="Classes\UI\Game\QuestsWindow.cs" />
-    <Compile Include="Classes\UI\Game\ShopWindow.cs" />
+    <Compile Include="Classes\UI\Game\Shop\ShopWindow.cs" />
     <Compile Include="Classes\UI\Game\SpellDescWindow.cs" />
-    <Compile Include="Classes\UI\Game\SpellWindow.cs" />
-    <Compile Include="Classes\UI\Game\TradingWindow.cs" />
+    <Compile Include="Classes\UI\Game\Spells\SpellsWindow.cs" />
+    <Compile Include="Classes\UI\Game\Trades\TradingWindow.cs" />
     <Compile Include="Classes\UI\Gui.cs" />
-    <Compile Include="Classes\UI\Menu\CreateCharacterWindow.cs" />
+    <Compile Include="Classes\UI\Menu\SelectCharacterWindow.cs" />
     <Compile Include="Classes\UI\Menu\LoginWindow.cs" />
     <Compile Include="Classes\UI\Menu\MainMenu.cs" />
     <Compile Include="Classes\UI\Menu\MenuGuiBase.cs" />
@@ -137,9 +160,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Interface\Resolution.cs" />
     <Compile Include="IntersectGame.cs" />
-    <Compile Include="Network\ClientNetwork.cs" />
     <Compile Include="ClientMain.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -213,6 +234,7 @@
     <EmbeddedResource Include="public-intersect.bek" />
     <None Include="App.config" />
     <None Include="app.manifest" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icon.bmp">

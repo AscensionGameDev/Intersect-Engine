@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Xml;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
@@ -23,7 +25,7 @@ namespace Intersect_Client.Classes.UI
         private static Canvas _gameCanvas;
         private static Canvas _menuCanvas;
         private static TexturedBase _gwenSkin;
-        public static List<string> MsgboxErrors = new List<string>();
+        public static List<KeyValuePair<string,string>> MsgboxErrors = new List<KeyValuePair<string, string>>();
         public static bool SetupHandlers;
         public static GameGuiBase GameUI;
         public static MenuGuiBase MenuUI;
@@ -52,7 +54,7 @@ namespace Intersect_Client.Classes.UI
             };
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)
-            _menuCanvas = new Canvas(_gwenSkin)
+            _menuCanvas = new Canvas(_gwenSkin, "MainMenu")
             {
                 Scale = 1f //(GameGraphics.Renderer.GetScreenWidth()/1920f);
             };
@@ -63,7 +65,7 @@ namespace Intersect_Client.Classes.UI
             _menuCanvas.KeyboardInputEnabled = true;
 
             // Create the game Canvas (it's root, on which all other GWEN controls are created)
-            _gameCanvas = new Canvas(_gameSkin);
+            _gameCanvas = new Canvas(_gameSkin, "InGame");
             //_gameCanvas.Scale = (GameGraphics.Renderer.GetScreenWidth() / 1920f);
             _gameCanvas.SetSize((int) (GameGraphics.Renderer.GetScreenWidth() / _gameCanvas.Scale),
                 (int) (GameGraphics.Renderer.GetScreenHeight() / _gameCanvas.Scale));
@@ -87,13 +89,56 @@ namespace Intersect_Client.Classes.UI
             if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
             {
                 MenuUI = new MenuGuiBase(_menuCanvas);
+                GameUI = null;
             }
             else
             {
                 GameUI = new GameGuiBase(_gameCanvas);
+                MenuUI = null;
             }
 
+            if (GameUI == null) LoadRootUIData(_menuCanvas, "MainMenu.xml");
+            if (MenuUI == null)
+            {
+                LoadRootUIData(_gameCanvas, "InGame.xml");
+            }
+
+
             GwenInitialized = true;
+        }
+
+        public static void SaveRootUIData(IntersectClientExtras.Gwen.Control.Base control, string xmlname, bool bounds = false)
+        {
+            //Create XML Doc with UI 
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.NewLineOnAttributes = true;
+
+            using (XmlWriter writer = XmlWriter.Create(Path.Combine("resources","gui", xmlname), settings))
+            {
+                writer.WriteStartDocument();
+                control.WriteBaseUIXml(writer, bounds);
+                writer.WriteEndDocument();
+            }
+        }
+
+        public static void LoadRootUIData(IntersectClientExtras.Gwen.Control.Base control, string xmlname)
+        {
+            XmlReaderSettings readerSettings = new XmlReaderSettings();
+            readerSettings.IgnoreWhitespace = true;
+            readerSettings.IgnoreComments = true;
+            if (!File.Exists(Path.Combine("resources","gui", xmlname))) return;
+            using (XmlReader reader = XmlReader.Create(Path.Combine("resources","gui", xmlname), readerSettings))
+            {
+                while (reader.Read())
+                {
+                    if (reader.Name == control.Name)
+                    {
+                        control.LoadUIXml(reader);
+                        control.ProcessAlignments();
+                    }
+                }
+            }
         }
 
         public static void DestroyGwen()
@@ -196,7 +241,7 @@ namespace Intersect_Client.Classes.UI
                 Debug.WriteLine($"w:{width},m:{measured},p:{curPos},l:{curLen},s:{lastSpace},t:'{line}'");
                 if (measured < width)
                 {
-                    lastOk = curLen;
+                    lastOk = lastSpace;
                     switch (input[curPos + curLen])
                     {
                         case ' ':

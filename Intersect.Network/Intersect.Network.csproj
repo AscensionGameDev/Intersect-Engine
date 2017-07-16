@@ -39,10 +39,22 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Diagnostic|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Diagnostic\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;INTERSECT_DIAGNOSTIC</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Lidgren.Network, Version=3.6.0.1271, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Lidgren.Network, Version=3.6.0.1236, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Lidgren.Network.dll</HintPath>
+    </Reference>
+    <Reference Include="Open.Nat">
+      <HintPath>.\Open.Nat.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,15 +66,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractNetwork.cs" />
+    <Compile Include="ClientNetwork.cs" />
     <Compile Include="Crypto\EncryptionKey.cs" />
     <Compile Include="Crypto\KeyFormat.cs" />
     <Compile Include="Crypto\Formats\RsaKey.cs" />
     <Compile Include="Crypto\Formats\AesKey.cs" />
     <Compile Include="Crypto\IKeyEncoder.cs" />
+    <Compile Include="IServer.cs" />
     <Compile Include="KeyFactory.cs" />
     <Compile Include="LidgrenConnection.cs" />
     <Compile Include="LidgrenBuffer.cs" />
+    <Compile Include="LidgrenInterface.cs" />
     <Compile Include="NetworkMetaStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -72,6 +86,8 @@
       <Name>Intersect %28Core%29</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

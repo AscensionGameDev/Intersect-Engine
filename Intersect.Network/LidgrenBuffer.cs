@@ -489,7 +489,10 @@ namespace Intersect.Network
             => Buffer?.Write(value);
 
         public void Write(byte[] value)
-            => Buffer?.Write(value);
+        {
+            Write(value?.Length ?? 0);
+            Write(value, value?.Length ?? 0);
+        }
 
         public void Write(byte[] value, long count)
             => Write(value, 0, count);

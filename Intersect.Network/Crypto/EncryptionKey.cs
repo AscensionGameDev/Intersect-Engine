@@ -85,5 +85,10 @@ namespace Intersect.Network.Crypto
 
             return encryptionKey;
         }
+
+        public static TKey FromStream<TKey>(Stream stream) where TKey : EncryptionKey
+        {
+            return FromStream(stream) as TKey;
+        }
     }
 }

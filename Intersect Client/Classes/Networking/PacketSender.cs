@@ -56,11 +56,12 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendChatMsg(string msg)
+        public static void SendChatMsg(string msg, int channel)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.LocalMessage);
             bf.WriteString(msg);
+			bf.WriteInteger(channel);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -344,7 +345,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.PartyAcceptInvite);
-            bf.WriteInteger((int) ((InputBox) sender).Slot);
+            bf.WriteInteger((int) ((InputBox) sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -352,7 +353,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.PartyDeclineInvite);
-            bf.WriteInteger((int) ((InputBox) sender).Slot);
+            bf.WriteInteger((int) ((InputBox) sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -424,7 +425,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.TradeRequestAccept);
-            bf.WriteInteger((int) ((InputBox) sender).Slot);
+            bf.WriteInteger((int) ((InputBox) sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -432,7 +433,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.TradeRequestDecline);
-            bf.WriteInteger((int) ((InputBox) sender).Slot);
+            bf.WriteInteger((int) ((InputBox) sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -497,7 +498,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.FriendRequestAccept);
-            bf.WriteInteger((int)((InputBox)sender).Slot);
+            bf.WriteInteger((int)((InputBox)sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -505,8 +506,31 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.FriendRequestDecline);
-            bf.WriteInteger((int)((InputBox)sender).Slot);
+            bf.WriteInteger((int)((InputBox)sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
-    }
+
+		public static void PlayGame(int charSlot)
+		{
+			var bf = new ByteBuffer();
+			bf.WriteLong((int)ClientPackets.PlayGame);
+			bf.WriteInteger(charSlot);
+			GameNetwork.SendPacket(bf.ToArray());
+		}
+
+		public static void DeleteChar(int charSlot)
+		{
+			var bf = new ByteBuffer();
+			bf.WriteLong((int)ClientPackets.DeleteChar);
+			bf.WriteInteger(charSlot);
+			GameNetwork.SendPacket(bf.ToArray());
+		}
+
+		public static void CreateNewCharacter()
+		{
+			var bf = new ByteBuffer();
+			bf.WriteLong((int)ClientPackets.CreateNewChar);
+			GameNetwork.SendPacket(bf.ToArray());
+		}
+	}
 }
