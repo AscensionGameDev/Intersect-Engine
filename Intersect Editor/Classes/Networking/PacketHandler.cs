@@ -38,8 +38,6 @@ namespace Intersect.Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
 
-            var length = bf.ReadInteger();
-
             //Compressed?
             if (bf.ReadByte() == 1)
             {

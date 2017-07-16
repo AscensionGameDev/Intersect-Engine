@@ -179,13 +179,11 @@ namespace Intersect.Editor.Classes
                 if (packet.Length > 800)
                 {
                     packet = Compression.CompressPacket(packet);
-                    buff.WriteInteger(packet.Length);
                     buff.WriteByte(1); //Compressed
                     buff.WriteBytes(packet);
                 }
                 else
                 {
-                    buff.WriteInteger(packet.Length);
                     buff.WriteByte(0); //Not Compressed
                     buff.WriteBytes(packet);
                 }
