@@ -21,6 +21,7 @@ namespace Intersect.Server.Classes
     public class MainClass
     {
         private static bool _errorHalt = true;
+        public static ServerNetwork SocketServer;
 
         public static void Main(string[] args)
         {
@@ -68,12 +69,13 @@ namespace Intersect.Server.Classes
             {
                 var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
                 Debug.Assert(rsaKey != null, "rsaKey != null");
-                IntersectNetworkServer.ServerNetwork = new IntersectNetworkServer(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
+                SocketServer = new ServerNetwork(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
             }
 
-            IntersectNetworkServer.ServerNetwork.Handlers[PacketCode.BinaryPacket] = IntersectNetworkSocket.DataReceived;
+            var packetHander = new PacketHandler();
+            SocketServer.Handlers[PacketCode.BinaryPacket] = packetHander.HandlePacket;
 
-            if (!IntersectNetworkServer.ServerNetwork.Listen())
+            if (!SocketServer.Listen())
             {
                 Log.Error("An error occurred while attempting to connect.");
             }
@@ -653,7 +655,7 @@ namespace Intersect.Server.Classes
                         else
                         {
                             Globals.ServerStarted = false;
-                            IntersectNetworkServer.ServerNetwork.Dispose();
+                            SocketServer.Dispose();
                             
                             return;
                         }
