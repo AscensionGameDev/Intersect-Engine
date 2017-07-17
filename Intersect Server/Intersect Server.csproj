@@ -133,6 +133,9 @@
     <Reference Include="NCalc">
       <HintPath>.\NCalc.dll</HintPath>
     </Reference>
+    <Reference Include="Open.Nat">
+      <HintPath>.\Open.Nat.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
@@ -185,6 +188,8 @@
     <Compile Include="Classes\Core\Database.cs" />
     <Compile Include="Classes\Maps\MapGrid.cs" />
     <Compile Include="Classes\Core\ServerLoop.cs" />
+    <Compile Include="Classes\Networking\PortChecker.cs" />
+    <Compile Include="Classes\Networking\Upnp.cs" />
     <Compile Include="Classes\Networking\WebSocket.cs" />
     <Compile Include="Classes\Networking\WebSocketServer.cs" />
     <Compile Include="Classes\Spells\SpellInstance.cs" />

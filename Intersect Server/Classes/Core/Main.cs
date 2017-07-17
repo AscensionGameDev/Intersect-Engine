@@ -14,6 +14,7 @@ using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Network;
+using Open.Nat;
 
 namespace Intersect.Server.Classes
 {
@@ -62,7 +63,6 @@ namespace Intersect.Server.Classes
             CustomColors.Load();
             Console.WriteLine(Strings.Get("commandoutput", "playercount", Database.GetRegisteredPlayers()));
             SocketServer.Init();
-            Console.WriteLine(Strings.Get("intro", "started", Options.ServerPort));
             Log.Global.AddOutput(new ConsoleOutput());
             var assembly = Assembly.GetExecutingAssembly();
             using (var stream = assembly.GetManifestResourceStream("Intersect.Server.private-intersect.bek"))
@@ -79,6 +79,46 @@ namespace Intersect.Server.Classes
             {
                 Log.Error("An error occurred while attempting to connect.");
             }
+
+            Console.WriteLine();
+            UPnP.ConnectNatDevice().Wait(5000);
+            UPnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
+            Console.WriteLine();
+
+            //Check to see if AGD can see this server. If so let the owner know :)
+            var externalIp = "";
+            var serverAccessible = PortChecker.CanYouSeeMe(Options.ServerPort, out externalIp);
+
+            Console.WriteLine(Strings.Get("portchecking", "connectioninfo"));
+            if (!String.IsNullOrEmpty(externalIp))
+            {
+                Console.WriteLine(Strings.Get("portchecking", "publicip"),externalIp);
+                Console.WriteLine(Strings.Get("portchecking", "publicport"),Options.ServerPort);
+
+                Console.WriteLine();
+                if (serverAccessible)
+                {
+                    Console.WriteLine(Strings.Get("portchecking", "accessible"));
+                    Console.WriteLine(Strings.Get("portchecking", "letothersjoin"));
+                }
+                else
+                {
+                    Console.WriteLine(Strings.Get("portchecking", "notaccessible"));
+                    Console.WriteLine(Strings.Get("portchecking", "debuggingsteps"));
+                    Console.WriteLine(Strings.Get("portchecking", "checkfirewalls"));
+                    Console.WriteLine(Strings.Get("portchecking", "checkantivirus"));
+                    Console.WriteLine(Strings.Get("portchecking", "screwed"));
+                    Console.WriteLine();
+                    if (!UPnP.ForwardingSucceeded())
+                        Console.WriteLine(Strings.Get("portchecking", "checkrouterupnp"));
+                }
+            }
+            else
+            {
+                Console.WriteLine(Strings.Get("portchecking", "notconnected"));
+            }
+            Console.WriteLine();
+            Console.WriteLine(Strings.Get("intro", "started", Options.ServerPort));
 
 #if websockets
             WebSocketServer.Init();
