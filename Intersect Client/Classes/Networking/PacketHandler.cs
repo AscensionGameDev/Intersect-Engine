@@ -10,8 +10,6 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
 using Intersect.Logging;
-using Intersect.Network;
-using Intersect.Network.Packets.Reflectable;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
@@ -30,41 +28,8 @@ namespace Intersect_Client.Classes.Networking
         public static long Ping = 0;
         public static long PingTime;
 
-        public static bool HandlePacket(IPacket packet)
+        public static void HandlePacket(ByteBuffer bf)
         {
-            var binaryPacket = packet as BinaryPacket;
-            //Log.Debug($"Handling packet (size={binaryPacket.Buffer.Length()}).");
-            HandlePacket(binaryPacket?.Buffer?.ToArray());
-            return true;
-        }
-
-        public static void HandlePacket(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            
-            var compressed = bf.ReadBoolean();
-
-            try
-            {
-                //Compressed?
-                if (compressed)
-                {
-                    packet = bf.ReadBytes(bf.Length());
-                    var data = Compression.DecompressPacket(packet);
-                    bf = new ByteBuffer();
-                    bf.WriteBytes(data);
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.Error($"Buffer length: {bf.Length()}");
-                Log.Error($"Packet length: {packet.Length}");
-                Log.Error($"Is Compressed: {compressed}");
-                Log.Error(exception);
-                return;
-            }
-
             var packetHeader = (ServerPackets) bf.ReadLong();
             lock (Globals.GameLock)
             {

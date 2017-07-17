@@ -11,7 +11,7 @@ using Intersect.Network.Packets.Reflectable;
 
 namespace Intersect.Editor.Classes
 {
-    public static class LegacyEditorNetwork
+    public static class EditorNetwork
     {
 
         public static ClientNetwork EditorLidgrenNetwork;

@@ -84,6 +84,7 @@
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Maps\MapAnimationInstance.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
+    <Compile Include="Classes\MonoGame\Network\IntersectNetworkSocket.cs" />
     <Compile Include="Classes\UI\Game\Bag\BagItem.cs" />
     <Compile Include="Classes\UI\Game\Bank\BankItem.cs" />
     <Compile Include="Classes\UI\Game\Character\EquipmentItem.cs" />
@@ -111,7 +112,6 @@
     <Compile Include="Classes\MonoGame\Graphics\MonoShader.cs" />
     <Compile Include="Classes\MonoGame\Graphics\MonoTexture.cs" />
     <Compile Include="Classes\MonoGame\Input\MonoInput.cs" />
-    <Compile Include="Classes\MonoGame\Network\MonoSocket.cs" />
     <Compile Include="Classes\MonoGame\System\MonoSystem.cs" />
     <Compile Include="Classes\Networking\GameNetwork.cs" />
     <Compile Include="Classes\Networking\PacketHandler.cs" />
