@@ -39,11 +39,11 @@ namespace Intersect.Server.Classes.Networking
             }
         }
 
-        public override void SendData(byte[] data)
+        public override void SendData(ByteBuffer bf)
         {
             try
             {
-                _myContext.WebSocket.Send(data);
+                _myContext.WebSocket.Send(bf.ToArray());
             }
             catch (Exception ex)
             {

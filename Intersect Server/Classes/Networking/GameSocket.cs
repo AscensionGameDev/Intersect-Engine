@@ -35,7 +35,7 @@ namespace Intersect.Server.Classes.Networking
             CreateClient();
         }
 
-        public abstract void SendData(byte[] data);
+        public abstract void SendData(ByteBuffer bf);
 
         public virtual void Disconnect()
         {
@@ -70,7 +70,7 @@ namespace Intersect.Server.Classes.Networking
             Disconnected();
         }
 
-        private void CreateClient()
+        public virtual void CreateClient()
         {
             var client = new Client(Globals.FindOpenEntity(), this);
             _myClient = client;
@@ -80,6 +80,24 @@ namespace Intersect.Server.Classes.Networking
             {
                 Globals.Clients.Add(client);
             }
+        }
+
+        public virtual void OnClientRemoved()
+        {
+            
+        }
+
+        public void HandlePacket(ByteBuffer bf)
+        {
+            //Compressed?
+            if (bf.ReadByte() == 1)
+            {
+                var packet = bf.ReadBytes(bf.Length());
+                var data = Compression.DecompressPacket(packet);
+                bf = new ByteBuffer();
+                bf.WriteBytes(data);
+            }
+            _packetHandler.HandlePacket(_myClient, bf);
         }
 
         protected void TryHandleData()
@@ -98,7 +116,7 @@ namespace Intersect.Server.Classes.Networking
                     if (_myBuffer.Length() >= packetLen + 4)
                     {
                         _myBuffer.ReadInteger();
-                        _packetHandler.HandlePacket(_myClient, _myBuffer.ReadBytes(packetLen));
+                        _packetHandler.HandlePacket(_myClient, _myBuffer);
                     }
                     else
                     {

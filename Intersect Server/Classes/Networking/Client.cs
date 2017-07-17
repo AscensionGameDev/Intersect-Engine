@@ -40,10 +40,8 @@ namespace Intersect.Server.Classes.Networking
         public string MySalt = "";
 
         //Network Variables
-        private GameSocket mySocket;
-        private IConnection connection;
+        public GameSocket Socket;
         public int Power = 0;
-        private ConcurrentQueue<byte[]> sendQueue = new ConcurrentQueue<byte[]>();
 
         //Sent Maps
         public Dictionary<int, Tuple<long, int>> SentMaps = new Dictionary<int, Tuple<long, int>>();
@@ -51,29 +49,27 @@ namespace Intersect.Server.Classes.Networking
         //Processing Thead
         private Thread updateThread;
 
-        public Client(IConnection connection)
-            : this(Globals.FindOpenEntity(), connection)
+        public Client()
+            : this(Globals.FindOpenEntity())
         {
         }
 
-        public Client(int entIndex, IConnection connection)
-            : this(entIndex, null, connection)
+        public Client(int entIndex)
+            : this(entIndex, null)
         {
             _connectTime = Globals.System.GetTimeMs();
             _connectionTimeout = Globals.System.GetTimeMs() + _timeout;
         }
 
-        public Client(int entIndex, GameSocket socket, IConnection connection = null)
+        public Client(int entIndex, GameSocket socket)
         {
-            mySocket = socket;
-            this.connection = connection;
+            Socket = socket;
             EntityIndex = entIndex;
             if (EntityIndex > -1)
             {
                 Entity = (Player) Globals.Entities[EntityIndex];
             }
-            var gameSocketConnected = mySocket != null && mySocket.IsConnected();
-            var beta4SocketConnected = this.connection != null && this.connection.IsConnected;
+            var gameSocketConnected = Socket != null && Socket.IsConnected();
             if (gameSocketConnected)
             {
                 PacketSender.SendPing(this);
@@ -98,14 +94,7 @@ namespace Intersect.Server.Classes.Networking
                 buff.WriteBytes(packetData);
             }
 
-            if (connection != null)
-            {
-                connection.Send(new BinaryPacket(null) { Buffer = buff });
-            }
-            else
-            {
-                sendQueue?.Enqueue(buff.ToArray());
-            }
+            Socket.SendData(buff);
         }
 
         public void SendShit()
@@ -170,29 +159,17 @@ namespace Intersect.Server.Classes.Networking
 
         public void Pinged()
         {
-            if (connection != null)
+            if (Socket != null && IsConnected())
             {
-                _connectionTimeout = Globals.System.GetTimeMs() + _timeout;
-                return;
-            }
-
-            if (mySocket != null && IsConnected())
-            {
-                mySocket?.Pinged();
+                Socket?.Pinged();
             }
         }
 
         public void Disconnect(string reason = "")
         {
-            if (connection != null)
-            {
-                connection.Dispose();
-                return;
-            }
-
             if (reason == "")
             {
-                mySocket?.Disconnect();
+                Socket?.Disconnect();
             }
             else
             {
@@ -202,72 +179,39 @@ namespace Intersect.Server.Classes.Networking
 
         public async void Update()
         {
-            if (connection == null)
-            {
                 try
                 {
-                    while (mySocket != null && IsConnected() && Globals.ServerStarted)
+                    while (Socket != null && IsConnected() && Globals.ServerStarted)
                     {
-                        mySocket.Update();
-                        while (sendQueue.TryDequeue(out byte[] data))
-                        {
-                            if (data != null)
-                            {
-                                mySocket.SendData(data);
-                            }
-                        }
+                        Socket.Update();
                         await Task.Delay(10);
                     }
                 }
                 catch (Exception ex)
                 {
                     Log.Trace(ex);
-                    mySocket.Disconnect();
+                    Socket.Disconnect();
                 }
-            }
         }
 
         public bool IsConnected()
         {
-            if (connection != null) return connection.IsConnected;
-            return mySocket != null && mySocket.IsConnected();
+            return Socket != null && Socket.IsConnected();
         }
 
         public string GetIP()
         {
             if (!IsConnected()) return "";
 
-            return connection != null ? connection.Ip : mySocket?.GetIP();
+            return Socket?.GetIP();
         }
 
-        public static Client CreateBeta4Client(IConnection connection)
+        public virtual void RemoveClient(Client client)
         {
-            var client = new Client(connection);
-            try
-            {
-                Globals.Entities[client.EntityIndex] = new Player(client.EntityIndex, client);
-                lock (Globals.ClientLock)
-                {
-                    Globals.Clients.Add(client);
-                    Globals.ClientLookup.Add(connection.Guid, client);
-                }
-                return client;
-            }
-            finally
-            {
-                client.SendShit();
-            }
-        }
-
-        public static void RemoveBeta4Client(IConnection connection)
-        {
-            var client = FindBeta4Client(connection);
-
             Debug.Assert(client != null, "client != null");
             lock (Globals.ClientLock)
             {
                 Globals.Clients.Remove(client);
-                Globals.ClientLookup.Remove(connection.Guid);
             }
 
             Log.Debug(string.IsNullOrWhiteSpace(client.MyAccount)
@@ -306,15 +250,8 @@ namespace Intersect.Server.Classes.Networking
             }
             client.Entity.Dispose();
             client.Entity = null;
+            client.Socket.OnClientRemoved();
             Globals.Entities[client.EntityIndex] = null;
-        }
-
-        public static Client FindBeta4Client(IConnection connection)
-        {
-            lock (Globals.ClientLock)
-            {
-                return Globals.Clients.Find(client => client?.connection == connection);
-            }
         }
     }
 
