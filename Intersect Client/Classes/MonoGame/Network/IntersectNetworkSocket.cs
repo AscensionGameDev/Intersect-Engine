@@ -41,7 +41,7 @@ namespace Intersect.Client.Classes.MonoGame.Network
 
                 if (ClientLidgrenNetwork != null)
                 {
-                    ClientLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = HandlePacket;
+                    ClientLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = PacketHandler.HandlePacket;
                     if (!ClientLidgrenNetwork.Connect())
                     {
                         Log.Error("An error occurred while attempting to connect.");
@@ -62,13 +62,6 @@ namespace Intersect.Client.Classes.MonoGame.Network
                     throw new Exception("Beta 4 network send failed.");
                 }
             }
-        }
-
-        public bool HandlePacket(IPacket packet)
-        {
-            var binaryPacket = packet as BinaryPacket;
-            this.OnDataReceived(binaryPacket?.Buffer?.ToArray());
-            return true;
         }
 
         public override void Update()

@@ -10,6 +10,8 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
 using Intersect.Logging;
+using Intersect.Network;
+using Intersect.Network.Packets.Reflectable;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
@@ -27,6 +29,24 @@ namespace Intersect_Client.Classes.Networking
     {
         public static long Ping = 0;
         public static long PingTime;
+
+        public static bool HandlePacket(IPacket packet)
+        {
+            var binaryPacket = packet as BinaryPacket;
+
+            var bf = binaryPacket?.Buffer;
+
+            //Compressed?
+            if (bf.ReadByte() == 1)
+            {
+                var data = Compression.DecompressPacket(bf.ReadBytes(bf.Length()));
+                bf = new ByteBuffer();
+                bf.WriteBytes(data);
+            }
+
+            HandlePacket(bf);
+            return true;
+        }
 
         public static void HandlePacket(ByteBuffer bf)
         {

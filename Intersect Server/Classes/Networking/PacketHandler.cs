@@ -29,34 +29,34 @@ namespace Intersect.Server.Classes.Networking
         public bool HandlePacket(IPacket packet)
         {
             var binaryPacket = packet as BinaryPacket;
-            HandlePacket(Client.FindBeta4Client(packet.Connection), binaryPacket.Buffer.ToArray());
+
+            var bf = binaryPacket?.Buffer;
+
+            //Compressed?
+            if (bf.ReadByte() == 1)
+            {
+                var data = Compression.DecompressPacket(bf.ReadBytes(bf.Length()));
+                bf = new ByteBuffer();
+                bf.WriteBytes(data);
+            }
+
+            HandlePacket(Client.FindBeta4Client(packet.Connection), bf);
             return true;
         }
 
-        public void HandlePacket(Client client, byte[] packet)
+        public void HandlePacket(Client client, ByteBuffer bf)
         {
+            //The raw packet is here, no more processing (decompression, length calculations, etc should have to happen)
             if (client == null)
             {
                 Log.Debug("Client missing... >.>");
                 return;
             }
 
-            if (packet == null || packet.Length == 0) return;
-
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-
-            //Compressed?
-            if (bf.ReadByte() == 1)
-            {
-                packet = bf.ReadBytes(bf.Length());
-                var data = Compression.DecompressPacket(packet);
-                bf = new ByteBuffer();
-                bf.WriteBytes(data);
-            }
+            if (bf == null || bf.Length() == 0) return;
 
             var packetHeader = (ClientPackets) bf.ReadLong();
-            packet = bf.ReadBytes(bf.Length());
+            var packet = bf.ReadBytes(bf.Length());
             bf.Dispose();
             switch (packetHeader)
             {

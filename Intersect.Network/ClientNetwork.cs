@@ -75,6 +75,11 @@ namespace Intersect.Network
             OnDisconnected?.Invoke(sender, connection);
         }
 
+        public void Close()
+        {
+            StopInterfaces("closing");
+        }
+
         internal void AssignGuid(Guid guid) => mGuid = guid;
 
         public override bool Send(IPacket packet)

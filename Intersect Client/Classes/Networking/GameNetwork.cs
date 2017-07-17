@@ -21,9 +21,6 @@ namespace Intersect_Client.Classes.Networking
         private static bool _connected;
         public static bool Connected => MySocket?.IsConnected() ?? _connected;
         public static bool Connecting;
-        private static byte[] _tempBuff;
-        private static ByteBuffer _myBuffer = new ByteBuffer();
-        private static object _bufferLock = new object();
 
         private static int mPing;
         public static int Ping

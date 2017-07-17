@@ -190,8 +190,8 @@
     <Compile Include="Classes\Networking\WebSocket.cs" />
     <Compile Include="Classes\Networking\WebSocketServer.cs" />
     <Compile Include="Classes\Spells\SpellInstance.cs" />
-    <Compile Include="Network\ServerNetwork.cs" />
-    <Compile Include="Network\ThreadYieldNet40.cs" />
+    <Compile Include="Classes\Networking\ServerNetwork.cs" />
+    <Compile Include="Classes\Networking\ThreadYieldNet40.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -237,9 +237,7 @@
       <Name>Intersect.Network</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Network\Handlers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets" Condition="Exists('packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets')" />
   <Target Name="EnsureMonoDataSqlitePortableImported" BeforeTargets="BeforeBuild" Condition="'$(MonoDataSqlitePortableImported)' == ''">
