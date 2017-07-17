@@ -62,7 +62,6 @@ namespace Intersect.Server.Classes
             }
             CustomColors.Load();
             Console.WriteLine(Strings.Get("commandoutput", "playercount", Database.GetRegisteredPlayers()));
-            SocketServer.Init();
             Log.Global.AddOutput(new ConsoleOutput());
             var assembly = Assembly.GetExecutingAssembly();
             using (var stream = assembly.GetManifestResourceStream("Intersect.Server.private-intersect.bek"))
@@ -121,8 +120,8 @@ namespace Intersect.Server.Classes
             Console.WriteLine(Strings.Get("intro", "started", Options.ServerPort));
 
 #if websockets
-            WebSocketServer.Init();
-            Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort + 1));
+            //WebSocketServer.Init();
+            //Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort + 1));
 #endif
             Console.WriteLine(Strings.Get("commandoutput", "gametime", ServerTime.GetTime().ToString("F")));
             logicThread = new Thread(() => ServerLoop.RunServerLoop());

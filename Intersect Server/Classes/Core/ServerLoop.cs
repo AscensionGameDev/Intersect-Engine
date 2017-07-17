@@ -34,8 +34,6 @@ namespace Intersect.Server.Classes.Core
 
             //Server is shutting down!!
             //TODO gracefully disconnect all clients
-            SocketServer.Stop();
-            WebSocketServer.Stop();
         }
     }
 }

@@ -4,7 +4,7 @@ using WebSocketSharp.Net.WebSockets;
 
 namespace Intersect.Server.Classes.Networking
 {
-    public class WebSocket : GameSocket
+    /*public class WebSocket : GameSocket
     {
         private WebSocketContext _myContext;
 
@@ -87,5 +87,5 @@ namespace Intersect.Server.Classes.Networking
                 return "";
             }
         }
-    }
+    }*/
 }

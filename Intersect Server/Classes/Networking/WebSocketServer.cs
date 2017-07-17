@@ -2,7 +2,7 @@
 
 namespace Intersect.Server.Classes.Networking
 {
-    public static class WebSocketServer
+    /*public static class WebSocketServer
     {
         private static WebSocketSharp.Server.WebSocketServer _listener;
 
@@ -31,5 +31,5 @@ namespace Intersect.Server.Classes.Networking
             var gameSocket = new WebSocket(Context);
             gameSocket.Start();
         }
-    }
+    }*/
 }

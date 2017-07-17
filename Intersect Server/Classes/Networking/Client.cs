@@ -40,7 +40,6 @@ namespace Intersect.Server.Classes.Networking
         public string MySalt = "";
 
         //Network Variables
-        private GameSocket mySocket;
         private IConnection connection;
         public int Power = 0;
         private ConcurrentQueue<byte[]> sendQueue = new ConcurrentQueue<byte[]>();
@@ -48,38 +47,21 @@ namespace Intersect.Server.Classes.Networking
         //Sent Maps
         public Dictionary<int, Tuple<long, int>> SentMaps = new Dictionary<int, Tuple<long, int>>();
 
-        //Processing Thead
-        private Thread updateThread;
-
         public Client(IConnection connection)
             : this(Globals.FindOpenEntity(), connection)
         {
         }
 
-        public Client(int entIndex, IConnection connection)
-            : this(entIndex, null, connection)
+        public Client(int entIndex, IConnection connection = null)
         {
+            this.connection = connection;
             _connectTime = Globals.System.GetTimeMs();
             _connectionTimeout = Globals.System.GetTimeMs() + _timeout;
-        }
-
-        public Client(int entIndex, GameSocket socket, IConnection connection = null)
-        {
-            mySocket = socket;
-            this.connection = connection;
             EntityIndex = entIndex;
             if (EntityIndex > -1)
             {
                 Entity = (Player) Globals.Entities[EntityIndex];
             }
-            var gameSocketConnected = mySocket != null && mySocket.IsConnected();
-            var beta4SocketConnected = this.connection != null && this.connection.IsConnected;
-            if (gameSocketConnected)
-            {
-                PacketSender.SendPing(this);
-            }
-            updateThread = new Thread(Update);
-            updateThread.Start();
         }
 
         public void SendPacket(byte[] packetData)
@@ -173,12 +155,6 @@ namespace Intersect.Server.Classes.Networking
             if (connection != null)
             {
                 _connectionTimeout = Globals.System.GetTimeMs() + _timeout;
-                return;
-            }
-
-            if (mySocket != null && IsConnected())
-            {
-                mySocket?.Pinged();
             }
         }
 
@@ -189,55 +165,18 @@ namespace Intersect.Server.Classes.Networking
                 connection.Dispose();
                 return;
             }
-
-            if (reason == "")
-            {
-                mySocket?.Disconnect();
-            }
-            else
-            {
-                //send abort packet and then disconnect?
-            }
-        }
-
-        public async void Update()
-        {
-            if (connection == null)
-            {
-                try
-                {
-                    while (mySocket != null && IsConnected() && Globals.ServerStarted)
-                    {
-                        mySocket.Update();
-                        while (sendQueue.TryDequeue(out byte[] data))
-                        {
-                            if (data != null)
-                            {
-                                mySocket.SendData(data);
-                            }
-                        }
-                        await Task.Delay(10);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Trace(ex);
-                    mySocket.Disconnect();
-                }
-            }
         }
 
         public bool IsConnected()
         {
-            if (connection != null) return connection.IsConnected;
-            return mySocket != null && mySocket.IsConnected();
+            return connection.IsConnected;
         }
 
         public string GetIP()
         {
             if (!IsConnected()) return "";
 
-            return connection != null ? connection.Ip : mySocket?.GetIP();
+            return connection.Ip;
         }
 
         public static Client CreateBeta4Client(IConnection connection)

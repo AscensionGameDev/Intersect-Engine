@@ -175,9 +175,6 @@
     <Compile Include="Classes\Misc\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Classes\Misc\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Classes\Misc\Pathfinding\PriorityQueue.cs" />
-    <Compile Include="Classes\Networking\GameSocket.cs" />
-    <Compile Include="Classes\Networking\NetSocket.cs" />
-    <Compile Include="Classes\Networking\NetSocketServer.cs" />
     <Compile Include="Classes\Networking\Client.cs" />
     <Compile Include="Classes\Entities\Npc.cs" />
     <Compile Include="Classes\Networking\PacketHandler.cs" />
