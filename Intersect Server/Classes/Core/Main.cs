@@ -22,8 +22,6 @@ namespace Intersect.Server.Classes
     {
         private static bool _errorHalt = true;
 
-        public static ServerNetwork ServerNetwork;
-
         public static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -62,19 +60,20 @@ namespace Intersect.Server.Classes
             }
             CustomColors.Load();
             Console.WriteLine(Strings.Get("commandoutput", "playercount", Database.GetRegisteredPlayers()));
+            Console.WriteLine(Strings.Get("commandoutput", "gametime", ServerTime.GetTime().ToString("F")));
+            ServerTime.Update();
             Log.Global.AddOutput(new ConsoleOutput());
             var assembly = Assembly.GetExecutingAssembly();
             using (var stream = assembly.GetManifestResourceStream("Intersect.Server.private-intersect.bek"))
             {
                 var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
                 Debug.Assert(rsaKey != null, "rsaKey != null");
-                ServerNetwork = new ServerNetwork(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
+                IntersectNetworkServer.ServerNetwork = new IntersectNetworkServer(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
             }
 
-            var packetHandler = new PacketHandler();
-            ServerNetwork.Handlers[PacketCode.BinaryPacket] = packetHandler.HandlePacket;
+            IntersectNetworkServer.ServerNetwork.Handlers[PacketCode.BinaryPacket] = IntersectNetworkSocket.DataReceived;
 
-            if (!ServerNetwork.Listen())
+            if (!IntersectNetworkServer.ServerNetwork.Listen())
             {
                 Log.Error("An error occurred while attempting to connect.");
             }
@@ -123,7 +122,6 @@ namespace Intersect.Server.Classes
             //WebSocketServer.Init();
             //Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort + 1));
 #endif
-            Console.WriteLine(Strings.Get("commandoutput", "gametime", ServerTime.GetTime().ToString("F")));
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
             if (args.Contains("nohalt"))
@@ -655,7 +653,7 @@ namespace Intersect.Server.Classes
                         else
                         {
                             Globals.ServerStarted = false;
-                            ServerNetwork.Dispose();
+                            IntersectNetworkServer.ServerNetwork.Dispose();
                             
                             return;
                         }

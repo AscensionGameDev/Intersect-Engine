@@ -2,6 +2,7 @@
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
+using Intersect.Server.Network;
 
 namespace Intersect.Server.Classes.Core
 {
