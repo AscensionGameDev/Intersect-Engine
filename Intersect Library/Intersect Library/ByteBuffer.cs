@@ -79,6 +79,15 @@ namespace Intersect
             _wasUpdated = true;
         }
 
+        public void InsertLength()
+        {
+            var lenbytes = BitConverter.GetBytes((int) Count());
+            for (int i = 0; i < lenbytes.Length; i++)
+            {
+                _buff.Insert(i, lenbytes[i]);
+            }
+        }
+
         public void WriteInteger(int input)
         {
             _buff.AddRange(BitConverter.GetBytes(input));

@@ -15,6 +15,7 @@ using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Network;
 using Open.Nat;
+using WebSocketSharp.Server;
 
 namespace Intersect.Server.Classes
 {
@@ -121,8 +122,8 @@ namespace Intersect.Server.Classes
             Console.WriteLine(Strings.Get("intro", "started", Options.ServerPort));
 
 #if websockets
-            //WebSocketServer.Init();
-            //Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort + 1));
+            WebSocketNetwork.Init(Options.ServerPort);
+            Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort));
 #endif
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();

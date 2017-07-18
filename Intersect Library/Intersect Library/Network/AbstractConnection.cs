@@ -22,7 +22,6 @@ namespace Intersect.Network
 
         public abstract string Ip { get; }
         public abstract int Port { get; }
-        public object UserData { get; set; }
 
         protected AbstractConnection(Guid? guid = null)
         {

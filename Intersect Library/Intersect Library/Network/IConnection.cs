@@ -17,7 +17,5 @@ namespace Intersect.Network
         void HandleConnected();
         void HandleApproved();
         void HandleDisconnected();
-
-        object UserData { get; set; }
     }
 }

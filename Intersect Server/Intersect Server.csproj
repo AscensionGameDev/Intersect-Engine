@@ -185,13 +185,13 @@
     <Compile Include="Classes\Core\Database.cs" />
     <Compile Include="Classes\Maps\MapGrid.cs" />
     <Compile Include="Classes\Core\ServerLoop.cs" />
-    <Compile Include="Classes\Networking\PortChecker.cs" />
-    <Compile Include="Classes\Networking\Upnp.cs" />
-    <Compile Include="Classes\Networking\WebSocket.cs" />
-    <Compile Include="Classes\Networking\WebSocketServer.cs" />
+    <Compile Include="Classes\Networking\Helpers\PortChecker.cs" />
+    <Compile Include="Classes\Networking\Helpers\Upnp.cs" />
+    <Compile Include="Classes\Networking\Websockets\WebSocketConnection.cs" />
+    <Compile Include="Classes\Networking\Websockets\WebSocketNetwork.cs" />
     <Compile Include="Classes\Spells\SpellInstance.cs" />
-    <Compile Include="Classes\Networking\ServerNetwork.cs" />
-    <Compile Include="Classes\Networking\ThreadYieldNet40.cs" />
+    <Compile Include="Classes\Networking\Lidgren\ServerNetwork.cs" />
+    <Compile Include="Classes\Networking\Lidgren\ThreadYieldNet40.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
