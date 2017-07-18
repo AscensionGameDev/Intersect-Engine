@@ -55,8 +55,8 @@ namespace Intersect_Client.Classes.Core
         public static int MapsDrawn;
 
         //Cache the Y based rendering
-        public static List<Entity>[] Layer1Entities;
-        public static List<Entity>[] Layer2Entities;
+        public static HashSet<Entity>[] Layer1Entities;
+        public static HashSet<Entity>[] Layer2Entities;
 
         public static bool PreRenderedMapLayer;
         public static object GFXLock = new object();
@@ -78,12 +78,12 @@ namespace Intersect_Client.Classes.Core
 
         public static void InitInGame()
         {
-            Layer1Entities = new List<Entity>[Options.MapHeight * 3];
-            Layer2Entities = new List<Entity>[Options.MapHeight * 3];
+            Layer1Entities = new HashSet<Entity>[Options.MapHeight * 3];
+            Layer2Entities = new HashSet<Entity>[Options.MapHeight * 3];
             for (var i = 0; i < Options.MapHeight * 3; i++)
             {
-                Layer1Entities[i] = new List<Entity>();
-                Layer2Entities[i] = new List<Entity>();
+                Layer1Entities[i] = new HashSet<Entity>();
+                Layer2Entities[i] = new HashSet<Entity>();
             }
         }
 

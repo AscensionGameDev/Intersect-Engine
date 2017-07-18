@@ -186,10 +186,11 @@ namespace Intersect_Client.Classes.Maps
 
         public bool InView()
         {
-            if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0 || Lookup.Get(Globals.Me.CurrentMap) == null)
+            var myMap = Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
+            if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0 || myMap == null)
                 return true;
-            var gridX = Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridX;
-            var gridY = Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridY;
+            var gridX = myMap.MapGridX;
+            var gridY = myMap.MapGridY;
             for (int x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (int y = gridY - 1; y <= gridY + 1; y++)

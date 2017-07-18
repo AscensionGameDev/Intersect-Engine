@@ -31,6 +31,7 @@ namespace Intersect_Client.Classes.UI
         public static MenuGuiBase MenuUI;
         public static ErrorMessageHandler ErrorMsgHandler;
         public static string ActiveFont = "arial";
+        public static bool HideUI;
 
         //Input Handling
         public static List<IntersectClientExtras.Gwen.Control.Base> FocusElements;
@@ -188,7 +189,7 @@ namespace Intersect_Client.Classes.UI
             {
                 MenuUI.Draw();
             }
-            else if (Globals.GameState == GameStates.InGame)
+            else if (Globals.GameState == GameStates.InGame && !HideUI)
             {
                 GameUI.Draw();
             }

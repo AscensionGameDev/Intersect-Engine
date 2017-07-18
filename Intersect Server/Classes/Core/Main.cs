@@ -83,8 +83,15 @@ namespace Intersect.Server.Classes
 
             Console.WriteLine();
             UPnP.ConnectNatDevice().Wait(5000);
-            UPnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
+            UPnP.OpenServerPort(Options.ServerPort, Protocol.Tcp).Wait(5000);
+            UPnP.OpenServerPort(Options.ServerPort + 1, Protocol.Udp).Wait(5000);
+
             Console.WriteLine();
+
+#if websockets
+            WebSocketNetwork.Init(Options.ServerPort);
+            Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort));
+#endif
 
             //Check to see if AGD can see this server. If so let the owner know :)
             var externalIp = "";
@@ -121,10 +128,6 @@ namespace Intersect.Server.Classes
             Console.WriteLine();
             Console.WriteLine(Strings.Get("intro", "started", Options.ServerPort));
 
-#if websockets
-            WebSocketNetwork.Init(Options.ServerPort);
-            Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort));
-#endif
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
             if (args.Contains("nohalt"))

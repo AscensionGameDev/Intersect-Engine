@@ -35,7 +35,7 @@ namespace Intersect.Server.Classes.Networking
             if (_device == null) return null;
             try
             {
-                await _device.CreatePortMapAsync(new Mapping(protocol,port,port, "Intersect"));
+                await _device.CreatePortMapAsync(new Mapping(protocol,port,port));
                 switch (protocol)
                 {
                     case Protocol.Tcp:

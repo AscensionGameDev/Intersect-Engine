@@ -32,8 +32,8 @@ namespace Intersect.Server.Classes.Networking.Websockets
         {
             if (!clientRemoved)
             {
-                Client.RemoveBeta4Client(this);
                 clientRemoved = true;
+                Client.RemoveBeta4Client(this);
             }
         }
 
@@ -41,8 +41,8 @@ namespace Intersect.Server.Classes.Networking.Websockets
         {
             if (!clientRemoved)
             {
-                Client.RemoveBeta4Client(this);
                 clientRemoved = true;
+                Client.RemoveBeta4Client(this);
             }
         }
 
@@ -91,14 +91,16 @@ namespace Intersect.Server.Classes.Networking.Websockets
                 }
             }
         }
-
+        
         public override bool Send(IPacket packet)
         {
             if (packet.GetType() == typeof(BinaryPacket))
             {
                 BinaryPacket bpacket = (BinaryPacket) packet;
-                bpacket.Buffer.InsertLength();
-                context.WebSocket.SendAsync(bpacket.Buffer.ToArray(),null);
+                var bf = new ByteBuffer();
+                bf.WriteInteger(bpacket.Buffer.ToArray().Length);
+                bf.WriteBytes(bpacket.Buffer.ToArray());
+                context.WebSocket.SendAsync(bf.ToArray(),null);
                 return true;
             }
             else

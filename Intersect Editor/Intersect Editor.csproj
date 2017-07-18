@@ -83,7 +83,7 @@
     <Compile Include="Classes\Maps\MapGrid.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Classes\Maps\MapProperties.cs" />
-    <Compile Include="Classes\Networking\LegacyEditorNetwork.cs" />
+    <Compile Include="Classes\Networking\EditorNetwork.cs" />
     <Compile Include="Classes\Networking\PacketHandler.cs" />
     <Compile Include="Classes\Networking\PacketSender.cs" />
     <Compile Include="Forms\Controls\AutoDragPanel.cs">

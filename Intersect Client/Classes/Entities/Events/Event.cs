@@ -30,6 +30,9 @@ namespace Intersect_Client.Classes.Entities
         public int RenderLevel = 1;
         public int WalkingAnim = 1;
 
+        private string cachedTilesetName;
+        private GameTexture cachedTileset;
+
         public Event(int index, long spawnTime, int mapNum, ByteBuffer bf) : base(index, spawnTime, bf, true)
         {
             var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
@@ -129,8 +132,7 @@ namespace Intersect_Client.Classes.Entities
                     }
                     break;
                 case 2: //Tile
-                    GameTexture tileset = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
-                        GraphicFile);
+                    GameTexture tileset = cachedTileset;
                     if (tileset != null)
                     {
                         srcTexture = tileset;
@@ -165,20 +167,22 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        public override List<Entity> DetermineRenderOrder(List<Entity> renderList)
+        private MapInstance oldRenderMap;
+        private int oldRenderY;
+        private int oldRenderLevel;
+        public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, MapInstance map)
         {
-            if (RenderLevel == 1) return base.DetermineRenderOrder(renderList);
+            if (RenderLevel == 1) return base.DetermineRenderOrder(renderList,map);
             if (renderList != null)
             {
                 renderList.Remove(this);
             }
-            var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
             if (map == null)
             {
                 return null;
             }
-            var gridX = MapInstance.Lookup.Get<MapInstance>(CurrentMap).MapGridX;
-            var gridY = MapInstance.Lookup.Get<MapInstance>(CurrentMap).MapGridY;
+            var gridX = map.MapGridX;
+            var gridY = map.MapGridY;
             for (int x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -190,7 +194,7 @@ namespace Intersect_Client.Classes.Entities
                         {
                             if (RenderLevel == 0) y -= 1;
                             if (RenderLevel == 2) y += 1;
-                            List<Entity>[] outerList;
+                            HashSet<Entity>[] outerList;
                             if (CurrentZ == 0)
                             {
                                 outerList = GameGraphics.Layer1Entities;
@@ -203,16 +207,19 @@ namespace Intersect_Client.Classes.Entities
                             {
                                 outerList[CurrentY].Add(this);
                                 renderList = outerList[CurrentY];
+                                return renderList;
                             }
                             else if (y == gridY)
                             {
                                 outerList[Options.MapHeight + CurrentY].Add(this);
                                 renderList = outerList[Options.MapHeight + CurrentY];
+                                return renderList;
                             }
                             else
                             {
                                 outerList[Options.MapHeight * 2 + CurrentY].Add(this);
                                 renderList = outerList[Options.MapHeight * 2 + CurrentY];
+                                return renderList;
                             }
                             break;
                         }
@@ -243,14 +250,25 @@ namespace Intersect_Client.Classes.Entities
                     }
                     break;
                 case 2: //Tile
-                    foreach (var tileset in TilesetBase.GetNameList())
+                    if (cachedTilesetName != GraphicFile)
                     {
-                        if (tileset == GraphicFile)
+                        cachedTilesetName = GraphicFile;
+                        cachedTileset = null;
+                        foreach (var tileset in TilesetBase.GetNameList())
                         {
-                            y -= ((GraphicHeight + 1) * Options.TileHeight) / 2;
-                            y -= 12;
-                            break;
+                            if (tileset == GraphicFile)
+                            {
+                                cachedTileset =
+                                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
+                                        GraphicFile);
+                                break;
+                            }
                         }
+                    }
+                    if (cachedTileset != null)
+                    {
+                        y -= ((GraphicHeight + 1) * Options.TileHeight) / 2;
+                        y -= 12;
                     }
                     break;
             }
@@ -281,14 +299,25 @@ namespace Intersect_Client.Classes.Entities
                     }
                     break;
                 case 2: //Tile
-                    foreach (var tileset in TilesetBase.GetNameList())
+                    if (cachedTilesetName != GraphicFile)
                     {
-                        if (tileset == GraphicFile)
+                        cachedTilesetName = GraphicFile;
+                        cachedTileset = null;
+                        foreach (var tileset in TilesetBase.GetNameList())
                         {
-                            pos.Y += Options.TileHeight / 2;
-                            pos.Y -= ((GraphicHeight + 1) * Options.TileHeight) / 2;
-                            break;
+                            if (tileset == GraphicFile)
+                            {
+                                cachedTileset =
+                                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
+                                        GraphicFile);
+                                break;
+                            }
                         }
+                    }
+                    if (cachedTileset != null)
+                    {
+                        pos.Y -= ((GraphicHeight + 1) * Options.TileHeight) / 2;
+                        pos.Y -= 12;
                     }
                     break;
             }
