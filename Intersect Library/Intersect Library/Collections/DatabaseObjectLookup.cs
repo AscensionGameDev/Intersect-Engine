@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using Intersect.Utilities;
 
 namespace Intersect.Collections
 {
@@ -199,6 +201,14 @@ namespace Intersect.Collections
 
         public bool Add(IDatabaseObject value) => InternalSet(value, false);
 
+        private string MessageNoConstructor(Type type, params string[] constructorMessage)
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine($@"No ({string.Join(",", constructorMessage ?? new string[]{})}) constructor for type '{type?.Name}'.");
+            builder.AppendLine(ReflectionUtils.StringifyConstructors(type));
+            return builder.ToString();
+        }
+
         public IDatabaseObject AddNew(Type type, Guid id)
         {
             if (type == null) throw new ArgumentNullException(nameof(type), @"No type specified.");
@@ -207,7 +217,7 @@ namespace Intersect.Collections
             if (mixedConstructor != null) return AddNew(type, id, NextIndex);
 
             var idConstructor = type.GetConstructor(new[] { KeyType });
-            if (idConstructor == null) throw new ArgumentNullException(nameof(idConstructor), $@"No ({KeyType?.Name ?? @"<NULL_KT>"}) constructor for type '{type.Name}'.");
+            if (idConstructor == null) throw new ArgumentNullException(nameof(idConstructor), MessageNoConstructor(type, KeyType?.Name ?? @"<NULL_KT>"));
 
             var value = (IDatabaseObject)idConstructor.Invoke(new object[] { id });
             if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the ({KeyType?.Name ?? @"<NULL_KT>"}) constructor.");
@@ -222,7 +232,7 @@ namespace Intersect.Collections
             if (mixedConstructor != null) return AddNew(type, Guid.NewGuid(), index);
 
             var indexConstructor = type.GetConstructor(new[] { IndexKeyType });
-            if (indexConstructor == null) throw new ArgumentNullException(nameof(indexConstructor), $@"No ({IndexKeyType?.Name ?? @"<NULL_IKT>"}) constructor for type '{type.Name}'.");
+            if (indexConstructor == null) throw new ArgumentNullException(nameof(indexConstructor), MessageNoConstructor(type, IndexKeyType?.Name ?? @"<NULL_IKT>"));
 
             var value = (IDatabaseObject)indexConstructor.Invoke(new object[] { index });
             if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the ({IndexKeyType?.Name ?? @"<NULL_IKT>"}) constructor.");
@@ -234,7 +244,7 @@ namespace Intersect.Collections
             if (type == null) throw new ArgumentNullException(nameof(type), @"No type specified.");
 
             var mixedConstructor = ValueType?.GetConstructor(new[] { KeyType, IndexKeyType });
-            if (mixedConstructor == null) throw new ArgumentNullException(nameof(mixedConstructor), $@"No ({KeyType?.Name ?? @"<NULL_KT>"}, {IndexKeyType?.Name ?? @"<NULL_IKT>"}) constructor for type '{type.Name}'.");
+            if (mixedConstructor == null) throw new ArgumentNullException(nameof(mixedConstructor), MessageNoConstructor(type, KeyType?.Name ?? @"<NULL_KT>", IndexKeyType?.Name ?? @"<NULL_IKT>"));
 
             var value = (IDatabaseObject)mixedConstructor.Invoke(new object[] { id, index });
             if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the ({KeyType?.Name ?? @"<NULL_KT>"}, {IndexKeyType?.Name ?? @"<NULL_IKT>"}) constructor.");
