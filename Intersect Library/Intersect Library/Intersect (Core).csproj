@@ -187,6 +187,7 @@
     <Compile Include="Threading\IThreadYield.cs" />
     <Compile Include="Threading\ThreadYieldNet35.cs" />
     <Compile Include="Utilities\CSharpFeatures.cs" />
+    <Compile Include="Utilities\ReflectionUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
