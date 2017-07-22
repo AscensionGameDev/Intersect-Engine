@@ -787,12 +787,14 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
-            var y = GetTopPos();
+            var y = GetTopPos() - 4;
             var x = (int) Math.Ceiling(GetCenterPos().X);
 
-            float textWidth = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 1).X;
+            Pointf textSize = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 1);
+
+            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(),new FloatRect(0,0,1,1),new FloatRect((x - textSize.X / 2f) - 4, y, textSize.X + 8, textSize.Y),new Intersect.Color(180,0,0,0));
             GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
-                (int) (x - (int) Math.Ceiling(textWidth / 2)), (int) (y), 1, color);
+                (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) (y), 1, color);
         }
 
         public void DrawHpBar()

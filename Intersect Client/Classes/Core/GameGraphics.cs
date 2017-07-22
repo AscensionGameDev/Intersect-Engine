@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Intersect;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
@@ -109,43 +110,49 @@ namespace Intersect_Client.Classes.Core
 
         public static void DrawInGame()
         {
-            var currentMap = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
+            var currentMap = Globals.Me.MapInstance;
             if (currentMap == null || Globals.NeedsMaps) return;
             if (GridSwitched)
             {
-                var map = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
-                if (map != null)
-                {
-                    //Brightness
-                    byte brightnessTarget = (byte) ((map.Brightness / 100f) * 255);
-                    _brightnessLevel = brightnessTarget;
-                    _playerLightColor.R = map.PlayerLightColor.R;
-                    _playerLightColor.G = map.PlayerLightColor.G;
-                    _playerLightColor.B = map.PlayerLightColor.B;
-                    _playerLightSize = map.PlayerLightSize;
-                    _playerLightIntensity = map.PlayerLightIntensity;
-                    _playerLightExpand = map.PlayerLightExpand;
+                //Brightness
+                byte brightnessTarget = (byte)((currentMap.Brightness / 100f) * 255);
+                _brightnessLevel = brightnessTarget;
+                _playerLightColor.R = currentMap.PlayerLightColor.R;
+                _playerLightColor.G = currentMap.PlayerLightColor.G;
+                _playerLightColor.B = currentMap.PlayerLightColor.B;
+                _playerLightSize = currentMap.PlayerLightSize;
+                _playerLightIntensity = currentMap.PlayerLightIntensity;
+                _playerLightExpand = currentMap.PlayerLightExpand;
 
-                    //Overlay
-                    OverlayColor.A = (byte) map.AHue;
-                    OverlayColor.R = (byte) map.RHue;
-                    OverlayColor.G = (byte) map.GHue;
-                    OverlayColor.B = (byte) map.BHue;
+                //Overlay
+                OverlayColor.A = (byte)currentMap.AHue;
+                OverlayColor.R = (byte)currentMap.RHue;
+                OverlayColor.G = (byte)currentMap.GHue;
+                OverlayColor.B = (byte)currentMap.BHue;
 
-                    //Fog && Panorama
-                    map.GridSwitched();
-                }
+                //Fog && Panorama
+                currentMap.GridSwitched();
                 GridSwitched = false;
             }
+            UnityEngine.Profiling.Profiler.BeginSample("ClearDarknessTexture");
             ClearDarknessTexture();
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("TryPreRendering");
             TryPreRendering();
-            FixAutotiles();
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("FixAutotiles");
+            FixAutotiles();
+            UnityEngine.Profiling.Profiler.EndSample();
+
+            UnityEngine.Profiling.Profiler.BeginSample("GenerateLightmap");
             GenerateLightMap();
+            UnityEngine.Profiling.Profiler.EndSample();
 
             var gridX = currentMap.MapGridX;
             var gridY = currentMap.MapGridY;
+            UnityEngine.Profiling.Profiler.BeginSample("DrawPanoramas");
             //Draw Panoramas First...
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
@@ -158,7 +165,9 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("DrawLowerMap");
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -170,7 +179,9 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("DrawLowerAnimations");
             lock (AnimationLock)
             {
                 foreach (AnimationInstance animInstance in LiveAnimations)
@@ -178,7 +189,9 @@ namespace Intersect_Client.Classes.Core
                     animInstance.Draw(false);
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("DrawLowerEntities");
             foreach (var entities in Layer1Entities)
             {
                 foreach (var entity in entities)
@@ -187,7 +200,9 @@ namespace Intersect_Client.Classes.Core
                     EntitiesDrawn++;
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("DrawMiddleMap");
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -199,7 +214,9 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("DrawMiddleEntities");
             foreach (var entities in Layer2Entities)
             {
                 foreach (var entity in entities)
@@ -208,7 +225,9 @@ namespace Intersect_Client.Classes.Core
                     EntitiesDrawn++;
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("DrawUpperMap");
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -220,7 +239,9 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("DrawUpperAnimations");
             lock (AnimationLock)
             {
                 foreach (AnimationInstance animInstance in LiveAnimations)
@@ -228,12 +249,18 @@ namespace Intersect_Client.Classes.Core
                     animInstance.Draw(true);
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("DrawTargets");
             //Draw the players targets
             Globals.Me.DrawTargets();
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("DrawOverlay");
             DrawOverlay();
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("DrawLayerEntityMetadata");
             foreach (var entities in Layer1Entities)
             {
                 foreach (var entity in entities)
@@ -247,7 +274,9 @@ namespace Intersect_Client.Classes.Core
                     entity.DrawChatBubbles();
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("DrawUpperEntityMetadata");
             foreach (var entities in Layer2Entities)
             {
                 foreach (var entity in entities)
@@ -261,8 +290,10 @@ namespace Intersect_Client.Classes.Core
                     entity.DrawChatBubbles();
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
 
             //Draw action msg's
+            UnityEngine.Profiling.Profiler.BeginSample("DrawActionMessages");
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -273,8 +304,11 @@ namespace Intersect_Client.Classes.Core
                     map?.DrawActionMsgs();
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("DrawDarkness");
             DrawDarkness();
+            UnityEngine.Profiling.Profiler.EndSample();
         }
 
         //Game Rendering
@@ -309,7 +343,9 @@ namespace Intersect_Client.Classes.Core
                 case GameStates.Loading:
                     break;
                 case GameStates.InGame:
+                    UnityEngine.Profiling.Profiler.BeginSample("DrawInGame");
                     DrawInGame();
+                    UnityEngine.Profiling.Profiler.EndSample();
                     break;
                 case GameStates.Error:
                     break;
@@ -317,7 +353,9 @@ namespace Intersect_Client.Classes.Core
                     throw new ArgumentOutOfRangeException();
             }
 
+            UnityEngine.Profiling.Profiler.BeginSample("Gui.DrawGui");
             Gui.DrawGui();
+            UnityEngine.Profiling.Profiler.EndSample();
 
             DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,
                 new Intersect.Color((int) GameFade.GetFade(), 0, 0, 0), null, GameBlendModes.Alpha);
@@ -326,11 +364,10 @@ namespace Intersect_Client.Classes.Core
 
         private static void TryPreRendering()
         {
-            if (Globals.Database.RenderCaching && Globals.Me != null &&
-                MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
+            if (Globals.Database.RenderCaching && Globals.Me != null && Globals.Me.MapInstance != null)
             {
-                var gridX = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridX;
-                var gridY = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridY;
+                var gridX = Globals.Me.MapInstance.MapGridX;
+                var gridY = Globals.Me.MapInstance.MapGridY;
                 for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
                     for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -344,6 +381,7 @@ namespace Intersect_Client.Classes.Core
                                 if (!PreRenderedMapLayer)
                                 {
                                     map.PreRenderMap();
+                                    return;
                                 }
                             }
                         }

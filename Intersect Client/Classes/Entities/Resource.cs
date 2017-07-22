@@ -25,6 +25,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 _mySprite = value;
                 Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, _mySprite);
+                _hasRenderBounds = false;
             }
         }
         public bool IsDead;
@@ -58,15 +59,20 @@ namespace Intersect_Client.Classes.Entities
 
         public override bool Update()
         {
-            CalculateRenderBounds();
-            bool result = base.Update();
             if (!_hasRenderBounds)
             {
                 CalculateRenderBounds();
             }
-            if (result &&
-                !GameGraphics.CurrentView.IntersectsWith(new FloatRect(destRectangle.Left, destRectangle.Top,
-                    destRectangle.Width, destRectangle.Height)))
+            if (!GameGraphics.CurrentView.IntersectsWith(destRectangle))
+            {
+                if (RenderList != null)
+                {
+                    RenderList.Remove(this);
+                }
+                return true;
+            }
+            bool result = base.Update();
+            if (!result)
             {
                 if (RenderList != null)
                 {
@@ -78,13 +84,13 @@ namespace Intersect_Client.Classes.Entities
 
         private void CalculateRenderBounds()
         {
-            var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+            var map = MapInstance;
             if (map == null)
             {
                 return;
             }
             if (Texture != null)
-            {
+            { 
                 srcRectangle.Width = Texture.GetWidth();
                 srcRectangle.Height = Texture.GetHeight();
                 destRectangle.Width = srcRectangle.Width;
@@ -106,8 +112,7 @@ namespace Intersect_Client.Classes.Entities
         //Rendering Resources
         public override void Draw()
         {
-            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) == null ||
-                !Globals.GridMaps.Contains(CurrentMap)) return;
+            if (MapInstance == null) return;
             if (Texture != null)
             {
                 GameGraphics.DrawGameTexture(Texture, srcRectangle, destRectangle, Intersect.Color.White);

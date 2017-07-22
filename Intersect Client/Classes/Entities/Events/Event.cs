@@ -231,7 +231,7 @@ namespace Intersect_Client.Classes.Entities
 
         public override void DrawName(Color color)
         {
-            if (HideName == 1)
+            if (HideName == 1 || MyName.Trim().Length == 0)
             {
                 return;
             }
@@ -273,9 +273,14 @@ namespace Intersect_Client.Classes.Entities
                     break;
             }
 
-            float textWidth = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 1).X;
+            y = (int)GetTopPos() - 4;
+            x = (int)Math.Ceiling(GetCenterPos().X);
+
+            Pointf textSize = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 1);
+
+            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect((x - textSize.X / 2f) - 4, y, textSize.X + 8, textSize.Y), new Intersect.Color(180, 0, 0, 0));
             GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
-                (int) (x - (int) Math.Ceiling(textWidth / 2)), (int) (y), 1, new Color(CustomColors.EventName.A,CustomColors.EventName.R, CustomColors.EventName.G, CustomColors.EventName.B));
+                (int)(x - (int)Math.Ceiling(textSize.X / 2f)), (int)(y), 1, new Color(CustomColors.EventName.A, CustomColors.EventName.R, CustomColors.EventName.G, CustomColors.EventName.B));
         }
 
         public override Pointf GetCenterPos()
