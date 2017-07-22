@@ -94,18 +94,25 @@ namespace Intersect.Server.Classes.Networking.Websockets
         
         public override bool Send(IPacket packet)
         {
-            if (packet.GetType() == typeof(BinaryPacket))
+            try
             {
-                BinaryPacket bpacket = (BinaryPacket) packet;
-                var bf = new ByteBuffer();
-                bf.WriteInteger(bpacket.Buffer.ToArray().Length);
-                bf.WriteBytes(bpacket.Buffer.ToArray());
-                context.WebSocket.SendAsync(bf.ToArray(),null);
-                return true;
+                if (packet.GetType() == typeof(BinaryPacket))
+                {
+                    BinaryPacket bpacket = (BinaryPacket) packet;
+                    var bf = new ByteBuffer();
+                    bf.WriteInteger(bpacket.Buffer.ToArray().Length);
+                    bf.WriteBytes(bpacket.Buffer.ToArray());
+                    context.WebSocket.SendAsync(bf.ToArray(), null);
+                    return true;
+                }
+                else
+                {
+                    throw new Exception("Websockets cannot send non-binary packets yet!");
+                }
             }
-            else
+            catch (InvalidOperationException ex)
             {
-                throw new Exception("Websockets cannot send non-binary packets yet!");
+                //Do Nothing.. the socket is just disconnected.
             }
             return false;
         }

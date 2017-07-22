@@ -223,7 +223,7 @@ namespace Intersect.Server.Classes.Entities
                                         SpawnY = mapEvent.SpawnY
                                     };
                                     MyEvents.Add(tmpEvent);
-                                    if (EventLookup.ContainsKey(new Tuple<int, int, int>(map.Index, mapEvent.SpawnX,mapEvent.SpawnY)))
+                                    if (!EventLookup.ContainsKey(new Tuple<int, int, int>(map.Index, mapEvent.SpawnX,mapEvent.SpawnY)))
                                     {
                                         EventLookup.Add(new Tuple<int, int, int>(map.Index,mapEvent.SpawnX,mapEvent.SpawnY),MyEvents.Count-1);
                                     }

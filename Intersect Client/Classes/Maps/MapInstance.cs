@@ -186,7 +186,7 @@ namespace Intersect_Client.Classes.Maps
 
         public bool InView()
         {
-            var myMap = Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
+            var myMap = Globals.Me.MapInstance;
             if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0 || myMap == null)
                 return true;
             var gridX = myMap.MapGridX;

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Intersect.GameObjects.Maps;
 using Intersect.Localization;
 using Intersect.Logging;
 using Intersect.Network;
@@ -76,6 +77,11 @@ namespace Intersect.Server.Classes
             var packetHander = new PacketHandler();
             SocketServer.Handlers[PacketCode.BinaryPacket] = packetHander.HandlePacket;
 
+#if websockets
+            WebSocketNetwork.Init(Options.ServerPort);
+            Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort));
+#endif
+
             if (!SocketServer.Listen())
             {
                 Log.Error("An error occurred while attempting to connect.");
@@ -84,14 +90,9 @@ namespace Intersect.Server.Classes
             Console.WriteLine();
             UPnP.ConnectNatDevice().Wait(5000);
             UPnP.OpenServerPort(Options.ServerPort, Protocol.Tcp).Wait(5000);
-            UPnP.OpenServerPort(Options.ServerPort + 1, Protocol.Udp).Wait(5000);
+            UPnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
 
             Console.WriteLine();
-
-#if websockets
-            WebSocketNetwork.Init(Options.ServerPort);
-            Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort));
-#endif
 
             //Check to see if AGD can see this server. If so let the owner know :)
             var externalIp = "";

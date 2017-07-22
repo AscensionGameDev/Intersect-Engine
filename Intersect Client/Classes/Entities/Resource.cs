@@ -15,9 +15,19 @@ namespace Intersect_Client.Classes.Entities
     {
         public ResourceBase _baseResource;
         private bool _hasRenderBounds;
-        FloatRect destRectangle;
+        FloatRect destRectangle = FloatRect.Empty;
+        FloatRect srcRectangle = FloatRect.Empty;
+
+        public override string MySprite
+        {
+            get { return _mySprite; }
+            set
+            {
+                _mySprite = value;
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, _mySprite);
+            }
+        }
         public bool IsDead;
-        FloatRect srcRectangle;
 
         public Resource(int index, long spawnTime, ByteBuffer bf) : base(index, spawnTime, bf)
         {
@@ -73,11 +83,12 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
-            GameTexture srcTexture =
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, MySprite);
-            if (srcTexture != null)
+            if (Texture != null)
             {
-                srcRectangle = new FloatRect(0, 0, srcTexture.GetWidth(), srcTexture.GetHeight());
+                srcRectangle.Width = Texture.GetWidth();
+                srcRectangle.Height = Texture.GetHeight();
+                destRectangle.Width = srcRectangle.Width;
+                destRectangle.Height = srcRectangle.Height;
                 destRectangle.Y = (int) (map.GetY() + CurrentY * Options.TileHeight + OffsetY);
                 destRectangle.X = (int) (map.GetX() + CurrentX * Options.TileWidth + OffsetX);
                 if (srcRectangle.Height > 32)
@@ -88,8 +99,6 @@ namespace Intersect_Client.Classes.Entities
                 {
                     destRectangle.X -= (srcRectangle.Width - 32) / 2;
                 }
-                destRectangle.Width = srcRectangle.Width;
-                destRectangle.Height = srcRectangle.Height;
                 _hasRenderBounds = true;
             }
         }
@@ -99,11 +108,9 @@ namespace Intersect_Client.Classes.Entities
         {
             if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) == null ||
                 !Globals.GridMaps.Contains(CurrentMap)) return;
-            GameTexture srcTexture =
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, MySprite);
-            if (srcTexture != null)
+            if (Texture != null)
             {
-                GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Intersect.Color.White);
+                GameGraphics.DrawGameTexture(Texture, srcRectangle, destRectangle, Intersect.Color.White);
             }
         }
     }

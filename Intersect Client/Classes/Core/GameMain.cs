@@ -131,7 +131,7 @@ namespace Intersect_Client.Classes.Core
 
         private static void ProcessLoading()
         {
-            if (Globals.Me == null || MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) == null) return;
+            if (Globals.Me == null || Globals.Me.MapInstance == null) return;
             if (!_createdMapTextures)
             {
                 if (Globals.Database.RenderCaching) GameGraphics.CreateMapTextures(9 * 18);
@@ -142,11 +142,10 @@ namespace Intersect_Client.Classes.Core
                 Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
                 _loadedTilesets = true;
             }
-            if (Globals.Database.RenderCaching && Globals.Me != null &&
-                MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
+            if (Globals.Database.RenderCaching && Globals.Me != null && Globals.Me.MapInstance != null)
             {
-                var gridX = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridX;
-                var gridY = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridY;
+                var gridX = Globals.Me.MapInstance.MapGridX;
+                var gridY = Globals.Me.MapInstance.MapGridY;
                 for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
                     for (int y = gridY - 1; y <= gridY + 1; y++)

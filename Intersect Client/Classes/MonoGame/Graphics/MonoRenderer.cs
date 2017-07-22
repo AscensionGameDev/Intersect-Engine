@@ -126,7 +126,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             {
                 UpdateGraphicsState(mScreenWidth, mScreenHeight);
             }
-            StartSpritebatch(mCurrentView, GameBlendModes.Alpha, null, null, true, null);
+            
             return true;
         }
 

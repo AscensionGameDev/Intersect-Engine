@@ -82,7 +82,7 @@ namespace Intersect_Client.Classes.UI.Game
             _fpsLabel.Text = Strings.Get("debug", "fps", GameGraphics.Renderer.GetFps());
             _pingLabel.Text = Strings.Get("debug", "ping", GameNetwork.Ping);
             _drawsLabel.Text = Strings.Get("debug", "draws", GameGraphics.DrawCalls);
-            if (MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
+            if (Globals.Me.MapInstance != null)
             {
                 _mapLabel.Text = Strings.Get("debug", "map", MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).Name);
                 _xLabel.Text = Strings.Get("debug", "x", Globals.Me.CurrentX);

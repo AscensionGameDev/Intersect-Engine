@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -48,14 +50,12 @@ namespace Intersect_Client.Classes.Entities
 
         //Caching
         public MapInstance latestMap;
-        public string latestTextureName;
-        public GameTexture latestTexture;
 
         private int _dir;
         public int Dir
         {
-            get => _dir;
-            set => _dir = (value + 4) % 4;
+            get { return _dir; }
+            set { _dir = (value + 4) % 4; }
         }
 
         public int[] Equipment = new int[Options.EquipmentSlots.Count];
@@ -79,18 +79,46 @@ namespace Intersect_Client.Classes.Entities
         //Core Values
         public int MyIndex;
         public string MyName = "";
-        public string MySprite = "";
+
+        protected string _mySprite = "";
+        public GameTexture Texture;
+        public virtual string MySprite
+        {
+            get { return _mySprite; }
+            set
+            {
+                _mySprite = value;
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, _mySprite);
+            }
+        }
         public float OffsetX;
         public float OffsetY;
         public int Passable;
+
+        private int cachedMapId = -1;
+        private MapInstance cachedMapInstance;
+        public MapInstance MapInstance
+        {
+            get
+            {
+                if (cachedMapId == CurrentMap && cachedMapInstance != null)
+                {
+                    return cachedMapInstance;
+                }
+                else
+                {
+                    cachedMapInstance = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+                    cachedMapId = CurrentMap;
+                    return cachedMapInstance;
+                }
+            }
+        }
 
         //Rendering Variables
         public HashSet<Entity> RenderList;
         public long SpawnTime;
         public int SpellCast = 0;
         public SpellInstance[] Spells = new SpellInstance[Options.MaxPlayerSkills];
-        public float SpriteHeight;
-        public float SpriteWidth;
         public int[] Stat = new int[(int) Stats.StatCount];
 
         //Status effects
@@ -468,7 +496,6 @@ namespace Intersect_Client.Classes.Entities
         //Rendering Functions
         public virtual void Draw()
         {
-            latestTexture = null;
             if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
@@ -497,32 +524,21 @@ namespace Intersect_Client.Classes.Entities
                     }
                 }
             }
-            GameTexture entityTex = null;
-            if (latestTexture != null && latestTextureName == sprite)
-            {
-                entityTex = latestTexture;
-            }
-            else
-            {
-                entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, sprite);
-                latestTexture = entityTex;
-                latestTextureName = sprite;
-            }
-            if (entityTex != null)
+            if (Texture != null)
             {
                 var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
-                if (entityTex.GetHeight() / 4 > Options.TileHeight)
+                if (Texture.GetHeight() / 4 > Options.TileHeight)
                 {
                     destRectangle.X = (map.GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2);
                     destRectangle.Y = map.GetY() + CurrentY * Options.TileHeight + OffsetY -
-                                      ((entityTex.GetHeight() / 4) - Options.TileHeight);
+                                      ((Texture.GetHeight() / 4) - Options.TileHeight);
                 }
                 else
                 {
                     destRectangle.X = map.GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2;
                     destRectangle.Y = map.GetY() + CurrentY * Options.TileHeight + OffsetY;
                 }
-                destRectangle.X -= ((entityTex.GetWidth() / 8));
+                destRectangle.X -= ((Texture.GetWidth() / 8));
                 switch (Dir)
                 {
                     case 0:
@@ -546,27 +562,26 @@ namespace Intersect_Client.Classes.Entities
                 destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
                 if (Options.AnimatedSprites.Contains(sprite))
                 {
-                    srcRectangle = new FloatRect(AnimationFrame * (int)entityTex.GetWidth() / 4, d * (int)entityTex.GetHeight() / 4,
-                            (int)entityTex.GetWidth() / 4, (int)entityTex.GetHeight() / 4);
+                    srcRectangle = new FloatRect(AnimationFrame * (int)Texture.GetWidth() / 4, d * (int)Texture.GetHeight() / 4,
+                            (int)Texture.GetWidth() / 4, (int)Texture.GetHeight() / 4);
                 }
                 else
                 {
                     if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMS() || Blocking)
                     {
-                        srcRectangle = new FloatRect(3 * (int)entityTex.GetWidth() / 4, d * (int)entityTex.GetHeight() / 4,
-                            (int)entityTex.GetWidth() / 4, (int)entityTex.GetHeight() / 4);
+                        srcRectangle = new FloatRect(3 * (int)Texture.GetWidth() / 4, d * (int)Texture.GetHeight() / 4,
+                            (int)Texture.GetWidth() / 4, (int)Texture.GetHeight() / 4);
                     }
                     else
                     {
-                        srcRectangle = new FloatRect(WalkFrame * (int)entityTex.GetWidth() / 4,
-                            d * (int)entityTex.GetHeight() / 4, (int)entityTex.GetWidth() / 4,
-                            (int)entityTex.GetHeight() / 4);
+                        srcRectangle = new FloatRect(WalkFrame * (int)Texture.GetWidth() / 4,
+                            d * (int)Texture.GetHeight() / 4, (int)Texture.GetWidth() / 4,
+                            (int)Texture.GetHeight() / 4);
                     }
                 }
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
-                latestTexture = entityTex;
-                GameGraphics.DrawGameTexture(entityTex, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255));
+                GameGraphics.DrawGameTexture(Texture, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255));
 
                 //Don't render the paperdolls if they have transformed.
                 if (sprite == MySprite && Equipment.Length == Options.EquipmentSlots.Count)
@@ -694,11 +709,10 @@ namespace Intersect_Client.Classes.Entities
             }
             Pointf pos = new Pointf(latestMap.GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2,
                 latestMap.GetY() + CurrentY * Options.TileHeight + OffsetY + Options.TileHeight / 2);
-            GameTexture entityTex = latestTexture;
-            if (entityTex != null)
+            if (Texture != null)
             {
                 pos.Y += Options.TileHeight / 2;
-                pos.Y -= entityTex.GetHeight() / 4 / 2;
+                pos.Y -= Texture.GetHeight() / 4 / 2;
             }
             return pos;
         }
@@ -711,10 +725,9 @@ namespace Intersect_Client.Classes.Entities
                 return 0f;
             }
             var y = (int) Math.Ceiling(GetCenterPos().Y);
-            GameTexture entityTex = latestTexture;
-            if (entityTex != null)
+            if (Texture != null)
             {
-                y = y - (int) ((entityTex.GetHeight() / 8));
+                y = y - (int) ((Texture.GetHeight() / 8));
                 y -= 12;
             }
             if (GetType() != typeof(Event))
@@ -769,7 +782,7 @@ namespace Intersect_Client.Classes.Entities
                     }
                 }
             }
-            var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+            var map = MapInstance;
             if (map == null)
             {
                 return;

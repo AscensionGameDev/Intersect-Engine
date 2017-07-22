@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using Intersect.Utilities;
 
 namespace Intersect.Collections
 {
@@ -94,7 +96,7 @@ namespace Intersect.Collections
             get { return Get(index); }
             set { Set(index, value); }
         }
-        
+
         public List<int> IndexList => IndexKeys?.ToList();
         public List<IDatabaseObject> ValueList => IndexValues?.ToList();
 
@@ -167,13 +169,13 @@ namespace Intersect.Collections
 
         internal virtual bool InternalSet(IDatabaseObject value, bool overwrite)
         {
-            if (value == null) throw new ArgumentNullException();
-            if (!IsIdValid(value.Guid)) throw new ArgumentOutOfRangeException();
-            if (!IsIndexValid(value.Index)) throw new ArgumentOutOfRangeException();
+            if (value == null) throw new ArgumentNullException(nameof(value));
+            if (!IsIdValid(value.Guid)) throw new ArgumentOutOfRangeException(nameof(value.Guid));
+            if (!IsIndexValid(value.Index)) throw new ArgumentOutOfRangeException(nameof(value.Index));
 
-            if (mLock == null) throw new ArgumentNullException();
-            if (mIdMap == null) throw new ArgumentNullException();
-            if (mIndexMap == null) throw new ArgumentNullException();
+            if (mLock == null) throw new ArgumentNullException(nameof(mLock));
+            if (mIdMap == null) throw new ArgumentNullException(nameof(mIdMap));
+            if (mIndexMap == null) throw new ArgumentNullException(nameof(mIndexMap));
 
             lock (mLock)
             {
@@ -199,37 +201,53 @@ namespace Intersect.Collections
 
         public bool Add(IDatabaseObject value) => InternalSet(value, false);
 
+        private string MessageNoConstructor(Type type, params string[] constructorMessage)
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine($@"No ({string.Join(",", constructorMessage ?? new string[] { })}) constructor for type '{type?.Name}'.");
+            builder.AppendLine(ReflectionUtils.StringifyConstructors(type));
+            return builder.ToString();
+        }
+
         public IDatabaseObject AddNew(Type type, Guid id)
         {
-            var mixedConstructor = type?.GetConstructor(new[] { KeyType, IndexKeyType });
+            if (type == null) throw new ArgumentNullException(nameof(type), @"No type specified.");
+
+            var mixedConstructor = type.GetConstructor(new[] { KeyType, IndexKeyType });
             if (mixedConstructor != null) return AddNew(type, id, NextIndex);
 
-            var idConstructor = type?.GetConstructor(new[] { IndexKeyType });
-            if (idConstructor == null) throw new ArgumentNullException($"No (Guid) constructor for type '{type?.Name}'.");
+            var idConstructor = type.GetConstructor(new[] { KeyType });
+            if (idConstructor == null) throw new ArgumentNullException(nameof(idConstructor), MessageNoConstructor(type, KeyType?.Name ?? @"<NULL_KT>"));
 
-            var value = (IDatabaseObject)idConstructor?.Invoke(new object[] { id });
-            if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the (Guid) constructor.");
+            var value = (IDatabaseObject)idConstructor.Invoke(new object[] { id });
+            if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the ({KeyType?.Name ?? @"<NULL_KT>"}) constructor.");
             return InternalSet(value, false) ? value : default(IDatabaseObject);
         }
 
         public IDatabaseObject AddNew(Type type, int index)
         {
-            var mixedConstructor = type?.GetConstructor(new[] { KeyType, IndexKeyType });
+            if (type == null) throw new ArgumentNullException(nameof(type), @"No type specified.");
+
+            var mixedConstructor = type.GetConstructor(new[] { KeyType, IndexKeyType });
             if (mixedConstructor != null) return AddNew(type, Guid.NewGuid(), index);
 
-            var indexConstructor = type?.GetConstructor(new[] { IndexKeyType });
-            if (indexConstructor == null) throw new ArgumentNullException($"No (int) constructor for type '{type?.Name}'.");
+            var indexConstructor = type.GetConstructor(new[] { IndexKeyType });
+            if (indexConstructor == null) throw new ArgumentNullException(nameof(indexConstructor), MessageNoConstructor(type, IndexKeyType?.Name ?? @"<NULL_IKT>"));
 
             var value = (IDatabaseObject)indexConstructor.Invoke(new object[] { index });
-            if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the (int) constructor.");
+            if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the ({IndexKeyType?.Name ?? @"<NULL_IKT>"}) constructor.");
             return InternalSet(value, false) ? value : default(IDatabaseObject);
         }
 
         public IDatabaseObject AddNew(Type type, Guid id, int index)
         {
+            if (type == null) throw new ArgumentNullException(nameof(type), @"No type specified.");
+
             var mixedConstructor = ValueType?.GetConstructor(new[] { KeyType, IndexKeyType });
-            var value = (IDatabaseObject)mixedConstructor?.Invoke(new object[] { id, index });
-            if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the (Guid, int) constructor.");
+            if (mixedConstructor == null) throw new ArgumentNullException(nameof(mixedConstructor), MessageNoConstructor(type, KeyType?.Name ?? @"<NULL_KT>", IndexKeyType?.Name ?? @"<NULL_IKT>"));
+
+            var value = (IDatabaseObject)mixedConstructor.Invoke(new object[] { id, index });
+            if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the ({KeyType?.Name ?? @"<NULL_KT>"}, {IndexKeyType?.Name ?? @"<NULL_IKT>"}) constructor.");
             return InternalSet(value, false) ? value : default(IDatabaseObject);
         }
 

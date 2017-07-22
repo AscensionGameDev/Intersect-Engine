@@ -6,8 +6,6 @@ using Intersect;
 using Intersect.Enums;
 using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Network.Crypto;
-using Intersect.Network.Crypto.Formats;
 using Intersect.Network.Packets.Reflectable;
 using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
@@ -25,8 +23,8 @@ namespace Intersect_Client.Classes.Networking
         private static int mPing;
         public static int Ping
         {
-            get => MySocket?.Ping() ?? mPing;
-            set => mPing = value;
+            get { return MySocket?.Ping() ?? mPing; }
+            set { mPing = value; }
         }
 
         public static void InitNetwork()

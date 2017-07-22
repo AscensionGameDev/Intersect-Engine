@@ -326,6 +326,18 @@ namespace Intersect.Server.Classes.Networking
                             }
                         }
 
+                        lock (Globals.ClientLock)
+                        {
+                            var clients = Globals.Clients.ToArray();
+                            foreach (var user in clients)
+                            {
+                                if (user.MyAccount.ToLower() == username.ToLower() && user != client && !user.IsEditor)
+                                {
+                                    user.Disconnect();
+                                }
+                            }
+                        }
+
                         if (Database.LoadUser(client))
                         {
                             //Check for mute
