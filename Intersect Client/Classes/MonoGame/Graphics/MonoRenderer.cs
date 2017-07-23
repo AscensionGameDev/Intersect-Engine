@@ -126,7 +126,9 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             {
                 UpdateGraphicsState(mScreenWidth, mScreenHeight);
             }
-            
+
+            StartSpritebatch(mCurrentView, GameBlendModes.Alpha, null, null, true, null);
+
             return true;
         }
 
@@ -182,7 +184,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 {
                     useEffect = (Effect) shader.GetShader();
                 }
-                mSpriteBatch.Begin(SpriteSortMode.Immediate, blend, SamplerState.PointClamp, null, rs, useEffect,
+                mSpriteBatch.Begin(SpriteSortMode.Deferred, blend, SamplerState.PointClamp, null, rs, useEffect,
                     Matrix.CreateRotationZ(0f) * Matrix.CreateScale(new Vector3(1, 1, 1)) *
                     Matrix.CreateTranslation(-view.X, -view.Y, 0));
                 _currentSpriteView = view;
