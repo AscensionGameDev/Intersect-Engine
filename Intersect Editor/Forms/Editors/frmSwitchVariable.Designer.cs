@@ -130,13 +130,35 @@ namespace Intersect.Editor.Forms.Editors
             this.grpList.TabStop = false;
             this.grpList.Text = "Switch/Variable List";
             // 
+            // btnNew
+            // 
+            this.btnNew.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnNew.Location = new System.Drawing.Point(7, 365);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Padding = new System.Windows.Forms.Padding(5);
+            this.btnNew.Size = new System.Drawing.Size(187, 27);
+            this.btnNew.TabIndex = 53;
+            this.btnNew.Text = "New";
+            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnDelete.Location = new System.Drawing.Point(7, 398);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Padding = new System.Windows.Forms.Padding(5);
+            this.btnDelete.Size = new System.Drawing.Size(187, 27);
+            this.btnDelete.TabIndex = 52;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
             // btnUndo
             // 
             this.btnUndo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnUndo.Location = new System.Drawing.Point(7, 431);
             this.btnUndo.Name = "btnUndo";
             this.btnUndo.Padding = new System.Windows.Forms.Padding(5);
-            this.btnUndo.Size = new System.Drawing.Size(190, 27);
+            this.btnUndo.Size = new System.Drawing.Size(187, 27);
             this.btnUndo.TabIndex = 55;
             this.btnUndo.Text = "Undo Changes";
             this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
@@ -152,28 +174,6 @@ namespace Intersect.Editor.Forms.Editors
             this.lstObjects.Size = new System.Drawing.Size(187, 327);
             this.lstObjects.TabIndex = 0;
             this.lstObjects.Click += new System.EventHandler(this.lstObjects_Click);
-            // 
-            // btnNew
-            // 
-            this.btnNew.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnNew.Location = new System.Drawing.Point(7, 365);
-            this.btnNew.Name = "btnNew";
-            this.btnNew.Padding = new System.Windows.Forms.Padding(5);
-            this.btnNew.Size = new System.Drawing.Size(190, 27);
-            this.btnNew.TabIndex = 53;
-            this.btnNew.Text = "New";
-            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
-            // 
-            // btnDelete
-            // 
-            this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(8, 398);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Padding = new System.Windows.Forms.Padding(5);
-            this.btnDelete.Size = new System.Drawing.Size(190, 27);
-            this.btnDelete.TabIndex = 52;
-            this.btnDelete.Text = "Delete";
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // grpEditor
             // 
