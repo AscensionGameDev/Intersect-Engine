@@ -133,9 +133,9 @@ namespace Intersect.Editor.Classes
         private static void SetupWhiteTex()
         {
             _whiteTex = CreateRenderTexture(1, 1);
-            _graphicsDevice.SetRenderTarget(_whiteTex);
+            SetRenderTarget(_whiteTex);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
-            _graphicsDevice.SetRenderTarget(null);
+            SetRenderTarget(null);
         }
 
         public static RenderTarget2D GetWhiteTex()
@@ -156,7 +156,7 @@ namespace Intersect.Editor.Classes
             {
                 lock (GraphicsLock)
                 {
-                    _graphicsDevice.SetRenderTarget(_mapEditorChain);
+                    SetRenderTarget(_mapEditorChain);
                     _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
                     StartSpritebatch();
                     ClearDarknessTexture(null);
@@ -331,7 +331,7 @@ namespace Intersect.Editor.Classes
             }
         }
 
-        private static void DrawAutoTile(int layerNum, int destX, int destY, int quarterNum, int x, int y, MapBase map,
+        private static void DrawAutoTile(Texture2D texture, int layerNum, int destX, int destY, int quarterNum, int x, int y, MapBase map,
             RenderTarget2D target)
         {
             int yOffset = 0, xOffset = 0;
@@ -353,8 +353,7 @@ namespace Intersect.Editor.Classes
                     break;
             }
             DrawTexture(
-                GetTexture(TextureType.Tileset,
-                    TilesetBase.Lookup.Get<TilesetBase>(map.Layers[layerNum].Tiles[x, y].TilesetIndex).Name),
+                texture,
                 destX, destY,
                 (int) map.Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
                 (int) map.Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
@@ -619,10 +618,11 @@ namespace Intersect.Editor.Classes
                                     .IntersectsWith(new System.Drawing.Rectangle(0, 0, CurrentView.Width,
                                         CurrentView.Height)))
                             {
+                                var tilesetObj = TilesetBase.Lookup.Get<TilesetBase>(tmpMap.Layers[z].Tiles[x, y]
+                                    .TilesetIndex);
                                 try
                                 {
-                                    if (TilesetBase.Lookup.Get<TilesetBase>(tmpMap.Layers[z].Tiles[x, y]
-                                            .TilesetIndex) == null) continue;
+                                    if (tilesetObj == null) continue;
                                 }
                                 catch (Exception exception)
                                 {
@@ -630,8 +630,7 @@ namespace Intersect.Editor.Classes
                                     Log.Error(exception);
                                     continue;
                                 }
-                                Texture2D tilesetTex = GetTexture(TextureType.Tileset,
-                                    TilesetBase.Lookup.Get<TilesetBase>(tmpMap.Layers[z].Tiles[x, y].TilesetIndex).Name);
+                                Texture2D tilesetTex = GetTexture(TextureType.Tileset,tilesetObj.Name);
                                 if (tilesetTex == null || tmpMap.Autotiles == null || tmpMap.Autotiles.Autotile == null) continue;
                                 if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState !=
                                     MapAutotiles.RenderStateNormal)
@@ -639,15 +638,15 @@ namespace Intersect.Editor.Classes
                                     if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState !=
                                         MapAutotiles.RenderStateAutotile)
                                         continue;
-                                    DrawAutoTile(z, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1,
+                                    DrawAutoTile(tilesetTex,z, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1,
                                         x,
                                         y, tmpMap, RenderTarget2D);
-                                    DrawAutoTile(z, x * Options.TileWidth + (Options.TileWidth / 2) + xoffset,
+                                    DrawAutoTile(tilesetTex,z, x * Options.TileWidth + (Options.TileWidth / 2) + xoffset,
                                         y * Options.TileHeight + yoffset, 2, x, y, tmpMap, RenderTarget2D);
-                                    DrawAutoTile(z, x * Options.TileWidth + xoffset,
+                                    DrawAutoTile(tilesetTex,z, x * Options.TileWidth + xoffset,
                                         y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 3, x, y, tmpMap,
                                         RenderTarget2D);
-                                    DrawAutoTile(z, x * Options.TileWidth + (Options.TileWidth / 2) + xoffset,
+                                    DrawAutoTile(tilesetTex,z, x * Options.TileWidth + (Options.TileWidth / 2) + xoffset,
                                         y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 4, x, y, tmpMap,
                                         RenderTarget2D);
                                 }
@@ -827,7 +826,7 @@ namespace Intersect.Editor.Classes
         {
             if (_mapGridChain == null || _mapGridChain.IsContentLost || _mapGridChain.IsDisposed ||
                 Globals.MapGridWindowNew.DockPanel.ActiveDocument != Globals.MapGridWindowNew) return;
-            _graphicsDevice.SetRenderTarget(_mapGridChain);
+            SetRenderTarget(_mapGridChain);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.FromNonPremultiplied(60, 63, 65, 255));
             var rand = new Random();
             var grid = Globals.MapGrid;
@@ -900,11 +899,17 @@ namespace Intersect.Editor.Classes
             _mapGridChain.Present();
         }
 
+        private static void SetRenderTarget(RenderTarget2D target)
+        {
+            EndSpriteBatch();
+            _graphicsDevice.SetRenderTarget(target);
+        }
+
         public static void DrawTileset()
         {
             if (_tilesetChain == null || _tilesetChain.IsContentLost || _tilesetChain.IsDisposed ||
                 Globals.MapLayersWindow.CurrentTab != LayerTabs.Tiles) return;
-            _graphicsDevice.SetRenderTarget(_tilesetChain);
+            SetRenderTarget(_tilesetChain);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (Globals.CurrentTileset != null)
             {
@@ -931,6 +936,7 @@ namespace Intersect.Editor.Classes
                         System.Drawing.Color.White, _tilesetChain);
                 }
             }
+            EndSpriteBatch();
             _tilesetChain.Present();
         }
 
@@ -1091,7 +1097,7 @@ namespace Intersect.Editor.Classes
         {
             RenderTarget2D screenShot = CreateRenderTexture((Options.MapWidth) * Options.TileWidth,
                 (Options.MapHeight) * Options.TileHeight);
-            _graphicsDevice.SetRenderTarget(screenShot);
+            SetRenderTarget(screenShot);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Transparent);
 
             if (Globals.MapGrid.Contains(Globals.CurrentMap.Index))
@@ -1300,9 +1306,9 @@ namespace Intersect.Editor.Classes
                 DarknessTexture = CreateRenderTexture(Options.TileWidth * Options.MapWidth * 3,
                     Options.TileHeight * Options.MapHeight * 3);
             }
-            _graphicsDevice.SetRenderTarget(DarknessTexture);
+            SetRenderTarget(DarknessTexture);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
-            _graphicsDevice.SetRenderTarget(null);
+            SetRenderTarget(null);
 
             if (Globals.CurrentMap == null) return;
             var tmpMap = Globals.CurrentMap;
@@ -1516,13 +1522,13 @@ namespace Intersect.Editor.Classes
                 if (_spriteBatchBegan) _spriteBatch.End();
                 if (target == null)
                 {
-                    _graphicsDevice.SetRenderTarget(_mapEditorChain);
+                    SetRenderTarget(_mapEditorChain);
                 }
                 else
                 {
-                    _graphicsDevice.SetRenderTarget(target);
+                    SetRenderTarget(target);
                 }
-                _spriteBatch.Begin(SpriteSortMode.Immediate, mode, null, null, rs, shader);
+                _spriteBatch.Begin(SpriteSortMode.Deferred, mode, null, null, rs, shader);
                 _currentBlendmode = mode;
                 _currentShader = shader;
                 _currentTarget = target;
@@ -1532,6 +1538,7 @@ namespace Intersect.Editor.Classes
 
         private static void EndSpriteBatch()
         {
+            if (!_spriteBatchBegan) return;
             _spriteBatch.End();
             _spriteBatchBegan = false;
         }

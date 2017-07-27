@@ -235,13 +235,12 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         }
 
         public override void DrawString(string text, GameFont gameFont, float x, float y, float fontScale,
-            Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null, bool outline = true)
+            Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null, Color borderColor = null)
         {
             if (gameFont == null) return;
             SpriteFont font = (SpriteFont) gameFont.GetFont();
             if (font == null) return;
             StartSpritebatch(mCurrentView, GameBlendModes.None, null, renderTexture, false, null);
-            Color backColor = Color.Black;
             foreach (var chr in text)
             {
                 if (!font.Characters.Contains(chr))
@@ -249,18 +248,18 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                     text = text.Replace(chr, ' ');
                 }
             }
-            if (outline)
+            if (borderColor != null && borderColor != Color.Transparent)
             {
-                mSpriteBatch.DrawString(font, text, new Vector2(x, y - 1), ConvertColor(backColor) * .8f, 0f,
+                mSpriteBatch.DrawString(font, text, new Vector2(x, y - 1), ConvertColor(borderColor), 0f,
                     Vector2.Zero,
                     new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
-                mSpriteBatch.DrawString(font, text, new Vector2(x - 1, y), ConvertColor(backColor) * .8f, 0f,
+                mSpriteBatch.DrawString(font, text, new Vector2(x - 1, y), ConvertColor(borderColor), 0f,
                     Vector2.Zero,
                     new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
-                mSpriteBatch.DrawString(font, text, new Vector2(x + 1, y), ConvertColor(backColor) * .8f, 0f,
+                mSpriteBatch.DrawString(font, text, new Vector2(x + 1, y), ConvertColor(borderColor), 0f,
                     Vector2.Zero,
                     new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
-                mSpriteBatch.DrawString(font, text, new Vector2(x, y + 1), ConvertColor(backColor) * .8f, 0f,
+                mSpriteBatch.DrawString(font, text, new Vector2(x, y + 1), ConvertColor(borderColor), 0f,
                     Vector2.Zero,
                     new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
             }
@@ -268,7 +267,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         }
 
         public override void DrawString(string text, GameFont gameFont, float x, float y, float fontScale,
-            Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect)
+            Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect, Color borderColor = null)
         {
             if (gameFont == null) return;
             x += mCurrentView.X;
@@ -293,9 +292,23 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                     text = text.Replace(chr, ' ');
                 }
             }
+            if (borderColor != null && borderColor != Color.Transparent)
+            {
+                mSpriteBatch.DrawString(font, text, new Vector2(x, y - 1), ConvertColor(borderColor), 0f,
+                    Vector2.Zero,
+                    new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
+                mSpriteBatch.DrawString(font, text, new Vector2(x - 1, y), ConvertColor(borderColor), 0f,
+                    Vector2.Zero,
+                    new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
+                mSpriteBatch.DrawString(font, text, new Vector2(x + 1, y), ConvertColor(borderColor), 0f,
+                    Vector2.Zero,
+                    new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
+                mSpriteBatch.DrawString(font, text, new Vector2(x, y + 1), ConvertColor(borderColor), 0f,
+                    Vector2.Zero,
+                    new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
+            }
             mSpriteBatch.DrawString(font, text, new Vector2(x, y), clr, 0f, Vector2.Zero,
                 new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
-
             EndSpriteBatch();
 
             //Reset scissor rectangle to the saved value

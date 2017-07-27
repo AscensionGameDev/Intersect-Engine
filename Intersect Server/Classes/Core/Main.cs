@@ -17,6 +17,7 @@ using Intersect.Server.Classes.Networking;
 using Intersect.Server.Network;
 using Open.Nat;
 using WebSocketSharp.Server;
+using System.Globalization;
 
 namespace Intersect.Server.Classes
 {
@@ -27,6 +28,7 @@ namespace Intersect.Server.Classes
 
         public static void Main(string[] args)
         {
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             Thread logicThread;

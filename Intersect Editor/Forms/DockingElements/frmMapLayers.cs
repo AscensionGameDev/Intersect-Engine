@@ -198,7 +198,10 @@ namespace Intersect.Editor.Forms
         public void InitTilesets()
         {
             Globals.MapLayersWindow.cmbTilesets.Items.Clear();
-            foreach (var filename in Database.GetGameObjectList(GameObjectType.Tileset))
+            var tilesetList = new List<string>();
+            tilesetList.AddRange(Database.GetGameObjectList(GameObjectType.Tileset));
+            tilesetList.Sort(new AlphanumComparatorFast());
+            foreach (var filename in tilesetList)
             {
                 if (File.Exists("resources/tilesets/" + filename))
                 {

@@ -9,7 +9,7 @@ using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
-using Color = IntersectClientExtras.GenericClasses.Color;
+using Color = Intersect.Color;
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -229,7 +229,7 @@ namespace Intersect_Client.Classes.Entities
             return renderList;
         }
 
-        public override void DrawName(Color color)
+        public override void DrawName(Color textColor, Color borderColor, Color backgroundColor)
         {
             if (HideName == 1 || MyName.Trim().Length == 0)
             {
@@ -278,9 +278,9 @@ namespace Intersect_Client.Classes.Entities
 
             Pointf textSize = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 1);
 
-            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect((x - textSize.X / 2f) - 4, y, textSize.X + 8, textSize.Y), new Intersect.Color(180, 0, 0, 0));
+            if (CustomColors.EventNameBackground != Color.Transparent) GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect((x - textSize.X / 2f) - 4, y, textSize.X + 8, textSize.Y), CustomColors.EventNameBackground);
             GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
-                (int)(x - (int)Math.Ceiling(textSize.X / 2f)), (int)(y), 1, new Color(CustomColors.EventName.A, CustomColors.EventName.R, CustomColors.EventName.G, CustomColors.EventName.B));
+                (int)(x - (int)Math.Ceiling(textSize.X / 2f)), (int)(y), 1, IntersectClientExtras.GenericClasses.Color.FromArgb(CustomColors.EventName.ToArgb()),true,null,IntersectClientExtras.GenericClasses.Color.FromArgb(CustomColors.EventNameBorder.ToArgb()));
         }
 
         public override Pointf GetCenterPos()

@@ -14,7 +14,7 @@ using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
 using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.Spells;
-using Color = IntersectClientExtras.GenericClasses.Color;
+using Color = Intersect.Color;
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -737,35 +737,44 @@ namespace Intersect_Client.Classes.Entities
             return y;
         }
 
-        public virtual void DrawName(Color color)
+        public virtual void DrawName(Color textColor, Color borderColor = null, Color backgroundColor = null)
         {
             if (HideName == 1 || MyName.Trim().Length == 0)
             {
                 return;
             }
-
+            if (borderColor == null) borderColor = Color.Transparent;
+            if (backgroundColor == null) backgroundColor = Color.Transparent;
             //Check for npc colors
-            if (color == null)
+            if (textColor == null)
             {
                 switch (type)
                 {
                     case -1: //When entity has a target (showing aggression)
-                        color = Color.FromArgb(CustomColors.AgressiveNpcName.A, CustomColors.AgressiveNpcName.R, CustomColors.AgressiveNpcName.G, CustomColors.AgressiveNpcName.B);
+                        textColor = CustomColors.AgressiveNpcName;
+                        borderColor = CustomColors.AgressiveNpcNameBorder;
+                        backgroundColor = CustomColors.AgressiveNpcNameBackground;
                         break;
                     case 0: //Attack when attacked
-                        color = Color.FromArgb(CustomColors.AttackWhenAttackedName.A, CustomColors.AttackWhenAttackedName.R, CustomColors.AttackWhenAttackedName.G, CustomColors.AttackWhenAttackedName.B);
+                        textColor = Intersect.CustomColors.AttackWhenAttackedName;
+                        borderColor = CustomColors.AttackWhenAttackedNameBorder;
+                        backgroundColor = CustomColors.AttackWhenAttackedNameBackground;
                         break;
                     case 1: //Attack on sight
-                        color = Color.FromArgb(CustomColors.AttackOnSightName.A, CustomColors.AttackOnSightName.R, CustomColors.AttackOnSightName.G, CustomColors.AttackOnSightName.B);
-                        break;
-                    case 2: //Neutral
-                        color = Color.FromArgb(CustomColors.NeutralName.A, CustomColors.NeutralName.R, CustomColors.NeutralName.G, CustomColors.NeutralName.B);
+                        textColor = CustomColors.AttackOnSightName;
+                        borderColor = CustomColors.AttackOnSightNameBorder;
+                        backgroundColor = CustomColors.AttackOnSightNameBackground;
                         break;
                     case 3: //Guard
-                        color = Color.FromArgb(CustomColors.GuardName.A, CustomColors.GuardName.R, CustomColors.GuardName.G, CustomColors.GuardName.B);
+                        textColor = CustomColors.GuardName;
+                        borderColor = CustomColors.GuardNameBorder;
+                        backgroundColor = CustomColors.GuardNameBackground;
                         break;
+                    case 2: //Neutral
                     default:
-                        color = Color.FromArgb(CustomColors.NeutralName.A, CustomColors.NeutralName.R, CustomColors.NeutralName.G, CustomColors.NeutralName.B);
+                        textColor = CustomColors.NeutralName;
+                        borderColor = CustomColors.NeutralNameBorder;
+                        backgroundColor = CustomColors.NeutralNameBackground;
                         break;
                 }
             }
@@ -792,9 +801,9 @@ namespace Intersect_Client.Classes.Entities
 
             Pointf textSize = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 1);
 
-            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(),new FloatRect(0,0,1,1),new FloatRect((x - textSize.X / 2f) - 4, y, textSize.X + 8, textSize.Y),new Intersect.Color(180,0,0,0));
+            if (backgroundColor != Color.Transparent) GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(),new FloatRect(0,0,1,1),new FloatRect((x - textSize.X / 2f) - 4, y, textSize.X + 8, textSize.Y),backgroundColor);
             GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
-                (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) (y), 1, color);
+                (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) (y), 1, IntersectClientExtras.GenericClasses.Color.FromArgb(textColor.ToArgb()),true,null, IntersectClientExtras.GenericClasses.Color.FromArgb(borderColor.ToArgb()));
         }
 
         public void DrawHpBar()

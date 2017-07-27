@@ -17,16 +17,40 @@ namespace Intersect
         public static Color CastingBackground = Color.Black;
 
         public static Color EventName = Color.White;
+        public static Color EventNameBorder = Color.Black;
+        public static Color EventNameBackground = new Color(180, 0, 0, 0);
 
         public static Color AgressiveNpcName = Color.Red;
+        public static Color AgressiveNpcNameBorder = Color.Black;
+        public static Color AgressiveNpcNameBackground = new Color(180, 0, 0, 0);
+
         public static Color AttackWhenAttackedName = new Color(128, 128, 128);
+        public static Color AttackWhenAttackedNameBorder = Color.Black;
+        public static Color AttackWhenAttackedNameBackground = new Color(180, 0, 0, 0);
+
         public static Color AttackOnSightName = new Color(128, 0, 0);
+        public static Color AttackOnSightNameBorder = Color.Black;
+        public static Color AttackOnSightNameBackground = new Color(180, 0, 0, 0);
+
         public static Color NeutralName = Color.White;
+        public static Color NeutralNameBorder = Color.Black;
+        public static Color NeutralNameBackground = new Color(180, 0, 0, 0);
+
         public static Color GuardName = Color.Black;
+        public static Color GuardNameBorder = Color.Black;
+        public static Color GuardNameBackground = new Color(180, 0, 0, 0);
 
         public static Color PlayerNameNormal = new Color(205, 133, 63);
+        public static Color PlayerNameNormalBorder = Color.Black;
+        public static Color PlayerNameNormalBackground = new Color(180, 0, 0, 0);
+
         public static Color PlayerNameMod = new Color(0, 70, 255);
+        public static Color PlayerNameModBorder = Color.Black;
+        public static Color PlayerNameModBackground = new Color(180, 0, 0, 0);
+
         public static Color PlayerNameAdmin = Color.Red;
+        public static Color PlayerNameAdminBorder = Color.Black;
+        public static Color PlayerNameAdminBackground = new Color(180, 0, 0, 0);
 
         public static Color GlobalMsg = new Color(255, 220, 220, 220);
         public static Color PlayerMsg = new Color(255, 220, 220, 220);

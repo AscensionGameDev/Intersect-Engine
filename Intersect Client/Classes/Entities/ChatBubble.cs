@@ -107,7 +107,7 @@ namespace Intersect_Client.Classes.Entities
                     GameGraphics.Renderer.DrawString(_text[i], GameGraphics.GameFont,
                         (int) (x - _textureBounds.Width / 2 + (_textureBounds.Width - textSize.X) / 2f),
                         (int) ((y) - _textureBounds.Height - yoffset + 8 + (i * 16)), 1,
-                        IntersectClientExtras.GenericClasses.Color.Black, true, null, false);
+                        IntersectClientExtras.GenericClasses.Color.Black, true, null);
                 }
             }
             yoffset += _textureBounds.Height;

@@ -13,7 +13,7 @@ namespace Intersect.GameObjects
         public new string Name
         {
             get { return base.Name; }
-            set { base.Name = value?.Trim(); }
+            set { base.Name = value?.Trim().ToLower(); }
         }
 
         public override void Load(byte[] packet) => Name = Encoding.ASCII.GetString(packet, 0, packet.Length);

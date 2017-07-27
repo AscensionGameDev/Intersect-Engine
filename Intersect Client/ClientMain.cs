@@ -1,6 +1,7 @@
 ﻿using System;
 using Intersect.Localization;
 using Intersect_Client_MonoGame;
+using System.Globalization;
 
 namespace Intersect_MonoGameDx
 {
@@ -16,6 +17,7 @@ namespace Intersect_MonoGameDx
         [STAThread]
         static void Main()
         {
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             using (var game = new IntersectGame())
             {
                 try

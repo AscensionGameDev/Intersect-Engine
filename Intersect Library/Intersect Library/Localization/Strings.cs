@@ -65,6 +65,10 @@ namespace Intersect.Localization
 
         public static string Get(string section, string id, params object[] args)
         {
+            for (int i = 0; i < args.Length; i++)
+            {
+                args[i] = args[i].ToString();
+            }
             if (SelectedLanguage != null && SelectedLanguage.IsLoaded && SelectedLanguage.HasString(section, id))
             {
                 return SelectedLanguage.GetString(section, id, args);

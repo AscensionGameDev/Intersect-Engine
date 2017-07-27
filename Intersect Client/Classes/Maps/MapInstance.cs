@@ -971,7 +971,7 @@ namespace Intersect_Client.Classes.Maps
                 var x = (int) Math.Ceiling(GetX() + ActionMsgs[n].X * Options.TileWidth + ActionMsgs[n].xOffset);
                 float textWidth = GameGraphics.Renderer.MeasureText(ActionMsgs[n].msg, GameGraphics.GameFont, 1).X;
                 GameGraphics.Renderer.DrawString(ActionMsgs[n].msg, GameGraphics.GameFont, (int) (x) - textWidth / 2f,
-                    (int) (y), 1, ActionMsgs[n].clr);
+                    (int) (y), 1, ActionMsgs[n].clr, true,null,new Color(40,40,40));
 
                 //Try to remove
                 ActionMsgs[n].TryRemove();

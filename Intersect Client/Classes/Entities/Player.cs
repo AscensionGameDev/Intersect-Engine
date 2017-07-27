@@ -13,7 +13,7 @@ using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.Spells;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
-using Color = IntersectClientExtras.GenericClasses.Color;
+using Color = Intersect.Color;
 using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.Entities
@@ -1105,19 +1105,26 @@ namespace Intersect_Client.Classes.Entities
         }
 
         //Override of the original function, used for rendering the color of a player based on rank
-        public override void DrawName(Color color)
+        public override void DrawName(Color textColor, Color borderColor, Color backgroundColor)
         {
-            if (type == 1)
+            if (textColor == null)
             {
-                base.DrawName(new Color(CustomColors.PlayerNameMod.A, CustomColors.PlayerNameMod.R, CustomColors.PlayerNameMod.G, CustomColors.PlayerNameMod.B)); //blue
-            }
-            else if (type == 2)
-            {
-                base.DrawName(new Color(CustomColors.PlayerNameAdmin.A, CustomColors.PlayerNameAdmin.R, CustomColors.PlayerNameAdmin.G, CustomColors.PlayerNameAdmin.B)); //red
+                if (type == 1)
+                {
+                    base.DrawName(CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground); //blue
+                }
+                else if (type == 2)
+                {
+                    base.DrawName(CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground); //red
+                }
+                else
+                {
+                    base.DrawName(CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground); //light brown
+                }
             }
             else
             {
-                base.DrawName(new Color(CustomColors.PlayerNameNormal.A, CustomColors.PlayerNameNormal.R, CustomColors.PlayerNameNormal.G, CustomColors.PlayerNameNormal.B)); //light brown
+                base.DrawName(textColor, borderColor, backgroundColor);
             }
         }
 
