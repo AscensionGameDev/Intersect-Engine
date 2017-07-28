@@ -239,7 +239,7 @@ namespace Intersect.Editor.Classes.Core
                     {
                         for (var x = 0; x < tilesetBaseList.Length; x++)
                         {
-                            if (tilesetBaseList[x] == tilesets[i])
+                            if (tilesetBaseList[x].ToLower() == tilesets[i].ToLower())
                             {
                                 break;
                             }

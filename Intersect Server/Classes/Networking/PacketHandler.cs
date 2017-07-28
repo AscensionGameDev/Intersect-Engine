@@ -1006,7 +1006,7 @@ namespace Intersect.Server.Classes.Networking
             if (client.Power == 1)
             {
                 PacketSender.SendPlayerMsg(client, Strings.Get("player", "modjoined"),
-                    CustomColors.AdminJoined);
+                    CustomColors.ModJoined);
             }
             else if (client.Power == 2)
             {

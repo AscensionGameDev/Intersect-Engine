@@ -230,7 +230,9 @@ namespace Intersect_Client.Classes.Core
             Globals.Me.DrawTargets();
             
             DrawOverlay();
-            
+
+            DrawDarkness();
+
             foreach (var entities in Layer1Entities)
             {
                 foreach (var entity in entities)
@@ -271,7 +273,7 @@ namespace Intersect_Client.Classes.Core
                     map?.DrawActionMsgs();
                 }
             }
-            DrawDarkness();
+
             
         }
 

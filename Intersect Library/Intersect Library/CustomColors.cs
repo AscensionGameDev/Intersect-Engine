@@ -20,35 +20,35 @@ namespace Intersect
         public static Color EventNameBorder = Color.Black;
         public static Color EventNameBackground = new Color(180, 0, 0, 0);
 
-        public static Color AgressiveNpcName = Color.Red;
+        public static Color AgressiveNpcName = new Color(255, 255, 40, 0);
         public static Color AgressiveNpcNameBorder = Color.Black;
         public static Color AgressiveNpcNameBackground = new Color(180, 0, 0, 0);
 
-        public static Color AttackWhenAttackedName = new Color(128, 128, 128);
+        public static Color AttackWhenAttackedName = new Color(255, 255, 255, 255);
         public static Color AttackWhenAttackedNameBorder = Color.Black;
         public static Color AttackWhenAttackedNameBackground = new Color(180, 0, 0, 0);
 
-        public static Color AttackOnSightName = new Color(128, 0, 0);
+        public static Color AttackOnSightName = new Color(255, 255, 200, 0);
         public static Color AttackOnSightNameBorder = Color.Black;
         public static Color AttackOnSightNameBackground = new Color(180, 0, 0, 0);
 
-        public static Color NeutralName = Color.White;
+        public static Color NeutralName = new Color(255, 100, 230, 100);
         public static Color NeutralNameBorder = Color.Black;
         public static Color NeutralNameBackground = new Color(180, 0, 0, 0);
 
-        public static Color GuardName = Color.Black;
+        public static Color GuardName = new Color(255, 240, 142, 105);
         public static Color GuardNameBorder = Color.Black;
         public static Color GuardNameBackground = new Color(180, 0, 0, 0);
 
-        public static Color PlayerNameNormal = new Color(205, 133, 63);
+        public static Color PlayerNameNormal = Color.White;
         public static Color PlayerNameNormalBorder = Color.Black;
         public static Color PlayerNameNormalBackground = new Color(180, 0, 0, 0);
 
-        public static Color PlayerNameMod = new Color(0, 70, 255);
+        public static Color PlayerNameMod = new Color(255, 0, 255, 255);
         public static Color PlayerNameModBorder = Color.Black;
         public static Color PlayerNameModBackground = new Color(180, 0, 0, 0);
 
-        public static Color PlayerNameAdmin = Color.Red;
+        public static Color PlayerNameAdmin = new Color(255, 255, 255, 0);
         public static Color PlayerNameAdminBorder = Color.Black;
         public static Color PlayerNameAdminBackground = new Color(180, 0, 0, 0);
 
@@ -67,22 +67,23 @@ namespace Intersect
         public static Color RemoveMana = new Color(255, 255, 127, 80);
         public static Color Dash = new Color(255, 0, 0, 255);
         public static Color NoAmmo = Color.Red;
-        public static Color AdminJoined = Color.OrangeRed;
+        public static Color AdminJoined = new Color(255, 255, 255, 0);
+        public static Color ModJoined = new Color(255, 0, 255, 255);
         public static Color NoTarget = Color.Red;
         public static Color Declined = Color.Red;
         public static Color Accepted = Color.Green;
         public static Color Error = Color.Red;
         public static Color Info = Color.White;
-        public static Color AdminGlobalChat = Color.Red;
-        public static Color ModGlobalChat = new Color(0, 70, 255);
+        public static Color AdminGlobalChat = new Color(255, 255, 255, 0);
+        public static Color ModGlobalChat = new Color(255, 0, 255, 255);
         public static Color GlobalChat = new Color(255, 220, 220, 220);
         public static Color AnnouncementChat = Color.Yellow;
         public static Color AdminChat = Color.Cyan;
         public static Color PartyChat = Color.Green;
         public static Color PrivateChat = Color.Magenta;
-        public static Color AdminLocalChat = Color.Red;
-        public static Color ModLocalChat = new Color(0, 70, 255);
-        public static Color LocalChat = new Color(255, 220, 220, 220);
+        public static Color AdminLocalChat = new Color(255, 255, 255, 0);
+        public static Color ModLocalChat = new Color(255, 0, 255, 255);
+        public static Color LocalChat = new Color(255, 240, 240, 240);
         public static Color QuestStarted = Color.Cyan;
         public static Color QuestDeclined = Color.Red;
         public static Color QuestAbandoned = Color.Red;
