@@ -2166,6 +2166,10 @@ namespace Intersect.Server.Classes.Networking
                 {
                     Globals.KillNpcsOf((NpcBase) obj);
                 }
+                else if (type == GameObjectType.Projectile)
+                {
+                    Globals.KillProjectilesOf((ProjectileBase) obj);
+                }
                 obj.Load(bf.ReadBytes(bf.Length()));
                 PacketSender.SendGameObjectToAll(obj, false);
                 Database.SaveGameObject(obj);

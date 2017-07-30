@@ -190,7 +190,7 @@ namespace Intersect_Client.Classes.UI.Game
 
                     if (faceTex != null)
                     {
-                        _eventDialogLabel.DeleteAllChildren();
+                        _eventDialogLabel.ClearText();
                         _eventDialogLabel.Width = _eventDialogArea.Width -
                                                   _eventDialogArea.GetVerticalScrollBar().Width;
                         _eventDialogLabel.AddText(Globals.EventDialogs[0].Prompt, _eventDialogLabelTemplate.TextColor,_eventDialogLabelTemplate.CurAlignments.Count > 0 ? _eventDialogLabelTemplate.CurAlignments[0] : Alignments.Left,_eventDialogLabelTemplate.Font);
@@ -198,7 +198,7 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                     else
                     {
-                        _eventDialogLabelNoFace.DeleteAllChildren();
+                        _eventDialogLabelNoFace.ClearText();
                         _eventDialogLabelNoFace.Width = _eventDialogAreaNoFace.Width - _eventDialogAreaNoFace.GetVerticalScrollBar().Width;
                         _eventDialogLabelNoFace.AddText(Globals.EventDialogs[0].Prompt, _eventDialogLabelNoFaceTemplate.TextColor, _eventDialogLabelNoFaceTemplate.CurAlignments.Count > 0 ? _eventDialogLabelNoFaceTemplate.CurAlignments[0] : Alignments.Left, _eventDialogLabelNoFaceTemplate.Font);
                         _eventDialogLabelNoFace.SizeToChildren(false, true);

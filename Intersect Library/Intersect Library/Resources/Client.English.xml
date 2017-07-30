@@ -258,7 +258,7 @@
 		<string id="targettype0">Self Cast</string>
 		<string id="targettype1">Targetted - Range: {00} Tiles</string>
 		<string id="targettype2">AOE - Range: {00} Tiles - Radius: {01} Tiles</string>
-		<string id="targettype3">Projectile - RangeL {00} Tiles</string>
+		<string id="targettype3">Projectile - Range: {00} Tiles</string>
 		<string id="casttime">Cast Time: {00} Seconds</string>
 		<string id="cooldowntime">Cooldown: {00} Seconds</string>
 		<string id="prereqs">Prerequisites:</string>

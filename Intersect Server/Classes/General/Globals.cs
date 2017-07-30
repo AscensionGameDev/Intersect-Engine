@@ -96,6 +96,22 @@ namespace Intersect.Server.Classes.General
             }
         }
 
+        public static void KillProjectilesOf(ProjectileBase projectile)
+        {
+            var projectiles = new List<Projectile>();
+            for (int i = 0; i < Entities.Count; i++)
+            {
+                if (Entities[i] != null && Entities[i].GetType() == typeof(Projectile) && ((Projectile)Entities[i]).MyBase == projectile)
+                {
+                    projectiles.Add((Projectile)Entities[i]);
+                }
+            }
+            foreach (var en in projectiles)
+            {
+                en.Die(0);
+            }
+        }
+
         public static void KillItemsOf(ItemBase item)
         {
             foreach (MapInstance map in MapInstance.Lookup.IndexValues)

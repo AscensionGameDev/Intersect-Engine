@@ -6,11 +6,6 @@ using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
 
-///////////////////////////////////////////////////
-// Welcome to Kibbelz Boss ass projectile system //
-//   Glad you took the time to view the code :)  //
-///////////////////////////////////////////////////
-
 namespace Intersect.Server.Classes.Entities
 {
     public class Projectile : Entity
@@ -18,7 +13,7 @@ namespace Intersect.Server.Classes.Entities
         private int _spawnCount;
         private int _spawnedAmount;
         private int _totalSpawns;
-        private ProjectileBase MyBase;
+        public ProjectileBase MyBase;
         public Entity Owner;
         private ItemBase ParentItem;
         private SpellBase ParentSpell;
@@ -55,7 +50,7 @@ namespace Intersect.Server.Classes.Entities
             HideName = 1;
             for (int x = 0; x < ProjectileBase.SpawnLocationsWidth; x++)
             {
-                for (int y = 0; y < ProjectileBase.SpawnLocationsWidth; y++)
+                for (int y = 0; y < ProjectileBase.SpawnLocationsHeight; y++)
                 {
                     for (int d = 0; d < ProjectileBase.MaxProjectileDirections; d++)
                     {
@@ -74,11 +69,11 @@ namespace Intersect.Server.Classes.Entities
         {
             for (int x = 0; x < ProjectileBase.SpawnLocationsWidth; x++)
             {
-                for (int y = 0; y < ProjectileBase.SpawnLocationsWidth; y++)
+                for (int y = 0; y < ProjectileBase.SpawnLocationsHeight; y++)
                 {
                     for (int d = 0; d < ProjectileBase.MaxProjectileDirections; d++)
                     {
-                        if (MyBase.SpawnLocations[x, y].Directions[d] == true)
+                        if (MyBase.SpawnLocations[x, y].Directions[d] == true && _spawnedAmount < Spawns.Length)
                         {
                             ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d),
                                 CurrentX + FindProjectileRotationX(Dir, x - 2, y - 2),
@@ -252,18 +247,7 @@ namespace Intersect.Server.Classes.Entities
                 return 0;
             }
         }
-
-        //Find the targets and give them the
-        //....................../´¯/) 
-        //....................,/¯../ 
-        //.................../..../ 
-        //............./´¯/'...'/´¯¯`·¸ 
-        //........../'/.../..../......./¨¯\ 
-        //........('(...´...´.... ¯~/'...') 
-        //.........\.................'...../ 
-        //..........''...\.......... _.·´ 
-        //............\..............(
-        //..............\.............\...
+        
         public void CheckForCollision()
         {
             if (_spawnCount != 0 || Quantity < MyBase.Quantity)
@@ -463,10 +447,23 @@ namespace Intersect.Server.Classes.Entities
             }
             else
             {
-                MapInstance.Lookup.Get<MapInstance>(CurrentMap).RemoveProjectile(this);
-                PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Projectile, CurrentMap);
-                Globals.Entities[MyIndex] = null;
+                Die(0,null);
             }
+        }
+
+        public override void Die(int dropitems = 0, Entity killer = null)
+        {
+            for (int i = 0; i < Spawns.Length; i++)
+            {
+                if (Spawns[i] != null)
+                {
+                    Spawns[i].Dispose(i);
+                    Spawns[i] = null;
+                }
+            }
+            MapInstance.Lookup.Get<MapInstance>(CurrentMap).RemoveProjectile(this);
+            PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.Projectile, CurrentMap);
+            Globals.Entities[MyIndex] = null;
         }
 
         public override byte[] Data()

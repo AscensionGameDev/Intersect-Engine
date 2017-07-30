@@ -27,7 +27,6 @@ namespace Intersect_Client.Classes.UI.Game
 
             Label spellName = new Label(_descWindow,"SpellName");
             spellName.Text = spell.Name;
-            Align.CenterHorizontally(spellName);
 
             Label spellType = new Label(_descWindow,"SpellType");
             spellType.Text = Strings.Get("spelldesc", "spelltype" + spell.SpellType);
