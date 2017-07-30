@@ -54,7 +54,7 @@ namespace Intersect.Editor.Classes.Entities
                                     frameHeight),
                                 new RectangleF(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth,
                                     frameHeight),
-                                System.Drawing.Color.White, target, BlendState.AlphaBlend);
+                                System.Drawing.Color.White, target, BlendState.NonPremultiplied);
                         }
                     }
                     EditorGraphics.AddLight(
@@ -83,7 +83,7 @@ namespace Intersect.Editor.Classes.Entities
                                     frameHeight),
                                 new RectangleF(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth,
                                     frameHeight),
-                                System.Drawing.Color.White, target, BlendState.AlphaBlend);
+                                System.Drawing.Color.White, target, BlendState.NonPremultiplied);
                         }
                     }
                     EditorGraphics.AddLight(
