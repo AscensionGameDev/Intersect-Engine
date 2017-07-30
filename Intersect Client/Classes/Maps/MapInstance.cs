@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading;
 using Intersect.Enums;
 using Color = IntersectClientExtras.GenericClasses.Color;
+using System.Diagnostics;
 
 namespace Intersect_Client.Classes.Maps
 {
@@ -100,7 +101,7 @@ namespace Intersect_Client.Classes.Maps
         }
 
         public bool MapLoaded { get; private set; }
-        public bool MapRendered { get; private set; }
+        public bool MapRendered { get; set; }
 
         //Camera Locking Variables
         public int HoldUp { get; set; }
@@ -127,6 +128,8 @@ namespace Intersect_Client.Classes.Maps
             MapRendered = false;
             OnMapLoaded += HandleMapLoaded;
         }
+
+
         public void LoadTileData(byte[] packet)
         {
             var bf = new ByteBuffer();
@@ -229,6 +232,10 @@ namespace Intersect_Client.Classes.Maps
                         }
                     }
                 }
+            }
+            else
+            {
+                Debug.WriteLine("Returning null mapgrid for map " + Name);
             }
             return mapBase;
         }
@@ -571,8 +578,7 @@ namespace Intersect_Client.Classes.Maps
             }
         }
 
-        private void DrawAutoTile(int layerNum, float destX, float destY, int quarterNum, int x, int y, int forceFrame,
-            GameRenderTexture tex)
+        private void DrawAutoTile(int layerNum, float destX, float destY, int quarterNum, int x, int y, int forceFrame, GameRenderTexture tex, GameTexture tileset)
         {
             int yOffset = 0, xOffset = 0;
 
@@ -591,15 +597,10 @@ namespace Intersect_Client.Classes.Maps
                     yOffset = -Options.TileHeight;
                     break;
             }
-            if (TilesetBase.Lookup.Get<TilesetBase>(Layers[layerNum].Tiles[x, y].TilesetIndex) != null)
-            {
-                GameTexture tileset = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
-                    TilesetBase.Lookup.Get<TilesetBase>(Layers[layerNum].Tiles[x, y].TilesetIndex).Name);
-                GameGraphics.DrawGameTexture(tileset, destX, destY,
-                    (int) Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
-                    (int) Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
+            GameGraphics.DrawGameTexture(tileset, destX, destY,
+                    (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
+                    (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
                     Options.TileWidth / 2, Options.TileHeight / 2, tex);
-            }
         }
 
         private void DrawMapLayer(GameRenderTexture tex, int layer, int animFrame, float xoffset = 0, float yoffset = 0)
@@ -666,13 +667,13 @@ namespace Intersect_Client.Classes.Maps
                     break;
                 case MapAutotiles.RenderStateAutotile:
                     DrawAutoTile(layer, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x, y,
-                        animFrame, tex);
+                        animFrame, tex, tilesetTex);
                     DrawAutoTile(layer, x * Options.TileWidth + (Options.TileWidth / 2) + xoffset,
-                        y * Options.TileHeight + yoffset, 2, x, y, animFrame, tex);
+                        y * Options.TileHeight + yoffset, 2, x, y, animFrame, tex, tilesetTex);
                     DrawAutoTile(layer, x * Options.TileWidth + xoffset,
-                        y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 3, x, y, animFrame, tex);
+                        y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 3, x, y, animFrame, tex, tilesetTex);
                     DrawAutoTile(layer, +x * Options.TileWidth + (Options.TileWidth / 2) + xoffset,
-                        y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 4, x, y, animFrame, tex);
+                        y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 4, x, y, animFrame, tex,tilesetTex);
                     break;
             }
         }
