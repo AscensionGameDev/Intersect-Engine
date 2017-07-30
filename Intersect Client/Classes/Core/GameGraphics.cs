@@ -320,7 +320,7 @@ namespace Intersect_Client.Classes.Core
             Gui.DrawGui();
             
             DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,
-                new Intersect.Color((int) GameFade.GetFade(), 0, 0, 0), null, GameBlendModes.Alpha);
+                new Intersect.Color((int) GameFade.GetFade(), 0, 0, 0), null, GameBlendModes.None);
             Renderer.End();
         }
 

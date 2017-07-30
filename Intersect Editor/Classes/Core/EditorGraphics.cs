@@ -61,7 +61,7 @@ namespace Intersect.Editor.Classes
         //Rendering Variables
         private static SpriteBatch _spriteBatch;
         private static bool _spriteBatchBegan;
-        private static BlendState _currentBlendmode = BlendState.AlphaBlend;
+        private static BlendState _currentBlendmode = BlendState.NonPremultiplied;
         private static Effect _currentShader;
         private static RenderTarget2D _currentTarget;
 
@@ -1473,7 +1473,7 @@ namespace Intersect.Editor.Classes
         public static void DrawTexture(Texture2D tex, RectangleF srcRectangle, RectangleF targetRect,
             RenderTarget2D RenderTarget2D)
         {
-            DrawTexture(tex, srcRectangle, targetRect, System.Drawing.Color.White, RenderTarget2D, BlendState.AlphaBlend);
+            DrawTexture(tex, srcRectangle, targetRect, System.Drawing.Color.White, RenderTarget2D, BlendState.NonPremultiplied);
         }
 
         public static void DrawTexture(Texture2D tex, RectangleF srcRectangle, RectangleF targetRect, System.Drawing.Color renderColor,
@@ -1519,7 +1519,7 @@ namespace Intersect.Editor.Classes
             if (mode != _currentBlendmode || shader != _currentShader || target != _currentTarget || viewsDiff || forced ||
                 !_spriteBatchBegan)
             {
-                if (_spriteBatchBegan) _spriteBatch.End();
+                if (_spriteBatchBegan) EndSpriteBatch();
                 if (target == null)
                 {
                     SetRenderTarget(_mapEditorChain);

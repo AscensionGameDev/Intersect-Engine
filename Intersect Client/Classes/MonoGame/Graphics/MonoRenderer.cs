@@ -127,7 +127,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 UpdateGraphicsState(mScreenWidth, mScreenHeight);
             }
 
-            StartSpritebatch(mCurrentView, GameBlendModes.Alpha, null, null, true, null);
+            StartSpritebatch(mCurrentView, GameBlendModes.None, null, null, true, null);
 
             return true;
         }
@@ -162,6 +162,10 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 {
                     case GameBlendModes.None:
                         blend = BlendState.NonPremultiplied;
+                        if (target != null)
+                        {
+                            blend = BlendState.AlphaBlend;
+                        }
                         break;
                     case GameBlendModes.Alpha:
                         blend = BlendState.NonPremultiplied;
@@ -316,7 +320,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         }
 
         public override void DrawTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect,
-            Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.Alpha,
+            Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
             GameShader shader = null, float rotationDegrees = 0, bool isUi = false)
         {
             if (tex == null || tex.GetTexture() == null) return;

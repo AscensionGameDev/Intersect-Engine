@@ -16,7 +16,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         {
             _renderTexture = new RenderTarget2D(graphicsDevice, width, height, false,
                 SurfaceFormat.Color,
-                DepthFormat.Depth16,
+                DepthFormat.Depth24,
                 0,
                 RenderTargetUsage.PreserveContents);
             _graphicsDevice = graphicsDevice;
