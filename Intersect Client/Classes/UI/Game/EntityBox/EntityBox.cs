@@ -495,12 +495,12 @@ namespace Intersect_Client.Classes.UI.Game
                     _currentSprite = _myEntity.MySprite;
                     _entityFace.IsHidden = false;
                 }
+                var Equipment = _myEntity.Equipment;
                 for (int z = 0; z < Options.PaperdollOrder[1].Count; z++)
                 {
                     var paperdoll = "";
-                    if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1)
+                    if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1 && Equipment.Length == Options.EquipmentSlots.Count)
                     {
-                        var Equipment = _myEntity.Equipment;
                         if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
                             (_myEntity != Globals.Me ||
                              Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <

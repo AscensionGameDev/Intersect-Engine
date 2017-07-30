@@ -18,13 +18,14 @@ namespace Intersect_Client.Classes.Entities
         private long _renderTimer;
         private Point[,] _texSections;
         private string[] _text;
+        private string _sourceText;
         private Rectangle _textBounds;
         private Rectangle _textureBounds;
 
         public ChatBubble(Entity Owner, string text)
         {
             _owner = Owner;
-            _text = Gui.WrapText(text, 200, GameGraphics.GameFont);
+            _sourceText = text; 
             _renderTimer = Globals.System.GetTimeMS() + 5000;
             _bubbleTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, "chatbubble.png");
         }
@@ -40,6 +41,10 @@ namespace Intersect_Client.Classes.Entities
 
         public float Draw(float yoffset = 0f)
         {
+            if (_text == null && _sourceText.Trim().Length > 0)
+            {
+                _text = Gui.WrapText(_sourceText, 200, GameGraphics.GameFont);
+            }
             var y = (int) Math.Ceiling(_owner.GetTopPos());
             var x = (int) Math.Ceiling(_owner.GetCenterPos().X);
             if (_textureBounds.Width == 0)
@@ -102,7 +107,7 @@ namespace Intersect_Client.Classes.Entities
                     GameGraphics.Renderer.DrawString(_text[i], GameGraphics.GameFont,
                         (int) (x - _textureBounds.Width / 2 + (_textureBounds.Width - textSize.X) / 2f),
                         (int) ((y) - _textureBounds.Height - yoffset + 8 + (i * 16)), 1,
-                        IntersectClientExtras.GenericClasses.Color.Black, true, null, false);
+                        IntersectClientExtras.GenericClasses.Color.Black, true, null);
                 }
             }
             yoffset += _textureBounds.Height;

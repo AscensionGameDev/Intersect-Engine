@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Intersect;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
@@ -55,8 +56,8 @@ namespace Intersect_Client.Classes.Core
         public static int MapsDrawn;
 
         //Cache the Y based rendering
-        public static List<Entity>[] Layer1Entities;
-        public static List<Entity>[] Layer2Entities;
+        public static HashSet<Entity>[] Layer1Entities;
+        public static HashSet<Entity>[] Layer2Entities;
 
         public static bool PreRenderedMapLayer;
         public static object GFXLock = new object();
@@ -78,12 +79,12 @@ namespace Intersect_Client.Classes.Core
 
         public static void InitInGame()
         {
-            Layer1Entities = new List<Entity>[Options.MapHeight * 3];
-            Layer2Entities = new List<Entity>[Options.MapHeight * 3];
+            Layer1Entities = new HashSet<Entity>[Options.MapHeight * 3];
+            Layer2Entities = new HashSet<Entity>[Options.MapHeight * 3];
             for (var i = 0; i < Options.MapHeight * 3; i++)
             {
-                Layer1Entities[i] = new List<Entity>();
-                Layer2Entities[i] = new List<Entity>();
+                Layer1Entities[i] = new HashSet<Entity>();
+                Layer2Entities[i] = new HashSet<Entity>();
             }
         }
 
@@ -109,40 +110,36 @@ namespace Intersect_Client.Classes.Core
 
         public static void DrawInGame()
         {
-            var currentMap = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
+            var currentMap = Globals.Me.MapInstance;
             if (currentMap == null || Globals.NeedsMaps) return;
             if (GridSwitched)
             {
-                var map = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
-                if (map != null)
-                {
-                    //Brightness
-                    byte brightnessTarget = (byte) ((map.Brightness / 100f) * 255);
-                    _brightnessLevel = brightnessTarget;
-                    _playerLightColor.R = map.PlayerLightColor.R;
-                    _playerLightColor.G = map.PlayerLightColor.G;
-                    _playerLightColor.B = map.PlayerLightColor.B;
-                    _playerLightSize = map.PlayerLightSize;
-                    _playerLightIntensity = map.PlayerLightIntensity;
-                    _playerLightExpand = map.PlayerLightExpand;
+                //Brightness
+                byte brightnessTarget = (byte)((currentMap.Brightness / 100f) * 255);
+                _brightnessLevel = brightnessTarget;
+                _playerLightColor.R = currentMap.PlayerLightColor.R;
+                _playerLightColor.G = currentMap.PlayerLightColor.G;
+                _playerLightColor.B = currentMap.PlayerLightColor.B;
+                _playerLightSize = currentMap.PlayerLightSize;
+                _playerLightIntensity = currentMap.PlayerLightIntensity;
+                _playerLightExpand = currentMap.PlayerLightExpand;
 
-                    //Overlay
-                    OverlayColor.A = (byte) map.AHue;
-                    OverlayColor.R = (byte) map.RHue;
-                    OverlayColor.G = (byte) map.GHue;
-                    OverlayColor.B = (byte) map.BHue;
+                //Overlay
+                OverlayColor.A = (byte)currentMap.AHue;
+                OverlayColor.R = (byte)currentMap.RHue;
+                OverlayColor.G = (byte)currentMap.GHue;
+                OverlayColor.B = (byte)currentMap.BHue;
 
-                    //Fog && Panorama
-                    map.GridSwitched();
-                }
+                //Fog && Panorama
+                currentMap.GridSwitched();
                 GridSwitched = false;
             }
-            ClearDarknessTexture();
 
+            ClearDarknessTexture();
             TryPreRendering();
             FixAutotiles();
-
             GenerateLightMap();
+            
 
             var gridX = currentMap.MapGridX;
             var gridY = currentMap.MapGridY;
@@ -158,7 +155,7 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
             }
-
+           
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -170,7 +167,7 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
             }
-
+            
             lock (AnimationLock)
             {
                 foreach (AnimationInstance animInstance in LiveAnimations)
@@ -178,7 +175,7 @@ namespace Intersect_Client.Classes.Core
                     animInstance.Draw(false);
                 }
             }
-
+            
             foreach (var entities in Layer1Entities)
             {
                 foreach (var entity in entities)
@@ -187,7 +184,7 @@ namespace Intersect_Client.Classes.Core
                     EntitiesDrawn++;
                 }
             }
-
+            
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -199,7 +196,7 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
             }
-
+            
             foreach (var entities in Layer2Entities)
             {
                 foreach (var entity in entities)
@@ -208,7 +205,7 @@ namespace Intersect_Client.Classes.Core
                     EntitiesDrawn++;
                 }
             }
-
+            
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -220,7 +217,7 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
             }
-
+            
             lock (AnimationLock)
             {
                 foreach (AnimationInstance animInstance in LiveAnimations)
@@ -228,12 +225,14 @@ namespace Intersect_Client.Classes.Core
                     animInstance.Draw(true);
                 }
             }
-
+            
             //Draw the players targets
             Globals.Me.DrawTargets();
-
+            
             DrawOverlay();
 
+            DrawDarkness();
+            
             foreach (var entities in Layer1Entities)
             {
                 foreach (var entity in entities)
@@ -247,7 +246,7 @@ namespace Intersect_Client.Classes.Core
                     entity.DrawChatBubbles();
                 }
             }
-
+            
             foreach (var entities in Layer2Entities)
             {
                 foreach (var entity in entities)
@@ -261,6 +260,7 @@ namespace Intersect_Client.Classes.Core
                     entity.DrawChatBubbles();
                 }
             }
+            
 
             //Draw action msg's
             for (var x = gridX - 1; x <= gridX + 1; x++)
@@ -274,7 +274,7 @@ namespace Intersect_Client.Classes.Core
                 }
             }
 
-            DrawDarkness();
+            
         }
 
         //Game Rendering
@@ -316,9 +316,9 @@ namespace Intersect_Client.Classes.Core
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
+            
             Gui.DrawGui();
-
+            
             DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,
                 new Intersect.Color((int) GameFade.GetFade(), 0, 0, 0), null, GameBlendModes.Alpha);
             Renderer.End();
@@ -326,11 +326,10 @@ namespace Intersect_Client.Classes.Core
 
         private static void TryPreRendering()
         {
-            if (Globals.Database.RenderCaching && Globals.Me != null &&
-                MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
+            if (Globals.Database.RenderCaching && Globals.Me != null && Globals.Me.MapInstance != null)
             {
-                var gridX = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridX;
-                var gridY = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridY;
+                var gridX = Globals.Me.MapInstance.MapGridX;
+                var gridY = Globals.Me.MapInstance.MapGridY;
                 for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
                     for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -343,7 +342,11 @@ namespace Intersect_Client.Classes.Core
                             {
                                 if (!PreRenderedMapLayer)
                                 {
-                                    map.PreRenderMap();
+                                    lock (map.GetMapLock())
+                                    {
+                                        map.PreRenderMap();
+                                    }
+                                    return;
                                 }
                             }
                         }

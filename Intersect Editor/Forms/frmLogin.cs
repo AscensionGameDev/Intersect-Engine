@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.Core;
 using Intersect.Localization;
+using System.Globalization;
 
 namespace Intersect.Editor.Forms
 {
@@ -19,6 +20,7 @@ namespace Intersect.Editor.Forms
 
         public FrmLogin()
         {
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             InitializeComponent();
         }
 
@@ -59,14 +61,14 @@ namespace Intersect.Editor.Forms
 
         private void tmrSocket_Tick(object sender, EventArgs e)
         {
-            LegacyEditorNetwork.Update();
+            EditorNetwork.Update();
             var statusString = Strings.Get("login", "connecting");
-            if (LegacyEditorNetwork.Connected)
+            if (EditorNetwork.Connected)
             {
                 statusString = Strings.Get("login", "connected");
                 btnLogin.Enabled = true;
             }
-            else if (LegacyEditorNetwork.Connecting)
+            else if (EditorNetwork.Connecting)
             {
             }
             else
@@ -88,7 +90,7 @@ namespace Intersect.Editor.Forms
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            if (!LegacyEditorNetwork.Connected || !btnLogin.Enabled) return;
+            if (!EditorNetwork.Connected || !btnLogin.Enabled) return;
             if (txtUsername.Text.Trim().Length > 0 && txtPassword.Text.Trim().Length > 0)
             {
                 var sha = new SHA256Managed();
@@ -115,7 +117,7 @@ namespace Intersect.Editor.Forms
 
         protected override void OnClosed(EventArgs e)
         {
-            LegacyEditorNetwork.EditorLidgrenNetwork?.Disconnect("quitting");
+            EditorNetwork.EditorLidgrenNetwork?.Disconnect("quitting");
             base.OnClosed(e);
             Application.Exit();
         }

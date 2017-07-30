@@ -23,6 +23,11 @@ namespace Intersect_Client.Classes.Core
             if (KeyDown != null) KeyDown(key);
             if (!Gui.HasInputFocus())
             {
+                if (key == Keys.F11)
+                {
+                    Gui.HideUI = !Gui.HideUI;
+                    return;
+                }
                 if (GameControls.ControlHasKey(Controls.AttackInteract, key))
                 {
                     if (Globals.Me != null)

@@ -6,10 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Open.Nat;
 
 namespace Intersect.Network
 {
@@ -24,7 +25,10 @@ namespace Intersect.Network
         private readonly RSACryptoServiceProvider mRsa;
         private readonly IDictionary<long, Guid> mGuidLookup;
 
+        public delegate void HandleUnconnectedMessage(NetPeer peer, NetIncomingMessage message);
+
         public HandlePacketAvailable OnPacketAvailable { get; set; }
+        public HandleUnconnectedMessage OnUnconnectedMessage { get; set; }
 
         public HandleConnectionEvent OnConnected { get; set; }
         public HandleConnectionEvent OnDisconnected { get; set; }
@@ -90,14 +94,17 @@ namespace Intersect.Network
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
             mPeer?.RegisterReceivedCallback(peer =>
             {
-                if (OnPacketAvailable == null)
+                lock (mPeer)
                 {
-                    Log.Debug("Unhandled inbound Lidgren message.");
-                    Log.Diagnostic($"Unhandled message: {TryHandleInboundMessage()}");
-                    return;
-                }
+                    if (OnPacketAvailable == null)
+                    {
+                        Log.Debug("Unhandled inbound Lidgren message.");
+                        Log.Diagnostic($"Unhandled message: {TryHandleInboundMessage()}");
+                        return;
+                    }
 
-                OnPacketAvailable(this);
+                    OnPacketAvailable(this);
+                }
             });
         }
 
@@ -113,7 +120,6 @@ namespace Intersect.Network
             {
                 Log.Info($"Listening on {mPeerConfiguration.LocalAddress}:{mPeerConfiguration.Port}.");
                 mPeer.Start();
-                OpenServerPort().Wait();
             }
             else
             {
@@ -139,23 +145,6 @@ namespace Intersect.Network
                 Log.Error("Failed to add connection to list.");
                 connection?.Disconnect("client_error");
             }
-        }
-
-        private async Task<NatDevice> OpenServerPort()
-        {
-            try
-            {
-                var nat = new NatDiscoverer();
-                var cts = new CancellationTokenSource(5000);
-                var device = await nat.DiscoverDeviceAsync(PortMapper.Upnp, cts);
-                await device.CreatePortMapAsync(new Mapping(Protocol.Udp, mNetwork.Configuration.Port, mNetwork.Configuration.Port, "Intersect"));
-                Log.Info("Successfully port forwarded using upnp.");
-            }
-            catch (Exception ex)
-            {
-                Log.Warn("Failed to auto port forward using upnp.");
-            }
-            return null;
         }
 
         private NetIncomingMessage TryHandleInboundMessage()
@@ -294,6 +283,7 @@ namespace Intersect.Network
                     break;
 
                 case NetIncomingMessageType.UnconnectedData:
+                    OnUnconnectedMessage?.Invoke(mPeer, message);
                     Log.Diagnostic($"{message.MessageType}: {message}");
                     break;
 

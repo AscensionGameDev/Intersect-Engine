@@ -96,7 +96,7 @@ namespace Intersect.Collections
             get { return Get(index); }
             set { Set(index, value); }
         }
-        
+
         public List<int> IndexList => IndexKeys?.ToList();
         public List<IDatabaseObject> ValueList => IndexValues?.ToList();
 
@@ -204,7 +204,7 @@ namespace Intersect.Collections
         private string MessageNoConstructor(Type type, params string[] constructorMessage)
         {
             var builder = new StringBuilder();
-            builder.AppendLine($@"No ({string.Join(",", constructorMessage ?? new string[]{})}) constructor for type '{type?.Name}'.");
+            builder.AppendLine($@"No ({string.Join(",", constructorMessage ?? new string[] { })}) constructor for type '{type?.Name}'.");
             builder.AppendLine(ReflectionUtils.StringifyConstructors(type));
             return builder.ToString();
         }

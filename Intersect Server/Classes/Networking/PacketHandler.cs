@@ -29,34 +29,34 @@ namespace Intersect.Server.Classes.Networking
         public bool HandlePacket(IPacket packet)
         {
             var binaryPacket = packet as BinaryPacket;
-            HandlePacket(Client.FindBeta4Client(packet.Connection), binaryPacket.Buffer.ToArray());
+
+            var bf = binaryPacket?.Buffer;
+
+            //Compressed?
+            if (bf.ReadByte() == 1)
+            {
+                var data = Compression.DecompressPacket(bf.ReadBytes(bf.Length()));
+                bf = new ByteBuffer();
+                bf.WriteBytes(data);
+            }
+
+            HandlePacket(Client.FindBeta4Client(packet.Connection), bf);
             return true;
         }
 
-        public void HandlePacket(Client client, byte[] packet)
+        public void HandlePacket(Client client, ByteBuffer bf)
         {
+            //The raw packet is here, no more processing (decompression, length calculations, etc should have to happen)
             if (client == null)
             {
                 Log.Debug("Client missing... >.>");
                 return;
             }
 
-            if (packet == null || packet.Length == 0) return;
-
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-
-            //Compressed?
-            if (bf.ReadByte() == 1)
-            {
-                packet = bf.ReadBytes(bf.Length());
-                var data = Compression.DecompressPacket(packet);
-                bf = new ByteBuffer();
-                bf.WriteBytes(data);
-            }
+            if (bf == null || bf.Length() == 0) return;
 
             var packetHeader = (ClientPackets) bf.ReadLong();
-            packet = bf.ReadBytes(bf.Length());
+            var packet = bf.ReadBytes(bf.Length());
             bf.Dispose();
             switch (packetHeader)
             {
@@ -326,6 +326,18 @@ namespace Intersect.Server.Classes.Networking
                             }
                         }
 
+                        lock (Globals.ClientLock)
+                        {
+                            var clients = Globals.Clients.ToArray();
+                            foreach (var user in clients)
+                            {
+                                if (user.MyAccount.ToLower() == username.ToLower() && user != client && !user.IsEditor)
+                                {
+                                    user.Disconnect();
+                                }
+                            }
+                        }
+
                         if (Database.LoadUser(client))
                         {
                             //Check for mute
@@ -335,10 +347,9 @@ namespace Intersect.Server.Classes.Networking
                                 client.Muted = true;
                                 client.MuteReason = isMuted;
                             }
-
+                            PacketSender.SendServerConfig(client);
                             Globals.Entities[index] = new Player(index, client);
                             client.Entity = (Player) Globals.Entities[index];
-                            PacketSender.SendServerConfig(client);
                             Database.GetCharacters(client);
                             //Character selection if more than one.
                             if (Options.MaxCharacters > 1)
@@ -994,7 +1005,7 @@ namespace Intersect.Server.Classes.Networking
             if (client.Power == 1)
             {
                 PacketSender.SendPlayerMsg(client, Strings.Get("player", "modjoined"),
-                    CustomColors.AdminJoined);
+                    CustomColors.ModJoined);
             }
             else if (client.Power == 2)
             {

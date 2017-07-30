@@ -22,30 +22,30 @@ namespace Intersect.Editor.Classes
         public delegate void GameObjectUpdated(GameObjectType type);
 
         public delegate void MapUpdated();
-
         public static GameObjectUpdated GameObjectUpdatedDelegate;
         public static MapUpdated MapUpdatedDelegate;
 
         public static bool HandlePacket(IPacket packet)
         {
             var binaryPacket = packet as BinaryPacket;
-            HandlePacket(binaryPacket.Buffer.ToArray());
-            return true;
-        }
 
-        public static void HandlePacket(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
+            var bf = binaryPacket?.Buffer;
 
             //Compressed?
             if (bf.ReadByte() == 1)
             {
-                packet = bf.ReadBytes(length);
-                var data = Compression.DecompressPacket(packet);
+                var data = Compression.DecompressPacket(bf.ReadBytes(bf.Length()));
                 bf = new ByteBuffer();
                 bf.WriteBytes(data);
             }
+
+            HandlePacket(bf);
+            return true;
+        }
+
+        public static void HandlePacket(ByteBuffer bf)
+        {
+            if (bf == null || bf.Length() == 0) return;
 
             var packetHeader = (ServerPackets) bf.ReadLong();
             switch (packetHeader)

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Intersect.GameObjects.Maps;
 using Intersect.Localization;
 using Intersect.Logging;
 using Intersect.Network;
@@ -14,17 +15,20 @@ using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Network;
+using Open.Nat;
+using WebSocketSharp.Server;
+using System.Globalization;
 
 namespace Intersect.Server.Classes
 {
     public class MainClass
     {
         private static bool _errorHalt = true;
-
-        public static ServerNetwork ServerNetwork;
+        public static ServerNetwork SocketServer;
 
         public static void Main(string[] args)
         {
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             Thread logicThread;
@@ -61,30 +65,72 @@ namespace Intersect.Server.Classes
             }
             CustomColors.Load();
             Console.WriteLine(Strings.Get("commandoutput", "playercount", Database.GetRegisteredPlayers()));
-            SocketServer.Init();
-            Console.WriteLine(Strings.Get("intro", "started", Options.ServerPort));
+            Console.WriteLine(Strings.Get("commandoutput", "gametime", ServerTime.GetTime().ToString("F")));
+            ServerTime.Update();
             Log.Global.AddOutput(new ConsoleOutput());
             var assembly = Assembly.GetExecutingAssembly();
             using (var stream = assembly.GetManifestResourceStream("Intersect.Server.private-intersect.bek"))
             {
                 var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
                 Debug.Assert(rsaKey != null, "rsaKey != null");
-                ServerNetwork = new ServerNetwork(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
+                SocketServer = new ServerNetwork(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
             }
 
-            var packetHandler = new PacketHandler();
-            ServerNetwork.Handlers[PacketCode.BinaryPacket] = packetHandler.HandlePacket;
+            var packetHander = new PacketHandler();
+            SocketServer.Handlers[PacketCode.BinaryPacket] = packetHander.HandlePacket;
 
-            if (!ServerNetwork.Listen())
+#if websockets
+            WebSocketNetwork.Init(Options.ServerPort);
+            Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort));
+#endif
+
+            if (!SocketServer.Listen())
             {
                 Log.Error("An error occurred while attempting to connect.");
             }
 
-#if websockets
-            WebSocketServer.Init();
-            Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort + 1));
-#endif
-            Console.WriteLine(Strings.Get("commandoutput", "gametime", ServerTime.GetTime().ToString("F")));
+            Console.WriteLine();
+            UPnP.ConnectNatDevice().Wait(5000);
+            UPnP.OpenServerPort(Options.ServerPort, Protocol.Tcp).Wait(5000);
+            UPnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
+
+            Console.WriteLine();
+
+            //Check to see if AGD can see this server. If so let the owner know :)
+            var externalIp = "";
+            var serverAccessible = PortChecker.CanYouSeeMe(Options.ServerPort, out externalIp);
+
+            Console.WriteLine(Strings.Get("portchecking", "connectioninfo"));
+            if (!String.IsNullOrEmpty(externalIp))
+            {
+                Console.WriteLine(Strings.Get("portchecking", "publicip"),externalIp);
+                Console.WriteLine(Strings.Get("portchecking", "publicport"),Options.ServerPort);
+
+                Console.WriteLine();
+                if (serverAccessible)
+                {
+                    Console.WriteLine(Strings.Get("portchecking", "accessible"));
+                    Console.WriteLine(Strings.Get("portchecking", "letothersjoin"));
+                }
+                else
+                {
+                    Console.WriteLine(Strings.Get("portchecking", "notaccessible"));
+                    Console.WriteLine(Strings.Get("portchecking", "debuggingsteps"));
+                    Console.WriteLine(Strings.Get("portchecking", "checkfirewalls"));
+                    Console.WriteLine(Strings.Get("portchecking", "checkantivirus"));
+                    Console.WriteLine(Strings.Get("portchecking", "screwed"));
+                    Console.WriteLine();
+                    if (!UPnP.ForwardingSucceeded())
+                        Console.WriteLine(Strings.Get("portchecking", "checkrouterupnp"));
+                }
+            }
+            else
+            {
+                Console.WriteLine(Strings.Get("portchecking", "notconnected"));
+            }
+            Console.WriteLine();
+            Console.WriteLine(Strings.Get("intro", "started", Options.ServerPort));
+
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
             if (args.Contains("nohalt"))
@@ -616,7 +662,7 @@ namespace Intersect.Server.Classes
                         else
                         {
                             Globals.ServerStarted = false;
-                            ServerNetwork.Dispose();
+                            SocketServer.Dispose();
                             
                             return;
                         }

@@ -1,14 +1,19 @@
-﻿using WebSocketSharp.Server;
+﻿using Intersect.Server.Classes.Networking.Websockets;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using WebSocketSharp.Server;
+using WebSocketSharp;
 
 namespace Intersect.Server.Classes.Networking
 {
-    public static class WebSocketServer
+    public static class WebSocketNetwork
     {
         private static WebSocketSharp.Server.WebSocketServer _listener;
 
-        public static void Init()
+        public static void Init(int port)
         {
-            _listener = new WebSocketSharp.Server.WebSocketServer(Options.ServerPort + 1);
+            _listener = new WebSocketSharp.Server.WebSocketServer(port);
             _listener.AddWebSocketService<SharpServerService>("/Intersect");
             _listener.Start();
         }
@@ -28,8 +33,7 @@ namespace Intersect.Server.Classes.Networking
 
         protected override void OnOpen()
         {
-            var gameSocket = new WebSocket(Context);
-            gameSocket.Start();
+            var connection = new WebSocketConnection(Context, this);
         }
     }
 }

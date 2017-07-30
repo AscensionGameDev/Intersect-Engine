@@ -33,38 +33,23 @@ namespace Intersect_Client.Classes.Networking
         public static bool HandlePacket(IPacket packet)
         {
             var binaryPacket = packet as BinaryPacket;
-            //Log.Debug($"Handling packet (size={binaryPacket.Buffer.Length()}).");
-            HandlePacket(binaryPacket?.Buffer?.ToArray());
+
+            var bf = binaryPacket?.Buffer;
+
+            //Compressed?
+            if (bf.ReadByte() == 1)
+            {
+                var data = Compression.DecompressPacket(bf.ReadBytes(bf.Length()));
+                bf = new ByteBuffer();
+                bf.WriteBytes(data);
+            }
+            
+            HandlePacket(bf);
             return true;
         }
 
-        public static void HandlePacket(byte[] packet)
+        public static void HandlePacket(ByteBuffer bf)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            
-            var compressed = bf.ReadBoolean();
-
-            try
-            {
-                //Compressed?
-                if (compressed)
-                {
-                    packet = bf.ReadBytes(bf.Length());
-                    var data = Compression.DecompressPacket(packet);
-                    bf = new ByteBuffer();
-                    bf.WriteBytes(data);
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.Error($"Buffer length: {bf.Length()}");
-                Log.Error($"Packet length: {packet.Length}");
-                Log.Error($"Is Compressed: {compressed}");
-                Log.Error(exception);
-                return;
-            }
-
             var packetHeader = (ServerPackets) bf.ReadLong();
             lock (Globals.GameLock)
             {
@@ -450,19 +435,22 @@ namespace Intersect_Client.Classes.Networking
             }
             map = new MapInstance((int) mapNum);
             MapInstance.Lookup.Set(mapNum, map);
-            map.Load(mapData);
-            map.LoadTileData(tileData);
-            if ((mapNum) == Globals.Me.CurrentMap)
+            lock (map.GetMapLock())
             {
-                GameAudio.PlayMusic(map.Music, 3, 3, true);
+                map.Load(mapData);
+                map.LoadTileData(tileData);
+                if ((mapNum) == Globals.Me.CurrentMap)
+                {
+                    GameAudio.PlayMusic(map.Music, 3, 3, true);
+                }
+                map.MapGridX = bf.ReadInteger();
+                map.MapGridY = bf.ReadInteger();
+                map.HoldLeft = bf.ReadInteger();
+                map.HoldRight = bf.ReadInteger();
+                map.HoldUp = bf.ReadInteger();
+                map.HoldDown = bf.ReadInteger();
+                map.Autotiles.InitAutotiles(map.GenerateAutotileGrid());
             }
-            map.MapGridX = bf.ReadInteger();
-            map.MapGridY = bf.ReadInteger();
-            map.HoldLeft = bf.ReadInteger();
-            map.HoldRight = bf.ReadInteger();
-            map.HoldUp = bf.ReadInteger();
-            map.HoldDown = bf.ReadInteger();
-            map.Autotiles.InitAutotiles(map.GenerateAutotileGrid());
             if (MapInstance.OnMapLoaded != null) MapInstance.OnMapLoaded(map);
             Globals.Me.FetchNewMaps();
         }

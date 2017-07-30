@@ -6,8 +6,6 @@ using Intersect;
 using Intersect.Enums;
 using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Network.Crypto;
-using Intersect.Network.Crypto.Formats;
 using Intersect.Network.Packets.Reflectable;
 using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
@@ -16,46 +14,21 @@ namespace Intersect_Client.Classes.Networking
 {
     public static class GameNetwork
     {
-
-        public static ClientNetwork ClientLidgrenNetwork;
-
         public static GameSocket MySocket;
 
         private static bool _connected;
-        public static bool Connected => ClientLidgrenNetwork?.IsConnected ?? _connected;
+        public static bool Connected => MySocket?.IsConnected() ?? _connected;
         public static bool Connecting;
-        private static byte[] _tempBuff;
-        private static ByteBuffer _myBuffer = new ByteBuffer();
-        private static object _bufferLock = new object();
 
         private static int mPing;
         public static int Ping
         {
-            get => ClientLidgrenNetwork?.Ping ?? mPing;
-            set => mPing = value;
+            get { return MySocket?.Ping() ?? mPing; }
+            set { mPing = value; }
         }
 
         public static void InitNetwork()
         {
-            Log.Global.AddOutput(new ConsoleOutput());
-            var config = new NetworkConfiguration(Globals.Database.ServerHost, (ushort)Globals.Database.ServerPort);
-            var assembly = Assembly.GetExecutingAssembly();
-            using (var stream = assembly.GetManifestResourceStream("Intersect.Client.public-intersect.bek"))
-            {
-                var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
-                Debug.Assert(rsaKey != null, "rsaKey != null");
-                ClientLidgrenNetwork = new ClientNetwork(config, rsaKey.Parameters);
-            }
-
-            ClientLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = PacketHandler.HandlePacket;
-
-            if (!ClientLidgrenNetwork.Connect())
-            {
-                Log.Error("An error occurred while attempting to connect.");
-            }
-
-            if (ClientLidgrenNetwork != null) return;
-
             if (MySocket == null) return;
             MySocket.Connected += MySocket_OnConnected;
             MySocket.Disconnected += MySocket_OnDisconnected;
@@ -74,22 +47,33 @@ namespace Intersect_Client.Classes.Networking
             TryConnect();
         }
 
-        public static void PushData(byte[] data)
+        private static void MySocket_OnDataReceived(byte[] packet)
         {
-            lock (_bufferLock)
-            {
-                _myBuffer.WriteBytes(data);
-            }
-            TryHandleData();
-        }
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
 
-        private static void MySocket_OnDataReceived(byte[] data)
-        {
-            lock (_bufferLock)
+            var compressed = bf.ReadBoolean();
+
+            try
             {
-                _myBuffer.WriteBytes(data);
+                //Compressed?
+                if (compressed)
+                {
+                    packet = bf.ReadBytes(bf.Length());
+                    var data = Compression.DecompressPacket(packet);
+                    bf = new ByteBuffer();
+                    bf.WriteBytes(data);
+                }
             }
-            TryHandleData();
+            catch (Exception exception)
+            {
+                Log.Error($"Buffer length: {bf.Length()}");
+                Log.Error($"Packet length: {packet.Length}");
+                Log.Error($"Is Compressed: {compressed}");
+                Log.Error(exception);
+                return;
+            }
+            PacketHandler.HandlePacket(bf);
         }
 
         private static void MySocket_OnDisconnected()
@@ -104,13 +88,13 @@ namespace Intersect_Client.Classes.Networking
             _connected = true;
         }
 
-        public static void Close()
+        public static void Close(string reason)
         {
             try
             {
                 _connected = false;
                 Connecting = false;
-                MySocket.Disconnect();
+                MySocket.Disconnect(reason);
                 MySocket.Dispose();
                 MySocket = null;
             }
@@ -137,16 +121,6 @@ namespace Intersect_Client.Classes.Networking
                     buff.WriteBytes(packet);
                 }
 
-                if (ClientLidgrenNetwork != null)
-                {
-                    if (!ClientLidgrenNetwork.Send(new BinaryPacket(null) {Buffer = buff}))
-                    {
-                        throw new Exception("Beta 4 network send failed.");
-                    }
-
-                    return;
-                }
-
                 MySocket?.SendData(buff.ToArray());
             }
             catch (Exception exception)
@@ -158,30 +132,6 @@ namespace Intersect_Client.Classes.Networking
         public static void Update()
         {
             MySocket?.Update();
-        }
-
-        private static void TryHandleData()
-        {
-            lock (_bufferLock)
-            {
-                while (_myBuffer.Length() >= 4)
-                {
-                    var packetLen = _myBuffer.ReadInteger(false);
-                    if (_myBuffer.Length() >= packetLen + 4)
-                    {
-                        _myBuffer.ReadInteger();
-                        PacketHandler.HandlePacket(_myBuffer.ReadBytes(packetLen));
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                if (_myBuffer.Length() == 0)
-                {
-                    _myBuffer.Clear();
-                }
-            }
         }
     }
 }

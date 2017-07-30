@@ -26,6 +26,8 @@ namespace Intersect.Server.Network
             lidgrenInterface.OnConnected += HandleInterfaceOnConnected;
             lidgrenInterface.OnConnectionApproved += HandleInterfaceOnConnectonApproved;
             lidgrenInterface.OnDisconnected += HandleInterfaceOnDisconnected;
+            lidgrenInterface.OnUnconnectedMessage += HandleOnUnconnectedMessage;
+            //lidgrenInterface.OnUnconnectedMessage += HandleUnconnectedMessageReceived;
             AddNetworkLayerInterface(lidgrenInterface);
         }
 
@@ -48,6 +50,20 @@ namespace Intersect.Server.Network
             Client.RemoveBeta4Client(connection);
             OnDisconnected?.Invoke(sender, connection);
         }
+
+        protected virtual void HandleOnUnconnectedMessage(NetPeer peer, NetIncomingMessage message)
+        {
+            var packetType = message.ReadString();
+            switch (packetType)
+            {
+                case "status":
+                    var response = peer.CreateMessage();
+                    response.WriteVariableInt32(peer.ConnectionsCount);
+                    peer.SendUnconnectedMessage(response,message.SenderEndPoint);
+                    break;
+            }
+        }
+
 
         public override bool Send(IPacket packet)
             => Send(Connections, packet);

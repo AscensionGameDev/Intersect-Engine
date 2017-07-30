@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Windows.Forms;
 using Intersect;
+using Intersect.Client.Classes.MonoGame.Network;
 using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client_MonoGame
@@ -75,7 +76,7 @@ namespace Intersect_Client_MonoGame
             (GameGraphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
 
             // TODO: Remove old netcode
-            //GameNetwork.MySocket = new MonoSocket();
+            GameNetwork.MySocket = new IntersectNetworkSocket();
 
             GameMain.Start();
             base.Initialize();
@@ -123,7 +124,7 @@ namespace Intersect_Client_MonoGame
         {
             base.OnExiting(sender, args);
 
-            GameNetwork.ClientLidgrenNetwork?.Disconnect("quitting");
+            GameNetwork.Close("quitting");
         }
     }
 }

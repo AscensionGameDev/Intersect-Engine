@@ -23,7 +23,7 @@ namespace Intersect.Server.Classes.Networking
         public int EditorMap = -1;
         public Player Entity;
         public List<Character> Characters = new List<Character>();
-		public int EntityIndex;
+        public int EntityIndex;
 
         //Client Properties
         public bool IsEditor;
@@ -35,12 +35,11 @@ namespace Intersect.Server.Classes.Networking
         //Game Incorperation Variables
         public string MyAccount = "";
         public string MyEmail = "";
-		public long MyId = -1;
-		public string MyPassword = "";
+        public long MyId = -1;
+        public string MyPassword = "";
         public string MySalt = "";
 
         //Network Variables
-        private GameSocket mySocket;
         private IConnection connection;
         public int Power = 0;
         private ConcurrentQueue<byte[]> sendQueue = new ConcurrentQueue<byte[]>();
@@ -48,38 +47,21 @@ namespace Intersect.Server.Classes.Networking
         //Sent Maps
         public Dictionary<int, Tuple<long, int>> SentMaps = new Dictionary<int, Tuple<long, int>>();
 
-        //Processing Thead
-        private Thread updateThread;
-
         public Client(IConnection connection)
             : this(Globals.FindOpenEntity(), connection)
         {
         }
 
-        public Client(int entIndex, IConnection connection)
-            : this(entIndex, null, connection)
+        public Client(int entIndex, IConnection connection = null)
         {
+            this.connection = connection;
             _connectTime = Globals.System.GetTimeMs();
             _connectionTimeout = Globals.System.GetTimeMs() + _timeout;
-        }
-
-        public Client(int entIndex, GameSocket socket, IConnection connection = null)
-        {
-            mySocket = socket;
-            this.connection = connection;
             EntityIndex = entIndex;
             if (EntityIndex > -1)
             {
-                Entity = (Player) Globals.Entities[EntityIndex];
+                Entity = (Player)Globals.Entities[EntityIndex];
             }
-            var gameSocketConnected = mySocket != null && mySocket.IsConnected();
-            var beta4SocketConnected = this.connection != null && this.connection.IsConnected;
-            if (gameSocketConnected)
-            {
-                PacketSender.SendPing(this);
-            }
-            updateThread = new Thread(Update);
-            updateThread.Start();
         }
 
         public void SendPacket(byte[] packetData)
@@ -173,12 +155,6 @@ namespace Intersect.Server.Classes.Networking
             if (connection != null)
             {
                 _connectionTimeout = Globals.System.GetTimeMs() + _timeout;
-                return;
-            }
-
-            if (mySocket != null && IsConnected())
-            {
-                mySocket?.Pinged();
             }
         }
 
@@ -189,55 +165,18 @@ namespace Intersect.Server.Classes.Networking
                 connection.Dispose();
                 return;
             }
-
-            if (reason == "")
-            {
-                mySocket?.Disconnect();
-            }
-            else
-            {
-                //send abort packet and then disconnect?
-            }
-        }
-
-        public async void Update()
-        {
-            if (connection == null)
-            {
-                try
-                {
-                    while (mySocket != null && IsConnected() && Globals.ServerStarted)
-                    {
-                        mySocket.Update();
-                        while (sendQueue.TryDequeue(out byte[] data))
-                        {
-                            if (data != null)
-                            {
-                                mySocket.SendData(data);
-                            }
-                        }
-                        await Task.Delay(10);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Trace(ex);
-                    mySocket.Disconnect();
-                }
-            }
         }
 
         public bool IsConnected()
         {
-            if (connection != null) return connection.IsConnected;
-            return mySocket != null && mySocket.IsConnected();
+            return connection.IsConnected;
         }
 
         public string GetIP()
         {
             if (!IsConnected()) return "";
 
-            return connection != null ? connection.Ip : mySocket?.GetIP();
+            return connection.Ip;
         }
 
         public static Client CreateBeta4Client(IConnection connection)
@@ -299,7 +238,7 @@ namespace Intersect.Server.Classes.Networking
             client.Entity.SpawnedNpcs.Clear();
 
             PacketSender.SendEntityLeave(client.Entity.MyIndex, (int)EntityTypes.Player,
-            Globals.Entities[client.EntityIndex].CurrentMap);
+                Globals.Entities[client.EntityIndex].CurrentMap);
             if (!client.IsEditor)
             {
                 PacketSender.SendGlobalMsg(Strings.Get("player", "left", client.Entity.MyName, Options.GameName));
@@ -318,28 +257,28 @@ namespace Intersect.Server.Classes.Networking
         }
     }
 
-	public class Character
-	{
-		public int Slot = 1;
-		public string Name = "";
-		public string Sprite = "";
-		public string Face = "";
-		public int Level = 1;
-		public int Class = 0;
-		public string[] Equipment = new string[Options.EquipmentSlots.Count];
+    public class Character
+    {
+        public int Slot = 1;
+        public string Name = "";
+        public string Sprite = "";
+        public string Face = "";
+        public int Level = 1;
+        public int Class = 0;
+        public string[] Equipment = new string[Options.EquipmentSlots.Count];
 
-		public Character(int slot, string name, string sprite, string face, int level, int charClass)
-		{
-			for (int i = 0; i < Options.EquipmentSlots.Count; i++)
-			{
-				Equipment[i] = "";
-			}
-			Slot = slot;
-			Name = name;
-			Sprite = sprite;
-			Face = face;
-			Level = level;
-			Class = charClass;
-		}
-	}
+        public Character(int slot, string name, string sprite, string face, int level, int charClass)
+        {
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+            {
+                Equipment[i] = "";
+            }
+            Slot = slot;
+            Name = name;
+            Sprite = sprite;
+            Face = face;
+            Level = level;
+            Class = charClass;
+        }
+    }
 }

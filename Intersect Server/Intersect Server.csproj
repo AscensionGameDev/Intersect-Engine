@@ -133,6 +133,9 @@
     <Reference Include="NCalc">
       <HintPath>.\NCalc.dll</HintPath>
     </Reference>
+    <Reference Include="Open.Nat">
+      <HintPath>.\Open.Nat.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
@@ -172,9 +175,6 @@
     <Compile Include="Classes\Misc\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Classes\Misc\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Classes\Misc\Pathfinding\PriorityQueue.cs" />
-    <Compile Include="Classes\Networking\GameSocket.cs" />
-    <Compile Include="Classes\Networking\NetSocket.cs" />
-    <Compile Include="Classes\Networking\NetSocketServer.cs" />
     <Compile Include="Classes\Networking\Client.cs" />
     <Compile Include="Classes\Entities\Npc.cs" />
     <Compile Include="Classes\Networking\PacketHandler.cs" />
@@ -185,11 +185,13 @@
     <Compile Include="Classes\Core\Database.cs" />
     <Compile Include="Classes\Maps\MapGrid.cs" />
     <Compile Include="Classes\Core\ServerLoop.cs" />
-    <Compile Include="Classes\Networking\WebSocket.cs" />
-    <Compile Include="Classes\Networking\WebSocketServer.cs" />
+    <Compile Include="Classes\Networking\Helpers\PortChecker.cs" />
+    <Compile Include="Classes\Networking\Helpers\Upnp.cs" />
+    <Compile Include="Classes\Networking\Websockets\WebSocketConnection.cs" />
+    <Compile Include="Classes\Networking\Websockets\WebSocketNetwork.cs" />
     <Compile Include="Classes\Spells\SpellInstance.cs" />
-    <Compile Include="Network\ServerNetwork.cs" />
-    <Compile Include="Network\ThreadYieldNet40.cs" />
+    <Compile Include="Classes\Networking\Lidgren\ServerNetwork.cs" />
+    <Compile Include="Classes\Networking\Lidgren\ThreadYieldNet40.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -235,9 +237,7 @@
       <Name>Intersect.Network</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Network\Handlers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets" Condition="Exists('packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets')" />
   <Target Name="EnsureMonoDataSqlitePortableImported" BeforeTargets="BeforeBuild" Condition="'$(MonoDataSqlitePortableImported)' == ''">

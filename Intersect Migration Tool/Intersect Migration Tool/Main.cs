@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using Intersect.Localization;
+using System.Globalization;
 
 namespace Intersect.Migration
 {
@@ -9,6 +10,7 @@ namespace Intersect.Migration
     {
         static void Main(string[] args)
         {
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Strings.Init(Strings.IntersectComponent.Migrator, Database.GetLanguageFromConfig());
             Console.WriteLine(@"  _____       _                          _   ");

@@ -31,6 +31,7 @@ namespace Intersect_Client.Classes.UI
         public static MenuGuiBase MenuUI;
         public static ErrorMessageHandler ErrorMsgHandler;
         public static string ActiveFont = "arial";
+        public static bool HideUI;
 
         //Input Handling
         public static List<IntersectClientExtras.Gwen.Control.Base> FocusElements;
@@ -188,7 +189,7 @@ namespace Intersect_Client.Classes.UI
             {
                 MenuUI.Draw();
             }
-            else if (Globals.GameState == GameStates.InGame)
+            else if (Globals.GameState == GameStates.InGame && !HideUI)
             {
                 GameUI.Draw();
             }
@@ -238,7 +239,7 @@ namespace Intersect_Client.Classes.UI
             {
                 line = input.Substring(curPos, curLen);
                 measured = GameGraphics.Renderer.MeasureText(line, font, 1).X;
-                Debug.WriteLine($"w:{width},m:{measured},p:{curPos},l:{curLen},s:{lastSpace},t:'{line}'");
+                //Debug.WriteLine($"w:{width},m:{measured},p:{curPos},l:{curLen},s:{lastSpace},t:'{line}'");
                 if (measured < width)
                 {
                     lastOk = lastSpace;
@@ -259,7 +260,7 @@ namespace Intersect_Client.Classes.UI
                 else
                 {
                     line = input.Substring(curPos, lastOk).Trim();
-                    Debug.WriteLine($"line={line}");
+                    //Debug.WriteLine($"line={line}");
                     myOutput.Add(line);
                     if (lastOk == 0) lastOk = curLen - 1;
                     curPos = curPos + lastOk;
