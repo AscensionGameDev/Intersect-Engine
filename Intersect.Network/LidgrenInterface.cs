@@ -94,14 +94,17 @@ namespace Intersect.Network
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
             mPeer?.RegisterReceivedCallback(peer =>
             {
-                if (OnPacketAvailable == null)
+                lock (mPeer)
                 {
-                    Log.Debug("Unhandled inbound Lidgren message.");
-                    Log.Diagnostic($"Unhandled message: {TryHandleInboundMessage()}");
-                    return;
-                }
+                    if (OnPacketAvailable == null)
+                    {
+                        Log.Debug("Unhandled inbound Lidgren message.");
+                        Log.Diagnostic($"Unhandled message: {TryHandleInboundMessage()}");
+                        return;
+                    }
 
-                OnPacketAvailable(this);
+                    OnPacketAvailable(this);
+                }
             });
         }
 

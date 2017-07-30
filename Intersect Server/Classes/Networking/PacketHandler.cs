@@ -347,10 +347,9 @@ namespace Intersect.Server.Classes.Networking
                                 client.Muted = true;
                                 client.MuteReason = isMuted;
                             }
-
+                            PacketSender.SendServerConfig(client);
                             Globals.Entities[index] = new Player(index, client);
                             client.Entity = (Player) Globals.Entities[index];
-                            PacketSender.SendServerConfig(client);
                             Database.GetCharacters(client);
                             //Character selection if more than one.
                             if (Options.MaxCharacters > 1)

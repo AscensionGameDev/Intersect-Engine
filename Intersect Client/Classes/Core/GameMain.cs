@@ -162,7 +162,10 @@ namespace Intersect_Client.Classes.Core
                                 }
                                 else if (map.MapRendered == false && Globals.Database.RenderCaching == true)
                                 {
-                                    map.PreRenderMap();
+                                    lock (map.GetMapLock())
+                                    {
+                                        map.PreRenderMap();
+                                    }
                                     return;
                                 }
                             }

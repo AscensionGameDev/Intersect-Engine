@@ -122,28 +122,27 @@ namespace Intersect.Server.Classes.Networking
                 byte[] MapData = null;
                 if (client.IsEditor)
                 {
-                    MapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetMapPacket(false);
+                    MapData = map.GetMapPacket(false);
                     bf.WriteInteger(MapData.Length);
                     bf.WriteBytes(MapData);
-                    var tileData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetTileData(false);
+                    var tileData = map.GetTileData(false);
                     bf.WriteInteger(tileData.Length);
                     bf.WriteBytes(tileData);
-                    bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).MapGridX);
-                    bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).MapGridY);
+                    bf.WriteInteger(map.MapGridX);
+                    bf.WriteInteger(map.MapGridY);
                 }
                 else
                 {
                     if (client.SentMaps.ContainsKey(mapNum))
                     {
                         if (client.SentMaps[mapNum].Item1 > Globals.System.GetTimeMs() &&
-                            client.SentMaps[mapNum].Item2 == MapInstance.Lookup.Get<MapInstance>(mapNum).Revision) return;
+                            client.SentMaps[mapNum].Item2 == map.Revision) return;
                         client.SentMaps.Remove(mapNum);
                     }
                     try
                     {
                         client.SentMaps.Add(mapNum,
-                            new Tuple<long, int>(Globals.System.GetTimeMs() + 5000,
-                                MapInstance.Lookup.Get<MapInstance>(mapNum).Revision));
+                            new Tuple<long, int>(Globals.System.GetTimeMs() + 5000,  map.Revision));
                     }
                     catch (Exception exception)
                     {
@@ -152,15 +151,15 @@ namespace Intersect.Server.Classes.Networking
                         Log.Error($"# Maps: {MapInstance.Lookup.Count}");
                         throw exception;
                     }
-                    MapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetMapPacket(true);
+                    MapData = map.GetMapPacket(true);
                     bf.WriteInteger(MapData.Length);
                     bf.WriteBytes(MapData);
-                    var tileData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetTileData();
+                    var tileData = map.GetTileData();
                     bf.WriteInteger(tileData.Length);
                     bf.WriteBytes(tileData);
-                    bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).Revision);
-                    bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).MapGridX);
-                    bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).MapGridY);
+                    bf.WriteInteger(map.Revision);
+                    bf.WriteInteger(map.MapGridX);
+                    bf.WriteInteger(map.MapGridY);
                     if (Options.GameBorderStyle == 1)
                     {
                         bf.WriteInteger(1);
@@ -170,7 +169,7 @@ namespace Intersect.Server.Classes.Networking
                     }
                     else if (Options.GameBorderStyle == 0)
                     {
-                        if (0 == MapInstance.Lookup.Get<MapInstance>(mapNum).MapGridX)
+                        if (0 == map.MapGridX)
                         {
                             bf.WriteInteger(1);
                         }
@@ -178,8 +177,7 @@ namespace Intersect.Server.Classes.Networking
                         {
                             bf.WriteInteger(0);
                         }
-                        if (Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid].XMax - 1 ==
-                            MapInstance.Lookup.Get<MapInstance>(mapNum).MapGridX)
+                        if (Database.MapGrids[map.MapGrid].XMax - 1 == map.MapGridX)
                         {
                             bf.WriteInteger(1);
                         }
@@ -187,7 +185,7 @@ namespace Intersect.Server.Classes.Networking
                         {
                             bf.WriteInteger(0);
                         }
-                        if (0 == MapInstance.Lookup.Get<MapInstance>(mapNum).MapGridY)
+                        if (0 == map.MapGridY)
                         {
                             bf.WriteInteger(1);
                         }
@@ -195,8 +193,7 @@ namespace Intersect.Server.Classes.Networking
                         {
                             bf.WriteInteger(0);
                         }
-                        if (Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid].YMax - 1 ==
-                            MapInstance.Lookup.Get<MapInstance>(mapNum).MapGridY)
+                        if (Database.MapGrids[map.MapGrid].YMax - 1 == map.MapGridY)
                         {
                             bf.WriteInteger(1);
                         }
@@ -220,7 +217,7 @@ namespace Intersect.Server.Classes.Networking
                 }
                 else
                 {
-                    MapInstance.Lookup.Get<MapInstance>(mapNum).SendMapEntitiesTo(client.Entity);
+                    map.SendMapEntitiesTo(client.Entity);
                     SendMapItems(client, mapNum);
                 }
             }

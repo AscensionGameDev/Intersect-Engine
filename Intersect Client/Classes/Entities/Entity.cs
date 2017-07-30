@@ -153,6 +153,7 @@ namespace Intersect_Client.Classes.Entities
             }
             AnimationTimer = Globals.System.GetTimeMS() + Globals.Random.Next(0, 500);
             MyIndex = index;
+            if (Options.EquipmentSlots.Count == 0) throw new Exception("What the fuck is going on!?!?!?!?!?!");
             Load(bf);
         }
 
@@ -447,8 +448,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 return null;
             }
-            var gridX = map.MapGridX;
-            var gridY = map.MapGridY;
+            var gridX = Globals.Me.MapInstance.MapGridX;
+            var gridY = Globals.Me.MapInstance.MapGridY;
             for (int x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -485,7 +486,6 @@ namespace Intersect_Client.Classes.Entities
                                 renderList = outerList[Options.MapHeight * 2 + CurrentY];
                                 return renderList;
                             }
-                            break;
                         }
                     }
                 }

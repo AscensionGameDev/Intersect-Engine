@@ -239,7 +239,7 @@ namespace Intersect_Client.Classes.UI
             {
                 line = input.Substring(curPos, curLen);
                 measured = GameGraphics.Renderer.MeasureText(line, font, 1).X;
-                Debug.WriteLine($"w:{width},m:{measured},p:{curPos},l:{curLen},s:{lastSpace},t:'{line}'");
+                //Debug.WriteLine($"w:{width},m:{measured},p:{curPos},l:{curLen},s:{lastSpace},t:'{line}'");
                 if (measured < width)
                 {
                     lastOk = lastSpace;
@@ -260,7 +260,7 @@ namespace Intersect_Client.Classes.UI
                 else
                 {
                     line = input.Substring(curPos, lastOk).Trim();
-                    Debug.WriteLine($"line={line}");
+                    //Debug.WriteLine($"line={line}");
                     myOutput.Add(line);
                     if (lastOk == 0) lastOk = curLen - 1;
                     curPos = curPos + lastOk;

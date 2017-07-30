@@ -232,7 +232,7 @@ namespace Intersect_Client.Classes.Core
             DrawOverlay();
 
             DrawDarkness();
-
+            
             foreach (var entities in Layer1Entities)
             {
                 foreach (var entity in entities)
@@ -342,7 +342,10 @@ namespace Intersect_Client.Classes.Core
                             {
                                 if (!PreRenderedMapLayer)
                                 {
-                                    map.PreRenderMap();
+                                    lock (map.GetMapLock())
+                                    {
+                                        map.PreRenderMap();
+                                    }
                                     return;
                                 }
                             }

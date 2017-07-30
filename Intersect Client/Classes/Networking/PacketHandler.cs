@@ -43,7 +43,7 @@ namespace Intersect_Client.Classes.Networking
                 bf = new ByteBuffer();
                 bf.WriteBytes(data);
             }
-
+            
             HandlePacket(bf);
             return true;
         }
@@ -435,19 +435,22 @@ namespace Intersect_Client.Classes.Networking
             }
             map = new MapInstance((int) mapNum);
             MapInstance.Lookup.Set(mapNum, map);
-            map.Load(mapData);
-            map.LoadTileData(tileData);
-            if ((mapNum) == Globals.Me.CurrentMap)
+            lock (map.GetMapLock())
             {
-                GameAudio.PlayMusic(map.Music, 3, 3, true);
+                map.Load(mapData);
+                map.LoadTileData(tileData);
+                if ((mapNum) == Globals.Me.CurrentMap)
+                {
+                    GameAudio.PlayMusic(map.Music, 3, 3, true);
+                }
+                map.MapGridX = bf.ReadInteger();
+                map.MapGridY = bf.ReadInteger();
+                map.HoldLeft = bf.ReadInteger();
+                map.HoldRight = bf.ReadInteger();
+                map.HoldUp = bf.ReadInteger();
+                map.HoldDown = bf.ReadInteger();
+                map.Autotiles.InitAutotiles(map.GenerateAutotileGrid());
             }
-            map.MapGridX = bf.ReadInteger();
-            map.MapGridY = bf.ReadInteger();
-            map.HoldLeft = bf.ReadInteger();
-            map.HoldRight = bf.ReadInteger();
-            map.HoldUp = bf.ReadInteger();
-            map.HoldDown = bf.ReadInteger();
-            map.Autotiles.InitAutotiles(map.GenerateAutotileGrid());
             if (MapInstance.OnMapLoaded != null) MapInstance.OnMapLoaded(map);
             Globals.Me.FetchNewMaps();
         }
