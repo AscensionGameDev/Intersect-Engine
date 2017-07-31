@@ -1036,7 +1036,7 @@ Tick timer saved in server config.xml.</string>
 	<TimeEditor>
 		<string id="title">Time Editor (Day/Night Settings)</string>
 		<string id="times">Time of Day</string>
-		<string id="to">t</string>
+		<string id="to">to</string>
 		<string id="settings">Time Settings</string>
 		<string id="intervals">Invervals:</string>
 		<string id="interval0">24 hours</string>

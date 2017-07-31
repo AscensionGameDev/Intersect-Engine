@@ -259,6 +259,7 @@ namespace Intersect.Editor.Classes.Maps
                     }
                 }
             }
+            mapBase[1,1] = this;
             return mapBase;
         }
 

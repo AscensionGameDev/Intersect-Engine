@@ -52,7 +52,7 @@ namespace Intersect.Editor.Forms
             this.nudLowerHorizontalFrames = new DarkUI.Controls.DarkNumericUpDown();
             this.grpLowerFrameOpts = new DarkUI.Controls.DarkGroupBox();
             this.btnLowerClone = new DarkUI.Controls.DarkButton();
-            this.lightEditorLower = new LightEditorCtrl();
+            this.lightEditorLower = new Intersect.Editor.Forms.Controls.LightEditorCtrl();
             this.grpLowerPlayback = new DarkUI.Controls.DarkGroupBox();
             this.btnPlayLower = new DarkUI.Controls.DarkButton();
             this.scrlLowerFrame = new DarkUI.Controls.DarkScrollBar();
@@ -77,7 +77,7 @@ namespace Intersect.Editor.Forms
             this.lblUpperFrame = new System.Windows.Forms.Label();
             this.grpUpperFrameOpts = new DarkUI.Controls.DarkGroupBox();
             this.btnUpperClone = new DarkUI.Controls.DarkButton();
-            this.lightEditorUpper = new LightEditorCtrl();
+            this.lightEditorUpper = new Intersect.Editor.Forms.Controls.LightEditorCtrl();
             this.lblUpperLoopCount = new System.Windows.Forms.Label();
             this.lblUpperFrameDuration = new System.Windows.Forms.Label();
             this.lblUpperFrameCount = new System.Windows.Forms.Label();
@@ -100,6 +100,7 @@ namespace Intersect.Editor.Forms
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.tmrRender = new System.Windows.Forms.Timer(this.components);
             this.grpAnimations.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             this.grpLower.SuspendLayout();
@@ -211,16 +212,23 @@ namespace Intersect.Editor.Forms
             this.cmbSound.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbSound.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSound.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSound.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbSound.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSound.ButtonIcon")));
+            this.cmbSound.DrawDropdownHoverOutline = false;
+            this.cmbSound.DrawFocusRectangle = false;
             this.cmbSound.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSound.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSound.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbSound.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSound.FormattingEnabled = true;
-            this.cmbSound.Items.AddRange(new object[] {"None"});
+            this.cmbSound.Items.AddRange(new object[] {
+            "None"});
             this.cmbSound.Location = new System.Drawing.Point(60, 45);
             this.cmbSound.Name = "cmbSound";
             this.cmbSound.Size = new System.Drawing.Size(368, 21);
             this.cmbSound.TabIndex = 2;
+            this.cmbSound.Text = "None";
+            this.cmbSound.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbSound.SelectedIndexChanged += new System.EventHandler(this.cmbSound_SelectedIndexChanged);
             // 
             // lblName
@@ -513,17 +521,23 @@ namespace Intersect.Editor.Forms
             this.cmbLowerGraphic.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbLowerGraphic.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbLowerGraphic.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbLowerGraphic.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbLowerGraphic.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbLowerGraphic.ButtonIcon")));
+            this.cmbLowerGraphic.DrawDropdownHoverOutline = false;
+            this.cmbLowerGraphic.DrawFocusRectangle = false;
             this.cmbLowerGraphic.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbLowerGraphic.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbLowerGraphic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbLowerGraphic.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbLowerGraphic.FormattingEnabled = true;
             this.cmbLowerGraphic.Items.AddRange(new object[] {
-            Strings.Get("general","none")});
+            "//general/none"});
             this.cmbLowerGraphic.Location = new System.Drawing.Point(54, 223);
             this.cmbLowerGraphic.Name = "cmbLowerGraphic";
             this.cmbLowerGraphic.Size = new System.Drawing.Size(149, 21);
             this.cmbLowerGraphic.TabIndex = 3;
+            this.cmbLowerGraphic.Text = "//general/none";
+            this.cmbLowerGraphic.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbLowerGraphic.SelectedIndexChanged += new System.EventHandler(this.cmbLowerGraphic_SelectedIndexChanged);
             // 
             // lblLowerGraphic
@@ -813,17 +827,23 @@ namespace Intersect.Editor.Forms
             this.cmbUpperGraphic.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbUpperGraphic.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbUpperGraphic.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbUpperGraphic.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbUpperGraphic.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbUpperGraphic.ButtonIcon")));
+            this.cmbUpperGraphic.DrawDropdownHoverOutline = false;
+            this.cmbUpperGraphic.DrawFocusRectangle = false;
             this.cmbUpperGraphic.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbUpperGraphic.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbUpperGraphic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbUpperGraphic.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbUpperGraphic.FormattingEnabled = true;
             this.cmbUpperGraphic.Items.AddRange(new object[] {
-            Strings.Get("general","none")});
+            "//general/none"});
             this.cmbUpperGraphic.Location = new System.Drawing.Point(57, 223);
             this.cmbUpperGraphic.Name = "cmbUpperGraphic";
             this.cmbUpperGraphic.Size = new System.Drawing.Size(143, 21);
             this.cmbUpperGraphic.TabIndex = 15;
+            this.cmbUpperGraphic.Text = "//general/none";
+            this.cmbUpperGraphic.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbUpperGraphic.SelectedIndexChanged += new System.EventHandler(this.cmbUpperGraphic_SelectedIndexChanged);
             // 
             // lblUpperGraphic
@@ -986,6 +1006,12 @@ namespace Intersect.Editor.Forms
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
+            // tmrRender
+            // 
+            this.tmrRender.Enabled = true;
+            this.tmrRender.Interval = 16;
+            this.tmrRender.Tick += new System.EventHandler(this.tmrRender_Tick);
+            // 
             // frmAnimation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1107,5 +1133,6 @@ namespace Intersect.Editor.Forms
         private DarkNumericUpDown nudUpperFrameCount;
         private DarkNumericUpDown nudUpperVerticalFrames;
         private DarkNumericUpDown nudUpperHorizontalFrames;
+        private System.Windows.Forms.Timer tmrRender;
     }
 }

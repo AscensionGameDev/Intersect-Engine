@@ -1536,7 +1536,7 @@ namespace Intersect.Editor.Classes
             }
         }
 
-        private static void EndSpriteBatch()
+        public static void EndSpriteBatch()
         {
             if (!_spriteBatchBegan) return;
             _spriteBatch.End();

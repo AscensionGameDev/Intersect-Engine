@@ -104,7 +104,7 @@ namespace Intersect.Editor.Forms.Editors
             g.Clear(System.Drawing.Color.Transparent);
             g.DrawImage(pnlColor.BackgroundImage, new System.Drawing.Point(0, 0));
             Brush brush =
-                new SolidBrush(System.Drawing.Color.FromArgb((int) ((scrlAlpha.Value) / 100f * 255f), pnlColor.BackColor.R,
+                new SolidBrush(System.Drawing.Color.FromArgb(scrlAlpha.Value, pnlColor.BackColor.R,
                     pnlColor.BackColor.G,
                     pnlColor.BackColor.B));
             g.FillRectangle(brush, new Rectangle(0, 0, pnlColor.Width, pnlColor.Height));
@@ -113,8 +113,9 @@ namespace Intersect.Editor.Forms.Editors
 
         private void scrlAlpha_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblBrightness.Text = Strings.Get("timeeditor", "brightness", (100 - scrlAlpha.Value).ToString());
-            myTime.RangeColors[lstTimes.SelectedIndex].A = (byte) (scrlAlpha.Value / 100f * 255f);
+            var brightness = (int)((255 - scrlAlpha.Value) / 255f * 100);
+            lblBrightness.Text = Strings.Get("timeeditor", "brightness", brightness.ToString());
+            myTime.RangeColors[lstTimes.SelectedIndex].A = (byte)scrlAlpha.Value;
             pnlColor.Refresh();
         }
 
@@ -129,8 +130,9 @@ namespace Intersect.Editor.Forms.Editors
             pnlColor.BackColor = System.Drawing.Color.FromArgb(255, myTime.RangeColors[lstTimes.SelectedIndex].R,
                 myTime.RangeColors[lstTimes.SelectedIndex].G,
                 myTime.RangeColors[lstTimes.SelectedIndex].B);
-            scrlAlpha.Value = (byte) (((myTime.RangeColors[lstTimes.SelectedIndex].A) / 255f) * 100f);
-            lblBrightness.Text = Strings.Get("timeeditor", "brightness", (100 - scrlAlpha.Value).ToString());
+            scrlAlpha.Value = myTime.RangeColors[lstTimes.SelectedIndex].A;
+            var brightness = (int)((255 - scrlAlpha.Value) / 255f * 100);
+            lblBrightness.Text = Strings.Get("timeeditor", "brightness", brightness);
             pnlColor.Refresh();
             EditorGraphics.LightColor = myTime.RangeColors[lstTimes.SelectedIndex];
         }

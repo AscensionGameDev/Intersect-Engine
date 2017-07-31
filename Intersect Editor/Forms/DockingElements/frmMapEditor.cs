@@ -1399,7 +1399,7 @@ namespace Intersect.Editor.Forms
                     dragxoffset = Globals.TotalTileDragX;
                     dragyoffset = Globals.TotalTileDragY;
                 }
-                if (dragxoffset == 0 && dragyoffset == 0) return;
+                if (dragxoffset == 0 && dragyoffset == 0 && Globals.SelectionSource == Globals.CurrentMap) return;
             }
             //WE are moving tiles, this will be fun!
             if (Globals.CurrentMap == tmpMap && Globals.SelectionSource == tmpMap)

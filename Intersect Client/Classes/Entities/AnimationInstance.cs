@@ -145,8 +145,8 @@ namespace Intersect_Client.Classes.Entities
                             Intersect.Color.White, null, GameBlendModes.None, null, rotationDegrees);
                     }
                 }
-                int offsetX = myBase.LowerLights[lowerFrame].OffsetX;
-                int offsetY = myBase.LowerLights[lowerFrame].OffsetY;
+                int offsetX = myBase.UpperLights[upperFrame].OffsetX;
+                int offsetY = myBase.UpperLights[upperFrame].OffsetY;
                 var rotationRadians = (float) ((Math.PI / 180) * rotationDegrees);
                 offsetX =
                     (int)
