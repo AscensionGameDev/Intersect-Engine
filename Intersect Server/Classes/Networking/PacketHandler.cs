@@ -276,16 +276,16 @@ namespace Intersect.Server.Classes.Networking
                 case ClientPackets.FriendRequestDecline:
                     HandleFriendRequestDecline(client, packet);
                     break;
-				case ClientPackets.PlayGame:
-					HandlePlayGame(client, packet);
-					break;
-				case ClientPackets.DeleteChar:
-					HandleDeleteChar(client, packet);
-					break;
-				case ClientPackets.CreateNewChar:
-					HandleCreateNewChar(client, packet);
-					break;
-				default:
+                case ClientPackets.PlayGame:
+                    HandlePlayGame(client, packet);
+                    break;
+                case ClientPackets.DeleteChar:
+                    HandleDeleteChar(client, packet);
+                    break;
+                case ClientPackets.CreateNewChar:
+                    HandleCreateNewChar(client, packet);
+                    break;
+                default:
                     break;
             }
         }
@@ -353,21 +353,21 @@ namespace Intersect.Server.Classes.Networking
                             Database.GetCharacters(client);
                             //Character selection if more than one.
                             if (Options.MaxCharacters > 1)
-							{
-								PacketSender.SendPlayerCharacters(client);
-							}
-							else
-							{
-								if (client.Characters.Count > 0 &&  Database.LoadCharacter(client,client.Characters[0].Slot))
-								{
-									PacketSender.SendJoinGame(client);
-								}
-								else
-								{
-									PacketSender.SendGameObjects(client, GameObjectType.Class);
-									PacketSender.SendCreateCharacter(client);
-								}
-							}
+                            {
+                                PacketSender.SendPlayerCharacters(client);
+                            }
+                            else
+                            {
+                                if (client.Characters.Count > 0 &&  Database.LoadCharacter(client,client.Characters[0].Slot))
+                                {
+                                    PacketSender.SendJoinGame(client);
+                                }
+                                else
+                                {
+                                    PacketSender.SendGameObjects(client, GameObjectType.Class);
+                                    PacketSender.SendCreateCharacter(client);
+                                }
+                            }
                         }
                         else
                         {
@@ -463,21 +463,21 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var msg = bf.ReadString();
-			string channel = bf.ReadInteger().ToString();
+            string channel = bf.ReadInteger().ToString();
             if (client.Muted == true) //Don't let the toungless toxic kids speak.
             {
                 PacketSender.SendPlayerMsg(client, client.MuteReason);
                 return;
             }
 
-			//If no /command, then use the designated channel.
-			if (msg[0] != '/')
-			{
-				msg = "/" + channel + " " + msg;
-			}
+            //If no /command, then use the designated channel.
+            if (msg[0] != '/')
+            {
+                msg = "/" + channel + " " + msg;
+            }
 
-			//Check for /commands
-			if (msg[0] == '/')
+            //Check for /commands
+            if (msg[0] == '/')
             {
                 string[] splitString = msg.Split();
                 msg = msg.Remove(0, splitString[0].Length); //Chop off the /command at the start of the sentance
@@ -1075,17 +1075,17 @@ namespace Intersect.Server.Classes.Networking
                     Database.CreateAccount(client, username, password, email);
                     PacketSender.SendServerConfig(client);
 
-					//Character selection if more than one.
-					if (Options.MaxCharacters > 1)
-					{
-						Database.GetCharacters(client);
-						PacketSender.SendPlayerCharacters(client);
-					}
-					else
-					{
-						PacketSender.SendGameObjects(client, GameObjectType.Class);
-						PacketSender.SendCreateCharacter(client);
-					}
+                    //Character selection if more than one.
+                    if (Options.MaxCharacters > 1)
+                    {
+                        Database.GetCharacters(client);
+                        PacketSender.SendPlayerCharacters(client);
+                    }
+                    else
+                    {
+                        PacketSender.SendGameObjects(client, GameObjectType.Class);
+                        PacketSender.SendCreateCharacter(client);
+                    }
                 }
             }
             bf.Dispose();
@@ -1102,7 +1102,7 @@ namespace Intersect.Server.Classes.Networking
                 return;
             }
 
-			var Class = bf.ReadInteger();
+            var Class = bf.ReadInteger();
             var Sprite = bf.ReadInteger();
             var index = client.EntityIndex;
             var classBase = ClassBase.Lookup.Get<ClassBase>(Class);
@@ -1111,80 +1111,80 @@ namespace Intersect.Server.Classes.Networking
                 PacketSender.SendLoginError(client, Strings.Get("account", "invalidclass"));
                 return;
             }
-			if (Database.CharacterNameInUse(Name))
-			{
-				PacketSender.SendLoginError(client, Strings.Get("account", "characterexists"));
-			}
-			else
-			{
-				var player = (Player)Globals.Entities[index];
+            if (Database.CharacterNameInUse(Name))
+            {
+                PacketSender.SendLoginError(client, Strings.Get("account", "characterexists"));
+            }
+            else
+            {
+                var player = (Player)Globals.Entities[index];
 
-				//Find the next free slot to put the character
-				bool space = false;
-				for (int i = 0; i < Options.MaxCharacters; i++)
-				{
-					bool foundChar = false;
-					foreach (Character c in client.Characters)
-					{
-						if (c.Slot == i)
-						{
-							foundChar = true;
-							break;
-						}
-					}
-					if (foundChar == false)
-					{
-						player.MyId = i;
-						space = true;
-						break;
-					}
-				}
+                //Find the next free slot to put the character
+                bool space = false;
+                for (int i = 0; i < Options.MaxCharacters; i++)
+                {
+                    bool foundChar = false;
+                    foreach (Character c in client.Characters)
+                    {
+                        if (c.Slot == i)
+                        {
+                            foundChar = true;
+                            break;
+                        }
+                    }
+                    if (foundChar == false)
+                    {
+                        player.MyId = i;
+                        space = true;
+                        break;
+                    }
+                }
 
-				if (space == false) //No space for new chars
-				{
-					PacketSender.SendLoginError(client, Strings.Get("account", "maxchars"));
-					return;
-				}
+                if (space == false) //No space for new chars
+                {
+                    PacketSender.SendLoginError(client, Strings.Get("account", "maxchars"));
+                    return;
+                }
 
-				client.Entity = player;
-				player.MyName = Name;
-				player.Class = Class;
-				if (classBase.Sprites.Count > 0)
-				{
-					player.MySprite = classBase.Sprites[Sprite].Sprite;
-					player.Face = classBase.Sprites[Sprite].Face;
-					player.Gender = classBase.Sprites[Sprite].Gender;
-				}
-				PacketSender.SendJoinGame(client);
-				player.WarpToSpawn();
-				player.Vital[(int)Vitals.Health] = classBase.BaseVital[(int)Vitals.Health];
-				player.Vital[(int)Vitals.Mana] = classBase.BaseVital[(int)Vitals.Mana];
-				player.MaxVital[(int)Vitals.Health] = classBase.BaseVital[(int)Vitals.Health];
-				player.MaxVital[(int)Vitals.Mana] = classBase.BaseVital[(int)Vitals.Mana];
+                client.Entity = player;
+                player.MyName = Name;
+                player.Class = Class;
+                if (classBase.Sprites.Count > 0)
+                {
+                    player.MySprite = classBase.Sprites[Sprite].Sprite;
+                    player.Face = classBase.Sprites[Sprite].Face;
+                    player.Gender = classBase.Sprites[Sprite].Gender;
+                }
+                PacketSender.SendJoinGame(client);
+                player.WarpToSpawn();
+                player.Vital[(int)Vitals.Health] = classBase.BaseVital[(int)Vitals.Health];
+                player.Vital[(int)Vitals.Mana] = classBase.BaseVital[(int)Vitals.Mana];
+                player.MaxVital[(int)Vitals.Health] = classBase.BaseVital[(int)Vitals.Health];
+                player.MaxVital[(int)Vitals.Mana] = classBase.BaseVital[(int)Vitals.Mana];
 
-				for (int i = 0; i < (int)Stats.StatCount; i++)
-				{
-					player.Stat[i].Stat = classBase.BaseStat[i];
-				}
-				player.StatPoints = classBase.BasePoints;
+                for (int i = 0; i < (int)Stats.StatCount; i++)
+                {
+                    player.Stat[i].Stat = classBase.BaseStat[i];
+                }
+                player.StatPoints = classBase.BasePoints;
 
-				for (int i = 0; i < classBase.Spells.Count; i++)
-				{
-					if (classBase.Spells[i].Level <= 1)
-					{
-						SpellInstance TempSpell = new SpellInstance()
-						{
-							SpellNum = classBase.Spells[i].SpellNum
-						};
-						player.TryTeachSpell(TempSpell, false);
-					}
-				}
+                for (int i = 0; i < classBase.Spells.Count; i++)
+                {
+                    if (classBase.Spells[i].Level <= 1)
+                    {
+                        SpellInstance TempSpell = new SpellInstance()
+                        {
+                            SpellNum = classBase.Spells[i].SpellNum
+                        };
+                        player.TryTeachSpell(TempSpell, false);
+                    }
+                }
 
-				for (int i = 0; i < Options.MaxNpcDrops; i++)
-				{
-					ItemInstance TempItem = new ItemInstance(classBase.Items[i].ItemNum, classBase.Items[i].Amount, -1);
-					player.TryGiveItem(TempItem, false);
-				}
+                for (int i = 0; i < Options.MaxNpcDrops; i++)
+                {
+                    ItemInstance TempItem = new ItemInstance(classBase.Items[i].ItemNum, classBase.Items[i].Amount, -1);
+                    player.TryGiveItem(TempItem, false);
+                }
 
                 Task.Run(() => Database.SaveCharacter(client.Entity, true));
             }
@@ -2614,43 +2614,43 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-		private static void HandlePlayGame(Client client, byte[] packet)
-		{
-			var bf = new ByteBuffer();
-			bf.WriteBytes(packet);
-			var charSlot = bf.ReadInteger();
+        private static void HandlePlayGame(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var charSlot = bf.ReadInteger();
 
-			if (Database.LoadCharacter(client, charSlot))
-			{
-				PacketSender.SendJoinGame(client);
-			}
+            if (Database.LoadCharacter(client, charSlot))
+            {
+                PacketSender.SendJoinGame(client);
+            }
 
-			bf.Dispose();
-		}
+            bf.Dispose();
+        }
 
-		private static void HandleDeleteChar(Client client, byte[] packet)
-		{
-			var bf = new ByteBuffer();
-			bf.WriteBytes(packet);
-			var charSlot = bf.ReadInteger();
-			Database.DeleteCharacter(client, charSlot);
-		    Database.GetCharacters(client);
+        private static void HandleDeleteChar(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var charSlot = bf.ReadInteger();
+            Database.DeleteCharacter(client, charSlot);
+            Database.GetCharacters(client);
             PacketSender.SendLoginError(client, Strings.Get("account", "deletechar"), Strings.Get("account", "deleted"));
             PacketSender.SendPlayerCharacters(client);
-			bf.Dispose();
-		}
+            bf.Dispose();
+        }
 
-		private static void HandleCreateNewChar(Client client, byte[] packet)
-		{
-			if (client.Characters.Count < Options.MaxCharacters)
-			{
-				PacketSender.SendGameObjects(client, GameObjectType.Class);
-				PacketSender.SendCreateCharacter(client);
-			}
-			else
-			{
-				PacketSender.SendLoginError(client, Strings.Get("account", "maxchars"));
-			}
-		}
-	}
+        private static void HandleCreateNewChar(Client client, byte[] packet)
+        {
+            if (client.Characters.Count < Options.MaxCharacters)
+            {
+                PacketSender.SendGameObjects(client, GameObjectType.Class);
+                PacketSender.SendCreateCharacter(client);
+            }
+            else
+            {
+                PacketSender.SendLoginError(client, Strings.Get("account", "maxchars"));
+            }
+        }
+    }
 }

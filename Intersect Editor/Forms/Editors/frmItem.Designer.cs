@@ -657,7 +657,7 @@ namespace Intersect.Editor.Forms
             this.cmbFemalePaperdoll.Name = "cmbFemalePaperdoll";
             this.cmbFemalePaperdoll.Size = new System.Drawing.Size(168, 21);
             this.cmbFemalePaperdoll.TabIndex = 36;
-            this.cmbFemalePaperdoll.Text = null;
+            this.cmbFemalePaperdoll.Text = "None";
             this.cmbFemalePaperdoll.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbFemalePaperdoll.SelectedIndexChanged += new System.EventHandler(this.cmbFemalePaperdoll_SelectedIndexChanged);
             // 
@@ -770,7 +770,7 @@ namespace Intersect.Editor.Forms
             this.cmbMalePaperdoll.Name = "cmbMalePaperdoll";
             this.cmbMalePaperdoll.Size = new System.Drawing.Size(168, 21);
             this.cmbMalePaperdoll.TabIndex = 22;
-            this.cmbMalePaperdoll.Text = null;
+            this.cmbMalePaperdoll.Text = "None";
             this.cmbMalePaperdoll.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbMalePaperdoll.SelectedIndexChanged += new System.EventHandler(this.cmbPaperdoll_SelectedIndexChanged);
             // 

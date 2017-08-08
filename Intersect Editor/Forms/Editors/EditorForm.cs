@@ -6,9 +6,8 @@ using Intersect.Logging;
 
 namespace Intersect.Editor.Forms.Editors
 {
-    public abstract class EditorForm : Form
+    public class EditorForm : Form
     {
-
 
         protected EditorForm()
         {
@@ -39,6 +38,8 @@ namespace Intersect.Editor.Forms.Editors
             GameObjectUpdatedDelegate(type);
         }
 
-        protected abstract void GameObjectUpdatedDelegate(GameObjectType type);
+        protected virtual void GameObjectUpdatedDelegate(GameObjectType type)
+        {
+        }
     }
 }
