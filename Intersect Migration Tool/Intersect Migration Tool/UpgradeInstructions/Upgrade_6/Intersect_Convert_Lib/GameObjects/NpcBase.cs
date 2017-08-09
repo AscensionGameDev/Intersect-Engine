@@ -8,6 +8,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
     {
         //Core info
         public new const string DATABASE_TABLE = "npcs";
+
         public new const GameObject OBJECT_TYPE = GameObject.Npc;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public List<int> AggroList = new List<int>();
@@ -18,10 +19,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
 
         //Combat
         public int Damage;
+
         public int DamageType;
 
         //Drops
         public List<NPCDrop> Drops = new List<NPCDrop>();
+
         public int Experience;
 
         //Vitals & Stats
@@ -31,16 +34,19 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
 
         //NPC vs NPC Combat
         public bool NpcVsNpcEnabled;
+
         public int Scaling;
         public int ScalingStat;
         public int SightRange;
 
         //Basic Info
         public int SpawnDuration;
+
         public int SpellFrequency = 2;
 
         //Spells
         public List<int> Spells = new List<int>();
+
         public string Sprite = "";
         public int[] Stat = new int[(int) Stats.StatCount];
 

@@ -41,7 +41,8 @@ namespace Intersect.Editor.Forms.Editors
         private void btnDelete_Click(object sender, EventArgs e)
         {
             if (lstCommonEvents.SelectedIndex > -1 &&
-                EventBase.Lookup.Get<EventBase>(Database.GameObjectIdFromList(GameObjectType.CommonEvent, lstCommonEvents.SelectedIndex)) !=
+                EventBase.Lookup.Get<EventBase>(
+                    Database.GameObjectIdFromList(GameObjectType.CommonEvent, lstCommonEvents.SelectedIndex)) !=
                 null)
             {
                 if (

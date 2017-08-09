@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using IntersectClientExtras.File_Management;
@@ -20,12 +19,13 @@ namespace Intersect_Client.Classes.UI
     {
         //GWEN GUI
         public static bool GwenInitialized;
+
         public static InputBase GwenInput;
         public static Base GwenRenderer;
         private static Canvas _gameCanvas;
         private static Canvas _menuCanvas;
         private static TexturedBase _gwenSkin;
-        public static List<KeyValuePair<string,string>> MsgboxErrors = new List<KeyValuePair<string, string>>();
+        public static List<KeyValuePair<string, string>> MsgboxErrors = new List<KeyValuePair<string, string>>();
         public static bool SetupHandlers;
         public static GameGuiBase GameUI;
         public static MenuGuiBase MenuUI;
@@ -35,6 +35,7 @@ namespace Intersect_Client.Classes.UI
 
         //Input Handling
         public static List<IntersectClientExtras.Gwen.Control.Base> FocusElements;
+
         public static List<IntersectClientExtras.Gwen.Control.Base> InputBlockingElements;
 
         #region "Gwen Setup and Input"
@@ -104,18 +105,18 @@ namespace Intersect_Client.Classes.UI
                 LoadRootUIData(_gameCanvas, "InGame.xml");
             }
 
-
             GwenInitialized = true;
         }
 
-        public static void SaveRootUIData(IntersectClientExtras.Gwen.Control.Base control, string xmlname, bool bounds = false)
+        public static void SaveRootUIData(IntersectClientExtras.Gwen.Control.Base control, string xmlname,
+            bool bounds = false)
         {
             //Create XML Doc with UI 
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.NewLineOnAttributes = true;
 
-            using (XmlWriter writer = XmlWriter.Create(Path.Combine("resources","gui", xmlname), settings))
+            using (XmlWriter writer = XmlWriter.Create(Path.Combine("resources", "gui", xmlname), settings))
             {
                 writer.WriteStartDocument();
                 control.WriteBaseUIXml(writer, bounds);
@@ -128,8 +129,8 @@ namespace Intersect_Client.Classes.UI
             XmlReaderSettings readerSettings = new XmlReaderSettings();
             readerSettings.IgnoreWhitespace = true;
             readerSettings.IgnoreComments = true;
-            if (!File.Exists(Path.Combine("resources","gui", xmlname))) return;
-            using (XmlReader reader = XmlReader.Create(Path.Combine("resources","gui", xmlname), readerSettings))
+            if (!File.Exists(Path.Combine("resources", "gui", xmlname))) return;
+            using (XmlReader reader = XmlReader.Create(Path.Combine("resources", "gui", xmlname), readerSettings))
             {
                 while (reader.Read())
                 {

@@ -1,33 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using Intersect;
+using Intersect.Client.Classes.UI.Game.Bank;
 using Intersect.GameObjects;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Graphics;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
-using IntersectClientExtras.Gwen.Control.EventArguments;
-using IntersectClientExtras.Gwen.ControlInternal;
-using IntersectClientExtras.Gwen.Input;
-using IntersectClientExtras.Input;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.Networking;
-using Color = IntersectClientExtras.GenericClasses.Color;
 using Point = IntersectClientExtras.GenericClasses.Point;
-using Intersect.Client.Classes.UI.Game.Bank;
 
 namespace Intersect_Client.Classes.UI.Game
 {
     public class BankWindow
     {
         private static int ItemXPadding = 4;
+
         private static int ItemYPadding = 4;
+
         //Controls
         private WindowControl _bankWindow;
+
         private ScrollControl _itemContainer;
         private List<Label> _values = new List<Label>();
 
@@ -35,16 +26,17 @@ namespace Intersect_Client.Classes.UI.Game
 
         //Location
         public int X;
+
         public int Y;
 
         //Init
         public BankWindow(Canvas _gameCanvas)
         {
-            _bankWindow = new WindowControl(_gameCanvas, Strings.Get("bank", "title"),false,"BankWindow");
+            _bankWindow = new WindowControl(_gameCanvas, Strings.Get("bank", "title"), false, "BankWindow");
             _bankWindow.DisableResizing();
             Gui.InputBlockingElements.Add(_bankWindow);
 
-            _itemContainer = new ScrollControl(_bankWindow,"ItemContainer");
+            _itemContainer = new ScrollControl(_bankWindow, "ItemContainer");
             _itemContainer.EnableScroll(false, true);
 
             Gui.LoadRootUIData(_bankWindow, "InGame.xml");
@@ -113,7 +105,7 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < Options.MaxBankSlots; i++)
             {
                 Items.Add(new BankItem(this, i));
-                Items[i].container = new ImagePanel(_itemContainer,"BankItemContainer");
+                Items[i].container = new ImagePanel(_itemContainer, "BankItemContainer");
                 Items[i].Setup();
 
                 _values.Add(new Label(_itemContainer));
@@ -125,8 +117,10 @@ namespace Intersect_Client.Classes.UI.Game
                 var xPadding = Items[i].container.Padding.Left + Items[i].container.Padding.Right;
                 var yPadding = Items[i].container.Padding.Top + Items[i].container.Padding.Bottom;
                 Items[i].container.SetPosition(
-                    (i % (_itemContainer.Width / (Items[i].container.Width + xPadding))) * (Items[i].container.Width + xPadding) + xPadding,
-                    (i / (_itemContainer.Width / (Items[i].container.Width + xPadding))) * (Items[i].container.Height + yPadding) + yPadding);
+                    (i % (_itemContainer.Width / (Items[i].container.Width + xPadding))) *
+                    (Items[i].container.Width + xPadding) + xPadding,
+                    (i / (_itemContainer.Width / (Items[i].container.Width + xPadding))) *
+                    (Items[i].container.Height + yPadding) + yPadding);
             }
         }
 

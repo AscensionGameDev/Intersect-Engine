@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Intersect.Logging;
@@ -9,18 +8,10 @@ namespace Intersect.Network
 {
     public sealed class NetworkThread
     {
-        private bool mStarted;
-        private readonly IThreadYield mThreadYield;
         private readonly PacketDispatcher mDispatcher;
+        private readonly IThreadYield mThreadYield;
+        private bool mStarted;
 
-        public string Name { get; }
-
-        public Thread CurrentThread { get; }
-        public PacketQueue Queue { get; }
-        public IList<IConnection> Connections { get; }
-
-        public bool IsRunning { get; private set; }
-        
         public NetworkThread(PacketDispatcher dispatcher, IThreadYield yield, string name = null)
         {
             mThreadYield = yield ?? new ThreadYieldNet35();
@@ -30,6 +21,14 @@ namespace Intersect.Network
             mDispatcher = dispatcher;
             Connections = new List<IConnection>();
         }
+
+        public string Name { get; }
+
+        public Thread CurrentThread { get; }
+        public PacketQueue Queue { get; }
+        public IList<IConnection> Connections { get; }
+
+        public bool IsRunning { get; private set; }
 
         public void Start()
         {

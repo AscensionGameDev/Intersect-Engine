@@ -23,10 +23,10 @@ namespace Intersect.Server.Classes.Entities
         public EventGraphic MyGraphic = new EventGraphic();
         public EventPage MyPage;
         private int PageNum;
+        public string Param;
         private int RenderLevel = 1;
         public int Trigger;
         private int WalkingAnim;
-        public string Param;
 
         public EventPageInstance(EventBase myEvent, EventPage myPage, int myIndex, int mapNum, EventInstance eventIndex,
             Client client) : base(myIndex)
@@ -232,7 +232,7 @@ namespace Intersect.Server.Classes.Entities
 
         protected override bool ProcessMoveRoute(Client client, long timeMs)
         {
-            if (!base.ProcessMoveRoute(client,timeMs))
+            if (!base.ProcessMoveRoute(client, timeMs))
             {
                 var moved = false;
                 var shouldSendUpdate = false;
@@ -487,7 +487,8 @@ namespace Intersect.Server.Classes.Entities
                             break;
                         case MoveRouteEnum.SetAnimation:
                             Animations.Clear();
-                            var anim = AnimationBase.Lookup.Get<AnimationBase>(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);
+                            var anim = AnimationBase.Lookup.Get<AnimationBase>(MoveRoute.Actions[MoveRoute.ActionIndex]
+                                .AnimationIndex);
                             if (anim != null)
                             {
                                 Animations.Add(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);

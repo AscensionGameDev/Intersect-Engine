@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect;
+using Intersect.Client.Classes.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
-using IntersectClientExtras.GenericClasses;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
@@ -13,8 +13,6 @@ using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.Spells;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
-using Color = Intersect.Color;
-using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -29,10 +27,10 @@ namespace Intersect_Client.Classes.Entities
         public int Class = -1;
         public int Experience = 0;
         public int ExperienceToNextLevel = 0;
+        public List<FriendInstance> Friends = new List<FriendInstance>();
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
 
         private List<int> mParty;
-        public List<FriendInstance> Friends = new List<FriendInstance>();
 
         public bool NoClip = false;
         public Dictionary<int, QuestProgressStruct> QuestProgress = new Dictionary<int, QuestProgressStruct>();
@@ -44,11 +42,6 @@ namespace Intersect_Client.Classes.Entities
             {
                 Hotbar[i] = new HotbarInstance();
             }
-        }
-
-        public bool IsInParty()
-        {
-            return Party.Count > 0;
         }
 
         public List<int> Party
@@ -77,7 +70,8 @@ namespace Intersect_Client.Classes.Entities
                     if (Globals.Me == this)
                     {
                         if (MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
-                            GameAudio.PlayMusic(MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).Music, 3, 3, true);
+                            GameAudio.PlayMusic(MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).Music, 3, 3,
+                                true);
                         if (newMap != null && oldMap != null)
                         {
                             newMap.CompareEffects(oldMap);
@@ -85,6 +79,11 @@ namespace Intersect_Client.Classes.Entities
                     }
                 }
             }
+        }
+
+        public bool IsInParty()
+        {
+            return Party.Count > 0;
         }
 
         public bool IsInMyParty(Entity entity)
@@ -161,7 +160,8 @@ namespace Intersect_Client.Classes.Entities
                 if (Inventory[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("inventory", "dropitem"),
-                        Strings.Get("inventory", "dropitemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name),
+                        Strings.Get("inventory", "dropitemprompt",
+                            ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name),
                         true, InputBox.InputType.TextInput, DropItemInputBoxOkay, null, index);
                 }
                 else
@@ -231,7 +231,9 @@ namespace Intersect_Client.Classes.Entities
                     if (Inventory[index].ItemVal > 1)
                     {
                         InputBox iBox = new InputBox(Strings.Get("shop", "sellitem"),
-                            Strings.Get("shop", "sellitemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true, InputBox.InputType.TextInput,
+                            Strings.Get("shop", "sellitemprompt",
+                                ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
+                            InputBox.InputType.TextInput,
                             SellItemInputBoxOkay, null, index);
                     }
                     else
@@ -264,7 +266,9 @@ namespace Intersect_Client.Classes.Entities
                 if (Inventory[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("bank", "deposititem"),
-                        Strings.Get("bank", "deposititemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true, InputBox.InputType.TextInput,
+                        Strings.Get("bank", "deposititemprompt",
+                            ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
+                        InputBox.InputType.TextInput,
                         DepositItemInputBoxOkay, null, index);
                 }
                 else
@@ -290,7 +294,8 @@ namespace Intersect_Client.Classes.Entities
                 if (Globals.Bank[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("bank", "withdrawitem"),
-                        Strings.Get("bank", "withdrawitemprompt", ItemBase.Lookup.Get<ItemBase>(Globals.Bank[index].ItemNum).Name),
+                        Strings.Get("bank", "withdrawitemprompt",
+                            ItemBase.Lookup.Get<ItemBase>(Globals.Bank[index].ItemNum).Name),
                         true, InputBox.InputType.TextInput, WithdrawItemInputBoxOkay, null, index);
                 }
                 else
@@ -317,7 +322,9 @@ namespace Intersect_Client.Classes.Entities
                 if (Inventory[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("bags", "storeitem"),
-                        Strings.Get("bags", "storeitemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true, InputBox.InputType.TextInput,
+                        Strings.Get("bags", "storeitemprompt",
+                            ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
+                        InputBox.InputType.TextInput,
                         StoreBagItemInputBoxOkay, null, index);
                 }
                 else
@@ -343,7 +350,8 @@ namespace Intersect_Client.Classes.Entities
                 if (Globals.Bag[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("bags", "retreiveitem"),
-                        Strings.Get("bags", "retreiveitemprompt", ItemBase.Lookup.Get<ItemBase>(Globals.Bag[index].ItemNum).Name),
+                        Strings.Get("bags", "retreiveitemprompt",
+                            ItemBase.Lookup.Get<ItemBase>(Globals.Bag[index].ItemNum).Name),
                         true, InputBox.InputType.TextInput, RetreiveBagItemInputBoxOkay, null, index);
                 }
                 else
@@ -370,7 +378,9 @@ namespace Intersect_Client.Classes.Entities
                 if (Inventory[index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("trading", "offeritem"),
-                        Strings.Get("trading", "offeritemprompt", ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true, InputBox.InputType.TextInput,
+                        Strings.Get("trading", "offeritemprompt",
+                            ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
+                        InputBox.InputType.TextInput,
                         TradeItemInputBoxOkay, null, index);
                 }
                 else
@@ -391,13 +401,15 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryRevokeItem(int index)
         {
-            if (Globals.Trade[0, index] != null && ItemBase.Lookup.Get<ItemBase>(Globals.Trade[0, index].ItemNum) != null)
+            if (Globals.Trade[0, index] != null && ItemBase.Lookup.Get<ItemBase>(Globals.Trade[0, index].ItemNum) !=
+                null)
             {
                 if (Globals.Trade[0, index].ItemVal > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Get("trading", "revokeitem"),
                         Strings.Get("trading", "revokeitemprompt",
-                            ItemBase.Lookup.Get<ItemBase>(Globals.Trade[0, index].ItemNum).Name), true, InputBox.InputType.TextInput, RevokeItemInputBoxOkay, null,
+                            ItemBase.Lookup.Get<ItemBase>(Globals.Trade[0, index].ItemNum).Name), true,
+                        InputBox.InputType.TextInput, RevokeItemInputBoxOkay, null,
                         index);
                 }
                 else
@@ -429,7 +441,8 @@ namespace Intersect_Client.Classes.Entities
             if (SpellBase.Lookup.Get<SpellBase>(Spells[index].SpellNum) != null)
             {
                 InputBox iBox = new InputBox(Strings.Get("spells", "forgetspell"),
-                    Strings.Get("spells", "forgetspellprompt", SpellBase.Lookup.Get<SpellBase>(Spells[index].SpellNum).Name), true, InputBox.InputType.YesNo,
+                    Strings.Get("spells", "forgetspellprompt",
+                        SpellBase.Lookup.Get<SpellBase>(Spells[index].SpellNum).Name), true, InputBox.InputType.YesNo,
                     ForgetSpellInputBoxOkay, null, index);
             }
         }
@@ -468,9 +481,11 @@ namespace Intersect_Client.Classes.Entities
                         if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY].value ==
                             (int) MapAttributes.ZDimension)
                         {
-                            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY].data1 > 0)
+                            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY].data1 >
+                                0)
                             {
-                                CurrentZ = MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY].data1 - 1;
+                                CurrentZ = MapInstance.Lookup.Get<MapInstance>(CurrentMap)
+                                               .Attributes[CurrentX, CurrentY].data1 - 1;
                             }
                         }
                     }
@@ -534,7 +549,8 @@ namespace Intersect_Client.Classes.Entities
 
             if (Options.ShieldIndex > -1 && Globals.Me.Equipment[Options.ShieldIndex] > -1)
             {
-                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[Globals.Me.Equipment[Options.ShieldIndex]].ItemNum);
+                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[Globals.Me.Equipment[Options.ShieldIndex]]
+                    .ItemNum);
                 if (item != null)
                 {
                     PacketSender.SendBlock(1);
@@ -707,11 +723,14 @@ namespace Intersect_Client.Classes.Entities
                                         {
                                             if (en.Value.GetType() == typeof(Player))
                                             {
-                                                _targetBox = new EntityBox(Gui.GameUI.GameCanvas, EntityTypes.Player, en.Value);
+                                                _targetBox =
+                                                    new EntityBox(Gui.GameUI.GameCanvas, EntityTypes.Player, en.Value);
                                             }
                                             else
                                             {
-                                                _targetBox = new EntityBox(Gui.GameUI.GameCanvas, EntityTypes.GlobalEntity, en.Value);
+                                                _targetBox =
+                                                    new EntityBox(Gui.GameUI.GameCanvas, EntityTypes.GlobalEntity,
+                                                        en.Value);
                                             }
                                         }
                                         if (_targetType == 0 && _targetIndex == en.Value.MyIndex)
@@ -747,7 +766,7 @@ namespace Intersect_Client.Classes.Entities
                                             _targetBox.Dispose();
                                             _targetBox = null;
                                         }
-                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas,EntityTypes.Event, en.Value);
+                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas, EntityTypes.Event, en.Value);
                                         if (_targetType == 1 && _targetIndex == en.Value.MyIndex)
                                         {
                                             ClearTarget();
@@ -1111,15 +1130,18 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (type == 1)
                 {
-                    base.DrawName(CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground); //blue
+                    base.DrawName(CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder,
+                        CustomColors.PlayerNameModBackground); //blue
                 }
                 else if (type == 2)
                 {
-                    base.DrawName(CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground); //red
+                    base.DrawName(CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder,
+                        CustomColors.PlayerNameAdminBackground); //red
                 }
                 else
                 {
-                    base.DrawName(CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground); //light brown
+                    base.DrawName(CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder,
+                        CustomColors.PlayerNameNormalBackground); //light brown
                 }
             }
             else
@@ -1222,8 +1244,8 @@ namespace Intersect_Client.Classes.Entities
 
     public class FriendInstance
     {
-        public string name;
         public string map;
+        public string name;
         public bool online = false;
     }
 

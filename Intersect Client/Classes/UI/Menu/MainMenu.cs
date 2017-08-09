@@ -1,18 +1,16 @@
 using System.Collections.Generic;
-using Intersect;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
-using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
     public class MainMenu
     {
-        private SelectCharacterWindow _selectCharacterWindow;
         private CreateCharacterWindow _createCharacterWindow;
+        private Button _creditsButton;
+        private CreditsWindow _creditsWindow;
         private Button _exitButton;
 
         private Button _loginButton;
@@ -24,13 +22,13 @@ namespace Intersect_Client.Classes.UI.Menu
         private OptionsWindow _optionsWindow;
         private Button _registerButton;
         private RegisterWindow _registerWindow;
-        private bool _shouldOpenCharacterSelection;
+        private SelectCharacterWindow _selectCharacterWindow;
         private bool _shouldOpenCharacterCreation;
-        private Button _creditsButton;
-        private CreditsWindow _creditsWindow;
+        private bool _shouldOpenCharacterSelection;
 
         //Character creation feild check
         private bool HasMadeCharacterCreation;
+
         //Controls
         private Canvas MenuCanvas;
 

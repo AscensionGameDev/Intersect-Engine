@@ -1,34 +1,26 @@
-﻿using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
-using Intersect.Client.Classes.UI.Menu;
+﻿using Intersect.Client.Classes.UI.Menu;
 using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using IntersectClientExtras.Gwen.ControlInternal;
-using IntersectClientExtras.Input;
-using Intersect_Client.Classes.Core;
-using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.Misc;
-using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
     public class CreditsWindow
     {
-        private MainMenu _mainMenu;
         private Button _backBtn;
+
+        //Content
+        private ScrollControl _creditsContent;
 
         //Parent
         private Label _creditsHeader;
-        //Content
-        private ScrollControl _creditsContent;
+
         //Controls
         private ImagePanel _creditsWindow;
+
+        private MainMenu _mainMenu;
 
         //Init
         public CreditsWindow(Canvas parent, MainMenu mainMenu)
@@ -47,7 +39,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _creditsContent.EnableScroll(false, true);
 
             var creditsParser = new CreditsParser();
-            var richLabel = new RichLabel(_creditsContent,"CreditsLabel");
+            var richLabel = new RichLabel(_creditsContent, "CreditsLabel");
             richLabel.SetSize(512, 393 - 35);
             foreach (var line in creditsParser.Credits)
             {
@@ -57,7 +49,8 @@ namespace Intersect_Client.Classes.UI.Menu
                 }
                 else
                 {
-                    richLabel.AddText(line.text, new Color(line.clr.A,line.clr.R,line.clr.G,line.clr.B), line.alignment, GameContentManager.Current.GetFont(line.font,line.size));
+                    richLabel.AddText(line.text, new Color(line.clr.A, line.clr.R, line.clr.G, line.clr.B),
+                        line.alignment, GameContentManager.Current.GetFont(line.font, line.size));
                     richLabel.AddLineBreak();
                 }
             }
@@ -89,6 +82,5 @@ namespace Intersect_Client.Classes.UI.Menu
         {
             _creditsWindow.IsHidden = false;
         }
-
     }
 }

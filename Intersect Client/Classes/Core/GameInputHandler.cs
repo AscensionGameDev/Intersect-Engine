@@ -1,5 +1,6 @@
 ﻿using System;
 using Intersect;
+using Intersect.Client.Classes.Core;
 using Intersect.Enums;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Input;
@@ -7,17 +8,18 @@ using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
-using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.Core
 {
     public static class GameInputHandler
     {
         public delegate void HandleKeyEvent(Keys key);
+
         public static HandleKeyEvent KeyDown;
         public static HandleKeyEvent KeyUp;
         public static HandleKeyEvent MouseDown;
         public static HandleKeyEvent MouseUp;
+
         public static void OnKeyPressed(Keys key)
         {
             if (KeyDown != null) KeyDown(key);
@@ -101,7 +103,7 @@ namespace Intersect_Client.Classes.Core
                     {
                         if (GameControls.ControlHasKey(i, key))
                         {
-                            var index = (int)(i - Controls.Hotkey1);
+                            var index = (int) (i - Controls.Hotkey1);
                             Gui.GameUI.Hotbar.Items[index].Activate();
                         }
                     }
@@ -197,7 +199,7 @@ namespace Intersect_Client.Classes.Core
             {
                 if (Globals.Me != null)
                 {
-                    if (GameControls.ControlHasKey(Controls.Block,key))
+                    if (GameControls.ControlHasKey(Controls.Block, key))
                     {
                         Globals.Me.StopBlocking();
                     }
@@ -219,8 +221,8 @@ namespace Intersect_Client.Classes.Core
                                     if (y >= map.GetY() && y <= map.GetY() + (Options.MapHeight * Options.TileHeight))
                                     {
                                         //Remove the offsets to just be dealing with pixels within the map selected
-                                        x -= (int)map.GetX();
-                                        y -= (int)map.GetY();
+                                        x -= (int) map.GetX();
+                                        y -= (int) map.GetY();
 
                                         //transform pixel format to tile format
                                         x /= Options.TileWidth;
@@ -229,7 +231,7 @@ namespace Intersect_Client.Classes.Core
 
                                         if (Globals.Me.GetRealLocation(ref x, ref y, ref mapNum))
                                         {
-                                            PacketSender.SendAdminAction((int)AdminActions.WarpToLoc,
+                                            PacketSender.SendAdminAction((int) AdminActions.WarpToLoc,
                                                 Convert.ToString(mapNum), Convert.ToString(x), Convert.ToString(y));
                                         }
                                         return;

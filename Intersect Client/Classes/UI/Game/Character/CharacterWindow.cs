@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Intersect;
 using Intersect.Client.Classes.UI.Game.Character;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using IntersectClientExtras.File_Management;
-using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using IntersectClientExtras.Gwen.ControlInternal;
-using IntersectClientExtras.Input;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Color = IntersectClientExtras.GenericClasses.Color;
-using Point = IntersectClientExtras.GenericClasses.Point;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -32,50 +26,55 @@ namespace Intersect_Client.Classes.UI.Game
 
         //Stats
         Label _attackLabel;
+
         private ImagePanel _characterContainer;
         private Label _characterLevelAndClass;
 
         private Label _characterName;
         private ImagePanel _characterPortrait;
-        public ImagePanel[] _paperdollPanels;
-        public string[] _paperdollTextures;
-
 
         private string _characterPortraitImg = "";
+
         //Controls
         private WindowControl _characterWindow;
+
         private string _currentSprite = "";
         Label _defenseLabel;
         private int[] _emptyStatBoost = new int[Options.MaxStats];
         private ScrollControl _equipmentContainer;
+
+        //Initialization
+        private bool _initialized = false;
+
+        private ImagePanel _itemTemplate;
         Label _magicRstLabel;
+        public ImagePanel[] _paperdollPanels;
+        public string[] _paperdollTextures;
         Label _pointsLabel;
         Label _speedLabel;
 
         //Equipment List
         public List<EquipmentItem> Items = new List<EquipmentItem>();
 
-        //Initialization
-        private bool _initialized = false;
-        private ImagePanel _itemTemplate;
-
         //Location
         public int X;
+
         public int Y;
 
         //Init
         public CharacterWindow(Canvas _gameCanvas)
         {
-            _characterWindow = new WindowControl(_gameCanvas, Strings.Get("character", "title"),false,"CharacterWindow");
+            _characterWindow = new WindowControl(_gameCanvas, Strings.Get("character", "title"), false,
+                "CharacterWindow");
             _characterWindow.DisableResizing();
 
-            _characterName = new Label(_characterWindow,"CharacterNameLabel");
+            _characterName = new Label(_characterWindow, "CharacterNameLabel");
             _characterName.SetTextColor(Color.White, Label.ControlState.Normal);
 
-            _characterLevelAndClass = new Label(_characterWindow,"ChatacterInfoLabel");
+            _characterLevelAndClass = new Label(_characterWindow, "ChatacterInfoLabel");
             _characterLevelAndClass.SetText("");
 
-            _characterContainer = new ImagePanel(_characterWindow,"CharacterContainer");
+            _characterContainer = new ImagePanel(_characterWindow, "CharacterContainer");
 
             _characterPortrait = new ImagePanel(_characterContainer);
 
@@ -88,40 +87,40 @@ namespace Intersect_Client.Classes.UI.Game
                 _paperdollPanels[i].Hide();
             }
 
-            Label equipmentLabel = new Label(_characterWindow,"EquipmentLabel");
+            Label equipmentLabel = new Label(_characterWindow, "EquipmentLabel");
             equipmentLabel.SetText(Strings.Get("character", "equipment"));
 
-            _equipmentContainer = new ScrollControl(_characterWindow,"EquipmentContainer");
+            _equipmentContainer = new ScrollControl(_characterWindow, "EquipmentContainer");
             _equipmentContainer.EnableScroll(true, false);
 
             _itemTemplate = new ImagePanel(_equipmentContainer, "EquipmentBox");
             new ImagePanel(_itemTemplate, "EquipmentIcon");
 
-            Label statsLabel = new Label(_characterWindow,"StatsLabel");
+            Label statsLabel = new Label(_characterWindow, "StatsLabel");
             statsLabel.SetText(Strings.Get("character", "stats"));
 
-            _attackLabel = new Label(_characterWindow,"AttackLabel");
+            _attackLabel = new Label(_characterWindow, "AttackLabel");
 
             _addAttackBtn = new Button(_characterWindow, "IncreaseAttackButton");
             _addAttackBtn.Clicked += _addAttackBtn_Clicked;
 
-            _defenseLabel = new Label(_characterWindow,"DefenseLabel");
-            _addDefenseBtn = new Button(_characterWindow,"IncreaseDefenseButton");
+            _defenseLabel = new Label(_characterWindow, "DefenseLabel");
+            _addDefenseBtn = new Button(_characterWindow, "IncreaseDefenseButton");
             _addDefenseBtn.Clicked += _addDefenseBtn_Clicked;
 
-            _speedLabel = new Label(_characterWindow,"SpeedLabel");
-            _addSpeedBtn = new Button(_characterWindow,"IncreaseSpeedButton");
+            _speedLabel = new Label(_characterWindow, "SpeedLabel");
+            _addSpeedBtn = new Button(_characterWindow, "IncreaseSpeedButton");
             _addSpeedBtn.Clicked += _addSpeedBtn_Clicked;
 
-            _abilityPwrLabel = new Label(_characterWindow,"AbilityPowerLabel");
-            _addAbilityPwrBtn = new Button(_characterWindow,"IncreaseAbilityPowerButton");
+            _abilityPwrLabel = new Label(_characterWindow, "AbilityPowerLabel");
+            _addAbilityPwrBtn = new Button(_characterWindow, "IncreaseAbilityPowerButton");
             _addAbilityPwrBtn.Clicked += _addAbilityPwrBtn_Clicked;
 
-            _magicRstLabel = new Label(_characterWindow,"MagicResistLabel");
-            _addMagicResistBtn = new Button(_characterWindow,"IncreaseMagicResistButton");
+            _magicRstLabel = new Label(_characterWindow, "MagicResistLabel");
+            _addMagicResistBtn = new Button(_characterWindow, "IncreaseMagicResistButton");
             _addMagicResistBtn.Clicked += _addMagicResistBtn_Clicked;
 
-            _pointsLabel = new Label(_characterWindow,"PointsLabel");
+            _pointsLabel = new Label(_characterWindow, "PointsLabel");
         }
 
         //Update Button Event Handlers
@@ -154,14 +153,17 @@ namespace Intersect_Client.Classes.UI.Game
         {
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                Items.Add(new EquipmentItem(i,_characterWindow));
-                Items[i].pnl = new ImagePanel(_equipmentContainer,"EquipmentBox");
+                Items.Add(new EquipmentItem(i, _characterWindow));
+                Items[i].pnl = new ImagePanel(_equipmentContainer, "EquipmentBox");
                 Items[i].Setup();
 
                 //TODO Made this more efficient.
                 Gui.LoadRootUIData(Items[i].pnl, "InGame.xml");
 
-                Items[i].pnl.SetPosition(Items[i].pnl.Padding.Left + (i * (Items[i].pnl.Padding.Left + Items[i].pnl.Padding.Right + Items[i].pnl.Width)),Items[i].pnl.Padding.Top);
+                Items[i].pnl
+                    .SetPosition(
+                        Items[i].pnl.Padding.Left + (i * (Items[i].pnl.Padding.Left + Items[i].pnl.Padding.Right +
+                                                          Items[i].pnl.Width)), Items[i].pnl.Padding.Top);
             }
             _itemTemplate.Hide();
         }

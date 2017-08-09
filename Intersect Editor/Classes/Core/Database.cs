@@ -13,12 +13,14 @@ namespace Intersect.Editor.Classes
 
         //Map Table Constants
         private const string MAP_CACHE_TABLE = "mapcache";
+
         private const string MAP_CACHE_ID = "id";
         private const string MAP_CACHE_REVISION = "revision";
         private const string MAP_CACHE_DATA = "data";
 
         //Options Constants
         private const string OPTION_TABLE = "options";
+
         private const string OPTION_ID = "id";
         private const string OPTION_NAME = "name";
         private const string OPTION_VALUE = "value";
@@ -26,6 +28,7 @@ namespace Intersect.Editor.Classes
 
         //Grid Variables
         public static bool GridHideDarkness;
+
         public static bool GridHideFog;
         public static bool GridHideOverlay;
         public static bool GridHideResources;
@@ -47,15 +50,15 @@ namespace Intersect.Editor.Classes
                     writer.WriteElementString("Host", "localhost");
                     writer.WriteElementString("Port", "4500");
                     writer.WriteElementString("RenderCache", "true");
-                        //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
                     writer.WriteElementString("MenuBGM", "");
-                        //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
                     writer.WriteElementString("MenuBG", "background.png");
-                        //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
                     writer.WriteElementString("Logo", "logo.png");
-                        //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
                     writer.WriteElementString("IntroBG", "");
-                        //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
                     writer.WriteEndElement();
                     writer.WriteEndDocument();
                     writer.Flush();
@@ -87,7 +90,9 @@ namespace Intersect.Editor.Classes
         //Game Object Handling
         public static string[] GetGameObjectList(GameObjectType type) => type.GetLookup()?.Names;
 
-        public static int GameObjectIdFromList(GameObjectType type, int listIndex) => listIndex < 0 ? -1 : (type.GetLookup()?.ValueList?[listIndex]?.Index ?? -1);
+        public static int GameObjectIdFromList(GameObjectType type, int listIndex) => listIndex < 0
+            ? -1
+            : (type.GetLookup()?.ValueList?[listIndex]?.Index ?? -1);
 
         public static int GameObjectListIndex(GameObjectType type, int id)
         {

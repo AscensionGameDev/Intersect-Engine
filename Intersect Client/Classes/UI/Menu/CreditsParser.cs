@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using IntersectClientExtras.Gwen;
 
@@ -12,14 +8,6 @@ namespace Intersect.Client.Classes.UI.Menu
     class CreditsParser
     {
         public List<CreditsLine> Credits = new List<CreditsLine>();
-        public struct CreditsLine
-        {
-            public string text;
-            public string font;
-            public int size;
-            public Alignments alignment;
-            public Color clr;
-        }
 
         public CreditsParser()
         {
@@ -54,7 +42,8 @@ namespace Intersect.Client.Classes.UI.Menu
                             switch (alignment)
                             {
                                 case "center":
-                                    cl.alignment = Alignments.CenterH;;
+                                    cl.alignment = Alignments.CenterH;
+                                    ;
                                     break;
                                 case "right":
                                     cl.alignment = Alignments.Right;
@@ -66,7 +55,8 @@ namespace Intersect.Client.Classes.UI.Menu
                             cl.font = reader.GetAttribute("font");
                             cl.size = int.Parse(reader.GetAttribute("size"));
                             var colors = reader.GetAttribute("color").Split(',');
-                            cl.clr = new Color(int.Parse(colors[0]), int.Parse(colors[1]), int.Parse(colors[2]), int.Parse(colors[3]));
+                            cl.clr = new Color(int.Parse(colors[0]), int.Parse(colors[1]), int.Parse(colors[2]),
+                                int.Parse(colors[3]));
                             reader.Read();
                             cl.text = reader.Value;
                             Credits.Add(cl);
@@ -74,6 +64,15 @@ namespace Intersect.Client.Classes.UI.Menu
                     }
                 }
             }
+        }
+
+        public struct CreditsLine
+        {
+            public string text;
+            public string font;
+            public int size;
+            public Alignments alignment;
+            public Color clr;
         }
     }
 }

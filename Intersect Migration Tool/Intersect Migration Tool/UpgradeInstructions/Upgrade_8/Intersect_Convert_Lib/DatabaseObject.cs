@@ -8,12 +8,6 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 {
     public abstract class DatabaseObject<TObject> : IDatabaseObject where TObject : DatabaseObject<TObject>
     {
-        public static DatabaseObjectLookup Lookup => LookupUtils.GetLookup(typeof(TObject));
-
-        public GameObjectType Type => LookupUtils.GetGameObjectType(typeof(TObject));
-
-        public string DatabaseTable => Type.GetTable();
-
         private byte[] mBackup;
 
         protected DatabaseObject(int index) : this(Guid.NewGuid(), index)
@@ -32,6 +26,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             Index = index;
         }
 
+        public static DatabaseObjectLookup Lookup => LookupUtils.GetLookup(typeof(TObject));
+
+        public GameObjectType Type => LookupUtils.GetGameObjectType(typeof(TObject));
+
+        public string DatabaseTable => Type.GetTable();
+
         public Guid Guid { get; }
         public int Index { get; }
         public string Name { get; set; }
@@ -40,6 +40,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         public void MakeBackup() => mBackup = BinaryData;
         public void DeleteBackup() => mBackup = null;
+
         public void RestoreBackup()
         {
             if (mBackup != null)
@@ -49,7 +50,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         }
 
         public abstract byte[] BinaryData { get; }
-        public virtual void Delete() => Lookup?.Delete((TObject)this);
+        public virtual void Delete() => Lookup?.Delete((TObject) this);
 
         public static string GetName(int index) =>
             Lookup?.Get(index)?.Name ?? "ERR_DELETED";

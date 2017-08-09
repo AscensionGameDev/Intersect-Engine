@@ -7,6 +7,7 @@ namespace Intersect.Logging
     public class FileOutput : ILogOutput
     {
         private const string TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.fff";
+
         private static readonly string SPACER =
             Environment.NewLine + new string('-', 80) + Environment.NewLine;
 
@@ -23,7 +24,8 @@ namespace Intersect.Logging
             bool append = true)
         {
             Filename = string.IsNullOrEmpty(filename)
-                ? Log.SuggestFilename() : filename;
+                ? Log.SuggestFilename()
+                : filename;
             LogLevel = logLevel;
             Append = append;
         }
@@ -77,7 +79,7 @@ namespace Intersect.Logging
             {
                 return;
             }
-            
+
             var line = string.IsNullOrEmpty(tag)
                 ? $"{DateTime.UtcNow.ToString(TIMESTAMP_FORMAT)} [{logLevel}] {message}"
                 : $"{DateTime.UtcNow.ToString(TIMESTAMP_FORMAT)} [{logLevel}] {tag}: {message}";

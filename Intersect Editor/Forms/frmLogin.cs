@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.Core;
 using Intersect.Localization;
-using System.Globalization;
 
 namespace Intersect.Editor.Forms
 {

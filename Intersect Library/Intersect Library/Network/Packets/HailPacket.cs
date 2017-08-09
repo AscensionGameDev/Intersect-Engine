@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Security.Cryptography;
-using Intersect.Logging;
 using Intersect.Memory;
 
 namespace Intersect.Network.Packets
@@ -10,28 +9,17 @@ namespace Intersect.Network.Packets
     {
         private byte[] mEncryptedHail;
 
-        private byte[] mVersionData;
-        public byte[] VersionData
-        {
-            get => mVersionData;
-            set => mVersionData = value;
-        }
-
         private RSAParameters mRsaParameters;
-        public RSAParameters RsaParameters
-        {
-            get => mRsaParameters;
-            set => mRsaParameters = value;
-        }
 
-        public override int EstimatedSize => mEncryptedHail?.Length + sizeof(int) ?? -1;
+        private byte[] mVersionData;
 
         public HailPacket(RSACryptoServiceProvider rsa)
             : base(rsa, null)
         {
         }
 
-        public HailPacket(RSACryptoServiceProvider rsa, byte[] handshakeSecret, byte[] versionData, RSAParameters rsaParameters)
+        public HailPacket(RSACryptoServiceProvider rsa, byte[] handshakeSecret, byte[] versionData,
+            RSAParameters rsaParameters)
             : base(rsa, handshakeSecret)
         {
             VersionData = versionData;
@@ -48,7 +36,7 @@ namespace Intersect.Network.Packets
 #endif
 
                 Debug.Assert(RsaParameters.Modulus != null, "RsaParameters.Modulus != null");
-                var bits = (ushort)(RsaParameters.Modulus.Length << 3);
+                var bits = (ushort) (RsaParameters.Modulus.Length << 3);
                 hailBuffer.Write(bits);
                 hailBuffer.Write(RsaParameters.Exponent, 3);
                 hailBuffer.Write(RsaParameters.Modulus, bits >> 3);
@@ -61,6 +49,20 @@ namespace Intersect.Network.Packets
                 mEncryptedHail = mRsa.Encrypt(hailBuffer.ToArray(), true);
             }
         }
+
+        public byte[] VersionData
+        {
+            get => mVersionData;
+            set => mVersionData = value;
+        }
+
+        public RSAParameters RsaParameters
+        {
+            get => mRsaParameters;
+            set => mRsaParameters = value;
+        }
+
+        public override int EstimatedSize => mEncryptedHail?.Length + sizeof(int) ?? -1;
 
         public override bool Read(ref IBuffer buffer)
         {

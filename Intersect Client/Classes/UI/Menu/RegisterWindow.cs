@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
-using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Core;
@@ -23,9 +20,6 @@ namespace Intersect_Client.Classes.UI.Menu
 
         //Parent
         private MainMenu _mainMenu;
-        private Label _registrationHeader;
-        //Controls
-        private ImagePanel _registrationPanel;
 
         private ImagePanel _passwordBackground;
 
@@ -35,6 +29,11 @@ namespace Intersect_Client.Classes.UI.Menu
         private TextBoxPassword _passwordTextbox;
         private TextBoxPassword _passwordTextbox2;
         private Button _registerBtn;
+
+        private Label _registrationHeader;
+
+        //Controls
+        private ImagePanel _registrationPanel;
 
         private ImagePanel _usernameBackground;
         private Label _usernameLabel;
@@ -57,11 +56,11 @@ namespace Intersect_Client.Classes.UI.Menu
             _usernameBackground = new ImagePanel(_registrationPanel, "UsernamePanel");
 
             //Register Username Label
-            _usernameLabel = new Label(_usernameBackground,"UsernameLabel");
+            _usernameLabel = new Label(_usernameBackground, "UsernameLabel");
             _usernameLabel.SetText(Strings.Get("registration", "username"));
 
             //Register Username Textbox
-            _usernameTextbox = new TextBox(_usernameBackground,"UsernameField");
+            _usernameTextbox = new TextBox(_usernameBackground, "UsernameField");
             _usernameTextbox.SubmitPressed += UsernameTextbox_SubmitPressed;
 
             //Register Email Background
@@ -79,31 +78,31 @@ namespace Intersect_Client.Classes.UI.Menu
             _passwordBackground = new ImagePanel(_registrationPanel, "Password1Panel");
 
             //Register Password Label
-            _passwordLabel = new Label(_passwordBackground,"Password1Label");
+            _passwordLabel = new Label(_passwordBackground, "Password1Label");
             _passwordLabel.SetText(Strings.Get("registration", "password"));
 
             //Register Password Textbox
-            _passwordTextbox = new TextBoxPassword(_passwordBackground,"Password1Field");
+            _passwordTextbox = new TextBoxPassword(_passwordBackground, "Password1Field");
             _passwordTextbox.SubmitPressed += PasswordTextbox_SubmitPressed;
 
             //Register Password Background
             _passwordBackground2 = new ImagePanel(_registrationPanel, "Password2Panel");
 
             //Register Password Label2
-            _passwordLabel2 = new Label(_passwordBackground2,"Password2Label");
+            _passwordLabel2 = new Label(_passwordBackground2, "Password2Label");
             _passwordLabel2.SetText(Strings.Get("registration", "confirmpass"));
 
             //Register Password Textbox2
-            _passwordTextbox2 = new TextBoxPassword(_passwordBackground2,"Password2Field");
+            _passwordTextbox2 = new TextBoxPassword(_passwordBackground2, "Password2Field");
             _passwordTextbox2.SubmitPressed += PasswordTextbox2_SubmitPressed;
 
             //Register - Send Registration Button
-            _registerBtn = new Button(_registrationPanel,"RegisterButton");
+            _registerBtn = new Button(_registrationPanel, "RegisterButton");
             _registerBtn.SetText(Strings.Get("registration", "register"));
             _registerBtn.Clicked += RegisterBtn_Clicked;
 
             //Register - Back Button
-            _backBtn = new Button(_registrationPanel,"BackButton");
+            _backBtn = new Button(_registrationPanel, "BackButton");
             _backBtn.SetText(Strings.Get("registration", "back"));
             _backBtn.Clicked += BackBtn_Clicked;
         }
@@ -147,22 +146,26 @@ namespace Intersect_Client.Classes.UI.Menu
                             }
                             else
                             {
-                                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("",Strings.Get("registration", "emailinvalid")));
+                                Gui.MsgboxErrors.Add(
+                                    new KeyValuePair<string, string>("", Strings.Get("registration", "emailinvalid")));
                             }
                         }
                         else
                         {
-                            Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("errors", "passwordinvalid")));
+                            Gui.MsgboxErrors.Add(
+                                new KeyValuePair<string, string>("", Strings.Get("errors", "passwordinvalid")));
                         }
                     }
                     else
                     {
-                        Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("registration", "passwordmatch")));
+                        Gui.MsgboxErrors.Add(
+                            new KeyValuePair<string, string>("", Strings.Get("registration", "passwordmatch")));
                     }
                 }
                 else
                 {
-                    Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("errors", "usernameinvalid")));
+                    Gui.MsgboxErrors.Add(
+                        new KeyValuePair<string, string>("", Strings.Get("errors", "usernameinvalid")));
                 }
             }
             else

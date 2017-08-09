@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Intersect.Network;
-using IntersectClientExtras.Network;
-using Intersect_Client.Classes.Networking;
-using Intersect.Logging;
-using Intersect_Client.Classes.General;
+using System.Diagnostics;
 using System.Reflection;
+using Intersect.Logging;
+using Intersect.Network;
 using Intersect.Network.Crypto;
 using Intersect.Network.Crypto.Formats;
-using System.Diagnostics;
 using Intersect.Network.Packets.Reflectable;
-using Lidgren.Network;
+using IntersectClientExtras.Network;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Networking;
 
 namespace Intersect.Client.Classes.MonoGame.Network
 {
@@ -30,7 +25,8 @@ namespace Intersect.Client.Classes.MonoGame.Network
             if (ClientLidgrenNetwork == null)
             {
                 Log.Global.AddOutput(new ConsoleOutput());
-                var config = new NetworkConfiguration(Globals.Database.ServerHost, (ushort)Globals.Database.ServerPort);
+                var config = new NetworkConfiguration(Globals.Database.ServerHost,
+                    (ushort) Globals.Database.ServerPort);
                 var assembly = Assembly.GetExecutingAssembly();
                 using (var stream = assembly.GetManifestResourceStream("Intersect.Client.public-intersect.bek"))
                 {
@@ -48,7 +44,6 @@ namespace Intersect.Client.Classes.MonoGame.Network
                     }
                 }
             }
-
         }
 
         public override void SendData(byte[] data)
@@ -57,7 +52,7 @@ namespace Intersect.Client.Classes.MonoGame.Network
             {
                 var buffer = new ByteBuffer();
                 buffer.WriteBytes(data);
-                if (!ClientLidgrenNetwork.Send(new BinaryPacket(null) { Buffer = buffer }))
+                if (!ClientLidgrenNetwork.Send(new BinaryPacket(null) {Buffer = buffer}))
                 {
                     throw new Exception("Beta 4 network send failed.");
                 }
@@ -66,7 +61,6 @@ namespace Intersect.Client.Classes.MonoGame.Network
 
         public override void Update()
         {
-            
         }
 
         public override void Disconnect(string reason)

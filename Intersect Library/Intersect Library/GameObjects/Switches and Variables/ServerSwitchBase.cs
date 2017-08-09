@@ -12,6 +12,8 @@ namespace Intersect.GameObjects
             Name = "New Global Switch";
         }
 
+        public override byte[] BinaryData => Data();
+
         public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
@@ -28,7 +30,5 @@ namespace Intersect.GameObjects
             myBuffer.WriteInteger(Convert.ToInt32(Value));
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => Data();
     }
 }

@@ -7,16 +7,15 @@ namespace Intersect.Network
 {
     public class LidgrenBuffer : IBuffer
     {
-        public NetBuffer Buffer { get; }
-
         public LidgrenBuffer(NetBuffer buffer)
         {
             Buffer = buffer;
         }
 
+        public NetBuffer Buffer { get; }
+
         public void Dispose()
         {
-            
         }
 
         public long Length

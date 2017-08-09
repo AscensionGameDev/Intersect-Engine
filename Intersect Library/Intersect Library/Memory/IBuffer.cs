@@ -33,7 +33,7 @@ namespace Intersect.Memory
         bool Read(out uint value);
         bool Read(out ulong value);
         bool Read(out ushort value);
-        
+
         #endregion
 
         #region ReadX()
@@ -73,7 +73,7 @@ namespace Intersect.Memory
         #endregion
 
         #region Write()
-        
+
         void Write(bool value);
         void Write(byte value);
         void Write(byte[] value);

@@ -25,6 +25,5 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
     public interface IIndexLookup : IIndexLookup<IIndexedGameObject>
     {
-
     }
 }

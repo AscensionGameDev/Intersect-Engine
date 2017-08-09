@@ -9,7 +9,7 @@
         HandshakeRequested = 2,
 
         HandshakeReceived = 4,
-        
+
         HandshakeCompleted = 8,
 
         Connected = 16

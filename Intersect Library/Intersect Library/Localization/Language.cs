@@ -23,6 +23,8 @@ namespace Intersect.Localization
             }
         }
 
+        public bool IsLoaded { get; private set; }
+
         private void LoadLanguage(string xmlData)
         {
             XmlDocument xmlDoc = new XmlDocument(); // Create an XML document object
@@ -64,11 +66,10 @@ namespace Intersect.Localization
             IsLoaded = true;
         }
 
-        public bool IsLoaded { get; private set; }
-
         public bool HasString(string section, string id)
         {
-            return loadedStrings.ContainsKey(section.ToLower()) && loadedStrings[section.ToLower()].ContainsKey(id.ToLower());
+            return loadedStrings.ContainsKey(section.ToLower()) &&
+                   loadedStrings[section.ToLower()].ContainsKey(id.ToLower());
         }
 
         public string GetString(string section, string id, params object[] args)

@@ -1,8 +1,7 @@
-﻿using Intersect.Logging;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Intersect.Network.Packets.Reflectable;
+using Intersect.Logging;
 
 namespace Intersect.Network
 {
@@ -19,23 +18,6 @@ namespace Intersect.Network
             FactoryInstanceLock = new object();
         }
 
-        public static ReflectablePacketFactory Instance
-        {
-            get
-            {
-                Debug.Assert(FactoryInstanceLock != null, "sFactoryInstanceLock != null");
-                lock (FactoryInstanceLock)
-                {
-                    if (sFactoryInstance == null)
-                    {
-                        sFactoryInstance = new ReflectablePacketFactory();
-                    }
-
-                    return sFactoryInstance;
-                }
-            }
-        }
-
         private ReflectablePacketFactory()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -50,6 +32,23 @@ namespace Intersect.Network
                     if (packetType == null) continue;
                     if (AddPacketTypes(packetType)) continue;
                     Log.Debug($"Error trying to add packet type {packetType} to the ReflectablePacketFactory.");
+                }
+            }
+        }
+
+        public static ReflectablePacketFactory Instance
+        {
+            get
+            {
+                Debug.Assert(FactoryInstanceLock != null, "sFactoryInstanceLock != null");
+                lock (FactoryInstanceLock)
+                {
+                    if (sFactoryInstance == null)
+                    {
+                        sFactoryInstance = new ReflectablePacketFactory();
+                    }
+
+                    return sFactoryInstance;
                 }
             }
         }
@@ -78,7 +77,8 @@ namespace Intersect.Network
             return Create<TPacketType>(packetCode, connection, null);
         }
 
-        public override TPacketType Create<TPacketType>(PacketCode packetCode, IConnection connection, params object[] args)
+        public override TPacketType Create<TPacketType>(PacketCode packetCode, IConnection connection,
+            params object[] args)
         {
             return Create(packetCode, connection, args) as TPacketType;
         }

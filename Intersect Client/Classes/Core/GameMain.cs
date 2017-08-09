@@ -290,7 +290,8 @@ namespace Intersect_Client.Classes.Core
             //Remove Event Holds If Invalid
             for (int i = 0; i < Globals.EventHolds.Count; i++)
             {
-                if (Globals.EventHolds[i].MapNum != -1 && MapInstance.Lookup.Get<MapInstance>(Globals.EventHolds[i].MapNum) == null)
+                if (Globals.EventHolds[i].MapNum != -1 &&
+                    MapInstance.Lookup.Get<MapInstance>(Globals.EventHolds[i].MapNum) == null)
                 {
                     Globals.EventHolds.RemoveAt(i);
                 }

@@ -24,20 +24,19 @@ namespace Intersect_Client.Classes.UI.Game
             else
                 title = titleOverride;
 
-            _descWindow = new ImagePanel(Gui.GameUI.GameCanvas,"ItemDescWindow");
-
+            _descWindow = new ImagePanel(Gui.GameUI.GameCanvas, "ItemDescWindow");
 
             var item = ItemBase.Lookup.Get<ItemBase>(itemnum);
             if (item != null)
             {
-                ImagePanel icon = new ImagePanel(_descWindow,"ItemIcon");
-                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,item.Pic);
+                ImagePanel icon = new ImagePanel(_descWindow, "ItemIcon");
+                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
                 if (itemTex != null)
                 {
                     icon.Texture = itemTex;
                 }
 
-                Label itemName = new Label(_descWindow,"ItemNameLabel");
+                Label itemName = new Label(_descWindow, "ItemNameLabel");
                 itemName.Text = title;
 
                 if (amount > 1)
@@ -47,8 +46,8 @@ namespace Intersect_Client.Classes.UI.Game
 
                 itemName.AddAlignment(Alignments.CenterH);
 
-                Label itemType = new Label(_descWindow,"ItemTypeLabel");
-                Label itemValue = new Label(_descWindow,"ItemValueLabel");
+                Label itemType = new Label(_descWindow, "ItemTypeLabel");
+                Label itemValue = new Label(_descWindow, "ItemValueLabel");
                 itemType.Text = Strings.Get("itemdesc", "itemtype" + item.ItemType);
                 itemValue.SetText(valueLabel);
 
@@ -60,8 +59,9 @@ namespace Intersect_Client.Classes.UI.Game
                         itemType.Text += " - " + Strings.Get("itemdesc", "2hand");
                     }
                 }
-                RichLabel itemDesc = new RichLabel(_descWindow,"ItemDescription");
-                Gui.LoadRootUIData(_descWindow, "InGame.xml"); //Load this up now so we know what color to make the text when filling out the desc
+                RichLabel itemDesc = new RichLabel(_descWindow, "ItemDescription");
+                Gui.LoadRootUIData(_descWindow,
+                    "InGame.xml"); //Load this up now so we know what color to make the text when filling out the desc
                 if (item.Desc.Length > 0)
                 {
                     itemDesc.AddText(Strings.Get("itemdesc", "desc", item.Desc), itemDesc.RenderColor);
@@ -93,7 +93,9 @@ namespace Intersect_Client.Classes.UI.Game
                 }
                 if (item.ItemType == (int) ItemTypes.Equipment && item.Data2 > 0 && item.Data3 > 0)
                 {
-                    itemDesc.AddText(Strings.Get("itemdesc", "effect", item.Data3,Strings.Get("itemdesc", "effect" + (item.Data2 - 1))),itemDesc.RenderColor);
+                    itemDesc.AddText(
+                        Strings.Get("itemdesc", "effect", item.Data3,
+                            Strings.Get("itemdesc", "effect" + (item.Data2 - 1))), itemDesc.RenderColor);
                 }
                 //Load Again for positioning purposes.
                 Gui.LoadRootUIData(_descWindow, "InGame.xml");

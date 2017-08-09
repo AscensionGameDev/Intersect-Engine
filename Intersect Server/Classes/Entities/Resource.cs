@@ -11,6 +11,7 @@ namespace Intersect.Server.Classes.Entities
     public class Resource : Entity
     {
         public bool IsDead;
+
         // Resource Number
         public ResourceBase MyBase;
 

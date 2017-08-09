@@ -22,6 +22,7 @@ namespace Intersect.Migration
 
         //Database Variables
         private const string INFO_TABLE = "info";
+
         private const string DB_VERSION = "dbversion";
         private static SqliteConnection _dbConnection;
         private static object _dbLock = new object();

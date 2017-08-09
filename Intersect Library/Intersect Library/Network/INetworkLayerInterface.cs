@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Intersect.Memory;
 
 namespace Intersect.Network
 {
     public delegate void HandlePacketAvailable(INetworkLayerInterface sender);
+
     public delegate void HandleConnectionEvent(INetworkLayerInterface sender, IConnection connection);
 
     public interface INetworkLayerInterface
@@ -18,8 +18,11 @@ namespace Intersect.Network
 
         void ReleaseInboundBuffer(IBuffer buffer);
 
-        bool SendPacket(IPacket packet, IConnection connection = null, TransmissionMode transmissionMode = TransmissionMode.All);
-        bool SendPacket(IPacket packet, ICollection<IConnection> connections, TransmissionMode transmissionMode = TransmissionMode.All);
+        bool SendPacket(IPacket packet, IConnection connection = null,
+            TransmissionMode transmissionMode = TransmissionMode.All);
+
+        bool SendPacket(IPacket packet, ICollection<IConnection> connections,
+            TransmissionMode transmissionMode = TransmissionMode.All);
 
         void Start();
         void Stop(string reason = "stopping");

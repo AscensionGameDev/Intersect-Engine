@@ -57,6 +57,7 @@
         ShowText,
         ShowOptions,
         AddChatboxText,
+
         //Logic Flow
         SetSwitch,
         SetVariable,
@@ -66,6 +67,7 @@
         Label,
         GoToLabel,
         StartCommonEvent,
+
         //Player Control
         RestoreHp,
         RestoreMp,
@@ -78,6 +80,7 @@
         ChangeFace,
         ChangeGender,
         SetAccess,
+
         //Movement,
         WarpPlayer,
         SetMoveRoute,
@@ -85,17 +88,21 @@
         HoldPlayer,
         ReleasePlayer,
         SpawnNpc,
+
         //Special Effects
         PlayAnimation,
         PlayBgm,
         FadeoutBgm,
         PlaySound,
         StopSounds,
+
         //Etc
         Wait,
+
         //Shop and Bank
         OpenBank,
         OpenShop,
+
         //Extras
         SetClass,
     }

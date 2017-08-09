@@ -1,33 +1,31 @@
 ﻿using System;
+using System.Collections.Generic;
+using Intersect.Client.Classes.Core;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using IntersectClientExtras.Gwen.ControlInternal;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.UI.Menu;
-using Intersect.Client.Classes.Core;
-using System.Collections.Generic;
 
 namespace Intersect_Client.Classes.UI
 {
     public class OptionsWindow
     {
-        //Parent Windows
-        private bool _gameWindow = false;
-        private MainMenu _mainMenu;
-
-        //Panels
-        private ScrollControl _optionsContainer;
-        private ScrollControl _controlsContainer;
-
-        //Window
-        private Label _optionsHeader;
         private Button _applyBtn;
         private Button _backBtn;
+        private ScrollControl _controlsContainer;
+
+        //Keybindings
+        private Button _editKeybindingsBtn;
+
+        private Button _edittingButton;
+        private Controls _edittingControl;
+        private GameControls _edittingControls;
+        private int _edittingKey = -1;
+        private Button _exitKeybindingsButton;
 
         private ImagePanel _fpsBackground;
         private Label _fpsLabel;
@@ -35,10 +33,24 @@ namespace Intersect_Client.Classes.UI
 
         private LabeledCheckBox _fullscreen;
 
-        //Controls
-        private ImagePanel _optionsPanel;
+        //Parent Windows
+        private bool _gameWindow = false;
+
+        private Dictionary<Controls, Button[]> _keyButtons = new Dictionary<Controls, Button[]>();
+        private long _listeningTimer;
+        private MainMenu _mainMenu;
         private Label _musicLabel;
         private HorizontalSlider _musicSlider;
+
+        //Panels
+        private ScrollControl _optionsContainer;
+
+        //Window
+        private Label _optionsHeader;
+
+        //Controls
+        private ImagePanel _optionsPanel;
+
         private int _previousMusicVolume;
 
         private int _previousSoundVolume;
@@ -48,16 +60,6 @@ namespace Intersect_Client.Classes.UI
         private ComboBox _resolutionList;
         private Label _soundLabel;
         private HorizontalSlider _soundSlider;
-
-        //Keybindings
-        private Button _editKeybindingsBtn;
-        private Button _exitKeybindingsButton;
-        private int _edittingKey = -1;
-        private Controls _edittingControl;
-        private Button _edittingButton;
-        private GameControls _edittingControls;
-        private Dictionary<Controls, Button[]> _keyButtons = new Dictionary<Controls, Button[]>();
-        private long _listeningTimer;
 
         //Init
         public OptionsWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
@@ -75,7 +77,7 @@ namespace Intersect_Client.Classes.UI
             _optionsHeader.SetText(Strings.Get("options", "title"));
 
             //Options Get Stored in the Options Scroll Control
-            _optionsContainer = new ScrollControl(_optionsPanel,"OptionsContainer");
+            _optionsContainer = new ScrollControl(_optionsPanel, "OptionsContainer");
             _optionsContainer.EnableScroll(false, false);
             _optionsContainer.Show();
 
@@ -98,11 +100,11 @@ namespace Intersect_Client.Classes.UI
             _fpsBackground = new ImagePanel(_optionsContainer, "FPSPanel");
 
             //Options - FPS Label
-            _fpsLabel = new Label(_fpsBackground,"FPSLabel");
+            _fpsLabel = new Label(_fpsBackground, "FPSLabel");
             _fpsLabel.SetText(Strings.Get("options", "targetfps"));
 
             //Options - FPS List
-            _fpsList = new ComboBox(_fpsBackground,"FPSCombobox");
+            _fpsList = new ComboBox(_fpsBackground, "FPSCombobox");
             _fpsList.AddItem(Strings.Get("options", "vsync"));
             _fpsList.AddItem(Strings.Get("options", "30fps"));
             _fpsList.AddItem(Strings.Get("options", "60fps"));
@@ -111,57 +113,64 @@ namespace Intersect_Client.Classes.UI
             _fpsList.AddItem(Strings.Get("options", "unlimitedfps"));
 
             //Options - Fullscreen Checkbox
-            _fullscreen = new LabeledCheckBox(_optionsContainer,"FullscreenCheckbox") { Text = Strings.Get("options", "fullscreen") };
+            _fullscreen =
+                new LabeledCheckBox(_optionsContainer, "FullscreenCheckbox")
+                {
+                    Text = Strings.Get("options", "fullscreen")
+                };
 
-            _editKeybindingsBtn = new Button(_optionsContainer,"KeybindingsButton") { Text = Strings.Get("controls", "edit") };
+            _editKeybindingsBtn =
+                new Button(_optionsContainer, "KeybindingsButton") {Text = Strings.Get("controls", "edit")};
             _editKeybindingsBtn.Clicked += _editKeybindingsBtn_Clicked;
 
             //Options - Sound Label
-            _soundLabel = new Label(_optionsContainer,"SoundLabel");
+            _soundLabel = new Label(_optionsContainer, "SoundLabel");
             _soundLabel.SetText(Strings.Get("options", "soundvolume", 100));
 
             //Options - Sound Slider
-            _soundSlider = new HorizontalSlider(_optionsContainer,"SoundSlider");
+            _soundSlider = new HorizontalSlider(_optionsContainer, "SoundSlider");
             _soundSlider.Min = 0;
             _soundSlider.Max = 100;
             _soundSlider.ValueChanged += _soundSlider_ValueChanged;
 
             //Options - Music Label
-            _musicLabel = new Label(_optionsContainer,"MusicLabel");
+            _musicLabel = new Label(_optionsContainer, "MusicLabel");
             _musicLabel.SetText(Strings.Get("options", "musicvolume", 100));
 
             //Options - Music Slider
-            _musicSlider = new HorizontalSlider(_optionsContainer,"MusicSlider");
+            _musicSlider = new HorizontalSlider(_optionsContainer, "MusicSlider");
             _musicSlider.Min = 0;
             _musicSlider.Max = 100;
             _musicSlider.ValueChanged += _musicSlider_ValueChanged;
 
             //Controls Get Stored in the Controls Scroll Control
-            _controlsContainer = new ScrollControl(_optionsPanel,"ControlsContainer");
+            _controlsContainer = new ScrollControl(_optionsPanel, "ControlsContainer");
             _controlsContainer.EnableScroll(false, true);
             _controlsContainer.Hide();
 
             _exitKeybindingsButton = new Button(_optionsPanel, "ExitControlsButton");
             _exitKeybindingsButton.Hide();
             _exitKeybindingsButton.Clicked += _editKeybindingsBtn_Clicked;
-            
+
             foreach (Controls control in Enum.GetValues(typeof(Controls)))
             {
-                var label = new Label(_controlsContainer, "Control" + Enum.GetName(typeof(Controls), control) + "Label");
+                var label = new Label(_controlsContainer,
+                    "Control" + Enum.GetName(typeof(Controls), control) + "Label");
                 label.Text = Strings.Get("controls", Enum.GetName(typeof(Controls), control).ToLower());
 
-                var key1 = new Button(_controlsContainer, "Control" + Enum.GetName(typeof(Controls), control) + "Button1");
+                var key1 = new Button(_controlsContainer,
+                    "Control" + Enum.GetName(typeof(Controls), control) + "Button1");
                 key1.Text = "";
                 key1.UserData = control;
                 key1.Clicked += Key1_Clicked;
 
-
-                var key2 = new Button(_controlsContainer, "Control" + Enum.GetName(typeof(Controls), control) + "Button2");
+                var key2 = new Button(_controlsContainer,
+                    "Control" + Enum.GetName(typeof(Controls), control) + "Button2");
                 key2.Text = "";
                 key2.UserData = control;
                 key2.Clicked += Key2_Clicked;
 
-                _keyButtons.Add(control, new Button[2] { key1, key2 });
+                _keyButtons.Add(control, new Button[2] {key1, key2});
             }
 
             //Options - Apply Button
@@ -180,12 +189,12 @@ namespace Intersect_Client.Classes.UI
 
         private void Key2_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            EditKeyPressed((Button)sender, 2);
+            EditKeyPressed((Button) sender, 2);
         }
 
         private void Key1_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            EditKeyPressed((Button)sender, 1);
+            EditKeyPressed((Button) sender, 1);
         }
 
         private void EditKeyPressed(Button sender, int keyNum)
@@ -194,7 +203,7 @@ namespace Intersect_Client.Classes.UI
             {
                 sender.Text = Strings.Get("controls", "listening");
                 _edittingKey = keyNum;
-                _edittingControl = (Controls)sender.UserData;
+                _edittingControl = (Controls) sender.UserData;
                 _edittingButton = sender;
                 Gui.GwenInput.HandleInput = false;
                 _listeningTimer = Globals.System.GetTimeMS() + 5000;
@@ -219,8 +228,10 @@ namespace Intersect_Client.Classes.UI
                 _exitKeybindingsButton.Show();
                 foreach (Controls control in Enum.GetValues(typeof(Controls)))
                 {
-                    _keyButtons[control][0].Text = Strings.Get("keys", Enum.GetName(typeof(Keys), _edittingControls.ControlMapping[control].key1));
-                    _keyButtons[control][1].Text = Strings.Get("keys", Enum.GetName(typeof(Keys), _edittingControls.ControlMapping[control].key2));
+                    _keyButtons[control][0].Text = Strings.Get("keys",
+                        Enum.GetName(typeof(Keys), _edittingControls.ControlMapping[control].key1));
+                    _keyButtons[control][1].Text = Strings.Get("keys",
+                        Enum.GetName(typeof(Keys), _edittingControls.ControlMapping[control].key2));
                 }
             }
         }
@@ -233,11 +244,13 @@ namespace Intersect_Client.Classes.UI
                 _edittingControls.UpdateControl(_edittingControl, _edittingKey, key);
                 if (_edittingKey == 1)
                 {
-                    _edittingButton.Text = Strings.Get("keys", Enum.GetName(typeof(Keys), _edittingControls.ControlMapping[_edittingControl].key1));
+                    _edittingButton.Text = Strings.Get("keys",
+                        Enum.GetName(typeof(Keys), _edittingControls.ControlMapping[_edittingControl].key1));
                 }
                 else
                 {
-                    _edittingButton.Text = Strings.Get("keys", Enum.GetName(typeof(Keys), _edittingControls.ControlMapping[_edittingControl].key2));
+                    _edittingButton.Text = Strings.Get("keys",
+                        Enum.GetName(typeof(Keys), _edittingControls.ControlMapping[_edittingControl].key2));
                 }
                 _edittingButton = null;
                 Gui.GwenInput.HandleInput = true;
@@ -294,8 +307,8 @@ namespace Intersect_Client.Classes.UI
             _fullscreen.IsChecked = Globals.Database.FullScreen;
             _musicSlider.Value = Globals.Database.MusicVolume;
             _soundSlider.Value = Globals.Database.SoundVolume;
-            _musicLabel.Text = Strings.Get("options", "musicvolume", (int)_musicSlider.Value);
-            _soundLabel.Text = Strings.Get("options", "soundvolume", (int)_soundSlider.Value);
+            _musicLabel.Text = Strings.Get("options", "musicvolume", (int) _musicSlider.Value);
+            _soundLabel.Text = Strings.Get("options", "soundvolume", (int) _soundSlider.Value);
             _optionsPanel.IsHidden = false;
         }
 
@@ -332,15 +345,15 @@ namespace Intersect_Client.Classes.UI
 
         void _musicSlider_ValueChanged(Base sender, EventArgs arguments)
         {
-            _musicLabel.Text = Strings.Get("options", "musicvolume", (int)_musicSlider.Value);
-            Globals.Database.MusicVolume = (int)_musicSlider.Value;
+            _musicLabel.Text = Strings.Get("options", "musicvolume", (int) _musicSlider.Value);
+            Globals.Database.MusicVolume = (int) _musicSlider.Value;
             GameAudio.UpdateGlobalVolume();
         }
 
         void _soundSlider_ValueChanged(Base sender, EventArgs arguments)
         {
-            _soundLabel.Text = Strings.Get("options", "soundvolume", (int)_soundSlider.Value);
-            Globals.Database.SoundVolume = (int)_soundSlider.Value;
+            _soundLabel.Text = Strings.Get("options", "soundvolume", (int) _soundSlider.Value);
+            Globals.Database.SoundVolume = (int) _soundSlider.Value;
             GameAudio.UpdateGlobalVolume();
         }
 
@@ -389,8 +402,8 @@ namespace Intersect_Client.Classes.UI
                 shouldReset = true;
                 Globals.Database.TargetFps = newFps;
             }
-            Globals.Database.MusicVolume = (int)_musicSlider.Value;
-            Globals.Database.SoundVolume = (int)_soundSlider.Value;
+            Globals.Database.MusicVolume = (int) _musicSlider.Value;
+            Globals.Database.SoundVolume = (int) _soundSlider.Value;
             GameControls.ActiveControls = _edittingControls;
             GameControls.ActiveControls.Save();
             GameAudio.UpdateGlobalVolume();

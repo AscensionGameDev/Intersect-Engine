@@ -10,6 +10,7 @@ namespace Intersect
 
         // To detect redundant calls
         private bool _disposedValue;
+
         private byte[] _readBytes;
         private bool _wasUpdated;
         public int Readpos;

@@ -22,8 +22,18 @@ namespace Intersect.Editor.Classes
         public delegate void GameObjectUpdated(GameObjectType type);
 
         public delegate void MapUpdated();
+
         public static GameObjectUpdated GameObjectUpdatedDelegate;
         public static MapUpdated MapUpdatedDelegate;
+
+        private static List<ShitMeasurement> measurements = new List<ShitMeasurement>();
+
+        private static int shitstaken;
+        private static long timespentshitting;
+        private static long totalshitsize;
+        private static Stopwatch ShitTimer = new Stopwatch();
+
+        private static TextWriter writer;
 
         public static bool HandlePacket(IPacket packet)
         {
@@ -99,30 +109,13 @@ namespace Intersect.Editor.Classes
             }
         }
 
-        private struct ShitMeasurement
-        {
-            public int taken;
-            public long totalsize;
-            public long elapsed;
-
-            public double ShitRate => taken / (elapsed / (double)TimeSpan.TicksPerSecond);
-            public double DataRate => totalsize / (elapsed / (double)TimeSpan.TicksPerSecond);
-        }
-
-        private static List<ShitMeasurement> measurements = new List<ShitMeasurement>();
-
-        private static int shitstaken;
-        private static long timespentshitting;
-        private static long totalshitsize;
-        private static Stopwatch ShitTimer = new Stopwatch();
-
-        private static TextWriter writer;
-
         private static void HandleShit(byte[] packet)
         {
             if (writer == null)
             {
-                writer = new StreamWriter(new FileStream($"shits{DateTime.Now:yyyy-MM-dd_HH-mm-ss-fff}.csv", FileMode.Create, FileAccess.Write), Encoding.UTF8);
+                writer = new StreamWriter(
+                    new FileStream($"shits{DateTime.Now:yyyy-MM-dd_HH-mm-ss-fff}.csv", FileMode.Create,
+                        FileAccess.Write), Encoding.UTF8);
             }
 
             using (var bf = new ByteBuffer())
@@ -156,7 +149,12 @@ namespace Intersect.Editor.Classes
                             //Console.WriteLine($"Timer done. {ShitTimer.ElapsedMilliseconds}ms elapsed.");
                             timespentshitting += ShitTimer.ElapsedTicks;
                             shitstaken++;
-                            measurements.Add(new ShitMeasurement { elapsed = ShitTimer.ElapsedTicks, taken = 1, totalsize = 0 });
+                            measurements.Add(new ShitMeasurement
+                            {
+                                elapsed = ShitTimer.ElapsedTicks,
+                                taken = 1,
+                                totalsize = 0
+                            });
                         }
                     }
                 }
@@ -168,7 +166,8 @@ namespace Intersect.Editor.Classes
                             foreach (var m in measurements)
                             {
                                 if (m.taken < 2) continue;
-                                Console.WriteLine($"Shits: {m.taken}, Shitrate: {m.ShitRate}s/s, Datarate: {m.DataRate / 1048576}MiB/s");
+                                Console.WriteLine(
+                                    $"Shits: {m.taken}, Shitrate: {m.ShitRate}s/s, Datarate: {m.DataRate / 1048576}MiB/s");
                             }
                             break;
                         case -3:
@@ -192,7 +191,12 @@ namespace Intersect.Editor.Classes
                                 //Console.WriteLine($"It took me a total of {timespentshitting / diff}s to shit.");
                                 //Console.WriteLine($"Each shit took {timespentshitting / (diff * shitstaken)}s per shit.");
                                 //Console.WriteLine($"I shit at approximately {(totalshitsize / (timespentshitting / diff)) / 1024}KiB/s.");
-                                measurements.Add(new ShitMeasurement { elapsed = timespentshitting, taken = shitstaken, totalsize = totalshitsize });
+                                measurements.Add(new ShitMeasurement
+                                {
+                                    elapsed = timespentshitting,
+                                    taken = shitstaken,
+                                    totalsize = totalshitsize
+                                });
                                 if (shitstaken > 0)
                                 {
                                     writer.WriteLine($"{timespentshitting},{shitstaken},{totalshitsize}");
@@ -665,6 +669,16 @@ namespace Intersect.Editor.Classes
             TimeBase.GetTimeBase().LoadTimeBase(packet);
             Globals.MainForm.BeginInvoke(Globals.MainForm.TimeDelegate);
             bf.Dispose();
+        }
+
+        private struct ShitMeasurement
+        {
+            public int taken;
+            public long totalsize;
+            public long elapsed;
+
+            public double ShitRate => taken / (elapsed / (double) TimeSpan.TicksPerSecond);
+            public double DataRate => totalsize / (elapsed / (double) TimeSpan.TicksPerSecond);
         }
     }
 }

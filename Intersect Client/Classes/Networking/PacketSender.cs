@@ -61,7 +61,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.LocalMessage);
             bf.WriteString(msg);
-			bf.WriteInteger(channel);
+            bf.WriteInteger(channel);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -474,14 +474,14 @@ namespace Intersect_Client.Classes.Networking
         public static void RequestFriends()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.RequestFriends);
+            bf.WriteLong((int) ClientPackets.RequestFriends);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void AddFriend(string name)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.AddFriend);
+            bf.WriteLong((int) ClientPackets.AddFriend);
             bf.WriteString(name);
             GameNetwork.SendPacket(bf.ToArray());
         }
@@ -489,7 +489,7 @@ namespace Intersect_Client.Classes.Networking
         public static void RemoveFriend(string name)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.RemoveFriend);
+            bf.WriteLong((int) ClientPackets.RemoveFriend);
             bf.WriteString(name);
             GameNetwork.SendPacket(bf.ToArray());
         }
@@ -497,40 +497,40 @@ namespace Intersect_Client.Classes.Networking
         public static void SendFriendRequestAccept(Object sender, EventArgs e)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.FriendRequestAccept);
-            bf.WriteInteger((int)((InputBox)sender).UserData);
+            bf.WriteLong((int) ClientPackets.FriendRequestAccept);
+            bf.WriteInteger((int) ((InputBox) sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendFriendRequestDecline(Object sender, EventArgs e)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.FriendRequestDecline);
-            bf.WriteInteger((int)((InputBox)sender).UserData);
+            bf.WriteLong((int) ClientPackets.FriendRequestDecline);
+            bf.WriteInteger((int) ((InputBox) sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-		public static void PlayGame(int charSlot)
-		{
-			var bf = new ByteBuffer();
-			bf.WriteLong((int)ClientPackets.PlayGame);
-			bf.WriteInteger(charSlot);
-			GameNetwork.SendPacket(bf.ToArray());
-		}
+        public static void PlayGame(int charSlot)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int) ClientPackets.PlayGame);
+            bf.WriteInteger(charSlot);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
 
-		public static void DeleteChar(int charSlot)
-		{
-			var bf = new ByteBuffer();
-			bf.WriteLong((int)ClientPackets.DeleteChar);
-			bf.WriteInteger(charSlot);
-			GameNetwork.SendPacket(bf.ToArray());
-		}
+        public static void DeleteChar(int charSlot)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int) ClientPackets.DeleteChar);
+            bf.WriteInteger(charSlot);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
 
-		public static void CreateNewCharacter()
-		{
-			var bf = new ByteBuffer();
-			bf.WriteLong((int)ClientPackets.CreateNewChar);
-			GameNetwork.SendPacket(bf.ToArray());
-		}
-	}
+        public static void CreateNewCharacter()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int) ClientPackets.CreateNewChar);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+    }
 }

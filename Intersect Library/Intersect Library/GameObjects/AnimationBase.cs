@@ -10,6 +10,7 @@ namespace Intersect.GameObjects
 
         //Lower Animation
         public string LowerAnimSprite = "";
+
         public int LowerAnimXFrames = 1;
         public int LowerAnimYFrames = 1;
         public LightBase[] LowerLights;
@@ -21,6 +22,7 @@ namespace Intersect.GameObjects
 
         //Upper Animation
         public string UpperAnimSprite = "";
+
         public int UpperAnimXFrames = 1;
         public int UpperAnimYFrames = 1;
         public LightBase[] UpperLights;
@@ -39,6 +41,8 @@ namespace Intersect.GameObjects
                 UpperLights[i] = new LightBase();
             }
         }
+
+        public override byte[] BinaryData => AnimData();
 
         public override void Load(byte[] packet)
         {
@@ -109,7 +113,5 @@ namespace Intersect.GameObjects
 
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => AnimData();
     }
 }

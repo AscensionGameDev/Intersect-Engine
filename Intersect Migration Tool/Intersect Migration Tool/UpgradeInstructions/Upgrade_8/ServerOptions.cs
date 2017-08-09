@@ -10,10 +10,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
     {
         //Config XML String
         public static string ConfigXml = "";
+
         private static bool ConfigFailed;
 
         //Misc
         public static int ItemDespawnTime = 15000; //15 seconds
+
         public static int ItemRespawnTime = 15000; //15 seconds
 
         //Combat
@@ -38,7 +40,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
 
                     //General Options
                     Intersect_Convert_Lib.Options.Language = GetXmlStr(options, "//Config/Language", false);
-                    if (Intersect_Convert_Lib.Options.Language == "") Intersect_Convert_Lib.Options.Language = "English";
+                    if (Intersect_Convert_Lib.Options.Language == "")
+                        Intersect_Convert_Lib.Options.Language = "English";
                     Intersect_Convert_Lib.Options.GameName = GetXmlStr(options, "//Config/GameName", false);
                     Intersect_Convert_Lib.Options.ServerPort = GetXmlInt(options, "//Config/ServerPort");
 
@@ -61,7 +64,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                     while (!string.IsNullOrEmpty(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false)))
                     {
                         if (
-                            Intersect_Convert_Lib.Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false)) >
+                            Intersect_Convert_Lib.Options.EquipmentSlots.IndexOf(GetXmlStr(options,
+                                "//Config/Equipment/Slot" + slot, false)) >
                             -1)
                         {
                             Console.WriteLine(
@@ -71,19 +75,22 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                         }
                         else
                         {
-                            Intersect_Convert_Lib.Options.EquipmentSlots.Add(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false));
+                            Intersect_Convert_Lib.Options.EquipmentSlots.Add(GetXmlStr(options,
+                                "//Config/Equipment/Slot" + slot, false));
                         }
                         slot++;
                     }
                     Intersect_Convert_Lib.Options.WeaponIndex = GetXmlInt(options, "//Config/Equipment/WeaponSlot");
-                    if (Intersect_Convert_Lib.Options.WeaponIndex < -1 || Intersect_Convert_Lib.Options.WeaponIndex > Intersect_Convert_Lib.Options.EquipmentSlots.Count - 1)
+                    if (Intersect_Convert_Lib.Options.WeaponIndex < -1 || Intersect_Convert_Lib.Options.WeaponIndex >
+                        Intersect_Convert_Lib.Options.EquipmentSlots.Count - 1)
                     {
                         Console.WriteLine(
                             "Weapon Slot is out of bounds! Make sure the slot exists and you are counting starting from zero! Use -1 if you do not wish to have equipable weapons in-game!  (Path: " +
                             "//Config/Equipment/WeaponSlot)");
                     }
                     Intersect_Convert_Lib.Options.ShieldIndex = GetXmlInt(options, "//Config/Equipment/ShieldSlot");
-                    if (Intersect_Convert_Lib.Options.ShieldIndex < -1 || Intersect_Convert_Lib.Options.ShieldIndex > Intersect_Convert_Lib.Options.EquipmentSlots.Count - 1)
+                    if (Intersect_Convert_Lib.Options.ShieldIndex < -1 || Intersect_Convert_Lib.Options.ShieldIndex >
+                        Intersect_Convert_Lib.Options.EquipmentSlots.Count - 1)
                     {
                         Console.WriteLine(
                             "Shield Slot is out of bounds! Make sure the slot exists and you are counting starting from zero! Use -1 if you do not wish to have equipable shields in-game!  (Path: " +
@@ -114,9 +121,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                         var path = "//Config/Paperdoll/" + dir + "/Slot" + slot;
                         while (!string.IsNullOrEmpty(GetXmlStr(options, path, false)))
                         {
-                            if (Intersect_Convert_Lib.Options.EquipmentSlots.IndexOf(GetXmlStr(options, path, false)) > -1)
+                            if (Intersect_Convert_Lib.Options.EquipmentSlots.IndexOf(GetXmlStr(options, path, false)) >
+                                -1)
                             {
-                                if (Intersect_Convert_Lib.Options.PaperdollOrder[i].IndexOf(GetXmlStr(options, path, false)) > -1)
+                                if (Intersect_Convert_Lib.Options.PaperdollOrder[i]
+                                        .IndexOf(GetXmlStr(options, path, false)) > -1)
                                 {
                                     Console.WriteLine(
                                         "Tried to add the same piece of equipment to the paperdoll render order twice, this is not permitted.  (Path: " +
@@ -125,7 +134,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                                 }
                                 else
                                 {
-                                    Intersect_Convert_Lib.Options.PaperdollOrder[i].Add(GetXmlStr(options, path, false));
+                                    Intersect_Convert_Lib.Options.PaperdollOrder[i]
+                                        .Add(GetXmlStr(options, path, false));
                                 }
                             }
                             else
@@ -144,7 +154,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                     slot = 0;
                     while (!string.IsNullOrEmpty(GetXmlStr(options, "//Config/ToolTypes/Slot" + slot, false)))
                     {
-                        if (Intersect_Convert_Lib.Options.ToolTypes.IndexOf(GetXmlStr(options, "//Config/ToolTypes/Slot" + slot, false)) > -1)
+                        if (Intersect_Convert_Lib.Options.ToolTypes.IndexOf(GetXmlStr(options,
+                                "//Config/ToolTypes/Slot" + slot, false)) > -1)
                         {
                             Console.WriteLine(
                                 "Tried to add the same type of tool twice, this is not permitted.  (Path: " +
@@ -153,7 +164,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                         }
                         else
                         {
-                            Intersect_Convert_Lib.Options.ToolTypes.Add(GetXmlStr(options, "//Config/ToolTypes/Slot" + slot, false));
+                            Intersect_Convert_Lib.Options.ToolTypes.Add(GetXmlStr(options,
+                                "//Config/ToolTypes/Slot" + slot, false));
                         }
                         slot++;
                     }
@@ -166,9 +178,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                     RegenTime = GetXmlInt(options, "//Config/Combat/RegenTime");
                     Intersect_Convert_Lib.Options.MinAttackRate = GetXmlInt(options, "//Config/Combat/MinAttackRate");
                     Intersect_Convert_Lib.Options.MaxAttackRate = GetXmlInt(options, "//Config/Combat/MaxAttackRate");
-                    Intersect_Convert_Lib.Options.BlockingSlow = GetXmlInt(options, "//Config/Combat/BlockingSlow") / 100;
+                    Intersect_Convert_Lib.Options.BlockingSlow =
+                        GetXmlInt(options, "//Config/Combat/BlockingSlow") / 100;
                     Intersect_Convert_Lib.Options.CritChance = GetXmlInt(options, "//Config/Combat/CritChance");
-                    Intersect_Convert_Lib.Options.BlockingSlow = GetXmlInt(options, "//Config/Combat/CritMultiplier") / 100;
+                    Intersect_Convert_Lib.Options.BlockingSlow =
+                        GetXmlInt(options, "//Config/Combat/CritMultiplier") / 100;
                     Intersect_Convert_Lib.Options.MaxDashSpeed = GetXmlInt(options, "//Config/Combat/MaxDashSpeed");
 
                     //Map
@@ -180,7 +194,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                     }
                     Intersect_Convert_Lib.Options.MapWidth = GetXmlInt(options, "//Config/Map/MapWidth");
                     Intersect_Convert_Lib.Options.MapHeight = GetXmlInt(options, "//Config/Map/MapHeight");
-                    if (Intersect_Convert_Lib.Options.MapWidth < 10 || Intersect_Convert_Lib.Options.MapWidth > 64 || Intersect_Convert_Lib.Options.MapHeight < 10 ||
+                    if (Intersect_Convert_Lib.Options.MapWidth < 10 || Intersect_Convert_Lib.Options.MapWidth > 64 ||
+                        Intersect_Convert_Lib.Options.MapHeight < 10 ||
                         Intersect_Convert_Lib.Options.MapHeight > 64)
                     {
                         Console.WriteLine(

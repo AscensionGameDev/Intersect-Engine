@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Intersect.Client.Classes.UI.Game.Shop;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using IntersectClientExtras.Gwen.ControlInternal;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI.Game;
@@ -29,10 +23,12 @@ namespace Intersect.Client.Classes.UI.Game.Shop
 
         //Drag/Drop References
         private ShopWindow _shopWindow;
+
         public ImagePanel container;
 
         //Mouse Event Variables
         private bool MouseOver;
+
         private int MouseX = -1;
         private int MouseY = -1;
         public ImagePanel pnl;
@@ -48,7 +44,7 @@ namespace Intersect.Client.Classes.UI.Game.Shop
 
         public void Setup()
         {
-            pnl = new ImagePanel(container,"ShopItemIcon");
+            pnl = new ImagePanel(container, "ShopItemIcon");
             pnl.HoverEnter += pnl_HoverEnter;
             pnl.HoverLeave += pnl_HoverLeave;
             pnl.DoubleClicked += Pnl_DoubleClicked;
@@ -72,7 +68,8 @@ namespace Intersect.Client.Classes.UI.Game.Shop
                 if (item.IsStackable())
                 {
                     InputBox iBox = new InputBox(Strings.Get("shop", "buyitem"),
-                        Strings.Get("shop", "buyitemprompt", item.Name), true, InputBox.InputType.TextInput, BuyItemInputBoxOkay, null, _mySlot);
+                        Strings.Get("shop", "buyitemprompt", item.Name), true, InputBox.InputType.TextInput,
+                        BuyItemInputBoxOkay, null, _mySlot);
                 }
                 else
                 {
@@ -83,10 +80,10 @@ namespace Intersect.Client.Classes.UI.Game.Shop
 
         private void BuyItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int)((InputBox)sender).Value;
+            int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendBuyItem(((InputBox)sender).UserData, value);
+                PacketSender.SendBuyItem(((InputBox) sender).UserData, value);
             }
         }
 

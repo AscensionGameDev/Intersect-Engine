@@ -13,7 +13,7 @@ namespace Intersect.Logging
         }
 
         public LogLevel LogLevel { get; set; }
-        
+
         public void Write(string tag, LogLevel logLevel, string message)
         {
             if (LogLevel < logLevel)

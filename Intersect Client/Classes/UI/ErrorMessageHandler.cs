@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
-using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
-using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.UI.Game;
 
 namespace Intersect_Client.Classes.UI
@@ -18,6 +14,7 @@ namespace Intersect_Client.Classes.UI
 
         //Canvasses
         private Canvas _gameCanvas;
+
         private Canvas _menuCanvas;
 
         //Init
@@ -31,7 +28,10 @@ namespace Intersect_Client.Classes.UI
         {
             if (Gui.MsgboxErrors.Count > 0)
             {
-                _errors.Add(new GUIError(_gameCanvas, _menuCanvas, Gui.MsgboxErrors[0].Value, !string.IsNullOrEmpty(Gui.MsgboxErrors[0].Key) ? Gui.MsgboxErrors[0].Key : Strings.Get("errors", "title")));
+                _errors.Add(new GUIError(_gameCanvas, _menuCanvas, Gui.MsgboxErrors[0].Value,
+                    !string.IsNullOrEmpty(Gui.MsgboxErrors[0].Key)
+                        ? Gui.MsgboxErrors[0].Key
+                        : Strings.Get("errors", "title")));
                 Gui.MsgboxErrors.RemoveAt(0);
             }
             for (int i = 0; i < _errors.Count; i++)
@@ -50,13 +50,14 @@ namespace Intersect_Client.Classes.UI
 
         public GUIError(Canvas _gameCanvas, Canvas _menuCanvas, string error, string header)
         {
-            CreateErrorWindow(_gameCanvas, error, header,"InGame.xml");
-            CreateErrorWindow(_menuCanvas, error, header,"MainMenu.xml");
+            CreateErrorWindow(_gameCanvas, error, header, "InGame.xml");
+            CreateErrorWindow(_menuCanvas, error, header, "MainMenu.xml");
         }
 
         private void CreateErrorWindow(Canvas canvas, string error, string header, string uiDataFile)
         {
-            var window = new InputBox(header, error, false, InputBox.InputType.OkayOnly, OkayClicked, null, -1, canvas, uiDataFile);
+            var window = new InputBox(header, error, false, InputBox.InputType.OkayOnly, OkayClicked, null, -1, canvas,
+                uiDataFile);
             errorWindows.Add(window);
         }
 

@@ -5,6 +5,12 @@ namespace Intersect.Network
 {
     public abstract class AbstractPacket : IPacket
     {
+        protected AbstractPacket(IConnection connection, PacketCode code)
+        {
+            Connection = connection;
+            Code = code;
+        }
+
         public IConnection Connection { get; }
 
         public double Timestamp { get; set; }
@@ -15,17 +21,11 @@ namespace Intersect.Network
 
         public PacketCode Code { get; }
 
-        protected AbstractPacket(IConnection connection, PacketCode code)
-        {
-            Connection = connection;
-            Code = code;
-        }
-
         public virtual bool Read(ref IBuffer buffer) => (buffer != null);
 
         public virtual bool Write(ref IBuffer buffer)
         {
-            buffer.Write((byte)Code);
+            buffer.Write((byte) Code);
 
             return true;
         }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.Core;
@@ -69,7 +68,8 @@ namespace Intersect.Editor.Forms
 
         private void lstNpcs_Click(object sender, EventArgs e)
         {
-            _editorItem = NpcBase.Lookup.Get<NpcBase>(Database.GameObjectIdFromList(GameObjectType.Npc, lstNpcs.SelectedIndex));
+            _editorItem =
+                NpcBase.Lookup.Get<NpcBase>(Database.GameObjectIdFromList(GameObjectType.Npc, lstNpcs.SelectedIndex));
             UpdateEditor();
         }
 
@@ -302,7 +302,7 @@ namespace Intersect.Editor.Forms
 
         private void UpdateDropValues()
         {
-            int index = (int)nudDropIndex.Value - 1;
+            int index = (int) nudDropIndex.Value - 1;
             cmbDropItem.SelectedIndex =
                 Database.GameObjectListIndex(GameObjectType.Item, _editorItem.Drops[index].ItemNum) + 1;
             nudDropAmount.Value = _editorItem.Drops[index].Amount;
@@ -496,7 +496,7 @@ namespace Intersect.Editor.Forms
 
         private void cmbDropItem_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[(int)nudDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item,
+            _editorItem.Drops[(int) nudDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item,
                 cmbDropItem.SelectedIndex - 1);
         }
 
@@ -578,7 +578,7 @@ namespace Intersect.Editor.Forms
 
         private void nudDropChance_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[(int)nudDropIndex.Value - 1].Chance = (int) nudDropChance.Value;
+            _editorItem.Drops[(int) nudDropIndex.Value - 1].Chance = (int) nudDropChance.Value;
         }
 
         private void nudHp_ValueChanged(object sender, EventArgs e)
@@ -598,7 +598,7 @@ namespace Intersect.Editor.Forms
 
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[(int)nudDropIndex.Value - 1].Amount = (int) nudDropAmount.Value;
+            _editorItem.Drops[(int) nudDropIndex.Value - 1].Amount = (int) nudDropAmount.Value;
         }
 
         private void nudDropIndex_ValueChanged(object sender, EventArgs e)
@@ -608,7 +608,7 @@ namespace Intersect.Editor.Forms
 
         private void nudLevel_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Level = (int)nudLevel.Value;
+            _editorItem.Level = (int) nudLevel.Value;
         }
     }
 }

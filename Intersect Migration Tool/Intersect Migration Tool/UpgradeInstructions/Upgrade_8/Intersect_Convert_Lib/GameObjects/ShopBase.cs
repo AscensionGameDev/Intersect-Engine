@@ -20,6 +20,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             Name = "New Shop";
         }
 
+        public override byte[] BinaryData => ShopData();
+
         public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
@@ -61,8 +63,6 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => ShopData();
     }
 
     public class ShopItem

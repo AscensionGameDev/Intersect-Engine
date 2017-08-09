@@ -66,7 +66,9 @@ namespace Intersect.Editor.Forms.Editors
 
         private void lstShops_Click(object sender, EventArgs e)
         {
-            _editorItem = ShopBase.Lookup.Get<ShopBase>(Database.GameObjectIdFromList(GameObjectType.Shop, lstShops.SelectedIndex));
+            _editorItem =
+                ShopBase.Lookup.Get<ShopBase>(
+                    Database.GameObjectIdFromList(GameObjectType.Shop, lstShops.SelectedIndex));
             UpdateEditor();
         }
 

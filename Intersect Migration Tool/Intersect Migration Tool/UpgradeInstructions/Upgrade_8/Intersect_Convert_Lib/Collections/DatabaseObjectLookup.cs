@@ -8,10 +8,9 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 {
     public class DatabaseObjectLookup : IIndexLookup<IDatabaseObject>
     {
-        private readonly object mLock;
-
         private readonly Dictionary<Guid, IDatabaseObject> mIdMap;
         private readonly Dictionary<int, IDatabaseObject> mIndexMap;
+        private readonly object mLock;
 
         public DatabaseObjectLookup()
         {
@@ -20,6 +19,24 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             mIdMap = new Dictionary<Guid, IDatabaseObject>();
             mIndexMap = new Dictionary<int, IDatabaseObject>();
         }
+
+        public string[] Names =>
+            this.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
+
+        public virtual IDatabaseObject this[Guid id]
+        {
+            get { return Get(id); }
+            set { Set(id, value); }
+        }
+
+        public virtual IDatabaseObject this[int index]
+        {
+            get { return Get(index); }
+            set { Set(index, value); }
+        }
+
+        public List<int> IndexList => IndexKeys?.ToList();
+        public List<IDatabaseObject> ValueList => IndexValues?.ToList();
 
         public Type KeyType => typeof(Guid);
         public Type IndexKeyType => typeof(int);
@@ -80,38 +97,27 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         public ICollection<int> IndexKeys => mIndexMap?.Keys;
         public ICollection<IDatabaseObject> IndexValues => mIndexMap?.Values;
 
-        public string[] Names =>
-            this.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
+        public virtual IDatabaseObject Get(Guid id) => TryGetValue(id, out IDatabaseObject value)
+            ? value
+            : default(IDatabaseObject);
 
-        public virtual IDatabaseObject this[Guid id]
-        {
-            get { return Get(id); }
-            set { Set(id, value); }
-        }
+        public virtual IDatabaseObject Get(int index) => TryGetValue(index, out IDatabaseObject value)
+            ? value
+            : default(IDatabaseObject);
 
-        public virtual IDatabaseObject this[int index]
-        {
-            get { return Get(index); }
-            set { Set(index, value); }
-        }
-        
-        public List<int> IndexList => IndexKeys?.ToList();
-        public List<IDatabaseObject> ValueList => IndexValues?.ToList();
+        public virtual TObject Get<TObject>(Guid id)
+            where TObject : IDatabaseObject => TryGetValue<TObject>(id, out TObject value) ? value : default(TObject);
 
-        protected virtual bool IsIdValid(Guid id) => (id != Guid.Empty);
-        protected virtual bool IsIndexValid(int index) => (index > -1);
-
-        public virtual IDatabaseObject Get(Guid id) => TryGetValue(id, out IDatabaseObject value) ? value : default(IDatabaseObject);
-        public virtual IDatabaseObject Get(int index) => TryGetValue(index, out IDatabaseObject value) ? value : default(IDatabaseObject);
-
-        public virtual TObject Get<TObject>(Guid id) where TObject : IDatabaseObject => TryGetValue<TObject>(id, out TObject value) ? value : default(TObject);
-        public virtual TObject Get<TObject>(int index) where TObject : IDatabaseObject => TryGetValue<TObject>(index, out TObject value) ? value : default(TObject);
+        public virtual TObject Get<TObject>(int index)
+            where TObject : IDatabaseObject => TryGetValue<TObject>(index, out TObject value)
+            ? value
+            : default(TObject);
 
         public virtual bool TryGetValue<TObject>(Guid id, out TObject value) where TObject : IDatabaseObject
         {
             if (TryGetValue(id, out IDatabaseObject baseObject))
             {
-                value = (TObject)baseObject;
+                value = (TObject) baseObject;
                 return true;
             }
 
@@ -140,7 +146,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         {
             if (TryGetValue(index, out IDatabaseObject baseObject))
             {
-                value = (TObject)baseObject;
+                value = (TObject) baseObject;
                 return true;
             }
 
@@ -165,83 +171,61 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             }
         }
 
-        internal virtual bool InternalSet(IDatabaseObject value, bool overwrite)
-        {
-            if (value == null) throw new ArgumentNullException();
-            if (!IsIdValid(value.Guid)) throw new ArgumentOutOfRangeException();
-            if (!IsIndexValid(value.Index)) throw new ArgumentOutOfRangeException();
-
-            if (mLock == null) throw new ArgumentNullException();
-            if (mIdMap == null) throw new ArgumentNullException();
-            if (mIndexMap == null) throw new ArgumentNullException();
-
-            lock (mLock)
-            {
-                if (!overwrite)
-                {
-                    if (mIdMap.ContainsKey(value.Guid)) return false;
-                    if (mIndexMap.ContainsKey(value.Index)) return false;
-                }
-                else if (mIdMap.ContainsKey(value.Guid))
-                {
-                    mIndexMap.Remove(mIdMap[value.Guid].Index);
-                }
-                else if (mIndexMap.ContainsKey(value.Index))
-                {
-                    mIdMap.Remove(mIndexMap[value.Index].Guid);
-                }
-
-                mIdMap[value.Guid] = value;
-                mIndexMap[value.Index] = value;
-                return true;
-            }
-        }
-
         public bool Add(IDatabaseObject value) => InternalSet(value, false);
 
         public IDatabaseObject AddNew(Type type, Guid id)
         {
-            var mixedConstructor = type?.GetConstructor(new[] { KeyType, IndexKeyType });
+            var mixedConstructor = type?.GetConstructor(new[] {KeyType, IndexKeyType});
             if (mixedConstructor != null) return AddNew(type, id, NextIndex);
 
-            var idConstructor = type?.GetConstructor(new[] { IndexKeyType });
-            if (idConstructor == null) throw new ArgumentNullException($"No (Guid) constructor for type '{type?.Name}'.");
+            var idConstructor = type?.GetConstructor(new[] {IndexKeyType});
+            if (idConstructor == null)
+                throw new ArgumentNullException($"No (Guid) constructor for type '{type?.Name}'.");
 
-            var value = (IDatabaseObject)idConstructor?.Invoke(new object[] { id });
-            if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the (Guid) constructor.");
+            var value = (IDatabaseObject) idConstructor?.Invoke(new object[] {id});
+            if (value == null)
+                throw new ArgumentNullException(
+                    $"Failed to create instance of '{ValueType?.Name}' with the (Guid) constructor.");
             return InternalSet(value, false) ? value : default(IDatabaseObject);
         }
 
         public IDatabaseObject AddNew(Type type, int index)
         {
-            var mixedConstructor = type?.GetConstructor(new[] { KeyType, IndexKeyType });
+            var mixedConstructor = type?.GetConstructor(new[] {KeyType, IndexKeyType});
             if (mixedConstructor != null) return AddNew(type, Guid.NewGuid(), index);
 
-            var indexConstructor = type?.GetConstructor(new[] { IndexKeyType });
-            if (indexConstructor == null) throw new ArgumentNullException($"No (int) constructor for type '{type?.Name}'.");
+            var indexConstructor = type?.GetConstructor(new[] {IndexKeyType});
+            if (indexConstructor == null)
+                throw new ArgumentNullException($"No (int) constructor for type '{type?.Name}'.");
 
-            var value = (IDatabaseObject)indexConstructor.Invoke(new object[] { index });
-            if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the (int) constructor.");
+            var value = (IDatabaseObject) indexConstructor.Invoke(new object[] {index});
+            if (value == null)
+                throw new ArgumentNullException(
+                    $"Failed to create instance of '{ValueType?.Name}' with the (int) constructor.");
             return InternalSet(value, false) ? value : default(IDatabaseObject);
         }
 
         public IDatabaseObject AddNew(Type type, Guid id, int index)
         {
-            var mixedConstructor = ValueType?.GetConstructor(new[] { KeyType, IndexKeyType });
-            var value = (IDatabaseObject)mixedConstructor?.Invoke(new object[] { id, index });
-            if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the (Guid, int) constructor.");
+            var mixedConstructor = ValueType?.GetConstructor(new[] {KeyType, IndexKeyType});
+            var value = (IDatabaseObject) mixedConstructor?.Invoke(new object[] {id, index});
+            if (value == null)
+                throw new ArgumentNullException(
+                    $"Failed to create instance of '{ValueType?.Name}' with the (Guid, int) constructor.");
             return InternalSet(value, false) ? value : default(IDatabaseObject);
         }
 
         public virtual bool Set(Guid key, IDatabaseObject value)
         {
-            if (key != (value?.Guid ?? Guid.Empty)) throw new ArgumentException("Provided Guid does not match value.Guid.");
+            if (key != (value?.Guid ?? Guid.Empty))
+                throw new ArgumentException("Provided Guid does not match value.Guid.");
             return InternalSet(value, true);
         }
 
         public virtual bool Set(int index, IDatabaseObject value)
         {
-            if (index != (value?.Index ?? -1)) throw new ArgumentException("Provided index does not match value.Index.");
+            if (index != (value?.Index ?? -1))
+                throw new ArgumentException("Provided index does not match value.Index.");
             return InternalSet(value, true);
         }
 
@@ -315,6 +299,41 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         {
             if (Clone != null) return Clone.GetEnumerator();
             throw new ArgumentNullException();
+        }
+
+        protected virtual bool IsIdValid(Guid id) => (id != Guid.Empty);
+        protected virtual bool IsIndexValid(int index) => (index > -1);
+
+        internal virtual bool InternalSet(IDatabaseObject value, bool overwrite)
+        {
+            if (value == null) throw new ArgumentNullException();
+            if (!IsIdValid(value.Guid)) throw new ArgumentOutOfRangeException();
+            if (!IsIndexValid(value.Index)) throw new ArgumentOutOfRangeException();
+
+            if (mLock == null) throw new ArgumentNullException();
+            if (mIdMap == null) throw new ArgumentNullException();
+            if (mIndexMap == null) throw new ArgumentNullException();
+
+            lock (mLock)
+            {
+                if (!overwrite)
+                {
+                    if (mIdMap.ContainsKey(value.Guid)) return false;
+                    if (mIndexMap.ContainsKey(value.Index)) return false;
+                }
+                else if (mIdMap.ContainsKey(value.Guid))
+                {
+                    mIndexMap.Remove(mIdMap[value.Guid].Index);
+                }
+                else if (mIndexMap.ContainsKey(value.Index))
+                {
+                    mIdMap.Remove(mIndexMap[value.Index].Guid);
+                }
+
+                mIdMap[value.Guid] = value;
+                mIndexMap[value.Index] = value;
+                return true;
+            }
         }
 
         public virtual IEnumerator<KeyValuePair<int, IDatabaseObject>> GetIndexEnumerator()

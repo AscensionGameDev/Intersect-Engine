@@ -70,7 +70,9 @@ namespace Intersect.Editor.Forms
 
         private void lstSpells_Click(object sender, EventArgs e)
         {
-            _editorItem = SpellBase.Lookup.Get<SpellBase>(Database.GameObjectIdFromList(GameObjectType.Spell, lstSpells.SelectedIndex));
+            _editorItem =
+                SpellBase.Lookup.Get<SpellBase>(
+                    Database.GameObjectIdFromList(GameObjectType.Spell, lstSpells.SelectedIndex));
             UpdateEditor();
         }
 
@@ -347,7 +349,8 @@ namespace Intersect.Editor.Forms
             else if (cmbType.SelectedIndex == (int) SpellTypes.Event)
             {
                 grpEvent.Show();
-                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CommonEvent, _editorItem.Data1) + 1;
+                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CommonEvent, _editorItem.Data1) +
+                                         1;
             }
         }
 
@@ -388,7 +391,8 @@ namespace Intersect.Editor.Forms
             {
                 lblProjectile.Show();
                 cmbProjectile.Show();
-                cmbProjectile.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Projectile, _editorItem.Projectile);
+                cmbProjectile.SelectedIndex =
+                    Database.GameObjectListIndex(GameObjectType.Projectile, _editorItem.Projectile);
             }
         }
 
@@ -663,7 +667,8 @@ namespace Intersect.Editor.Forms
 
         private void cmbProjectile_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Projectile = Database.GameObjectIdFromList(GameObjectType.Projectile, cmbProjectile.SelectedIndex);
+            _editorItem.Projectile =
+                Database.GameObjectIdFromList(GameObjectType.Projectile, cmbProjectile.SelectedIndex);
         }
 
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)

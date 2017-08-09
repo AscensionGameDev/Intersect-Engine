@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
@@ -18,6 +14,7 @@ namespace Intersect.Client.Classes.UI.Game.Crafting
     {
         //References
         private CraftingWindow _craftingBenchWindow;
+
         public ItemDescWindow _descWindow;
 
         //Slot info
@@ -25,12 +22,14 @@ namespace Intersect.Client.Classes.UI.Game.Crafting
 
         //Dragging
         private bool CanDrag;
+
         public ImagePanel container;
         private Draggable dragIcon;
         public bool IsDragging;
 
         //Mouse Event Variables
         private bool MouseOver;
+
         private int MouseX = -1;
         private int MouseY = -1;
         public ImagePanel pnl;
@@ -43,7 +42,7 @@ namespace Intersect.Client.Classes.UI.Game.Crafting
 
         public void Setup(string name)
         {
-            pnl = new ImagePanel(container,name);
+            pnl = new ImagePanel(container, name);
             pnl.HoverEnter += pnl_HoverEnter;
             pnl.HoverLeave += pnl_HoverLeave;
 
@@ -102,7 +101,7 @@ namespace Intersect.Client.Classes.UI.Game.Crafting
             if (_ingredient != null)
             {
                 _descWindow = new ItemDescWindow(_ingredient.Item, _ingredient.Quantity, _craftingBenchWindow.X - 255,
-                    _craftingBenchWindow.Y, new int[(int)Stats.StatCount]);
+                    _craftingBenchWindow.Y, new int[(int) Stats.StatCount]);
             }
         }
     }

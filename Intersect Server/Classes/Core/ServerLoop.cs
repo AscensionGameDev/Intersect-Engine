@@ -1,8 +1,6 @@
 ﻿using System.Threading;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
-using Intersect.Server.Classes.Networking;
-using Intersect.Server.Network;
 
 namespace Intersect.Server.Classes.Core
 {
@@ -17,7 +15,7 @@ namespace Intersect.Server.Classes.Core
                 var timeMs = Globals.System.GetTimeMs();
                 foreach (MapInstance map in MapInstance.Lookup.Values)
                 {
-                   map.Update(timeMs);
+                    map.Update(timeMs);
                 }
                 cps++;
                 if (timeMs >= cpsTimer)

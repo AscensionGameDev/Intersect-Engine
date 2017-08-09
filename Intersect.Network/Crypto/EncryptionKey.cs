@@ -1,20 +1,20 @@
-﻿using Intersect.Memory;
-using Intersect.Network.Crypto.Formats;
-using System;
+﻿using System;
 using System.IO;
 using System.IO.Compression;
+using Intersect.Memory;
+using Intersect.Network.Crypto.Formats;
 
 namespace Intersect.Network.Crypto
 {
     public abstract class EncryptionKey
     {
-        public KeyFormat Format { get; }
-        public bool Compressed { get; set; }
-
         protected EncryptionKey(KeyFormat format)
         {
             Format = format;
         }
+
+        public KeyFormat Format { get; }
+        public bool Compressed { get; set; }
 
         protected abstract bool InternalRead(IBuffer buffer);
 
@@ -38,7 +38,7 @@ namespace Intersect.Network.Crypto
         {
             var buffer = new StreamWrapper(stream);
 
-            buffer.Write((byte)Format);
+            buffer.Write((byte) Format);
             buffer.Write(Compressed);
 
             if (Compressed)
@@ -63,7 +63,7 @@ namespace Intersect.Network.Crypto
                 if (!wrapper.Read(out byte format)) throw new EndOfStreamException();
                 if (!wrapper.Read(out bool compressed)) throw new EndOfStreamException();
 
-                switch ((KeyFormat)format)
+                switch ((KeyFormat) format)
                 {
                     case KeyFormat.Aes:
                         encryptionKey = new AesKey();

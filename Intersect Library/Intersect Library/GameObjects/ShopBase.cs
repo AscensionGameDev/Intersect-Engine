@@ -21,6 +21,8 @@ namespace Intersect.GameObjects
             Name = "New Shop";
         }
 
+        public override byte[] BinaryData => ShopData();
+
         public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
@@ -62,8 +64,6 @@ namespace Intersect.GameObjects
 
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => ShopData();
     }
 
     public class ShopItem

@@ -1,19 +1,18 @@
-﻿using Intersect.Models;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Intersect.Models;
 using Intersect.Utilities;
 
 namespace Intersect.Collections
 {
     public class DatabaseObjectLookup : IIndexLookup<IDatabaseObject>
     {
-        private readonly object mLock;
-
         private readonly Dictionary<Guid, IDatabaseObject> mIdMap;
         private readonly Dictionary<int, IDatabaseObject> mIndexMap;
+        private readonly object mLock;
 
         public DatabaseObjectLookup()
         {
@@ -22,6 +21,24 @@ namespace Intersect.Collections
             mIdMap = new Dictionary<Guid, IDatabaseObject>();
             mIndexMap = new Dictionary<int, IDatabaseObject>();
         }
+
+        public string[] Names =>
+            this.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
+
+        public virtual IDatabaseObject this[Guid id]
+        {
+            get { return Get(id); }
+            set { Set(id, value); }
+        }
+
+        public virtual IDatabaseObject this[int index]
+        {
+            get { return Get(index); }
+            set { Set(index, value); }
+        }
+
+        public List<int> IndexList => IndexKeys?.ToList();
+        public List<IDatabaseObject> ValueList => IndexValues?.ToList();
 
         public Type KeyType => typeof(Guid);
         public Type IndexKeyType => typeof(int);
@@ -82,38 +99,27 @@ namespace Intersect.Collections
         public ICollection<int> IndexKeys => mIndexMap?.Keys;
         public ICollection<IDatabaseObject> IndexValues => mIndexMap?.Values;
 
-        public string[] Names =>
-            this.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
+        public virtual IDatabaseObject Get(Guid id) => TryGetValue(id, out IDatabaseObject value)
+            ? value
+            : default(IDatabaseObject);
 
-        public virtual IDatabaseObject this[Guid id]
-        {
-            get { return Get(id); }
-            set { Set(id, value); }
-        }
+        public virtual IDatabaseObject Get(int index) => TryGetValue(index, out IDatabaseObject value)
+            ? value
+            : default(IDatabaseObject);
 
-        public virtual IDatabaseObject this[int index]
-        {
-            get { return Get(index); }
-            set { Set(index, value); }
-        }
+        public virtual TObject Get<TObject>(Guid id)
+            where TObject : IDatabaseObject => TryGetValue<TObject>(id, out TObject value) ? value : default(TObject);
 
-        public List<int> IndexList => IndexKeys?.ToList();
-        public List<IDatabaseObject> ValueList => IndexValues?.ToList();
-
-        protected virtual bool IsIdValid(Guid id) => (id != Guid.Empty);
-        protected virtual bool IsIndexValid(int index) => (index > -1);
-
-        public virtual IDatabaseObject Get(Guid id) => TryGetValue(id, out IDatabaseObject value) ? value : default(IDatabaseObject);
-        public virtual IDatabaseObject Get(int index) => TryGetValue(index, out IDatabaseObject value) ? value : default(IDatabaseObject);
-
-        public virtual TObject Get<TObject>(Guid id) where TObject : IDatabaseObject => TryGetValue<TObject>(id, out TObject value) ? value : default(TObject);
-        public virtual TObject Get<TObject>(int index) where TObject : IDatabaseObject => TryGetValue<TObject>(index, out TObject value) ? value : default(TObject);
+        public virtual TObject Get<TObject>(int index)
+            where TObject : IDatabaseObject => TryGetValue<TObject>(index, out TObject value)
+            ? value
+            : default(TObject);
 
         public virtual bool TryGetValue<TObject>(Guid id, out TObject value) where TObject : IDatabaseObject
         {
             if (TryGetValue(id, out IDatabaseObject baseObject))
             {
-                value = (TObject)baseObject;
+                value = (TObject) baseObject;
                 return true;
             }
 
@@ -142,7 +148,7 @@ namespace Intersect.Collections
         {
             if (TryGetValue(index, out IDatabaseObject baseObject))
             {
-                value = (TObject)baseObject;
+                value = (TObject) baseObject;
                 return true;
             }
 
@@ -167,60 +173,24 @@ namespace Intersect.Collections
             }
         }
 
-        internal virtual bool InternalSet(IDatabaseObject value, bool overwrite)
-        {
-            if (value == null) throw new ArgumentNullException(nameof(value));
-            if (!IsIdValid(value.Guid)) throw new ArgumentOutOfRangeException(nameof(value.Guid));
-            if (!IsIndexValid(value.Index)) throw new ArgumentOutOfRangeException(nameof(value.Index));
-
-            if (mLock == null) throw new ArgumentNullException(nameof(mLock));
-            if (mIdMap == null) throw new ArgumentNullException(nameof(mIdMap));
-            if (mIndexMap == null) throw new ArgumentNullException(nameof(mIndexMap));
-
-            lock (mLock)
-            {
-                if (!overwrite)
-                {
-                    if (mIdMap.ContainsKey(value.Guid)) return false;
-                    if (mIndexMap.ContainsKey(value.Index)) return false;
-                }
-                else if (mIdMap.ContainsKey(value.Guid))
-                {
-                    mIndexMap.Remove(mIdMap[value.Guid].Index);
-                }
-                else if (mIndexMap.ContainsKey(value.Index))
-                {
-                    mIdMap.Remove(mIndexMap[value.Index].Guid);
-                }
-
-                mIdMap[value.Guid] = value;
-                mIndexMap[value.Index] = value;
-                return true;
-            }
-        }
-
         public bool Add(IDatabaseObject value) => InternalSet(value, false);
-
-        private string MessageNoConstructor(Type type, params string[] constructorMessage)
-        {
-            var builder = new StringBuilder();
-            builder.AppendLine($@"No ({string.Join(",", constructorMessage ?? new string[] { })}) constructor for type '{type?.Name}'.");
-            builder.AppendLine(ReflectionUtils.StringifyConstructors(type));
-            return builder.ToString();
-        }
 
         public IDatabaseObject AddNew(Type type, Guid id)
         {
             if (type == null) throw new ArgumentNullException(nameof(type), @"No type specified.");
 
-            var mixedConstructor = type.GetConstructor(new[] { KeyType, IndexKeyType });
+            var mixedConstructor = type.GetConstructor(new[] {KeyType, IndexKeyType});
             if (mixedConstructor != null) return AddNew(type, id, NextIndex);
 
-            var idConstructor = type.GetConstructor(new[] { KeyType });
-            if (idConstructor == null) throw new ArgumentNullException(nameof(idConstructor), MessageNoConstructor(type, KeyType?.Name ?? @"<NULL_KT>"));
+            var idConstructor = type.GetConstructor(new[] {KeyType});
+            if (idConstructor == null)
+                throw new ArgumentNullException(nameof(idConstructor),
+                    MessageNoConstructor(type, KeyType?.Name ?? @"<NULL_KT>"));
 
-            var value = (IDatabaseObject)idConstructor.Invoke(new object[] { id });
-            if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the ({KeyType?.Name ?? @"<NULL_KT>"}) constructor.");
+            var value = (IDatabaseObject) idConstructor.Invoke(new object[] {id});
+            if (value == null)
+                throw new ArgumentNullException(
+                    $"Failed to create instance of '{ValueType?.Name}' with the ({KeyType?.Name ?? @"<NULL_KT>"}) constructor.");
             return InternalSet(value, false) ? value : default(IDatabaseObject);
         }
 
@@ -228,14 +198,18 @@ namespace Intersect.Collections
         {
             if (type == null) throw new ArgumentNullException(nameof(type), @"No type specified.");
 
-            var mixedConstructor = type.GetConstructor(new[] { KeyType, IndexKeyType });
+            var mixedConstructor = type.GetConstructor(new[] {KeyType, IndexKeyType});
             if (mixedConstructor != null) return AddNew(type, Guid.NewGuid(), index);
 
-            var indexConstructor = type.GetConstructor(new[] { IndexKeyType });
-            if (indexConstructor == null) throw new ArgumentNullException(nameof(indexConstructor), MessageNoConstructor(type, IndexKeyType?.Name ?? @"<NULL_IKT>"));
+            var indexConstructor = type.GetConstructor(new[] {IndexKeyType});
+            if (indexConstructor == null)
+                throw new ArgumentNullException(nameof(indexConstructor),
+                    MessageNoConstructor(type, IndexKeyType?.Name ?? @"<NULL_IKT>"));
 
-            var value = (IDatabaseObject)indexConstructor.Invoke(new object[] { index });
-            if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the ({IndexKeyType?.Name ?? @"<NULL_IKT>"}) constructor.");
+            var value = (IDatabaseObject) indexConstructor.Invoke(new object[] {index});
+            if (value == null)
+                throw new ArgumentNullException(
+                    $"Failed to create instance of '{ValueType?.Name}' with the ({IndexKeyType?.Name ?? @"<NULL_IKT>"}) constructor.");
             return InternalSet(value, false) ? value : default(IDatabaseObject);
         }
 
@@ -243,23 +217,29 @@ namespace Intersect.Collections
         {
             if (type == null) throw new ArgumentNullException(nameof(type), @"No type specified.");
 
-            var mixedConstructor = ValueType?.GetConstructor(new[] { KeyType, IndexKeyType });
-            if (mixedConstructor == null) throw new ArgumentNullException(nameof(mixedConstructor), MessageNoConstructor(type, KeyType?.Name ?? @"<NULL_KT>", IndexKeyType?.Name ?? @"<NULL_IKT>"));
+            var mixedConstructor = ValueType?.GetConstructor(new[] {KeyType, IndexKeyType});
+            if (mixedConstructor == null)
+                throw new ArgumentNullException(nameof(mixedConstructor),
+                    MessageNoConstructor(type, KeyType?.Name ?? @"<NULL_KT>", IndexKeyType?.Name ?? @"<NULL_IKT>"));
 
-            var value = (IDatabaseObject)mixedConstructor.Invoke(new object[] { id, index });
-            if (value == null) throw new ArgumentNullException($"Failed to create instance of '{ValueType?.Name}' with the ({KeyType?.Name ?? @"<NULL_KT>"}, {IndexKeyType?.Name ?? @"<NULL_IKT>"}) constructor.");
+            var value = (IDatabaseObject) mixedConstructor.Invoke(new object[] {id, index});
+            if (value == null)
+                throw new ArgumentNullException(
+                    $"Failed to create instance of '{ValueType?.Name}' with the ({KeyType?.Name ?? @"<NULL_KT>"}, {IndexKeyType?.Name ?? @"<NULL_IKT>"}) constructor.");
             return InternalSet(value, false) ? value : default(IDatabaseObject);
         }
 
         public virtual bool Set(Guid key, IDatabaseObject value)
         {
-            if (key != (value?.Guid ?? Guid.Empty)) throw new ArgumentException("Provided Guid does not match value.Guid.");
+            if (key != (value?.Guid ?? Guid.Empty))
+                throw new ArgumentException("Provided Guid does not match value.Guid.");
             return InternalSet(value, true);
         }
 
         public virtual bool Set(int index, IDatabaseObject value)
         {
-            if (index != (value?.Index ?? -1)) throw new ArgumentException("Provided index does not match value.Index.");
+            if (index != (value?.Index ?? -1))
+                throw new ArgumentException("Provided index does not match value.Index.");
             return InternalSet(value, true);
         }
 
@@ -333,6 +313,52 @@ namespace Intersect.Collections
         {
             if (Clone != null) return Clone.GetEnumerator();
             throw new ArgumentNullException();
+        }
+
+        protected virtual bool IsIdValid(Guid id) => (id != Guid.Empty);
+        protected virtual bool IsIndexValid(int index) => (index > -1);
+
+        internal virtual bool InternalSet(IDatabaseObject value, bool overwrite)
+        {
+            if (value == null) throw new ArgumentNullException(nameof(value));
+            if (!IsIdValid(value.Guid)) throw new ArgumentOutOfRangeException(nameof(value.Guid));
+            if (!IsIndexValid(value.Index)) throw new ArgumentOutOfRangeException(nameof(value.Index));
+
+            if (mLock == null) throw new ArgumentNullException(nameof(mLock));
+            if (mIdMap == null) throw new ArgumentNullException(nameof(mIdMap));
+            if (mIndexMap == null) throw new ArgumentNullException(nameof(mIndexMap));
+
+            lock (mLock)
+            {
+                if (!overwrite)
+                {
+                    if (mIdMap.ContainsKey(value.Guid)) return false;
+                    if (mIndexMap.ContainsKey(value.Index)) return false;
+                }
+                else if (mIdMap.ContainsKey(value.Guid))
+                {
+                    mIndexMap.Remove(mIdMap[value.Guid].Index);
+                }
+                else if (mIndexMap.ContainsKey(value.Index))
+                {
+                    mIdMap.Remove(mIndexMap[value.Index].Guid);
+                }
+
+                mIdMap[value.Guid] = value;
+                mIndexMap[value.Index] = value;
+                return true;
+            }
+        }
+
+        private string MessageNoConstructor(Type type, params string[] constructorMessage)
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine(
+                $@"No ({
+                        string.Join(",", constructorMessage ?? new string[] { })
+                    }) constructor for type '{type?.Name}'.");
+            builder.AppendLine(ReflectionUtils.StringifyConstructors(type));
+            return builder.ToString();
         }
 
         public virtual IEnumerator<KeyValuePair<int, IDatabaseObject>> GetIndexEnumerator()

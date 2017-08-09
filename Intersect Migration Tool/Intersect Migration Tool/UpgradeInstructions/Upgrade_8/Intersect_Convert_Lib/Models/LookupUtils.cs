@@ -10,9 +10,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
     {
         private static Dictionary<Type, DatabaseObjectLookup> sLookupMap;
         private static Dictionary<Type, GameObjectType> sEnumMap;
-        
-        public static Dictionary<Type, DatabaseObjectLookup> LookupMap => (sLookupMap = (sLookupMap ?? new Dictionary<Type, DatabaseObjectLookup>()));
-        public static Dictionary<Type, GameObjectType> EnumMap => (sEnumMap = (sEnumMap ?? new Dictionary<Type, GameObjectType>()));
+
+        public static Dictionary<Type, DatabaseObjectLookup> LookupMap => (sLookupMap =
+            (sLookupMap ?? new Dictionary<Type, DatabaseObjectLookup>()));
+
+        public static Dictionary<Type, GameObjectType> EnumMap => (sEnumMap =
+            (sEnumMap ?? new Dictionary<Type, GameObjectType>()));
 
         public static DatabaseObjectLookup GetLookup(Type type)
         {

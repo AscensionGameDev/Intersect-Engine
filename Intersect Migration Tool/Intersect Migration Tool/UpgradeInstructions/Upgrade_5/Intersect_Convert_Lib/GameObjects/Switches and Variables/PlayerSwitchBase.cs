@@ -8,6 +8,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
     {
         //Core info
         public new const string DATABASE_TABLE = "player_switches";
+
         public new const GameObject OBJECT_TYPE = GameObject.PlayerSwitch;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
@@ -97,7 +98,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         public static Dictionary<int, PlayerSwitchBase> GetObjects()
         {
-            Dictionary<int, PlayerSwitchBase> objects = Objects.ToDictionary(k => k.Key, v => (PlayerSwitchBase) v.Value);
+            Dictionary<int, PlayerSwitchBase> objects =
+                Objects.ToDictionary(k => k.Key, v => (PlayerSwitchBase) v.Value);
             return objects;
         }
     }

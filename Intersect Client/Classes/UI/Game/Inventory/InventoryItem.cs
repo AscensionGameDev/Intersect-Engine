@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using IntersectClientExtras.File_Management;
@@ -28,6 +24,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
 
         //Drag/Drop References
         private InventoryWindow _inventoryWindow;
+
         private bool _isEquipped;
 
         //Slot info
@@ -35,6 +32,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
 
         //Dragging
         private bool CanDrag;
+
         private long ClickTime;
         public ImagePanel container;
         private Draggable dragIcon;
@@ -43,6 +41,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
 
         //Mouse Event Variables
         private bool MouseOver;
+
         private int MouseX = -1;
         private int MouseY = -1;
         public ImagePanel pnl;
@@ -56,7 +55,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
 
         public void Setup()
         {
-            pnl = new ImagePanel(container,"InventoryItemIcon");
+            pnl = new ImagePanel(container, "InventoryItemIcon");
             pnl.HoverEnter += pnl_HoverEnter;
             pnl.HoverLeave += pnl_HoverLeave;
             pnl.RightClicked += pnl_RightClicked;
@@ -250,20 +249,29 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                         {
                             if (MouseX == -1 || MouseY == -1)
                             {
-                                MouseX = InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X;
-                                MouseY = InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y;
+                                MouseX = InputHandler.MousePosition.X -
+                                         pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X;
+                                MouseY = InputHandler.MousePosition.Y -
+                                         pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y;
                             }
                             else
                             {
                                 int xdiff = MouseX -
-                                            (InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X);
+                                            (InputHandler.MousePosition.X -
+                                             pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
+                                                 .X);
                                 int ydiff = MouseY -
-                                            (InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y);
+                                            (InputHandler.MousePosition.Y -
+                                             pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
+                                                 .Y);
                                 if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                 {
                                     IsDragging = true;
-                                    dragIcon = new Draggable(pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X + MouseX,
-                                        pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X + MouseY, pnl.Texture);
+                                    dragIcon = new Draggable(
+                                        pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X +
+                                        MouseX,
+                                        pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X +
+                                        MouseY, pnl.Texture);
                                 }
                             }
                         }
@@ -276,8 +284,11 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                 {
                     //Drug the item and now we stopped
                     IsDragging = false;
-                    FloatRect dragRect = new FloatRect(dragIcon.X - (container.Padding.Left + container.Padding.Right) / 2, dragIcon.Y - (container.Padding.Top + container.Padding.Bottom) / 2,
-                        (container.Padding.Left + container.Padding.Right) / 2 + pnl.Width, (container.Padding.Top + container.Padding.Bottom) / 2 + pnl.Height);
+                    FloatRect dragRect = new FloatRect(
+                        dragIcon.X - (container.Padding.Left + container.Padding.Right) / 2,
+                        dragIcon.Y - (container.Padding.Top + container.Padding.Bottom) / 2,
+                        (container.Padding.Left + container.Padding.Right) / 2 + pnl.Width,
+                        (container.Padding.Top + container.Padding.Bottom) / 2 + pnl.Height);
 
                     float bestIntersect = 0;
                     int bestIntersectIndex = -1;

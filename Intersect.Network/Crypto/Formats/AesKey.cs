@@ -1,16 +1,11 @@
-﻿using Intersect.Memory;
-using System;
+﻿using System;
+using Intersect.Memory;
 
 namespace Intersect.Network.Crypto.Formats
 {
     public class AesKey : EncryptionKey
     {
         private byte[] mData;
-        public byte[] Data
-        {
-            get => mData;
-            set => mData = value;
-        }
 
         public AesKey()
             : this(null)
@@ -21,6 +16,12 @@ namespace Intersect.Network.Crypto.Formats
             : base(KeyFormat.Aes)
         {
             Data = data;
+        }
+
+        public byte[] Data
+        {
+            get => mData;
+            set => mData = value;
         }
 
         protected override bool InternalRead(IBuffer buffer)

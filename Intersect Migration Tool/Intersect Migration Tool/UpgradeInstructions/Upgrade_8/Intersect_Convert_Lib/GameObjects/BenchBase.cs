@@ -11,6 +11,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             Name = "New Bench";
         }
 
+        public override byte[] BinaryData => CraftData();
+
         public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
@@ -34,7 +36,6 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         {
             using (var myBuffer = new ByteBuffer())
             {
-
                 myBuffer.WriteString(Name);
                 myBuffer.WriteInteger(Crafts.Count);
                 foreach (var craft in Crafts)
@@ -45,8 +46,6 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
                 return myBuffer.ToArray();
             }
         }
-
-        public override byte[] BinaryData => CraftData();
     }
 
     public class Craft

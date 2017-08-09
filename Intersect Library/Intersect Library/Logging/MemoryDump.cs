@@ -8,15 +8,15 @@ namespace Intersect.Logging
     {
         private static string mDumpDirectory;
 
+        static MemoryDump()
+        {
+            DumpDirectory = "logs/dumps";
+        }
+
         public static string DumpDirectory
         {
             get { return Path.Combine(Environment.CurrentDirectory, mDumpDirectory); }
             set { mDumpDirectory = value; }
-        }
-
-        static MemoryDump()
-        {
-            DumpDirectory = "logs/dumps";
         }
 
         private static void EnsureDirectory()

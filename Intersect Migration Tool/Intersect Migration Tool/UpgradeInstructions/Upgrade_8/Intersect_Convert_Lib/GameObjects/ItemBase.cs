@@ -38,6 +38,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             StatsGiven = new int[Options.MaxStats];
         }
 
+        public override byte[] BinaryData => ItemData();
+
         public override void Load(byte[] data)
         {
             var myBuffer = new ByteBuffer();
@@ -122,7 +124,5 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
                     ItemType == (int) ItemTypes.None ||
                     ItemType == (int) ItemTypes.Spell) && Stackable > 0;
         }
-
-        public override byte[] BinaryData => ItemData();
     }
 }

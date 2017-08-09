@@ -1,25 +1,23 @@
 ﻿using System;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
-using IntersectClientExtras.Gwen;
+using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
-using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.UI.Game
 {
     class FriendsWindow
     {
-        private ListBox _friends;
         private Button _addButton;
-        private ImagePanel _textboxContainer;
-        private TextBox _searchTextbox;
+        private ListBox _friends;
 
         //Controls
         private WindowControl _friendsWindow;
+
+        private TextBox _searchTextbox;
+        private ImagePanel _textboxContainer;
 
         //Temp variables
         private string TempName;
@@ -27,14 +25,14 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public FriendsWindow(Canvas _gameCanvas)
         {
-            _friendsWindow = new WindowControl(_gameCanvas, Strings.Get("friends", "title"),false,"FriendsWindow");
+            _friendsWindow = new WindowControl(_gameCanvas, Strings.Get("friends", "title"), false, "FriendsWindow");
             _friendsWindow.DisableResizing();
 
-            _textboxContainer = new ImagePanel(_friendsWindow,"SearchContainer");
-            _searchTextbox = new TextBox(_textboxContainer,"SearchTextbox");
+            _textboxContainer = new ImagePanel(_friendsWindow, "SearchContainer");
+            _searchTextbox = new TextBox(_textboxContainer, "SearchTextbox");
             Gui.FocusElements.Add(_searchTextbox);
 
-            _addButton = new Button(_friendsWindow,"AddFriendButton");
+            _addButton = new Button(_friendsWindow, "AddFriendButton");
             _addButton.SetText("+");
             _addButton.Clicked += addButton_Clicked;
 
@@ -107,8 +105,8 @@ namespace Intersect_Client.Classes.UI.Game
 
         void friends_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            var row = (ListBoxRow)sender;
-            
+            var row = (ListBoxRow) sender;
+
             //Only pm online players
             foreach (var friend in Globals.Me.Friends)
             {
@@ -116,7 +114,7 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (friend.online == true)
                     {
-                        Gui.GameUI.SetChatboxText("/pm " + (string)row.UserData + " ");
+                        Gui.GameUI.SetChatboxText("/pm " + (string) row.UserData + " ");
                     }
                 }
             }
@@ -124,12 +122,12 @@ namespace Intersect_Client.Classes.UI.Game
 
         void friends_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            var row = (ListBoxRow)sender;
-            TempName = (string)row.UserData;
+            var row = (ListBoxRow) sender;
+            TempName = (string) row.UserData;
 
             InputBox iBox = new InputBox(Strings.Get("friends", "removefriend"),
-                        Strings.Get("friends", "removefriendprompt", TempName),
-                        true, InputBox.InputType.YesNo, RemoveFriend, null, 0);
+                Strings.Get("friends", "removefriendprompt", TempName),
+                true, InputBox.InputType.YesNo, RemoveFriend, null, 0);
         }
 
         private void RemoveFriend(Object sender, EventArgs e)

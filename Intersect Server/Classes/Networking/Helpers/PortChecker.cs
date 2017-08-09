@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Intersect.Server.Classes.Networking
 {
@@ -15,8 +11,10 @@ namespace Intersect.Server.Classes.Networking
             externalIp = "";
             try
             {
-                WebRequest request = WebRequest.Create("https://www.ascensiongamedev.com/resources/canyouseeme.php?port=" + port + "&time=" + DateTime.Now.ToBinary().ToString());
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                WebRequest request =
+                    WebRequest.Create("https://www.ascensiongamedev.com/resources/canyouseeme.php?port=" + port +
+                                      "&time=" + DateTime.Now.ToBinary().ToString());
+                HttpWebResponse response = (HttpWebResponse) request.GetResponse();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     Stream data = response.GetResponseStream();
