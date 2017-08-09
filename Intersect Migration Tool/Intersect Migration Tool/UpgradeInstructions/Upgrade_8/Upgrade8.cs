@@ -32,6 +32,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
         private const string CHAR_DELETED = "deleted";
         private const string CHAR_LAST_ONLINE_TIME = "last_online";
 
+        //Map List Table Constants
+        private const string MAP_LIST_TABLE = "map_list";
+        private const string MAP_LIST_DATA = "data";
+
+        //Time of Day Table Constants
+        private const string TIME_TABLE = "time";
+        private const string TIME_DATA = "data";
+
         private SqliteConnection _dbConnection;
         private object _dbLock = new object();
 
@@ -49,6 +57,9 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
             CreateCharacterFriendsTable();
             AddDeletedColumnToCharacters();
             AddLastOnlineColumnToCharacters();
+            AddNotNullToGameObjectTables();
+            FixSimpleTable(TIME_TABLE,TIME_DATA);
+            FixSimpleTable(MAP_LIST_TABLE,MAP_LIST_DATA);
         }
 
         //Game Object Saving/Loading
@@ -329,7 +340,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
 
         private void CreateMapTilesTable()
         {
-            var cmd = "CREATE TABLE " + MAP_TILES_TABLE + " (" + MAP_TILES_MAP_ID + " INTEGER UNIQUE, " + MAP_TILES_DATA + " BLOB);";
+            var cmd = "CREATE TABLE " + MAP_TILES_TABLE + " (" + MAP_TILES_MAP_ID + " INTEGER UNIQUE, " + MAP_TILES_DATA + " BLOB NOT NULL);";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
@@ -382,6 +393,100 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                 createCommand.Parameters.Add(new SqliteParameter("@" + CHAR_LAST_ONLINE_TIME, DateTime.UtcNow.ToBinary()));
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
+            }
+        }
+
+        private void AddNotNullToGameObjectTables()
+        {
+            //Loop through each type of game object. //Delete anything that is currently null.
+            foreach (var value in Enum.GetValues(typeof(GameObjectType)))
+            {
+                var type = (GameObjectType)value;
+                if (type == GameObjectType.Time) continue;
+                using (SqliteTransaction transaction = _dbConnection.BeginTransaction())
+                {
+                    //Rename Table to Old
+                    var query = "ALTER TABLE " + type.GetTable() + " RENAME TO " + type.GetTable() + "_old;";
+                    using (var cmd = _dbConnection.CreateCommand())
+                    {
+                        cmd.CommandText = query;
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    //Create new table
+                    query = "CREATE TABLE " + type.GetTable() + " ("
+                              + GAME_OBJECT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                              + GAME_OBJECT_DELETED + " INTEGER NOT NULL DEFAULT 0,"
+                              + GAME_OBJECT_DATA + " BLOB NOT NULL" + ");";
+                    using (var cmd = _dbConnection.CreateCommand())
+                    {
+                        cmd.CommandText = query;
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    //Import from old table
+                    query = "INSERT INTO " + type.GetTable() + " ("
+                            + GAME_OBJECT_ID + ","
+                            + GAME_OBJECT_DELETED + ","
+                            + GAME_OBJECT_DATA + ") SELECT " + GAME_OBJECT_ID + "," + GAME_OBJECT_DELETED + "," + GAME_OBJECT_DATA + " FROM " + type.GetTable() + "_old ORDER BY " + GAME_OBJECT_ID + " ASC;";
+                    using (var cmd = _dbConnection.CreateCommand())
+                    {
+                        cmd.CommandText = query;
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    //Delete backup table
+                    query = "DROP TABLE " + type.GetTable() + "_old;";
+                    using (var cmd = _dbConnection.CreateCommand())
+                    {
+                        cmd.CommandText = query;
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit();
+                }
+            }
+        }
+
+        private void FixSimpleTable(string tablename, string datacol)
+        {
+            using (SqliteTransaction transaction = _dbConnection.BeginTransaction())
+            {
+                //Rename Table to Old
+                var query = "ALTER TABLE " + tablename + " RENAME TO " + tablename + "_old;";
+                using (var cmd = _dbConnection.CreateCommand())
+                {
+                    cmd.CommandText = query;
+                    cmd.ExecuteNonQuery();
+                }
+
+                //Create new table
+                query = "CREATE TABLE " + tablename + " ("
+                        + datacol + " BLOB NOT NULL" + ");";
+                using (var cmd = _dbConnection.CreateCommand())
+                {
+                    cmd.CommandText = query;
+                    cmd.ExecuteNonQuery();
+                }
+
+                //Import from old table
+                query = "INSERT INTO " + tablename + " ("
+                        + datacol + ") SELECT " + datacol + " FROM " + tablename + "_old;";
+                using (var cmd = _dbConnection.CreateCommand())
+                {
+                    cmd.CommandText = query;
+                    cmd.ExecuteNonQuery();
+                }
+
+                //Delete backup table
+                query = "DROP TABLE " + tablename + "_old;";
+                using (var cmd = _dbConnection.CreateCommand())
+                {
+                    cmd.CommandText = query;
+                    cmd.ExecuteNonQuery();
+                }
+
+                transaction.Commit();
             }
         }
     }

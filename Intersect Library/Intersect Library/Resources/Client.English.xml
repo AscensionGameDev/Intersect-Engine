@@ -541,8 +541,8 @@
 		<string id="inprogress">Quest In Progress</string>
 		<string id="completed">Quest Completed</string>
 		<string id="currenttask">Current Task:</string>
-		<string id="tasknpc">{00}/{01} {02}(s) gathered.</string>
-		<string id="taskitem">{00}/{01} {02}(s) slain.</string>
+		<string id="tasknpc">{00}/{01} {02}(s) slain.</string>
+		<string id="taskitem">{00}/{01} {02}(s) gathered.</string>
 	</QuestLog>
 	<Registration>
 		<string id="title">Register</string>

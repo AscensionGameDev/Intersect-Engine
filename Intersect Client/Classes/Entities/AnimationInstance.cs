@@ -61,28 +61,28 @@ namespace Intersect_Client.Classes.Entities
                 switch (_renderDir)
                 {
                     case 0: //Up
-                        rotationDegrees = 180f;
-                        break;
-                    case 1: //Down
                         rotationDegrees = 0f;
                         break;
-                    case 2: //Left
-                        rotationDegrees = 90f;
+                    case 1: //Down
+                        rotationDegrees = 180f;
                         break;
-                    case 3: //Right
+                    case 2: //Left
                         rotationDegrees = 270f;
                         break;
+                    case 3: //Right
+                        rotationDegrees = 90f;
+                        break;
                     case 4: //NW
-                        rotationDegrees = 135f;
+                        rotationDegrees = 315f;
                         break;
                     case 5: //NE
-                        rotationDegrees = 225f;
-                        break;
-                    case 6: //SW
                         rotationDegrees = 45f;
                         break;
+                    case 6: //SW
+                        rotationDegrees = 225f;
+                        break;
                     case 7: //SE
-                        rotationDegrees = 315f;
+                        rotationDegrees = 135f;
                         break;
                 }
             }
@@ -109,17 +109,9 @@ namespace Intersect_Client.Classes.Entities
                 }
                 int offsetX = myBase.LowerLights[lowerFrame].OffsetX;
                 int offsetY = myBase.LowerLights[lowerFrame].OffsetY;
-                var rotationRadians = (float) ((Math.PI / 180) * rotationDegrees);
-                offsetX =
-                    (int)
-                    (Math.Cos(rotationRadians) * ((double) offsetX) -
-                     (double) Math.Sin(rotationRadians) * ((double) offsetY));
-                offsetY =
-                    (int)
-                    (Math.Sin(rotationRadians) * ((double) offsetX) +
-                     (double) Math.Cos(rotationRadians) * ((double) offsetY));
-                GameGraphics.AddLight((int) _renderX + offsetX,
-                    (int) _renderY + offsetY, myBase.LowerLights[lowerFrame].Size,
+                var offset = RotatePoint(new Point((int)offsetX, (int)offsetY), new Point(0, 0), rotationDegrees + 180);
+                GameGraphics.AddLight((int) _renderX - offset.X,
+                    (int) _renderY - offset.Y, myBase.LowerLights[lowerFrame].Size,
                     myBase.LowerLights[lowerFrame].Intensity, myBase.LowerLights[lowerFrame].Expand,
                     myBase.LowerLights[lowerFrame].Color);
             }
@@ -147,20 +139,30 @@ namespace Intersect_Client.Classes.Entities
                 }
                 int offsetX = myBase.UpperLights[upperFrame].OffsetX;
                 int offsetY = myBase.UpperLights[upperFrame].OffsetY;
-                var rotationRadians = (float) ((Math.PI / 180) * rotationDegrees);
-                offsetX =
-                    (int)
-                    (Math.Cos(rotationRadians) * ((double) offsetX) -
-                     (double) Math.Sin(rotationRadians) * ((double) offsetY));
-                offsetY =
-                    (int)
-                    (Math.Sin(rotationRadians) * ((double) offsetX) +
-                     (double) Math.Cos(rotationRadians) * ((double) offsetY));
-                GameGraphics.AddLight((int) _renderX + offsetX,
-                    (int) _renderY + offsetY, myBase.UpperLights[upperFrame].Size,
+                var offset = RotatePoint(new Point((int)offsetX, (int)offsetY), new Point(0, 0), rotationDegrees + 180);
+                GameGraphics.AddLight((int) _renderX - offset.X,
+                    (int) _renderY - offset.Y, myBase.UpperLights[upperFrame].Size,
                     myBase.UpperLights[upperFrame].Intensity, myBase.UpperLights[upperFrame].Expand,
                     myBase.UpperLights[upperFrame].Color);
             }
+        }
+
+        static Point RotatePoint(Point pointToRotate, Point centerPoint, double angleInDegrees)
+        {
+            double angleInRadians = angleInDegrees * (Math.PI / 180);
+            double cosTheta = Math.Cos(angleInRadians);
+            double sinTheta = Math.Sin(angleInRadians);
+            return new Point
+            {
+                X =
+                    (int)
+                    (cosTheta * (pointToRotate.X - centerPoint.X) -
+                     sinTheta * (pointToRotate.Y - centerPoint.Y) + centerPoint.X),
+                Y =
+                    (int)
+                    (sinTheta * (pointToRotate.X - centerPoint.X) +
+                     cosTheta * (pointToRotate.Y - centerPoint.Y) + centerPoint.Y)
+            };
         }
 
         public void Hide()

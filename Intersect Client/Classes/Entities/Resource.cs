@@ -97,13 +97,13 @@ namespace Intersect_Client.Classes.Entities
                 destRectangle.Height = srcRectangle.Height;
                 destRectangle.Y = (int) (map.GetY() + CurrentY * Options.TileHeight + OffsetY);
                 destRectangle.X = (int) (map.GetX() + CurrentX * Options.TileWidth + OffsetX);
-                if (srcRectangle.Height > 32)
+                if (srcRectangle.Height > Options.TileHeight)
                 {
-                    destRectangle.Y -= srcRectangle.Height - 32;
+                    destRectangle.Y -= srcRectangle.Height - Options.TileHeight;
                 }
-                if (srcRectangle.Width > 32)
+                if (srcRectangle.Width > Options.TileWidth)
                 {
-                    destRectangle.X -= (srcRectangle.Width - 32) / 2;
+                    destRectangle.X -= (srcRectangle.Width - Options.TileWidth) / 2;
                 }
                 _hasRenderBounds = true;
             }

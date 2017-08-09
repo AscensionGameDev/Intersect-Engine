@@ -310,7 +310,14 @@ namespace Intersect_Client.Classes.Entities
                     }
                     else
                     {
-                        WalkFrame = 0;
+                        if (WalkFrame == 1 || WalkFrame == 2)
+                        {
+                            WalkFrame = 2;
+                        }
+                        else
+                        {
+                            WalkFrame = 0;
+                        }
                     }
                     _walkTimer = Globals.System.GetTimeMS() + 200;
                 }
@@ -444,7 +451,7 @@ namespace Intersect_Client.Classes.Entities
                 renderList.Remove(this);
             }
 
-            if (map == null)
+            if (map == null || Globals.Me == null || Globals.Me.MapInstance == null)
             {
                 return null;
             }

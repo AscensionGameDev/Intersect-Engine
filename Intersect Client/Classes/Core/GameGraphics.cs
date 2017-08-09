@@ -281,7 +281,7 @@ namespace Intersect_Client.Classes.Core
         public static void Render()
         {
             if (!(Renderer?.Begin() ?? false)) return;
-            if (Renderer.GetScreenWidth() != _oldWidth || Renderer.GetScreenHeight() != _oldHeight)
+            if (Renderer.GetScreenWidth() != _oldWidth || Renderer.GetScreenHeight() != _oldHeight || Renderer.DisplayModeChanged())
             {
                 _darknessTexture = null;
                 Gui.DestroyGwen();
