@@ -240,7 +240,7 @@ namespace Intersect.Editor.Forms
                 nudSpd.Value = _editorItem.StatsGiven[4];
                 nudDamage.Value = _editorItem.Damage;
                 nudCritChance.Value = _editorItem.CritChance;
-                nudScaling.Value = _editorItem.Scaling;
+                nudScaling.Value = _editorItem.Scaling / 100;
                 nudRange.Value = _editorItem.StatGrowth;
                 chkBound.Checked = Convert.ToBoolean(_editorItem.Bound);
                 chkStackable.Checked = Convert.ToBoolean(_editorItem.Stackable);
@@ -381,7 +381,7 @@ namespace Intersect.Editor.Forms
 
         private void cmbPic_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Pic = cmbPic.Text;
+            _editorItem.Pic = cmbPic.SelectedIndex < 1 ? "" : cmbPic.Text;
             if (cmbPic.SelectedIndex > 0)
             {
                 picItem.BackgroundImage = System.Drawing.Image.FromFile("resources/items/" + cmbPic.Text);
@@ -399,7 +399,7 @@ namespace Intersect.Editor.Forms
 
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.MalePaperdoll = cmbMalePaperdoll.Text;
+            _editorItem.MalePaperdoll = cmbMalePaperdoll.SelectedIndex < 1 ? "" : cmbMalePaperdoll.Text;
             if (cmbMalePaperdoll.SelectedIndex > 0)
             {
                 picMalePaperdoll.BackgroundImage =
@@ -456,7 +456,7 @@ namespace Intersect.Editor.Forms
 
         private void cmbFemalePaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.FemalePaperdoll = cmbFemalePaperdoll.Text;
+            _editorItem.FemalePaperdoll = cmbMalePaperdoll.SelectedIndex < 1 ? "" : cmbFemalePaperdoll.Text;
             if (cmbFemalePaperdoll.SelectedIndex > 0)
             {
                 picFemalePaperdoll.BackgroundImage =
@@ -619,7 +619,7 @@ namespace Intersect.Editor.Forms
 
         private void nudScaling_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Scaling = (int) nudScaling.Value;
+            _editorItem.Scaling = (int) nudScaling.Value * 100;
         }
 
         private void nudDamage_ValueChanged(object sender, EventArgs e)
