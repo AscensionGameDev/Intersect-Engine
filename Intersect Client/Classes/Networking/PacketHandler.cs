@@ -401,6 +401,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Options.LoadFromServer(bf);
+            Globals.Bank = new ItemInstance[Options.MaxBankSlots];
             GameGraphics.InitInGame();
         }
 

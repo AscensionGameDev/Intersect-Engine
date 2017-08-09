@@ -29,20 +29,20 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             InitializeComponent();
             _editingGraphic = editingGraphic;
-            _tmpGraphic.CopyFrom(_editingGraphic);
             _eventEditor = eventEditor;
             _loading = true;
-            cmbGraphicType.SelectedIndex = _editingGraphic.Type;
             UpdateGraphicList();
             if (cmbGraphic.Items.IndexOf(_editingGraphic.Filename) > -1)
             {
                 cmbGraphic.SelectedIndex = cmbGraphic.Items.IndexOf(_editingGraphic.Filename);
             }
-            UpdatePreview();
             _routeDesigner = moveRouteDesigner;
             _newRouteAction = newMoveRouteAction;
             _loading = false;
             InitLocalization();
+            cmbGraphicType.SelectedIndex = _editingGraphic.Type;
+            _tmpGraphic.CopyFrom(_editingGraphic);
+            UpdatePreview();
         }
 
         private void InitLocalization()

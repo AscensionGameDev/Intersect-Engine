@@ -19,6 +19,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             InitializeComponent();
             _myTask = refTask;
             _eventBackup.WriteBytes(_myTask.CompletionEvent.EventData());
+            InitLocalization();
             cmbTaskType.SelectedIndex = _myTask.Objective;
             txtStartDesc.Text = _myTask.Desc;
             UpdateFormElements();
@@ -35,7 +36,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
                     nudNpcQuantity.Value = _myTask.Data2;
                     break;
             }
-            InitLocalization();
         }
 
         private void InitLocalization()

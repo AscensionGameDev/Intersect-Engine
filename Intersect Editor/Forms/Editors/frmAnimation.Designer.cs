@@ -100,6 +100,7 @@ namespace Intersect.Editor.Forms
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.tmrRender = new System.Windows.Forms.Timer(this.components);
             this.grpAnimations.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             this.grpLower.SuspendLayout();
@@ -1005,6 +1006,12 @@ namespace Intersect.Editor.Forms
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
+            // tmrRender
+            // 
+            this.tmrRender.Enabled = true;
+            this.tmrRender.Interval = 16;
+            this.tmrRender.Tick += new System.EventHandler(this.tmrRender_Tick);
+            // 
             // frmAnimation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1126,5 +1133,6 @@ namespace Intersect.Editor.Forms
         private DarkNumericUpDown nudUpperFrameCount;
         private DarkNumericUpDown nudUpperVerticalFrames;
         private DarkNumericUpDown nudUpperHorizontalFrames;
+        private System.Windows.Forms.Timer tmrRender;
     }
 }

@@ -48,6 +48,7 @@ namespace Intersect.Editor.Classes
             if (bf == null || bf.Length() == 0) return;
 
             var packetHeader = (ServerPackets) bf.ReadLong();
+            Console.WriteLine("Received packet " + packetHeader);
             switch (packetHeader)
             {
                 case ServerPackets.Ping:
@@ -259,7 +260,6 @@ namespace Intersect.Editor.Classes
                         Globals.CurrentMap = map;
                     MapInstance.Lookup.Get<MapInstance>(mapNum).Delete();
                 }
-                MapInstance.Lookup.Set(mapNum, map);
                 map.Load(mapData);
                 map.LoadTileData(tileData);
                 map.SaveStateAsUnchanged();
@@ -267,6 +267,7 @@ namespace Intersect.Editor.Classes
                 map.MapGridY = bf.ReadInteger();
                 map.InitAutotiles();
                 map.UpdateAdjacentAutotiles();
+                MapInstance.Lookup.Set(mapNum, map);
                 if (!Globals.InEditor && Globals.HasGameData)
                 {
                     Globals.CurrentMap = map;

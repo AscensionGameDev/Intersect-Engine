@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Intersect.Logging;
 
 namespace Intersect.GameObjects.Maps
@@ -954,7 +955,7 @@ namespace Intersect.GameObjects.Maps
             {
                 int i = y - 1;
 
-                while (tileLayer == 0)
+                while (tileLayer == 0 && i > -Options.MapHeight)
                 {
                     if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
                     {
@@ -973,7 +974,7 @@ namespace Intersect.GameObjects.Maps
             {
                 int i = y + 1;
 
-                while (tileLayer == 0)
+                while (tileLayer == 0 && i < Options.MapHeight * 2)
                 {
                     if (CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
                     {
@@ -1094,8 +1095,7 @@ namespace Intersect.GameObjects.Maps
             if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
             {
                 int i = y - 1;
-
-                while (tileLayer == 0)
+                while (tileLayer == 0 && i > -Options.MapHeight)
                 {
                     if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
                     {
@@ -1114,7 +1114,7 @@ namespace Intersect.GameObjects.Maps
             {
                 int i = y + 1;
 
-                while (tileLayer == 0)
+                while (tileLayer == 0  &&  i < Options.MapHeight*2)
                 {
                     if (CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
                     {
@@ -1236,7 +1236,7 @@ namespace Intersect.GameObjects.Maps
             {
                 int i = y - 1;
 
-                while (tileLayer == 0)
+                while (tileLayer == 0 && i > -Options.MapHeight)
                 {
                     if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
                     {
@@ -1255,7 +1255,7 @@ namespace Intersect.GameObjects.Maps
             {
                 int i = y + 1;
 
-                while (tileLayer == 0)
+                while (tileLayer == 0 && i < Options.MapHeight * 2)
                 {
                     if (CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
                     {
@@ -1358,7 +1358,7 @@ namespace Intersect.GameObjects.Maps
             {
                 int i = y - 1;
 
-                while (tileLayer == 0)
+                while (tileLayer == 0 && i > -Options.MapHeight)
                 {
                     if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
                     {
@@ -1377,7 +1377,7 @@ namespace Intersect.GameObjects.Maps
             {
                 int i = y + 1;
 
-                while (tileLayer == 0)
+                while (tileLayer == 0 && i < Options.MapHeight * 2)
                 {
                     if (CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
                     {
@@ -1953,19 +1953,7 @@ namespace Intersect.GameObjects.Maps
             if (surroundingMaps[gridX + 1, gridY + 1] != null)
             {
                 var layers = surroundingMaps[gridX + 1, gridY + 1].Layers;
-                if (layers == null)
-                {
-                    Log.Debug($"Layers are null [{gridX}/{gridX + 1},{gridY}/{gridY + 1}]");
-                    return false;
-                }
-
                 var tiles = layers[layerNum].Tiles;
-                if (tiles == null)
-                {
-                    Log.Debug($"Layer {layerNum}'s tiles are null.");
-                    return false;
-                }
-
                 targetTile = tiles[x2, y2];
             }
             var sourceTile = _myMap.Layers[layerNum].Tiles[x1, y1];

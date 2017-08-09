@@ -1043,7 +1043,7 @@ namespace Intersect.Editor.Classes
                                         }
                                         if (res.Width > Options.TileWidth)
                                         {
-                                            xpos -= (res.Width - 32) / 2;
+                                            xpos -= (res.Width - Options.TileWidth) / 2;
                                         }
                                         DrawTexture(res, xpos, ypos,
                                             0, 0, (int) res.Width, (int) res.Height, renderTarget);
@@ -1536,7 +1536,7 @@ namespace Intersect.Editor.Classes
             }
         }
 
-        private static void EndSpriteBatch()
+        public static void EndSpriteBatch()
         {
             if (!_spriteBatchBegan) return;
             _spriteBatch.End();

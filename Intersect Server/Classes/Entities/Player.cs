@@ -233,7 +233,7 @@ namespace Intersect.Server.Classes.Entities
                                     }
                                 }
                                 else { 
-                                    MyEvents[foundEvent].Update(timeMs);
+                                    if (MyEvents[foundEvent] != null) MyEvents[foundEvent].Update(timeMs);
                                 }
                             }
                         }

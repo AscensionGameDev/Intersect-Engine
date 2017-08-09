@@ -95,6 +95,7 @@ namespace Intersect.Editor.Forms.Editors
             // scrlAlpha
             // 
             this.scrlAlpha.Location = new System.Drawing.Point(141, 26);
+            this.scrlAlpha.Maximum = 255;
             this.scrlAlpha.Name = "scrlAlpha";
             this.scrlAlpha.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlAlpha.Size = new System.Drawing.Size(118, 17);
@@ -201,6 +202,10 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbIntervals.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbIntervals.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbIntervals.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbIntervals.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbIntervals.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbIntervals.ButtonIcon")));
+            this.cmbIntervals.DrawDropdownHoverOutline = false;
+            this.cmbIntervals.DrawFocusRectangle = false;
             this.cmbIntervals.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbIntervals.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbIntervals.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -223,6 +228,8 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbIntervals.Name = "cmbIntervals";
             this.cmbIntervals.Size = new System.Drawing.Size(109, 21);
             this.cmbIntervals.TabIndex = 1;
+            this.cmbIntervals.Text = "24 hours";
+            this.cmbIntervals.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbIntervals.SelectedIndexChanged += new System.EventHandler(this.cmbIntervals_SelectedIndexChanged);
             // 
             // chkSync

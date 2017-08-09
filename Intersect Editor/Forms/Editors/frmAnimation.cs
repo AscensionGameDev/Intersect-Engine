@@ -181,7 +181,7 @@ namespace Intersect.Editor.Forms
                 nudLowerFrameCount.Value = _editorItem.LowerAnimFrameCount;
                 UpdateLowerFrames();
 
-                nudLowerFrameDuration.Value = _editorItem.LowerAnimFrameSpeed * 10;
+                nudLowerFrameDuration.Value = _editorItem.LowerAnimFrameSpeed;
                 tmrLowerAnimation.Interval = (int) nudLowerFrameDuration.Value;
                 nudLowerLoopCount.Value = _editorItem.LowerAnimLoopCount;
 
@@ -193,7 +193,7 @@ namespace Intersect.Editor.Forms
                 nudUpperFrameCount.Value = _editorItem.UpperAnimFrameCount;
                 UpdateUpperFrames();
 
-                nudUpperFrameDuration.Value = _editorItem.UpperAnimFrameSpeed * 10;
+                nudUpperFrameDuration.Value = _editorItem.UpperAnimFrameSpeed;
                 tmrUpperAnimation.Interval = (int) nudUpperFrameDuration.Value;
                 nudUpperLoopCount.Value = _editorItem.UpperAnimLoopCount;
 
@@ -238,7 +238,6 @@ namespace Intersect.Editor.Forms
 
         private void tmrLowerAnimation_Tick(object sender, EventArgs e)
         {
-            DrawLowerFrame();
             if (_playLower)
             {
                 _lowerFrame++;
@@ -300,7 +299,7 @@ namespace Intersect.Editor.Forms
             if (lowerWindow == null || _editorItem == null) return;
             if (!_playLower) _lowerFrame = scrlLowerFrame.Value - 1;
             GraphicsDevice graphicsDevice = EditorGraphics.GetGraphicsDevice();
-
+            EditorGraphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(lowerDarkness);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (_lowerFrame < _editorItem.LowerLights.Length)
@@ -316,7 +315,7 @@ namespace Intersect.Editor.Forms
                 new RectangleF(0, 0, lowerDarkness.Width, lowerDarkness.Height),
                 System.Drawing.Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255, 255), lowerDarkness,
                 BlendState.Additive);
-
+            EditorGraphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(lowerWindow);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
             Texture2D animTexture = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
@@ -336,6 +335,7 @@ namespace Intersect.Editor.Forms
                         (int) picLowerAnimation.Height / 2 - (int) h / 2, w, h), lowerWindow);
             }
             EditorGraphics.DrawTexture(lowerDarkness, 0, 0, lowerWindow, EditorGraphics.MultiplyState);
+            EditorGraphics.EndSpriteBatch();
             lowerWindow.Present();
         }
 
@@ -344,7 +344,7 @@ namespace Intersect.Editor.Forms
             if (upperWindow == null || _editorItem == null) return;
             if (!_playUpper) _upperFrame = scrlUpperFrame.Value - 1;
             GraphicsDevice graphicsDevice = EditorGraphics.GetGraphicsDevice();
-
+            EditorGraphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(upperDarkness);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (_upperFrame < _editorItem.UpperLights.Length)
@@ -360,7 +360,7 @@ namespace Intersect.Editor.Forms
                 new RectangleF(0, 0, upperDarkness.Width, upperDarkness.Height),
                 System.Drawing.Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255, 255), upperDarkness,
                 BlendState.Additive);
-
+            EditorGraphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(upperWindow);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
             Texture2D animTexture = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
@@ -380,12 +380,12 @@ namespace Intersect.Editor.Forms
                         (int) picUpperAnimation.Height / 2 - (int) h / 2, w, h), upperWindow);
             }
             EditorGraphics.DrawTexture(upperDarkness, 0, 0, upperWindow, EditorGraphics.MultiplyState);
+            EditorGraphics.EndSpriteBatch();
             upperWindow.Present();
         }
 
         private void tmrUpperAnimation_Tick(object sender, EventArgs e)
         {
-            DrawUpperFrame();
             if (_playUpper)
             {
                 _upperFrame++;
@@ -626,7 +626,7 @@ namespace Intersect.Editor.Forms
 
         private void nudLowerFrameDuration_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.LowerAnimFrameSpeed = (int) nudLowerFrameDuration.Value / 10;
+            _editorItem.LowerAnimFrameSpeed = (int) nudLowerFrameDuration.Value;
             tmrLowerAnimation.Interval = (int) nudLowerFrameDuration.Value;
         }
 
@@ -653,13 +653,19 @@ namespace Intersect.Editor.Forms
 
         private void nudUpperFrameDuration_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.UpperAnimFrameSpeed = (int) nudUpperFrameDuration.Value / 10;
+            _editorItem.UpperAnimFrameSpeed = (int) nudUpperFrameDuration.Value;
             tmrUpperAnimation.Interval = (int) nudUpperFrameDuration.Value;
         }
 
         private void nudUpperLoopCount_ValueChanged(object sender, EventArgs e)
         {
             _editorItem.UpperAnimLoopCount = (int) nudUpperLoopCount.Value;
+        }
+
+        private void tmrRender_Tick(object sender, EventArgs e)
+        {
+            DrawLowerFrame();
+            DrawUpperFrame();
         }
     }
 }

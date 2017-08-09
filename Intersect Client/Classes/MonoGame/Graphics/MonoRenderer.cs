@@ -38,12 +38,15 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         private int mScreenWidth;
         private int mDisplayWidth;
         private int mDisplayHeight;
+        private DisplayMode mOldDisplayMode;
+        private bool mDisplayModeChanged = false;
 
         private SpriteBatch mSpriteBatch;
         private bool _spriteBatchBegan;
         private List<string> mValidVideoModes;
         private GameRenderTexture mWhiteTexture;
         private List<MonoTexture> AllTextures = new List<MonoTexture>();
+        private long fsChangedTimer = -1;
         
         private bool mInitializing;
 
@@ -76,13 +79,13 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         public void UpdateGraphicsState(int width, int height)
         {
             var currentDisplayMode = mGraphics.GraphicsDevice.Adapter.CurrentDisplayMode;
-            mDisplayWidth = currentDisplayMode.Width;
-            mDisplayHeight = currentDisplayMode.Height;
+            var fsChanged = mGraphics.IsFullScreen != Globals.Database.FullScreen && !Globals.Database.FullScreen;
+            mGraphics.IsFullScreen = Globals.Database.FullScreen;
+            if (fsChanged) mGraphics.ApplyChanges();
             mScreenWidth = width;
             mScreenHeight = height;
             mGraphics.PreferredBackBufferWidth = width;
             mGraphics.PreferredBackBufferHeight = height;
-            mGraphics.IsFullScreen = Globals.Database.FullScreen;
             mGraphics.SynchronizeWithVerticalRetrace = (Globals.Database.TargetFps == 0);
             mGraphics.ApplyChanges();
 
@@ -106,8 +109,11 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             {
                 _game.IsFixedTimeStep = false;
             }
-
+            mDisplayWidth = currentDisplayMode.Width;
+            mDisplayHeight = currentDisplayMode.Height;
             _gameWindow.Position = new Microsoft.Xna.Framework.Point((mDisplayWidth - mScreenWidth) / 2, (mDisplayHeight - mScreenHeight) / 2);
+            mOldDisplayMode = currentDisplayMode;
+            if (fsChanged) fsChangedTimer = Globals.System.GetTimeMS() + 1000;
         }
 
         public void CreateWhiteTexture()
@@ -120,10 +126,19 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override bool Begin()
         {
+            if (fsChangedTimer > -1 && fsChangedTimer < Globals.System.GetTimeMS())
+            {
+                mGraphics.PreferredBackBufferWidth--;
+                mGraphics.ApplyChanges();
+                mGraphics.PreferredBackBufferWidth++;
+                mGraphics.ApplyChanges();
+                fsChangedTimer = -1;
+            }
             if (_gameWindow.ClientBounds.Width != 0 && _gameWindow.ClientBounds.Height != 0 &&
-                (_gameWindow.ClientBounds.Width != mScreenWidth || _gameWindow.ClientBounds.Height != mScreenHeight) &&
+                (_gameWindow.ClientBounds.Width != mScreenWidth || _gameWindow.ClientBounds.Height != mScreenHeight || mGraphics.GraphicsDevice.Adapter.CurrentDisplayMode != mOldDisplayMode) &&
                 !mGraphics.IsFullScreen)
             {
+                if (mOldDisplayMode != mGraphics.GraphicsDevice.DisplayMode) mDisplayModeChanged = true;
                 UpdateGraphicsState(mScreenWidth, mScreenHeight);
             }
 
@@ -197,6 +212,13 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 _currentTarget = target;
                 _spriteBatchBegan = true;
             }
+        }
+
+        public override bool DisplayModeChanged()
+        {
+            var changed = mDisplayModeChanged;
+            mDisplayModeChanged = false;
+            return changed;
         }
 
         private void EndSpriteBatch()

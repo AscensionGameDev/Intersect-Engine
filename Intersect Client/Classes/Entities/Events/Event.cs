@@ -56,7 +56,7 @@ namespace Intersect_Client.Classes.Entities
             DisablePreview = bf.ReadInteger();
             Desc = bf.ReadString();
             GraphicType = bf.ReadInteger();
-            GraphicFile = bf.ReadString();
+            GraphicFile = bf.ReadString().ToLower();
             GraphicX = bf.ReadInteger();
             GraphicY = bf.ReadInteger();
             GraphicWidth = bf.ReadInteger();
@@ -132,6 +132,21 @@ namespace Intersect_Client.Classes.Entities
                     }
                     break;
                 case 2: //Tile
+                    if (cachedTilesetName != GraphicFile)
+                    {
+                        cachedTilesetName = GraphicFile;
+                        cachedTileset = null;
+                        foreach (var tilesetName in TilesetBase.GetNameList())
+                        {
+                            if (tilesetName.ToLower() == GraphicFile.ToLower())
+                            {
+                                cachedTileset =
+                                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
+                                        GraphicFile);
+                                break;
+                            }
+                        }
+                    }
                     GameTexture tileset = cachedTileset;
                     if (tileset != null)
                     {

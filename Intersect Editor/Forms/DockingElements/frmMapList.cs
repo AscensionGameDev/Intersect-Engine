@@ -24,7 +24,7 @@ namespace Intersect.Editor.Forms
         {
             if (e.Node.Tag.GetType() == typeof(MapListMap))
             {
-                if (Globals.CurrentMap.Changed() &&
+                if (Globals.CurrentMap != null && Globals.CurrentMap.Changed() &&
                     DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"),
                         Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)

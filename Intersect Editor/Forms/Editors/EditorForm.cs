@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Enums;
@@ -40,6 +40,7 @@ namespace Intersect.Editor.Forms.Editors
 
         protected virtual void GameObjectUpdatedDelegate(GameObjectType type)
         {
+
         }
     }
 }

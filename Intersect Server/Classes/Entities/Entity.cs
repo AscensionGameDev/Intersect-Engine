@@ -239,16 +239,14 @@ namespace Intersect.Server.Classes.Entities
                 for (int i = 0; i < mapEntities.Count; i++)
                 {
                     Entity en = mapEntities[i];
-                    if (en.CurrentX == tile.GetX() && en.CurrentY == tile.GetY() && en.CurrentZ == CurrentZ &&
-                        en.Passable == 0)
+                    if (en.CurrentX == tile.GetX() && en.CurrentY == tile.GetY() && en.CurrentZ == CurrentZ && en.Passable == 0)
                     {
                         //Set a target if a projectile
                         CollisionIndex = en.MyIndex;
                         if (en.GetType() == typeof(Player))
                         {
                             //Check if this target player is passable....
-                            if (!Options.PlayerPassable[(int) targetMap.ZoneType])
-                                return (int) EntityTypes.Player;
+                            if (!Options.PlayerPassable[(int) targetMap.ZoneType]) return (int) EntityTypes.Player;
                         }
                         else if (en.GetType() == typeof(Npc))
                         {
@@ -258,8 +256,7 @@ namespace Intersect.Server.Classes.Entities
                         {
                             //If determine if we should walk
                             var res = ((Resource) en);
-                            if ((!res.IsDead() && !res.MyBase.WalkableBefore) ||
-                                (res.IsDead() && !res.MyBase.WalkableAfter))
+                            if ((!res.IsDead() && !res.MyBase.WalkableBefore) || (res.IsDead() && !res.MyBase.WalkableAfter))
                             {
                                 return (int) EntityTypes.Resource;
                             }
@@ -542,6 +539,34 @@ namespace Intersect.Server.Classes.Entities
                         else
                         {
                             PacketSender.SendEntityMove(this, correction);
+                        }
+                        //Check if moving into a projectile.. if so this npc needs to be hit
+                        var myMap = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+                        if (myMap != null)
+                        {
+                            var localMaps = myMap.GetSurroundingMaps(true);
+                            foreach (var map in localMaps)
+                            {
+                                var projectiles = map.MapProjectiles;
+                                foreach (var projectile in projectiles)
+                                {
+                                    if (projectile.GetType() == typeof(Projectile))
+                                    {
+                                        var proj = projectile;
+                                        foreach (var spawn in proj.Spawns)
+                                        {
+                                            if (spawn != null && spawn.Map == CurrentMap && spawn.X == CurrentX &&
+                                                spawn.Y == CurrentY && spawn.Z == CurrentZ)
+                                            {
+                                                if (spawn.HitEntity(this))
+                                                {
+                                                    spawn.Parent.KillSpawn(spawn);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                         MoveTimer = Globals.System.GetTimeMs() + (long) GetMovementTime();
                     }
