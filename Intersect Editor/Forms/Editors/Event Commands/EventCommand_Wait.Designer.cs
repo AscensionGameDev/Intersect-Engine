@@ -31,10 +31,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private void InitializeComponent()
         {
             this.grpWait = new DarkUI.Controls.DarkGroupBox();
+            this.nudWait = new DarkUI.Controls.DarkNumericUpDown();
             this.lblWait = new System.Windows.Forms.Label();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
-            this.nudWait = new DarkUI.Controls.DarkNumericUpDown();
             this.grpWait.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudWait)).BeginInit();
             this.SuspendLayout();
@@ -54,6 +54,21 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpWait.TabIndex = 17;
             this.grpWait.TabStop = false;
             this.grpWait.Text = "Wait:";
+            // 
+            // nudWait
+            // 
+            this.nudWait.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudWait.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudWait.Location = new System.Drawing.Point(89, 22);
+            this.nudWait.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.nudWait.Name = "nudWait";
+            this.nudWait.Size = new System.Drawing.Size(158, 20);
+            this.nudWait.TabIndex = 35;
+            this.nudWait.ValueChanged += new System.EventHandler(this.nudWait_ValueChanged);
             // 
             // lblWait
             // 
@@ -83,21 +98,6 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // nudWait
-            // 
-            this.nudWait.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudWait.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudWait.Location = new System.Drawing.Point(89, 22);
-            this.nudWait.Maximum = new decimal(new int[] {
-            30000,
-            0,
-            0,
-            0});
-            this.nudWait.Name = "nudWait";
-            this.nudWait.Size = new System.Drawing.Size(158, 20);
-            this.nudWait.TabIndex = 35;
-            this.nudWait.ValueChanged += new System.EventHandler(this.nudWait_ValueChanged);
             // 
             // EventCommand_Wait
             // 
