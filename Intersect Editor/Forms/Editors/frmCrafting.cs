@@ -52,7 +52,9 @@ namespace Intersect.Editor.Forms.Editors
 
         private void lstCrafts_Click(object sender, EventArgs e)
         {
-            _editorItem = BenchBase.Lookup.Get<BenchBase>(Database.GameObjectIdFromList(GameObjectType.Bench, lstCrafts.SelectedIndex));
+            _editorItem =
+                BenchBase.Lookup.Get<BenchBase>(
+                    Database.GameObjectIdFromList(GameObjectType.Bench, lstCrafts.SelectedIndex));
             UpdateEditor();
         }
 
@@ -114,7 +116,8 @@ namespace Intersect.Editor.Forms.Editors
                     if (_currentCraft.Ingredients[i].Item > -1)
                     {
                         lstIngredients.Items.Add(Strings.Get("craftingeditor", "ingredientlistitem",
-                            ItemBase.GetName(_currentCraft.Ingredients[i].Item), _currentCraft.Ingredients[i].Quantity));
+                            ItemBase.GetName(_currentCraft.Ingredients[i].Item),
+                            _currentCraft.Ingredients[i].Quantity));
                     }
                     else
                     {
@@ -244,7 +247,8 @@ namespace Intersect.Editor.Forms.Editors
             if (_editorItem != null && lstCrafts.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("craftingeditor", "deleteprompt"),
-                        Strings.Get("craftingeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                        Strings.Get("craftingeditor", "deletetitle"), DarkDialogButton.YesNo,
+                        Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
@@ -275,7 +279,8 @@ namespace Intersect.Editor.Forms.Editors
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("craftingeditor", "undoprompt"),
-                        Strings.Get("craftingeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                        Strings.Get("craftingeditor", "undotitle"), DarkDialogButton.YesNo,
+                        Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();

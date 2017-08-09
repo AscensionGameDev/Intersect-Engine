@@ -1,13 +1,24 @@
-﻿using Intersect.Memory;
-using System;
+﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using Intersect.Memory;
 
 namespace Intersect.Network.Crypto.Formats
 {
     public class RsaKey : EncryptionKey
     {
         private RSAParameters mParameters;
+
+        public RsaKey()
+            : this(null)
+        {
+        }
+
+        public RsaKey(RSAParameters? parameters)
+            : base(KeyFormat.Rsa)
+        {
+            Parameters = parameters ?? new RSAParameters();
+        }
 
         public RSAParameters Parameters
         {
@@ -22,17 +33,6 @@ namespace Intersect.Network.Crypto.Formats
                (mParameters.InverseQ == null) ||
                (mParameters.P == null) ||
                (mParameters.Q == null);
-
-        public RsaKey()
-            : this(null)
-        {
-        }
-
-        public RsaKey(RSAParameters? parameters)
-            : base(KeyFormat.Rsa)
-        {
-            Parameters = parameters ?? new RSAParameters();
-        }
 
         protected override bool InternalRead(IBuffer buffer)
         {
@@ -57,12 +57,16 @@ namespace Intersect.Network.Crypto.Formats
         protected override bool InternalWrite(IBuffer buffer)
         {
             if (buffer == null) throw new ArgumentNullException();
-            if (mParameters.Exponent == null || mParameters.Exponent.Length != 3) throw new ArgumentNullException(nameof(mParameters.Exponent), @"Exponent not initialized (or properly).");
-            if (mParameters.Modulus == null || mParameters.Modulus.Length % 2 != 0) throw new ArgumentNullException(nameof(mParameters.Exponent), @"Modulus not initialized (or properly).");
+            if (mParameters.Exponent == null || mParameters.Exponent.Length != 3)
+                throw new ArgumentNullException(nameof(mParameters.Exponent),
+                    @"Exponent not initialized (or properly).");
+            if (mParameters.Modulus == null || mParameters.Modulus.Length % 2 != 0)
+                throw new ArgumentNullException(nameof(mParameters.Exponent),
+                    @"Modulus not initialized (or properly).");
 
             buffer.Write(IsPublic);
 
-            var bits = (ushort)(mParameters.Modulus.Length << 3);
+            var bits = (ushort) (mParameters.Modulus.Length << 3);
             buffer.Write(bits);
             buffer.Write(mParameters.Modulus, 0, bits >> 3);
             buffer.Write(mParameters.Exponent, 0, 3);

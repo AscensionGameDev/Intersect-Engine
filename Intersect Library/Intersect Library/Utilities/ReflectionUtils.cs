@@ -6,7 +6,6 @@ namespace Intersect.Utilities
 {
     public static class ReflectionUtils
     {
-
         public static string StringifyParameter(ParameterInfo parameter) =>
             parameter == null
                 ? @"[NAMEOF_NULL_PARAMETER: TYPEOF_NULL_PARAMETER]"
@@ -40,6 +39,5 @@ namespace Intersect.Utilities
 
             return builder.ToString();
         }
-
     }
 }

@@ -188,22 +188,22 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     if (chkRelativeLocation.Checked && chkRotateDirection.Checked)
                     {
                         _myCommand.Ints[5] = 3;
-                            //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                        //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
                     else if (chkRelativeLocation.Checked)
                     {
                         _myCommand.Ints[5] = 1;
-                            //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                        //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
                     else if (chkRotateDirection.Checked)
                     {
                         _myCommand.Ints[5] = 2;
-                            //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                        //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
                     else
                     {
                         _myCommand.Ints[5] = 0;
-                            //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                        //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
 
                     break;

@@ -187,7 +187,8 @@ namespace Intersect.GameObjects.Maps.MapList
                     {
                         return parent;
                     }
-                    if (((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]) != null)
+                    if (((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]) !=
+                        null)
                     {
                         return ((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]);
                     }

@@ -63,7 +63,7 @@ namespace Intersect.Memory
                 return false;
             }
 
-            value = (byte)(base.ReadByte() & 0xFF);
+            value = (byte) (base.ReadByte() & 0xFF);
             return true;
         }
 
@@ -103,7 +103,7 @@ namespace Intersect.Memory
         public bool Read(out decimal value)
         {
             value = default(decimal);
-            
+
             var bits = new int[4];
             if (!Read(out bits[0])) return false;
             if (!Read(out bits[1])) return false;
@@ -303,7 +303,7 @@ namespace Intersect.Memory
         }
 
         public new byte ReadByte()
-            => (byte)(base.ReadByte() & 0xFF);
+            => (byte) (base.ReadByte() & 0xFF);
 
         public byte ReadUInt8()
         {

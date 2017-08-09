@@ -1,5 +1,4 @@
 ﻿using System;
-using Intersect.Memory;
 
 namespace Intersect.Network
 {

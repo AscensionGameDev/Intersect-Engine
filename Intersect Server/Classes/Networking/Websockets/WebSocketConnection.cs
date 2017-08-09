@@ -8,11 +8,11 @@ namespace Intersect.Server.Classes.Networking.Websockets
 {
     public class WebSocketConnection : AbstractConnection
     {
-        private readonly WebSocketContext context;
         private readonly WebSocketBehavior behavior;
-        private bool clientRemoved;
-        private object bufferLock = new Object();
+        private readonly WebSocketContext context;
         private ByteBuffer buffer = new ByteBuffer();
+        private object bufferLock = new Object();
+        private bool clientRemoved;
         private PacketHandler packetHandler = new PacketHandler();
 
         public WebSocketConnection(WebSocketContext context, WebSocketBehavior behavior)
@@ -24,9 +24,15 @@ namespace Intersect.Server.Classes.Networking.Websockets
             Client.CreateBeta4Client(this);
         }
 
-        public override string Ip { get { return this.context.UserEndPoint.Address.ToString(); } }
-        public override int Port { get { return this.context.UserEndPoint.Port; } }
+        public override string Ip
+        {
+            get { return this.context.UserEndPoint.Address.ToString(); }
+        }
 
+        public override int Port
+        {
+            get { return this.context.UserEndPoint.Port; }
+        }
 
         private void WebSocket_OnError(object sender, WebSocketSharp.ErrorEventArgs e)
         {
@@ -91,7 +97,7 @@ namespace Intersect.Server.Classes.Networking.Websockets
                 }
             }
         }
-        
+
         public override bool Send(IPacket packet)
         {
             try

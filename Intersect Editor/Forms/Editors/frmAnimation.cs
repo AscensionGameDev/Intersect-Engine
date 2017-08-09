@@ -29,6 +29,7 @@ namespace Intersect.Editor.Forms
 
         //Mono Rendering Variables
         private SwapChainRenderTarget lowerWindow;
+
         private RenderTarget2D upperDarkness;
         private SwapChainRenderTarget upperWindow;
 
@@ -79,7 +80,8 @@ namespace Intersect.Editor.Forms
         private void lstAnimations_Click(object sender, EventArgs e)
         {
             _editorItem =
-                AnimationBase.Lookup.Get<AnimationBase>(Database.GameObjectIdFromList(GameObjectType.Animation, lstAnimations.SelectedIndex));
+                AnimationBase.Lookup.Get<AnimationBase>(
+                    Database.GameObjectIdFromList(GameObjectType.Animation, lstAnimations.SelectedIndex));
             UpdateEditor();
         }
 
@@ -93,12 +95,14 @@ namespace Intersect.Editor.Forms
             //Lower Animation Graphic
             cmbLowerGraphic.Items.Clear();
             cmbLowerGraphic.Items.Add(Strings.Get("general", "none"));
-            cmbLowerGraphic.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Animation));
+            cmbLowerGraphic.Items.AddRange(
+                GameContentManager.GetTextureNames(GameContentManager.TextureType.Animation));
 
             //Upper Animation Graphic
             cmbUpperGraphic.Items.Clear();
             cmbUpperGraphic.Items.Add(Strings.Get("general", "none"));
-            cmbUpperGraphic.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Animation));
+            cmbUpperGraphic.Items.AddRange(
+                GameContentManager.GetTextureNames(GameContentManager.TextureType.Animation));
 
             lowerWindow = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), picLowerAnimation.Handle,
                 picLowerAnimation.Width, picLowerAnimation.Height);
@@ -218,7 +222,8 @@ namespace Intersect.Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstAnimations.Items[Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.Index)] = txtName.Text;
+            lstAnimations.Items[Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.Index)] =
+                txtName.Text;
         }
 
         private void cmbSound_SelectedIndexChanged(object sender, EventArgs e)
@@ -313,7 +318,8 @@ namespace Intersect.Editor.Forms
             }
             EditorGraphics.DrawTexture(EditorGraphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                 new RectangleF(0, 0, lowerDarkness.Width, lowerDarkness.Height),
-                System.Drawing.Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255, 255), lowerDarkness,
+                System.Drawing.Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255,
+                    255), lowerDarkness,
                 BlendState.Additive);
             EditorGraphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(lowerWindow);
@@ -358,7 +364,8 @@ namespace Intersect.Editor.Forms
             }
             EditorGraphics.DrawTexture(EditorGraphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                 new RectangleF(0, 0, upperDarkness.Width, upperDarkness.Height),
-                System.Drawing.Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255, 255), upperDarkness,
+                System.Drawing.Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255,
+                    255), upperDarkness,
                 BlendState.Additive);
             EditorGraphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(upperWindow);
@@ -518,7 +525,8 @@ namespace Intersect.Editor.Forms
             if (_editorItem != null && lstAnimations.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("animationeditor", "deleteprompt"),
-                        Strings.Get("animationeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                        Strings.Get("animationeditor", "deletetitle"), DarkDialogButton.YesNo,
+                        Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
@@ -549,7 +557,8 @@ namespace Intersect.Editor.Forms
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("animationeditor", "undoprompt"),
-                        Strings.Get("animationeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                        Strings.Get("animationeditor", "undotitle"), DarkDialogButton.YesNo,
+                        Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();

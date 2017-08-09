@@ -54,7 +54,7 @@ namespace Intersect_Client.Classes.UI.Game
             Hotbar = new HotBarWindow(GameCanvas);
             _debugMenu = new DebugMenu(GameCanvas);
             _questOfferWindow = new QuestOfferWindow(GameCanvas);
-            _playerBox = new EntityBox(GameCanvas,EntityTypes.Player, Globals.Me, true);
+            _playerBox = new EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
         }
 
         //Chatbox

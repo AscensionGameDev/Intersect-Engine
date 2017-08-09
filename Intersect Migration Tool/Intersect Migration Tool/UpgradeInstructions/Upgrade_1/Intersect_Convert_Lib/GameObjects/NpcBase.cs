@@ -7,12 +7,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
     {
         //Core info
         public new const string DATABASE_TABLE = "npcs";
+
         public new const GameObject OBJECT_TYPE = GameObject.Npc;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public byte Behavior;
 
         //Drops
         public List<NPCDrop> Drops = new List<NPCDrop>();
+
         public int Experience;
 
         //Vitals & Stats
@@ -26,6 +28,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
 
         //Spells
         public List<int> Spells = new List<int>();
+
         public string Sprite = "";
         public int[] Stat = new int[(int) Stats.StatCount];
 

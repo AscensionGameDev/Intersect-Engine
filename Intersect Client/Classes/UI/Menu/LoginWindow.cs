@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
-using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using IntersectClientExtras.Input;
@@ -21,11 +18,13 @@ namespace Intersect_Client.Classes.UI.Menu
         private Button _backBtn;
         private Button _loginBtn;
 
-        //Parent
-        private MainMenu _mainMenu;
         private Label _loginHeader;
+
         //Controls
         private ImagePanel _loginWindow;
+
+        //Parent
+        private MainMenu _mainMenu;
 
         private ImagePanel _passwordBackground;
         private Label _passwordLabel;
@@ -35,6 +34,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
         //Controls
         private ImagePanel _usernameBackground;
+
         private Label _usernameLabel;
         private TextBox _usernameTextbox;
 
@@ -76,10 +76,11 @@ namespace Intersect_Client.Classes.UI.Menu
             _passwordTextbox.TextChanged += _passwordTextbox_TextChanged;
 
             //Login Save Pass Checkbox
-            _savePassChk = new LabeledCheckBox(_loginWindow,"SavePassCheckbox") {Text = Strings.Get("login", "savepass")};
+            _savePassChk =
+                new LabeledCheckBox(_loginWindow, "SavePassCheckbox") {Text = Strings.Get("login", "savepass")};
 
             //Login - Send Login Button
-            _loginBtn = new Button(_loginWindow,"LoginButton");
+            _loginBtn = new Button(_loginWindow, "LoginButton");
             _loginBtn.SetText(Strings.Get("login", "login"));
             _loginBtn.Clicked += LoginBtn_Clicked;
 
@@ -93,7 +94,8 @@ namespace Intersect_Client.Classes.UI.Menu
 
         private void _usernameTextbox_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            Globals.InputManager.OpenKeyboard(GameInput.KeyboardType.Normal, _usernameTextbox.Text, false, false, false);
+            Globals.InputManager.OpenKeyboard(GameInput.KeyboardType.Normal, _usernameTextbox.Text, false, false,
+                false);
         }
 
         //Methods
@@ -170,13 +172,15 @@ namespace Intersect_Client.Classes.UI.Menu
                         }
                         else
                         {
-                            Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("errors", "passwordinvalid")));
+                            Gui.MsgboxErrors.Add(
+                                new KeyValuePair<string, string>("", Strings.Get("errors", "passwordinvalid")));
                         }
                     }
                 }
                 else
                 {
-                    Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("errors", "usernameinvalid")));
+                    Gui.MsgboxErrors.Add(
+                        new KeyValuePair<string, string>("", Strings.Get("errors", "usernameinvalid")));
                 }
             }
             else

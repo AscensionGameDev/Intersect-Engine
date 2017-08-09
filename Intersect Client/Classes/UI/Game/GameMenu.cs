@@ -1,7 +1,4 @@
 ﻿using Intersect.Localization;
-using IntersectClientExtras.File_Management;
-using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
@@ -11,37 +8,43 @@ namespace Intersect_Client.Classes.UI.Game
 {
     class GameMenu
     {
-        //Menu Container
-        private ImagePanel _menuContainer;
+        private ImagePanel _characterBackground;
+        private Button _characterButton;
+        private CharacterWindow _characterWindow;
+        private ImagePanel _closeBackground;
+        private Button _closeButton;
+        private ImagePanel _friendsBackground;
+        private Button _friendsButton;
+        private FriendsWindow _friendsWindow;
 
         //Canvas instance
         Canvas _GameCanvas;
+
         private ImagePanel _inventoryBackground;
+
         //Control Variables
         private Button _inventoryButton;
+
         private InventoryWindow _inventoryWindow;
+
+        //Menu Container
+        private ImagePanel _menuContainer;
+
         private ImagePanel _optionsBackground;
         private Button _optionsButton;
 
         //Window References
         private OptionsWindow _optionsWindow;
+
         private ImagePanel _partyBackground;
         private Button _partyButton;
         private PartyWindow _partyWindow;
-        private ImagePanel _friendsBackground;
-        private Button _friendsButton;
-        private FriendsWindow _friendsWindow;
         private ImagePanel _questsBackground;
         private Button _questsButton;
         private QuestsWindow _questsWindow;
         private ImagePanel _spellsBackground;
         private Button _spellsButton;
         private SpellsWindow _spellsWindow;
-        private ImagePanel _characterBackground;
-        private Button _characterButton;
-        private CharacterWindow _characterWindow;
-        private ImagePanel _closeBackground;
-        private Button _closeButton;
         private int backgroundHeight = 42;
         private int backgroundWidth = 42;
         private int buttonHeight = 34;
@@ -54,10 +57,10 @@ namespace Intersect_Client.Classes.UI.Game
         {
             _GameCanvas = _gameCanvas;
 
-            _menuContainer = new ImagePanel(_gameCanvas,"MenuContainer");
-            
+            _menuContainer = new ImagePanel(_gameCanvas, "MenuContainer");
+
             _inventoryBackground = new ImagePanel(_menuContainer, "InventoryContainer");
-            _inventoryButton = new Button(_inventoryBackground,"InventoryButton");
+            _inventoryButton = new Button(_inventoryBackground, "InventoryButton");
             _inventoryButton.SetToolTipText(Strings.Get("gamemenu", "items"));
             _inventoryButton.Clicked += InventoryButton_Clicked;
 

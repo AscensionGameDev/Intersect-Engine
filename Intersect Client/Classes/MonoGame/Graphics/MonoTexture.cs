@@ -12,8 +12,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         private int _height = -1;
         private long _lastAccessTime;
         private bool _loadError;
-        private string _path = "";
         private string _name = "";
+        private string _path = "";
         private Texture2D _tex;
         private int _width = -1;
 

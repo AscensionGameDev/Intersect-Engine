@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Intersect.Collections;
@@ -32,10 +29,12 @@ namespace Intersect.Server.Classes.Core
 
         //Database Variables
         private const string INFO_TABLE = "info";
+
         private const string DB_VERSION = "dbversion";
 
         //Ban Table Constants
         private const string BAN_TABLE = "bans";
+
         private const string BAN_ID = "id";
         private const string BAN_TIME = "time";
         private const string BAN_USER = "user";
@@ -46,6 +45,7 @@ namespace Intersect.Server.Classes.Core
 
         //Mute Table Constants
         private const string MUTE_TABLE = "mutes";
+
         private const string MUTE_ID = "id";
         private const string MUTE_TIME = "time";
         private const string MUTE_USER = "user";
@@ -56,6 +56,7 @@ namespace Intersect.Server.Classes.Core
 
         //Log Table Constants
         private const string LOG_TABLE = "logs";
+
         private const string LOG_ID = "id";
         private const string LOG_TIME = "time";
         private const string LOG_TYPE = "type";
@@ -63,6 +64,7 @@ namespace Intersect.Server.Classes.Core
 
         //User Table Constants
         private const string USERS_TABLE = "users";
+
         private const string USER_ID = "id";
         private const string USER_NAME = "user";
         private const string USER_PASS = "pass";
@@ -72,10 +74,11 @@ namespace Intersect.Server.Classes.Core
 
         //Character Table Constants
         private const string CHAR_TABLE = "characters";
+
         private const string CHAR_ID = "id";
         private const string CHAR_USER_ID = "user_id";
         private const string CHAR_DELETED = "deleted";
-		private const string CHAR_NAME = "name";
+        private const string CHAR_NAME = "name";
         private const string CHAR_MAP = "map";
         private const string CHAR_X = "x";
         private const string CHAR_Y = "y";
@@ -96,6 +99,7 @@ namespace Intersect.Server.Classes.Core
 
         //Char Inventory Table Constants
         private const string CHAR_INV_TABLE = "char_inventory";
+
         private const string CHAR_INV_CHAR_ID = "char_id";
         private const string CHAR_INV_SLOT = "slot";
         private const string CHAR_INV_ITEM_NUM = "itemnum";
@@ -105,6 +109,7 @@ namespace Intersect.Server.Classes.Core
 
         //Char Spells Table Constants
         private const string CHAR_SPELL_TABLE = "char_spells";
+
         private const string CHAR_SPELL_CHAR_ID = "char_id";
         private const string CHAR_SPELL_SLOT = "slot";
         private const string CHAR_SPELL_NUM = "spellnum";
@@ -112,6 +117,7 @@ namespace Intersect.Server.Classes.Core
 
         //Char Hotbar Table Constants
         private const string CHAR_HOTBAR_TABLE = "char_hotbar";
+
         private const string CHAR_HOTBAR_CHAR_ID = "char_id";
         private const string CHAR_HOTBAR_SLOT = "slot";
         private const string CHAR_HOTBAR_TYPE = "type";
@@ -119,6 +125,7 @@ namespace Intersect.Server.Classes.Core
 
         //Char Bank Table Constants
         private const string CHAR_BANK_TABLE = "char_bank";
+
         private const string CHAR_BANK_CHAR_ID = "char_id";
         private const string CHAR_BANK_SLOT = "slot";
         private const string CHAR_BANK_ITEM_NUM = "itemnum";
@@ -128,18 +135,21 @@ namespace Intersect.Server.Classes.Core
 
         //Char Switches Table Constants
         private const string CHAR_SWITCHES_TABLE = "char_switches";
+
         private const string CHAR_SWITCH_CHAR_ID = "char_id";
         private const string CHAR_SWITCH_SLOT = "slot";
         private const string CHAR_SWITCH_VAL = "val";
 
         //Char Variables Table Constants
         private const string CHAR_VARIABLES_TABLE = "char_variables";
+
         private const string CHAR_VARIABLE_CHAR_ID = "char_id";
         private const string CHAR_VARIABLE_SLOT = "slot";
         private const string CHAR_VARIABLE_VAL = "val";
 
         //Char Quests Table Constants
         private const string CHAR_QUESTS_TABLE = "char_quests";
+
         private const string CHAR_QUEST_CHAR_ID = "char_id";
         private const string CHAR_QUEST_ID = "quest_id";
         private const string CHAR_QUEST_TASK = "task";
@@ -148,34 +158,41 @@ namespace Intersect.Server.Classes.Core
 
         //Char Friendss Table Constants
         private const string CHAR_FRIENDS_TABLE = "char_friends";
+
         private const string CHAR_FRIEND_CHAR_ID = "char_id";
         private const string CHAR_FRIEND_ID = "friend_id";
 
         //GameObject Table Constants
         private const string GAME_OBJECT_ID = "id";
+
         private const string GAME_OBJECT_DELETED = "deleted";
         private const string GAME_OBJECT_DATA = "data";
 
         //Map Tiles Table
         private const string MAP_TILES_TABLE = "map_tiles";
+
         private const string MAP_TILES_MAP_ID = "map_id";
         private const string MAP_TILES_DATA = "data";
 
         //Map List Table Constants
         private const string MAP_LIST_TABLE = "map_list";
+
         private const string MAP_LIST_DATA = "data";
 
         //Time of Day Table Constants
         private const string TIME_TABLE = "time";
+
         private const string TIME_DATA = "data";
 
         //Bag Table Constants
         private const string BAGS_TABLE = "bags";
+
         private const string BAG_ID = "bag_id";
         private const string BAG_SLOT_COUNT = "slot_count";
 
         //Bag Items Table Constants
         private const string BAG_ITEMS_TABLE = "bag_items";
+
         private const string BAG_ITEM_CONTAINER_ID = "bag_id";
         private const string BAG_ITEM_SLOT = "slot";
         private const string BAG_ITEM_NUM = "itemnum";
@@ -341,7 +358,7 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-		private static void CreateCharactersTable()
+        private static void CreateCharactersTable()
         {
             var cmd = "CREATE TABLE " + CHAR_TABLE + " ("
                       + CHAR_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -532,7 +549,7 @@ namespace Intersect.Server.Classes.Core
                 ExecuteNonQuery(createCommand);
             }
             CreateBag(1);
-                //This is to bypass an issue where we use itemVal to store the bag identifier (we are terrible!)
+            //This is to bypass an issue where we use itemVal to store the bag identifier (we are terrible!)
         }
 
         private static void CreateGameObjectTables()
@@ -559,7 +576,8 @@ namespace Intersect.Server.Classes.Core
 
         private static void CreateMapTilesTable()
         {
-            var cmd = "CREATE TABLE " + MAP_TILES_TABLE + " (" + MAP_TILES_MAP_ID + " INTEGER UNIQUE, " + MAP_TILES_DATA + " BLOB NOT NULL);";
+            var cmd = "CREATE TABLE " + MAP_TILES_TABLE + " (" + MAP_TILES_MAP_ID + " INTEGER UNIQUE, " +
+                      MAP_TILES_DATA + " BLOB NOT NULL);";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
@@ -765,15 +783,16 @@ namespace Intersect.Server.Classes.Core
             if (client == null) return -1;
             long rowId = -1;
 
-            var insertQuery = $"INSERT into {USERS_TABLE} ({USER_NAME}, {USER_EMAIL}, {USER_PASS}, {USER_SALT}, {USER_POWER})" +
-                              $"VALUES (@{USER_NAME}, @{USER_EMAIL}, @{USER_PASS}, @{USER_SALT}, @{USER_POWER}); SELECT last_insert_rowid();";
+            var insertQuery =
+                $"INSERT into {USERS_TABLE} ({USER_NAME}, {USER_EMAIL}, {USER_PASS}, {USER_SALT}, {USER_POWER})" +
+                $"VALUES (@{USER_NAME}, @{USER_EMAIL}, @{USER_PASS}, @{USER_SALT}, @{USER_POWER}); SELECT last_insert_rowid();";
 
             var updateQuery = $"UPDATE {USERS_TABLE} SET " +
-                                $"{USER_NAME}=@{USER_NAME}, " +
-                                $"{USER_EMAIL}=@{USER_EMAIL}, " +
-                                $"{USER_PASS}=@{USER_PASS}, " +
-                                $"{USER_SALT}=@{USER_SALT}, " +
-                                $"{USER_POWER}=@{USER_POWER} " +
+                              $"{USER_NAME}=@{USER_NAME}, " +
+                              $"{USER_EMAIL}=@{USER_EMAIL}, " +
+                              $"{USER_PASS}=@{USER_PASS}, " +
+                              $"{USER_SALT}=@{USER_SALT}, " +
+                              $"{USER_POWER}=@{USER_POWER} " +
                               $"WHERE {USER_ID}=@{USER_ID};";
 
             using (var cmd = new SqliteCommand(newUser ? insertQuery : updateQuery, _dbConnection))
@@ -786,7 +805,7 @@ namespace Intersect.Server.Classes.Core
                 if (!newUser) cmd.Parameters.Add(new SqliteParameter("@" + USER_ID, client.MyId));
                 if (newUser)
                 {
-                    rowId = (int) ((long)ExecuteScalar(cmd));
+                    rowId = (int) ((long) ExecuteScalar(cmd));
                 }
                 else
                 {
@@ -857,7 +876,7 @@ namespace Intersect.Server.Classes.Core
                         client.Power = Convert.ToInt32(dataReader[USER_POWER]);
                         client.MyId = Convert.ToInt32(dataReader[USER_ID]);
 
-						return true;
+                        return true;
                     }
                 }
             }
@@ -875,26 +894,31 @@ namespace Intersect.Server.Classes.Core
             }
             if (player.MyClient.MyAccount == "") return -1;
             if (!newCharacter && player.MyId == -1) return -1;
-            var insertQuery = "INSERT into " + CHAR_TABLE + " (" + CHAR_USER_ID  + "," + CHAR_NAME + "," + CHAR_MAP +
+            var insertQuery = "INSERT into " + CHAR_TABLE + " (" + CHAR_USER_ID + "," + CHAR_NAME + "," + CHAR_MAP +
                               "," + CHAR_X + "," + CHAR_Y + "," + CHAR_Z + "," + CHAR_DIR + "," + CHAR_SPRITE + "," +
                               CHAR_FACE + "," + CHAR_CLASS + "," + CHAR_GENDER + "," + CHAR_LEVEL + "," + CHAR_EXP +
                               "," + CHAR_VITALS + "," + CHAR_MAX_VITALS + "," + CHAR_STATS + "," + CHAR_STAT_POINTS +
-                              "," + CHAR_EQUIPMENT + "," + CHAR_DELETED + "," +  CHAR_LAST_ONLINE_TIME + ")" + " VALUES (@" + CHAR_USER_ID + ",@" + CHAR_NAME + ",@" +
+                              "," + CHAR_EQUIPMENT + "," + CHAR_DELETED + "," + CHAR_LAST_ONLINE_TIME + ")" +
+                              " VALUES (@" + CHAR_USER_ID + ",@" + CHAR_NAME + ",@" +
                               CHAR_MAP + ",@" + CHAR_X + ",@" + CHAR_Y + ",@" + CHAR_Z + ",@" + CHAR_DIR + ",@" +
                               CHAR_SPRITE + ",@" + CHAR_FACE + ",@" + CHAR_CLASS + ",@" + CHAR_GENDER + ",@" +
                               CHAR_LEVEL + ",@" + CHAR_EXP + ",@" + CHAR_VITALS + ",@" + CHAR_MAX_VITALS + ",@" +
-                              CHAR_STATS + ",@" + CHAR_STAT_POINTS + ",@" + CHAR_EQUIPMENT + ",0,@" + CHAR_LAST_ONLINE_TIME + ");SELECT last_insert_rowid();";
+                              CHAR_STATS + ",@" + CHAR_STAT_POINTS + ",@" + CHAR_EQUIPMENT + ",0,@" +
+                              CHAR_LAST_ONLINE_TIME + ");SELECT last_insert_rowid();";
 
             var updateQuery = "UPDATE " + CHAR_TABLE + " SET " + CHAR_USER_ID + "=@" + CHAR_USER_ID +
-                               "," +  CHAR_NAME + "=@" + CHAR_NAME + "," + CHAR_MAP + "=@" + CHAR_MAP + "," +
-                               CHAR_X + "=@" +  CHAR_X + "," + CHAR_Y + "=@" + CHAR_Y + "," + CHAR_Z + "=@" + CHAR_Z + "," + CHAR_DIR +
+                              "," + CHAR_NAME + "=@" + CHAR_NAME + "," + CHAR_MAP + "=@" + CHAR_MAP + "," +
+                              CHAR_X + "=@" + CHAR_X + "," + CHAR_Y + "=@" + CHAR_Y + "," + CHAR_Z + "=@" + CHAR_Z +
+                              "," + CHAR_DIR +
                               "=@" + CHAR_DIR + "," + CHAR_SPRITE + "=@" + CHAR_SPRITE + "," + CHAR_FACE + "=@" +
                               CHAR_FACE + "," + CHAR_CLASS + "=@" + CHAR_CLASS + "," + CHAR_GENDER + "=@" +
                               CHAR_GENDER + "," + CHAR_LEVEL + "=@" + CHAR_LEVEL + "," + CHAR_EXP + "=@" + CHAR_EXP +
                               "," + CHAR_VITALS + "=@" + CHAR_VITALS + "," + CHAR_MAX_VITALS + "=@" +
                               CHAR_MAX_VITALS + "," + CHAR_STATS + "=@" + CHAR_STATS + "," + CHAR_STAT_POINTS + "=@" +
-                              CHAR_STAT_POINTS + "," + CHAR_EQUIPMENT + "=@" + CHAR_EQUIPMENT + "," + CHAR_LAST_ONLINE_TIME 
-                              + "=@" + CHAR_LAST_ONLINE_TIME + " WHERE " + CHAR_ID + "=@" + CHAR_ID + ";SELECT last_insert_rowid();";
+                              CHAR_STAT_POINTS + "," + CHAR_EQUIPMENT + "=@" + CHAR_EQUIPMENT + "," +
+                              CHAR_LAST_ONLINE_TIME
+                              + "=@" + CHAR_LAST_ONLINE_TIME + " WHERE " + CHAR_ID + "=@" + CHAR_ID +
+                              ";SELECT last_insert_rowid();";
             long rowId = -1;
             using (SqliteTransaction transaction = _dbConnection.BeginTransaction())
             {
@@ -940,7 +964,7 @@ namespace Intersect.Server.Classes.Core
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_EQUIPMENT, equipment));
                     if (!newCharacter) cmd.Parameters.Add(new SqliteParameter("@" + CHAR_ID, player.MyId));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_LAST_ONLINE_TIME, DateTime.UtcNow.ToBinary()));
-                    rowId = (int) ((long)ExecuteScalar(cmd));
+                    rowId = (int) ((long) ExecuteScalar(cmd));
                 }
                 if (newCharacter) player.MyId = rowId;
                 SaveCharacterInventory(player);
@@ -1000,9 +1024,9 @@ namespace Intersect.Server.Classes.Core
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_SLOT, i));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_NUM, player.Spells[i].SpellNum));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_CD,
-                    (player.Spells[i].SpellCD > Globals.System.GetTimeMs()
-                        ? Globals.System.GetTimeMs() - player.Spells[i].SpellCD
-                        : 0)));
+                        (player.Spells[i].SpellCD > Globals.System.GetTimeMs()
+                            ? Globals.System.GetTimeMs() - player.Spells[i].SpellCD
+                            : 0)));
                     ExecuteNonQuery(cmd);
                 }
             }
@@ -1146,26 +1170,33 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-		public static void GetCharacters(Client client)
-		{
+        public static void GetCharacters(Client client)
+        {
             var commaSep = new char[1];
             commaSep[0] = ',';
             try
-			{
-			    client.Characters.Clear();
-				var query = "SELECT " + CHAR_ID + "," + CHAR_NAME + "," + CHAR_SPRITE + "," + CHAR_GENDER + "," + CHAR_FACE + "," + CHAR_LEVEL + "," + CHAR_CLASS + "," + CHAR_EQUIPMENT + "," + CHAR_LAST_ONLINE_TIME + " FROM " + CHAR_TABLE + " WHERE " + CHAR_USER_ID + "=@" + CHAR_USER_ID + " AND " + CHAR_DELETED + " = 0 ORDER BY " + CHAR_LAST_ONLINE_TIME + " DESC LIMIT " + Options.MaxCharacters + ";";
-				using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
-				{
-					cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_ID, client.MyId));
-					using (var dataReader = ExecuteReader(cmd))
-					{
-						while (dataReader.Read())
-						{
-                            var character = new Character(Convert.ToInt32(dataReader[CHAR_ID]), dataReader[CHAR_NAME].ToString(), dataReader[CHAR_SPRITE].ToString(), dataReader[CHAR_FACE].ToString(),
-                                                                    Convert.ToInt32(dataReader[CHAR_LEVEL]), Convert.ToInt32(dataReader[CHAR_CLASS]));
-                            var equipmentString = dataReader[CHAR_EQUIPMENT].ToString().Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-						    var equipmentArray = new int[Options.EquipmentSlots.Count];
-                            for (var i = 0; i < (int)Options.EquipmentSlots.Count && i < equipmentString.Length; i++)
+            {
+                client.Characters.Clear();
+                var query = "SELECT " + CHAR_ID + "," + CHAR_NAME + "," + CHAR_SPRITE + "," + CHAR_GENDER + "," +
+                            CHAR_FACE + "," + CHAR_LEVEL + "," + CHAR_CLASS + "," + CHAR_EQUIPMENT + "," +
+                            CHAR_LAST_ONLINE_TIME + " FROM " + CHAR_TABLE + " WHERE " + CHAR_USER_ID + "=@" +
+                            CHAR_USER_ID + " AND " + CHAR_DELETED + " = 0 ORDER BY " + CHAR_LAST_ONLINE_TIME +
+                            " DESC LIMIT " + Options.MaxCharacters + ";";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_ID, client.MyId));
+                    using (var dataReader = ExecuteReader(cmd))
+                    {
+                        while (dataReader.Read())
+                        {
+                            var character = new Character(Convert.ToInt32(dataReader[CHAR_ID]),
+                                dataReader[CHAR_NAME].ToString(), dataReader[CHAR_SPRITE].ToString(),
+                                dataReader[CHAR_FACE].ToString(),
+                                Convert.ToInt32(dataReader[CHAR_LEVEL]), Convert.ToInt32(dataReader[CHAR_CLASS]));
+                            var equipmentString = dataReader[CHAR_EQUIPMENT].ToString()
+                                .Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            var equipmentArray = new int[Options.EquipmentSlots.Count];
+                            for (var i = 0; i < (int) Options.EquipmentSlots.Count && i < equipmentString.Length; i++)
                             {
                                 equipmentArray[i] = int.Parse(equipmentString[i]);
                             }
@@ -1174,9 +1205,14 @@ namespace Intersect.Server.Classes.Core
                             {
                                 if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1)
                                 {
-                                    if (equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 && equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] < Options.MaxInvItems)
+                                    if (equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] >
+                                        -1 && equipmentArray[
+                                            Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
+                                        Options.MaxInvItems)
                                     {
-                                        var itemNum = GetCharacterInventoryItem(character.Slot, equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])]);
+                                        var itemNum = GetCharacterInventoryItem(character.Slot,
+                                            equipmentArray[
+                                                Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])]);
 
                                         if (ItemBase.Lookup.Get<ItemBase>(itemNum) != null)
                                         {
@@ -1194,17 +1230,17 @@ namespace Intersect.Server.Classes.Core
                                 }
                             }
                             client.Characters.Add(character);
-						}
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
-		}
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
-		public static bool LoadCharacter(Client client, int id)
+        public static bool LoadCharacter(Client client, int id)
         {
             var en = client.Entity;
             var commaSep = new char[1];
@@ -1212,7 +1248,8 @@ namespace Intersect.Server.Classes.Core
             if (client.MyId == -1) return false;
             try
             {
-                var query = "SELECT * from " + CHAR_TABLE + " WHERE " + CHAR_USER_ID + "=@" + CHAR_USER_ID + " AND " + CHAR_ID + "=@" + CHAR_ID + ";";
+                var query = "SELECT * from " + CHAR_TABLE + " WHERE " + CHAR_USER_ID + "=@" + CHAR_USER_ID + " AND " +
+                            CHAR_ID + "=@" + CHAR_ID + ";";
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_ID, client.MyId));
@@ -1222,7 +1259,7 @@ namespace Intersect.Server.Classes.Core
                         if (dataReader.HasRows && dataReader.Read())
                         {
                             en.MyId = Convert.ToInt32(dataReader[CHAR_ID]);
-							en.MyName = dataReader[CHAR_NAME].ToString();
+                            en.MyName = dataReader[CHAR_NAME].ToString();
                             en.CurrentMap = Convert.ToInt32(dataReader[CHAR_MAP]);
                             en.CurrentX = Convert.ToInt32(dataReader[CHAR_X]);
                             en.CurrentY = Convert.ToInt32(dataReader[CHAR_Y]);
@@ -1283,31 +1320,32 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-		public static void DeleteCharacter(Client client, int id)
-		{
-			var commaSep = new char[1];
-			commaSep[0] = ',';
-			if (client.MyId == -1) return;
-			try
-			{
-				var query = "UPDATE " + CHAR_TABLE + " SET " + CHAR_DELETED + " = 1 WHERE " + CHAR_USER_ID + "=@" + CHAR_USER_ID + " AND " + CHAR_ID + "=@" + CHAR_ID + ";";
-				using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
-				{
-					cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_ID, client.MyId));
-					cmd.Parameters.Add(new SqliteParameter("@" + CHAR_ID, id));
-				    ExecuteNonQuery(cmd);
-				}
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
-			finally
-			{
-			}
-		}
+        public static void DeleteCharacter(Client client, int id)
+        {
+            var commaSep = new char[1];
+            commaSep[0] = ',';
+            if (client.MyId == -1) return;
+            try
+            {
+                var query = "UPDATE " + CHAR_TABLE + " SET " + CHAR_DELETED + " = 1 WHERE " + CHAR_USER_ID + "=@" +
+                            CHAR_USER_ID + " AND " + CHAR_ID + "=@" + CHAR_ID + ";";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_ID, client.MyId));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_ID, id));
+                    ExecuteNonQuery(cmd);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+            }
+        }
 
-		private static bool LoadCharacterInventory(Player player)
+        private static bool LoadCharacterInventory(Player player)
         {
             var commaSep = new char[1];
             commaSep[0] = ',';
@@ -1386,7 +1424,7 @@ namespace Intersect.Server.Classes.Core
             return itemId;
         }
 
-		private static bool LoadCharacterSpells(Player player)
+        private static bool LoadCharacterSpells(Player player)
         {
             try
             {
@@ -1422,7 +1460,7 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-		private static bool LoadCharacterBank(Player player)
+        private static bool LoadCharacterBank(Player player)
         {
             var commaSep = new char[1];
             commaSep[0] = ',';
@@ -1471,7 +1509,7 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-		private static bool LoadCharacterHotbar(Player player)
+        private static bool LoadCharacterHotbar(Player player)
         {
             try
             {
@@ -1501,7 +1539,7 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-		private static bool LoadCharacterSwitches(Player player)
+        private static bool LoadCharacterSwitches(Player player)
         {
             try
             {
@@ -1521,7 +1559,8 @@ namespace Intersect.Server.Classes.Core
                             }
                             else
                             {
-                                player.Switches.Add(id, Convert.ToBoolean(Convert.ToInt32(dataReader[CHAR_SWITCH_VAL])));
+                                player.Switches.Add(id,
+                                    Convert.ToBoolean(Convert.ToInt32(dataReader[CHAR_SWITCH_VAL])));
                             }
                         }
                     }
@@ -1534,7 +1573,7 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-		private static bool LoadCharacterVariables(Player player)
+        private static bool LoadCharacterVariables(Player player)
         {
             try
             {
@@ -1567,7 +1606,7 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-		private static bool LoadCharacterQuests(Player player)
+        private static bool LoadCharacterQuests(Player player)
         {
             try
             {
@@ -1610,16 +1649,16 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-		private static bool LoadCharacterFriends(Player player)
+        private static bool LoadCharacterFriends(Player player)
         {
             player.Friends.Clear();
 
             try
             {
-                var query = "SELECT " + CHAR_TABLE + "." + CHAR_NAME + "," + CHAR_FRIENDS_TABLE + "." + 
-                    CHAR_FRIEND_ID + " FROM " + CHAR_FRIENDS_TABLE + " INNER JOIN " + CHAR_TABLE + " ON " + 
-                    CHAR_FRIENDS_TABLE + "." + CHAR_FRIEND_ID + " = " + CHAR_TABLE + "." + CHAR_ID + " WHERE " + 
-                    CHAR_FRIEND_CHAR_ID + "=@" + CHAR_FRIEND_CHAR_ID + ";";
+                var query = "SELECT " + CHAR_TABLE + "." + CHAR_NAME + "," + CHAR_FRIENDS_TABLE + "." +
+                            CHAR_FRIEND_ID + " FROM " + CHAR_FRIENDS_TABLE + " INNER JOIN " + CHAR_TABLE + " ON " +
+                            CHAR_FRIENDS_TABLE + "." + CHAR_FRIEND_ID + " = " + CHAR_TABLE + "." + CHAR_ID + " WHERE " +
+                            CHAR_FRIEND_CHAR_ID + "=@" + CHAR_FRIEND_CHAR_ID + ";";
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FRIEND_CHAR_ID, player.MyId));
@@ -1627,7 +1666,8 @@ namespace Intersect.Server.Classes.Core
                     {
                         while (dataReader.Read())
                         {
-                            player.Friends.Add(Convert.ToInt32(dataReader[CHAR_FRIEND_ID]), dataReader[CHAR_NAME].ToString());
+                            player.Friends.Add(Convert.ToInt32(dataReader[CHAR_FRIEND_ID]),
+                                dataReader[CHAR_NAME].ToString());
                         }
                     }
                 }
@@ -1639,9 +1679,10 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-		public static void DeleteCharacterFriend(Player player, int key)
+        public static void DeleteCharacterFriend(Player player, int key)
         {
-            var insertQuery = "DELETE FROM " + CHAR_FRIENDS_TABLE + " WHERE " + CHAR_FRIEND_ID + "=@" + CHAR_FRIEND_ID + " AND " + CHAR_ID + " = @" + CHAR_ID + ";";
+            var insertQuery = "DELETE FROM " + CHAR_FRIENDS_TABLE + " WHERE " + CHAR_FRIEND_ID + "=@" + CHAR_FRIEND_ID +
+                              " AND " + CHAR_ID + " = @" + CHAR_ID + ";";
             using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FRIEND_ID, key));
@@ -1742,10 +1783,12 @@ namespace Intersect.Server.Classes.Core
 
         public static void SaveBagItem(int bagId, int slot, ItemInstance bagItem)
         {
-            var query = "INSERT OR REPLACE into " + BAG_ITEMS_TABLE + " (" + BAG_ITEM_CONTAINER_ID + "," + BAG_ITEM_SLOT +
+            var query = "INSERT OR REPLACE into " + BAG_ITEMS_TABLE + " (" + BAG_ITEM_CONTAINER_ID + "," +
+                        BAG_ITEM_SLOT +
                         "," + BAG_ITEM_NUM + "," +
                         BAG_ITEM_VAL + "," + BAG_ITEM_STATS + "," + BAG_ITEM_BAG_ID + ")" + " VALUES " + " (@" +
-                        BAG_ITEM_CONTAINER_ID + ",@" + BAG_ITEM_SLOT + ",@" + BAG_ITEM_NUM + ",@" + BAG_ITEM_VAL + ",@" +
+                        BAG_ITEM_CONTAINER_ID + ",@" + BAG_ITEM_SLOT + ",@" + BAG_ITEM_NUM + ",@" + BAG_ITEM_VAL +
+                        ",@" +
                         BAG_ITEM_STATS + ",@" + BAG_ITEM_BAG_ID + ");";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
@@ -2110,7 +2153,7 @@ namespace Intersect.Server.Classes.Core
                             var data = (byte[]) dataReader[GAME_OBJECT_DATA];
                             if (data.Length > 1)
                             {
-                                LoadGameObject(gameObjectType, index, (byte[])dataReader[GAME_OBJECT_DATA]);
+                                LoadGameObject(gameObjectType, index, (byte[]) dataReader[GAME_OBJECT_DATA]);
                             }
                         }
                         else
@@ -2160,7 +2203,7 @@ namespace Intersect.Server.Classes.Core
             }
 
             if (gameObject.Type != GameObjectType.Map) return;
-            var map = (MapBase)gameObject;
+            var map = (MapBase) gameObject;
             if (map.TileData != null)
             {
                 SaveMapTiles(map.Index, map.TileData);
@@ -2169,12 +2212,13 @@ namespace Intersect.Server.Classes.Core
 
         public static IDatabaseObject AddGameObject(GameObjectType gameObjectType)
         {
-            var insertQuery = "INSERT into " + gameObjectType.GetTable() + " (" + GAME_OBJECT_DATA + ") VALUES (@" + GAME_OBJECT_DATA + ")" + "; SELECT last_insert_rowid();";
+            var insertQuery = "INSERT into " + gameObjectType.GetTable() + " (" + GAME_OBJECT_DATA + ") VALUES (@" +
+                              GAME_OBJECT_DATA + ")" + "; SELECT last_insert_rowid();";
             int index = -1;
             using (var cmd = new SqliteCommand(insertQuery, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, new byte[1]));
-                index = (int)((long)ExecuteScalar(cmd));
+                index = (int) ((long) ExecuteScalar(cmd));
             }
             if (index > -1)
             {
@@ -2298,7 +2342,8 @@ namespace Intersect.Server.Classes.Core
         public static byte[] GetMapTiles(int index)
         {
             var nullIssues = "";
-            var query = "SELECT * from " + MAP_TILES_TABLE + " WHERE " + MAP_TILES_MAP_ID + "=@" + MAP_TILES_MAP_ID + ";";
+            var query = "SELECT * from " + MAP_TILES_TABLE + " WHERE " + MAP_TILES_MAP_ID + "=@" + MAP_TILES_MAP_ID +
+                        ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_TILES_MAP_ID, index));
@@ -2308,11 +2353,12 @@ namespace Intersect.Server.Classes.Core
                     {
                         if (dataReader[MAP_TILES_DATA].GetType() != typeof(DBNull))
                         {
-                            return (byte[])dataReader[MAP_TILES_DATA];
+                            return (byte[]) dataReader[MAP_TILES_DATA];
                         }
                         else
                         {
-                            nullIssues += Strings.Get("database", "nullfound", index, MAP_TILES_TABLE) + Environment.NewLine;
+                            nullIssues += Strings.Get("database", "nullfound", index, MAP_TILES_TABLE) +
+                                          Environment.NewLine;
                         }
                     }
                     else
@@ -2327,10 +2373,12 @@ namespace Intersect.Server.Classes.Core
             }
             return null;
         }
+
         public static void SaveMapTiles(int index, byte[] data)
         {
             if (data == null) return;
-            var query = "INSERT OR REPLACE into " + MAP_TILES_TABLE + " (" + MAP_TILES_MAP_ID + "," + MAP_TILES_DATA + ")" + " VALUES " + " (@" + MAP_TILES_MAP_ID + ",@" + MAP_TILES_DATA + ")";
+            var query = "INSERT OR REPLACE into " + MAP_TILES_TABLE + " (" + MAP_TILES_MAP_ID + "," + MAP_TILES_DATA +
+                        ")" + " VALUES " + " (@" + MAP_TILES_MAP_ID + ",@" + MAP_TILES_DATA + ")";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_TILES_MAP_ID, index));

@@ -115,6 +115,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
 
         //Properties
         public string Music { get; set; } = "None";
+
         public string Sound { get; set; } = "None";
         public bool IsIndoors { get; set; }
         public string Panorama { get; set; } = "None";

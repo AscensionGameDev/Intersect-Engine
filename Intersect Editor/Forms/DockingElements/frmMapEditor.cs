@@ -21,6 +21,7 @@ namespace Intersect.Editor.Forms
     {
         //MonoGame Swap Chain
         private SwapChainRenderTarget _chain;
+
         public byte[] CurrentMapState;
         private bool MapChanged;
         public List<byte[]> MapRedoStates = new List<byte[]>();
@@ -251,7 +252,7 @@ namespace Intersect.Editor.Forms
                         Globals.CurMapSelW = 0;
                         Globals.CurMapSelH = 0;
                     }
-                    else if (Globals.CurrentTool == (int)EdittingTool.Fill)
+                    else if (Globals.CurrentTool == (int) EdittingTool.Fill)
                     {
                         if (Globals.CurrentLayer == Options.LayerCount)
                         {
@@ -262,7 +263,7 @@ namespace Intersect.Editor.Forms
                             Globals.MapEditorWindow.SmartFillLayer(Globals.CurTileX, Globals.CurTileY);
                         }
                     }
-                    else if (Globals.CurrentTool == (int)EdittingTool.Erase)
+                    else if (Globals.CurrentTool == (int) EdittingTool.Erase)
                     {
                         if (Globals.CurrentLayer <= Options.LayerCount)
                         {
@@ -351,14 +352,14 @@ namespace Intersect.Editor.Forms
                             PlaceSelection();
                         }
                     }
-                    if (Globals.CurrentTool == (int)EdittingTool.Fill)
+                    if (Globals.CurrentTool == (int) EdittingTool.Fill)
                     {
                         if (Globals.CurrentLayer <= Options.LayerCount)
                         {
                             Globals.MapEditorWindow.FillLayer();
                         }
                     }
-                    else if (Globals.CurrentTool == (int)EdittingTool.Erase)
+                    else if (Globals.CurrentTool == (int) EdittingTool.Erase)
                     {
                         if (Globals.CurrentLayer <= Options.LayerCount)
                         {
@@ -889,7 +890,8 @@ namespace Intersect.Editor.Forms
                             else
                             {
                                 DarkMessageBox.ShowError(Strings.Get("mapping", "diagonalwarning"),
-                                    Strings.Get("mapping", "createmap"), DarkDialogButton.Ok, Properties.Resources.Icon);
+                                    Strings.Get("mapping", "createmap"), DarkDialogButton.Ok,
+                                    Properties.Resources.Icon);
                                 return;
                             }
                         }
@@ -907,7 +909,8 @@ namespace Intersect.Editor.Forms
                     {
                         if (
                             DarkMessageBox.ShowInformation(Strings.Get("mapping", "createmapdialogue"),
-                                Strings.Get("mapping", "createmap"), DarkDialogButton.YesNo, Properties.Resources.Icon) !=
+                                Strings.Get("mapping", "createmap"), DarkDialogButton.YesNo,
+                                Properties.Resources.Icon) !=
                             DialogResult.Yes) return;
                         if (Globals.CurrentMap.Changed() &&
                             DarkMessageBox.ShowWarning(Strings.Get("mapping", "savemapdialogue"),
@@ -942,9 +945,9 @@ namespace Intersect.Editor.Forms
             {
                 LightBase tmpLight;
                 if (
-                (tmpLight =
-                    Globals.CurrentMap.FindLightAt(Globals.CurTileX,
-                        Globals.CurTileY)) == null)
+                    (tmpLight =
+                        Globals.CurrentMap.FindLightAt(Globals.CurTileX,
+                            Globals.CurTileY)) == null)
                 {
                     tmpLight = new LightBase(Globals.CurTileX, Globals.CurTileY)
                     {
@@ -964,9 +967,9 @@ namespace Intersect.Editor.Forms
                 EventBase tmpEvent;
                 FrmEvent tmpEventEditor;
                 if (
-                (tmpEvent =
-                    Globals.CurrentMap.FindEventAt(Globals.CurTileX,
-                        Globals.CurTileY)) == null)
+                    (tmpEvent =
+                        Globals.CurrentMap.FindEventAt(Globals.CurTileX,
+                            Globals.CurTileY)) == null)
                 {
                     tmpEvent = new EventBase(Globals.CurrentMap.EventIndex, Globals.CurTileX, Globals.CurTileY);
                     Globals.CurrentMap.Events.Add(Globals.CurrentMap.EventIndex, tmpEvent);
@@ -1140,7 +1143,8 @@ namespace Intersect.Editor.Forms
                         }
                         else if (Globals.CurrentLayer < Options.LayerCount)
                         {
-                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = -1;
+                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex =
+                                -1;
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = 0;
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = 0;
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
@@ -1186,17 +1190,19 @@ namespace Intersect.Editor.Forms
                 {
                     x1 = (x) % (Globals.CurSelW + 1);
                     y1 = (y) % (Globals.CurSelH + 1);
-                    Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].TilesetIndex = Globals.CurrentTileset.Index;
+                    Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].TilesetIndex =
+                        Globals.CurrentTileset.Index;
                     Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].X = Globals.CurSelX + x1;
                     Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].Y = Globals.CurSelY + y1;
                     Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].Autotile = 0;
                 }
                 else
                 {
-                    Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].TilesetIndex = Globals.CurrentTileset.Index;
+                    Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].TilesetIndex =
+                        Globals.CurrentTileset.Index;
                     Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].X = Globals.CurSelX;
                     Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].Y = Globals.CurSelY;
-                    Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].Autotile = (byte)Globals.Autotilemode;
+                    Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].Autotile = (byte) Globals.Autotilemode;
                 }
 
                 SmartFillTile(x, y - 1, target);
@@ -1440,7 +1446,8 @@ namespace Intersect.Editor.Forms
                             y0 < Options.MapHeight)
                         {
                             tmpMap.Layers[l].Tiles[x0, y0].TilesetIndex =
-                                Globals.SelectionSource.Layers[l].Tiles[x0 - dragxoffset, y0 - dragyoffset].TilesetIndex;
+                                Globals.SelectionSource.Layers[l].Tiles[x0 - dragxoffset, y0 - dragyoffset]
+                                    .TilesetIndex;
                             tmpMap.Layers[l].Tiles[x0, y0].X =
                                 Globals.SelectionSource.Layers[l].Tiles[x0 - dragxoffset, y0 - dragyoffset].X;
                             tmpMap.Layers[l].Tiles[x0, y0].Y =
@@ -1499,7 +1506,8 @@ namespace Intersect.Editor.Forms
                                     tmpMap.Spawns.Remove(tmpMap.FindSpawnAt(x0, y0));
                                 }
                                 spawnCopy =
-                                    new NpcSpawn(Globals.SelectionSource.FindSpawnAt(x0 - dragxoffset, y0 - dragyoffset))
+                                    new NpcSpawn(
+                                        Globals.SelectionSource.FindSpawnAt(x0 - dragxoffset, y0 - dragyoffset))
                                     {
                                         X = x0,
                                         Y = y0
@@ -1520,7 +1528,8 @@ namespace Intersect.Editor.Forms
                                     tmpMap.Lights.Remove(tmpMap.FindLightAt(x0, y0));
                                 }
                                 lightCopy =
-                                    new LightBase(Globals.SelectionSource.FindLightAt(x0 - dragxoffset, y0 - dragyoffset))
+                                    new LightBase(
+                                        Globals.SelectionSource.FindLightAt(x0 - dragxoffset, y0 - dragyoffset))
                                     {
                                         TileX = x0,
                                         TileY = y0

@@ -1,46 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect;
-using Intersect.GameObjects;
 using Intersect.Localization;
 using IntersectClientExtras.File_Management;
-using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.Misc;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI.Game;
-using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
     public class SelectCharacterWindow
     {
-        public List<Character> Characters = new List<Character>();
-
         private ImagePanel _characterContainer;
         private ImagePanel _characterPortrait;
-        private ImagePanel[] _paperdollPortraits;
 
         //Image
         private string _characterPortraitImg = "";
+
+        private Label _characterSelectionHeader;
+        private ImagePanel _characterSelectionPanel;
         private Label _charnameLabel;
+        private Button _deleteButton;
         private Label _infoLabel;
 
         //Parent
         private MainMenu _mainMenu;
-        private Label _characterSelectionHeader;
-        private ImagePanel _characterSelectionPanel;
+
+        private Button _newButton;
 
         //Controls
         private Button _nextCharButton;
-        private Button _prevCharButton;
+
+        private ImagePanel[] _paperdollPortraits;
         private Button _playButton;
-        private Button _deleteButton;
-        private Button _newButton;
+        private Button _prevCharButton;
+        public List<Character> Characters = new List<Character>();
 
         //Selected Char
         private int selectedChar = 0;
@@ -59,7 +55,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _characterSelectionHeader.SetText(Strings.Get("CharacterSelection", "title"));
 
             //Character Name
-            _charnameLabel = new Label(_characterSelectionPanel,"CharacterNameLabel");
+            _charnameLabel = new Label(_characterSelectionPanel, "CharacterNameLabel");
             _charnameLabel.SetText(Strings.Get("CharacterSelection", "nochar"));
 
             //Character Info
@@ -117,7 +113,6 @@ namespace Intersect_Client.Classes.UI.Menu
                 _prevCharButton.Hide();
             }
 
-
             if (_paperdollPortraits == null)
             {
                 _paperdollPortraits = new ImagePanel[Options.EquipmentSlots.Count];
@@ -135,17 +130,22 @@ namespace Intersect_Client.Classes.UI.Menu
 
             if (Characters[selectedChar].Id > -1)
             {
-                _charnameLabel.SetText(Strings.Get("CharacterSelection","name",Characters[selectedChar].Name));
-                _infoLabel.SetText(Strings.Get("CharacterSelection", "info", Characters[selectedChar].Level, Characters[selectedChar].Class));
+                _charnameLabel.SetText(Strings.Get("CharacterSelection", "name", Characters[selectedChar].Name));
+                _infoLabel.SetText(Strings.Get("CharacterSelection", "info", Characters[selectedChar].Level,
+                    Characters[selectedChar].Class));
                 _infoLabel.Show();
                 _playButton.Show();
                 _deleteButton.Show();
                 _newButton.Hide();
 
-                _characterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, Characters[selectedChar].Face);
+                _characterPortrait.Texture =
+                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face,
+                        Characters[selectedChar].Face);
                 if (_characterPortrait.Texture == null)
                 {
-                    _characterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, Characters[selectedChar].Sprite);
+                    _characterPortrait.Texture =
+                        Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity,
+                            Characters[selectedChar].Sprite);
                     isFace = false;
                 }
 
@@ -154,22 +154,24 @@ namespace Intersect_Client.Classes.UI.Menu
                     if (isFace)
                     {
                         _characterPortrait.SetTextureRect(0, 0, _characterPortrait.Texture.GetWidth(),
-                        _characterPortrait.Texture.GetHeight());
+                            _characterPortrait.Texture.GetHeight());
                         _characterPortrait.SetSize(64, 64);
                         _characterPortrait.SetPosition(5, 5);
                     }
                     else
                     {
                         _characterPortrait.SetTextureRect(0, 0, _characterPortrait.Texture.GetWidth() / 4,
-                        _characterPortrait.Texture.GetHeight() / 4);
+                            _characterPortrait.Texture.GetHeight() / 4);
                         _characterPortrait.SetSize(_characterPortrait.Texture.GetWidth() / 4,
-                        _characterPortrait.Texture.GetHeight() / 4);
+                            _characterPortrait.Texture.GetHeight() / 4);
                         _characterPortrait.SetPosition(_characterContainer.Width / 2 - _characterPortrait.Width / 2,
-                        _characterContainer.Height / 2 - _characterPortrait.Height / 2);
+                            _characterContainer.Height / 2 - _characterPortrait.Height / 2);
 
                         for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                         {
-                            _paperdollPortraits[i].Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll, Characters[selectedChar].Equipment[i]);
+                            _paperdollPortraits[i].Texture =
+                                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll,
+                                    Characters[selectedChar].Equipment[i]);
                             if (_paperdollPortraits[i].Texture != null)
                             {
                                 _paperdollPortraits[i].Show();
@@ -214,14 +216,20 @@ namespace Intersect_Client.Classes.UI.Menu
         private void _prevCharButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             selectedChar--;
-            if (selectedChar < 0) { selectedChar = Characters.Count - 1; }
+            if (selectedChar < 0)
+            {
+                selectedChar = Characters.Count - 1;
+            }
             Update();
         }
 
         private void _nextCharButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             selectedChar++;
-            if (selectedChar >= Characters.Count) { selectedChar = 0; }
+            if (selectedChar >= Characters.Count)
+            {
+                selectedChar = 0;
+            }
             Update();
         }
 
@@ -232,15 +240,16 @@ namespace Intersect_Client.Classes.UI.Menu
 
         private void _deleteButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            InputBox iBox = new InputBox(Strings.Get("characterselection", "deletetitle",Characters[selectedChar].Name),
-                        Strings.Get("characterselection", "deleteprompt", Characters[selectedChar].Name),
-                        true, InputBox.InputType.YesNo, DeleteCharacter, null, Characters[selectedChar].Id,_characterSelectionPanel.Parent,"MainMenu.xml");
-            
+            InputBox iBox =
+                new InputBox(Strings.Get("characterselection", "deletetitle", Characters[selectedChar].Name),
+                    Strings.Get("characterselection", "deleteprompt", Characters[selectedChar].Name),
+                    true, InputBox.InputType.YesNo, DeleteCharacter, null, Characters[selectedChar].Id,
+                    _characterSelectionPanel.Parent, "MainMenu.xml");
         }
 
         private void DeleteCharacter(Object sender, EventArgs e)
         {
-            PacketSender.DeleteChar(((InputBox)sender).UserData);
+            PacketSender.DeleteChar(((InputBox) sender).UserData);
             selectedChar = 0;
             Update();
         }
@@ -253,14 +262,14 @@ namespace Intersect_Client.Classes.UI.Menu
 
     public class Character
     {
-        public bool Exists = false;
-        public int Id = -1;
-        public string Name = "";
-        public string Sprite = "";
-        public string Face = "";
-        public int Level = 1;
         public string Class = "";
         public string[] Equipment = new string[Options.EquipmentSlots.Count];
+        public bool Exists = false;
+        public string Face = "";
+        public int Id = -1;
+        public int Level = 1;
+        public string Name = "";
+        public string Sprite = "";
 
         public Character(int id)
         {

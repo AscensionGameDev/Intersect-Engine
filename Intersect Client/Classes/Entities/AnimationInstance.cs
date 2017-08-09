@@ -103,13 +103,15 @@ namespace Intersect_Client.Classes.Entities
                                 (float) Math.Floor((double) lowerFrame / myBase.LowerAnimXFrames) * frameHeight,
                                 frameWidth,
                                 frameHeight),
-                            new FloatRect(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth, frameHeight),
+                            new FloatRect(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth,
+                                frameHeight),
                             Intersect.Color.White, null, GameBlendModes.None, null, rotationDegrees);
                     }
                 }
                 int offsetX = myBase.LowerLights[lowerFrame].OffsetX;
                 int offsetY = myBase.LowerLights[lowerFrame].OffsetY;
-                var offset = RotatePoint(new Point((int)offsetX, (int)offsetY), new Point(0, 0), rotationDegrees + 180);
+                var offset = RotatePoint(new Point((int) offsetX, (int) offsetY), new Point(0, 0),
+                    rotationDegrees + 180);
                 GameGraphics.AddLight((int) _renderX - offset.X,
                     (int) _renderY - offset.Y, myBase.LowerLights[lowerFrame].Size,
                     myBase.LowerLights[lowerFrame].Intensity, myBase.LowerLights[lowerFrame].Expand,
@@ -133,13 +135,15 @@ namespace Intersect_Client.Classes.Entities
                                 (float) Math.Floor((double) upperFrame / myBase.UpperAnimXFrames) * frameHeight,
                                 frameWidth,
                                 frameHeight),
-                            new FloatRect(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth, frameHeight),
+                            new FloatRect(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth,
+                                frameHeight),
                             Intersect.Color.White, null, GameBlendModes.None, null, rotationDegrees);
                     }
                 }
                 int offsetX = myBase.UpperLights[upperFrame].OffsetX;
                 int offsetY = myBase.UpperLights[upperFrame].OffsetY;
-                var offset = RotatePoint(new Point((int)offsetX, (int)offsetY), new Point(0, 0), rotationDegrees + 180);
+                var offset = RotatePoint(new Point((int) offsetX, (int) offsetY), new Point(0, 0),
+                    rotationDegrees + 180);
                 GameGraphics.AddLight((int) _renderX - offset.X,
                     (int) _renderY - offset.Y, myBase.UpperLights[upperFrame].Size,
                     myBase.UpperLights[upperFrame].Intensity, myBase.UpperLights[upperFrame].Expand,

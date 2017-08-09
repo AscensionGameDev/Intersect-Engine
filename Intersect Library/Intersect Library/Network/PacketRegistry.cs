@@ -6,9 +6,7 @@ namespace Intersect.Network
     public sealed class PacketRegistry
     {
         private static PacketRegistry sInstance;
-        public static PacketRegistry Instance
-            => (sInstance ?? new PacketRegistry());
-        
+
         private IDictionary<PacketCode, PacketType> mLookup;
 
         private PacketRegistry()
@@ -21,10 +19,14 @@ namespace Intersect.Network
             mLookup = new SortedDictionary<PacketCode, PacketType>();
         }
 
+        public static PacketRegistry Instance
+            => (sInstance ?? new PacketRegistry());
+
         // ReSharper disable once PossibleNullReferenceException
         public PacketType GetPacketType(PacketCode code)
             => (mLookup.TryGetValue(code, out PacketType packetType))
-            ? packetType : null;
+                ? packetType
+                : null;
 
         public bool Register(Type type)
         {

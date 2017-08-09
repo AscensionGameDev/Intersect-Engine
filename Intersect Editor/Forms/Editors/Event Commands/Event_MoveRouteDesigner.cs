@@ -74,7 +74,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                         : "" + evt.Value.Name);
                     if (_editingCommand != null)
                     {
-                        if (_editingCommand.Route.Target == evt.Key) cmbTarget.SelectedIndex = cmbTarget.Items.Count-1;
+                        if (_editingCommand.Route.Target == evt.Key)
+                            cmbTarget.SelectedIndex = cmbTarget.Items.Count - 1;
                     }
                     else
                     {

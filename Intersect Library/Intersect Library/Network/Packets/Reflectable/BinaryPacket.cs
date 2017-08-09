@@ -6,12 +6,12 @@ namespace Intersect.Network.Packets.Reflectable
     {
         public ByteBuffer Buffer;
 
-        public override int EstimatedSize => Buffer?.Length() + sizeof(int) ?? sizeof(int);
-
         public BinaryPacket(IConnection connection)
             : base(connection, PacketCode.BinaryPacket)
         {
         }
+
+        public override int EstimatedSize => Buffer?.Length() + sizeof(int) ?? sizeof(int);
 
         public override bool Read(ref IBuffer buffer)
         {

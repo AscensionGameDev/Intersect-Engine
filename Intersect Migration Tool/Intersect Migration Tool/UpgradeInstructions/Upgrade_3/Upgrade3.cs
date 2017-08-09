@@ -6,6 +6,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_3
     {
         //Time of Day Table Constants
         private const string TIME_TABLE = "time";
+
         private const string TIME_DATA = "data";
         private SqliteConnection _dbConnection;
         private object _dbLock = new object();

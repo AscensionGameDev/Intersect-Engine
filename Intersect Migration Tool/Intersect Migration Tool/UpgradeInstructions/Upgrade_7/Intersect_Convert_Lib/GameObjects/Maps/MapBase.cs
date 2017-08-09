@@ -116,6 +116,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
 
         //Properties
         public string Music { get; set; } = Strings.Get("general", "none");
+
         public string Sound { get; set; } = Strings.Get("general", "none");
         public bool IsIndoors { get; set; }
         public string Panorama { get; set; } = Strings.Get("general", "none");

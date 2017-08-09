@@ -9,6 +9,25 @@ namespace Intersect.Network
 {
     public class ClientNetwork : AbstractNetwork, IClient
     {
+        private readonly LidgrenInterface mLidgrenInterface;
+
+        private Guid mGuid;
+
+        public ClientNetwork(NetworkConfiguration configuration, RSAParameters rsaParameters)
+            : base(configuration)
+        {
+            mGuid = Guid.Empty;
+
+            IsConnected = false;
+            IsServerOnline = false;
+
+            mLidgrenInterface = new LidgrenInterface(this, typeof(NetClient), rsaParameters);
+            mLidgrenInterface.OnConnected += HandleInterfaceOnConnected;
+            mLidgrenInterface.OnConnectionApproved += HandleInterfaceOnConnectonApproved;
+            mLidgrenInterface.OnDisconnected += HandleInterfaceOnDisconnected;
+            AddNetworkLayerInterface(mLidgrenInterface);
+        }
+
         public HandleConnectionEvent OnConnected { get; set; }
         public HandleConnectionEvent OnConnectionApproved { get; set; }
         public HandleConnectionEvent OnDisconnected { get; set; }
@@ -27,25 +46,7 @@ namespace Intersect.Network
             }
         }
 
-        private Guid mGuid;
         public override Guid Guid => mGuid;
-
-        private readonly LidgrenInterface mLidgrenInterface;
-
-        public ClientNetwork(NetworkConfiguration configuration, RSAParameters rsaParameters)
-            : base(configuration)
-        {
-            mGuid = Guid.Empty;
-
-            IsConnected = false;
-            IsServerOnline = false;
-
-            mLidgrenInterface = new LidgrenInterface(this, typeof(NetClient), rsaParameters);
-            mLidgrenInterface.OnConnected += HandleInterfaceOnConnected;
-            mLidgrenInterface.OnConnectionApproved += HandleInterfaceOnConnectonApproved;
-            mLidgrenInterface.OnDisconnected += HandleInterfaceOnDisconnected;
-            AddNetworkLayerInterface(mLidgrenInterface);
-        }
 
         public bool Connect()
         {
@@ -54,6 +55,15 @@ namespace Intersect.Network
             StartInterfaces();
             return true;
         }
+
+        public override bool Send(IPacket packet)
+            => mLidgrenInterface?.SendPacket(packet) ?? false;
+
+        public override bool Send(IConnection connection, IPacket packet)
+            => Send(packet);
+
+        public override bool Send(ICollection<IConnection> connections, IPacket packet)
+            => Send(packet);
 
         protected virtual void HandleInterfaceOnConnected(INetworkLayerInterface sender, IConnection connection)
         {
@@ -81,15 +91,6 @@ namespace Intersect.Network
         }
 
         internal void AssignGuid(Guid guid) => mGuid = guid;
-
-        public override bool Send(IPacket packet)
-            => mLidgrenInterface?.SendPacket(packet) ?? false;
-
-        public override bool Send(IConnection connection, IPacket packet)
-            => Send(packet);
-
-        public override bool Send(ICollection<IConnection> connections, IPacket packet)
-            => Send(packet);
 
         protected override IDictionary<TKey, TValue> CreateDictionaryLegacy<TKey, TValue>()
         {

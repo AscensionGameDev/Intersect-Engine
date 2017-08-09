@@ -7,11 +7,13 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
     {
         //General
         public new const string DATABASE_TABLE = "quests";
+
         public new const GameObject OBJECT_TYPE = GameObject.Quest;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         //Requirements
         public int ClassReq;
+
         public string EndDesc = "";
         public int ItemReq;
         public int LevelReq;
@@ -23,6 +25,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
 
         //Tasks
         public List<QuestTask> Tasks = new List<QuestTask>();
+
         public int VariableReq;
         public int VariableValue;
 

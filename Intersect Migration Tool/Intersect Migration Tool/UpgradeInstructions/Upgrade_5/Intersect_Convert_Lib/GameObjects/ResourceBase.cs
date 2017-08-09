@@ -8,16 +8,19 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
     {
         // General
         public new const string DATABASE_TABLE = "resources";
+
         public new const GameObject OBJECT_TYPE = GameObject.Resource;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public int Animation;
 
         // Drops
         public List<ResourceDrop> Drops = new List<ResourceDrop>();
+
         public string EndGraphic = "None";
 
         // Graphics
         public string InitialGraphic = "None";
+
         public int MaxHP;
         public int MinHP;
 

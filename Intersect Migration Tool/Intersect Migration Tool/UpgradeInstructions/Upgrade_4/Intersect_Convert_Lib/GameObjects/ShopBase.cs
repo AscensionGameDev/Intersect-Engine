@@ -8,12 +8,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
     {
         //Core info
         public new const string DATABASE_TABLE = "shops";
+
         public new const GameObject OBJECT_TYPE = GameObject.Shop;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public List<ShopItem> BuyingItems = new List<ShopItem>();
 
         //Buying List
         public bool BuyingWhitelist = true;
+
         public int DefaultCurrency;
 
         public string Name = "New Shop";

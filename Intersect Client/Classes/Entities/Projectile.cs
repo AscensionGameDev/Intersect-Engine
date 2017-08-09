@@ -19,6 +19,7 @@ namespace Intersect_Client.Classes.Entities
 
         // Individual Spawns
         public ProjectileSpawns[] Spawns;
+
         private long SpawnTime;
         public int Target;
 
@@ -313,10 +314,12 @@ namespace Intersect_Client.Classes.Entities
                         Spawns[s].OffsetX = GetRangeX(Spawns[s].Dir, getDisplacement(Spawns[s].SpawnTime));
                         Spawns[s].OffsetY = GetRangeY(Spawns[s].Dir, getDisplacement(Spawns[s].SpawnTime));
                         Spawns[s].Anim.SetPosition(
-                            MapInstance.Lookup.Get<MapInstance>(Spawns[s].SpawnMap).GetX() + Spawns[s].SpawnX * Options.TileWidth +
+                            MapInstance.Lookup.Get<MapInstance>(Spawns[s].SpawnMap).GetX() +
+                            Spawns[s].SpawnX * Options.TileWidth +
                             Spawns[s].OffsetX +
                             Options.TileWidth / 2,
-                            MapInstance.Lookup.Get<MapInstance>(Spawns[s].SpawnMap).GetY() + Spawns[s].SpawnY * Options.TileHeight +
+                            MapInstance.Lookup.Get<MapInstance>(Spawns[s].SpawnMap).GetY() +
+                            Spawns[s].SpawnY * Options.TileHeight +
                             Spawns[s].OffsetY +
                             Options.TileHeight / 2, CurrentX, CurrentY, CurrentMap,
                             Spawns[s].AutoRotate ? Spawns[s].Dir : 0, Spawns[s].Z);
@@ -421,7 +424,8 @@ namespace Intersect_Client.Classes.Entities
                                 }
                             }
 
-                            int tileBlocked = Globals.Me.IsTileBlocked(Spawns[i].X, Spawns[i].Y, CurrentZ, Spawns[i].Map);
+                            int tileBlocked =
+                                Globals.Me.IsTileBlocked(Spawns[i].X, Spawns[i].Y, CurrentZ, Spawns[i].Map);
 
                             if (tileBlocked != -1)
                             {
@@ -491,7 +495,8 @@ namespace Intersect_Client.Classes.Entities
         /// </summary>
         public override void Draw()
         {
-            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
+            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) == null ||
+                !Globals.GridMaps.Contains(CurrentMap)) return;
         }
 
         public void SpawnDead(int spawnIndex)
@@ -514,6 +519,7 @@ namespace Intersect_Client.Classes.Entities
 
         //Clientside variables
         public float OffsetX;
+
         public float OffsetY;
         public ProjectileBase ProjectileBase;
         public int SpawnMap;

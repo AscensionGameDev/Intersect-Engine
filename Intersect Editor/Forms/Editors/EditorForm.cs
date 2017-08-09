@@ -8,7 +8,6 @@ namespace Intersect.Editor.Forms.Editors
 {
     public class EditorForm : Form
     {
-
         protected EditorForm()
         {
             ApplyHooks();
@@ -19,7 +18,7 @@ namespace Intersect.Editor.Forms.Editors
             PacketHandler.GameObjectUpdatedDelegate = type =>
             {
                 if (IsDisposed) return;
-                var action = (Action<GameObjectType>)FireGameObjectUpdatedDelegate;
+                var action = (Action<GameObjectType>) FireGameObjectUpdatedDelegate;
                 try
                 {
                     if (InvokeRequired) Invoke(action, type);
@@ -40,7 +39,6 @@ namespace Intersect.Editor.Forms.Editors
 
         protected virtual void GameObjectUpdatedDelegate(GameObjectType type)
         {
-
         }
     }
 }

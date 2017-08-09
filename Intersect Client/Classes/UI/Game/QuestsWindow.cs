@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using Intersect.GameObjects;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using IntersectClientExtras.Gwen.ControlInternal;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 
@@ -18,12 +15,15 @@ namespace Intersect_Client.Classes.UI.Game
     {
         private Button _backButton;
         private ScrollControl _questDescArea;
-        private Label _questDescTemplateLabel;
         private RichLabel _questDescLabel;
+        private Label _questDescTemplateLabel;
         private ListBox _questList;
+
         private Label _questStatus;
+
         //Controls
         private WindowControl _questsWindow;
+
         private Label _questTitle;
         private Button _quitButton;
         private QuestBase _selectedQuest;
@@ -31,10 +31,10 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public QuestsWindow(Canvas _gameCanvas)
         {
-            _questsWindow = new WindowControl(_gameCanvas, Strings.Get("questlog", "title"),false,"QuestsWindow");
+            _questsWindow = new WindowControl(_gameCanvas, Strings.Get("questlog", "title"), false, "QuestsWindow");
             _questsWindow.DisableResizing();
 
-            _questList = new ListBox(_questsWindow,"QuestList");
+            _questList = new ListBox(_questsWindow, "QuestList");
             _questList.EnableScroll(false, true);
 
             _questTitle = new Label(_questsWindow, "QuestTitle");
@@ -49,10 +49,10 @@ namespace Intersect_Client.Classes.UI.Game
 
             _questDescLabel = new RichLabel(_questDescArea);
 
-            _backButton = new Button(_questsWindow,"BackButton");
+            _backButton = new Button(_questsWindow, "BackButton");
             _backButton.Clicked += _backButton_Clicked;
 
-            _quitButton = new Button(_questsWindow,"AbandonQuestButton");
+            _quitButton = new Button(_questsWindow, "AbandonQuestButton");
             _quitButton.SetText(Strings.Get("questlog", "abandon"));
             _quitButton.Clicked += _quitButton_Clicked;
         }
@@ -62,7 +62,8 @@ namespace Intersect_Client.Classes.UI.Game
             if (_selectedQuest != null)
             {
                 new InputBox(Strings.Get("questlog", "abandontitle", _selectedQuest.Name),
-                    Strings.Get("questlog", "abandonprompt", _selectedQuest.Name), true, InputBox.InputType.YesNo, AbandonQuest, null,
+                    Strings.Get("questlog", "abandonprompt", _selectedQuest.Name), true, InputBox.InputType.YesNo,
+                    AbandonQuest, null,
                     _selectedQuest.Index);
             }
         }
@@ -222,7 +223,8 @@ namespace Intersect_Client.Classes.UI.Game
                             _questDescLabel.AddLineBreak();
                             _questDescLabel.AddLineBreak();
                         }
-                        _questDescLabel.AddText(Strings.Get("questlog", "currenttask"),Color.White,Alignments.Left, _questDescTemplateLabel.Font);
+                        _questDescLabel.AddText(Strings.Get("questlog", "currenttask"), Color.White, Alignments.Left,
+                            _questDescTemplateLabel.Font);
                         _questDescLabel.AddLineBreak();
                         for (int i = 0; i < _selectedQuest.Tasks.Count; i++)
                         {
@@ -238,14 +240,18 @@ namespace Intersect_Client.Classes.UI.Game
                                 if (_selectedQuest.Tasks[i].Objective == 1) //Gather Items
                                 {
                                     _questDescLabel.AddText(Strings.Get("questlog", "taskitem",
-                                        Globals.Me.QuestProgress[_selectedQuest.Index].taskProgress,
-                                        _selectedQuest.Tasks[i].Data2, ItemBase.GetName(_selectedQuest.Tasks[i].Data1)), Color.White, Alignments.Left, _questDescTemplateLabel.Font);
+                                            Globals.Me.QuestProgress[_selectedQuest.Index].taskProgress,
+                                            _selectedQuest.Tasks[i].Data2,
+                                            ItemBase.GetName(_selectedQuest.Tasks[i].Data1)),
+                                        Color.White, Alignments.Left, _questDescTemplateLabel.Font);
                                 }
                                 else if (_selectedQuest.Tasks[i].Objective == 2) //Kill Npcs
                                 {
                                     _questDescLabel.AddText(Strings.Get("questlog", "tasknpc",
-                                        Globals.Me.QuestProgress[_selectedQuest.Index].taskProgress,
-                                        _selectedQuest.Tasks[i].Data2, NpcBase.GetName(_selectedQuest.Tasks[i].Data1)), Color.White, Alignments.Left, _questDescTemplateLabel.Font);
+                                            Globals.Me.QuestProgress[_selectedQuest.Index].taskProgress,
+                                            _selectedQuest.Tasks[i].Data2,
+                                            NpcBase.GetName(_selectedQuest.Tasks[i].Data1)),
+                                        Color.White, Alignments.Left, _questDescTemplateLabel.Font);
                                 }
                             }
                         }
@@ -263,7 +269,8 @@ namespace Intersect_Client.Classes.UI.Game
                             {
                                 _questStatus.SetText(Strings.Get("questlog", "completed"));
                                 _questStatus.SetTextColor(Color.Green, Label.ControlState.Normal);
-                                _questDescLabel.AddText(_selectedQuest.EndDesc, Color.White, Alignments.Left, _questDescTemplateLabel.Font);
+                                _questDescLabel.AddText(_selectedQuest.EndDesc, Color.White, Alignments.Left,
+                                    _questDescTemplateLabel.Font);
                             }
                         }
                         else
@@ -273,7 +280,8 @@ namespace Intersect_Client.Classes.UI.Game
                             {
                                 _questStatus.SetText(Strings.Get("questlog", "notstarted"));
                                 _questStatus.SetTextColor(Color.Red, Label.ControlState.Normal);
-                                _questDescLabel.AddText(_selectedQuest.BeforeDesc, Color.White, Alignments.Left, _questDescTemplateLabel.Font);
+                                _questDescLabel.AddText(_selectedQuest.BeforeDesc, Color.White, Alignments.Left,
+                                    _questDescTemplateLabel.Font);
                             }
                         }
                     }
@@ -285,7 +293,8 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         _questStatus.SetText(Strings.Get("questlog", "notstarted"));
                         _questStatus.SetTextColor(Color.Red, Label.ControlState.Normal);
-                        _questDescLabel.AddText(_selectedQuest.BeforeDesc, Color.White, Alignments.Left, _questDescTemplateLabel.Font);
+                        _questDescLabel.AddText(_selectedQuest.BeforeDesc, Color.White, Alignments.Left,
+                            _questDescTemplateLabel.Font);
                     }
                 }
                 _questList.Hide();
@@ -293,7 +302,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _questTitle.Text = _selectedQuest.Name;
                 _questDescArea.IsHidden = false;
                 _questDescLabel.Width = _questDescArea.Width - _questDescArea.GetVerticalScrollBar().Width;
-                _questDescLabel.SizeToChildren(false,true);
+                _questDescLabel.SizeToChildren(false, true);
                 _questStatus.Show();
                 _backButton.Show();
             }

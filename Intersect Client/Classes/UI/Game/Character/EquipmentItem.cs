@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
@@ -27,7 +23,7 @@ namespace Intersect.Client.Classes.UI.Game.Character
         private int myindex;
         public ImagePanel pnl;
 
-        public EquipmentItem(int index,  WindowControl characterWindow)
+        public EquipmentItem(int index, WindowControl characterWindow)
         {
             myindex = index;
             _characterWindow = characterWindow;
@@ -39,7 +35,7 @@ namespace Intersect.Client.Classes.UI.Game.Character
             pnl.HoverLeave += pnl_HoverLeave;
             pnl.RightClicked += pnl_RightClicked;
 
-            contentPanel = new ImagePanel(pnl,"EquipmentIcon");
+            contentPanel = new ImagePanel(pnl, "EquipmentIcon");
             pnl.SetToolTipText(Options.EquipmentSlots[myindex]);
         }
 

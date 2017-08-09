@@ -7,6 +7,8 @@
             Name = "New Player Switch";
         }
 
+        public override byte[] BinaryData => Data();
+
         public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
@@ -21,7 +23,5 @@
             myBuffer.WriteString(Name);
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => Data();
     }
 }

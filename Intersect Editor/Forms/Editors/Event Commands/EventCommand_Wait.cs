@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using DarkUI.Controls;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
 
@@ -31,7 +30,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = (int)nudWait.Value;
+            _myCommand.Ints[0] = (int) nudWait.Value;
             _eventEditor.FinishCommandEdit();
         }
 
@@ -42,7 +41,6 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void nudWait_ValueChanged(object sender, EventArgs e)
         {
-
         }
     }
 }

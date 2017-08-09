@@ -9,10 +9,6 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 {
     public static class GameObjectTypeExtensions
     {
-        private static Type EnumType { get; }
-        private static Type AttributeType { get; }
-        private static Dictionary<GameObjectType, GameObjectInfoAttribute> AttributeMap { get; }
-
         static GameObjectTypeExtensions()
         {
             EnumType = typeof(GameObjectType);
@@ -22,9 +18,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             foreach (GameObjectType gameObjectType in Enum.GetValues(EnumType))
             {
                 var memberInfo = EnumType.GetMember(Enum.GetName(EnumType, value: gameObjectType)).FirstOrDefault();
-                AttributeMap[gameObjectType] = (GameObjectInfoAttribute)memberInfo?.GetCustomAttributes(AttributeType, false).FirstOrDefault();
+                AttributeMap[gameObjectType] =
+                    (GameObjectInfoAttribute) memberInfo?.GetCustomAttributes(AttributeType, false).FirstOrDefault();
             }
         }
+
+        private static Type EnumType { get; }
+        private static Type AttributeType { get; }
+        private static Dictionary<GameObjectType, GameObjectInfoAttribute> AttributeMap { get; }
 
         public static Type GetObjectType(this GameObjectType gameObjectType)
             => AttributeMap?[gameObjectType]?.Type;

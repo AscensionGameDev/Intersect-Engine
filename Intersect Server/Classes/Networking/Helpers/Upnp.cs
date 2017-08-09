@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Intersect.Localization;
-using Intersect.Logging;
 using Open.Nat;
 
 namespace Intersect.Server.Classes.Networking
@@ -14,7 +10,7 @@ namespace Intersect.Server.Classes.Networking
     {
         private static NatDevice _device;
         private static bool _portForwarded;
-        
+
         public static async Task<NatDevice> ConnectNatDevice()
         {
             try
@@ -22,7 +18,7 @@ namespace Intersect.Server.Classes.Networking
                 var nat = new NatDiscoverer();
                 var cts = new CancellationTokenSource(5000);
                 _device = await nat.DiscoverDeviceAsync(PortMapper.Upnp, cts);
-                Console.WriteLine(Strings.Get("upnp","initialized"));
+                Console.WriteLine(Strings.Get("upnp", "initialized"));
             }
             catch (Exception ex)
             {
@@ -30,20 +26,21 @@ namespace Intersect.Server.Classes.Networking
             }
             return null;
         }
+
         public static async Task<NatDevice> OpenServerPort(int port, Protocol protocol)
         {
             if (_device == null) return null;
             try
             {
-                await _device.CreatePortMapAsync(new Mapping(protocol,port,port));
+                await _device.CreatePortMapAsync(new Mapping(protocol, port, port));
                 switch (protocol)
                 {
                     case Protocol.Tcp:
-                        Console.WriteLine(Strings.Get("upnp", "forwardedtcp",port));
+                        Console.WriteLine(Strings.Get("upnp", "forwardedtcp", port));
                         break;
 
                     case Protocol.Udp:
-                        Console.WriteLine(Strings.Get("upnp", "forwardedudp",port));
+                        Console.WriteLine(Strings.Get("upnp", "forwardedudp", port));
                         _portForwarded = true;
                         break;
                 }
@@ -53,7 +50,7 @@ namespace Intersect.Server.Classes.Networking
                 switch (protocol)
                 {
                     case Protocol.Tcp:
-                        Console.WriteLine(Strings.Get("upnp", "failedforwardingtcp",port));
+                        Console.WriteLine(Strings.Get("upnp", "failedforwardingtcp", port));
                         break;
 
                     case Protocol.Udp:

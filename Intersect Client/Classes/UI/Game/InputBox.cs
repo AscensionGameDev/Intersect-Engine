@@ -1,12 +1,8 @@
 ﻿using System;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
-using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using Intersect_Client.Classes.Core;
-using Intersect_Client.Classes.General;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -19,21 +15,23 @@ namespace Intersect_Client.Classes.UI.Game
             TextInput,
         }
 
+        private bool _initialized = false;
+        private InputType _inputType;
+
         private WindowControl _myWindow;
-        private TextBoxNumeric _textbox;
-        private Button _yesButton;
         private Button _noButton;
         private Button _okayButton;
-        private InputType _inputType;
-        private Label _promptLabel;
-        private string _uiDataFile;
-        private ImagePanel _textboxBg;
         private string _prompt = "";
+        private Label _promptLabel;
+        private TextBoxNumeric _textbox;
+        private ImagePanel _textboxBg;
+        private string _uiDataFile;
+        private Button _yesButton;
         public int UserData;
         public float Value;
-        private bool _initialized = false;
 
-        public InputBox(string title, string prompt, bool modal,InputType inputtype, EventHandler okayYesSubmitClicked, EventHandler cancelClicked, int userData,Base parent = null,string uiDataFile = "InGame.xml")
+        public InputBox(string title, string prompt, bool modal, InputType inputtype, EventHandler okayYesSubmitClicked,
+            EventHandler cancelClicked, int userData, Base parent = null, string uiDataFile = "InGame.xml")
         {
             if (parent == null) parent = Gui.GameUI.GameCanvas;
             _okayEventHandler = okayYesSubmitClicked;
@@ -69,9 +67,7 @@ namespace Intersect_Client.Classes.UI.Game
             _okayButton.SetText(Strings.Get("inputbox", "okay"));
             _okayButton.Clicked += okayBtn_Clicked;
 
-
             _promptLabel = new Label(_myWindow, "PromptLabel");
-
         }
 
         private void _myWindow_BeforeDraw(Base sender, EventArgs arguments)

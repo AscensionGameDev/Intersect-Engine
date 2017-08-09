@@ -259,7 +259,8 @@ namespace Intersect.Editor.Classes.Maps
         {
             get
             {
-                return System.Drawing.Color.FromArgb(_myMap.PlayerLightColor.A, _myMap.PlayerLightColor.R, _myMap.PlayerLightColor.G,
+                return System.Drawing.Color.FromArgb(_myMap.PlayerLightColor.A, _myMap.PlayerLightColor.R,
+                    _myMap.PlayerLightColor.G,
                     _myMap.PlayerLightColor.B);
             }
             set

@@ -36,7 +36,8 @@ namespace Intersect.Editor.Forms
                     UpdateEditor();
                 }
             }
-            else if (type == GameObjectType.Class || type == GameObjectType.Projectile || type == GameObjectType.Animation ||
+            else if (type == GameObjectType.Class || type == GameObjectType.Projectile ||
+                     type == GameObjectType.Animation ||
                      type == GameObjectType.Spell)
             {
                 frmItem_Load(null, null);
@@ -72,7 +73,9 @@ namespace Intersect.Editor.Forms
 
         private void lstItems_Click(object sender, EventArgs e)
         {
-            _editorItem = ItemBase.Lookup.Get<ItemBase>(Database.GameObjectIdFromList(GameObjectType.Item, lstItems.SelectedIndex));
+            _editorItem =
+                ItemBase.Lookup.Get<ItemBase>(
+                    Database.GameObjectIdFromList(GameObjectType.Item, lstItems.SelectedIndex));
             UpdateEditor();
         }
 
@@ -290,8 +293,9 @@ namespace Intersect.Editor.Forms
                 //External References
                 cmbProjectile.SelectedIndex =
                     Database.GameObjectListIndex(GameObjectType.Projectile, _editorItem.Projectile) + 1;
-                cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.Animation) +
-                                             1;
+                cmbAnimation.SelectedIndex =
+                    Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.Animation) +
+                    1;
 
                 if (_changed.IndexOf(_editorItem) == -1)
                 {
@@ -324,23 +328,24 @@ namespace Intersect.Editor.Forms
                 _editorItem.Data4 = 0;
             }
 
-            if (cmbType.SelectedIndex == (int)ItemTypes.Consumable)
+            if (cmbType.SelectedIndex == (int) ItemTypes.Consumable)
             {
                 cmbConsume.SelectedIndex = _editorItem.Data1;
                 nudInterval.Value = _editorItem.Data2;
                 grpConsumable.Visible = true;
             }
-            else if (cmbType.SelectedIndex == (int)ItemTypes.Spell)
+            else if (cmbType.SelectedIndex == (int) ItemTypes.Spell)
             {
                 cmbTeachSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell, _editorItem.Data1) + 1;
                 grpSpell.Visible = true;
             }
-            else if (cmbType.SelectedIndex == (int)ItemTypes.Event)
+            else if (cmbType.SelectedIndex == (int) ItemTypes.Event)
             {
-                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CommonEvent, _editorItem.Data1) + 1;
+                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CommonEvent, _editorItem.Data1) +
+                                         1;
                 grpEvent.Visible = true;
             }
-            else if (cmbType.SelectedIndex == (int)ItemTypes.Equipment)
+            else if (cmbType.SelectedIndex == (int) ItemTypes.Equipment)
             {
                 grpEquipment.Visible = true;
                 if (_editorItem.Data1 < -1 || _editorItem.Data1 >= cmbEquipmentSlot.Items.Count)
@@ -350,7 +355,7 @@ namespace Intersect.Editor.Forms
                 cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
                 cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
             }
-            else if (cmbType.SelectedIndex == (int)ItemTypes.Bag)
+            else if (cmbType.SelectedIndex == (int) ItemTypes.Bag)
             {
                 if (_editorItem.Data1 < 1)
                 {
@@ -593,7 +598,8 @@ namespace Intersect.Editor.Forms
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Animation = Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
+            _editorItem.Animation =
+                Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
         }
 
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)

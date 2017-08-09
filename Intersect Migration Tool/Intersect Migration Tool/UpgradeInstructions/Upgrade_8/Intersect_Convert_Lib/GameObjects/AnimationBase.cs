@@ -8,6 +8,7 @@
 
         //Lower Animation
         public string LowerAnimSprite = "";
+
         public int LowerAnimXFrames = 1;
         public int LowerAnimYFrames = 1;
         public LightBase[] LowerLights;
@@ -19,6 +20,7 @@
 
         //Upper Animation
         public string UpperAnimSprite = "";
+
         public int UpperAnimXFrames = 1;
         public int UpperAnimYFrames = 1;
         public LightBase[] UpperLights;
@@ -37,6 +39,8 @@
                 UpperLights[i] = new LightBase();
             }
         }
+
+        public override byte[] BinaryData => AnimData();
 
         public override void Load(byte[] packet)
         {
@@ -107,7 +111,5 @@
 
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => AnimData();
     }
 }

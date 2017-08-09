@@ -14,6 +14,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
 
         //Lower Animation
         public string LowerAnimSprite = "";
+
         public int LowerAnimXFrames = 1;
         public int LowerAnimYFrames = 1;
         public LightBase[] LowerLights;
@@ -26,6 +27,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
 
         //Upper Animation
         public string UpperAnimSprite = "";
+
         public int UpperAnimXFrames = 1;
         public int UpperAnimYFrames = 1;
         public LightBase[] UpperLights;

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
@@ -25,9 +21,9 @@ namespace Intersect.Client.Classes.UI.Game.EntityBox
 
         private int myindex;
         public ImagePanel pnl;
-        public Label timeLabel;
 
         private string texLoaded = "";
+        public Label timeLabel;
 
         public SpellStatus(Intersect_Client.Classes.UI.Game.EntityBox entityBox, int index)
         {
@@ -37,7 +33,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityBox
 
         public void Setup()
         {
-            pnl = new ImagePanel(container,"StatusIcon");
+            pnl = new ImagePanel(container, "StatusIcon");
             pnl.HoverEnter += pnl_HoverEnter;
             pnl.HoverLeave += pnl_HoverLeave;
         }
@@ -53,13 +49,17 @@ namespace Intersect.Client.Classes.UI.Game.EntityBox
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
-            if (myindex >= _entityBox._myEntity.Status.Count) { return; }
+            if (myindex >= _entityBox._myEntity.Status.Count)
+            {
+                return;
+            }
             if (_descWindow != null)
             {
                 _descWindow.Dispose();
                 _descWindow = null;
             }
-            _descWindow = new SpellDescWindow(_entityBox._myEntity.Status[myindex].SpellNum, _entityBox._entityWindow.X + 316, _entityBox._entityWindow.Y);
+            _descWindow = new SpellDescWindow(_entityBox._myEntity.Status[myindex].SpellNum,
+                _entityBox._entityWindow.X + 316, _entityBox._entityWindow.Y);
         }
 
         public FloatRect RenderBounds()
@@ -79,14 +79,15 @@ namespace Intersect.Client.Classes.UI.Game.EntityBox
             var spell = SpellBase.Lookup.Get<SpellBase>(_entityBox._myEntity.Status[myindex].SpellNum);
             var timeDiff = Globals.System.GetTimeMS() - _entityBox._myEntity.Status[myindex].TimeRecevied;
             var remaining = _entityBox._myEntity.Status[myindex].TimeRemaining - timeDiff;
-            var fraction = (float)((float)remaining / (float)_entityBox._myEntity.Status[myindex].TotalDuration);
-            pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color((int)(fraction * 255f), 255, 255, 255);
+            var fraction = (float) ((float) remaining / (float) _entityBox._myEntity.Status[myindex].TotalDuration);
+            pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color((int) (fraction * 255f), 255, 255, 255);
             if ((texLoaded != "" && spell == null) || (spell != null && texLoaded != spell.Pic) ||
                 currentSpell != _entityBox._myEntity.Status[myindex].SpellNum)
             {
                 if (spell != null)
                 {
-                    GameTexture spellTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Pic);
+                    GameTexture spellTex =
+                        Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Pic);
                     if (spellTex != null)
                     {
                         pnl.Texture = spellTex;

@@ -9,6 +9,8 @@
             Name = "New Global Variable";
         }
 
+        public override byte[] BinaryData => Data();
+
         public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
@@ -25,7 +27,5 @@
             myBuffer.WriteInteger(Value);
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => Data();
     }
 }

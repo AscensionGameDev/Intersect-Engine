@@ -11,6 +11,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             Name = "New Global Switch";
         }
 
+        public override byte[] BinaryData => Data();
+
         public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
@@ -27,7 +29,5 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             myBuffer.WriteInteger(Convert.ToInt32(Value));
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => Data();
     }
 }

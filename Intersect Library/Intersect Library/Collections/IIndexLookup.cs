@@ -25,6 +25,5 @@ namespace Intersect.Collections
 
     public interface IIndexLookup : IIndexLookup<IIndexedGameObject>
     {
-
     }
 }

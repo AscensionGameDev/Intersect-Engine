@@ -113,9 +113,9 @@ namespace Intersect.Editor.Forms.Editors
 
         private void scrlAlpha_Scroll(object sender, ScrollValueEventArgs e)
         {
-            var brightness = (int)((255 - scrlAlpha.Value) / 255f * 100);
+            var brightness = (int) ((255 - scrlAlpha.Value) / 255f * 100);
             lblBrightness.Text = Strings.Get("timeeditor", "brightness", brightness.ToString());
-            myTime.RangeColors[lstTimes.SelectedIndex].A = (byte)scrlAlpha.Value;
+            myTime.RangeColors[lstTimes.SelectedIndex].A = (byte) scrlAlpha.Value;
             pnlColor.Refresh();
         }
 
@@ -131,7 +131,7 @@ namespace Intersect.Editor.Forms.Editors
                 myTime.RangeColors[lstTimes.SelectedIndex].G,
                 myTime.RangeColors[lstTimes.SelectedIndex].B);
             scrlAlpha.Value = myTime.RangeColors[lstTimes.SelectedIndex].A;
-            var brightness = (int)((255 - scrlAlpha.Value) / 255f * 100);
+            var brightness = (int) ((255 - scrlAlpha.Value) / 255f * 100);
             lblBrightness.Text = Strings.Get("timeeditor", "brightness", brightness);
             pnlColor.Refresh();
             EditorGraphics.LightColor = myTime.RangeColors[lstTimes.SelectedIndex];

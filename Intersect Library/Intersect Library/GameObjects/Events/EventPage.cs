@@ -40,8 +40,8 @@ namespace Intersect.GameObjects.Events
         public EventMoveRoute MoveRoute = new EventMoveRoute();
         public int Passable;
         public int Trigger;
-        public int TriggerVal;
         public string TriggerCommand;
+        public int TriggerVal;
         public int WalkingAnimation = 1;
 
         public EventPage()

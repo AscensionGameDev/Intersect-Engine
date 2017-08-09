@@ -6,6 +6,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
     {
         //Game Settings
         public static string GameName = "Intersect";
+
         public static string MOTD = "Welcome to Intersect!";
         public static int ServerPort = 4500;
 
@@ -14,6 +15,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         //Player Maxes
         public static int MaxStatValue = 200;
+
         public static int MaxStats = 5;
         public static int MaxLevel = 100;
         public static int MaxHotbar = 10;
@@ -23,6 +25,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         //Equipment
         public static int WeaponIndex = -1;
+
         public static int ShieldIndex = -1;
         public static List<string> EquipmentSlots = new List<string>();
         public static List<string> PaperdollOrder = new List<string>();
@@ -41,6 +44,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         //Combat
         public static int MinAttackRate = 500; //2 attacks per second
+
         public static int MaxAttackRate = 200; //5 attacks per second
         public static double BlockingSlow = 0.3; //Slow when moving with a shield. Default 30%
         public static int CritChance = 20; //1 in 20 chance to critically strike.
@@ -49,6 +53,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         //Maps
         public static int GameBorderStyle; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
+
         public static int MapWidth = 32;
         public static int MapHeight = 26;
         public static int TileWidth = 32;

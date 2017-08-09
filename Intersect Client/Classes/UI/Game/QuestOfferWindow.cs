@@ -1,11 +1,7 @@
 ﻿using Intersect.GameObjects;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
-using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
-using IntersectClientExtras.Gwen.ControlInternal;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 
@@ -15,17 +11,21 @@ namespace Intersect_Client.Classes.UI.Game
     {
         private Button _acceptButton;
         private Button _declineButton;
-        private ScrollControl _questPromptArea;
-        private Label _questPromptTemplate;
-        private RichLabel _questPromptLabel;
+
         private string _questOfferText = "";
+
         //Controls
         private WindowControl _questOfferWindow;
+
+        private ScrollControl _questPromptArea;
+        private RichLabel _questPromptLabel;
+        private Label _questPromptTemplate;
         private Label _questTitle;
 
         public QuestOfferWindow(Canvas _gameCanvas)
         {
-            _questOfferWindow = new WindowControl(_gameCanvas, Strings.Get("questoffer", "title"),false,"QuestOfferWindow");
+            _questOfferWindow = new WindowControl(_gameCanvas, Strings.Get("questoffer", "title"), false,
+                "QuestOfferWindow");
             _questOfferWindow.DisableResizing();
             _questOfferWindow.IsClosable = false;
 
@@ -39,12 +39,12 @@ namespace Intersect_Client.Classes.UI.Game
             _questPromptLabel = new RichLabel(_questPromptArea);
 
             //Accept Button
-            _acceptButton = new Button(_questOfferWindow,"AcceptButton");
+            _acceptButton = new Button(_questOfferWindow, "AcceptButton");
             _acceptButton.SetText(Strings.Get("questoffer", "accept"));
             _acceptButton.Clicked += _acceptButton_Clicked;
 
             //Decline Button
-            _declineButton = new Button(_questOfferWindow,"DeclineButton");
+            _declineButton = new Button(_questOfferWindow, "DeclineButton");
             _declineButton.SetText(Strings.Get("questoffer", "decline"));
             _declineButton.Clicked += _declineButton_Clicked;
 
@@ -87,7 +87,10 @@ namespace Intersect_Client.Classes.UI.Game
                     _questPromptLabel.DeleteAllChildren();
                     _questPromptLabel.Width = _questPromptArea.Width -
                                               _questPromptArea.GetVerticalScrollBar().Width;
-                    _questPromptLabel.AddText(quest.StartDesc, _questPromptTemplate.TextColor, _questPromptTemplate.CurAlignments.Count > 0 ? _questPromptTemplate.CurAlignments[0] : Alignments.Left, _questPromptTemplate.Font);
+                    _questPromptLabel.AddText(quest.StartDesc, _questPromptTemplate.TextColor,
+                        _questPromptTemplate.CurAlignments.Count > 0
+                            ? _questPromptTemplate.CurAlignments[0]
+                            : Alignments.Left, _questPromptTemplate.Font);
                     _questPromptLabel.SizeToChildren(false, true);
                     _questOfferText = quest.StartDesc;
                 }

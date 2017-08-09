@@ -15,24 +15,28 @@ namespace Intersect.GameObjects
 
         //Combat
         public int Damage;
+
         public int DamageType;
 
         //Drops
         public List<NPCDrop> Drops = new List<NPCDrop>();
+
         public int Experience;
+        public int Level = 1;
 
         //Vitals & Stats
         public int[] MaxVital = new int[(int) Vitals.VitalCount];
-        public int Level = 1;
 
         //NPC vs NPC Combat
         public bool NpcVsNpcEnabled;
+
         public int Scaling;
         public int ScalingStat;
         public int SightRange;
 
         //Basic Info
         public int SpawnDuration;
+
         public int SpellFrequency = 2;
 
         //Spells
@@ -49,6 +53,8 @@ namespace Intersect.GameObjects
                 Drops.Add(new NPCDrop());
             }
         }
+
+        public override byte[] BinaryData => NpcData();
 
         public override void Load(byte[] packet)
         {
@@ -154,8 +160,6 @@ namespace Intersect.GameObjects
 
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => NpcData();
     }
 
     public class NPCDrop

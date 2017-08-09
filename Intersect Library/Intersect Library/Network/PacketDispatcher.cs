@@ -41,14 +41,14 @@ namespace Intersect.Network
         {
             var handlers = GetHandlers(type);
             return (handlers?.Contains(handler) ?? false)
-                && handlers.Remove(handler);
+                   && handlers.Remove(handler);
         }
 
         public bool Dispatch(IPacket packet)
         {
             if (packet == null) throw new ArgumentNullException();
             return GetHandlers(packet.GetType())?.Any(handler
-                => handler != null && handler(packet)) ?? false;
+                       => handler != null && handler(packet)) ?? false;
         }
     }
 }

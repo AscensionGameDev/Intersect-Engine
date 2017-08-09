@@ -160,7 +160,8 @@ namespace Intersect.Editor.Classes.Maps
                         {
                             if (Globals.CurrentMap.Changed() &&
                                 DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"),
-                                    Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                                    Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo,
+                                    Properties.Resources.Icon) ==
                                 DialogResult.Yes)
                             {
                                 SaveMap();
@@ -199,7 +200,8 @@ namespace Intersect.Editor.Classes.Maps
             {
                 if (
                     DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "savescreenshotconfirm"),
-                        Strings.Get("mapgrid", "savescreenshottitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                        Strings.Get("mapgrid", "savescreenshottitle"), DarkDialogButton.YesNo,
+                        Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     FetchMissingPreviews(false);
@@ -220,7 +222,8 @@ namespace Intersect.Editor.Classes.Maps
             int rows = rowSize * (GridHeight);
             Bitmap tmpBitmap = new Bitmap(colSize, rowSize);
             Graphics g = Graphics.FromImage(tmpBitmap);
-            var png = new PngWriter(new FileStream(filename, FileMode.OpenOrCreate), new ImageInfo(cols, rows, 16, true));
+            var png = new PngWriter(new FileStream(filename, FileMode.OpenOrCreate),
+                new ImageInfo(cols, rows, 16, true));
             var pngReaderDict = new Dictionary<int, Bitmap>();
             var cacheRow = 0;
             //Generate one row at a time.
@@ -266,7 +269,7 @@ namespace Intersect.Editor.Classes.Maps
                             for (int x1 = (x) * colSize; x1 < (x) * colSize + colSize; x1++)
                             {
                                 System.Drawing.Color clr = reader.GetPixel(x1 - (x) * colSize, rowNum);
-                                    // Color.FromArgb(ImageLineHelper.GetPixelToARGB8(line, x1 - (x) * colSize));
+                                // Color.FromArgb(ImageLineHelper.GetPixelToARGB8(line, x1 - (x) * colSize));
                                 row[x1 * 4] = clr.R;
                                 row[x1 * 4 + 1] = clr.G;
                                 row[x1 * 4 + 2] = clr.B;
@@ -396,7 +399,8 @@ namespace Intersect.Editor.Classes.Maps
                     Globals.FetchingMapPreviews = true;
                     Globals.PreviewProgressForm = new frmProgress();
                     Globals.PreviewProgressForm.SetTitle(Strings.Get("mapgrid", "fetchingmaps"));
-                    Globals.PreviewProgressForm.SetProgress(Strings.Get("mapgrid", "fetchingprogress", 0, maps.Count), 0,
+                    Globals.PreviewProgressForm.SetProgress(Strings.Get("mapgrid", "fetchingprogress", 0, maps.Count),
+                        0,
                         false);
                     Globals.FetchCount = maps.Count;
                     Globals.MapsToFetch = maps;
@@ -501,7 +505,8 @@ namespace Intersect.Editor.Classes.Maps
             {
                 //Fetch and screenshot this singular map
                 Database.SaveMapCache(_contextMap.mapnum, _contextMap.revision, null);
-                if (MapInstance.Lookup.Get<MapInstance>(_contextMap.mapnum) != null) MapInstance.Lookup.Get<MapInstance>(_contextMap.mapnum).Delete();
+                if (MapInstance.Lookup.Get<MapInstance>(_contextMap.mapnum) != null)
+                    MapInstance.Lookup.Get<MapInstance>(_contextMap.mapnum).Delete();
                 Globals.MapsToFetch = new List<int>() {_contextMap.mapnum};
                 PacketSender.SendNeedMap(_contextMap.mapnum);
             }
@@ -553,7 +558,7 @@ namespace Intersect.Editor.Classes.Maps
             MinZoom =
                 Math.Min(panelBounds.Width / (float) (Options.TileWidth * Options.MapWidth * (GridWidth + 2)),
                     panelBounds.Height / (float) (Options.TileHeight * Options.MapHeight * (GridHeight + 2))) / 2f;
-                //Gotta calculate 
+            //Gotta calculate 
             if (Zoom < MinZoom)
             {
                 Zoom = MinZoom * 2;
@@ -625,7 +630,8 @@ namespace Intersect.Editor.Classes.Maps
                             //Figure out if this texture should be loaded
                             if (new Rectangle(ContentRect.X + (x + 1) * TileWidth, ContentRect.Y + (y + 1) * TileHeight,
                                     TileWidth,
-                                    TileHeight).Contains(new System.Drawing.Point(mouseX, mouseY)) && Grid[x, y] != null)
+                                    TileHeight).Contains(new System.Drawing.Point(mouseX, mouseY)) &&
+                                Grid[x, y] != null)
                             {
                                 return Grid[x, y];
                             }

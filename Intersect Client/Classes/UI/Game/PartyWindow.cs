@@ -2,14 +2,10 @@
 using System.Collections.Generic;
 using Intersect.Enums;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
-using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -21,14 +17,16 @@ namespace Intersect_Client.Classes.UI.Game
 
         private List<Label> _lblnames = new List<Label>();
         private ImagePanel _leader;
+
         private Button _leaveButton;
+
         //Controls
         private WindowControl _partyWindow;
 
         //Init
         public PartyWindow(Canvas _gameCanvas)
         {
-            _partyWindow = new WindowControl(_gameCanvas, Strings.Get("parties", "title"),false, "PartyWindow");
+            _partyWindow = new WindowControl(_gameCanvas, Strings.Get("parties", "title"), false, "PartyWindow");
             _partyWindow.DisableResizing();
 
             //Add the icon representing party leader (ALWAYS member 1 in the party list)
@@ -48,7 +46,7 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < 4; i++)
             {
                 //Labels
-                _lblnames.Add(new Label(_partyWindow,"MemberName" + i));
+                _lblnames.Add(new Label(_partyWindow, "MemberName" + i));
                 if (i < Globals.Me.Party.Count)
                 {
                     _lblnames[i].Text = Globals.Entities[Globals.Me.Party[i]].MyName;
@@ -59,13 +57,13 @@ namespace Intersect_Client.Classes.UI.Game
                 }
 
                 //Health bars
-                _barContainer.Add(new ImagePanel(_partyWindow,"HealthBarContainer" + i));
+                _barContainer.Add(new ImagePanel(_partyWindow, "HealthBarContainer" + i));
                 _barContainer[i].Hide();
                 if (i < Globals.Me.Party.Count)
                 {
                     _barContainer[i].Show();
                 }
-                _bar.Add(new ImagePanel(_barContainer[i],"HealthBar" + i));
+                _bar.Add(new ImagePanel(_barContainer[i], "HealthBar" + i));
 
                 if (i == 0)
                 {
@@ -97,7 +95,7 @@ namespace Intersect_Client.Classes.UI.Game
                 }
             }
 
-            _leaveButton = new Button(_partyWindow,"LeavePartyButton");
+            _leaveButton = new Button(_partyWindow, "LeavePartyButton");
             _leaveButton.SetToolTipText(Strings.Get("parties", "leave"));
             _leaveButton.Clicked += leave_Clicked;
         }

@@ -7,21 +7,25 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
     {
         //Core info
         public new const string DATABASE_TABLE = "classes";
+
         public new const GameObject OBJECT_TYPE = GameObject.Class;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public int AttackAnimation = -1;
 
         //Exp Calculations
         public int BaseExp = 100;
+
         public int BasePoints;
         public int[] BaseStat = new int[(int) Stats.StatCount];
 
         //Starting Vitals & Stats
         public int[] BaseVital = new int[(int) Vitals.VitalCount];
+
         public int CritChance;
 
         //Combat
         public int Damage;
+
         public int DamageType;
         public int ExpIncrease = 50;
 
@@ -42,6 +46,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
 
         //Spawn Info
         public int SpawnMap;
+
         public int SpawnX;
         public int SpawnY;
 
@@ -50,6 +55,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
 
         //Sprites
         public List<ClassSprite> Sprites = new List<ClassSprite>();
+
         public int[] StatIncrease = new int[(int) Stats.StatCount];
         public int[] VitalIncrease = new int[(int) Vitals.VitalCount];
 

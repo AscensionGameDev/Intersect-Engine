@@ -10,18 +10,21 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
     {
         // General
         public new const string DATABASE_TABLE = "resources";
+
         public new const GameObject OBJECT_TYPE = GameObject.Resource;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public int Animation;
 
         // Drops
         public List<ResourceDrop> Drops = new List<ResourceDrop>();
+
         public string EndGraphic = Strings.Get("general", "none");
 
         public ConditionLists HarvestingReqs = new ConditionLists();
 
         // Graphics
         public string InitialGraphic = Strings.Get("general", "none");
+
         public int MaxHP;
         public int MinHP;
 

@@ -34,12 +34,14 @@ namespace Intersect.GameObjects.Events
             MyPages = new List<EventPage>();
             Load(myBuffer.ToArray());
         }
-        
+
         public int SpawnX { get; set; }
         public int SpawnY { get; set; }
         public bool CommonEvent { get; set; }
         public byte IsGlobal { get; set; }
         public List<EventPage> MyPages { get; set; }
+
+        public override byte[] BinaryData => EventData();
 
         public byte[] EventData()
         {
@@ -71,7 +73,5 @@ namespace Intersect.GameObjects.Events
                 MyPages.Add(new EventPage(myBuffer));
             }
         }
-
-        public override byte[] BinaryData => EventData();
     }
 }

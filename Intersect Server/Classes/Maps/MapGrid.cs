@@ -91,19 +91,23 @@ namespace Intersect.Server.Classes.Maps
             {
                 _botRight.Y = y;
             }
-            if (MapInstance.Lookup.IndexKeys.Contains(map.Up) && MapInstance.Lookup.Get<MapInstance>(map.Up).Down == map.Index)
+            if (MapInstance.Lookup.IndexKeys.Contains(map.Up) &&
+                MapInstance.Lookup.Get<MapInstance>(map.Up).Down == map.Index)
             {
                 CalculateBounds(MapInstance.Lookup.Get<MapInstance>(map.Up), x, y - 1);
             }
-            if (MapInstance.Lookup.IndexKeys.Contains(map.Down) && MapInstance.Lookup.Get<MapInstance>(map.Down).Up == map.Index)
+            if (MapInstance.Lookup.IndexKeys.Contains(map.Down) &&
+                MapInstance.Lookup.Get<MapInstance>(map.Down).Up == map.Index)
             {
                 CalculateBounds(MapInstance.Lookup.Get<MapInstance>(map.Down), x, y + 1);
             }
-            if (MapInstance.Lookup.IndexKeys.Contains(map.Left) && MapInstance.Lookup.Get<MapInstance>(map.Left).Right == map.Index)
+            if (MapInstance.Lookup.IndexKeys.Contains(map.Left) &&
+                MapInstance.Lookup.Get<MapInstance>(map.Left).Right == map.Index)
             {
                 CalculateBounds(MapInstance.Lookup.Get<MapInstance>(map.Left), x - 1, y);
             }
-            if (MapInstance.Lookup.IndexKeys.Contains(map.Right) && MapInstance.Lookup.Get<MapInstance>(map.Right).Left == map.Index)
+            if (MapInstance.Lookup.IndexKeys.Contains(map.Right) &&
+                MapInstance.Lookup.Get<MapInstance>(map.Right).Left == map.Index)
             {
                 CalculateBounds(MapInstance.Lookup.Get<MapInstance>(map.Right), x + 1, y);
             }

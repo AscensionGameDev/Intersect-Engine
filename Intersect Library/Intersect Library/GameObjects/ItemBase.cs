@@ -40,6 +40,8 @@ namespace Intersect.GameObjects
             StatsGiven = new int[Options.MaxStats];
         }
 
+        public override byte[] BinaryData => ItemData();
+
         public override void Load(byte[] data)
         {
             var myBuffer = new ByteBuffer();
@@ -120,7 +122,5 @@ namespace Intersect.GameObjects
         {
             return ItemType == (int) ItemTypes.Currency || Stackable > 0;
         }
-
-        public override byte[] BinaryData => ItemData();
     }
 }

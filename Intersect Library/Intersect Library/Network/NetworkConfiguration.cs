@@ -4,11 +4,6 @@ namespace Intersect.Network
 {
     public class NetworkConfiguration
     {
-        public string Host { get; set; }
-        public int Port { get; set; }
-        public bool IsServer { get; }
-        public int MaximumConnections { get; set; }
-
         public NetworkConfiguration()
             : this("localhost", 4500)
         {
@@ -29,12 +24,17 @@ namespace Intersect.Network
             Host = host;
             Port = port;
             IsServer = isServer;
-            MaximumConnections = IsServer ? Math.Max(maximumConnections, (ushort)1) : 0;
+            MaximumConnections = IsServer ? Math.Max(maximumConnections, (ushort) 1) : 0;
 
             if (port < 26 || port == 53)
             {
                 Port = 4500;
             }
         }
+
+        public string Host { get; set; }
+        public int Port { get; set; }
+        public bool IsServer { get; }
+        public int MaximumConnections { get; set; }
     }
 }

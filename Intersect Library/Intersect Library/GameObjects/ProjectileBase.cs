@@ -40,6 +40,8 @@ namespace Intersect.GameObjects
             }
         }
 
+        public override byte[] BinaryData => ProjectileData();
+
         public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
@@ -130,8 +132,6 @@ namespace Intersect.GameObjects
 
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => ProjectileData();
     }
 
     public class Location

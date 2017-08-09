@@ -84,7 +84,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private void btnVisual_Click(object sender, EventArgs e)
         {
             frmWarpSelection frmWarpSelection = new frmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum, scrlX.Value, scrlY.Value);
+            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum, scrlX.Value,
+                scrlY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {

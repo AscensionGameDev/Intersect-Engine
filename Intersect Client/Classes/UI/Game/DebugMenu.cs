@@ -12,6 +12,7 @@ namespace Intersect_Client.Classes.UI.Game
     {
         //Controls
         private WindowControl _debugWindow;
+
         private Label _drawsLabel;
         private Label _entitiesDrawnLabel;
         private Label _entitiesLabel;
@@ -84,7 +85,8 @@ namespace Intersect_Client.Classes.UI.Game
             _drawsLabel.Text = Strings.Get("debug", "draws", GameGraphics.DrawCalls);
             if (MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
             {
-                _mapLabel.Text = Strings.Get("debug", "map", MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).Name);
+                _mapLabel.Text = Strings.Get("debug", "map",
+                    MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).Name);
                 _xLabel.Text = Strings.Get("debug", "x", Globals.Me.CurrentX);
                 _yLabel.Text = Strings.Get("debug", "y", Globals.Me.CurrentY);
                 _zLabel.Text = Strings.Get("debug", "z", Globals.Me.CurrentZ);

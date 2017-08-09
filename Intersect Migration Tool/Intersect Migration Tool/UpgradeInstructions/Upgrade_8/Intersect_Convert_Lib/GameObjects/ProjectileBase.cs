@@ -39,6 +39,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             }
         }
 
+        public override byte[] BinaryData => ProjectileData();
+
         public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
@@ -129,8 +131,6 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => ProjectileData();
     }
 
     public class Location

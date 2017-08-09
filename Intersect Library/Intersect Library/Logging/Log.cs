@@ -9,7 +9,7 @@ namespace Intersect.Logging
         private static string ExecutableName =>
             Path.GetFileNameWithoutExtension(Process.GetCurrentProcess().MainModule.FileName);
 
-    public static string SuggestFilename(DateTime? time = null)
+        public static string SuggestFilename(DateTime? time = null)
             => $"{ExecutableName}-{time ?? DateTime.Now:yyyy_MM_dd-HH_mm_ss_fff}.log";
 
         #region Global

@@ -42,12 +42,14 @@ namespace Intersect.Editor.Classes.Core
 
         //Initial Resource Downloading
         private static string resourceRelayer = "http://ascensiongamedev.com/resources/Intersect/findResources.php";
+
         private static frmLoadingContent loadingForm;
         private static bool downloadCompleted;
         private static string errorString = "";
 
         //Game Content
         public static List<GameTexture> AllTextures = new List<GameTexture>();
+
         static IDictionary<string, GameTexture> tilesetDict = new Dictionary<string, GameTexture>();
         static IDictionary<string, GameTexture> itemDict = new Dictionary<string, GameTexture>();
         static IDictionary<string, GameTexture> entityDict = new Dictionary<string, GameTexture>();
@@ -258,7 +260,8 @@ namespace Intersect.Editor.Classes.Core
             var badTilesets = new List<string>();
             for (var i = 0; i < TilesetBase.Lookup.Count; i++)
             {
-                var tileset = TilesetBase.Lookup.Get<TilesetBase>(Database.GameObjectIdFromList(GameObjectType.Tileset, i));
+                var tileset =
+                    TilesetBase.Lookup.Get<TilesetBase>(Database.GameObjectIdFromList(GameObjectType.Tileset, i));
                 if (File.Exists("resources/tilesets/" + tileset.Name))
                 {
                     try
@@ -416,24 +419,49 @@ namespace Intersect.Editor.Classes.Core
             IDictionary<string, GameTexture> textureDict = null;
             switch (type)
             {
-                case TextureType.Tileset: textureDict = tilesetDict; break;
-                case TextureType.Item: textureDict = itemDict; break;
-                case TextureType.Entity: textureDict = entityDict; break;
-                case TextureType.Spell: textureDict = spellDict; break;
-                case TextureType.Animation: textureDict = animationDict; break;
-                case TextureType.Face: textureDict = faceDict; break;
-                case TextureType.Image: textureDict = imageDict; break;
-                case TextureType.Fog: textureDict = fogDict; break;
-                case TextureType.Resource: textureDict = resourceDict; break;
-                case TextureType.Paperdoll: textureDict = paperdollDict; break;
-                case TextureType.Gui: textureDict = guiDict; break;
-                case TextureType.Misc: textureDict = miscDict; break;
+                case TextureType.Tileset:
+                    textureDict = tilesetDict;
+                    break;
+                case TextureType.Item:
+                    textureDict = itemDict;
+                    break;
+                case TextureType.Entity:
+                    textureDict = entityDict;
+                    break;
+                case TextureType.Spell:
+                    textureDict = spellDict;
+                    break;
+                case TextureType.Animation:
+                    textureDict = animationDict;
+                    break;
+                case TextureType.Face:
+                    textureDict = faceDict;
+                    break;
+                case TextureType.Image:
+                    textureDict = imageDict;
+                    break;
+                case TextureType.Fog:
+                    textureDict = fogDict;
+                    break;
+                case TextureType.Resource:
+                    textureDict = resourceDict;
+                    break;
+                case TextureType.Paperdoll:
+                    textureDict = paperdollDict;
+                    break;
+                case TextureType.Gui:
+                    textureDict = guiDict;
+                    break;
+                case TextureType.Misc:
+                    textureDict = miscDict;
+                    break;
                 default:
                     return null;
             }
 
             if (textureDict == null) return null;
-            if (textureDict == tilesetDict) //When assigning name in tilebase base we force it to be lowercase.. so lets save some processing time here..
+            if (textureDict == tilesetDict
+            ) //When assigning name in tilebase base we force it to be lowercase.. so lets save some processing time here..
             {
                 return textureDict.TryGetValue(name, out GameTexture texture1) ? texture1.GetTexture() : null;
             }
@@ -482,22 +510,46 @@ namespace Intersect.Editor.Classes.Core
             IDictionary<string, GameTexture> textureDict = null;
             switch (type)
             {
-                case TextureType.Tileset: textureDict = tilesetDict; break;
-                case TextureType.Item: textureDict = itemDict; break;
-                case TextureType.Entity: textureDict = entityDict; break;
-                case TextureType.Spell: textureDict = spellDict; break;
-                case TextureType.Animation: textureDict = animationDict; break;
-                case TextureType.Face: textureDict = faceDict; break;
-                case TextureType.Image: textureDict = imageDict; break;
-                case TextureType.Fog: textureDict = fogDict; break;
-                case TextureType.Resource: textureDict = resourceDict; break;
-                case TextureType.Paperdoll: textureDict = paperdollDict; break;
-                case TextureType.Gui: textureDict = guiDict; break;
-                case TextureType.Misc: textureDict = miscDict; break;
+                case TextureType.Tileset:
+                    textureDict = tilesetDict;
+                    break;
+                case TextureType.Item:
+                    textureDict = itemDict;
+                    break;
+                case TextureType.Entity:
+                    textureDict = entityDict;
+                    break;
+                case TextureType.Spell:
+                    textureDict = spellDict;
+                    break;
+                case TextureType.Animation:
+                    textureDict = animationDict;
+                    break;
+                case TextureType.Face:
+                    textureDict = faceDict;
+                    break;
+                case TextureType.Image:
+                    textureDict = imageDict;
+                    break;
+                case TextureType.Fog:
+                    textureDict = fogDict;
+                    break;
+                case TextureType.Resource:
+                    textureDict = resourceDict;
+                    break;
+                case TextureType.Paperdoll:
+                    textureDict = paperdollDict;
+                    break;
+                case TextureType.Gui:
+                    textureDict = guiDict;
+                    break;
+                case TextureType.Misc:
+                    textureDict = miscDict;
+                    break;
                 default:
                     return null;
             }
-            
+
             return textureDict?.Keys.ToArray();
         }
 
@@ -517,6 +569,7 @@ namespace Intersect.Editor.Classes.Core
 
         // Not used but required that these be here:
         public event EventHandler<EventArgs> DeviceCreated;
+
         public event EventHandler<EventArgs> DeviceDisposing;
         public event EventHandler<EventArgs> DeviceReset;
         public event EventHandler<EventArgs> DeviceResetting;

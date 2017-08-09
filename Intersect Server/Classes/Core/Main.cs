@@ -1,11 +1,11 @@
 #define websockets
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using Intersect.GameObjects.Maps;
 using Intersect.Localization;
 using Intersect.Logging;
 using Intersect.Network;
@@ -16,8 +16,6 @@ using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Network;
 using Open.Nat;
-using WebSocketSharp.Server;
-using System.Globalization;
 
 namespace Intersect.Server.Classes
 {
@@ -103,8 +101,8 @@ namespace Intersect.Server.Classes
             Console.WriteLine(Strings.Get("portchecking", "connectioninfo"));
             if (!String.IsNullOrEmpty(externalIp))
             {
-                Console.WriteLine(Strings.Get("portchecking", "publicip"),externalIp);
-                Console.WriteLine(Strings.Get("portchecking", "publicport"),Options.ServerPort);
+                Console.WriteLine(Strings.Get("portchecking", "publicip"), externalIp);
+                Console.WriteLine(Strings.Get("portchecking", "publicport"), Options.ServerPort);
 
                 Console.WriteLine();
                 if (serverAccessible)
@@ -577,7 +575,8 @@ namespace Intersect.Server.Classes
                                         catch (Exception)
                                         {
                                             Console.WriteLine(@"    " +
-                                                              Strings.Get("commandoutput", "parseerror", commandsplit[0],
+                                                              Strings.Get("commandoutput", "parseerror",
+                                                                  commandsplit[0],
                                                                   Strings.Get("commands", "commandinfo")));
                                         }
                                     }
@@ -663,7 +662,7 @@ namespace Intersect.Server.Classes
                         {
                             Globals.ServerStarted = false;
                             SocketServer.Dispose();
-                            
+
                             return;
                         }
                     }
@@ -692,19 +691,23 @@ namespace Intersect.Server.Classes
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "exit")) +
                                               " - " + Strings.Get("commands", "exithelp"));
                             Console.WriteLine(@"    " +
-                                              string.Format("{0,-20}", Strings.Get("commands", "announcement")) + " - " +
+                                              string.Format("{0,-20}", Strings.Get("commands", "announcement")) +
+                                              " - " +
                                               Strings.Get("commands", "announcementhelp"));
-                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "cps")) + " - " +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "cps")) +
+                                              " - " +
                                               Strings.Get("commands", "cpshelp"));
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "power")) +
                                               " - " + Strings.Get("commands", "powerhelp"));
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "poweracc")) +
                                               " - " + Strings.Get("commands", "poweracchelp"));
-                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "onlinelist")) +
-                                              " - " + Strings.Get("commands", "onlinelisthelp"));
+                            Console.WriteLine(
+                                @"    " + string.Format("{0,-20}", Strings.Get("commands", "onlinelist")) +
+                                " - " + Strings.Get("commands", "onlinelisthelp"));
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "kick")) +
                                               " - " + Strings.Get("commands", "kickhelp"));
-                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "ban")) + " - " +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "ban")) +
+                                              " - " +
                                               Strings.Get("commands", "banhelp"));
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "unban")) +
                                               " - " + Strings.Get("commands", "unbanhelp"));

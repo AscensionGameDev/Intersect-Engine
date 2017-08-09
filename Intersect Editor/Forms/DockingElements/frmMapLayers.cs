@@ -28,6 +28,7 @@ namespace Intersect.Editor.Forms
     {
         //MonoGame Swap Chain
         private SwapChainRenderTarget _chain;
+
         private int _lastTileLayer;
         private List<PictureBox> _mapLayers = new List<PictureBox>();
         private bool _tMouseDown;
@@ -214,7 +215,8 @@ namespace Intersect.Editor.Forms
             if (TilesetBase.Lookup.Count > 0)
             {
                 Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
-                Globals.CurrentTileset = TilesetBase.Lookup.Get<TilesetBase>(Database.GameObjectListIndex(GameObjectType.Tileset, 0));
+                Globals.CurrentTileset =
+                    TilesetBase.Lookup.Get<TilesetBase>(Database.GameObjectListIndex(GameObjectType.Tileset, 0));
             }
         }
 
@@ -402,45 +404,45 @@ namespace Intersect.Editor.Forms
         {
             if (rbBlocked.Checked == true)
             {
-                return (int)MapAttributes.Blocked;
+                return (int) MapAttributes.Blocked;
             }
             else if (rbItem.Checked == true)
             {
-                return (int)MapAttributes.Item;
+                return (int) MapAttributes.Item;
             }
             else if (rbZDimension.Checked == true)
             {
-                return (int)MapAttributes.ZDimension;
+                return (int) MapAttributes.ZDimension;
             }
             else if (rbNPCAvoid.Checked == true)
             {
-                return (int)MapAttributes.NPCAvoid;
+                return (int) MapAttributes.NPCAvoid;
             }
             else if (rbWarp.Checked == true)
             {
-                return (int)MapAttributes.Warp;
+                return (int) MapAttributes.Warp;
             }
             else if (rbSound.Checked == true)
             {
-                return (int)MapAttributes.Sound;
+                return (int) MapAttributes.Sound;
             }
             else if (rbResource.Checked == true)
             {
-                return (int)MapAttributes.Resource;
+                return (int) MapAttributes.Resource;
             }
             else if (rbAnimation.Checked == true)
             {
-                return (int)MapAttributes.Animation;
+                return (int) MapAttributes.Animation;
             }
             else if (rbGrappleStone.Checked == true)
             {
-                return (int)MapAttributes.GrappleStone;
+                return (int) MapAttributes.GrappleStone;
             }
             else if (rbSlide.Checked == true)
             {
-                return (int)MapAttributes.Slide;
+                return (int) MapAttributes.Slide;
             }
-            return (int)MapAttributes.Walkable;
+            return (int) MapAttributes.Walkable;
         }
 
         public void PlaceAttribute(MapBase tmpMap, int x, int y)

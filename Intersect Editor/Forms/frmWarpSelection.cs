@@ -91,7 +91,8 @@ namespace Intersect.Editor.Forms
                     }
                     else
                     {
-                        if (MapInstance.Lookup.Get<MapInstance>(_currentMap) != null) MapInstance.Lookup.Get<MapInstance>(_currentMap).Delete();
+                        if (MapInstance.Lookup.Get<MapInstance>(_currentMap) != null)
+                            MapInstance.Lookup.Get<MapInstance>(_currentMap).Delete();
                         Globals.MapsToFetch = new List<int>() {_currentMap};
                         if (!Globals.MapsToScreenshot.Contains(_currentMap)) Globals.MapsToScreenshot.Add(_currentMap);
                         PacketSender.SendNeedMap(_currentMap);

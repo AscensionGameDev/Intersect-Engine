@@ -14,12 +14,14 @@ namespace Intersect.GameObjects
 
         //Requirements
         public ConditionLists CastingReqs = new ConditionLists();
+
         public int CastRange;
         public int CooldownDuration;
         public int Cost;
 
         //Damage
         public int CritChance;
+
         public int DamageType = 1;
         public int Data1;
         public int Data2;
@@ -35,6 +37,7 @@ namespace Intersect.GameObjects
 
         //Extra Data, Teleport Coords, Custom Spells, Etc
         public int Projectile;
+
         public int Scaling;
         public int ScalingStat;
         public byte SpellType;
@@ -55,6 +58,8 @@ namespace Intersect.GameObjects
         {
             Name = "New Spell";
         }
+
+        public override byte[] BinaryData => SpellData();
 
         public override void Load(byte[] packet)
         {
@@ -159,7 +164,5 @@ namespace Intersect.GameObjects
             myBuffer.WriteString(Data5);
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => SpellData();
     }
 }

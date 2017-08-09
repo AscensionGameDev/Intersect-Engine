@@ -19,7 +19,9 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
     {
         private bool downloadCompleted;
         private string errorString = "";
+
         private frmLoadingContent loadingForm;
+
         //Initial Resource Downloading
         private string resourceRelayer = "http://ascensiongamedev.com/resources/Intersect/findResources.php";
 
@@ -91,7 +93,8 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             }
         }
 
-        private void Client_DownloadFileCompleted(object sender, global::System.ComponentModel.AsyncCompletedEventArgs e)
+        private void Client_DownloadFileCompleted(object sender,
+            global::System.ComponentModel.AsyncCompletedEventArgs e)
         {
             downloadCompleted = true;
             if (!e.Cancelled && e.Error == null)

@@ -1,6 +1,4 @@
-﻿
-using System;
-using System.Diagnostics;
+﻿using System;
 
 namespace Intersect.Utilities.Scripts
 {
