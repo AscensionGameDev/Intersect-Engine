@@ -32,6 +32,7 @@ namespace Intersect_Client.Classes.Entities
 
         public Resource(int index, long spawnTime, ByteBuffer bf) : base(index, spawnTime, bf)
         {
+            _renderPriority = 0;
         }
 
         public ResourceBase GetResourceBase()

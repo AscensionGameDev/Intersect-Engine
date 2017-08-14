@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
@@ -27,9 +29,11 @@ namespace Intersect.Server.Classes.Core
                     cpsTimer = timeMs + 1000;
                 }
                 ServerTime.Update();
-                if (Globals.CPSLock)
+                var currentTime = Globals.System.GetTimeMs();
+                if (Globals.CPSLock && currentTime < timeMs + 10)
                 {
-                    Thread.Sleep(10);
+                    int waitTime = (int) ((timeMs + 10) - currentTime);
+                    Thread.Sleep(waitTime);
                 }
             }
 

@@ -44,6 +44,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 Hotbar[i] = new HotbarInstance();
             }
+            _renderPriority = 2;
         }
 
         public bool IsInParty()

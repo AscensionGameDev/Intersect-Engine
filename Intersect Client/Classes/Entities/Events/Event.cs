@@ -40,6 +40,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 map.AddEvent(this);
             }
+            _renderPriority = 1;
         }
 
         public override string ToString()
@@ -182,16 +183,10 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        private MapInstance oldRenderMap;
-        private int oldRenderY;
-        private int oldRenderLevel;
         public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, MapInstance map)
         {
             if (RenderLevel == 1) return base.DetermineRenderOrder(renderList,map);
-            if (renderList != null)
-            {
-                renderList.Remove(this);
-            }
+            renderList?.Remove(this);
             if (map == null)
             {
                 return null;
@@ -209,34 +204,29 @@ namespace Intersect_Client.Classes.Entities
                         {
                             if (RenderLevel == 0) y -= 1;
                             if (RenderLevel == 2) y += 1;
-                            HashSet<Entity>[] outerList;
-                            if (CurrentZ == 0)
+                            var priority = _renderPriority;
+                            if (CurrentZ != 0)
                             {
-                                outerList = GameGraphics.Layer1Entities;
-                            }
-                            else
-                            {
-                                outerList = GameGraphics.Layer2Entities;
+                                priority += 3;
                             }
                             if (y == gridY - 1)
                             {
-                                outerList[CurrentY].Add(this);
-                                renderList = outerList[CurrentY];
+                                GameGraphics.RenderingEntities[priority, CurrentY].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, CurrentY];
                                 return renderList;
                             }
                             else if (y == gridY)
                             {
-                                outerList[Options.MapHeight + CurrentY].Add(this);
-                                renderList = outerList[Options.MapHeight + CurrentY];
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY];
                                 return renderList;
                             }
                             else
                             {
-                                outerList[Options.MapHeight * 2 + CurrentY].Add(this);
-                                renderList = outerList[Options.MapHeight * 2 + CurrentY];
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY];
                                 return renderList;
                             }
-                            break;
                         }
                     }
                 }

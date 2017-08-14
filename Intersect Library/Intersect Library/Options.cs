@@ -80,6 +80,7 @@ namespace Intersect
 
             //Equipment
             int count = bf.ReadInteger();
+            EquipmentSlots.Clear();
             for (int i = 0; i < count; i++)
             {
                 EquipmentSlots.Add(bf.ReadString());

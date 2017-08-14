@@ -27,6 +27,7 @@ namespace Intersect_Client.Classes.Entities
 
         private long _lastUpdate;
         private long _walkTimer;
+        protected byte _renderPriority = 1;
 
         //Entity Animations
         public List<AnimationInstance> Animations = new List<AnimationInstance>();
@@ -466,31 +467,27 @@ namespace Intersect_Client.Classes.Entities
                     {
                         if (Globals.MapGrid[x, y] == CurrentMap)
                         {
-                            HashSet<Entity>[] outerList;
-                            if (CurrentZ == 0)
+                            var priority = _renderPriority;
+                            if (CurrentZ != 0)
                             {
-                                outerList = GameGraphics.Layer1Entities;
-                            }
-                            else
-                            {
-                                outerList = GameGraphics.Layer2Entities;
+                                priority += 3;
                             }
                             if (y == gridY - 1)
                             {
-                                outerList[CurrentY].Add(this);
-                                renderList = outerList[CurrentY];
+                                GameGraphics.RenderingEntities[priority, CurrentY].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, CurrentY];
                                 return renderList;
                             }
                             else if (y == gridY)
                             {
-                                outerList[Options.MapHeight + CurrentY].Add(this);
-                                renderList = outerList[Options.MapHeight + CurrentY];
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY];
                                 return renderList;
                             }
                             else
                             {
-                                outerList[Options.MapHeight * 2 + CurrentY].Add(this);
-                                renderList = outerList[Options.MapHeight * 2 + CurrentY];
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY];
                                 return renderList;
                             }
                         }
