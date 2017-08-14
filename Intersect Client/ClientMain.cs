@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Globalization;
 using Intersect.Localization;
 using Intersect_Client_MonoGame;
-using System.Globalization;
 
 namespace Intersect_MonoGameDx
 {

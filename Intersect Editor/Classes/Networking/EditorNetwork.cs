@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Net.Sockets;
 using System.Reflection;
 using System.Windows.Forms;
 using Intersect.Logging;
@@ -13,16 +12,14 @@ namespace Intersect.Editor.Classes
 {
     public static class EditorNetwork
     {
-
         public static ClientNetwork EditorLidgrenNetwork;
-        public static bool Connected => EditorLidgrenNetwork?.IsConnected ?? false;
         public static bool Connecting;
+        public static bool Connected => EditorLidgrenNetwork?.IsConnected ?? false;
 
         public static void InitNetwork()
         {
             if (EditorLidgrenNetwork == null)
             {
-
                 Log.Global.AddOutput(new ConsoleOutput());
                 var config = new NetworkConfiguration(Globals.ServerHost, (ushort) Globals.ServerPort);
                 var assembly = Assembly.GetExecutingAssembly();
@@ -123,7 +120,7 @@ namespace Intersect.Editor.Classes
 
                 if (EditorLidgrenNetwork != null)
                 {
-                    if (!EditorLidgrenNetwork.Send(new BinaryPacket(null) { Buffer = buff }))
+                    if (!EditorLidgrenNetwork.Send(new BinaryPacket(null) {Buffer = buff}))
                     {
                         throw new Exception("Beta 4 network send failed.");
                     }

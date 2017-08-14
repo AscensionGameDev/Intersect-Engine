@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
-using Intersect.Logging;
 
 namespace Intersect.Network
 {
@@ -9,14 +7,9 @@ namespace Intersect.Network
     {
         protected const int SIZE_HANDSHAKE_SECRET = 32;
 
-        protected byte[] mHandshakeSecret;
-        public byte[] HandshakeSecret
-        {
-            get => mHandshakeSecret;
-            set => mHandshakeSecret = value;
-        }
-
         protected readonly RSACryptoServiceProvider mRsa;
+
+        protected byte[] mHandshakeSecret;
 
         protected ConnectionPacket(RSACryptoServiceProvider rsa, byte[] handshakeSecret)
             : base(null, PacketCode.Unknown)
@@ -24,6 +17,12 @@ namespace Intersect.Network
             mRsa = rsa ?? throw new ArgumentNullException();
 
             mHandshakeSecret = handshakeSecret;
+        }
+
+        public byte[] HandshakeSecret
+        {
+            get => mHandshakeSecret;
+            set => mHandshakeSecret = value;
         }
 
         protected static void DumpKey(RSAParameters parameters, bool isPublic)

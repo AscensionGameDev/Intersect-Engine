@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Intersect.Utilities.Scripts;
 
 namespace Intersect.Utilities
@@ -24,27 +23,6 @@ namespace Intersect.Utilities
         static void RegisterScript(Script script)
         {
             mScripts.Add(script.Name, script);
-        }
-
-        class Decorator : TextWriter
-        {
-            private TextWriter mWriter;
-
-            public override Encoding Encoding
-                => mWriter.Encoding;
-
-            public Decorator(TextWriter writer)
-            {
-                mWriter = writer;
-            }
-
-            public override void WriteLine(string value)
-            {
-                var color = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Red;
-                mWriter.WriteLine(value);
-                Console.ForegroundColor = color;
-            }
         }
 
         static void Main(string[] args)
@@ -93,6 +71,27 @@ namespace Intersect.Utilities
                             Console.Error?.WriteLine(result.Exception.StackTrace);
                         break;
                 }
+            }
+        }
+
+        class Decorator : TextWriter
+        {
+            private TextWriter mWriter;
+
+            public Decorator(TextWriter writer)
+            {
+                mWriter = writer;
+            }
+
+            public override Encoding Encoding
+                => mWriter.Encoding;
+
+            public override void WriteLine(string value)
+            {
+                var color = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
+                mWriter.WriteLine(value);
+                Console.ForegroundColor = color;
             }
         }
     }

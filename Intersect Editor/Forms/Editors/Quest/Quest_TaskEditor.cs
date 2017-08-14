@@ -64,7 +64,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
             btnEditTaskEvent.Text = Strings.Get("taskeditor", "editcompletionevent");
             btnSave.Text = Strings.Get("taskeditor", "ok");
             btnCancel.Text = Strings.Get("taskeditor", "cancel");
-
         }
 
         private void UpdateFormElements()
@@ -104,11 +103,11 @@ namespace Intersect.Editor.Forms.Editors.Quest
                     break;
                 case 1: //Gather Items
                     _myTask.Data1 = Database.GameObjectIdFromList(GameObjectType.Item, cmbItem.SelectedIndex);
-                    _myTask.Data2 = (int)nudItemAmount.Value;
+                    _myTask.Data2 = (int) nudItemAmount.Value;
                     break;
                 case 2: //Kill Npcs
                     _myTask.Data1 = Database.GameObjectIdFromList(GameObjectType.Npc, cmbNpc.SelectedIndex);
-                    _myTask.Data2 = (int)nudNpcQuantity.Value;
+                    _myTask.Data2 = (int) nudNpcQuantity.Value;
                     break;
             }
             ParentForm.Close();
@@ -128,7 +127,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void btnEditTaskEvent_Click(object sender, EventArgs e)
         {
-            _myTask.CompletionEvent.Name = Strings.Get("taskeditor","completionevent");
+            _myTask.CompletionEvent.Name = Strings.Get("taskeditor", "completionevent");
             FrmEvent editor = new FrmEvent(null)
             {
                 MyEvent = _myTask.CompletionEvent

@@ -6,6 +6,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
     {
         // Autotiles
         public const byte AutoTileInner = 1;
+
         public const byte AutoTileOuter = 2;
         public const byte AutoTileHorizontal = 3;
         public const byte AutoTileVertical = 4;
@@ -13,6 +14,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
 
         // Autotile types
         public const byte AutotileNone = 0;
+
         public const byte AutotileNormal = 1;
         public const byte AutotileFake = 2;
         public const byte AutotileAnim = 3;
@@ -21,6 +23,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
 
         // Rendering
         public const byte RenderStateNone = 0;
+
         public const byte RenderStateNormal = 1;
         public const byte RenderStateAutotile = 2;
 
@@ -28,6 +31,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
 
         // autotiling
         public PointStruct[] AutoInner = new PointStruct[6];
+
         public PointStruct[] AutoNe = new PointStruct[6];
         public PointStruct[] AutoNw = new PointStruct[6];
         public PointStruct[] AutoSe = new PointStruct[6];

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
@@ -24,6 +20,7 @@ namespace Intersect.Client.Classes.UI.Game.Bag
 
         //Drag/Drop References
         private BagWindow _bagWindow;
+
         private int _currentItem = -2;
         private ItemDescWindow _descWindow;
 
@@ -32,6 +29,7 @@ namespace Intersect.Client.Classes.UI.Game.Bag
 
         //Dragging
         private bool CanDrag;
+
         private long ClickTime;
         public ImagePanel container;
         private Draggable dragIcon;
@@ -39,6 +37,7 @@ namespace Intersect.Client.Classes.UI.Game.Bag
 
         //Mouse Event Variables
         private bool MouseOver;
+
         private int MouseX = -1;
         private int MouseY = -1;
         public ImagePanel pnl;
@@ -51,7 +50,7 @@ namespace Intersect.Client.Classes.UI.Game.Bag
 
         public void Setup()
         {
-            pnl = new ImagePanel(container,"BagItemIcon");
+            pnl = new ImagePanel(container, "BagItemIcon");
             pnl.HoverEnter += pnl_HoverEnter;
             pnl.HoverLeave += pnl_HoverLeave;
             pnl.RightClicked += pnl_RightClicked;
@@ -172,20 +171,29 @@ namespace Intersect.Client.Classes.UI.Game.Bag
                         {
                             if (MouseX == -1 || MouseY == -1)
                             {
-                                MouseX = InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X;
-                                MouseY = InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y;
+                                MouseX = InputHandler.MousePosition.X -
+                                         pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X;
+                                MouseY = InputHandler.MousePosition.Y -
+                                         pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y;
                             }
                             else
                             {
                                 int xdiff = MouseX -
-                                            (InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X);
+                                            (InputHandler.MousePosition.X -
+                                             pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
+                                                 .X);
                                 int ydiff = MouseY -
-                                            (InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y);
+                                            (InputHandler.MousePosition.Y -
+                                             pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
+                                                 .Y);
                                 if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                 {
                                     IsDragging = true;
-                                    dragIcon = new Draggable(pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X + MouseX,
-                                        pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X + MouseY, pnl.Texture);
+                                    dragIcon = new Draggable(
+                                        pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X +
+                                        MouseX,
+                                        pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X +
+                                        MouseY, pnl.Texture);
                                 }
                             }
                         }

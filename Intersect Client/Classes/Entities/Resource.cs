@@ -4,10 +4,8 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.Maps;
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -15,8 +13,14 @@ namespace Intersect_Client.Classes.Entities
     {
         public ResourceBase _baseResource;
         private bool _hasRenderBounds;
+        public bool IsDead;
         FloatRect destRectangle = FloatRect.Empty;
         FloatRect srcRectangle = FloatRect.Empty;
+
+        public Resource(int index, long spawnTime, ByteBuffer bf) : base(index, spawnTime, bf)
+        {
+            _renderPriority = 0;
+        }
 
         public override string MySprite
         {
@@ -28,13 +32,6 @@ namespace Intersect_Client.Classes.Entities
                 _hasRenderBounds = false;
             }
         }
-        public bool IsDead;
-
-        public Resource(int index, long spawnTime, ByteBuffer bf) : base(index, spawnTime, bf)
-        {
-            _renderPriority = 0;
-        }
-
         public ResourceBase GetResourceBase()
         {
             return _baseResource;
@@ -91,7 +88,7 @@ namespace Intersect_Client.Classes.Entities
                 return;
             }
             if (Texture != null)
-            { 
+            {
                 srcRectangle.Width = Texture.GetWidth();
                 srcRectangle.Height = Texture.GetHeight();
                 destRectangle.Width = srcRectangle.Width;

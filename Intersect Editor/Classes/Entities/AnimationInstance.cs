@@ -59,7 +59,8 @@ namespace Intersect.Editor.Classes.Entities
                     }
                     EditorGraphics.AddLight(
                         Options.MapWidth * Options.TileWidth + (int) _renderX + myBase.LowerLights[lowerFrame].OffsetX,
-                        Options.MapHeight * Options.TileHeight + (int) _renderY + myBase.LowerLights[lowerFrame].OffsetY,
+                        Options.MapHeight * Options.TileHeight + (int) _renderY +
+                        myBase.LowerLights[lowerFrame].OffsetY,
                         myBase.LowerLights[lowerFrame]);
                 }
             }
@@ -88,7 +89,8 @@ namespace Intersect.Editor.Classes.Entities
                     }
                     EditorGraphics.AddLight(
                         Options.MapWidth * Options.TileWidth + (int) _renderX + myBase.UpperLights[upperFrame].OffsetX,
-                        Options.MapHeight * Options.TileHeight + (int) _renderY + myBase.UpperLights[upperFrame].OffsetY,
+                        Options.MapHeight * Options.TileHeight + (int) _renderY +
+                        myBase.UpperLights[upperFrame].OffsetY,
                         myBase.UpperLights[upperFrame]);
                 }
             }

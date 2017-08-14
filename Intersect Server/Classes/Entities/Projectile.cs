@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -14,18 +13,20 @@ namespace Intersect.Server.Classes.Entities
         private int _spawnCount;
         private int _spawnedAmount;
         private int _totalSpawns;
+        public ItemBase Item;
         public ProjectileBase MyBase;
         public Entity Owner;
-        public ItemBase Item;
-        public SpellBase Spell;
         private int Quantity;
 
         // Individual Spawns
         public ProjectileSpawns[] Spawns;
+
         private long SpawnTime;
+        public SpellBase Spell;
         public Entity Target;
 
-        public Projectile(int index, Entity owner, SpellBase parentSpell, ItemBase parentItem, ProjectileBase projectile,
+        public Projectile(int index, Entity owner, SpellBase parentSpell, ItemBase parentItem,
+            ProjectileBase projectile,
             int Map, int X, int Y, int Z, int Direction, Entity target) : base(index)
         {
             MyBase = projectile;
@@ -248,7 +249,7 @@ namespace Intersect.Server.Classes.Entities
                 return 0;
             }
         }
-        
+
         public void ProcessFragments()
         {
             if (_spawnCount != 0 || Quantity < MyBase.Quantity)
@@ -259,7 +260,6 @@ namespace Intersect.Server.Classes.Entities
                     {
                         var killSpawn = MoveFragment(Spawns[i]);
                         if (!killSpawn) killSpawn = CheckForCollision(Spawns[i]);
-                        
 
                         if (killSpawn)
                         {
@@ -273,7 +273,7 @@ namespace Intersect.Server.Classes.Entities
             }
             else
             {
-                Die(0,null);
+                Die(0, null);
             }
         }
 
@@ -302,7 +302,7 @@ namespace Intersect.Server.Classes.Entities
             //Check for Z-Dimension
             if (!spawn.ProjectileBase.IgnoreZDimension)
             {
-                if (attribute != null && attribute.value == (int)MapAttributes.ZDimension)
+                if (attribute != null && attribute.value == (int) MapAttributes.ZDimension)
                 {
                     if (attribute.data1 > 0)
                     {
@@ -310,7 +310,7 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
                 //Check for grapplehooks.
-                if (attribute != null && attribute.value == (int)MapAttributes.GrappleStone &&
+                if (attribute != null && attribute.value == (int) MapAttributes.GrappleStone &&
                     MyBase.GrappleHook == true)
                 {
                     if (spawn.Dir <= 3) //Don't handle directional projectile grapplehooks
@@ -321,7 +321,7 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
             }
-            if (attribute != null && attribute.value == (int)MapAttributes.Blocked &&
+            if (attribute != null && attribute.value == (int) MapAttributes.Blocked &&
                 !spawn.ProjectileBase.IgnoreMapBlocks)
             {
                 if (spawn.Dir <= 3) //Don't handle directional projectile grapplehooks
@@ -347,8 +347,8 @@ namespace Intersect.Server.Classes.Entities
                         if (z == entities.Count - 1)
                         {
                             spawn.TransmittionTimer = Globals.System.GetTimeMs() +
-                                                          (long)
-                                                          ((float)MyBase.Speed / (float)MyBase.Range);
+                                                      (long)
+                                                      ((float) MyBase.Speed / (float) MyBase.Range);
                             if (spawn.Distance >= MyBase.Range)
                             {
                                 killSpawn = true;
@@ -434,7 +434,7 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
             MapInstance.Lookup.Get<MapInstance>(CurrentMap).RemoveProjectile(this);
-            PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.Projectile, CurrentMap);
+            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Projectile, CurrentMap);
             Globals.Entities[MyIndex] = null;
         }
 
@@ -466,12 +466,12 @@ namespace Intersect.Server.Classes.Entities
         public int Dir;
         public int Distance;
         public int Map;
+        public Projectile Parent;
         public ProjectileBase ProjectileBase;
         public long TransmittionTimer = Globals.System.GetTimeMs();
         public int X;
         public int Y;
         public int Z;
-        public Projectile Parent;
 
         public ProjectileSpawns(int dir, int x, int y, int z, int map, ProjectileBase projectileBase, Projectile parent)
         {
@@ -496,7 +496,8 @@ namespace Intersect.Server.Classes.Entities
                     if (Parent.Owner != Parent.Target)
                     {
                         Parent.Owner.TryAttack(TargetEntity, Parent.MyBase, Parent.Spell, Parent.Item, Dir);
-                        if (Dir <= 3 && Parent.MyBase.GrappleHook == true) //Don't handle directional projectile grapplehooks
+                        if (Dir <= 3 && Parent.MyBase.GrappleHook == true
+                        ) //Don't handle directional projectile grapplehooks
                         {
                             Parent.Owner.Dir = Dir;
                             new DashInstance(Parent.Owner, Distance, Parent.Owner.Dir);
@@ -506,15 +507,16 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else if (TargetEntity.GetType() == typeof(Resource))
                 {
-                    if ((((Resource)TargetEntity).IsDead &&
+                    if ((((Resource) TargetEntity).IsDead &&
                          !ProjectileBase.IgnoreExhaustedResources) ||
-                        (!((Resource)TargetEntity).IsDead &&
+                        (!((Resource) TargetEntity).IsDead &&
                          !ProjectileBase.IgnoreActiveResources))
                     {
                         if (Parent.Owner.GetType() == typeof(Player))
                         {
                             Parent.Owner.TryAttack(TargetEntity, Parent.MyBase, Parent.Spell, Parent.Item, Dir);
-                            if (Dir <= 3 && Parent.MyBase.GrappleHook == true) //Don't handle directional projectile grapplehooks
+                            if (Dir <= 3 && Parent.MyBase.GrappleHook == true
+                            ) //Don't handle directional projectile grapplehooks
                             {
                                 Parent.Owner.Dir = Dir;
                                 new DashInstance(Parent.Owner, Distance, Parent.Owner.Dir);
@@ -529,7 +531,8 @@ namespace Intersect.Server.Classes.Entities
                     if (OwnerNpc == null || OwnerNpc.CanNpcCombat(TargetEntity))
                     {
                         Parent.Owner.TryAttack(TargetEntity, Parent.MyBase, Parent.Spell, Parent.Item, Dir);
-                        if (Dir <= 3 && Parent.MyBase.GrappleHook == true) //Don't handle directional projectile grapplehooks
+                        if (Dir <= 3 && Parent.MyBase.GrappleHook == true
+                        ) //Don't handle directional projectile grapplehooks
                         {
                             Parent.Owner.Dir = Dir;
                             new DashInstance(Parent.Owner, Distance, Parent.Owner.Dir);

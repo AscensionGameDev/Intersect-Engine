@@ -22,7 +22,9 @@ namespace Intersect.Collections
         public ICollection<TKey> Keys => mInternalDictionary?.Keys ?? new TKey[0];
         public ICollection<TValue> Values => mInternalDictionary?.Values ?? new TValue[0];
 
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => mInternalDictionary?.GetEnumerator() ?? new Dictionary<TKey, TValue>().GetEnumerator();
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => mInternalDictionary?.GetEnumerator() ??
+                                                                          new Dictionary<TKey, TValue>()
+                                                                              .GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

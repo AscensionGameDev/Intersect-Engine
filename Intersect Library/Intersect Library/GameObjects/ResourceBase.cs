@@ -12,12 +12,14 @@ namespace Intersect.GameObjects
 
         // Drops
         public List<ResourceDrop> Drops = new List<ResourceDrop>();
+
         public string EndGraphic = Strings.Get("general", "none");
 
         public ConditionLists HarvestingReqs = new ConditionLists();
 
         // Graphics
         public string InitialGraphic = Strings.Get("general", "none");
+
         public int MaxHP;
 
         public int MinHP;
@@ -34,6 +36,8 @@ namespace Intersect.GameObjects
                 Drops.Add(new ResourceDrop());
             }
         }
+
+        public override byte[] BinaryData => ResourceData();
 
         public override void Load(byte[] packet)
         {
@@ -87,8 +91,6 @@ namespace Intersect.GameObjects
 
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => ResourceData();
 
         public class ResourceDrop
         {

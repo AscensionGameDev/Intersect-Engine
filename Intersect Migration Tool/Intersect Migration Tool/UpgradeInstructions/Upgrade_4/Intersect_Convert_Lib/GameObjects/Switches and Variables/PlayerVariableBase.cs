@@ -8,6 +8,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
     {
         //Core info
         public new const string DATABASE_TABLE = "player_variables";
+
         public new const GameObject OBJECT_TYPE = GameObject.PlayerVariable;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 

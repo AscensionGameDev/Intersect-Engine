@@ -78,7 +78,8 @@ namespace Intersect.Editor.Forms
             btnEdit.Enabled = true;
             if (!_commandProperties[_currentCommand].Editable) btnEdit.Enabled = false;
             if (_commandProperties[_currentCommand].MyList.Commands.Count == 0 ||
-                _commandProperties[_currentCommand].MyIndex >= _commandProperties[_currentCommand].MyList.Commands.Count ||
+                _commandProperties[_currentCommand].MyIndex >=
+                _commandProperties[_currentCommand].MyList.Commands.Count ||
                 _commandProperties[_currentCommand].MyIndex < 0) btnEdit.Enabled = false;
             btnDelete.Enabled = true;
         }
@@ -160,7 +161,8 @@ namespace Intersect.Editor.Forms
                         new Rectangle(CurrentPage.Graphic.X * Options.TileWidth,
                             CurrentPage.Graphic.Y * Options.TileHeight,
                             Options.TileWidth + (CurrentPage.Graphic.Width * Options.TileWidth),
-                            Options.TileHeight + (CurrentPage.Graphic.Height * Options.TileHeight)), GraphicsUnit.Pixel);
+                            Options.TileHeight + (CurrentPage.Graphic.Height * Options.TileHeight)),
+                        GraphicsUnit.Pixel);
                 }
                 sourceBitmap.Dispose();
             }
@@ -311,7 +313,8 @@ namespace Intersect.Editor.Forms
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.Animation = Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
+            CurrentPage.Animation =
+                Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
         }
 
         private void chkIsGlobal_CheckedChanged(object sender, EventArgs e)
@@ -380,7 +383,8 @@ namespace Intersect.Editor.Forms
                  tmpCommand.Type == EventCommandType.WaitForRouteCompletion) && MyEvent.CommonEvent)
             {
                 DarkMessageBox.ShowWarning(Strings.Get("eventcommandlist", "notcommon"),
-                    Strings.Get("eventcommandlist", "notcommoncaption"), DarkDialogButton.Ok, Properties.Resources.Icon);
+                    Strings.Get("eventcommandlist", "notcommoncaption"), DarkDialogButton.Ok,
+                    Properties.Resources.Icon);
                 EnableButtons();
                 return;
             }
@@ -391,7 +395,8 @@ namespace Intersect.Editor.Forms
             if (_isInsert)
             {
                 _commandProperties[_currentCommand].MyList.Commands.Insert(
-                    _commandProperties[_currentCommand].MyList.Commands.IndexOf(_commandProperties[_currentCommand].Cmd),
+                    _commandProperties[_currentCommand].MyList.Commands
+                        .IndexOf(_commandProperties[_currentCommand].Cmd),
                     tmpCommand);
             }
             else
@@ -406,6 +411,11 @@ namespace Intersect.Editor.Forms
         {
             var editForm = new frmDynamicRequirements(CurrentPage.ConditionLists, RequirementType.Event);
             editForm.ShowDialog();
+        }
+
+        private void txtCommand_TextChanged(object sender, EventArgs e)
+        {
+            CurrentPage.TriggerCommand = txtCommand.Text;
         }
 
         #region "Form Events"
@@ -450,7 +460,6 @@ namespace Intersect.Editor.Forms
 
         private void FrmEvent_FormClosed(object sender, FormClosedEventArgs e)
         {
-
         }
 
         private void FrmEvent_VisibleChanged(object sender, EventArgs e)
@@ -528,7 +537,8 @@ namespace Intersect.Editor.Forms
                 lstCommands.Nodes[i].Text = Strings.Get("eventcommands", lstCommands.Nodes[i].Name);
                 for (int x = 0; x < lstCommands.Nodes[i].Nodes.Count; x++)
                 {
-                    lstCommands.Nodes[i].Nodes[x].Text = Strings.Get("eventcommands", lstCommands.Nodes[i].Nodes[x].Name);
+                    lstCommands.Nodes[i].Nodes[x].Text =
+                        Strings.Get("eventcommands", lstCommands.Nodes[i].Nodes[x].Name);
                 }
             }
         }
@@ -627,12 +637,13 @@ namespace Intersect.Editor.Forms
                     lblTriggerVal.Show();
                     lblTriggerVal.Text = Strings.Get("eventeditor", "projectile");
                     cmbTriggerVal.Show();
-                    cmbTriggerVal.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Projectile, CurrentPage.TriggerVal) + 1;
+                    cmbTriggerVal.SelectedIndex =
+                        Database.GameObjectListIndex(GameObjectType.Projectile, CurrentPage.TriggerVal) + 1;
                 }
             }
             else
             {
-                if (cmbTrigger.SelectedIndex == (int)EventPage.CommonEventTriggers.Command)
+                if (cmbTrigger.SelectedIndex == (int) EventPage.CommonEventTriggers.Command)
                 {
                     txtCommand.Show();
                     txtCommand.Text = CurrentPage.TriggerCommand;
@@ -646,7 +657,8 @@ namespace Intersect.Editor.Forms
                 cmbPreviewFace.SelectedIndex = 0;
                 UpdateFacePreview();
             }
-            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, CurrentPage.Animation) + 1;
+            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, CurrentPage.Animation) +
+                                         1;
             chkHideName.Checked = Convert.ToBoolean(CurrentPage.HideName);
             chkDisableInspector.Checked = Convert.ToBoolean(CurrentPage.DisablePreview);
             chkDirectionFix.Checked = Convert.ToBoolean(CurrentPage.DirectionFix);
@@ -849,7 +861,8 @@ namespace Intersect.Editor.Forms
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[5]],
                                 indent + "          ");
 
-                            lstEventCommands.Items.Add(indent + "      : " + Strings.Get("eventcommandlist", "endspell"));
+                            lstEventCommands.Items.Add(
+                                indent + "      : " + Strings.Get("eventcommandlist", "endspell"));
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -1034,12 +1047,14 @@ namespace Intersect.Editor.Forms
                     }
                     if (command.Ints[0] == (int) SwitchVariableTypes.PlayerSwitch)
                     {
-                        return Strings.Get("eventcommandlist", "playerswitch", PlayerSwitchBase.GetName(command.Ints[1]),
+                        return Strings.Get("eventcommandlist", "playerswitch",
+                            PlayerSwitchBase.GetName(command.Ints[1]),
                             value);
                     }
                     else if (command.Ints[0] == (int) SwitchVariableTypes.ServerSwitch)
                     {
-                        return Strings.Get("eventcommandlist", "globalswitch", ServerSwitchBase.GetName(command.Ints[1]),
+                        return Strings.Get("eventcommandlist", "globalswitch",
+                            ServerSwitchBase.GetName(command.Ints[1]),
                             value);
                     }
                     else
@@ -1062,7 +1077,8 @@ namespace Intersect.Editor.Forms
                             break;
 
                         case 3:
-                            varvalue = Strings.Get("eventcommandlist", "randvariable", command.Ints[3], command.Ints[4]);
+                            varvalue = Strings.Get("eventcommandlist", "randvariable", command.Ints[3],
+                                command.Ints[4]);
                             break;
                     }
                     if (command.Ints[0] == (int) SwitchVariableTypes.PlayerVariable)
@@ -1691,7 +1707,7 @@ namespace Intersect.Editor.Forms
             lblTriggerVal.Hide();
             txtCommand.Hide();
             lblCommand.Hide();
-            
+
             if (!MyEvent.CommonEvent)
             {
                 if (cmbTrigger.SelectedIndex == (int) EventPage.EventTriggers.ProjectileHit)
@@ -1704,7 +1720,7 @@ namespace Intersect.Editor.Forms
             }
             else
             {
-                if (cmbTrigger.SelectedIndex == (int)EventPage.CommonEventTriggers.Command)
+                if (cmbTrigger.SelectedIndex == (int) EventPage.CommonEventTriggers.Command)
                 {
                     txtCommand.Show();
                     txtCommand.Text = CurrentPage.TriggerCommand;
@@ -1779,11 +1795,6 @@ namespace Intersect.Editor.Forms
         }
 
         #endregion
-
-        private void txtCommand_TextChanged(object sender, EventArgs e)
-        {
-            CurrentPage.TriggerCommand = txtCommand.Text;
-        }
     }
 
     public class CommandListProperties

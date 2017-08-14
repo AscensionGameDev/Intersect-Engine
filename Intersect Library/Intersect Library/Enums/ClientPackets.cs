@@ -74,8 +74,8 @@ namespace Intersect.Enums
         RemoveFriend,
         FriendRequestAccept,
         FriendRequestDecline,
-		PlayGame,
-		DeleteChar,
-		CreateNewChar,
-	}
+        PlayGame,
+        DeleteChar,
+        CreateNewChar,
+    }
 }

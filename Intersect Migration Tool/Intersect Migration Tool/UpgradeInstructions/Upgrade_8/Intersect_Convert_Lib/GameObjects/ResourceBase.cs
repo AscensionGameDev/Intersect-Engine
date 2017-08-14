@@ -11,12 +11,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         // Drops
         public List<ResourceDrop> Drops = new List<ResourceDrop>();
+
         public string EndGraphic = Strings.Get("general", "none");
 
         public ConditionLists HarvestingReqs = new ConditionLists();
 
         // Graphics
         public string InitialGraphic = Strings.Get("general", "none");
+
         public int MaxHP;
 
         public int MinHP;
@@ -33,6 +35,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
                 Drops.Add(new ResourceDrop());
             }
         }
+
+        public override byte[] BinaryData => ResourceData();
 
         public override void Load(byte[] packet)
         {
@@ -86,8 +90,6 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => ResourceData();
 
         public class ResourceDrop
         {

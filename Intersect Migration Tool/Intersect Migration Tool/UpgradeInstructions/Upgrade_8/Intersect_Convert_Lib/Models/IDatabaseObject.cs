@@ -6,11 +6,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
     {
         GameObjectType Type { get; }
         string DatabaseTable { get; }
-        
+
         string Name { get; set; }
+        byte[] BinaryData { get; }
 
         void Load(byte[] packet);
-        byte[] BinaryData { get; }
 
         void MakeBackup();
         void RestoreBackup();

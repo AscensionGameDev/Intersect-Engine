@@ -9,6 +9,8 @@ namespace Intersect.GameObjects
             Name = "New Player Switch";
         }
 
+        public override byte[] BinaryData => Data();
+
         public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
@@ -23,7 +25,5 @@ namespace Intersect.GameObjects
             myBuffer.WriteString(Name);
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => Data();
     }
 }

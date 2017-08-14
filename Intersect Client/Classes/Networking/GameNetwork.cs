@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
 using Intersect;
-using Intersect.Enums;
 using Intersect.Logging;
-using Intersect.Network;
-using Intersect.Network.Packets.Reflectable;
 using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
 
@@ -17,10 +11,11 @@ namespace Intersect_Client.Classes.Networking
         public static GameSocket MySocket;
 
         private static bool _connected;
-        public static bool Connected => MySocket?.IsConnected() ?? _connected;
         public static bool Connecting;
 
         private static int mPing;
+        public static bool Connected => MySocket?.IsConnected() ?? _connected;
+
         public static int Ping
         {
             get { return MySocket?.Ping() ?? mPing; }

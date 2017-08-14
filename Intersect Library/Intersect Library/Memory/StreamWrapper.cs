@@ -7,12 +7,12 @@ namespace Intersect.Memory
 {
     public class StreamWrapper : Stream, IBuffer
     {
-        public Stream Stream { get; }
-
         public StreamWrapper(Stream stream)
         {
             Stream = stream;
         }
+
+        public Stream Stream { get; }
 
         public override bool CanRead
             => Stream?.CanRead ?? false;
@@ -22,18 +22,6 @@ namespace Intersect.Memory
 
         public override bool CanWrite
             => Stream?.CanWrite ?? false;
-
-        public override void Flush()
-            => Stream?.Flush();
-
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            if (Stream == null) throw new NullReferenceException();
-            return Stream.Seek(offset, origin);
-        }
-
-        public override void SetLength(long value)
-            => Stream?.SetLength(value);
 
         public override long Length
             => Stream?.Length ?? -1;
@@ -53,7 +41,7 @@ namespace Intersect.Memory
 
         public byte[] ToBytes()
         {
-            var length = (int)(Stream?.Length - Stream?.Position ?? 0);
+            var length = (int) (Stream?.Length - Stream?.Position ?? 0);
             var data = new byte[length];
             Stream?.Read(data, 0, length);
             return data;
@@ -85,7 +73,7 @@ namespace Intersect.Memory
             }
 
             Debug.Assert(Stream != null, "Stream != null");
-            value = (byte)(Stream.ReadByte() & 0xFF);
+            value = (byte) (Stream.ReadByte() & 0xFF);
             return true;
         }
 
@@ -107,15 +95,10 @@ namespace Intersect.Memory
             return Read(ref value, 0, count);
         }
 
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            return Stream?.Read(buffer, offset, count) ?? -1;
-        }
-
         public bool Read(ref byte[] value, long offset, long count)
         {
             if (value == null) value = new byte[offset + count];
-            return count == Stream?.Read(value, (int)offset, (int)count);
+            return count == Stream?.Read(value, (int) offset, (int) count);
         }
 
         public bool Read(out char value)
@@ -210,7 +193,7 @@ namespace Intersect.Memory
 
             var bytes = new byte[sizeof(sbyte)];
             Stream?.Read(bytes, 0, sizeof(sbyte));
-            value = (sbyte)bytes[0];
+            value = (sbyte) bytes[0];
             return true;
         }
 
@@ -257,7 +240,7 @@ namespace Intersect.Memory
                 }
 
                 Stream.Position = originalPosition;
-                length = (int)(Length - originalPosition);
+                length = (int) (Length - originalPosition);
             }
             else if (!Read(out length))
             {
@@ -526,12 +509,9 @@ namespace Intersect.Memory
 
         public void Write(byte[] value, long count)
             => Write(value, 0, count);
-        
-        public override void Write(byte[] buffer, int offset, int count)
-            => Stream?.Write(buffer, offset, count);
 
         public void Write(byte[] value, long offset, long count)
-            => Stream?.Write(value ?? new byte[0], (int) offset, (int)count);
+            => Stream?.Write(value ?? new byte[0], (int) offset, (int) count);
 
         public void Write(char value)
             => Write(BitConverter.GetBytes(value), 0, sizeof(char));
@@ -558,7 +538,7 @@ namespace Intersect.Memory
             => Write(BitConverter.GetBytes(value), 0, sizeof(long));
 
         public void Write(sbyte value)
-            => WriteByte((byte)value);
+            => WriteByte((byte) value);
 
         public void Write(short value)
             => Write(BitConverter.GetBytes(value), 0, sizeof(short));
@@ -587,5 +567,25 @@ namespace Intersect.Memory
 
         public void Write(ushort value)
             => Write(BitConverter.GetBytes(value), 0, sizeof(ushort));
+
+        public override void Flush()
+            => Stream?.Flush();
+
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            if (Stream == null) throw new NullReferenceException();
+            return Stream.Seek(offset, origin);
+        }
+
+        public override void SetLength(long value)
+            => Stream?.SetLength(value);
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            return Stream?.Read(buffer, offset, count) ?? -1;
+        }
+
+        public override void Write(byte[] buffer, int offset, int count)
+            => Stream?.Write(buffer, offset, count);
     }
 }

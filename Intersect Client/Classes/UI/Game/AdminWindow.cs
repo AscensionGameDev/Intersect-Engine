@@ -15,13 +15,17 @@ namespace Intersect_Client.Classes.UI.Game
     class AdminWindow
     {
         private ComboBox _accessDropdown;
+
         private Label _accessLabel;
+
         //Controls
         private WindowControl _adminWindow;
+
         private Button _banButton;
 
         //Windows
         BanMuteBox _banMuteWindow;
+
         private CheckBox _chkChronological;
         private ComboBox _faceDropdown;
         private Label _faceLabel;
@@ -31,6 +35,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         //Player Mod Buttons
         private Button _kickButton;
+
         private Button _killButton;
         private Label _lblChronological;
 
@@ -43,10 +48,12 @@ namespace Intersect_Client.Classes.UI.Game
 
         //Player Mod Textboxes
         private TextBox _nameTextbox;
+
         private CheckBox _noclipCheckBox;
 
         //Admin Powers
         private Label _noclipLabel;
+
         private Button _setFaceButton;
         private Button _setPowerButton;
         private Button _setSpriteButton;
@@ -423,7 +430,8 @@ namespace Intersect_Client.Classes.UI.Game
             if (_nameTextbox.Text.Trim().Length > 0)
             {
                 var confirmWindow = new InputBox(Strings.Get("admin", "unmutecaption", _nameTextbox.Text),
-                    Strings.Get("admin", "unmuteprompt", _nameTextbox.Text), true, InputBox.InputType.YesNo, UnmuteUser, null, -1);
+                    Strings.Get("admin", "unmuteprompt", _nameTextbox.Text), true, InputBox.InputType.YesNo, UnmuteUser,
+                    null, -1);
             }
         }
 
@@ -432,7 +440,8 @@ namespace Intersect_Client.Classes.UI.Game
             if (_nameTextbox.Text.Trim().Length > 0)
             {
                 var confirmWindow = new InputBox(Strings.Get("admin", "unbancaption", _nameTextbox.Text),
-                    Strings.Get("admin", "unbanprompt", _nameTextbox.Text), true, InputBox.InputType.YesNo, UnbanUser, null, -1);
+                    Strings.Get("admin", "unbanprompt", _nameTextbox.Text), true, InputBox.InputType.YesNo, UnbanUser,
+                    null, -1);
             }
         }
 

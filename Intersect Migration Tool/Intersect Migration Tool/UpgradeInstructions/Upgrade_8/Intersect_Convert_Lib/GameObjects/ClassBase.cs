@@ -8,15 +8,18 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         //Exp Calculations
         public int BaseExp = 100;
+
         public int BasePoints;
         public int[] BaseStat = new int[(int) Stats.StatCount];
 
         //Starting Vitals & Stats
         public int[] BaseVital = new int[(int) Vitals.VitalCount];
+
         public int CritChance;
 
         //Combat
         public int Damage;
+
         public int DamageType;
         public int ExpIncrease = 50;
 
@@ -28,6 +31,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         //Locked - Can the class be chosen from character select?
         public int Locked;
+
         public int PointIncrease;
         public int Scaling;
         public int ScalingStat;
@@ -35,6 +39,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         //Spawn Info
         public int SpawnMap;
+
         public int SpawnX;
         public int SpawnY;
 
@@ -43,6 +48,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         //Sprites
         public List<ClassSprite> Sprites = new List<ClassSprite>();
+
         public int[] StatIncrease = new int[(int) Stats.StatCount];
         public int[] VitalIncrease = new int[(int) Vitals.VitalCount];
 
@@ -57,6 +63,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
                 Items.Add(new ClassItem());
             }
         }
+
+        public override byte[] BinaryData => ClassData();
 
         public override void Load(byte[] packet)
         {
@@ -233,8 +241,6 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => ClassData();
     }
 
     public class ClassItem

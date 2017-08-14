@@ -36,7 +36,8 @@ namespace Intersect.Editor.Forms
                     UpdateEditor();
                 }
             }
-            else if (type == GameObjectType.Class || type == GameObjectType.Projectile || type == GameObjectType.Animation ||
+            else if (type == GameObjectType.Class || type == GameObjectType.Projectile ||
+                     type == GameObjectType.Animation ||
                      type == GameObjectType.Spell)
             {
                 frmItem_Load(null, null);
@@ -72,7 +73,9 @@ namespace Intersect.Editor.Forms
 
         private void lstItems_Click(object sender, EventArgs e)
         {
-            _editorItem = ItemBase.Lookup.Get<ItemBase>(Database.GameObjectIdFromList(GameObjectType.Item, lstItems.SelectedIndex));
+            _editorItem =
+                ItemBase.Lookup.Get<ItemBase>(
+                    Database.GameObjectIdFromList(GameObjectType.Item, lstItems.SelectedIndex));
             UpdateEditor();
         }
 
@@ -237,7 +240,7 @@ namespace Intersect.Editor.Forms
                 nudSpd.Value = _editorItem.StatsGiven[4];
                 nudDamage.Value = _editorItem.Damage;
                 nudCritChance.Value = _editorItem.CritChance;
-                nudScaling.Value = _editorItem.Scaling;
+                nudScaling.Value = _editorItem.Scaling / 100;
                 nudRange.Value = _editorItem.StatGrowth;
                 chkBound.Checked = Convert.ToBoolean(_editorItem.Bound);
                 chkStackable.Checked = Convert.ToBoolean(_editorItem.Stackable);
@@ -290,8 +293,9 @@ namespace Intersect.Editor.Forms
                 //External References
                 cmbProjectile.SelectedIndex =
                     Database.GameObjectListIndex(GameObjectType.Projectile, _editorItem.Projectile) + 1;
-                cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.Animation) +
-                                             1;
+                cmbAnimation.SelectedIndex =
+                    Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.Animation) +
+                    1;
 
                 if (_changed.IndexOf(_editorItem) == -1)
                 {
@@ -324,23 +328,24 @@ namespace Intersect.Editor.Forms
                 _editorItem.Data4 = 0;
             }
 
-            if (cmbType.SelectedIndex == (int)ItemTypes.Consumable)
+            if (cmbType.SelectedIndex == (int) ItemTypes.Consumable)
             {
                 cmbConsume.SelectedIndex = _editorItem.Data1;
                 nudInterval.Value = _editorItem.Data2;
                 grpConsumable.Visible = true;
             }
-            else if (cmbType.SelectedIndex == (int)ItemTypes.Spell)
+            else if (cmbType.SelectedIndex == (int) ItemTypes.Spell)
             {
                 cmbTeachSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell, _editorItem.Data1) + 1;
                 grpSpell.Visible = true;
             }
-            else if (cmbType.SelectedIndex == (int)ItemTypes.Event)
+            else if (cmbType.SelectedIndex == (int) ItemTypes.Event)
             {
-                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CommonEvent, _editorItem.Data1) + 1;
+                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CommonEvent, _editorItem.Data1) +
+                                         1;
                 grpEvent.Visible = true;
             }
-            else if (cmbType.SelectedIndex == (int)ItemTypes.Equipment)
+            else if (cmbType.SelectedIndex == (int) ItemTypes.Equipment)
             {
                 grpEquipment.Visible = true;
                 if (_editorItem.Data1 < -1 || _editorItem.Data1 >= cmbEquipmentSlot.Items.Count)
@@ -350,7 +355,7 @@ namespace Intersect.Editor.Forms
                 cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
                 cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
             }
-            else if (cmbType.SelectedIndex == (int)ItemTypes.Bag)
+            else if (cmbType.SelectedIndex == (int) ItemTypes.Bag)
             {
                 if (_editorItem.Data1 < 1)
                 {
@@ -376,7 +381,7 @@ namespace Intersect.Editor.Forms
 
         private void cmbPic_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Pic = cmbPic.Text;
+            _editorItem.Pic = cmbPic.SelectedIndex < 1 ? "" : cmbPic.Text;
             if (cmbPic.SelectedIndex > 0)
             {
                 picItem.BackgroundImage = System.Drawing.Image.FromFile("resources/items/" + cmbPic.Text);
@@ -394,7 +399,7 @@ namespace Intersect.Editor.Forms
 
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.MalePaperdoll = cmbMalePaperdoll.Text;
+            _editorItem.MalePaperdoll = cmbMalePaperdoll.SelectedIndex < 1 ? "" : cmbMalePaperdoll.Text;
             if (cmbMalePaperdoll.SelectedIndex > 0)
             {
                 picMalePaperdoll.BackgroundImage =
@@ -451,7 +456,7 @@ namespace Intersect.Editor.Forms
 
         private void cmbFemalePaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.FemalePaperdoll = cmbFemalePaperdoll.Text;
+            _editorItem.FemalePaperdoll = cmbMalePaperdoll.SelectedIndex < 1 ? "" : cmbFemalePaperdoll.Text;
             if (cmbFemalePaperdoll.SelectedIndex > 0)
             {
                 picFemalePaperdoll.BackgroundImage =
@@ -593,7 +598,8 @@ namespace Intersect.Editor.Forms
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Animation = Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
+            _editorItem.Animation =
+                Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
         }
 
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
@@ -613,7 +619,7 @@ namespace Intersect.Editor.Forms
 
         private void nudScaling_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Scaling = (int) nudScaling.Value;
+            _editorItem.Scaling = (int) nudScaling.Value * 100;
         }
 
         private void nudDamage_ValueChanged(object sender, EventArgs e)

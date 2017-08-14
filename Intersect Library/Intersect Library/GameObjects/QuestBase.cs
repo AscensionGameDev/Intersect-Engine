@@ -31,22 +31,27 @@ namespace Intersect.GameObjects
 
         //Tasks
         public int NextTaskID;
+
         public byte Quitable;
 
         public byte Repeatable;
 
         //Requirements
         public ConditionLists Requirements = new ConditionLists();
+
         public string StartDesc = "";
 
         //Events
         public EventBase StartEvent = new EventBase(-1, 0, 0, true);
+
         public List<QuestTask> Tasks = new List<QuestTask>();
 
         public QuestBase(int id) : base(id)
         {
             Name = "New Quest";
         }
+
+        public override byte[] BinaryData => QuestData();
 
         public override void Load(byte[] packet)
         {
@@ -152,8 +157,6 @@ namespace Intersect.GameObjects
             }
             return null;
         }
-
-        public override byte[] BinaryData => QuestData();
 
         public class QuestTask
         {

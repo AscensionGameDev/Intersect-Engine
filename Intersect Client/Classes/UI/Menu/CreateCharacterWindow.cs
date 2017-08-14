@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using IntersectClientExtras.File_Management;
-using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Core;
@@ -23,6 +21,12 @@ namespace Intersect_Client.Classes.UI.Menu
 
         //Image
         private string _characterPortraitImg = "";
+
+        private Label _charCreationHeader;
+
+        //Controls
+        private ImagePanel _charCreationPanel;
+
         private Label _charnameLabel;
         private TextBox _charnameTextbox;
 
@@ -39,13 +43,12 @@ namespace Intersect_Client.Classes.UI.Menu
 
         //Parent
         private MainMenu _mainMenu;
+
         private LabeledCheckBox _maleChk;
 
         //Class Info
         private List<KeyValuePair<int, ClassSprite>> _maleSprites = new List<KeyValuePair<int, ClassSprite>>();
-        private Label _charCreationHeader;
-        //Controls
-        private ImagePanel _charCreationPanel;
+
         private Button _nextSpriteButton;
         private Button _prevSpriteButton;
 
@@ -67,58 +70,65 @@ namespace Intersect_Client.Classes.UI.Menu
             _characterNameBackground = new ImagePanel(_charCreationPanel, "CharacterNamePanel");
 
             //Character name Label
-            _charnameLabel = new Label(_characterNameBackground,"CharacterNameLabel");
+            _charnameLabel = new Label(_characterNameBackground, "CharacterNameLabel");
             _charnameLabel.SetText(Strings.Get("charactercreation", "name"));
 
             //Character name Textbox
-            _charnameTextbox = new TextBox(_characterNameBackground,"CharacterNameField");
+            _charnameTextbox = new TextBox(_characterNameBackground, "CharacterNameField");
             _charnameTextbox.SubmitPressed += CharnameTextbox_SubmitPressed;
 
             //Class Background
             _classBackground = new ImagePanel(_charCreationPanel, "ClassPanel");
 
             //Class Label
-            _classLabel = new Label(_classBackground,"ClassLabel");
+            _classLabel = new Label(_classBackground, "ClassLabel");
             _classLabel.SetText(Strings.Get("charactercreation", "class"));
 
             //Class Combobox
-            _classCombobox = new ComboBox(_classBackground,"ClassCombobox");
+            _classCombobox = new ComboBox(_classBackground, "ClassCombobox");
             _classCombobox.ItemSelected += classCombobox_ItemSelected;
 
             //Character Container
-            _characterContainer = new ImagePanel(_charCreationPanel,"CharacterContainer");
+            _characterContainer = new ImagePanel(_charCreationPanel, "CharacterContainer");
 
             //Character sprite
-            _characterPortrait = new ImagePanel(_characterContainer,"CharacterPortait");
+            _characterPortrait = new ImagePanel(_characterContainer, "CharacterPortait");
             _characterPortrait.SetSize(48, 48);
 
             //Next Sprite Button
-            _nextSpriteButton = new Button(_characterContainer,"NextSpriteButton");
+            _nextSpriteButton = new Button(_characterContainer, "NextSpriteButton");
             _nextSpriteButton.Clicked += _nextSpriteButton_Clicked;
 
             //Prev Sprite Button
-            _prevSpriteButton = new Button(_characterContainer,"PreviousSpriteButton");
+            _prevSpriteButton = new Button(_characterContainer, "PreviousSpriteButton");
 
             //Class Background
             _genderBackground = new ImagePanel(_charCreationPanel, "GeneralPanel");
 
             //Gender Label
-            _genderLabel = new Label(_genderBackground,"GenderLabel");
+            _genderLabel = new Label(_genderBackground, "GenderLabel");
             _genderLabel.SetText(Strings.Get("charactercreation", "gender"));
 
             //Male Checkbox
-            _maleChk = new LabeledCheckBox(_genderBackground,"MaleCheckbox") {Text = Strings.Get("charactercreation", "male")};
+            _maleChk = new LabeledCheckBox(_genderBackground, "MaleCheckbox")
+            {
+                Text = Strings.Get("charactercreation", "male")
+            };
             _maleChk.IsChecked = true;
             _maleChk.Checked += maleChk_Checked;
             _maleChk.UnChecked += femaleChk_Checked; // If you notice this, feel free to hate us ;)
 
             //Female Checkbox
-            _femaleChk = new LabeledCheckBox(_genderBackground,"FemaleCheckbox") {Text = Strings.Get("charactercreation", "female")};
+            _femaleChk =
+                new LabeledCheckBox(_genderBackground, "FemaleCheckbox")
+                {
+                    Text = Strings.Get("charactercreation", "female")
+                };
             _femaleChk.Checked += femaleChk_Checked;
             _femaleChk.UnChecked += maleChk_Checked;
 
             //Register - Send Registration Button
-            _createButton = new Button(_charCreationPanel,"CreateButton");
+            _createButton = new Button(_charCreationPanel, "CreateButton");
             _createButton.SetText(Strings.Get("charactercreation", "create"));
             _createButton.Clicked += CreateButton_Clicked;
         }
@@ -216,7 +226,7 @@ namespace Intersect_Client.Classes.UI.Menu
             if (_classCombobox.SelectedItem == null) return null;
             foreach (var cls in ClassBase.Lookup)
             {
-                if (_classCombobox.SelectedItem.Text == cls.Value.Name && ((ClassBase)cls.Value).Locked == 0)
+                if (_classCombobox.SelectedItem.Text == cls.Value.Name && ((ClassBase) cls.Value).Locked == 0)
                 {
                     return (ClassBase) cls.Value;
                 }
@@ -376,7 +386,8 @@ namespace Intersect_Client.Classes.UI.Menu
             }
             else
             {
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("charactercreation", "invalidname")));
+                Gui.MsgboxErrors.Add(
+                    new KeyValuePair<string, string>("", Strings.Get("charactercreation", "invalidname")));
             }
         }
 

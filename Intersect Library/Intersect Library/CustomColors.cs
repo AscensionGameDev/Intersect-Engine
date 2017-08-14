@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
@@ -105,18 +101,20 @@ namespace Intersect
             else
             {
                 XmlDocument doc = new XmlDocument();
-                doc.LoadXml(File.ReadAllText(Path.Combine("resources","colors.xml")));
+                doc.LoadXml(File.ReadAllText(Path.Combine("resources", "colors.xml")));
                 Type type = typeof(CustomColors);
-                foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public))
+                foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |
+                                                 System.Reflection.BindingFlags.Public))
                 {
                     var node = doc.SelectSingleNode("//Colors/" + p.Name);
                     if (node != null)
                     {
                         var value = node.InnerText;
-                        Match match = Regex.Match(value, "argb" + Regex.Escape("(") + "([0-9]*),([0-9]*),([0-9]*),([0-9]*)" + Regex.Escape(")"));
+                        Match match = Regex.Match(value,
+                            "argb" + Regex.Escape("(") + "([0-9]*),([0-9]*),([0-9]*),([0-9]*)" + Regex.Escape(")"));
                         if (match.Success)
                         {
-                            p.SetValue(p,Color.FromArgb(Convert.ToInt32(match.Groups[1].Value),
+                            p.SetValue(p, Color.FromArgb(Convert.ToInt32(match.Groups[1].Value),
                                 Convert.ToInt32(match.Groups[2].Value), Convert.ToInt32(match.Groups[3].Value),
                                 Convert.ToInt32(match.Groups[4].Value)));
                         }
@@ -136,23 +134,27 @@ namespace Intersect
             writer.WriteStartElement("Colors");
 
             Type type = typeof(CustomColors);
-            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public))
+            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |
+                                             System.Reflection.BindingFlags.Public))
             {
-                Color val = (Color)p.GetValue(null);
-                writer.WriteElementString(p.Name, "argb(" + String.Join(",",new string[4]{val.A.ToString(),val.R.ToString(), val.G.ToString(), val.B.ToString() }) + ")");
+                Color val = (Color) p.GetValue(null);
+                writer.WriteElementString(p.Name,
+                    "argb(" + String.Join(",",
+                        new string[4] {val.A.ToString(), val.R.ToString(), val.G.ToString(), val.B.ToString()}) + ")");
             }
             writer.WriteEndElement();
             writer.WriteEndDocument();
             writer.Close();
 
-            File.WriteAllText(Path.Combine("resources","colors.xml"),ms.ToString());
+            File.WriteAllText(Path.Combine("resources", "colors.xml"), ms.ToString());
         }
 
         public static byte[] GetData()
         {
             var bf = new ByteBuffer();
             Type type = typeof(CustomColors);
-            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public))
+            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |
+                                             System.Reflection.BindingFlags.Public))
             {
                 bf.WriteInteger(((Color) p.GetValue(null)).ToArgb());
             }
@@ -162,7 +164,8 @@ namespace Intersect
         public static void Load(ByteBuffer bf)
         {
             Type type = typeof(CustomColors);
-            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public))
+            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |
+                                             System.Reflection.BindingFlags.Public))
             {
                 p.SetValue(p, Color.FromArgb(bf.ReadInteger()));
             }

@@ -37,6 +37,7 @@ namespace Intersect.Server.Classes.Entities
 
         //Special conditions
         public bool PlayerHasDied;
+
         public int SpawnX;
         public int SpawnY;
         public long WaitTimer;
@@ -65,7 +66,8 @@ namespace Intersect.Server.Classes.Entities
             CurrentY = baseEvent.SpawnY;
             for (int i = 0; i < BaseEvent.MyPages.Count; i++)
             {
-                GlobalPageInstance[i] = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], index, MapNum, this, null);
+                GlobalPageInstance[i] =
+                    new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], index, MapNum, this, null);
             }
         }
 
@@ -93,7 +95,8 @@ namespace Intersect.Server.Classes.Entities
                 else
                 {
                     if (!IsGlobal)
-                        PageInstance.Update(CallStack.Count > 0, timeMs); //Process movement and stuff that is client specific
+                        PageInstance.Update(CallStack.Count > 0,
+                            timeMs); //Process movement and stuff that is client specific
                     if (CallStack.Count > 0)
                     {
                         if (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.Shop &&
@@ -115,7 +118,8 @@ namespace Intersect.Server.Classes.Entities
                                 if (CallStack.Peek().WaitingForRoute == -1)
                                 {
                                     if (MyPlayer.MoveRoute == null ||
-                                        (MyPlayer.MoveRoute.Complete && MyPlayer.MoveTimer < Globals.System.GetTimeMs()))
+                                        (MyPlayer.MoveRoute.Complete &&
+                                         MyPlayer.MoveTimer < Globals.System.GetTimeMs()))
                                     {
                                         CallStack.Peek().WaitingForRoute = -2;
                                         CallStack.Peek().WaitingForRouteMap = -1;
@@ -195,7 +199,8 @@ namespace Intersect.Server.Classes.Entities
                             {
                                 PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.Index,
                                     MapNum, this, MyClient,
-                                    MapInstance.Lookup.Get<MapInstance>(MapNum).GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
+                                    MapInstance.Lookup.Get<MapInstance>(MapNum).GetGlobalEventInstance(BaseEvent)
+                                        .GlobalPageInstance[i]);
                                 sendLeave = false;
                                 PageIndex = i;
                             }
@@ -408,7 +413,8 @@ namespace Intersect.Server.Classes.Entities
                     {
                         if (EventInstance.IsGlobal)
                         {
-                            var evts = MapInstance.Lookup.Get<MapInstance>(EventInstance.MapNum).GlobalEventInstances.Values.ToList();
+                            var evts = MapInstance.Lookup.Get<MapInstance>(EventInstance.MapNum).GlobalEventInstances
+                                .Values.ToList();
                             for (int i = 0; i < evts.Count; i++)
                             {
                                 if (evts[i] != null && evts[i].BaseEvent == EventInstance.BaseEvent)
@@ -501,7 +507,8 @@ namespace Intersect.Server.Classes.Entities
                 input = input.Replace(Strings.Get("events", "playernamecommand"), MyClient.Entity.MyName);
                 input = input.Replace(Strings.Get("events", "eventnamecommand"), PageInstance.MyName);
                 input = input.Replace(Strings.Get("events", "commandparameter"), PageInstance.Param);
-                if (input.Contains(Strings.Get("events", "onlinelistcommand")) || input.Contains(Strings.Get("events", "onlinecountcommand")))
+                if (input.Contains(Strings.Get("events", "onlinelistcommand")) ||
+                    input.Contains(Strings.Get("events", "onlinecountcommand")))
                 {
                     var onlineList = Globals.GetOnlineList();
                     input = input.Replace(Strings.Get("events", "onlinecountcommand"), onlineList.Count.ToString());
@@ -528,7 +535,8 @@ namespace Intersect.Server.Classes.Entities
                 }
 
                 //Have to accept a numeric parameter after each of the following (player switch/var and server switch/var)
-                MatchCollection matches = Regex.Matches(input, Regex.Escape(Strings.Get("events", "playervar")) + " ([0-9]+)");
+                MatchCollection matches = Regex.Matches(input,
+                    Regex.Escape(Strings.Get("events", "playervar")) + " ([0-9]+)");
                 foreach (Match m in matches)
                 {
                     if (m.Success)
@@ -536,12 +544,13 @@ namespace Intersect.Server.Classes.Entities
                         int id = Convert.ToInt32(m.Groups[1].Value);
                         if (MyPlayer.Variables.ContainsKey(id))
                         {
-                            input = input.Replace(Strings.Get("events", "playervar") + " " + m.Groups[1].Value, MyPlayer.Variables[id].ToString());
-
+                            input = input.Replace(Strings.Get("events", "playervar") + " " + m.Groups[1].Value,
+                                MyPlayer.Variables[id].ToString());
                         }
                         else
                         {
-                            input = input.Replace(Strings.Get("events", "playervar") + " " + m.Groups[1].Value, 0.ToString());
+                            input = input.Replace(Strings.Get("events", "playervar") + " " + m.Groups[1].Value,
+                                0.ToString());
                         }
                     }
                 }
@@ -553,12 +562,13 @@ namespace Intersect.Server.Classes.Entities
                         int id = Convert.ToInt32(m.Groups[1].Value);
                         if (MyPlayer.Switches.ContainsKey(id))
                         {
-                            input = input.Replace(Strings.Get("events", "playerswitch") + " " + m.Groups[1].Value, MyPlayer.Switches[id].ToString());
-
+                            input = input.Replace(Strings.Get("events", "playerswitch") + " " + m.Groups[1].Value,
+                                MyPlayer.Switches[id].ToString());
                         }
                         else
                         {
-                            input = input.Replace(Strings.Get("events", "playerswitch") + " " + m.Groups[1].Value, false.ToString());
+                            input = input.Replace(Strings.Get("events", "playerswitch") + " " + m.Groups[1].Value,
+                                false.ToString());
                         }
                     }
                 }
@@ -571,12 +581,13 @@ namespace Intersect.Server.Classes.Entities
                         var globalvar = ServerVariableBase.Lookup.Get<ServerVariableBase>(id);
                         if (globalvar != null)
                         {
-                            input = input.Replace(Strings.Get("events", "globalvar") + " " + m.Groups[1].Value, globalvar.Value.ToString());
-
+                            input = input.Replace(Strings.Get("events", "globalvar") + " " + m.Groups[1].Value,
+                                globalvar.Value.ToString());
                         }
                         else
                         {
-                            input = input.Replace(Strings.Get("events", "globalvar") + " " + m.Groups[1].Value, 0.ToString());
+                            input = input.Replace(Strings.Get("events", "globalvar") + " " + m.Groups[1].Value,
+                                0.ToString());
                         }
                     }
                 }
@@ -589,16 +600,16 @@ namespace Intersect.Server.Classes.Entities
                         var globalswitch = ServerSwitchBase.Lookup.Get<ServerSwitchBase>(id);
                         if (globalswitch != null)
                         {
-                            input = input.Replace(Strings.Get("events", "globalswitch") + " " + m.Groups[1].Value, globalswitch.Value.ToString());
+                            input = input.Replace(Strings.Get("events", "globalswitch") + " " + m.Groups[1].Value,
+                                globalswitch.Value.ToString());
                         }
                         else
                         {
-                            input = input.Replace(Strings.Get("events", "globalswitch") + " " + m.Groups[1].Value, false.ToString());
+                            input = input.Replace(Strings.Get("events", "globalswitch") + " " + m.Groups[1].Value,
+                                false.ToString());
                         }
                     }
                 }
-
-
             }
             return input;
         }
@@ -639,7 +650,8 @@ namespace Intersect.Server.Classes.Entities
                                 Color.FromName(command.Strs[1]));
                             break;
                         case 2: //Global
-                            PacketSender.SendGlobalMsg(ParseEventText(command.Strs[0]), Color.FromName(command.Strs[1]));
+                            PacketSender.SendGlobalMsg(ParseEventText(command.Strs[0]),
+                                Color.FromName(command.Strs[1]));
                             break;
                     }
                     CallStack.Peek().CommandIndex++;
@@ -1076,7 +1088,8 @@ namespace Intersect.Server.Classes.Entities
                     tile = new TileHelper(mapNum, tileX, tileY);
                     if (tile.TryFix())
                     {
-                        var npc = MapInstance.Lookup.Get<MapInstance>(mapNum).SpawnNpc(tileX, tileY, direction, npcNum, true);
+                        var npc = MapInstance.Lookup.Get<MapInstance>(mapNum)
+                            .SpawnNpc(tileX, tileY, direction, npcNum, true);
                         MyPlayer.SpawnedNpcs.Add((Npc) npc);
                     }
                     CallStack.Peek().CommandIndex++;
@@ -1172,8 +1185,8 @@ namespace Intersect.Server.Classes.Entities
                                     if (targetEntity.GetType() == typeof(Player))
                                     {
                                         PacketSender.SendAnimationToProximity(animNum, 1, targetEntity.MyIndex,
-                                                MyClient.Entity.CurrentMap, 0, 0, direction);
-                                            //Target Type 1 will be global entity
+                                            MyClient.Entity.CurrentMap, 0, 0, direction);
+                                        //Target Type 1 will be global entity
                                     }
                                     else
                                     {
@@ -1290,7 +1303,8 @@ namespace Intersect.Server.Classes.Entities
                     break;
                 case EventCommandType.StartQuest:
                     success = false;
-                    var quest = QuestBase.Lookup.Get<QuestBase>(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                    var quest = QuestBase.Lookup.Get<QuestBase>(CallStack.Peek().Page
+                        .CommandLists[CallStack.Peek().ListIndex]
                         .Commands[CallStack.Peek().CommandIndex].Ints[0]);
                     if (quest != null)
                     {

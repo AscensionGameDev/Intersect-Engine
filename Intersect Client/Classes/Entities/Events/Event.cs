@@ -15,6 +15,9 @@ namespace Intersect_Client.Classes.Entities
 {
     public class Event : Entity
     {
+        private GameTexture cachedTileset;
+
+        private string cachedTilesetName;
         public string Desc = "";
         public int DirectionFix;
         public int DisablePreview;
@@ -27,11 +30,12 @@ namespace Intersect_Client.Classes.Entities
         public int GraphicX;
         public int GraphicY;
         public int Layer;
+        private int oldRenderLevel;
+
+        private MapInstance oldRenderMap;
+        private int oldRenderY;
         public int RenderLevel = 1;
         public int WalkingAnim = 1;
-
-        private string cachedTilesetName;
-        private GameTexture cachedTileset;
 
         public Event(int index, long spawnTime, int mapNum, ByteBuffer bf) : base(index, spawnTime, bf, true)
         {
@@ -79,7 +83,8 @@ namespace Intersect_Client.Classes.Entities
 
         public override void Draw()
         {
-            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
+            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) == null ||
+                !Globals.GridMaps.Contains(CurrentMap)) return;
             var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
@@ -240,7 +245,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
-            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
+            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) == null ||
+                !Globals.GridMaps.Contains(CurrentMap)) return;
             var y = (int) Math.Ceiling(GetCenterPos().Y);
             var x = (int) Math.Ceiling(GetCenterPos().X);
             switch (GraphicType)
@@ -278,14 +284,19 @@ namespace Intersect_Client.Classes.Entities
                     break;
             }
 
-            y = (int)GetTopPos() - 4;
-            x = (int)Math.Ceiling(GetCenterPos().X);
+            y = (int) GetTopPos() - 4;
+            x = (int) Math.Ceiling(GetCenterPos().X);
 
             Pointf textSize = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 1);
 
-            if (CustomColors.EventNameBackground != Color.Transparent) GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect((x - textSize.X / 2f) - 4, y, textSize.X + 8, textSize.Y), CustomColors.EventNameBackground);
+            if (CustomColors.EventNameBackground != Color.Transparent)
+                GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                    new FloatRect((x - textSize.X / 2f) - 4, y, textSize.X + 8, textSize.Y),
+                    CustomColors.EventNameBackground);
             GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
-                (int)(x - (int)Math.Ceiling(textSize.X / 2f)), (int)(y), 1, IntersectClientExtras.GenericClasses.Color.FromArgb(CustomColors.EventName.ToArgb()),true,null,IntersectClientExtras.GenericClasses.Color.FromArgb(CustomColors.EventNameBorder.ToArgb()));
+                (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) (y), 1,
+                IntersectClientExtras.GenericClasses.Color.FromArgb(CustomColors.EventName.ToArgb()), true, null,
+                IntersectClientExtras.GenericClasses.Color.FromArgb(CustomColors.EventNameBorder.ToArgb()));
         }
 
         public override Pointf GetCenterPos()

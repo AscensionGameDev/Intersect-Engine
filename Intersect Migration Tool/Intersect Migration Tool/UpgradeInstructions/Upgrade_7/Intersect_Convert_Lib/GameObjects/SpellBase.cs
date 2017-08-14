@@ -9,6 +9,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
     {
         //Core Info
         public new const string DATABASE_TABLE = "spells";
+
         public new const GameObject OBJECT_TYPE = GameObject.Spell;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
@@ -20,12 +21,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
 
         //Requirements
         public ConditionLists CastingReqs = new ConditionLists();
+
         public int CastRange;
         public int CooldownDuration;
         public int Cost;
 
         //Damage
         public int CritChance;
+
         public int DamageType = 1;
         public int Data1;
         public int Data2;
@@ -45,12 +48,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
 
         //Extra Data, Teleport Coords, Custom Spells, Etc
         public int Projectile;
+
         public int Scaling;
         public int ScalingStat;
         public byte SpellType;
 
         //Buff/Debuff Data
         public int[] StatDiff = new int[(int) Stats.StatCount];
+
         public int[] StatReq = new int[(int) Stats.StatCount];
 
         //Targetting Stuff

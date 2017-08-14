@@ -24,6 +24,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
     {
         //General
         public new const string DATABASE_TABLE = "quests";
+
         public new const GameObject OBJECT_TYPE = GameObject.Quest;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public string BeforeDesc = "";
@@ -41,16 +42,19 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
         //Requirements
         //I am cheating here and using event commands as conditional branches instead of having a lot of duplicate code.
         public List<EventCommand> OldRequirements = new List<EventCommand>();
+
         public byte Quitable;
 
         public byte Repeatable;
 
         //Requirements
         public ConditionLists Requirements = new ConditionLists();
+
         public string StartDesc = "";
 
         //Events
         public EventBase StartEvent = new EventBase(-1, 0, 0, true);
+
         public List<QuestTask> Tasks = new List<QuestTask>();
 
         public QuestBase(int id) : base(id)

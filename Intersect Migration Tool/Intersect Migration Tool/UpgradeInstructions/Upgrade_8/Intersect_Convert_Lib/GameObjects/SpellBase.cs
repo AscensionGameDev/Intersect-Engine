@@ -12,12 +12,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         //Requirements
         public ConditionLists CastingReqs = new ConditionLists();
+
         public int CastRange;
         public int CooldownDuration;
         public int Cost;
 
         //Damage
         public int CritChance;
+
         public int DamageType = 1;
         public int Data1;
         public int Data2;
@@ -33,6 +35,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         //Extra Data, Teleport Coords, Custom Spells, Etc
         public int Projectile;
+
         public int Scaling;
         public int ScalingStat;
         public byte SpellType;
@@ -53,6 +56,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         {
             Name = "New Spell";
         }
+
+        public override byte[] BinaryData => SpellData();
 
         public override void Load(byte[] packet)
         {
@@ -157,7 +162,5 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             myBuffer.WriteString(Data5);
             return myBuffer.ToArray();
         }
-
-        public override byte[] BinaryData => SpellData();
     }
 }

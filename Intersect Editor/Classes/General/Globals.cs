@@ -15,11 +15,13 @@ namespace Intersect.Editor.Classes
     {
         //Network Variables
         public static string ServerHost = "localhost";
+
         public static int ServerPort = 4500;
         public static int ReconnectTime = 3000;
 
         //Editor Loop Variables
         public static Thread EditorThread;
+
         public static int CurrentEditor = -1;
         public static EditorSystem System = new EditorSystem();
 
@@ -33,11 +35,13 @@ namespace Intersect.Editor.Classes
 
         //Animation Frame Variables
         public static int Autotilemode = 0;
+
         public static int WaterfallFrame = 0;
         public static int AutotileFrame = 0;
 
         //Editor Variables
         public static MapInstance CurrentMap = null;
+
         public static int LoadingMap = -1;
         public static TilesetBase CurrentTileset = null;
         public static int CurSelX;
@@ -61,6 +65,7 @@ namespace Intersect.Editor.Classes
 
         //Selection Moving Copying and Pasting
         public static int SelectionType = (int) SelectionTypes.AllLayers;
+
         public static bool Dragging = false;
         public static int TileDragX = 0;
         public static int TileDragY = 0;
@@ -70,6 +75,7 @@ namespace Intersect.Editor.Classes
 
         //Cut/Copy Variables
         public static MapInstance CopySource;
+
         public static int CopyMapSelX;
         public static int CopyMapSelY;
         public static int CopyMapSelW;
@@ -82,6 +88,7 @@ namespace Intersect.Editor.Classes
 
         //Docking Window References
         public static frmMapLayers MapLayersWindow;
+
         public static frmMapEditor MapEditorWindow;
         public static frmMapList MapListWindow;
         public static frmMapProperties MapPropertiesWindow;
@@ -90,6 +97,7 @@ namespace Intersect.Editor.Classes
 
         //Preview Fetching Variables
         public static bool FetchingMapPreviews = false;
+
         public static List<int> MapsToFetch;
         public static List<int> MapsToScreenshot = new List<int>();
         public static int FetchCount;

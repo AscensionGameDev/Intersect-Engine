@@ -9,12 +9,9 @@ namespace Intersect.Network
     {
         private static readonly ICollection<PacketType> sPacketTypes = new HashSet<PacketType>();
         private static readonly IDictionary<Type, PacketType> sTypeLookup = new Dictionary<Type, PacketType>();
-        private static readonly IDictionary<PacketCode, PacketType> sCodeLookup = new Dictionary<PacketCode, PacketType>();
 
-        public Type Type { get; }
-        public ConstructorInfo Constructor { get; }
-        public PacketCode Code { get; }
-        public IPacket Instance => CreateInstance();
+        private static readonly IDictionary<PacketCode, PacketType> sCodeLookup =
+            new Dictionary<PacketCode, PacketType>();
 
         private PacketType(Type type, ConstructorInfo constructor, PacketCode code)
         {
@@ -23,8 +20,13 @@ namespace Intersect.Network
             Code = code;
         }
 
+        public Type Type { get; }
+        public ConstructorInfo Constructor { get; }
+        public PacketCode Code { get; }
+        public IPacket Instance => CreateInstance();
+
         public IPacket CreateInstance(IConnection connection = null)
-            => Constructor.Invoke(new object[] { connection }) as IPacket;
+            => Constructor.Invoke(new object[] {connection}) as IPacket;
 
         public static PacketType Of(Type type)
         {
@@ -36,7 +38,9 @@ namespace Intersect.Network
         public static PacketType Of(IPacket packet)
         {
             Debug.Assert(sCodeLookup != null, "sCodeLookup != null");
-            return sCodeLookup.TryGetValue(packet?.Code ?? PacketCode.Unknown, out PacketType packetType) ? packetType : Of(packet?.GetType(), packet, null);
+            return sCodeLookup.TryGetValue(packet?.Code ?? PacketCode.Unknown, out PacketType packetType)
+                ? packetType
+                : Of(packet?.GetType(), packet, null);
         }
 
         private static PacketType Of(Type type, IPacket instance, ConstructorInfo constructor)
@@ -52,12 +56,12 @@ namespace Intersect.Network
 
             if (constructor == null)
             {
-                constructor = type.GetConstructor(new[] { typeof(IConnection) });
+                constructor = type.GetConstructor(new[] {typeof(IConnection)});
             }
 
             if (instance == null)
             {
-                instance = constructor?.Invoke(new object[] { null }) as IPacket;
+                instance = constructor?.Invoke(new object[] {null}) as IPacket;
             }
 
             Debug.Assert(instance != null, "instance != null");

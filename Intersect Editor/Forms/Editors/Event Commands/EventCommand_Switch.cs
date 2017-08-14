@@ -49,12 +49,14 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             if (rdoPlayerSwitch.Checked)
             {
                 cmbSetSwitch.Items.AddRange(Database.GetGameObjectList(GameObjectType.PlayerSwitch));
-                cmbSetSwitch.SelectedIndex = Database.GameObjectListIndex(GameObjectType.PlayerSwitch, _myCommand.Ints[1]);
+                cmbSetSwitch.SelectedIndex =
+                    Database.GameObjectListIndex(GameObjectType.PlayerSwitch, _myCommand.Ints[1]);
             }
             else
             {
                 cmbSetSwitch.Items.AddRange(Database.GetGameObjectList(GameObjectType.ServerSwitch));
-                cmbSetSwitch.SelectedIndex = Database.GameObjectListIndex(GameObjectType.ServerSwitch, _myCommand.Ints[1]);
+                cmbSetSwitch.SelectedIndex =
+                    Database.GameObjectListIndex(GameObjectType.ServerSwitch, _myCommand.Ints[1]);
             }
             cmbSetSwitchVal.SelectedIndex = _myCommand.Ints[2];
         }
@@ -64,12 +66,14 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             if (rdoPlayerSwitch.Checked)
             {
                 _myCommand.Ints[0] = (int) SwitchVariableTypes.PlayerSwitch;
-                _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObjectType.PlayerSwitch, cmbSetSwitch.SelectedIndex);
+                _myCommand.Ints[1] =
+                    Database.GameObjectIdFromList(GameObjectType.PlayerSwitch, cmbSetSwitch.SelectedIndex);
             }
             if (rdoGlobalSwitch.Checked)
             {
                 _myCommand.Ints[0] = (int) SwitchVariableTypes.ServerSwitch;
-                _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObjectType.ServerSwitch, cmbSetSwitch.SelectedIndex);
+                _myCommand.Ints[1] =
+                    Database.GameObjectIdFromList(GameObjectType.ServerSwitch, cmbSetSwitch.SelectedIndex);
             }
             _myCommand.Ints[2] = cmbSetSwitchVal.SelectedIndex;
             _eventEditor.FinishCommandEdit();

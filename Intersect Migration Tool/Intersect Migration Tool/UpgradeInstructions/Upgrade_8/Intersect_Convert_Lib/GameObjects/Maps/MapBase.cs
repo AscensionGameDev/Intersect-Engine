@@ -9,35 +9,6 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 {
     public class MapBase : DatabaseObject<MapBase>
     {
-        public class MapInstances : DatabaseObjectLookup
-        {
-            private readonly DatabaseObjectLookup mBaseLookup;
-
-            public MapInstances(DatabaseObjectLookup baseLookup)
-            {
-                if (baseLookup == null) throw new ArgumentNullException();
-                mBaseLookup = baseLookup;
-            }
-
-            internal override bool InternalSet(IDatabaseObject value, bool overwrite)
-            {
-                mBaseLookup?.InternalSet(value, overwrite);
-                return base.InternalSet(value, overwrite);
-            }
-
-            public override bool Delete(IDatabaseObject value)
-            {
-                mBaseLookup?.Delete(value);
-                return base.Delete(value);
-            }
-
-            public override void Clear()
-            {
-                mBaseLookup?.Clear();
-                base.Clear();
-            }
-        }
-
         //SyncLock
         protected object _mapLock = new object();
 
@@ -49,11 +20,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         //Temporary Values
         public bool IsClient;
-        //For server only
-        public byte[] TileData;
 
         //Core Data
         public TileArray[] Layers = new TileArray[Options.LayerCount];
+
+        //For server only
+        public byte[] TileData;
 
         public MapBase(int mapNum, bool isClient) : base(mapNum)
         {
@@ -84,7 +56,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
                 Name = mapcopy.Name;
                 Brightness = mapcopy.Brightness;
                 IsIndoors = mapcopy.IsIndoors;
-                
+
                 for (var i = 0; i < Options.LayerCount; i++)
                 {
                     Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
@@ -144,6 +116,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         //Properties
         public string Music { get; set; } = Strings.Get("general", "none");
+
         public string Sound { get; set; } = Strings.Get("general", "none");
         public bool IsIndoors { get; set; }
         public string Panorama { get; set; } = Strings.Get("general", "none");
@@ -162,6 +135,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         public float PlayerLightExpand { get; set; }
         public Color PlayerLightColor { get; set; } = Color.White;
         public string OverlayGraphic { get; set; } = Strings.Get("general", "none");
+
+        public override byte[] BinaryData => GetMapData(false);
 
         public object GetMapLock()
         {
@@ -199,7 +174,6 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
                 PlayerLightExpand = (float) bf.ReadDouble();
                 PlayerLightIntensity = bf.ReadByte();
                 PlayerLightColor = Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
-
 
                 TileData = bf.ReadBytes(Options.LayerCount * Options.MapWidth * Options.MapHeight * 13);
 
@@ -347,6 +321,33 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             return bf.ToArray();
         }
 
-        public override byte[] BinaryData => GetMapData(false);
+        public class MapInstances : DatabaseObjectLookup
+        {
+            private readonly DatabaseObjectLookup mBaseLookup;
+
+            public MapInstances(DatabaseObjectLookup baseLookup)
+            {
+                if (baseLookup == null) throw new ArgumentNullException();
+                mBaseLookup = baseLookup;
+            }
+
+            internal override bool InternalSet(IDatabaseObject value, bool overwrite)
+            {
+                mBaseLookup?.InternalSet(value, overwrite);
+                return base.InternalSet(value, overwrite);
+            }
+
+            public override bool Delete(IDatabaseObject value)
+            {
+                mBaseLookup?.Delete(value);
+                return base.Delete(value);
+            }
+
+            public override void Clear()
+            {
+                mBaseLookup?.Clear();
+                base.Clear();
+            }
+        }
     }
 }

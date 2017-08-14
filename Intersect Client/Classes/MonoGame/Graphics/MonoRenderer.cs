@@ -22,33 +22,33 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         private GameShader _currentShader;
         private FloatRect _currentSpriteView;
         private GameRenderTexture _currentTarget;
-        private FloatRect mCurrentView;
+        private BlendState _cutoutState;
         private int _fps;
         private int _fpsCount;
         private long _fpsTimer;
         private Game _game;
         private GameWindow _gameWindow;
-        private GraphicsDeviceManager mGraphics;
-        private GraphicsDevice mGraphicsDevice;
         private bool _initialized;
         private BlendState _multiplyState;
-        private BlendState _cutoutState;
         RasterizerState _rasterizerState = new RasterizerState() {ScissorTestEnable = true};
-        private int mScreenHeight;
-        private int mScreenWidth;
-        private int mDisplayWidth;
-        private int mDisplayHeight;
-        private DisplayMode mOldDisplayMode;
-        private bool mDisplayModeChanged = false;
-
-        private SpriteBatch mSpriteBatch;
         private bool _spriteBatchBegan;
-        private List<string> mValidVideoModes;
-        private GameRenderTexture mWhiteTexture;
         private List<MonoTexture> AllTextures = new List<MonoTexture>();
         private long fsChangedTimer = -1;
-        
+        private FloatRect mCurrentView;
+        private int mDisplayHeight;
+        private bool mDisplayModeChanged = false;
+        private int mDisplayWidth;
+        private GraphicsDeviceManager mGraphics;
+        private GraphicsDevice mGraphicsDevice;
+
         private bool mInitializing;
+        private DisplayMode mOldDisplayMode;
+        private int mScreenHeight;
+        private int mScreenWidth;
+
+        private SpriteBatch mSpriteBatch;
+        private List<string> mValidVideoModes;
+        private GameRenderTexture mWhiteTexture;
 
         public MonoRenderer(GraphicsDeviceManager graphics, ContentManager contentManager, Game monoGame)
         {
@@ -75,6 +75,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
             _gameWindow = monoGame.Window;
         }
+
+        public IList<string> ValidVideoModes => GetValidVideoModes();
 
         public void UpdateGraphicsState(int width, int height)
         {
@@ -111,7 +113,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             }
             mDisplayWidth = currentDisplayMode.Width;
             mDisplayHeight = currentDisplayMode.Height;
-            _gameWindow.Position = new Microsoft.Xna.Framework.Point((mDisplayWidth - mScreenWidth) / 2, (mDisplayHeight - mScreenHeight) / 2);
+            _gameWindow.Position = new Microsoft.Xna.Framework.Point((mDisplayWidth - mScreenWidth) / 2,
+                (mDisplayHeight - mScreenHeight) / 2);
             mOldDisplayMode = currentDisplayMode;
             if (fsChanged) fsChangedTimer = Globals.System.GetTimeMS() + 1000;
         }
@@ -135,7 +138,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 fsChangedTimer = -1;
             }
             if (_gameWindow.ClientBounds.Width != 0 && _gameWindow.ClientBounds.Height != 0 &&
-                (_gameWindow.ClientBounds.Width != mScreenWidth || _gameWindow.ClientBounds.Height != mScreenHeight || mGraphics.GraphicsDevice.Adapter.CurrentDisplayMode != mOldDisplayMode) &&
+                (_gameWindow.ClientBounds.Width != mScreenWidth || _gameWindow.ClientBounds.Height != mScreenHeight ||
+                 mGraphics.GraphicsDevice.Adapter.CurrentDisplayMode != mOldDisplayMode) &&
                 !mGraphics.IsFullScreen)
             {
                 if (mOldDisplayMode != mGraphics.GraphicsDevice.DisplayMode) mDisplayModeChanged = true;
@@ -158,7 +162,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         {
             bool viewsDiff = view.X != _currentSpriteView.X || view.Y != _currentSpriteView.Y ||
                              view.Width != _currentSpriteView.Width || view.Height != _currentSpriteView.Height;
-            if (mode != _currentBlendmode || shader != _currentShader || target != _currentTarget || viewsDiff || forced ||
+            if (mode != _currentBlendmode || shader != _currentShader || target != _currentTarget || viewsDiff ||
+                forced ||
                 !_spriteBatchBegan)
             {
                 if (_spriteBatchBegan) mSpriteBatch.End();
@@ -233,7 +238,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public static Microsoft.Xna.Framework.Color ConvertColor(Color clr)
         {
-            return new Microsoft.Xna.Framework.Color(new Vector4(clr.R / 255f, clr.G / 255f, clr.B / 255f, clr.A / 255f));
+            return new Microsoft.Xna.Framework.Color(
+                new Vector4(clr.R / 255f, clr.G / 255f, clr.B / 255f, clr.A / 255f));
         }
 
         public override void Clear(Color color)
@@ -293,7 +299,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         }
 
         public override void DrawString(string text, GameFont gameFont, float x, float y, float fontScale,
-            Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect, Color borderColor = null)
+            Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect,
+            Color borderColor = null)
         {
             if (gameFont == null) return;
             x += mCurrentView.X;
@@ -363,7 +370,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 }
                 StartSpritebatch(mCurrentView, blendMode, shader, null, false, null);
                 mSpriteBatch.Draw((Texture2D) tex.GetTexture(), null,
-                    new Microsoft.Xna.Framework.Rectangle((int) targetRect.X, (int) targetRect.Y, (int) targetRect.Width,
+                    new Microsoft.Xna.Framework.Rectangle((int) targetRect.X, (int) targetRect.Y,
+                        (int) targetRect.Width,
                         (int) targetRect.Height),
                     new Microsoft.Xna.Framework.Rectangle((int) srcRectangle.X, (int) srcRectangle.Y,
                         (int) srcRectangle.Width, (int) srcRectangle.Height),
@@ -374,7 +382,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 StartSpritebatch(new FloatRect(0, 0, renderTarget.GetWidth(), renderTarget.GetHeight()), blendMode,
                     shader, renderTarget, false, null);
                 mSpriteBatch.Draw((Texture2D) tex.GetTexture(), null,
-                    new Microsoft.Xna.Framework.Rectangle((int) targetRect.X, (int) targetRect.Y, (int) targetRect.Width,
+                    new Microsoft.Xna.Framework.Rectangle((int) targetRect.X, (int) targetRect.Y,
+                        (int) targetRect.Width,
                         (int) targetRect.Height),
                     new Microsoft.Xna.Framework.Rectangle((int) srcRectangle.X, (int) srcRectangle.Y,
                         (int) srcRectangle.Width, (int) srcRectangle.Height),
@@ -419,7 +428,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             if (mValidVideoModes != null) return mValidVideoModes;
             mValidVideoModes = new List<string>();
 
-            var allowedResolutions = new[] {
+            var allowedResolutions = new[]
+            {
                 new Resolution(800, 600),
                 new Resolution(1024, 768),
                 new Resolution(1024, 720),
@@ -447,8 +457,6 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             return mValidVideoModes;
         }
 
-        public IList<string> ValidVideoModes => GetValidVideoModes();
-
         public override FloatRect GetView()
         {
             return mCurrentView;
@@ -475,7 +483,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             mGraphics.PreferredBackBufferWidth = resolution.X;
             mGraphics.PreferredBackBufferHeight = resolution.Y;
 
-            UpdateGraphicsState(mGraphics?.PreferredBackBufferWidth ?? 800, mGraphics?.PreferredBackBufferHeight ?? 600);
+            UpdateGraphicsState(mGraphics?.PreferredBackBufferWidth ?? 800,
+                mGraphics?.PreferredBackBufferHeight ?? 600);
 
             if (mWhiteTexture == null) CreateWhiteTexture();
 

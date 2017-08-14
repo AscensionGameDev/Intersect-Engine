@@ -8,6 +8,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
     {
         //Core info
         public new const string DATABASE_TABLE = "tilesets";
+
         public new const GameObject OBJECT_TYPE = GameObject.Tileset;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 

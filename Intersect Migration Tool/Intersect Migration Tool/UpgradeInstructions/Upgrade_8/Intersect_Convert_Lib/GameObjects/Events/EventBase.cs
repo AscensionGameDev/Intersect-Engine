@@ -33,12 +33,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             MyPages = new List<EventPage>();
             Load(myBuffer.ToArray());
         }
-        
+
         public int SpawnX { get; set; }
         public int SpawnY { get; set; }
         public bool CommonEvent { get; set; }
         public byte IsGlobal { get; set; }
         public List<EventPage> MyPages { get; set; }
+
+        public override byte[] BinaryData => EventData();
 
         public byte[] EventData()
         {
@@ -70,7 +72,5 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
                 MyPages.Add(new EventPage(myBuffer));
             }
         }
-
-        public override byte[] BinaryData => EventData();
     }
 }

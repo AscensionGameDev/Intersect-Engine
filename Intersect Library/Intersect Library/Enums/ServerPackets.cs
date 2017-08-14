@@ -74,7 +74,7 @@ namespace Intersect.Enums
         MoveRouteToggle,
         SendFriends,
         FriendRequest,
-		PlayerCharacters,
+        PlayerCharacters,
         Shit
     }
 }

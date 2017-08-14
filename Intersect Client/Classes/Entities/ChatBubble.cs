@@ -16,16 +16,16 @@ namespace Intersect_Client.Classes.Entities
         private Entity _owner;
         private Color _renderColor;
         private long _renderTimer;
+        private string _sourceText;
         private Point[,] _texSections;
         private string[] _text;
-        private string _sourceText;
         private Rectangle _textBounds;
         private Rectangle _textureBounds;
 
         public ChatBubble(Entity Owner, string text)
         {
             _owner = Owner;
-            _sourceText = text; 
+            _sourceText = text;
             _renderTimer = Globals.System.GetTimeMS() + 5000;
             _bubbleTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, "chatbubble.png");
         }

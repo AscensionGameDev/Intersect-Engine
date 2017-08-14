@@ -5,11 +5,9 @@ namespace Intersect.Collections
 {
     public interface IGameObjectLookup<TValue> : ILookup<Guid, TValue> where TValue : IGameObject
     {
-        
     }
 
     public interface IGameObjectLookup : IGameObjectLookup<IGameObject>
     {
-        
     }
 }

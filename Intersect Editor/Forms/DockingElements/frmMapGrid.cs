@@ -12,6 +12,7 @@ namespace Intersect.Editor.Forms.DockingElements
     {
         //MonoGame Swap Chain
         private SwapChainRenderTarget _chain;
+
         private bool _dragging;
         private int _dragX;
         private int _dragY;

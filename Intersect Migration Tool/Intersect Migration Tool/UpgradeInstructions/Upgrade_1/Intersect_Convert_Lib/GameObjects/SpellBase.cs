@@ -7,6 +7,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
     {
         //Core Info
         public new const string DATABASE_TABLE = "spells";
+
         public new const GameObject OBJECT_TYPE = GameObject.Spell;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
@@ -15,6 +16,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
 
         //Spell Times
         public int CastDuration;
+
         public int CastRange;
         public int CooldownDuration;
         public int Cost;
@@ -35,10 +37,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
 
         //Extra Data, Teleport Coords, Custom Spells, Etc
         public int Projectile = 0;
+
         public byte SpellType;
 
         //Buff/Debuff Data
         public int[] StatDiff = new int[(int) Stats.StatCount];
+
         public int[] StatReq = new int[(int) Stats.StatCount];
 
         //Targetting Stuff

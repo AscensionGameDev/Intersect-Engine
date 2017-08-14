@@ -9,6 +9,8 @@ namespace Intersect.Network
 
         Guid Guid { get; }
 
+        int ConnectionCount { get; }
+
         bool Disconnect(string message = "");
 
         bool Disconnect(Guid guid, string message = "");
@@ -30,11 +32,11 @@ namespace Intersect.Network
 
         IConnection FindConnection(Guid guid);
         TConnection FindConnection<TConnection>(Guid guid) where TConnection : class, IConnection;
-        TConnection FindConnection<TConnection>(Func<TConnection, bool> selector) where TConnection : class, IConnection;
+
+        TConnection FindConnection<TConnection>(Func<TConnection, bool> selector)
+            where TConnection : class, IConnection;
 
         ICollection<IConnection> FindConnections(ICollection<Guid> guids);
         ICollection<TConnection> FindConnections<TConnection>() where TConnection : class, IConnection;
-
-        int ConnectionCount { get; }
     }
 }

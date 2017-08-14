@@ -1,23 +1,23 @@
-﻿using Intersect.Client.Classes.Core;
+﻿using System;
+using System.Windows.Forms;
+using Intersect;
+using Intersect.Client.Classes.Core;
+using Intersect.Client.Classes.MonoGame.Network;
 using Intersect.Localization;
 using Intersect.Logging;
+using IntersectClientExtras.Gwen.Input;
+using IntersectClientExtras.Gwen.Renderer;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.System;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
 using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 using Intersect_Client_MonoGame.Classes.SFML.Input;
-using IntersectClientExtras.Gwen.Input;
-using IntersectClientExtras.Gwen.Renderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Windows.Forms;
-using Intersect;
-using Intersect.Client.Classes.MonoGame.Network;
-using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client_MonoGame
 {
@@ -61,7 +61,8 @@ namespace Intersect_Client_MonoGame
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs exception)
         {
             Log.Error((Exception) exception?.ExceptionObject);
-            MessageBox.Show(@"The Intersect Client has encountered an error and must close. Error information can be found in logs/errors.log");
+            MessageBox.Show(
+                @"The Intersect Client has encountered an error and must close. Error information can be found in logs/errors.log");
             Environment.Exit(-1);
         }
 

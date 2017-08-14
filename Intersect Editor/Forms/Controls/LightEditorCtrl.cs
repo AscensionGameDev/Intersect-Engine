@@ -30,7 +30,8 @@ namespace Intersect.Editor.Forms.Controls
             nudOffsetX.Value = tmpLight.OffsetX;
             nudOffsetY.Value = tmpLight.OffsetY;
             nudExpand.Value = (int) tmpLight.Expand;
-            pnlLightColor.BackColor = System.Drawing.Color.FromArgb(tmpLight.Color.A, tmpLight.Color.R, tmpLight.Color.G,
+            pnlLightColor.BackColor = System.Drawing.Color.FromArgb(tmpLight.Color.A, tmpLight.Color.R,
+                tmpLight.Color.G,
                 tmpLight.Color.B);
             if (!CanClose) btnOkay.Hide();
             InitLocalization();

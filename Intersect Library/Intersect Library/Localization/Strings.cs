@@ -51,10 +51,10 @@ namespace Intersect.Localization
                 //Copy Client.English.xml from resources
                 File.WriteAllText(Path.Combine(langDir, strComponent + ".English.xml"), defaultFile);
             }
-            DefaultLanguage = new Language(Path.Combine(langDir, strComponent + ".English.xml"),false);
+            DefaultLanguage = new Language(Path.Combine(langDir, strComponent + ".English.xml"), false);
             if (File.Exists(Path.Combine(langDir, strComponent + "." + language + ".xml")))
             {
-                SelectedLanguage = new Language(Path.Combine(langDir, strComponent + "." + language + ".xml"),false);
+                SelectedLanguage = new Language(Path.Combine(langDir, strComponent + "." + language + ".xml"), false);
             }
         }
 

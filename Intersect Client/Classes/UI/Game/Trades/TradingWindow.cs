@@ -1,24 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using Intersect;
+using Intersect.Client.Classes.UI.Game.Trades;
 using Intersect.GameObjects;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Graphics;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using IntersectClientExtras.Gwen.ControlInternal;
-using IntersectClientExtras.Gwen.Input;
-using IntersectClientExtras.Input;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
-using Color = IntersectClientExtras.GenericClasses.Color;
 using Point = IntersectClientExtras.GenericClasses.Point;
-using Intersect.Client.Classes.UI.Game.Trades;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -41,38 +31,27 @@ namespace Intersect_Client.Classes.UI.Game
         //Trader
         public int EntityID;
 
-        //Location
-        public int X
-        {
-            get { return _tradeWindow.X; }
-        }
-
-        public int Y
-        {
-            get { return _tradeWindow.Y; }
-        }
-
         //Init
         public TradingWindow(Canvas _gameCanvas, int entityID)
         {
             EntityID = entityID;
 
             _tradeWindow = new WindowControl(_gameCanvas,
-                Strings.Get("trading", "title", Globals.Entities[EntityID].MyName),false,"TradeWindow");
+                Strings.Get("trading", "title", Globals.Entities[EntityID].MyName), false, "TradeWindow");
             _tradeWindow.DisableResizing();
             Gui.InputBlockingElements.Add(_tradeWindow);
 
-            _yourOffer = new Label(_tradeWindow,"YourOfferLabel")
+            _yourOffer = new Label(_tradeWindow, "YourOfferLabel")
             {
                 Text = Strings.Get("trading", "youroffer")
             };
 
-            _theirOffer = new Label(_tradeWindow,"TheirOfferLabel")
+            _theirOffer = new Label(_tradeWindow, "TheirOfferLabel")
             {
                 Text = Strings.Get("trading", "theiroffer")
             };
 
-            _trade = new Button(_tradeWindow,"TradeButton");
+            _trade = new Button(_tradeWindow, "TradeButton");
             _trade.SetText(Strings.Get("trading", "accept"));
             _trade.Clicked += trade_Clicked;
 
@@ -86,6 +65,17 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _tradeSegment[i].InitItemContainer(i);
             }
+        }
+
+        //Location
+        public int X
+        {
+            get { return _tradeWindow.X; }
+        }
+
+        public int Y
+        {
+            get { return _tradeWindow.Y; }
         }
 
         public void Close()
@@ -149,7 +139,8 @@ namespace Intersect_Client.Classes.UI.Game
                 _tradeSegment[n].GoldValue.Text = Strings.Get("trading", "value", g);
                 _tradeSegment[n].GoldValue.SetPosition(
                     4 +
-                    (((2 * n) + 1) * (_tradeWindow.Width - _tradeWindow.Padding.Left - _tradeWindow.Padding.Right) / 4) -
+                    (((2 * n) + 1) * (_tradeWindow.Width - _tradeWindow.Padding.Left -
+                                      _tradeWindow.Padding.Right) / 4) -
                     (_tradeSegment[n].GoldValue.Width / 2), 294);
                 g = 0;
             }

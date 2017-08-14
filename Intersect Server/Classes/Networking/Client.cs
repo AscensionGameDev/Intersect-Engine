@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Intersect.Enums;
 using Intersect.Localization;
@@ -20,9 +19,17 @@ namespace Intersect.Server.Classes.Networking
 {
     public class Client
     {
+        private long _connectionTimeout;
+
+        private long _connectTime;
+        protected long _timeout = 20000; //20 seconds
+        public List<Character> Characters = new List<Character>();
+
+        //Network Variables
+        private IConnection connection;
+
         public int EditorMap = -1;
         public Player Entity;
-        public List<Character> Characters = new List<Character>();
         public int EntityIndex;
 
         //Client Properties
@@ -30,17 +37,16 @@ namespace Intersect.Server.Classes.Networking
 
         //Adminastrative punnishments
         public bool Muted = false;
+
         public string MuteReason = "";
 
         //Game Incorperation Variables
         public string MyAccount = "";
+
         public string MyEmail = "";
         public long MyId = -1;
         public string MyPassword = "";
         public string MySalt = "";
-
-        //Network Variables
-        private IConnection connection;
         public int Power = 0;
         private ConcurrentQueue<byte[]> sendQueue = new ConcurrentQueue<byte[]>();
 
@@ -60,7 +66,7 @@ namespace Intersect.Server.Classes.Networking
             EntityIndex = entIndex;
             if (EntityIndex > -1)
             {
-                Entity = (Player)Globals.Entities[EntityIndex];
+                Entity = (Player) Globals.Entities[EntityIndex];
             }
         }
 
@@ -82,7 +88,7 @@ namespace Intersect.Server.Classes.Networking
 
             if (connection != null)
             {
-                connection.Send(new BinaryPacket(null) { Buffer = buff });
+                connection.Send(new BinaryPacket(null) {Buffer = buff});
             }
             else
             {
@@ -124,7 +130,7 @@ namespace Intersect.Server.Classes.Networking
         {
             using (var bf = new ByteBuffer())
             {
-                bf.WriteLong((int)ServerPackets.Shit);
+                bf.WriteLong((int) ServerPackets.Shit);
                 bf.WriteBoolean(shitting);
                 bf.WriteInteger(num);
                 if (num == -1) return bf.ToArray();
@@ -145,10 +151,6 @@ namespace Intersect.Server.Classes.Networking
             new Random().NextBytes(shit);
             return BitConverter.ToString(shit);
         }
-
-        private long _connectTime;
-        private long _connectionTimeout;
-        protected long _timeout = 20000; //20 seconds
 
         public void Pinged()
         {
@@ -237,7 +239,7 @@ namespace Intersect.Server.Classes.Networking
             }
             client.Entity.SpawnedNpcs.Clear();
 
-            PacketSender.SendEntityLeave(client.Entity.MyIndex, (int)EntityTypes.Player,
+            PacketSender.SendEntityLeave(client.Entity.MyIndex, (int) EntityTypes.Player,
                 Globals.Entities[client.EntityIndex].CurrentMap);
             if (!client.IsEditor)
             {
@@ -259,13 +261,13 @@ namespace Intersect.Server.Classes.Networking
 
     public class Character
     {
-        public int Slot = 1;
-        public string Name = "";
-        public string Sprite = "";
-        public string Face = "";
-        public int Level = 1;
         public int Class = 0;
         public string[] Equipment = new string[Options.EquipmentSlots.Count];
+        public string Face = "";
+        public int Level = 1;
+        public string Name = "";
+        public int Slot = 1;
+        public string Sprite = "";
 
         public Character(int slot, string name, string sprite, string face, int level, int charClass)
         {

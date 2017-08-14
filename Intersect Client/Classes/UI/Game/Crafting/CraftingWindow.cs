@@ -1,22 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using Intersect.Enums;
+using Intersect.Client.Classes.UI.Game.Crafting;
 using Intersect.GameObjects;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
-using IntersectClientExtras.Graphics;
-using IntersectClientExtras.Gwen;
+using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using IntersectClientExtras.Gwen.ControlInternal;
-using IntersectClientExtras.Input;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI.Game.Chat;
-using Color = IntersectClientExtras.GenericClasses.Color;
-using Intersect.Client.Classes.UI.Game.Crafting;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -30,63 +22,72 @@ namespace Intersect_Client.Classes.UI.Game
 
         private RecipeItem _CombinedItem;
         private Button _craft;
+        private ImagePanel _craftedItemTemplate;
 
         //Controls
         private WindowControl _craftWindow;
+
+        private bool _initialized = false;
         private ScrollControl _itemContainer;
         private List<RecipeItem> _items = new List<RecipeItem>();
+        private ImagePanel _itemTemplate;
         private Label _lblIngredients;
         private Label _lblProduct;
         private Label _lblRecepies;
 
         //Objects
         private ListBox _Recepies;
+
         private List<Label> _values = new List<Label>();
 
         private long BarTimer;
         private int craftIndex;
         public bool crafting;
 
-        private bool _initialized = false;
-        private ImagePanel _itemTemplate;
-        private ImagePanel _craftedItemTemplate;
-
-        //Location
-        public int X { get { return _craftWindow.X; } }
-        public int Y { get { return _craftWindow.Y; } }
-
         public CraftingWindow(Canvas _gameCanvas)
         {
-            _craftWindow = new WindowControl(_gameCanvas, Strings.Get("craftingbench", "title"),false,"CraftingWindow");
+            _craftWindow = new WindowControl(_gameCanvas, Strings.Get("craftingbench", "title"), false,
+                "CraftingWindow");
             _craftWindow.DisableResizing();
 
-            _itemContainer = new ScrollControl(_craftWindow,"IngredientsContainer");
+            _itemContainer = new ScrollControl(_craftWindow, "IngredientsContainer");
 
             //Labels
-            _lblRecepies = new Label(_craftWindow,"RecipesTitle");
+            _lblRecepies = new Label(_craftWindow, "RecipesTitle");
             _lblRecepies.Text = Strings.Get("craftingbench", "recepies");
 
-            _lblIngredients = new Label(_craftWindow,"IngredientsTitle");
+            _lblIngredients = new Label(_craftWindow, "IngredientsTitle");
             _lblIngredients.Text = Strings.Get("craftingbench", "ingredients");
 
-            _lblProduct = new Label(_craftWindow,"ProductLabel");
+            _lblProduct = new Label(_craftWindow, "ProductLabel");
             _lblProduct.Text = Strings.Get("craftingbench", "product");
 
             //Recepie list
-            _Recepies = new ListBox(_craftWindow,"RecipesList");
+            _Recepies = new ListBox(_craftWindow, "RecipesList");
 
             //Progress Bar
-            _barContainer = new ImagePanel(_craftWindow,"ProgressBarContainer");
-            _bar = new ImagePanel(_barContainer,"ProgressBar");
+            _barContainer = new ImagePanel(_craftWindow, "ProgressBarContainer");
+            _bar = new ImagePanel(_barContainer, "ProgressBar");
 
             //Load the craft button
-            _craft = new Button(_craftWindow,"CraftButton");
+            _craft = new Button(_craftWindow, "CraftButton");
             _craft.SetText(Strings.Get("craftingbench", "craft"));
             _craft.Clicked += craft_Clicked;
-            
+
             Gui.LoadRootUIData(_craftWindow, "InGame.xml");
 
             Gui.InputBlockingElements.Add(_craftWindow);
+        }
+
+        //Location
+        public int X
+        {
+            get { return _craftWindow.X; }
+        }
+
+        public int Y
+        {
+            get { return _craftWindow.Y; }
         }
 
         private void LoadCraftItems(int index)
@@ -104,10 +105,10 @@ namespace Intersect_Client.Classes.UI.Game
             }
             var craft = Globals.GameBench.Crafts[index];
             if (craft == null) return;
-            
+
             _CombinedItem = new RecipeItem(this, new CraftIngredient(craft.Item, 0))
             {
-                container = new ImagePanel(_craftWindow,"CraftedItemContainer")
+                container = new ImagePanel(_craftWindow, "CraftedItemContainer")
             };
             _CombinedItem.Setup("CraftedItemIcon");
 
@@ -132,7 +133,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _items[i].container = new ImagePanel(_itemContainer, "IngredientItemContainer");
                 _items[i].Setup("IngredientItemIcon");
 
-                Label _lblTemp = new Label(_items[i].container,"IngredientItemValue");
+                Label _lblTemp = new Label(_items[i].container, "IngredientItemValue");
 
                 int n = Globals.Me.FindItem(craft.Ingredients[i].Item);
                 int x = 0;
@@ -149,8 +150,11 @@ namespace Intersect_Client.Classes.UI.Game
                 var xPadding = _items[i].container.Padding.Left + _items[i].container.Padding.Right;
                 var yPadding = _items[i].container.Padding.Top + _items[i].container.Padding.Bottom;
                 _items[i].container.SetPosition(
-                    (i % ((_itemContainer.Width - _itemContainer.GetVerticalScrollBar().Width) / (_items[i].container.Width + xPadding))) * (_items[i].container.Width + xPadding) + xPadding,
-                    (i / ((_itemContainer.Width - _itemContainer.GetVerticalScrollBar().Width) / (_items[i].container.Width + xPadding))) * (_items[i].container.Height + yPadding) + yPadding);
+                    (i % ((_itemContainer.Width - _itemContainer.GetVerticalScrollBar().Width) /
+                          (_items[i].container.Width + xPadding))) * (_items[i].container.Width + xPadding) + xPadding,
+                    (i / ((_itemContainer.Width - _itemContainer.GetVerticalScrollBar().Width) /
+                          (_items[i].container.Width + xPadding))) * (_items[i].container.Height + yPadding) +
+                    yPadding);
             }
         }
 
@@ -201,7 +205,8 @@ namespace Intersect_Client.Classes.UI.Game
                 }
                 if (x < c.Quantity)
                 {
-                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Get("craftingbench", "incorrectresources"), Color.Red));
+                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Get("craftingbench", "incorrectresources"),
+                        Color.Red));
                     return;
                 }
             }

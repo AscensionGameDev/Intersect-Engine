@@ -34,7 +34,7 @@ namespace Intersect.Server.Classes.General
                 if (!timeBase.SyncTime)
                 {
                     _gameTime = _gameTime.Add(new TimeSpan(0, 0, 0, 0, (int) (1000 * timeBase.Rate)));
-                        //Not sure if Rate is negative if time will go backwards but we can hope!
+                    //Not sure if Rate is negative if time will go backwards but we can hope!
                 }
 
                 //Calculate what "timeRange" we should be in, if we're not then switch and notify the world

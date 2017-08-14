@@ -19,16 +19,20 @@ namespace Intersect.Server.Classes.Entities
 
         //Spell casting
         public long CastFreq;
+
         public bool Despawnable;
 
         //Moving
         public long LastRandomMove;
+
         public NpcBase MyBase;
+
         //Targetting
         public Entity MyTarget;
 
         //Pathfinding
         private Pathfinder pathFinder;
+
         private Task pathfindingTask;
         public byte Range;
 
@@ -40,7 +44,7 @@ namespace Intersect.Server.Classes.Entities
         {
             MyName = myBase.Name;
             MySprite = myBase.Sprite;
-			Level = myBase.Level;
+            Level = myBase.Level;
             MyBase = myBase;
             Despawnable = despawnable;
 
@@ -100,7 +104,7 @@ namespace Intersect.Server.Classes.Entities
             var statuses = Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == (int)StatusTypes.Stun)
+                if (status.Type == (int) StatusTypes.Stun)
                 {
                     return false;
                 }
@@ -170,7 +174,7 @@ namespace Intersect.Server.Classes.Entities
             var statuses = Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == (int)StatusTypes.Stun)
+                if (status.Type == (int) StatusTypes.Stun)
                 {
                     return;
                 }
@@ -186,7 +190,7 @@ namespace Intersect.Server.Classes.Entities
                 //Check if the NPC is silenced or stunned
                 foreach (var status in statuses)
                 {
-                    if (status.Type == (int)StatusTypes.Silence || status.Type == (int)StatusTypes.Stun)
+                    if (status.Type == (int) StatusTypes.Silence || status.Type == (int) StatusTypes.Stun)
                     {
                         CC = true;
                         break;
@@ -201,10 +205,10 @@ namespace Intersect.Server.Classes.Entities
                         var spell = SpellBase.Lookup.Get<SpellBase>((MyBase.Spells[s]));
                         if (spell != null)
                         {
-							var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spell.Projectile);
-							if (spell.SpellType == (int) SpellTypes.CombatSpell &&
+                            var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spell.Projectile);
+                            if (spell.SpellType == (int) SpellTypes.CombatSpell &&
                                 spell.TargetType == (int) SpellTargetTypes.Projectile &&
-								InRangeOf(MyTarget, projectileBase.Range))
+                                InRangeOf(MyTarget, projectileBase.Range))
                             {
                                 if (DirToEnemy(MyTarget) != Dir)
                                 {
@@ -220,61 +224,61 @@ namespace Intersect.Server.Classes.Entities
                                 }
                             }
 
-							if (spell.VitalCost[(int) Vitals.Mana] <= Vital[(int) Vitals.Mana])
+                            if (spell.VitalCost[(int) Vitals.Mana] <= Vital[(int) Vitals.Mana])
                             {
                                 if (spell.VitalCost[(int) Vitals.Health] <= Vital[(int) Vitals.Health])
                                 {
                                     if (Spells[s].SpellCD < Globals.System.GetTimeMs())
                                     {
-										if (InRangeOf(MyTarget, spell.CastRange))
-										{
-											Vital[(int)Vitals.Mana] = Vital[(int)Vitals.Mana] -
-																	   spell.VitalCost[(int)Vitals.Mana];
-											Vital[(int)Vitals.Health] = Vital[(int)Vitals.Health] -
-																		 spell.VitalCost[(int)Vitals.Health
-																		 ];
-											CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
-											if (spell.Friendly == 1)
-											{
-												CastTarget = this;
-											}
-											else
-											{
-												CastTarget = MyTarget;
-											}
+                                        if (InRangeOf(MyTarget, spell.CastRange))
+                                        {
+                                            Vital[(int) Vitals.Mana] = Vital[(int) Vitals.Mana] -
+                                                                       spell.VitalCost[(int) Vitals.Mana];
+                                            Vital[(int) Vitals.Health] = Vital[(int) Vitals.Health] -
+                                                                         spell.VitalCost[(int) Vitals.Health
+                                                                         ];
+                                            CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
+                                            if (spell.Friendly == 1)
+                                            {
+                                                CastTarget = this;
+                                            }
+                                            else
+                                            {
+                                                CastTarget = MyTarget;
+                                            }
 
-											switch (MyBase.SpellFrequency)
-											{
-												case 0:
-													CastFreq = Globals.System.GetTimeMs() + 30000;
-													break;
-												case 1:
-													CastFreq = Globals.System.GetTimeMs() + 15000;
-													break;
-												case 2:
-													CastFreq = Globals.System.GetTimeMs() + 8000;
-													break;
-												case 3:
-													CastFreq = Globals.System.GetTimeMs() + 4000;
-													break;
-												case 4:
-													CastFreq = Globals.System.GetTimeMs() + 2000;
-													break;
-											}
+                                            switch (MyBase.SpellFrequency)
+                                            {
+                                                case 0:
+                                                    CastFreq = Globals.System.GetTimeMs() + 30000;
+                                                    break;
+                                                case 1:
+                                                    CastFreq = Globals.System.GetTimeMs() + 15000;
+                                                    break;
+                                                case 2:
+                                                    CastFreq = Globals.System.GetTimeMs() + 8000;
+                                                    break;
+                                                case 3:
+                                                    CastFreq = Globals.System.GetTimeMs() + 4000;
+                                                    break;
+                                                case 4:
+                                                    CastFreq = Globals.System.GetTimeMs() + 2000;
+                                                    break;
+                                            }
 
-											SpellCastSlot = s;
+                                            SpellCastSlot = s;
 
-											if (spell.CastAnimation > -1)
-											{
-												PacketSender.SendAnimationToProximity(spell.CastAnimation, 1,
-													MyIndex, CurrentMap, 0, 0, Dir);
-												//Target Type 1 will be global entity
-											}
+                                            if (spell.CastAnimation > -1)
+                                            {
+                                                PacketSender.SendAnimationToProximity(spell.CastAnimation, 1,
+                                                    MyIndex, CurrentMap, 0, 0, Dir);
+                                                //Target Type 1 will be global entity
+                                            }
 
-											PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
-											PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
-											PacketSender.SendEntityCastTime(this, (MyBase.Spells[s]));
-										}
+                                            PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
+                                            PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
+                                            PacketSender.SendEntityCastTime(this, (MyBase.Spells[s]));
+                                        }
                                     }
                                 }
                             }
@@ -304,7 +308,7 @@ namespace Intersect.Server.Classes.Entities
                         var targetStatuses = MyTarget.Statuses.Values.ToArray();
                         foreach (var targetStatus in targetStatuses)
                         {
-                            if (targetStatus.Type == (int)StatusTypes.Stealth)
+                            if (targetStatus.Type == (int) StatusTypes.Stealth)
                             {
                                 targetMap = -1;
                                 targetX = 0;
@@ -362,7 +366,9 @@ namespace Intersect.Server.Classes.Entities
                     {
                         if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).SurroundingMaps.Count > 0)
                         {
-                            for (var x = 0; x < MapInstance.Lookup.Get<MapInstance>(CurrentMap).SurroundingMaps.Count; x++)
+                            for (var x = 0;
+                                x < MapInstance.Lookup.Get<MapInstance>(CurrentMap).SurroundingMaps.Count;
+                                x++)
                             {
                                 if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).SurroundingMaps[x] == targetMap)
                                 {
@@ -385,7 +391,8 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (pathFinder.GetTarget() != null)
                     {
-                        if (targetMap != pathFinder.GetTarget().TargetMap || targetX != pathFinder.GetTarget().TargetX ||
+                        if (targetMap != pathFinder.GetTarget().TargetMap ||
+                            targetX != pathFinder.GetTarget().TargetX ||
                             targetY != pathFinder.GetTarget().TargetY)
                         {
                             pathFinder.SetTarget(null);
@@ -400,7 +407,8 @@ namespace Intersect.Server.Classes.Entities
                     if (pathFinder.GetTarget() != null)
                     {
                         TryCastSpells();
-                        if (!IsOneBlockAway(pathFinder.GetTarget().TargetMap, pathFinder.GetTarget().TargetX,pathFinder.GetTarget().TargetY))
+                        if (!IsOneBlockAway(pathFinder.GetTarget().TargetMap, pathFinder.GetTarget().TargetX,
+                            pathFinder.GetTarget().TargetY))
                         {
                             switch (pathFinder.Update(timeMs))
                             {
@@ -414,8 +422,8 @@ namespace Intersect.Server.Classes.Entities
                                             var statuses = Statuses.Values.ToArray();
                                             foreach (var status in statuses)
                                             {
-                                                if (status.Type == (int)StatusTypes.Stun ||
-                                                     status.Type == (int)StatusTypes.Snare)
+                                                if (status.Type == (int) StatusTypes.Stun ||
+                                                    status.Type == (int) StatusTypes.Snare)
                                                 {
                                                     return;
                                                 }
@@ -485,7 +493,7 @@ namespace Intersect.Server.Classes.Entities
                         var statuses = Statuses.Values.ToArray();
                         foreach (var status in statuses)
                         {
-                            if (status.Type == (int)StatusTypes.Stun || status.Type == (int)StatusTypes.Snare)
+                            if (status.Type == (int) StatusTypes.Stun || status.Type == (int) StatusTypes.Snare)
                             {
                                 return;
                             }

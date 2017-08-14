@@ -71,7 +71,9 @@ namespace Intersect.Editor.Forms
 
         private void lstClasses_Click(object sender, EventArgs e)
         {
-            _editorItem = ClassBase.Lookup.Get<ClassBase>(Database.GameObjectIdFromList(GameObjectType.Class, lstClasses.SelectedIndex));
+            _editorItem =
+                ClassBase.Lookup.Get<ClassBase>(
+                    Database.GameObjectIdFromList(GameObjectType.Class, lstClasses.SelectedIndex));
             UpdateEditor();
         }
 
@@ -84,7 +86,8 @@ namespace Intersect.Editor.Forms
         {
             int index = scrlDropIndex.Value;
             lblDropIndex.Text = Strings.Get("classeditor", "itemindex", index + 1);
-            cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, _editorItem.Items[index].ItemNum) + 1;
+            cmbItem.SelectedIndex =
+                Database.GameObjectListIndex(GameObjectType.Item, _editorItem.Items[index].ItemNum) + 1;
             nudItemAmount.Value = _editorItem.Items[index].Amount;
         }
 
@@ -144,7 +147,8 @@ namespace Intersect.Editor.Forms
                 nudDef.Value = _editorItem.BaseStat[(int) Stats.Defense];
                 nudMR.Value = _editorItem.BaseStat[(int) Stats.MagicResist];
                 nudSpd.Value = _editorItem.BaseStat[(int) Stats.Speed];
-                nudBaseHP.Value = Math.Max(Math.Min(_editorItem.BaseVital[(int)Vitals.Health], nudBaseHP.Maximum), nudBaseHP.Minimum);
+                nudBaseHP.Value = Math.Max(Math.Min(_editorItem.BaseVital[(int) Vitals.Health], nudBaseHP.Maximum),
+                    nudBaseHP.Minimum);
                 nudBaseMana.Value = _editorItem.BaseVital[(int) Vitals.Mana];
                 nudPoints.Value = _editorItem.BasePoints;
                 chkLocked.Checked = Convert.ToBoolean(_editorItem.Locked);
@@ -473,7 +477,8 @@ namespace Intersect.Editor.Forms
             }
             else
             {
-                lstSprites.Items.Add(Strings.Get("classeditor", "spriteitemfemale", _editorItem.Sprites.Count, n.Sprite));
+                lstSprites.Items.Add(
+                    Strings.Get("classeditor", "spriteitemfemale", _editorItem.Sprites.Count, n.Sprite));
             }
 
             lstSprites.SelectedIndex = lstSprites.Items.Count - 1;
@@ -766,7 +771,8 @@ namespace Intersect.Editor.Forms
         {
             if (lstSpells.SelectedIndex > -1)
             {
-                _editorItem.Spells[lstSpells.SelectedIndex].SpellNum = Database.GameObjectIdFromList(GameObjectType.Spell,
+                _editorItem.Spells[lstSpells.SelectedIndex].SpellNum = Database.GameObjectIdFromList(
+                    GameObjectType.Spell,
                     cmbSpell.SelectedIndex);
                 UpdateSpellList();
             }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Intersect;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
@@ -18,27 +17,33 @@ namespace Intersect_Client.Classes.Core
     {
         //Game Renderer
         public static GameRenderer Renderer;
+
         public static GameShader DefaultShader;
         private static GameContentManager contentManager;
 
         //Resolution
         private static int _oldWidth;
+
         private static int _oldHeight;
 
         //Screen Values
         public static GameFont GameFont;
+
         public static FloatRect CurrentView;
 
         //Darkness Stuff
         public static float _brightnessLevel;
+
         private static GameRenderTexture _darknessTexture;
 
         //Overlay Stuff
         public static Intersect.Color OverlayColor = Intersect.Color.Transparent;
+
         private static long _overlayUpdate;
 
         //Player Spotlight Values
         private static long _lightUpdate;
+
         private static float _playerLightIntensity = 255;
         private static float _playerLightSize;
         private static float _playerLightExpand;
@@ -51,6 +56,7 @@ namespace Intersect_Client.Classes.Core
 
         //Rendering Variables
         public static int DrawCalls;
+
         public static int EntitiesDrawn;
         public static int LightsDrawn;
         public static int MapsDrawn;
@@ -65,6 +71,7 @@ namespace Intersect_Client.Classes.Core
 
         //Animations
         public static List<AnimationInstance> LiveAnimations = new List<AnimationInstance>();
+
         public static object AnimationLock = new object();
 
         //Init Functions
@@ -114,7 +121,7 @@ namespace Intersect_Client.Classes.Core
             if (GridSwitched)
             {
                 //Brightness
-                byte brightnessTarget = (byte)((currentMap.Brightness / 100f) * 255);
+                byte brightnessTarget = (byte) ((currentMap.Brightness / 100f) * 255);
                 _brightnessLevel = brightnessTarget;
                 _playerLightColor.R = currentMap.PlayerLightColor.R;
                 _playerLightColor.G = currentMap.PlayerLightColor.G;
@@ -124,10 +131,10 @@ namespace Intersect_Client.Classes.Core
                 _playerLightExpand = currentMap.PlayerLightExpand;
 
                 //Overlay
-                OverlayColor.A = (byte)currentMap.AHue;
-                OverlayColor.R = (byte)currentMap.RHue;
-                OverlayColor.G = (byte)currentMap.GHue;
-                OverlayColor.B = (byte)currentMap.BHue;
+                OverlayColor.A = (byte) currentMap.AHue;
+                OverlayColor.R = (byte) currentMap.RHue;
+                OverlayColor.G = (byte) currentMap.GHue;
+                OverlayColor.B = (byte) currentMap.BHue;
 
                 //Fog && Panorama
                 currentMap.GridSwitched();
@@ -138,7 +145,6 @@ namespace Intersect_Client.Classes.Core
             TryPreRendering();
             FixAutotiles();
             GenerateLightMap();
-
 
             var gridX = currentMap.MapGridX;
             var gridY = currentMap.MapGridY;
@@ -174,7 +180,7 @@ namespace Intersect_Client.Classes.Core
                     animInstance.Draw(false);
                 }
             }
-
+            
             for (int y = 0; y < Options.MapHeight * 3; y++)
             {
                 for (int x = 0; x < 3; x++)
@@ -198,7 +204,7 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
             }
-
+            
             for (int y = 0; y < Options.MapHeight * 3; y++)
             {
                 for (int x = 3; x < 6; x++)
@@ -237,7 +243,7 @@ namespace Intersect_Client.Classes.Core
             DrawOverlay();
 
             DrawDarkness();
-
+            
             for (int y = 0; y < Options.MapHeight * 3; y++)
             {
                 for (int x = 0; x < 3; x++)
@@ -254,7 +260,7 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
             }
-
+            
             for (int y = 0; y < Options.MapHeight * 3; y++)
             {
                 for (int x = 3; x < 6; x++)
@@ -272,7 +278,6 @@ namespace Intersect_Client.Classes.Core
                 }
             }
 
-
             //Draw action msg's
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
@@ -284,15 +289,14 @@ namespace Intersect_Client.Classes.Core
                     map?.DrawActionMsgs();
                 }
             }
-
-
         }
 
         //Game Rendering
         public static void Render()
         {
             if (!(Renderer?.Begin() ?? false)) return;
-            if (Renderer.GetScreenWidth() != _oldWidth || Renderer.GetScreenHeight() != _oldHeight || Renderer.DisplayModeChanged())
+            if (Renderer.GetScreenWidth() != _oldWidth || Renderer.GetScreenHeight() != _oldHeight ||
+                Renderer.DisplayModeChanged())
             {
                 _darknessTexture = null;
                 Gui.DestroyGwen();
@@ -702,7 +706,6 @@ namespace Intersect_Client.Classes.Core
                         (int)ClientTime.GetTintColor().G, (int)ClientTime.GetTintColor().B), _darknessTexture,
                     GameBlendModes.None);
             }
-
             AddLight((int)Math.Ceiling(Globals.Me.GetCenterPos().X), (int)Math.Ceiling(Globals.Me.GetCenterPos().Y),
                 (int)_playerLightSize, (byte)_playerLightIntensity, _playerLightExpand,
                 Intersect.Color.FromArgb((int)_playerLightColor.A, (int)_playerLightColor.R, (int)_playerLightColor.G,
@@ -1002,11 +1005,14 @@ namespace Intersect_Client.Classes.Core
         }
 
         public static void DrawGameTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect,
-            Intersect.Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
+            Intersect.Color renderColor, GameRenderTexture renderTarget = null,
+            GameBlendModes blendMode = GameBlendModes.None,
             GameShader shader = null, float rotationDegrees = 0.0f)
         {
             if (tex == null) return;
-            Renderer.DrawTexture(tex, srcRectangle, targetRect, Color.FromArgb(renderColor.A, renderColor.R, renderColor.G, renderColor.B), renderTarget, blendMode, shader,
+            Renderer.DrawTexture(tex, srcRectangle, targetRect,
+                Color.FromArgb(renderColor.A, renderColor.R, renderColor.G, renderColor.B), renderTarget, blendMode,
+                shader,
                 rotationDegrees);
         }
     }

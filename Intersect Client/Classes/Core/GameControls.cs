@@ -1,11 +1,7 @@
-﻿using Intersect_Client.Classes.General;
-using IntersectClientExtras.GenericClasses;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using IntersectClientExtras.GenericClasses;
+using Intersect_Client.Classes.General;
 
 namespace Intersect.Client.Classes.Core
 {
@@ -48,13 +44,22 @@ namespace Intersect.Client.Classes.Core
                 var key2 = Globals.Database.LoadPreference(name + "_key2");
                 if (string.IsNullOrEmpty(key1) || string.IsNullOrEmpty(key2))
                 {
-                    Globals.Database.SavePreference(name + "_key1", ((int)ControlMapping[control].key1).ToString());
-                    Globals.Database.SavePreference(name + "_key2", ((int)ControlMapping[control].key2).ToString());
+                    Globals.Database.SavePreference(name + "_key1", ((int) ControlMapping[control].key1).ToString());
+                    Globals.Database.SavePreference(name + "_key2", ((int) ControlMapping[control].key2).ToString());
                 }
                 else
                 {
-                    CreateControlMap(control, (Keys)Convert.ToInt32(key1), (Keys)Convert.ToInt32(key2));
+                    CreateControlMap(control, (Keys) Convert.ToInt32(key1), (Keys) Convert.ToInt32(key2));
                 }
+            }
+        }
+
+        public GameControls(GameControls copyFrom)
+        {
+            ControlMapping.Clear();
+            foreach (var mapping in copyFrom.ControlMapping)
+            {
+                CreateControlMap(mapping.Key, mapping.Value.key1, mapping.Value.key2);
             }
         }
 
@@ -80,22 +85,13 @@ namespace Intersect.Client.Classes.Core
             CreateControlMap(Controls.Hotkey0, Keys.D0, Keys.None);
         }
 
-        public GameControls(GameControls copyFrom)
-        {
-            ControlMapping.Clear();
-            foreach (var mapping in copyFrom.ControlMapping)
-            {
-                CreateControlMap(mapping.Key, mapping.Value.key1, mapping.Value.key2);
-            }
-        }
-
         public void Save()
         {
             foreach (Controls control in Enum.GetValues(typeof(Controls)))
             {
                 var name = Enum.GetName(typeof(Controls), control);
-                Globals.Database.SavePreference(name + "_key1", ((int)ControlMapping[control].key1).ToString());
-                Globals.Database.SavePreference(name + "_key2", ((int)ControlMapping[control].key2).ToString());
+                Globals.Database.SavePreference(name + "_key1", ((int) ControlMapping[control].key1).ToString());
+                Globals.Database.SavePreference(name + "_key2", ((int) ControlMapping[control].key2).ToString());
             }
         }
 
@@ -117,7 +113,8 @@ namespace Intersect.Client.Classes.Core
         {
             if (ActiveControls.ControlMapping.ContainsKey(control))
             {
-                if (ActiveControls.ControlMapping[control].key1 == key || ActiveControls.ControlMapping[control].key2 == key)
+                if (ActiveControls.ControlMapping[control].key1 == key ||
+                    ActiveControls.ControlMapping[control].key2 == key)
                 {
                     return true;
                 }
@@ -154,6 +151,7 @@ namespace Intersect.Client.Classes.Core
     {
         public Keys key1;
         public Keys key2;
+
         public ControlMap(Controls control, Keys key1, Keys key2)
         {
             this.key1 = key1;
@@ -167,5 +165,4 @@ namespace Intersect.Client.Classes.Core
             return false;
         }
     }
-
 }

@@ -12,8 +12,6 @@ namespace Intersect.Editor.Classes.Maps
     {
         private static MapInstances sLookup;
 
-        public new static MapInstances Lookup => (sLookup = (sLookup ?? new MapInstances(MapBase.Lookup)));
-
         //Map Attributes
         private Dictionary<Attribute, AnimationInstance> _attributeAnimInstances =
             new Dictionary<Attribute, AnimationInstance>();
@@ -42,9 +40,14 @@ namespace Intersect.Editor.Classes.Maps
             }
         }
 
+        public new static MapInstances Lookup => (sLookup = (sLookup ?? new MapInstances(MapBase.Lookup)));
+
         //World Position
         public int MapGridX { get; set; }
+
         public int MapGridY { get; set; }
+
+        public override byte[] BinaryData => GetMapData(false);
 
         public void Load(byte[] myArr, bool import = false)
         {
@@ -64,6 +67,7 @@ namespace Intersect.Editor.Classes.Maps
                 }
             }
         }
+
         public void LoadTileData(byte[] packet)
         {
             var bf = new ByteBuffer();
@@ -164,7 +168,8 @@ namespace Intersect.Editor.Classes.Maps
             if (attr == null) return null;
             if (!_attributeAnimInstances.ContainsKey(attr))
             {
-                _attributeAnimInstances.Add(attr, new AnimationInstance(AnimationBase.Lookup.Get<AnimationBase>(animNum), true));
+                _attributeAnimInstances.Add(attr,
+                    new AnimationInstance(AnimationBase.Lookup.Get<AnimationBase>(animNum), true));
             }
             return _attributeAnimInstances[attr];
         }
@@ -189,7 +194,8 @@ namespace Intersect.Editor.Classes.Maps
                         {
                             for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                             {
-                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight &&
+                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 &&
+                                    y < Globals.MapGrid.GridHeight &&
                                     Globals.MapGrid.Grid[x, y].mapnum > -1)
                                 {
                                     var needMap = Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
@@ -259,7 +265,7 @@ namespace Intersect.Editor.Classes.Maps
                     }
                 }
             }
-            mapBase[1,1] = this;
+            mapBase[1, 1] = this;
             return mapBase;
         }
 
@@ -329,8 +335,6 @@ namespace Intersect.Editor.Classes.Maps
             }
             return null;
         }
-
-        public override byte[] BinaryData => GetMapData(false);
 
         public override void Delete() => Lookup?.Delete(this);
 

@@ -1,28 +1,18 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Linq;
 using System.Security.Cryptography;
-using Intersect.Memory;
+using Intersect.Logging;
 using Intersect.Network.Packets;
 using Lidgren.Network;
-using System.Linq;
-using Intersect.Logging;
 
 namespace Intersect.Network
 {
     public sealed class LidgrenConnection : AbstractConnection
     {
-        public INetwork Network { get; }
-        public NetConnection NetConnection { get; }
-        public RSACryptoServiceProvider Rsa { get; private set; }
-        public NetAESEncryption Aes { get; private set; }
-
-        public bool IsConnected => NetConnection?.Status == NetConnectionStatus.Connected;
-        public override string Ip => NetConnection?.RemoteEndPoint?.Address?.ToString();
-        public override int Port => NetConnection?.RemoteEndPoint?.Port ?? -1;
-
-        private byte[] mRsaSecret;
         private byte[] mAesKey;
         private byte[] mHandshakeSecret;
+
+        private byte[] mRsaSecret;
 
         public LidgrenConnection(INetwork network, NetConnection connection, byte[] aesKey)
             : this(network, Guid.NewGuid(), connection, aesKey)
@@ -45,7 +35,8 @@ namespace Intersect.Network
             CreateAes();
         }
 
-        public LidgrenConnection(INetwork network, Guid guid, NetConnection netConnection, byte[] handshakeSecret, RSAParameters rsaParameters)
+        public LidgrenConnection(INetwork network, Guid guid, NetConnection netConnection, byte[] handshakeSecret,
+            RSAParameters rsaParameters)
             : base(guid)
         {
             Network = network;
@@ -53,6 +44,15 @@ namespace Intersect.Network
             mHandshakeSecret = handshakeSecret;
             CreateRsa(rsaParameters);
         }
+
+        public INetwork Network { get; }
+        public NetConnection NetConnection { get; }
+        public RSACryptoServiceProvider Rsa { get; private set; }
+        public NetAESEncryption Aes { get; private set; }
+
+        public bool IsConnected => NetConnection?.Status == NetConnectionStatus.Connected;
+        public override string Ip => NetConnection?.RemoteEndPoint?.Address?.ToString();
+        public override int Port => NetConnection?.RemoteEndPoint?.Port ?? -1;
 
         private void CreateRsa(RSAParameters rsaParameters)
         {

@@ -304,8 +304,8 @@ namespace Intersect.Editor.Forms
             this.nudLowerFrameDuration.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudLowerFrameDuration.Location = new System.Drawing.Point(10, 363);
             this.nudLowerFrameDuration.Maximum = new decimal(new int[] {
-            20000,
-            0,
+            -10,
+            4,
             0,
             0});
             this.nudLowerFrameDuration.Minimum = new decimal(new int[] {
@@ -610,8 +610,8 @@ namespace Intersect.Editor.Forms
             this.nudUpperFrameDuration.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudUpperFrameDuration.Location = new System.Drawing.Point(6, 363);
             this.nudUpperFrameDuration.Maximum = new decimal(new int[] {
-            20000,
-            0,
+            -10,
+            4,
             0,
             0});
             this.nudUpperFrameDuration.Minimum = new decimal(new int[] {

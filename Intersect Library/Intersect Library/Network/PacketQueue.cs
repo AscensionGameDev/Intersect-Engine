@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Intersect.Logging;
 
 namespace Intersect.Network
 {
@@ -9,18 +8,29 @@ namespace Intersect.Network
     public sealed class PacketQueue : IDisposable
     {
         private readonly object mDequeLock;
-        private readonly object mQueueLock;
-        private bool mDisposed;
 
         private readonly Queue<IPacket> mQueue;
-
-        public int Size => mQueue?.Count ?? -1;
+        private readonly object mQueueLock;
+        private bool mDisposed;
 
         public PacketQueue()
         {
             mDequeLock = new object();
             mQueueLock = new object();
             mQueue = new Queue<IPacket>();
+        }
+
+        public int Size => mQueue?.Count ?? -1;
+
+        public void Dispose()
+        {
+            if (mDisposed) return;
+
+            if (mQueue != null) Monitor.PulseAll(mQueue);
+            if (mQueueLock != null) Monitor.PulseAll(mQueueLock);
+            if (mDequeLock != null) Monitor.PulseAll(mDequeLock);
+
+            mDisposed = true;
         }
 
         public void Interrupt()
@@ -88,17 +98,6 @@ namespace Intersect.Network
 
                 return true;
             }
-        }
-
-        public void Dispose()
-        {
-            if (mDisposed) return;
-
-            if (mQueue != null) Monitor.PulseAll(mQueue);
-            if (mQueueLock != null) Monitor.PulseAll(mQueueLock);
-            if (mDequeLock != null) Monitor.PulseAll(mDequeLock);
-
-            mDisposed = true;
         }
     }
 }

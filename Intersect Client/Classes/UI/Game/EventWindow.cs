@@ -1,12 +1,9 @@
 ﻿using Intersect.Localization;
 using IntersectClientExtras.File_Management;
-using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using IntersectClientExtras.Gwen.ControlInternal;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 
@@ -14,15 +11,18 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class EventWindow
     {
+        private ScrollControl _eventDialogArea;
+        private ScrollControl _eventDialogAreaNoFace;
+        private RichLabel _eventDialogLabel;
+        private RichLabel _eventDialogLabelNoFace;
+        private Label _eventDialogLabelNoFaceTemplate;
+
+        private Label _eventDialogLabelTemplate;
+
         //Window Controls
         private ImagePanel _eventDialogWindow;
+
         private ImagePanel _eventFace;
-        private ScrollControl _eventDialogArea;
-        private Label _eventDialogLabelTemplate;
-        private ScrollControl _eventDialogAreaNoFace;
-        private Label _eventDialogLabelNoFaceTemplate;
-        private RichLabel _eventDialogLabelNoFace;
-        private RichLabel _eventDialogLabel;
         private Button _eventResponse1;
         private Button _eventResponse2;
         private Button _eventResponse3;
@@ -32,30 +32,30 @@ namespace Intersect_Client.Classes.UI.Game
         public EventWindow(Canvas _gameCanvas)
         {
             //Event Dialog Window
-            _eventDialogWindow = new ImagePanel(_gameCanvas,"EventDialogueWindow");
+            _eventDialogWindow = new ImagePanel(_gameCanvas, "EventDialogueWindow");
             _eventDialogWindow.Hide();
             Gui.InputBlockingElements.Add(_eventDialogWindow);
 
-            _eventFace = new ImagePanel(_eventDialogWindow,"EventFacePanel");
+            _eventFace = new ImagePanel(_eventDialogWindow, "EventFacePanel");
 
-            _eventDialogArea = new ScrollControl(_eventDialogWindow,"EventDialogArea");
-            _eventDialogLabelTemplate = new Label(_eventDialogArea,"EventDialogLabel");
+            _eventDialogArea = new ScrollControl(_eventDialogWindow, "EventDialogArea");
+            _eventDialogLabelTemplate = new Label(_eventDialogArea, "EventDialogLabel");
             _eventDialogLabel = new RichLabel(_eventDialogArea);
 
-            _eventDialogAreaNoFace = new ScrollControl(_eventDialogWindow,"EventDialogAreaNoFace");
+            _eventDialogAreaNoFace = new ScrollControl(_eventDialogWindow, "EventDialogAreaNoFace");
             _eventDialogLabelNoFaceTemplate = new Label(_eventDialogAreaNoFace, "EventDialogLabel");
             _eventDialogLabelNoFace = new RichLabel(_eventDialogAreaNoFace);
 
-            _eventResponse1 = new Button(_eventDialogWindow,"EventResponse1");
+            _eventResponse1 = new Button(_eventDialogWindow, "EventResponse1");
             _eventResponse1.Clicked += EventResponse1_Clicked;
 
-            _eventResponse2 = new Button(_eventDialogWindow,"EventResponse2");
+            _eventResponse2 = new Button(_eventDialogWindow, "EventResponse2");
             _eventResponse2.Clicked += EventResponse2_Clicked;
 
-            _eventResponse3 = new Button(_eventDialogWindow,"EventResponse3");
+            _eventResponse3 = new Button(_eventDialogWindow, "EventResponse3");
             _eventResponse3.Clicked += EventResponse3_Clicked;
 
-            _eventResponse4 = new Button(_eventDialogWindow,"EventResponse4");
+            _eventResponse4 = new Button(_eventDialogWindow, "EventResponse4");
             _eventResponse4.Clicked += EventResponse4_Clicked;
         }
 
@@ -193,14 +193,22 @@ namespace Intersect_Client.Classes.UI.Game
                         _eventDialogLabel.ClearText();
                         _eventDialogLabel.Width = _eventDialogArea.Width -
                                                   _eventDialogArea.GetVerticalScrollBar().Width;
-                        _eventDialogLabel.AddText(Globals.EventDialogs[0].Prompt, _eventDialogLabelTemplate.TextColor,_eventDialogLabelTemplate.CurAlignments.Count > 0 ? _eventDialogLabelTemplate.CurAlignments[0] : Alignments.Left,_eventDialogLabelTemplate.Font);
+                        _eventDialogLabel.AddText(Globals.EventDialogs[0].Prompt, _eventDialogLabelTemplate.TextColor,
+                            _eventDialogLabelTemplate.CurAlignments.Count > 0
+                                ? _eventDialogLabelTemplate.CurAlignments[0]
+                                : Alignments.Left, _eventDialogLabelTemplate.Font);
                         _eventDialogLabel.SizeToChildren(false, true);
                     }
                     else
                     {
                         _eventDialogLabelNoFace.ClearText();
-                        _eventDialogLabelNoFace.Width = _eventDialogAreaNoFace.Width - _eventDialogAreaNoFace.GetVerticalScrollBar().Width;
-                        _eventDialogLabelNoFace.AddText(Globals.EventDialogs[0].Prompt, _eventDialogLabelNoFaceTemplate.TextColor, _eventDialogLabelNoFaceTemplate.CurAlignments.Count > 0 ? _eventDialogLabelNoFaceTemplate.CurAlignments[0] : Alignments.Left, _eventDialogLabelNoFaceTemplate.Font);
+                        _eventDialogLabelNoFace.Width = _eventDialogAreaNoFace.Width -
+                                                        _eventDialogAreaNoFace.GetVerticalScrollBar().Width;
+                        _eventDialogLabelNoFace.AddText(Globals.EventDialogs[0].Prompt,
+                            _eventDialogLabelNoFaceTemplate.TextColor,
+                            _eventDialogLabelNoFaceTemplate.CurAlignments.Count > 0
+                                ? _eventDialogLabelNoFaceTemplate.CurAlignments[0]
+                                : Alignments.Left, _eventDialogLabelNoFaceTemplate.Font);
                         _eventDialogLabelNoFace.SizeToChildren(false, true);
                     }
                 }

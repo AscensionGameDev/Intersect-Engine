@@ -14,30 +14,36 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
     {
         //GameObject Table Constants
         private const string GAME_OBJECT_ID = "id";
+
         private const string GAME_OBJECT_DELETED = "deleted";
         private const string GAME_OBJECT_DATA = "data";
 
         //Map Tiles Table
         private const string MAP_TILES_TABLE = "map_tiles";
+
         private const string MAP_TILES_MAP_ID = "map_id";
         private const string MAP_TILES_DATA = "data";
 
         //Char Friends Table Constants
         private const string CHAR_FRIENDS_TABLE = "char_friends";
+
         private const string CHAR_FRIEND_CHAR_ID = "char_id";
         private const string CHAR_FRIEND_ID = "friend_id";
 
         //Character Table Constants
         private const string CHAR_TABLE = "characters";
+
         private const string CHAR_DELETED = "deleted";
         private const string CHAR_LAST_ONLINE_TIME = "last_online";
 
         //Map List Table Constants
         private const string MAP_LIST_TABLE = "map_list";
+
         private const string MAP_LIST_DATA = "data";
 
         //Time of Day Table Constants
         private const string TIME_TABLE = "time";
+
         private const string TIME_DATA = "data";
 
         private SqliteConnection _dbConnection;
@@ -58,8 +64,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
             AddDeletedColumnToCharacters();
             AddLastOnlineColumnToCharacters();
             AddNotNullToGameObjectTables();
-            FixSimpleTable(TIME_TABLE,TIME_DATA);
-            FixSimpleTable(MAP_LIST_TABLE,MAP_LIST_DATA);
+            FixSimpleTable(TIME_TABLE, TIME_DATA);
+            FixSimpleTable(MAP_LIST_TABLE, MAP_LIST_DATA);
         }
 
         //Game Object Saving/Loading
@@ -256,7 +262,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
             {
                 var tableName = gameObjectType.GetTable();
                 ClearGameObjects(gameObjectType);
-                var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" + GAME_OBJECT_DELETED +
+                var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" +
+                            GAME_OBJECT_DELETED +
                             ";";
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
@@ -281,7 +288,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
             }
             if (nullIssues != "")
             {
-                throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine + nullIssues));
+                throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine +
+                                     nullIssues));
             }
         }
 
@@ -340,7 +348,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
 
         private void CreateMapTilesTable()
         {
-            var cmd = "CREATE TABLE " + MAP_TILES_TABLE + " (" + MAP_TILES_MAP_ID + " INTEGER UNIQUE, " + MAP_TILES_DATA + " BLOB NOT NULL);";
+            var cmd = "CREATE TABLE " + MAP_TILES_TABLE + " (" + MAP_TILES_MAP_ID + " INTEGER UNIQUE, " +
+                      MAP_TILES_DATA + " BLOB NOT NULL);";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
@@ -351,7 +360,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
         public void SaveMapTiles(int index, byte[] data)
         {
             if (data == null) return;
-            var query = "INSERT OR REPLACE into " + MAP_TILES_TABLE + " (" + MAP_TILES_MAP_ID + "," + MAP_TILES_DATA + ")" + " VALUES " + " (@" + MAP_TILES_MAP_ID + ",@" + MAP_TILES_DATA + ")";
+            var query = "INSERT OR REPLACE into " + MAP_TILES_TABLE + " (" + MAP_TILES_MAP_ID + "," + MAP_TILES_DATA +
+                        ")" + " VALUES " + " (@" + MAP_TILES_MAP_ID + ",@" + MAP_TILES_DATA + ")";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_TILES_MAP_ID, index));
@@ -390,7 +400,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
             cmd = "UPDATE " + CHAR_TABLE + " set " + CHAR_LAST_ONLINE_TIME + " = @" + CHAR_LAST_ONLINE_TIME + ";";
             using (var createCommand = _dbConnection.CreateCommand())
             {
-                createCommand.Parameters.Add(new SqliteParameter("@" + CHAR_LAST_ONLINE_TIME, DateTime.UtcNow.ToBinary()));
+                createCommand.Parameters.Add(
+                    new SqliteParameter("@" + CHAR_LAST_ONLINE_TIME, DateTime.UtcNow.ToBinary()));
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
@@ -401,7 +412,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
             //Loop through each type of game object. //Delete anything that is currently null.
             foreach (var value in Enum.GetValues(typeof(GameObjectType)))
             {
-                var type = (GameObjectType)value;
+                var type = (GameObjectType) value;
                 if (type == GameObjectType.Time) continue;
                 using (SqliteTransaction transaction = _dbConnection.BeginTransaction())
                 {
@@ -415,9 +426,9 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
 
                     //Create new table
                     query = "CREATE TABLE " + type.GetTable() + " ("
-                              + GAME_OBJECT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                              + GAME_OBJECT_DELETED + " INTEGER NOT NULL DEFAULT 0,"
-                              + GAME_OBJECT_DATA + " BLOB NOT NULL" + ");";
+                            + GAME_OBJECT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                            + GAME_OBJECT_DELETED + " INTEGER NOT NULL DEFAULT 0,"
+                            + GAME_OBJECT_DATA + " BLOB NOT NULL" + ");";
                     using (var cmd = _dbConnection.CreateCommand())
                     {
                         cmd.CommandText = query;
@@ -428,7 +439,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                     query = "INSERT INTO " + type.GetTable() + " ("
                             + GAME_OBJECT_ID + ","
                             + GAME_OBJECT_DELETED + ","
-                            + GAME_OBJECT_DATA + ") SELECT " + GAME_OBJECT_ID + "," + GAME_OBJECT_DELETED + "," + GAME_OBJECT_DATA + " FROM " + type.GetTable() + "_old ORDER BY " + GAME_OBJECT_ID + " ASC;";
+                            + GAME_OBJECT_DATA + ") SELECT " + GAME_OBJECT_ID + "," + GAME_OBJECT_DELETED + "," +
+                            GAME_OBJECT_DATA + " FROM " + type.GetTable() + "_old ORDER BY " + GAME_OBJECT_ID + " ASC;";
                     using (var cmd = _dbConnection.CreateCommand())
                     {
                         cmd.CommandText = query;

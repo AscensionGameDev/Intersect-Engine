@@ -1,9 +1,5 @@
 ﻿using Intersect.Server.Classes.Networking.Websockets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using WebSocketSharp.Server;
-using WebSocketSharp;
 
 namespace Intersect.Server.Classes.Networking
 {

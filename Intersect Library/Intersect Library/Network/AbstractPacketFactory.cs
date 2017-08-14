@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Security.Policy;
 using Intersect.Collections;
 
 namespace Intersect.Network
@@ -14,13 +13,24 @@ namespace Intersect.Network
     {
         private readonly IDictionary<PacketCode, PacketType> mPacketTypeLookup;
 
-        protected IDictionary<PacketCode, PacketType> PacketTypeLookup { get; }
-
         protected AbstractPacketFactory()
         {
             mPacketTypeLookup = new Dictionary<PacketCode, PacketType>();
             PacketTypeLookup = new ReadOnlyDictionary<PacketCode, PacketType>(mPacketTypeLookup);
         }
+
+        protected IDictionary<PacketCode, PacketType> PacketTypeLookup { get; }
+
+        public abstract bool CanCreatePacketType(PacketCode packetCode);
+
+        public abstract IPacket Create(PacketCode packetCode, IConnection connection);
+        public abstract IPacket Create(PacketCode packetCode, IConnection connection, params object[] args);
+
+        public abstract TPacketType Create<TPacketType>(PacketCode packetCode, IConnection connection)
+            where TPacketType : class, IPacket;
+
+        public abstract TPacketType Create<TPacketType>(PacketCode packetCode, IConnection connection,
+            params object[] args) where TPacketType : class, IPacket;
 
         protected bool AddPacketTypes(params PacketType[] packetTypes)
         {
@@ -60,13 +70,5 @@ namespace Intersect.Network
             }
             return success;
         }
-
-        public abstract bool CanCreatePacketType(PacketCode packetCode);
-
-        public abstract IPacket Create(PacketCode packetCode, IConnection connection);
-        public abstract IPacket Create(PacketCode packetCode, IConnection connection, params object[] args);
-
-        public abstract TPacketType Create<TPacketType>(PacketCode packetCode, IConnection connection) where TPacketType : class, IPacket;
-        public abstract TPacketType Create<TPacketType>(PacketCode packetCode, IConnection connection, params object[] args) where TPacketType : class, IPacket;
     }
 }

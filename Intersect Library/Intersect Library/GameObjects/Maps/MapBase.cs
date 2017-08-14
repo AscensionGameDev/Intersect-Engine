@@ -10,35 +10,6 @@ namespace Intersect.GameObjects.Maps
 {
     public class MapBase : DatabaseObject<MapBase>
     {
-        public class MapInstances : DatabaseObjectLookup
-        {
-            private readonly DatabaseObjectLookup mBaseLookup;
-
-            public MapInstances(DatabaseObjectLookup baseLookup)
-            {
-                if (baseLookup == null) throw new ArgumentNullException();
-                mBaseLookup = baseLookup;
-            }
-
-            internal override bool InternalSet(IDatabaseObject value, bool overwrite)
-            {
-                mBaseLookup?.InternalSet(value, overwrite);
-                return base.InternalSet(value, overwrite);
-            }
-
-            public override bool Delete(IDatabaseObject value)
-            {
-                mBaseLookup?.Delete(value);
-                return base.Delete(value);
-            }
-
-            public override void Clear()
-            {
-                mBaseLookup?.Clear();
-                base.Clear();
-            }
-        }
-
         //SyncLock
         protected object _mapLock = new object();
 
@@ -50,11 +21,12 @@ namespace Intersect.GameObjects.Maps
 
         //Temporary Values
         public bool IsClient;
-        //For server only
-        public byte[] TileData;
 
         //Core Data
         public TileArray[] Layers = new TileArray[Options.LayerCount];
+
+        //For server only
+        public byte[] TileData;
 
         public MapBase(int mapNum, bool isClient) : base(mapNum)
         {
@@ -130,7 +102,7 @@ namespace Intersect.GameObjects.Maps
         public int Left { get; set; } = -1;
         public int Right { get; set; } = -1;
         public int Revision { get; set; }
-        public Attribute[,]  Attributes { get; set; } = new Attribute[Options.MapWidth, Options.MapHeight];
+        public Attribute[,] Attributes { get; set; } = new Attribute[Options.MapWidth, Options.MapHeight];
         public List<LightBase> Lights { get; set; } = new List<LightBase>();
         public Dictionary<int, EventBase> Events { get; set; } = new Dictionary<int, EventBase>();
         public List<NpcSpawn> Spawns { get; set; } = new List<NpcSpawn>();
@@ -138,6 +110,7 @@ namespace Intersect.GameObjects.Maps
 
         //Properties
         public string Music { get; set; } = Strings.Get("general", "none");
+
         public string Sound { get; set; } = Strings.Get("general", "none");
         public bool IsIndoors { get; set; }
         public string Panorama { get; set; } = Strings.Get("general", "none");
@@ -156,6 +129,8 @@ namespace Intersect.GameObjects.Maps
         public float PlayerLightExpand { get; set; }
         public Color PlayerLightColor { get; set; } = Color.White;
         public string OverlayGraphic { get; set; } = Strings.Get("general", "none");
+
+        public override byte[] BinaryData => GetMapData(false);
 
         public object GetMapLock()
         {
@@ -338,6 +313,33 @@ namespace Intersect.GameObjects.Maps
             return bf.ToArray();
         }
 
-        public override byte[] BinaryData => GetMapData(false);
+        public class MapInstances : DatabaseObjectLookup
+        {
+            private readonly DatabaseObjectLookup mBaseLookup;
+
+            public MapInstances(DatabaseObjectLookup baseLookup)
+            {
+                if (baseLookup == null) throw new ArgumentNullException();
+                mBaseLookup = baseLookup;
+            }
+
+            internal override bool InternalSet(IDatabaseObject value, bool overwrite)
+            {
+                mBaseLookup?.InternalSet(value, overwrite);
+                return base.InternalSet(value, overwrite);
+            }
+
+            public override bool Delete(IDatabaseObject value)
+            {
+                mBaseLookup?.Delete(value);
+                return base.Delete(value);
+            }
+
+            public override void Clear()
+            {
+                mBaseLookup?.Clear();
+                base.Clear();
+            }
+        }
     }
 }

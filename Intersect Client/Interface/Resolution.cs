@@ -7,8 +7,8 @@
 
         public Resolution(long x = 800, long y = 600)
         {
-            X = (ushort)(x & 0xFFFF);
-            Y = (ushort)(y & 0xFFFF);
+            X = (ushort) (x & 0xFFFF);
+            Y = (ushort) (y & 0xFFFF);
         }
 
         private Resolution(string resolution) : this()

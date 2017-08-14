@@ -12,6 +12,7 @@ namespace Intersect.Server.Classes.General
     {
         //Console Variables
         public static long CPS = 0;
+
         public static bool CPSLock = true;
         public static bool ServerStarted = true;
         public static ServerSystem System = new ServerSystem();
@@ -101,9 +102,10 @@ namespace Intersect.Server.Classes.General
             var projectiles = new List<Projectile>();
             for (int i = 0; i < Entities.Count; i++)
             {
-                if (Entities[i] != null && Entities[i].GetType() == typeof(Projectile) && ((Projectile)Entities[i]).MyBase == projectile)
+                if (Entities[i] != null && Entities[i].GetType() == typeof(Projectile) &&
+                    ((Projectile) Entities[i]).MyBase == projectile)
                 {
-                    projectiles.Add((Projectile)Entities[i]);
+                    projectiles.Add((Projectile) Entities[i]);
                 }
             }
             foreach (var en in projectiles)

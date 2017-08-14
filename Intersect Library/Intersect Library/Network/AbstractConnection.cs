@@ -7,6 +7,13 @@ namespace Intersect.Network
     {
         private bool mDisposed;
 
+        protected AbstractConnection(Guid? guid = null)
+        {
+            if (!guid.HasValue) guid = Guid.NewGuid();
+
+            Guid = guid.Value;
+        }
+
         public virtual void Dispose()
         {
             lock (this)
@@ -22,13 +29,6 @@ namespace Intersect.Network
 
         public abstract string Ip { get; }
         public abstract int Port { get; }
-
-        protected AbstractConnection(Guid? guid = null)
-        {
-            if (!guid.HasValue) guid = Guid.NewGuid();
-
-            Guid = guid.Value;
-        }
 
         public abstract bool Send(IPacket packet);
 

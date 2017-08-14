@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using Intersect.Localization;
-using System.Globalization;
 
 namespace Intersect.Migration
 {
@@ -62,7 +62,8 @@ namespace Intersect.Migration
                 else
                 {
                     Console.WriteLine("");
-                    Console.WriteLine(Strings.Get("intro", "uptodate", Database.GetDatabaseVersion(), Database.DbVersion));
+                    Console.WriteLine(Strings.Get("intro", "uptodate", Database.GetDatabaseVersion(),
+                        Database.DbVersion));
                     Console.WriteLine(Strings.Get("intro", "tooloutofdate"));
                     Console.WriteLine("");
                     Console.WriteLine(Strings.Get("main", "exit"));

@@ -16,6 +16,7 @@ namespace Intersect_Client.Classes.Core
 
         //Music
         private static string _queuedMusic = "";
+
         private static string _currentSong = "";
         private static float _fadeRate;
         private static long _fadeTimer;

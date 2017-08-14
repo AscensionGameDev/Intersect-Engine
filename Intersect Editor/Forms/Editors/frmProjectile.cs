@@ -228,7 +228,8 @@ namespace Intersect.Editor.Classes
                 if (_editorItem.Animations[i].Animation != -1)
                 {
                     lstAnimations.Items.Add(Strings.Get("projectileeditor", "animationline", n,
-                        _editorItem.Animations[i].SpawnRange, AnimationBase.GetName(_editorItem.Animations[i].Animation)));
+                        _editorItem.Animations[i].SpawnRange,
+                        AnimationBase.GetName(_editorItem.Animations[i].Animation)));
                 }
                 else
                 {
@@ -284,7 +285,8 @@ namespace Intersect.Editor.Classes
                             gfx.DrawImage(_directionGrid,
                                 new Rectangle((x * 32) + DirectionOffsetX(i), (y * 32) + DirectionOffsetY(i),
                                     (32 - 2) / 3, (32 - 2) / 3),
-                                new Rectangle(32 + DirectionOffsetX(i), DirectionOffsetY(i), (32 - 2) / 3, (32 - 2) / 3),
+                                new Rectangle(32 + DirectionOffsetX(i), DirectionOffsetY(i), (32 - 2) / 3,
+                                    (32 - 2) / 3),
                                 GraphicsUnit.Pixel);
                         }
                     }
@@ -392,7 +394,8 @@ namespace Intersect.Editor.Classes
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstProjectiles.Items[Database.GameObjectListIndex(GameObjectType.Projectile, _editorItem.Index)] = txtName.Text;
+            lstProjectiles.Items[Database.GameObjectListIndex(GameObjectType.Projectile, _editorItem.Index)] =
+                txtName.Text;
         }
 
         private void chkHoming_CheckedChanged(object sender, EventArgs e)
@@ -526,7 +529,8 @@ namespace Intersect.Editor.Classes
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("projectileeditor", "undoprompt"),
-                        Strings.Get("projectileeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                        Strings.Get("projectileeditor", "undotitle"), DarkDialogButton.YesNo,
+                        Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();

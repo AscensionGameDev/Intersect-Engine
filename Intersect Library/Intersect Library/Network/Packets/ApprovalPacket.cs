@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Security.Cryptography;
-using Intersect.Logging;
 using Intersect.Memory;
 
 namespace Intersect.Network.Packets
@@ -11,23 +10,11 @@ namespace Intersect.Network.Packets
         private const int SIZE_AES_KEY = 32;
         private const int SIZE_GUID = 16;
 
+        private byte[] mAesKey;
+
         private byte[] mEncryptedApproval;
 
         private Guid mGuid;
-        public Guid Guid
-        {
-            get => mGuid;
-            set => mGuid = value;
-        }
-
-        private byte[] mAesKey;
-        public byte[] AesKey
-        {
-            get => mAesKey;
-            set => mAesKey = value;
-        }
-
-        public override int EstimatedSize => mEncryptedApproval?.Length + sizeof(int) ?? -1;
 
         public ApprovalPacket(RSACryptoServiceProvider rsa)
             : base(rsa, null)
@@ -55,6 +42,20 @@ namespace Intersect.Network.Packets
                 mEncryptedApproval = mRsa.Encrypt(approvalBuffer.ToArray(), true);
             }
         }
+
+        public Guid Guid
+        {
+            get => mGuid;
+            set => mGuid = value;
+        }
+
+        public byte[] AesKey
+        {
+            get => mAesKey;
+            set => mAesKey = value;
+        }
+
+        public override int EstimatedSize => mEncryptedApproval?.Length + sizeof(int) ?? -1;
 
         public override bool Read(ref IBuffer buffer)
         {

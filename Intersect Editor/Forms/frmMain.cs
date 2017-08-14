@@ -28,6 +28,7 @@ namespace Intersect.Editor.Forms
 
         //Editor References
         private frmAnimation _animationEditor;
+
         private frmClass _classEditor;
         private frmCommonEvent _commonEventEditor;
         private frmCrafting _craftEditor;
@@ -39,9 +40,12 @@ namespace Intersect.Editor.Forms
         private frmShop _shopEditor;
         private frmSpell _spellEditor;
         private frmSwitchVariable _switchVariableEditor;
+
         private frmTime _timeEditor;
+
         //General Editting Variables
         bool _tMouseDown;
+
         public HandleDisconnect DisconnectDelegate;
         public TryOpenEditor EditorDelegate;
         public UpdateTimeList TimeDelegate;
@@ -576,7 +580,7 @@ namespace Intersect.Editor.Forms
                         copyToolStripMenuItem.Enabled = false;
                     }
                     break;
-                case (int)EdittingTool.Fill:
+                case (int) EdittingTool.Fill:
                     if (toolStripBtnPen.Checked)
                     {
                         toolStripBtnPen.Checked = false;
@@ -619,7 +623,7 @@ namespace Intersect.Editor.Forms
                         copyToolStripMenuItem.Enabled = false;
                     }
                     break;
-                case (int)EdittingTool.Erase:
+                case (int) EdittingTool.Erase:
                     if (toolStripBtnPen.Checked)
                     {
                         toolStripBtnPen.Checked = false;
@@ -1053,7 +1057,8 @@ namespace Intersect.Editor.Forms
             var tmpMap = Globals.CurrentMap;
             if (Globals.MapEditorWindow.MapUndoStates.Count > 0)
             {
-                tmpMap.LoadInternal(Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1]);
+                tmpMap.LoadInternal(
+                    Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1]);
                 Globals.MapEditorWindow.MapRedoStates.Add(Globals.MapEditorWindow.CurrentMapState);
                 Globals.MapEditorWindow.CurrentMapState =
                     Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1];
@@ -1068,7 +1073,8 @@ namespace Intersect.Editor.Forms
             var tmpMap = Globals.CurrentMap;
             if (Globals.MapEditorWindow.MapRedoStates.Count > 0)
             {
-                tmpMap.LoadInternal(Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1]);
+                tmpMap.LoadInternal(
+                    Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1]);
                 Globals.MapEditorWindow.MapUndoStates.Add(Globals.MapEditorWindow.CurrentMapState);
                 Globals.MapEditorWindow.CurrentMapState =
                     Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1];
@@ -1080,12 +1086,12 @@ namespace Intersect.Editor.Forms
 
         private void toolStripBtnFill_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int)EdittingTool.Fill;
+            Globals.CurrentTool = (int) EdittingTool.Fill;
         }
 
         private void toolStripBtnErase_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int)EdittingTool.Erase;
+            Globals.CurrentTool = (int) EdittingTool.Erase;
         }
 
         private void toolStripBtnScreenshot_Click(object sender, EventArgs e)

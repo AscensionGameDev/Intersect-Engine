@@ -1,38 +1,28 @@
-﻿using Intersect.Logging;
-using Intersect.Memory;
-using Intersect.Network.Packets;
-using Lidgren.Network;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using Intersect.Logging;
+using Intersect.Memory;
+using Intersect.Network.Packets;
+using Lidgren.Network;
 
 namespace Intersect.Network
 {
     public sealed class LidgrenInterface : INetworkLayerInterface
     {
-        private static readonly IConnection[] EMPTY_CONNECTIONS = {};
-
-        private readonly INetwork mNetwork;
-        private readonly NetPeerConfiguration mPeerConfiguration;
-        private readonly NetPeer mPeer;
-        private readonly RandomNumberGenerator mRng;
-        private readonly RSACryptoServiceProvider mRsa;
-        private readonly IDictionary<long, Guid> mGuidLookup;
-
         public delegate void HandleUnconnectedMessage(NetPeer peer, NetIncomingMessage message);
 
-        public HandlePacketAvailable OnPacketAvailable { get; set; }
-        public HandleUnconnectedMessage OnUnconnectedMessage { get; set; }
+        private static readonly IConnection[] EMPTY_CONNECTIONS = { };
+        private readonly IDictionary<long, Guid> mGuidLookup;
 
-        public HandleConnectionEvent OnConnected { get; set; }
-        public HandleConnectionEvent OnDisconnected { get; set; }
-        public HandleConnectionEvent OnConnectionApproved { get; set; }
+        private readonly INetwork mNetwork;
+        private readonly NetPeer mPeer;
+        private readonly NetPeerConfiguration mPeerConfiguration;
+        private readonly RandomNumberGenerator mRng;
+        private readonly RSACryptoServiceProvider mRsa;
 
         public LidgrenInterface(INetwork network, Type peerType, RSAParameters rsaParameters)
         {
@@ -42,7 +32,7 @@ namespace Intersect.Network
 
             var configuration = mNetwork.Configuration;
             if (configuration == null) throw new ArgumentNullException(nameof(mNetwork.Configuration));
-            
+
             mRng = new RNGCryptoServiceProvider();
 
             mRsa = new RSACryptoServiceProvider();
@@ -108,6 +98,14 @@ namespace Intersect.Network
             });
         }
 
+        public HandleUnconnectedMessage OnUnconnectedMessage { get; set; }
+        public HandleConnectionEvent OnConnectionApproved { get; set; }
+
+        public HandlePacketAvailable OnPacketAvailable { get; set; }
+
+        public HandleConnectionEvent OnConnected { get; set; }
+        public HandleConnectionEvent OnDisconnected { get; set; }
+
         public void Start()
         {
             Debug.Assert(mNetwork != null, "mNetwork != null");
@@ -130,7 +128,8 @@ namespace Intersect.Network
 
                 var connectionRsa = new RSACryptoServiceProvider(2048);
 
-                var hail = new HailPacket(mRsa, handshakeSecret, SharedConstants.VERSION_DATA, connectionRsa.ExportParameters(false));
+                var hail = new HailPacket(mRsa, handshakeSecret, SharedConstants.VERSION_DATA,
+                    connectionRsa.ExportParameters(false));
                 var hailMessage = mPeer.CreateMessage(hail.EstimatedSize);
 
                 IBuffer buffer = new LidgrenBuffer(hailMessage);
@@ -138,13 +137,171 @@ namespace Intersect.Network
 
                 mPeer.Start();
                 var connection = mPeer.Connect(mNetwork.Configuration.Host, mNetwork.Configuration.Port, hailMessage);
-                var server = new LidgrenConnection(mNetwork, Guid.Empty, connection, handshakeSecret, connectionRsa.ExportParameters(true));
+                var server = new LidgrenConnection(mNetwork, Guid.Empty, connection, handshakeSecret,
+                    connectionRsa.ExportParameters(true));
 
                 if (mNetwork.AddConnection(server)) return;
 
                 Log.Error("Failed to add connection to list.");
                 connection?.Disconnect("client_error");
             }
+        }
+
+        public bool TryGetInboundBuffer(out IBuffer buffer, out IConnection connection)
+        {
+            buffer = default(IBuffer);
+            connection = default(IConnection);
+            if (mPeer == null) return false;
+
+            var message = TryHandleInboundMessage();
+            if (message == null) return true;
+
+            var lidgrenId = message.SenderConnection?.RemoteUniqueIdentifier ?? -1;
+            Debug.Assert(mGuidLookup != null, "mGuidLookup != null");
+            if (!mGuidLookup.TryGetValue(lidgrenId, out Guid guid))
+            {
+                Log.Error($"Missing connection: {guid}");
+                mPeer.Recycle(message);
+                return false;
+            }
+
+            connection = mNetwork?.FindConnection(guid);
+
+            if (connection != null)
+            {
+                var lidgrenConnection = connection as LidgrenConnection;
+                if (lidgrenConnection?.Aes == null)
+                {
+                    Log.Error("No provider to decrypt data with.");
+                    return false;
+                }
+
+                if (!lidgrenConnection.Aes.Decrypt(message))
+                {
+                    Log.Error($"Error decrypting inbound Lidgren message [Connection:{connection.Guid}].");
+                    return false;
+                }
+            }
+            else
+            {
+                Log.Warn($"Received message from an unregistered endpoint.");
+            }
+
+            buffer = new LidgrenBuffer(message);
+            return true;
+        }
+
+        public void ReleaseInboundBuffer(IBuffer buffer)
+        {
+            var message = (buffer as LidgrenBuffer)?.Buffer as NetIncomingMessage;
+            mPeer?.Recycle(message);
+        }
+
+        public bool SendPacket(IPacket packet, IConnection connection = null,
+            TransmissionMode transmissionMode = TransmissionMode.All)
+        {
+            if (connection == null) return SendPacket(packet, EMPTY_CONNECTIONS, transmissionMode);
+
+            var lidgrenConnection = connection as LidgrenConnection;
+            if (lidgrenConnection == null)
+            {
+                Log.Diagnostic("Tried to send to a non-Lidgren connection.");
+                return false;
+            }
+
+            var deliveryMethod = TranslateTransmissionMode(transmissionMode);
+            if (mPeer == null) throw new ArgumentNullException(nameof(mPeer));
+
+            if (packet == null)
+            {
+                Log.Diagnostic("Tried to send a null packet.");
+                return false;
+            }
+
+            var sequence = 0;
+            if (deliveryMethod == NetDeliveryMethod.ReliableSequenced)
+                sequence = (byte) packet.Code % 32;
+
+            var message = mPeer.CreateMessage(packet.EstimatedSize);
+            if (message == null) throw new ArgumentNullException(nameof(message));
+            IBuffer buffer = new LidgrenBuffer(message);
+            if (!packet.Write(ref buffer))
+            {
+                Log.Debug($"Error writing packet to outgoing message buffer ({packet.Code}).");
+                return false;
+            }
+
+            SendMessage(message, lidgrenConnection, deliveryMethod);
+            return true;
+        }
+
+        public bool SendPacket(IPacket packet, ICollection<IConnection> connections,
+            TransmissionMode transmissionMode = TransmissionMode.All)
+        {
+            var deliveryMethod = TranslateTransmissionMode(transmissionMode);
+            if (mPeer == null) throw new ArgumentNullException(nameof(mPeer));
+
+            if (packet == null)
+            {
+                Log.Diagnostic("Tried to send a null packet.");
+                return false;
+            }
+
+            var sequence = 0;
+            if (deliveryMethod == NetDeliveryMethod.ReliableSequenced)
+                sequence = (byte) packet.Code % 32;
+
+            var message = mPeer.CreateMessage(packet.EstimatedSize);
+            if (message == null) throw new ArgumentNullException(nameof(message));
+            IBuffer buffer = new LidgrenBuffer(message);
+            if (!packet.Write(ref buffer))
+            {
+                Log.Debug($"Error writing packet to outgoing message buffer ({packet.Code}).");
+                return false;
+            }
+
+            if (connections == null || connections.Count(connection => connection != null) < 1)
+            {
+                connections = mNetwork?.FindConnections<IConnection>();
+            }
+
+            var lidgrenConnections = connections?.OfType<LidgrenConnection>().ToList();
+            if (lidgrenConnections?.Count > 0)
+            {
+                var firstConnection = lidgrenConnections.First();
+
+                lidgrenConnections.ForEach(lidgrenConnection =>
+                {
+                    if (lidgrenConnection == null) return;
+                    if (firstConnection == lidgrenConnection) return;
+                    if (message.Data == null) throw new ArgumentNullException(nameof(message.Data));
+                    var messageClone = mPeer.CreateMessage(message.Data.Length);
+                    if (messageClone == null) throw new ArgumentNullException(nameof(messageClone));
+                    Buffer.BlockCopy(message.Data, 0, messageClone.Data, 0, message.Data.Length);
+                    messageClone.LengthBytes = message.LengthBytes;
+                    SendMessage(messageClone, lidgrenConnection, deliveryMethod);
+                });
+
+                SendMessage(message, lidgrenConnections.First(), deliveryMethod);
+            }
+            else
+            {
+                Log.Diagnostic("No lidgren connections, skipping...");
+            }
+
+            return true;
+        }
+
+        public void Stop(string reason = "stopping") => Disconnect(reason);
+
+        public void Disconnect(IConnection connection, string message)
+            => Disconnect(new[] {connection}, message);
+
+        public void Disconnect(ICollection<IConnection> connections, string message)
+        {
+            if (connections == null) return;
+            foreach (var connection in connections)
+                (connection as LidgrenConnection)?.NetConnection?.Disconnect(message);
         }
 
         private NetIncomingMessage TryHandleInboundMessage()
@@ -383,150 +540,8 @@ namespace Intersect.Network
             return null;
         }
 
-        public bool TryGetInboundBuffer(out IBuffer buffer, out IConnection connection)
-        {
-            buffer = default(IBuffer);
-            connection = default(IConnection);
-            if (mPeer == null) return false;
-
-            var message = TryHandleInboundMessage();
-            if (message == null) return true;
-
-            var lidgrenId = message.SenderConnection?.RemoteUniqueIdentifier ?? -1;
-            Debug.Assert(mGuidLookup != null, "mGuidLookup != null");
-            if (!mGuidLookup.TryGetValue(lidgrenId, out Guid guid))
-            {
-                Log.Error($"Missing connection: {guid}");
-                mPeer.Recycle(message);
-                return false;
-            }
-
-            connection = mNetwork?.FindConnection(guid);
-
-            if (connection != null)
-            {
-                var lidgrenConnection = connection as LidgrenConnection;
-                if (lidgrenConnection?.Aes == null)
-                {
-                    Log.Error("No provider to decrypt data with.");
-                    return false;
-                }
-
-                if (!lidgrenConnection.Aes.Decrypt(message))
-                {
-                    Log.Error($"Error decrypting inbound Lidgren message [Connection:{connection.Guid}].");
-                    return false;
-                }
-            }
-            else
-            {
-                Log.Warn($"Received message from an unregistered endpoint.");
-            }
-
-            buffer = new LidgrenBuffer(message);
-            return true;
-        }
-
-        public void ReleaseInboundBuffer(IBuffer buffer)
-        {
-            var message = (buffer as LidgrenBuffer)?.Buffer as NetIncomingMessage;
-            mPeer?.Recycle(message);
-        }
-
-        public bool SendPacket(IPacket packet, IConnection connection = null, TransmissionMode transmissionMode = TransmissionMode.All)
-        {
-            if (connection == null) return SendPacket(packet, EMPTY_CONNECTIONS, transmissionMode);
-
-            var lidgrenConnection = connection as LidgrenConnection;
-            if (lidgrenConnection == null)
-            {
-                Log.Diagnostic("Tried to send to a non-Lidgren connection.");
-                return false;
-            }
-
-            var deliveryMethod = TranslateTransmissionMode(transmissionMode);
-            if (mPeer == null) throw new ArgumentNullException(nameof(mPeer));
-
-            if (packet == null)
-            {
-                Log.Diagnostic("Tried to send a null packet.");
-                return false;
-            }
-
-            var sequence = 0;
-            if (deliveryMethod == NetDeliveryMethod.ReliableSequenced)
-                sequence = (byte)packet.Code % 32;
-
-            var message = mPeer.CreateMessage(packet.EstimatedSize);
-            if (message == null) throw new ArgumentNullException(nameof(message));
-            IBuffer buffer = new LidgrenBuffer(message);
-            if (!packet.Write(ref buffer))
-            {
-                Log.Debug($"Error writing packet to outgoing message buffer ({packet.Code}).");
-                return false;
-            }
-
-            SendMessage(message, lidgrenConnection, deliveryMethod);
-            return true;
-        }
-
-        public bool SendPacket(IPacket packet, ICollection<IConnection> connections, TransmissionMode transmissionMode = TransmissionMode.All)
-        {
-            var deliveryMethod = TranslateTransmissionMode(transmissionMode);
-            if (mPeer == null) throw new ArgumentNullException(nameof(mPeer));
-
-            if (packet == null)
-            {
-                Log.Diagnostic("Tried to send a null packet.");
-                return false;
-            }
-
-            var sequence = 0;
-            if (deliveryMethod == NetDeliveryMethod.ReliableSequenced)
-                sequence = (byte)packet.Code % 32;
-
-            var message = mPeer.CreateMessage(packet.EstimatedSize);
-            if (message == null) throw new ArgumentNullException(nameof(message));
-            IBuffer buffer = new LidgrenBuffer(message);
-            if (!packet.Write(ref buffer))
-            {
-                Log.Debug($"Error writing packet to outgoing message buffer ({packet.Code}).");
-                return false;
-            }
-
-            if (connections == null || connections.Count(connection => connection != null) < 1)
-            {
-                connections = mNetwork?.FindConnections<IConnection>();
-            }
-
-            var lidgrenConnections = connections?.OfType<LidgrenConnection>().ToList();
-            if (lidgrenConnections?.Count > 0)
-            {
-                var firstConnection = lidgrenConnections.First();
-
-                lidgrenConnections.ForEach(lidgrenConnection =>
-                {
-                    if (lidgrenConnection == null) return;
-                    if (firstConnection == lidgrenConnection) return;
-                    if (message.Data == null) throw new ArgumentNullException(nameof(message.Data));
-                    var messageClone = mPeer.CreateMessage(message.Data.Length);
-                    if (messageClone == null) throw new ArgumentNullException(nameof(messageClone));
-                    Buffer.BlockCopy(message.Data, 0, messageClone.Data, 0, message.Data.Length);
-                    messageClone.LengthBytes = message.LengthBytes;
-                    SendMessage(messageClone, lidgrenConnection, deliveryMethod);
-                });
-
-                SendMessage(message, lidgrenConnections.First(), deliveryMethod);
-            }
-            else
-            {
-                Log.Diagnostic("No lidgren connections, skipping...");
-            }
-
-            return true;
-        }
-
-        private void SendMessage(NetOutgoingMessage message, LidgrenConnection connection, NetDeliveryMethod deliveryMethod, int sequenceChannel = 0)
+        private void SendMessage(NetOutgoingMessage message, LidgrenConnection connection,
+            NetDeliveryMethod deliveryMethod, int sequenceChannel = 0)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
             if (connection == null) throw new ArgumentNullException(nameof(connection));
@@ -551,18 +566,6 @@ namespace Intersect.Network
                 default:
                     return NetDeliveryMethod.ReliableOrdered;
             }
-        }
-
-        public void Stop(string reason = "stopping") => Disconnect(reason);
-
-        public void Disconnect(IConnection connection, string message)
-            => Disconnect(new[] { connection }, message);
-
-        public void Disconnect(ICollection<IConnection> connections, string message)
-        {
-            if (connections == null) return;
-            foreach (var connection in connections)
-                (connection as LidgrenConnection)?.NetConnection?.Disconnect(message);
         }
 
         internal bool Disconnect(string message)

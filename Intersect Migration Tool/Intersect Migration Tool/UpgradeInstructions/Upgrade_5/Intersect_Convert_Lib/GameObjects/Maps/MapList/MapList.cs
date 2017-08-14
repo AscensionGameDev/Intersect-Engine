@@ -186,7 +186,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
                     {
                         return parent;
                     }
-                    if (((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]) != null)
+                    if (((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]) !=
+                        null)
                     {
                         return ((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]);
                     }

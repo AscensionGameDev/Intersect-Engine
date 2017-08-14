@@ -11,12 +11,6 @@ namespace Intersect.Server.Network
 {
     public class ServerNetwork : AbstractNetwork, IServer
     {
-        public HandleConnectionEvent OnConnected { get; set; }
-        public HandleConnectionEvent OnConnectionApproved { get; set; }
-        public HandleConnectionEvent OnDisconnected { get; set; }
-
-        public override Guid Guid { get; }
-
         public ServerNetwork(NetworkConfiguration configuration, RSAParameters rsaParameters)
             : base(configuration)
         {
@@ -29,6 +23,18 @@ namespace Intersect.Server.Network
             lidgrenInterface.OnUnconnectedMessage += HandleOnUnconnectedMessage;
             //lidgrenInterface.OnUnconnectedMessage += HandleUnconnectedMessageReceived;
             AddNetworkLayerInterface(lidgrenInterface);
+        }
+
+        public HandleConnectionEvent OnConnected { get; set; }
+        public HandleConnectionEvent OnConnectionApproved { get; set; }
+        public HandleConnectionEvent OnDisconnected { get; set; }
+
+        public override Guid Guid { get; }
+
+        public bool Listen()
+        {
+            StartInterfaces();
+            return true;
         }
 
         protected virtual void HandleInterfaceOnConnected(INetworkLayerInterface sender, IConnection connection)
@@ -59,11 +65,10 @@ namespace Intersect.Server.Network
                 case "status":
                     var response = peer.CreateMessage();
                     response.WriteVariableInt32(peer.ConnectionsCount);
-                    peer.SendUnconnectedMessage(response,message.SenderEndPoint);
+                    peer.SendUnconnectedMessage(response, message.SenderEndPoint);
                     break;
             }
         }
-
 
         public override bool Send(IPacket packet)
             => Send(Connections, packet);
@@ -80,12 +85,6 @@ namespace Intersect.Server.Network
         protected override IDictionary<TKey, TValue> CreateDictionaryLegacy<TKey, TValue>()
         {
             return new ConcurrentDictionary<TKey, TValue>();
-        }
-
-        public bool Listen()
-        {
-            StartInterfaces();
-            return true;
         }
     }
 }
