@@ -156,48 +156,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void lstObjects_Click(object sender, EventArgs e)
         {
-            if (lstObjects.SelectedIndex > -1)
-            {
-                IDatabaseObject obj = null;
-                if (rdoPlayerSwitch.Checked)
-                {
-                    obj =
-                        PlayerSwitchBase.Lookup.Get<PlayerSwitchBase>(Database.GameObjectIdFromList(
-                            GameObjectType.PlayerSwitch,
-                            lstObjects.SelectedIndex));
-                }
-                else if (rdoPlayerVariables.Checked)
-                {
-                    obj =
-                        PlayerVariableBase.Lookup.Get<PlayerVariableBase>(Database.GameObjectIdFromList(
-                            GameObjectType.PlayerVariable,
-                            lstObjects.SelectedIndex));
-                }
-                else if (rdoGlobalSwitches.Checked)
-                {
-                    obj =
-                        ServerSwitchBase.Lookup.Get<ServerSwitchBase>(Database.GameObjectIdFromList(
-                            GameObjectType.ServerSwitch,
-                            lstObjects.SelectedIndex));
-                }
-                else if (rdoGlobalVariables.Checked)
-                {
-                    obj =
-                        ServerVariableBase.Lookup.Get<ServerVariableBase>(Database.GameObjectIdFromList(
-                            GameObjectType.ServerVariable,
-                            lstObjects.SelectedIndex));
-                }
-                if (obj != null)
-                {
-                    _editorItem = obj;
-                    if (!_changed.Contains(obj))
-                    {
-                        _changed.Add(obj);
-                        obj.MakeBackup();
-                    }
-                }
-            }
-            UpdateEditor();
+
         }
 
         public void InitEditor()

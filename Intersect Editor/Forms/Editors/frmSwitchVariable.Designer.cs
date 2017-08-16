@@ -42,6 +42,7 @@ namespace Intersect.Editor.Forms.Editors
             this.btnNew = new DarkUI.Controls.DarkButton();
             this.btnDelete = new DarkUI.Controls.DarkButton();
             this.grpEditor = new DarkUI.Controls.DarkGroupBox();
+            this.lblId = new System.Windows.Forms.Label();
             this.lblValue = new System.Windows.Forms.Label();
             this.txtObjectName = new DarkUI.Controls.DarkTextBox();
             this.lblName = new System.Windows.Forms.Label();
@@ -50,7 +51,6 @@ namespace Intersect.Editor.Forms.Editors
             this.txtVariableVal = new DarkUI.Controls.DarkTextBox();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
-            this.lblId = new System.Windows.Forms.Label();
             this.grpTypes.SuspendLayout();
             this.grpList.SuspendLayout();
             this.grpEditor.SuspendLayout();
@@ -130,6 +130,29 @@ namespace Intersect.Editor.Forms.Editors
             this.grpList.TabStop = false;
             this.grpList.Text = "Switch/Variable List";
             // 
+            // btnUndo
+            // 
+            this.btnUndo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnUndo.Location = new System.Drawing.Point(7, 431);
+            this.btnUndo.Name = "btnUndo";
+            this.btnUndo.Padding = new System.Windows.Forms.Padding(5);
+            this.btnUndo.Size = new System.Drawing.Size(187, 27);
+            this.btnUndo.TabIndex = 55;
+            this.btnUndo.Text = "Undo Changes";
+            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
+            // 
+            // lstObjects
+            // 
+            this.lstObjects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstObjects.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstObjects.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lstObjects.FormattingEnabled = true;
+            this.lstObjects.Location = new System.Drawing.Point(7, 20);
+            this.lstObjects.Name = "lstObjects";
+            this.lstObjects.Size = new System.Drawing.Size(187, 327);
+            this.lstObjects.TabIndex = 0;
+            this.lstObjects.SelectedIndexChanged += new System.EventHandler(this.lstObjects_Click);
+            // 
             // btnNew
             // 
             this.btnNew.DialogResult = System.Windows.Forms.DialogResult.Cancel;
@@ -152,29 +175,6 @@ namespace Intersect.Editor.Forms.Editors
             this.btnDelete.Text = "Delete";
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
-            // btnUndo
-            // 
-            this.btnUndo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnUndo.Location = new System.Drawing.Point(7, 431);
-            this.btnUndo.Name = "btnUndo";
-            this.btnUndo.Padding = new System.Windows.Forms.Padding(5);
-            this.btnUndo.Size = new System.Drawing.Size(187, 27);
-            this.btnUndo.TabIndex = 55;
-            this.btnUndo.Text = "Undo Changes";
-            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
-            // 
-            // lstObjects
-            // 
-            this.lstObjects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstObjects.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lstObjects.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstObjects.FormattingEnabled = true;
-            this.lstObjects.Location = new System.Drawing.Point(7, 20);
-            this.lstObjects.Name = "lstObjects";
-            this.lstObjects.Size = new System.Drawing.Size(187, 327);
-            this.lstObjects.TabIndex = 0;
-            this.lstObjects.Click += new System.EventHandler(this.lstObjects_Click);
-            // 
             // grpEditor
             // 
             this.grpEditor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
@@ -194,6 +194,15 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEditor.TabStop = false;
             this.grpEditor.Text = "Switch/Variable Editor";
             this.grpEditor.Visible = false;
+            // 
+            // lblId
+            // 
+            this.lblId.Location = new System.Drawing.Point(209, 20);
+            this.lblId.Name = "lblId";
+            this.lblId.Size = new System.Drawing.Size(69, 13);
+            this.lblId.TabIndex = 6;
+            this.lblId.Text = "1";
+            this.lblId.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // lblValue
             // 
@@ -289,15 +298,6 @@ namespace Intersect.Editor.Forms.Editors
             this.btnSave.TabIndex = 51;
             this.btnSave.Text = "Save";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // lblId
-            // 
-            this.lblId.Location = new System.Drawing.Point(209, 20);
-            this.lblId.Name = "lblId";
-            this.lblId.Size = new System.Drawing.Size(69, 13);
-            this.lblId.TabIndex = 6;
-            this.lblId.Text = "1";
-            this.lblId.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // frmSwitchVariable
             // 

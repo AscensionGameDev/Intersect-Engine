@@ -123,7 +123,7 @@ namespace Intersect.Editor.Classes
             this.lstProjectiles.Name = "lstProjectiles";
             this.lstProjectiles.Size = new System.Drawing.Size(191, 392);
             this.lstProjectiles.TabIndex = 1;
-            this.lstProjectiles.Click += new System.EventHandler(this.lstProjectiles_Click);
+            this.lstProjectiles.SelectedIndexChanged += new System.EventHandler(this.lstProjectiles_Click);
             this.lstProjectiles.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
             // grpSpawns

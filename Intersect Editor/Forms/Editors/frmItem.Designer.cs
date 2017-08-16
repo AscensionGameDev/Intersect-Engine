@@ -174,7 +174,7 @@ namespace Intersect.Editor.Forms
             this.lstItems.Name = "lstItems";
             this.lstItems.Size = new System.Drawing.Size(191, 444);
             this.lstItems.TabIndex = 1;
-            this.lstItems.Click += new System.EventHandler(this.lstItems_Click);
+            this.lstItems.SelectedIndexChanged += new System.EventHandler(this.lstItems_Click);
             this.lstItems.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
             // btnCancel

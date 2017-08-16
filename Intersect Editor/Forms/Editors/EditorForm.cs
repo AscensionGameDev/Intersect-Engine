@@ -8,6 +8,7 @@ namespace Intersect.Editor.Forms.Editors
 {
     public class EditorForm : Form
     {
+        private bool closing = false;
         protected EditorForm()
         {
             ApplyHooks();
@@ -17,7 +18,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             PacketHandler.GameObjectUpdatedDelegate = type =>
             {
-                if (IsDisposed) return;
+                if (IsDisposed || closing || Disposing) return;
                 var action = (Action<GameObjectType>) FireGameObjectUpdatedDelegate;
                 try
                 {
@@ -29,11 +30,17 @@ namespace Intersect.Editor.Forms.Editors
                     Log.Debug(e);
                 }
             };
+            this.Closing += EditorForm_Closing;
+        }
+
+        private void EditorForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            closing = true;
         }
 
         private void FireGameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (IsDisposed) return;
+            if (IsDisposed || closing || Disposing) return;
             GameObjectUpdatedDelegate(type);
         }
 

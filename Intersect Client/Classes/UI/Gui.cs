@@ -233,6 +233,7 @@ namespace Intersect_Client.Classes.UI
             var curPos = 0;
             var curLen = 1;
             var lastOk = 0;
+            var lastCut = 0;
             input = input.Replace("\r\n", "\n");
             float measured;
             string line;
@@ -253,6 +254,7 @@ namespace Intersect_Client.Classes.UI
 
                         case '\n':
                             myOutput.Add(input.Substring(curPos, curLen).Trim());
+                            lastSpace = 0;
                             curPos = curPos + curLen + 1;
                             curLen = 1;
                             break;
@@ -260,11 +262,13 @@ namespace Intersect_Client.Classes.UI
                 }
                 else
                 {
+                    if (lastOk == 0) lastOk = curLen - 1;
                     line = input.Substring(curPos, lastOk).Trim();
                     //Debug.WriteLine($"line={line}");
                     myOutput.Add(line);
-                    if (lastOk == 0) lastOk = curLen - 1;
                     curPos = curPos + lastOk;
+                    lastOk = 0;
+                    lastSpace = 0;
                     curLen = 1;
                 }
                 curLen++;

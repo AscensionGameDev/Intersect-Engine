@@ -120,7 +120,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lstCrafts.Name = "lstCrafts";
             this.lstCrafts.Size = new System.Drawing.Size(191, 366);
             this.lstCrafts.TabIndex = 1;
-            this.lstCrafts.Click += new System.EventHandler(this.lstCrafts_Click);
+            this.lstCrafts.SelectedIndexChanged += new System.EventHandler(this.lstCrafts_Click);
             this.lstCrafts.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
             // pnlContainer

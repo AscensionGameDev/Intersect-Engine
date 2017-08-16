@@ -508,7 +508,7 @@ namespace Intersect.Server.Classes.Entities
             var myclass = ClassBase.Lookup.Get<ClassBase>(Class);
             if (myclass != null)
             {
-                return (int) (myclass.BaseExp * Math.Pow(1 + (myclass.ExpIncrease / 100f) / 1, Level));
+                return (int) (myclass.BaseExp * Math.Pow(1 + (myclass.ExpIncrease / 100f) / 1, Level-1));
             }
             return 1000;
         }
@@ -3090,6 +3090,7 @@ namespace Intersect.Server.Classes.Entities
                     if (MyEvents[i].HoldingPlayer) return -5;
                 }
             }
+            //TODO Check if any events are blocking us
             return base.CanMove(moveDir);
         }
 

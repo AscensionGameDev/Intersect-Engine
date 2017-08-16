@@ -937,7 +937,8 @@ namespace Intersect.Server.Classes.Entities
                         CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
                             CallStack.Peek().CommandIndex].Ints[2],
                         CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
-                            CallStack.Peek().CommandIndex].Ints[3]);
+                            CallStack.Peek().CommandIndex].Ints[3] == 0 ? MyPlayer.Dir : CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
+                            CallStack.Peek().CommandIndex].Ints[3] -1);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetMoveRoute:

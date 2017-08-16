@@ -166,7 +166,7 @@ namespace Intersect.Editor.Forms
             this.lstNpcs.Name = "lstNpcs";
             this.lstNpcs.Size = new System.Drawing.Size(191, 496);
             this.lstNpcs.TabIndex = 1;
-            this.lstNpcs.Click += new System.EventHandler(this.lstNpcs_Click);
+            this.lstNpcs.SelectedIndexChanged += new System.EventHandler(this.lstNpcs_Click);
             this.lstNpcs.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
             // grpGeneral

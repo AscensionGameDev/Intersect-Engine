@@ -122,7 +122,7 @@ namespace Intersect.Editor.Classes
             this.lstResources.Name = "lstResources";
             this.lstResources.Size = new System.Drawing.Size(191, 405);
             this.lstResources.TabIndex = 1;
-            this.lstResources.Click += new System.EventHandler(this.lstResources_Click);
+            this.lstResources.SelectedIndexChanged += new System.EventHandler(this.lstResources_Click);
             this.lstResources.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
             // grpGeneral

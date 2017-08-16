@@ -245,7 +245,7 @@ namespace Intersect.Server.Classes.Entities
                 for (int i = 0; i < mapEntities.Count; i++)
                 {
                     Entity en = mapEntities[i];
-                    if (en.CurrentX == tile.GetX() && en.CurrentY == tile.GetY() && en.CurrentZ == CurrentZ &&
+                    if (en != null && en.CurrentX == tile.GetX() && en.CurrentY == tile.GetY() && en.CurrentZ == CurrentZ &&
                         en.Passable == 0)
                     {
                         //Set a target if a projectile
@@ -269,9 +269,21 @@ namespace Intersect.Server.Classes.Entities
                                 return (int) EntityTypes.Resource;
                             }
                         }
-                        else if (en.GetType() == typeof(EventPageInstance))
+                    }
+                }
+                //If this is an npc or other event.. if any global page exists that isn't passable then don't walk here!
+                if (this.GetType() != typeof(Player))
+                {
+                    foreach (var evt in MapInstance.Lookup.Get<MapInstance>(tile.GetMap()).GlobalEventInstances)
+                    {
+                        foreach (var en in evt.Value.GlobalPageInstance)
                         {
-                            return (int) EntityTypes.Event;
+                            if (en != null && en.CurrentX == tile.GetX() && en.CurrentY == tile.GetY() &&
+                                en.CurrentZ == CurrentZ &&
+                                en.Passable == 0)
+                            {
+                                return (int) EntityTypes.Event;
+                            }
                         }
                     }
                 }

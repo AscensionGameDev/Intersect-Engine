@@ -346,7 +346,7 @@ namespace Intersect_Client.Classes.Maps
         {
             foreach (Entity en in LocalEntities.Values)
             {
-                en.ClearAnimations();
+                en.ClearAnimations(null);
             }
             foreach (MapAnimationInstance anim in LocalAnimations)
             {

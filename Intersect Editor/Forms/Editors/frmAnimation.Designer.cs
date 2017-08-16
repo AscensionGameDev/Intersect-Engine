@@ -148,7 +148,7 @@ namespace Intersect.Editor.Forms
             this.lstAnimations.Name = "lstAnimations";
             this.lstAnimations.Size = new System.Drawing.Size(191, 509);
             this.lstAnimations.TabIndex = 1;
-            this.lstAnimations.Click += new System.EventHandler(this.lstAnimations_Click);
+            this.lstAnimations.SelectedIndexChanged += new System.EventHandler(this.lstAnimations_Click);
             this.lstAnimations.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
             // grpGeneral

@@ -600,23 +600,6 @@ namespace Intersect_Client.Classes.Entities
             }
             if (GetRealLocation(ref x, ref y, ref map))
             {
-                foreach (MapInstance eventMap in MapInstance.Lookup.Values)
-                {
-                    foreach (var en in eventMap.LocalEntities)
-                    {
-                        if (en.Value == null) continue;
-                        if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
-                        {
-                            if (en.Value.GetType() == typeof(Event))
-                            {
-                                //Talk to Event
-                                PacketSender.SendActivateEvent(en.Value.CurrentMap, en.Key);
-                                AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
-                                return true;
-                            }
-                        }
-                    }
-                }
                 foreach (var en in Globals.Entities)
                 {
                     if (en.Value == null) continue;
@@ -626,6 +609,23 @@ namespace Intersect_Client.Classes.Entities
                         {
                             //ATTACKKKKK!!!
                             PacketSender.SendAttack(en.Key);
+                            AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+                            return true;
+                        }
+                    }
+                }
+            }
+            foreach (MapInstance eventMap in MapInstance.Lookup.Values)
+            {
+                foreach (var en in eventMap.LocalEntities)
+                {
+                    if (en.Value == null) continue;
+                    if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                    {
+                        if (en.Value.GetType() == typeof(Event))
+                        {
+                            //Talk to Event
+                            PacketSender.SendActivateEvent(en.Value.CurrentMap, en.Key);
                             AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
                             return true;
                         }

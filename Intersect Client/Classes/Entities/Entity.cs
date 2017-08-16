@@ -192,14 +192,37 @@ namespace Intersect_Client.Classes.Entities
             Dir = bf.ReadInteger();
             Passable = bf.ReadInteger();
             HideName = bf.ReadInteger();
-            ClearAnimations();
+            var animsToClear = new List<AnimationInstance>();
+            var animsToAdd = new List<AnimationBase>();
             int animCount = bf.ReadInteger();
             for (int i = 0; i < animCount; i++)
             {
                 var anim = AnimationBase.Lookup.Get<AnimationBase>(bf.ReadInteger());
                 if (anim != null)
-                    Animations.Add(new AnimationInstance(anim, true));
+                    animsToAdd.Add(anim);
             }
+            foreach (var anim in Animations)
+            {
+                animsToClear.Add(anim);
+                if (!anim.InfiniteLoop)
+                {
+                    animsToClear.Remove(anim);
+                }
+                else
+                {
+                    foreach (var addedAnim in animsToAdd)
+                    {
+                        if (addedAnim.Index == anim.MyBase.Index)
+                        {
+                            animsToClear.Remove(anim);
+                            animsToAdd.Remove(addedAnim);
+                            break;
+                        }
+                    }
+                }
+            }
+            ClearAnimations(animsToClear);
+            AddAnimations(animsToAdd);
             for (var i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 MaxVital[i] = bf.ReadInteger();
@@ -238,15 +261,24 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        public void ClearAnimations()
+        public void AddAnimations(List<AnimationBase> anims)
         {
-            if (Animations.Count > 0)
+            foreach (var anim in anims)
             {
-                for (int i = 0; i < Animations.Count; i++)
+                Animations.Add(new AnimationInstance(anim,true));
+            }
+        }
+
+        public void ClearAnimations(List<AnimationInstance> anims)
+        {
+            if (anims == null) anims = Animations;
+            if (anims.Count > 0)
+            {
+                for (int i = 0; i < anims.Count; i++)
                 {
-                    Animations[i].Dispose();
+                    anims[i].Dispose();
+                    Animations.Remove(anims[i]);
                 }
-                Animations.Clear();
             }
         }
 
@@ -261,7 +293,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 RenderList.Remove(this);
             }
-            ClearAnimations();
+            ClearAnimations(null);
             _disposed = true;
         }
 

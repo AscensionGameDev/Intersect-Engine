@@ -1682,7 +1682,7 @@ namespace Intersect.Editor.Forms
             this.lstSpells.Name = "lstSpells";
             this.lstSpells.Size = new System.Drawing.Size(191, 444);
             this.lstSpells.TabIndex = 1;
-            this.lstSpells.Click += new System.EventHandler(this.lstSpells_Click);
+            this.lstSpells.SelectedIndexChanged += new System.EventHandler(this.lstSpells_Click);
             this.lstSpells.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
             // frmSpell
