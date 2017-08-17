@@ -34,11 +34,13 @@ namespace Intersect_Client.Classes.Networking
 
         private static void TryConnect()
         {
+            _connected = false;
             MySocket.Connect(Globals.Database.ServerHost, Globals.Database.ServerPort);
         }
 
         private static void MySocket_OnConnectionFailed()
         {
+            _connected = false;
             TryConnect();
         }
 
@@ -74,7 +76,17 @@ namespace Intersect_Client.Classes.Networking
         private static void MySocket_OnDisconnected()
         {
             //Not sure how to handle this yet!
-            Globals.IsRunning = false;
+            _connected = false;
+            if (Globals.GameState == GameStates.InGame || Globals.GameState == GameStates.Loading)
+            {
+                Globals.IsRunning = false;
+            }
+            else
+            {
+                MySocket.Disconnect("");
+                TryConnect();
+            }
+
         }
 
         private static void MySocket_OnConnected()

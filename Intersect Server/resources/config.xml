@@ -4,7 +4,7 @@
 <Config>
   <Language>English</Language>
   <GameName>Intersect</GameName>
-  <ServerPort>4500</ServerPort>
+  <ServerPort>5400</ServerPort>
   <GameObjects>
     <!--You can increase these if you want, but you shouldn't unless you need to.-->
     <MaxNpcDrops>10</MaxNpcDrops>

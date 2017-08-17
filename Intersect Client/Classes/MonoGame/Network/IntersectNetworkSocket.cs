@@ -18,15 +18,20 @@ namespace Intersect.Client.Classes.MonoGame.Network
 
         public IntersectNetworkSocket()
         {
+            Log.Global.AddOutput(new ConsoleOutput());
         }
 
         public override void Connect(string host, int port)
         {
+            if (ClientLidgrenNetwork != null)
+            {
+                ClientLidgrenNetwork.Close();
+                ClientLidgrenNetwork = null;
+            }
             if (ClientLidgrenNetwork == null)
             {
-                Log.Global.AddOutput(new ConsoleOutput());
                 var config = new NetworkConfiguration(Globals.Database.ServerHost,
-                    (ushort) Globals.Database.ServerPort);
+                    (ushort)Globals.Database.ServerPort);
                 var assembly = Assembly.GetExecutingAssembly();
                 using (var stream = assembly.GetManifestResourceStream("Intersect.Client.public-intersect.bek"))
                 {
@@ -38,6 +43,10 @@ namespace Intersect.Client.Classes.MonoGame.Network
                 if (ClientLidgrenNetwork != null)
                 {
                     ClientLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = PacketHandler.HandlePacket;
+                    ClientLidgrenNetwork.OnDisconnected = delegate(INetworkLayerInterface sender, IConnection connection)
+                    {
+                        this.OnDisconnected();
+                    };
                     if (!ClientLidgrenNetwork.Connect())
                     {
                         Log.Error("An error occurred while attempting to connect.");

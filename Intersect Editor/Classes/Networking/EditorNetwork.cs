@@ -31,6 +31,7 @@ namespace Intersect.Editor.Classes
                 }
 
                 EditorLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = PacketHandler.HandlePacket;
+                EditorLidgrenNetwork.OnDisconnected = HandleDc;
             }
 
             if (!Connected)
@@ -71,6 +72,7 @@ namespace Intersect.Editor.Classes
             try
             {
                 EditorLidgrenNetwork.Close();
+                EditorLidgrenNetwork = null;
             }
             catch (Exception)
             {
@@ -78,8 +80,9 @@ namespace Intersect.Editor.Classes
             }
         }
 
-        public static void HandleDc()
+        public static void HandleDc(INetworkLayerInterface netInterface,IConnection netConnection)
         {
+            DestroyNetwork();
             if (Globals.MainForm != null && Globals.MainForm.Visible)
             {
                 if (Globals.MainForm.DisconnectDelegate != null)
@@ -88,12 +91,11 @@ namespace Intersect.Editor.Classes
                     Globals.MainForm.DisconnectDelegate = null;
                 }
             }
-            /*else if (Globals.LoginForm.Visible)
+            else if (Globals.LoginForm.Visible)
             {
-                _connected = false;
                 Connecting = false;
                 InitNetwork();
-            }*/
+            }
             else
             {
                 MessageBox.Show(@"Disconnected!");
@@ -128,7 +130,7 @@ namespace Intersect.Editor.Classes
             }
             catch (Exception)
             {
-                HandleDc();
+                HandleDc(null,null);
             }
         }
     }

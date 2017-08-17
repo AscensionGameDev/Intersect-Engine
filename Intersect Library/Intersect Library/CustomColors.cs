@@ -91,6 +91,7 @@ namespace Intersect
         public static Color Experience = Color.White;
         public static Color Crafted = Color.Green;
         public static Color RequestSent = Color.Yellow;
+        public static Color ChatBubbleTextColor = Color.Black;
 
         public static void Load()
         {

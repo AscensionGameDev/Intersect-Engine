@@ -400,7 +400,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 _fps = _fpsCount;
                 _fpsCount = 0;
                 _fpsTimer = Globals.System.GetTimeMS() + 1000;
-                _gameWindow.Title = Strings.Get("main", "gamename") + " - " + _fps;
+                _gameWindow.Title = Strings.Get("main", "gamename");
             }
             for (int i = 0; i < AllTextures.Count; i++)
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using Intersect;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
@@ -107,7 +108,7 @@ namespace Intersect_Client.Classes.Entities
                     GameGraphics.Renderer.DrawString(_text[i], GameGraphics.GameFont,
                         (int) (x - _textureBounds.Width / 2 + (_textureBounds.Width - textSize.X) / 2f),
                         (int) ((y) - _textureBounds.Height - yoffset + 8 + (i * 16)), 1,
-                        IntersectClientExtras.GenericClasses.Color.Black, true, null);
+                        IntersectClientExtras.GenericClasses.Color.FromArgb(CustomColors.ChatBubbleTextColor.ToArgb()), true, null);
                 }
             }
             yoffset += _textureBounds.Height;
