@@ -547,14 +547,17 @@ namespace Intersect_Client.Classes.UI.Game
                         var _paperdollTex =
                             Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll, paperdoll);
                         _paperdollPanels[z].Texture = _paperdollTex;
-                        _paperdollPanels[z].SetTextureRect(0, 0,
-                            _paperdollPanels[z].Texture.GetWidth() / 4,
-                            _paperdollPanels[z].Texture.GetHeight() / 4);
-                        _paperdollPanels[z].SetSize(_paperdollPanels[z].Texture.GetWidth() / 4,
-                            _paperdollPanels[z].Texture.GetHeight() / 4);
-                        _paperdollPanels[z].SetPosition(
-                            _entityFaceContainer.Width / 2 - _paperdollPanels[z].Width / 2,
-                            _entityFaceContainer.Height / 2 - _paperdollPanels[z].Height / 2);
+                        if (_paperdollTex != null)
+                        {
+                            _paperdollPanels[z].SetTextureRect(0, 0,
+                                _paperdollPanels[z].Texture.GetWidth() / 4,
+                                _paperdollPanels[z].Texture.GetHeight() / 4);
+                            _paperdollPanels[z].SetSize(_paperdollPanels[z].Texture.GetWidth() / 4,
+                                _paperdollPanels[z].Texture.GetHeight() / 4);
+                            _paperdollPanels[z].SetPosition(
+                                _entityFaceContainer.Width / 2 - _paperdollPanels[z].Width / 2,
+                                _entityFaceContainer.Height / 2 - _paperdollPanels[z].Height / 2);
+                        }
                         _paperdollPanels[z].Show();
                         _paperdollTextures[z] = paperdoll;
                     }

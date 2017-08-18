@@ -10,7 +10,7 @@ namespace Intersect
         public static string Language = "English";
 
         public static string GameName = "Intersect";
-        public static ushort ServerPort = 4500;
+        public static ushort ServerPort = 5400;
 
         //Maxes
         public static int MaxNpcDrops = 10;

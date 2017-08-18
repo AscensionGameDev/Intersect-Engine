@@ -13,6 +13,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
         //Content
         private ScrollControl _creditsContent;
+        private RichLabel _richLabel;
 
         //Parent
         private Label _creditsHeader;
@@ -39,22 +40,20 @@ namespace Intersect_Client.Classes.UI.Menu
             _creditsContent.EnableScroll(false, true);
 
             var creditsParser = new CreditsParser();
-            var richLabel = new RichLabel(_creditsContent, "CreditsLabel");
-            richLabel.SetSize(512, 393 - 35);
+            _richLabel = new RichLabel(_creditsContent, "CreditsLabel");
             foreach (var line in creditsParser.Credits)
             {
                 if (line.text.Trim().Length == 0)
                 {
-                    richLabel.AddLineBreak();
+                    _richLabel.AddLineBreak();
                 }
                 else
                 {
-                    richLabel.AddText(line.text, new Color(line.clr.A, line.clr.R, line.clr.G, line.clr.B),
+                    _richLabel.AddText(line.text, new Color(line.clr.A, line.clr.R, line.clr.G, line.clr.B),
                         line.alignment, GameContentManager.Current.GetFont(line.font, line.size));
-                    richLabel.AddLineBreak();
+                    _richLabel.AddLineBreak();
                 }
             }
-            richLabel.SizeToChildren(false, true);
 
             //Back Button
             _backBtn = new Button(_creditsWindow, "BackButton");
@@ -81,6 +80,8 @@ namespace Intersect_Client.Classes.UI.Menu
         public void Show()
         {
             _creditsWindow.IsHidden = false;
+            _richLabel.Width = _creditsContent.Width;
+            _richLabel.SizeToChildren(false, true);
         }
     }
 }

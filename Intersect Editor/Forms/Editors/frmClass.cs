@@ -156,7 +156,7 @@ namespace Intersect.Editor.Forms
                 //Combat
                 nudDamage.Value = _editorItem.Damage;
                 nudCritChance.Value = _editorItem.CritChance;
-                nudScaling.Value = _editorItem.Scaling / 100;
+                nudScaling.Value = _editorItem.Scaling;
                 cmbDamageType.SelectedIndex = _editorItem.DamageType;
                 cmbScalingStat.SelectedIndex = _editorItem.ScalingStat;
                 cmbAttackAnimation.SelectedIndex =
@@ -796,7 +796,7 @@ namespace Intersect.Editor.Forms
 
         private void nudScaling_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Scaling = (int) (nudScaling.Value * 100);
+            _editorItem.Scaling = (int) (nudScaling.Value);
         }
 
         private void nudX_ValueChanged(object sender, EventArgs e)

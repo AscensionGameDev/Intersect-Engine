@@ -48,7 +48,7 @@ namespace Intersect.Editor.Classes
                     writer.WriteStartElement("Config");
                     writer.WriteElementString("Language", "English");
                     writer.WriteElementString("Host", "localhost");
-                    writer.WriteElementString("Port", "4500");
+                    writer.WriteElementString("Port", "5400");
                     writer.WriteElementString("RenderCache", "true");
                     //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
                     writer.WriteElementString("MenuBGM", "");

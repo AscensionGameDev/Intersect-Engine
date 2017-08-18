@@ -666,7 +666,7 @@ namespace Intersect.Server.Classes.Core
                 Client client = GetPlayerClient(username);
                 client.Power = power;
                 SaveUser(client);
-                PacketSender.SendPlayerMsg(client, Strings.Get("player", "powermodified"), client.Entity.MyName);
+                PacketSender.SendPlayerMsg(client, Strings.Get("player", "powerchanged"), client.Entity.MyName);
                 Console.WriteLine(Strings.Get("commandoutput", "powerlevel", username, power));
             }
             else

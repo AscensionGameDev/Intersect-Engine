@@ -240,7 +240,7 @@ namespace Intersect.Editor.Forms
                 nudSpd.Value = _editorItem.StatsGiven[4];
                 nudDamage.Value = _editorItem.Damage;
                 nudCritChance.Value = _editorItem.CritChance;
-                nudScaling.Value = _editorItem.Scaling / 100;
+                nudScaling.Value = _editorItem.Scaling;
                 nudRange.Value = _editorItem.StatGrowth;
                 chkBound.Checked = Convert.ToBoolean(_editorItem.Bound);
                 chkStackable.Checked = Convert.ToBoolean(_editorItem.Stackable);
@@ -619,7 +619,7 @@ namespace Intersect.Editor.Forms
 
         private void nudScaling_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Scaling = (int) nudScaling.Value * 100;
+            _editorItem.Scaling = (int) nudScaling.Value;
         }
 
         private void nudDamage_ValueChanged(object sender, EventArgs e)

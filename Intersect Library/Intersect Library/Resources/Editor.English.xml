@@ -467,7 +467,7 @@ Tick timer saved in server config.xml.</string>
 		<string id="damagetype1">Magic</string>
 		<string id="damagetype2">True</string>
 		<string id="scalingstat">Scaling Stat:</string>
-		<string id="scalingamount">Scaling Amount:</string>
+		<string id="scalingamount">Scaling Amount (%):</string>
 		<string id="attackanimation">Attack Animation:</string>
 		
 		<string id="leveling">Leveling Up</string>
@@ -605,7 +605,7 @@ Tick timer saved in server config.xml.</string>
 		<string id="damagetype1">Magic</string>
 		<string id="damagetype2">True</string>
 		<string id="scalingstat">Scaling Stat:</string>
-		<string id="scalingamount">Scaling Amount:</string>
+		<string id="scalingamount">Scaling Amount (%):</string>
 		<string id="attackanimation">Attack Animation:</string>
 		<string id="projectile">Projectile:</string>
 		<string id="tooltype">Tool Type:</string>
@@ -697,7 +697,7 @@ Tick timer saved in server config.xml.</string>
 		<string id="damagetype1">Magic</string>
 		<string id="damagetype2">True</string>
 		<string id="scalingstat">Scaling Stat:</string>
-		<string id="scalingamount">Scaling Amount:</string>
+		<string id="scalingamount">Scaling Amount (%):</string>
 		<string id="attackanimation">Attack Animation:</string>
 		
 		<string id="save">Save</string>
@@ -975,7 +975,7 @@ Tick timer saved in server config.xml.</string>
 		<string id="damagetype1">Magic</string>
 		<string id="damagetype2">True</string>
 		<string id="scalingstat">Scaling Stat:</string>
-		<string id="scalingamount">Scaling Amount:</string>
+		<string id="scalingamount">Scaling Amount (%):</string>
 		
 		<string id="hotdot">Heal/Damage Over Time</string>
 		<string id="ishotdot">HOT/DOT?</string>

@@ -16,7 +16,7 @@ namespace Intersect.Editor.Classes
         //Network Variables
         public static string ServerHost = "localhost";
 
-        public static int ServerPort = 4500;
+        public static int ServerPort = 5400;
         public static int ReconnectTime = 3000;
 
         //Editor Loop Variables

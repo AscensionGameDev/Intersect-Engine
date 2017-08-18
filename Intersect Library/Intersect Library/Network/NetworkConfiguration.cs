@@ -5,7 +5,7 @@ namespace Intersect.Network
     public class NetworkConfiguration
     {
         public NetworkConfiguration()
-            : this("localhost", 4500)
+            : this("localhost", 5400)
         {
         }
 
@@ -28,7 +28,7 @@ namespace Intersect.Network
 
             if (port < 26 || port == 53)
             {
-                Port = 4500;
+                Port = 5400;
             }
         }
 
