@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Intersect;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Conditions;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Conditions;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects
 {
     public enum QuestProgress
     {
@@ -25,33 +24,37 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
     {
         //General
         public new const string DATABASE_TABLE = "quests";
+
         public new const GameObject OBJECT_TYPE = GameObject.Quest;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public string BeforeDesc = "";
         public string EndDesc = "";
         public EventBase EndEvent = new EventBase(-1, 0, 0, true);
         public string InProgressDesc = "";
-        public byte LogAfterComplete = 0;
-        public byte LogBeforeOffer = 0;
+        public byte LogAfterComplete;
+        public byte LogBeforeOffer;
 
         public string Name = "New Quest";
 
         //Tasks
-        public int NextTaskID = 0;
+        public int NextTaskID;
 
         //Requirements
         //I am cheating here and using event commands as conditional branches instead of having a lot of duplicate code.
         public List<EventCommand> OldRequirements = new List<EventCommand>();
-        public byte Quitable = 0;
 
-        public byte Repeatable = 0;
+        public byte Quitable;
+
+        public byte Repeatable;
 
         //Requirements
         public ConditionLists Requirements = new ConditionLists();
+
         public string StartDesc = "";
 
         //Events
         public EventBase StartEvent = new EventBase(-1, 0, 0, true);
+
         public List<QuestTask> Tasks = new List<QuestTask>();
 
         public QuestBase(int id) : base(id)
@@ -248,11 +251,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         public class QuestTask
         {
             public EventBase CompletionEvent = new EventBase(-1, 0, 0, true);
-            public int Data1 = 0;
-            public int Data2 = 0;
+            public int Data1;
+            public int Data2;
             public string Desc = "";
-            public int Id = 0;
-            public int Objective = 0;
+            public int Id;
+            public int Objective;
 
             public QuestTask(int id)
             {

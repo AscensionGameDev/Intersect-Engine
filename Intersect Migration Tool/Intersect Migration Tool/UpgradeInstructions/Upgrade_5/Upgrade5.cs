@@ -1,23 +1,23 @@
 ﻿using System;
-using Intersect;
 using Intersect.Logging;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Events;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Maps;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
+using Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib;
+using Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects;
+using Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Events;
+using Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Maps;
+using Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 using Mono.Data.Sqlite;
-using GameObject = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObject;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_5
 {
     public class Upgrade5
     {
         //GameObject Table Constants
         private const string GAME_OBJECT_ID = "id";
+
         private const string GAME_OBJECT_DELETED = "deleted";
         private const string GAME_OBJECT_DATA = "data";
         private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
+        private object _dbLock = new object();
 
         public Upgrade5(SqliteConnection connection)
         {
@@ -301,7 +301,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5
             {
                 var tableName = GetGameObjectTable(type);
                 ClearGameObjects(type);
-                var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" + GAME_OBJECT_DELETED +
+                var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" +
+                            GAME_OBJECT_DELETED +
                             ";";
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
@@ -326,7 +327,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5
             }
             if (nullIssues != "")
             {
-                throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine + nullIssues));
+                throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine +
+                                     nullIssues));
             }
         }
 

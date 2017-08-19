@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_ChangeItems : UserControl
     {
@@ -21,9 +21,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _currentPage = refPage;
             InitLocalization();
             cmbItem.Items.Clear();
-            cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
+            cmbItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
             cmbAction.SelectedIndex = _myCommand.Ints[0];
-            cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _myCommand.Ints[1]);
+            cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, _myCommand.Ints[1]);
             if (_myCommand.Ints[2] < 1)
             {
                 nudGiveTakeAmount.Value = 1;
@@ -51,7 +51,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             _myCommand.Ints[0] = cmbAction.SelectedIndex;
-            _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Item, cmbItem.SelectedIndex);
+            _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObjectType.Item, cmbItem.SelectedIndex);
             _myCommand.Ints[2] = (int) nudGiveTakeAmount.Value;
             if (_myCommand.Ints[4] == 0)
                 // command.Ints[4, and 5] are reserved for when the action succeeds or fails

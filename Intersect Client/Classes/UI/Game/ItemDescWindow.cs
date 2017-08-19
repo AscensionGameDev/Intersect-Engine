@@ -1,5 +1,6 @@
 ﻿using System;
 using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using IntersectClientExtras.File_Management;
@@ -23,63 +24,33 @@ namespace Intersect_Client.Classes.UI.Game
             else
                 title = titleOverride;
 
-            _descWindow = new ImagePanel(Gui.GameUI.GameCanvas);
-            _descWindow.SetSize(255, 260);
-            _descWindow.Margin = Margin.Zero;
-            _descWindow.Padding = new Padding(8, 5, 9, 11);
-            _descWindow.SetPosition(x, y);
-            _descWindow.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
-                "itemdescpanel.png");
+            _descWindow = new ImagePanel(Gui.GameUI.GameCanvas, "ItemDescWindow");
 
-            y = 12;
-
-            var item = ItemBase.GetItem(itemnum);
+            var item = ItemBase.Lookup.Get<ItemBase>(itemnum);
             if (item != null)
             {
-                var innery = 8;
-                ImagePanel icon = new ImagePanel(_descWindow);
-                icon.SetSize(32, 32);
-                icon.SetPosition(240 - 4 - 32, innery);
-                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                    item.Pic);
+                ImagePanel icon = new ImagePanel(_descWindow, "ItemIcon");
+                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
                 if (itemTex != null)
                 {
                     icon.Texture = itemTex;
                 }
 
-                Label itemName = new Label(_descWindow);
-                itemName.SetPosition(4, innery);
+                Label itemName = new Label(_descWindow, "ItemNameLabel");
                 itemName.Text = title;
-                itemName.SetTextColor(IntersectClientExtras.GenericClasses.Color.White, Label.ControlState.Normal);
-                itemName.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
 
-                innery += 18;
                 if (amount > 1)
                 {
                     itemName.Text += " " + Strings.Get("itemdesc", "quantity", amount);
                 }
 
-                Align.CenterHorizontally(itemName);
+                itemName.AddAlignment(Alignments.CenterH);
 
-                Label itemType = new Label(_descWindow);
-                itemType.SetPosition(4, innery);
-                itemType.SetTextColor(IntersectClientExtras.GenericClasses.Color.White, Label.ControlState.Normal);
-                itemType.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 10);
-                innery += 16;
-
-                if (valueLabel != "")
-                {
-                    Label itemValue = new Label(_descWindow);
-                    itemValue.SetPosition(4, innery);
-                    itemValue.SetText(valueLabel);
-                    itemValue.SetTextColor(IntersectClientExtras.GenericClasses.Color.White, Label.ControlState.Normal);
-                    Align.CenterHorizontally(itemValue);
-                    innery += 12;
-                }
-
+                Label itemType = new Label(_descWindow, "ItemTypeLabel");
+                Label itemValue = new Label(_descWindow, "ItemValueLabel");
                 itemType.Text = Strings.Get("itemdesc", "itemtype" + item.ItemType);
+                itemValue.SetText(valueLabel);
 
-                y += innery + 2;
                 if (item.ItemType == (int) ItemTypes.Equipment)
                 {
                     itemType.Text = Options.EquipmentSlots[item.Data1];
@@ -88,67 +59,48 @@ namespace Intersect_Client.Classes.UI.Game
                         itemType.Text += " - " + Strings.Get("itemdesc", "2hand");
                     }
                 }
-                RichLabel itemDesc = new RichLabel(_descWindow);
-                itemDesc.SetPosition(_descWindow.Padding.Left + 4, y);
-                itemDesc.Width = 240 - 4;
-                //itemDesc.SetBounds(4, y, 180, 10);
+                RichLabel itemDesc = new RichLabel(_descWindow, "ItemDescription");
+                Gui.LoadRootUIData(_descWindow,
+                    "InGame.xml"); //Load this up now so we know what color to make the text when filling out the desc
                 if (item.Desc.Length > 0)
                 {
-                    itemDesc.AddText(Strings.Get("itemdesc", "desc", item.Desc),
-                        IntersectClientExtras.GenericClasses.Color.White);
+                    itemDesc.AddText(Strings.Get("itemdesc", "desc", item.Desc), itemDesc.RenderColor);
+                    itemDesc.AddLineBreak();
+                    itemDesc.AddLineBreak();
                 }
-                itemDesc.SizeToChildren(false, true);
-
-                y += itemDesc.Height + 8;
-                int y1 = y;
 
                 string stats = "";
                 if (item.ItemType == (int) ItemTypes.Equipment)
                 {
-                    RichLabel itemStats = new RichLabel(_descWindow);
-                    itemStats.SetPosition(_descWindow.Padding.Left + 4, y);
-                    itemStats.Width = 240;
                     stats = Strings.Get("itemdesc", "bonuses");
-                    itemStats.AddText(stats, IntersectClientExtras.GenericClasses.Color.White);
-                    itemStats.AddLineBreak();
+                    itemDesc.AddText(stats, itemDesc.RenderColor);
+                    itemDesc.AddLineBreak();
                     if (item.ItemType == (int) ItemTypes.Equipment && item.Data1 == Options.WeaponIndex)
                     {
                         stats = Strings.Get("itemdesc", "damage", item.Damage);
-                        itemStats.AddText(stats, IntersectClientExtras.GenericClasses.Color.White);
-                        itemStats.AddLineBreak();
+                        itemDesc.AddText(stats, itemDesc.RenderColor);
+                        itemDesc.AddLineBreak();
                     }
                     if (StatBuffs != null)
                     {
                         for (int i = 0; i < Options.MaxStats; i++)
                         {
-                            stats = Strings.Get("combat", "stat" + i) + ": " +
-                                    (item.StatsGiven[i] + StatBuffs[i]) + "";
-                            itemStats.AddText(stats, IntersectClientExtras.GenericClasses.Color.White);
-                            itemStats.AddLineBreak();
+                            stats = Strings.Get("combat", "stat" + i) + ": " + (item.StatsGiven[i] + StatBuffs[i]) + "";
+                            itemDesc.AddText(stats, itemDesc.RenderColor);
+                            itemDesc.AddLineBreak();
                         }
                     }
-
-                    itemStats.SizeToChildren(false, true);
-                    y += itemStats.Height + 4;
                 }
-
-                if (y1 > y)
-                {
-                    y = y1;
-                }
-
-                y += 6;
                 if (item.ItemType == (int) ItemTypes.Equipment && item.Data2 > 0 && item.Data3 > 0)
                 {
-                    Label bonusLabel = new Label(_descWindow);
-                    bonusLabel.SetPosition(_descWindow.Padding.Left + 4, y);
-                    bonusLabel.TextColorOverride = IntersectClientExtras.GenericClasses.Color.White;
-                    bonusLabel.Text = Strings.Get("itemdesc", "effect", item.Data3,
-                        Strings.Get("itemdesc", "effect" + (item.Data2 - 1)));
-                    y += 24;
+                    itemDesc.AddText(
+                        Strings.Get("itemdesc", "effect", item.Data3,
+                            Strings.Get("itemdesc", "effect" + (item.Data2 - 1))), itemDesc.RenderColor);
                 }
-
-                Align.CenterHorizontally(itemType);
+                //Load Again for positioning purposes.
+                Gui.LoadRootUIData(_descWindow, "InGame.xml");
+                itemDesc.SizeToChildren(false, true);
+                _descWindow.SetPosition(x, y);
             }
         }
 

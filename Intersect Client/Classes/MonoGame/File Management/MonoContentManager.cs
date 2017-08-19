@@ -17,15 +17,18 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
 {
     public class MonoContentManager : GameContentManager
     {
-        private bool downloadCompleted = false;
+        private bool downloadCompleted;
         private string errorString = "";
+
         private frmLoadingContent loadingForm;
+
         //Initial Resource Downloading
         private string resourceRelayer = "http://ascensiongamedev.com/resources/Intersect/findResources.php";
 
         public MonoContentManager()
         {
             ServicePointManager.Expect100Continue = false;
+            Init(this);
             if (!Directory.Exists("resources"))
             {
                 loadingForm = new frmLoadingContent();
@@ -90,7 +93,8 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             }
         }
 
-        private void Client_DownloadFileCompleted(Object sender, global::System.ComponentModel.AsyncCompletedEventArgs e)
+        private void Client_DownloadFileCompleted(object sender,
+            global::System.ComponentModel.AsyncCompletedEventArgs e)
         {
             downloadCompleted = true;
             if (!e.Cancelled && e.Error == null)
@@ -119,7 +123,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             }
         }
 
-        private void Client_DownloadProgressChanged(Object sender, DownloadProgressChangedEventArgs e)
+        private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             loadingForm.SetProgress(e.ProgressPercentage);
         }

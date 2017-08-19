@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Server", "Intersect Server\Intersect Server.csproj", "{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Library", "Intersect Library\Intersect Library\Intersect Library.csproj", "{BC304B43-1F2C-4454-9EDC-48F47357CA94}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect (Core)", "Intersect Library\Intersect Library\Intersect (Core).csproj", "{BC304B43-1F2C-4454-9EDC-48F47357CA94}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Client", "Intersect Client\Intersect Client.csproj", "{2240F3DD-3694-4606-B181-F204CBBCB971}"
 EndProject
@@ -13,52 +13,131 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Editor", "Interse
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Migration Tool", "Intersect Migration Tool\Intersect Migration Tool\Intersect Migration Tool.csproj", "{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Network", "Intersect.Network\Intersect.Network.csproj", "{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Utilities", "Intersect.Utilities\Intersect.Utilities.csproj", "{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
+		Diagnostic|Any CPU = Diagnostic|Any CPU
+		Diagnostic|x86 = Diagnostic|x86
 		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
+		Tespia|Any CPU = Tespia|Any CPU
+		Tespia|x86 = Tespia|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Debug|x86.ActiveCfg = Debug|x86
 		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Debug|x86.Build.0 = Debug|x86
+		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Diagnostic|Any CPU.ActiveCfg = Diagnostic|x64
+		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Diagnostic|Any CPU.Build.0 = Diagnostic|Any CPU
+		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Diagnostic|x86.ActiveCfg = Diagnostic|x86
+		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Diagnostic|x86.Build.0 = Diagnostic|x86
 		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Release|x86.ActiveCfg = Release|x86
 		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Release|x86.Build.0 = Release|x86
+		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Tespia|Any CPU.ActiveCfg = Tespia|x64
+		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Tespia|Any CPU.Build.0 = Tespia|Any CPU
+		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Tespia|x86.ActiveCfg = Tespia|x86
+		{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}.Tespia|x86.Build.0 = Tespia|x86
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Debug|x86.Build.0 = Debug|Any CPU
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Diagnostic|Any CPU.ActiveCfg = Diagnostic|Any CPU
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Diagnostic|Any CPU.Build.0 = Diagnostic|Any CPU
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Diagnostic|x86.ActiveCfg = Diagnostic|Any CPU
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Diagnostic|x86.Build.0 = Diagnostic|Any CPU
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Release|x86.ActiveCfg = Release|Any CPU
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Release|x86.Build.0 = Release|Any CPU
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Tespia|Any CPU.ActiveCfg = Tespia|Any CPU
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Tespia|Any CPU.Build.0 = Tespia|Any CPU
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Tespia|x86.ActiveCfg = Tespia|Any CPU
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Tespia|x86.Build.0 = Tespia|Any CPU
 		{2240F3DD-3694-4606-B181-F204CBBCB971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2240F3DD-3694-4606-B181-F204CBBCB971}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2240F3DD-3694-4606-B181-F204CBBCB971}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{2240F3DD-3694-4606-B181-F204CBBCB971}.Debug|x86.Build.0 = Debug|Any CPU
+		{2240F3DD-3694-4606-B181-F204CBBCB971}.Diagnostic|Any CPU.ActiveCfg = Diagnostic|Any CPU
+		{2240F3DD-3694-4606-B181-F204CBBCB971}.Diagnostic|Any CPU.Build.0 = Diagnostic|Any CPU
+		{2240F3DD-3694-4606-B181-F204CBBCB971}.Diagnostic|x86.ActiveCfg = Diagnostic|Any CPU
+		{2240F3DD-3694-4606-B181-F204CBBCB971}.Diagnostic|x86.Build.0 = Diagnostic|Any CPU
 		{2240F3DD-3694-4606-B181-F204CBBCB971}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2240F3DD-3694-4606-B181-F204CBBCB971}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2240F3DD-3694-4606-B181-F204CBBCB971}.Release|x86.ActiveCfg = Release|Any CPU
 		{2240F3DD-3694-4606-B181-F204CBBCB971}.Release|x86.Build.0 = Release|Any CPU
+		{2240F3DD-3694-4606-B181-F204CBBCB971}.Tespia|Any CPU.ActiveCfg = Tespia|Any CPU
+		{2240F3DD-3694-4606-B181-F204CBBCB971}.Tespia|Any CPU.Build.0 = Tespia|Any CPU
+		{2240F3DD-3694-4606-B181-F204CBBCB971}.Tespia|x86.ActiveCfg = Tespia|Any CPU
+		{2240F3DD-3694-4606-B181-F204CBBCB971}.Tespia|x86.Build.0 = Tespia|Any CPU
 		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Debug|Any CPU.Build.0 = Debug|x86
 		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Debug|x86.ActiveCfg = Debug|x86
 		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Debug|x86.Build.0 = Debug|x86
+		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Diagnostic|Any CPU.ActiveCfg = Diagnostic|x86
+		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Diagnostic|x86.ActiveCfg = Diagnostic|x86
+		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Diagnostic|x86.Build.0 = Diagnostic|x86
 		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Release|Any CPU.ActiveCfg = Release|x86
 		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Release|x86.ActiveCfg = Release|x86
 		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Release|x86.Build.0 = Release|x86
+		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Tespia|Any CPU.ActiveCfg = Tespia|x86
+		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Tespia|x86.ActiveCfg = Tespia|x86
+		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Tespia|x86.Build.0 = Tespia|x86
 		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Debug|x86.Build.0 = Debug|Any CPU
+		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Diagnostic|Any CPU.ActiveCfg = Diagnostic|Any CPU
+		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Diagnostic|Any CPU.Build.0 = Diagnostic|Any CPU
+		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Diagnostic|x86.ActiveCfg = Diagnostic|Any CPU
+		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Diagnostic|x86.Build.0 = Diagnostic|Any CPU
 		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Release|x86.ActiveCfg = Release|Any CPU
 		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Release|x86.Build.0 = Release|Any CPU
+		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Tespia|Any CPU.ActiveCfg = Tespia|Any CPU
+		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Tespia|Any CPU.Build.0 = Tespia|Any CPU
+		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Tespia|x86.ActiveCfg = Tespia|Any CPU
+		{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}.Tespia|x86.Build.0 = Tespia|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Debug|x86.Build.0 = Debug|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Diagnostic|Any CPU.ActiveCfg = Diagnostic|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Diagnostic|Any CPU.Build.0 = Diagnostic|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Diagnostic|x86.ActiveCfg = Diagnostic|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Diagnostic|x86.Build.0 = Diagnostic|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Release|x86.ActiveCfg = Release|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Release|x86.Build.0 = Release|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Tespia|Any CPU.ActiveCfg = Tespia|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Tespia|Any CPU.Build.0 = Tespia|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Tespia|x86.ActiveCfg = Tespia|Any CPU
+		{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}.Tespia|x86.Build.0 = Tespia|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Debug|x86.Build.0 = Debug|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Diagnostic|Any CPU.ActiveCfg = Diagnostic|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Diagnostic|Any CPU.Build.0 = Diagnostic|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Diagnostic|x86.ActiveCfg = Diagnostic|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Diagnostic|x86.Build.0 = Diagnostic|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Release|x86.ActiveCfg = Release|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Release|x86.Build.0 = Release|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Tespia|Any CPU.ActiveCfg = Release|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Tespia|Any CPU.Build.0 = Release|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Tespia|x86.ActiveCfg = Tespia|Any CPU
+		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Tespia|x86.Build.0 = Tespia|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

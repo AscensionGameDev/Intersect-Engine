@@ -8,6 +8,6 @@ namespace Intersect.Logging
 
         void Write(string tag, LogLevel logLevel, string message);
         void Write(string tag, LogLevel logLevel, string format, params object[] args);
-        void Write(string tag, LogLevel logLevel, Exception exception);
+        void Write(string tag, LogLevel logLevel, Exception exception, string message);
     }
 }

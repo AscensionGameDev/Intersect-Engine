@@ -1,6 +1,7 @@
 ﻿using DarkUI.Controls;
+using Intersect.Editor.Forms.Controls;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     partial class frmWarpSelection
     {
@@ -38,7 +39,7 @@ namespace Intersect_Editor.Forms
             this.pnlMap = new System.Windows.Forms.Panel();
             this.grpMapList = new DarkUI.Controls.DarkGroupBox();
             this.chkChronological = new DarkUI.Controls.DarkCheckBox();
-            this.mapTreeList1 = new Intersect_Editor.Forms.Controls.MapTreeList();
+            this.mapTreeList1 = new MapTreeList();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnOk = new DarkUI.Controls.DarkButton();
             this.tmrMapCheck = new System.Windows.Forms.Timer(this.components);

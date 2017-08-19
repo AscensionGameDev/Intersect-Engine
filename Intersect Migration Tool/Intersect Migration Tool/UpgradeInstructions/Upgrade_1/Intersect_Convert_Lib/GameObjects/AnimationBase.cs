@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects
 {
     public class AnimationBase : DatabaseObject
     {
@@ -15,6 +14,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
 
         //Lower Animation
         public string LowerAnimSprite = "";
+
         public int LowerAnimXFrames = 1;
         public int LowerAnimYFrames = 1;
         public LightBase[] LowerLights;
@@ -27,6 +27,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
 
         //Upper Animation
         public string UpperAnimSprite = "";
+
         public int UpperAnimXFrames = 1;
         public int UpperAnimYFrames = 1;
         public LightBase[] UpperLights;

@@ -1,6 +1,6 @@
 ﻿using DarkUI.Controls;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_ChangeSpells
     {

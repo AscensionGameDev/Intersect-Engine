@@ -1,6 +1,6 @@
 ﻿using DarkUI.Controls;
 
-namespace Intersect_Editor.Forms.Editors
+namespace Intersect.Editor.Forms.Editors
 {
     partial class frmSwitchVariable
     {
@@ -42,6 +42,7 @@ namespace Intersect_Editor.Forms.Editors
             this.btnNew = new DarkUI.Controls.DarkButton();
             this.btnDelete = new DarkUI.Controls.DarkButton();
             this.grpEditor = new DarkUI.Controls.DarkGroupBox();
+            this.lblId = new System.Windows.Forms.Label();
             this.lblValue = new System.Windows.Forms.Label();
             this.txtObjectName = new DarkUI.Controls.DarkTextBox();
             this.lblName = new System.Windows.Forms.Label();
@@ -135,7 +136,7 @@ namespace Intersect_Editor.Forms.Editors
             this.btnUndo.Location = new System.Drawing.Point(7, 431);
             this.btnUndo.Name = "btnUndo";
             this.btnUndo.Padding = new System.Windows.Forms.Padding(5);
-            this.btnUndo.Size = new System.Drawing.Size(190, 27);
+            this.btnUndo.Size = new System.Drawing.Size(187, 27);
             this.btnUndo.TabIndex = 55;
             this.btnUndo.Text = "Undo Changes";
             this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
@@ -150,7 +151,7 @@ namespace Intersect_Editor.Forms.Editors
             this.lstObjects.Name = "lstObjects";
             this.lstObjects.Size = new System.Drawing.Size(187, 327);
             this.lstObjects.TabIndex = 0;
-            this.lstObjects.Click += new System.EventHandler(this.lstObjects_Click);
+            this.lstObjects.SelectedIndexChanged += new System.EventHandler(this.lstObjects_Click);
             // 
             // btnNew
             // 
@@ -158,7 +159,7 @@ namespace Intersect_Editor.Forms.Editors
             this.btnNew.Location = new System.Drawing.Point(7, 365);
             this.btnNew.Name = "btnNew";
             this.btnNew.Padding = new System.Windows.Forms.Padding(5);
-            this.btnNew.Size = new System.Drawing.Size(190, 27);
+            this.btnNew.Size = new System.Drawing.Size(187, 27);
             this.btnNew.TabIndex = 53;
             this.btnNew.Text = "New";
             this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
@@ -166,10 +167,10 @@ namespace Intersect_Editor.Forms.Editors
             // btnDelete
             // 
             this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(8, 398);
+            this.btnDelete.Location = new System.Drawing.Point(7, 398);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Padding = new System.Windows.Forms.Padding(5);
-            this.btnDelete.Size = new System.Drawing.Size(190, 27);
+            this.btnDelete.Size = new System.Drawing.Size(187, 27);
             this.btnDelete.TabIndex = 52;
             this.btnDelete.Text = "Delete";
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
@@ -178,6 +179,7 @@ namespace Intersect_Editor.Forms.Editors
             // 
             this.grpEditor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpEditor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpEditor.Controls.Add(this.lblId);
             this.grpEditor.Controls.Add(this.lblValue);
             this.grpEditor.Controls.Add(this.txtObjectName);
             this.grpEditor.Controls.Add(this.lblName);
@@ -192,6 +194,15 @@ namespace Intersect_Editor.Forms.Editors
             this.grpEditor.TabStop = false;
             this.grpEditor.Text = "Switch/Variable Editor";
             this.grpEditor.Visible = false;
+            // 
+            // lblId
+            // 
+            this.lblId.Location = new System.Drawing.Point(209, 20);
+            this.lblId.Name = "lblId";
+            this.lblId.Size = new System.Drawing.Size(69, 13);
+            this.lblId.TabIndex = 6;
+            this.lblId.Text = "1";
+            this.lblId.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // lblValue
             // 
@@ -236,9 +247,14 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbSwitchValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbSwitchValue.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSwitchValue.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSwitchValue.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbSwitchValue.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSwitchValue.ButtonIcon")));
+            this.cmbSwitchValue.DrawDropdownHoverOutline = false;
+            this.cmbSwitchValue.DrawFocusRectangle = false;
             this.cmbSwitchValue.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSwitchValue.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSwitchValue.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbSwitchValue.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSwitchValue.FormattingEnabled = true;
             this.cmbSwitchValue.Items.AddRange(new object[] {
             "False",
@@ -247,6 +263,8 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbSwitchValue.Name = "cmbSwitchValue";
             this.cmbSwitchValue.Size = new System.Drawing.Size(224, 21);
             this.cmbSwitchValue.TabIndex = 5;
+            this.cmbSwitchValue.Text = "False";
+            this.cmbSwitchValue.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbSwitchValue.SelectedIndexChanged += new System.EventHandler(this.cmbSwitchValue_SelectedIndexChanged);
             // 
             // txtVariableVal
@@ -330,5 +348,6 @@ namespace Intersect_Editor.Forms.Editors
         private DarkButton btnDelete;
         private DarkButton btnSave;
         private DarkButton btnCancel;
+        private System.Windows.Forms.Label lblId;
     }
 }

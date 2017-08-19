@@ -1,15 +1,15 @@
-﻿using System;
-using Mono.Data.Sqlite;
+﻿using Mono.Data.Sqlite;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_3
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_3
 {
     public class Upgrade3
     {
         //Time of Day Table Constants
         private const string TIME_TABLE = "time";
+
         private const string TIME_DATA = "data";
         private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
+        private object _dbLock = new object();
 
         public Upgrade3(SqliteConnection connection)
         {

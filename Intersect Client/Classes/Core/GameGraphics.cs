@@ -17,55 +17,62 @@ namespace Intersect_Client.Classes.Core
     {
         //Game Renderer
         public static GameRenderer Renderer;
+
         public static GameShader DefaultShader;
         private static GameContentManager contentManager;
 
         //Resolution
-        private static int _oldWidth = 0;
-        private static int _oldHeight = 0;
+        private static int _oldWidth;
+
+        private static int _oldHeight;
 
         //Screen Values
         public static GameFont GameFont;
+
         public static FloatRect CurrentView;
 
         //Darkness Stuff
         public static float _brightnessLevel;
+
         private static GameRenderTexture _darknessTexture;
 
         //Overlay Stuff
-        public static Color OverlayColor = Color.Transparent;
-        private static long _overlayUpdate = 0;
+        public static Intersect.Color OverlayColor = Intersect.Color.Transparent;
+
+        private static long _overlayUpdate;
 
         //Player Spotlight Values
-        private static long _lightUpdate = 0;
+        private static long _lightUpdate;
+
         private static float _playerLightIntensity = 255;
-        private static float _playerLightSize = 0;
-        private static float _playerLightExpand = 0f;
+        private static float _playerLightSize;
+        private static float _playerLightExpand;
         public static ColorF _playerLightColor = ColorF.White;
         private static List<LightBase> _lightQueue = new List<LightBase>();
         private static long _fadeTimer;
 
         //Grid Switched
-        public static bool GridSwitched = false;
+        public static bool GridSwitched;
 
         //Rendering Variables
-        public static int DrawCalls = 0;
-        public static int EntitiesDrawn = 0;
-        public static int LightsDrawn = 0;
-        public static int MapsDrawn = 0;
+        public static int DrawCalls;
+
+        public static int EntitiesDrawn;
+        public static int LightsDrawn;
+        public static int MapsDrawn;
 
         //Cache the Y based rendering
-        public static List<Entity>[] Layer1Entities;
-        public static List<Entity>[] Layer2Entities;
+        public static HashSet<Entity>[,] RenderingEntities;
 
-        public static bool PreRenderedMapLayer = false;
-        public static object GFXLock = new Object();
+        public static bool PreRenderedMapLayer;
+        public static object GFXLock = new object();
         public static List<GameRenderTexture> MapReleaseQueue = new List<GameRenderTexture>();
         public static List<GameRenderTexture> FreeMapTextures = new List<GameRenderTexture>();
 
         //Animations
         public static List<AnimationInstance> LiveAnimations = new List<AnimationInstance>();
-        public static object AnimationLock = new Object();
+
+        public static object AnimationLock = new object();
 
         //Init Functions
         public static void InitGraphics()
@@ -73,24 +80,24 @@ namespace Intersect_Client.Classes.Core
             Renderer.Init();
             contentManager = Globals.ContentManager;
             contentManager.LoadAll();
-            GameFont = contentManager.GetFont("arial", 8);
+            GameFont = contentManager.GetFont(Gui.ActiveFont, 8);
         }
 
         public static void InitInGame()
         {
-            Layer1Entities = new List<Entity>[Options.MapHeight * 3];
-            Layer2Entities = new List<Entity>[Options.MapHeight * 3];
-            for (var i = 0; i < Options.MapHeight * 3; i++)
+            RenderingEntities = new HashSet<Entity>[6, Options.MapHeight * 3];
+            for (int z = 0; z < 6; z++)
             {
-                Layer1Entities[i] = new List<Entity>();
-                Layer2Entities[i] = new List<Entity>();
+                for (var i = 0; i < Options.MapHeight * 3; i++)
+                {
+                    RenderingEntities[z, i] = new HashSet<Entity>();
+                }
             }
         }
 
         public static void DrawIntro()
         {
-            GameTexture imageTex = contentManager.GetTexture(GameContentManager.TextureType.Image,
-                Globals.Database.IntroBG[Globals.IntroIndex]);
+            GameTexture imageTex = contentManager.GetTexture(GameContentManager.TextureType.Image, Globals.Database.IntroBG[Globals.IntroIndex]);
             if (imageTex != null)
             {
                 DrawFullScreenTextureStretched(imageTex);
@@ -109,229 +116,235 @@ namespace Intersect_Client.Classes.Core
 
         public static void DrawInGame()
         {
-            var currentMap = MapInstance.GetMap(Globals.Me.CurrentMap);
-            if (currentMap != null && Globals.NeedsMaps == false)
+            var currentMap = Globals.Me.MapInstance;
+            if (currentMap == null || Globals.NeedsMaps) return;
+            if (GridSwitched)
             {
-                if (GridSwitched)
+                //Brightness
+                byte brightnessTarget = (byte) ((currentMap.Brightness / 100f) * 255);
+                _brightnessLevel = brightnessTarget;
+                _playerLightColor.R = currentMap.PlayerLightColor.R;
+                _playerLightColor.G = currentMap.PlayerLightColor.G;
+                _playerLightColor.B = currentMap.PlayerLightColor.B;
+                _playerLightSize = currentMap.PlayerLightSize;
+                _playerLightIntensity = currentMap.PlayerLightIntensity;
+                _playerLightExpand = currentMap.PlayerLightExpand;
+
+                //Overlay
+                OverlayColor.A = (byte) currentMap.AHue;
+                OverlayColor.R = (byte) currentMap.RHue;
+                OverlayColor.G = (byte) currentMap.GHue;
+                OverlayColor.B = (byte) currentMap.BHue;
+
+                //Fog && Panorama
+                currentMap.GridSwitched();
+                GridSwitched = false;
+            }
+
+            ClearDarknessTexture();
+            TryPreRendering();
+            FixAutotiles();
+            GenerateLightMap();
+
+            var gridX = currentMap.MapGridX;
+            var gridY = currentMap.MapGridY;
+            //Draw Panoramas First...
+            for (var x = gridX - 1; x <= gridX + 1; x++)
+            {
+                for (var y = gridY - 1; y <= gridY + 1; y++)
                 {
-                    var map = MapInstance.GetMap(Globals.Me.CurrentMap);
-                    if (map != null)
+                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                        Globals.MapGrid[x, y] != -1)
                     {
-                        //Brightness
-                        byte brightnessTarget = (byte) ((map.Brightness / 100f) * 255);
-                        _brightnessLevel = brightnessTarget;
-                        _playerLightColor.R = map.PlayerLightColor.R;
-                        _playerLightColor.G = map.PlayerLightColor.G;
-                        _playerLightColor.B = map.PlayerLightColor.B;
-                        _playerLightSize = map.PlayerLightSize;
-                        _playerLightIntensity = map.PlayerLightIntensity;
-                        _playerLightExpand = map.PlayerLightExpand;
-
-                        //Overlay
-                        OverlayColor.A = (byte) map.AHue;
-                        OverlayColor.R = (byte) map.RHue;
-                        OverlayColor.G = (byte) map.GHue;
-                        OverlayColor.B = (byte) map.BHue;
-
-                        //Fog && Panorama
-                        map.GridSwitched();
-                    }
-                    GridSwitched = false;
-                }
-                ClearDarknessTexture();
-
-                TryPreRendering();
-
-                GenerateLightMap();
-
-                var gridX = currentMap.MapGridX;
-                var gridY = currentMap.MapGridY;
-                //Draw Panoramas First...
-                for (int x = gridX - 1; x <= gridX + 1; x++)
-                {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
-                    {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != -1)
-                        {
-                            DrawMapPanorama(Globals.MapGrid[x, y]);
-                        }
+                        DrawMapPanorama(Globals.MapGrid[x, y]);
                     }
                 }
+            }
 
-                for (int x = gridX - 1; x <= gridX + 1; x++)
+            for (var x = gridX - 1; x <= gridX + 1; x++)
+            {
+                for (var y = gridY - 1; y <= gridY + 1; y++)
                 {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
+                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                        Globals.MapGrid[x, y] != -1)
                     {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != -1)
-                        {
-                            DrawMap(Globals.MapGrid[x, y], 0);
-                        }
+                        DrawMap(Globals.MapGrid[x, y], 0);
                     }
                 }
+            }
 
-                lock (AnimationLock)
+            lock (AnimationLock)
+            {
+                foreach (AnimationInstance animInstance in LiveAnimations)
                 {
-                    foreach (AnimationInstance animInstance in LiveAnimations)
-                    {
-                        animInstance.Draw(false);
-                    }
+                    animInstance.Draw(false);
                 }
-
-                for (int x = 0; x < Layer1Entities.Length; x++)
+            }
+            
+            for (int y = 0; y < Options.MapHeight * 3; y++)
+            {
+                for (int x = 0; x < 3; x++)
                 {
-                    for (int y = 0; y < Layer1Entities[x].Count; y++)
+                    foreach (var entity in RenderingEntities[x, y])
                     {
-                        Layer1Entities[x][y].Draw();
+                        entity.Draw();
                         EntitiesDrawn++;
                     }
                 }
+            }
 
-                for (int x = gridX - 1; x <= gridX + 1; x++)
+            for (var x = gridX - 1; x <= gridX + 1; x++)
+            {
+                for (var y = gridY - 1; y <= gridY + 1; y++)
                 {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
+                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                        Globals.MapGrid[x, y] != -1)
                     {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != -1)
-                        {
-                            DrawMap(Globals.MapGrid[x, y], 1);
-                        }
+                        DrawMap(Globals.MapGrid[x, y], 1);
                     }
                 }
-
-                for (int x = 0; x < Layer2Entities.Length; x++)
+            }
+            
+            for (int y = 0; y < Options.MapHeight * 3; y++)
+            {
+                for (int x = 3; x < 6; x++)
                 {
-                    for (int y = 0; y < Layer2Entities[x].Count; y++)
+                    foreach (var entity in RenderingEntities[x, y])
                     {
-                        Layer2Entities[x][y].Draw();
+                        entity.Draw();
                         EntitiesDrawn++;
                     }
                 }
+            }
 
-                for (int x = gridX - 1; x <= gridX + 1; x++)
+            for (var x = gridX - 1; x <= gridX + 1; x++)
+            {
+                for (var y = gridY - 1; y <= gridY + 1; y++)
                 {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
+                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                        Globals.MapGrid[x, y] != -1)
                     {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != -1)
+                        DrawMap(Globals.MapGrid[x, y], 2);
+                    }
+                }
+            }
+
+            lock (AnimationLock)
+            {
+                foreach (AnimationInstance animInstance in LiveAnimations)
+                {
+                    animInstance.Draw(true);
+                }
+            }
+
+            //Draw the players targets
+            Globals.Me.DrawTargets();
+
+            DrawOverlay();
+
+            DrawDarkness();
+            
+            for (int y = 0; y < Options.MapHeight * 3; y++)
+            {
+                for (int x = 0; x < 3; x++)
+                {
+                    foreach (var entity in RenderingEntities[x, y])
+                    {
+                        entity.DrawName(null);
+                        if (entity.GetType() != typeof(Event))
                         {
-                            DrawMap(Globals.MapGrid[x, y], 2);
+                            entity.DrawHpBar();
+                            entity.DrawCastingBar();
                         }
+                        entity.DrawChatBubbles();
                     }
                 }
-
-                lock (AnimationLock)
+            }
+            
+            for (int y = 0; y < Options.MapHeight * 3; y++)
+            {
+                for (int x = 3; x < 6; x++)
                 {
-                    foreach (AnimationInstance animInstance in LiveAnimations)
+                    foreach (var entity in RenderingEntities[x, y])
                     {
-                        animInstance.Draw(true);
-                    }
-                }
-
-                //Draw the players targets
-                Globals.Me.DrawTargets();
-
-                DrawOverlay();
-
-                for (int x = 0; x < Layer1Entities.Length; x++)
-                {
-                    for (int y = 0; y < Layer1Entities[x].Count; y++)
-                    {
-                        Layer1Entities[x][y].DrawName(null);
-                        if (Layer1Entities[x][y].GetType() != typeof(Event))
+                        entity.DrawName(null);
+                        if (entity.GetType() != typeof(Event))
                         {
-                            Layer1Entities[x][y].DrawHpBar();
-                            Layer1Entities[x][y].DrawCastingBar();
+                            entity.DrawHpBar();
+                            entity.DrawCastingBar();
                         }
-                        Layer1Entities[x][y].DrawChatBubbles();
+                        entity.DrawChatBubbles();
                     }
                 }
-                for (int x = 0; x < Layer2Entities.Length; x++)
-                {
-                    for (int y = 0; y < Layer2Entities[x].Count; y++)
-                    {
-                        Layer2Entities[x][y].DrawName(null);
-                        if (Layer2Entities[x][y].GetType() != typeof(Event))
-                        {
-                            Layer2Entities[x][y].DrawHpBar();
-                            Layer2Entities[x][y].DrawCastingBar();
-                        }
-                        Layer2Entities[x][y].DrawChatBubbles();
-                    }
-                }
+            }
 
-                //Draw action msg's
-                for (int x = gridX - 1; x <= gridX + 1; x++)
+            //Draw action msg's
+            for (var x = gridX - 1; x <= gridX + 1; x++)
+            {
+                for (var y = gridY - 1; y <= gridY + 1; y++)
                 {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
-                    {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != -1)
-                        {
-                            var map = MapInstance.GetMap(Globals.MapGrid[x, y]);
-                            if (map != null) map.DrawActionMsgs();
-                        }
-                    }
+                    if (x < 0 || x >= Globals.MapGridWidth || y < 0 || y >= Globals.MapGridHeight ||
+                        Globals.MapGrid[x, y] == -1) continue;
+                    var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
+                    map?.DrawActionMsgs();
                 }
-
-                DrawDarkness();
             }
         }
 
         //Game Rendering
         public static void Render()
         {
-            if (Renderer.Begin())
+            if (!(Renderer?.Begin() ?? false)) return;
+            if (Renderer.GetScreenWidth() != _oldWidth || Renderer.GetScreenHeight() != _oldHeight ||
+                Renderer.DisplayModeChanged())
             {
-                if (Renderer.GetScreenWidth() != _oldWidth || Renderer.GetScreenHeight() != _oldHeight)
-                {
-                    _darknessTexture = null;
-                    Gui.DestroyGwen();
-                    Gui.InitGwen();
-                    _oldWidth = Renderer.GetScreenWidth();
-                    _oldHeight = Renderer.GetScreenHeight();
-                }
-                Renderer.Clear(Color.Black);
-                DrawCalls = 0;
-                MapsDrawn = 0;
-                EntitiesDrawn = 0;
-                LightsDrawn = 0;
-                PreRenderedMapLayer = false;
-
-                UpdateView();
-
-                if (Globals.GameState == GameStates.Intro)
-                {
-                    DrawIntro();
-                }
-                else if (Globals.GameState == GameStates.Menu)
-                {
-                    DrawMenu();
-                }
-                else if (Globals.GameState == GameStates.Loading)
-                {
-                }
-                if (Globals.GameState == GameStates.InGame)
-                {
-                    DrawInGame();
-                }
-
-                Gui.DrawGui();
-
-                DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,
-                    new Color((int) GameFade.GetFade(), 0, 0, 0), null, GameBlendModes.Alpha);
-                Renderer.End();
+                _darknessTexture = null;
+                Gui.DestroyGwen();
+                Gui.InitGwen();
+                _oldWidth = Renderer.GetScreenWidth();
+                _oldHeight = Renderer.GetScreenHeight();
             }
+            Renderer.Clear(Color.Black);
+            DrawCalls = 0;
+            MapsDrawn = 0;
+            EntitiesDrawn = 0;
+            LightsDrawn = 0;
+            PreRenderedMapLayer = false;
+
+            UpdateView();
+
+            switch (Globals.GameState)
+            {
+                case GameStates.Intro:
+                    DrawIntro();
+                    break;
+                case GameStates.Menu:
+                    DrawMenu();
+                    break;
+                case GameStates.Loading:
+                    break;
+                case GameStates.InGame:
+                    DrawInGame();
+                    break;
+                case GameStates.Error:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            Gui.DrawGui();
+
+            DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,
+                new Intersect.Color((int)GameFade.GetFade(), 0, 0, 0), null, GameBlendModes.None);
+            Renderer.End();
         }
 
         private static void TryPreRendering()
         {
-            if (Globals.Database.RenderCaching && Globals.Me != null &&
-                MapInstance.GetMap(Globals.Me.CurrentMap) != null)
+            if (Globals.Database.RenderCaching && Globals.Me != null && Globals.Me.MapInstance != null)
             {
-                var gridX = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridX;
-                var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
+                var gridX = Globals.Me.MapInstance.MapGridX;
+                var gridY = Globals.Me.MapInstance.MapGridY;
                 for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
                     for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -339,13 +352,42 @@ namespace Intersect_Client.Classes.Core
                         if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
                             Globals.MapGrid[x, y] != -1)
                         {
-                            var map = MapInstance.GetMap(Globals.MapGrid[x, y]);
+                            var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
                             if (map != null && !map.MapRendered)
                             {
                                 if (!PreRenderedMapLayer)
                                 {
-                                    map.PreRenderMap();
+                                    lock (map.GetMapLock())
+                                    {
+                                        map.PreRenderMap();
+                                    }
+                                    return;
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void FixAutotiles()
+        {
+            if (Globals.Database.RenderCaching && Globals.Me != null &&
+                MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
+            {
+                var gridX = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridX;
+                var gridY = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridY;
+                for (int x = gridX - 1; x <= gridX + 1; x++)
+                {
+                    for (int y = gridY - 1; y <= gridY + 1; y++)
+                    {
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                            Globals.MapGrid[x, y] != -1)
+                        {
+                            var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
+                            if (map != null && map.MapRendered)
+                            {
+                                map.FixAutotiles();
                             }
                         }
                     }
@@ -355,23 +397,21 @@ namespace Intersect_Client.Classes.Core
 
         private static void DrawMap(int mapNum, int layer = 0)
         {
-            var map = MapInstance.GetMap(mapNum);
-            if (map != null)
+            var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
+            if (map == null) return;
+            if (
+                !new FloatRect(map.GetX(), map.GetY(), Options.TileWidth * Options.MapWidth,
+                    Options.TileHeight * Options.MapHeight).IntersectsWith(CurrentView)) return;
+            map.Draw(layer);
+            if (layer == 0)
             {
-                if (
-                    !new FloatRect(map.GetX(), map.GetY(), Options.TileWidth * Options.MapWidth,
-                        Options.TileHeight * Options.MapHeight).IntersectsWith(CurrentView)) return;
-                map.Draw(layer);
-                if (layer == 0)
-                {
-                    MapsDrawn++;
-                }
+                MapsDrawn++;
             }
         }
 
         private static void DrawMapPanorama(int mapNum)
         {
-            var map = MapInstance.GetMap(mapNum);
+            var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
             if (map != null)
             {
                 if (
@@ -383,7 +423,7 @@ namespace Intersect_Client.Classes.Core
 
         public static void DrawOverlay()
         {
-            var map = MapInstance.GetMap(Globals.Me.CurrentMap);
+            var map = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
             if (map != null)
             {
                 float ecTime = Globals.System.GetTimeMS() - _overlayUpdate;
@@ -395,97 +435,97 @@ namespace Intersect_Client.Classes.Core
                 {
                     if (OverlayColor.A < map.AHue)
                     {
-                        if ((int) OverlayColor.A + (int) (255 * ecTime / 2000f) > map.AHue)
+                        if ((int)OverlayColor.A + (int)(255 * ecTime / 2000f) > map.AHue)
                         {
-                            OverlayColor.A = (byte) map.AHue;
+                            OverlayColor.A = (byte)map.AHue;
                         }
                         else
                         {
-                            OverlayColor.A += (byte) (255 * ecTime / 2000f);
+                            OverlayColor.A += (byte)(255 * ecTime / 2000f);
                         }
                     }
 
                     if (OverlayColor.A > map.AHue)
                     {
-                        if ((int) OverlayColor.A - (int) (255 * ecTime / 2000f) < map.AHue)
+                        if ((int)OverlayColor.A - (int)(255 * ecTime / 2000f) < map.AHue)
                         {
-                            OverlayColor.A = (byte) map.AHue;
+                            OverlayColor.A = (byte)map.AHue;
                         }
                         else
                         {
-                            OverlayColor.A -= (byte) (255 * ecTime / 2000f);
+                            OverlayColor.A -= (byte)(255 * ecTime / 2000f);
                         }
                     }
 
                     if (OverlayColor.R < map.RHue)
                     {
-                        if ((int) OverlayColor.R + (int) (255 * ecTime / 2000f) > map.RHue)
+                        if ((int)OverlayColor.R + (int)(255 * ecTime / 2000f) > map.RHue)
                         {
-                            OverlayColor.R = (byte) map.RHue;
+                            OverlayColor.R = (byte)map.RHue;
                         }
                         else
                         {
-                            OverlayColor.R += (byte) (255 * ecTime / 2000f);
+                            OverlayColor.R += (byte)(255 * ecTime / 2000f);
                         }
                     }
 
                     if (OverlayColor.R > map.RHue)
                     {
-                        if ((int) OverlayColor.R - (int) (255 * ecTime / 2000f) < map.RHue)
+                        if ((int)OverlayColor.R - (int)(255 * ecTime / 2000f) < map.RHue)
                         {
-                            OverlayColor.R = (byte) map.RHue;
+                            OverlayColor.R = (byte)map.RHue;
                         }
                         else
                         {
-                            OverlayColor.R -= (byte) (255 * ecTime / 2000f);
+                            OverlayColor.R -= (byte)(255 * ecTime / 2000f);
                         }
                     }
 
                     if (OverlayColor.G < map.GHue)
                     {
-                        if ((int) OverlayColor.G + (int) (255 * ecTime / 2000f) > map.GHue)
+                        if ((int)OverlayColor.G + (int)(255 * ecTime / 2000f) > map.GHue)
                         {
-                            OverlayColor.G = (byte) map.GHue;
+                            OverlayColor.G = (byte)map.GHue;
                         }
                         else
                         {
-                            OverlayColor.G += (byte) (255 * ecTime / 2000f);
+                            OverlayColor.G += (byte)(255 * ecTime / 2000f);
                         }
                     }
 
                     if (OverlayColor.G > map.GHue)
                     {
-                        if ((int) OverlayColor.G - (int) (255 * ecTime / 2000f) < map.GHue)
+                        if ((int)OverlayColor.G - (int)(255 * ecTime / 2000f) < map.GHue)
                         {
-                            OverlayColor.G = (byte) map.GHue;
+                            OverlayColor.G = (byte)map.GHue;
                         }
                         else
                         {
-                            OverlayColor.G -= (byte) (255 * ecTime / 2000f);
+                            OverlayColor.G -= (byte)(255 * ecTime / 2000f);
                         }
                     }
 
                     if (OverlayColor.B < map.BHue)
                     {
-                        if ((int) OverlayColor.B + (int) (255 * ecTime / 2000f) > map.BHue)
+                        if ((int)OverlayColor.B + (int)(255 * ecTime / 2000f) > map.BHue)
                         {
-                            OverlayColor.B = (byte) map.BHue;
+                            OverlayColor.B = (byte)map.BHue;
                         }
                         else
                         {
-                            OverlayColor.B += (byte) (255 * ecTime / 2000f);
+                            OverlayColor.B += (byte)(255 * ecTime / 2000f);
                         }
                     }
 
                     if (OverlayColor.B > map.BHue)
                     {
-                        if ((int) OverlayColor.B - (int) (255 * ecTime / 2000f) < map.BHue)
+                        if ((int)OverlayColor.B - (int)(255 * ecTime / 2000f) < map.BHue)
                         {
-                            OverlayColor.B = (byte) map.BHue;
+                            OverlayColor.B = (byte)map.BHue;
                         }
                         else
                         {
-                            OverlayColor.B -= (byte) (255 * ecTime / 2000f);
+                            OverlayColor.B -= (byte)(255 * ecTime / 2000f);
                         }
                     }
                 }
@@ -497,33 +537,33 @@ namespace Intersect_Client.Classes.Core
 
         public static void DrawFullScreenTexture(GameTexture tex, float alpha = 1f)
         {
-            int bgx = (int) (Renderer.GetScreenWidth() / 2 - tex.GetWidth() / 2);
-            int bgy = (int) (Renderer.GetScreenHeight() / 2 - tex.GetHeight() / 2);
-            int bgw = (int) tex.GetWidth();
-            int bgh = (int) tex.GetHeight();
+            int bgx = (int)(Renderer.GetScreenWidth() / 2 - tex.GetWidth() / 2);
+            int bgy = (int)(Renderer.GetScreenHeight() / 2 - tex.GetHeight() / 2);
+            int bgw = (int)tex.GetWidth();
+            int bgh = (int)tex.GetHeight();
             int diff = 0;
             if (bgw < Renderer.GetScreenWidth())
             {
-                diff = (int) (Renderer.GetScreenWidth() - bgw);
+                diff = (int)(Renderer.GetScreenWidth() - bgw);
                 bgx -= diff / 2;
                 bgw += diff;
             }
             if (bgh < Renderer.GetScreenHeight())
             {
-                diff = (int) (Renderer.GetScreenHeight() - bgh);
+                diff = (int)(Renderer.GetScreenHeight() - bgh);
                 bgy -= diff / 2;
                 bgh += diff;
             }
             DrawGameTexture(tex, new FloatRect(0, 0, tex.GetWidth(), tex.GetHeight()),
                 new FloatRect(bgx + Renderer.GetView().X, bgy + Renderer.GetView().Y, bgw, bgh),
-                new Color((int) (alpha * 255f), 255, 255, 255));
+                new Intersect.Color((int)(alpha * 255f), 255, 255, 255));
         }
 
         public static void DrawFullScreenTextureStretched(GameTexture tex)
         {
-            DrawGameTexture(tex, new FloatRect(0, 0, (int) tex.GetWidth(), (int) tex.GetHeight()),
+            DrawGameTexture(tex, new FloatRect(0, 0, (int)tex.GetWidth(), (int)tex.GetHeight()),
                 new FloatRect(Renderer.GetView().X, Renderer.GetView().Y, Renderer.GetScreenWidth(),
-                    Renderer.GetScreenHeight()), Color.White);
+                    Renderer.GetScreenHeight()), Intersect.Color.White);
         }
 
         private static void UpdateView()
@@ -533,7 +573,7 @@ namespace Intersect_Client.Classes.Core
                 CurrentView = new FloatRect(0, 0, Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
                 return;
             }
-            var map = MapInstance.GetMap(Globals.Me.CurrentMap);
+            var map = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
             if (Globals.GameState == GameStates.InGame && map != null)
             {
                 Player en = Globals.Me;
@@ -560,8 +600,8 @@ namespace Intersect_Client.Classes.Core
                 float w = x1 - x;
                 float h = y1 - y;
                 var RestrictView = new FloatRect(x, y, w, h);
-                CurrentView = new FloatRect((int) Math.Ceiling(en.GetCenterPos().X - Renderer.GetScreenWidth() / 2f),
-                    (int) Math.Ceiling(en.GetCenterPos().Y - Renderer.GetScreenHeight() / 2f), Renderer.GetScreenWidth(),
+                CurrentView = new FloatRect((int)Math.Ceiling(en.GetCenterPos().X - Renderer.GetScreenWidth() / 2f),
+                    (int)Math.Ceiling(en.GetCenterPos().Y - Renderer.GetScreenHeight() / 2f), Renderer.GetScreenWidth(),
                     Renderer.GetScreenHeight());
                 if (RestrictView.Width >= CurrentView.Width)
                 {
@@ -642,7 +682,7 @@ namespace Intersect_Client.Classes.Core
 
         private static void GenerateLightMap()
         {
-            var map = MapInstance.GetMap(Globals.Me.CurrentMap);
+            var map = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
             if (map == null) return;
             if (_darknessTexture == null)
             {
@@ -653,24 +693,23 @@ namespace Intersect_Client.Classes.Core
             {
                 DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(0, 0, _darknessTexture.GetWidth(), _darknessTexture.GetHeight()),
-                    new Color((byte) (_brightnessLevel), 255, 255, 255), _darknessTexture, GameBlendModes.Add);
+                    new Intersect.Color((byte)(_brightnessLevel), 255, 255, 255), _darknessTexture, GameBlendModes.Add);
             }
             else
             {
                 DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(0, 0, _darknessTexture.GetWidth(), _darknessTexture.GetHeight()),
-                    new Color(255, 255, 255, 255), _darknessTexture, GameBlendModes.Add);
+                    new Intersect.Color(255, 255, 255, 255), _darknessTexture, GameBlendModes.Add);
                 DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(0, 0, _darknessTexture.GetWidth(), _darknessTexture.GetHeight()),
-                    new Color((int) ClientTime.GetTintColor().A, (int) ClientTime.GetTintColor().R,
-                        (int) ClientTime.GetTintColor().G, (int) ClientTime.GetTintColor().B), _darknessTexture,
+                    new Intersect.Color((int)ClientTime.GetTintColor().A, (int)ClientTime.GetTintColor().R,
+                        (int)ClientTime.GetTintColor().G, (int)ClientTime.GetTintColor().B), _darknessTexture,
                     GameBlendModes.None);
             }
-
-            AddLight((int) Math.Ceiling(Globals.Me.GetCenterPos().X), (int) Math.Ceiling(Globals.Me.GetCenterPos().Y),
-                (int) _playerLightSize, (byte) _playerLightIntensity, _playerLightExpand,
-                Intersect.Color.FromArgb((int) _playerLightColor.A, (int) _playerLightColor.R, (int) _playerLightColor.G,
-                    (int) _playerLightColor.B));
+            AddLight((int)Math.Ceiling(Globals.Me.GetCenterPos().X), (int)Math.Ceiling(Globals.Me.GetCenterPos().Y),
+                (int)_playerLightSize, (byte)_playerLightIntensity, _playerLightExpand,
+                Intersect.Color.FromArgb((int)_playerLightColor.A, (int)_playerLightColor.R, (int)_playerLightColor.G,
+                    (int)_playerLightColor.B));
 
             DrawLights();
             _darknessTexture.End();
@@ -698,14 +737,14 @@ namespace Intersect_Client.Classes.Core
             {
                 foreach (LightBase l in _lightQueue)
                 {
-                    int x = l.OffsetX - ((int) CurrentView.Left + l.Size);
-                    int y = l.OffsetY - ((int) CurrentView.Top + l.Size);
+                    int x = l.OffsetX - ((int)CurrentView.Left + l.Size);
+                    int y = l.OffsetY - ((int)CurrentView.Top + l.Size);
 
                     radialShader.SetColor("LightColor", new Color(l.Intensity, l.Color.R, l.Color.G, l.Color.B));
                     radialShader.SetFloat("Expand", l.Expand / 100f);
 
                     DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                        new FloatRect(x, y, l.Size * 2, l.Size * 2), new Color(255, 255, 255, 255),
+                        new FloatRect(x, y, l.Size * 2, l.Size * 2), new Intersect.Color(255, 255, 255, 255),
                         _darknessTexture, GameBlendModes.Add, radialShader);
                 }
             }
@@ -715,12 +754,12 @@ namespace Intersect_Client.Classes.Core
         public static void UpdatePlayerLight()
         {
             //Draw Light Around Player
-            var map = MapInstance.GetMap(Globals.Me.CurrentMap);
+            var map = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
             if (map != null)
             {
                 float ecTime = Globals.System.GetTimeMS() - _lightUpdate;
                 float valChange = (255 * ecTime / 2000f);
-                byte brightnessTarget = (byte) ((map.Brightness / 100f) * 255);
+                byte brightnessTarget = (byte)((map.Brightness / 100f) * 255);
                 if (_brightnessLevel < brightnessTarget)
                 {
                     if (_brightnessLevel + valChange > brightnessTarget)
@@ -916,9 +955,9 @@ namespace Intersect_Client.Classes.Core
         public static void DrawGameTexture(GameTexture tex, float x, float y, GameRenderTexture renderTarget = null,
             GameBlendModes blendMode = GameBlendModes.None, GameShader shader = null, float rotationDegrees = 0.0f)
         {
-            var destRectangle = new FloatRect(x, y, (int) tex.GetWidth(), (int) tex.GetHeight());
-            var srcRectangle = new FloatRect(0, 0, (int) tex.GetWidth(), (int) tex.GetHeight());
-            DrawGameTexture(tex, srcRectangle, destRectangle, Color.White, renderTarget, blendMode, shader,
+            var destRectangle = new FloatRect(x, y, (int)tex.GetWidth(), (int)tex.GetHeight());
+            var srcRectangle = new FloatRect(0, 0, (int)tex.GetWidth(), (int)tex.GetHeight());
+            DrawGameTexture(tex, srcRectangle, destRectangle, Intersect.Color.White, renderTarget, blendMode, shader,
                 rotationDegrees);
         }
 
@@ -932,12 +971,12 @@ namespace Intersect_Client.Classes.Core
         /// <param name="renderColor">Color mask to draw with. Default is Color.White</param>
         /// <param name="renderTarget">Where to draw to. If null it this will draw to the game screen.</param>
         /// <param name="blendMode">Which blend mode to use when rendering</param>
-        public static void DrawGameTexture(GameTexture tex, float x, float y, Color renderColor,
+        public static void DrawGameTexture(GameTexture tex, float x, float y, Intersect.Color renderColor,
             GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
             GameShader shader = null, float rotationDegrees = 0.0f)
         {
-            var destRectangle = new FloatRect(x, y, (int) tex.GetWidth(), (int) tex.GetHeight());
-            var srcRectangle = new FloatRect(0, 0, (int) tex.GetWidth(), (int) tex.GetHeight());
+            var destRectangle = new FloatRect(x, y, (int)tex.GetWidth(), (int)tex.GetHeight());
+            var srcRectangle = new FloatRect(0, 0, (int)tex.GetWidth(), (int)tex.GetHeight());
             DrawGameTexture(tex, srcRectangle, destRectangle, renderColor, renderTarget, blendMode, shader,
                 rotationDegrees);
         }
@@ -961,16 +1000,19 @@ namespace Intersect_Client.Classes.Core
         {
             var destRectangle = new FloatRect(dx, dy, w, h);
             var srcRectangle = new FloatRect(sx, sy, w, h);
-            DrawGameTexture(tex, srcRectangle, destRectangle, Color.White, renderTarget, blendMode, shader,
+            DrawGameTexture(tex, srcRectangle, destRectangle, Intersect.Color.White, renderTarget, blendMode, shader,
                 rotationDegrees);
         }
 
         public static void DrawGameTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect,
-            Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
+            Intersect.Color renderColor, GameRenderTexture renderTarget = null,
+            GameBlendModes blendMode = GameBlendModes.None,
             GameShader shader = null, float rotationDegrees = 0.0f)
         {
             if (tex == null) return;
-            Renderer.DrawTexture(tex, srcRectangle, targetRect, renderColor, renderTarget, blendMode, shader,
+            Renderer.DrawTexture(tex, srcRectangle, targetRect,
+                Color.FromArgb(renderColor.A, renderColor.R, renderColor.G, renderColor.B), renderTarget, blendMode,
+                shader,
                 rotationDegrees);
         }
     }

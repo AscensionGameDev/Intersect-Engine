@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
+using Intersect.Editor.Forms;
 using Intersect.Logging;
-using Intersect_Editor.Forms;
 
-namespace Intersect_Editor.Classes
+namespace Intersect.Editor.Classes
 {
     static class Program
     {

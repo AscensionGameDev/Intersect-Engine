@@ -1,23 +1,25 @@
 using System;
 using System.Collections.Generic;
 using Intersect.GameObjects;
-using Intersect_Server.Classes.Core;
-using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Networking;
+using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.Entities;
+using Intersect.Server.Classes.Maps;
+using Intersect.Server.Classes.Networking;
 
-namespace Intersect_Server.Classes.General
+namespace Intersect.Server.Classes.General
 {
     public static class Globals
     {
         //Console Variables
         public static long CPS = 0;
-        public static Boolean CPSLock = true;
+
+        public static bool CPSLock = true;
         public static bool ServerStarted = true;
         public static ServerSystem System = new ServerSystem();
 
         public static object ClientLock = new object();
         public static List<Client> Clients = new List<Client>();
+        public static IDictionary<Guid, Client> ClientLookup = new Dictionary<Guid, Client>();
 
         public static List<Entity> Entities = new List<Entity>();
 
@@ -74,7 +76,7 @@ namespace Intersect_Server.Classes.General
             }
             foreach (var en in resources)
             {
-                en.Die(false);
+                en.Die(0);
                 en.Spawn();
             }
         }
@@ -91,18 +93,32 @@ namespace Intersect_Server.Classes.General
             }
             foreach (var en in npcs)
             {
-                en.Die(false);
+                en.Die(0);
+            }
+        }
+
+        public static void KillProjectilesOf(ProjectileBase projectile)
+        {
+            var projectiles = new List<Projectile>();
+            for (int i = 0; i < Entities.Count; i++)
+            {
+                if (Entities[i] != null && Entities[i].GetType() == typeof(Projectile) &&
+                    ((Projectile) Entities[i]).MyBase == projectile)
+                {
+                    projectiles.Add((Projectile) Entities[i]);
+                }
+            }
+            foreach (var en in projectiles)
+            {
+                en.Die(0);
             }
         }
 
         public static void KillItemsOf(ItemBase item)
         {
-            foreach (var map in MapInstance.GetObjects())
+            foreach (MapInstance map in MapInstance.Lookup.IndexValues)
             {
-                if (map.Value != null)
-                {
-                    map.Value.DespawnItemsOf(item);
-                }
+                map?.DespawnItemsOf(item);
             }
         }
     }

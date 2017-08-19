@@ -10,72 +10,98 @@ namespace Intersect_Client.Classes.Networking
     {
         public static GameSocket MySocket;
 
-        public static bool Connected;
+        private static bool _connected;
         public static bool Connecting;
-        private static byte[] _tempBuff;
-        private static ByteBuffer _myBuffer = new ByteBuffer();
-        private static Object _bufferLock = new Object();
-        public static int Ping = 0;
+
+        private static int mPing;
+        public static bool Connected => MySocket?.IsConnected() ?? _connected;
+
+        public static int Ping
+        {
+            get { return MySocket?.Ping() ?? mPing; }
+            set { mPing = value; }
+        }
 
         public static void InitNetwork()
         {
-            if (MySocket != null)
-            {
-                MySocket.Connected += MySocket_OnConnected;
-                MySocket.Disconnected += MySocket_OnDisconnected;
-                MySocket.DataReceived += MySocket_OnDataReceived;
-                MySocket.ConnectionFailed += MySocket_OnConnectionFailed;
-                TryConnect();
-            }
+            if (MySocket == null) return;
+            MySocket.Connected += MySocket_OnConnected;
+            MySocket.Disconnected += MySocket_OnDisconnected;
+            MySocket.DataReceived += MySocket_OnDataReceived;
+            MySocket.ConnectionFailed += MySocket_OnConnectionFailed;
+            TryConnect();
         }
 
         private static void TryConnect()
         {
+            _connected = false;
             MySocket.Connect(Globals.Database.ServerHost, Globals.Database.ServerPort);
         }
 
         private static void MySocket_OnConnectionFailed()
         {
+            _connected = false;
             TryConnect();
         }
 
-        public static void PushData(byte[] data)
+        private static void MySocket_OnDataReceived(byte[] packet)
         {
-            lock (_bufferLock)
-            {
-                _myBuffer.WriteBytes(data);
-            }
-            TryHandleData();
-        }
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
 
-        private static void MySocket_OnDataReceived(byte[] data)
-        {
-            lock (_bufferLock)
+            var compressed = bf.ReadBoolean();
+
+            try
             {
-                _myBuffer.WriteBytes(data);
+                //Compressed?
+                if (compressed)
+                {
+                    packet = bf.ReadBytes(bf.Length());
+                    var data = Compression.DecompressPacket(packet);
+                    bf = new ByteBuffer();
+                    bf.WriteBytes(data);
+                }
             }
-            TryHandleData();
+            catch (Exception exception)
+            {
+                Log.Error($"Buffer length: {bf.Length()}");
+                Log.Error($"Packet length: {packet.Length}");
+                Log.Error($"Is Compressed: {compressed}");
+                Log.Error(exception);
+                return;
+            }
+            PacketHandler.HandlePacket(bf);
         }
 
         private static void MySocket_OnDisconnected()
         {
             //Not sure how to handle this yet!
-            Globals.IsRunning = false;
+            _connected = false;
+            if (Globals.GameState == GameStates.InGame || Globals.GameState == GameStates.Loading)
+            {
+                Globals.IsRunning = false;
+            }
+            else
+            {
+                MySocket.Disconnect("");
+                TryConnect();
+            }
+
         }
 
         private static void MySocket_OnConnected()
         {
             //Not sure how to handle this yet!
-            Connected = true;
+            _connected = true;
         }
 
-        public static void Close()
+        public static void Close(string reason)
         {
             try
             {
-                Connected = false;
+                _connected = false;
                 Connecting = false;
-                MySocket.Disconnect();
+                MySocket.Disconnect(reason);
                 MySocket.Dispose();
                 MySocket = null;
             }
@@ -93,17 +119,16 @@ namespace Intersect_Client.Classes.Networking
                 if (packet.Length > 800)
                 {
                     packet = Compression.CompressPacket(packet);
-                    buff.WriteInteger(packet.Length + 1);
                     buff.WriteByte(1); //Compressed
                     buff.WriteBytes(packet);
                 }
                 else
                 {
-                    buff.WriteInteger(packet.Length + 1);
                     buff.WriteByte(0); //Not Compressed
                     buff.WriteBytes(packet);
                 }
-                MySocket.SendData(buff.ToArray());
+
+                MySocket?.SendData(buff.ToArray());
             }
             catch (Exception exception)
             {
@@ -113,34 +138,7 @@ namespace Intersect_Client.Classes.Networking
 
         public static void Update()
         {
-            if (MySocket != null)
-            {
-                MySocket.Update();
-            }
-        }
-
-        private static void TryHandleData()
-        {
-            lock (_bufferLock)
-            {
-                while (_myBuffer.Length() >= 4)
-                {
-                    var packetLen = _myBuffer.ReadInteger(false);
-                    if (_myBuffer.Length() >= packetLen + 4)
-                    {
-                        _myBuffer.ReadInteger();
-                        PacketHandler.HandlePacket(_myBuffer.ReadBytes(packetLen));
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                if (_myBuffer.Length() == 0)
-                {
-                    _myBuffer.Clear();
-                }
-            }
+            MySocket?.Update();
         }
     }
 }

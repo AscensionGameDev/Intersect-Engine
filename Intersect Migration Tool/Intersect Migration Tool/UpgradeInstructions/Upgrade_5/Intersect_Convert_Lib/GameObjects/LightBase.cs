@@ -1,15 +1,13 @@
-﻿using Intersect;
-
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects
+﻿namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects
 {
     public class LightBase
     {
         public Color Color = Color.White;
-        public float Expand = 0f;
+        public float Expand;
         public byte Intensity = 255;
         public int OffsetX;
         public int OffsetY;
-        public int Size = 0;
+        public int Size;
         public int TileX;
         public int TileY;
 

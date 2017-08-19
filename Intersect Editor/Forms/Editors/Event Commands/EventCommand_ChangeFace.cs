@@ -2,11 +2,11 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using Intersect.Editor.Classes.Core;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes.Core;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_ChangeFace : UserControl
     {
@@ -44,7 +44,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         {
             Bitmap destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
             Graphics g = Graphics.FromImage(destBitmap);
-            g.Clear(Color.Black);
+            g.Clear(System.Drawing.Color.Black);
             if (File.Exists("resources/faces/" + cmbFace.Text))
             {
                 Bitmap sourceBitmap = new Bitmap("resources/faces/" + cmbFace.Text);

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.GameObjects
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.GameObjects
 {
     public class ProjectileBase : DatabaseObject
     {
@@ -16,20 +15,20 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Conve
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
         public int Delay = 1;
-        public bool GrappleHook = false;
-        public bool Homing = false;
-        public bool IgnoreActiveResources = false;
-        public bool IgnoreExhaustedResources = false;
-        public bool IgnoreMapBlocks = false;
-        public bool IgnoreZDimension = false;
-        public int Knockback = 0;
+        public bool GrappleHook;
+        public bool Homing;
+        public bool IgnoreActiveResources;
+        public bool IgnoreExhaustedResources;
+        public bool IgnoreMapBlocks;
+        public bool IgnoreZDimension;
+        public int Knockback;
 
         public string Name = "New Projectile";
         public int Quantity = 1;
         public int Range = 1;
         public Location[,] SpawnLocations = new Location[SpawnLocationsWidth, SpawnLocationsHeight];
         public int Speed = 1;
-        public int Spell = 0;
+        public int Spell;
 
         //Init
         public ProjectileBase(int id) : base(id)
@@ -208,7 +207,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Conve
     public class ProjectileAnimation
     {
         public int Animation = -1;
-        public bool AutoRotate = false;
+        public bool AutoRotate;
         public int SpawnRange = 1;
 
         public ProjectileAnimation(int animation, int spawnRange, bool autoRotate)

@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Maps;
-using Color = System.Drawing.Color;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class frmWarpSelection : Form
     {
@@ -18,9 +16,9 @@ namespace Intersect_Editor.Forms
         private int _currentX;
         private int _currentY;
         private int _drawnMap = -1;
-        private Image _mapImage = null;
-        private List<int> _restrictMaps = null;
-        private bool _result = false;
+        private Image _mapImage;
+        private List<int> _restrictMaps;
+        private bool _result;
         private bool _tileSelection = true;
 
         public frmWarpSelection()
@@ -30,7 +28,7 @@ namespace Intersect_Editor.Forms
             mapTreeList1.UpdateMapList(_currentMap);
             pnlMap.Width = Options.TileWidth * Options.MapWidth;
             pnlMap.Height = Options.TileHeight * Options.MapHeight;
-            pnlMap.BackColor = Color.Black;
+            pnlMap.BackColor = System.Drawing.Color.Black;
             mapTreeList1.SetSelect(NodeDoubleClick);
 
             typeof(Panel).InvokeMember("DoubleBuffered",
@@ -93,7 +91,8 @@ namespace Intersect_Editor.Forms
                     }
                     else
                     {
-                        if (MapInstance.GetMap(_currentMap) != null) MapInstance.GetMap(_currentMap).Delete();
+                        if (MapInstance.Lookup.Get<MapInstance>(_currentMap) != null)
+                            MapInstance.Lookup.Get<MapInstance>(_currentMap).Delete();
                         Globals.MapsToFetch = new List<int>() {_currentMap};
                         if (!Globals.MapsToScreenshot.Contains(_currentMap)) Globals.MapsToScreenshot.Add(_currentMap);
                         PacketSender.SendNeedMap(_currentMap);
@@ -109,7 +108,7 @@ namespace Intersect_Editor.Forms
                     new Rectangle(0, 0, pnlMap.Width, pnlMap.Height), GraphicsUnit.Pixel);
                 if (_tileSelection)
                 {
-                    g.DrawRectangle(new Pen(Color.White, 2f),
+                    g.DrawRectangle(new Pen(System.Drawing.Color.White, 2f),
                         new Rectangle(_currentX * Options.TileWidth, _currentY * Options.TileHeight,
                             Options.TileWidth,
                             Options.TileHeight));

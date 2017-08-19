@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects.
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects.
     Switches_and_Variables
 {
     public class ServerVariableBase : DatabaseObject
     {
         //Core info
         public new const string DATABASE_TABLE = "server_variables";
+
         public new const GameObject OBJECT_TYPE = GameObject.ServerVariable;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         public string Name = "New Global Variable";
-        public int Value = 0;
+        public int Value;
 
         public ServerVariableBase(int id) : base(id)
         {

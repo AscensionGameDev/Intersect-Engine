@@ -467,7 +467,7 @@ Tick timer saved in server config.xml.</string>
 		<string id="damagetype1">Magic</string>
 		<string id="damagetype2">True</string>
 		<string id="scalingstat">Scaling Stat:</string>
-		<string id="scalingamount">Scaling Amount:</string>
+		<string id="scalingamount">Scaling Amount (%):</string>
 		<string id="attackanimation">Attack Animation:</string>
 		
 		<string id="leveling">Leveling Up</string>
@@ -605,7 +605,7 @@ Tick timer saved in server config.xml.</string>
 		<string id="damagetype1">Magic</string>
 		<string id="damagetype2">True</string>
 		<string id="scalingstat">Scaling Stat:</string>
-		<string id="scalingamount">Scaling Amount:</string>
+		<string id="scalingamount">Scaling Amount (%):</string>
 		<string id="attackanimation">Attack Animation:</string>
 		<string id="projectile">Projectile:</string>
 		<string id="tooltype">Tool Type:</string>
@@ -684,7 +684,7 @@ Tick timer saved in server config.xml.</string>
 		<string id="removehostility">Remove</string>
 
 		<string id="drops">Drops</string>
-		<string id="dropindex">Drop Index: {00}</string>
+		<string id="dropindex">Drop Index: </string>
 		<string id="dropitem">Item:</string>
 		<string id="dropamount">Drop Amount:</string>
 		<string id="dropchance">Drop Chance (%):</string>
@@ -697,7 +697,7 @@ Tick timer saved in server config.xml.</string>
 		<string id="damagetype1">Magic</string>
 		<string id="damagetype2">True</string>
 		<string id="scalingstat">Scaling Stat:</string>
-		<string id="scalingamount">Scaling Amount:</string>
+		<string id="scalingamount">Scaling Amount (%):</string>
 		<string id="attackanimation">Attack Animation:</string>
 		
 		<string id="save">Save</string>
@@ -853,10 +853,10 @@ Tick timer saved in server config.xml.</string>
 		<string id="requirements">Harvesting Requirements</string>
 		
 		<string id="drops">Drops</string>
-		<string id="dropindex">Drop Index: {00}</string>
+		<string id="dropindex">Drop Index:</string>
 		<string id="dropitem">Item:</string>
 		<string id="dropamount">Amount:</string>
-		<string id="dropchance">Chance (%):)</string>
+		<string id="dropchance">Chance (%):</string>
 		
 		<string id="graphics">Graphics</string>
 		<string id="initialgraphic">Initial Graphic:</string>
@@ -975,7 +975,7 @@ Tick timer saved in server config.xml.</string>
 		<string id="damagetype1">Magic</string>
 		<string id="damagetype2">True</string>
 		<string id="scalingstat">Scaling Stat:</string>
-		<string id="scalingamount">Scaling Amount:</string>
+		<string id="scalingamount">Scaling Amount (%):</string>
 		
 		<string id="hotdot">Heal/Damage Over Time</string>
 		<string id="ishotdot">HOT/DOT?</string>
@@ -989,7 +989,7 @@ Tick timer saved in server config.xml.</string>
 		<string id="magicresist">Magic Resist:</string>
 		
 		<string id="boostduration">Stat Boost/Effect Duration</string>
-		<string id="duration6">Stat Boost/Effect Duration</string>
+		<string id="duration">Stat Boost/Effect Duration</string>
 		<string id="effectgroup">Effect</string>
 		<string id="effectlabel">Extra Effect:</string>
 		<string id="effect0">None</string>
@@ -1036,7 +1036,7 @@ Tick timer saved in server config.xml.</string>
 	<TimeEditor>
 		<string id="title">Time Editor (Day/Night Settings)</string>
 		<string id="times">Time of Day</string>
-		<string id="to">t</string>
+		<string id="to">to</string>
 		<string id="settings">Time Settings</string>
 		<string id="intervals">Invervals:</string>
 		<string id="interval0">24 hours</string>
@@ -1135,11 +1135,14 @@ Negative values for time to flow backwards.</string>
 		<string id="trigger3">Projectile Hit</string>
 		
 		<string id="projectile">Projectile:</string>
-		
+		<string id="command">/Command: /</string>
 		
 		<string id="commontrigger0">None</string>
 		<string id="commontrigger1">Login</string>
 		<string id="commontrigger2">Level Up</string>
+		<string id="commontrigger3">On Respawn</string>
+		<string id="commontrigger4">/Command</string>
+		<string id="commontrigger5">Autorun</string>
 		
 		<string id="commandlist">Commands:</string>
 		<string id="addcommand">Add Commands</string>
@@ -1480,7 +1483,8 @@ Negative values for time to flow backwards.</string>
 		<string id="condition13">Quest Completed....</string>
 		<string id="condition14">Player Death</string>
 		<string id="condition15">No NPCs on Map</string>
-		<string id="condition16">Gender Is...</string>
+		<string id="condition16">Gender is...</string>
+		<string id="condition17">/command is...</string>
 		
 		<!-- Shared Options -->
 		<string id="true">True</string>
@@ -1568,6 +1572,11 @@ Negative values for time to flow backwards.</string>
 		<string id="gender">Gender:</string>
 		<string id="male">Male</string>
 		<string id="female">Female</string>
+
+		<!-- /command is... -->
+		<string id ="commandis">/command is...</string>
+		<string id ="command">/command:   /</string>
+		<string id ="commoneventsonly">This condition works for Common Events activation only!</string>
 		
 		<string id="okay">Ok</string>
 		<string id="cancel">Cancel</string>
@@ -1743,7 +1752,7 @@ Negative values for time to flow backwards.</string>
 	</EventSetVariable>
 	<EventWait>
 		<string id="title">Wait</string>
-		<string id="label">Wait: {00}ms</string>
+		<string id="label">Wait (ms):</string>
 		<string id="okay">Ok</string>
 		<string id="cancel">Cancel</string>
 	</EventWait>

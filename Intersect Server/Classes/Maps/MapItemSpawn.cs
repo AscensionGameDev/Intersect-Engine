@@ -1,4 +1,4 @@
-﻿namespace Intersect_Server.Classes.Maps
+﻿namespace Intersect.Server.Classes.Maps
 {
     public class MapItemSpawn
     {

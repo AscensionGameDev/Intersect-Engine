@@ -1,6 +1,6 @@
 ﻿using DarkUI.Controls;
 
-namespace Intersect_Editor.Forms.Editors
+namespace Intersect.Editor.Forms.Editors
 {
     partial class frmCrafting
     {
@@ -120,7 +120,7 @@ namespace Intersect_Editor.Forms.Editors
             this.lstCrafts.Name = "lstCrafts";
             this.lstCrafts.Size = new System.Drawing.Size(191, 366);
             this.lstCrafts.TabIndex = 1;
-            this.lstCrafts.Click += new System.EventHandler(this.lstCrafts_Click);
+            this.lstCrafts.SelectedIndexChanged += new System.EventHandler(this.lstCrafts_Click);
             this.lstCrafts.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
             // pnlContainer
@@ -221,7 +221,7 @@ namespace Intersect_Editor.Forms.Editors
             this.nudSpeed.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudSpeed.Location = new System.Drawing.Point(16, 118);
             this.nudSpeed.Maximum = new decimal(new int[] {
-            600000,
+            2147483647,
             0,
             0,
             0});
@@ -245,6 +245,10 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbResult.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbResult.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbResult.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbResult.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbResult.ButtonIcon")));
+            this.cmbResult.DrawDropdownHoverOutline = false;
+            this.cmbResult.DrawFocusRectangle = false;
             this.cmbResult.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbResult.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbResult.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -254,6 +258,8 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbResult.Name = "cmbResult";
             this.cmbResult.Size = new System.Drawing.Size(247, 21);
             this.cmbResult.TabIndex = 34;
+            this.cmbResult.Text = null;
+            this.cmbResult.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbResult.SelectedIndexChanged += new System.EventHandler(this.cmbResult_SelectedIndexChanged);
             // 
             // lblItem
@@ -344,6 +350,10 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbIngredient.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbIngredient.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbIngredient.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbIngredient.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbIngredient.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbIngredient.ButtonIcon")));
+            this.cmbIngredient.DrawDropdownHoverOutline = false;
+            this.cmbIngredient.DrawFocusRectangle = false;
             this.cmbIngredient.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbIngredient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbIngredient.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -353,6 +363,8 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbIngredient.Name = "cmbIngredient";
             this.cmbIngredient.Size = new System.Drawing.Size(250, 21);
             this.cmbIngredient.TabIndex = 40;
+            this.cmbIngredient.Text = null;
+            this.cmbIngredient.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbIngredient.SelectedIndexChanged += new System.EventHandler(this.cmbIngredient_SelectedIndexChanged);
             // 
             // btnDupIngredient

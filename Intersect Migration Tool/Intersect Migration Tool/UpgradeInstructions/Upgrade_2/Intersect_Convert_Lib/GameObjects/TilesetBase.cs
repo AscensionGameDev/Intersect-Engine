@@ -2,12 +2,13 @@
 using System.Linq;
 using System.Text;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects
 {
     public class TilesetBase : DatabaseObject
     {
         //Core info
         public new const string DATABASE_TABLE = "tilesets";
+
         public new const GameObject OBJECT_TYPE = GameObject.Tileset;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 

@@ -1,20 +1,18 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using Intersect.Models;
 
 namespace Intersect.GameObjects
 {
     public class BenchBase : DatabaseObject<BenchBase>
     {
-        public new const string DATABASE_TABLE = "crafts";
-        public new const GameObject OBJECT_TYPE = GameObject.Bench;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
         public List<Craft> Crafts = new List<Craft>();
 
         public BenchBase(int id) : base(id)
         {
             Name = "New Bench";
         }
+
+        public override byte[] BinaryData => CraftData();
 
         public override void Load(byte[] packet)
         {
@@ -39,7 +37,6 @@ namespace Intersect.GameObjects
         {
             using (var myBuffer = new ByteBuffer())
             {
-
                 myBuffer.WriteString(Name);
                 myBuffer.WriteInteger(Crafts.Count);
                 foreach (var craft in Crafts)
@@ -49,72 +46,6 @@ namespace Intersect.GameObjects
 
                 return myBuffer.ToArray();
             }
-        }
-
-        public static BenchBase GetCraft(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (BenchBase) Objects[index];
-            }
-            return null;
-        }
-
-        public static string GetName(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return ((BenchBase) Objects[index]).Name;
-            }
-            return "Deleted";
-        }
-
-        public override byte[] BinaryData => CraftData();
-
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, BenchBase> GetObjects()
-        {
-            Dictionary<int, BenchBase> objects = Objects.ToDictionary(k => k.Key, v => (BenchBase) v.Value);
-            return objects;
-        }
-
-        public override void Delete()
-        {
-            Objects.Remove(Id);
-        }
-
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
         }
     }
 

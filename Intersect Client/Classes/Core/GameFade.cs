@@ -14,7 +14,7 @@ namespace Intersect_Client.Classes.Core
         private static FadeType _currentAction;
         private static float _fadeAmt;
         private static float _fadeRate = 3000f;
-        private static long _lastUpdate = 0;
+        private static long _lastUpdate;
 
         public static void FadeIn()
         {

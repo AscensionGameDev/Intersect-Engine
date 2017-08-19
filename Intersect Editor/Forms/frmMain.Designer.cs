@@ -4,7 +4,7 @@ using DarkUI.Controls;
 using DarkUI.Renderers;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     partial class frmMain
     {

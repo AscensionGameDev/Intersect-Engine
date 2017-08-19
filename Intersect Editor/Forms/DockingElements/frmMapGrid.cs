@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Windows.Forms;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.Maps;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Maps;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace Intersect_Editor.Forms.DockingElements
+namespace Intersect.Editor.Forms.DockingElements
 {
     public partial class frmMapGrid : DockContent
     {
         //MonoGame Swap Chain
         private SwapChainRenderTarget _chain;
-        private bool _dragging = false;
-        private int _dragX = 0;
-        private int _dragY = 0;
-        private int _posX = 0;
-        private int _posY = 0;
+
+        private bool _dragging;
+        private int _dragX;
+        private int _dragY;
+        private int _posX;
+        private int _posY;
         private ToolTip _toolTip = new ToolTip();
         private MapGridItem _toolTipItem;
 

@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_Label : UserControl
     {

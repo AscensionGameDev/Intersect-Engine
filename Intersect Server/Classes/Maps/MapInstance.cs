@@ -2,44 +2,41 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
-using Intersect_Server.Classes.Core;
-using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Items;
-using Intersect_Server.Classes.Misc.Pathfinding;
-using Intersect_Server.Classes.Networking;
+using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.Entities;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Items;
+using Intersect.Server.Classes.Networking;
 
-namespace Intersect_Server.Classes.Maps
+namespace Intersect.Server.Classes.Maps
 {
     public class MapInstance : MapBase
     {
-        //Core
-        public new const GameObject OBJECT_TYPE = GameObject.Map;
-        protected static Dictionary<int, DatabaseObject> MapInstanceTable = new Dictionary<int, DatabaseObject>();
-        private static object TableLock = new object();
+        private static MapInstances sLookup;
 
         //Does the map have a player on or nearby it?
         public bool Active;
 
-        private byte[] ClientMapData = null;
         private List<Entity> Entities = new List<Entity>();
         public Dictionary<EventBase, EventInstance> GlobalEventInstances = new Dictionary<EventBase, EventInstance>();
         public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
         private Point[] MapBlocks;
-        private Point[] NpcMapBlocks;
 
         //Location of Map in the current grid
         public int MapGrid;
+
         public int MapGridX = -1;
         public int MapGridY = -1;
         public List<MapItemInstance> MapItems = new List<MapItemInstance>();
 
         //Projectiles
         public List<Projectile> MapProjectiles = new List<Projectile>();
+
+        private Point[] NpcMapBlocks;
         public Dictionary<NpcSpawn, MapNpcSpawn> NpcSpawnInstances = new Dictionary<NpcSpawn, MapNpcSpawn>();
         private List<Player> Players = new List<Player>();
 
@@ -49,10 +46,12 @@ namespace Intersect_Server.Classes.Maps
         //Temporary Values
         public List<int> SurroundingMaps = new List<int>();
 
+        public long TileAccessTime;
+
         //Init
         public MapInstance() : base(-1, false)
         {
-            Autotiles = new MapAutotiles(this);
+            Layers = null;
         }
 
         public MapInstance(int mapNum) : base(mapNum, false)
@@ -61,7 +60,16 @@ namespace Intersect_Server.Classes.Maps
             {
                 return;
             }
-            Autotiles = new MapAutotiles(this);
+            Layers = null;
+        }
+
+        public new static MapInstances Lookup => (sLookup = (sLookup ?? new MapInstances(MapBase.Lookup)));
+
+        //GameObject Functions
+
+        public override byte[] BinaryData
+        {
+            get { return GetMapData(false); }
         }
 
         public object GetMapLock()
@@ -78,7 +86,6 @@ namespace Intersect_Server.Classes.Maps
         {
             lock (_mapLock)
             {
-                ClientMapData = null;
                 DespawnEverything();
                 base.Load(packet);
                 if (keepRevision > -1) Revision = keepRevision;
@@ -97,14 +104,15 @@ namespace Intersect_Server.Classes.Maps
                 {
                     if (Attributes[x, y] != null)
                     {
-                        if (Attributes[x, y].value == (int)MapAttributes.Blocked || Attributes[x, y].value == (int)MapAttributes.GrappleStone)
+                        if (Attributes[x, y].value == (int) MapAttributes.Blocked ||
+                            Attributes[x, y].value == (int) MapAttributes.GrappleStone)
                         {
-                            blocks.Add(new Point(x,y));
-                            npcBlocks.Add(new Point(x,y));
+                            blocks.Add(new Point(x, y));
+                            npcBlocks.Add(new Point(x, y));
                         }
-                        else if (Attributes[x, y].value == (int)MapAttributes.NPCAvoid)
+                        else if (Attributes[x, y].value == (int) MapAttributes.NPCAvoid)
                         {
-                            npcBlocks.Add(new Point(x,y));
+                            npcBlocks.Add(new Point(x, y));
                         }
                     }
                 }
@@ -119,71 +127,40 @@ namespace Intersect_Server.Classes.Maps
             return NpcMapBlocks;
         }
 
-        //Autotile Caching (So Clients Don't have to calculate it)
-        public MapBase[,] GenerateAutotileGrid()
+        //Get Map Packet
+        public byte[] GetMapPacket(bool forClient)
         {
-            MapBase[,] mapBase = new MapBase[3, 3];
-            if (MapGrid >= 0)
-            {
-                if (Database.MapGrids[MapGrid] != null &&
-                    Database.MapGrids[MapGrid].MyMaps.Contains(((DatabaseObject) this).Id))
-                {
-                    for (int x = -1; x <= 1; x++)
-                    {
-                        for (int y = -1; y <= 1; y++)
-                        {
-                            var x1 = MapGridX + x;
-                            var y1 = MapGridY + y;
-                            if (x1 >= 0 && y1 >= 0 && x1 < Database.MapGrids[MapGrid].Width &&
-                                y1 < Database.MapGrids[MapGrid].Height)
-                            {
-                                if (x == 0 && y == 0)
-                                {
-                                    mapBase[x + 1, y + 1] = this;
-                                }
-                                else
-                                {
-                                    mapBase[x + 1, y + 1] = GetMap(Database.MapGrids[MapGrid].MyGrid[x1, y1]);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return mapBase;
+            return GetMapData(forClient);
         }
 
-        public void UpdateSurroundingTiles()
+        public byte[] GetTileData(bool shouldCache = true)
         {
-            var grid = GenerateAutotileGrid();
-            for (int x = 0; x < 3; x++)
-            {
-                for (int y = 0; y < 3; y++)
-                {
-                    if (grid[x, y] != null)
-                    {
-                        ((MapInstance) grid[x, y]).InitAutotiles();
-                    }
-                }
-            }
-        }
-
-        public void InitAutotiles()
-        {
+            //If the tile data is cached then send it
+            //Else grab it (and maybe cache it)
             lock (GetMapLock())
             {
-                Autotiles.InitAutotiles(GenerateAutotileGrid());
+                if (TileData != null)
+                {
+                    if (shouldCache)
+                    {
+                        TileAccessTime = Globals.System.GetTimeMs();
+                    }
+                    return TileData;
+                }
+                else
+                {
+                    if (shouldCache)
+                    {
+                        TileData = Database.GetMapTiles(Index);
+                        TileAccessTime = Globals.System.GetTimeMs();
+                        return TileData;
+                    }
+                    else
+                    {
+                        return Database.GetMapTiles(Index);
+                    }
+                }
             }
-        }
-
-        //Get Map Data
-        public byte[] GetClientMapData()
-        {
-            if (ClientMapData == null)
-            {
-                ClientMapData = GetMapData(true);
-            }
-            return ClientMapData;
         }
 
         //Items & Resources
@@ -211,7 +188,7 @@ namespace Intersect_Server.Classes.Maps
 
         public void SpawnItem(int x, int y, ItemInstance item, int amount)
         {
-            var itemBase = ItemBase.GetItem(item.ItemNum);
+            var itemBase = ItemBase.Lookup.Get<ItemBase>(item.ItemNum);
             if (itemBase != null)
             {
                 MapItems.Add(new MapItemInstance(item.ItemNum, item.ItemVal, item.BagId));
@@ -230,13 +207,13 @@ namespace Intersect_Server.Classes.Maps
                 {
                     MapItems[MapItems.Count - 1].ItemVal = amount;
                 }
-                PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
+                PacketSender.SendMapItemUpdate(Index, MapItems.Count - 1);
             }
         }
 
         private void SpawnAttributeItem(int x, int y)
         {
-            var item = ItemBase.GetItem(Attributes[x, y].data1);
+            var item = ItemBase.Lookup.Get<ItemBase>(Attributes[x, y].data1);
             if (item != null)
             {
                 MapItems.Add(new MapItemInstance(Attributes[x, y].data1, Attributes[x, y].data2, -1));
@@ -254,7 +231,7 @@ namespace Intersect_Server.Classes.Maps
                         MapItems[MapItems.Count - 1].StatBoost[i] = r.Next(-1 * item.StatGrowth, item.StatGrowth + 1);
                     }
                 }
-                PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
+                PacketSender.SendMapItemUpdate(Index, MapItems.Count - 1);
             }
         }
 
@@ -263,7 +240,7 @@ namespace Intersect_Server.Classes.Maps
             if (index < MapItems.Count && MapItems[index] != null)
             {
                 MapItems[index].ItemNum = -1;
-                PacketSender.SendMapItemUpdate(Id, index);
+                PacketSender.SendMapItemUpdate(Index, index);
                 if (respawn)
                 {
                     if (MapItems[index].AttributeSpawnX > -1)
@@ -296,7 +273,7 @@ namespace Intersect_Server.Classes.Maps
             {
                 if (MapItems[i] != null)
                 {
-                    if (ItemBase.GetItem(MapItems[i].ItemNum) == itemBase)
+                    if (ItemBase.Lookup.Get<ItemBase>(MapItems[i].ItemNum) == itemBase)
                     {
                         RemoveItem(i, true);
                     }
@@ -344,7 +321,7 @@ namespace Intersect_Server.Classes.Maps
                 }
                 if (resourceSpawnInstance.Entity == null)
                 {
-                    var resourceBase = ResourceBase.GetResource(ResourceSpawns[i].ResourceNum);
+                    var resourceBase = ResourceBase.Lookup.Get<ResourceBase>(ResourceSpawns[i].ResourceNum);
                     if (resourceBase != null)
                     {
                         index = Globals.FindOpenEntity();
@@ -353,7 +330,7 @@ namespace Intersect_Server.Classes.Maps
                         Globals.Entities[index].CurrentX = ResourceSpawns[i].X;
                         Globals.Entities[index].CurrentY = ResourceSpawns[i].Y;
                         Globals.Entities[index].CurrentZ = ResourceSpawns[i].Z;
-                        Globals.Entities[index].CurrentMap = Id;
+                        Globals.Entities[index].CurrentMap = Index;
                         Entities.Add((Resource) Globals.Entities[index]);
                     }
                 }
@@ -375,7 +352,7 @@ namespace Intersect_Server.Classes.Maps
             {
                 if (resourceSpawn.Value != null && resourceSpawn.Value.Entity != null)
                 {
-                    resourceSpawn.Value.Entity.Destroy(false);
+                    resourceSpawn.Value.Entity.Destroy(0);
                     Entities.Remove(resourceSpawn.Value.Entity);
                 }
             }
@@ -396,7 +373,7 @@ namespace Intersect_Server.Classes.Maps
             int X = 0;
             int Y = 0;
             int dir = 0;
-            var npcBase = NpcBase.GetNpc(Spawns[i].NpcNum);
+            var npcBase = NpcBase.Lookup.Get<NpcBase>(Spawns[i].NpcNum);
             if (npcBase != null)
             {
                 MapNpcSpawn npcSpawnInstance;
@@ -444,7 +421,7 @@ namespace Intersect_Server.Classes.Maps
             //Kill all npcs spawned from this map
             foreach (var npcSpawn in NpcSpawnInstances)
             {
-                npcSpawn.Value.Entity.Die(false);
+                npcSpawn.Value.Entity.Die(0);
             }
             NpcSpawnInstances.Clear();
             Spawns.Clear();
@@ -454,20 +431,20 @@ namespace Intersect_Server.Classes.Maps
             {
                 if (entity.GetType() == typeof(Npc))
                 {
-                    entity.Die(false);
+                    entity.Die(0);
                 }
             }
         }
 
         public Entity SpawnNpc(int tileX, int tileY, int dir, int npcNum, bool despawnable = false)
         {
-            var npcBase = NpcBase.GetNpc(npcNum);
+            var npcBase = NpcBase.Lookup.Get<NpcBase>(npcNum);
             if (npcBase != null)
             {
                 int index = Globals.FindOpenEntity();
                 Globals.Entities[index] = new Npc(index, npcBase, despawnable)
                 {
-                    CurrentMap = Id,
+                    CurrentMap = Index,
                     CurrentX = tileX,
                     CurrentY = tileY
                 };
@@ -497,7 +474,7 @@ namespace Intersect_Server.Classes.Maps
             {
                 if (evt.Value.IsGlobal == 1)
                 {
-                    GlobalEventInstances.Add(evt.Value, new EventInstance(evt.Value, evt.Key, Id));
+                    GlobalEventInstances.Add(evt.Value, new EventInstance(evt.Value, evt.Key, Index));
                 }
             }
         }
@@ -540,7 +517,8 @@ namespace Intersect_Server.Classes.Maps
             lock (GetMapLock())
             {
                 int n = Globals.FindOpenEntity();
-                MapProjectiles.Add(new Projectile(n, owner, parentSpell, parentItem, projectile, Map, X, Y, Z, Direction,
+                MapProjectiles.Add(new Projectile(n, owner, parentSpell, parentItem, projectile, Map, X, Y, Z,
+                    Direction,
                     target));
                 Globals.Entities[n] = MapProjectiles[MapProjectiles.Count - 1];
                 PacketSender.SendEntityDataToProximity(Globals.Entities[n]);
@@ -620,9 +598,14 @@ namespace Intersect_Server.Classes.Maps
         //Update + Related Functions
         public void Update(long timeMs)
         {
-            lock (_mapLock)
+            lock (GetMapLock())
             {
-                if (CheckActive() == false)
+                //See if we should dispose of tile data
+                if (TileAccessTime + 30000 < timeMs && TileData != null)
+                {
+                    TileData = null;
+                }
+                if (!Active || CheckActive() == false)
                 {
                     return;
                 }
@@ -648,10 +631,7 @@ namespace Intersect_Server.Classes.Maps
                     //Process All Entites
                     for (int i = 0; i < Entities.Count; i++)
                     {
-                        if (Entities[i] != null)
-                        {
-                            Entities[i].Update(timeMs);
-                }
+                        Entities[i].Update(timeMs);
                     }
                     //Process NPC Respawns
                     for (int i = 0; i < Spawns.Count; i++)
@@ -664,7 +644,8 @@ namespace Intersect_Server.Classes.Maps
                                 if (npcSpawnInstance.RespawnTime == -1)
                                 {
                                     npcSpawnInstance.RespawnTime = Globals.System.GetTimeMs() +
-                                                                   ((Npc) npcSpawnInstance.Entity).MyBase.SpawnDuration *
+                                                                   ((Npc) npcSpawnInstance.Entity).MyBase
+                                                                   .SpawnDuration *
                                                                    1000;
                                 }
                                 else if (npcSpawnInstance.RespawnTime < Globals.System.GetTimeMs())
@@ -731,7 +712,7 @@ namespace Intersect_Server.Classes.Maps
             if (includingSelf) maps.Add(this);
             for (int i = 0; i < SurroundingMaps.Count; i++)
             {
-                var map = GetMap(SurroundingMaps[i]);
+                var map = Lookup.Get<MapInstance>(SurroundingMaps[i]);
                 if (map != null) maps.Add(map);
             }
             return maps;
@@ -800,17 +781,17 @@ namespace Intersect_Server.Classes.Maps
                 Active = true;
                 //Send Entity Info to Everyone and Everyone to the Entity
                 SendMapEntitiesTo(player);
-                PacketSender.SendMapItems(player.MyClient, Id);
+                PacketSender.SendMapItems(player.MyClient, Index);
                 AddEntity(player);
-                player.LastMapEntered = ((DatabaseObject) this).Id;
+                player.LastMapEntered = Index;
                 if (SurroundingMaps.Count <= 0) return;
                 foreach (var t in SurroundingMaps)
                 {
-                    GetMap(t).Active = true;
-                    GetMap(t).SendMapEntitiesTo(player);
+                    Lookup.Get<MapInstance>(t).Active = true;
+                    Lookup.Get<MapInstance>(t).SendMapEntitiesTo(player);
                     PacketSender.SendMapItems(player.MyClient, t);
                 }
-                PacketSender.SendEntityDataToProximity(player);
+                PacketSender.SendEntityDataToProximity(player, player.MyClient);
             }
         }
 
@@ -885,84 +866,6 @@ namespace Intersect_Server.Classes.Maps
             SpawnMapResources();
         }
 
-        //GameObject Functions
-
-        public override byte[] BinaryData
-        {
-            get
-            {
-                ClientMapData = null;
-                return GetMapData(false);
-            }
-        }
-
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public new static MapInstance GetMap(int index)
-        {
-            if (MapInstanceTable.ContainsKey(index))
-            {
-                return (MapInstance) MapInstanceTable[index];
-            }
-            return null;
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (MapInstanceTable.ContainsKey(index))
-            {
-                return MapInstanceTable[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            lock (TableLock)
-            {
-                MapInstanceTable.Remove(((DatabaseObject) this).Id);
-                Objects.Remove(((DatabaseObject) this).Id);
-            }
-        }
-
-        public static void ClearObjects()
-        {
-            lock (TableLock)
-            {
-                MapInstanceTable.Clear();
-                MapBase.ClearObjects();
-            }
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            lock (TableLock)
-            {
-                MapInstanceTable.Add(index, obj);
-                Objects.Add(index, (MapBase) obj);
-            }
-        }
-
-        public static int ObjectCount()
-        {
-            return MapInstanceTable.Count;
-        }
-
-        public static Dictionary<int, MapInstance> GetObjects()
-        {
-            lock (TableLock)
-            {
-                Dictionary<int, MapInstance> objects = MapInstanceTable.ToDictionary(k => k.Key,v => (MapInstance) v.Value);
-                return objects;
-            }
-        }
+        public override void Delete() => Lookup?.Delete(this);
     }
 }

@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Intersect;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Conditions;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Conditions;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects
 {
     public class SpellBase : DatabaseObject
     {
         //Core Info
         public new const string DATABASE_TABLE = "spells";
+
         public new const GameObject OBJECT_TYPE = GameObject.Spell;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
@@ -17,45 +17,49 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
         public int CastAnimation = -1;
 
         //Spell Times
-        public int CastDuration = 0;
+        public int CastDuration;
 
         //Requirements
         public ConditionLists CastingReqs = new ConditionLists();
-        public int CastRange = 0;
-        public int CooldownDuration = 0;
-        public int Cost = 0;
+
+        public int CastRange;
+        public int CooldownDuration;
+        public int Cost;
 
         //Damage
         public int CritChance;
+
         public int DamageType = 1;
-        public int Data1 = 0;
-        public int Data2 = 0;
-        public int Data3 = 0;
-        public int Data4 = 0;
+        public int Data1;
+        public int Data2;
+        public int Data3;
+        public int Data4;
         public string Data5 = "";
         public string Desc = "";
         public int Friendly;
         public int HitAnimation = -1;
-        public int HitRadius = 0;
+        public int HitRadius;
 
         //OldRequirements
-        public int LevelReq = 0;
+        public int LevelReq;
 
         public string Name = "New Spell";
         public string Pic = "";
 
         //Extra Data, Teleport Coords, Custom Spells, Etc
-        public int Projectile = 0;
+        public int Projectile;
+
         public int Scaling;
         public int ScalingStat;
-        public byte SpellType = 0;
+        public byte SpellType;
 
         //Buff/Debuff Data
         public int[] StatDiff = new int[(int) Stats.StatCount];
+
         public int[] StatReq = new int[(int) Stats.StatCount];
 
         //Targetting Stuff
-        public int TargetType = 0;
+        public int TargetType;
 
         //Costs
         public int[] VitalCost = new int[(int) Vitals.VitalCount];
@@ -129,28 +133,42 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             };
             if (LevelReq > 0)
             {
-                var req = new EventCommand()
+                var req = new EventCommand
                 {
-                    Type = EventCommandType.ConditionalBranch
+                    Type = EventCommandType.ConditionalBranch,
+                    Ints =
+                    {
+                        [0] = 7,
+                        [1] = 1,
+                        [2] = LevelReq,
+                        [3] = 0
+                    }
                 };
-                req.Ints[0] = 7; //Level or Stat is
-                req.Ints[1] = 1; //Greater than or equal to
-                req.Ints[2] = LevelReq; //Level To Compare
-                req.Ints[3] = 0; //Level not stat
+                //Level or Stat is
+                //Greater than or equal to
+                //Level To Compare
+                //Level not stat
                 cndList.Conditions.Add(req);
             }
             for (var i = 0; i < Options.MaxStats; i++)
             {
                 if (StatReq[i] > 0)
                 {
-                    var req = new EventCommand()
+                    var req = new EventCommand
                     {
-                        Type = EventCommandType.ConditionalBranch
+                        Type = EventCommandType.ConditionalBranch,
+                        Ints =
+                        {
+                            [0] = 7,
+                            [1] = 1,
+                            [2] = StatReq[i],
+                            [3] = i + 1
+                        }
                     };
-                    req.Ints[0] = 7; //Level or Stat is
-                    req.Ints[1] = 1; //Greater than or equal to
-                    req.Ints[2] = StatReq[i]; //Value To Compare
-                    req.Ints[3] = i + 1; //Stat index
+                    //Level or Stat is
+                    //Greater than or equal to
+                    //Value To Compare
+                    //Stat index
                     cndList.Conditions.Add(req);
                 }
             }

@@ -1,11 +1,12 @@
 ﻿using Intersect;
+using Intersect.Enums;
 
 namespace Intersect_Client.Classes.Items
 {
     public class ItemInstance
     {
         public int ItemNum = -1;
-        public int ItemVal = 0;
+        public int ItemVal;
         public int[] StatBoost = new int[(int) Stats.StatCount];
 
         public ItemInstance()
@@ -39,8 +40,8 @@ namespace Intersect_Client.Classes.Items
 
     public class MapItemInstance : ItemInstance
     {
-        public int X = 0;
-        public int Y = 0;
+        public int X;
+        public int Y;
 
         public MapItemInstance() : base()
         {

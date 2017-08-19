@@ -3,26 +3,26 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using DarkUI.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Forms.Editors;
+using Intersect.Editor.Forms.Editors.Quest;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Forms.Editors;
-using Intersect_Editor.Forms.Editors.Quest;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
-    public partial class frmQuest : Form
+    public partial class frmQuest : EditorForm
     {
         private List<QuestBase> _changed = new List<QuestBase>();
-        private byte[] _copiedItem = null;
-        private QuestBase _editorItem = null;
+        private byte[] _copiedItem;
+        private QuestBase _editorItem;
 
         public frmQuest()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstQuests.LostFocus += itemList_FocusChanged;
             lstQuests.GotFocus += itemList_FocusChanged;
             InitLocalization();
@@ -66,17 +66,17 @@ namespace Intersect_Editor.Forms
             btnEditStartEvent.Text = Strings.Get("questeditor", "editstartevent");
             lblOnEnd.Text = Strings.Get("questeditor", "onend");
             btnEditCompletionEvent.Text = Strings.Get("questeditor", "editendevent");
-            
+
             btnSave.Text = Strings.Get("questeditor", "save");
             btnCancel.Text = Strings.Get("questeditor", "cancel");
         }
 
-        private void GameObjectUpdatedDelegate(GameObject type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (type == GameObject.Quest)
+            if (type == GameObjectType.Quest)
             {
                 InitEditor();
-                if (_editorItem != null && !QuestBase.GetObjects().ContainsValue(_editorItem))
+                if (_editorItem != null && !QuestBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -115,14 +115,16 @@ namespace Intersect_Editor.Forms
 
         private void lstQuests_Click(object sender, EventArgs e)
         {
-            _editorItem = QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, lstQuests.SelectedIndex));
+            _editorItem =
+                QuestBase.Lookup.Get<QuestBase>(
+                    Database.GameObjectIdFromList(GameObjectType.Quest, lstQuests.SelectedIndex));
             UpdateEditor();
         }
 
         public void InitEditor()
         {
             lstQuests.Items.Clear();
-            foreach (var quest in QuestBase.GetObjects())
+            foreach (var quest in QuestBase.Lookup)
             {
                 lstQuests.Items.Add(quest.Value.Name);
             }
@@ -165,7 +167,7 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstQuests.Items[Database.GameObjectListIndex(GameObject.Quest, _editorItem.Id)] = txtName.Text;
+            lstQuests.Items[Database.GameObjectListIndex(GameObjectType.Quest, _editorItem.Index)] = txtName.Text;
         }
 
         private void txtStartDesc_TextChanged(object sender, EventArgs e)
@@ -224,7 +226,7 @@ namespace Intersect_Editor.Forms
             var cmdWindow = new Quest_TaskEditor(task);
             var frm = new Form
             {
-                Text = Strings.Get("taskeditor","title")
+                Text = Strings.Get("taskeditor", "title")
             };
             frm.Controls.Add(cmdWindow);
             frm.Size = new Size(0, 0);
@@ -316,7 +318,7 @@ namespace Intersect_Editor.Forms
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
         {
-            PacketSender.SendCreateObject(GameObject.Quest);
+            PacketSender.SendCreateObject(GameObjectType.Quest);
         }
 
         private void toolStripItemDelete_Click(object sender, EventArgs e)
@@ -324,7 +326,8 @@ namespace Intersect_Editor.Forms
             if (_editorItem != null && lstQuests.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("questeditor", "deleteprompt"),
-                        Strings.Get("questeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                        Strings.Get("questeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
                 }

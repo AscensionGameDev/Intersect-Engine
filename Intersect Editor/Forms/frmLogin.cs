@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.Core;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Core;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class FrmLogin : Form
     {
@@ -20,6 +20,7 @@ namespace Intersect_Editor.Forms
 
         public FrmLogin()
         {
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             InitializeComponent();
         }
 
@@ -60,14 +61,14 @@ namespace Intersect_Editor.Forms
 
         private void tmrSocket_Tick(object sender, EventArgs e)
         {
-            Network.Update();
+            EditorNetwork.Update();
             var statusString = Strings.Get("login", "connecting");
-            if (Network.Connected)
+            if (EditorNetwork.Connected)
             {
                 statusString = Strings.Get("login", "connected");
                 btnLogin.Enabled = true;
             }
-            else if (Network.Connecting)
+            else if (EditorNetwork.Connecting)
             {
             }
             else
@@ -89,7 +90,7 @@ namespace Intersect_Editor.Forms
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            if (!Network.Connected || !btnLogin.Enabled) return;
+            if (!EditorNetwork.Connected || !btnLogin.Enabled) return;
             if (txtUsername.Text.Trim().Length > 0 && txtPassword.Text.Trim().Length > 0)
             {
                 var sha = new SHA256Managed();
@@ -116,6 +117,7 @@ namespace Intersect_Editor.Forms
 
         protected override void OnClosed(EventArgs e)
         {
+            EditorNetwork.EditorLidgrenNetwork?.Disconnect("quitting");
             base.OnClosed(e);
             Application.Exit();
         }
@@ -172,6 +174,26 @@ namespace Intersect_Editor.Forms
             if (e.KeyCode == Keys.F1)
             {
                 new frmOptions().ShowDialog();
+            }
+        }
+
+        public void HideSafe() => ShowSafe(false);
+
+        public void ShowSafe(bool show = true)
+        {
+            var doShow = new Action<Form>(instance =>
+            {
+                if (show) instance?.Show();
+                else instance?.Hide();
+            });
+
+            if (!InvokeRequired)
+            {
+                doShow(this);
+            }
+            else
+            {
+                Invoke(doShow, this);
             }
         }
     }

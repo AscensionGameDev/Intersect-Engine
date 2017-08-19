@@ -1,13 +1,12 @@
-﻿using Intersect;
+﻿using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Misc;
-using Intersect_Server.Classes.Misc.Pathfinding;
-using Intersect_Server.Classes.Networking;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Maps;
+using Intersect.Server.Classes.Misc.Pathfinding;
+using Intersect.Server.Classes.Networking;
 
-namespace Intersect_Server.Classes.Entities
+namespace Intersect.Server.Classes.Entities
 {
     public class EventPageInstance : Entity
     {
@@ -24,6 +23,7 @@ namespace Intersect_Server.Classes.Entities
         public EventGraphic MyGraphic = new EventGraphic();
         public EventPage MyPage;
         private int PageNum;
+        public string Param;
         private int RenderLevel = 1;
         public int Trigger;
         private int WalkingAnim;
@@ -232,7 +232,7 @@ namespace Intersect_Server.Classes.Entities
 
         protected override bool ProcessMoveRoute(Client client, long timeMs)
         {
-            if (!base.ProcessMoveRoute(client,timeMs))
+            if (!base.ProcessMoveRoute(client, timeMs))
             {
                 var moved = false;
                 var shouldSendUpdate = false;
@@ -487,7 +487,8 @@ namespace Intersect_Server.Classes.Entities
                             break;
                         case MoveRouteEnum.SetAnimation:
                             Animations.Clear();
-                            var anim = AnimationBase.Lookup.Get(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);
+                            var anim = AnimationBase.Lookup.Get<AnimationBase>(MoveRoute.Actions[MoveRoute.ActionIndex]
+                                .AnimationIndex);
                             if (anim != null)
                             {
                                 Animations.Add(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);
@@ -589,7 +590,7 @@ namespace Intersect_Server.Classes.Entities
             }
             if (GlobalClone != null)
             {
-                var map = MapInstance.GetMap(GlobalClone.CurrentMap);
+                var map = MapInstance.Lookup.Get<MapInstance>(GlobalClone.CurrentMap);
                 if (map == null || !map.FindEvent(GlobalClone.BaseEvent, GlobalClone)) return true;
             }
             return false;

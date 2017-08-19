@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <!--formulas.xml generated automatically by Intersect Server.
 
 Here you can modify formulas used in the Intersect Engine. The three main formulas are for calculating Physical, Magical, and True Damage.
@@ -26,7 +27,7 @@ V_MagicResist:			Victims magic resist stat.
 
 -->
 <Formulas>
-	<PhysicalDamage>Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025) * (100 / (100 + V_Defense))</PhysicalDamage>
-	<MagicDamage>Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025) * (100 / (100 + V_MagicResist))</MagicDamage>
-	<TrueDamage>Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025)</TrueDamage>
+  <PhysicalDamage>Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025) * (100 / (100 + V_Defense))</PhysicalDamage>
+  <MagicDamage>Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025) * (100 / (100 + V_MagicResist))</MagicDamage>
+  <TrueDamage>Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025)</TrueDamage>
 </Formulas>

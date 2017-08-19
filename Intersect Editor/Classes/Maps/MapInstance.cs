@@ -1,22 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using Intersect;
+using Intersect.Editor.Classes.Entities;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
-using Intersect_Editor.Classes.Entities;
 
-namespace Intersect_Editor.Classes.Maps
+namespace Intersect.Editor.Classes.Maps
 {
-    public class MapInstance : MapBase
+    public class MapInstance : MapBase, IGameObject<int, MapInstance>
     {
-        //Map Attributes
-        public new const GameObject OBJECT_TYPE = GameObject.Map;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        private static object objectsLock = new object();
+        private static MapInstances sLookup;
 
+        //Map Attributes
         private Dictionary<Attribute, AnimationInstance> _attributeAnimInstances =
             new Dictionary<Attribute, AnimationInstance>();
 
@@ -24,46 +20,133 @@ namespace Intersect_Editor.Classes.Maps
 
         public MapInstance(int mapNum) : base(mapNum, false)
         {
-            Autotiles = new MapAutotiles(this);
+            lock (GetMapLock())
+            {
+                Autotiles = new MapAutotiles(this);
+            }
         }
 
         public MapInstance(MapBase mapStruct) : base(mapStruct)
         {
-            Autotiles = new MapAutotiles(this);
-            if (typeof(MapInstance) == mapStruct.GetType())
+            lock (GetMapLock())
             {
-                MapGridX = ((MapInstance) mapStruct).MapGridX;
-                MapGridY = ((MapInstance) mapStruct).MapGridY;
+                Autotiles = new MapAutotiles(this);
+                if (typeof(MapInstance) == mapStruct.GetType())
+                {
+                    MapGridX = ((MapInstance) mapStruct).MapGridX;
+                    MapGridY = ((MapInstance) mapStruct).MapGridY;
+                }
+                InitAutotiles();
             }
-            InitAutotiles();
         }
+
+        public new static MapInstances Lookup => (sLookup = (sLookup ?? new MapInstances(MapBase.Lookup)));
 
         //World Position
         public int MapGridX { get; set; }
+
         public int MapGridY { get; set; }
+
+        public override byte[] BinaryData => GetMapData(false);
 
         public void Load(byte[] myArr, bool import = false)
         {
-            var up = Up;
-            var down = Down;
-            var left = Left;
-            var right = Right;
-            loadedData = myArr;
-            base.Load(myArr);
-            if (import)
+            lock (GetMapLock())
             {
-                Up = up;
-                Down = down;
-                Left = left;
-                Right = right;
+                var up = Up;
+                var down = Down;
+                var left = Left;
+                var right = Right;
+                base.Load(myArr);
+                if (import)
+                {
+                    Up = up;
+                    Down = down;
+                    Left = left;
+                    Right = right;
+                }
             }
+        }
+
+        public void LoadTileData(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            lock (GetMapLock())
+            {
+                Layers = new TileArray[Options.LayerCount];
+                for (var i = 0; i < Options.LayerCount; i++)
+                {
+                    Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
+                    for (var x = 0; x < Options.MapWidth; x++)
+                    {
+                        for (var y = 0; y < Options.MapHeight; y++)
+                        {
+                            Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].X = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].Y = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
+                        }
+                    }
+                }
+            }
+            bf.Dispose();
+        }
+
+        public void SaveStateAsUnchanged()
+        {
+            loadedData = SaveInternal();
+        }
+
+        public void LoadInternal(byte[] myArr, bool import = false)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(myArr);
+            var mapDataLength = bf.ReadInteger();
+            var mapData = bf.ReadBytes(mapDataLength);
+            var tileDataLength = bf.ReadInteger();
+            var tileData = bf.ReadBytes(tileDataLength);
+            Load(mapData, import);
+            LoadTileData(tileData);
+            bf.Dispose();
+        }
+
+        public byte[] SaveInternal()
+        {
+            var bf = new ByteBuffer();
+            var mapData = GetMapData(false);
+            bf.WriteInteger(mapData.Length);
+            bf.WriteBytes(mapData);
+            var tileData = GenerateTileData();
+            bf.WriteInteger(tileData.Length);
+            bf.WriteBytes(tileData);
+            return bf.ToArray();
+        }
+
+        public byte[] GenerateTileData()
+        {
+            var bf = new ByteBuffer();
+            for (var i = 0; i < Options.LayerCount; i++)
+            {
+                for (var x = 0; x < Options.MapWidth; x++)
+                {
+                    for (var y = 0; y < Options.MapHeight; y++)
+                    {
+                        bf.WriteInteger(Layers[i].Tiles[x, y].TilesetIndex);
+                        bf.WriteInteger(Layers[i].Tiles[x, y].X);
+                        bf.WriteInteger(Layers[i].Tiles[x, y].Y);
+                        bf.WriteByte(Layers[i].Tiles[x, y].Autotile);
+                    }
+                }
+            }
+            return bf.ToArray();
         }
 
         public bool Changed()
         {
             if (loadedData != null)
             {
-                var newData = GetMapData(false);
+                var newData = SaveInternal();
                 if (newData.Length == loadedData.Length)
                 {
                     for (int i = 0; i < newData.Length; i++)
@@ -85,7 +168,8 @@ namespace Intersect_Editor.Classes.Maps
             if (attr == null) return null;
             if (!_attributeAnimInstances.ContainsKey(attr))
             {
-                _attributeAnimInstances.Add(attr, new AnimationInstance(AnimationBase.Lookup.Get(animNum), true));
+                _attributeAnimInstances.Add(attr,
+                    new AnimationInstance(AnimationBase.Lookup.Get<AnimationBase>(animNum), true));
             }
             return _attributeAnimInstances[attr];
         }
@@ -100,20 +184,21 @@ namespace Intersect_Editor.Classes.Maps
 
         public void Update()
         {
-            if (Globals.MapsToScreenshot.Contains(Id))
+            if (Globals.MapsToScreenshot.Contains(Index))
             {
                 if (Globals.MapGrid != null && Globals.MapGrid.Loaded)
                 {
-                    if (Globals.MapGrid.Contains(Id))
+                    if (Globals.MapGrid.Contains(Index))
                     {
                         for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
                         {
                             for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                             {
-                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight &&
+                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 &&
+                                    y < Globals.MapGrid.GridHeight &&
                                     Globals.MapGrid.Grid[x, y].mapnum > -1)
                                 {
-                                    var needMap = GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                    var needMap = Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (needMap == null) return;
                                 }
                             }
@@ -130,10 +215,10 @@ namespace Intersect_Editor.Classes.Maps
                             screenshotTexture.Save(ms, ImageFormat.Png);
                             ms.Close();
                         }
-                        Database.SaveMapCache(Id, Revision, ms.ToArray());
+                        Database.SaveMapCache(Index, Revision, ms.ToArray());
                     }
                     Globals.CurrentMap = prevMap;
-                    Globals.MapsToScreenshot.Remove(Id);
+                    Globals.MapsToScreenshot.Remove(Index);
 
                     //See if this map is around our current map, if not let's delete it
                     if (Globals.CurrentMap != null && Globals.MapGrid != null && Globals.MapGrid.Loaded)
@@ -144,7 +229,7 @@ namespace Intersect_Editor.Classes.Maps
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    if (Globals.MapGrid.Grid[x, y].mapnum == Id) return;
+                                    if (Globals.MapGrid.Grid[x, y].mapnum == Index) return;
                                 }
                             }
                         }
@@ -158,7 +243,7 @@ namespace Intersect_Editor.Classes.Maps
         public MapBase[,] GenerateAutotileGrid()
         {
             MapBase[,] mapBase = new MapBase[3, 3];
-            if (Globals.MapGrid != null && Globals.MapGrid.Contains(Id))
+            if (Globals.MapGrid != null && Globals.MapGrid.Contains(Index))
             {
                 for (int x = -1; x <= 1; x++)
                 {
@@ -174,12 +259,13 @@ namespace Intersect_Editor.Classes.Maps
                             }
                             else
                             {
-                                mapBase[x + 1, y + 1] = GetMap(Globals.MapGrid.Grid[x1, y1].mapnum);
+                                mapBase[x + 1, y + 1] = Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x1, y1].mapnum);
                             }
                         }
                     }
                 }
             }
+            mapBase[1, 1] = this;
             return mapBase;
         }
 
@@ -193,7 +279,7 @@ namespace Intersect_Editor.Classes.Maps
 
         public void UpdateAdjacentAutotiles()
         {
-            if (Globals.MapGrid != null && Globals.MapGrid.Contains(Id))
+            if (Globals.MapGrid != null && Globals.MapGrid.Contains(Index))
             {
                 for (int x = -1; x <= 1; x++)
                 {
@@ -203,7 +289,7 @@ namespace Intersect_Editor.Classes.Maps
                         var y1 = MapGridY + y;
                         if (x1 >= 0 && y1 >= 0 && x1 < Globals.MapGrid.GridWidth && y1 < Globals.MapGrid.GridHeight)
                         {
-                            var map = GetMap(Globals.MapGrid.Grid[x1, y1].mapnum);
+                            var map = Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x1, y1].mapnum);
                             if (map != null && map != this) map.InitAutotiles();
                         }
                     }
@@ -250,71 +336,7 @@ namespace Intersect_Editor.Classes.Maps
             return null;
         }
 
-        public override byte[] BinaryData => GetMapData(false);
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public new static MapInstance GetMap(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (MapInstance) Objects[index];
-            }
-            return null;
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            lock (objectsLock)
-            {
-                Objects.Remove(Id);
-                MapBase.GetObjects().Remove(Id);
-            }
-        }
-
-        public static void ClearObjects()
-        {
-            lock (objectsLock)
-            {
-                Objects.Clear();
-                MapBase.ClearObjects();
-            }
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            lock (objectsLock)
-            {
-                Objects.Add(index, obj);
-                MapBase.Objects.Add(index, (MapBase) obj);
-            }
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, MapInstance> GetObjects()
-        {
-            lock (objectsLock)
-            {
-                Dictionary<int, MapInstance> objects = Objects.ToDictionary(k => k.Key, v => (MapInstance) v.Value);
-                return objects;
-            }
-        }
+        public override void Delete() => Lookup?.Delete(this);
 
         public void Dispose()
         {

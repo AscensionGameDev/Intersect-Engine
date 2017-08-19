@@ -9,7 +9,7 @@
     <ProjectGuid>{5AC53DF1-8152-466D-B7D0-238657F013F7}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Intersect_Editor</RootNamespace>
+    <RootNamespace>Intersect.Editor</RootNamespace>
     <AssemblyName>Intersect Editor</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>Windows</MonoGamePlatform>
@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\build\debug\editor\</OutputPath>
     <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -30,7 +30,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\build\release\editor\</OutputPath>
     <DefineConstants>TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -44,7 +44,32 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Intersect_Editor.Classes.Program</StartupObject>
+    <StartupObject>Intersect.Editor.Classes.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Tespia|x86'">
+    <OutputPath>..\build\tespia\editor\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;WINDOWS</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Diagnostic|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\build\diagnostic\editor\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;WINDOWS;INTERSECT_DIAGNOSTIC</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Classes\Content\GameContentManager.cs" />
@@ -61,7 +86,7 @@
     <Compile Include="Classes\Maps\MapGrid.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Classes\Maps\MapProperties.cs" />
-    <Compile Include="Classes\Networking\Network.cs" />
+    <Compile Include="Classes\Networking\EditorNetwork.cs" />
     <Compile Include="Classes\Networking\PacketHandler.cs" />
     <Compile Include="Classes\Networking\PacketSender.cs" />
     <Compile Include="Forms\Controls\AutoDragPanel.cs">
@@ -111,6 +136,9 @@
     </Compile>
     <Compile Include="Forms\DockingElements\frmMapProperties.Designer.cs">
       <DependentUpon>frmMapProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\EditorForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\Editors\Event Commands\EventCommand_ChangeFace.cs">
       <SubType>UserControl</SubType>
@@ -466,6 +494,10 @@
     <Reference Include="DarkUI">
       <HintPath>.\DarkUI.dll</HintPath>
     </Reference>
+    <Reference Include="Lidgren.Network, Version=3.6.0.1271, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Lidgren.Network.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\Mono.Data.Sqlite.dll</HintPath>
       <Private>True</Private>
@@ -708,6 +740,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon.ico" />
+    <EmbeddedResource Include="public-intersect.bek" />
     <None Include="Resources\1_A.png" />
     <None Include="Resources\1_B Hide.png" />
     <None Include="Resources\1_B.png" />
@@ -733,11 +766,16 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Intersect Library\Intersect Library\Intersect Library.csproj">
+    <ProjectReference Include="..\Intersect Library\Intersect Library\Intersect %28Core%29.csproj">
       <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
-      <Name>Intersect Library</Name>
+      <Name>Intersect %28Core%29</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj">
+      <Project>{e8f288cb-51df-4d9d-a3b3-a61bd4fd3f45}</Project>
+      <Name>Intersect.Network</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <Import Project="packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets" Condition="Exists('packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets')" />

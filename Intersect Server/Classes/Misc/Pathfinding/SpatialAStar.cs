@@ -1,32 +1,8 @@
-﻿/*
-The MIT License
-
-Copyright (c) 2010 Christoph Husse
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
-using System;
+﻿using System;
 using System.Collections.Generic;
-using Intersect;
-using Intersect_Server.Classes.Misc.Pathfinding;
+using Intersect.Server.Classes.Misc.Pathfinding;
 
-namespace Intersect_Server.Classes.Misc
+namespace Intersect.Server.Classes.Misc
 {
     public interface IIndexedObject
     {
@@ -36,11 +12,17 @@ namespace Intersect_Server.Classes.Misc
     public class PathNode : IComparer<PathNode>, IIndexedObject
     {
         public static readonly PathNode Comparer = new PathNode(0, 0, false);
-        
-        public Double G { get; internal set; }
-        public Double H { get; internal set; }
-        public Double F { get; internal set; }
-        public int Index { get; set; }
+
+        public PathNode(int inX, int inY, bool isWall)
+        {
+            X = inX;
+            Y = inY;
+            IsWall = isWall;
+        }
+
+        public double G { get; internal set; }
+        public double H { get; internal set; }
+        public double F { get; internal set; }
 
         public int X { get; set; }
         public int Y { get; set; }
@@ -56,29 +38,21 @@ namespace Intersect_Server.Classes.Misc
             return 0;
         }
 
-        public PathNode(int inX, int inY, bool isWall)
-        {
-            X = inX;
-            Y = inY;
-            IsWall = isWall;
-        }
+        public int Index { get; set; }
     }
 
     /// <summary>
-    /// Uses about 50 MB for a 1024x1024 grid.
+    ///     Uses about 50 MB for a 1024x1024 grid.
     /// </summary>
     public class SpatialAStar
     {
+        private static readonly double SQRT_2 = Math.Sqrt(2);
+        private PathNode[,] m_CameFrom;
         private OpenCloseMap m_ClosedSet;
         private OpenCloseMap m_OpenSet;
         private PriorityQueue<PathNode> m_OrderedOpenSet;
-        private PathNode[,] m_CameFrom;
         private OpenCloseMap m_RuntimeGrid;
         private PathNode[,] m_SearchSpace;
-
-        public PathNode[,] SearchSpace { get; private set; }
-        public int Width { get; private set; }
-        public int Height { get; private set; }
 
         public SpatialAStar(PathNode[,] inGrid)
         {
@@ -93,14 +67,17 @@ namespace Intersect_Server.Classes.Misc
             m_OrderedOpenSet = new PriorityQueue<PathNode>(PathNode.Comparer);
         }
 
-        protected virtual Double Heuristic(PathNode inStart, PathNode inEnd)
+        public PathNode[,] SearchSpace { get; private set; }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+
+        protected virtual double Heuristic(PathNode inStart, PathNode inEnd)
         {
-            return Math.Sqrt((inStart.X - inEnd.X) * (inStart.X - inEnd.X) + (inStart.Y - inEnd.Y) * (inStart.Y - inEnd.Y));
+            return Math.Sqrt((inStart.X - inEnd.X) * (inStart.X - inEnd.X) +
+                             (inStart.Y - inEnd.Y) * (inStart.Y - inEnd.Y));
         }
 
-        private static readonly Double SQRT_2 = Math.Sqrt(2);
-
-        protected virtual Double NeighborDistance(PathNode inStart, PathNode inEnd)
+        protected virtual double NeighborDistance(PathNode inStart, PathNode inEnd)
         {
             int diffX = Math.Abs(inStart.X - inEnd.X);
             int diffY = Math.Abs(inStart.Y - inEnd.Y);
@@ -118,8 +95,8 @@ namespace Intersect_Server.Classes.Misc
         //private List<Int64> elapsed = new List<long>();
 
         /// <summary>
-        /// Returns null, if no path is found. Start- and End-Node are included in returned path. The user context
-        /// is passed to IsWalkable().
+        ///     Returns null, if no path is found. Start- and End-Node are included in returned path. The user context
+        ///     is passed to IsWalkable().
         /// </summary>
         public LinkedList<PathNode> Search(Point inStartNode, Point inEndNode, PathNode inUserContext)
         {
@@ -130,7 +107,7 @@ namespace Intersect_Server.Classes.Misc
             //watch.Start();
 
             if (startNode == endNode)
-                return new LinkedList<PathNode>(new PathNode[] { startNode });
+                return new LinkedList<PathNode>(new PathNode[] {startNode});
 
             PathNode[] neighborNodes = new PathNode[8];
 
@@ -158,7 +135,6 @@ namespace Intersect_Server.Classes.Misc
 
             int nodes = 0;
 
-
             while (!m_OpenSet.IsEmpty)
             {
                 PathNode x = m_OrderedOpenSet.Pop();
@@ -184,7 +160,7 @@ namespace Intersect_Server.Classes.Misc
                 for (int i = 0; i < neighborNodes.Length; i++)
                 {
                     PathNode y = neighborNodes[i];
-                    Boolean tentative_is_better;
+                    bool tentative_is_better;
 
                     if (y == null)
                         continue;
@@ -197,8 +173,8 @@ namespace Intersect_Server.Classes.Misc
 
                     nodes++;
 
-                    Double tentative_g_score = m_RuntimeGrid[x].G + NeighborDistance(x, y);
-                    Boolean wasAdded = false;
+                    double tentative_g_score = m_RuntimeGrid[x].G + NeighborDistance(x, y);
+                    bool wasAdded = false;
 
                     if (!m_OpenSet.Contains(y))
                     {
@@ -265,14 +241,12 @@ namespace Intersect_Server.Classes.Misc
             int x = inAround.X;
             int y = inAround.Y;
 
-
             inNeighbors[0] = null;
 
             if (y > 0)
                 inNeighbors[1] = m_SearchSpace[x, y - 1];
             else
                 inNeighbors[1] = null;
-
 
             inNeighbors[2] = null;
 
@@ -299,40 +273,31 @@ namespace Intersect_Server.Classes.Misc
         private class OpenCloseMap
         {
             private PathNode[,] m_Map;
-            public int Width { get; private set; }
-            public int Height { get; private set; }
-            public int Count { get; private set; }
-
-            public PathNode this[Int32 x, Int32 y]
-            {
-                get
-                {
-                    return m_Map[x, y];
-                }
-            }
-
-            public PathNode this[PathNode Node]
-            {
-                get
-                {
-                    return m_Map[Node.X, Node.Y];
-                }
-
-            }
-
-            public bool IsEmpty
-            {
-                get
-                {
-                    return Count == 0;
-                }
-            }
 
             public OpenCloseMap(int inWidth, int inHeight)
             {
                 m_Map = new PathNode[inWidth, inHeight];
                 Width = inWidth;
                 Height = inHeight;
+            }
+
+            public int Width { get; private set; }
+            public int Height { get; private set; }
+            public int Count { get; private set; }
+
+            public PathNode this[int x, int y]
+            {
+                get { return m_Map[x, y]; }
+            }
+
+            public PathNode this[PathNode Node]
+            {
+                get { return m_Map[Node.X, Node.Y]; }
+            }
+
+            public bool IsEmpty
+            {
+                get { return Count == 0; }
             }
 
             public void Add(PathNode inValue)

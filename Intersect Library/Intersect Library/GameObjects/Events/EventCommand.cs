@@ -81,7 +81,8 @@ namespace Intersect.GameObjects.Events
                             pVar = Strings.Get("eventconditiondesc", "notequal", Ints[3]);
                             break;
                     }
-                    return Strings.Get("eventconditiondesc", "playervariable", PlayerVariableBase.GetName(Ints[1]), pVar);
+                    return Strings.Get("eventconditiondesc", "playervariable", PlayerVariableBase.GetName(Ints[1]),
+                        pVar);
                 case 2: //Global Switch
                     var gValue = Strings.Get("eventconditiondesc", "false");
                     if (Convert.ToBoolean(Ints[2])) gValue = Strings.Get("eventconditiondesc", "true");
@@ -109,7 +110,8 @@ namespace Intersect.GameObjects.Events
                             gVar = Strings.Get("eventconditiondesc", "notequal", Ints[3]);
                             break;
                     }
-                    return Strings.Get("eventconditiondesc", "globalvariable", ServerVariableBase.GetName(Ints[1]), gVar);
+                    return Strings.Get("eventconditiondesc", "globalvariable", ServerVariableBase.GetName(Ints[1]),
+                        gVar);
                 case 4: //Has Item
                     return Strings.Get("eventconditiondesc", "hasitem", Ints[2], ItemBase.GetName(Ints[1]));
                 case 5: //Class Is
@@ -158,7 +160,8 @@ namespace Intersect.GameObjects.Events
                 case 9: //Power is
                     if (Ints[1] == 0)
                     {
-                        return Strings.Get("eventconditiondesc", "power", Strings.Get("eventconditiondesc", "modadmin"));
+                        return Strings.Get("eventconditiondesc", "power",
+                            Strings.Get("eventconditiondesc", "modadmin"));
                     }
                     else
                     {
@@ -196,7 +199,7 @@ namespace Intersect.GameObjects.Events
                 case 11: //Can Start Quest...
                     return Strings.Get("eventconditiondesc", "startquest", QuestBase.GetName(Ints[1]));
                 case 12: //Quest In Progress...
-                    var quest = QuestBase.GetQuest(Ints[1]);
+                    var quest = QuestBase.Lookup.Get<QuestBase>(Ints[1]);
                     if (quest != null)
                     {
                         QuestBase.QuestTask task = null;
@@ -232,9 +235,9 @@ namespace Intersect.GameObjects.Events
                     return Strings.Get("eventconditiondesc", "nonpcsonmap");
                 case 16: //Gender Is
                     return Strings.Get("eventconditiondesc", "gender",
-                    (Ints[1] == 0
-                        ? Strings.Get("eventconditiondesc", "male")
-                        : Strings.Get("eventconditiondesc", "female")));
+                        (Ints[1] == 0
+                            ? Strings.Get("eventconditiondesc", "male")
+                            : Strings.Get("eventconditiondesc", "female")));
             }
             return "";
         }

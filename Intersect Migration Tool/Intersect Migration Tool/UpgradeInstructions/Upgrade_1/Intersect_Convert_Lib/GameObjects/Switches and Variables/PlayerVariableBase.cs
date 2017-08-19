@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.
     Switches_and_Variables
 {
     public class PlayerVariableBase : DatabaseObject
     {
         //Core info
         public new const string DATABASE_TABLE = "player_variables";
+
         public new const GameObject OBJECT_TYPE = GameObject.PlayerVariable;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 

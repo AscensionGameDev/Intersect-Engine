@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Xml;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
@@ -16,21 +18,24 @@ namespace Intersect_Client.Classes.UI
     public static class Gui
     {
         //GWEN GUI
-        public static bool GwenInitialized = false;
+        public static bool GwenInitialized;
+
         public static InputBase GwenInput;
         public static Base GwenRenderer;
         private static Canvas _gameCanvas;
         private static Canvas _menuCanvas;
         private static TexturedBase _gwenSkin;
-        public static List<string> MsgboxErrors = new List<string>();
+        public static List<KeyValuePair<string, string>> MsgboxErrors = new List<KeyValuePair<string, string>>();
         public static bool SetupHandlers;
         public static GameGuiBase GameUI;
         public static MenuGuiBase MenuUI;
         public static ErrorMessageHandler ErrorMsgHandler;
-        public static string DefaultFont = "arial";
+        public static string ActiveFont = "arial";
+        public static bool HideUI;
 
         //Input Handling
         public static List<IntersectClientExtras.Gwen.Control.Base> FocusElements;
+
         public static List<IntersectClientExtras.Gwen.Control.Base> InputBlockingElements;
 
         #region "Gwen Setup and Input"
@@ -42,16 +47,16 @@ namespace Intersect_Client.Classes.UI
             _gwenSkin = new TexturedBase(GwenRenderer,
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
             {
-                DefaultFont = Globals.ContentManager.GetFont(DefaultFont, 10)
+                DefaultFont = Globals.ContentManager.GetFont(ActiveFont, 10)
             };
             var _gameSkin = new TexturedBase(GwenRenderer,
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
             {
-                DefaultFont = Globals.ContentManager.GetFont(DefaultFont, 10)
+                DefaultFont = Globals.ContentManager.GetFont(ActiveFont, 10)
             };
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)
-            _menuCanvas = new Canvas(_gwenSkin)
+            _menuCanvas = new Canvas(_gwenSkin, "MainMenu")
             {
                 Scale = 1f //(GameGraphics.Renderer.GetScreenWidth()/1920f);
             };
@@ -62,7 +67,7 @@ namespace Intersect_Client.Classes.UI
             _menuCanvas.KeyboardInputEnabled = true;
 
             // Create the game Canvas (it's root, on which all other GWEN controls are created)
-            _gameCanvas = new Canvas(_gameSkin);
+            _gameCanvas = new Canvas(_gameSkin, "InGame");
             //_gameCanvas.Scale = (GameGraphics.Renderer.GetScreenWidth() / 1920f);
             _gameCanvas.SetSize((int) (GameGraphics.Renderer.GetScreenWidth() / _gameCanvas.Scale),
                 (int) (GameGraphics.Renderer.GetScreenHeight() / _gameCanvas.Scale));
@@ -86,13 +91,56 @@ namespace Intersect_Client.Classes.UI
             if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
             {
                 MenuUI = new MenuGuiBase(_menuCanvas);
+                GameUI = null;
             }
             else
             {
                 GameUI = new GameGuiBase(_gameCanvas);
+                MenuUI = null;
+            }
+
+            if (GameUI == null) LoadRootUIData(_menuCanvas, "MainMenu.xml");
+            if (MenuUI == null)
+            {
+                LoadRootUIData(_gameCanvas, "InGame.xml");
             }
 
             GwenInitialized = true;
+        }
+
+        public static void SaveRootUIData(IntersectClientExtras.Gwen.Control.Base control, string xmlname,
+            bool bounds = false)
+        {
+            //Create XML Doc with UI 
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.NewLineOnAttributes = true;
+
+            using (XmlWriter writer = XmlWriter.Create(Path.Combine("resources", "gui", xmlname), settings))
+            {
+                writer.WriteStartDocument();
+                control.WriteBaseUIXml(writer, bounds);
+                writer.WriteEndDocument();
+            }
+        }
+
+        public static void LoadRootUIData(IntersectClientExtras.Gwen.Control.Base control, string xmlname)
+        {
+            XmlReaderSettings readerSettings = new XmlReaderSettings();
+            readerSettings.IgnoreWhitespace = true;
+            readerSettings.IgnoreComments = true;
+            if (!File.Exists(Path.Combine("resources", "gui", xmlname))) return;
+            using (XmlReader reader = XmlReader.Create(Path.Combine("resources", "gui", xmlname), readerSettings))
+            {
+                while (reader.Read())
+                {
+                    if (reader.Name == control.Name)
+                    {
+                        control.LoadUIXml(reader);
+                        control.ProcessAlignments();
+                    }
+                }
+            }
         }
 
         public static void DestroyGwen()
@@ -142,7 +190,7 @@ namespace Intersect_Client.Classes.UI
             {
                 MenuUI.Draw();
             }
-            else if (Globals.GameState == GameStates.InGame)
+            else if (Globals.GameState == GameStates.InGame && !HideUI)
             {
                 GameUI.Draw();
             }
@@ -184,27 +232,43 @@ namespace Intersect_Client.Classes.UI
             var lastSpace = 0;
             var curPos = 0;
             var curLen = 1;
+            var lastOk = 0;
+            var lastCut = 0;
             input = input.Replace("\r\n", "\n");
+            float measured;
+            string line;
             while (curPos + curLen < input.Length)
             {
-                if (GameGraphics.Renderer.MeasureText(input.Substring(curPos, curLen), font, 1).X < width)
+                line = input.Substring(curPos, curLen);
+                measured = GameGraphics.Renderer.MeasureText(line, font, 1).X;
+                //Debug.WriteLine($"w:{width},m:{measured},p:{curPos},l:{curLen},s:{lastSpace},t:'{line}'");
+                if (measured < width)
                 {
-                    if (input[curPos + curLen] == ' ' || input[curPos + curLen] == '-')
+                    lastOk = lastSpace;
+                    switch (input[curPos + curLen])
                     {
-                        lastSpace = curLen;
-                    }
-                    else if (input[curPos + curLen] == '\n')
-                    {
-                        myOutput.Add(input.Substring(curPos, curLen).Trim());
-                        curPos = curPos + curLen + 1;
-                        curLen = 1;
+                        case ' ':
+                        case '-':
+                            lastSpace = curLen;
+                            break;
+
+                        case '\n':
+                            myOutput.Add(input.Substring(curPos, curLen).Trim());
+                            lastSpace = 0;
+                            curPos = curPos + curLen + 1;
+                            curLen = 1;
+                            break;
                     }
                 }
                 else
                 {
-                    myOutput.Add(input.Substring(curPos, lastSpace).Trim());
-                    if (lastSpace == 0) lastSpace = curLen - 1;
-                    curPos = curPos + lastSpace;
+                    if (lastOk == 0) lastOk = curLen - 1;
+                    line = input.Substring(curPos, lastOk).Trim();
+                    //Debug.WriteLine($"line={line}");
+                    myOutput.Add(line);
+                    curPos = curPos + lastOk;
+                    lastOk = 0;
+                    lastSpace = 0;
                     curLen = 1;
                 }
                 curLen++;

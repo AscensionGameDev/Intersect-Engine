@@ -1,36 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Intersect;
 using Intersect.Localization;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Conditions;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Conditions;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects
 {
     public class ResourceBase : DatabaseObject
     {
         // General
         public new const string DATABASE_TABLE = "resources";
+
         public new const GameObject OBJECT_TYPE = GameObject.Resource;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        public int Animation = 0;
+        public int Animation;
 
         // Drops
         public List<ResourceDrop> Drops = new List<ResourceDrop>();
+
         public string EndGraphic = Strings.Get("general", "none");
 
         public ConditionLists HarvestingReqs = new ConditionLists();
 
         // Graphics
         public string InitialGraphic = Strings.Get("general", "none");
-        public int MaxHP = 0;
-        public int MinHP = 0;
+
+        public int MaxHP;
+        public int MinHP;
 
         public string Name = "New Resource";
-        public int SpawnDuration = 0;
+        public int SpawnDuration;
         public int Tool = -1;
-        public bool WalkableAfter = false;
-        public bool WalkableBefore = false;
+        public bool WalkableAfter;
+        public bool WalkableBefore;
 
         public ResourceBase(int id) : base(id)
         {

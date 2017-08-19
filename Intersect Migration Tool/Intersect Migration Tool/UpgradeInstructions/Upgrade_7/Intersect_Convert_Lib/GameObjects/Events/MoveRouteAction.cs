@@ -1,11 +1,9 @@
-﻿using Intersect;
-
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events
+﻿namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events
 {
     public class MoveRouteAction
     {
         public int AnimationIndex = -1;
-        public EventGraphic Graphic = null;
+        public EventGraphic Graphic;
         public MoveRouteEnum Type;
 
         public void Save(ByteBuffer myBuffer)

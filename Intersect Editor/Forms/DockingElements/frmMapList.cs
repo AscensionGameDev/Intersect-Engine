@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Windows.Forms;
 using DarkUI.Forms;
-using Intersect.GameObjects;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.General;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.General;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class frmMapList : DockContent
     {
@@ -25,7 +24,7 @@ namespace Intersect_Editor.Forms
         {
             if (e.Node.Tag.GetType() == typeof(MapListMap))
             {
-                if (Globals.CurrentMap.Changed() &&
+                if (Globals.CurrentMap != null && Globals.CurrentMap.Changed() &&
                     DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"),
                         Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
@@ -141,18 +140,18 @@ namespace Intersect_Editor.Forms
             }
             if (mapTreeList.list.SelectedNode == null)
             {
-                PacketSender.SendCreateMap(-1, ((DatabaseObject) Globals.CurrentMap).Id, null);
+                PacketSender.SendCreateMap(-1, Globals.CurrentMap.Index, null);
             }
             else
             {
-                PacketSender.SendCreateMap(-1, ((DatabaseObject) Globals.CurrentMap).Id,
+                PacketSender.SendCreateMap(-1, Globals.CurrentMap.Index,
                     (MapListItem) mapTreeList.list.SelectedNode.Tag);
             }
         }
 
         private void toolSelectMap_Click(object sender, EventArgs e)
         {
-            mapTreeList.UpdateMapList(Globals.CurrentMap.Id);
+            mapTreeList.UpdateMapList(Globals.CurrentMap.Index);
         }
     }
 }

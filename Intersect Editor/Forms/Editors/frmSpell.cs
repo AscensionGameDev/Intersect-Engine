@@ -1,40 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Forms.Editors;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Forms.Editors;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
-    public partial class frmSpell : Form
+    public partial class frmSpell : EditorForm
     {
         private List<SpellBase> _changed = new List<SpellBase>();
-        private byte[] _copiedItem = null;
-        private SpellBase _editorItem = null;
+        private byte[] _copiedItem;
+        private SpellBase _editorItem;
 
         public frmSpell()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstSpells.LostFocus += itemList_FocusChanged;
             lstSpells.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObject type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (type == GameObject.Spell)
+            if (type == GameObjectType.Spell)
             {
                 InitEditor();
-                if (_editorItem != null && !SpellBase.GetObjects().Values.Contains(_editorItem))
+                if (_editorItem != null && !SpellBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -71,23 +70,25 @@ namespace Intersect_Editor.Forms
 
         private void lstSpells_Click(object sender, EventArgs e)
         {
-            _editorItem = SpellBase.GetSpell(Database.GameObjectIdFromList(GameObject.Spell, lstSpells.SelectedIndex));
+            _editorItem =
+                SpellBase.Lookup.Get<SpellBase>(
+                    Database.GameObjectIdFromList(GameObjectType.Spell, lstSpells.SelectedIndex));
             UpdateEditor();
         }
 
         private void frmSpell_Load(object sender, EventArgs e)
         {
             cmbProjectile.Items.Clear();
-            cmbProjectile.Items.AddRange(Database.GetGameObjectList(GameObject.Projectile));
+            cmbProjectile.Items.AddRange(Database.GetGameObjectList(GameObjectType.Projectile));
             cmbCastAnimation.Items.Clear();
             cmbCastAnimation.Items.Add(Strings.Get("general", "none"));
-            cmbCastAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbCastAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbHitAnimation.Items.Clear();
             cmbHitAnimation.Items.Add(Strings.Get("general", "none"));
-            cmbHitAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbHitAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbEvent.Items.Clear();
             cmbEvent.Items.Add(Strings.Get("general", "none"));
-            cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObject.CommonEvent));
+            cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObjectType.CommonEvent));
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add(Strings.Get("general", "none"));
             string[] spellNames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Spell);
@@ -143,7 +144,7 @@ namespace Intersect_Editor.Forms
 
             grpSpellCost.Text = Strings.Get("spelleditor", "cost");
             lblHPCost.Text = Strings.Get("spelleditor", "hpcost");
-            lblMPCost.Text = Strings.Get("spelleditor", "mpcost");
+            lblMPCost.Text = Strings.Get("spelleditor", "manacost");
             lblCastDuration.Text = Strings.Get("spelleditor", "casttime");
             lblCooldownDuration.Text = Strings.Get("spelleditor", "cooldown");
 
@@ -159,7 +160,7 @@ namespace Intersect_Editor.Forms
             lblHitRadius.Text = Strings.Get("spelleditor", "hitradius");
 
             grpCombat.Text = Strings.Get("spelleditor", "combatspell");
-            grpDamage.Text = Strings.Get("spelleditor", "combat");
+            grpDamage.Text = Strings.Get("spelleditor", "damagegroup");
             lblCritChance.Text = Strings.Get("spelleditor", "critchance");
             lblDamageType.Text = Strings.Get("spelleditor", "damagetype");
             lblHPDamage.Text = Strings.Get("spelleditor", "hpdamage");
@@ -206,7 +207,7 @@ namespace Intersect_Editor.Forms
             grpWarp.Text = Strings.Get("spelleditor", "warptomap");
             lblMap.Text = Strings.Get("warping", "map", "");
             lblX.Text = Strings.Get("warping", "x", "");
-            lblY.Text = Strings.Get("warping", "y");
+            lblY.Text = Strings.Get("warping", "y", "");
             lblWarpDir.Text = Strings.Get("warping", "direction", "");
             cmbDirection.Items.Clear();
             for (int i = -1; i < 4; i++)
@@ -225,7 +226,7 @@ namespace Intersect_Editor.Forms
         public void InitEditor()
         {
             lstSpells.Items.Clear();
-            lstSpells.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
+            lstSpells.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
             cmbScalingStat.Items.Clear();
             for (int i = 0; i < Options.MaxStats; i++)
             {
@@ -247,9 +248,9 @@ namespace Intersect_Editor.Forms
                 nudCooldownDuration.Value = _editorItem.CooldownDuration * 100;
 
                 cmbCastAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObject.Animation, _editorItem.CastAnimation) + 1;
+                    Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.CastAnimation) + 1;
                 cmbHitAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObject.Animation, _editorItem.HitAnimation) + 1;
+                    Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.HitAnimation) + 1;
 
                 cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Pic);
                 if (cmbSprite.SelectedIndex > 0)
@@ -348,7 +349,8 @@ namespace Intersect_Editor.Forms
             else if (cmbType.SelectedIndex == (int) SpellTypes.Event)
             {
                 grpEvent.Show();
-                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObject.CommonEvent, _editorItem.Data1) + 1;
+                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CommonEvent, _editorItem.Data1) +
+                                         1;
             }
         }
 
@@ -389,14 +391,15 @@ namespace Intersect_Editor.Forms
             {
                 lblProjectile.Show();
                 cmbProjectile.Show();
-                cmbProjectile.SelectedIndex = Database.GameObjectListIndex(GameObject.Projectile, _editorItem.Projectile);
+                cmbProjectile.SelectedIndex =
+                    Database.GameObjectListIndex(GameObjectType.Projectile, _editorItem.Projectile);
             }
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstSpells.Items[Database.GameObjectListIndex(GameObject.Spell, _editorItem.Id)] = txtName.Text;
+            lstSpells.Items[Database.GameObjectListIndex(GameObjectType.Spell, _editorItem.Index)] = txtName.Text;
         }
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
@@ -531,7 +534,7 @@ namespace Intersect_Editor.Forms
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
         {
-            PacketSender.SendCreateObject(GameObject.Spell);
+            PacketSender.SendCreateObject(GameObjectType.Spell);
         }
 
         private void toolStripItemDelete_Click(object sender, EventArgs e)
@@ -652,24 +655,25 @@ namespace Intersect_Editor.Forms
 
         private void cmbCastAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.CastAnimation = Database.GameObjectIdFromList(GameObject.Animation,
+            _editorItem.CastAnimation = Database.GameObjectIdFromList(GameObjectType.Animation,
                 cmbCastAnimation.SelectedIndex - 1);
         }
 
         private void cmbHitAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.HitAnimation = Database.GameObjectIdFromList(GameObject.Animation,
+            _editorItem.HitAnimation = Database.GameObjectIdFromList(GameObjectType.Animation,
                 cmbHitAnimation.SelectedIndex - 1);
         }
 
         private void cmbProjectile_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Projectile = Database.GameObjectIdFromList(GameObject.Projectile, cmbProjectile.SelectedIndex);
+            _editorItem.Projectile =
+                Database.GameObjectIdFromList(GameObjectType.Projectile, cmbProjectile.SelectedIndex);
         }
 
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Data1 = Database.GameObjectIdFromList(GameObject.CommonEvent, cmbEvent.SelectedIndex - 1);
+            _editorItem.Data1 = Database.GameObjectIdFromList(GameObjectType.CommonEvent, cmbEvent.SelectedIndex - 1);
         }
 
         private void btnVisualMapSelector_Click(object sender, EventArgs e)

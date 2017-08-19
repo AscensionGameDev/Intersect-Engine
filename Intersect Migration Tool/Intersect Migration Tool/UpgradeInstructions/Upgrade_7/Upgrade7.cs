@@ -1,32 +1,33 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using Intersect;
 using Intersect.Logging;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Maps;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Maps;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 using Mono.Data.Sqlite;
-using GameObject = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObject;
-using Options = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.Options;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
 {
     public class Upgrade7
     {
         //GameObject Table Constants
         private const string GAME_OBJECT_ID = "id";
+
         private const string GAME_OBJECT_DELETED = "deleted";
         private const string GAME_OBJECT_DATA = "data";
 
         //Bag Table Constants
         private const string BAGS_TABLE = "bags";
+
         private const string BAG_ID = "bag_id";
         private const string BAG_SLOT_COUNT = "slot_count";
 
         //Bag Items Table Constants
         private const string BAG_ITEMS_TABLE = "bag_items";
+
         private const string BAG_ITEM_CONTAINER_ID = "bag_id";
         private const string BAG_ITEM_SLOT = "slot";
         private const string BAG_ITEM_NUM = "itemnum";
@@ -36,12 +37,15 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
 
         //Char Inventory Table Constants
         private const string CHAR_INV_TABLE = "char_inventory";
+
         private const string CHAR_INV_ITEM_BAG_ID = "item_bag_id";
+
         //Char Bank Table Constants
         private const string CHAR_BANK_TABLE = "char_bank";
+
         private const string CHAR_BANK_ITEM_BAG_ID = "item_bag_id";
         private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
+        private object _dbLock = new object();
 
         public Upgrade7(SqliteConnection connection)
         {
@@ -85,10 +89,10 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                     doc.CreateComment("Paperdoll is rendered in the following order when facing " + dir +
                                       ". If you want to change when each piece of equipment gets rendered simply swap the equipment names.");
                 dirElement.AppendChild(comment);
-                for (int i = 0; i < Options.PaperdollOrder.Count; i++)
+                for (int i = 0; i < Intersect_Convert_Lib.Options.PaperdollOrder.Count; i++)
                 {
                     XmlElement slot = doc.CreateElement("Slot" + i);
-                    slot.InnerText = Options.PaperdollOrder[i];
+                    slot.InnerText = Intersect_Convert_Lib.Options.PaperdollOrder[i];
                     dirElement.AppendChild(slot);
                 }
                 eleNew.AppendChild(dirElement);
@@ -99,7 +103,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
             //Finally create the passability options
             eleNew = doc.CreateElement("Passability");
             var passabilityComment =
-                doc.CreateComment("Trigger player passability based on map moralites. True = Passable, False = Blocked");
+                doc.CreateComment(
+                    "Trigger player passability based on map moralites. True = Passable, False = Blocked");
             XmlElement normal = doc.CreateElement("Normal");
             normal.InnerText = "False";
             XmlElement safe = doc.CreateElement("Safe");
@@ -371,7 +376,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
             {
                 var tableName = GetGameObjectTable(type);
                 ClearGameObjects(type);
-                var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" + GAME_OBJECT_DELETED +
+                var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" +
+                            GAME_OBJECT_DELETED +
                             ";";
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
@@ -396,7 +402,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
             }
             if (nullIssues != "")
             {
-                throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine + nullIssues));
+                throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine +
+                                     nullIssues));
             }
         }
 
@@ -460,7 +467,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7
                 createCommand.ExecuteNonQuery();
             }
             CreateBag(1);
-                //This is to bypass an issue where we use itemVal to store the bag identifier (we are terrible!)
+            //This is to bypass an issue where we use itemVal to store the bag identifier (we are terrible!)
         }
 
         public void CreateBag(int slotCount)

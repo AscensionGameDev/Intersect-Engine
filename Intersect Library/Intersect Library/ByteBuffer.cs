@@ -10,6 +10,7 @@ namespace Intersect
 
         // To detect redundant calls
         private bool _disposedValue;
+
         private byte[] _readBytes;
         private bool _wasUpdated;
         public int Readpos;
@@ -79,6 +80,15 @@ namespace Intersect
             _wasUpdated = true;
         }
 
+        public void InsertLength()
+        {
+            var lenbytes = BitConverter.GetBytes((int) Count());
+            for (int i = 0; i < lenbytes.Length; i++)
+            {
+                _buff.Insert(i, lenbytes[i]);
+            }
+        }
+
         public void WriteInteger(int input)
         {
             _buff.AddRange(BitConverter.GetBytes(input));
@@ -99,7 +109,7 @@ namespace Intersect
 
         public void WriteString(string input)
         {
-            if (String.IsNullOrEmpty(input))
+            if (string.IsNullOrEmpty(input))
             {
                 WriteInteger(0);
             }

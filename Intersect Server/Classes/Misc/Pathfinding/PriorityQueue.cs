@@ -1,25 +1,6 @@
-﻿//
-//  THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
-//  KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-//  IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
-//  PURPOSE. IT CAN BE DISTRIBUTED FREE OF CHARGE AS LONG AS THIS HEADER 
-//  REMAINS UNCHANGED.
-//
-//  Email:  gustavo_franco@hotmail.com
-//
-//  Copyright (C) 2006 Franco, Gustavo 
-//
-// EDIT 2010 by Christoph Husse: Update() method didn't work correctly. Also
-// each item is now carrying an index, so that updating can be performed
-// efficiently.
-//
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace Intersect_Server.Classes.Misc.Pathfinding
+namespace Intersect.Server.Classes.Misc.Pathfinding
 {
     internal class PriorityQueue<T> where T : IIndexedObject
     {
@@ -42,6 +23,11 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
             InnerList.Capacity = capacity;
         }
 
+        public int Count
+        {
+            get { return InnerList.Count; }
+        }
+
         protected void SwitchElements(int i, int j)
         {
             T h = InnerList[i];
@@ -58,10 +44,13 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
         }
 
         /// <summary>
-        /// Push an object onto the PQ
+        ///     Push an object onto the PQ
         /// </summary>
         /// <param name="O">The new object</param>
-        /// <returns>The index in the list where the object is _now_. This will change when objects are taken from or put onto the PQ.</returns>
+        /// <returns>
+        ///     The index in the list where the object is _now_. This will change when objects are taken from or put onto the
+        ///     PQ.
+        /// </returns>
         public int Push(T item)
         {
             int p = InnerList.Count, p2;
@@ -85,7 +74,7 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
         }
 
         /// <summary>
-        /// Get the smallest object and remove it.
+        ///     Get the smallest object and remove it.
         /// </summary>
         /// <returns>The smallest object</returns>
         public T Pop()
@@ -119,8 +108,8 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
         }
 
         /// <summary>
-        /// Notify the PQ that the object at position i has changed
-        /// and the PQ needs to restore order.
+        ///     Notify the PQ that the object at position i has changed
+        ///     and the PQ needs to restore order.
         /// </summary>
         public void Update(T item)
         {
@@ -139,7 +128,7 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
         }
 
         /// <summary>
-        /// Get the smallest object without removing it.
+        ///     Get the smallest object without removing it.
         /// </summary>
         /// <returns>The smallest object</returns>
         public T Peek()
@@ -152,11 +141,6 @@ namespace Intersect_Server.Classes.Misc.Pathfinding
         public void Clear()
         {
             InnerList.Clear();
-        }
-
-        public int Count
-        {
-            get { return InnerList.Count; }
         }
     }
 }

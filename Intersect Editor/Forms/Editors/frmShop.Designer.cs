@@ -1,6 +1,6 @@
 ﻿using DarkUI.Controls;
 
-namespace Intersect_Editor.Forms.Editors
+namespace Intersect.Editor.Forms.Editors
 {
     partial class frmShop
     {
@@ -105,7 +105,7 @@ namespace Intersect_Editor.Forms.Editors
             this.lstShops.Name = "lstShops";
             this.lstShops.Size = new System.Drawing.Size(191, 431);
             this.lstShops.TabIndex = 1;
-            this.lstShops.Click += new System.EventHandler(this.lstShops_Click);
+            this.lstShops.SelectedIndexChanged += new System.EventHandler(this.lstShops_Click);
             this.lstShops.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
             // grpGeneral
@@ -129,6 +129,10 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbDefaultCurrency.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbDefaultCurrency.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbDefaultCurrency.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbDefaultCurrency.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbDefaultCurrency.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbDefaultCurrency.ButtonIcon")));
+            this.cmbDefaultCurrency.DrawDropdownHoverOutline = false;
+            this.cmbDefaultCurrency.DrawFocusRectangle = false;
             this.cmbDefaultCurrency.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbDefaultCurrency.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbDefaultCurrency.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -138,6 +142,8 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbDefaultCurrency.Name = "cmbDefaultCurrency";
             this.cmbDefaultCurrency.Size = new System.Drawing.Size(179, 21);
             this.cmbDefaultCurrency.TabIndex = 8;
+            this.cmbDefaultCurrency.Text = null;
+            this.cmbDefaultCurrency.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbDefaultCurrency.SelectedIndexChanged += new System.EventHandler(this.cmbDefaultCurrency_SelectedIndexChanged);
             // 
             // lblDefaultCurrency
@@ -209,6 +215,10 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbSellFor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbSellFor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSellFor.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSellFor.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbSellFor.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSellFor.ButtonIcon")));
+            this.cmbSellFor.DrawDropdownHoverOutline = false;
+            this.cmbSellFor.DrawFocusRectangle = false;
             this.cmbSellFor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSellFor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSellFor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -218,6 +228,8 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbSellFor.Name = "cmbSellFor";
             this.cmbSellFor.Size = new System.Drawing.Size(246, 21);
             this.cmbSellFor.TabIndex = 11;
+            this.cmbSellFor.Text = null;
+            this.cmbSellFor.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblSellFor
             // 
@@ -262,6 +274,10 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbAddSoldItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbAddSoldItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbAddSoldItem.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbAddSoldItem.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbAddSoldItem.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAddSoldItem.ButtonIcon")));
+            this.cmbAddSoldItem.DrawDropdownHoverOutline = false;
+            this.cmbAddSoldItem.DrawFocusRectangle = false;
             this.cmbAddSoldItem.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbAddSoldItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbAddSoldItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -271,6 +287,8 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbAddSoldItem.Name = "cmbAddSoldItem";
             this.cmbAddSoldItem.Size = new System.Drawing.Size(246, 21);
             this.cmbAddSoldItem.TabIndex = 2;
+            this.cmbAddSoldItem.Text = null;
+            this.cmbAddSoldItem.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblAddSoldItem
             // 
@@ -334,6 +352,10 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbBuyFor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbBuyFor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbBuyFor.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbBuyFor.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbBuyFor.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbBuyFor.ButtonIcon")));
+            this.cmbBuyFor.DrawDropdownHoverOutline = false;
+            this.cmbBuyFor.DrawFocusRectangle = false;
             this.cmbBuyFor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbBuyFor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbBuyFor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -343,6 +365,8 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbBuyFor.Name = "cmbBuyFor";
             this.cmbBuyFor.Size = new System.Drawing.Size(246, 21);
             this.cmbBuyFor.TabIndex = 12;
+            this.cmbBuyFor.Text = null;
+            this.cmbBuyFor.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblBuyFor
             // 
@@ -387,6 +411,10 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbAddBoughtItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbAddBoughtItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbAddBoughtItem.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbAddBoughtItem.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbAddBoughtItem.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAddBoughtItem.ButtonIcon")));
+            this.cmbAddBoughtItem.DrawDropdownHoverOutline = false;
+            this.cmbAddBoughtItem.DrawFocusRectangle = false;
             this.cmbAddBoughtItem.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbAddBoughtItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbAddBoughtItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -396,6 +424,8 @@ namespace Intersect_Editor.Forms.Editors
             this.cmbAddBoughtItem.Name = "cmbAddBoughtItem";
             this.cmbAddBoughtItem.Size = new System.Drawing.Size(246, 21);
             this.cmbAddBoughtItem.TabIndex = 3;
+            this.cmbAddBoughtItem.Text = null;
+            this.cmbAddBoughtItem.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblItemBought
             // 

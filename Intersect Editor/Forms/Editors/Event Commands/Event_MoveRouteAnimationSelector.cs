@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class Event_MoveRouteAnimationSelector : UserControl
     {
         private MoveRouteAction _myAction;
-        private bool _newAction = false;
+        private bool _newAction;
         private Event_MoveRouteDesigner _routeDesigner;
 
         public Event_MoveRouteAnimationSelector(Event_MoveRouteDesigner moveRouteDesigner, MoveRouteAction action,
@@ -19,10 +19,11 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitializeComponent();
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.Get("general", "none"));
-            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             if (!newAction)
             {
-                cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, action.AnimationIndex);
+                cmbAnimation.SelectedIndex =
+                    Database.GameObjectListIndex(GameObjectType.Animation, action.AnimationIndex);
             }
             _newAction = newAction;
             _routeDesigner = moveRouteDesigner;
@@ -40,7 +41,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnOkay_Click(object sender, EventArgs e)
         {
-            _myAction.AnimationIndex = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex);
+            _myAction.AnimationIndex =
+                Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex);
             _routeDesigner.Controls.Remove(this);
         }
 

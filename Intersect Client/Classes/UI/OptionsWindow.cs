@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using Intersect.Client.Classes.Core;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using IntersectClientExtras.Gwen.ControlInternal;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.UI.Menu;
@@ -16,6 +16,16 @@ namespace Intersect_Client.Classes.UI
     {
         private Button _applyBtn;
         private Button _backBtn;
+        private ScrollControl _controlsContainer;
+
+        //Keybindings
+        private Button _editKeybindingsBtn;
+
+        private Button _edittingButton;
+        private Controls _edittingControl;
+        private GameControls _edittingControls;
+        private int _edittingKey = -1;
+        private Button _exitKeybindingsButton;
 
         private ImagePanel _fpsBackground;
         private Label _fpsLabel;
@@ -23,13 +33,24 @@ namespace Intersect_Client.Classes.UI
 
         private LabeledCheckBox _fullscreen;
 
+        //Parent Windows
         private bool _gameWindow = false;
-        private MainMenu _mainMenu = null;
-        private Label _menuHeader;
-        //Controls
-        private ImagePanel _menuPanel;
+
+        private Dictionary<Controls, Button[]> _keyButtons = new Dictionary<Controls, Button[]>();
+        private long _listeningTimer;
+        private MainMenu _mainMenu;
         private Label _musicLabel;
         private HorizontalSlider _musicSlider;
+
+        //Panels
+        private ScrollControl _optionsContainer;
+
+        //Window
+        private Label _optionsHeader;
+
+        //Controls
+        private ImagePanel _optionsPanel;
+
         private int _previousMusicVolume;
 
         private int _previousSoundVolume;
@@ -47,252 +68,213 @@ namespace Intersect_Client.Classes.UI
             _mainMenu = mainMenu;
 
             //Main Menu Window
-            _menuPanel = new ImagePanel(parent)
-            {
-                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png")
-            };
-            _menuPanel.SetSize(512, 393);
-            if (_mainMenu != null && parentPanel != null)
-            {
-                _menuPanel.SetPosition(parentPanel.X, parentPanel.Y);
-            }
-            else
-            {
-                _menuPanel.SetPosition(parent.Width / 2 - _menuPanel.Width / 2,
-                    parent.Height / 2 - _menuPanel.Height / 2);
-            }
-            _menuPanel.IsHidden = true;
-            Gui.InputBlockingElements.Add(_menuPanel);
+            _optionsPanel = new ImagePanel(parent, "OptionsPanel");
+            _optionsPanel.IsHidden = true;
+            Gui.InputBlockingElements.Add(_optionsPanel);
 
             //Menu Header
-            _menuHeader = new Label(_menuPanel)
-            {
-                AutoSizeToContents = false
-            };
-            _menuHeader.SetText(Strings.Get("options", "title"));
-            _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);
-            _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
-            _menuHeader.Alignment = Pos.CenterH;
-            _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
+            _optionsHeader = new Label(_optionsPanel, "OptionsHeader");
+            _optionsHeader.SetText(Strings.Get("options", "title"));
+
+            //Options Get Stored in the Options Scroll Control
+            _optionsContainer = new ScrollControl(_optionsPanel, "OptionsContainer");
+            _optionsContainer.EnableScroll(false, false);
+            _optionsContainer.Show();
 
             //Resolution Background
-            _resolutionBackground = new ImagePanel(_menuPanel)
-            {
-                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
-            };
-            _resolutionBackground.SetSize(_resolutionBackground.Texture.GetWidth(),
-                _resolutionBackground.Texture.GetHeight());
-            _resolutionBackground.SetPosition(_menuPanel.Width / 2 - _resolutionBackground.Width / 2, 44);
+            _resolutionBackground = new ImagePanel(_optionsContainer, "ResolutionPanel");
 
             //Options - Resolution Label
-            _resolutionLabel = new Label(_resolutionBackground);
+            _resolutionLabel = new Label(_resolutionBackground, "ResolutionLabel");
             _resolutionLabel.SetText(Strings.Get("options", "resolution"));
-            _resolutionLabel.AutoSizeToContents = false;
-            _resolutionLabel.SetSize(178, 60);
-            _resolutionLabel.Alignment = Pos.Center;
-            _resolutionLabel.TextColorOverride = new Color(255, 30, 30, 30);
-            _resolutionLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
-            _resolutionList = new ComboBox(_resolutionBackground);
-            _resolutionList.SetPosition(190, 8);
-            _resolutionList.SetSize(260, 38);
-            _resolutionList.Alignment = Pos.Center;
-            _resolutionList.ShouldDrawBackground = false;
-            _resolutionList.SetMenuBackgroundColor(new Color(220, 0, 0, 0));
-            _resolutionList.SetMenuMaxSize(260, 200);
-            _resolutionList.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
-            _resolutionList.SetTextColor(new Color(255, 220, 220, 220), Label.ControlState.Hovered);
-            _resolutionList.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _resolutionList = new ComboBox(_resolutionBackground, "ResolutionCombobox");
             var myModes = GameGraphics.Renderer.GetValidVideoModes();
             for (var i = 0; i < myModes.Count; i++)
             {
                 var item = _resolutionList.AddItem(myModes[i]);
                 item.Alignment = Pos.Center;
-                /*if (Globals.GameBorderStyle == 1)
-                {
-                    if (myModes[i].Width <= Options.TileWidth*Options.MapWidth &&
-                        myModes[i].Height <= Options.TileHeight*Options.MapHeight)
-                    {
-                        _resolutionList.AddItem(myModes[i].Width + "x" + myModes[i].Height);
-                    }
-                }
-                else
-                {
-                    int maxx = (Options.MapWidth - 1) * Options.TileWidth * 2;
-                    int maxy = (Options.MapHeight - 1) * Options.TileHeight * 2;
-                    if (myModes[i].Width <= maxx &&
-                        myModes[i].Height <= maxy)
-                    {
-                        _resolutionList.AddItem(myModes[i].Width + "x" + myModes[i].Height);
-                    }
-                }*/
             }
 
             //FPS Background
-            _fpsBackground = new ImagePanel(_menuPanel)
-            {
-                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png")
-            };
-            _fpsBackground.SetSize(_fpsBackground.Texture.GetWidth(), _fpsBackground.Texture.GetHeight());
-            _fpsBackground.SetPosition(_menuPanel.Width / 2 - _fpsBackground.Width / 2,
-                _resolutionBackground.Bottom + 16);
+            _fpsBackground = new ImagePanel(_optionsContainer, "FPSPanel");
 
             //Options - FPS Label
-            _fpsLabel = new Label(_fpsBackground);
+            _fpsLabel = new Label(_fpsBackground, "FPSLabel");
             _fpsLabel.SetText(Strings.Get("options", "targetfps"));
-            _fpsLabel.AutoSizeToContents = false;
-            _fpsLabel.SetSize(176, 55);
-            _fpsLabel.Alignment = Pos.Center;
-            _fpsLabel.TextColorOverride = new Color(255, 30, 30, 30);
-            _fpsLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
             //Options - FPS List
-            _fpsList = new ComboBox(_fpsBackground);
-            _fpsList.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
-            _fpsList.SetTextColor(new Color(255, 220, 220, 220), Label.ControlState.Hovered);
+            _fpsList = new ComboBox(_fpsBackground, "FPSCombobox");
             _fpsList.AddItem(Strings.Get("options", "vsync"));
             _fpsList.AddItem(Strings.Get("options", "30fps"));
             _fpsList.AddItem(Strings.Get("options", "60fps"));
             _fpsList.AddItem(Strings.Get("options", "90fps"));
             _fpsList.AddItem(Strings.Get("options", "120fps"));
             _fpsList.AddItem(Strings.Get("options", "unlimitedfps"));
-            _fpsList.SetPosition(190, 8);
-            _fpsList.SetSize(260, 38);
-            _fpsList.Alignment = Pos.Center;
-            _fpsList.ShouldDrawBackground = false;
-            _fpsList.SetMenuBackgroundColor(new Color(220, 0, 0, 0));
-            _fpsList.SetMenuMaxSize(260, 200);
-            _fpsList.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
             //Options - Fullscreen Checkbox
-            _fullscreen = new LabeledCheckBox(_menuPanel) {Text = Strings.Get("options", "fullscreen")};
-            _fullscreen.SetSize(300, 36);
-            _fullscreen.SetPosition(_fpsBackground.X + 24, _fpsBackground.Bottom + 16);
-            _fullscreen.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxempty.png"),
-                CheckBox.ControlState.Normal);
-            _fullscreen.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxfull.png"),
-                CheckBox.ControlState.CheckedNormal);
-            _fullscreen.SetCheckSize(32, 32);
-            _fullscreen.SetLabelDistance(12);
-            _fullscreen.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
-            _fullscreen.SetTextColor(new Color(255, 140, 140, 140), Label.ControlState.Hovered);
-            _fullscreen.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 20));
+            _fullscreen =
+                new LabeledCheckBox(_optionsContainer, "FullscreenCheckbox")
+                {
+                    Text = Strings.Get("options", "fullscreen")
+                };
+
+            _editKeybindingsBtn =
+                new Button(_optionsContainer, "KeybindingsButton") {Text = Strings.Get("controls", "edit")};
+            _editKeybindingsBtn.Clicked += _editKeybindingsBtn_Clicked;
 
             //Options - Sound Label
-            _soundLabel = new Label(_menuPanel);
+            _soundLabel = new Label(_optionsContainer, "SoundLabel");
             _soundLabel.SetText(Strings.Get("options", "soundvolume", 100));
-            _soundLabel.SetSize(210, 32);
-            _soundLabel.AutoSizeToContents = false;
-            _soundLabel.SetPosition(_resolutionBackground.X, _fullscreen.Bottom + 16);
-            _soundLabel.Alignment = Pos.Center;
-            _soundLabel.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
-            _soundLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 16);
 
             //Options - Sound Slider
-            _soundSlider = new HorizontalSlider(_menuPanel);
-            _soundSlider.SetSize(210, 25);
-            _soundSlider.SetPosition(_soundLabel.X, _soundLabel.Bottom + 8);
+            _soundSlider = new HorizontalSlider(_optionsContainer, "SoundSlider");
             _soundSlider.Min = 0;
             _soundSlider.Max = 100;
             _soundSlider.ValueChanged += _soundSlider_ValueChanged;
-            _soundSlider.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "sliderbar.png"));
-            _soundSlider.SetDraggerImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggerv.png"),
-                Dragger.ControlState.Normal);
-            _soundSlider.SetDraggerImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggervclick.png"),
-                Dragger.ControlState.Clicked);
-            _soundSlider.SetDraggerImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggervhover.png"),
-                Dragger.ControlState.Hovered);
-
-            _soundSlider.SetDraggerSize(14, 26);
 
             //Options - Music Label
-            _musicLabel = new Label(_menuPanel);
+            _musicLabel = new Label(_optionsContainer, "MusicLabel");
             _musicLabel.SetText(Strings.Get("options", "musicvolume", 100));
-            _musicLabel.SetSize(210, 32);
-            _musicLabel.AutoSizeToContents = false;
-            _musicLabel.SetPosition(_resolutionBackground.Right - _musicLabel.Width, _fullscreen.Bottom + 16);
-            _musicLabel.Alignment = Pos.Center;
-            _musicLabel.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
-            _musicLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 16);
 
             //Options - Music Slider
-            _musicSlider = new HorizontalSlider(_menuPanel);
-            _musicSlider.SetSize(210, 24);
-            _musicSlider.SetPosition(_musicLabel.X, _musicLabel.Bottom + 8);
+            _musicSlider = new HorizontalSlider(_optionsContainer, "MusicSlider");
             _musicSlider.Min = 0;
             _musicSlider.Max = 100;
             _musicSlider.ValueChanged += _musicSlider_ValueChanged;
-            _musicSlider.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "sliderbar.png"));
-            _musicSlider.SetDraggerImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggerv.png"),
-                Dragger.ControlState.Normal);
-            _musicSlider.SetDraggerImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggervclick.png"),
-                Dragger.ControlState.Clicked);
-            _musicSlider.SetDraggerImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "draggervhover.png"),
-                Dragger.ControlState.Hovered);
-            _musicSlider.SetDraggerSize(14, 26);
+
+            //Controls Get Stored in the Controls Scroll Control
+            _controlsContainer = new ScrollControl(_optionsPanel, "ControlsContainer");
+            _controlsContainer.EnableScroll(false, true);
+            _controlsContainer.Hide();
+
+            _exitKeybindingsButton = new Button(_optionsPanel, "ExitControlsButton");
+            _exitKeybindingsButton.Hide();
+            _exitKeybindingsButton.Clicked += _editKeybindingsBtn_Clicked;
+
+            foreach (Controls control in Enum.GetValues(typeof(Controls)))
+            {
+                var label = new Label(_controlsContainer,
+                    "Control" + Enum.GetName(typeof(Controls), control) + "Label");
+                label.Text = Strings.Get("controls", Enum.GetName(typeof(Controls), control).ToLower());
+
+                var key1 = new Button(_controlsContainer,
+                    "Control" + Enum.GetName(typeof(Controls), control) + "Button1");
+                key1.Text = "";
+                key1.UserData = control;
+                key1.Clicked += Key1_Clicked;
+
+                var key2 = new Button(_controlsContainer,
+                    "Control" + Enum.GetName(typeof(Controls), control) + "Button2");
+                key2.Text = "";
+                key2.UserData = control;
+                key2.Clicked += Key2_Clicked;
+
+                _keyButtons.Add(control, new Button[2] {key1, key2});
+            }
 
             //Options - Apply Button
-            _applyBtn = new Button(_menuPanel);
+            _applyBtn = new Button(_optionsContainer, "ApplyButton");
             _applyBtn.SetText(Strings.Get("options", "apply"));
-            _applyBtn.SetPosition(_resolutionBackground.X, _soundSlider.Bottom + 16);
-            _applyBtn.SetSize(56, 32);
             _applyBtn.Clicked += ApplyBtn_Clicked;
-            _applyBtn.SetSize(211, 61);
-            _applyBtn.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"),
-                Button.ControlState.Normal);
-            _applyBtn.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"),
-                Button.ControlState.Hovered);
-            _applyBtn.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"),
-                Button.ControlState.Clicked);
-            _applyBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
-            _applyBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
-            _applyBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            _applyBtn.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
             //Options - Back Button
-            _backBtn = new Button(_menuPanel);
+            _backBtn = new Button(_optionsContainer, "CancelButton");
             _backBtn.SetText(Strings.Get("options", "cancel"));
-            _backBtn.SetSize(211, 61);
-            _backBtn.SetPosition(_resolutionBackground.Right - _backBtn.Width, _soundSlider.Bottom + 16);
             _backBtn.Clicked += BackBtn_Clicked;
-            _backBtn.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"),
-                Button.ControlState.Normal);
-            _backBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"),
-                Button.ControlState.Hovered);
-            _backBtn.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"),
-                Button.ControlState.Clicked);
-            _backBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
-            _backBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
-            _backBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            _backBtn.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+
+            GameInputHandler.KeyDown += OnKeyDown;
+            GameInputHandler.MouseDown += OnKeyDown;
+        }
+
+        private void Key2_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            EditKeyPressed((Button) sender, 2);
+        }
+
+        private void Key1_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            EditKeyPressed((Button) sender, 1);
+        }
+
+        private void EditKeyPressed(Button sender, int keyNum)
+        {
+            if (_edittingButton == null)
+            {
+                sender.Text = Strings.Get("controls", "listening");
+                _edittingKey = keyNum;
+                _edittingControl = (Controls) sender.UserData;
+                _edittingButton = sender;
+                Gui.GwenInput.HandleInput = false;
+                _listeningTimer = Globals.System.GetTimeMS() + 5000;
+            }
+        }
+
+        private void _editKeybindingsBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            //Determine if controls are currently being shown or not
+            if (_controlsContainer.IsVisible)
+            {
+                _controlsContainer.Hide();
+                _optionsContainer.Show();
+                _optionsHeader.SetText(Strings.Get("options", "title"));
+                _exitKeybindingsButton.Hide();
+            }
+            else
+            {
+                _controlsContainer.Show();
+                _optionsContainer.Hide();
+                _optionsHeader.SetText(Strings.Get("controls", "title"));
+                _exitKeybindingsButton.Show();
+                foreach (Controls control in Enum.GetValues(typeof(Controls)))
+                {
+                    _keyButtons[control][0].Text = Strings.Get("keys",
+                        Enum.GetName(typeof(Keys), _edittingControls.ControlMapping[control].key1));
+                    _keyButtons[control][1].Text = Strings.Get("keys",
+                        Enum.GetName(typeof(Keys), _edittingControls.ControlMapping[control].key2));
+                }
+            }
+        }
+
+        private void OnKeyDown(Keys key)
+        {
+            if (_edittingButton != null)
+            {
+                if (key == Keys.Escape) key = Keys.None;
+                _edittingControls.UpdateControl(_edittingControl, _edittingKey, key);
+                if (_edittingKey == 1)
+                {
+                    _edittingButton.Text = Strings.Get("keys",
+                        Enum.GetName(typeof(Keys), _edittingControls.ControlMapping[_edittingControl].key1));
+                }
+                else
+                {
+                    _edittingButton.Text = Strings.Get("keys",
+                        Enum.GetName(typeof(Keys), _edittingControls.ControlMapping[_edittingControl].key2));
+                }
+                _edittingButton = null;
+                Gui.GwenInput.HandleInput = true;
+            }
         }
 
         //Methods
         public void Update()
         {
+            if (_optionsPanel.IsVisible && _edittingButton != null && _listeningTimer < Globals.System.GetTimeMS())
+            {
+                OnKeyDown(Keys.None);
+            }
         }
 
         public void Show()
         {
             if (_mainMenu == null)
             {
-                _menuPanel.MakeModal(true);
+                _optionsPanel.MakeModal(true);
             }
             _previousMusicVolume = Globals.Database.MusicVolume;
             _previousSoundVolume = Globals.Database.SoundVolume;
+            _edittingControls = new GameControls(GameControls.ActiveControls);
             if (GameGraphics.Renderer.GetValidVideoModes().Count > 0)
             {
                 _resolutionList.SelectByText(
@@ -327,21 +309,21 @@ namespace Intersect_Client.Classes.UI
             _soundSlider.Value = Globals.Database.SoundVolume;
             _musicLabel.Text = Strings.Get("options", "musicvolume", (int) _musicSlider.Value);
             _soundLabel.Text = Strings.Get("options", "soundvolume", (int) _soundSlider.Value);
-            _menuPanel.IsHidden = false;
+            _optionsPanel.IsHidden = false;
         }
 
         public bool IsVisible()
         {
-            return !_menuPanel.IsHidden;
+            return !_optionsPanel.IsHidden;
         }
 
         public void Hide()
         {
             if (_mainMenu == null)
             {
-                _menuPanel.RemoveModal();
+                _optionsPanel.RemoveModal();
             }
-            _menuPanel.IsHidden = true;
+            _optionsPanel.IsHidden = true;
         }
 
         //Input Handlers
@@ -422,6 +404,8 @@ namespace Intersect_Client.Classes.UI
             }
             Globals.Database.MusicVolume = (int) _musicSlider.Value;
             Globals.Database.SoundVolume = (int) _soundSlider.Value;
+            GameControls.ActiveControls = _edittingControls;
+            GameControls.ActiveControls.Save();
             GameAudio.UpdateGlobalVolume();
             Globals.Database.SavePreferences();
             if (shouldReset) GameGraphics.Renderer.Init();

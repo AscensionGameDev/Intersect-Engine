@@ -7,8 +7,6 @@ namespace Intersect.Localization
 {
     class Language
     {
-        private bool _loaded = false;
-
         private Dictionary<string, Dictionary<string, string>> loadedStrings =
             new Dictionary<string, Dictionary<string, string>>();
 
@@ -24,6 +22,8 @@ namespace Intersect.Localization
                 LoadLanguage(File.ReadAllText(data));
             }
         }
+
+        public bool IsLoaded { get; private set; }
 
         private void LoadLanguage(string xmlData)
         {
@@ -62,25 +62,14 @@ namespace Intersect.Localization
                     }
                 }
             }
-        //Try to load it into dictionaries.
-        _loaded = true;
-        }
-
-        public bool Loaded()
-        {
-            return _loaded;
+            //Try to load it into dictionaries.
+            IsLoaded = true;
         }
 
         public bool HasString(string section, string id)
         {
-            if (loadedStrings.ContainsKey(section.ToLower()))
-            {
-                if (loadedStrings[section.ToLower()].ContainsKey(id.ToLower()))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return loadedStrings.ContainsKey(section.ToLower()) &&
+                   loadedStrings[section.ToLower()].ContainsKey(id.ToLower());
         }
 
         public string GetString(string section, string id, params object[] args)

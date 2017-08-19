@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
-using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events
 {
     public class EventMoveRoute
     {
-        public int ActionIndex = 0;
+        public int ActionIndex;
         public List<MoveRouteAction> Actions = new List<MoveRouteAction>();
-        public bool Complete = false;
-        public bool IgnoreIfBlocked = false;
-        public bool RepeatRoute = false;
+        public bool Complete;
+        public bool IgnoreIfBlocked;
+        public bool RepeatRoute;
         public int Target = -1;
 
         public EventMoveRoute()

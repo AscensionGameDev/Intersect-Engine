@@ -1,9 +1,9 @@
-﻿namespace Intersect_Server.Classes.Items
+﻿namespace Intersect.Server.Classes.Items
 {
     public class BagInstance
     {
-        public ItemInstance[] Items = null;
-        public int Slots = 0;
+        public ItemInstance[] Items;
+        public int Slots;
 
         public BagInstance(int slots)
         {

@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <!--Config.xml generated automatically by Intersect Server.-->
 <Config>
-	<Language>English</Language>
+  <Language>English</Language>
   <GameName>Intersect</GameName>
-  <ServerPort>4500</ServerPort>
+  <ServerPort>5400</ServerPort>
   <GameObjects>
     <!--You can increase these if you want, but you shouldn't unless you need to.-->
     <MaxNpcDrops>10</MaxNpcDrops>
@@ -14,13 +15,16 @@
     <MaxInventory>35</MaxInventory>
     <MaxSpells>35</MaxSpells>
     <MaxBank>100</MaxBank>
+    <MaxCharacters>3</MaxCharacters>
+    <!--Percentage chance of each item being dropped on player death. e.g. 50 = 50% drop chance per item.-->
+    <ItemDropChance>50</ItemDropChance>
   </Player>
-	<!--Trigger player passability based on map moralites. True = Passable, False = Blocked-->
-	<Passability>
-		<Normal>False</Normal>
-		<Safe>True</Safe>
-		<Arena>False</Arena>
-	</Passability>
+  <!--Trigger player passability based on map moralites. True = Passable, False = Blocked-->
+  <Passability>
+    <Normal>False</Normal>
+    <Safe>True</Safe>
+    <Arena>False</Arena>
+  </Passability>
   <Equipment>
     <WeaponSlot>2</WeaponSlot>
     <ShieldSlot>3</ShieldSlot>
@@ -31,38 +35,38 @@
     <Slot4>Boots</Slot4>
   </Equipment>
   <Paperdoll>
-		<Up>
-		    <!--Paperdoll is rendered in the following order when facing up. If you want to change when each piece of equipment gets rendered simply swap the equipment names.-->
-				<Slot0>Helmet</Slot0>
-				<Slot1>Armor</Slot1>
-				<Slot2>Weapon</Slot2>
-				<Slot3>Shield</Slot3>
-				<Slot4>Boots</Slot4>
-		</Up>
-		<Down>
-		    <!--Paperdoll is rendered in the following order when facing down. If you want to change when each piece of equipment gets rendered simply swap the equipment names.-->
-				<Slot0>Helmet</Slot0>
-				<Slot1>Armor</Slot1>
-				<Slot2>Weapon</Slot2>
-				<Slot3>Shield</Slot3>
-				<Slot4>Boots</Slot4>
-		</Down>
-		<Left>
-		    <!--Paperdoll is rendered in the following order when facing left. If you want to change when each piece of equipment gets rendered simply swap the equipment names.-->
-				<Slot0>Helmet</Slot0>
-				<Slot1>Armor</Slot1>
-				<Slot2>Weapon</Slot2>
-				<Slot3>Shield</Slot3>
-				<Slot4>Boots</Slot4>
-		</Left>
-		<Right>
-		    <!--Paperdoll is rendered in the following order when facing right. If you want to change when each piece of equipment gets rendered simply swap the equipment names.-->
-				<Slot0>Helmet</Slot0>
-				<Slot1>Armor</Slot1>
-				<Slot2>Weapon</Slot2>
-				<Slot3>Shield</Slot3>
-				<Slot4>Boots</Slot4>
-		</Right>
+    <Up>
+      <!--Paperdoll is rendered in the following order when facing up. If you want to change when each piece of equipment gets rendered simply swap the equipment names.-->
+      <Slot0>Helmet</Slot0>
+      <Slot1>Armor</Slot1>
+      <Slot2>Weapon</Slot2>
+      <Slot3>Shield</Slot3>
+      <Slot4>Boots</Slot4>
+    </Up>
+    <Down>
+      <!--Paperdoll is rendered in the following order when facing down. If you want to change when each piece of equipment gets rendered simply swap the equipment names.-->
+      <Slot0>Helmet</Slot0>
+      <Slot1>Armor</Slot1>
+      <Slot2>Weapon</Slot2>
+      <Slot3>Shield</Slot3>
+      <Slot4>Boots</Slot4>
+    </Down>
+    <Left>
+      <!--Paperdoll is rendered in the following order when facing left. If you want to change when each piece of equipment gets rendered simply swap the equipment names.-->
+      <Slot0>Helmet</Slot0>
+      <Slot1>Armor</Slot1>
+      <Slot2>Weapon</Slot2>
+      <Slot3>Shield</Slot3>
+      <Slot4>Boots</Slot4>
+    </Left>
+    <Right>
+      <!--Paperdoll is rendered in the following order when facing right. If you want to change when each piece of equipment gets rendered simply swap the equipment names.-->
+      <Slot0>Helmet</Slot0>
+      <Slot1>Armor</Slot1>
+      <Slot2>Weapon</Slot2>
+      <Slot3>Shield</Slot3>
+      <Slot4>Boots</Slot4>
+    </Right>
   </Paperdoll>
   <ToolTypes>
     <Slot0>Axe</Slot0>
@@ -73,6 +77,7 @@
   <Misc>
     <ItemDespawnTime>15000</ItemDespawnTime>
     <ItemSpawnTime>15000</ItemSpawnTime>
+    <AnimatedSprites></AnimatedSprites>
   </Misc>
   <Combat>
     <RegenTime>3000</RegenTime>

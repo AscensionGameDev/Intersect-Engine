@@ -1,40 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Intersect.Enums;
+using Intersect.Models;
 
 namespace Intersect.GameObjects
 {
     public class NpcBase : DatabaseObject<NpcBase>
     {
-        //Core info
-        public new const string DATABASE_TABLE = "npcs";
-        public new const GameObject OBJECT_TYPE = GameObject.Npc;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public List<int> AggroList = new List<int>();
-        public bool AttackAllies = false;
+        public bool AttackAllies;
         public int AttackAnimation = -1;
-        public byte Behavior = 0;
+        public byte Behavior;
         public int CritChance;
 
         //Combat
         public int Damage;
+
         public int DamageType;
 
         //Drops
         public List<NPCDrop> Drops = new List<NPCDrop>();
-        public int Experience = 0;
+
+        public int Experience;
+        public int Level = 1;
 
         //Vitals & Stats
         public int[] MaxVital = new int[(int) Vitals.VitalCount];
 
         //NPC vs NPC Combat
-        public bool NpcVsNpcEnabled = false;
+        public bool NpcVsNpcEnabled;
+
         public int Scaling;
         public int ScalingStat;
-        public int SightRange = 0;
+        public int SightRange;
 
         //Basic Info
-        public int SpawnDuration = 0;
+        public int SpawnDuration;
+
         public int SpellFrequency = 2;
 
         //Spells
@@ -52,12 +54,15 @@ namespace Intersect.GameObjects
             }
         }
 
+        public override byte[] BinaryData => NpcData();
+
         public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
             Name = myBuffer.ReadString();
             Sprite = myBuffer.ReadString();
+            Level = myBuffer.ReadInteger();
             for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 MaxVital[i] = myBuffer.ReadInteger();
@@ -110,6 +115,7 @@ namespace Intersect.GameObjects
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
             myBuffer.WriteString(Sprite);
+            myBuffer.WriteInteger(Level);
             for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 myBuffer.WriteInteger(MaxVital[i]);
@@ -153,72 +159,6 @@ namespace Intersect.GameObjects
             myBuffer.WriteInteger(Convert.ToInt32(AttackAllies));
 
             return myBuffer.ToArray();
-        }
-
-        public static NpcBase GetNpc(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (NpcBase) Objects[index];
-            }
-            return null;
-        }
-
-        public static string GetName(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return ((NpcBase) Objects[index]).Name;
-            }
-            return "Deleted";
-        }
-
-        public override byte[] BinaryData => NpcData();
-
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            Objects.Remove(Id);
-        }
-
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, NpcBase> GetObjects()
-        {
-            Dictionary<int, NpcBase> objects = Objects.ToDictionary(k => k.Key, v => (NpcBase) v.Value);
-            return objects;
         }
     }
 

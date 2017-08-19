@@ -2,19 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Intersect;
+using System.Text.RegularExpressions;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Server.Classes.Core;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Items;
-using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Networking;
-using Intersect_Server.Classes.Spells;
+using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Items;
+using Intersect.Server.Classes.Maps;
+using Intersect.Server.Classes.Networking;
+using Intersect.Server.Classes.Spells;
 
-namespace Intersect_Server.Classes.Entities
+namespace Intersect.Server.Classes.Entities
 {
     public class EventInstance
     {
@@ -24,21 +25,22 @@ namespace Intersect_Server.Classes.Entities
         public int CurrentX;
         public int CurrentY;
         public EventPageInstance[] GlobalPageInstance;
-        public bool HoldingPlayer = false;
+        public bool HoldingPlayer;
         public bool IsGlobal;
         public int MapNum;
         public Client MyClient;
         public int MyIndex;
         public Player MyPlayer;
-        public bool NPCDeathTriggerd = false;
+        public bool NPCDeathTriggerd;
         public int PageIndex;
         public EventPageInstance PageInstance;
 
         //Special conditions
-        public bool PlayerHasDied = false;
+        public bool PlayerHasDied;
+
         public int SpawnX;
         public int SpawnY;
-        public long WaitTimer = 0;
+        public long WaitTimer;
 
         public EventInstance(int index, Client client, EventBase baseEvent, int mapNum)
         {
@@ -64,7 +66,8 @@ namespace Intersect_Server.Classes.Entities
             CurrentY = baseEvent.SpawnY;
             for (int i = 0; i < BaseEvent.MyPages.Count; i++)
             {
-                GlobalPageInstance[i] = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], index, MapNum, this, null);
+                GlobalPageInstance[i] =
+                    new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], index, MapNum, this, null);
             }
         }
 
@@ -92,7 +95,8 @@ namespace Intersect_Server.Classes.Entities
                 else
                 {
                     if (!IsGlobal)
-                        PageInstance.Update(CallStack.Count > 0, timeMs); //Process movement and stuff that is client specific
+                        PageInstance.Update(CallStack.Count > 0,
+                            timeMs); //Process movement and stuff that is client specific
                     if (CallStack.Count > 0)
                     {
                         if (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.Shop &&
@@ -114,7 +118,8 @@ namespace Intersect_Server.Classes.Entities
                                 if (CallStack.Peek().WaitingForRoute == -1)
                                 {
                                     if (MyPlayer.MoveRoute == null ||
-                                        (MyPlayer.MoveRoute.Complete && MyPlayer.MoveTimer < Globals.System.GetTimeMs()))
+                                        (MyPlayer.MoveRoute.Complete &&
+                                         MyPlayer.MoveTimer < Globals.System.GetTimeMs()))
                                     {
                                         CallStack.Peek().WaitingForRoute = -2;
                                         CallStack.Peek().WaitingForRouteMap = -1;
@@ -127,7 +132,7 @@ namespace Intersect_Server.Classes.Entities
                                     {
                                         if (MyPlayer.MyEvents[i] == null) continue;
                                         if (MyPlayer.MyEvents[i].MapNum == CallStack.Peek().WaitingForRouteMap &&
-                                            MyPlayer.MyEvents[i].BaseEvent.MyIndex == CallStack.Peek().WaitingForRoute)
+                                            MyPlayer.MyEvents[i].BaseEvent.Index == CallStack.Peek().WaitingForRoute)
                                         {
                                             if (MyPlayer.MyEvents[i].PageInstance == null) break;
                                             if (!MyPlayer.MyEvents[i].PageInstance.MoveRoute.Complete) break;
@@ -181,7 +186,7 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
 
-            if (PageInstance == null)
+            if (PageInstance == null && MapNum > -1)
             {
                 //Try to Spawn a PageInstance.. if we can
                 for (int i = BaseEvent.MyPages.Count - 1; i >= 0; i--)
@@ -190,18 +195,19 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (IsGlobal)
                         {
-                            if (MapInstance.GetMap(MapNum).GetGlobalEventInstance(BaseEvent) != null)
+                            if (MapInstance.Lookup.Get<MapInstance>(MapNum).GetGlobalEventInstance(BaseEvent) != null)
                             {
-                                PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.MyIndex,
+                                PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.Index,
                                     MapNum, this, MyClient,
-                                    MapInstance.GetMap(MapNum).GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
+                                    MapInstance.Lookup.Get<MapInstance>(MapNum).GetGlobalEventInstance(BaseEvent)
+                                        .GlobalPageInstance[i]);
                                 sendLeave = false;
                                 PageIndex = i;
                             }
                         }
                         else
                         {
-                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.MyIndex,
+                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.Index,
                                 MapNum, this, MyClient);
                             sendLeave = false;
                             PageIndex = i;
@@ -214,11 +220,11 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (IsGlobal)
                     {
-                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.MyIndex, (int) EntityTypes.Event, MapNum);
+                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.Index, (int) EntityTypes.Event, MapNum);
                     }
                     else
                     {
-                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.MyIndex, (int) EntityTypes.Event, MapNum);
+                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.Index, (int) EntityTypes.Event, MapNum);
                     }
                 }
             }
@@ -315,15 +321,15 @@ namespace Intersect_Server.Classes.Entities
                     break;
                 case 2: //Global Switch
                     var servSwitch = false;
-                    if (ServerSwitchBase.GetSwitch(conditionCommand.Ints[1]) != null)
-                        servSwitch = ServerSwitchBase.GetSwitch(conditionCommand.Ints[1]).Value;
+                    if (ServerSwitchBase.Lookup.Get<ServerSwitchBase>(conditionCommand.Ints[1]) != null)
+                        servSwitch = ServerSwitchBase.Lookup.Get<ServerSwitchBase>(conditionCommand.Ints[1]).Value;
                     if (servSwitch == Convert.ToBoolean(conditionCommand.Ints[2]))
                         return true;
                     break;
                 case 3: //Global Variable
                     var servVar = 0;
-                    if (ServerVariableBase.GetVariable(conditionCommand.Ints[1]) != null)
-                        servVar = ServerVariableBase.GetVariable(conditionCommand.Ints[1]).Value;
+                    if (ServerVariableBase.Lookup.Get<ServerVariableBase>(conditionCommand.Ints[1]) != null)
+                        servVar = ServerVariableBase.Lookup.Get<ServerVariableBase>(conditionCommand.Ints[1]).Value;
                     switch (conditionCommand.Ints[2]) //Comparator
                     {
                         case 0: //Equal to
@@ -407,7 +413,8 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (EventInstance.IsGlobal)
                         {
-                            var evts = MapInstance.GetMap(EventInstance.MapNum).GlobalEventInstances.Values.ToList();
+                            var evts = MapInstance.Lookup.Get<MapInstance>(EventInstance.MapNum).GlobalEventInstances
+                                .Values.ToList();
                             for (int i = 0; i < evts.Count; i++)
                             {
                                 if (evts[i] != null && evts[i].BaseEvent == EventInstance.BaseEvent)
@@ -442,14 +449,14 @@ namespace Intersect_Server.Classes.Entities
                         return true;
                     }
                 case 11: //Can Start Quest
-                    var startQuest = QuestBase.GetQuest(conditionCommand.Ints[1]);
+                    var startQuest = QuestBase.Lookup.Get<QuestBase>(conditionCommand.Ints[1]);
                     if (startQuest != null)
                     {
                         return MyPlayer.CanStartQuest(startQuest);
                     }
                     break;
                 case 12: //Quest In Progress
-                    var questInProgress = QuestBase.GetQuest(conditionCommand.Ints[1]);
+                    var questInProgress = QuestBase.Lookup.Get<QuestBase>(conditionCommand.Ints[1]);
                     if (questInProgress != null)
                     {
                         return MyPlayer.QuestInProgress(questInProgress, (QuestProgress) conditionCommand.Ints[2],
@@ -457,7 +464,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     break;
                 case 13: //Quest Completed
-                    var questCompleted = QuestBase.GetQuest(conditionCommand.Ints[1]);
+                    var questCompleted = QuestBase.Lookup.Get<QuestBase>(conditionCommand.Ints[1]);
                     if (questCompleted != null)
                     {
                         return MyPlayer.QuestCompleted(questCompleted);
@@ -473,7 +480,7 @@ namespace Intersect_Server.Classes.Entities
                     if (EventInstance != null)
                     {
                         if (EventInstance.NPCDeathTriggerd == true) return false; //Only call it once
-                        MapInstance m = MapInstance.GetMap(EventInstance.MapNum);
+                        MapInstance m = MapInstance.Lookup.Get<MapInstance>(EventInstance.MapNum);
                         for (int i = 0; i < m.Spawns.Count; i++)
                         {
                             if (m.NpcSpawnInstances.ContainsKey(m.Spawns[i]))
@@ -499,6 +506,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 input = input.Replace(Strings.Get("events", "playernamecommand"), MyClient.Entity.MyName);
                 input = input.Replace(Strings.Get("events", "eventnamecommand"), PageInstance.MyName);
+                input = input.Replace(Strings.Get("events", "commandparameter"), PageInstance.Param);
                 if (input.Contains(Strings.Get("events", "onlinelistcommand")) ||
                     input.Contains(Strings.Get("events", "onlinecountcommand")))
                 {
@@ -510,6 +518,97 @@ namespace Intersect_Server.Classes.Entities
                         sb.Append(onlineList[i].MyName + (i != onlineList.Count - 1 ? ", " : ""));
                     }
                     input = input.Replace(Strings.Get("events", "onlinelistcommand"), sb.ToString());
+                }
+
+                //Time Stuff
+                input = input.Replace(Strings.Get("events", "timehour"), ServerTime.GetTime().ToString("%h"));
+                input = input.Replace(Strings.Get("events", "militaryhour"), ServerTime.GetTime().ToString("HH"));
+                input = input.Replace(Strings.Get("events", "timeminute"), ServerTime.GetTime().ToString("mm"));
+                input = input.Replace(Strings.Get("events", "timesecond"), ServerTime.GetTime().ToString("ss"));
+                if (ServerTime.GetTime().Hour >= 12)
+                {
+                    input = input.Replace(Strings.Get("events", "timeperiod"), Strings.Get("events", "periodevening"));
+                }
+                else
+                {
+                    input = input.Replace(Strings.Get("events", "timeperiod"), Strings.Get("events", "periodmorning"));
+                }
+
+                //Have to accept a numeric parameter after each of the following (player switch/var and server switch/var)
+                MatchCollection matches = Regex.Matches(input,
+                    Regex.Escape(Strings.Get("events", "playervar")) + " ([0-9]+)");
+                foreach (Match m in matches)
+                {
+                    if (m.Success)
+                    {
+                        int id = Convert.ToInt32(m.Groups[1].Value);
+                        if (MyPlayer.Variables.ContainsKey(id))
+                        {
+                            input = input.Replace(Strings.Get("events", "playervar") + " " + m.Groups[1].Value,
+                                MyPlayer.Variables[id].ToString());
+                        }
+                        else
+                        {
+                            input = input.Replace(Strings.Get("events", "playervar") + " " + m.Groups[1].Value,
+                                0.ToString());
+                        }
+                    }
+                }
+                matches = Regex.Matches(input, Regex.Escape(Strings.Get("events", "playerswitch")) + " ([0-9]+)");
+                foreach (Match m in matches)
+                {
+                    if (m.Success)
+                    {
+                        int id = Convert.ToInt32(m.Groups[1].Value);
+                        if (MyPlayer.Switches.ContainsKey(id))
+                        {
+                            input = input.Replace(Strings.Get("events", "playerswitch") + " " + m.Groups[1].Value,
+                                MyPlayer.Switches[id].ToString());
+                        }
+                        else
+                        {
+                            input = input.Replace(Strings.Get("events", "playerswitch") + " " + m.Groups[1].Value,
+                                false.ToString());
+                        }
+                    }
+                }
+                matches = Regex.Matches(input, Regex.Escape(Strings.Get("events", "globalvar")) + " ([0-9]+)");
+                foreach (Match m in matches)
+                {
+                    if (m.Success)
+                    {
+                        int id = Convert.ToInt32(m.Groups[1].Value);
+                        var globalvar = ServerVariableBase.Lookup.Get<ServerVariableBase>(id);
+                        if (globalvar != null)
+                        {
+                            input = input.Replace(Strings.Get("events", "globalvar") + " " + m.Groups[1].Value,
+                                globalvar.Value.ToString());
+                        }
+                        else
+                        {
+                            input = input.Replace(Strings.Get("events", "globalvar") + " " + m.Groups[1].Value,
+                                0.ToString());
+                        }
+                    }
+                }
+                matches = Regex.Matches(input, Regex.Escape(Strings.Get("events", "globalswitch")) + " ([0-9]+)");
+                foreach (Match m in matches)
+                {
+                    if (m.Success)
+                    {
+                        int id = Convert.ToInt32(m.Groups[1].Value);
+                        var globalswitch = ServerSwitchBase.Lookup.Get<ServerSwitchBase>(id);
+                        if (globalswitch != null)
+                        {
+                            input = input.Replace(Strings.Get("events", "globalswitch") + " " + m.Groups[1].Value,
+                                globalswitch.Value.ToString());
+                        }
+                        else
+                        {
+                            input = input.Replace(Strings.Get("events", "globalswitch") + " " + m.Groups[1].Value,
+                                false.ToString());
+                        }
+                    }
                 }
             }
             return input;
@@ -527,7 +626,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 case EventCommandType.ShowText:
                     PacketSender.SendEventDialog(MyClient, ParseEventText(command.Strs[0]), command.Strs[1], MapNum,
-                        BaseEvent.MyIndex);
+                        BaseEvent.Index);
                     CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Dialogue;
                     CallStack.Peek().CommandIndex++;
                     break;
@@ -535,7 +634,7 @@ namespace Intersect_Server.Classes.Entities
                     PacketSender.SendEventDialog(MyClient, ParseEventText(command.Strs[0]),
                         ParseEventText(command.Strs[1]), ParseEventText(command.Strs[2]),
                         ParseEventText(command.Strs[3]), ParseEventText(command.Strs[4]), command.Strs[5], MapNum,
-                        BaseEvent.MyIndex);
+                        BaseEvent.Index);
                     CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Dialogue;
                     CallStack.Peek().ResponseIndex = 1;
                     break;
@@ -551,7 +650,8 @@ namespace Intersect_Server.Classes.Entities
                                 Color.FromName(command.Strs[1]));
                             break;
                         case 2: //Global
-                            PacketSender.SendGlobalMsg(ParseEventText(command.Strs[0]), Color.FromName(command.Strs[1]));
+                            PacketSender.SendGlobalMsg(ParseEventText(command.Strs[0]),
+                                Color.FromName(command.Strs[1]));
                             break;
                     }
                     CallStack.Peek().CommandIndex++;
@@ -567,7 +667,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else if (command.Ints[0] == (int) SwitchVariableTypes.ServerSwitch)
                     {
-                        var serverSwitch = ServerSwitchBase.GetSwitch(command.Ints[1]);
+                        var serverSwitch = ServerSwitchBase.Lookup.Get<ServerSwitchBase>(command.Ints[1]);
                         if (serverSwitch != null)
                         {
                             serverSwitch.Value = Convert.ToBoolean(command.Ints[2]);
@@ -602,7 +702,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else if (command.Ints[0] == (int) SwitchVariableTypes.ServerVariable)
                     {
-                        var serverVarible = ServerVariableBase.GetVariable(command.Ints[1]);
+                        var serverVarible = ServerVariableBase.Lookup.Get<ServerVariableBase>(command.Ints[1]);
                         if (serverVarible != null)
                         {
                             switch (command.Ints[2])
@@ -629,7 +729,7 @@ namespace Intersect_Server.Classes.Entities
                 case EventCommandType.SetSelfSwitch:
                     if (IsGlobal)
                     {
-                        var evts = MapInstance.GetMap(MapNum).GlobalEventInstances.Values.ToList();
+                        var evts = MapInstance.Lookup.Get<MapInstance>(MapNum).GlobalEventInstances.Values.ToList();
                         for (int i = 0; i < evts.Count; i++)
                         {
                             if (evts[i] != null && evts[i].BaseEvent == BaseEvent)
@@ -687,7 +787,7 @@ namespace Intersect_Server.Classes.Entities
                     break;
                 case EventCommandType.StartCommonEvent:
                     CallStack.Peek().CommandIndex++;
-                    var commonEvent = EventBase.GetEvent(command.Ints[0]);
+                    var commonEvent = EventBase.Lookup.Get<EventBase>(command.Ints[0]);
                     if (commonEvent != null)
                     {
                         for (int i = 0; i < commonEvent.MyPages.Count; i++)
@@ -837,7 +937,8 @@ namespace Intersect_Server.Classes.Entities
                         CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
                             CallStack.Peek().CommandIndex].Ints[2],
                         CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
-                            CallStack.Peek().CommandIndex].Ints[3]);
+                            CallStack.Peek().CommandIndex].Ints[3] == 0 ? MyPlayer.Dir : CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
+                            CallStack.Peek().CommandIndex].Ints[3] -1);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetMoveRoute:
@@ -856,7 +957,7 @@ namespace Intersect_Server.Classes.Entities
                         for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
                         {
                             if (MyPlayer.MyEvents[i] == null) continue;
-                            if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
+                            if (MyPlayer.MyEvents[i].BaseEvent.Index ==
                                 CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
                                     CallStack.Peek().CommandIndex].Route.Target)
                             {
@@ -885,11 +986,11 @@ namespace Intersect_Server.Classes.Entities
                         for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
                         {
                             if (MyPlayer.MyEvents[i] == null) continue;
-                            if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
+                            if (MyPlayer.MyEvents[i].BaseEvent.Index ==
                                 CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
                                     CallStack.Peek().CommandIndex].Ints[0])
                             {
-                                CallStack.Peek().WaitingForRoute = MyPlayer.MyEvents[i].BaseEvent.MyIndex;
+                                CallStack.Peek().WaitingForRoute = MyPlayer.MyEvents[i].BaseEvent.Index;
                                 CallStack.Peek().WaitingForRouteMap = MyPlayer.MyEvents[i].MapNum;
                                 break;
                             }
@@ -937,7 +1038,7 @@ namespace Intersect_Server.Classes.Entities
                                 for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
                                 {
                                     if (MyPlayer.MyEvents[i] == null) continue;
-                                    if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
+                                    if (MyPlayer.MyEvents[i].BaseEvent.Index ==
                                         CallStack.Peek().Page.CommandLists[
                                             CallStack.Peek().ListIndex].Commands[
                                             CallStack.Peek().CommandIndex].Ints[2])
@@ -988,7 +1089,8 @@ namespace Intersect_Server.Classes.Entities
                     tile = new TileHelper(mapNum, tileX, tileY);
                     if (tile.TryFix())
                     {
-                        var npc = MapInstance.GetMap(mapNum).SpawnNpc(tileX, tileY, direction, npcNum, true);
+                        var npc = MapInstance.Lookup.Get<MapInstance>(mapNum)
+                            .SpawnNpc(tileX, tileY, direction, npcNum, true);
                         MyPlayer.SpawnedNpcs.Add((Npc) npc);
                     }
                     CallStack.Peek().CommandIndex++;
@@ -1001,7 +1103,7 @@ namespace Intersect_Server.Classes.Entities
                         {
                             if (((Npc) entities[i]).Despawnable == true)
                             {
-                                ((Npc) entities[i]).Die(false);
+                                ((Npc) entities[i]).Die(100);
                             }
                         }
                     }
@@ -1050,7 +1152,7 @@ namespace Intersect_Server.Classes.Entities
                                 for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
                                 {
                                     if (MyPlayer.MyEvents[i] == null) continue;
-                                    if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
+                                    if (MyPlayer.MyEvents[i].BaseEvent.Index ==
                                         CallStack.Peek().Page.CommandLists[
                                             CallStack.Peek().ListIndex].Commands[
                                             CallStack.Peek().CommandIndex].Ints[2])
@@ -1084,8 +1186,8 @@ namespace Intersect_Server.Classes.Entities
                                     if (targetEntity.GetType() == typeof(Player))
                                     {
                                         PacketSender.SendAnimationToProximity(animNum, 1, targetEntity.MyIndex,
-                                                MyClient.Entity.CurrentMap, 0, 0, direction);
-                                            //Target Type 1 will be global entity
+                                            MyClient.Entity.CurrentMap, 0, 0, direction);
+                                        //Target Type 1 will be global entity
                                     }
                                     else
                                     {
@@ -1191,7 +1293,7 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetClass:
-                    if (ClassBase.GetClass(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                    if (ClassBase.Lookup.Get<ClassBase>(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                             .Commands[CallStack.Peek().CommandIndex].Ints[0]) != null)
                     {
                         MyPlayer.Class = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
@@ -1202,7 +1304,8 @@ namespace Intersect_Server.Classes.Entities
                     break;
                 case EventCommandType.StartQuest:
                     success = false;
-                    var quest = QuestBase.GetQuest(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                    var quest = QuestBase.Lookup.Get<QuestBase>(CallStack.Peek().Page
+                        .CommandLists[CallStack.Peek().ListIndex]
                         .Commands[CallStack.Peek().CommandIndex].Ints[0]);
                     if (quest != null)
                     {
@@ -1214,7 +1317,7 @@ namespace Intersect_Server.Classes.Entities
                             {
                                 MyPlayer.OfferQuest(quest);
                                 CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Quest;
-                                CallStack.Peek().ResponseIndex = quest.Id;
+                                CallStack.Peek().ResponseIndex = quest.Index;
                                 break;
                             }
                             else

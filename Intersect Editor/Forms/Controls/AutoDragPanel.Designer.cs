@@ -1,4 +1,4 @@
-﻿namespace Intersect_Editor.Forms.Controls
+﻿namespace Intersect.Editor.Forms.Controls
 {
     partial class AutoDragPanel
     {

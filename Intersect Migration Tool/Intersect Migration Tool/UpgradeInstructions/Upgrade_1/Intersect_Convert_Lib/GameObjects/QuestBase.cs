@@ -1,31 +1,33 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects
 {
     public class QuestBase : DatabaseObject
     {
         //General
         public new const string DATABASE_TABLE = "quests";
+
         public new const GameObject OBJECT_TYPE = GameObject.Quest;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         //Requirements
-        public int ClassReq = 0;
+        public int ClassReq;
+
         public string EndDesc = "";
-        public int ItemReq = 0;
-        public int LevelReq = 0;
+        public int ItemReq;
+        public int LevelReq;
 
         public string Name = "New Quest";
-        public int QuestReq = 0;
+        public int QuestReq;
         public string StartDesc = "";
-        public int SwitchReq = 0;
+        public int SwitchReq;
 
         //Tasks
         public List<QuestTask> Tasks = new List<QuestTask>();
-        public int VariableReq = 0;
-        public int VariableValue = 0;
+
+        public int VariableReq;
+        public int VariableValue;
 
         public QuestBase(int id) : base(id)
         {
@@ -172,11 +174,11 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
 
         public class QuestTask
         {
-            public int Data1 = 0;
-            public int Data2 = 0;
+            public int Data1;
+            public int Data2;
             public string Desc = "";
-            public int Experience = 0;
-            public int Objective = 0;
+            public int Experience;
+            public int Objective;
             public List<QuestReward> Rewards = new List<QuestReward>();
 
             public QuestTask()
@@ -190,8 +192,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
 
         public class QuestReward
         {
-            public int Amount = 0;
-            public int ItemNum = 0;
+            public int Amount;
+            public int ItemNum;
         }
     }
 }

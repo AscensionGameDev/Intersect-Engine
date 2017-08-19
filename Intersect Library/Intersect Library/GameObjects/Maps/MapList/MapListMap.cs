@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using Intersect.Collections;
 
 namespace Intersect.GameObjects.Maps.MapList
 {
@@ -18,25 +18,25 @@ namespace Intersect.GameObjects.Maps.MapList
             return MapNum.CompareTo(obj.MapNum);
         }
 
-        public void GetData(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps)
+        public void GetData(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps)
         {
             base.GetData(myBuffer);
             myBuffer.WriteInteger(MapNum);
             myBuffer.WriteString(gameMaps[MapNum].Name);
         }
 
-        public bool Load(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps, bool isServer = true)
+        public bool Load(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps, bool isServer = true)
         {
             base.Load(myBuffer);
             MapNum = myBuffer.ReadInteger();
             Name = myBuffer.ReadString();
             if (isServer)
             {
-                if (!gameMaps.ContainsKey(MapNum)) return false;
+                if (!gameMaps.IndexKeys.Contains(MapNum)) return false;
             }
             else
             {
-                if (gameMaps.ContainsKey(MapNum))
+                if (gameMaps.IndexKeys.Contains(MapNum))
                 {
                     gameMaps[MapNum].Name = Name;
                 }

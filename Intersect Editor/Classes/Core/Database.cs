@@ -1,17 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Xml;
-using Intersect;
-using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Maps;
-using Intersect_Editor.Classes.Maps;
+using Intersect.Enums;
 using Mono.Data.Sqlite;
 
-namespace Intersect_Editor.Classes
+namespace Intersect.Editor.Classes
 {
     public static class Database
     {
@@ -19,22 +13,25 @@ namespace Intersect_Editor.Classes
 
         //Map Table Constants
         private const string MAP_CACHE_TABLE = "mapcache";
+
         private const string MAP_CACHE_ID = "id";
         private const string MAP_CACHE_REVISION = "revision";
         private const string MAP_CACHE_DATA = "data";
 
         //Options Constants
         private const string OPTION_TABLE = "options";
+
         private const string OPTION_ID = "id";
         private const string OPTION_NAME = "name";
         private const string OPTION_VALUE = "value";
         private static SqliteConnection _dbConnection;
 
         //Grid Variables
-        public static bool GridHideDarkness = false;
-        public static bool GridHideFog = false;
-        public static bool GridHideOverlay = false;
-        public static bool GridHideResources = false;
+        public static bool GridHideDarkness;
+
+        public static bool GridHideFog;
+        public static bool GridHideOverlay;
+        public static bool GridHideResources;
         public static int GridLightColor = System.Drawing.Color.White.ToArgb();
 
         //Options File
@@ -51,17 +48,17 @@ namespace Intersect_Editor.Classes
                     writer.WriteStartElement("Config");
                     writer.WriteElementString("Language", "English");
                     writer.WriteElementString("Host", "localhost");
-                    writer.WriteElementString("Port", "4500");
+                    writer.WriteElementString("Port", "5400");
                     writer.WriteElementString("RenderCache", "true");
-                        //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
                     writer.WriteElementString("MenuBGM", "");
-                        //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
                     writer.WriteElementString("MenuBG", "background.png");
-                        //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
                     writer.WriteElementString("Logo", "logo.png");
-                        //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
                     writer.WriteElementString("IntroBG", "");
-                        //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
                     writer.WriteEndElement();
                     writer.WriteEndDocument();
                     writer.Flush();
@@ -91,187 +88,17 @@ namespace Intersect_Editor.Classes
         }
 
         //Game Object Handling
-        public static string[] GetGameObjectList(GameObject type)
-        {
-            var items = new List<string>();
-            switch (type)
-            {
-                case GameObject.Animation:
-                    foreach (var obj in AnimationBase.Lookup)
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.Class:
-                    foreach (var obj in ClassBase.GetObjects())
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.Item:
-                    foreach (var obj in ItemBase.GetObjects())
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.Npc:
-                    foreach (var obj in NpcBase.GetObjects())
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.Projectile:
-                    foreach (var obj in ProjectileBase.GetObjects())
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.Quest:
-                    foreach (var obj in QuestBase.GetObjects())
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.Resource:
-                    foreach (var obj in ResourceBase.GetObjects())
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.Shop:
-                    foreach (var obj in ShopBase.GetObjects())
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.Spell:
-                    foreach (var obj in SpellBase.GetObjects())
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.Bench:
-                    foreach (var obj in BenchBase.GetObjects())
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.Map:
-                    foreach (var obj in MapInstance.GetObjects())
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.CommonEvent:
-                    foreach (var obj in EventBase.GetObjects())
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.PlayerSwitch:
-                    foreach (var obj in PlayerSwitchBase.GetObjects())
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.PlayerVariable:
-                    foreach (var obj in PlayerVariableBase.GetObjects())
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.ServerSwitch:
-                    foreach (var obj in ServerSwitchBase.GetObjects())
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.ServerVariable:
-                    foreach (var obj in ServerVariableBase.GetObjects())
-                        items.Add(obj.Value.Name);
-                    break;
-                case GameObject.Tileset:
-                    foreach (var obj in TilesetBase.Lookup)
-                        items.Add(obj.Value.Name);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
-            return items.ToArray();
-        }
+        public static string[] GetGameObjectList(GameObjectType type) => type.GetLookup()?.Names;
 
-        public static int GameObjectIdFromList(GameObject type, int listIndex)
-        {
-            if (listIndex < 0) return -1;
-            switch (type)
-            {
-                case GameObject.Animation:
-                    if (listIndex >= AnimationBase.Lookup.Count) return -1;
-                    return AnimationBase.Lookup.Keys.ToList()[listIndex];
-                case GameObject.Class:
-                    if (listIndex >= ClassBase.ObjectCount()) return -1;
-                    return ClassBase.GetObjects().Keys.ToList()[listIndex];
-                case GameObject.Item:
-                    if (listIndex >= ItemBase.ObjectCount()) return -1;
-                    return ItemBase.GetObjects().Keys.ToList()[listIndex];
-                case GameObject.Npc:
-                    if (listIndex >= NpcBase.ObjectCount()) return -1;
-                    return NpcBase.GetObjects().Keys.ToList()[listIndex];
-                case GameObject.Projectile:
-                    if (listIndex >= ProjectileBase.ObjectCount()) return -1;
-                    return ProjectileBase.GetObjects().Keys.ToList()[listIndex];
-                case GameObject.Quest:
-                    if (listIndex >= QuestBase.ObjectCount()) return -1;
-                    return QuestBase.GetObjects().Keys.ToList()[listIndex];
-                case GameObject.Resource:
-                    if (listIndex >= ResourceBase.ObjectCount()) return -1;
-                    return ResourceBase.GetObjects().Keys.ToList()[listIndex];
-                case GameObject.Shop:
-                    if (listIndex >= ShopBase.ObjectCount()) return -1;
-                    return ShopBase.GetObjects().Keys.ToList()[listIndex];
-                case GameObject.Spell:
-                    if (listIndex >= SpellBase.ObjectCount()) return -1;
-                    return SpellBase.GetObjects().Keys.ToList()[listIndex];
-                case GameObject.Bench:
-                    if (listIndex >= BenchBase.ObjectCount()) return -1;
-                    return BenchBase.GetObjects().Keys.ToList()[listIndex];
-                case GameObject.Map:
-                    if (listIndex >= MapBase.ObjectCount()) return -1;
-                    return MapBase.GetObjects().Keys.ToList()[listIndex];
-                case GameObject.CommonEvent:
-                    if (listIndex >= EventBase.ObjectCount()) return -1;
-                    return EventBase.GetObjects().Keys.ToList()[listIndex];
-                case GameObject.PlayerSwitch:
-                    if (listIndex >= PlayerSwitchBase.ObjectCount()) return -1;
-                    return PlayerSwitchBase.GetObjects().Keys.ToList()[listIndex];
-                case GameObject.PlayerVariable:
-                    if (listIndex >= PlayerVariableBase.ObjectCount()) return -1;
-                    return PlayerVariableBase.GetObjects().Keys.ToList()[listIndex];
-                case GameObject.ServerSwitch:
-                    if (listIndex >= ServerSwitchBase.ObjectCount()) return -1;
-                    return ServerSwitchBase.GetObjects().Keys.ToList()[listIndex];
-                case GameObject.ServerVariable:
-                    if (listIndex >= ServerVariableBase.ObjectCount()) return -1;
-                    return ServerVariableBase.GetObjects().Keys.ToList()[listIndex];
-                case GameObject.Tileset:
-                    if (listIndex >= TilesetBase.Lookup.Count) return -1;
-                    return TilesetBase.Lookup.Keys.ToList()[listIndex];
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
-        }
+        public static int GameObjectIdFromList(GameObjectType type, int listIndex) => listIndex < 0
+            ? -1
+            : (type.GetLookup()?.ValueList?[listIndex]?.Index ?? -1);
 
-        public static int GameObjectListIndex(GameObject type, int id)
+        public static int GameObjectListIndex(GameObjectType type, int id)
         {
-            switch (type)
-            {
-                case GameObject.Animation:
-                    return AnimationBase.Lookup.Keys.ToList().IndexOf(id);
-                case GameObject.Class:
-                    return ClassBase.GetObjects().Keys.ToList().IndexOf(id);
-                case GameObject.Item:
-                    return ItemBase.GetObjects().Keys.ToList().IndexOf(id);
-                case GameObject.Npc:
-                    return NpcBase.GetObjects().Keys.ToList().IndexOf(id);
-                case GameObject.Projectile:
-                    return ProjectileBase.GetObjects().Keys.ToList().IndexOf(id);
-                case GameObject.Quest:
-                    return QuestBase.GetObjects().Keys.ToList().IndexOf(id);
-                case GameObject.Resource:
-                    return ResourceBase.GetObjects().Keys.ToList().IndexOf(id);
-                case GameObject.Shop:
-                    return ShopBase.GetObjects().Keys.ToList().IndexOf(id);
-                case GameObject.Spell:
-                    return SpellBase.GetObjects().Keys.ToList().IndexOf(id);
-                case GameObject.Bench:
-                    return BenchBase.GetObjects().Keys.ToList().IndexOf(id);
-                case GameObject.Map:
-                    return MapBase.GetObjects().Keys.ToList().IndexOf(id);
-                case GameObject.CommonEvent:
-                    return EventBase.GetObjects().Keys.ToList().IndexOf(id);
-                case GameObject.PlayerSwitch:
-                    return PlayerSwitchBase.GetObjects().Keys.ToList().IndexOf(id);
-                case GameObject.PlayerVariable:
-                    return PlayerVariableBase.GetObjects().Keys.ToList().IndexOf(id);
-                case GameObject.ServerSwitch:
-                    return ServerSwitchBase.GetObjects().Keys.ToList().IndexOf(id);
-                case GameObject.ServerVariable:
-                    return ServerVariableBase.GetObjects().Keys.ToList().IndexOf(id);
-                case GameObject.Tileset:
-                    return TilesetBase.Lookup.Keys.ToList().IndexOf(id);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
+            var index = type.GetLookup()?.IndexList?.IndexOf(id);
+            if (!index.HasValue) throw new ArgumentNullException();
+            return index.Value;
         }
 
         //Map Cache DB
@@ -331,7 +158,7 @@ namespace Intersect_Editor.Classes
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + OPTION_NAME, name));
-                cmd.Parameters.Add(new SqliteParameter("@" + OPTION_VALUE, value.ToString()));
+                cmd.Parameters.Add(new SqliteParameter("@" + OPTION_VALUE, value));
                 cmd.ExecuteNonQuery();
             }
         }

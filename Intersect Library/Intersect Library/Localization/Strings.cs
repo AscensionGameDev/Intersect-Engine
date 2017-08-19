@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Xml.Serialization;
+using System.Linq;
 
 namespace Intersect.Localization
 {
@@ -51,10 +51,10 @@ namespace Intersect.Localization
                 //Copy Client.English.xml from resources
                 File.WriteAllText(Path.Combine(langDir, strComponent + ".English.xml"), defaultFile);
             }
-            DefaultLanguage = new Language(Path.Combine(langDir, strComponent + ".English.xml"),false);
+            DefaultLanguage = new Language(Path.Combine(langDir, strComponent + ".English.xml"), false);
             if (File.Exists(Path.Combine(langDir, strComponent + "." + language + ".xml")))
             {
-                SelectedLanguage = new Language(Path.Combine(langDir, strComponent + "." + language + ".xml"),false);
+                SelectedLanguage = new Language(Path.Combine(langDir, strComponent + "." + language + ".xml"), false);
             }
         }
 
@@ -65,28 +65,32 @@ namespace Intersect.Localization
 
         public static string Get(string section, string id, params object[] args)
         {
-            if (SelectedLanguage != null && SelectedLanguage.Loaded() && SelectedLanguage.HasString(section, id))
+            for (int i = 0; i < args.Length; i++)
+            {
+                args[i] = args[i].ToString();
+            }
+            if (SelectedLanguage != null && SelectedLanguage.IsLoaded && SelectedLanguage.HasString(section, id))
             {
                 return SelectedLanguage.GetString(section, id, args);
             }
-            if (DefaultLanguage != null && DefaultLanguage.Loaded() && DefaultLanguage.HasString(section, id))
+            if (DefaultLanguage != null && DefaultLanguage.IsLoaded && DefaultLanguage.HasString(section, id))
             {
                 return DefaultLanguage.GetString(section, id, args);
             }
-            return "Not Found";
+            return $"//{section}/{id} ({string.Join(",", args.Cast<string>().ToArray())})";
         }
 
         public static string Get(string section, string id)
         {
-            if (SelectedLanguage != null && SelectedLanguage.Loaded() && SelectedLanguage.HasString(section, id))
+            if (SelectedLanguage != null && SelectedLanguage.IsLoaded && SelectedLanguage.HasString(section, id))
             {
                 return SelectedLanguage.GetString(section, id);
             }
-            if (DefaultLanguage != null && DefaultLanguage.Loaded() && DefaultLanguage.HasString(section, id))
+            if (DefaultLanguage != null && DefaultLanguage.IsLoaded && DefaultLanguage.HasString(section, id))
             {
                 return DefaultLanguage.GetString(section, id);
             }
-            return "Not Found";
+            return $"//{section}/{id}";
         }
     }
 }

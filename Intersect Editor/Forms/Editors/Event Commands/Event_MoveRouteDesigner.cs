@@ -6,7 +6,7 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.Localization;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class Event_MoveRouteDesigner : UserControl
     {
@@ -69,12 +69,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 }
                 foreach (var evt in _currentMap.Events)
                 {
-                    cmbTarget.Items.Add(evt.Key == _editingEvent.MyIndex
+                    cmbTarget.Items.Add(evt.Key == _editingEvent.Index
                         ? Strings.Get("eventmoveroute", "thisevent")
                         : "" + evt.Value.Name);
                     if (_editingCommand != null)
                     {
-                        if (_editingCommand.Route.Target == evt.Key) cmbTarget.SelectedIndex = cmbTarget.Items.Count-1;
+                        if (_editingCommand.Route.Target == evt.Key)
+                            cmbTarget.SelectedIndex = cmbTarget.Items.Count - 1;
                     }
                     else
                     {

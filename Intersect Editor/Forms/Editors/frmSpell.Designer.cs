@@ -1,6 +1,6 @@
 ﻿using DarkUI.Controls;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     partial class frmSpell
     {
@@ -429,8 +429,8 @@ namespace Intersect_Editor.Forms
             this.nudCooldownDuration.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudCooldownDuration.Location = new System.Drawing.Point(222, 71);
             this.nudCooldownDuration.Maximum = new decimal(new int[] {
-            60000,
-            0,
+            -100,
+            49,
             0,
             0});
             this.nudCooldownDuration.Name = "nudCooldownDuration";
@@ -444,8 +444,8 @@ namespace Intersect_Editor.Forms
             this.nudCastDuration.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudCastDuration.Location = new System.Drawing.Point(222, 32);
             this.nudCastDuration.Maximum = new decimal(new int[] {
-            60000,
-            0,
+            -100,
+            49,
             0,
             0});
             this.nudCastDuration.Name = "nudCastDuration";
@@ -870,8 +870,8 @@ namespace Intersect_Editor.Forms
             this.nudBuffDuration.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudBuffDuration.Location = new System.Drawing.Point(137, 14);
             this.nudBuffDuration.Maximum = new decimal(new int[] {
-            86400000,
-            0,
+            -100,
+            49,
             0,
             0});
             this.nudBuffDuration.Name = "nudBuffDuration";
@@ -1451,7 +1451,7 @@ namespace Intersect_Editor.Forms
             this.cmbDirection.Name = "cmbDirection";
             this.cmbDirection.Size = new System.Drawing.Size(189, 21);
             this.cmbDirection.TabIndex = 32;
-            this.cmbDirection.Text = null;
+            this.cmbDirection.Text = "Retain Direction";
             this.cmbDirection.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbDirection.SelectedIndexChanged += new System.EventHandler(this.cmbDirection_SelectedIndexChanged);
             // 
@@ -1682,7 +1682,7 @@ namespace Intersect_Editor.Forms
             this.lstSpells.Name = "lstSpells";
             this.lstSpells.Size = new System.Drawing.Size(191, 444);
             this.lstSpells.TabIndex = 1;
-            this.lstSpells.Click += new System.EventHandler(this.lstSpells_Click);
+            this.lstSpells.SelectedIndexChanged += new System.EventHandler(this.lstSpells_Click);
             this.lstSpells.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
             // frmSpell

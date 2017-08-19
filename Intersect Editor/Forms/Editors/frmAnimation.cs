@@ -4,21 +4,21 @@ using System.Drawing;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Forms.Editors;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Core;
 using Microsoft.Xna.Framework.Graphics;
-using Color = System.Drawing.Color;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
-    public partial class frmAnimation : Form
+    public partial class frmAnimation : EditorForm
     {
         private List<AnimationBase> _changed = new List<AnimationBase>();
-        private byte[] _copiedItem = null;
-        private AnimationBase _editorItem = null;
+        private byte[] _copiedItem;
+        private AnimationBase _editorItem;
 
         private int _lowerFrame;
 
@@ -29,28 +29,25 @@ namespace Intersect_Editor.Forms
 
         //Mono Rendering Variables
         private SwapChainRenderTarget lowerWindow;
+
         private RenderTarget2D upperDarkness;
         private SwapChainRenderTarget upperWindow;
 
         public frmAnimation()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstAnimations.LostFocus += itemList_FocusChanged;
             lstAnimations.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObject type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (type == GameObject.Animation)
-            {
-                InitEditor();
-                if (_editorItem != null && !AnimationBase.Lookup.Values.Contains(_editorItem))
-                {
-                    _editorItem = null;
-                    UpdateEditor();
-                }
-            }
+            if (type != GameObjectType.Animation) return;
+            InitEditor();
+            if (_editorItem == null || AnimationBase.Lookup.Values.Contains(_editorItem)) return;
+            _editorItem = null;
+            UpdateEditor();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -83,7 +80,8 @@ namespace Intersect_Editor.Forms
         private void lstAnimations_Click(object sender, EventArgs e)
         {
             _editorItem =
-                AnimationBase.Lookup.Get(Database.GameObjectIdFromList(GameObject.Animation, lstAnimations.SelectedIndex));
+                AnimationBase.Lookup.Get<AnimationBase>(
+                    Database.GameObjectIdFromList(GameObjectType.Animation, lstAnimations.SelectedIndex));
             UpdateEditor();
         }
 
@@ -97,12 +95,14 @@ namespace Intersect_Editor.Forms
             //Lower Animation Graphic
             cmbLowerGraphic.Items.Clear();
             cmbLowerGraphic.Items.Add(Strings.Get("general", "none"));
-            cmbLowerGraphic.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Animation));
+            cmbLowerGraphic.Items.AddRange(
+                GameContentManager.GetTextureNames(GameContentManager.TextureType.Animation));
 
             //Upper Animation Graphic
             cmbUpperGraphic.Items.Clear();
             cmbUpperGraphic.Items.Add(Strings.Get("general", "none"));
-            cmbUpperGraphic.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Animation));
+            cmbUpperGraphic.Items.AddRange(
+                GameContentManager.GetTextureNames(GameContentManager.TextureType.Animation));
 
             lowerWindow = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), picLowerAnimation.Handle,
                 picLowerAnimation.Width, picLowerAnimation.Height);
@@ -165,7 +165,7 @@ namespace Intersect_Editor.Forms
         public void InitEditor()
         {
             lstAnimations.Items.Clear();
-            lstAnimations.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            lstAnimations.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
         }
 
         private void UpdateEditor()
@@ -185,7 +185,7 @@ namespace Intersect_Editor.Forms
                 nudLowerFrameCount.Value = _editorItem.LowerAnimFrameCount;
                 UpdateLowerFrames();
 
-                nudLowerFrameDuration.Value = _editorItem.LowerAnimFrameSpeed * 10;
+                nudLowerFrameDuration.Value = _editorItem.LowerAnimFrameSpeed;
                 tmrLowerAnimation.Interval = (int) nudLowerFrameDuration.Value;
                 nudLowerLoopCount.Value = _editorItem.LowerAnimLoopCount;
 
@@ -197,7 +197,7 @@ namespace Intersect_Editor.Forms
                 nudUpperFrameCount.Value = _editorItem.UpperAnimFrameCount;
                 UpdateUpperFrames();
 
-                nudUpperFrameDuration.Value = _editorItem.UpperAnimFrameSpeed * 10;
+                nudUpperFrameDuration.Value = _editorItem.UpperAnimFrameSpeed;
                 tmrUpperAnimation.Interval = (int) nudUpperFrameDuration.Value;
                 nudUpperLoopCount.Value = _editorItem.UpperAnimLoopCount;
 
@@ -222,7 +222,8 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstAnimations.Items[Database.GameObjectListIndex(GameObject.Animation, _editorItem.Id)] = txtName.Text;
+            lstAnimations.Items[Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.Index)] =
+                txtName.Text;
         }
 
         private void cmbSound_SelectedIndexChanged(object sender, EventArgs e)
@@ -242,7 +243,6 @@ namespace Intersect_Editor.Forms
 
         private void tmrLowerAnimation_Tick(object sender, EventArgs e)
         {
-            DrawLowerFrame();
             if (_playLower)
             {
                 _lowerFrame++;
@@ -304,7 +304,7 @@ namespace Intersect_Editor.Forms
             if (lowerWindow == null || _editorItem == null) return;
             if (!_playLower) _lowerFrame = scrlLowerFrame.Value - 1;
             GraphicsDevice graphicsDevice = EditorGraphics.GetGraphicsDevice();
-
+            EditorGraphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(lowerDarkness);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (_lowerFrame < _editorItem.LowerLights.Length)
@@ -318,9 +318,10 @@ namespace Intersect_Editor.Forms
             }
             EditorGraphics.DrawTexture(EditorGraphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                 new RectangleF(0, 0, lowerDarkness.Width, lowerDarkness.Height),
-                Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255, 255), lowerDarkness,
+                System.Drawing.Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255,
+                    255), lowerDarkness,
                 BlendState.Additive);
-
+            EditorGraphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(lowerWindow);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
             Texture2D animTexture = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
@@ -340,6 +341,7 @@ namespace Intersect_Editor.Forms
                         (int) picLowerAnimation.Height / 2 - (int) h / 2, w, h), lowerWindow);
             }
             EditorGraphics.DrawTexture(lowerDarkness, 0, 0, lowerWindow, EditorGraphics.MultiplyState);
+            EditorGraphics.EndSpriteBatch();
             lowerWindow.Present();
         }
 
@@ -348,7 +350,7 @@ namespace Intersect_Editor.Forms
             if (upperWindow == null || _editorItem == null) return;
             if (!_playUpper) _upperFrame = scrlUpperFrame.Value - 1;
             GraphicsDevice graphicsDevice = EditorGraphics.GetGraphicsDevice();
-
+            EditorGraphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(upperDarkness);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (_upperFrame < _editorItem.UpperLights.Length)
@@ -362,9 +364,10 @@ namespace Intersect_Editor.Forms
             }
             EditorGraphics.DrawTexture(EditorGraphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                 new RectangleF(0, 0, upperDarkness.Width, upperDarkness.Height),
-                Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255, 255), upperDarkness,
+                System.Drawing.Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255,
+                    255), upperDarkness,
                 BlendState.Additive);
-
+            EditorGraphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(upperWindow);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
             Texture2D animTexture = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
@@ -384,12 +387,12 @@ namespace Intersect_Editor.Forms
                         (int) picUpperAnimation.Height / 2 - (int) h / 2, w, h), upperWindow);
             }
             EditorGraphics.DrawTexture(upperDarkness, 0, 0, upperWindow, EditorGraphics.MultiplyState);
+            EditorGraphics.EndSpriteBatch();
             upperWindow.Present();
         }
 
         private void tmrUpperAnimation_Tick(object sender, EventArgs e)
         {
-            DrawUpperFrame();
             if (_playUpper)
             {
                 _upperFrame++;
@@ -514,7 +517,7 @@ namespace Intersect_Editor.Forms
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
         {
-            PacketSender.SendCreateObject(GameObject.Animation);
+            PacketSender.SendCreateObject(GameObjectType.Animation);
         }
 
         private void toolStripItemDelete_Click(object sender, EventArgs e)
@@ -522,7 +525,8 @@ namespace Intersect_Editor.Forms
             if (_editorItem != null && lstAnimations.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("animationeditor", "deleteprompt"),
-                        Strings.Get("animationeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                        Strings.Get("animationeditor", "deletetitle"), DarkDialogButton.YesNo,
+                        Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
@@ -553,7 +557,8 @@ namespace Intersect_Editor.Forms
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("animationeditor", "undoprompt"),
-                        Strings.Get("animationeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                        Strings.Get("animationeditor", "undotitle"), DarkDialogButton.YesNo,
+                        Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
@@ -630,8 +635,8 @@ namespace Intersect_Editor.Forms
 
         private void nudLowerFrameDuration_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.LowerAnimFrameSpeed = (int) nudLowerFrameDuration.Value / 10;
-            tmrLowerAnimation.Interval = (int) nudLowerFrameDuration.Value / 10;
+            _editorItem.LowerAnimFrameSpeed = (int) nudLowerFrameDuration.Value;
+            tmrLowerAnimation.Interval = (int) nudLowerFrameDuration.Value;
         }
 
         private void nudLowerLoopCount_ValueChanged(object sender, EventArgs e)
@@ -657,13 +662,19 @@ namespace Intersect_Editor.Forms
 
         private void nudUpperFrameDuration_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.UpperAnimFrameSpeed = (int) nudUpperFrameDuration.Value / 10;
-            tmrUpperAnimation.Interval = (int) nudUpperFrameDuration.Value / 10;
+            _editorItem.UpperAnimFrameSpeed = (int) nudUpperFrameDuration.Value;
+            tmrUpperAnimation.Interval = (int) nudUpperFrameDuration.Value;
         }
 
         private void nudUpperLoopCount_ValueChanged(object sender, EventArgs e)
         {
             _editorItem.UpperAnimLoopCount = (int) nudUpperLoopCount.Value;
+        }
+
+        private void tmrRender_Tick(object sender, EventArgs e)
+        {
+            DrawLowerFrame();
+            DrawUpperFrame();
         }
     }
 }
