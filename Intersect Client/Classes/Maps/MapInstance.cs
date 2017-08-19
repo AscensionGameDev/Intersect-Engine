@@ -615,7 +615,7 @@ namespace Intersect_Client.Classes.Maps
             GameGraphics.DrawGameTexture(tileset, destX, destY,
                 (int) Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
                 (int) Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
-                Options.TileWidth / 2, Options.TileHeight / 2, tex);
+                Options.TileWidth / 2, Options.TileHeight / 2, tex,GameBlendModes.Alpha);
         }
 
         private void DrawMapLayer(GameRenderTexture tex, int layer, int animFrame, float xoffset = 0, float yoffset = 0)
@@ -679,7 +679,7 @@ namespace Intersect_Client.Classes.Maps
                 case MapAutotiles.RenderStateNormal:
                     GameGraphics.DrawGameTexture(tilesetTex, x * Options.TileWidth + xoffset,
                         y * Options.TileHeight + yoffset, Layers[layer].Tiles[x, y].X * Options.TileWidth,
-                        Layers[layer].Tiles[x, y].Y * Options.TileHeight, Options.TileWidth, Options.TileHeight, tex);
+                        Layers[layer].Tiles[x, y].Y * Options.TileHeight, Options.TileWidth, Options.TileHeight, tex, GameBlendModes.Alpha);
                     break;
                 case MapAutotiles.RenderStateAutotile:
                     DrawAutoTile(layer, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x, y,

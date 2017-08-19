@@ -361,7 +361,6 @@ namespace Intersect_Client.Classes.Core
                                     {
                                         map.PreRenderMap();
                                     }
-                                    return;
                                 }
                             }
                         }
