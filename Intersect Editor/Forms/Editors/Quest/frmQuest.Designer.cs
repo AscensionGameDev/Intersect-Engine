@@ -1,6 +1,6 @@
 ﻿using DarkUI.Controls;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     partial class frmQuest
     {
@@ -109,7 +109,7 @@ namespace Intersect_Editor.Forms
             this.lstQuests.Name = "lstQuests";
             this.lstQuests.Size = new System.Drawing.Size(191, 340);
             this.lstQuests.TabIndex = 1;
-            this.lstQuests.Click += new System.EventHandler(this.lstQuests_Click);
+            this.lstQuests.SelectedIndexChanged += new System.EventHandler(this.lstQuests_Click);
             this.lstQuests.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
             // grpGeneral

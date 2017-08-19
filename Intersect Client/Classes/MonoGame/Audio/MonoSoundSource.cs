@@ -9,7 +9,7 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
     {
         private ContentManager _contentManager;
         private string _filename;
-        private int _instanceCount = 0;
+        private int _instanceCount;
         private SoundEffect _sound;
 
         public MonoSoundSource(string filename, ContentManager contentManager)

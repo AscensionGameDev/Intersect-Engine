@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.GameObjects.
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Lib.GameObjects.
     Switches_and_Variables
 {
     public class ServerSwitchBase : DatabaseObject
     {
         //Core info
         public new const string DATABASE_TABLE = "server_switches";
+
         public new const GameObject OBJECT_TYPE = GameObject.ServerSwitch;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         public string Name = "New Global Switch";
-        public bool Value = false;
+        public bool Value;
 
         public ServerSwitchBase(int id) : base(id)
         {
@@ -102,7 +102,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6.Intersect_Conve
 
         public static Dictionary<int, ServerSwitchBase> GetObjects()
         {
-            Dictionary<int, ServerSwitchBase> objects = Objects.ToDictionary(k => k.Key, v => (ServerSwitchBase) v.Value);
+            Dictionary<int, ServerSwitchBase> objects =
+                Objects.ToDictionary(k => k.Key, v => (ServerSwitchBase) v.Value);
             return objects;
         }
     }

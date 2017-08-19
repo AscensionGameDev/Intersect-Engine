@@ -1,7 +1,7 @@
 ﻿using DarkUI.Controls;
 using DarkUI.Renderers;
 
-namespace Intersect_Editor.Forms.DockingElements
+namespace Intersect.Editor.Forms.DockingElements
 {
     partial class frmMapGrid
     {

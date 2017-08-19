@@ -1,8 +1,9 @@
 ﻿using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Renderers;
+using Intersect.Editor.Forms.Controls;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     partial class frmMapList
     {
@@ -47,7 +48,7 @@ namespace Intersect_Editor.Forms
             this.deleteToolStripMenuItem = new ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.newFolderToolStripMenuItem = new ToolStripMenuItem();
-            this.mapTreeList = new Intersect_Editor.Forms.Controls.MapTreeList();
+            this.mapTreeList = new MapTreeList();
             this.toolStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();

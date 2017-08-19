@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
+using Intersect.Editor.Classes.Core;
 using Intersect.Localization;
-using Intersect_Editor.Classes.Core;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class frmOptions : Form
     {
@@ -31,7 +31,7 @@ namespace Intersect_Editor.Forms
         private void InitLocalization()
         {
             Text = Strings.Get("options", "title");
-            btnTileHeader.Text = Strings.Get("options", "generalbtn", Application.ProductVersion);
+            btnTileHeader.Text = Strings.Get("options", "generaltab", Application.ProductVersion);
             chkSuppressTilesetWarning.Text = Strings.Get("options", "tilesetwarning");
             grpClientPath.Text = Strings.Get("options", "pathgroup");
             btnBrowseClient.Text = Strings.Get("options", "browsebtn");

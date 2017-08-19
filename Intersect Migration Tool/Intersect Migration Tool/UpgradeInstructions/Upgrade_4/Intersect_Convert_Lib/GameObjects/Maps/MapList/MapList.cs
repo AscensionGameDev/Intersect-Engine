@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Maps.MapList
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Maps.MapList
 {
     public class MapList
     {
@@ -187,7 +186,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Conve
                     {
                         return parent;
                     }
-                    if (((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]) != null)
+                    if (((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]) !=
+                        null)
                     {
                         return ((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]);
                     }

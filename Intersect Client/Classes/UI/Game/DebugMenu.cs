@@ -12,6 +12,7 @@ namespace Intersect_Client.Classes.UI.Game
     {
         //Controls
         private WindowControl _debugWindow;
+
         private Label _drawsLabel;
         private Label _entitiesDrawnLabel;
         private Label _entitiesLabel;
@@ -82,20 +83,21 @@ namespace Intersect_Client.Classes.UI.Game
             _fpsLabel.Text = Strings.Get("debug", "fps", GameGraphics.Renderer.GetFps());
             _pingLabel.Text = Strings.Get("debug", "ping", GameNetwork.Ping);
             _drawsLabel.Text = Strings.Get("debug", "draws", GameGraphics.DrawCalls);
-            if (MapInstance.GetMap(Globals.Me.CurrentMap) != null)
+            if (MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
             {
-                _mapLabel.Text = Strings.Get("debug", "map", MapInstance.GetMap(Globals.Me.CurrentMap).Name);
+                _mapLabel.Text = Strings.Get("debug", "map",
+                    MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).Name);
                 _xLabel.Text = Strings.Get("debug", "x", Globals.Me.CurrentX);
-                _yLabel.Text = Strings.Get("debug", "y", "Y: " + Globals.Me.CurrentY);
-                _zLabel.Text = Strings.Get("debug", "z", "Z: " + Globals.Me.CurrentZ);
+                _yLabel.Text = Strings.Get("debug", "y", Globals.Me.CurrentY);
+                _zLabel.Text = Strings.Get("debug", "z", Globals.Me.CurrentZ);
             }
             int entityCount = Globals.Entities.Count;
-            foreach (var map in MapInstance.GetObjects())
+            foreach (MapInstance map in MapInstance.Lookup.IndexValues)
             {
-                if (map.Value != null) entityCount += map.Value.LocalEntities.Count;
+                if (map != null) entityCount += map.LocalEntities.Count;
             }
             _entitiesLabel.Text = Strings.Get("debug", "knownentities", Globals.Entities.Count);
-            _mapsLoadedLabel.Text = Strings.Get("debug", "knownmaps", MapInstance.ObjectCount());
+            _mapsLoadedLabel.Text = Strings.Get("debug", "knownmaps", MapInstance.Lookup.Count);
             _mapsDrawnLabel.Text = Strings.Get("debug", "mapsdrawn", GameGraphics.MapsDrawn);
             _entitiesDrawnLabel.Text = Strings.Get("debug", "entitiesdrawn", +GameGraphics.EntitiesDrawn);
             _lightsDrawnLabel.Text = Strings.Get("debug", "lightsdrawn", GameGraphics.LightsDrawn);

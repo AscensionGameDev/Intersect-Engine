@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.Core;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Core;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public enum LayerTabs
     {
@@ -28,6 +28,7 @@ namespace Intersect_Editor.Forms
     {
         //MonoGame Swap Chain
         private SwapChainRenderTarget _chain;
+
         private int _lastTileLayer;
         private List<PictureBox> _mapLayers = new List<PictureBox>();
         private bool _tMouseDown;
@@ -198,7 +199,10 @@ namespace Intersect_Editor.Forms
         public void InitTilesets()
         {
             Globals.MapLayersWindow.cmbTilesets.Items.Clear();
-            foreach (var filename in Database.GetGameObjectList(GameObject.Tileset))
+            var tilesetList = new List<string>();
+            tilesetList.AddRange(Database.GetGameObjectList(GameObjectType.Tileset));
+            tilesetList.Sort(new AlphanumComparatorFast());
+            foreach (var filename in tilesetList)
             {
                 if (File.Exists("resources/tilesets/" + filename))
                 {
@@ -211,7 +215,8 @@ namespace Intersect_Editor.Forms
             if (TilesetBase.Lookup.Count > 0)
             {
                 Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
-                Globals.CurrentTileset = TilesetBase.Lookup.Get(Database.GameObjectListIndex(GameObject.Tileset, 0));
+                Globals.CurrentTileset =
+                    TilesetBase.Lookup.Get<TilesetBase>(Database.GameObjectListIndex(GameObjectType.Tileset, 0));
             }
         }
 
@@ -220,7 +225,7 @@ namespace Intersect_Editor.Forms
             TilesetBase tSet = null;
             var tilesets = TilesetBase.Lookup;
             var index = -1;
-            foreach (var tileset in tilesets)
+            foreach (var tileset in tilesets.IndexClone)
             {
                 if (tileset.Value.Name.ToLower() == name.ToLower())
                 {
@@ -230,7 +235,7 @@ namespace Intersect_Editor.Forms
             }
             if (index > -1)
             {
-                tSet = TilesetBase.Lookup.Get(index);
+                tSet = TilesetBase.Lookup.Get<TilesetBase>(index);
             }
             if (tSet != null)
             {
@@ -314,7 +319,7 @@ namespace Intersect_Editor.Forms
             hideAttributeMenus();
             grpItem.Visible = true;
             cmbItemAttribute.Items.Clear();
-            cmbItemAttribute.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
+            cmbItemAttribute.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
             if (cmbItemAttribute.Items.Count > 0) cmbItemAttribute.SelectedIndex = 0;
         }
 
@@ -364,7 +369,7 @@ namespace Intersect_Editor.Forms
             hideAttributeMenus();
             grpResource.Visible = true;
             cmbResourceAttribute.Items.Clear();
-            cmbResourceAttribute.Items.AddRange(Database.GetGameObjectList(GameObject.Resource));
+            cmbResourceAttribute.Items.AddRange(Database.GetGameObjectList(GameObjectType.Resource));
             if (cmbResourceAttribute.Items.Count > 0) cmbResourceAttribute.SelectedIndex = 0;
         }
 
@@ -395,9 +400,54 @@ namespace Intersect_Editor.Forms
             return 0;
         }
 
+        public int GetAttributeFromEditor()
+        {
+            if (rbBlocked.Checked == true)
+            {
+                return (int) MapAttributes.Blocked;
+            }
+            else if (rbItem.Checked == true)
+            {
+                return (int) MapAttributes.Item;
+            }
+            else if (rbZDimension.Checked == true)
+            {
+                return (int) MapAttributes.ZDimension;
+            }
+            else if (rbNPCAvoid.Checked == true)
+            {
+                return (int) MapAttributes.NPCAvoid;
+            }
+            else if (rbWarp.Checked == true)
+            {
+                return (int) MapAttributes.Warp;
+            }
+            else if (rbSound.Checked == true)
+            {
+                return (int) MapAttributes.Sound;
+            }
+            else if (rbResource.Checked == true)
+            {
+                return (int) MapAttributes.Resource;
+            }
+            else if (rbAnimation.Checked == true)
+            {
+                return (int) MapAttributes.Animation;
+            }
+            else if (rbGrappleStone.Checked == true)
+            {
+                return (int) MapAttributes.GrappleStone;
+            }
+            else if (rbSlide.Checked == true)
+            {
+                return (int) MapAttributes.Slide;
+            }
+            return (int) MapAttributes.Walkable;
+        }
+
         public void PlaceAttribute(MapBase tmpMap, int x, int y)
         {
-            tmpMap.Attributes[x, y] = new Intersect.GameObjects.Maps.Attribute();
+            tmpMap.Attributes[x, y] = new GameObjects.Maps.Attribute();
             if (rbBlocked.Checked == true)
             {
                 tmpMap.Attributes[x, y].value = (int) MapAttributes.Blocked;
@@ -405,7 +455,7 @@ namespace Intersect_Editor.Forms
             else if (rbItem.Checked == true)
             {
                 tmpMap.Attributes[x, y].value = (int) MapAttributes.Item;
-                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObject.Item,
+                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObjectType.Item,
                     cmbItemAttribute.SelectedIndex);
                 tmpMap.Attributes[x, y].data2 = (int) nudItemQuantity.Value;
             }
@@ -438,7 +488,7 @@ namespace Intersect_Editor.Forms
             else if (rbResource.Checked == true)
             {
                 tmpMap.Attributes[x, y].value = (int) MapAttributes.Resource;
-                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObject.Resource,
+                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObjectType.Resource,
                     cmbResourceAttribute.SelectedIndex);
                 if (rbLevel1.Checked == true)
                 {
@@ -452,7 +502,7 @@ namespace Intersect_Editor.Forms
             else if (rbAnimation.Checked == true)
             {
                 tmpMap.Attributes[x, y].value = (int) MapAttributes.Animation;
-                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObject.Animation,
+                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObjectType.Animation,
                     cmbAnimationAttribute.SelectedIndex);
             }
             else if (rbGrappleStone.Checked == true)
@@ -480,7 +530,7 @@ namespace Intersect_Editor.Forms
         {
             // Update the list incase npcs have been modified since form load.
             cmbNpc.Items.Clear();
-            cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
+            cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObjectType.Npc));
 
             // Add the map NPCs
             lstMapNpcs.Items.Clear();
@@ -497,7 +547,7 @@ namespace Intersect_Editor.Forms
             {
                 lstMapNpcs.SelectedIndex = 0;
                 cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
-                cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Npc,
+                cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Npc,
                     Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum);
                 if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                 {
@@ -519,7 +569,7 @@ namespace Intersect_Editor.Forms
             //Don't add nothing
             if (cmbNpc.SelectedIndex > -1)
             {
-                n.NpcNum = Database.GameObjectIdFromList(GameObject.Npc, cmbNpc.SelectedIndex);
+                n.NpcNum = Database.GameObjectIdFromList(GameObjectType.Npc, cmbNpc.SelectedIndex);
                 n.X = -1;
                 n.Y = -1;
                 n.Dir = -1;
@@ -555,7 +605,7 @@ namespace Intersect_Editor.Forms
         {
             if (lstMapNpcs.Items.Count > 0 && lstMapNpcs.SelectedIndex > -1)
             {
-                cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Npc,
+                cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Npc,
                     Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum);
                 cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
                 if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
@@ -594,7 +644,7 @@ namespace Intersect_Editor.Forms
             if (lstMapNpcs.SelectedIndex >= 0)
             {
                 Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum =
-                    Database.GameObjectIdFromList(GameObject.Npc, cmbNpc.SelectedIndex);
+                    Database.GameObjectIdFromList(GameObjectType.Npc, cmbNpc.SelectedIndex);
 
                 // Refresh List
                 n = lstMapNpcs.SelectedIndex;
@@ -642,7 +692,7 @@ namespace Intersect_Editor.Forms
             hideAttributeMenus();
             grpAnimation.Visible = true;
             cmbAnimationAttribute.Items.Clear();
-            cmbAnimationAttribute.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbAnimationAttribute.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             if (cmbAnimationAttribute.Items.Count > 0) cmbAnimationAttribute.SelectedIndex = 0;
         }
 

@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Intersect;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Conditions;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Conditions;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects
 {
     public class ItemBase : DatabaseObject
     {
@@ -96,48 +95,70 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
             };
             if (ClassReq > -1)
             {
-                var req = new EventCommand()
+                var req = new EventCommand
                 {
-                    Type = EventCommandType.ConditionalBranch
+                    Type = EventCommandType.ConditionalBranch,
+                    Ints =
+                    {
+                        [0] = 5,
+                        [1] = ClassReq
+                    }
                 };
-                req.Ints[0] = 5; //Class Is
-                req.Ints[1] = ClassReq;
+                //Class Is
                 cndList.Conditions.Add(req);
             }
             if (GenderReq > 0)
             {
-                var req = new EventCommand()
+                var req = new EventCommand
                 {
-                    Type = EventCommandType.ConditionalBranch
+                    Type = EventCommandType.ConditionalBranch,
+                    Ints =
+                    {
+                        [0] = 16,
+                        [1] = GenderReq - 1
+                    }
                 };
-                req.Ints[0] = 16; //Gender Is
-                req.Ints[1] = GenderReq - 1;
+                //Gender Is
                 cndList.Conditions.Add(req);
             }
             if (LevelReq > 0)
             {
-                var req = new EventCommand()
+                var req = new EventCommand
                 {
-                    Type = EventCommandType.ConditionalBranch
+                    Type = EventCommandType.ConditionalBranch,
+                    Ints =
+                    {
+                        [0] = 7,
+                        [1] = 1,
+                        [2] = LevelReq,
+                        [3] = 0
+                    }
                 };
-                req.Ints[0] = 7; //Level or Stat is
-                req.Ints[1] = 1; //Greater than or equal to
-                req.Ints[2] = LevelReq; //Level To Compare
-                req.Ints[3] = 0; //Level not stat
+                //Level or Stat is
+                //Greater than or equal to
+                //Level To Compare
+                //Level not stat
                 cndList.Conditions.Add(req);
             }
             for (var i = 0; i < Options.MaxStats; i++)
             {
                 if (StatsReq[i] > 0)
                 {
-                    var req = new EventCommand()
+                    var req = new EventCommand
                     {
-                        Type = EventCommandType.ConditionalBranch
+                        Type = EventCommandType.ConditionalBranch,
+                        Ints =
+                        {
+                            [0] = 7,
+                            [1] = 1,
+                            [2] = StatsReq[i],
+                            [3] = i + 1
+                        }
                     };
-                    req.Ints[0] = 7; //Level or Stat is
-                    req.Ints[1] = 1; //Greater than or equal to
-                    req.Ints[2] = StatsReq[i]; //Value To Compare
-                    req.Ints[3] = i + 1; //Stat index
+                    //Level or Stat is
+                    //Greater than or equal to
+                    //Value To Compare
+                    //Stat index
                     cndList.Conditions.Add(req);
                 }
             }

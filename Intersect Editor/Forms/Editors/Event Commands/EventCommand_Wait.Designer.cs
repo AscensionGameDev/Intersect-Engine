@@ -1,6 +1,6 @@
 ﻿using DarkUI.Controls;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_Wait
     {
@@ -31,18 +31,19 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void InitializeComponent()
         {
             this.grpWait = new DarkUI.Controls.DarkGroupBox();
-            this.scrlWait = new DarkUI.Controls.DarkScrollBar();
+            this.nudWait = new DarkUI.Controls.DarkNumericUpDown();
             this.lblWait = new System.Windows.Forms.Label();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.grpWait.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWait)).BeginInit();
             this.SuspendLayout();
             // 
             // grpWait
             // 
             this.grpWait.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpWait.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpWait.Controls.Add(this.scrlWait);
+            this.grpWait.Controls.Add(this.nudWait);
             this.grpWait.Controls.Add(this.lblWait);
             this.grpWait.Controls.Add(this.btnCancel);
             this.grpWait.Controls.Add(this.btnSave);
@@ -54,24 +55,29 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.grpWait.TabStop = false;
             this.grpWait.Text = "Wait:";
             // 
-            // scrlWait
+            // nudWait
             // 
-            this.scrlWait.Location = new System.Drawing.Point(81, 20);
-            this.scrlWait.Maximum = 30000;
-            this.scrlWait.Name = "scrlWait";
-            this.scrlWait.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlWait.Size = new System.Drawing.Size(166, 17);
-            this.scrlWait.TabIndex = 22;
-            this.scrlWait.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlWait_Scroll);
+            this.nudWait.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudWait.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudWait.Location = new System.Drawing.Point(89, 22);
+            this.nudWait.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.nudWait.Name = "nudWait";
+            this.nudWait.Size = new System.Drawing.Size(158, 20);
+            this.nudWait.TabIndex = 35;
+            this.nudWait.ValueChanged += new System.EventHandler(this.nudWait_ValueChanged);
             // 
             // lblWait
             // 
             this.lblWait.AutoSize = true;
             this.lblWait.Location = new System.Drawing.Point(4, 22);
             this.lblWait.Name = "lblWait";
-            this.lblWait.Size = new System.Drawing.Size(51, 13);
+            this.lblWait.Size = new System.Drawing.Size(54, 13);
             this.lblWait.TabIndex = 21;
-            this.lblWait.Text = "Wait 0ms";
+            this.lblWait.Text = "Wait (ms):";
             // 
             // btnCancel
             // 
@@ -104,6 +110,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             this.Size = new System.Drawing.Size(259, 106);
             this.grpWait.ResumeLayout(false);
             this.grpWait.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWait)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -114,6 +121,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private DarkButton btnCancel;
         private DarkButton btnSave;
         private System.Windows.Forms.Label lblWait;
-        private DarkScrollBar scrlWait;
+        private DarkNumericUpDown nudWait;
     }
 }

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Maps.MapList
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Maps.MapList
 {
     public class MapListMap : MapListItem, IComparable<MapListMap>
     {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect.Collections;
 
 namespace Intersect.GameObjects.Maps.MapList
 {
@@ -20,7 +21,7 @@ namespace Intersect.GameObjects.Maps.MapList
             return _orderedMaps;
         }
 
-        public byte[] Data(Dictionary<int, MapBase> gameMaps)
+        public byte[] Data(DatabaseObjectLookup gameMaps)
         {
             ByteBuffer myBuffer = new ByteBuffer();
             myBuffer.WriteInteger(Items.Count);
@@ -38,7 +39,7 @@ namespace Intersect.GameObjects.Maps.MapList
             return myBuffer.ToArray();
         }
 
-        public bool Load(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps, bool isServer = true,
+        public bool Load(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps, bool isServer = true,
             bool isTopLevel = false)
         {
             if (isTopLevel) _orderedMaps.Clear();
@@ -68,7 +69,7 @@ namespace Intersect.GameObjects.Maps.MapList
                     tmpMap = new MapListMap();
                     if (tmpMap.Load(myBuffer, gameMaps, isServer))
                     {
-                        if (gameMaps.ContainsKey(tmpMap.MapNum) || !isServer)
+                        if (gameMaps.IndexKeys.Contains(tmpMap.MapNum) || !isServer)
                         {
                             Items.Add(tmpMap);
                             _orderedMaps.Add(tmpMap);
@@ -84,9 +85,9 @@ namespace Intersect.GameObjects.Maps.MapList
             return result;
         }
 
-        public void AddMap(int mapNum, Dictionary<int, MapBase> gameMaps)
+        public void AddMap(int mapNum, DatabaseObjectLookup gameMaps)
         {
-            if (!gameMaps.ContainsKey(mapNum)) return;
+            if (!gameMaps.IndexKeys.Contains(mapNum)) return;
             var tmp = new MapListMap()
             {
                 Name = gameMaps[mapNum].Name,
@@ -186,7 +187,8 @@ namespace Intersect.GameObjects.Maps.MapList
                     {
                         return parent;
                     }
-                    if (((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]) != null)
+                    if (((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]) !=
+                        null)
                     {
                         return ((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]);
                     }

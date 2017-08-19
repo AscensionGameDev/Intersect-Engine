@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Intersect;
 using Intersect.GameObjects;
 using IntersectClientExtras.Database;
@@ -14,29 +15,34 @@ namespace Intersect_Client.Classes.General
     {
         //Engine Progression
         public static int IntroIndex = 0;
+
         public static long IntroStartTime = -1;
         public static long IntroDelay = 2000;
         public static bool IntroComing = true;
 
         //Game Lock
         public static object GameLock = new object();
+
         public static bool IsRunning = false;
         public static string GameError = "";
 
         //Game Systems
         public static GameContentManager ContentManager;
+
         public static GameInput InputManager;
         public static GameSystem System;
         public static GameDatabase Database;
 
         //Scene management
         public static bool WaitingOnServer = false;
+
         public static bool JoiningGame = false;
         public static bool NeedsMaps = true;
         public static bool HasGameData = false;
 
         //Map/Chunk Array
         public static int[,] MapGrid;
+
         public static List<int> GridMaps = new List<int>();
         public static long MapGridWidth;
         public static long MapGridHeight;
@@ -45,6 +51,7 @@ namespace Intersect_Client.Classes.General
 
         //Local player information
         public static Player Me;
+
         public static int CurrentMap = -1;
         public static int MyX = 0;
         public static int MyY = 0;
@@ -54,19 +61,23 @@ namespace Intersect_Client.Classes.General
 
         //Crucial game variables
         public static GameStates GameState = GameStates.Intro; //0 for Intro, 1 to Menu, 2 for in game
+
         public static bool GameLoaded;
 
         //Entities and stuff
         //public static List<Entity> Entities = new List<Entity>();
         public static Dictionary<int, Entity> Entities = new Dictionary<int, Entity>();
+
         public static List<int> EntitiesToDispose = new List<int>();
 
         //Bank
-        public static ItemInstance[] Bank = new ItemInstance[Options.MaxBankSlots];
+        public static ItemInstance[] Bank;
+
         public static bool InBank = false;
 
         //Bag
         public static ItemInstance[] Bag = null;
+
         public static bool InBag = false;
 
         //Crafting station
@@ -74,6 +85,7 @@ namespace Intersect_Client.Classes.General
 
         //Trading (Only 2 people can trade at once)
         public static ItemInstance[,] Trade = new ItemInstance[2, Options.MaxInvItems];
+
         public static bool InTrade = false;
 
         //Game Shop
@@ -87,8 +99,11 @@ namespace Intersect_Client.Classes.General
 
         public static bool LoggedIn = false;
 
+        public static Random Random = new Random();
+
         //Control Objects
         public static List<EventDialog> EventDialogs = new List<EventDialog>();
+
         public static List<EventHold> EventHolds = new List<EventHold>();
         public static List<int> QuestOffers = new List<int>();
         public static bool MoveRouteActive = false;

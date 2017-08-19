@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Intersect_Editor.Forms.Controls
+namespace Intersect.Editor.Forms.Controls
 {
     public partial class AutoDragPanel : Panel
     {

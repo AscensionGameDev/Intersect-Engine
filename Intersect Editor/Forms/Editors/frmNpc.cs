@@ -2,36 +2,36 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Forms.Editors;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Core;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
-    public partial class frmNpc : Form
+    public partial class frmNpc : EditorForm
     {
         private List<NpcBase> _changed = new List<NpcBase>();
-        private byte[] _copiedItem = null;
-        private NpcBase _editorItem = null;
+        private byte[] _copiedItem;
+        private NpcBase _editorItem;
 
         public frmNpc()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstNpcs.LostFocus += itemList_FocusChanged;
             lstNpcs.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObject type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (type == GameObject.Npc)
+            if (type == GameObjectType.Npc)
             {
                 InitEditor();
-                if (_editorItem != null && !NpcBase.GetObjects().ContainsValue(_editorItem))
+                if (_editorItem != null && !NpcBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -68,7 +68,8 @@ namespace Intersect_Editor.Forms
 
         private void lstNpcs_Click(object sender, EventArgs e)
         {
-            _editorItem = NpcBase.GetNpc(Database.GameObjectIdFromList(GameObject.Npc, lstNpcs.SelectedIndex));
+            _editorItem =
+                NpcBase.Lookup.Get<NpcBase>(Database.GameObjectIdFromList(GameObjectType.Npc, lstNpcs.SelectedIndex));
             UpdateEditor();
         }
 
@@ -78,15 +79,15 @@ namespace Intersect_Editor.Forms
             cmbSprite.Items.Add(Strings.Get("general", "none"));
             cmbSprite.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
             cmbSpell.Items.Clear();
-            cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
+            cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
             cmbHostileNPC.Items.Clear();
-            cmbHostileNPC.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
+            cmbHostileNPC.Items.AddRange(Database.GetGameObjectList(GameObjectType.Npc));
             cmbDropItem.Items.Clear();
             cmbDropItem.Items.Add(Strings.Get("general", "none"));
-            cmbDropItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
+            cmbDropItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
             cmbAttackAnimation.Items.Clear();
             cmbAttackAnimation.Items.Add(Strings.Get("general", "none"));
-            cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbScalingStat.Items.Clear();
             for (int x = 0; x < Options.MaxStats; x++)
             {
@@ -148,7 +149,7 @@ namespace Intersect_Editor.Forms
             btnRemoveAggro.Text = Strings.Get("npceditor", "removehostility");
 
             grpDrops.Text = Strings.Get("npceditor", "drops");
-            lblDropIndex.Text = Strings.Get("npceditor", "dropindex", (scrlDropIndex.Value + 1));
+            lblDropIndex.Text = Strings.Get("npceditor", "dropindex");
             lblDropItem.Text = Strings.Get("npceditor", "dropitem");
             lblDropAmount.Text = Strings.Get("npceditor", "dropamount");
             lblDropChance.Text = Strings.Get("npceditor", "dropchance");
@@ -173,7 +174,7 @@ namespace Intersect_Editor.Forms
         public void InitEditor()
         {
             lstNpcs.Items.Clear();
-            lstNpcs.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
+            lstNpcs.Items.AddRange(Database.GetGameObjectList(GameObjectType.Npc));
         }
 
         private void UpdateEditor()
@@ -185,6 +186,7 @@ namespace Intersect_Editor.Forms
                 txtName.Text = _editorItem.Name;
                 cmbBehavior.SelectedIndex = _editorItem.Behavior;
                 cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Sprite);
+                nudLevel.Value = _editorItem.Level;
                 nudSightRange.Value = _editorItem.SightRange;
                 nudSpawnDuration.Value = _editorItem.SpawnDuration;
                 nudStr.Value = _editorItem.Stat[(int) Stats.Attack];
@@ -201,11 +203,11 @@ namespace Intersect_Editor.Forms
                 //Combat
                 nudDamage.Value = _editorItem.Damage;
                 nudCritChance.Value = _editorItem.CritChance;
-                nudScaling.Value = _editorItem.Scaling / 100;
+                nudScaling.Value = _editorItem.Scaling;
                 cmbDamageType.SelectedIndex = _editorItem.DamageType;
                 cmbScalingStat.SelectedIndex = _editorItem.ScalingStat;
                 cmbAttackAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObject.Animation, _editorItem.AttackAnimation) + 1;
+                    Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.AttackAnimation) + 1;
 
                 // Add the spells to the list
                 lstSpells.Items.Clear();
@@ -223,7 +225,7 @@ namespace Intersect_Editor.Forms
                 if (lstSpells.Items.Count > 0)
                 {
                     lstSpells.SelectedIndex = 0;
-                    cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell,
+                    cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell,
                         _editorItem.Spells[lstSpells.SelectedIndex]);
                 }
                 cmbFreq.SelectedIndex = _editorItem.SpellFrequency;
@@ -242,7 +244,7 @@ namespace Intersect_Editor.Forms
                     }
                 }
 
-                scrlDropIndex.Value = 0;
+                nudDropIndex.Value = 1;
                 UpdateDropValues();
                 DrawNpcSprite();
                 if (_changed.IndexOf(_editorItem) == -1)
@@ -261,7 +263,7 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
-            lstNpcs.Items[Database.GameObjectListIndex(GameObject.Npc, _editorItem.Id)] = txtName.Text;
+            lstNpcs.Items[Database.GameObjectListIndex(GameObjectType.Npc, _editorItem.Index)] = txtName.Text;
         }
 
         private void cmbBehavior_SelectedIndexChanged(object sender, EventArgs e)
@@ -300,17 +302,11 @@ namespace Intersect_Editor.Forms
 
         private void UpdateDropValues()
         {
-            int index = scrlDropIndex.Value;
-            lblDropIndex.Text = Strings.Get("npceditor", "dropindex", (scrlDropIndex.Value + 1));
+            int index = (int) nudDropIndex.Value - 1;
             cmbDropItem.SelectedIndex =
-                Database.GameObjectListIndex(GameObject.Item, _editorItem.Drops[index].ItemNum) + 1;
+                Database.GameObjectListIndex(GameObjectType.Item, _editorItem.Drops[index].ItemNum) + 1;
             nudDropAmount.Value = _editorItem.Drops[index].Amount;
             nudDropChance.Value = _editorItem.Drops[index].Chance;
-        }
-
-        private void scrlDropIndex_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            UpdateDropValues();
         }
 
         private void frmNpc_FormClosed(object sender, FormClosedEventArgs e)
@@ -320,7 +316,7 @@ namespace Intersect_Editor.Forms
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            _editorItem.Spells.Add(Database.GameObjectIdFromList(GameObject.Spell, cmbSpell.SelectedIndex));
+            _editorItem.Spells.Add(Database.GameObjectIdFromList(GameObjectType.Spell, cmbSpell.SelectedIndex));
             int n = lstSpells.SelectedIndex;
             lstSpells.Items.Clear();
             for (int i = 0; i < _editorItem.Spells.Count; i++)
@@ -357,7 +353,7 @@ namespace Intersect_Editor.Forms
 
         private void btnAddAggro_Click(object sender, EventArgs e)
         {
-            _editorItem.AggroList.Add(Database.GameObjectIdFromList(GameObject.Npc, cmbHostileNPC.SelectedIndex));
+            _editorItem.AggroList.Add(Database.GameObjectIdFromList(GameObjectType.Npc, cmbHostileNPC.SelectedIndex));
             lstAggro.Items.Clear();
             for (int i = 0; i < _editorItem.AggroList.Count; i++)
             {
@@ -384,7 +380,7 @@ namespace Intersect_Editor.Forms
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
         {
-            PacketSender.SendCreateObject(GameObject.Npc);
+            PacketSender.SendCreateObject(GameObjectType.Npc);
         }
 
         private void toolStripItemDelete_Click(object sender, EventArgs e)
@@ -484,7 +480,7 @@ namespace Intersect_Editor.Forms
 
         private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.AttackAnimation = Database.GameObjectIdFromList(GameObject.Animation,
+            _editorItem.AttackAnimation = Database.GameObjectIdFromList(GameObjectType.Animation,
                 cmbAttackAnimation.SelectedIndex - 1);
         }
 
@@ -500,7 +496,7 @@ namespace Intersect_Editor.Forms
 
         private void cmbDropItem_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value].ItemNum = Database.GameObjectIdFromList(GameObject.Item,
+            _editorItem.Drops[(int) nudDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item,
                 cmbDropItem.SelectedIndex - 1);
         }
 
@@ -508,7 +504,7 @@ namespace Intersect_Editor.Forms
         {
             if (lstSpells.SelectedIndex > -1)
             {
-                cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell,
+                cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell,
                     _editorItem.Spells[lstSpells.SelectedIndex]);
             }
         }
@@ -517,7 +513,7 @@ namespace Intersect_Editor.Forms
         {
             if (lstSpells.SelectedIndex > -1 && lstSpells.SelectedIndex < _editorItem.Spells.Count)
             {
-                _editorItem.Spells[lstSpells.SelectedIndex] = Database.GameObjectIdFromList(GameObject.Spell,
+                _editorItem.Spells[lstSpells.SelectedIndex] = Database.GameObjectIdFromList(GameObjectType.Spell,
                     cmbSpell.SelectedIndex);
             }
 
@@ -532,7 +528,7 @@ namespace Intersect_Editor.Forms
 
         private void nudScaling_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Scaling = (int) nudScaling.Value * 100;
+            _editorItem.Scaling = (int) nudScaling.Value;
         }
 
         private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)
@@ -582,7 +578,7 @@ namespace Intersect_Editor.Forms
 
         private void nudDropChance_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value].Chance = (int) nudDropChance.Value;
+            _editorItem.Drops[(int) nudDropIndex.Value - 1].Chance = (int) nudDropChance.Value;
         }
 
         private void nudHp_ValueChanged(object sender, EventArgs e)
@@ -602,7 +598,17 @@ namespace Intersect_Editor.Forms
 
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value].Amount = (int) nudDropAmount.Value;
+            _editorItem.Drops[(int) nudDropIndex.Value - 1].Amount = (int) nudDropAmount.Value;
+        }
+
+        private void nudDropIndex_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateDropValues();
+        }
+
+        private void nudLevel_ValueChanged(object sender, EventArgs e)
+        {
+            _editorItem.Level = (int) nudLevel.Value;
         }
     }
 }

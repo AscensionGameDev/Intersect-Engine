@@ -1,35 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Intersect.Models;
 
 namespace Intersect.GameObjects
 {
     public class ProjectileBase : DatabaseObject<ProjectileBase>
     {
-        public new const string DATABASE_TABLE = "projectiles";
-        public new const GameObject OBJECT_TYPE = GameObject.Projectile;
-
         public const int SpawnLocationsWidth = 5;
         public const int SpawnLocationsHeight = 5;
         public const int MaxProjectileDirections = 8;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public int Ammo = -1;
         public int AmmoRequired = 1;
         public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
         public int Delay = 1;
-        public bool GrappleHook = false;
-        public bool Homing = false;
-        public bool IgnoreActiveResources = false;
-        public bool IgnoreExhaustedResources = false;
-        public bool IgnoreMapBlocks = false;
-        public bool IgnoreZDimension = false;
-        public int Knockback = 0;
+        public bool GrappleHook;
+        public bool Homing;
+        public bool IgnoreActiveResources;
+        public bool IgnoreExhaustedResources;
+        public bool IgnoreMapBlocks;
+        public bool IgnoreZDimension;
+        public int Knockback;
         public int Quantity = 1;
         public int Range = 1;
         public Location[,] SpawnLocations = new Location[SpawnLocationsWidth, SpawnLocationsHeight];
 
         public int Speed = 1;
-        public int Spell = 0;
+        public int Spell;
 
         //Init
         public ProjectileBase(int id) : base(id)
@@ -43,6 +39,8 @@ namespace Intersect.GameObjects
                 }
             }
         }
+
+        public override byte[] BinaryData => ProjectileData();
 
         public override void Load(byte[] packet)
         {
@@ -134,72 +132,6 @@ namespace Intersect.GameObjects
 
             return myBuffer.ToArray();
         }
-
-        public static ProjectileBase GetProjectile(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (ProjectileBase) Objects[index];
-            }
-            return null;
-        }
-
-        public static string GetName(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return ((ProjectileBase) Objects[index]).Name;
-            }
-            return "Deleted";
-        }
-
-        public override byte[] BinaryData => ProjectileData();
-
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            Objects.Remove(Id);
-        }
-
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, ProjectileBase> GetObjects()
-        {
-            Dictionary<int, ProjectileBase> objects = Objects.ToDictionary(k => k.Key, v => (ProjectileBase) v.Value);
-            return objects;
-        }
     }
 
     public class Location
@@ -210,7 +142,7 @@ namespace Intersect.GameObjects
     public class ProjectileAnimation
     {
         public int Animation = -1;
-        public bool AutoRotate = false;
+        public bool AutoRotate;
         public int SpawnRange = 1;
 
         public ProjectileAnimation(int animation, int spawnRange, bool autoRotate)

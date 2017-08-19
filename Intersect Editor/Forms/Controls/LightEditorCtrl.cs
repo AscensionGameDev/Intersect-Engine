@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
 using Intersect.GameObjects;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Controls
+namespace Intersect.Editor.Forms.Controls
 {
     public partial class LightEditorCtrl : UserControl
     {
@@ -31,7 +30,8 @@ namespace Intersect_Editor.Forms.Controls
             nudOffsetX.Value = tmpLight.OffsetX;
             nudOffsetY.Value = tmpLight.OffsetY;
             nudExpand.Value = (int) tmpLight.Expand;
-            pnlLightColor.BackColor = System.Drawing.Color.FromArgb(tmpLight.Color.A, tmpLight.Color.R, tmpLight.Color.G,
+            pnlLightColor.BackColor = System.Drawing.Color.FromArgb(tmpLight.Color.A, tmpLight.Color.R,
+                tmpLight.Color.G,
                 tmpLight.Color.B);
             if (!CanClose) btnOkay.Hide();
             InitLocalization();

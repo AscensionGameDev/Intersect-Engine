@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_Switch : UserControl
     {
         private readonly FrmEvent _eventEditor;
-        private bool _loading = false;
+        private bool _loading;
         private EventCommand _myCommand;
 
         public EventCommand_Switch(EventCommand refCommand, FrmEvent editor)
@@ -48,13 +48,15 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             int switchCount = 0;
             if (rdoPlayerSwitch.Checked)
             {
-                cmbSetSwitch.Items.AddRange(Database.GetGameObjectList(GameObject.PlayerSwitch));
-                cmbSetSwitch.SelectedIndex = Database.GameObjectListIndex(GameObject.PlayerSwitch, _myCommand.Ints[1]);
+                cmbSetSwitch.Items.AddRange(Database.GetGameObjectList(GameObjectType.PlayerSwitch));
+                cmbSetSwitch.SelectedIndex =
+                    Database.GameObjectListIndex(GameObjectType.PlayerSwitch, _myCommand.Ints[1]);
             }
             else
             {
-                cmbSetSwitch.Items.AddRange(Database.GetGameObjectList(GameObject.ServerSwitch));
-                cmbSetSwitch.SelectedIndex = Database.GameObjectListIndex(GameObject.ServerSwitch, _myCommand.Ints[1]);
+                cmbSetSwitch.Items.AddRange(Database.GetGameObjectList(GameObjectType.ServerSwitch));
+                cmbSetSwitch.SelectedIndex =
+                    Database.GameObjectListIndex(GameObjectType.ServerSwitch, _myCommand.Ints[1]);
             }
             cmbSetSwitchVal.SelectedIndex = _myCommand.Ints[2];
         }
@@ -64,12 +66,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             if (rdoPlayerSwitch.Checked)
             {
                 _myCommand.Ints[0] = (int) SwitchVariableTypes.PlayerSwitch;
-                _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.PlayerSwitch, cmbSetSwitch.SelectedIndex);
+                _myCommand.Ints[1] =
+                    Database.GameObjectIdFromList(GameObjectType.PlayerSwitch, cmbSetSwitch.SelectedIndex);
             }
             if (rdoGlobalSwitch.Checked)
             {
                 _myCommand.Ints[0] = (int) SwitchVariableTypes.ServerSwitch;
-                _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.ServerSwitch, cmbSetSwitch.SelectedIndex);
+                _myCommand.Ints[1] =
+                    Database.GameObjectIdFromList(GameObjectType.ServerSwitch, cmbSetSwitch.SelectedIndex);
             }
             _myCommand.Ints[2] = cmbSetSwitchVal.SelectedIndex;
             _eventEditor.FinishCommandEdit();

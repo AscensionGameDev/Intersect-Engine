@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Intersect.Editor.Classes;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Controls
+namespace Intersect.Editor.Forms.Controls
 {
     public partial class MapTreeList : UserControl
     {
         //Cross Thread Delegates
         public delegate void TryUpdateMapList(int selectMap = -1, List<int> restrictMaps = null);
 
-        private bool _canEdit = false;
-        private List<int> _restrictMaps = null;
+        private bool _canEdit;
+        private List<int> _restrictMaps;
         public bool Chronological = false;
         public TryUpdateMapList MapListDelegate;
         private List<int> OpenFolders = new List<int>();
@@ -29,7 +29,7 @@ namespace Intersect_Editor.Forms.Controls
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        internal static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+        internal static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
         private void treeMapList_ItemDrag(object sender, ItemDragEventArgs e)
         {
@@ -127,7 +127,7 @@ namespace Intersect_Editor.Forms.Controls
             if (!_canEdit) return;
             if (e.Node != null)
             {
-                if (!String.IsNullOrEmpty(e.Label))
+                if (!string.IsNullOrEmpty(e.Label))
                 {
                     if (e.Node.Tag.GetType() == typeof(MapListMap))
                     {

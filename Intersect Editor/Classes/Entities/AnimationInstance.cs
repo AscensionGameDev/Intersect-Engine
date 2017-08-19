@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Drawing;
-using Intersect;
+using Intersect.Editor.Classes.Core;
 using Intersect.GameObjects;
-using Intersect_Editor.Classes.Core;
 using Microsoft.Xna.Framework.Graphics;
-using Color = System.Drawing.Color;
 
-namespace Intersect_Editor.Classes.Entities
+namespace Intersect.Editor.Classes.Entities
 {
     public class AnimationInstance
     {
-        private int _renderDir = 0;
-        private float _renderX = 0;
-        private float _renderY = 0;
-        private bool infiniteLoop = false;
+        private int _renderDir;
+        private float _renderX;
+        private float _renderY;
+        private bool infiniteLoop;
         private int lowerFrame;
         private int lowerLoop;
         private long lowerTimer;
@@ -56,12 +54,13 @@ namespace Intersect_Editor.Classes.Entities
                                     frameHeight),
                                 new RectangleF(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth,
                                     frameHeight),
-                                Color.White, target, BlendState.AlphaBlend);
+                                System.Drawing.Color.White, target, BlendState.NonPremultiplied);
                         }
                     }
                     EditorGraphics.AddLight(
                         Options.MapWidth * Options.TileWidth + (int) _renderX + myBase.LowerLights[lowerFrame].OffsetX,
-                        Options.MapHeight * Options.TileHeight + (int) _renderY + myBase.LowerLights[lowerFrame].OffsetY,
+                        Options.MapHeight * Options.TileHeight + (int) _renderY +
+                        myBase.LowerLights[lowerFrame].OffsetY,
                         myBase.LowerLights[lowerFrame]);
                 }
             }
@@ -85,12 +84,13 @@ namespace Intersect_Editor.Classes.Entities
                                     frameHeight),
                                 new RectangleF(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth,
                                     frameHeight),
-                                Color.White, target, BlendState.AlphaBlend);
+                                System.Drawing.Color.White, target, BlendState.NonPremultiplied);
                         }
                     }
                     EditorGraphics.AddLight(
                         Options.MapWidth * Options.TileWidth + (int) _renderX + myBase.UpperLights[upperFrame].OffsetX,
-                        Options.MapHeight * Options.TileHeight + (int) _renderY + myBase.UpperLights[upperFrame].OffsetY,
+                        Options.MapHeight * Options.TileHeight + (int) _renderY +
+                        myBase.UpperLights[upperFrame].OffsetY,
                         myBase.UpperLights[upperFrame]);
                 }
             }

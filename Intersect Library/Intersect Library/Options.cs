@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect.Enums;
 
 namespace Intersect
 {
@@ -7,44 +8,42 @@ namespace Intersect
     {
         //Game Settings
         public static string Language = "English";
+
         public static string GameName = "Intersect";
-        public static int ServerPort = 4500;
+        public static ushort ServerPort = 5400;
 
         //Maxes
         public static int MaxNpcDrops = 10;
 
         //Player Maxes
         public static int MaxStatValue = 200;
+
         public static int MaxStats = 5;
         public static int MaxLevel = 100;
         public static int MaxHotbar = 10;
         public static int MaxInvItems = 35;
         public static int MaxPlayerSkills = 35;
         public static int MaxBankSlots = 100;
+        public static int MaxCharacters = 3;
+        public static int ItemDropChance = 0;
 
         //Passability Based on MapZones
         public static bool[] PlayerPassable = new bool[Enum.GetNames(typeof(MapZones)).Length];
 
         //Equipment
         public static int WeaponIndex = -1;
+
         public static int ShieldIndex = -1;
         public static List<string> EquipmentSlots = new List<string>();
         public static List<string>[] PaperdollOrder = new List<string>[Enum.GetNames(typeof(Directions)).Length];
         public static List<string> ToolTypes = new List<string>();
 
-        public static List<string> StatusActionMsgs = new List<string>
-        {
-            "NONE!",
-            "SILENCED!",
-            "STUNNED!",
-            "SNARED!",
-            "BLINDED!",
-            "STEALTH!",
-            "TRANSFORMED!"
-        };
+        //Constantly Animated Sprites
+        public static List<string> AnimatedSprites = new List<string>();
 
         //Combat
         public static int MinAttackRate = 500; //2 attacks per second
+
         public static int MaxAttackRate = 200; //5 attacks per second
         public static double BlockingSlow = 0.3; //Slow when moving with a shield. Default 30%
         public static int CritChance = 20; //1 in 20 chance to critically strike.
@@ -52,8 +51,9 @@ namespace Intersect
         public static int MaxDashSpeed = 200;
 
         //Maps
-        public static int GameBorderStyle = 0; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
-        public static bool ZDimensionVisible = false;
+        public static int GameBorderStyle; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
+
+        public static bool ZDimensionVisible;
         public static int MapWidth = 32;
         public static int MapHeight = 26;
         public static int TileWidth = 32;
@@ -75,6 +75,8 @@ namespace Intersect
             MaxInvItems = bf.ReadInteger();
             MaxPlayerSkills = bf.ReadInteger();
             MaxBankSlots = bf.ReadInteger();
+            MaxCharacters = bf.ReadInteger();
+            ItemDropChance = bf.ReadInteger();
 
             for (int i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
             {
@@ -83,6 +85,7 @@ namespace Intersect
 
             //Equipment
             int count = bf.ReadInteger();
+            EquipmentSlots.Clear();
             for (int i = 0; i < count; i++)
             {
                 EquipmentSlots.Add(bf.ReadString());
@@ -106,6 +109,14 @@ namespace Intersect
             for (int i = 0; i < count; i++)
             {
                 ToolTypes.Add(bf.ReadString());
+            }
+
+            //Animated Sprites
+            count = bf.ReadInteger();
+            AnimatedSprites.Clear();
+            for (int i = 0; i < count; i++)
+            {
+                AnimatedSprites.Add(bf.ReadString());
             }
 
             //Combat

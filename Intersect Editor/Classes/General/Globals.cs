@@ -1,25 +1,27 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
-using Intersect;
+using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Classes.General;
+using Intersect.Editor.Classes.Maps;
+using Intersect.Editor.Forms;
+using Intersect.Editor.Forms.DockingElements;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
-using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Classes.General;
-using Intersect_Editor.Classes.Maps;
-using Intersect_Editor.Forms;
-using Intersect_Editor.Forms.DockingElements;
 
-namespace Intersect_Editor.Classes
+namespace Intersect.Editor.Classes
 {
     public static class Globals
     {
         //Network Variables
         public static string ServerHost = "localhost";
-        public static int ServerPort = 4500;
+
+        public static int ServerPort = 5400;
         public static int ReconnectTime = 3000;
 
         //Editor Loop Variables
         public static Thread EditorThread;
+
         public static int CurrentEditor = -1;
         public static EditorSystem System = new EditorSystem();
 
@@ -28,15 +30,18 @@ namespace Intersect_Editor.Classes
         public static FrmLogin LoginForm;
         public static bool HasGameData = false;
         public static bool InEditor;
+
         public static bool ClosingEditor;
 
         //Animation Frame Variables
         public static int Autotilemode = 0;
+
         public static int WaterfallFrame = 0;
         public static int AutotileFrame = 0;
 
         //Editor Variables
         public static MapInstance CurrentMap = null;
+
         public static int LoadingMap = -1;
         public static TilesetBase CurrentTileset = null;
         public static int CurSelX;
@@ -60,6 +65,7 @@ namespace Intersect_Editor.Classes
 
         //Selection Moving Copying and Pasting
         public static int SelectionType = (int) SelectionTypes.AllLayers;
+
         public static bool Dragging = false;
         public static int TileDragX = 0;
         public static int TileDragY = 0;
@@ -69,6 +75,7 @@ namespace Intersect_Editor.Classes
 
         //Cut/Copy Variables
         public static MapInstance CopySource;
+
         public static int CopyMapSelX;
         public static int CopyMapSelY;
         public static int CopyMapSelW;
@@ -81,6 +88,7 @@ namespace Intersect_Editor.Classes
 
         //Docking Window References
         public static frmMapLayers MapLayersWindow;
+
         public static frmMapEditor MapEditorWindow;
         public static frmMapList MapListWindow;
         public static frmMapProperties MapPropertiesWindow;
@@ -89,6 +97,7 @@ namespace Intersect_Editor.Classes
 
         //Preview Fetching Variables
         public static bool FetchingMapPreviews = false;
+
         public static List<int> MapsToFetch;
         public static List<int> MapsToScreenshot = new List<int>();
         public static int FetchCount;

@@ -1,53 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect.Collections;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
+using Intersect.Models;
 
 namespace Intersect.GameObjects.Maps
 {
     public class MapBase : DatabaseObject<MapBase>
     {
-        public new const string DATABASE_TABLE = "maps";
-        public new const GameObject OBJECT_TYPE = GameObject.Map;
-        protected static Dictionary<int, MapBase> Objects = new Dictionary<int, MapBase>();
-
         //SyncLock
-        protected Object _mapLock = new Object();
+        protected object _mapLock = new object();
 
         //Client/Editor Only
         public MapAutotiles Autotiles;
 
         //Server/Editor Only
-        public int EventIndex = 0;
+        public int EventIndex;
 
         //Temporary Values
-        public bool IsClient = false;
+        public bool IsClient;
 
         //Core Data
         public TileArray[] Layers = new TileArray[Options.LayerCount];
+
+        //For server only
+        public byte[] TileData;
 
         public MapBase(int mapNum, bool isClient) : base(mapNum)
         {
             Name = "New Map";
             IsClient = isClient;
-            for (var i = 0; i < Options.LayerCount; i++)
-            {
-                Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
-                for (var x = 0; x < Options.MapWidth; x++)
-                {
-                    for (var y = 0; y < Options.MapHeight; y++)
-                    {
-                        Layers[i].Tiles[x, y].TilesetIndex = -1;
-                        if (i == 0)
-                        {
-                            Attributes[x, y] = new Attribute();
-                        }
-                    }
-                }
-            }
         }
 
-        public MapBase(MapBase mapcopy) : base(mapcopy.Id)
+        public MapBase(MapBase mapcopy) : base(mapcopy.Index)
         {
             lock (GetMapLock())
             {
@@ -55,31 +42,40 @@ namespace Intersect.GameObjects.Maps
                 Name = mapcopy.Name;
                 Brightness = mapcopy.Brightness;
                 IsIndoors = mapcopy.IsIndoors;
-                for (var i = 0; i < Options.LayerCount; i++)
+                if (Layers != null)
                 {
-                    Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
-                    for (var x = 0; x < Options.MapWidth; x++)
+                    for (var i = 0; i < Options.LayerCount; i++)
                     {
-                        for (var y = 0; y < Options.MapHeight; y++)
+                        Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
+                        for (var x = 0; x < Options.MapWidth; x++)
                         {
-                            Layers[i].Tiles[x, y] = new Tile
+                            for (var y = 0; y < Options.MapHeight; y++)
                             {
-                                TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex,
-                                X = mapcopy.Layers[i].Tiles[x, y].X,
-                                Y = mapcopy.Layers[i].Tiles[x, y].Y,
-                                Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile
-                            };
-                            if (i == 0 && mapcopy.Attributes[x, y] != null)
-                            {
-                                Attributes[x, y] = new Attribute
+                                Layers[i].Tiles[x, y] = new Tile
                                 {
-                                    value = mapcopy.Attributes[x, y].value,
-                                    data1 = mapcopy.Attributes[x, y].data1,
-                                    data2 = mapcopy.Attributes[x, y].data2,
-                                    data3 = mapcopy.Attributes[x, y].data3,
-                                    data4 = mapcopy.Attributes[x, y].data4
+                                    TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex,
+                                    X = mapcopy.Layers[i].Tiles[x, y].X,
+                                    Y = mapcopy.Layers[i].Tiles[x, y].Y,
+                                    Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile
                                 };
                             }
+                        }
+                    }
+                }
+                for (var x = 0; x < Options.MapWidth; x++)
+                {
+                    for (var y = 0; y < Options.MapHeight; y++)
+                    {
+                        if (mapcopy.Attributes[x, y] != null)
+                        {
+                            Attributes[x, y] = new Attribute
+                            {
+                                value = mapcopy.Attributes[x, y].value,
+                                data1 = mapcopy.Attributes[x, y].data1,
+                                data2 = mapcopy.Attributes[x, y].data2,
+                                data3 = mapcopy.Attributes[x, y].data3,
+                                data4 = mapcopy.Attributes[x, y].data4
+                            };
                         }
                     }
                 }
@@ -114,24 +110,27 @@ namespace Intersect.GameObjects.Maps
 
         //Properties
         public string Music { get; set; } = Strings.Get("general", "none");
+
         public string Sound { get; set; } = Strings.Get("general", "none");
         public bool IsIndoors { get; set; }
         public string Panorama { get; set; } = Strings.Get("general", "none");
         public string Fog { get; set; } = Strings.Get("general", "none");
-        public int FogXSpeed { get; set; } = 0;
-        public int FogYSpeed { get; set; } = 0;
-        public int FogTransparency { get; set; } = 0;
-        public int RHue { get; set; } = 0;
-        public int GHue { get; set; } = 0;
-        public int BHue { get; set; } = 0;
-        public int AHue { get; set; } = 0;
+        public int FogXSpeed { get; set; }
+        public int FogYSpeed { get; set; }
+        public int FogTransparency { get; set; }
+        public int RHue { get; set; }
+        public int GHue { get; set; }
+        public int BHue { get; set; }
+        public int AHue { get; set; }
         public int Brightness { get; set; } = 100;
         public MapZones ZoneType { get; set; } = MapZones.Normal;
         public int PlayerLightSize { get; set; } = 300;
         public byte PlayerLightIntensity { get; set; } = 255;
-        public float PlayerLightExpand { get; set; } = 0f;
+        public float PlayerLightExpand { get; set; }
         public Color PlayerLightColor { get; set; } = Color.White;
         public string OverlayGraphic { get; set; } = Strings.Get("general", "none");
+
+        public override byte[] BinaryData => GetMapData(false);
 
         public object GetMapLock()
         {
@@ -169,20 +168,6 @@ namespace Intersect.GameObjects.Maps
                 PlayerLightExpand = (float) bf.ReadDouble();
                 PlayerLightIntensity = bf.ReadByte();
                 PlayerLightColor = Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
-
-                for (var i = 0; i < Options.LayerCount; i++)
-                {
-                    for (var x = 0; x < Options.MapWidth; x++)
-                    {
-                        for (var y = 0; y < Options.MapHeight; y++)
-                        {
-                            Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
-                            Layers[i].Tiles[x, y].X = bf.ReadInteger();
-                            Layers[i].Tiles[x, y].Y = bf.ReadInteger();
-                            Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
-                        }
-                    }
-                }
 
                 for (var x = 0; x < Options.MapWidth; x++)
                 {
@@ -276,19 +261,6 @@ namespace Intersect.GameObjects.Maps
             bf.WriteByte(PlayerLightColor.G);
             bf.WriteByte(PlayerLightColor.B);
 
-            for (var i = 0; i < Options.LayerCount; i++)
-            {
-                for (var x = 0; x < Options.MapWidth; x++)
-                {
-                    for (var y = 0; y < Options.MapHeight; y++)
-                    {
-                        bf.WriteInteger(Layers[i].Tiles[x, y].TilesetIndex);
-                        bf.WriteInteger(Layers[i].Tiles[x, y].X);
-                        bf.WriteInteger(Layers[i].Tiles[x, y].Y);
-                        bf.WriteByte(Layers[i].Tiles[x, y].Autotile);
-                    }
-                }
-            }
             for (var x = 0; x < Options.MapWidth; x++)
             {
                 for (var y = 0; y < Options.MapHeight; y++)
@@ -341,68 +313,33 @@ namespace Intersect.GameObjects.Maps
             return bf.ToArray();
         }
 
-        public static MapBase GetMap(int index)
+        public class MapInstances : DatabaseObjectLookup
         {
-            if (Objects.ContainsKey(index))
+            private readonly DatabaseObjectLookup mBaseLookup;
+
+            public MapInstances(DatabaseObjectLookup baseLookup)
             {
-                return (MapBase) Objects[index];
+                if (baseLookup == null) throw new ArgumentNullException();
+                mBaseLookup = baseLookup;
             }
-            return null;
-        }
 
-        public static string GetName(int index)
-        {
-            if (Objects.ContainsKey(index))
+            internal override bool InternalSet(IDatabaseObject value, bool overwrite)
             {
-                return ((MapBase) Objects[index]).Name;
+                mBaseLookup?.InternalSet(value, overwrite);
+                return base.InternalSet(value, overwrite);
             }
-            return "Deleted";
-        }
 
-        public override byte[] BinaryData => GetMapData(false);
-
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public static DatabaseObject<MapBase> Get(int index)
-        {
-            if (Objects.ContainsKey(index))
+            public override bool Delete(IDatabaseObject value)
             {
-                return Objects[index];
+                mBaseLookup?.Delete(value);
+                return base.Delete(value);
             }
-            return null;
-        }
 
-        public override void Delete()
-        {
-            Objects.Remove(Id);
-        }
-
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject<MapBase> obj)
-        {
-            Objects.Add(index, (MapBase) obj);
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, MapBase> GetObjects()
-        {
-            return Objects;
+            public override void Clear()
+            {
+                mBaseLookup?.Clear();
+                base.Clear();
+            }
         }
     }
 }

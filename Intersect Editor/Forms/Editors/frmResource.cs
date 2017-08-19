@@ -3,43 +3,43 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect;
+using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Forms.Editors;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
-using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Forms.Editors;
 
-namespace Intersect_Editor.Classes
+namespace Intersect.Editor.Classes
 {
-    public partial class frmResource : Form
+    public partial class frmResource : EditorForm
     {
         private List<ResourceBase> _changed = new List<ResourceBase>();
-        private byte[] _copiedItem = null;
-        private ResourceBase _editorItem = null;
+        private byte[] _copiedItem;
+        private ResourceBase _editorItem;
         private Bitmap _endBitmap;
         private Bitmap _endTileset;
         private Bitmap _initialBitmap;
 
         private Bitmap _initialTileset;
+
         //General Editting Variables
         bool _tMouseDown;
 
         public frmResource()
         {
+            ApplyHooks();
             InitializeComponent();
-            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstResources.LostFocus += itemList_FocusChanged;
             lstResources.GotFocus += itemList_FocusChanged;
         }
 
-        private void GameObjectUpdatedDelegate(GameObject type)
+        protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (type == GameObject.Resource)
+            if (type == GameObjectType.Resource)
             {
                 InitEditor();
-                if (_editorItem != null && !ResourceBase.GetObjects().ContainsValue(_editorItem))
+                if (_editorItem != null && !ResourceBase.Lookup.Values.Contains(_editorItem))
                 {
                     _editorItem = null;
                     UpdateEditor();
@@ -77,7 +77,8 @@ namespace Intersect_Editor.Classes
         private void lstResources_Click(object sender, EventArgs e)
         {
             _editorItem =
-                ResourceBase.GetResource(Database.GameObjectIdFromList(GameObject.Resource, lstResources.SelectedIndex));
+                ResourceBase.Lookup.Get<ResourceBase>(
+                    Database.GameObjectIdFromList(GameObjectType.Resource, lstResources.SelectedIndex));
             UpdateEditor();
         }
 
@@ -97,10 +98,10 @@ namespace Intersect_Editor.Classes
             }
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.Get("general", "none"));
-            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbItem.Items.Clear();
             cmbItem.Items.Add(Strings.Get("general", "none"));
-            cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
+            cmbItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
             InitLocalization();
             UpdateEditor();
         }
@@ -128,7 +129,7 @@ namespace Intersect_Editor.Classes
             btnRequirements.Text = Strings.Get("resourceeditor", "requirements");
 
             grpDrops.Text = Strings.Get("resourceeditor", "drops");
-            lblDropIndex.Text = Strings.Get("resourceeditor", "dropindex", scrlDropIndex.Value);
+            lblDropIndex.Text = Strings.Get("resourceeditor", "dropindex");
             lblDropItem.Text = Strings.Get("resourceeditor", "dropitem");
             lblDropAmount.Text = Strings.Get("resourceeditor", "dropamount");
             lblDropChance.Text = Strings.Get("resourceeditor", "dropchance");
@@ -144,7 +145,7 @@ namespace Intersect_Editor.Classes
         public void InitEditor()
         {
             lstResources.Items.Clear();
-            lstResources.Items.AddRange(Database.GetGameObjectList(GameObject.Resource));
+            lstResources.Items.AddRange(Database.GetGameObjectList(GameObjectType.Resource));
             cmbToolType.Items.Clear();
             cmbToolType.Items.Add(Strings.Get("general", "none"));
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
@@ -159,8 +160,9 @@ namespace Intersect_Editor.Classes
                 txtName.Text = _editorItem.Name;
                 cmbToolType.SelectedIndex = _editorItem.Tool + 1;
                 nudSpawnDuration.Value = _editorItem.SpawnDuration;
-                cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation) +
-                                             1;
+                cmbAnimation.SelectedIndex =
+                    Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.Animation) +
+                    1;
                 nudMinHp.Value = _editorItem.MinHP;
                 nudMaxHp.Value = _editorItem.MaxHP;
                 chkWalkableBefore.Checked = _editorItem.WalkableBefore;
@@ -168,7 +170,7 @@ namespace Intersect_Editor.Classes
                 cmbInitialSprite.SelectedIndex =
                     cmbInitialSprite.FindString(_editorItem.InitialGraphic);
                 cmbEndSprite.SelectedIndex = cmbEndSprite.FindString(_editorItem.EndGraphic);
-                scrlDropIndex.Value = 1;
+                nudDropIndex.Value = 1;
                 UpdateDropValues();
                 Render();
                 if (_changed.IndexOf(_editorItem) == -1)
@@ -186,16 +188,11 @@ namespace Intersect_Editor.Classes
 
         private void UpdateDropValues()
         {
-            int index = scrlDropIndex.Value - 1;
-            lblDropIndex.Text = Strings.Get("resourceeditor", "dropindex", index + 1);
-            cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _editorItem.Drops[index].ItemNum) + 1;
+            int index = (int) nudDropIndex.Value - 1;
+            cmbItem.SelectedIndex =
+                Database.GameObjectListIndex(GameObjectType.Item, _editorItem.Drops[index].ItemNum) + 1;
             nudDropAmount.Value = _editorItem.Drops[index].Amount;
             nudDropChance.Value = _editorItem.Drops[index].Chance;
-        }
-
-        private void scrlDropIndex_Scroll(object sender, ScrollValueEventArgs e)
-        {
-            UpdateDropValues();
         }
 
         private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)
@@ -205,7 +202,7 @@ namespace Intersect_Editor.Classes
 
         private void nudDropChance_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value - 1].Chance = (int) nudDropChance.Value;
+            _editorItem.Drops[(int) nudDropIndex.Value - 1].Chance = (int) nudDropChance.Value;
         }
 
         private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)
@@ -322,7 +319,7 @@ namespace Intersect_Editor.Classes
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
         {
-            PacketSender.SendCreateObject(GameObject.Resource);
+            PacketSender.SendCreateObject(GameObjectType.Resource);
         }
 
         private void toolStripItemDelete_Click(object sender, EventArgs e)
@@ -330,7 +327,8 @@ namespace Intersect_Editor.Classes
             if (_editorItem != null && lstResources.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("resourceeditor", "deleteprompt"),
-                        Strings.Get("resourceeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                        Strings.Get("resourceeditor", "deletetitle"), DarkDialogButton.YesNo,
+                        Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(_editorItem);
@@ -361,7 +359,8 @@ namespace Intersect_Editor.Classes
             if (_changed.Contains(_editorItem) && _editorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("resourceeditor", "undoprompt"),
-                        Strings.Get("resourceeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                        Strings.Get("resourceeditor", "undotitle"), DarkDialogButton.YesNo,
+                        Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     _editorItem.RestoreBackup();
@@ -428,18 +427,19 @@ namespace Intersect_Editor.Classes
 
         private void cmbItem_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObject.Item,
+            _editorItem.Drops[(int) nudDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item,
                 cmbItem.SelectedIndex - 1);
         }
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Animation = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex - 1);
+            _editorItem.Animation =
+                Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
         }
 
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value - 1].Amount = (int) nudDropAmount.Value;
+            _editorItem.Drops[(int) nudDropIndex.Value - 1].Amount = (int) nudDropAmount.Value;
         }
 
         private void nudMinHp_ValueChanged(object sender, EventArgs e)
@@ -449,7 +449,12 @@ namespace Intersect_Editor.Classes
 
         private void nudMaxHp_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.MinHP = (int) nudMaxHp.Value;
+            _editorItem.MaxHP = (int) nudMaxHp.Value;
+        }
+
+        private void nudDropIndex_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateDropValues();
         }
     }
 }

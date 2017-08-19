@@ -1,9 +1,8 @@
 ﻿using System;
-using Intersect;
 using Intersect.GameObjects;
-using Intersect_Server.Classes.Networking;
+using Intersect.Server.Classes.Networking;
 
-namespace Intersect_Server.Classes.General
+namespace Intersect.Server.Classes.General
 {
     public static class ServerTime
     {
@@ -35,7 +34,7 @@ namespace Intersect_Server.Classes.General
                 if (!timeBase.SyncTime)
                 {
                     _gameTime = _gameTime.Add(new TimeSpan(0, 0, 0, 0, (int) (1000 * timeBase.Rate)));
-                        //Not sure if Rate is negative if time will go backwards but we can hope!
+                    //Not sure if Rate is negative if time will go backwards but we can hope!
                 }
 
                 //Calculate what "timeRange" we should be in, if we're not then switch and notify the world

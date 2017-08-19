@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Intersect;
+using Intersect.Editor.Classes.Core;
+using Intersect.Enums;
 using Intersect.GameObjects.Maps;
 using Intersect.Localization;
-using Intersect_Editor.Classes.Core;
-using Color = System.Drawing.Color;
 
-namespace Intersect_Editor.Classes.Maps
+namespace Intersect.Editor.Classes.Maps
 {
     class CustomCategory : CategoryAttribute
     {
@@ -256,11 +255,12 @@ namespace Intersect_Editor.Classes.Maps
          CustomDescription("playerlightcolordesc"),
          CustomDisplayName("playerlightcolor"),
          DefaultValue(0)]
-        public Color PlayerLightColor
+        public System.Drawing.Color PlayerLightColor
         {
             get
             {
-                return Color.FromArgb(_myMap.PlayerLightColor.A, _myMap.PlayerLightColor.R, _myMap.PlayerLightColor.G,
+                return System.Drawing.Color.FromArgb(_myMap.PlayerLightColor.A, _myMap.PlayerLightColor.R,
+                    _myMap.PlayerLightColor.G,
                     _myMap.PlayerLightColor.B);
             }
             set
@@ -269,7 +269,7 @@ namespace Intersect_Editor.Classes.Maps
                     _myMap.PlayerLightColor.G != value.G || _myMap.PlayerLightColor.B != value.B)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.PlayerLightColor = Intersect.Color.FromArgb(value.A, value.R, value.G, value.B);
+                    _myMap.PlayerLightColor = Color.FromArgb(value.A, value.R, value.G, value.B);
                     EditorGraphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }

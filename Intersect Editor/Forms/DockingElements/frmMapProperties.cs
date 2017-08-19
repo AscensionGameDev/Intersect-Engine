@@ -1,9 +1,9 @@
 ﻿using System.Windows.Forms;
+using Intersect.Editor.Classes.Maps;
 using Intersect.Localization;
-using Intersect_Editor.Classes.Maps;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class frmMapProperties : DockContent
     {

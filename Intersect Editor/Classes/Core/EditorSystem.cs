@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Intersect_Editor.Classes.Core
+namespace Intersect.Editor.Classes.Core
 {
     public class EditorSystem
     {

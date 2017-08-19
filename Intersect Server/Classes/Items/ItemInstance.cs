@@ -1,15 +1,15 @@
-﻿using Intersect;
+﻿using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect_Server.Classes.General;
+using Intersect.Server.Classes.General;
 
-namespace Intersect_Server.Classes.Items
+namespace Intersect.Server.Classes.Items
 {
     public class ItemInstance
     {
         public int BagId = -1;
-        public BagInstance BagInstance = null;
+        public BagInstance BagInstance;
         public int ItemNum = -1;
-        public int ItemVal = 0;
+        public int ItemVal;
         public int[] StatBoost = new int[(int) Stats.StatCount];
 
         public ItemInstance()
@@ -21,16 +21,16 @@ namespace Intersect_Server.Classes.Items
             ItemNum = itemNum;
             ItemVal = itemVal;
             BagId = bagId;
-            if (ItemBase.GetItem(ItemNum) != null)
+            if (ItemBase.Lookup.Get<ItemBase>(ItemNum) != null)
             {
-                if (ItemBase.GetItem(ItemNum).ItemType == (int) ItemTypes.Equipment)
+                if (ItemBase.Lookup.Get<ItemBase>(ItemNum).ItemType == (int) ItemTypes.Equipment)
                 {
                     itemVal = 1;
                     for (int i = 0; i < (int) Stats.StatCount; i++)
                     {
                         StatBoost[i] =
-                            Globals.Rand.Next(-1 * ItemBase.GetItem(ItemNum).StatGrowth,
-                                ItemBase.GetItem(ItemNum).StatGrowth + 1);
+                            Globals.Rand.Next(-1 * ItemBase.Lookup.Get<ItemBase>(ItemNum).StatGrowth,
+                                ItemBase.Lookup.Get<ItemBase>(ItemNum).StatGrowth + 1);
                     }
                 }
             }

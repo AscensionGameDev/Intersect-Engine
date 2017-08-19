@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Intersect.Editor.Forms.Editors.Event_Commands;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Forms.Editors.Event_Commands;
 
-namespace Intersect_Editor.Forms.Editors
+namespace Intersect.Editor.Forms.Editors
 {
     public enum RequirementType
     {
@@ -158,22 +158,18 @@ namespace Intersect_Editor.Forms.Editors
             var cmdWindow = new EventCommand_ConditionalBranch(cmd, null, null);
             var frm = new Form
             {
-                Text = Strings.Get("dynamicrequirements", "conditioneditor")
+                Text = Strings.Get("dynamicrequirements", "conditioneditor"),
+                FormBorderStyle = FormBorderStyle.FixedSingle,
+                Size = new Size(0, 0),
+                AutoSize = true,
+                ControlBox = false,
+                StartPosition = FormStartPosition.CenterParent,
+                BackColor = cmdWindow.BackColor
             };
-            frm.FormBorderStyle = FormBorderStyle.FixedSingle;
             frm.Controls.Add(cmdWindow);
-            frm.Size = new Size(0, 0);
-            frm.AutoSize = true;
-            frm.ControlBox = false;
-            frm.StartPosition = FormStartPosition.CenterParent;
             cmdWindow.BringToFront();
-            frm.BackColor = cmdWindow.BackColor;
             frm.ShowDialog();
-            if (!cmdWindow.Cancelled)
-            {
-                return true;
-            }
-            return false;
+            return !cmdWindow.Cancelled;
         }
 
         private void btnRemoveCondition_Click(object sender, EventArgs e)

@@ -1,19 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Intersect.Models;
 
 namespace Intersect.GameObjects
 {
     public class AnimationBase : DatabaseObject<AnimationBase>
     {
-        public new const string DATABASE_TABLE = "animations";
-        public new const GameObject OBJECT_TYPE = GameObject.Animation;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public int LowerAnimFrameCount = 1;
         public int LowerAnimFrameSpeed = 100;
-        public int LowerAnimLoopCount = 0;
+        public int LowerAnimLoopCount;
 
         //Lower Animation
         public string LowerAnimSprite = "";
+
         public int LowerAnimXFrames = 1;
         public int LowerAnimYFrames = 1;
         public LightBase[] LowerLights;
@@ -21,10 +18,11 @@ namespace Intersect.GameObjects
         public string Sound = "";
         public int UpperAnimFrameCount = 1;
         public int UpperAnimFrameSpeed = 100;
-        public int UpperAnimLoopCount = 0;
+        public int UpperAnimLoopCount;
 
         //Upper Animation
         public string UpperAnimSprite = "";
+
         public int UpperAnimXFrames = 1;
         public int UpperAnimYFrames = 1;
         public LightBase[] UpperLights;
@@ -33,16 +31,18 @@ namespace Intersect.GameObjects
         {
             Name = "New Animation";
             LowerLights = new LightBase[LowerAnimFrameCount];
-            for (int i = 0; i < LowerAnimFrameCount; i++)
+            for (var i = 0; i < LowerAnimFrameCount; i++)
             {
                 LowerLights[i] = new LightBase();
             }
             UpperLights = new LightBase[UpperAnimFrameCount];
-            for (int i = 0; i < UpperAnimFrameCount; i++)
+            for (var i = 0; i < UpperAnimFrameCount; i++)
             {
                 UpperLights[i] = new LightBase();
             }
         }
+
+        public override byte[] BinaryData => AnimData();
 
         public override void Load(byte[] packet)
         {
@@ -60,7 +60,7 @@ namespace Intersect.GameObjects
             LowerAnimFrameSpeed = myBuffer.ReadInteger();
             LowerAnimLoopCount = myBuffer.ReadInteger();
             LowerLights = new LightBase[LowerAnimFrameCount];
-            for (int i = 0; i < LowerAnimFrameCount; i++)
+            for (var i = 0; i < LowerAnimFrameCount; i++)
             {
                 LowerLights[i] = new LightBase(myBuffer);
             }
@@ -73,7 +73,7 @@ namespace Intersect.GameObjects
             UpperAnimFrameSpeed = myBuffer.ReadInteger();
             UpperAnimLoopCount = myBuffer.ReadInteger();
             UpperLights = new LightBase[UpperAnimFrameCount];
-            for (int i = 0; i < UpperAnimFrameCount; i++)
+            for (var i = 0; i < UpperAnimFrameCount; i++)
             {
                 UpperLights[i] = new LightBase(myBuffer);
             }
@@ -81,7 +81,7 @@ namespace Intersect.GameObjects
             myBuffer.Dispose();
         }
 
-        public byte[] AnimData()
+        private byte[] AnimData()
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
@@ -94,7 +94,7 @@ namespace Intersect.GameObjects
             myBuffer.WriteInteger(LowerAnimFrameCount);
             myBuffer.WriteInteger(LowerAnimFrameSpeed);
             myBuffer.WriteInteger(LowerAnimLoopCount);
-            for (int i = 0; i < LowerAnimFrameCount; i++)
+            for (var i = 0; i < LowerAnimFrameCount; i++)
             {
                 myBuffer.WriteBytes(LowerLights[i].LightData());
             }
@@ -106,24 +106,12 @@ namespace Intersect.GameObjects
             myBuffer.WriteInteger(UpperAnimFrameCount);
             myBuffer.WriteInteger(UpperAnimFrameSpeed);
             myBuffer.WriteInteger(UpperAnimLoopCount);
-            for (int i = 0; i < UpperAnimFrameCount; i++)
+            for (var i = 0; i < UpperAnimFrameCount; i++)
             {
                 myBuffer.WriteBytes(UpperLights[i].LightData());
             }
 
             return myBuffer.ToArray();
-        }
-
-        public override byte[] BinaryData => AnimData();
-
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
         }
     }
 }

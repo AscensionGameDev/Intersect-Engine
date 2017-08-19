@@ -1,23 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects
 {
     public class ClassBase : DatabaseObject
     {
         //Core info
         public new const string DATABASE_TABLE = "classes";
+
         public new const GameObject OBJECT_TYPE = GameObject.Class;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         //Exp Calculations
         public int BaseExp = 100;
-        public int BasePoints = 0;
+
+        public int BasePoints;
         public int[] BaseStat = new int[(int) Stats.StatCount];
 
         //Starting Vitals & Stats
         public int[] BaseVital = new int[(int) Vitals.VitalCount];
+
         public int ExpIncrease = 50;
 
         //Level Up Info
@@ -31,18 +33,20 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
 
         public string Name = "New Class";
         public int PointIncrease = 0;
-        public int SpawnDir = 0;
+        public int SpawnDir;
 
         //Spawn Info
-        public int SpawnMap = 0;
-        public int SpawnX = 0;
-        public int SpawnY = 0;
+        public int SpawnMap;
+
+        public int SpawnX;
+        public int SpawnY;
 
         //Starting Spells
         public List<ClassSpell> Spells = new List<ClassSpell>();
 
         //Sprites
         public List<ClassSprite> Sprites = new List<ClassSprite>();
+
         public int[] StatIncrease = new int[(int) Stats.StatCount];
         public int[] VitalIncrease = new int[(int) Vitals.VitalCount];
 

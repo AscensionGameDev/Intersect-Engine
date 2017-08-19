@@ -2,27 +2,26 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.Core;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Core;
-using Color = System.Drawing.Color;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class Event_GraphicSelector : UserControl
     {
         private EventGraphic _editingGraphic;
         private FrmEvent _eventEditor;
-        private bool _loading = false;
+        private bool _loading;
 
         private bool _mouseDown;
-        private bool _newRouteAction = false;
-        private Event_MoveRouteDesigner _routeDesigner = null;
-        private int _spriteHeight = 0;
+        private bool _newRouteAction;
+        private Event_MoveRouteDesigner _routeDesigner;
+        private int _spriteHeight;
 
-        private int _spriteWidth = 0;
+        private int _spriteWidth;
         private EventGraphic _tmpGraphic = new EventGraphic();
 
         public Event_GraphicSelector(EventGraphic editingGraphic, FrmEvent eventEditor,
@@ -30,20 +29,20 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         {
             InitializeComponent();
             _editingGraphic = editingGraphic;
-            _tmpGraphic.CopyFrom(_editingGraphic);
             _eventEditor = eventEditor;
             _loading = true;
-            cmbGraphicType.SelectedIndex = _editingGraphic.Type;
             UpdateGraphicList();
             if (cmbGraphic.Items.IndexOf(_editingGraphic.Filename) > -1)
             {
                 cmbGraphic.SelectedIndex = cmbGraphic.Items.IndexOf(_editingGraphic.Filename);
             }
-            UpdatePreview();
             _routeDesigner = moveRouteDesigner;
             _newRouteAction = newMoveRouteAction;
             _loading = false;
             InitLocalization();
+            cmbGraphicType.SelectedIndex = _editingGraphic.Type;
+            _tmpGraphic.CopyFrom(_editingGraphic);
+            UpdatePreview();
         }
 
         private void InitLocalization()
@@ -91,7 +90,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 lblGraphic.Show();
                 cmbGraphic.Show();
                 cmbGraphic.Items.Clear();
-                foreach (var filename in Database.GetGameObjectList(GameObject.Tileset))
+                foreach (var filename in Database.GetGameObjectList(GameObjectType.Tileset))
                 {
                     if (File.Exists("resources/tilesets/" + filename))
                     {
@@ -124,7 +123,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 lblGraphic.Show();
                 cmbGraphic.Show();
-                foreach (var filename in Database.GetGameObjectList(GameObject.Tileset))
+                foreach (var filename in Database.GetGameObjectList(GameObjectType.Tileset))
                 {
                     if (File.Exists("resources/tilesets/" + filename))
                     {
@@ -160,11 +159,11 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 pnlGraphic.Width = sourceBitmap.Width;
                 pnlGraphic.Height = sourceBitmap.Height;
                 graphics = Graphics.FromImage(destBitmap);
-                graphics.Clear(Color.FromArgb(60, 63, 65));
+                graphics.Clear(System.Drawing.Color.FromArgb(60, 63, 65));
                 graphics.DrawImage(sourceBitmap, new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height));
                 if (cmbGraphicType.SelectedIndex == 1)
                 {
-                    graphics.DrawRectangle(new Pen(Color.White, 2f),
+                    graphics.DrawRectangle(new Pen(System.Drawing.Color.White, 2f),
                         new Rectangle(_tmpGraphic.X * sourceBitmap.Width / 4, _tmpGraphic.Y * sourceBitmap.Height / 4,
                             sourceBitmap.Width / 4, sourceBitmap.Height / 4));
                 }
@@ -184,7 +183,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                         selY -= Math.Abs(selH);
                         selH = Math.Abs(selH);
                     }
-                    graphics.DrawRectangle(new Pen(Color.White, 2f),
+                    graphics.DrawRectangle(new Pen(System.Drawing.Color.White, 2f),
                         new Rectangle(selX * Options.TileWidth, selY * Options.TileHeight,
                             Options.TileWidth + (selW * Options.TileWidth),
                             Options.TileHeight + (selH * Options.TileHeight)));

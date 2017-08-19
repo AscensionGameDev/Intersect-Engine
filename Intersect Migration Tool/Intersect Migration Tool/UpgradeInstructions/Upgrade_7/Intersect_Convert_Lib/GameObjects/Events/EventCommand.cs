@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
 using Intersect.Localization;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
+using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events
 {
     public class EventCommand
     {
@@ -83,7 +82,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
                             pVar = Strings.Get("eventconditiondesc", "notequal", Ints[3]);
                             break;
                     }
-                    return Strings.Get("eventconditiondesc", "playervariable", PlayerVariableBase.GetName(Ints[1]), pVar);
+                    return Strings.Get("eventconditiondesc", "playervariable", PlayerVariableBase.GetName(Ints[1]),
+                        pVar);
                 case 2: //Global Switch
                     var gValue = Strings.Get("eventconditiondesc", "false");
                     if (Convert.ToBoolean(Ints[2])) gValue = Strings.Get("eventconditiondesc", "true");
@@ -111,7 +111,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
                             gVar = Strings.Get("eventconditiondesc", "notequal", Ints[3]);
                             break;
                     }
-                    return Strings.Get("eventconditiondesc", "globalvariable", ServerVariableBase.GetName(Ints[1]), gVar);
+                    return Strings.Get("eventconditiondesc", "globalvariable", ServerVariableBase.GetName(Ints[1]),
+                        gVar);
                 case 4: //Has Item
                     return Strings.Get("eventconditiondesc", "hasitem", Ints[2], ItemBase.GetName(Ints[1]));
                 case 5: //Class Is
@@ -160,7 +161,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
                 case 9: //Power is
                     if (Ints[1] == 0)
                     {
-                        return Strings.Get("eventconditiondesc", "power", Strings.Get("eventconditiondesc", "modadmin"));
+                        return Strings.Get("eventconditiondesc", "power",
+                            Strings.Get("eventconditiondesc", "modadmin"));
                     }
                     else
                     {
@@ -234,9 +236,9 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Conve
                     return Strings.Get("eventconditiondesc", "nonpcsonmap");
                 case 16: //Gender Is
                     return Strings.Get("eventconditiondesc", "gender",
-                    (Ints[1] == 0
-                        ? Strings.Get("eventconditiondesc", "male")
-                        : Strings.Get("eventconditiondesc", "female")));
+                        (Ints[1] == 0
+                            ? Strings.Get("eventconditiondesc", "male")
+                            : Strings.Get("eventconditiondesc", "female")));
             }
             return "";
         }

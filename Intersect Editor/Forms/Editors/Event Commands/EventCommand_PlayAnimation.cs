@@ -2,15 +2,14 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Color = System.Drawing.Color;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_PlayAnimation : UserControl
     {
@@ -18,8 +17,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private MapBase _currentMap;
         private EventBase _editingEvent;
         private EventCommand _myCommand;
-        private int spawnX = 0;
-        private int spawnY = 0;
+        private int spawnX;
+        private int spawnY;
 
         public EventCommand_PlayAnimation(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent,
             EventCommand editingCommand)
@@ -31,8 +30,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _currentMap = currentMap;
             InitLocalization();
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
-            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _myCommand.Ints[0]);
+            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
+            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, _myCommand.Ints[0]);
             cmbConditionType.SelectedIndex = _myCommand.Ints[1];
             nudWarpX.Maximum = Options.MapWidth;
             nudWarpY.Maximum = Options.MapHeight;
@@ -130,7 +129,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     {
                         foreach (var evt in _currentMap.Events)
                         {
-                            cmbEntities.Items.Add(evt.Key == _editingEvent.MyIndex
+                            cmbEntities.Items.Add(evt.Key == _editingEvent.Index
                                 ? Strings.Get("eventplayanimation", "this") + " "
                                 : "" + evt.Value.Name);
                             if (_myCommand.Ints[2] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
@@ -147,7 +146,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             Bitmap destBitmap = new Bitmap(pnlSpawnLoc.Width, pnlSpawnLoc.Height);
             Font renderFont = new Font(new FontFamily("Arial"), 14);
             Graphics g = Graphics.FromImage(destBitmap);
-            g.Clear(Color.White);
+            g.Clear(System.Drawing.Color.White);
             g.FillRectangle(Brushes.Red, new Rectangle((spawnX + 2) * 32, (spawnY + 2) * 32, 32, 32));
             for (int x = 0; x < 5; x++)
             {
@@ -165,7 +164,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex);
+            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex);
             _myCommand.Ints[1] = cmbConditionType.SelectedIndex;
             switch (_myCommand.Ints[1])
             {
@@ -189,22 +188,22 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     if (chkRelativeLocation.Checked && chkRotateDirection.Checked)
                     {
                         _myCommand.Ints[5] = 3;
-                            //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                        //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
                     else if (chkRelativeLocation.Checked)
                     {
                         _myCommand.Ints[5] = 1;
-                            //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                        //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
                     else if (chkRotateDirection.Checked)
                     {
                         _myCommand.Ints[5] = 2;
-                            //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                        //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
                     else
                     {
                         _myCommand.Ints[5] = 0;
-                            //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                        //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
 
                     break;

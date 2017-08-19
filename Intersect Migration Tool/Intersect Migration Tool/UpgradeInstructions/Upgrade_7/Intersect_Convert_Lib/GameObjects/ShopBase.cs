@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects
 {
     public class ShopBase : DatabaseObject
     {
         //Core info
         public new const string DATABASE_TABLE = "shops";
+
         public new const GameObject OBJECT_TYPE = GameObject.Shop;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public List<ShopItem> BuyingItems = new List<ShopItem>();
 
         //Buying List
         public bool BuyingWhitelist = true;
-        public int DefaultCurrency = 0;
+
+        public int DefaultCurrency;
 
         public string Name = "New Shop";
 

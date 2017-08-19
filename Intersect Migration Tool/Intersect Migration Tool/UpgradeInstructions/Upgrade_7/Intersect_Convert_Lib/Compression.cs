@@ -1,8 +1,7 @@
 ﻿using System.IO;
 using System.IO.Compression;
-using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib
 {
     public static class Compression
     {

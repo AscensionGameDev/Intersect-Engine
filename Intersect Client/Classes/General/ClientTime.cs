@@ -1,6 +1,5 @@
 ﻿using System;
 using IntersectClientExtras.GenericClasses;
-using Color = Intersect.Color;
 
 namespace Intersect_Client.Classes.General
 {
@@ -8,9 +7,9 @@ namespace Intersect_Client.Classes.General
     {
         private static DateTime _serverTime = DateTime.Now;
         private static ColorF _currentColor = ColorF.White;
-        private static long _updateTime = 0;
+        private static long _updateTime;
         private static float _rate = 1f;
-        private static long _colorUpdate = 0;
+        private static long _colorUpdate;
         private static Color _targetColor = Color.Transparent;
 
         public static void LoadTime(DateTime timeUpdate, Color clr, float rate)

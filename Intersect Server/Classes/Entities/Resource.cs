@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
+using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Networking;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Maps;
+using Intersect.Server.Classes.Networking;
 
-namespace Intersect_Server.Classes.Entities
+namespace Intersect.Server.Classes.Entities
 {
     public class Resource : Entity
     {
         public bool IsDead;
+
         // Resource Number
         public ResourceBase MyBase;
 
@@ -29,19 +30,19 @@ namespace Intersect_Server.Classes.Entities
             HideName = 1;
         }
 
-        public void Destroy(bool dropitems = false, Entity killer = null)
+        public void Destroy(int dropitems = 0, Entity killer = null)
         {
             Die(dropitems, killer);
             PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Resource, CurrentMap);
         }
 
-        public override void Die(bool dropitems = false, Entity killer = null)
+        public override void Die(int dropitems = 100, Entity killer = null)
         {
-            base.Die(false, killer);
+            base.Die(0, killer);
             MySprite = MyBase.EndGraphic;
             Passable = Convert.ToInt32(MyBase.WalkableAfter);
             IsDead = true;
-            if (dropitems)
+            if (dropitems > 0)
             {
                 SpawnResourceItems(killer);
                 if (MyBase.Animation > -1)
@@ -87,7 +88,7 @@ namespace Intersect_Server.Classes.Entities
                     if (tileHelper.TryFix())
                     {
                         //Tile is valid.. let's see if its open
-                        var map = MapInstance.GetMap(tileHelper.GetMap());
+                        var map = MapInstance.Lookup.Get<MapInstance>(tileHelper.GetMap());
                         if (map != null)
                         {
                             if (!map.TileBlocked(tileHelper.GetX(), tileHelper.GetY()))
@@ -126,9 +127,9 @@ namespace Intersect_Server.Classes.Entities
                 // Drop items
                 foreach (var item in Inventory)
                 {
-                    if (ItemBase.GetItem(item.ItemNum) != null)
+                    if (ItemBase.Lookup.Get<ItemBase>(item.ItemNum) != null)
                     {
-                        MapInstance.GetMap(selectedTile.GetMap())
+                        MapInstance.Lookup.Get<MapInstance>(selectedTile.GetMap())
                             .SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.ItemVal);
                     }
                 }
@@ -141,7 +142,7 @@ namespace Intersect_Server.Classes.Entities
             ByteBuffer myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(base.Data());
             myBuffer.WriteInteger(Convert.ToInt32(IsDead));
-            myBuffer.WriteInteger(MyBase.Id);
+            myBuffer.WriteInteger(MyBase.Index);
             return myBuffer.ToArray();
         }
 

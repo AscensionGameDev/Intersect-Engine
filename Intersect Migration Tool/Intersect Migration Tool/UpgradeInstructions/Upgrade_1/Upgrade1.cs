@@ -1,19 +1,19 @@
 ﻿using System;
-using Intersect;
 using Intersect.Logging;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Events;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Maps;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
+using Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib;
+using Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects;
+using Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Events;
+using Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Maps;
+using Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 using Mono.Data.Sqlite;
-using GameObject = Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObject;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_1
 {
     public class Upgrade1
     {
         //Ban Table Constants
         private const string BAN_TABLE = "bans";
+
         private const string BAN_ID = "id";
         private const string BAN_TIME = "time";
         private const string BAN_USER = "user";
@@ -24,6 +24,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
 
         //Mute Table Constants
         private const string MUTE_TABLE = "mutes";
+
         private const string MUTE_ID = "id";
         private const string MUTE_TIME = "time";
         private const string MUTE_USER = "user";
@@ -34,6 +35,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
 
         //Log Table Constants
         private const string LOG_TABLE = "logs";
+
         private const string LOG_ID = "id";
         private const string LOG_TIME = "time";
         private const string LOG_TYPE = "type";
@@ -41,6 +43,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
 
         //Char Quests Table Constants
         private const string CHAR_QUESTS_TABLE = "char_quests";
+
         private const string CHAR_QUEST_CHAR_ID = "char_id";
         private const string CHAR_QUEST_ID = "quest_id";
         private const string CHAR_QUEST_TASK = "task";
@@ -49,14 +52,16 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
 
         //GameObject Table Constants
         private const string GAME_OBJECT_ID = "id";
+
         private const string GAME_OBJECT_DELETED = "deleted";
         private const string GAME_OBJECT_DATA = "data";
 
         //Map List Table Constants
         private const string MAP_LIST_TABLE = "map_list";
+
         private const string MAP_LIST_DATA = "data";
         private SqliteConnection _dbConnection;
-        private Object _dbLock = new Object();
+        private object _dbLock = new object();
 
         public Upgrade1(SqliteConnection connection)
         {
@@ -349,7 +354,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
             {
                 var tableName = GetGameObjectTable(type);
                 ClearGameObjects(type);
-                var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" + GAME_OBJECT_DELETED +
+                var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" +
+                            GAME_OBJECT_DELETED +
                             ";";
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
@@ -374,7 +380,8 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
             }
             if (nullIssues != "")
             {
-                throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine + nullIssues));
+                throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine +
+                                     nullIssues));
             }
         }
 

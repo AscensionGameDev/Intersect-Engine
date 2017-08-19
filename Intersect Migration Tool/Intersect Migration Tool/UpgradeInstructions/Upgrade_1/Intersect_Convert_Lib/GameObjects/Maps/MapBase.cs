@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
-using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Events;
+using Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Events;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Maps
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Maps
 {
     public class MapBase : DatabaseObject
     {
@@ -15,10 +14,10 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
         public MapAutotiles Autotiles;
 
         //Server/Editor Only
-        public int EventIndex = 0;
+        public int EventIndex;
 
         //Temporary Values
-        public bool IsClient = false;
+        public bool IsClient;
 
         //Core Data
         public TileArray[] Layers = new TileArray[Options.LayerCount];
@@ -110,22 +109,23 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
 
         //Properties
         public string Music { get; set; } = "None";
+
         public string Sound { get; set; } = "None";
         public bool IsIndoors { get; set; }
         public string Panorama { get; set; } = "None";
         public string Fog { get; set; } = "None";
-        public int FogXSpeed { get; set; } = 0;
-        public int FogYSpeed { get; set; } = 0;
-        public int FogTransparency { get; set; } = 0;
-        public int RHue { get; set; } = 0;
-        public int GHue { get; set; } = 0;
-        public int BHue { get; set; } = 0;
-        public int AHue { get; set; } = 0;
+        public int FogXSpeed { get; set; }
+        public int FogYSpeed { get; set; }
+        public int FogTransparency { get; set; }
+        public int RHue { get; set; }
+        public int GHue { get; set; }
+        public int BHue { get; set; }
+        public int AHue { get; set; }
         public int Brightness { get; set; } = 100;
-        public byte ZoneType { get; set; } = 0; //Everything goes, 1 is safe, add more later
+        public byte ZoneType { get; set; } //Everything goes, 1 is safe, add more later
         public int PlayerLightSize { get; set; } = 300;
         public byte PlayerLightIntensity { get; set; } = 255;
-        public float PlayerLightExpand { get; set; } = 0f;
+        public float PlayerLightExpand { get; set; }
         public Color PlayerLightColor { get; set; } = Color.White;
         public string OverlayGraphic { get; set; } = "None";
 

@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects
 {
     public class SpellBase : DatabaseObject
     {
         //Core Info
         public new const string DATABASE_TABLE = "spells";
+
         public new const GameObject OBJECT_TYPE = GameObject.Spell;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
@@ -15,35 +15,38 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1.Intersect_Conve
         public int CastAnimation = -1;
 
         //Spell Times
-        public int CastDuration = 0;
-        public int CastRange = 0;
-        public int CooldownDuration = 0;
-        public int Cost = 0;
-        public int Data1 = 0;
-        public int Data2 = 0;
-        public int Data3 = 0;
-        public int Data4 = 0;
+        public int CastDuration;
+
+        public int CastRange;
+        public int CooldownDuration;
+        public int Cost;
+        public int Data1;
+        public int Data2;
+        public int Data3;
+        public int Data4;
         public string Data5 = "";
         public string Desc = "";
         public int HitAnimation = -1;
-        public int HitRadius = 0;
+        public int HitRadius;
 
         //Requirements
-        public int LevelReq = 0;
+        public int LevelReq;
 
         public string Name = "New Spell";
         public string Pic = "";
 
         //Extra Data, Teleport Coords, Custom Spells, Etc
         public int Projectile = 0;
-        public byte SpellType = 0;
+
+        public byte SpellType;
 
         //Buff/Debuff Data
         public int[] StatDiff = new int[(int) Stats.StatCount];
+
         public int[] StatReq = new int[(int) Stats.StatCount];
 
         //Targetting Stuff
-        public int TargetType = 0;
+        public int TargetType;
 
         //Costs
         public int[] VitalCost = new int[(int) Vitals.VitalCount];

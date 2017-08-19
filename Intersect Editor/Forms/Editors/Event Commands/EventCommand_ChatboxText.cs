@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_ChatboxText : UserControl
     {
@@ -60,7 +59,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void lblCommands_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("http://www.ascensiongamedev.com/community/topic/749-event-text-variables/");
+            System.Diagnostics.Process.Start(
+                "http://www.ascensiongamedev.com/community/topic/749-event-text-variables/");
         }
     }
 }

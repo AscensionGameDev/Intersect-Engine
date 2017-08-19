@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_EndQuest : UserControl
     {
@@ -19,8 +19,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _eventEditor = editor;
             InitLocalization();
             cmbQuests.Items.Clear();
-            cmbQuests.Items.AddRange(Database.GetGameObjectList(GameObject.Quest));
-            cmbQuests.SelectedIndex = Database.GameObjectListIndex(GameObject.Quest, refCommand.Ints[0]);
+            cmbQuests.Items.AddRange(Database.GetGameObjectList(GameObjectType.Quest));
+            cmbQuests.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Quest, refCommand.Ints[0]);
             chkRunCompletionTask.Checked = Convert.ToBoolean(refCommand.Ints[1]);
         }
 
@@ -35,7 +35,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.Quest, cmbQuests.SelectedIndex);
+            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Quest, cmbQuests.SelectedIndex);
             _myCommand.Ints[1] = Convert.ToInt32(chkRunCompletionTask.Checked);
             _eventEditor.FinishCommandEdit();
         }

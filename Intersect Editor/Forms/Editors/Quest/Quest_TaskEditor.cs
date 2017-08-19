@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Windows.Forms;
-using DarkUI.Controls;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Editors.Quest
+namespace Intersect.Editor.Forms.Editors.Quest
 {
     public partial class Quest_TaskEditor : UserControl
     {
         private ByteBuffer _eventBackup = new ByteBuffer();
         private QuestBase.QuestTask _myTask;
-        public bool Cancelled = false;
+        public bool Cancelled;
 
         public Quest_TaskEditor(QuestBase.QuestTask refTask)
         {
             InitializeComponent();
             _myTask = refTask;
             _eventBackup.WriteBytes(_myTask.CompletionEvent.EventData());
+            InitLocalization();
             cmbTaskType.SelectedIndex = _myTask.Objective;
             txtStartDesc.Text = _myTask.Desc;
             UpdateFormElements();
@@ -28,15 +28,14 @@ namespace Intersect_Editor.Forms.Editors.Quest
                 case 0: //Event Driven
                     break;
                 case 1: //Gather Items
-                    cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _myTask.Data1);
+                    cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, _myTask.Data1);
                     nudItemAmount.Value = _myTask.Data2;
                     break;
                 case 2: //Kill NPCS
-                    cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _myTask.Data1);
+                    cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, _myTask.Data1);
                     nudNpcQuantity.Value = _myTask.Data2;
                     break;
             }
-            InitLocalization();
         }
 
         private void InitLocalization()
@@ -65,7 +64,6 @@ namespace Intersect_Editor.Forms.Editors.Quest
             btnEditTaskEvent.Text = Strings.Get("taskeditor", "editcompletionevent");
             btnSave.Text = Strings.Get("taskeditor", "ok");
             btnCancel.Text = Strings.Get("taskeditor", "cancel");
-
         }
 
         private void UpdateFormElements()
@@ -79,14 +77,14 @@ namespace Intersect_Editor.Forms.Editors.Quest
                 case 1: //Gather Items
                     grpGatherItems.Show();
                     cmbItem.Items.Clear();
-                    cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
+                    cmbItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
                     if (cmbItem.Items.Count > 0) cmbItem.SelectedIndex = 0;
                     nudItemAmount.Value = 1;
                     break;
                 case 2: //Kill Npcs
                     grpKillNpcs.Show();
                     cmbNpc.Items.Clear();
-                    cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
+                    cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObjectType.Npc));
                     if (cmbNpc.Items.Count > 0) cmbNpc.SelectedIndex = 0;
                     nudNpcQuantity.Value = 1;
                     break;
@@ -104,12 +102,12 @@ namespace Intersect_Editor.Forms.Editors.Quest
                     _myTask.Data2 = 1;
                     break;
                 case 1: //Gather Items
-                    _myTask.Data1 = Database.GameObjectIdFromList(GameObject.Item, cmbItem.SelectedIndex);
-                    _myTask.Data2 = (int)nudItemAmount.Value;
+                    _myTask.Data1 = Database.GameObjectIdFromList(GameObjectType.Item, cmbItem.SelectedIndex);
+                    _myTask.Data2 = (int) nudItemAmount.Value;
                     break;
                 case 2: //Kill Npcs
-                    _myTask.Data1 = Database.GameObjectIdFromList(GameObject.Npc, cmbNpc.SelectedIndex);
-                    _myTask.Data2 = (int)nudNpcQuantity.Value;
+                    _myTask.Data1 = Database.GameObjectIdFromList(GameObjectType.Npc, cmbNpc.SelectedIndex);
+                    _myTask.Data2 = (int) nudNpcQuantity.Value;
                     break;
             }
             ParentForm.Close();
@@ -129,7 +127,7 @@ namespace Intersect_Editor.Forms.Editors.Quest
 
         private void btnEditTaskEvent_Click(object sender, EventArgs e)
         {
-            _myTask.CompletionEvent.Name = Strings.Get("taskeditor","completionevent");
+            _myTask.CompletionEvent.Name = Strings.Get("taskeditor", "completionevent");
             FrmEvent editor = new FrmEvent(null)
             {
                 MyEvent = _myTask.CompletionEvent

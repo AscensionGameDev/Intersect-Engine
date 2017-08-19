@@ -5,19 +5,18 @@ using System.IO;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Forms.Editors;
+using Intersect.Editor.Forms.Editors.Event_Commands;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Forms.Editors;
-using Intersect_Editor.Forms.Editors.Event_Commands;
-using Color = System.Drawing.Color;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class FrmEvent : Form
     {
@@ -51,7 +50,7 @@ namespace Intersect_Editor.Forms
         private void txtEventname_TextChanged(object sender, EventArgs e)
         {
             MyEvent.Name = txtEventname.Text;
-            Text = Strings.Get("eventeditor", "title", MyEvent.MyIndex, txtEventname.Text);
+            Text = Strings.Get("eventeditor", "title", MyEvent.Index, txtEventname.Text);
         }
 
         private void lstEventCommands_SelectedIndexChanged(object sender, EventArgs e)
@@ -79,7 +78,8 @@ namespace Intersect_Editor.Forms
             btnEdit.Enabled = true;
             if (!_commandProperties[_currentCommand].Editable) btnEdit.Enabled = false;
             if (_commandProperties[_currentCommand].MyList.Commands.Count == 0 ||
-                _commandProperties[_currentCommand].MyIndex >= _commandProperties[_currentCommand].MyList.Commands.Count ||
+                _commandProperties[_currentCommand].MyIndex >=
+                _commandProperties[_currentCommand].MyList.Commands.Count ||
                 _commandProperties[_currentCommand].MyIndex < 0) btnEdit.Enabled = false;
             btnDelete.Enabled = true;
         }
@@ -120,7 +120,7 @@ namespace Intersect_Editor.Forms
             Bitmap destBitmap = null;
             destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
             graphics = Graphics.FromImage(destBitmap);
-            graphics.Clear(Color.FromArgb(60, 63, 65));
+            graphics.Clear(System.Drawing.Color.FromArgb(60, 63, 65));
 
             if (CurrentPage.Graphic.Type == 1) //Sprite
             {
@@ -161,7 +161,8 @@ namespace Intersect_Editor.Forms
                         new Rectangle(CurrentPage.Graphic.X * Options.TileWidth,
                             CurrentPage.Graphic.Y * Options.TileHeight,
                             Options.TileWidth + (CurrentPage.Graphic.Width * Options.TileWidth),
-                            Options.TileHeight + (CurrentPage.Graphic.Height * Options.TileHeight)), GraphicsUnit.Pixel);
+                            Options.TileHeight + (CurrentPage.Graphic.Height * Options.TileHeight)),
+                        GraphicsUnit.Pixel);
                 }
                 sourceBitmap.Dispose();
             }
@@ -312,7 +313,8 @@ namespace Intersect_Editor.Forms
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.Animation = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex - 1);
+            CurrentPage.Animation =
+                Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
         }
 
         private void chkIsGlobal_CheckedChanged(object sender, EventArgs e)
@@ -372,7 +374,7 @@ namespace Intersect_Editor.Forms
             }
             var tmpCommand = new EventCommand();
             grpNewCommands.Hide();
-            tmpCommand.Type = (EventCommandType) Int32.Parse(e.Node.Tag.ToString());
+            tmpCommand.Type = (EventCommandType) int.Parse(e.Node.Tag.ToString());
             if (tmpCommand.Type == EventCommandType.SetSwitch || tmpCommand.Type == EventCommandType.SetSelfSwitch)
             {
                 tmpCommand.Ints[2] = 1;
@@ -381,7 +383,8 @@ namespace Intersect_Editor.Forms
                  tmpCommand.Type == EventCommandType.WaitForRouteCompletion) && MyEvent.CommonEvent)
             {
                 DarkMessageBox.ShowWarning(Strings.Get("eventcommandlist", "notcommon"),
-                    Strings.Get("eventcommandlist", "notcommoncaption"), DarkDialogButton.Ok, Properties.Resources.Icon);
+                    Strings.Get("eventcommandlist", "notcommoncaption"), DarkDialogButton.Ok,
+                    Properties.Resources.Icon);
                 EnableButtons();
                 return;
             }
@@ -392,7 +395,8 @@ namespace Intersect_Editor.Forms
             if (_isInsert)
             {
                 _commandProperties[_currentCommand].MyList.Commands.Insert(
-                    _commandProperties[_currentCommand].MyList.Commands.IndexOf(_commandProperties[_currentCommand].Cmd),
+                    _commandProperties[_currentCommand].MyList.Commands
+                        .IndexOf(_commandProperties[_currentCommand].Cmd),
                     tmpCommand);
             }
             else
@@ -407,6 +411,11 @@ namespace Intersect_Editor.Forms
         {
             var editForm = new frmDynamicRequirements(CurrentPage.ConditionLists, RequirementType.Event);
             editForm.ShowDialog();
+        }
+
+        private void txtCommand_TextChanged(object sender, EventArgs e)
+        {
+            CurrentPage.TriggerCommand = txtCommand.Text;
         }
 
         #region "Form Events"
@@ -451,7 +460,6 @@ namespace Intersect_Editor.Forms
 
         private void FrmEvent_FormClosed(object sender, FormClosedEventArgs e)
         {
-
         }
 
         private void FrmEvent_VisibleChanged(object sender, EventArgs e)
@@ -529,7 +537,8 @@ namespace Intersect_Editor.Forms
                 lstCommands.Nodes[i].Text = Strings.Get("eventcommands", lstCommands.Nodes[i].Name);
                 for (int x = 0; x < lstCommands.Nodes[i].Nodes.Count; x++)
                 {
-                    lstCommands.Nodes[i].Nodes[x].Text = Strings.Get("eventcommands", lstCommands.Nodes[i].Nodes[x].Name);
+                    lstCommands.Nodes[i].Nodes[x].Text =
+                        Strings.Get("eventcommands", lstCommands.Nodes[i].Nodes[x].Name);
                 }
             }
         }
@@ -548,7 +557,7 @@ namespace Intersect_Editor.Forms
             _eventBackup = new ByteBuffer();
             _eventBackup.WriteBytes(MyEvent.EventData());
             txtEventname.Text = MyEvent.Name;
-            if (MyEvent.MyIndex < 0)
+            if (MyEvent.Index < 0)
             {
                 txtEventname.Enabled = false;
                 grpTriggers.Hide();
@@ -558,12 +567,12 @@ namespace Intersect_Editor.Forms
             cmbPreviewFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.Get("general", "none"));
-            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             if (MyEvent.CommonEvent)
             {
                 grpEntityOptions.Hide();
                 cmbTrigger.Items.Clear();
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 6; i++)
                 {
                     cmbTrigger.Items.Add(Strings.Get("eventeditor", "commontrigger" + i));
                 }
@@ -577,7 +586,7 @@ namespace Intersect_Editor.Forms
                 }
                 cmbTriggerVal.Items.Clear();
                 cmbTriggerVal.Items.Add(Strings.Get("general", "none"));
-                cmbTriggerVal.Items.AddRange(Database.GetGameObjectList(GameObject.Projectile));
+                cmbTriggerVal.Items.AddRange(Database.GetGameObjectList(GameObjectType.Projectile));
             }
             chkIsGlobal.Checked = Convert.ToBoolean(MyEvent.IsGlobal);
             if (MyEvent.CommonEvent) chkIsGlobal.Hide();
@@ -591,18 +600,18 @@ namespace Intersect_Editor.Forms
         /// <param name="pageNum">The index of the page to load.</param>
         public void LoadPage(int pageNum)
         {
-            Text = Strings.Get("eventeditor", "title", MyEvent.MyIndex, txtEventname.Text);
+            Text = Strings.Get("eventeditor", "title", MyEvent.Index, txtEventname.Text);
             CurrentPageIndex = pageNum;
             CurrentPage = MyEvent.MyPages[pageNum];
             for (int i = 0; i < _pageTabs.Count; i++)
             {
                 if (i == CurrentPageIndex)
                 {
-                    _pageTabs[i].BackColor = Color.FromArgb(90, 90, 90);
+                    _pageTabs[i].BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
                 }
                 else
                 {
-                    _pageTabs[i].BackColor = Color.FromArgb(45, 45, 48);
+                    _pageTabs[i].BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
                 }
             }
             cmbMoveType.SelectedIndex = CurrentPage.MovementType;
@@ -629,7 +638,17 @@ namespace Intersect_Editor.Forms
                     lblTriggerVal.Text = Strings.Get("eventeditor", "projectile");
                     cmbTriggerVal.Show();
                     cmbTriggerVal.SelectedIndex =
-                        Database.GameObjectListIndex(GameObject.Projectile, CurrentPage.TriggerVal) + 1;
+                        Database.GameObjectListIndex(GameObjectType.Projectile, CurrentPage.TriggerVal) + 1;
+                }
+            }
+            else
+            {
+                if (cmbTrigger.SelectedIndex == (int) EventPage.CommonEventTriggers.Command)
+                {
+                    txtCommand.Show();
+                    txtCommand.Text = CurrentPage.TriggerCommand;
+                    lblCommand.Show();
+                    lblCommand.Text = Strings.Get("eventeditor", "command");
                 }
             }
             cmbPreviewFace.SelectedIndex = cmbPreviewFace.Items.IndexOf(CurrentPage.FaceGraphic);
@@ -638,7 +657,8 @@ namespace Intersect_Editor.Forms
                 cmbPreviewFace.SelectedIndex = 0;
                 UpdateFacePreview();
             }
-            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, CurrentPage.Animation) + 1;
+            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, CurrentPage.Animation) +
+                                         1;
             chkHideName.Checked = Convert.ToBoolean(CurrentPage.HideName);
             chkDisableInspector.Checked = Convert.ToBoolean(CurrentPage.DisablePreview);
             chkDirectionFix.Checked = Convert.ToBoolean(CurrentPage.DirectionFix);
@@ -658,8 +678,8 @@ namespace Intersect_Editor.Forms
             }
             if (NewEvent)
             {
-                if (MyMap.EventIndex == MyEvent.MyIndex + 1) MyMap.EventIndex--;
-                MyMap.Events.Remove(MyEvent.MyIndex);
+                if (MyMap.EventIndex == MyEvent.Index + 1) MyMap.EventIndex--;
+                MyMap.Events.Remove(MyEvent.Index);
             }
             else
             {
@@ -675,7 +695,7 @@ namespace Intersect_Editor.Forms
             {
                 CancelCommandEdit();
             }
-            if (MyEvent.CommonEvent && MyEvent.MyIndex >= 0)
+            if (MyEvent.CommonEvent && MyEvent.Index >= 0)
             {
                 PacketSender.SendSaveObject(MyEvent);
             }
@@ -841,7 +861,8 @@ namespace Intersect_Editor.Forms
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[5]],
                                 indent + "          ");
 
-                            lstEventCommands.Items.Add(indent + "      : " + Strings.Get("eventcommandlist", "endspell"));
+                            lstEventCommands.Items.Add(
+                                indent + "      : " + Strings.Get("eventcommandlist", "endspell"));
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -1026,12 +1047,14 @@ namespace Intersect_Editor.Forms
                     }
                     if (command.Ints[0] == (int) SwitchVariableTypes.PlayerSwitch)
                     {
-                        return Strings.Get("eventcommandlist", "playerswitch", PlayerSwitchBase.GetName(command.Ints[1]),
+                        return Strings.Get("eventcommandlist", "playerswitch",
+                            PlayerSwitchBase.GetName(command.Ints[1]),
                             value);
                     }
                     else if (command.Ints[0] == (int) SwitchVariableTypes.ServerSwitch)
                     {
-                        return Strings.Get("eventcommandlist", "globalswitch", ServerSwitchBase.GetName(command.Ints[1]),
+                        return Strings.Get("eventcommandlist", "globalswitch",
+                            ServerSwitchBase.GetName(command.Ints[1]),
                             value);
                     }
                     else
@@ -1054,7 +1077,8 @@ namespace Intersect_Editor.Forms
                             break;
 
                         case 3:
-                            varvalue = Strings.Get("eventcommandlist", "randvariable", command.Ints[3], command.Ints[4]);
+                            varvalue = Strings.Get("eventcommandlist", "randvariable", command.Ints[3],
+                                command.Ints[4]);
                             break;
                     }
                     if (command.Ints[0] == (int) SwitchVariableTypes.PlayerVariable)
@@ -1344,7 +1368,7 @@ namespace Intersect_Editor.Forms
                             Strings.Get("eventcommandlist", "showoffer"));
                     }
                 case EventCommandType.CompleteQuestTask:
-                    var quest = QuestBase.GetQuest(command.Ints[0]);
+                    var quest = QuestBase.Lookup.Get<QuestBase>(command.Ints[0]);
                     if (quest != null)
                     {
                         //Try to find task
@@ -1681,6 +1705,9 @@ namespace Intersect_Editor.Forms
             CurrentPage.Trigger = cmbTrigger.SelectedIndex;
             cmbTriggerVal.Hide();
             lblTriggerVal.Hide();
+            txtCommand.Hide();
+            lblCommand.Hide();
+
             if (!MyEvent.CommonEvent)
             {
                 if (cmbTrigger.SelectedIndex == (int) EventPage.EventTriggers.ProjectileHit)
@@ -1689,6 +1716,16 @@ namespace Intersect_Editor.Forms
                     lblTriggerVal.Show();
                     lblTriggerVal.Text = Strings.Get("eventeditor", "projectile");
                     cmbTriggerVal.SelectedIndex = 0;
+                }
+            }
+            else
+            {
+                if (cmbTrigger.SelectedIndex == (int) EventPage.CommonEventTriggers.Command)
+                {
+                    txtCommand.Show();
+                    txtCommand.Text = CurrentPage.TriggerCommand;
+                    lblCommand.Show();
+                    lblCommand.Text = Strings.Get("eventeditor", "command");
                 }
             }
         }

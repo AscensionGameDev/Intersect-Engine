@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Windows.Forms;
+using Intersect;
+using Intersect.Client.Classes.Core;
+using Intersect.Client.Classes.MonoGame.Network;
 using Intersect.Localization;
 using Intersect.Logging;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Gwen.Renderer;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management;
-using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.System;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
@@ -31,6 +33,7 @@ namespace Intersect_Client_MonoGame
             //Setup an error handler
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             graphics = new GraphicsDeviceManager(this);
+
             Content.RootDirectory = "";
             IsMouseVisible = true;
             Globals.ContentManager = new MonoContentManager();
@@ -38,20 +41,28 @@ namespace Intersect_Client_MonoGame
             Globals.Database.LoadConfig();
             Globals.Database.LoadPreferences();
             Strings.Init(Strings.IntersectComponent.Client, Globals.Database.Language);
+            Gui.ActiveFont = TextUtils.StripToLower(Globals.Database.Font);
             Globals.InputManager = new MonoInput(this);
-            GameGraphics.Renderer = new MonoRenderer(graphics, Content, this);
+
+            var renderer = new MonoRenderer(graphics, Content, this);
+            GameGraphics.Renderer = renderer;
+            if (renderer == null) throw new NullReferenceException("No renderer.");
+
             Globals.System = new MonoSystem();
             Gui.GwenRenderer = new IntersectRenderer(null, GameGraphics.Renderer);
             Gui.GwenInput = new IntersectInput();
+            GameControls.Init();
+
+            Window.Position = new Microsoft.Xna.Framework.Point(-20, -2000);
             Window.IsBorderless = false;
         }
 
         //Really basic error handler for debugging purposes
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs exception)
         {
-            Log.Error((Exception) e.ExceptionObject);
+            Log.Error((Exception) exception?.ExceptionObject);
             MessageBox.Show(
-                "The Intersect Client has encountered an error and must close. Error information can be found in resources/logs/errors.log");
+                @"The Intersect Client has encountered an error and must close. Error information can be found in logs/errors.log");
             Environment.Exit(-1);
         }
 
@@ -63,9 +74,10 @@ namespace Intersect_Client_MonoGame
         /// </summary>
         protected override void Initialize()
         {
-            //Setup SFML Classes
-            ((MonoRenderer) GameGraphics.Renderer).Init(GraphicsDevice);
-            GameNetwork.MySocket = new MonoSocket();
+            (GameGraphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
+
+            // TODO: Remove old netcode
+            GameNetwork.MySocket = new IntersectNetworkSocket();
 
             GameMain.Start();
             base.Initialize();
@@ -107,6 +119,13 @@ namespace Intersect_Client_MonoGame
                 Exit();
             }
             base.Draw(gameTime);
+        }
+
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            base.OnExiting(sender, args);
+
+            GameNetwork.Close("quitting");
         }
     }
 }

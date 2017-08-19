@@ -1,9 +1,10 @@
-﻿using System.Threading;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Networking;
+﻿using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Maps;
 
-namespace Intersect_Server.Classes.Core
+namespace Intersect.Server.Classes.Core
 {
     public static class ServerLoop
     {
@@ -14,10 +15,9 @@ namespace Intersect_Server.Classes.Core
             while (Globals.ServerStarted)
             {
                 var timeMs = Globals.System.GetTimeMs();
-                var maps = MapInstance.GetObjects();
-                foreach (var map in maps)
+                foreach (MapInstance map in MapInstance.Lookup.Values)
                 {
-                    if (map.Value.Active) map.Value.Update(timeMs);
+                    map.Update(timeMs);
                 }
                 cps++;
                 if (timeMs >= cpsTimer)
@@ -27,16 +27,16 @@ namespace Intersect_Server.Classes.Core
                     cpsTimer = timeMs + 1000;
                 }
                 ServerTime.Update();
-                if (Globals.CPSLock)
+                var currentTime = Globals.System.GetTimeMs();
+                if (Globals.CPSLock && currentTime < timeMs + 10)
                 {
-                    Thread.Sleep(10);
+                    int waitTime = (int) ((timeMs + 10) - currentTime);
+                    Thread.Sleep(waitTime);
                 }
             }
 
             //Server is shutting down!!
             //TODO gracefully disconnect all clients
-            SocketServer.Stop();
-            WebSocketServer.Stop();
         }
     }
 }

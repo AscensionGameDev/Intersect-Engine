@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
+using Intersect.Enums;
 using Intersect.Localization;
-using IntersectClientExtras.File_Management;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
-using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -21,44 +17,20 @@ namespace Intersect_Client.Classes.UI.Game
 
         private List<Label> _lblnames = new List<Label>();
         private ImagePanel _leader;
+
         private Button _leaveButton;
+
         //Controls
         private WindowControl _partyWindow;
 
         //Init
         public PartyWindow(Canvas _gameCanvas)
         {
-            _partyWindow = new WindowControl(_gameCanvas, Strings.Get("parties", "title"));
-            _partyWindow.SetSize(228, 320);
-            _partyWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 210,
-                GameGraphics.Renderer.GetScreenHeight() - 500);
+            _partyWindow = new WindowControl(_gameCanvas, Strings.Get("parties", "title"), false, "PartyWindow");
             _partyWindow.DisableResizing();
-            _partyWindow.Margin = Margin.Zero;
-            _partyWindow.Padding = new Padding(8, 5, 9, 11);
-            _partyWindow.IsHidden = true;
-
-            _partyWindow.SetTitleBarHeight(24);
-            _partyWindow.SetCloseButtonSize(20, 20);
-            _partyWindow.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "partyactive.png"),
-                WindowControl.ControlState.Active);
-            _partyWindow.SetCloseButtonImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"),
-                Button.ControlState.Normal);
-            _partyWindow.SetCloseButtonImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"),
-                Button.ControlState.Hovered);
-            _partyWindow.SetCloseButtonImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"),
-                Button.ControlState.Clicked);
-            _partyWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
-            _partyWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
             //Add the icon representing party leader (ALWAYS member 1 in the party list)
-            _leader = new ImagePanel(_partyWindow);
-            _leader.SetSize(34, 34);
-            _leader.SetPosition(_partyWindow.Width - 80, 4);
-            _leader.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "partyleader.png");
+            _leader = new ImagePanel(_partyWindow, "LeaderIcon");
             _leader.SetToolTipText(Strings.Get("parties", "leader"));
             _leader.Hide();
             if (Globals.Me.Party.Count > 0)
@@ -74,8 +46,7 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < 4; i++)
             {
                 //Labels
-                _lblnames.Add(new Label(_partyWindow));
-                _lblnames[i].SetPosition(4, 4 + (60 * i));
+                _lblnames.Add(new Label(_partyWindow, "MemberName" + i));
                 if (i < Globals.Me.Party.Count)
                 {
                     _lblnames[i].Text = Globals.Entities[Globals.Me.Party[i]].MyName;
@@ -84,35 +55,15 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     _lblnames[i].Text = "";
                 }
-                _lblnames[i].TextColorOverride = Color.White;
 
                 //Health bars
-                _barContainer.Add(new ImagePanel(_partyWindow));
-                _barContainer[i].SetSize(183, 25);
-                _barContainer[i].SetPosition(4, 34 + (60 * i));
-                _barContainer[i].Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
-                    "EmptyBar.png");
+                _barContainer.Add(new ImagePanel(_partyWindow, "HealthBarContainer" + i));
                 _barContainer[i].Hide();
                 if (i < Globals.Me.Party.Count)
                 {
                     _barContainer[i].Show();
                 }
-
-                _bar.Add(new ImagePanel(_barContainer[i]));
-                if (i < Globals.Me.Party.Count)
-                {
-                    float d =
-                        (float)
-                        ((float) Globals.Entities[Globals.Me.Party[i]].Vital[(int) Vitals.Health] /
-                         (float) Globals.Entities[Globals.Me.Party[i]].MaxVital[(int) Vitals.Health]);
-                    _bar[i].SetSize(Convert.ToInt32(d * 183), 25);
-                }
-                else
-                {
-                    _bar[i].SetSize(0, 25);
-                }
-                _bar[i].SetPosition(0, 0);
-                _bar[i].Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "lifebar.png");
+                _bar.Add(new ImagePanel(_barContainer[i], "HealthBar" + i));
 
                 if (i == 0)
                 {
@@ -120,18 +71,7 @@ namespace Intersect_Client.Classes.UI.Game
                 }
                 else
                 {
-                    _kickButtons.Add(new Button(_partyWindow));
-                    _kickButtons[i].SetSize(34, 34);
-                    _kickButtons[i].SetPosition(_partyWindow.Width - 45, 30 + (60 * i));
-                    _kickButtons[i].SetImage(
-                        Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "partykick.png"),
-                        Button.ControlState.Normal);
-                    _kickButtons[i].SetImage(
-                        Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "partykick.png"),
-                        Button.ControlState.Hovered);
-                    _kickButtons[i].SetImage(
-                        Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "partykick.png"),
-                        Button.ControlState.Clicked);
+                    _kickButtons.Add(new Button(_partyWindow, "KickButton" + i));
                     _kickButtons[i].Clicked += kick_Clicked;
                     if (i < Globals.Me.Party.Count)
                     {
@@ -155,17 +95,7 @@ namespace Intersect_Client.Classes.UI.Game
                 }
             }
 
-            _leaveButton = new Button(_partyWindow);
-            _leaveButton.SetBounds(_partyWindow.Width - 50, _partyWindow.Height - 68, 34, 34);
-            _leaveButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "partyleave.png"),
-                Button.ControlState.Normal);
-            _leaveButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "partyleave.png"),
-                Button.ControlState.Hovered);
-            _leaveButton.SetImage(
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "partyleave.png"),
-                Button.ControlState.Clicked);
+            _leaveButton = new Button(_partyWindow, "LeavePartyButton");
             _leaveButton.SetToolTipText(Strings.Get("parties", "leave"));
             _leaveButton.Clicked += leave_Clicked;
         }
@@ -203,7 +133,7 @@ namespace Intersect_Client.Classes.UI.Game
                         var vitalMaxHP = partyMember.MaxVital[(int) Vitals.Health];
                         var ratioHP = ((float) vitalHP) / ((float) vitalMaxHP);
                         ratioHP = Math.Min(1, Math.Max(0, ratioHP));
-                        _bar[i].SetSize(Convert.ToInt32(ratioHP * 183), 25);
+                        _bar[i].SetSize(Convert.ToInt32(ratioHP * _barContainer[i].Width), _barContainer[i].Height);
                         if (i > 0) _kickButtons[i].Hide();
 
                         //Only show the kick buttons if its you or you are the party leader
@@ -218,7 +148,7 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         if (i > 0) _kickButtons[i].SetToolTipText("");
                         _lblnames[i].Text = "";
-                        _bar[i].SetSize(0, 25);
+                        _bar[i].SetSize(0, _barContainer[i].Height);
                         _barContainer[i].Hide();
                     }
                 }

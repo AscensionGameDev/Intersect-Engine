@@ -1,24 +1,32 @@
 #define websockets
 using System;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using Intersect;
 using Intersect.Localization;
 using Intersect.Logging;
-using Intersect_Server.Classes.Core;
-using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Networking;
+using Intersect.Network;
+using Intersect.Network.Crypto;
+using Intersect.Network.Crypto.Formats;
+using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Networking;
+using Intersect.Server.Network;
+using Open.Nat;
 
-namespace Intersect_Server.Classes
+namespace Intersect.Server.Classes
 {
     public class MainClass
     {
         private static bool _errorHalt = true;
+        public static ServerNetwork SocketServer;
 
         public static void Main(string[] args)
         {
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             Thread logicThread;
@@ -28,6 +36,7 @@ namespace Intersect_Server.Classes
                 Console.ReadKey();
                 return;
             }
+
             Strings.Init(Strings.IntersectComponent.Server, Options.Language);
             Console.WriteLine(@"  _____       _                          _   ");
             Console.WriteLine(@" |_   _|     | |                        | |  ");
@@ -52,14 +61,74 @@ namespace Intersect_Server.Classes
                 Console.ReadKey();
                 return;
             }
+            CustomColors.Load();
             Console.WriteLine(Strings.Get("commandoutput", "playercount", Database.GetRegisteredPlayers()));
-            SocketServer.Init();
-            Console.WriteLine(Strings.Get("intro", "started", Options.ServerPort));
-#if websockets
-            WebSocketServer.Init();
-            Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort + 1));
-#endif
             Console.WriteLine(Strings.Get("commandoutput", "gametime", ServerTime.GetTime().ToString("F")));
+            ServerTime.Update();
+            Log.Global.AddOutput(new ConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error));
+            var assembly = Assembly.GetExecutingAssembly();
+            using (var stream = assembly.GetManifestResourceStream("Intersect.Server.private-intersect.bek"))
+            {
+                var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
+                Debug.Assert(rsaKey != null, "rsaKey != null");
+                SocketServer = new ServerNetwork(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
+            }
+
+            var packetHander = new PacketHandler();
+            SocketServer.Handlers[PacketCode.BinaryPacket] = packetHander.HandlePacket;
+
+#if websockets
+            WebSocketNetwork.Init(Options.ServerPort);
+            Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort));
+#endif
+
+            if (!SocketServer.Listen())
+            {
+                Log.Error("An error occurred while attempting to connect.");
+            }
+
+            Console.WriteLine();
+            UPnP.ConnectNatDevice().Wait(5000);
+            UPnP.OpenServerPort(Options.ServerPort, Protocol.Tcp).Wait(5000);
+            UPnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
+
+            Console.WriteLine();
+
+            //Check to see if AGD can see this server. If so let the owner know :)
+            var externalIp = "";
+            var serverAccessible = PortChecker.CanYouSeeMe(Options.ServerPort, out externalIp);
+
+            Console.WriteLine(Strings.Get("portchecking", "connectioninfo"));
+            if (!String.IsNullOrEmpty(externalIp))
+            {
+                Console.WriteLine(Strings.Get("portchecking", "publicip"), externalIp);
+                Console.WriteLine(Strings.Get("portchecking", "publicport"), Options.ServerPort);
+
+                Console.WriteLine();
+                if (serverAccessible)
+                {
+                    Console.WriteLine(Strings.Get("portchecking", "accessible"));
+                    Console.WriteLine(Strings.Get("portchecking", "letothersjoin"));
+                }
+                else
+                {
+                    Console.WriteLine(Strings.Get("portchecking", "notaccessible"));
+                    Console.WriteLine(Strings.Get("portchecking", "debuggingsteps"));
+                    Console.WriteLine(Strings.Get("portchecking", "checkfirewalls"));
+                    Console.WriteLine(Strings.Get("portchecking", "checkantivirus"));
+                    Console.WriteLine(Strings.Get("portchecking", "screwed"));
+                    Console.WriteLine();
+                    if (!UPnP.ForwardingSucceeded())
+                        Console.WriteLine(Strings.Get("portchecking", "checkrouterupnp"));
+                }
+            }
+            else
+            {
+                Console.WriteLine(Strings.Get("portchecking", "notconnected"));
+            }
+            Console.WriteLine();
+            Console.WriteLine(Strings.Get("intro", "started", Options.ServerPort));
+
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
             if (args.Contains("nohalt"))
@@ -102,18 +171,18 @@ namespace Intersect_Server.Classes
                     }
                     else if (commandsplit[0] == Strings.Get("commands", "onlinelist")) //Online List Command
                     {
-                        Console.WriteLine(String.Format("{0,-10}", Strings.Get("commandoutput", "listid")) +
-                                          String.Format("{0,-28}", Strings.Get("commandoutput", "listaccount")) +
-                                          String.Format("{0,-28}", Strings.Get("commandoutput", "listcharacter")));
-                        Console.WriteLine(new String('-', 66));
+                        Console.WriteLine(string.Format("{0,-10}", Strings.Get("commandoutput", "listid")) +
+                                          string.Format("{0,-28}", Strings.Get("commandoutput", "listaccount")) +
+                                          string.Format("{0,-28}", Strings.Get("commandoutput", "listcharacter")));
+                        Console.WriteLine(new string('-', 66));
                         for (int i = 0; i < Globals.Clients.Count; i++)
                         {
                             if (Globals.Clients[i] != null)
                             {
                                 var name = Globals.Clients[i].Entity != null ? Globals.Clients[i].Entity.MyName : "";
-                                Console.WriteLine(String.Format("{0,-10}", "#" + i) +
-                                                  String.Format("{0,-28}", Globals.Clients[i].MyAccount) +
-                                                  String.Format("{0,-28}", name));
+                                Console.WriteLine(string.Format("{0,-10}", "#" + i) +
+                                                  string.Format("{0,-28}", Globals.Clients[i].MyAccount) +
+                                                  string.Format("{0,-28}", name));
                             }
                         }
                     }
@@ -432,7 +501,7 @@ namespace Intersect_Server.Classes
                                             if (user == commandsplit[1].ToLower())
                                             {
                                                 Database.SetPlayerPower(Globals.Clients[i].MyAccount,
-                                                    Int32.Parse(commandsplit[2]));
+                                                    int.Parse(commandsplit[2]));
                                                 PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
                                                 if (Globals.Clients[i].Power > 0)
                                                 {
@@ -492,7 +561,7 @@ namespace Intersect_Server.Classes
                                         {
                                             if (Database.AccountExists(commandsplit[1]))
                                             {
-                                                Database.SetPlayerPower(commandsplit[1], Int32.Parse(commandsplit[2]));
+                                                Database.SetPlayerPower(commandsplit[1], int.Parse(commandsplit[2]));
                                                 Console.WriteLine(@"    " +
                                                                   Strings.Get("commandoutput", "powerchanged",
                                                                       commandsplit[1]));
@@ -506,7 +575,8 @@ namespace Intersect_Server.Classes
                                         catch (Exception)
                                         {
                                             Console.WriteLine(@"    " +
-                                                              Strings.Get("commandoutput", "parseerror", commandsplit[0],
+                                                              Strings.Get("commandoutput", "parseerror",
+                                                                  commandsplit[0],
                                                                   Strings.Get("commands", "commandinfo")));
                                         }
                                     }
@@ -591,6 +661,8 @@ namespace Intersect_Server.Classes
                         else
                         {
                             Globals.ServerStarted = false;
+                            SocketServer.Dispose();
+
                             return;
                         }
                     }
@@ -614,32 +686,36 @@ namespace Intersect_Server.Classes
                         else
                         {
                             Console.WriteLine(@"    " + Strings.Get("commandoutput", "helpheader"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "help")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "help")) +
                                               " - " + Strings.Get("commands", "helphelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "exit")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "exit")) +
                                               " - " + Strings.Get("commands", "exithelp"));
                             Console.WriteLine(@"    " +
-                                              String.Format("{0,-20}", Strings.Get("commands", "announcement")) + " - " +
+                                              string.Format("{0,-20}", Strings.Get("commands", "announcement")) +
+                                              " - " +
                                               Strings.Get("commands", "announcementhelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "cps")) + " - " +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "cps")) +
+                                              " - " +
                                               Strings.Get("commands", "cpshelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "power")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "power")) +
                                               " - " + Strings.Get("commands", "powerhelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "poweracc")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "poweracc")) +
                                               " - " + Strings.Get("commands", "poweracchelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "onlinelist")) +
-                                              " - " + Strings.Get("commands", "onlinelisthelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "kick")) +
+                            Console.WriteLine(
+                                @"    " + string.Format("{0,-20}", Strings.Get("commands", "onlinelist")) +
+                                " - " + Strings.Get("commands", "onlinelisthelp"));
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "kick")) +
                                               " - " + Strings.Get("commands", "kickhelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "ban")) + " - " +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "ban")) +
+                                              " - " +
                                               Strings.Get("commands", "banhelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "unban")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "unban")) +
                                               " - " + Strings.Get("commands", "unbanhelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "mute")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "mute")) +
                                               " - " + Strings.Get("commands", "mutehelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "unmute")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "unmute")) +
                                               " - " + Strings.Get("commands", "unmutehelp"));
-                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "kill")) +
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "kill")) +
                                               " - " + Strings.Get("commands", "killhelp"));
                             Console.WriteLine(@"    " +
                                               Strings.Get("commandoutput", "helpfooter",

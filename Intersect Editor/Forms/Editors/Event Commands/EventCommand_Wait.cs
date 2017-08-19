@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
-using DarkUI.Controls;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_Wait : UserControl
     {
@@ -17,21 +16,21 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             InitLocalization();
-            scrlWait.Value = _myCommand.Ints[0];
-            lblWait.Text = Strings.Get("eventwait", "label", scrlWait.Value);
+            nudWait.Value = _myCommand.Ints[0];
+            lblWait.Text = Strings.Get("eventwait", "label");
         }
 
         private void InitLocalization()
         {
             grpWait.Text = Strings.Get("eventwait", "title");
-            lblWait.Text = Strings.Get("eventwait", "label", scrlWait.Value);
+            lblWait.Text = Strings.Get("eventwait", "label");
             btnSave.Text = Strings.Get("eventwait", "okay");
             btnCancel.Text = Strings.Get("eventwait", "cancel");
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = scrlWait.Value;
+            _myCommand.Ints[0] = (int) nudWait.Value;
             _eventEditor.FinishCommandEdit();
         }
 
@@ -40,9 +39,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _eventEditor.CancelCommandEdit();
         }
 
-        private void scrlWait_Scroll(object sender, ScrollValueEventArgs e)
+        private void nudWait_ValueChanged(object sender, EventArgs e)
         {
-            lblWait.Text = Strings.Get("eventwait", "label", scrlWait.Value);
         }
     }
 }

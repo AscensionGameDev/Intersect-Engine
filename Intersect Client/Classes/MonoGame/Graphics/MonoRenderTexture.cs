@@ -8,20 +8,25 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
     public class MonoRenderTexture : GameRenderTexture
     {
         private GraphicsDevice _graphicsDevice;
-        private int _height = 0;
+        private int _height;
         private RenderTarget2D _renderTexture;
-        private int _width = 0;
+        private int _width;
 
         public MonoRenderTexture(GraphicsDevice graphicsDevice, int width, int height) : base(width, height)
         {
             _renderTexture = new RenderTarget2D(graphicsDevice, width, height, false,
                 SurfaceFormat.Color,
-                DepthFormat.Depth16,
+                DepthFormat.Depth24,
                 0,
                 RenderTargetUsage.PreserveContents);
             _graphicsDevice = graphicsDevice;
             _width = width;
             _height = height;
+        }
+
+        public override string GetName()
+        {
+            return "";
         }
 
         public override int GetWidth()

@@ -1,10 +1,8 @@
-﻿using Intersect;
-
-namespace Intersect_Server.Classes.Spells
+﻿namespace Intersect.Server.Classes.Spells
 {
     public class SpellInstance
     {
-        public long SpellCD = 0;
+        public long SpellCD;
         public int SpellNum = -1;
 
         public SpellInstance()

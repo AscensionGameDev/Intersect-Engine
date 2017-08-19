@@ -1,20 +1,20 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Intersect.GameObjects;
+using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Classes.Maps;
+using Intersect.Editor.Forms;
 using Intersect.Localization;
-using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Classes.Maps;
-using Intersect_Editor.Forms;
 
-namespace Intersect_Editor.Classes
+namespace Intersect.Editor.Classes
 {
     public static class EditorLoop
     {
-        private static int _fps = 0;
-        private static int _fpsCount = 0;
-        private static long _fpsTime = 0;
+        private static int _fps;
+        private static int _fpsCount;
+        private static long _fpsTime;
         private static frmMain myForm;
         private static long animationTimer = Globals.System.GetTimeMs();
         private static long waterfallTimer = Globals.System.GetTimeMs();
@@ -24,7 +24,7 @@ namespace Intersect_Editor.Classes
         public static void StartLoop()
         {
             Globals.MainForm.Visible = true;
-            Globals.MainForm.EnterMap(Globals.CurrentMap == null ? 0 : ((DatabaseObject) Globals.CurrentMap).Id);
+            Globals.MainForm.EnterMap(Globals.CurrentMap == null ? 0 : Globals.CurrentMap.Index);
             myForm = Globals.MainForm;
 
             if (mapThread == null)
@@ -38,6 +38,16 @@ namespace Intersect_Editor.Classes
                     RunFrame();
                 }
             }
+        }
+
+        public static void DrawFrame()
+        {
+            //Check Editors
+            if (Globals.ResourceEditor != null && Globals.ResourceEditor.IsDisposed == false)
+            {
+                Globals.ResourceEditor.Render();
+            }
+            EditorGraphics.Render();
         }
 
         public static void RunFrame()
@@ -64,14 +74,11 @@ namespace Intersect_Editor.Classes
                 }
                 animationTimer = Globals.System.GetTimeMs() + 600;
             }
-            //Check Editors
-            if (Globals.ResourceEditor != null && Globals.ResourceEditor.IsDisposed == false)
-            {
-                Globals.ResourceEditor.Render();
-            }
-            EditorGraphics.Render();
+
+            DrawFrame();
+
             GameContentManager.Update();
-            Network.Update();
+            EditorNetwork.Update();
             Application.DoEvents(); // handle form events
 
             _fpsCount++;
@@ -99,8 +106,8 @@ namespace Intersect_Editor.Classes
                         new Task((() => progressForm.ShowDialog())).Start();
                         while (Globals.MapsToScreenshot.Count > 0)
                         {
-                            var maps = MapInstance.GetObjects();
-                            foreach (var map in maps)
+                            var maps = MapInstance.Lookup.IndexValues.ToArray();
+                            foreach (MapInstance map in maps)
                             {
                                 if (!myForm.Disposing && progressForm.IsHandleCreated)
                                     progressForm.BeginInvoke(
@@ -108,11 +115,11 @@ namespace Intersect_Editor.Classes
                                         (() =>
                                             progressForm.SetProgress(
                                                 Globals.MapsToScreenshot.Count + " maps remaining.", -1, false)));
-                                if (map.Value != null)
+                                if (map != null)
                                 {
-                                    map.Value.Update();
+                                    map.Update();
                                 }
-                                Network.Update();
+                                EditorNetwork.Update();
                                 Application.DoEvents();
                             }
                             Thread.Sleep(50);

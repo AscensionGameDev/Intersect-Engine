@@ -2,15 +2,14 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
-using Color = System.Drawing.Color;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_SpawnNpc : UserControl
     {
@@ -18,8 +17,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private MapBase _currentMap;
         private EventBase _editingEvent;
         private EventCommand _myCommand;
-        private int spawnX = 0;
-        private int spawnY = 0;
+        private int spawnX;
+        private int spawnY;
 
         public EventCommand_SpawnNpc(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent,
             EventCommand editingCommand)
@@ -31,8 +30,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _currentMap = currentMap;
             InitLocalization();
             cmbNpc.Items.Clear();
-            cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
-            cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Npc, _myCommand.Ints[0]);
+            cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObjectType.Npc));
+            cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Npc, _myCommand.Ints[0]);
             cmbConditionType.SelectedIndex = _myCommand.Ints[1];
             nudWarpX.Maximum = Options.MapWidth;
             nudWarpY.Maximum = Options.MapHeight;
@@ -117,7 +116,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     {
                         foreach (var evt in _currentMap.Events)
                         {
-                            cmbEntities.Items.Add(evt.Key == _editingEvent.MyIndex
+                            cmbEntities.Items.Add(evt.Key == _editingEvent.Index
                                 ? Strings.Get("eventspawnnpc", "this") + " "
                                 : "" + evt.Value.Name);
                             if (_myCommand.Ints[2] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
@@ -133,7 +132,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             Bitmap destBitmap = new Bitmap(pnlSpawnLoc.Width, pnlSpawnLoc.Height);
             Font renderFont = new Font(new FontFamily("Arial"), 14);
             Graphics g = Graphics.FromImage(destBitmap);
-            g.Clear(Color.White);
+            g.Clear(System.Drawing.Color.White);
             g.FillRectangle(Brushes.Red, new Rectangle((spawnX + 2) * 32, (spawnY + 2) * 32, 32, 32));
             for (int x = 0; x < 5; x++)
             {
@@ -151,7 +150,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.Npc, cmbNpc.SelectedIndex);
+            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Npc, cmbNpc.SelectedIndex);
             _myCommand.Ints[1] = cmbConditionType.SelectedIndex;
             switch (_myCommand.Ints[1])
             {

@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Intersect;
 
-namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects
 {
     public class NpcBase : DatabaseObject
     {
         //Core info
         public new const string DATABASE_TABLE = "npcs";
+
         public new const GameObject OBJECT_TYPE = GameObject.Npc;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public List<int> AggroList = new List<int>();
         public bool AttackAllies = false;
-        public byte Behavior = 0;
+        public byte Behavior;
 
         //Drops
         public List<NPCDrop> Drops = new List<NPCDrop>();
-        public int Experience = 0;
+
+        public int Experience;
 
         //Vitals & Stats
         public int[] MaxVital = new int[(int) Vitals.VitalCount];
@@ -26,14 +27,17 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2.Intersect_Conve
 
         //NPC vs NPC Combat
         public bool NpcVsNpcEnabled = false;
-        public int SightRange = 0;
+
+        public int SightRange;
 
         //Basic Info
-        public int SpawnDuration = 0;
+        public int SpawnDuration;
+
         public int SpellFrequency = 2;
 
         //Spells
         public List<int> Spells = new List<int>();
+
         public string Sprite = "";
         public int[] Stat = new int[(int) Stats.StatCount];
 

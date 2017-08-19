@@ -1,8 +1,7 @@
-﻿using System;
-using Intersect;
-using Intersect_Server.Classes.Core;
+﻿using Intersect.Enums;
+using Intersect.Server.Classes.Core;
 
-namespace Intersect_Server.Classes.Maps
+namespace Intersect.Server.Classes.Maps
 {
     public class TileHelper
     {
@@ -55,10 +54,10 @@ namespace Intersect_Server.Classes.Maps
 
         private bool TransitionMaps(int direction)
         {
-            if (!MapInstance.GetObjects().ContainsKey(_mapNum)) return false;
-            int Grid = MapInstance.GetMap(_mapNum).MapGrid;
-            int GridX = MapInstance.GetMap(_mapNum).MapGridX;
-            int GridY = MapInstance.GetMap(_mapNum).MapGridY;
+            if (!MapInstance.Lookup.IndexKeys.Contains(_mapNum)) return false;
+            int Grid = MapInstance.Lookup.Get<MapInstance>(_mapNum).MapGrid;
+            int GridX = MapInstance.Lookup.Get<MapInstance>(_mapNum).MapGridX;
+            int GridY = MapInstance.Lookup.Get<MapInstance>(_mapNum).MapGridY;
             switch (direction)
             {
                 case (int) Directions.Up:
@@ -102,8 +101,8 @@ namespace Intersect_Server.Classes.Maps
 
         private bool Fix()
         {
-            if (!MapInstance.GetObjects().ContainsKey(_mapNum)) return false;
-            MapInstance curMap = MapInstance.GetMap(_mapNum);
+            if (!MapInstance.Lookup.IndexKeys.Contains(_mapNum)) return false;
+            MapInstance curMap = MapInstance.Lookup.Get<MapInstance>(_mapNum);
             while (_tileX < 0)
             {
                 if (!TransitionMaps((int) Directions.Left)) return false;
@@ -138,9 +137,9 @@ namespace Intersect_Server.Classes.Maps
             return _tileY;
         }
 
-        public static Boolean IsTileValid(int mapNum, int tileX, int tileY)
+        public static bool IsTileValid(int mapNum, int tileX, int tileY)
         {
-            if (!MapInstance.GetObjects().ContainsKey(mapNum)) return false;
+            if (!MapInstance.Lookup.IndexKeys.Contains(mapNum)) return false;
             if (tileX < 0 || tileX >= Options.MapWidth) return false;
             if (tileY < 0 || tileY >= Options.MapHeight) return false;
             return true;

@@ -1,4 +1,5 @@
-﻿using Intersect.GameObjects;
+﻿using Intersect.Enums;
+using Intersect.GameObjects;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
@@ -11,24 +12,24 @@ namespace Intersect_Client.Classes.UI.Game
         private BagWindow _bagWindow;
         private BankWindow _bankWindow;
         private Chatbox _chatBox;
-        private CraftingBenchWindow _CraftingBenchWindow;
+        private CraftingWindow _CraftingBenchWindow;
         private DebugMenu _debugMenu;
 
         private EventWindow _eventWindow;
-        private EntityBox _playerBox;
+        public EntityBox _playerBox;
         private QuestOfferWindow _questOfferWindow;
         private ShopWindow _shopWindow;
-        private bool _shouldCloseBag = false;
-        private bool _shouldCloseBank = false;
-        private bool _shouldCloseCraftingBench = false;
-        private bool _shouldCloseShop = false;
-        private bool _shouldCloseTrading = false;
-        private bool _shouldOpenAdminWindow = false;
-        private bool _shouldOpenBag = false;
-        private bool _shouldOpenBank = false;
-        private bool _shouldOpenCraftingBench = false;
-        private bool _shouldOpenShop = false;
-        private bool _shouldOpenTrading = false;
+        private bool _shouldCloseBag;
+        private bool _shouldCloseBank;
+        private bool _shouldCloseCraftingBench;
+        private bool _shouldCloseShop;
+        private bool _shouldCloseTrading;
+        private bool _shouldOpenAdminWindow;
+        private bool _shouldOpenBag;
+        private bool _shouldOpenBank;
+        private bool _shouldOpenCraftingBench;
+        private bool _shouldOpenShop;
+        private bool _shouldOpenTrading;
         private bool _shouldUpdateQuestLog = true;
         private int _tradingTarget = -1;
         private TradingWindow _TradingWindow;
@@ -53,10 +54,19 @@ namespace Intersect_Client.Classes.UI.Game
             Hotbar = new HotBarWindow(GameCanvas);
             _debugMenu = new DebugMenu(GameCanvas);
             _questOfferWindow = new QuestOfferWindow(GameCanvas);
-            if (Globals.Me != null)
-            {
-                TryAddPlayerBox();
-            }
+            _playerBox = new EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
+        }
+
+        //Chatbox
+        public void SetChatboxText(string msg)
+        {
+            _chatBox.SetChatboxText(msg);
+        }
+
+        //Friends Window
+        public void UpdateFriendsList()
+        {
+            GameMenu.UpdateFriendsList();
         }
 
         //Admin Window
@@ -155,7 +165,7 @@ namespace Intersect_Client.Classes.UI.Game
         public void OpenCraftingBench()
         {
             if (_CraftingBenchWindow != null) _CraftingBenchWindow.Close();
-            _CraftingBenchWindow = new CraftingBenchWindow(GameCanvas);
+            _CraftingBenchWindow = new CraftingWindow(GameCanvas);
             _shouldOpenCraftingBench = false;
             Globals.InCraft = true;
         }
@@ -184,15 +194,6 @@ namespace Intersect_Client.Classes.UI.Game
             _TradingWindow = new TradingWindow(GameCanvas, _tradingTarget);
             _shouldOpenTrading = false;
             Globals.InTrade = true;
-        }
-
-        public void TryAddPlayerBox()
-        {
-            if (_playerBox != null || Globals.Me == null)
-            {
-                return;
-            }
-            _playerBox = new EntityBox(GameCanvas, Globals.Me, 4, 4);
         }
 
         public void ShowHideDebug()
@@ -229,9 +230,9 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Draw()
         {
-            if (Globals.Me != null)
+            if (Globals.Me != null && _playerBox._myEntity != Globals.Me)
             {
-                TryAddPlayerBox();
+                _playerBox.SetEntity(Globals.Me);
             }
             _eventWindow.Update();
             _chatBox.Update();
@@ -246,7 +247,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             if (Globals.QuestOffers.Count > 0)
             {
-                var quest = QuestBase.GetQuest(Globals.QuestOffers[0]);
+                var quest = QuestBase.Lookup.Get<QuestBase>(Globals.QuestOffers[0]);
                 _questOfferWindow.Update(quest);
             }
             else
@@ -320,7 +321,7 @@ namespace Intersect_Client.Classes.UI.Game
                 }
                 else
                 {
-                    _CraftingBenchWindow.UpdateCraftBar();
+                    _CraftingBenchWindow.Update();
                 }
             }
             _shouldCloseCraftingBench = false;

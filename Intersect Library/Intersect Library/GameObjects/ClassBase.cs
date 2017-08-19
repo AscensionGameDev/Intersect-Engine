@@ -1,53 +1,56 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using Intersect.Enums;
+using Intersect.Models;
 
 namespace Intersect.GameObjects
 {
     public class ClassBase : DatabaseObject<ClassBase>
     {
-        //Core info
-        public new const string DATABASE_TABLE = "classes";
-        public new const GameObject OBJECT_TYPE = GameObject.Class;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public int AttackAnimation = -1;
 
         //Exp Calculations
         public int BaseExp = 100;
-        public int BasePoints = 0;
+
+        public int BasePoints;
         public int[] BaseStat = new int[(int) Stats.StatCount];
 
         //Starting Vitals & Stats
         public int[] BaseVital = new int[(int) Vitals.VitalCount];
+
         public int CritChance;
 
         //Combat
         public int Damage;
+
         public int DamageType;
         public int ExpIncrease = 50;
 
         //Level Up Info
-        public int IncreasePercentage = 0;
+        public int IncreasePercentage;
 
         //Starting Items
         public List<ClassItem> Items = new List<ClassItem>();
 
         //Locked - Can the class be chosen from character select?
-        public int Locked = 0;
-        public int PointIncrease = 0;
+        public int Locked;
+
+        public int PointIncrease;
         public int Scaling;
         public int ScalingStat;
-        public int SpawnDir = 0;
+        public int SpawnDir;
 
         //Spawn Info
-        public int SpawnMap = 0;
-        public int SpawnX = 0;
-        public int SpawnY = 0;
+        public int SpawnMap;
+
+        public int SpawnX;
+        public int SpawnY;
 
         //Starting Spells
         public List<ClassSpell> Spells = new List<ClassSpell>();
 
         //Sprites
         public List<ClassSprite> Sprites = new List<ClassSprite>();
+
         public int[] StatIncrease = new int[(int) Stats.StatCount];
         public int[] VitalIncrease = new int[(int) Vitals.VitalCount];
 
@@ -62,6 +65,8 @@ namespace Intersect.GameObjects
                 Items.Add(new ClassItem());
             }
         }
+
+        public override byte[] BinaryData => ClassData();
 
         public override void Load(byte[] packet)
         {
@@ -237,72 +242,6 @@ namespace Intersect.GameObjects
             }
 
             return myBuffer.ToArray();
-        }
-
-        public static ClassBase GetClass(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (ClassBase) Objects[index];
-            }
-            return null;
-        }
-
-        public static string GetName(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return ((ClassBase) Objects[index]).Name;
-            }
-            return "Deleted";
-        }
-
-        public override byte[] BinaryData => ClassData();
-
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            Objects.Remove(Id);
-        }
-
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, ClassBase> GetObjects()
-        {
-            Dictionary<int, ClassBase> objects = Objects.ToDictionary(k => k.Key, v => (ClassBase) v.Value);
-            return objects;
         }
     }
 

@@ -1,17 +1,33 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
+using System.Diagnostics;
+using System.Text;
 using System.Threading.Tasks;
-using Intersect;
+using Intersect.Enums;
+using Intersect.Localization;
 using Intersect.Logging;
-using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.General;
+using Intersect.Network;
+using Intersect.Network.Packets.Reflectable;
+using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.Entities;
+using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Maps;
+using Lidgren.Network;
 
-namespace Intersect_Server.Classes.Networking
+namespace Intersect.Server.Classes.Networking
 {
     public class Client
     {
+        private long _connectionTimeout;
+
+        private long _connectTime;
+        protected long _timeout = 20000; //20 seconds
+        public List<Character> Characters = new List<Character>();
+
+        //Network Variables
+        private IConnection connection;
+
         public int EditorMap = -1;
         public Player Entity;
         public int EntityIndex;
@@ -21,127 +37,250 @@ namespace Intersect_Server.Classes.Networking
 
         //Adminastrative punnishments
         public bool Muted = false;
+
         public string MuteReason = "";
 
         //Game Incorperation Variables
         public string MyAccount = "";
+
         public string MyEmail = "";
         public long MyId = -1;
         public string MyPassword = "";
         public string MySalt = "";
-
-        //Network Variables
-        private GameSocket mySocket;
         public int Power = 0;
         private ConcurrentQueue<byte[]> sendQueue = new ConcurrentQueue<byte[]>();
 
         //Sent Maps
         public Dictionary<int, Tuple<long, int>> SentMaps = new Dictionary<int, Tuple<long, int>>();
 
-        //Processing Thead
-        private Thread updateThread;
-
-        public Client(int entIndex, GameSocket socket)
+        public Client(IConnection connection)
+            : this(Globals.FindOpenEntity(), connection)
         {
-            mySocket = socket;
+        }
+
+        public Client(int entIndex, IConnection connection = null)
+        {
+            this.connection = connection;
+            _connectTime = Globals.System.GetTimeMs();
+            _connectionTimeout = Globals.System.GetTimeMs() + _timeout;
             EntityIndex = entIndex;
             if (EntityIndex > -1)
             {
                 Entity = (Player) Globals.Entities[EntityIndex];
             }
-            if (mySocket != null && mySocket.IsConnected())
-            {
-                PacketSender.SendPing(this);
-            }
-            updateThread = new Thread(Update);
-            updateThread.Start();
         }
 
-        public void SendPacket(byte[] packet)
+        public void SendPacket(byte[] packetData)
         {
             var buff = new ByteBuffer();
-            if (packet.Length > 800)
+            Debug.Assert(packetData != null, "packetData != null");
+            if (packetData.Length > 800)
             {
-                packet = Compression.CompressPacket(packet);
-                buff.WriteInteger(packet.Length + 1);
+                packetData = Compression.CompressPacket(packetData);
                 buff.WriteByte(1); //Compressed
-                buff.WriteBytes(packet);
+                buff.WriteBytes(packetData);
             }
             else
             {
-                buff.WriteInteger(packet.Length + 1);
                 buff.WriteByte(0); //Not Compressed
-                buff.WriteBytes(packet);
+                buff.WriteBytes(packetData);
             }
-            sendQueue.Enqueue(buff.ToArray());
+
+            if (connection != null)
+            {
+                connection.Send(new BinaryPacket(null) {Buffer = buff});
+            }
+            else
+            {
+                sendQueue?.Enqueue(buff.ToArray());
+            }
+        }
+
+        public void SendShit()
+        {
+            //var timer = new System.Timers.Timer(5000);
+            //timer.Elapsed += (source, args) =>
+            //{
+            var random = new CryptoRandom();
+            var b = 0;
+            for (var a = 0; a < b; a++)
+            {
+                Log.Diagnostic($"Sending shit... {a}/{b}");
+                for (var c = 10; c < 50; c++)
+                {
+                    var cap = 10 + (c + random.NextDouble() * 25) % 40;
+                    SendPacket(CreateShitPacket(true, -1, false, false, null, 0));
+                    for (var i = 0; i < cap; i++)
+                    {
+                        var shit = CreateShit();
+                        var shitSize = Encoding.Unicode.GetByteCount(shit);
+                        SendPacket(CreateShitPacket(true, i, false, true, null, 0));
+                        SendPacket(CreateShitPacket(true, i, true, false, shit, shitSize));
+                        SendPacket(CreateShitPacket(true, i, false, false, null, 0));
+                    }
+                    SendPacket(CreateShitPacket(false, -1, false, false, null, 0));
+                }
+                SendPacket(CreateShitPacket(false, -2, false, false, null, 0));
+            }
+            //};
+            //timer.Start();
+        }
+
+        private byte[] CreateShitPacket(bool shitting, int num, bool data, bool start, string shit, int shitSize)
+        {
+            using (var bf = new ByteBuffer())
+            {
+                bf.WriteLong((int) ServerPackets.Shit);
+                bf.WriteBoolean(shitting);
+                bf.WriteInteger(num);
+                if (num == -1) return bf.ToArray();
+                bf.WriteBoolean(data);
+                if (data)
+                {
+                    bf.WriteString(shit);
+                    bf.WriteInteger(shitSize);
+                }
+                else bf.WriteBoolean(start);
+                return bf.ToArray();
+            }
+        }
+
+        private string CreateShit()
+        {
+            var shit = new byte[512];
+            new Random().NextBytes(shit);
+            return BitConverter.ToString(shit);
         }
 
         public void Pinged()
         {
-            if (mySocket != null && IsConnected())
+            if (connection != null)
             {
-                mySocket.Pinged();
+                _connectionTimeout = Globals.System.GetTimeMs() + _timeout;
             }
         }
 
         public void Disconnect(string reason = "")
         {
-            if (reason == "")
+            if (connection != null)
             {
-                mySocket.Disconnect();
-            }
-            else
-            {
-                //send abort packet and then disconnect?
-            }
-        }
-
-        public async void Update()
-        {
-            try
-            {
-                while (mySocket != null && IsConnected() && Globals.ServerStarted)
-                {
-                    mySocket.Update();
-                    while (sendQueue.TryDequeue(out byte[] data))
-                    {
-                        if (data != null)
-                        {
-                            mySocket.SendData(data);
-                        }
-                    }
-                    await Task.Delay(10);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Trace(ex);
-                mySocket.Disconnect();
+                connection.Dispose();
+                return;
             }
         }
 
         public bool IsConnected()
         {
-            if (mySocket != null)
-            {
-                return mySocket.IsConnected();
-            }
-            else
-            {
-                return false;
-            }
+            return connection.IsConnected;
         }
 
         public string GetIP()
         {
-            if (IsConnected())
+            if (!IsConnected()) return "";
+
+            return connection.Ip;
+        }
+
+        public static Client CreateBeta4Client(IConnection connection)
+        {
+            var client = new Client(connection);
+            try
             {
-                return mySocket.GetIP();
+                Globals.Entities[client.EntityIndex] = new Player(client.EntityIndex, client);
+                lock (Globals.ClientLock)
+                {
+                    Globals.Clients.Add(client);
+                    Globals.ClientLookup.Add(connection.Guid, client);
+                }
+                return client;
             }
-            else
+            finally
             {
-                return "";
+                client.SendShit();
             }
+        }
+
+        public static void RemoveBeta4Client(IConnection connection)
+        {
+            var client = FindBeta4Client(connection);
+
+            Debug.Assert(client != null, "client != null");
+            lock (Globals.ClientLock)
+            {
+                Globals.Clients.Remove(client);
+                Globals.ClientLookup.Remove(connection.Guid);
+            }
+
+            Log.Debug(string.IsNullOrWhiteSpace(client.MyAccount)
+                //? $"Client disconnected ({(client.IsEditor ? "[editor]" : "[client]")})"
+                // TODO: Transmit client information on network start so we can determine editor vs client
+                ? $"Client disconnected ([menu])"
+                : $"Client disconnected ({client.MyAccount}->{client.Entity?.MyName ?? "[editor]"})");
+
+            if (client.Entity == null) return;
+
+            var en = client.Entity;
+            Task.Run(() => Database.SaveCharacter(en));
+            var map = MapInstance.Lookup.Get<MapInstance>(client.Entity.CurrentMap);
+            map?.RemoveEntity(client.Entity);
+
+            //Update parties
+            client.Entity.LeaveParty();
+
+            //Update trade
+            client.Entity.CancelTrade();
+
+            //Clear all event spawned NPC's
+            var entities = client.Entity.SpawnedNpcs.ToArray();
+            foreach (var t in entities)
+            {
+                if (t == null || t.GetType() != typeof(Npc)) continue;
+                if (t.Despawnable) t.Die(0);
+            }
+            client.Entity.SpawnedNpcs.Clear();
+
+            PacketSender.SendEntityLeave(client.Entity.MyIndex, (int) EntityTypes.Player,
+                Globals.Entities[client.EntityIndex].CurrentMap);
+            if (!client.IsEditor)
+            {
+                PacketSender.SendGlobalMsg(Strings.Get("player", "left", client.Entity.MyName, Options.GameName));
+            }
+            client.Entity.Dispose();
+            client.Entity = null;
+            Globals.Entities[client.EntityIndex] = null;
+        }
+
+        public static Client FindBeta4Client(IConnection connection)
+        {
+            lock (Globals.ClientLock)
+            {
+                return Globals.Clients.Find(client => client?.connection == connection);
+            }
+        }
+    }
+
+    public class Character
+    {
+        public int Class = 0;
+        public string[] Equipment = new string[Options.EquipmentSlots.Count];
+        public string Face = "";
+        public int Level = 1;
+        public string Name = "";
+        public int Slot = 1;
+        public string Sprite = "";
+
+        public Character(int slot, string name, string sprite, string face, int level, int charClass)
+        {
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+            {
+                Equipment[i] = "";
+            }
+            Slot = slot;
+            Name = name;
+            Sprite = sprite;
+            Face = face;
+            Level = level;
+            Class = charClass;
         }
     }
 }

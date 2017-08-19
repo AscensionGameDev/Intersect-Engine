@@ -1,4 +1,4 @@
-﻿namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib
+﻿namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib
 {
     public class Color
     {

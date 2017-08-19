@@ -16,14 +16,15 @@ namespace Intersect_Client.Classes.Core
 
         //Music
         private static string _queuedMusic = "";
+
         private static string _currentSong = "";
         private static float _fadeRate;
         private static long _fadeTimer;
         private static GameAudioInstance _myMusic;
         private static bool _musicLoop;
-        private static bool _fadingOut = false;
-        private static bool _queuedLoop = false;
-        private static float _queuedFade = 0f;
+        private static bool _fadingOut;
+        private static bool _queuedLoop;
+        private static float _queuedFade;
 
         //Sounds
         private static List<MapSound> _gameSounds = new List<MapSound>();
@@ -277,7 +278,7 @@ namespace Intersect_Client.Classes.Core
                 _sound.SetVolume(0);
                 return;
             }
-            var map = MapInstance.GetMap(_map);
+            var map = MapInstance.Lookup.Get<MapInstance>(_map);
             if (map == null)
             {
                 Stop();
@@ -313,7 +314,7 @@ namespace Intersect_Client.Classes.Core
             float soundx = 0;
             float soundy = 0;
             int mapNum = _map;
-            var map = MapInstance.GetMap(mapNum);
+            var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
             if (map != null)
             {
                 if (_x == -1 || _y == -1 || _distance == -1)

@@ -1,293 +1,370 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Intersect Server Language File - Beta 3.1 -->
+<!-- Intersect Server Language File - Beta 3 -->
 <Strings>
-	<Intro>
-		<string id="title">Intersect Server</string>
-		<string id="tagline">                          free 2d orpg engine</string>
-		<string id="version">Version {00}</string>
-		<string id="exit">Press any key to exit.</string>
-		<string id="support">For help, support, and updates visit: http://ascensiongamedev.com</string>
-		<string id="loading">Loading, please wait.</string>
-		<string id="started">Server Started. Using Port #{00}</string>
-		<string id="websocketstarted">Websocket listener started for Unity WebGL Clients using Port #{00}</string>
-		<string id="consoleactive">Type exit to shutdown the server, or help for a list of commands.</string>
-	</Intro>
-	<CommandOutput>
-		<string id="playercount">Server has {00} registered players.</string>
-		<string id="gametime">Game time is now: {00}</string>
-		<string id="listid">ID</string>
-		<string id="listaccount">Account</string>
-		<string id="listcharacter">Character</string>
-		<string id="killsuccess">{00} has been killed!</string>
-		<string id="parseerror">Parse Error: Parameter could not be read. Type {00} {01} for usage information.</string>
-		<string id="syntaxerror">Syntax Error: Expected parameter not found. Type {00} {01} for usage information.</string>
-		<string id="invalidparameters">Invalid parameters provided! Use {00} to get more info about a command.</string>
-		<string id="powerchanged">{00} has had their power updated!</string>
-		<string id="powerlevel">{00}'s power has been set to {01}!</string>
-		<string id="cps">Current CPS: {00}</string>
-		<string id="cpslocked">CPS Locked</string>
-		<string id="cpsunlocked">CPS Unlocked</string>
-		<string id="helpheader">List of available commands:</string>
-		<string id="helpfooter">Type in any command followed by {00} for parameters and usage information.</string>
-		<string id="notfound">Command not recoginized. Enter help for a list of commands. Remember console commands are case sensitive!</string>
-	</CommandOutput>
-	<Commands>
-		<string id="commandinfo">/?</string>
-		
-		<string id="announcement">announcement</string>
-		<string id="announcementusage">Usage: announcement [message] {00}</string>
-		<string id="announcementdesc">Desc: Sends a global message to all users playing the game.</string>
-		<string id="announcementhelp">sends a global message to all players</string>
-		
-		<string id="onlinelist">onlinelist</string>
-		<string id="onlinelisthelp">shows all players online</string>
-		
-		<string id="kill">kill</string>
-		<string id="killusage">Usage: kill [username] {00}</string>
-		<string id="killdesc">Desc: Kills a player on the server.</string>
-		<string id="killhelp">kills a player on the server</string>
-		
-		<string id="kick">kick</string>
-		<string id="kickusage">Usage: kick [username] {00}</string>
-		<string id="kickdesc">Desc: Kicks a player from the server.</string>
-		<string id="kickhelp">kicks a player from the server</string>
-		
-		<string id="unban">unban</string>
-		<string id="unbanusage">Usage: unban [account] {00}</string>
-		<string id="unbandesc">Desc: Unbans a player from the server.</string>
-		<string id="unbanhelp">unbans a player from the server</string>
-		
-		<string id="ban">ban</string>
-		<string id="banuser">console</string>
-		<string id="unbanusage">Usage: ban [username] [duration (days)] [IP Ban? ({00}/{01})] [reason] {02}</string>
-		<string id="unbandesc">Desc: Bans a player from the server.</string>
-		<string id="banhelp">bans a player from the server</string>
-		
-		<string id="unmute">unmute</string>
-		<string id="unmuteusage">Usage: unmute [username] {00}</string>
-		<string id="unmutedesc">Desc: unmutes a player allowing them to talk.</string>
-		<string id="unmutehelp">unmutes a player allowing them to talk</string>
-		
-		<string id="mute">mute</string>
-		<string id="muteuser">console</string>
-		<string id="muteusage">Usage: mute [username] [duration (days)] [IP Ban? ({00}/{01})] [reason] {02}</string>
-		<string id="mutedesc">Desc: mutes a player preventing them from talking.</string>
-		<string id="mutehelp">mutes a player preventing them from talking</string>
-		
-		<string id="power">power</string>
-		<string id="powerusage">Usage: power [username] [level] {00}</string>
-		<string id="powerdesc">Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.</string>
-		<string id="powerhelp">sets the administrative access of a user</string>
-		
-		<string id="poweracc">poweracc</string>
-		<string id="poweraccusage">Usage: power [login] [level] {00}</string>
-		<string id="poweraccdesc">Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.</string>
-		<string id="poweracchelp">sets the administrative access of an account</string>
-		
-		<string id="cps">cps</string>
-		<string id="cpsusage">Usage: cps [status] [lock] [unlock] {00}</string>
-		<string id="cpsdesc">Desc: Prints the current CPS. The status flag tells if the server loop is locked or unlocked. The lock flag locks the cps while the unlock flag unlocks it.</string>
-		<string id="cpslock">lock</string>
-		<string id="cpsunlock">unlock</string>
-		<string id="cpsstatus">status</string>
-		<string id="cpshelp">prints the current server cps</string>
-		
-		<string id="exit">exit</string>
-		<string id="exitusage">Usage: exit {00}</string>
-		<string id="exitdesc">Desc: Closes down the server.</string>
-		<string id="exithelp">closes the server</string>
-		
-		<string id="help">help</string>
-		<string id="helpusage">help</string>
-		<string id="helpdesc">help</string>
-		<string id="helphelp">displays list of available commands</string>
-		
-		<string id="true">true</string>
-		<string id="false">false</string>
-	</Commands>
-	<General>
-	  <!-- Used everywhere. Sounds on map, resource graphics, panoramas, item types, etc. English is None or No Selection. Choose whatever fits best in your language. Try to keep this the same across the client, editor, and server language files as well. -->
-		<string id="none">None</string>
-	</General>
-	<Database>
-		<string id="outofdate">Database is out of date! Version: {00} Expected Version: {01}. Please run the included migration tool!</string>
-		<string id="usingsqlite">Using SQLite database for account and data storage.</string>
-		<string id="nullfound">Tried to load null value for index {00} of {01}</string>
-		<string id="nullerror">Tried to load one or more null game objects!</string>
-		<string id="nomaps">No maps found! - Creating an empty map!</string>
-		<string id="noclasses">No classes found! - Creating a default class!</string>
-		<string id="default">Default</string>
-	</Database>
-	<Account>
-		<string id="doesnotexist">Account does not exist.</string>
-		<string id="notfound">Error: Account {00} was not found!</string>
-		<string id="unbanned">Account {00} has been unbanned!</string>
-		<string id="banned">{00} has been banned!</string>
-		<string id="muted">{00} has been muted!</string>
-		<string id="unmuted">{00} has been unmuted!</string>
-		<string id="mutestatus">Your account has been muted since: {00} by {01}. Mute expires: {02}. Reason for mute: {03}</string>
-		<string id="banstatus">Your account has been banned since: {00} by {01}. Ban expires: {02}. Reason for ban: {03}</string>
-		<string id="loadfail">Failed to load account. Please try logging in again.</string>
-		<string id="badlogin">Username or password incorrect.</string>
-		<string id="badaccess">Access denied! Invalid power level!</string>
-		<string id="exists">Account already exists!</string>
-		<string id="emailexists">An account with this email address already exists.</string>
-		<string id="invalidclass">Invalid class selected. Try again.</string>
-		<string id="characterexists">An account with this character name exists. Please choose another.</string>
-		<string id="invalidname">The chosen name does not meet requirements set by the server.</string>
-		<string id="invalidemail">The chosen email does not meet requirements set by the server.</string>
-	</Account>
-	<Player>
-		<string id="offline">User not online!</string>
-		<string id="serverkilled">{00} has been killed by the server!</string>
-		<string id="serverkicked">{00} has been kicked by the server!</string>
-		<string id="admin">{00} has been given administrative powers!</string>
-		<string id="mod">{00} has been given moderation powers!</string>
-		<string id="deadmin">{00} has had their administrative powers revoked!</string>
-		<string id="demod">{00} has had their moderation powers revoked!</string>
-		<string id="powerchanged">Your power has been modified!</string>
-		<string id="saved">Your progress has been automatically saved.</string>
-		<string id="levelup">You have leveled up! You are now level {00}!</string>
-		<string id="statpoints">You have {00} stat points available to be spent!</string>
-		<string id="left">{00} has left {01}.</string>
-		<string id="modjoined">You are a moderator! Press Insert at any time to access the administration menu or F2 for debug information.</string>
-		<string id="adminjoined">You are an administrator! Press Insert at any time to access the administration menu or F2 for debug information.</string>
-		<string id="warpedto">Warped to {00}.</string>
-		<string id="warpedtoyou">{00} warped to you.</string>
-		<string id="haswarpedto">{00} has been warped to you.</string>
-		<string id="beenwarpedto">You have been warped to {00}.</string>
-		<string id="killed">{00} has been killed by {01}!</string>
-		<string id="kicked">{00} has been kicked by {01}!</string>
-		<string id="adminsetpower">Only admins can set power!</string>
-		<string id="changeownpower">You cannot alter your own power!</string>
-		<string id="notarget">You need to select a valid target.</string>
-		<string id="targetoutsiderange">Target not in range.</string>
-	</Player>
-	<Quests>
-		<string id="started">Quest Started: {00}!</string>
-		<string id="completed">Quest: {00} completed!</string>
-		<string id="updated">Quest: {00} updated!</string>
-		<string id="declined">Quest Declined: {00}!</string>
-		<string id="abandoned">Quest Abandoned: {00}!</string>
-		<string id="npctask">{00}  updated! {01}/{02} {03}(s) slain!</string>
-		<string id="itemtask">{00}  updated! {01}/{02} {03}(s) gathered!</string>
-		<string id="taskcompleted">Task Completed!</string>
-	</Quests>
-	<Items>
-		<string id="statreq">You do not possess the correct combat stats to use this item.</string>
-		<string id="stunned">You cannot use this item whilst stunned.</string>
-		<string id="dynamicreq">You do not meet the requirements to use this item!</string>
-		<string id="cannotuse">You cannot use this item!</string>
-		<string id="notenough">Not enough {00}s!</string>
-		<string id="notimplemented">Use of this item type is not yet implemented.</string>
-	</Items>
-	<Shops>
-		<string id="doesnotaccept">This shop does not accept that item!</string>
-		<string id="inventoryfull">You do not have space to purchase that item!</string>
-		<string id="cantafford">Transaction failed due to insufficent funds.</string>
-	</Shops>
-	<Crafting>
-		<string id="crafted">You successfully crafted {00}!</string>
-	</Crafting>
-	<Banks>
-		<string id="banknospace">There is no space left in your bank for that item!</string>
-		<string id="depositinvalid">Invalid item selected to deposit!</string>
-		<string id="inventorynospace">There is no space left in your inventory for that item!</string>
-		<string id="withdrawinvalid">Invalid item selected to withdraw!</string>
-	</Banks>
-	<Bags>
-		<string id="bagnospace">There is no space left in your bag for that item!</string>
-		<string id="baginself">You cannot store a bag in within itself!</string>
-		<string id="depositinvalid">Invalid item selected to store!</string>
-		<string id="inventorynospace">There is no space left in your inventory for that item!</string>
-		<string id="withdrawinvalid">Invalid item selected to retreive!</string>
-		<string id="onlysellempty">Cannot sell bag unless it's empty!</string>
-		<string id="onlytradeempty">Cannot trade bag unless it's empty!</string>
-	</Bags>
-	<Trading>
-		<string id="tradenospace">There is no space left in the trade window for that item!</string>
-		<string id="offerinvalid">Invalid item selected to offer!</string>
-		<string id="inventorynospace">There is no space left in your inventory for that item!</string>
-		<string id="revokeinvalid">Invalid item selected to revoke!</string>
-		<string id="itemsdropped">Out of inventory space. Some of your items have been dropped on the ground!</string>
-		<string id="declined">Out of inventory space. Some of your items have been dropped on the ground!</string>
-		<string id="accepted">The trade was successful!</string>
-		<string id="alreadydenied">Your trade request has already been denied!</string>
-		<string id="busy">{00} is busy. Please try again later!</string>
-		<string id="declined">{00} has declined your request to trade!</string>
-	</Trading>
-	<Parties>
-		<string id="leaderinvonly">Only the party leader can send invitations to your party.</string>
-		<string id="joined">{00} has joined the party!</string>
-		<string id="limitedreached">You have reached the maximum limit of party members. Kick another member before adding more.</string>
-		<string id="kicked">You have been kicked from the party!</string>
-		<string id="memberkicked">{00} has been kicked from the party!</string>
-		<string id="disbanded">The party has been disbanded.</string>
-		<string id="left">You have left the party.</string>
-		<string id="memberleft">{00} has left the party!</string>
-		<string id="alreadydenied">Your party invitation has already been rejected!</string>
-		<string id="busy">{00} is busy. Please try again later!</string>
-		<string id="declined">{00} has declined your party invitation!</string>
-	</Parties>
-	<Events>
-		<string id="playernamecommand">\pn</string>
-		<string id="eventnamecommand">\en</string>
-		<string id="onlinelistcommand">\onlinelist</string>
-		<string id="onlinecountcommand">\onlinecount</string>
-	</Events>
-	<Combat>
-		<string id="critical">CRITICAL HIT!</string>
-		<string id="miss">MISS!</string>
-		<string id="blocked">BLOCKED!</string>
-		<string id="dash">DASH!</string>
-		<string id="levelup">LEVEL UP!</string>
-		<string id="toolrequired">You require a {00} to interact with this resource!</string>
-		<string id="addsymbol">+</string>
-		<string id="removesymbol">-</string>
-		<string id="statreq">You do not possess the correct combat stats to use this ability.</string>
-		<string id="silenced">You cannot cast this ability whilst silenced.</string>
-		<string id="stunned">You cannot cast this ability whilst stunned.</string>
-		<string id="levelreq">You are not a high enough level to use this ability.</string>
-		<string id="notarget">No Target!</string>
-        <string id="channeling">You are currently channeling another skill.</string>
-        <string id="channelingnoattack">You are currently channeling a spell, you cannot attack.</string>
-		<string id="cooldown">This skill is on cooldown.</string>
-		<string id="lowhealth">Not enough health.</string>
-		<string id="lowmana">Not enough mana.</string>
-		<string id="stunblocking">You are stunned and can't block.</string>
-		<string id="stunattacking">You are stunned and can't attack.</string>
-		<string id="dynamicreq">You do not meet the requirements to cast the spell!</string>
-		<string id="resourcereqs">You do not meet the requirements to harvest this resource!</string>
-	</Combat>
-	<Mapping>
-		<string id="newfolder">New Folder</string>
-		<string id="lastmap">Last Map</string>
-		<string id="lastmaperror">Failed to delete map, you must have at least one map at all times!</string>
-		<string id="linkfail">Map Link Failure</string>
-		<string id="linkfailerror">Failed to link map {00} to map {01}. If this merge were to happen, maps {02} and {03} would occupy the same space in the world.</string>
-	</Mapping>
-	<Classes>
-		<string id="lastclass">Last Class</string>
-		<string id="lastclasserror">Failed to delete class, you must have at least one class at all times!</string>
-	</Classes>
-	<Networking>
-		<string id="disconnected">Client disconnected.</string>
-		<string id="badpacket">Error handling client packet. Disconnecting client. More info logged to errors.log</string>
-	</Networking>
-	<Formulas>
-				<string id="loadfailed">Failed to load formulas! Press any key to shut down.</string>
-				<string id="missing">Formulas.xml missing. Generated default formulas file.</string>
-				<string id="syntax">Error loading formulas! Please make sure the file exists and is free on syntax errors.</string>
-	</Formulas>
-	<Regex>
-		<string id="email">^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|([a-zA-Z]+[\w-]+\.)+[a-zA-Z]{2,4})$</string>
-		<string id="username">^[a-zA-Z0-9]{2,20}$</string>
-		<string id="password">^[a-zA-Z0-9]{4,20}$</string>
-	</Regex>
-	<Errors>
-		<string id="warpfail">Failed to warp player to new map -- warping to spawn.</string>
-		<string id="errorlogged">An error was logged into errors.log</string>
-		<string id="errorservercrashnohalt">The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log.</string>
-		<string id="errorservercrash">The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log. Press any key to exit.</string>
-	</Errors>
+    <Intro>
+        <string id="title">Intersect Server</string>
+        <string id="tagline">                          free 2d orpg engine</string>
+        <string id="version">Version {00}</string>
+        <string id="exit">Press any key to exit.</string>
+        <string id="support">For help, support, and updates visit: http://ascensiongamedev.com</string>
+        <string id="loading">Loading, please wait.</string>
+        <string id="started">Server Started. Using Port #{00}</string>
+        <string id="websocketstarted">Websocket listener started for Unity WebGL Clients using Port #{00}</string>
+        <string id="consoleactive">Type exit to shutdown the server, or help for a list of commands.</string>
+    </Intro>
+    <CommandOutput>
+        <string id="playercount">Server has {00} registered players.</string>
+        <string id="gametime">Game time is now: {00}</string>
+        <string id="listid">ID</string>
+        <string id="listaccount">Account</string>
+        <string id="listcharacter">Character</string>
+        <string id="killsuccess">{00} has been killed!</string>
+        <string id="parseerror">Parse Error: Parameter could not be read. Type {00} {01} for usage information.</string>
+        <string id="syntaxerror">Syntax Error: Expected parameter not found. Type {00} {01} for usage information.</string>
+        <string id="invalidparameters">Invalid parameters provided! Use {00} to get more info about a command.</string>
+        <string id="powerchanged">{00} has had their power updated!</string>
+        <string id="powerlevel">{00}'s power has been set to {01}!</string>
+        <string id="cps">Current CPS: {00}</string>
+        <string id="cpslocked">CPS Locked</string>
+        <string id="cpsunlocked">CPS Unlocked</string>
+        <string id="helpheader">List of available commands:</string>
+        <string id="helpfooter">Type in any command followed by {00} for parameters and usage information.</string>
+        <string id="notfound">Command not recoginized. Enter help for a list of commands. Remember console commands are case sensitive!</string>
+    </CommandOutput>
+    <Commands>
+        <string id="commandinfo">/?</string>
+        
+        <string id="announcement">announcement</string>
+        <string id="announcementusage">Usage: announcement [message] {00}</string>
+        <string id="announcementdesc">Desc: Sends a global message to all users playing the game.</string>
+        <string id="announcementhelp">sends a global message to all players</string>
+        
+        <string id="onlinelist">onlinelist</string>
+        <string id="onlinelisthelp">shows all players online</string>
+        
+        <string id="kill">kill</string>
+        <string id="killusage">Usage: kill [username] {00}</string>
+        <string id="killdesc">Desc: Kills a player on the server.</string>
+        <string id="killhelp">kills a player on the server</string>
+        
+        <string id="kick">kick</string>
+        <string id="kickusage">Usage: kick [username] {00}</string>
+        <string id="kickdesc">Desc: Kicks a player from the server.</string>
+        <string id="kickhelp">kicks a player from the server</string>
+        
+        <string id="unban">unban</string>
+        <string id="unbanusage">Usage: unban [account] {00}</string>
+        <string id="unbandesc">Desc: Unbans a player from the server.</string>
+        <string id="unbanhelp">unbans a player from the server</string>
+        
+        <string id="ban">ban</string>
+        <string id="banuser">console</string>
+        <string id="unbanusage">Usage: ban [username] [duration (days)] [IP Ban? ({00}/{01})] [reason] {02}</string>
+        <string id="unbandesc">Desc: Bans a player from the server.</string>
+        <string id="banhelp">bans a player from the server</string>
+        
+        <string id="unmute">unmute</string>
+        <string id="unmuteusage">Usage: unmute [username] {00}</string>
+        <string id="unmutedesc">Desc: unmutes a player allowing them to talk.</string>
+        <string id="unmutehelp">unmutes a player allowing them to talk</string>
+        
+        <string id="mute">mute</string>
+        <string id="muteuser">console</string>
+        <string id="muteusage">Usage: mute [username] [duration (days)] [IP Ban? ({00}/{01})] [reason] {02}</string>
+        <string id="mutedesc">Desc: mutes a player preventing them from talking.</string>
+        <string id="mutehelp">mutes a player preventing them from talking</string>
+        
+        <string id="power">power</string>
+        <string id="powerusage">Usage: power [username] [level] {00}</string>
+        <string id="powerdesc">Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.</string>
+        <string id="powerhelp">sets the administrative access of a user</string>
+        
+        <string id="poweracc">poweracc</string>
+        <string id="poweraccusage">Usage: power [login] [level] {00}</string>
+        <string id="poweraccdesc">Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.</string>
+        <string id="poweracchelp">sets the administrative access of an account</string>
+        
+        <string id="cps">cps</string>
+        <string id="cpsusage">Usage: cps [status] [lock] [unlock] {00}</string>
+        <string id="cpsdesc">Desc: Prints the current CPS. The status flag tells if the server loop is locked or unlocked. The lock flag locks the cps while the unlock flag unlocks it.</string>
+        <string id="cpslock">lock</string>
+        <string id="cpsunlock">unlock</string>
+        <string id="cpsstatus">status</string>
+        <string id="cpshelp">prints the current server cps</string>
+        
+        <string id="exit">exit</string>
+        <string id="exitusage">Usage: exit {00}</string>
+        <string id="exitdesc">Desc: Closes down the server.</string>
+        <string id="exithelp">closes the server</string>
+        
+        <string id="help">help</string>
+        <string id="helpusage">help</string>
+        <string id="helpdesc">help</string>
+        <string id="helphelp">displays list of available commands</string>
+
+        <string id="invalid">Invalid /command.</string>
+        
+        <string id="true">true</string>
+        <string id="false">false</string>
+    </Commands>
+    <General>
+      <!-- Used everywhere. Sounds on map, resource graphics, panoramas, item types, etc. English is None or No Selection. Choose whatever fits best in your language. Try to keep this the same across the client, editor, and server language files as well. -->
+        <string id="none">None</string>
+    </General>
+    <Database>
+        <string id="outofdate">Database is out of date! Version: {00} Expected Version: {01}. Please run the included migration tool!</string>
+        <string id="usingsqlite">Using SQLite database for account and data storage.</string>
+        <string id="nullfound">Tried to load null value for index {00} of {01}</string>
+        <string id="nullerror">Tried to load one or more null game objects!</string>
+        <string id="nomaps">No maps found! - Creating an empty map!</string>
+        <string id="noclasses">No classes found! - Creating a default class!</string>
+        <string id="default">Default</string>
+    </Database>
+    <Account>
+        <string id="doesnotexist">Account does not exist.</string>
+        <string id="notfound">Error: Account {00} was not found!</string>
+        <string id="unbanned">Account {00} has been unbanned!</string>
+        <string id="banned">{00} has been banned!</string>
+        <string id="muted">{00} has been muted!</string>
+        <string id="unmuted">{00} has been unmuted!</string>
+        <string id="mutestatus">Your account has been muted since: {00} by {01}. Mute expires: {02}. Reason for mute: {03}</string>
+        <string id="banstatus">Your account has been banned since: {00} by {01}. Ban expires: {02}. Reason for ban: {03}</string>
+        <string id="loadfail">Failed to load account. Please try logging in again.</string>
+        <string id="badlogin">Username or password incorrect.</string>
+        <string id="badaccess">Access denied! Invalid power level!</string>
+        <string id="exists">Account already exists!</string>
+        <string id="emailexists">An account with this email address already exists.</string>
+        <string id="invalidclass">Invalid class selected. Try again.</string>
+        <string id="characterexists">An account with this character name exists. Please choose another.</string>
+        <string id="invalidname">The chosen name does not meet requirements set by the server.</string>
+        <string id="invalidemail">The chosen email does not meet requirements set by the server.</string>
+				<string id="deletechar">The character has been deleted.</string>
+				<string id="maxchars">You have already created the maximum number of characters. Delete one before creating a new one.</string>
+    </Account>
+    <Player>
+        <string id="offline">User not online!</string>
+        <string id="serverkilled">{00} has been killed by the server!</string>
+        <string id="serverkicked">{00} has been kicked by the server!</string>
+        <string id="admin">{00} has been given administrative powers!</string>
+        <string id="mod">{00} has been given moderation powers!</string>
+        <string id="deadmin">{00} has had their administrative powers revoked!</string>
+        <string id="demod">{00} has had their moderation powers revoked!</string>
+        <string id="powerchanged">Your power has been modified!</string>
+        <string id="saved">Your progress has been automatically saved.</string>
+        <string id="levelup">You have leveled up! You are now level {00}!</string>
+        <string id="statpoints">You have {00} stat points available to be spent!</string>
+        <string id="left">{00} has left {01}.</string>
+        <string id="joined">{00} has joined {01}.</string>
+        <string id="modjoined">You are a moderator! Press Insert at any time to access the administration menu or F2 for debug information.</string>
+        <string id="adminjoined">You are an administrator! Press Insert at any time to access the administration menu or F2 for debug information.</string>
+        <string id="warpedto">Warped to {00}.</string>
+        <string id="warpedtoyou">{00} warped to you.</string>
+        <string id="haswarpedto">{00} has been warped to you.</string>
+        <string id="beenwarpedto">You have been warped to {00}.</string>
+        <string id="killed">{00} has been killed by {01}!</string>
+        <string id="kicked">{00} has been kicked by {01}!</string>
+        <string id="adminsetpower">Only admins can set power!</string>
+        <string id="changeownpower">You cannot alter your own power!</string>
+        <string id="notarget">You need to select a valid target.</string>
+        <string id="targetoutsiderange">Target not in range.</string>
+    </Player>
+    <Quests>
+        <string id="started">Quest Started: {00}!</string>
+        <string id="completed">Quest: {00} completed!</string>
+        <string id="updated">Quest: {00} updated!</string>
+        <string id="declined">Quest Declined: {00}!</string>
+        <string id="abandoned">Quest Abandoned: {00}!</string>
+        <string id="npctask">{00}  updated! {01}/{02} {03}(s) slain!</string>
+        <string id="itemtask">{00}  updated! {01}/{02} {03}(s) gathered!</string>
+        <string id="taskcompleted">Task Completed!</string>
+    </Quests>
+    <Items>
+        <string id="statreq">You do not possess the correct combat stats to use this item.</string>
+        <string id="stunned">You cannot use this item whilst stunned.</string>
+        <string id="dynamicreq">You do not meet the requirements to use this item!</string>
+        <string id="cannotuse">You cannot use this item!</string>
+        <string id="notenough">Not enough {00}s!</string>
+        <string id="notimplemented">Use of this item type is not yet implemented.</string>
+        <string id="bound">You cannot drop this item.</string>
+        <string id="equipped">You cannot drop equipped items.</string>
+    </Items>
+    <Shops>
+        <string id="doesnotaccept">This shop does not accept that item!</string>
+        <string id="inventoryfull">You do not have space to purchase that item!</string>
+        <string id="cantafford">Transaction failed due to insufficent funds.</string>
+    </Shops>
+    <Crafting>
+        <string id="crafted">You successfully crafted {00}!</string>
+        <string id="nospace">You do not have enough inventory space to craft {00}!</string>
+    </Crafting>
+    <Banks>
+        <string id="banknospace">There is no space left in your bank for that item!</string>
+        <string id="depositinvalid">Invalid item selected to deposit!</string>
+        <string id="inventorynospace">There is no space left in your inventory for that item!</string>
+        <string id="withdrawinvalid">Invalid item selected to withdraw!</string>
+    </Banks>
+    <Bags>
+        <string id="bagnospace">There is no space left in your bag for that item!</string>
+        <string id="baginself">You cannot store a bag in within itself!</string>
+        <string id="depositinvalid">Invalid item selected to store!</string>
+        <string id="inventorynospace">There is no space left in your inventory for that item!</string>
+        <string id="withdrawinvalid">Invalid item selected to retreive!</string>
+        <string id="onlysellempty">Cannot sell bag unless it's empty!</string>
+        <string id="onlytradeempty">Cannot trade bag unless it's empty!</string>
+    </Bags>
+    <Trading>
+        <string id="tradenospace">There is no space left in the trade window for that item!</string>
+        <string id="offerinvalid">Invalid item selected to offer!</string>
+        <string id="inventorynospace">There is no space left in your inventory for that item!</string>
+        <string id="revokeinvalid">Invalid item selected to revoke!</string>
+        <string id="itemsdropped">Out of inventory space. Some of your items have been dropped on the ground!</string>
+        <string id="declined">The trade was declined!</string>
+        <string id="accepted">The trade was successful!</string>
+        <string id="alreadydenied">Your trade request has already been denied!</string>
+        <string id="busy">{00} is busy. Please try again later!</string>
+        <string id="declined">{00} has declined your request to trade!</string>
+    </Trading>
+    <Parties>
+        <string id="leaderinvonly">Only the party leader can send invitations to your party.</string>
+        <string id="joined">{00} has joined the party!</string>
+        <string id="limitedreached">You have reached the maximum limit of party members. Kick another member before adding more.</string>
+        <string id="kicked">You have been kicked from the party!</string>
+        <string id="memberkicked">{00} has been kicked from the party!</string>
+        <string id="disbanded">The party has been disbanded.</string>
+        <string id="left">You have left the party.</string>
+        <string id="memberleft">{00} has left the party!</string>
+        <string id="alreadydenied">Your party invitation has already been rejected!</string>
+        <string id="busy">{00} is busy. Please try again later!</string>
+        <string id="declined">{00} has declined your party invitation!</string>
+				<string id="notinparty">You are not in a party.</string>
+    </Parties>
+    <Friends>
+        <string id="accept">{00} has accepted your friend request!</string>
+        <string id="sent">Friend request sent.</string>
+        <string id="remove">Friend removed.</string>
+        <string id="alreadyfriends">You are already friends with {00}.</string>
+        <string id="busy">{00} is busy. Please try again later!</string>
+        <string id="notification">You are now friends with {00}!</string>
+    </Friends>
+    <Events>
+        <string id="playernamecommand">\pn</string>
+        <string id="eventnamecommand">\en</string>
+        <string id="onlinelistcommand">\onlinelist</string>
+        <string id="onlinecountcommand">\onlinecount</string>
+        <string id="commandparameter">\param</string>
+        <string id="playervar">\pv</string>
+        <string id="playerswitch">\ps</string>
+        <string id="globalvar">\gv</string>
+        <string id="globalswitch">\gs</string>
+        <string id="timehour">\hour</string>
+        <string id="militaryhour">\24hour</string>
+        <string id="timeminute">\minute</string>
+        <string id="timesecond">\second</string>
+        <string id="timeperiod">\period</string>
+        
+        <string id="periodmorning">AM</string>
+        <string id="periodevening">PM</string>
+    </Events>
+    <Combat>
+        <string id="critcal">CRITICAL HIT!</string>
+        <string id="miss">MISS!</string>
+        <string id="blocked">BLOCKED!</string>
+        <string id="dash">DASH!</string>
+        <string id="levelup">LEVEL UP!</string>
+        <string id="toolrequired">You require a {00} to interact with this resource!</string>
+        <string id="addsymbol">+</string>
+        <string id="removesymbol">-</string>
+        <string id="statreq">You do not possess the correct combat stats to use this ability.</string>
+        <string id="silenced">You cannot cast this ability whilst silenced.</string>
+        <string id="stunned">You cannot cast this ability whilst stunned.</string>
+        <string id="levelreq">You are not a high enough level to use this ability.</string>
+        <string id="notarget">No Target!</string>
+    <string id="channeling">You are currently channeling another skill.</string>
+    <string id="channelingnoattack">You are currently channeling a spell, you cannot attack.</string>
+        <string id="cooldown">This skill is on cooldown.</string>
+        <string id="lowhealth">Not enough health.</string>
+        <string id="lowmana">Not enough mana.</string>
+        <string id="stunblocking">You are stunned and can't block.</string>
+        <string id="stunattacking">You are stunned and can't attack.</string>
+        <string id="dynamicreq">You do not meet the requirements to cast the spell!</string>
+        <string id="resourcereqs">You do not meet the requirements to harvest this resource!</string>
+        <string id="status0">NONE!</string>
+        <string id="status1">SILENCED!</string>
+        <string id="status2">STUNNED!</string>
+        <string id="status3">SNARED!</string>
+        <string id="status4">BLINDED!</string>
+        <string id="status5">STEALTH!</string>
+        <string id="status6">TRANSFORMED!</string>
+    </Combat>
+    <Mapping>
+        <string id="newfolder">New Folder</string>
+        <string id="lastmap">Last Map</string>
+        <string id="lastmaperror">Failed to delete map, you must have at least one map at all times!</string>
+        <string id="linkfail">Map Link Failure</string>
+        <string id="linkfailerror">Failed to link map {00} to map {01}. If this merge were to happen, maps {02} and {03} would occupy the same space in the world.</string>
+    </Mapping>
+    <Classes>
+        <string id="lastclass">Last Class</string>
+        <string id="lastclasserror">Failed to delete class, you must have at least one class at all times!</string>
+    </Classes>
+    <Networking>
+        <string id="disconnected">Client disconnected.</string>
+        <string id="badpacket">Error handling client packet. Disconnecting client. More info logged to errors.log</string>
+    </Networking>
+    <Formulas>
+        <string id="loadfailed">Failed to load formulas! Press any key to shut down.</string>
+        <string id="missing">Formulas.xml missing. Generated default formulas file.</string>
+        <string id="syntax">Error loading formulas! Please make sure the file exists and is free on syntax errors.</string>
+    </Formulas>
+    <Chat>
+        <string id="global">[GLOBAL] {00}: {01}</string>
+        <string id="announcement">[ANNOUNCEMENT] {00}: {01}</string>
+        <string id="private">[PM] {00}: {01}</string>
+        <string id="admin">[ADMIN] {00}: {01}</string>
+        <string id="party">[PARTY] {00}: {01}</string>
+        <string id="local">{00}: {01}</string>
+				<string id="localcmd">/global</string>
+        <string id="globalcmd">/global</string>
+        <string id="allcmd">/all</string>
+        <string id="announcementcmd">/announcement</string>
+        <string id="admincmd">/admin</string>
+        <string id="partycmd">/party</string>
+        <string id="pmcmd">/pm</string>
+        <string id="messagecmd">/message</string>
+        <string id="replycmd">/reply</string>
+        <string id="rcmd">/r</string>
+    </Chat>
+		<UPnP>
+				<string id="initialized">UPnP Service Initialization Succeeded</string>
+        <string id="initializationfailed">UPnP Service Initialization Failed. You might not have a router, or UPnP on your router might be disabled.</string>
+        <string id="forwardedtcp">Successfully auto port forwarded tcp port {00} using UPnP.</string>
+        <string id="forwardedudp">Successfully auto port forwarded udp port {00} using UPnP.</string>
+        <string id="failedforwardingtcp">Failed to automatically port forward tcp port {00} using UPnP. (UPnP possibly disabled in your router settings, or this port might already be forwarded!)</string>
+        <string id="failedforwardingudp">Failed to automatically port forward udp port {00} using UPnP. (UPnP possibly disabled in your router settings, or this port might already be forwarded!)</string>
+		</UPnP>
+		<PortChecking>
+				<string id="connectioninfo">Connection Information:</string>
+				<string id="notconnected">   Could not retreive connection information from AGD servers. Do you have an internet connection?</string>
+				<string id="publicip">   Public IP: {00}</string>
+				<string id="publicport">   Public Port: {00}</string>
+				<string id="accessible">Your game is accesible to the public!</string>
+				<string id="letothersjoin">Enter your public ip and port into the client/editor config for others to join!</string>
+				<string id="notaccessible">It does not appear that your game is accessible to the outside world.</string>
+				<string id="debuggingsteps">Debugging Steps (To allow public access):</string>
+				<string id="checkfirewalls">   1. Firewalls might be blocking connections to your server. Check firewalls on your system. (i.e. iptables, FirewallD, Windows Firewall)</string>
+				<string id="checkantivirus">   2. Antivirus programs might also be blocking connections and you may need to add Intersect Server.exe to your antivirus exclusions.</string>
+				<string id="checkrouterupnp">It appears that UPnP Failed. Your might need to enable UPnP on your router or manually port forward to allow connections to your server.</string>
+				<string id="screwed">   3. If on a college campus, or within a business network you likely do not have permission to open ports or host games in which case you are screwed!</string>
+		</PortChecking>
+    <Regex>
+        <string id="email">^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|([a-zA-Z]+[\w-]+\.)+[a-zA-Z]{2,4})$</string>
+        <string id="username">^[a-zA-Z0-9]{2,20}$</string>
+        <string id="password">^[a-zA-Z0-9]{4,20}$</string>
+    </Regex>
+    <Errors>
+        <string id="warpfail">Failed to warp player to new map -- warping to spawn.</string>
+        <string id="errorlogged">An error was logged into errors.log</string>
+        <string id="errorservercrashnohalt">The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log.</string>
+        <string id="errorservercrash">The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log. Press any key to exit.</string>
+    </Errors>
 </Strings>

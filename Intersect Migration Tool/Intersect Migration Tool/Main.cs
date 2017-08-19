@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using Intersect.Localization;
 
-namespace Intersect_Migration_Tool
+namespace Intersect.Migration
 {
     class MainClass
     {
         static void Main(string[] args)
         {
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Strings.Init(Strings.IntersectComponent.Migrator, Database.GetLanguageFromConfig());
             Console.WriteLine(@"  _____       _                          _   ");
@@ -60,7 +62,8 @@ namespace Intersect_Migration_Tool
                 else
                 {
                     Console.WriteLine("");
-                    Console.WriteLine(Strings.Get("intro", "uptodate", Database.GetDatabaseVersion(), Database.DbVersion));
+                    Console.WriteLine(Strings.Get("intro", "uptodate", Database.GetDatabaseVersion(),
+                        Database.DbVersion));
                     Console.WriteLine(Strings.Get("intro", "tooloutofdate"));
                     Console.WriteLine("");
                     Console.WriteLine(Strings.Get("main", "exit"));
@@ -85,7 +88,7 @@ namespace Intersect_Migration_Tool
             {
                 writer.WriteLine("Message :" + ((Exception) e.ExceptionObject).Message + "<br/>" + Environment.NewLine +
                                  "StackTrace :" + ((Exception) e.ExceptionObject).StackTrace +
-                                 "" + Environment.NewLine + "Date :" + DateTime.Now.ToString());
+                                 "" + Environment.NewLine + "Date :" + DateTime.Now);
                 writer.WriteLine(Environment.NewLine +
                                  "-----------------------------------------------------------------------------" +
                                  Environment.NewLine);

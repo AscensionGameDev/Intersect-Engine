@@ -1,6 +1,6 @@
-﻿using Intersect_Server.Classes.Entities;
+﻿using Intersect.Server.Classes.Entities;
 
-namespace Intersect_Server.Classes.Maps
+namespace Intersect.Server.Classes.Maps
 {
     public class MapResourceSpawn
     {

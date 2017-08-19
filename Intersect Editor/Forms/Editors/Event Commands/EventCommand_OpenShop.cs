@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect;
+using Intersect.Editor.Classes;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
-using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
     public partial class EventCommand_OpenShop : UserControl
     {
@@ -19,8 +19,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _eventEditor = editor;
             InitLocalization();
             cmbShop.Items.Clear();
-            cmbShop.Items.AddRange(Database.GetGameObjectList(GameObject.Shop));
-            cmbShop.SelectedIndex = Database.GameObjectListIndex(GameObject.Shop, _myCommand.Ints[0]);
+            cmbShop.Items.AddRange(Database.GetGameObjectList(GameObjectType.Shop));
+            cmbShop.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Shop, _myCommand.Ints[0]);
         }
 
         private void InitLocalization()
@@ -34,7 +34,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (cmbShop.SelectedIndex > -1)
-                _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.Shop, cmbShop.SelectedIndex);
+                _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Shop, cmbShop.SelectedIndex);
             _eventEditor.FinishCommandEdit();
         }
 

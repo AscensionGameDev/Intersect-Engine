@@ -2,13 +2,13 @@
 using System.Windows.Forms;
 using Intersect.Localization;
 
-namespace Intersect_Editor.Forms
+namespace Intersect.Editor.Forms
 {
     public partial class frmProgress : Form
     {
         private int progressVal;
-        private Boolean shouldClose;
-        private Boolean showCancelBtn;
+        private bool shouldClose;
+        private bool showCancelBtn;
         private string statusText;
 
         public frmProgress()

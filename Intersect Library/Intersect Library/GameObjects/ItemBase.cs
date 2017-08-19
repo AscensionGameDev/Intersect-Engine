@@ -1,14 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
+using Intersect.Models;
 
 namespace Intersect.GameObjects
 {
     public class ItemBase : DatabaseObject<ItemBase>
     {
-        public new const string DATABASE_TABLE = "items";
-        public new const GameObject OBJECT_TYPE = GameObject.Item;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         public int Animation;
         public int AttackAnimation = -1;
         public int Bound;
@@ -42,6 +39,8 @@ namespace Intersect.GameObjects
             Speed = 10; // Set to 10 by default.
             StatsGiven = new int[Options.MaxStats];
         }
+
+        public override byte[] BinaryData => ItemData();
 
         public override void Load(byte[] data)
         {
@@ -119,79 +118,9 @@ namespace Intersect.GameObjects
             return myBuffer.ToArray();
         }
 
-        public static ItemBase GetItem(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (ItemBase) Objects[index];
-            }
-            return null;
-        }
-
-        public static string GetName(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return ((ItemBase) Objects[index]).Name;
-            }
-            return "Deleted";
-        }
-
         public bool IsStackable()
         {
-            //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-            return (ItemType == (int) ItemTypes.Consumable ||
-                    ItemType == (int) ItemTypes.Currency ||
-                    ItemType == (int) ItemTypes.None ||
-                    ItemType == (int) ItemTypes.Spell) && Stackable > 0;
-        }
-
-        public override byte[] BinaryData => ItemData();
-
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            Objects.Remove(Id);
-        }
-
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, ItemBase> GetObjects()
-        {
-            Dictionary<int, ItemBase> objects = Objects.ToDictionary(k => k.Key, v => (ItemBase) v.Value);
-            return objects;
+            return ItemType == (int) ItemTypes.Currency || Stackable > 0;
         }
     }
 }

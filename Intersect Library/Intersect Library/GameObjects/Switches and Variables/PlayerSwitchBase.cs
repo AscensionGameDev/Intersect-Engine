@@ -1,19 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Intersect.Models;
 
 namespace Intersect.GameObjects
 {
     public class PlayerSwitchBase : DatabaseObject<PlayerSwitchBase>
     {
-        //Core info
-        public new const string DATABASE_TABLE = "player_switches";
-        public new const GameObject OBJECT_TYPE = GameObject.PlayerSwitch;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-
         public PlayerSwitchBase(int id) : base(id)
         {
             Name = "New Player Switch";
         }
+
+        public override byte[] BinaryData => Data();
 
         public override void Load(byte[] packet)
         {
@@ -28,72 +24,6 @@ namespace Intersect.GameObjects
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
             return myBuffer.ToArray();
-        }
-
-        public static PlayerSwitchBase GetSwitch(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return (PlayerSwitchBase) Objects[index];
-            }
-            return null;
-        }
-
-        public static string GetName(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return ((PlayerSwitchBase) Objects[index]).Name;
-            }
-            return "Deleted";
-        }
-
-        public override byte[] BinaryData => Data();
-
-        public override string DatabaseTableName
-        {
-            get { return DATABASE_TABLE; }
-        }
-
-        public override GameObject GameObjectType
-        {
-            get { return OBJECT_TYPE; }
-        }
-
-        public static DatabaseObject Get(int index)
-        {
-            if (Objects.ContainsKey(index))
-            {
-                return Objects[index];
-            }
-            return null;
-        }
-
-        public override void Delete()
-        {
-            Objects.Remove(Id);
-        }
-
-        public static void ClearObjects()
-        {
-            Objects.Clear();
-        }
-
-        public static void AddObject(int index, DatabaseObject obj)
-        {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
-        }
-
-        public static int ObjectCount()
-        {
-            return Objects.Count;
-        }
-
-        public static Dictionary<int, PlayerSwitchBase> GetObjects()
-        {
-            Dictionary<int, PlayerSwitchBase> objects = Objects.ToDictionary(k => k.Key, v => (PlayerSwitchBase) v.Value);
-            return objects;
         }
     }
 }
