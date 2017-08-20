@@ -895,7 +895,7 @@ namespace Intersect.Server.Classes.Entities
                     case (int) ItemTypes.None:
                     case (int) ItemTypes.Currency:
                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "cannotuse"));
-                        break;
+                        return;
                     case (int) ItemTypes.Consumable:
                         string s = "";
                         if (itemBase.Data2 > 0)
@@ -906,7 +906,6 @@ namespace Intersect.Server.Classes.Entities
                         switch (itemBase.Data1)
                         {
                             case 0: //Health
-                                AddVital(Vitals.Health, itemBase.Data2);
                                 if (s == Strings.Get("combat", "addsymbol"))
                                 {
                                     PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.Heal);
@@ -929,7 +928,7 @@ namespace Intersect.Server.Classes.Entities
                                 PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.Experience);
                                 break;
                             default:
-                                break;
+                                return;
                         }
                         TakeItem(slot, 1);
                         break;
@@ -983,25 +982,18 @@ namespace Intersect.Server.Classes.Entities
                         }
                         PacketSender.SendPlayerEquipmentToProximity(this);
                         PacketSender.SendEntityStats(this);
+                        if (equipped) return;
                         break;
                     case (int) ItemTypes.Spell:
-                        if (itemBase.Data1 > -1)
-                        {
-                            if (TryTeachSpell(new SpellInstance(itemBase.Data1)))
-                            {
-                                TakeItem(slot, 1);
-                            }
-                        }
+                        if (itemBase.Data1 <= -1) return;
+                        if (!TryTeachSpell(new SpellInstance(itemBase.Data1))) return;
+                        TakeItem(slot, 1);
                         break;
                     case (int) ItemTypes.Event:
                         var evt = EventBase.Lookup.Get<EventBase>(itemBase.Data1);
-                        if (evt != null)
-                        {
-                            if (StartCommonEvent(evt))
-                            {
-                                TakeItem(slot, 1);
-                            }
-                        }
+                        if (evt == null) return;
+                        if (!StartCommonEvent(evt)) return;
+                        TakeItem(slot, 1);
                         break;
                     case (int) ItemTypes.Bag:
                         //Bags will never, ever, be stackable. Going to use the value property for the bag id in the database.
@@ -1017,7 +1009,14 @@ namespace Intersect.Server.Classes.Entities
                         break;
                     default:
                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "notimplemented"));
-                        break;
+                        return;
+                }
+                AddVital(Vitals.Health, itemBase.Data2);
+                if (itemBase.Animation > -1)
+                {
+                    PacketSender.SendAnimationToProximity(itemBase.Animation, 1, MyIndex, CurrentMap,
+                        0,
+                        0, Dir); //Target Type 1 will be global entity
                 }
             }
         }
@@ -3047,32 +3046,38 @@ namespace Intersect.Server.Classes.Entities
                     SpawnY = -1
                 };
                 MyEvents.Add(tmpEvent);
-                tmpEvent.Update(Globals.System.GetTimeMs());
-                if (tmpEvent.PageInstance != null && (trigger == -1 || tmpEvent.PageInstance.MyPage.Trigger == trigger))
+                //Try to Spawn a PageInstance.. if we can
+                for (int i = evt.MyPages.Count - 1; i >= 0; i--)
                 {
-                    //Check for /command trigger
-                    if (trigger == (int) EventPage.CommonEventTriggers.Command)
+                    if ((trigger == -1 || evt.MyPages[i].Trigger == trigger) && tmpEvent.CanSpawnPage(i, evt))
                     {
-                        if (command.ToLower() == tmpEvent.PageInstance.MyPage.TriggerCommand.ToLower())
+                        tmpEvent.PageInstance =
+                            new EventPageInstance(evt, evt.MyPages[i], evt.Index, -1, tmpEvent, MyClient);
+                        tmpEvent.PageIndex = i;
+                        //Check for /command trigger
+                        if (trigger == (int) EventPage.CommonEventTriggers.Command)
+                        {
+                            if (command.ToLower() == tmpEvent.PageInstance.MyPage.TriggerCommand.ToLower())
+                            {
+                                var newStack =
+                                    new CommandInstance(tmpEvent.PageInstance.MyPage) {CommandIndex = 0, ListIndex = 0};
+                                tmpEvent.PageInstance.Param = param;
+                                tmpEvent.CallStack.Push(newStack);
+                                return true;
+                            }
+                        }
+                        else
                         {
                             var newStack =
                                 new CommandInstance(tmpEvent.PageInstance.MyPage) {CommandIndex = 0, ListIndex = 0};
-                            tmpEvent.PageInstance.Param = param;
                             tmpEvent.CallStack.Push(newStack);
+                            return true;
                         }
-                    }
-                    else
-                    {
-                        var newStack =
-                            new CommandInstance(tmpEvent.PageInstance.MyPage) {CommandIndex = 0, ListIndex = 0};
-                        tmpEvent.CallStack.Push(newStack);
+                        break;
                     }
                 }
-                else
-                {
-                    MyEvents.RemoveAt(MyEvents.Count - 1);
-                }
-                return true;
+                MyEvents.RemoveAt(MyEvents.Count - 1);
+                return false;
             }
         }
 

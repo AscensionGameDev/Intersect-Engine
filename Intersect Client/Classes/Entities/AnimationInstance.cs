@@ -56,7 +56,7 @@ namespace Intersect_Client.Classes.Entities
         {
             if (Hidden) return;
             float rotationDegrees = 0f;
-            if (AutoRotate)
+            if (AutoRotate || _renderDir != -1)
             {
                 switch (_renderDir)
                 {

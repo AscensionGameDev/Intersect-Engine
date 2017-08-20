@@ -56,7 +56,7 @@ namespace Intersect_Client.Classes.Networking
             HandlePacket(bf);
             return true;
         }
-
+        
         public static void HandlePacket(ByteBuffer bf)
         {
             var packetHeader = (ServerPackets) bf.ReadLong();

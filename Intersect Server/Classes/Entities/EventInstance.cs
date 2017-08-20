@@ -186,7 +186,7 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
 
-            if (PageInstance == null && MapNum > -1)
+            if (PageInstance == null)
             {
                 //Try to Spawn a PageInstance.. if we can
                 for (int i = BaseEvent.MyPages.Count - 1; i >= 0; i--)

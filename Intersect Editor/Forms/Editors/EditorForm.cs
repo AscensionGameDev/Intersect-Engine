@@ -9,6 +9,7 @@ namespace Intersect.Editor.Forms.Editors
     public class EditorForm : Form
     {
         private bool closing = false;
+        protected bool changingName = false;
         protected EditorForm()
         {
             ApplyHooks();

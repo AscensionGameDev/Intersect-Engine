@@ -52,6 +52,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void lstCrafts_Click(object sender, EventArgs e)
         {
+            if (changingName) return;
             _editorItem =
                 BenchBase.Lookup.Get<BenchBase>(
                     Database.GameObjectIdFromList(GameObjectType.Bench, lstCrafts.SelectedIndex));
@@ -141,11 +142,13 @@ namespace Intersect.Editor.Forms.Editors
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
+            changingName = true;
             _editorItem.Name = txtName.Text;
             if (lstCrafts.SelectedIndex > -1)
             {
                 lstCrafts.Items[lstCrafts.SelectedIndex] = txtName.Text;
             }
+            changingName = false;
         }
 
         private void nudQuantity_ValueChanged(object sender, EventArgs e)

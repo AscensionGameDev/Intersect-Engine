@@ -66,6 +66,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void lstShops_Click(object sender, EventArgs e)
         {
+            if (changingName) return;
             _editorItem =
                 ShopBase.Lookup.Get<ShopBase>(
                     Database.GameObjectIdFromList(GameObjectType.Shop, lstShops.SelectedIndex));
@@ -198,8 +199,10 @@ namespace Intersect.Editor.Forms.Editors
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
+            changingName = true;
             _editorItem.Name = txtName.Text;
             lstShops.Items[ShopBase.Lookup.IndexKeys.ToList().IndexOf(_editorItem.Index)] = txtName.Text;
+            changingName = false;
         }
 
         private void UpdateLists()

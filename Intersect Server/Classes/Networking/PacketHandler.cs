@@ -935,6 +935,23 @@ namespace Intersect.Server.Classes.Networking
                     }
                 }
 
+                var attackingTile = new TileHelper(client.Entity.CurrentMap,client.Entity.CurrentX,client.Entity.CurrentY);
+                switch (client.Entity.Dir)
+                {
+                    case 0:
+                        attackingTile.Translate(0,-1);
+                        break;
+                    case 1:
+                        attackingTile.Translate(0, 1);
+                        break;
+                    case 2:
+                        attackingTile.Translate(-1, 0);
+                        break;
+                    case 3:
+                        attackingTile.Translate(1, 0);
+                        break;
+                }
+
                 //Fire projectile instead if weapon has it
                 if (Options.WeaponIndex > -1)
                 {
@@ -950,11 +967,9 @@ namespace Intersect.Server.Classes.Networking
                         var attackAnim = AnimationBase.Lookup.Get<AnimationBase>(ItemBase.Lookup.Get<ItemBase>(
                                 client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum)
                             .AttackAnimation);
-                        if (attackAnim != null)
+                        if (attackAnim != null && attackingTile.TryFix())
                         {
-                            PacketSender.SendAnimationToProximity(attackAnim.Index, 1, client.Entity.MyIndex,
-                                client.Entity.CurrentMap, client.Entity.CurrentX, client.Entity.CurrentY,
-                                client.Entity.Dir);
+                            PacketSender.SendAnimationToProximity(attackAnim.Index, -1, -1, attackingTile.GetMap(),attackingTile.GetX(),attackingTile.GetY(),client.Entity.Dir);
                         }
 
                         var projectileBase =
@@ -1003,9 +1018,7 @@ namespace Intersect.Server.Classes.Networking
                         var attackAnim = AnimationBase.Lookup.Get<AnimationBase>(classBase.AttackAnimation);
                         if (attackAnim != null)
                         {
-                            PacketSender.SendAnimationToProximity(attackAnim.Index, 1, client.Entity.MyIndex,
-                                client.Entity.CurrentMap, client.Entity.CurrentX, client.Entity.CurrentY,
-                                client.Entity.Dir);
+                            PacketSender.SendAnimationToProximity(attackAnim.Index, -1, -1, attackingTile.GetMap(), attackingTile.GetX(), attackingTile.GetY(), client.Entity.Dir);
                         }
                     }
                 }

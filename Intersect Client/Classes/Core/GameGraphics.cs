@@ -744,7 +744,7 @@ namespace Intersect_Client.Classes.Core
 
                     DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                         new FloatRect(x, y, l.Size * 2, l.Size * 2), new Intersect.Color(255, 255, 255, 255),
-                        _darknessTexture, GameBlendModes.Add, radialShader);
+                        _darknessTexture, GameBlendModes.Add, radialShader,0,true);
                 }
             }
             _lightQueue.Clear();
@@ -952,12 +952,12 @@ namespace Intersect_Client.Classes.Core
         /// <param name="renderTarget">Where to draw to. If null it this will draw to the game screen.</param>
         /// <param name="blendMode">Which blend mode to use when rendering</param>
         public static void DrawGameTexture(GameTexture tex, float x, float y, GameRenderTexture renderTarget = null,
-            GameBlendModes blendMode = GameBlendModes.None, GameShader shader = null, float rotationDegrees = 0.0f)
+            GameBlendModes blendMode = GameBlendModes.None, GameShader shader = null, float rotationDegrees = 0.0f, bool drawImmediate = false)
         {
             var destRectangle = new FloatRect(x, y, (int)tex.GetWidth(), (int)tex.GetHeight());
             var srcRectangle = new FloatRect(0, 0, (int)tex.GetWidth(), (int)tex.GetHeight());
             DrawGameTexture(tex, srcRectangle, destRectangle, Intersect.Color.White, renderTarget, blendMode, shader,
-                rotationDegrees);
+                rotationDegrees, drawImmediate);
         }
 
         /// <summary>
@@ -972,12 +972,12 @@ namespace Intersect_Client.Classes.Core
         /// <param name="blendMode">Which blend mode to use when rendering</param>
         public static void DrawGameTexture(GameTexture tex, float x, float y, Intersect.Color renderColor,
             GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
-            GameShader shader = null, float rotationDegrees = 0.0f)
+            GameShader shader = null, float rotationDegrees = 0.0f, bool drawImmediate = false)
         {
             var destRectangle = new FloatRect(x, y, (int)tex.GetWidth(), (int)tex.GetHeight());
             var srcRectangle = new FloatRect(0, 0, (int)tex.GetWidth(), (int)tex.GetHeight());
             DrawGameTexture(tex, srcRectangle, destRectangle, renderColor, renderTarget, blendMode, shader,
-                rotationDegrees);
+                rotationDegrees, drawImmediate);
         }
 
         /// <summary>
@@ -995,24 +995,24 @@ namespace Intersect_Client.Classes.Core
         /// <param name="blendMode">Which blend mode to use when rendering</param>
         public static void DrawGameTexture(GameTexture tex, float dx, float dy, float sx, float sy, float w, float h,
             GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
-            GameShader shader = null, float rotationDegrees = 0.0f)
+            GameShader shader = null, float rotationDegrees = 0.0f, bool drawImmediate = false)
         {
             var destRectangle = new FloatRect(dx, dy, w, h);
             var srcRectangle = new FloatRect(sx, sy, w, h);
             DrawGameTexture(tex, srcRectangle, destRectangle, Intersect.Color.White, renderTarget, blendMode, shader,
-                rotationDegrees);
+                rotationDegrees, drawImmediate);
         }
 
         public static void DrawGameTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect,
             Intersect.Color renderColor, GameRenderTexture renderTarget = null,
             GameBlendModes blendMode = GameBlendModes.None,
-            GameShader shader = null, float rotationDegrees = 0.0f)
+            GameShader shader = null, float rotationDegrees = 0.0f, bool drawImmediate = false)
         {
             if (tex == null) return;
             Renderer.DrawTexture(tex, srcRectangle, targetRect,
                 Color.FromArgb(renderColor.A, renderColor.R, renderColor.G, renderColor.B), renderTarget, blendMode,
                 shader,
-                rotationDegrees);
+                rotationDegrees,false,drawImmediate);
         }
     }
 }
