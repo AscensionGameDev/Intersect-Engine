@@ -18,7 +18,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
     public class MonoRenderer : GameRenderer
     {
         private ContentManager _contentManager;
-        private GameBlendModes _currentBlendmode = GameBlendModes.Alpha;
+        private GameBlendModes _currentBlendmode = GameBlendModes.None;
         private GameShader _currentShader;
         private FloatRect _currentSpriteView;
         private GameRenderTexture _currentTarget;
@@ -29,6 +29,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         private Game _game;
         private GameWindow _gameWindow;
         private bool _initialized;
+        private BlendState _normalState;
         private BlendState _multiplyState;
         RasterizerState _rasterizerState = new RasterizerState() {ScissorTestEnable = true};
         private bool _spriteBatchBegan;
@@ -55,6 +56,14 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             _game = monoGame;
             mGraphics = graphics;
             _contentManager = contentManager;
+
+            _normalState = new BlendState()
+            {
+                ColorSourceBlend = Blend.SourceAlpha,
+                AlphaSourceBlend = Blend.One,
+                ColorDestinationBlend = Blend.InverseSourceAlpha,
+                AlphaDestinationBlend = Blend.InverseSourceAlpha
+            };
 
             _multiplyState = new BlendState()
             {
@@ -174,20 +183,16 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 {
                     mGraphicsDevice.SetRenderTarget((RenderTarget2D) target.GetTexture());
                 }
-                BlendState blend = BlendState.AlphaBlend;
+                BlendState blend = _normalState;
                 Effect useEffect = null;
 
                 switch (mode)
                 {
                     case GameBlendModes.None:
-                        blend = BlendState.NonPremultiplied;
-                        if (target != null)
-                        {
-                            blend = BlendState.AlphaBlend;
-                        }
+                        blend = _normalState;
                         break;
                     case GameBlendModes.Alpha:
-                        blend = BlendState.NonPremultiplied;
+                        blend = BlendState.AlphaBlend;
                         break;
                     case (GameBlendModes.Multiply):
                         blend = _multiplyState;

@@ -44,7 +44,7 @@ namespace Intersect_Client.Classes.Networking
             var binaryPacket = packet as BinaryPacket;
 
             var bf = binaryPacket?.Buffer;
-
+            if (packet == null || bf == null) return false;
             //Compressed?
             if (bf.ReadByte() == 1)
             {
@@ -1206,7 +1206,7 @@ namespace Intersect_Client.Classes.Networking
                 var map = MapInstance.Lookup.Get<MapInstance>(mapIndex);
                 if (map != null)
                 {
-                    if (entityIndex >= 0 && entityIndex < map.LocalEntities.Count)
+                    if (map.LocalEntities.ContainsKey(entityIndex))
                     {
                         if (map.LocalEntities[entityIndex] != null)
                         {

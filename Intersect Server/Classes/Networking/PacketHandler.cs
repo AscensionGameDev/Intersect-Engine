@@ -30,6 +30,8 @@ namespace Intersect.Server.Classes.Networking
 
             var bf = binaryPacket?.Buffer;
 
+            if (packet == null || bf == null) return false;
+
             //Compressed?
             if (bf.ReadByte() == 1)
             {

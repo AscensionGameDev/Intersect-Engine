@@ -32,6 +32,8 @@ namespace Intersect_Client.Classes.UI.Game
             _searchTextbox = new TextBox(_textboxContainer, "SearchTextbox");
             Gui.FocusElements.Add(_searchTextbox);
 
+            _friends = new ListBox(_friendsWindow, "FriendsList");
+
             _addButton = new Button(_friendsWindow, "AddFriendButton");
             _addButton.SetText("+");
             _addButton.Clicked += addButton_Clicked;
@@ -70,10 +72,6 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _friends.Clear();
             }
-
-            _friends = new ListBox(_friendsWindow);
-            _friends.SetBounds(6, 32, _friendsWindow.Width - 24, _friendsWindow.Height - 78);
-            _friends.RenderColor.A = 0;
 
             foreach (var f in Globals.Me.Friends)
             {

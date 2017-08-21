@@ -968,6 +968,8 @@ namespace Intersect.Server.Classes.Entities
                                             .Commands[
                                                 CallStack.Peek().CommandIndex].Route);
                                     MyPlayer.MyEvents[i].PageInstance.MovementType = 2;
+                                    if (MyPlayer.MyEvents[i].PageInstance.GlobalClone != null)
+                                        MyPlayer.MyEvents[i].PageInstance.GlobalClone.MovementType = 2;
                                 }
                             }
                         }
@@ -1037,7 +1039,7 @@ namespace Intersect.Server.Classes.Entities
                             {
                                 for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
                                 {
-                                    if (MyPlayer.MyEvents[i] == null) continue;
+                                    if (MyPlayer.MyEvents[i] == null || MyPlayer.MyEvents[i].MapNum != this.MapNum) continue;
                                     if (MyPlayer.MyEvents[i].BaseEvent.Index ==
                                         CallStack.Peek().Page.CommandLists[
                                             CallStack.Peek().ListIndex].Commands[
@@ -1151,7 +1153,7 @@ namespace Intersect.Server.Classes.Entities
                             {
                                 for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
                                 {
-                                    if (MyPlayer.MyEvents[i] == null) continue;
+                                    if (MyPlayer.MyEvents[i] == null || MyPlayer.MyEvents[i].MapNum != this.MapNum) continue;
                                     if (MyPlayer.MyEvents[i].BaseEvent.Index ==
                                         CallStack.Peek().Page.CommandLists[
                                             CallStack.Peek().ListIndex].Commands[
@@ -1192,7 +1194,7 @@ namespace Intersect.Server.Classes.Entities
                                     else
                                     {
                                         PacketSender.SendAnimationToProximity(animNum, 2, targetEntity.MyIndex,
-                                            targetEntity.CurrentMap, targetEntity.MyIndex, 0, direction);
+                                            targetEntity.CurrentMap, 0, 0, direction);
                                     }
                                     CallStack.Peek().CommandIndex++;
                                     return;

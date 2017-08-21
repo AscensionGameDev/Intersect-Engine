@@ -68,7 +68,7 @@ namespace Intersect.Network
             mPeerConfiguration.ConnectionTimeout = 60;
             mPeerConfiguration.EnableMessageType(NetIncomingMessageType.VerboseDebugMessage);
 #else
-            mPeerConfiguration.ConnectionTimeout = 5;
+            mPeerConfiguration.ConnectionTimeout = 60;
             mPeerConfiguration.DisableMessageType(NetIncomingMessageType.VerboseDebugMessage);
 #endif
 
@@ -427,8 +427,11 @@ namespace Intersect.Network
                             }
 
                             var client = mNetwork.FindConnection(guid);
-                            OnDisconnected(this, client);
-                            mNetwork?.RemoveConnection(client);
+                            if (client != null)
+                            {
+                                OnDisconnected(this, client);
+                                mNetwork?.RemoveConnection(client);
+                            }
                             Debug.Assert(mGuidLookup != null, "mGuidLookup != null");
                             mGuidLookup.Remove(connection.RemoteUniqueIdentifier);
                             break;

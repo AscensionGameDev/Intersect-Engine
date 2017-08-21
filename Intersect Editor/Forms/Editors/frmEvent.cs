@@ -1258,14 +1258,14 @@ namespace Intersect.Editor.Forms
                                 if (MyMap.Events.ContainsKey(command.Ints[2]))
                                 {
                                     return Strings.Get("eventcommandlist", "spawnnpc", NpcBase.GetName(command.Ints[0]),
-                                        Strings.Get("eventcommandlist", "spawnonevent", command.Ints[2] + 1,
+                                        Strings.Get("eventcommandlist", "spawnonevent", command.Ints[2],
                                             MyMap.Events[command.Ints[2]].Name, command.Ints[3], command.Ints[4],
                                             retain));
                                 }
                                 else
                                 {
                                     return Strings.Get("eventcommandlist", "spawnnpc", NpcBase.GetName(command.Ints[0]),
-                                        Strings.Get("eventcommandlist", "spawnonevent", command.Ints[2] + 1,
+                                        Strings.Get("eventcommandlist", "spawnonevent", command.Ints[2],
                                             Strings.Get("eventcommandlist", "deletedevent"), command.Ints[3],
                                             command.Ints[4], retain));
                                 }
@@ -1275,7 +1275,6 @@ namespace Intersect.Editor.Forms
                 case EventCommandType.DespawnNpc:
                     return Strings.Get("eventcommandlist", "despawnnpcs");
                 case EventCommandType.PlayAnimation:
-                    output += "Play Animation " + AnimationBase.GetName(command.Ints[0]) + " ";
                     switch (command.Ints[1])
                     {
                         case 0: //On Map/Tile Selection
@@ -1323,7 +1322,7 @@ namespace Intersect.Editor.Forms
                                 {
                                     return Strings.Get("eventcommandlist", "playanimation",
                                         AnimationBase.GetName(command.Ints[0]),
-                                        Strings.Get("eventcommandlist", "animationonevent", (command.Ints[2] + 1),
+                                        Strings.Get("eventcommandlist", "animationonevent", (command.Ints[2]),
                                             MyMap.Events[command.Ints[2]].Name, command.Ints[3],
                                             command.Ints[4], spawnOpt));
                                 }
@@ -1331,7 +1330,7 @@ namespace Intersect.Editor.Forms
                                 {
                                     return Strings.Get("eventcommandlist", "playanimation",
                                         AnimationBase.GetName(command.Ints[0]),
-                                        Strings.Get("eventcommandlist", "animationonevent", (command.Ints[2] + 1),
+                                        Strings.Get("eventcommandlist", "animationonevent", (command.Ints[2]),
                                             Strings.Get("eventcommandlist", "deletedevent"), command.Ints[3],
                                             command.Ints[4], spawnOpt));
                                 }

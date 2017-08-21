@@ -41,6 +41,8 @@ namespace Intersect.Editor.Classes
 
             var bf = binaryPacket?.Buffer;
 
+            if (packet == null || bf == null) return false;
+
             //Compressed?
             if (bf.ReadByte() == 1)
             {
@@ -292,7 +294,7 @@ namespace Intersect.Editor.Classes
                                 if (Globals.MapsToFetch.Count == 0)
                                 {
                                     Globals.FetchingMapPreviews = false;
-                                    Globals.PreviewProgressForm.Dispose();
+                                    Globals.PreviewProgressForm.BeginInvoke((MethodInvoker)delegate { Globals.PreviewProgressForm.Dispose(); });
                                 }
                                 else
                                 {

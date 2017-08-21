@@ -92,6 +92,7 @@ namespace Intersect_Client.Classes.Entities
                 //Draw Lower
                 GameTexture tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation,
                     MyBase.LowerAnimSprite);
+                if (!MyBase.Name.ToLower().Contains("star")) tex = null;
                 if (tex != null)
                 {
                     if (MyBase.LowerAnimXFrames > 0 && MyBase.LowerAnimYFrames > 0)
