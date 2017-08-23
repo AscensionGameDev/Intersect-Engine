@@ -55,12 +55,18 @@ namespace Intersect.Editor.Classes
             return true;
         }
 
+        private static int packetCount = 0;
+        private static bool debugPackets = false;
         public static void HandlePacket(ByteBuffer bf)
         {
             if (bf == null || bf.Length() == 0) return;
 
             var packetHeader = (ServerPackets) bf.ReadLong();
-            Console.WriteLine("Received packet " + packetHeader);
+            packetCount++;
+            if (debugPackets)
+            {
+                Console.WriteLine("Handled packet " + packetHeader + " - " + packetCount);
+            }
             switch (packetHeader)
             {
                 case ServerPackets.Ping:

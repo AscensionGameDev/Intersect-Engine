@@ -128,14 +128,12 @@ namespace Intersect.Server.Classes.Entities
                                 else
                                 {
                                     //Check if the exist exists && if the move route is completed.
-                                    for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
+                                    foreach (var evt in MyPlayer.EventLookup.Values)
                                     {
-                                        if (MyPlayer.MyEvents[i] == null) continue;
-                                        if (MyPlayer.MyEvents[i].MapNum == CallStack.Peek().WaitingForRouteMap &&
-                                            MyPlayer.MyEvents[i].BaseEvent.Index == CallStack.Peek().WaitingForRoute)
+                                        if (evt.MapNum == CallStack.Peek().WaitingForRouteMap && evt.BaseEvent.Index == CallStack.Peek().WaitingForRoute)
                                         {
-                                            if (MyPlayer.MyEvents[i].PageInstance == null) break;
-                                            if (!MyPlayer.MyEvents[i].PageInstance.MoveRoute.Complete) break;
+                                            if (evt.PageInstance == null) break;
+                                            if (!evt.PageInstance.MoveRoute.Complete) break;
                                             CallStack.Peek().WaitingForRoute = -2;
                                             CallStack.Peek().WaitingForRouteMap = -1;
                                             break;
@@ -236,7 +234,7 @@ namespace Intersect.Server.Classes.Entities
         }
 
         public static bool MeetsConditionLists(ConditionLists lists, Player MyPlayer, EventInstance EventInstance,
-            bool SingleList = true)
+            bool SingleList = true, QuestBase questBase = null)
         {
             if (MyPlayer == null) return false;
             //If no condition lists then this passes
@@ -245,7 +243,7 @@ namespace Intersect.Server.Classes.Entities
 
             for (int i = 0; i < lists.Lists.Count; i++)
             {
-                if (MeetsConditionList(lists.Lists[i], MyPlayer, EventInstance))
+                if (MeetsConditionList(lists.Lists[i], MyPlayer, EventInstance,questBase))
                     //Checks to see if all conditions in this list are met
                 {
                     //If all conditions are met.. and we only need a single list to pass then return true
@@ -264,16 +262,16 @@ namespace Intersect.Server.Classes.Entities
             return !SingleList;
         }
 
-        public static bool MeetsConditionList(ConditionList list, Player MyPlayer, EventInstance EventInstance)
+        public static bool MeetsConditionList(ConditionList list, Player MyPlayer, EventInstance EventInstance, QuestBase questBase)
         {
             for (int i = 0; i < list.Conditions.Count; i++)
             {
-                if (!MeetsCondition(list.Conditions[i], MyPlayer, EventInstance)) return false;
+                if (!MeetsCondition(list.Conditions[i], MyPlayer, EventInstance, questBase)) return false;
             }
             return true;
         }
 
-        public static bool MeetsCondition(EventCommand conditionCommand, Player MyPlayer, EventInstance EventInstance)
+        public static bool MeetsCondition(EventCommand conditionCommand, Player MyPlayer, EventInstance EventInstance, QuestBase questBase)
         {
             //For instance use PageInstance
             switch (conditionCommand.Ints[0])
@@ -450,6 +448,11 @@ namespace Intersect.Server.Classes.Entities
                     }
                 case 11: //Can Start Quest
                     var startQuest = QuestBase.Lookup.Get<QuestBase>(conditionCommand.Ints[1]);
+                    if (startQuest == questBase)
+                    {
+                        //We cannot check and see if we meet quest requirements if we are already checking to see if we meet quest requirements :P
+                        return true;
+                    }
                     if (startQuest != null)
                     {
                         return MyPlayer.CanStartQuest(startQuest);
@@ -745,7 +748,7 @@ namespace Intersect.Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.ConditionalBranch:
-                    if (MeetsCondition(command, MyPlayer, this))
+                    if (MeetsCondition(command, MyPlayer, this,null))
                     {
                         var tmpStack = new CommandInstance(CallStack.Peek().Page)
                         {
@@ -954,22 +957,16 @@ namespace Intersect.Server.Classes.Entities
                     }
                     else
                     {
-                        for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
+                        foreach (var evt in MyPlayer.EventLookup.Values)
                         {
-                            if (MyPlayer.MyEvents[i] == null) continue;
-                            if (MyPlayer.MyEvents[i].BaseEvent.Index ==
-                                CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
-                                    CallStack.Peek().CommandIndex].Route.Target)
+                            if (evt.BaseEvent.Index == CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Route.Target)
                             {
-                                if (MyPlayer.MyEvents[i].PageInstance != null)
+                                if (evt.PageInstance != null)
                                 {
-                                    MyPlayer.MyEvents[i].PageInstance.MoveRoute.CopyFrom(
-                                        CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
-                                            .Commands[
-                                                CallStack.Peek().CommandIndex].Route);
-                                    MyPlayer.MyEvents[i].PageInstance.MovementType = 2;
-                                    if (MyPlayer.MyEvents[i].PageInstance.GlobalClone != null)
-                                        MyPlayer.MyEvents[i].PageInstance.GlobalClone.MovementType = 2;
+                                    evt.PageInstance.MoveRoute.CopyFrom(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Route);
+                                    evt.PageInstance.MovementType = 2;
+                                    if (evt.PageInstance.GlobalClone != null)
+                                        evt.PageInstance.GlobalClone.MovementType = 2;
                                 }
                             }
                         }
@@ -985,15 +982,12 @@ namespace Intersect.Server.Classes.Entities
                     }
                     else
                     {
-                        for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
+                        foreach (var evt in MyPlayer.EventLookup.Values)
                         {
-                            if (MyPlayer.MyEvents[i] == null) continue;
-                            if (MyPlayer.MyEvents[i].BaseEvent.Index ==
-                                CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
-                                    CallStack.Peek().CommandIndex].Ints[0])
+                            if (evt.BaseEvent.Index == CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[0])
                             {
-                                CallStack.Peek().WaitingForRoute = MyPlayer.MyEvents[i].BaseEvent.Index;
-                                CallStack.Peek().WaitingForRouteMap = MyPlayer.MyEvents[i].MapNum;
+                                CallStack.Peek().WaitingForRoute = evt.BaseEvent.Index;
+                                CallStack.Peek().WaitingForRouteMap = evt.MapNum;
                                 break;
                             }
                         }
@@ -1037,15 +1031,12 @@ namespace Intersect.Server.Classes.Entities
                             }
                             else
                             {
-                                for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
+                                foreach (var evt in MyPlayer.EventLookup.Values)
                                 {
-                                    if (MyPlayer.MyEvents[i] == null || MyPlayer.MyEvents[i].MapNum != this.MapNum) continue;
-                                    if (MyPlayer.MyEvents[i].BaseEvent.Index ==
-                                        CallStack.Peek().Page.CommandLists[
-                                            CallStack.Peek().ListIndex].Commands[
-                                            CallStack.Peek().CommandIndex].Ints[2])
+                                    if (evt.MapNum != this.MapNum) continue;
+                                    if (evt.BaseEvent.Index == CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[2])
                                     {
-                                        targetEntity = MyPlayer.MyEvents[i].PageInstance;
+                                        targetEntity = evt.PageInstance;
                                         break;
                                     }
                                 }
@@ -1151,15 +1142,12 @@ namespace Intersect.Server.Classes.Entities
                             }
                             else
                             {
-                                for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
+                                foreach (var evt in MyPlayer.EventLookup.Values)
                                 {
-                                    if (MyPlayer.MyEvents[i] == null || MyPlayer.MyEvents[i].MapNum != this.MapNum) continue;
-                                    if (MyPlayer.MyEvents[i].BaseEvent.Index ==
-                                        CallStack.Peek().Page.CommandLists[
-                                            CallStack.Peek().ListIndex].Commands[
-                                            CallStack.Peek().CommandIndex].Ints[2])
+                                    if (evt.MapNum != this.MapNum) continue;
+                                    if (evt.BaseEvent.Index == CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[2])
                                     {
-                                        targetEntity = MyPlayer.MyEvents[i].PageInstance;
+                                        targetEntity = evt.PageInstance;
                                         break;
                                     }
                                 }

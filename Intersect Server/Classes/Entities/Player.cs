@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +32,8 @@ namespace Intersect.Server.Classes.Entities
         //Temporary Values
         private object EventLock = new object();
 
-        public Dictionary<Tuple<int, int, int>, int> EventLookup = new Dictionary<Tuple<int, int, int>, int>();
+        public ConcurrentDictionary<Tuple<int, int, int>, EventInstance> EventLookup = new ConcurrentDictionary<Tuple<int, int, int>, EventInstance>();
+        private int EventCounter = 0;
         public int Experience;
         public Player FriendRequester;
         public Dictionary<Player, long> FriendRequests = new Dictionary<Player, long>();
@@ -45,7 +47,6 @@ namespace Intersect.Server.Classes.Entities
         public int InShop = -1;
         public int LastMapEntered = -1;
         public Client MyClient;
-        public List<EventInstance> MyEvents = new List<EventInstance>();
 
         public long MyId = -1;
         public List<Player> Party = new List<Player>();
@@ -88,7 +89,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 Hotbar[i] = new HotbarInstance();
             }
-            for (int I = 0; I < (int) Stats.StatCount; I++)
+            for (int I = 0; I < (int)Stats.StatCount; I++)
             {
                 Stat[I] = new EntityStat(0, I, this);
             }
@@ -137,7 +138,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (evt != null)
                 {
-                    StartCommonEvent(evt, (int) EventPage.CommonEventTriggers.Autorun);
+                    StartCommonEvent(evt, (int)EventPage.CommonEventTriggers.Autorun);
                 }
             }
 
@@ -145,11 +146,12 @@ namespace Intersect.Server.Classes.Entities
             if (MoveRoute != null && MoveTimer < timeMs)
             {
                 //Check to see if the event instance is still active for us... if not then let's remove this route
-                for (var i = 0; i < MyEvents.Count; i++)
+                var foundEvent = false;
+                foreach (var evt in EventLookup.Values)
                 {
-                    var evt = MyEvents[i];
-                    if (MyEvents[i] != null && MyEvents[i].PageInstance == MoveRouteSetter)
+                    if (evt.PageInstance == MoveRouteSetter)
                     {
+                        foundEvent = true;
                         if (MoveRoute.ActionIndex < MoveRoute.Actions.Count)
                         {
                             ProcessMoveRoute(MyClient, timeMs);
@@ -165,12 +167,12 @@ namespace Intersect.Server.Classes.Entities
                         }
                         break;
                     }
-                    else if (i == MyEvents.Count - 1)
-                    {
-                        MoveRoute = null;
-                        MoveRouteSetter = null;
-                        PacketSender.SendMoveRouteToggle(MyClient, false);
-                    }
+                }
+                if (!foundEvent)
+                {
+                    MoveRoute = null;
+                    MoveRouteSetter = null;
+                    PacketSender.SendMoveRouteToggle(MyClient, false);
                 }
             }
 
@@ -218,33 +220,20 @@ namespace Intersect.Server.Classes.Entities
                             {
                                 //Look for event
                                 var foundEvent = EventExists(map.Index, mapEvent.SpawnX, mapEvent.SpawnY);
-                                if (foundEvent == -1 || MyEvents[foundEvent] == null)
+                                if (foundEvent == null)
                                 {
-                                    var tmpEvent = new EventInstance(MyEvents.Count, MyClient, mapEvent, map.Index)
+                                    var tmpEvent = new EventInstance(EventCounter++, MyClient, mapEvent, map.Index)
                                     {
                                         IsGlobal = mapEvent.IsGlobal == 1,
                                         MapNum = map.Index,
                                         SpawnX = mapEvent.SpawnX,
                                         SpawnY = mapEvent.SpawnY
                                     };
-                                    MyEvents.Add(tmpEvent);
-                                    if (!EventLookup.ContainsKey(new Tuple<int, int, int>(map.Index, mapEvent.SpawnX,
-                                        mapEvent.SpawnY)))
-                                    {
-                                        EventLookup.Add(
-                                            new Tuple<int, int, int>(map.Index, mapEvent.SpawnX, mapEvent.SpawnY),
-                                            MyEvents.Count - 1);
-                                    }
-                                    else
-                                    {
-                                        EventLookup[
-                                                new Tuple<int, int, int>(map.Index, mapEvent.SpawnX, mapEvent.SpawnY)] =
-                                            MyEvents.Count - 1;
-                                    }
+                                    EventLookup.AddOrUpdate(new Tuple<int, int, int>(map.Index, mapEvent.SpawnX, mapEvent.SpawnY), tmpEvent, (key, oldValue) => tmpEvent);
                                 }
                                 else
                                 {
-                                    if (MyEvents[foundEvent] != null) MyEvents[foundEvent].Update(timeMs);
+                                    foundEvent.Update(timeMs);
                                 }
                             }
                         }
@@ -254,10 +243,9 @@ namespace Intersect.Server.Classes.Entities
             //Check to see if we can spawn events, if already spawned.. update them.
             lock (EventLock)
             {
-                for (var i = 0; i < MyEvents.Count; i++)
+                foreach (var evt in EventLookup.Values)
                 {
-                    var evt = MyEvents[i];
-                    if (MyEvents[i] == null) continue;
+                    if (evt == null) continue;
                     var eventFound = false;
                     if (evt.MapNum == -1)
                     {
@@ -282,10 +270,8 @@ namespace Intersect.Server.Classes.Entities
                         eventFound = true;
                     }
                     if (eventFound) continue;
-                    PacketSender.SendEntityLeaveTo(MyClient, i, (int) EntityTypes.Event, evt.MapNum);
-                    EventLookup.Remove(new Tuple<int, int, int>(MyEvents[i].MapNum, MyEvents[i].BaseEvent.SpawnX,
-                        MyEvents[i].BaseEvent.SpawnY));
-                    MyEvents[i] = null;
+                    PacketSender.SendEntityLeaveTo(MyClient, evt.MyIndex, (int)EntityTypes.Event, evt.MapNum);
+                    EventLookup.TryRemove(new Tuple<int, int, int>(evt.MapNum, evt.BaseEvent.SpawnX, evt.BaseEvent.SpawnY), out EventInstance z);
                 }
             }
         }
@@ -326,12 +312,9 @@ namespace Intersect.Server.Classes.Entities
             PacketSender.SendPlayerDeath(this);
 
             //Event trigger
-            for (var i = 0; i < MyEvents.Count; i++)
+            foreach (var evt in EventLookup.Values)
             {
-                if (MyEvents[i] != null)
-                {
-                    MyEvents[i].PlayerHasDied = true;
-                }
+                evt.PlayerHasDied = true;
             }
 
             //Search death common event trigger
@@ -339,7 +322,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (evt != null)
                 {
-                    StartCommonEvent(evt, (int) EventPage.CommonEventTriggers.OnRespawn);
+                    StartCommonEvent(evt, (int)EventPage.CommonEventTriggers.OnRespawn);
                 }
             }
 
@@ -352,15 +335,15 @@ namespace Intersect.Server.Classes.Entities
         //Vitals
         public void RestoreVital(Vitals vital)
         {
-            Vital[(int) vital] = MaxVital[(int) vital];
+            Vital[(int)vital] = MaxVital[(int)vital];
             PacketSender.SendEntityVitals(this);
         }
 
         public void AddVital(Vitals vital, int amount)
         {
-            Vital[(int) vital] += amount;
-            if (Vital[(int) vital] < 0) Vital[(int) vital] = 0;
-            if (Vital[(int) vital] > MaxVital[(int) vital]) Vital[(int) vital] = MaxVital[(int) vital];
+            Vital[(int)vital] += amount;
+            if (Vital[(int)vital] < 0) Vital[(int)vital] = 0;
+            if (Vital[(int)vital] > MaxVital[(int)vital]) Vital[(int)vital] = MaxVital[(int)vital];
             PacketSender.SendEntityVitals(this);
         }
 
@@ -372,10 +355,10 @@ namespace Intersect.Server.Classes.Entities
             {
                 foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
                 {
-                    if ((int) vital < (int) Vitals.VitalCount && Vital[(int) vital] != MaxVital[(int) vital])
+                    if ((int)vital < (int)Vitals.VitalCount && Vital[(int)vital] != MaxVital[(int)vital])
                     {
                         AddVital(vital,
-                            (int) ((float) MaxVital[(int) vital] * (myclass.VitalRegen[(int) vital] / 100f)));
+                            (int)((float)MaxVital[(int)vital] * (myclass.VitalRegen[(int)vital] / 100f)));
                         vitalAdded = true;
                     }
                 }
@@ -411,43 +394,43 @@ namespace Intersect.Server.Classes.Entities
                     {
                         foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
                         {
-                            if ((int) vital < (int) Vitals.VitalCount)
+                            if ((int)vital < (int)Vitals.VitalCount)
                             {
-                                var maxVital = MaxVital[(int) vital];
+                                var maxVital = MaxVital[(int)vital];
                                 if (myclass.IncreasePercentage == 1)
                                 {
                                     maxVital =
                                         (int)
-                                        (MaxVital[(int) vital] *
-                                         (1f + ((float) myclass.VitalIncrease[(int) vital] / 100f)));
+                                        (MaxVital[(int)vital] *
+                                         (1f + ((float)myclass.VitalIncrease[(int)vital] / 100f)));
                                 }
                                 else
                                 {
-                                    maxVital = MaxVital[(int) vital] + myclass.VitalIncrease[(int) vital];
+                                    maxVital = MaxVital[(int)vital] + myclass.VitalIncrease[(int)vital];
                                 }
-                                var vitalDiff = maxVital - MaxVital[(int) vital];
-                                MaxVital[(int) vital] = maxVital;
+                                var vitalDiff = maxVital - MaxVital[(int)vital];
+                                MaxVital[(int)vital] = maxVital;
                                 AddVital(vital, vitalDiff);
                             }
                         }
 
                         foreach (Stats stat in Enum.GetValues(typeof(Stats)))
                         {
-                            if ((int) stat < (int) Stats.StatCount)
+                            if ((int)stat < (int)Stats.StatCount)
                             {
-                                var newStat = Stat[(int) stat].Stat;
+                                var newStat = Stat[(int)stat].Stat;
                                 if (myclass.IncreasePercentage == 1)
                                 {
                                     newStat =
                                         (int)
-                                        (Stat[(int) stat].Stat *
-                                         (1f + ((float) myclass.StatIncrease[(int) stat] / 100f)));
+                                        (Stat[(int)stat].Stat *
+                                         (1f + ((float)myclass.StatIncrease[(int)stat] / 100f)));
                                 }
                                 else
                                 {
-                                    newStat = Stat[(int) stat].Stat + myclass.StatIncrease[(int) stat];
+                                    newStat = Stat[(int)stat].Stat + myclass.StatIncrease[(int)stat];
                                 }
-                                var statDiff = newStat - Stat[(int) stat].Stat;
+                                var statDiff = newStat - Stat[(int)stat].Stat;
                                 AddStat(stat, statDiff);
                             }
                         }
@@ -472,7 +455,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (evt != null)
                 {
-                    StartCommonEvent(evt, (int) EventPage.CommonEventTriggers.LevelUp);
+                    StartCommonEvent(evt, (int)EventPage.CommonEventTriggers.LevelUp);
                 }
             }
         }
@@ -508,7 +491,7 @@ namespace Intersect.Server.Classes.Entities
             var myclass = ClassBase.Lookup.Get<ClassBase>(Class);
             if (myclass != null)
             {
-                return (int) (myclass.BaseExp * Math.Pow(1 + (myclass.ExpIncrease / 100f) / 1, Level-1));
+                return (int)(myclass.BaseExp * Math.Pow(1 + (myclass.ExpIncrease / 100f) / 1, Level - 1));
             }
             return 1000;
         }
@@ -522,16 +505,16 @@ namespace Intersect.Server.Classes.Entities
                 {
                     for (int i = 0; i < Party.Count; i++)
                     {
-                        Party[i].GiveExperience(((Npc) en).MyBase.Experience / Party.Count);
+                        Party[i].GiveExperience(((Npc)en).MyBase.Experience / Party.Count);
                     }
                 }
                 else
                 {
-                    GiveExperience(((Npc) en).MyBase.Experience);
+                    GiveExperience(((Npc)en).MyBase.Experience);
                 }
 
                 //If any quests demand that this Npc be killed then let's handle it
-                var npc = (Npc) en;
+                var npc = (Npc)en;
                 for (int i = 0; i < Quests.Keys.Count; i++)
                 {
                     var questId = Quests.Keys.ToArray()[i];
@@ -580,19 +563,19 @@ namespace Intersect.Server.Classes.Entities
             if (!isFacingTarget(enemy)) return;
 
             ItemBase weapon = null;
-            if (((Player) Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex] >= 0)
+            if (((Player)Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex] >= 0)
             {
                 weapon =
                     ItemBase.Lookup.Get<ItemBase>(
-                        Inventory[((Player) Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex]].ItemNum);
+                        Inventory[((Player)Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex]].ItemNum);
             }
 
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
             if (enemy.GetType() == typeof(Resource))
             {
-                if (((Resource) enemy).IsDead) return;
+                if (((Resource)enemy).IsDead) return;
                 // Check that a resource is actually required.
-                var resource = ((Resource) enemy).MyBase;
+                var resource = ((Resource)enemy).MyBase;
                 //Check Dynamic Requirements
                 if (!EventInstance.MeetsConditionLists(resource.HarvestingReqs, this, null))
                 {
@@ -612,8 +595,8 @@ namespace Intersect.Server.Classes.Entities
 
             if (weapon != null)
             {
-                base.TryAttack(enemy, weapon.Damage == 0 ? 1 : weapon.Damage, (DamageType) weapon.DamageType,
-                    (Stats) weapon.ScalingStat,
+                base.TryAttack(enemy, weapon.Damage == 0 ? 1 : weapon.Damage, (DamageType)weapon.DamageType,
+                    (Stats)weapon.ScalingStat,
                     weapon.Scaling, weapon.CritChance, Options.CritMultiplier);
             }
             else
@@ -622,16 +605,16 @@ namespace Intersect.Server.Classes.Entities
                 if (classBase != null)
                 {
                     base.TryAttack(enemy, classBase.Damage == 0 ? 1 : classBase.Damage,
-                        (DamageType) classBase.DamageType, (Stats) classBase.ScalingStat,
+                        (DamageType)classBase.DamageType, (Stats)classBase.ScalingStat,
                         classBase.Scaling, classBase.CritChance, Options.CritMultiplier);
                 }
                 else
                 {
-                    base.TryAttack(enemy, 1, (DamageType) DamageType.Physical, Stats.Attack,
+                    base.TryAttack(enemy, 1, (DamageType)DamageType.Physical, Stats.Attack,
                         100, 10, Options.CritMultiplier);
                 }
             }
-            PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
+            PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
         }
 
         public override bool CanAttack(Entity en, SpellBase spell)
@@ -640,7 +623,7 @@ namespace Intersect.Server.Classes.Entities
             var statuses = Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == (int) StatusTypes.Stun)
+                if (status.Type == (int)StatusTypes.Stun)
                 {
                     return false;
                 }
@@ -678,13 +661,11 @@ namespace Intersect.Server.Classes.Entities
             CurrentY = newY;
             CurrentZ = 0;
             Dir = newDir;
-            for (int i = 0; i < MyEvents.Count; i++)
+            foreach (var evt in EventLookup.Values)
             {
-                if (MyEvents[i] != null && MyEvents[i].MapNum != -1 && MyEvents[i].MapNum != newMap)
+                if (evt.MapNum != -1 && evt.MapNum != newMap)
                 {
-                    EventLookup.Remove(new Tuple<int, int, int>(MyEvents[i].MapNum, MyEvents[i].BaseEvent.SpawnX,
-                        MyEvents[i].BaseEvent.SpawnY));
-                    MyEvents[i] = null;
+                    EventLookup.TryRemove(new Tuple<int, int, int>(evt.MapNum, evt.BaseEvent.SpawnX, evt.BaseEvent.SpawnY), out EventInstance z);
                 }
             }
             if (newMap != CurrentMap || _sentMap == false)
@@ -694,7 +675,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     oldMap.RemoveEntity(this);
                 }
-                PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Player, CurrentMap);
+                PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.Player, CurrentMap);
                 CurrentMap = newMap;
                 map.PlayerEnteredMap(this);
                 PacketSender.SendEntityDataToProximity(this);
@@ -877,7 +858,7 @@ namespace Intersect.Server.Classes.Entities
                 var statuses = Statuses.Values.ToArray();
                 foreach (var status in statuses)
                 {
-                    if (status.Type == (int) StatusTypes.Stun)
+                    if (status.Type == (int)StatusTypes.Stun)
                     {
                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "stunned"));
                         return;
@@ -892,11 +873,11 @@ namespace Intersect.Server.Classes.Entities
 
                 switch (itemBase.ItemType)
                 {
-                    case (int) ItemTypes.None:
-                    case (int) ItemTypes.Currency:
+                    case (int)ItemTypes.None:
+                    case (int)ItemTypes.Currency:
                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "cannotuse"));
                         return;
-                    case (int) ItemTypes.Consumable:
+                    case (int)ItemTypes.Consumable:
                         string s = "";
                         if (itemBase.Data2 > 0)
                         {
@@ -913,7 +894,7 @@ namespace Intersect.Server.Classes.Entities
                                 else
                                 {
                                     PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.PhysicalDamage);
-                                    if (Vital[(int) Vitals.Health] <= 0) //Add a death handler for poison.
+                                    if (Vital[(int)Vitals.Health] <= 0) //Add a death handler for poison.
                                     {
                                         Die();
                                     }
@@ -932,7 +913,7 @@ namespace Intersect.Server.Classes.Entities
                         }
                         TakeItem(slot, 1);
                         break;
-                    case (int) ItemTypes.Equipment:
+                    case (int)ItemTypes.Equipment:
                         for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                         {
                             if (Equipment[i] == slot)
@@ -984,18 +965,18 @@ namespace Intersect.Server.Classes.Entities
                         PacketSender.SendEntityStats(this);
                         if (equipped) return;
                         break;
-                    case (int) ItemTypes.Spell:
+                    case (int)ItemTypes.Spell:
                         if (itemBase.Data1 <= -1) return;
                         if (!TryTeachSpell(new SpellInstance(itemBase.Data1))) return;
                         TakeItem(slot, 1);
                         break;
-                    case (int) ItemTypes.Event:
+                    case (int)ItemTypes.Event:
                         var evt = EventBase.Lookup.Get<EventBase>(itemBase.Data1);
                         if (evt == null) return;
                         if (!StartCommonEvent(evt)) return;
                         TakeItem(slot, 1);
                         break;
-                    case (int) ItemTypes.Bag:
+                    case (int)ItemTypes.Bag:
                         //Bags will never, ever, be stackable. Going to use the value property for the bag id in the database.
                         if (itemInstance.BagId == -1)
                         {
@@ -1153,7 +1134,7 @@ namespace Intersect.Server.Classes.Entities
                     }
 
                     //Check if this is a bag with items.. if so don't allow sale
-                    if (itemBase.ItemType == (int) ItemTypes.Bag)
+                    if (itemBase.ItemType == (int)ItemTypes.Bag)
                     {
                         if (Inventory[slot].BagId > -1)
                         {
@@ -1898,7 +1879,7 @@ namespace Intersect.Server.Classes.Entities
                     }
 
                     //Check if this is a bag with items.. if so don't allow sale
-                    if (itemBase.ItemType == (int) ItemTypes.Bag)
+                    if (itemBase.ItemType == (int)ItemTypes.Bag)
                     {
                         if (Inventory[slot].BagId > -1)
                         {
@@ -1932,7 +1913,7 @@ namespace Intersect.Server.Classes.Entities
                                 }
                                 PacketSender.SendInventoryItemUpdate(MyClient, slot);
                                 PacketSender.SendTradeUpdate(MyClient, MyIndex, i);
-                                PacketSender.SendTradeUpdate(((Player) Globals.Entities[Trading]).MyClient, MyIndex, i);
+                                PacketSender.SendTradeUpdate(((Player)Globals.Entities[Trading]).MyClient, MyIndex, i);
                                 return;
                             }
                         }
@@ -1958,7 +1939,7 @@ namespace Intersect.Server.Classes.Entities
                             }
                             PacketSender.SendInventoryItemUpdate(MyClient, slot);
                             PacketSender.SendTradeUpdate(MyClient, MyIndex, i);
-                            PacketSender.SendTradeUpdate(((Player) Globals.Entities[Trading]).MyClient, MyIndex, i);
+                            PacketSender.SendTradeUpdate(((Player)Globals.Entities[Trading]).MyClient, MyIndex, i);
                             return;
                         }
                     }
@@ -2042,7 +2023,7 @@ namespace Intersect.Server.Classes.Entities
 
             PacketSender.SendInventoryItemUpdate(MyClient, inventorySlot);
             PacketSender.SendTradeUpdate(MyClient, MyIndex, slot);
-            PacketSender.SendTradeUpdate(((Player) Globals.Entities[Trading]).MyClient, MyIndex, slot);
+            PacketSender.SendTradeUpdate(((Player)Globals.Entities[Trading]).MyClient, MyIndex, slot);
         }
 
         public void ReturnTradeItems()
@@ -2071,14 +2052,14 @@ namespace Intersect.Server.Classes.Entities
         {
             if (Trading < 0) return;
             ReturnTradeItems();
-            ((Player) Globals.Entities[Trading]).ReturnTradeItems();
+            ((Player)Globals.Entities[Trading]).ReturnTradeItems();
             PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading", "declined"), CustomColors.Error);
-            PacketSender.SendPlayerMsg(((Player) Globals.Entities[Trading]).MyClient,
+            PacketSender.SendPlayerMsg(((Player)Globals.Entities[Trading]).MyClient,
                 Strings.Get("trading", "declined"),
                 CustomColors.Error);
-            PacketSender.SendTradeClose(((Player) Globals.Entities[Trading]).MyClient);
+            PacketSender.SendTradeClose(((Player)Globals.Entities[Trading]).MyClient);
             PacketSender.SendTradeClose(MyClient);
-            ((Player) Globals.Entities[Trading]).Trading = -1;
+            ((Player)Globals.Entities[Trading]).Trading = -1;
             Trading = -1;
         }
 
@@ -2337,12 +2318,12 @@ namespace Intersect.Server.Classes.Entities
                 var statuses = Statuses.Values.ToArray();
                 foreach (var status in statuses)
                 {
-                    if (status.Type == (int) StatusTypes.Silence)
+                    if (status.Type == (int)StatusTypes.Silence)
                     {
                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "silenced"));
                         return;
                     }
-                    if (status.Type == (int) StatusTypes.Stun)
+                    if (status.Type == (int)StatusTypes.Stun)
                     {
                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "stunned"));
                         return;
@@ -2350,8 +2331,8 @@ namespace Intersect.Server.Classes.Entities
                 }
 
                 //Check if the caster has the right ammunition if a projectile
-                if (spell.SpellType == (int) SpellTypes.CombatSpell &&
-                    spell.TargetType == (int) SpellTargetTypes.Projectile && spell.Projectile > -1)
+                if (spell.SpellType == (int)SpellTypes.CombatSpell &&
+                    spell.TargetType == (int)SpellTargetTypes.Projectile && spell.Projectile > -1)
                 {
                     var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spell.Projectile);
                     if (projectileBase == null) return;
@@ -2368,16 +2349,16 @@ namespace Intersect.Server.Classes.Entities
                 }
 
                 if (target == null &&
-                    ((spell.SpellType == (int) SpellTypes.CombatSpell &&
-                      spell.TargetType == (int) SpellTargetTypes.Single) || spell.SpellType == (int) SpellTypes.WarpTo))
+                    ((spell.SpellType == (int)SpellTypes.CombatSpell &&
+                      spell.TargetType == (int)SpellTargetTypes.Single) || spell.SpellType == (int)SpellTypes.WarpTo))
                 {
                     PacketSender.SendActionMsg(this, Strings.Get("combat", "notarget"), CustomColors.NoTarget);
                     return;
                 }
 
                 //Check for range of a single target spell
-                if (spell.SpellType == (int) SpellTypes.CombatSpell &&
-                    spell.TargetType == (int) SpellTargetTypes.Single && Target != this)
+                if (spell.SpellType == (int)SpellTypes.CombatSpell &&
+                    spell.TargetType == (int)SpellTargetTypes.Single && Target != this)
                 {
                     if (!InRangeOf(Target, spell.CastRange))
                     {
@@ -2387,25 +2368,25 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
 
-                if (spell.VitalCost[(int) Vitals.Mana] <= Vital[(int) Vitals.Mana])
+                if (spell.VitalCost[(int)Vitals.Mana] <= Vital[(int)Vitals.Mana])
                 {
-                    if (spell.VitalCost[(int) Vitals.Health] <= Vital[(int) Vitals.Health])
+                    if (spell.VitalCost[(int)Vitals.Health] <= Vital[(int)Vitals.Health])
                     {
                         if (Spells[spellSlot].SpellCD < Globals.System.GetTimeMs())
                         {
                             if (CastTime < Globals.System.GetTimeMs())
                             {
-                                Vital[(int) Vitals.Mana] =
-                                    Vital[(int) Vitals.Mana] - spell.VitalCost[(int) Vitals.Mana];
-                                Vital[(int) Vitals.Health] = Vital[(int) Vitals.Health] -
-                                                             spell.VitalCost[(int) Vitals.Health];
+                                Vital[(int)Vitals.Mana] =
+                                    Vital[(int)Vitals.Mana] - spell.VitalCost[(int)Vitals.Mana];
+                                Vital[(int)Vitals.Health] = Vital[(int)Vitals.Health] -
+                                                             spell.VitalCost[(int)Vitals.Health];
                                 CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
                                 SpellCastSlot = spellSlot;
                                 CastTarget = Target;
 
                                 //Check if the caster has the right ammunition if a projectile
-                                if (spell.SpellType == (int) SpellTypes.CombatSpell &&
-                                    spell.TargetType == (int) SpellTargetTypes.Projectile && spell.Projectile > -1)
+                                if (spell.SpellType == (int)SpellTypes.CombatSpell &&
+                                    spell.TargetType == (int)SpellTargetTypes.Projectile && spell.Projectile > -1)
                                 {
                                     var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spell.Projectile);
                                     if (projectileBase != null && projectileBase.Ammo > -1)
@@ -2453,7 +2434,7 @@ namespace Intersect.Server.Classes.Entities
             var spellBase = SpellBase.Lookup.Get<SpellBase>(SpellNum);
             if (spellBase != null)
             {
-                if (spellBase.SpellType == (int) SpellTypes.Event)
+                if (spellBase.SpellType == (int)SpellTypes.Event)
                 {
                     var evt = EventBase.Lookup.Get<EventBase>(spellBase.Data1);
                     if (evt != null)
@@ -2514,9 +2495,9 @@ namespace Intersect.Server.Classes.Entities
 
         public void AddStat(Stats stat, int amount)
         {
-            Stat[(int) stat].Stat += amount;
-            if (Stat[(int) stat].Stat < 0) Stat[(int) stat].Stat = 0;
-            if (Stat[(int) stat].Stat > Options.MaxStatValue) Stat[(int) stat].Stat = Options.MaxStatValue;
+            Stat[(int)stat].Stat += amount;
+            if (Stat[(int)stat].Stat < 0) Stat[(int)stat].Stat = 0;
+            if (Stat[(int)stat].Stat > Options.MaxStatValue) Stat[(int)stat].Stat = Options.MaxStatValue;
         }
 
         //Hotbar
@@ -2566,7 +2547,7 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
             //So the quest isn't started or we can repeat it.. let's make sure that we meet requirements.
-            if (!EventInstance.MeetsConditionLists(quest.Requirements, this, null)) return false;
+            if (!EventInstance.MeetsConditionLists(quest.Requirements, this, null, true, quest)) return false;
             if (quest.Tasks.Count == 0)
             {
                 return false;
@@ -2669,36 +2650,33 @@ namespace Intersect.Server.Classes.Entities
         {
             if (QuestOffers.Contains(questId))
             {
-                QuestOffers.Remove(questId);
-                var quest = QuestBase.Lookup.Get<QuestBase>(questId);
-                if (quest != null)
+                lock (EventLock)
                 {
-                    StartQuest(quest);
-                    lock (EventLock)
+                    QuestOffers.Remove(questId);
+                    var quest = QuestBase.Lookup.Get<QuestBase>(questId);
+                    if (quest != null)
                     {
-                        for (int i = 0; i < MyEvents.Count; i++)
+                        StartQuest(quest);
+                        foreach (var evt in EventLookup.Values)
                         {
-                            if (MyEvents[i] != null)
+                            if (evt.CallStack.Count <= 0) continue;
+                            if (evt.CallStack.Peek().WaitingForResponse !=
+                                CommandInstance.EventResponse.Quest) continue;
+                            if (evt.CallStack.Peek().ResponseIndex == questId)
                             {
-                                if (MyEvents[i].CallStack.Count <= 0) return;
-                                if (MyEvents[i].CallStack.Peek().WaitingForResponse !=
-                                    CommandInstance.EventResponse.Quest) return;
-                                if (MyEvents[i].CallStack.Peek().ResponseIndex == questId)
+                                //Run success branch
+                                var tmpStack = new CommandInstance(evt.CallStack.Peek().Page)
                                 {
-                                    MyEvents[i].CallStack.Peek().WaitingForResponse =
-                                        CommandInstance.EventResponse.None;
-                                    //Run success branch
-                                    var tmpStack = new CommandInstance(MyEvents[i].CallStack.Peek().Page)
-                                    {
-                                        CommandIndex = 0,
-                                        ListIndex =
-                                            MyEvents[i].CallStack.Peek().Page.CommandLists[
-                                                MyEvents[i].CallStack.Peek().ListIndex].Commands[
-                                                MyEvents[i].CallStack.Peek().CommandIndex].Ints[4]
-                                    };
-                                    MyEvents[i].CallStack.Peek().CommandIndex++;
-                                    MyEvents[i].CallStack.Push(tmpStack);
-                                }
+                                    CommandIndex = 0,
+                                    ListIndex =
+                                        evt.CallStack.Peek().Page.CommandLists[
+                                            evt.CallStack.Peek().ListIndex].Commands[
+                                            evt.CallStack.Peek().CommandIndex].Ints[4]
+                                };
+                                evt.CallStack.Peek().CommandIndex++;
+                                evt.CallStack.Peek().WaitingForResponse =
+                                    CommandInstance.EventResponse.None;
+                                evt.CallStack.Push(tmpStack);
                             }
                         }
                     }
@@ -2710,33 +2688,31 @@ namespace Intersect.Server.Classes.Entities
         {
             if (QuestOffers.Contains(questId))
             {
-                QuestOffers.Remove(questId);
-                PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests", "declined", QuestBase.GetName(questId)),
-                    CustomColors.QuestDeclined);
                 lock (EventLock)
                 {
-                    for (int i = 0; i < MyEvents.Count; i++)
+                    QuestOffers.Remove(questId);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests", "declined", QuestBase.GetName(questId)),
+                        CustomColors.QuestDeclined);
+                    foreach (var evt in EventLookup.Values)
                     {
-                        if (MyEvents[i] != null)
+                        if (evt.CallStack.Count <= 0) continue;
+                        if (evt.CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Quest)
+                            continue;
+                        if (evt.CallStack.Peek().ResponseIndex == questId)
                         {
-                            if (MyEvents[i].CallStack.Count <= 0) return;
-                            if (MyEvents[i].CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Quest)
-                                return;
-                            if (MyEvents[i].CallStack.Peek().ResponseIndex == questId)
+                            //Run failure branch
+                            var tmpStack = new CommandInstance(evt.CallStack.Peek().Page)
                             {
-                                MyEvents[i].CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
-                                //Run failure branch
-                                var tmpStack = new CommandInstance(MyEvents[i].CallStack.Peek().Page)
-                                {
-                                    CommandIndex = 0,
-                                    ListIndex =
-                                        MyEvents[i].CallStack.Peek().Page.CommandLists[
-                                            MyEvents[i].CallStack.Peek().ListIndex].Commands[
-                                            MyEvents[i].CallStack.Peek().CommandIndex].Ints[5]
-                                };
-                                MyEvents[i].CallStack.Peek().CommandIndex++;
-                                MyEvents[i].CallStack.Push(tmpStack);
-                            }
+                                CommandIndex = 0,
+                                ListIndex =
+                                    evt.CallStack.Peek().Page.CommandLists[
+                                        evt.CallStack.Peek().ListIndex].Commands[
+                                        evt.CallStack.Peek().CommandIndex].Ints[5]
+                            };
+                            evt.CallStack.Peek().CommandIndex++;
+                            evt.CallStack.Peek().WaitingForResponse =
+                                CommandInstance.EventResponse.None;
+                            evt.CallStack.Push(tmpStack);
                         }
                     }
                 }
@@ -2870,16 +2846,16 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Event Processing Methods
-        public int EventExists(int map, int x, int y)
+        public EventInstance EventExists(int map, int x, int y)
         {
-            int index = -1;
-            if (EventLookup.TryGetValue(new Tuple<int, int, int>(map, x, y), out index)) return index;
-            return -1;
+            EventInstance instance = null;
+            if (EventLookup.TryGetValue(new Tuple<int, int, int>(map, x, y), out instance)) return instance;
+            return instance;
         }
 
         public EventPageInstance EventAt(int map, int x, int y, int z)
         {
-            foreach (var evt in MyEvents)
+            foreach (var evt in EventLookup.Values)
             {
                 if (evt != null && evt.PageInstance != null)
                 {
@@ -2895,44 +2871,41 @@ namespace Intersect.Server.Classes.Entities
 
         public void TryActivateEvent(int mapNum, int eventIndex)
         {
-            for (int i = 0; i < MyEvents.Count; i++)
+            foreach (var evt in EventLookup.Values)
             {
-                if (MyEvents[i] != null)
+                if (evt.MapNum == mapNum && evt.BaseEvent.Index == eventIndex)
                 {
-                    if (MyEvents[i].MapNum == mapNum && MyEvents[i].BaseEvent.Index == eventIndex)
+                    if (evt.PageInstance == null) return;
+                    if (evt.PageInstance.Trigger != 0) return;
+                    if (!IsEventOneBlockAway(evt)) return;
+                    if (evt.CallStack.Count != 0) return;
+                    var newStack = new CommandInstance(evt.PageInstance.MyPage)
                     {
-                        if (MyEvents[i].PageInstance == null) return;
-                        if (MyEvents[i].PageInstance.Trigger != 0) return;
-                        if (!IsEventOneBlockAway(i)) return;
-                        if (MyEvents[i].CallStack.Count != 0) return;
-                        var newStack = new CommandInstance(MyEvents[i].PageInstance.MyPage)
+                        CommandIndex = 0,
+                        ListIndex = 0
+                    };
+                    evt.CallStack.Push(newStack);
+                    if (!evt.IsGlobal)
+                    {
+                        evt.PageInstance.TurnTowardsPlayer();
+                    }
+                    else
+                    {
+                        //Turn the global event opposite of the player
+                        switch (Dir)
                         {
-                            CommandIndex = 0,
-                            ListIndex = 0
-                        };
-                        MyEvents[i].CallStack.Push(newStack);
-                        if (!MyEvents[i].IsGlobal)
-                        {
-                            MyEvents[i].PageInstance.TurnTowardsPlayer();
-                        }
-                        else
-                        {
-                            //Turn the global event opposite of the player
-                            switch (Dir)
-                            {
-                                case 0:
-                                    MyEvents[i].PageInstance.GlobalClone.ChangeDir(1);
-                                    break;
-                                case 1:
-                                    MyEvents[i].PageInstance.GlobalClone.ChangeDir(0);
-                                    break;
-                                case 2:
-                                    MyEvents[i].PageInstance.GlobalClone.ChangeDir(3);
-                                    break;
-                                case 3:
-                                    MyEvents[i].PageInstance.GlobalClone.ChangeDir(2);
-                                    break;
-                            }
+                            case 0:
+                                evt.PageInstance.GlobalClone.ChangeDir(1);
+                                break;
+                            case 1:
+                                evt.PageInstance.GlobalClone.ChangeDir(0);
+                                break;
+                            case 2:
+                                evt.PageInstance.GlobalClone.ChangeDir(3);
+                                break;
+                            case 3:
+                                evt.PageInstance.GlobalClone.ChangeDir(2);
+                                break;
                         }
                     }
                 }
@@ -2943,31 +2916,30 @@ namespace Intersect.Server.Classes.Entities
         {
             lock (EventLock)
             {
-                for (int i = 0; i < MyEvents.Count; i++)
+                foreach (var evt in EventLookup.Values)
                 {
-                    if (MyEvents[i] != null && MyEvents[i].MapNum == mapNum &&
-                        MyEvents[i].BaseEvent.Index == eventIndex)
+                    if (evt.MapNum == mapNum && evt.BaseEvent.Index == eventIndex)
                     {
-                        if (MyEvents[i].CallStack.Count <= 0) return;
-                        if (MyEvents[i].CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Dialogue)
+                        if (evt.CallStack.Count <= 0) return;
+                        if (evt.CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Dialogue)
                             return;
-                        if (MyEvents[i].CallStack.Peek().ResponseIndex == 0)
+                        if (evt.CallStack.Peek().ResponseIndex == 0)
                         {
-                            MyEvents[i].CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
+                            evt.CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                         }
                         else
                         {
-                            var tmpStack = new CommandInstance(MyEvents[i].CallStack.Peek().Page)
+                            var tmpStack = new CommandInstance(evt.CallStack.Peek().Page)
                             {
                                 CommandIndex = 0,
                                 ListIndex =
-                                    MyEvents[i].CallStack.Peek().Page.CommandLists[
-                                        MyEvents[i].CallStack.Peek().ListIndex].Commands[
-                                        MyEvents[i].CallStack.Peek().CommandIndex].Ints[responseId - 1]
+                                    evt.CallStack.Peek().Page.CommandLists[
+                                        evt.CallStack.Peek().ListIndex].Commands[
+                                        evt.CallStack.Peek().CommandIndex].Ints[responseId - 1]
                             };
-                            MyEvents[i].CallStack.Peek().CommandIndex++;
-                            MyEvents[i].CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
-                            MyEvents[i].CallStack.Push(tmpStack);
+                            evt.CallStack.Peek().CommandIndex++;
+                            evt.CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
+                            evt.CallStack.Push(tmpStack);
                         }
                         return;
                     }
@@ -2975,23 +2947,18 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
-        static bool IsEventOneBlockAway(int eventIndex)
+        static bool IsEventOneBlockAway(EventInstance evt)
         {
+            //todo this
             return true;
         }
 
-        public int FindEvent(EventPageInstance en)
+        public EventInstance FindEvent(EventPageInstance en)
         {
-            int id = -1;
             lock (EventLock)
             {
-                for (int i = 0; i < MyEvents.Count; i++)
+                foreach (var evt in EventLookup.Values)
                 {
-                    var evt = MyEvents[i];
-                    if (evt == null)
-                    {
-                        continue;
-                    }
                     if (evt.PageInstance == null)
                     {
                         continue;
@@ -2999,68 +2966,53 @@ namespace Intersect.Server.Classes.Entities
 
                     if (evt.PageInstance == en || evt.PageInstance.GlobalClone == en)
                     {
-                        id = i;
-                        return id;
+                        return evt;
                     }
                 }
             }
-            return id;
-        }
-
-        public EventInstance GetEventFromPageInstance(EventPageInstance instance)
-        {
-            var evt = FindEvent(instance);
-            if (evt > -1 && evt < MyEvents.Count)
-            {
-                return MyEvents[evt];
-            }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         public void SendEvents()
         {
-            for (int i = 0; i < MyEvents.Count; i++)
+            foreach (var evt in EventLookup.Values)
             {
-                if (MyEvents[i] != null && MyEvents[i].PageInstance != null)
+                if (evt.PageInstance != null)
                 {
-                    MyEvents[i].PageInstance.SendToClient();
+                    evt.PageInstance.SendToClient();
                 }
             }
         }
 
-        public bool StartCommonEvent(EventBase evt, int trigger = -1, string command = "", string param = "")
+        public bool StartCommonEvent(EventBase baseEvent, int trigger = -1, string command = "", string param = "")
         {
             lock (EventLock)
             {
-                for (int i = 0; i < MyEvents.Count; i++)
+                foreach (var evt in EventLookup.Values)
                 {
-                    if (MyEvents[i] != null && MyEvents[i].BaseEvent == evt) return false;
+                    if (evt.BaseEvent == baseEvent) return false;
                 }
-                var tmpEvent = new EventInstance(MyEvents.Count, MyClient, evt, -1)
+                var tmpEvent = new EventInstance(EventCounter++, MyClient, baseEvent, -1)
                 {
                     MapNum = -1,
                     SpawnX = -1,
                     SpawnY = -1
                 };
-                MyEvents.Add(tmpEvent);
+                EventLookup.AddOrUpdate(new Tuple<int, int, int>(-1, -1, -1), tmpEvent, (key, oldValue) => tmpEvent);
                 //Try to Spawn a PageInstance.. if we can
-                for (int i = evt.MyPages.Count - 1; i >= 0; i--)
+                for (int i = baseEvent.MyPages.Count - 1; i >= 0; i--)
                 {
-                    if ((trigger == -1 || evt.MyPages[i].Trigger == trigger) && tmpEvent.CanSpawnPage(i, evt))
+                    if ((trigger == -1 || baseEvent.MyPages[i].Trigger == trigger) && tmpEvent.CanSpawnPage(i, baseEvent))
                     {
-                        tmpEvent.PageInstance =
-                            new EventPageInstance(evt, evt.MyPages[i], evt.Index, -1, tmpEvent, MyClient);
+                        tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.MyPages[i], baseEvent.Index, -1, tmpEvent, MyClient);
                         tmpEvent.PageIndex = i;
                         //Check for /command trigger
-                        if (trigger == (int) EventPage.CommonEventTriggers.Command)
+                        if (trigger == (int)EventPage.CommonEventTriggers.Command)
                         {
                             if (command.ToLower() == tmpEvent.PageInstance.MyPage.TriggerCommand.ToLower())
                             {
                                 var newStack =
-                                    new CommandInstance(tmpEvent.PageInstance.MyPage) {CommandIndex = 0, ListIndex = 0};
+                                    new CommandInstance(tmpEvent.PageInstance.MyPage) { CommandIndex = 0, ListIndex = 0 };
                                 tmpEvent.PageInstance.Param = param;
                                 tmpEvent.CallStack.Push(newStack);
                                 return true;
@@ -3069,14 +3021,14 @@ namespace Intersect.Server.Classes.Entities
                         else
                         {
                             var newStack =
-                                new CommandInstance(tmpEvent.PageInstance.MyPage) {CommandIndex = 0, ListIndex = 0};
+                                new CommandInstance(tmpEvent.PageInstance.MyPage) { CommandIndex = 0, ListIndex = 0 };
                             tmpEvent.CallStack.Push(newStack);
                             return true;
                         }
                         break;
                     }
                 }
-                MyEvents.RemoveAt(MyEvents.Count - 1);
+                EventLookup.TryRemove(new Tuple<int, int, int>(-1, -1, -1), out EventInstance z);
                 return false;
             }
         }
@@ -3088,12 +3040,9 @@ namespace Intersect.Server.Classes.Entities
             {
                 return -5;
             }
-            for (int i = 0; i < MyEvents.Count; i++)
+            foreach (var evt in EventLookup.Values)
             {
-                if (MyEvents[i] != null)
-                {
-                    if (MyEvents[i].HoldingPlayer) return -5;
-                }
+                if (evt.HoldingPlayer) return -5;
             }
             //TODO Check if any events are blocking us
             return base.CanMove(moveDir);
@@ -3109,7 +3058,7 @@ namespace Intersect.Server.Classes.Entities
             var attribute =
                 MapInstance.Lookup.Get<MapInstance>(Globals.Entities[index].CurrentMap).Attributes[
                     Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
-            if (attribute != null && attribute.value == (int) MapAttributes.Warp)
+            if (attribute != null && attribute.value == (int)MapAttributes.Warp)
             {
                 if (Convert.ToInt32(attribute.data4) == -1)
                 {
@@ -3124,7 +3073,7 @@ namespace Intersect.Server.Classes.Entities
             }
 
             //Check for slide tiles
-            if (attribute != null && attribute.value == (int) MapAttributes.Slide)
+            if (attribute != null && attribute.value == (int)MapAttributes.Slide)
             {
                 if (attribute.data1 > 0)
                 {
@@ -3133,28 +3082,25 @@ namespace Intersect.Server.Classes.Entities
                 var dash = new DashInstance(this, 1, Dir);
             }
 
-            for (int i = 0; i < MyEvents.Count; i++)
+            foreach (var evt in EventLookup.Values)
             {
-                if (MyEvents[i] != null)
+                if (evt.MapNum == CurrentMap)
                 {
-                    if (MyEvents[i].MapNum == CurrentMap)
+                    if (evt.PageInstance != null)
                     {
-                        if (MyEvents[i].PageInstance != null)
+                        if (evt.PageInstance.CurrentMap == CurrentMap &&
+                            evt.PageInstance.CurrentX == CurrentX &&
+                            evt.PageInstance.CurrentY == CurrentY &&
+                            evt.PageInstance.CurrentZ == CurrentZ)
                         {
-                            if (MyEvents[i].PageInstance.CurrentMap == CurrentMap &&
-                                MyEvents[i].PageInstance.CurrentX == CurrentX &&
-                                MyEvents[i].PageInstance.CurrentY == CurrentY &&
-                                MyEvents[i].PageInstance.CurrentZ == CurrentZ)
+                            if (evt.PageInstance.Trigger != 1) return;
+                            if (evt.CallStack.Count != 0) return;
+                            var newStack = new CommandInstance(evt.PageInstance.MyPage)
                             {
-                                if (MyEvents[i].PageInstance.Trigger != 1) return;
-                                if (MyEvents[i].CallStack.Count != 0) return;
-                                var newStack = new CommandInstance(MyEvents[i].PageInstance.MyPage)
-                                {
-                                    CommandIndex = 0,
-                                    ListIndex = 0
-                                };
-                                MyEvents[i].CallStack.Push(newStack);
-                            }
+                                CommandIndex = 0,
+                                ListIndex = 0
+                            };
+                            evt.CallStack.Push(newStack);
                         }
                     }
                 }

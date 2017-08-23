@@ -47,6 +47,8 @@ namespace Intersect.Server.Classes.Maps
         public List<int> SurroundingMaps = new List<int>();
 
         public long TileAccessTime;
+        public long LastUpdateTime = -1;
+        public long UpdateDelay = 100;
 
         //Init
         public MapInstance() : base(-1, false)
@@ -446,7 +448,8 @@ namespace Intersect.Server.Classes.Maps
                 {
                     CurrentMap = Index,
                     CurrentX = tileX,
-                    CurrentY = tileY
+                    CurrentY = tileY,
+                    Dir = dir
                 };
 
                 //Give NPC Drops
@@ -605,7 +608,7 @@ namespace Intersect.Server.Classes.Maps
                 {
                     TileData = null;
                 }
-                if (!Active || CheckActive() == false)
+                if (!Active || CheckActive() == false || LastUpdateTime + UpdateDelay > timeMs)
                 {
                     return;
                 }
@@ -695,7 +698,7 @@ namespace Intersect.Server.Classes.Maps
                             {
                                 foreach (var player in map.GetPlayersOnMap())
                                 {
-                                    var eventInstance = player.GetEventFromPageInstance(evts[i].GlobalPageInstance[x]);
+                                    var eventInstance = player.FindEvent(evts[i].GlobalPageInstance[x]);
                                     if (eventInstance != null && eventInstance.CallStack.Count > 0) active = true;
                                 }
                             }
@@ -703,6 +706,7 @@ namespace Intersect.Server.Classes.Maps
                         }
                     }
                 }
+                LastUpdateTime = timeMs;
             }
         }
 
@@ -797,7 +801,7 @@ namespace Intersect.Server.Classes.Maps
 
         public void SendMapEntitiesTo(Player player)
         {
-            if (player != null)
+            if (player != null && player.CurrentMap == Index)
             {
                 PacketSender.SendMapEntitiesTo(player.MyClient, Entities);
                 player.SendEvents();

@@ -56,10 +56,17 @@ namespace Intersect_Client.Classes.Networking
             HandlePacket(bf);
             return true;
         }
-        
+
+        private static int packetCount = 0;
+        private static bool debugPackets = false;
         public static void HandlePacket(ByteBuffer bf)
         {
             var packetHeader = (ServerPackets) bf.ReadLong();
+            packetCount++;
+            if (debugPackets)
+            {
+                Debug.WriteLine("Handled " + packetHeader + " - " + packetCount);
+            }
             lock (Globals.GameLock)
             {
                 switch (packetHeader)

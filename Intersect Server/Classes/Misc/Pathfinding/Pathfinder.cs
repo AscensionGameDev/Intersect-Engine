@@ -186,7 +186,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
                                                         Player player = ev.Client.Entity;
                                                         if (player != null)
                                                         {
-                                                            if (player.MyEvents.Count > Options.MapWidth *
+                                                            if (player.EventLookup.Values.Count > Options.MapWidth *
                                                                 Options.MapHeight)
                                                             {
                                                                 //Find all events on this map (since events can't switch maps)
@@ -194,13 +194,11 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
                                                                 {
                                                                     for (int mapY = 0; mapY < Options.MapHeight; mapY++)
                                                                     {
-                                                                        var evtIndex = player.EventExists(ev.CurrentMap,
+                                                                        var evt = player.EventExists(ev.CurrentMap,
                                                                             mapX, mapY);
-                                                                        if (evtIndex > -1)
+                                                                        if (evt != null)
                                                                         {
-                                                                            var evt = player.MyEvents[evtIndex];
-                                                                            if (evt != null &&
-                                                                                evt.PageInstance != null &&
+                                                                            if (evt.PageInstance != null &&
                                                                                 evt.PageInstance.Passable == 0)
                                                                             {
                                                                                 mapGrid[
@@ -217,7 +215,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
                                                             }
                                                             else
                                                             {
-                                                                var playerEvents = player.MyEvents;
+                                                                var playerEvents = player.EventLookup.Values;
                                                                 foreach (var evt in playerEvents)
                                                                 {
                                                                     if (evt != null && evt.PageInstance != null &&

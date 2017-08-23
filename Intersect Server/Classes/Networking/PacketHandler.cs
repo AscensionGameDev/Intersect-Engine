@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Intersect.Enums;
@@ -54,7 +55,6 @@ namespace Intersect.Server.Classes.Networking
             }
 
             if (bf == null || bf.Length() == 0) return;
-
             var packetHeader = (ClientPackets) bf.ReadLong();
             var packet = bf.ReadBytes(bf.Length());
             bf.Dispose();

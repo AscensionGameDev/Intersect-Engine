@@ -70,10 +70,20 @@ namespace Intersect.Server.Classes.Networking
             }
         }
 
+        private int packetCount = 0;
+        private bool debugPackets = false;
         public void SendPacket(byte[] packetData)
         {
             var buff = new ByteBuffer();
             Debug.Assert(packetData != null, "packetData != null");
+            packetCount++;
+            if (debugPackets)
+            {
+                var bf = new ByteBuffer();
+                bf.WriteBytes(packetData);
+                var header = (ServerPackets) bf.ReadLong();
+                Console.WriteLine("Sent " + header + " - " + packetCount);
+            }
             if (packetData.Length > 800)
             {
                 packetData = Compression.CompressPacket(packetData);

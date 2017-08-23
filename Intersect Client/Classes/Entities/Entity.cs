@@ -28,6 +28,7 @@ namespace Intersect_Client.Classes.Entities
         private long _lastUpdate;
 
         protected string _mySprite = "";
+        protected string _transformedSprite = "";
         private long _walkTimer;
         protected byte _renderPriority = 1;
         public int AnimationFrame;
@@ -142,6 +143,17 @@ namespace Intersect_Client.Classes.Entities
         {
             get { return _dir; }
             set { _dir = (value + 4) % 4; }
+        }
+
+        public virtual string TransformedSprite
+        {
+            get { return _transformedSprite; }
+            set
+            {
+                _transformedSprite = value;
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, _transformedSprite);
+                if (value == "") MySprite = _mySprite;
+            }
         }
 
         public virtual string MySprite
@@ -555,7 +567,7 @@ namespace Intersect_Client.Classes.Entities
             FloatRect destRectangle = new FloatRect();
             var d = 0;
 
-            string sprite = MySprite;
+            string sprite = "";
             int alpha = 255;
 
             //If the entity has transformed, apply that sprite instead.
@@ -577,6 +589,14 @@ namespace Intersect_Client.Classes.Entities
                         alpha = 125;
                     }
                 }
+            }
+            if (sprite != TransformedSprite)
+            {
+                TransformedSprite = sprite;
+            }
+            else
+            {
+                sprite = MySprite;
             }
             if (Texture != null)
             {
