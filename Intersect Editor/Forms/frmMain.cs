@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.Core;
@@ -20,6 +21,8 @@ namespace Intersect.Editor.Forms
     public partial class frmMain : Form
     {
         public delegate void HandleDisconnect();
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern IntPtr WindowFromPoint(System.Drawing.Point pnt);
 
         //Cross Thread Delegates
         public delegate void TryOpenEditor(GameObjectType type);
@@ -261,6 +264,15 @@ namespace Intersect.Editor.Forms
                 }
                 if (xDiff != 0 || yDiff != 0)
                 {
+                    IntPtr hWnd = WindowFromPoint((System.Drawing.Point)MousePosition);
+                    if (hWnd != IntPtr.Zero)
+                    {
+                        Control ctl = Control.FromHandle(hWnd);
+                        if (ctl != null)
+                        {
+                            if (ctl.GetType() == typeof(ComboBox) || ctl.GetType() == typeof(DarkComboBox)) return;
+                        }
+                    }
                     EditorGraphics.CurrentView.X -= (xDiff);
                     EditorGraphics.CurrentView.Y -= (yDiff);
                     if (EditorGraphics.CurrentView.X > Options.MapWidth * Options.TileWidth)
