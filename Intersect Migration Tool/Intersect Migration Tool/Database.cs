@@ -11,13 +11,15 @@ using Intersect.Migration.UpgradeInstructions.Upgrade_5;
 using Intersect.Migration.UpgradeInstructions.Upgrade_6;
 using Intersect.Migration.UpgradeInstructions.Upgrade_7;
 using Intersect.Migration.UpgradeInstructions.Upgrade_8;
+using Intersect.Migration.UpgradeInstructions.Upgrade_9;
 using Mono.Data.Sqlite;
+using Log = Intersect.Migration.UpgradeInstructions.Upgrade_9.Intersect_Convert_Lib.Logging.Log;
 
 namespace Intersect.Migration
 {
     public static class Database
     {
-        public const int DbVersion = 9;
+        public const int DbVersion = 10;
         private const string DbFilename = "resources/intersect.db";
 
         //Database Variables
@@ -157,6 +159,12 @@ namespace Intersect.Migration
                     case 8:
                         var upgrade8 = new Upgrade8(_dbConnection);
                         upgrade8.Upgrade();
+                        currentVersion++;
+                        IncrementDatabaseVersion();
+                        break;
+                    case 9:
+                        var upgrade9 = new Upgrade9(_dbConnection);
+                        upgrade9.Upgrade();
                         currentVersion++;
                         IncrementDatabaseVersion();
                         break;
