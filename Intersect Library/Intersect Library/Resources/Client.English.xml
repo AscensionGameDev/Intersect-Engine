@@ -5,7 +5,7 @@
         <string id="gamename">Intersect Client</string>
     </Main>
     <General>
-      <!-- Used everywhere. Sounds on map, resource graphics, panoramas, item types, etc. English is None or No Selection. Choose whatever fits best in your language. Try to keep this the same across the client, editor, and server language files as well. -->
+        <!-- Used everywhere. Sounds on map, resource graphics, panoramas, item types, etc. English is None or No Selection. Choose whatever fits best in your language. Try to keep this the same across the client, editor, and server language files as well. -->
         <string id="none">None</string>
     </General>
     <Combat>
@@ -556,17 +556,17 @@
         <string id="emailinvalid">Email is invalid.</string>
         <string id="passwordmatch">Passwords didn't match!</string>
     </Registration>
-  <CharacterSelection>
+    <CharacterSelection>
         <string id="name">{00}</string>
         <string id="empty">Empty Character Slot</string>
-    <string id="title">Select a Character</string>
-    <string id="info">Level {00} {01}</string>
-    <string id="play">Use</string>
-    <string id="delete">Delete</string>
-    <string id="new">New Character</string>
+        <string id="title">Select a Character</string>
+        <string id="info">Level {00} {01}</string>
+        <string id="play">Use</string>
+        <string id="delete">Delete</string>
+        <string id="new">New Character</string>
         <string id="deletetitle">Delete {00}</string>
-        <string id="deleteprompt">Are you sure you want to delete {00}? This action is irreverseable!</string>
-  </CharacterSelection>
+        <string id="deleteprompt">Are you sure you want to delete {00}? This action is irreversible!</string>
+    </CharacterSelection>
     <Resources>
         <string id="failedtoload">Failed to load Resources!</string>
         <string id="resourceexception">Failed to download client resources.\n\nException Info: {00}\n\nWould you like to try again?</string>
