@@ -70,6 +70,7 @@ namespace Intersect.Editor.Forms
 
         private void lstSpells_Click(object sender, EventArgs e)
         {
+            if (changingName) return;
             _editorItem =
                 SpellBase.Lookup.Get<SpellBase>(
                     Database.GameObjectIdFromList(GameObjectType.Spell, lstSpells.SelectedIndex));
@@ -398,8 +399,10 @@ namespace Intersect.Editor.Forms
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
+            changingName = true;
             _editorItem.Name = txtName.Text;
             lstSpells.Items[Database.GameObjectListIndex(GameObjectType.Spell, _editorItem.Index)] = txtName.Text;
+            changingName = false;
         }
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)

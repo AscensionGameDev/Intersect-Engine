@@ -109,6 +109,15 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                     else
                     {
+                        if (Globals.Me.QuestProgress[_selectedQuest.Index].task == -1)
+                        {
+                            //Not Started
+                            if (_selectedQuest.LogBeforeOffer == 0)
+                            {
+                                _selectedQuest = null;
+                                UpdateSelectedQuest();
+                            }
+                        }
                         return;
                     }
                 }

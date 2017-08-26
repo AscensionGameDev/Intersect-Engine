@@ -21,6 +21,7 @@ namespace Intersect.Editor.Forms
         private byte[] _copiedItem;
         private ClassBase _editorItem;
 
+
         public frmClass()
         {
             ApplyHooks();
@@ -71,6 +72,7 @@ namespace Intersect.Editor.Forms
 
         private void lstClasses_Click(object sender, EventArgs e)
         {
+            if (changingName) return;
             _editorItem =
                 ClassBase.Lookup.Get<ClassBase>(
                     Database.GameObjectIdFromList(GameObjectType.Class, lstClasses.SelectedIndex));
@@ -93,8 +95,10 @@ namespace Intersect.Editor.Forms
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
+            changingName = true;
             _editorItem.Name = txtName.Text;
             lstClasses.Items[Database.GameObjectListIndex(GameObjectType.Class, _editorItem.Index)] = txtName.Text;
+            changingName = false;
         }
 
         private void UpdateSpellList(bool keepIndex = true)
@@ -183,6 +187,8 @@ namespace Intersect.Editor.Forms
                 UpdateIncreases();
 
                 UpdateSpellList(false);
+                
+                cmbSpell.SelectedIndex = -1;
 
                 // Don't select if there are no Spells, to avoid crashes.
                 if (lstSpells.Items.Count > 0)
@@ -197,8 +203,6 @@ namespace Intersect.Editor.Forms
                     cmbSpell.SelectedIndex = -1;
                     nudLevel.Value = 0;
                 }
-
-                cmbSpell.SelectedIndex = -1;
 
                 RefreshSpriteList(false);
 
@@ -769,7 +773,7 @@ namespace Intersect.Editor.Forms
 
         private void cmbSpell_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lstSpells.SelectedIndex > -1)
+            if (lstSpells.SelectedIndex > -1 && cmbSpell.SelectedIndex > -1)
             {
                 _editorItem.Spells[lstSpells.SelectedIndex].SpellNum = Database.GameObjectIdFromList(
                     GameObjectType.Spell,

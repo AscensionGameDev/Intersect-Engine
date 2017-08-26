@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using Intersect.Logging;
@@ -15,6 +16,7 @@ namespace Intersect.Client.Classes.MonoGame.Network
     public class IntersectNetworkSocket : GameSocket
     {
         public static ClientNetwork ClientLidgrenNetwork;
+        public static Queue<IPacket> PacketQueue = new Queue<IPacket>();
 
         public IntersectNetworkSocket()
         {
@@ -42,7 +44,7 @@ namespace Intersect.Client.Classes.MonoGame.Network
 
                 if (ClientLidgrenNetwork != null)
                 {
-                    ClientLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = PacketHandler.HandlePacket;
+                    ClientLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = AddPacketToQueue;
                     ClientLidgrenNetwork.OnDisconnected = delegate(INetworkLayerInterface sender, IConnection connection)
                     {
                         this.OnDisconnected();
@@ -68,8 +70,19 @@ namespace Intersect.Client.Classes.MonoGame.Network
             }
         }
 
+        public static bool AddPacketToQueue(IPacket packet)
+        {
+            PacketQueue.Enqueue(packet);
+            return true;
+        }
+
         public override void Update()
         {
+            var packetCount = PacketQueue.Count;
+            for (int i = 0; i < packetCount; i++)
+            {
+                PacketHandler.HandlePacket(PacketQueue.Dequeue());
+            }
         }
 
         public override void Disconnect(string reason)

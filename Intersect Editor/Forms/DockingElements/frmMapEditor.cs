@@ -1215,61 +1215,58 @@ namespace Intersect.Editor.Forms
         public void SmartFillLayer(int x, int y)
         {
             Tile target = Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y];
-            SmartFillTile(x, y, target);
 
-            Globals.CurrentMap.InitAutotiles();
-            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Left) != null)
-                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Left).InitAutotiles();
-            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Up) != null)
-                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Up).InitAutotiles();
-            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Right) != null)
-                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Right).InitAutotiles();
-            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Down) != null)
-                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Down).InitAutotiles();
-
-            if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+            //if target tile != selected tile then we should smart fill...
+            if (target.TilesetIndex != Globals.CurrentTileset.Index || target.X != Globals.CurSelX ||
+                target.Y != Globals.CurSelY || target.Autotile != (byte) Globals.Autotilemode)
             {
-                if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
-                MapRedoStates.Clear();
-                CurrentMapState = Globals.CurrentMap.SaveInternal();
+                SmartFillTile(x, y, target);
+
+                Globals.CurrentMap.InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Left) != null)
+                    MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Left).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Up) != null)
+                    MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Up).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Right) != null)
+                    MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Right).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Down) != null)
+                    MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Down).InitAutotiles();
+
+                if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+                {
+                    if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
+                    MapRedoStates.Clear();
+                    CurrentMapState = Globals.CurrentMap.SaveInternal();
+                }
             }
         }
 
-        private void SmartFillAttribute(int x, int y, int attribute)
+        private void SmartFillAttribute(int x, int y, byte[] data)
         {
-            int a = 0;
-
             if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
             {
                 return;
             }
 
-            if (Globals.CurrentMap.Attributes[x, y] != null)
-            {
-                a = Globals.CurrentMap.Attributes[x, y].value;
-            }
+            GameObjects.Maps.Attribute attribute = Globals.CurrentMap.Attributes[x, y];
+            var thisData = attribute?.Data();
 
-            if (a == attribute)
+            if (thisData == data)
             {
                 Globals.MapLayersWindow.PlaceAttribute(Globals.CurrentMap, x, y);
 
-                SmartFillAttribute(x, y - 1, attribute);
-                SmartFillAttribute(x, y + 1, attribute);
-                SmartFillAttribute(x - 1, y, attribute);
-                SmartFillAttribute(x + 1, y, attribute);
+                SmartFillAttribute(x, y - 1, data);
+                SmartFillAttribute(x, y + 1, data);
+                SmartFillAttribute(x - 1, y, data);
+                SmartFillAttribute(x + 1, y, data);
             }
         }
 
         public void SmartFillAttributes(int x, int y)
         {
-            int attribute = 0;
-
-            if (Globals.CurrentMap.Attributes[x, y] != null)
-            {
-                attribute = Globals.CurrentMap.Attributes[x, y].value;
-            }
-
-            SmartFillAttribute(x, y, attribute);
+            GameObjects.Maps.Attribute attribute = Globals.CurrentMap.Attributes[x, y];
+            var data = attribute?.Data();
+            SmartFillAttribute(x, y, data);
 
             if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
             {
@@ -1291,7 +1288,7 @@ namespace Intersect.Editor.Forms
             if (selected.TilesetIndex == target.TilesetIndex && selected.X == target.X &&
                 selected.Y == target.Y && selected.Autotile == target.Autotile)
             {
-                Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].TilesetIndex = 0;
+                Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].TilesetIndex = -1;
                 Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].X = 0;
                 Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].Y = 0;
                 Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y].Autotile = 0;
@@ -1306,23 +1303,27 @@ namespace Intersect.Editor.Forms
         public void SmartEraseLayer(int x, int y)
         {
             Tile target = Globals.CurrentMap.Layers[Globals.CurrentLayer].Tiles[x, y];
-            SmartEraseTile(x, y, target);
 
-            Globals.CurrentMap.InitAutotiles();
-            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Left) != null)
-                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Left).InitAutotiles();
-            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Up) != null)
-                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Up).InitAutotiles();
-            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Right) != null)
-                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Right).InitAutotiles();
-            if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Down) != null)
-                MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Down).InitAutotiles();
-
-            if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+            if (target.TilesetIndex != -1)
             {
-                if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
-                MapRedoStates.Clear();
-                CurrentMapState = Globals.CurrentMap.SaveInternal();
+                SmartEraseTile(x, y, target);
+
+                Globals.CurrentMap.InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Left) != null)
+                    MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Left).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Up) != null)
+                    MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Up).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Right) != null)
+                    MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Right).InitAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Down) != null)
+                    MapInstance.Lookup.Get<MapInstance>(Globals.CurrentMap.Down).InitAutotiles();
+
+                if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+                {
+                    if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
+                    MapRedoStates.Clear();
+                    CurrentMapState = Globals.CurrentMap.SaveInternal();
+                }
             }
         }
 
@@ -1359,14 +1360,16 @@ namespace Intersect.Editor.Forms
             {
                 attribute = Globals.CurrentMap.Attributes[x, y].value;
             }
-
-            SmartEraseAttribute(x, y, attribute);
-
-            if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+            if (attribute > 0)
             {
-                if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
-                MapRedoStates.Clear();
-                CurrentMapState = Globals.CurrentMap.SaveInternal();
+                SmartEraseAttribute(x, y, attribute);
+
+                if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+                {
+                    if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
+                    MapRedoStates.Clear();
+                    CurrentMapState = Globals.CurrentMap.SaveInternal();
+                }
             }
         }
 

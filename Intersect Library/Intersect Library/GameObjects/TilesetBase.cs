@@ -16,8 +16,8 @@ namespace Intersect.GameObjects
             set { base.Name = value?.Trim().ToLower(); }
         }
 
-        public override byte[] BinaryData => Encoding.ASCII.GetBytes(Name);
+        public override byte[] BinaryData => Encoding.UTF8.GetBytes(Name);
 
-        public override void Load(byte[] packet) => Name = Encoding.ASCII.GetString(packet, 0, packet.Length);
+        public override void Load(byte[] packet) => Name = Encoding.UTF8.GetString(packet, 0, packet.Length);
     }
 }

@@ -7,5 +7,16 @@
         public int data3;
         public string data4 = "";
         public int value;
+
+        public byte[] Data()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteInteger(value);
+            bf.WriteInteger(data1);
+            bf.WriteInteger(data2);
+            bf.WriteInteger(data3);
+            bf.WriteString(data4);
+            return bf.ToArray();
+        }
     }
 }

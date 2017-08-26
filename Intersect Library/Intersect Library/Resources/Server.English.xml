@@ -323,7 +323,7 @@
         <string id="admin">[ADMIN] {00}: {01}</string>
         <string id="party">[PARTY] {00}: {01}</string>
         <string id="local">{00}: {01}</string>
-				<string id="localcmd">/global</string>
+	<string id="localcmd">/local</string>
         <string id="globalcmd">/global</string>
         <string id="allcmd">/all</string>
         <string id="announcementcmd">/announcement</string>

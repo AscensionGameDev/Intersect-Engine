@@ -41,6 +41,8 @@ namespace Intersect.Editor.Classes
 
             var bf = binaryPacket?.Buffer;
 
+            if (packet == null || bf == null) return false;
+
             //Compressed?
             if (bf.ReadByte() == 1)
             {
@@ -53,12 +55,18 @@ namespace Intersect.Editor.Classes
             return true;
         }
 
+        private static int packetCount = 0;
+        private static bool debugPackets = false;
         public static void HandlePacket(ByteBuffer bf)
         {
             if (bf == null || bf.Length() == 0) return;
 
             var packetHeader = (ServerPackets) bf.ReadLong();
-            Console.WriteLine("Received packet " + packetHeader);
+            packetCount++;
+            if (debugPackets)
+            {
+                Console.WriteLine("Handled packet " + packetHeader + " - " + packetCount);
+            }
             switch (packetHeader)
             {
                 case ServerPackets.Ping:
@@ -292,7 +300,7 @@ namespace Intersect.Editor.Classes
                                 if (Globals.MapsToFetch.Count == 0)
                                 {
                                     Globals.FetchingMapPreviews = false;
-                                    Globals.PreviewProgressForm.Dispose();
+                                    Globals.PreviewProgressForm.BeginInvoke((MethodInvoker)delegate { Globals.PreviewProgressForm.Dispose(); });
                                 }
                                 else
                                 {

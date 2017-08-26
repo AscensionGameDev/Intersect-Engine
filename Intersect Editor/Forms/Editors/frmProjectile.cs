@@ -69,6 +69,7 @@ namespace Intersect.Editor.Classes
 
         private void lstProjectiles_Click(object sender, EventArgs e)
         {
+            if (changingName) return;
             _editorItem =
                 ProjectileBase.Lookup.Get<ProjectileBase>(Database.GameObjectIdFromList(GameObjectType.Projectile,
                     lstProjectiles.SelectedIndex));
@@ -393,9 +394,11 @@ namespace Intersect.Editor.Classes
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
+            changingName = true;
             _editorItem.Name = txtName.Text;
             lstProjectiles.Items[Database.GameObjectListIndex(GameObjectType.Projectile, _editorItem.Index)] =
                 txtName.Text;
+            changingName = false;
         }
 
         private void chkHoming_CheckedChanged(object sender, EventArgs e)

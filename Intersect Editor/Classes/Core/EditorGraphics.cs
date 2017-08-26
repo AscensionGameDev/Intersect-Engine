@@ -840,6 +840,7 @@ namespace Intersect.Editor.Classes
         {
             if (_mapGridChain == null || _mapGridChain.IsContentLost || _mapGridChain.IsDisposed ||
                 Globals.MapGridWindowNew.DockPanel.ActiveDocument != Globals.MapGridWindowNew) return;
+            EndSpriteBatch();
             SetRenderTarget(_mapGridChain);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.FromNonPremultiplied(60, 63, 65, 255));
             var rand = new Random();
@@ -913,6 +914,7 @@ namespace Intersect.Editor.Classes
                     }
                 }
             }
+            EndSpriteBatch();
             _mapGridChain.Present();
         }
 

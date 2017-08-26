@@ -73,6 +73,7 @@ namespace Intersect.Editor.Forms
 
         private void lstItems_Click(object sender, EventArgs e)
         {
+            if (changingName) return;
             _editorItem =
                 ItemBase.Lookup.Get<ItemBase>(
                     Database.GameObjectIdFromList(GameObjectType.Item, lstItems.SelectedIndex));
@@ -375,8 +376,10 @@ namespace Intersect.Editor.Forms
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
+            changingName = true;
             _editorItem.Name = txtName.Text;
             lstItems.Items[Database.GameObjectListIndex(GameObjectType.Item, _editorItem.Index)] = txtName.Text;
+            changingName = false;
         }
 
         private void cmbPic_SelectedIndexChanged(object sender, EventArgs e)

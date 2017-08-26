@@ -14,11 +14,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public MonoRenderTexture(GraphicsDevice graphicsDevice, int width, int height) : base(width, height)
         {
-            _renderTexture = new RenderTarget2D(graphicsDevice, width, height, false,
-                SurfaceFormat.Color,
-                DepthFormat.Depth24,
-                0,
-                RenderTargetUsage.PreserveContents);
+            _renderTexture = new RenderTarget2D(graphicsDevice, width, height, true,
+                graphicsDevice.PresentationParameters.BackBufferFormat, graphicsDevice.PresentationParameters.DepthStencilFormat, graphicsDevice.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
             _graphicsDevice = graphicsDevice;
             _width = width;
             _height = height;

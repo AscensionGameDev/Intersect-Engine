@@ -24,7 +24,7 @@ namespace Intersect.Server.Classes.Core
 {
     public static class Database
     {
-        private const int DbVersion = 9;
+        private const int DbVersion = 10;
         private const string DbFilename = "resources/intersect.db";
 
         //Database Variables

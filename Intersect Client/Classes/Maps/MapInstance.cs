@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using Intersect;
@@ -15,6 +16,7 @@ using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
+using Microsoft.Xna.Framework.Graphics;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.Maps
@@ -406,15 +408,15 @@ namespace Intersect_Client.Classes.Maps
             {
                 if (layer == 0)
                 {
-                    GameGraphics.DrawGameTexture(LowerTextures[Globals.AnimFrame], GetX(), GetY());
+                    GameGraphics.DrawGameTexture(LowerTextures[Globals.AnimFrame], GetX(), GetY(), null, GameBlendModes.None);
                 }
                 else if (layer == 1)
                 {
-                    GameGraphics.DrawGameTexture(UpperTextures[Globals.AnimFrame], GetX(), GetY());
+                    GameGraphics.DrawGameTexture(UpperTextures[Globals.AnimFrame], GetX(), GetY(), null, GameBlendModes.None);
                 }
                 else
                 {
-                    GameGraphics.DrawGameTexture(PeakTextures[Globals.AnimFrame], GetX(), GetY());
+                    GameGraphics.DrawGameTexture(PeakTextures[Globals.AnimFrame], GetX(), GetY(), null, GameBlendModes.None);
                 }
             }
             if (layer == 0)
@@ -850,7 +852,7 @@ namespace Intersect_Client.Classes.Maps
                                     GetY() - (Options.MapHeight * Options.TileHeight * 1f) + y * fogH + drawY, fogW,
                                     fogH),
                                 new Intersect.Color((byte) (FogTransparency * _curFogIntensity), 255, 255, 255), null,
-                                GameBlendModes.Alpha);
+                                GameBlendModes.None);
                         }
                     }
                 }

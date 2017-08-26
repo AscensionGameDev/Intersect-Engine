@@ -76,6 +76,7 @@ namespace Intersect.Editor.Classes
 
         private void lstResources_Click(object sender, EventArgs e)
         {
+            if (changingName) return;
             _editorItem =
                 ResourceBase.Lookup.Get<ResourceBase>(
                     Database.GameObjectIdFromList(GameObjectType.Resource, lstResources.SelectedIndex));
@@ -303,8 +304,10 @@ namespace Intersect.Editor.Classes
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
+            changingName = true;
             _editorItem.Name = txtName.Text;
             lstResources.Items[lstResources.SelectedIndex] = txtName.Text;
+            changingName = false;
         }
 
         private void frmResource_FormClosed(object sender, FormClosedEventArgs e)

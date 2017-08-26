@@ -18,7 +18,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
     public class MonoRenderer : GameRenderer
     {
         private ContentManager _contentManager;
-        private GameBlendModes _currentBlendmode = GameBlendModes.Alpha;
+        private GameBlendModes _currentBlendmode = GameBlendModes.None;
         private GameShader _currentShader;
         private FloatRect _currentSpriteView;
         private GameRenderTexture _currentTarget;
@@ -29,6 +29,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         private Game _game;
         private GameWindow _gameWindow;
         private bool _initialized;
+        private BlendState _normalState;
         private BlendState _multiplyState;
         RasterizerState _rasterizerState = new RasterizerState() {ScissorTestEnable = true};
         private bool _spriteBatchBegan;
@@ -55,6 +56,14 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             _game = monoGame;
             mGraphics = graphics;
             _contentManager = contentManager;
+
+            _normalState = new BlendState()
+            {
+                ColorSourceBlend = Blend.SourceAlpha,
+                AlphaSourceBlend = Blend.One,
+                ColorDestinationBlend = Blend.InverseSourceAlpha,
+                AlphaDestinationBlend = Blend.InverseSourceAlpha
+            };
 
             _multiplyState = new BlendState()
             {
@@ -158,13 +167,12 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         }
 
         private void StartSpritebatch(FloatRect view, GameBlendModes mode = GameBlendModes.None,
-            GameShader shader = null, GameRenderTexture target = null, bool forced = false, RasterizerState rs = null)
+            GameShader shader = null, GameRenderTexture target = null, bool forced = false, RasterizerState rs = null, bool drawImmediate = false)
         {
             bool viewsDiff = view.X != _currentSpriteView.X || view.Y != _currentSpriteView.Y ||
                              view.Width != _currentSpriteView.Width || view.Height != _currentSpriteView.Height;
-            if (mode != _currentBlendmode || shader != _currentShader || target != _currentTarget || viewsDiff ||
-                forced ||
-                !_spriteBatchBegan)
+            if (mode != _currentBlendmode || (shader != _currentShader || (shader != null && shader.ValuesChanged())) || target != _currentTarget || viewsDiff ||
+                forced || drawImmediate || !_spriteBatchBegan)
             {
                 if (_spriteBatchBegan) mSpriteBatch.End();
                 if (target == null)
@@ -175,20 +183,16 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 {
                     mGraphicsDevice.SetRenderTarget((RenderTarget2D) target.GetTexture());
                 }
-                BlendState blend = BlendState.AlphaBlend;
+                BlendState blend = _normalState;
                 Effect useEffect = null;
 
                 switch (mode)
                 {
                     case GameBlendModes.None:
-                        blend = BlendState.NonPremultiplied;
-                        if (target != null)
-                        {
-                            blend = BlendState.AlphaBlend;
-                        }
+                        blend = _normalState;
                         break;
                     case GameBlendModes.Alpha:
-                        blend = BlendState.NonPremultiplied;
+                        blend = BlendState.AlphaBlend;
                         break;
                     case (GameBlendModes.Multiply):
                         blend = _multiplyState;
@@ -207,8 +211,9 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 if (shader != null)
                 {
                     useEffect = (Effect) shader.GetShader();
+                    shader.ResetChanged();
                 }
-                mSpriteBatch.Begin(SpriteSortMode.Deferred, blend, SamplerState.PointClamp, null, rs, useEffect,
+                mSpriteBatch.Begin(drawImmediate ? SpriteSortMode.Immediate : SpriteSortMode.Deferred, blend, SamplerState.PointClamp, null, rs, useEffect,
                     Matrix.CreateRotationZ(0f) * Matrix.CreateScale(new Vector3(1, 1, 1)) *
                     Matrix.CreateTranslation(-view.X, -view.Y, 0));
                 _currentSpriteView = view;
@@ -350,7 +355,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override void DrawTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect,
             Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
-            GameShader shader = null, float rotationDegrees = 0, bool isUi = false)
+            GameShader shader = null, float rotationDegrees = 0, bool isUi = false, bool drawImmediate = false)
         {
             if (tex == null || tex.GetTexture() == null) return;
             Vector2 origin = Vector2.Zero;
@@ -368,7 +373,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                     targetRect.X += mCurrentView.X;
                     targetRect.Y += mCurrentView.Y;
                 }
-                StartSpritebatch(mCurrentView, blendMode, shader, null, false, null);
+                StartSpritebatch(mCurrentView, blendMode, shader, null, false, null, drawImmediate);
                 mSpriteBatch.Draw((Texture2D) tex.GetTexture(), null,
                     new Microsoft.Xna.Framework.Rectangle((int) targetRect.X, (int) targetRect.Y,
                         (int) targetRect.Width,
@@ -380,7 +385,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             else
             {
                 StartSpritebatch(new FloatRect(0, 0, renderTarget.GetWidth(), renderTarget.GetHeight()), blendMode,
-                    shader, renderTarget, false, null);
+                    shader, renderTarget, false, null, drawImmediate);
                 mSpriteBatch.Draw((Texture2D) tex.GetTexture(), null,
                     new Microsoft.Xna.Framework.Rectangle((int) targetRect.X, (int) targetRect.Y,
                         (int) targetRect.Width,

@@ -149,10 +149,6 @@ namespace Intersect_Client.Classes.Core
 
         private static void StartMusic(string filename, float fadein = 0f)
         {
-            if (Globals.Database.MusicVolume == 0)
-            {
-                return;
-            }
             GameAudioSource music = Globals.ContentManager.GetMusic(filename);
             if (music != null)
             {
