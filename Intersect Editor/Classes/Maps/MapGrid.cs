@@ -102,8 +102,8 @@ namespace Intersect.Editor.Classes.Maps
             lock (texLock)
             {
                 UnloadTextures();
+                Grid = new MapGridItem[GridWidth, GridHeight];
             }
-            Grid = new MapGridItem[GridWidth, GridHeight];
             for (int x = -1; x <= GridWidth; x++)
             {
                 for (int y = -1; y <= GridHeight; y++)

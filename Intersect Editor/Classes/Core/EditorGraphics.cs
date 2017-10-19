@@ -70,6 +70,9 @@ namespace Intersect.Editor.Classes
         private static Effect _currentShader;
         private static RenderTarget2D _currentTarget;
 
+        //Screenshot RT
+        private static RenderTarget2D _screenShotRenderTexture;
+
         //Editor Viewing Rect
         public static System.Drawing.Rectangle CurrentView;
 
@@ -1115,9 +1118,9 @@ namespace Intersect.Editor.Classes
 
         public static Bitmap ScreenShotMap()
         {
-            RenderTarget2D screenShot = CreateRenderTexture((Options.MapWidth) * Options.TileWidth,
+            if (_screenShotRenderTexture == null) _screenShotRenderTexture = CreateRenderTexture((Options.MapWidth) * Options.TileWidth,
                 (Options.MapHeight) * Options.TileHeight);
-            SetRenderTarget(screenShot);
+            SetRenderTarget(_screenShotRenderTexture);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Transparent);
 
             if (Globals.MapGrid.Contains(Globals.CurrentMap.Index))
@@ -1137,7 +1140,7 @@ namespace Intersect.Editor.Classes
                                     //Draw this map
                                     DrawMap(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true,
                                         0,
-                                        screenShot);
+                                        _screenShotRenderTexture);
                                 }
                             }
                         }
@@ -1158,7 +1161,7 @@ namespace Intersect.Editor.Classes
                                 {
                                     DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
                                         y - Globals.CurrentMap.MapGridY,
-                                        true, screenShot, false);
+                                        true, _screenShotRenderTexture, false);
                                 }
                             }
                         }
@@ -1180,7 +1183,7 @@ namespace Intersect.Editor.Classes
                                     //Draw this map
                                     DrawMap(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true,
                                         1,
-                                        screenShot);
+                                        _screenShotRenderTexture);
                                 }
                             }
                         }
@@ -1201,7 +1204,7 @@ namespace Intersect.Editor.Classes
                                 {
                                     DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
                                         y - Globals.CurrentMap.MapGridY,
-                                        true, screenShot, true);
+                                        true, _screenShotRenderTexture, true);
                                 }
                             }
                         }
@@ -1214,45 +1217,45 @@ namespace Intersect.Editor.Classes
                 {
                     //Draw this map
                     DrawMap(Globals.CurrentMap, 0, 0, true, 0,
-                        screenShot);
+                        _screenShotRenderTexture);
                     DrawMapAttributes(Globals.CurrentMap, 0, 0,
-                        true, screenShot, false);
+                        true, _screenShotRenderTexture, false);
                     //Draw this map
                     DrawMap(Globals.CurrentMap, 0, 0, true, 1,
-                        screenShot);
+                        _screenShotRenderTexture);
                     DrawMapAttributes(Globals.CurrentMap, 0, 0,
-                        true, screenShot, true);
+                        true, _screenShotRenderTexture, true);
                 }
             }
             if (!Database.GridHideFog)
             {
-                DrawFog(screenShot);
+                DrawFog(_screenShotRenderTexture);
             }
             if (!Database.GridHideOverlay)
             {
-                DrawMapOverlay(screenShot);
+                DrawMapOverlay(_screenShotRenderTexture);
             }
             if ((!Database.GridHideDarkness || Globals.CurrentLayer == Options.LayerCount + 1))
             {
-                ClearDarknessTexture(screenShot, true);
-                OverlayDarkness(screenShot, true);
+                ClearDarknessTexture(_screenShotRenderTexture, true);
+                OverlayDarkness(_screenShotRenderTexture, true);
             }
-            int[] data = new int[screenShot.Width * screenShot.Height];
-            screenShot.GetData(0, new Microsoft.Xna.Framework.Rectangle(0, 0, screenShot.Width, screenShot.Height),
+            int[] data = new int[_screenShotRenderTexture.Width * _screenShotRenderTexture.Height];
+            _screenShotRenderTexture.GetData(0, new Microsoft.Xna.Framework.Rectangle(0, 0, _screenShotRenderTexture.Width, _screenShotRenderTexture.Height),
                 data,
-                0, screenShot.Width * screenShot.Height);
-            Bitmap bitmap = new Bitmap(screenShot.Width, screenShot.Height);
+                0, _screenShotRenderTexture.Width * _screenShotRenderTexture.Height);
+            Bitmap bitmap = new Bitmap(_screenShotRenderTexture.Width, _screenShotRenderTexture.Height);
             var bits = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
                 ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
             unsafe
             {
                 byte* dstPointer = (byte*) bits.Scan0;
-                for (int y = 0; y < screenShot.Height; ++y)
+                for (int y = 0; y < _screenShotRenderTexture.Height; ++y)
                 {
-                    for (int x = 0; x < screenShot.Width; ++x)
+                    for (int x = 0; x < _screenShotRenderTexture.Width; ++x)
                     {
                         System.Drawing.Color bitmapColor =
-                            System.Drawing.Color.FromArgb(data[y * screenShot.Width + x]);
+                            System.Drawing.Color.FromArgb(data[y * _screenShotRenderTexture.Width + x]);
                         dstPointer[0] = bitmapColor.R;
                         dstPointer[1] = bitmapColor.G;
                         dstPointer[2] = bitmapColor.B;
