@@ -860,6 +860,7 @@ namespace Intersect.Server.Classes.Entities
                     {
                         if (!((Player) this).InParty((Player) enemy) && this != enemy) return;
                     }
+                    if (enemy.GetType() != GetType()) return; //Don't let players aoe heal npcs. Don't let npcs aoe heal players.
                 }
 
                 if (spellBase.HitAnimation > -1)
@@ -1052,7 +1053,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else if (baseDamage < 0)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) baseDamage,
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) Math.Abs(baseDamage),
                         CustomColors.Heal);
                 }
             }
@@ -1070,7 +1071,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else if (baseDamage < 0)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) baseDamage,
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) Math.Abs(baseDamage),
                         CustomColors.AddMana);
                 }
             }

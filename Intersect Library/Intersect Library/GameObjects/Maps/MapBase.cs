@@ -42,8 +42,9 @@ namespace Intersect.GameObjects.Maps
                 Name = mapcopy.Name;
                 Brightness = mapcopy.Brightness;
                 IsIndoors = mapcopy.IsIndoors;
-                if (Layers != null)
+                if (Layers != null && mapcopy.Layers != null)
                 {
+                    if (Layers.Length < Options.LayerCount) Layers = new TileArray[Options.LayerCount];
                     for (var i = 0; i < Options.LayerCount; i++)
                     {
                         Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];

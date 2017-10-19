@@ -1561,7 +1561,14 @@ namespace Intersect.Editor.Classes
                 {
                     SetRenderTarget(target);
                 }
-                _spriteBatch.Begin(SpriteSortMode.Deferred, mode, null, null, rs, shader);
+                if (shader != null)
+                {
+                    _spriteBatch.Begin(SpriteSortMode.Immediate, mode, null, null, rs, shader);
+                }
+                else
+                {
+                    _spriteBatch.Begin(SpriteSortMode.Deferred, mode, null, null, rs, shader);
+                }
                 _currentBlendmode = mode;
                 _currentShader = shader;
                 _currentTarget = target;

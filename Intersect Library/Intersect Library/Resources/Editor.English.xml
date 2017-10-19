@@ -1151,9 +1151,10 @@ Negative values for time to flow backwards.</string>
         <string id="startquest">Can Start Quest: {00}</string>
         <string id="questinprogress">Quest In Progress: {00} {01}</string>
         <string id="beforetask">, Before Task: {00}</string>
-        <string id="aftertask">, After Task: {00}</string>
+        <string id="afterd">, After Task: {00}</string>
         <string id="ontask">, On Task: {00}</string>
         <string id="onanytask">, On Any Task</string>
+		<string id="tasknotfound">Not Found</string>
         <string id="questcompleted">Quest is Completed: {00}</string>
         <string id="playerdeath">Player Death</string>
         <string id="nonpcsonmap">No NPCs on the map</string>

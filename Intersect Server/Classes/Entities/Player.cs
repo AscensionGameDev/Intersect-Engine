@@ -383,6 +383,7 @@ namespace Intersect.Server.Classes.Entities
 
         public void LevelUp(bool resetExperience = true, int levels = 1)
         {
+            var spellMsgs = new List<string>();
             if (Level < Options.MaxLevel)
             {
                 for (int i = 0; i < levels; i++)
@@ -434,6 +435,19 @@ namespace Intersect.Server.Classes.Entities
                                 AddStat(stat, statDiff);
                             }
                         }
+
+                        foreach (var spell in myclass.Spells)
+                        {
+                            if (spell.Level == Level)
+                            {
+                                var spellInstance = new SpellInstance();
+                                spellInstance.SpellNum = spell.SpellNum;
+                                if (TryTeachSpell(spellInstance, true))
+                                {
+                                    spellMsgs.Add(Strings.Get("player","spelltaughtlevelup",SpellBase.GetName(spellInstance.SpellNum)));
+                                }
+                            }
+                        }
                     }
                     StatPoints += myclass.PointIncrease;
                 }
@@ -441,6 +455,10 @@ namespace Intersect.Server.Classes.Entities
 
             PacketSender.SendPlayerMsg(MyClient, Strings.Get("player", "levelup", Level), CustomColors.LevelUp, MyName);
             PacketSender.SendActionMsg(this, Strings.Get("combat", "levelup"), CustomColors.LevelUp);
+            foreach (var msg in spellMsgs)
+            {
+                PacketSender.SendPlayerMsg(MyClient, msg, CustomColors.Info, MyName);
+            }
             if (StatPoints > 0)
             {
                 PacketSender.SendPlayerMsg(MyClient, Strings.Get("player", "statpoints", StatPoints),
@@ -2245,6 +2263,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 return false;
             }
+            if (SpellBase.Lookup.Get<SpellBase>(spell.SpellNum) == null) return false;
             for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 if (Spells[i].SpellNum <= 0)
