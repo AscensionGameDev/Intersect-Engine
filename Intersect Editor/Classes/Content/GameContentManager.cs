@@ -550,6 +550,11 @@ namespace Intersect.Editor.Classes.Core
                     return null;
             }
 
+            var keys = textureDict?.Keys.ToArray();
+            if (keys != null)
+            {
+                Array.Sort(keys,new AlphanumComparatorFast());
+            }
             return textureDict?.Keys.ToArray();
         }
 

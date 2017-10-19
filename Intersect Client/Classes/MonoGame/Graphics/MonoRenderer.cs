@@ -438,6 +438,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 new Resolution(800, 600),
                 new Resolution(1024, 768),
                 new Resolution(1024, 720),
+                new Resolution(1280, 720),
                 new Resolution(1280, 768),
                 new Resolution(1280, 1024),
                 new Resolution(1360, 768),

@@ -207,7 +207,7 @@ namespace Intersect.Server.Classes.Entities
                         {
                             var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spell.Projectile);
                             if (spell.SpellType == (int) SpellTypes.CombatSpell &&
-                                spell.TargetType == (int) SpellTargetTypes.Projectile &&
+                                spell.TargetType == (int) SpellTargetTypes.Projectile && projectileBase != null &&
                                 InRangeOf(MyTarget, projectileBase.Range))
                             {
                                 if (DirToEnemy(MyTarget) != Dir)

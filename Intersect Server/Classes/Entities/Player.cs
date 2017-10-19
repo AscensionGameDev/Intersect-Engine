@@ -247,7 +247,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (evt == null) continue;
                     var eventFound = false;
-                    if (evt.MapNum == -1)
+                    if (evt.MapNum < 0)
                     {
                         evt.Update(timeMs);
                         if (evt.CallStack.Count > 0)
@@ -2994,17 +2994,17 @@ namespace Intersect.Server.Classes.Entities
                 }
                 var tmpEvent = new EventInstance(EventCounter++, MyClient, baseEvent, -1)
                 {
-                    MapNum = -1,
+                    MapNum = -1 * baseEvent.Index,
                     SpawnX = -1,
                     SpawnY = -1
                 };
-                EventLookup.AddOrUpdate(new Tuple<int, int, int>(-1, -1, -1), tmpEvent, (key, oldValue) => tmpEvent);
+                EventLookup.AddOrUpdate(new Tuple<int, int, int>(-1 * baseEvent.Index, -1, -1), tmpEvent, (key, oldValue) => tmpEvent);
                 //Try to Spawn a PageInstance.. if we can
                 for (int i = baseEvent.MyPages.Count - 1; i >= 0; i--)
                 {
                     if ((trigger == -1 || baseEvent.MyPages[i].Trigger == trigger) && tmpEvent.CanSpawnPage(i, baseEvent))
                     {
-                        tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.MyPages[i], baseEvent.Index, -1, tmpEvent, MyClient);
+                        tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.MyPages[i], baseEvent.Index, -1 * baseEvent.Index, tmpEvent, MyClient);
                         tmpEvent.PageIndex = i;
                         //Check for /command trigger
                         if (trigger == (int)EventPage.CommonEventTriggers.Command)
@@ -3028,7 +3028,7 @@ namespace Intersect.Server.Classes.Entities
                         break;
                     }
                 }
-                EventLookup.TryRemove(new Tuple<int, int, int>(-1, -1, -1), out EventInstance z);
+                EventLookup.TryRemove(new Tuple<int, int, int>(-1 * baseEvent.Index, -1, -1), out EventInstance z);
                 return false;
             }
         }

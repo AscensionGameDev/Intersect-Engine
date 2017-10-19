@@ -50,7 +50,6 @@ namespace Intersect.Network
         public RSACryptoServiceProvider Rsa { get; private set; }
         public NetAESEncryption Aes { get; private set; }
 
-        public bool IsConnected => NetConnection?.Status == NetConnectionStatus.Connected;
         public override string Ip => NetConnection?.RemoteEndPoint?.Address?.ToString();
         public override int Port => NetConnection?.RemoteEndPoint?.Port ?? -1;
 

@@ -801,10 +801,10 @@ namespace Intersect.Server.Classes.Maps
 
         public void SendMapEntitiesTo(Player player)
         {
-            if (player != null && player.CurrentMap == Index)
+            if (player != null)
             {
                 PacketSender.SendMapEntitiesTo(player.MyClient, Entities);
-                player.SendEvents();
+                if (player.CurrentMap == Index) player.SendEvents();
             }
         }
 

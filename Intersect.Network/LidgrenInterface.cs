@@ -405,6 +405,7 @@ namespace Intersect.Network
                                 break;
                             }
 
+                            intersectConnection?.HandleConnected();
                             OnConnected(this, intersectConnection);
 
                             break;
@@ -429,6 +430,7 @@ namespace Intersect.Network
                             var client = mNetwork.FindConnection(guid);
                             if (client != null)
                             {
+                                client?.HandleDisconnected();
                                 OnDisconnected(this, client);
                                 mNetwork?.RemoveConnection(client);
                             }
@@ -502,7 +504,6 @@ namespace Intersect.Network
                     IBuffer approvalBuffer = new LidgrenBuffer(approvalMessage);
                     approval.Write(ref approvalBuffer);
                     connection.Approve(approvalMessage);
-
                     OnConnectionApproved(this, client);
 
                     break;
