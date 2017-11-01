@@ -1240,6 +1240,7 @@ namespace Intersect.Editor.Classes
                 ClearDarknessTexture(_screenShotRenderTexture, true);
                 OverlayDarkness(_screenShotRenderTexture, true);
             }
+            EndSpriteBatch();
             int[] data = new int[_screenShotRenderTexture.Width * _screenShotRenderTexture.Height];
             _screenShotRenderTexture.GetData(0, new Microsoft.Xna.Framework.Rectangle(0, 0, _screenShotRenderTexture.Width, _screenShotRenderTexture.Height),
                 data,
@@ -1346,6 +1347,7 @@ namespace Intersect.Editor.Classes
                     DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                         new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),
                         System.Drawing.Color.FromArgb(255, 255, 255, 255), DarknessTexture, BlendState.Additive);
+
                     DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),
                         new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),
                         System.Drawing.Color.FromArgb(gridLightColor.A, gridLightColor.R, gridLightColor.G,

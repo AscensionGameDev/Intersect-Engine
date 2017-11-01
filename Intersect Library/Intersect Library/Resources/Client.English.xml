@@ -122,7 +122,7 @@
     </Chatbox>
     <CraftingBench>
         <string id="title">Crafting Bench</string>
-        <string id="recepies">Recepies:</string>
+        <string id="recipes">Recipes:</string>
         <string id="ingredients">Ingredients:</string>
         <string id="product">Product:</string>
         <string id="incorrectresources">You do not have the correct resources to craft this item.</string>

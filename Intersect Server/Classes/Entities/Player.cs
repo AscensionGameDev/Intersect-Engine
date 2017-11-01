@@ -304,6 +304,14 @@ namespace Intersect.Server.Classes.Entities
                 Warp(0, 0, 0, 0);
             }
             PacketSender.SendEntityDataToProximity(this);
+            //Search death common event trigger
+            foreach (EventBase evt in EventBase.Lookup.IndexValues)
+            {
+                if (evt != null)
+                {
+                    StartCommonEvent(evt, (int)EventPage.CommonEventTriggers.OnRespawn);
+                }
+            }
         }
 
         public override void Die(int dropitems = 0, Entity killer = null)
@@ -315,15 +323,6 @@ namespace Intersect.Server.Classes.Entities
             foreach (var evt in EventLookup.Values)
             {
                 evt.PlayerHasDied = true;
-            }
-
-            //Search death common event trigger
-            foreach (EventBase evt in EventBase.Lookup.IndexValues)
-            {
-                if (evt != null)
-                {
-                    StartCommonEvent(evt, (int)EventPage.CommonEventTriggers.OnRespawn);
-                }
             }
 
             base.Die(dropitems, killer);

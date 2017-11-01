@@ -33,10 +33,10 @@ namespace Intersect_Client.Classes.UI.Game
         private ImagePanel _itemTemplate;
         private Label _lblIngredients;
         private Label _lblProduct;
-        private Label _lblRecepies;
+        private Label _lblRecipes;
 
         //Objects
-        private ListBox _Recepies;
+        private ListBox _Recipes;
 
         private List<Label> _values = new List<Label>();
 
@@ -53,8 +53,8 @@ namespace Intersect_Client.Classes.UI.Game
             _itemContainer = new ScrollControl(_craftWindow, "IngredientsContainer");
 
             //Labels
-            _lblRecepies = new Label(_craftWindow, "RecipesTitle");
-            _lblRecepies.Text = Strings.Get("craftingbench", "recepies");
+            _lblRecipes = new Label(_craftWindow, "RecipesTitle");
+            _lblRecipes.Text = Strings.Get("craftingbench", "recipes");
 
             _lblIngredients = new Label(_craftWindow, "IngredientsTitle");
             _lblIngredients.Text = Strings.Get("craftingbench", "ingredients");
@@ -63,7 +63,7 @@ namespace Intersect_Client.Classes.UI.Game
             _lblProduct.Text = Strings.Get("craftingbench", "product");
 
             //Recepie list
-            _Recepies = new ListBox(_craftWindow, "RecipesList");
+            _Recipes = new ListBox(_craftWindow, "RecipesList");
 
             //Progress Bar
             _barContainer = new ImagePanel(_craftWindow, "ProgressBarContainer");
@@ -225,7 +225,7 @@ namespace Intersect_Client.Classes.UI.Game
                 ListBoxRow tmpRow;
                 for (int i = 0; i < Globals.GameBench.Crafts.Count; i++)
                 {
-                    tmpRow = _Recepies.AddRow((i + 1) + ") " + ItemBase.GetName(Globals.GameBench.Crafts[i].Item));
+                    tmpRow = _Recipes.AddRow((i + 1) + ") " + ItemBase.GetName(Globals.GameBench.Crafts[i].Item));
                     tmpRow.UserData = i;
                     tmpRow.DoubleClicked += tmpNode_DoubleClicked;
                     tmpRow.Clicked += tmpNode_DoubleClicked;
