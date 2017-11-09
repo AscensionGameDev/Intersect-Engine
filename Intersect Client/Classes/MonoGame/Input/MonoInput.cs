@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Input;
@@ -39,6 +40,16 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
                             _keyDictionary.Add(key, Microsoft.Xna.Framework.Input.Keys.LeftShift);
                             break;
                         }
+                        if (key == Keys.Control || key == Keys.LControlKey)
+                        {
+                            _keyDictionary.Add(key,Microsoft.Xna.Framework.Input.Keys.LeftControl);
+                            break;
+                        }
+                        if (key == Keys.RControlKey)
+                        {
+                            _keyDictionary.Add(key, Microsoft.Xna.Framework.Input.Keys.RightControl);
+                            break;
+                        }
                         if (key == Keys.Return)
                         {
                             _keyDictionary.Add(key, Microsoft.Xna.Framework.Input.Keys.Enter);
@@ -56,7 +67,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
                 }
                 if (!_keyDictionary.ContainsKey(key))
                 {
-                    Console.WriteLine("Mono does not have a key to match: " + key);
+                    Debug.WriteLine("Mono does not have a key to match: " + key);
                 }
             }
         }

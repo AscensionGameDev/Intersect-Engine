@@ -237,6 +237,23 @@ namespace Intersect_Client.Classes.Core
                 }
             }
 
+            for (var x = gridX - 1; x <= gridX + 1; x++)
+            {
+                for (var y = gridY - 1; y <= gridY + 1; y++)
+                {
+                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                        Globals.MapGrid[x, y] != -1)
+                    {
+                        MapInstance map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
+                        if (map != null)
+                        {
+                            map.DrawFog();
+                            map.DrawOverlayGraphic();
+                        }
+                    }
+                }
+            }
+
             //Draw the players targets
             Globals.Me.DrawTargets();
 

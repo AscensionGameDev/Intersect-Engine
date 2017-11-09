@@ -231,7 +231,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             return changed;
         }
 
-        private void EndSpriteBatch()
+        public void EndSpriteBatch()
         {
             if (_spriteBatchBegan)
             {

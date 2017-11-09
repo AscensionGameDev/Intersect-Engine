@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Windows.Forms;
 using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -447,11 +448,6 @@ namespace Intersect_Client.Classes.Maps
                 }
                 UpdateMapAttributes();
             }
-            if (layer == 2)
-            {
-                DrawFog();
-                DrawOverlayGraphic();
-            }
         }
 
         private void HandleMapLoaded(MapInstance map)
@@ -768,7 +764,7 @@ namespace Intersect_Client.Classes.Maps
         }
 
         //Fogs/Panorama/Overlay
-        private void DrawFog()
+        public void DrawFog()
         {
             if (Globals.Me == null || Lookup.Get(Globals.Me.CurrentMap) == null) return;
             float ecTime = Globals.System.GetTimeMS() - _fogUpdateTime;
@@ -898,7 +894,7 @@ namespace Intersect_Client.Classes.Maps
             }
         }
 
-        private void DrawOverlayGraphic()
+        public void DrawOverlayGraphic()
         {
             float ecTime = Globals.System.GetTimeMS() - _overlayUpdateTime;
             _overlayUpdateTime = Globals.System.GetTimeMS();

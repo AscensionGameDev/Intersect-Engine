@@ -41,6 +41,7 @@ namespace Intersect.Editor.Classes.Entities
                     myBase.LowerAnimSprite);
                 if (showLower)
                 {
+                    if (lowerFrame >= myBase.LowerAnimFrameCount) return;
                     if (tex != null)
                     {
                         if (myBase.LowerAnimXFrames > 0 && myBase.LowerAnimYFrames > 0)
@@ -71,6 +72,7 @@ namespace Intersect.Editor.Classes.Entities
                     myBase.UpperAnimSprite);
                 if (showUpper)
                 {
+                    if (upperFrame >= myBase.UpperAnimFrameCount) return;
                     if (tex != null)
                     {
                         if (myBase.UpperAnimXFrames > 0 && myBase.UpperAnimYFrames > 0)

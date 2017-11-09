@@ -634,6 +634,18 @@ namespace Intersect.Server.Classes.Maps
                     //Process All Entites
                     for (int i = 0; i < Entities.Count; i++)
                     {
+                        //Let's see if and how long this map has been inactive, if longer than 30 seconds, regenerate everything on the map
+                        //TODO, take this 30 second value and throw it into the server config after I switch everything to json
+                        if (timeMs > LastUpdateTime + 30000)
+                        {
+                            //Regen Everything & Forget Targets
+                            if (Entities[i].GetType() == typeof(Resource) || Entities[i].GetType() == typeof(Npc))
+                            {
+                                Entities[i].RestoreVital(Vitals.Health);
+                                Entities[i].RestoreVital(Vitals.Mana);
+                                Entities[i].Target = null;
+                            }
+                        }
                         Entities[i].Update(timeMs);
                     }
                     //Process NPC Respawns

@@ -220,7 +220,7 @@ namespace Intersect.Client.Classes.UI.Game.Spells
                     {
                         for (int i = 0; i < Options.MaxInvItems; i++)
                         {
-                            if (_spellWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
+                            if (i < _spellWindow.Items.Count && _spellWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
                                 if (FloatRect.Intersect(_spellWindow.Items[i].RenderBounds(), dragRect).Width *
                                     FloatRect.Intersect(_spellWindow.Items[i].RenderBounds(), dragRect).Height >

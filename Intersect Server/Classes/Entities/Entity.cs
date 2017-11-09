@@ -727,6 +727,21 @@ namespace Intersect.Server.Classes.Entities
             return true;
         }
 
+        //Vitals
+        public void RestoreVital(Vitals vital)
+        {
+            Vital[(int)vital] = MaxVital[(int)vital];
+            PacketSender.SendEntityVitals(this);
+        }
+
+        public void AddVital(Vitals vital, int amount)
+        {
+            Vital[(int)vital] += amount;
+            if (Vital[(int)vital] < 0) Vital[(int)vital] = 0;
+            if (Vital[(int)vital] > MaxVital[(int)vital]) Vital[(int)vital] = MaxVital[(int)vital];
+            PacketSender.SendEntityVitals(this);
+        }
+
         //Attacking with projectile
         public virtual void TryAttack(Entity enemy, ProjectileBase projectile, SpellBase parentSpell,
             ItemBase parentItem, int projectileDir)
@@ -1672,8 +1687,8 @@ namespace Intersect.Server.Classes.Entities
         public DoTInstance(int ownerID, int spellNum, Entity target)
         {
             SpellBase = SpellBase.Lookup.Get<SpellBase>(spellNum);
-            if (SpellBase != null)
-            {
+            if (SpellBase != null && SpellBase.Data4 > 0)
+            { 
                 OwnerID = ownerID;
                 Target = target;
                 Interval = Globals.System.GetTimeMs() + (SpellBase.Data4 * 100);

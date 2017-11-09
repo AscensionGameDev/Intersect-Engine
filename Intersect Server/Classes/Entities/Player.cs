@@ -34,6 +34,7 @@ namespace Intersect.Server.Classes.Entities
 
         public ConcurrentDictionary<Tuple<int, int, int>, EventInstance> EventLookup = new ConcurrentDictionary<Tuple<int, int, int>, EventInstance>();
         private int EventCounter = 0;
+        private int CommonEventLaunches = 0;
         public int Experience;
         public Player FriendRequester;
         public Dictionary<Player, long> FriendRequests = new Dictionary<Player, long>();
@@ -271,7 +272,7 @@ namespace Intersect.Server.Classes.Entities
                     }
                     if (eventFound) continue;
                     PacketSender.SendEntityLeaveTo(MyClient, evt.MyIndex, (int)EntityTypes.Event, evt.MapNum);
-                    EventLookup.TryRemove(new Tuple<int, int, int>(evt.MapNum, evt.BaseEvent.SpawnX, evt.BaseEvent.SpawnY), out EventInstance z);
+                    EventLookup.TryRemove(new Tuple<int, int, int>(evt.MapNum, evt.MapNum < 0 ? -1 : evt.BaseEvent.SpawnX, evt.MapNum < 0 ? -1 : evt.BaseEvent.SpawnY), out EventInstance z);
                 }
             }
         }
@@ -331,25 +332,9 @@ namespace Intersect.Server.Classes.Entities
             PacketSender.SendInventory(MyClient);
         }
 
-        //Vitals
-        public void RestoreVital(Vitals vital)
-        {
-            Vital[(int)vital] = MaxVital[(int)vital];
-            PacketSender.SendEntityVitals(this);
-        }
-
-        public void AddVital(Vitals vital, int amount)
-        {
-            Vital[(int)vital] += amount;
-            if (Vital[(int)vital] < 0) Vital[(int)vital] = 0;
-            if (Vital[(int)vital] > MaxVital[(int)vital]) Vital[(int)vital] = MaxVital[(int)vital];
-            PacketSender.SendEntityVitals(this);
-        }
-
         public override void ProcessRegen()
         {
             var myclass = ClassBase.Lookup.Get<ClassBase>(Class);
-            var vitalAdded = false;
             if (myclass != null)
             {
                 foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
@@ -358,13 +343,8 @@ namespace Intersect.Server.Classes.Entities
                     {
                         AddVital(vital,
                             (int)((float)MaxVital[(int)vital] * (myclass.VitalRegen[(int)vital] / 100f)));
-                        vitalAdded = true;
                     }
                 }
-            }
-            if (vitalAdded)
-            {
-                PacketSender.SendEntityVitals(this);
             }
         }
 
@@ -680,7 +660,7 @@ namespace Intersect.Server.Classes.Entities
             Dir = newDir;
             foreach (var evt in EventLookup.Values)
             {
-                if (evt.MapNum != -1 && evt.MapNum != newMap)
+                if (evt.MapNum > -1 && evt.MapNum != newMap)
                 {
                     EventLookup.TryRemove(new Tuple<int, int, int>(evt.MapNum, evt.BaseEvent.SpawnX, evt.BaseEvent.SpawnY), out EventInstance z);
                 }
@@ -715,7 +695,7 @@ namespace Intersect.Server.Classes.Entities
 
         public void WarpToSpawn(bool sendWarp = false)
         {
-            int map = -1, x = 0, y = 0;
+            int map = -1, x = 0, y = 0, dir = 0;
             var cls = ClassBase.Lookup.Get<ClassBase>(Class);
             if (cls != null)
             {
@@ -725,6 +705,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 x = cls.SpawnX;
                 y = cls.SpawnY;
+                dir = cls.SpawnDir;
             }
             if (map == -1)
             {
@@ -734,7 +715,7 @@ namespace Intersect.Server.Classes.Entities
                     map = mapenum.Current.Value.Index;
                 }
             }
-            Warp(map, x, y);
+            Warp(map, x, y,dir);
         }
 
         //Inventory
@@ -3010,19 +2991,21 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (evt.BaseEvent == baseEvent) return false;
                 }
+                CommonEventLaunches++;
+                var commonEventLaunch = CommonEventLaunches;
                 var tmpEvent = new EventInstance(EventCounter++, MyClient, baseEvent, -1)
                 {
-                    MapNum = -1 * baseEvent.Index,
+                    MapNum = -1 * commonEventLaunch,
                     SpawnX = -1,
                     SpawnY = -1
                 };
-                EventLookup.AddOrUpdate(new Tuple<int, int, int>(-1 * baseEvent.Index, -1, -1), tmpEvent, (key, oldValue) => tmpEvent);
+                EventLookup.AddOrUpdate(new Tuple<int, int, int>(-1 * commonEventLaunch, -1, -1), tmpEvent, (key, oldValue) => tmpEvent);
                 //Try to Spawn a PageInstance.. if we can
                 for (int i = baseEvent.MyPages.Count - 1; i >= 0; i--)
                 {
                     if ((trigger == -1 || baseEvent.MyPages[i].Trigger == trigger) && tmpEvent.CanSpawnPage(i, baseEvent))
                     {
-                        tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.MyPages[i], baseEvent.Index, -1 * baseEvent.Index, tmpEvent, MyClient);
+                        tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.MyPages[i], baseEvent.Index, -1 * commonEventLaunch, tmpEvent, MyClient);
                         tmpEvent.PageIndex = i;
                         //Check for /command trigger
                         if (trigger == (int)EventPage.CommonEventTriggers.Command)
@@ -3046,7 +3029,7 @@ namespace Intersect.Server.Classes.Entities
                         break;
                     }
                 }
-                EventLookup.TryRemove(new Tuple<int, int, int>(-1 * baseEvent.Index, -1, -1), out EventInstance z);
+                EventLookup.TryRemove(new Tuple<int, int, int>(-1 * commonEventLaunch, -1, -1), out EventInstance z);
                 return false;
             }
         }

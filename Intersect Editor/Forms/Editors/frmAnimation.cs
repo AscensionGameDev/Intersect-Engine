@@ -515,6 +515,9 @@ namespace Intersect.Editor.Forms
             _editorItem.UpperAnimLoopCount = LowerAnimLoopCount;
             _editorItem.UpperLights = LowerLights;
 
+            _upperFrame = 0;
+            _lowerFrame = 0;
+
             UpdateEditor();
         }
 

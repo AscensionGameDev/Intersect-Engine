@@ -139,14 +139,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             _entityStatusPanel = new ImagePanel(_entityWindow, "StatusArea");
 
-            if (playerBox)
-            {
-                _statusTemplate = new ImagePanel(_entityStatusPanel, "PlayerStatusTemplate");
-            }
-            else
-            {
-                _statusTemplate = new ImagePanel(_entityStatusPanel, "TargetStatusTemplate");
-            }
+            _statusTemplate = new ImagePanel(_entityStatusPanel, "PlayerStatusTemplate");
 
             var _itemIcon = new ImagePanel(_statusTemplate, "StatusIcon");
 
@@ -308,9 +301,9 @@ namespace Intersect_Client.Classes.UI.Game
                 var xPadding = Items[i].container.Padding.Left + Items[i].container.Padding.Right;
                 var yPadding = Items[i].container.Padding.Top + Items[i].container.Padding.Bottom;
                 Items[i].container.SetPosition(
-                    (i % (_entityStatusPanel.Width / (Items[i].container.Width + xPadding))) *
+                    (i % ((float)_entityStatusPanel.Width / (float)(Items[i].container.Width + xPadding))) *
                     (Items[i].container.Width + xPadding) + xPadding,
-                    (i / (_entityStatusPanel.Width / (Items[i].container.Width + xPadding))) *
+                    (i / ((float)_entityStatusPanel.Width / (float)(Items[i].container.Width + xPadding))) *
                     (Items[i].container.Height + yPadding) + yPadding);
             }
             _statusTemplate.Hide();

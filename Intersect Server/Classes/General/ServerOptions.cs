@@ -270,7 +270,7 @@ namespace Intersect.Server.Classes.General
             bf.WriteInteger(Options.AnimatedSprites.Count);
             for (int i = 0; i < Options.AnimatedSprites.Count; i++)
             {
-                bf.WriteString(Options.AnimatedSprites[i]);
+                bf.WriteString(Options.AnimatedSprites[i].ToLower());
             }
 
             //Combat

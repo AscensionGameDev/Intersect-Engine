@@ -137,6 +137,18 @@ namespace Intersect.Server.Classes.Entities
             Inventory.Clear();
         }
 
+        public override void ProcessRegen()
+        {
+            //For now give npcs/resources 10% health back every regen tick... in the future we should put per-npc and per-resource regen settings into their respective editors.
+            foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
+            {
+                if ((int)vital < (int)Vitals.VitalCount && Vital[(int)vital] != MaxVital[(int)vital])
+                {
+                    AddVital(vital, (int)((float)MaxVital[(int)vital] * .1f));
+                }
+            }
+        }
+
         public override byte[] Data()
         {
             ByteBuffer myBuffer = new ByteBuffer();
