@@ -882,7 +882,7 @@ namespace Intersect.Server.Classes.Entities
                         int itemIndex = MyPlayer.FindItem(command.Ints[1], command.Ints[2]);
                         if (itemIndex > -1)
                         {
-                            success = MyPlayer.TakeItem(itemIndex, command.Ints[2]);
+                            success = MyPlayer.TakeItemsBySlot(itemIndex, command.Ints[2]);
                         }
                     }
                     if (success)

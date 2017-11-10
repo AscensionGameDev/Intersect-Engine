@@ -56,6 +56,7 @@ namespace Intersect.Editor.Classes
         public static int CurrentLayer = 0;
         public static bool ViewingMapProperties = false;
         public static int CurrentTool = (int) EdittingTool.Pen;
+        public static int SavedTool = (int) EdittingTool.Pen;
         public static int CurMapSelX;
         public static int CurMapSelY;
         public static int CurMapSelW;

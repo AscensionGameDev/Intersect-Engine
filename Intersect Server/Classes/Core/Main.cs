@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Intersect.Localization;
 using Intersect.Logging;
@@ -29,6 +30,8 @@ namespace Intersect.Server.Classes
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            if (RunningOnWindows()) SetConsoleCtrlHandler(new HandlerRoutine(ConsoleCtrlCheck), true);
+            Console.CancelKeyPress += Console_CancelKeyPress;
             Thread logicThread;
             if (!ServerOptions.LoadOptions())
             {
@@ -144,6 +147,11 @@ namespace Intersect.Server.Classes
                 {
                     bool userFound = false;
                     string ip = "";
+                    if (command == null)
+                    {
+                        ShutDown();
+                        return;
+                    }
                     command = command.Trim();
                     string[] commandsplit = command.Split(' ');
 
@@ -179,7 +187,9 @@ namespace Intersect.Server.Classes
                         {
                             if (Globals.Clients[i] != null)
                             {
-                                var name = Globals.Clients[i].Entity != null ? Globals.Clients[i].Entity.MyName : "";
+                                var name = Globals.Clients[i].Entity != null
+                                    ? Globals.Clients[i].Entity.MyName
+                                    : "";
                                 Console.WriteLine(string.Format("{0,-10}", "#" + i) +
                                                   string.Format("{0,-28}", Globals.Clients[i].MyAccount) +
                                                   string.Format("{0,-28}", name));
@@ -289,7 +299,8 @@ namespace Intersect.Server.Classes
                                 if (Database.AccountExists(commandsplit[1]))
                                 {
                                     Database.DeleteBan(commandsplit[1]);
-                                    Console.WriteLine(@"    " + Strings.Get("account", "unbanned", commandsplit[1]));
+                                    Console.WriteLine(
+                                        @"    " + Strings.Get("account", "unbanned", commandsplit[1]));
                                 }
                                 else
                                 {
@@ -311,7 +322,8 @@ namespace Intersect.Server.Classes
                             {
                                 Console.WriteLine(@"    " +
                                                   Strings.Get("commands", "banusage",
-                                                      Strings.Get("commands", "true"), Strings.Get("commands", "false"),
+                                                      Strings.Get("commands", "true"),
+                                                      Strings.Get("commands", "false"),
                                                       Strings.Get("commands", "commandinfo")));
                                 Console.WriteLine(@"    " + Strings.Get("commands", "bandesc"));
                             }
@@ -335,7 +347,8 @@ namespace Intersect.Server.Classes
                                                 {
                                                     ip = Globals.Clients[i].GetIP();
                                                 }
-                                                Database.AddBan(Globals.Clients[i], Convert.ToInt32(commandsplit[2]),
+                                                Database.AddBan(Globals.Clients[i],
+                                                    Convert.ToInt32(commandsplit[2]),
                                                     reason,
                                                     Strings.Get("commands", "banuser"), ip);
                                                 PacketSender.SendGlobalMsg(Strings.Get("account", "banned",
@@ -420,7 +433,8 @@ namespace Intersect.Server.Classes
                             {
                                 Console.WriteLine(@"    " +
                                                   Strings.Get("commands", "muteusage",
-                                                      Strings.Get("commands", "true"), Strings.Get("commands", "false"),
+                                                      Strings.Get("commands", "true"),
+                                                      Strings.Get("commands", "false"),
                                                       Strings.Get("commands", "commandinfo")));
                                 Console.WriteLine(@"    " + Strings.Get("commands", "mutedesc"));
                             }
@@ -444,7 +458,8 @@ namespace Intersect.Server.Classes
                                                 {
                                                     ip = Globals.Clients[i].GetIP();
                                                 }
-                                                Database.AddMute(Globals.Clients[i], Convert.ToInt32(commandsplit[2]),
+                                                Database.AddMute(Globals.Clients[i],
+                                                    Convert.ToInt32(commandsplit[2]),
                                                     reason, Strings.Get("commands", "muteuser"), ip);
                                                 Globals.Clients[i].Muted = true; //Cut out their tongues!
                                                 Globals.Clients[i].MuteReason =
@@ -561,7 +576,8 @@ namespace Intersect.Server.Classes
                                         {
                                             if (Database.AccountExists(commandsplit[1]))
                                             {
-                                                Database.SetPlayerPower(commandsplit[1], int.Parse(commandsplit[2]));
+                                                Database.SetPlayerPower(commandsplit[1],
+                                                    int.Parse(commandsplit[2]));
                                                 Console.WriteLine(@"    " +
                                                                   Strings.Get("commandoutput", "powerchanged",
                                                                       commandsplit[1]));
@@ -569,7 +585,8 @@ namespace Intersect.Server.Classes
                                             else
                                             {
                                                 Console.WriteLine(@"    " +
-                                                                  Strings.Get("account", "notfound", commandsplit[1]));
+                                                                  Strings.Get("account", "notfound",
+                                                                      commandsplit[1]));
                                             }
                                         }
                                         catch (Exception)
@@ -583,7 +600,8 @@ namespace Intersect.Server.Classes
                                     else
                                     {
                                         Console.WriteLine(@"    " +
-                                                          Strings.Get("commandoutput", "syntaxerror", commandsplit[0],
+                                                          Strings.Get("commandoutput", "syntaxerror",
+                                                              commandsplit[0],
                                                               Strings.Get("commands", "commandinfo")));
                                     }
                                 }
@@ -660,9 +678,7 @@ namespace Intersect.Server.Classes
                         }
                         else
                         {
-                            Globals.ServerStarted = false;
-                            SocketServer.Dispose();
-
+                            ShutDown();
                             return;
                         }
                     }
@@ -699,8 +715,9 @@ namespace Intersect.Server.Classes
                                               Strings.Get("commands", "cpshelp"));
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "power")) +
                                               " - " + Strings.Get("commands", "powerhelp"));
-                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "poweracc")) +
-                                              " - " + Strings.Get("commands", "poweracchelp"));
+                            Console.WriteLine(
+                                @"    " + string.Format("{0,-20}", Strings.Get("commands", "poweracc")) +
+                                " - " + Strings.Get("commands", "poweracchelp"));
                             Console.WriteLine(
                                 @"    " + string.Format("{0,-20}", Strings.Get("commands", "onlinelist")) +
                                 " - " + Strings.Get("commands", "onlinelisthelp"));
@@ -713,8 +730,9 @@ namespace Intersect.Server.Classes
                                               " - " + Strings.Get("commands", "unbanhelp"));
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "mute")) +
                                               " - " + Strings.Get("commands", "mutehelp"));
-                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "unmute")) +
-                                              " - " + Strings.Get("commands", "unmutehelp"));
+                            Console.WriteLine(
+                                @"    " + string.Format("{0,-20}", Strings.Get("commands", "unmute")) +
+                                " - " + Strings.Get("commands", "unmutehelp"));
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Get("commands", "kill")) +
                                               " - " + Strings.Get("commands", "killhelp"));
                             Console.WriteLine(@"    " +
@@ -730,6 +748,28 @@ namespace Intersect.Server.Classes
                     command = Console.ReadLine();
                 }
             }
+        }
+
+        private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        {
+            ShutDown();
+            e.Cancel = true;
+        }
+
+        private static void ShutDown()
+        {
+            //Save all online players
+            for (int i = 0; i < Globals.Clients.Count; i++)
+            {
+                if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
+                {
+                    Database.SaveCharacter(Globals.Clients[i].Entity);
+                }
+            }
+
+            Globals.ServerStarted = false;
+            SocketServer.Dispose();
+            Environment.Exit(-1);
         }
 
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
@@ -752,7 +792,7 @@ namespace Intersect.Server.Classes
         //Really basic error handler for debugging purposes
         public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Log.Error((Exception) e.ExceptionObject);
+            Log.Error((Exception)e.ExceptionObject);
             if (e.IsTerminating)
             {
                 if (_errorHalt)
@@ -771,5 +811,70 @@ namespace Intersect.Server.Classes
                 Console.WriteLine(Strings.Get("errors", "errorlogged"));
             }
         }
+
+        private static bool RunningOnWindows()
+        {
+            OperatingSystem os = Environment.OSVersion;
+            PlatformID pid = os.Platform;
+            switch (pid)
+            {
+                case PlatformID.Win32NT:
+                case PlatformID.Win32S:
+                case PlatformID.Win32Windows:
+                case PlatformID.WinCE:
+                    return true;
+            }
+            return false;
+        }
+
+        private static bool ConsoleCtrlCheck(CtrlTypes ctrlType)
+        {
+            // Put your own handler here
+            switch (ctrlType)
+            {
+                case CtrlTypes.CTRL_C_EVENT:
+                    //Handled Elsewhere
+                    break;
+
+                case CtrlTypes.CTRL_BREAK_EVENT:
+                    //Handled Elsewhere
+                    break;
+
+                case CtrlTypes.CTRL_CLOSE_EVENT:
+                    ShutDown();
+                    break;
+
+                case CtrlTypes.CTRL_LOGOFF_EVENT:
+                case CtrlTypes.CTRL_SHUTDOWN_EVENT:
+                    ShutDown();
+                    break;
+
+            }
+            return true;
+        }
+
+        #region unmanaged
+        // Declare the SetConsoleCtrlHandler function
+        // as external and receiving a delegate.
+
+        [DllImport("Kernel32")]
+        public static extern bool SetConsoleCtrlHandler(HandlerRoutine Handler, bool Add);
+
+        // A delegate type to be used as the handler routine
+        // for SetConsoleCtrlHandler.
+        public delegate bool HandlerRoutine(CtrlTypes CtrlType);
+
+        // An enumerated type for the control messages
+        // sent to the handler routine.
+        public enum CtrlTypes
+        {
+            CTRL_C_EVENT = 0,
+            CTRL_BREAK_EVENT,
+            CTRL_CLOSE_EVENT,
+            CTRL_LOGOFF_EVENT = 5,
+            CTRL_SHUTDOWN_EVENT
+        }
+
+        #endregion
     }
 }

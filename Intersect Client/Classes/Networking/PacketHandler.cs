@@ -1020,6 +1020,10 @@ namespace Intersect_Client.Classes.Networking
                 bf.WriteBytes(packet);
                 int slot = bf.ReadInteger();
                 Globals.Me.Inventory[slot].Load(bf);
+                if (Globals.Me.InventoryUpdatedDelegate != null)
+                {
+                    Globals.Me.InventoryUpdatedDelegate();
+                }
                 bf.Dispose();
             }
         }

@@ -130,6 +130,13 @@ namespace Intersect.Server.Classes.Entities
                 {
                     CraftItem(CraftIndex);
                 }
+                else
+                {
+                    if (!CheckCrafting(CraftIndex))
+                    {
+                        CraftIndex = -1;
+                    }
+                }
             }
 
             base.Update(timeMs);
@@ -909,7 +916,7 @@ namespace Intersect.Server.Classes.Entities
                             default:
                                 return;
                         }
-                        TakeItem(slot, 1);
+                        TakeItemsBySlot(slot, 1);
                         break;
                     case (int)ItemTypes.Equipment:
                         for (int i = 0; i < Options.EquipmentSlots.Count; i++)
@@ -966,13 +973,13 @@ namespace Intersect.Server.Classes.Entities
                     case (int)ItemTypes.Spell:
                         if (itemBase.Data1 <= -1) return;
                         if (!TryTeachSpell(new SpellInstance(itemBase.Data1))) return;
-                        TakeItem(slot, 1);
+                        TakeItemsBySlot(slot, 1);
                         break;
                     case (int)ItemTypes.Event:
                         var evt = EventBase.Lookup.Get<EventBase>(itemBase.Data1);
                         if (evt == null) return;
                         if (!StartCommonEvent(evt)) return;
-                        TakeItem(slot, 1);
+                        TakeItemsBySlot(slot, 1);
                         break;
                     case (int)ItemTypes.Bag:
                         //Bags will never, ever, be stackable. Going to use the value property for the bag id in the database.
@@ -1000,7 +1007,7 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
-        public bool TakeItem(int slot, int amount)
+        public bool TakeItemsBySlot(int slot, int amount)
         {
             bool returnVal = false;
             if (slot < 0)
@@ -1044,6 +1051,52 @@ namespace Intersect.Server.Classes.Entities
                 UpdateGatherItemQuests(itemBase.Index);
             }
             return returnVal;
+        }
+
+        public bool TakeItemsByNum(int itemNum, int amount)
+        {
+            if (CountItemInstances(itemNum) >= amount)
+            {
+                var invbackup = new List<ItemInstance>();
+                foreach (var item in Inventory)
+                {
+                    invbackup.Add(item.Clone());
+                }
+
+                for (int i = 0; i < Options.MaxInvItems; i++)
+                {
+                    if (Inventory[i].ItemNum == itemNum)
+                    {
+                        if (Inventory[i].ItemVal <= 1)
+                        {
+                            amount -= 1;
+                            Inventory[i] = new ItemInstance();
+                            PacketSender.SendInventoryItemUpdate(MyClient, i);
+                            if (amount == 0) return true;
+                        }
+                        else
+                        {
+                            if (amount >= Inventory[i].ItemVal)
+                            {
+                                amount -= Inventory[i].ItemVal;
+                                Inventory[i] = new ItemInstance();
+                                PacketSender.SendInventoryItemUpdate(MyClient, i);
+                                if (amount == 0) return true;
+                            }
+                            else
+                            {
+                                Inventory[i].ItemVal -= amount;
+                                PacketSender.SendInventoryItemUpdate(MyClient, i);
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                Inventory = invbackup;
+                PacketSender.SendInventory(MyClient);
+            }
+            return false;
         }
 
         public int FindItem(int itemNum, int itemVal = 1)
@@ -1238,7 +1291,7 @@ namespace Intersect.Server.Classes.Entities
                             {
                                 if (shop.SellingItems[slot].CostItemVal > 0)
                                 {
-                                    TakeItem(
+                                    TakeItemsBySlot(
                                         FindItem(shop.SellingItems[slot].CostItemNum,
                                             shop.SellingItems[slot].CostItemVal * buyItemAmt),
                                         shop.SellingItems[slot].CostItemVal * buyItemAmt);
@@ -1252,7 +1305,7 @@ namespace Intersect.Server.Classes.Entities
                                         FindItem(shop.SellingItems[slot].CostItemNum,
                                             shop.SellingItems[slot].CostItemVal * buyItemAmt)].ItemVal)
                                 {
-                                    TakeItem(
+                                    TakeItemsBySlot(
                                         FindItem(shop.SellingItems[slot].CostItemNum,
                                             shop.SellingItems[slot].CostItemVal * buyItemAmt),
                                         shop.SellingItems[slot].CostItemVal * buyItemAmt);
@@ -1303,21 +1356,42 @@ namespace Intersect.Server.Classes.Entities
                 {
                     invbackup.Add(item.Clone());
                 }
+
+                //Quickly Look through the inventory and create a catalog of what items we have, and how many
+                Dictionary<int, int> itemdict = new Dictionary<int, int>();
+                foreach (var item in Inventory)
+                {
+                    if (item != null)
+                    {
+                        if (itemdict.ContainsKey(item.ItemNum))
+                        {
+                            itemdict[item.ItemNum] += item.ItemVal;
+                        }
+                        else
+                        {
+                            itemdict.Add(item.ItemNum, item.ItemVal);
+                        }
+                    }
+                }
+
                 //Check the player actually has the items
                 foreach (CraftIngredient c in BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Ingredients)
                 {
-                    int n = FindItem(c.Item);
-                    int x = 0;
-                    if (n > -1)
+                    if (itemdict.ContainsKey(c.Item))
                     {
-                        x = Inventory[n].ItemVal;
-                        if (x == 0)
+                        if (itemdict[c.Item] >= c.Quantity)
                         {
-                            x = 1;
+                            itemdict[c.Item] -= c.Quantity;
+                        }
+                        else
+                        {
+                            CraftIndex = -1;
+                            return;
                         }
                     }
-                    if (x < c.Quantity)
+                    else
                     {
+                        CraftIndex = -1;
                         return;
                     }
                 }
@@ -1325,10 +1399,12 @@ namespace Intersect.Server.Classes.Entities
                 //Take the items
                 foreach (CraftIngredient c in BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Ingredients)
                 {
-                    int n = FindItem(c.Item);
-                    if (n > -1)
+                    if (!TakeItemsByNum(c.Item, c.Quantity))
                     {
-                        TakeItem(n, c.Quantity);
+                        Inventory = invbackup;
+                        PacketSender.SendInventory(MyClient);
+                        CraftIndex = -1;
+                        return;
                     }
                 }
 
@@ -1351,6 +1427,48 @@ namespace Intersect.Server.Classes.Entities
                 }
                 CraftIndex = -1;
             }
+        }
+
+        public bool CheckCrafting(int index)
+        {
+            //See if we have lost the items needed for our current craft, if so end the crafting session
+            //Quickly Look through the inventory and create a catalog of what items we have, and how many
+            Dictionary<int, int> itemdict = new Dictionary<int, int>();
+            foreach (var item in Inventory)
+            {
+                if (item != null)
+                {
+                    if (itemdict.ContainsKey(item.ItemNum))
+                    {
+                        itemdict[item.ItemNum] += item.ItemVal;
+                    }
+                    else
+                    {
+                        itemdict.Add(item.ItemNum, item.ItemVal);
+                    }
+                }
+            }
+
+            //Check the player actually has the items
+            foreach (CraftIngredient c in BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Ingredients)
+            {
+                if (itemdict.ContainsKey(c.Item))
+                {
+                    if (itemdict[c.Item] >= c.Quantity)
+                    {
+                        itemdict[c.Item] -= c.Quantity;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         //Business
@@ -2390,7 +2508,7 @@ namespace Intersect.Server.Classes.Entities
                                     var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spell.Projectile);
                                     if (projectileBase != null && projectileBase.Ammo > -1)
                                     {
-                                        TakeItem(FindItem(projectileBase.Ammo, projectileBase.AmmoRequired),
+                                        TakeItemsBySlot(FindItem(projectileBase.Ammo, projectileBase.AmmoRequired),
                                             projectileBase.AmmoRequired);
                                     }
                                 }

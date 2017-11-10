@@ -77,6 +77,12 @@ namespace Intersect_Client.Classes.UI.Game
             Gui.LoadRootUIData(_craftWindow, "InGame.xml");
 
             Gui.InputBlockingElements.Add(_craftWindow);
+
+            Globals.Me.InventoryUpdatedDelegate = () =>
+            {
+                //Refresh crafting window items
+                LoadCraftItems(craftIndex);
+            };
         }
 
         //Location
@@ -127,6 +133,23 @@ namespace Intersect_Client.Classes.UI.Game
             _items.Clear();
             _values.Clear();
 
+            //Quickly Look through the inventory and create a catalog of what items we have, and how many
+            Dictionary<int, int> itemdict = new Dictionary<int, int>();
+            foreach (var item in Globals.Me.Inventory)
+            {
+                if (item != null)
+                {
+                    if (itemdict.ContainsKey(item.ItemNum))
+                    {
+                        itemdict[item.ItemNum] += item.ItemVal;
+                    }
+                    else
+                    {
+                        itemdict.Add(item.ItemNum, item.ItemVal);
+                    }
+                }
+            }
+
             for (int i = 0; i < craft.Ingredients.Count; i++)
             {
                 _items.Add(new RecipeItem(this, craft.Ingredients[i]));
@@ -135,13 +158,12 @@ namespace Intersect_Client.Classes.UI.Game
 
                 Label _lblTemp = new Label(_items[i].container, "IngredientItemValue");
 
-                int n = Globals.Me.FindItem(craft.Ingredients[i].Item);
-                int x = 0;
-                if (n > -1)
+                int onHand = 0;
+                if (itemdict.ContainsKey(craft.Ingredients[i].Item))
                 {
-                    x = Globals.Me.Inventory[n].ItemVal;
+                    onHand = itemdict[craft.Ingredients[i].Item];
                 }
-                _lblTemp.Text = x + "/" + craft.Ingredients[i].Quantity;
+                _lblTemp.Text = onHand + "/" + craft.Ingredients[i].Quantity;
                 _values.Add(_lblTemp);
 
                 //TODO Made this more efficient.
@@ -155,6 +177,42 @@ namespace Intersect_Client.Classes.UI.Game
                     (i / ((_itemContainer.Width - _itemContainer.GetVerticalScrollBar().Width) /
                           (_items[i].container.Width + xPadding))) * (_items[i].container.Height + yPadding) +
                     yPadding);
+            }
+
+            //If crafting & we no longer have the items for the craft then stop!
+            if (crafting)
+            {
+                var cancraft = true;
+                foreach (CraftIngredient c in Globals.GameBench.Crafts[craftIndex].Ingredients)
+                {
+                    if (itemdict.ContainsKey(c.Item))
+                    {
+                        if (itemdict[c.Item] >= c.Quantity)
+                        {
+                            itemdict[c.Item] -= c.Quantity;
+                        }
+                        else
+                        {
+                            cancraft = false;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        cancraft = false;
+                        break;
+                    }
+                }
+
+                if (!cancraft)
+                {
+                    crafting = false;
+                    _craftWindow.IsClosable = true;
+                    _bar.Width = 0;
+                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Get("craftingbench", "incorrectresources"),
+                        Color.Red));
+                    return;
+                }
             }
         }
 
@@ -191,24 +249,51 @@ namespace Intersect_Client.Classes.UI.Game
         //Craft the item
         void craft_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            foreach (CraftIngredient c in Globals.GameBench.Crafts[craftIndex].Ingredients)
+            //This shouldn't be client side :(
+            //Quickly Look through the inventory and create a catalog of what items we have, and how many
+            Dictionary<int, int> itemdict = new Dictionary<int, int>();
+            foreach (var item in Globals.Me.Inventory)
             {
-                int n = Globals.Me.FindItem(c.Item);
-                int x = 0;
-                if (n > -1)
+                if (item != null)
                 {
-                    x = Globals.Me.Inventory[n].ItemVal;
-                    if (x == 0)
+                    if (itemdict.ContainsKey(item.ItemNum))
                     {
-                        x = 1;
+                        itemdict[item.ItemNum] += item.ItemVal;
+                    }
+                    else
+                    {
+                        itemdict.Add(item.ItemNum, item.ItemVal);
                     }
                 }
-                if (x < c.Quantity)
+            }
+
+            var cancraft = true;
+            foreach (CraftIngredient c in Globals.GameBench.Crafts[craftIndex].Ingredients)
+            {
+                if (itemdict.ContainsKey(c.Item))
                 {
-                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Get("craftingbench", "incorrectresources"),
-                        Color.Red));
-                    return;
+                    if (itemdict[c.Item] >= c.Quantity)
+                    {
+                        itemdict[c.Item] -= c.Quantity;
+                    }
+                    else
+                    {
+                        cancraft = false;
+                        break;
+                    }
                 }
+                else
+                {
+                    cancraft = false;
+                    break;
+                }
+            }
+
+            if (!cancraft)
+            {
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Get("craftingbench", "incorrectresources"),
+                    Color.Red));
+                return;
             }
 
             crafting = true;

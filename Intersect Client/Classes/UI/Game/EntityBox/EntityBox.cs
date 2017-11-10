@@ -139,7 +139,14 @@ namespace Intersect_Client.Classes.UI.Game
 
             _entityStatusPanel = new ImagePanel(_entityWindow, "StatusArea");
 
-            _statusTemplate = new ImagePanel(_entityStatusPanel, "PlayerStatusTemplate");
+            if (PlayerBox)
+            {
+                _statusTemplate = new ImagePanel(_entityStatusPanel, "PlayerStatusTemplate");
+            }
+            else
+            {
+                _statusTemplate = new ImagePanel(_entityStatusPanel, "TargetStatusTemplate");
+            }
 
             var _itemIcon = new ImagePanel(_statusTemplate, "StatusIcon");
 
@@ -297,6 +304,7 @@ namespace Intersect_Client.Classes.UI.Game
 
                 //TODO Made this more efficient.
                 Gui.LoadRootUIData(Items[i].container, "InGame.xml");
+                Items[i].container.Name = "";
 
                 var xPadding = Items[i].container.Padding.Left + Items[i].container.Padding.Right;
                 var yPadding = Items[i].container.Padding.Top + Items[i].container.Padding.Bottom;

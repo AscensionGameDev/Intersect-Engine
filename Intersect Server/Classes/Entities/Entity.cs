@@ -1460,7 +1460,7 @@ namespace Intersect.Server.Classes.Entities
                             .SpawnItem(CurrentX, CurrentY, item, item.ItemVal);
                         if (GetType() == typeof(Player))
                         {
-                            ((Player) this).TakeItem(n, item.ItemVal);
+                            ((Player) this).TakeItemsBySlot(n, item.ItemVal);
                         }
                     }
                 }
