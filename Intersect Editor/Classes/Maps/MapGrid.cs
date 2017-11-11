@@ -78,14 +78,23 @@ namespace Intersect.Editor.Classes.Maps
                         freeTextures.RemoveAt(0);
 
                         var texData = Database.LoadMapCache(itm.mapnum, itm.revision, TileWidth, TileHeight);
-                        if (texData != null)
+                        try
                         {
-                            tex.SetData(texData);
-                            itm.tex = tex;
+                            if (texData != null)
+                            {
+                                tex.SetData(texData);
+                                itm.tex = tex;
+                            }
+                            else
+                            {
+                                freeTextures.Add(tex);
+                            }
                         }
-                        else
+                        catch (Exception ex)
                         {
+                            //Ignore errors that are likely caused by timing issues.
                             freeTextures.Add(tex);
+                            toLoad.Add(itm);
                         }
                     }
                 }
