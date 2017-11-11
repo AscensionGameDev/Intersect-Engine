@@ -894,6 +894,10 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
+            if (Vital[(int)Vitals.Health] == MaxVital[(int)Vitals.Health])
+            {
+                return;
+            }
             if (Vital[(int) Vitals.Health] <= 0)
             {
                 return;

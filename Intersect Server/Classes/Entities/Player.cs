@@ -565,6 +565,8 @@ namespace Intersect.Server.Classes.Entities
 
             if (!IsOneBlockAway(enemy)) return;
             if (!isFacingTarget(enemy)) return;
+            if (enemy.GetType() == typeof(Npc) && ((Npc)enemy).MyBase.Behavior == (int)NpcBehavior.Friendly) return;
+            if (enemy.GetType() == typeof(EventPageInstance)) return;
 
             ItemBase weapon = null;
             if (((Player)Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex] >= 0)
@@ -623,6 +625,8 @@ namespace Intersect.Server.Classes.Entities
 
         public override bool CanAttack(Entity en, SpellBase spell)
         {
+            if (en.GetType() == typeof(Npc) && ((Npc)en).MyBase.Behavior == (int)NpcBehavior.Friendly) return false;
+            if (en.GetType() == typeof(EventPageInstance)) return false;
             //Check if the attacker is stunned or blinded.
             var statuses = Statuses.Values.ToArray();
             foreach (var status in statuses)

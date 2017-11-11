@@ -19,7 +19,7 @@ using Intersect_Client_MonoGame.Classes.SFML.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Intersect_Client_MonoGame
+namespace Intersect.Client
 {
     /// <summary>
     ///     This is the main type for your game.
@@ -126,6 +126,7 @@ namespace Intersect_Client_MonoGame
             base.OnExiting(sender, args);
 
             GameNetwork.Close("quitting");
+            Environment.Exit(-1);
         }
     }
 }
