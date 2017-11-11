@@ -26,14 +26,7 @@ namespace Intersect.Client
             CosturaUtility.Initialize();
 
             //Delete any files that exist
-            DeleteIfExists("libopenal.so.1");
-            DeleteIfExists("libSDL2-2.0.so.0");
-            DeleteIfExists("SDL2.dll");
-            DeleteIfExists("soft_oal.dll");
-            DeleteIfExists("libopenal.1.dylib");
-            DeleteIfExists("libSDL2-2.0.0.dylib");
-            DeleteIfExists("openal32.dll");
-            DeleteIfExists("MonoGame.Framework.dll.config");
+            ClearDlls();
 
             OperatingSystem os = Environment.OSVersion;
             PlatformID pid = os.Platform;
@@ -84,7 +77,8 @@ namespace Intersect.Client
                     ExportDependency("openal32.dll", "");
                     break;
             }
-            ExportDependency("MonoGame.Framework.dll", "");
+            ExportDependency("MonoGame.Framework.dll", "", "MonoGame.Framework.Client.dll");
+            Assembly.LoadFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MonoGame.Framework.Client.dll"));
 
             // Get the type contained in the name string
             Type type = Type.GetType("Intersect.Client.IntersectGame", true);
@@ -102,6 +96,20 @@ namespace Intersect.Client
             {
                 System.Windows.Forms.MessageBox.Show("OpenGL Initialialization Error! Try updating your graphics drivers!");
             }
+        }
+
+        public static void ClearDlls()
+        {
+            //Delete any files that exist
+            DeleteIfExists("libopenal.so.1");
+            DeleteIfExists("libSDL2-2.0.so.0");
+            DeleteIfExists("SDL2.dll");
+            DeleteIfExists("soft_oal.dll");
+            DeleteIfExists("libopenal.1.dylib");
+            DeleteIfExists("libSDL2-2.0.0.dylib");
+            DeleteIfExists("openal32.dll");
+            DeleteIfExists("MonoGame.Framework.dll.config");
+            DeleteIfExists("MonoGame.Framework.Client.dll");
         }
 
         private static string ReadProcessOutput(string name)
@@ -129,7 +137,7 @@ namespace Intersect.Client
             }
         }
 
-        private static void ExportDependency(string filename, string folder)
+        private static void ExportDependency(string filename, string folder, string nameoverride = null)
         {
             var res = "Intersect.Client.Resources." + (string.IsNullOrEmpty(folder) ? "" : folder + ".") + filename;
             if (Assembly.GetExecutingAssembly().GetManifestResourceNames().Contains(res))
@@ -138,7 +146,7 @@ namespace Intersect.Client
                 var ass = Assembly.GetExecutingAssembly();
                 using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(res))
                 {
-                    using (var fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                    using (var fs = new FileStream(string.IsNullOrEmpty(nameoverride) ? filename : nameoverride, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                     {
                         var data = new byte[stream.Length];
                         stream.Read(data, 0, (int) stream.Length);
@@ -161,7 +169,7 @@ namespace Intersect.Client
                     Console.WriteLine(enumerator.Key);
                     if (enumerator.Key != null && enumerator.Key.ToString().Trim() == path.Trim())
                     {
-                        using (var fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                        using (var fs = new FileStream(string.IsNullOrEmpty(nameoverride) ? filename : nameoverride, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                         {
                             var data = new byte[((System.IO.UnmanagedMemoryStream) enumerator.Value).Length];
                             ((System.IO.UnmanagedMemoryStream) enumerator.Value).Read(data, 0,

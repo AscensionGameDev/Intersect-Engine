@@ -124,7 +124,6 @@ namespace Intersect.Client
         protected override void OnExiting(object sender, EventArgs args)
         {
             base.OnExiting(sender, args);
-
             GameNetwork.Close("quitting");
             Environment.Exit(-1);
         }
