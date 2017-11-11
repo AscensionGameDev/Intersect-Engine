@@ -60,7 +60,7 @@ namespace Intersect.Client
                     ExportDependency("libopenal.1.dylib", "");
                     ExportDependency("libSDL2-2.0.0.dylib", "");
                     ExportDependency("openal32.dll", "");
-                    ExportDependency("MonoGame.Framework.dll.config","");
+                    ExportDependency("MonoGame.Framework.dll.config","", "MonoGame.Framework.Client.dll.config");
                     break;
                 default:
                     if (Environment.Is64BitProcess)
@@ -73,7 +73,7 @@ namespace Intersect.Client
                         ExportDependency("libopenal.so.1", "x86");
                         ExportDependency("libSDL2-2.0.so.0", "x86");
                     }
-                    ExportDependency("MonoGame.Framework.dll.config", "");
+                    ExportDependency("MonoGame.Framework.dll.config", "", "MonoGame.Framework.Client.dll.config");
                     ExportDependency("openal32.dll", "");
                     break;
             }
@@ -108,7 +108,7 @@ namespace Intersect.Client
             DeleteIfExists("libopenal.1.dylib");
             DeleteIfExists("libSDL2-2.0.0.dylib");
             DeleteIfExists("openal32.dll");
-            DeleteIfExists("MonoGame.Framework.dll.config");
+            DeleteIfExists("MonoGame.Framework.Client.dll.config");
             DeleteIfExists("MonoGame.Framework.Client.dll");
         }
 
