@@ -153,7 +153,7 @@
         <string id="changeownpower">You cannot alter your own power!</string>
         <string id="notarget">You need to select a valid target.</string>
         <string id="targetoutsiderange">Target not in range.</string>
-		<string id="spelltaughtlevelup">You've learned the {00} spell!</string>
+        <string id="spelltaughtlevelup">You've learned the {00} spell!</string>
     </Player>
     <Quests>
         <string id="started">Quest Started: {00}!</string>

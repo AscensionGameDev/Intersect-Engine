@@ -128,10 +128,6 @@ publish/
 *.pubxml
 *.publishproj
 
-# NuGet Packages Directory
-## TODO: If you have NuGet Package Restore enabled, uncomment the next line
-#packages/
-
 # Windows Azure Build Output
 csx
 *.build.csdef
@@ -193,7 +189,7 @@ $RECYCLE.BIN/
 *.egg
 *.egg-info
 dist/
-build/
+#build/
 eggs/
 parts/
 var/
@@ -213,3 +209,10 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+# NuGet Packages Directory
+## TODO: If you have NuGet Package Restore enabled, uncomment the next line
+#packages/
+
+!packages/*/build/
+#!packages/Fody.2.0.0/build/*
