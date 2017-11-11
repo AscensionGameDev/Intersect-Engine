@@ -216,3 +216,5 @@ pip-log.txt
 
 !packages/*/build/
 #!packages/Fody.2.0.0/build/*
+
+.vs/
