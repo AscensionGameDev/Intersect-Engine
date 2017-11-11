@@ -85,7 +85,7 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         for (int i = 0; i < Options.MaxStats; i++)
                         {
-                            stats = Strings.Get("combat", "stat" + i, (item.StatsGiven[i] + StatBuffs[i]));
+                            stats = Strings.Get("itemdesc", "stat" + i, (item.StatsGiven[i] + StatBuffs[i]));
                             itemDesc.AddText(stats, itemDesc.RenderColor);
                             itemDesc.AddLineBreak();
                         }
