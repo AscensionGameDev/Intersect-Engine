@@ -185,7 +185,7 @@ namespace Intersect.Editor.Forms
                 pnlContainer.Show();
 
                 txtName.Text = _editorItem.Name;
-                cmbBehavior.SelectedIndex = _editorItem.Behavior;
+                cmbBehavior.SelectedIndex = Math.Min(_editorItem.Behavior,cmbBehavior.Items.Count-1);
                 cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Sprite);
                 nudLevel.Value = _editorItem.Level;
                 nudSightRange.Value = _editorItem.SightRange;

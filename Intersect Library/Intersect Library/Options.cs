@@ -116,7 +116,7 @@ namespace Intersect
             AnimatedSprites.Clear();
             for (int i = 0; i < count; i++)
             {
-                AnimatedSprites.Add(bf.ReadString());
+                AnimatedSprites.Add(bf.ReadString().ToLower());
             }
 
             //Combat

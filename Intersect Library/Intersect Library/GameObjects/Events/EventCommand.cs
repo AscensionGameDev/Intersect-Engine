@@ -210,17 +210,18 @@ namespace Intersect.GameObjects.Events
                                 task = tsk;
                             }
                         }
+                        var taskName = task != null ? task.GetTaskString() : Strings.Get("eventconditiondesc", "tasknotfound");
                         switch (Ints[2])
                         {
                             case 1:
                                 return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]),
-                                    Strings.Get("eventconditiondesc", "beforetask", task.GetTaskString()));
+                                    Strings.Get("eventconditiondesc", "beforetask", taskName));
                             case 2:
                                 return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]),
-                                    Strings.Get("eventconditiondesc", "aftertask", task.GetTaskString()));
+                                    Strings.Get("eventconditiondesc", "aftertask", taskName));
                             case 3:
                                 return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]),
-                                    Strings.Get("eventconditiondesc", "ontask", task.GetTaskString()));
+                                    Strings.Get("eventconditiondesc", "ontask", taskName));
                             default:
                                 return Strings.Get("eventconditiondesc", "questinprogress", QuestBase.GetName(Ints[1]),
                                     Strings.Get("eventconditiondesc", "onanytask"));

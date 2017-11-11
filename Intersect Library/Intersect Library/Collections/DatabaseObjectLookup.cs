@@ -37,8 +37,27 @@ namespace Intersect.Collections
             set { Set(index, value); }
         }
 
-        public List<int> IndexList => IndexKeys?.ToList();
-        public List<IDatabaseObject> ValueList => IndexValues?.ToList();
+        public List<int> IndexList
+        {
+            get
+            {
+                lock (mLock)
+                {
+                    return IndexKeys?.ToList();
+                }
+            }
+        }
+
+        public List<IDatabaseObject> ValueList
+        {
+            get
+            {
+                lock (mLock)
+                {
+                    return IndexValues?.ToList();
+                }
+            }
+        }
 
         public Type KeyType => typeof(Guid);
         public Type IndexKeyType => typeof(int);

@@ -123,7 +123,7 @@ namespace Intersect_Client.Classes.Entities
                         }
                         int frame = GraphicX;
                         if (WalkingAnim == 1) frame = WalkFrame;
-                        if (Options.AnimatedSprites.Contains(GraphicFile))
+                        if (Options.AnimatedSprites.Contains(GraphicFile.ToLower()))
                         {
                             srcRectangle = new FloatRect(AnimationFrame * (int) entityTex.GetWidth() / 4,
                                 d * (int) entityTex.GetHeight() / 4,

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Intersect.Server.Classes.General;
@@ -15,7 +16,8 @@ namespace Intersect.Server.Classes.Core
             while (Globals.ServerStarted)
             {
                 var timeMs = Globals.System.GetTimeMs();
-                foreach (MapInstance map in MapInstance.Lookup.Values)
+                var maps = MapInstance.Lookup.Values.ToArray();
+                foreach (MapInstance map in maps)
                 {
                     map.Update(timeMs);
                 }

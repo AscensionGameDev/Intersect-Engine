@@ -727,6 +727,21 @@ namespace Intersect.Server.Classes.Entities
             return true;
         }
 
+        //Vitals
+        public void RestoreVital(Vitals vital)
+        {
+            Vital[(int)vital] = MaxVital[(int)vital];
+            PacketSender.SendEntityVitals(this);
+        }
+
+        public void AddVital(Vitals vital, int amount)
+        {
+            Vital[(int)vital] += amount;
+            if (Vital[(int)vital] < 0) Vital[(int)vital] = 0;
+            if (Vital[(int)vital] > MaxVital[(int)vital]) Vital[(int)vital] = MaxVital[(int)vital];
+            PacketSender.SendEntityVitals(this);
+        }
+
         //Attacking with projectile
         public virtual void TryAttack(Entity enemy, ProjectileBase projectile, SpellBase parentSpell,
             ItemBase parentItem, int projectileDir)
@@ -860,6 +875,7 @@ namespace Intersect.Server.Classes.Entities
                     {
                         if (!((Player) this).InParty((Player) enemy) && this != enemy) return;
                     }
+                    if (enemy.GetType() != GetType()) return; //Don't let players aoe heal npcs. Don't let npcs aoe heal players.
                 }
 
                 if (spellBase.HitAnimation > -1)
@@ -1052,7 +1068,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else if (baseDamage < 0)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) baseDamage,
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) Math.Abs(baseDamage),
                         CustomColors.Heal);
                 }
             }
@@ -1070,7 +1086,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else if (baseDamage < 0)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) baseDamage,
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) Math.Abs(baseDamage),
                         CustomColors.AddMana);
                 }
             }
@@ -1444,7 +1460,7 @@ namespace Intersect.Server.Classes.Entities
                             .SpawnItem(CurrentX, CurrentY, item, item.ItemVal);
                         if (GetType() == typeof(Player))
                         {
-                            ((Player) this).TakeItem(n, item.ItemVal);
+                            ((Player) this).TakeItemsBySlot(n, item.ItemVal);
                         }
                     }
                 }
@@ -1671,8 +1687,8 @@ namespace Intersect.Server.Classes.Entities
         public DoTInstance(int ownerID, int spellNum, Entity target)
         {
             SpellBase = SpellBase.Lookup.Get<SpellBase>(spellNum);
-            if (SpellBase != null)
-            {
+            if (SpellBase != null && SpellBase.Data4 > 0)
+            { 
                 OwnerID = ownerID;
                 Target = target;
                 Interval = Globals.System.GetTimeMs() + (SpellBase.Data4 * 100);

@@ -1,4 +1,5 @@
-﻿using Intersect;
+﻿using System;
+using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
@@ -97,9 +98,9 @@ namespace Intersect_Client.Classes.UI.Game
                 if (spell.VitalDiff[(int) Vitals.Health] != 0)
                 {
                     stats = Strings.Get("spelldesc", "vital0",
-                        (spell.VitalDiff[(int) Vitals.Health] > 0
+                        (spell.VitalDiff[(int) Vitals.Health] < 0
                             ? Strings.Get("spelldesc", "addsymbol")
-                            : Strings.Get("spelldecs", "removesymbol")), spell.VitalDiff[(int) Vitals.Health]);
+                            : Strings.Get("spelldecs", "removesymbol")), Math.Abs(spell.VitalDiff[(int) Vitals.Health]));
                     spellDesc.AddText(stats, spellDesc.RenderColor);
                     spellDesc.AddLineBreak();
                 }
@@ -107,9 +108,9 @@ namespace Intersect_Client.Classes.UI.Game
                 if (spell.VitalDiff[(int) Vitals.Mana] != 0)
                 {
                     stats = Strings.Get("spelldesc", "vital1",
-                        (spell.VitalDiff[(int) Vitals.Mana] > 0
+                        (spell.VitalDiff[(int) Vitals.Mana] < 0
                             ? Strings.Get("spelldesc", "addsymbol")
-                            : Strings.Get("spelldesc", "removesymbol")), spell.VitalDiff[(int) Vitals.Mana]);
+                            : Strings.Get("spelldesc", "removesymbol")), Math.Abs(spell.VitalDiff[(int) Vitals.Mana]));
                     spellDesc.AddText(stats, spellDesc.RenderColor);
                     spellDesc.AddLineBreak();
                 }

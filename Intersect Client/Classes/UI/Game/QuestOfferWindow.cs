@@ -84,7 +84,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _questTitle.Text = quest.Name;
                 if (_questOfferText != quest.StartDesc)
                 {
-                    _questPromptLabel.DeleteAllChildren();
+                    _questPromptLabel.ClearText();
                     _questPromptLabel.Width = _questPromptArea.Width -
                                               _questPromptArea.GetVerticalScrollBar().Width;
                     _questPromptLabel.AddText(quest.StartDesc, _questPromptTemplate.TextColor,

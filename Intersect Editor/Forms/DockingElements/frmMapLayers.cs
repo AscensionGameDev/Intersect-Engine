@@ -880,6 +880,7 @@ namespace Intersect.Editor.Forms
 
         private void btnTileHeader_Click(object sender, EventArgs e)
         {
+            Globals.CurrentTool = Globals.SavedTool;
             ChangeTab();
             SetLayer(_lastTileLayer);
             EditorGraphics.TilePreviewUpdated = true;
@@ -890,6 +891,7 @@ namespace Intersect.Editor.Forms
 
         private void btnAttributeHeader_Click(object sender, EventArgs e)
         {
+            Globals.CurrentTool = Globals.SavedTool;
             ChangeTab();
             Globals.CurrentLayer = Options.LayerCount;
             EditorGraphics.TilePreviewUpdated = true;
@@ -900,6 +902,10 @@ namespace Intersect.Editor.Forms
 
         public void btnLightsHeader_Click(object sender, EventArgs e)
         {
+            if (Globals.CurrentLayer < Options.LayerCount + 1)
+            {
+                Globals.SavedTool = Globals.CurrentTool;
+            }
             ChangeTab();
             Globals.CurrentLayer = Options.LayerCount + 1;
             EditorGraphics.TilePreviewUpdated = true;
@@ -910,6 +916,10 @@ namespace Intersect.Editor.Forms
 
         private void btnEventsHeader_Click(object sender, EventArgs e)
         {
+            if (Globals.CurrentLayer < Options.LayerCount + 1)
+            {
+                Globals.SavedTool = Globals.CurrentTool;
+            }
             ChangeTab();
             Globals.CurrentLayer = Options.LayerCount + 2;
             EditorGraphics.TilePreviewUpdated = true;
@@ -920,6 +930,10 @@ namespace Intersect.Editor.Forms
 
         private void btnNpcsHeader_Click(object sender, EventArgs e)
         {
+            if (Globals.CurrentLayer < Options.LayerCount + 1)
+            {
+                Globals.SavedTool = Globals.CurrentTool;
+            }
             ChangeTab();
             Globals.CurrentLayer = Options.LayerCount + 3;
             EditorGraphics.TilePreviewUpdated = true;

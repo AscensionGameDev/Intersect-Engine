@@ -309,20 +309,10 @@ namespace Intersect.Server.Classes.Entities
                         spawn.Z = attribute.data1 - 1;
                     }
                 }
-                //Check for grapplehooks.
-                if (attribute != null && attribute.value == (int) MapAttributes.GrappleStone &&
-                    MyBase.GrappleHook == true)
-                {
-                    if (spawn.Dir <= 3) //Don't handle directional projectile grapplehooks
-                    {
-                        Owner.Dir = spawn.Dir;
-                        new DashInstance(Owner, spawn.Distance, Owner.Dir);
-                        killSpawn = true;
-                    }
-                }
             }
-            if (attribute != null && attribute.value == (int) MapAttributes.Blocked &&
-                !spawn.ProjectileBase.IgnoreMapBlocks)
+            //Check for grapplehooks.
+            if (attribute != null && attribute.value == (int)MapAttributes.GrappleStone &&
+                MyBase.GrappleHook == true)
             {
                 if (spawn.Dir <= 3) //Don't handle directional projectile grapplehooks
                 {
@@ -330,6 +320,11 @@ namespace Intersect.Server.Classes.Entities
                     new DashInstance(Owner, spawn.Distance, Owner.Dir);
                     killSpawn = true;
                 }
+            }
+            if (attribute != null && attribute.value == (int) MapAttributes.Blocked &&
+                !spawn.ProjectileBase.IgnoreMapBlocks)
+            {
+                killSpawn = true;
             }
 
             if (!killSpawn && map != null)

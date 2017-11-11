@@ -57,6 +57,7 @@ namespace Intersect.Editor.Forms
             lblPassword.Text = Strings.Get("login", "password");
             chkRemember.Text = Strings.Get("login", "rememberme");
             btnLogin.Text = Strings.Get("login", "login");
+            lblStatus.Text = Strings.Get("login", "connecting");
         }
 
         private void tmrSocket_Tick(object sender, EventArgs e)

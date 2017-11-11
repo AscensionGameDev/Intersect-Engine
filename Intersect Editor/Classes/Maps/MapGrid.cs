@@ -78,14 +78,23 @@ namespace Intersect.Editor.Classes.Maps
                         freeTextures.RemoveAt(0);
 
                         var texData = Database.LoadMapCache(itm.mapnum, itm.revision, TileWidth, TileHeight);
-                        if (texData != null)
+                        try
                         {
-                            tex.SetData(texData);
-                            itm.tex = tex;
+                            if (texData != null)
+                            {
+                                tex.SetData(texData);
+                                itm.tex = tex;
+                            }
+                            else
+                            {
+                                freeTextures.Add(tex);
+                            }
                         }
-                        else
+                        catch (Exception ex)
                         {
+                            //Ignore errors that are likely caused by timing issues.
                             freeTextures.Add(tex);
+                            toLoad.Add(itm);
                         }
                     }
                 }
@@ -102,8 +111,8 @@ namespace Intersect.Editor.Classes.Maps
             lock (texLock)
             {
                 UnloadTextures();
+                Grid = new MapGridItem[GridWidth, GridHeight];
             }
-            Grid = new MapGridItem[GridWidth, GridHeight];
             for (int x = -1; x <= GridWidth; x++)
             {
                 for (int y = -1; y <= GridHeight; y++)

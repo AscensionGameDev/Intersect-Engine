@@ -436,7 +436,7 @@ namespace Intersect.Editor.Forms
         {
             if (lstSprites.SelectedIndex >= 0)
             {
-                _editorItem.Sprites[lstSprites.SelectedIndex].Sprite = cmbSprite.Text;
+                if (cmbSprite.Text != null) _editorItem.Sprites[lstSprites.SelectedIndex].Sprite = cmbSprite.Text;
 
                 RefreshSpriteList();
             }

@@ -18,6 +18,8 @@ namespace Intersect_Client.Classes.Entities
 {
     public class Player : Entity
     {
+        public delegate void InventoryUpdated();
+        public InventoryUpdated InventoryUpdatedDelegate;
         private ItemDescWindow _itemTargetBox;
         public EntityBox _targetBox;
 

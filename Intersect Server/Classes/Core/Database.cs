@@ -1856,8 +1856,8 @@ namespace Intersect.Server.Classes.Core
         public static string CheckMute(string account, string ip)
         {
             var query = "SELECT " + MUTE_DURATION + "," + MUTE_TIME + "," + MUTE_MUTER + "," + MUTE_REASON +
-                        " from " + MUTE_TABLE + " WHERE (LOWER(" + MUTE_USER + ")=@" + MUTE_USER + " OR " + MUTE_IP +
-                        "=@" + MUTE_IP + ")" + ";";
+                        " from " + MUTE_TABLE + " WHERE (LOWER(" + MUTE_USER + ")=@" + MUTE_USER + ((ip.Trim().Length > 0) ?  " OR " + MUTE_IP +
+                        "=@" + MUTE_IP : "") + ")" + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, account.ToLower().Trim()));
@@ -1920,8 +1920,8 @@ namespace Intersect.Server.Classes.Core
         public static string CheckBan(string account, string ip)
         {
             var query = "SELECT " + BAN_DURATION + "," + BAN_TIME + "," + BAN_BANNER + "," + BAN_REASON +
-                        " from " + BAN_TABLE + " WHERE (LOWER(" + BAN_USER + ")=@" + BAN_USER + " OR " + BAN_IP + "=@" +
-                        BAN_IP + ")" + ";";
+                        " from " + BAN_TABLE + " WHERE (LOWER(" + BAN_USER + ")=@" + BAN_USER + (ip.Trim().Length > 0 ? (" OR " + BAN_IP + "=@" +
+                        BAN_IP) : "") + ")" + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, account.ToLower().Trim()));

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using Intersect.Editor.Forms;
 using Intersect.Logging;
@@ -16,6 +18,24 @@ namespace Intersect.Editor.Classes
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            //Place sqlite3.dll where it's needed.
+            var dllname = "sqlite3x64.dll";
+            if (!Environment.Is64BitProcess)
+            {
+                dllname = "sqlite3x86.dll";
+            }
+            var resources = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Intersect.Editor.Resources." + dllname))
+            {
+                using (var fs = new FileStream("sqlite3.dll", FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                {
+                    var data = new byte[stream.Length];
+                    stream.Read(data, 0, (int)stream.Length);
+                    fs.Write(data, 0, data.Length);
+                }
+            }
+
             Globals.LoginForm = new FrmLogin();
             Globals.MainForm = new frmMain();
             Application.Run(Globals.LoginForm);

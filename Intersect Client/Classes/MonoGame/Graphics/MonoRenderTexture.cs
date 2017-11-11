@@ -1,5 +1,6 @@
 ﻿using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
+using Intersect_Client.Classes.Core;
 using Microsoft.Xna.Framework.Graphics;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
@@ -55,6 +56,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override void End()
         {
+            ((MonoRenderer) GameGraphics.Renderer).EndSpriteBatch();
         }
 
         public override void Clear(Color color)

@@ -139,7 +139,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             _entityStatusPanel = new ImagePanel(_entityWindow, "StatusArea");
 
-            if (playerBox)
+            if (PlayerBox)
             {
                 _statusTemplate = new ImagePanel(_entityStatusPanel, "PlayerStatusTemplate");
             }
@@ -304,13 +304,14 @@ namespace Intersect_Client.Classes.UI.Game
 
                 //TODO Made this more efficient.
                 Gui.LoadRootUIData(Items[i].container, "InGame.xml");
+                Items[i].container.Name = "";
 
                 var xPadding = Items[i].container.Padding.Left + Items[i].container.Padding.Right;
                 var yPadding = Items[i].container.Padding.Top + Items[i].container.Padding.Bottom;
                 Items[i].container.SetPosition(
-                    (i % (_entityStatusPanel.Width / (Items[i].container.Width + xPadding))) *
+                    (i % ((float)_entityStatusPanel.Width / (float)(Items[i].container.Width + xPadding))) *
                     (Items[i].container.Width + xPadding) + xPadding,
-                    (i / (_entityStatusPanel.Width / (Items[i].container.Width + xPadding))) *
+                    (i / ((float)_entityStatusPanel.Width / (float)(Items[i].container.Width + xPadding))) *
                     (Items[i].container.Height + yPadding) + yPadding);
             }
             _statusTemplate.Hide();

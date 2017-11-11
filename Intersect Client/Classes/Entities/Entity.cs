@@ -634,7 +634,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.X = (int) Math.Ceiling(destRectangle.X);
                 destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
-                if (Options.AnimatedSprites.Contains(sprite))
+                if (Options.AnimatedSprites.Contains(sprite.ToLower()))
                 {
                     srcRectangle = new FloatRect(AnimationFrame * (int) Texture.GetWidth() / 4,
                         d * (int) Texture.GetHeight() / 4,
@@ -891,6 +891,10 @@ namespace Intersect_Client.Classes.Entities
         public void DrawHpBar()
         {
             if (HideName == 1 && Vital[(int) Vitals.Health] == MaxVital[(int) Vitals.Health])
+            {
+                return;
+            }
+            if (Vital[(int)Vitals.Health] == MaxVital[(int)Vitals.Health])
             {
                 return;
             }
