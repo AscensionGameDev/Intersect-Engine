@@ -100,7 +100,7 @@ namespace Intersect_Client.Classes.UI.Game
                     stats = Strings.Get("spelldesc", "vital0",
                         (spell.VitalDiff[(int) Vitals.Health] < 0
                             ? Strings.Get("spelldesc", "addsymbol")
-                            : Strings.Get("spelldecs", "removesymbol")), Math.Abs(spell.VitalDiff[(int) Vitals.Health]));
+                            : Strings.Get("spelldesc", "removesymbol")), Math.Abs(spell.VitalDiff[(int) Vitals.Health]));
                     spellDesc.AddText(stats, spellDesc.RenderColor);
                     spellDesc.AddLineBreak();
                 }
