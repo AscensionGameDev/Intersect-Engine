@@ -9,7 +9,7 @@ using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.UI;
-using Color = IntersectClientExtras.GenericClasses.Color;
+using Color = Intersect.Color;
 
 namespace Intersect_Client.Classes.Core
 {
@@ -37,7 +37,7 @@ namespace Intersect_Client.Classes.Core
         private static GameRenderTexture _darknessTexture;
 
         //Overlay Stuff
-        public static Intersect.Color OverlayColor = Intersect.Color.Transparent;
+        public static Color OverlayColor = Color.Transparent;
 
         private static long _overlayUpdate;
 
@@ -100,7 +100,7 @@ namespace Intersect_Client.Classes.Core
             GameTexture imageTex = contentManager.GetTexture(GameContentManager.TextureType.Image, Globals.Database.IntroBG[Globals.IntroIndex]);
             if (imageTex != null)
             {
-                DrawFullScreenTextureStretched(imageTex);
+                DrawFullScreenTextureFitMinimum(imageTex);
             }
         }
 
@@ -321,7 +321,7 @@ namespace Intersect_Client.Classes.Core
                 _oldWidth = Renderer.GetScreenWidth();
                 _oldHeight = Renderer.GetScreenHeight();
             }
-            Renderer.Clear(Color.Black);
+            Renderer.Clear(IntersectClientExtras.GenericClasses.Color.Black);
             DrawCalls = 0;
             MapsDrawn = 0;
             EntitiesDrawn = 0;
@@ -352,7 +352,7 @@ namespace Intersect_Client.Classes.Core
             Gui.DrawGui();
 
             DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,
-                new Intersect.Color((int)GameFade.GetFade(), 0, 0, 0), null, GameBlendModes.None);
+                new Color((int)GameFade.GetFade(), 0, 0, 0), null, GameBlendModes.None);
             Renderer.End();
         }
 
@@ -451,7 +451,7 @@ namespace Intersect_Client.Classes.Core
                 {
                     if (OverlayColor.A < map.AHue)
                     {
-                        if ((int)OverlayColor.A + (int)(255 * ecTime / 2000f) > map.AHue)
+                        if (OverlayColor.A + (int)(255 * ecTime / 2000f) > map.AHue)
                         {
                             OverlayColor.A = (byte)map.AHue;
                         }
@@ -463,7 +463,7 @@ namespace Intersect_Client.Classes.Core
 
                     if (OverlayColor.A > map.AHue)
                     {
-                        if ((int)OverlayColor.A - (int)(255 * ecTime / 2000f) < map.AHue)
+                        if (OverlayColor.A - (int)(255 * ecTime / 2000f) < map.AHue)
                         {
                             OverlayColor.A = (byte)map.AHue;
                         }
@@ -475,7 +475,7 @@ namespace Intersect_Client.Classes.Core
 
                     if (OverlayColor.R < map.RHue)
                     {
-                        if ((int)OverlayColor.R + (int)(255 * ecTime / 2000f) > map.RHue)
+                        if (OverlayColor.R + (int)(255 * ecTime / 2000f) > map.RHue)
                         {
                             OverlayColor.R = (byte)map.RHue;
                         }
@@ -487,7 +487,7 @@ namespace Intersect_Client.Classes.Core
 
                     if (OverlayColor.R > map.RHue)
                     {
-                        if ((int)OverlayColor.R - (int)(255 * ecTime / 2000f) < map.RHue)
+                        if (OverlayColor.R - (int)(255 * ecTime / 2000f) < map.RHue)
                         {
                             OverlayColor.R = (byte)map.RHue;
                         }
@@ -499,7 +499,7 @@ namespace Intersect_Client.Classes.Core
 
                     if (OverlayColor.G < map.GHue)
                     {
-                        if ((int)OverlayColor.G + (int)(255 * ecTime / 2000f) > map.GHue)
+                        if (OverlayColor.G + (int)(255 * ecTime / 2000f) > map.GHue)
                         {
                             OverlayColor.G = (byte)map.GHue;
                         }
@@ -511,7 +511,7 @@ namespace Intersect_Client.Classes.Core
 
                     if (OverlayColor.G > map.GHue)
                     {
-                        if ((int)OverlayColor.G - (int)(255 * ecTime / 2000f) < map.GHue)
+                        if (OverlayColor.G - (int)(255 * ecTime / 2000f) < map.GHue)
                         {
                             OverlayColor.G = (byte)map.GHue;
                         }
@@ -523,7 +523,7 @@ namespace Intersect_Client.Classes.Core
 
                     if (OverlayColor.B < map.BHue)
                     {
-                        if ((int)OverlayColor.B + (int)(255 * ecTime / 2000f) > map.BHue)
+                        if (OverlayColor.B + (int)(255 * ecTime / 2000f) > map.BHue)
                         {
                             OverlayColor.B = (byte)map.BHue;
                         }
@@ -535,7 +535,7 @@ namespace Intersect_Client.Classes.Core
 
                     if (OverlayColor.B > map.BHue)
                     {
-                        if ((int)OverlayColor.B - (int)(255 * ecTime / 2000f) < map.BHue)
+                        if (OverlayColor.B - (int)(255 * ecTime / 2000f) < map.BHue)
                         {
                             OverlayColor.B = (byte)map.BHue;
                         }
@@ -551,35 +551,96 @@ namespace Intersect_Client.Classes.Core
             _overlayUpdate = Globals.System.GetTimeMS();
         }
 
+        public static FloatRect GetSourceRect(GameTexture gameTexture)
+        {
+            return gameTexture == null
+                ? new FloatRect()
+                : new FloatRect(0, 0, gameTexture.GetWidth(), gameTexture.GetHeight());
+        }
+
         public static void DrawFullScreenTexture(GameTexture tex, float alpha = 1f)
         {
-            int bgx = (int)(Renderer.GetScreenWidth() / 2 - tex.GetWidth() / 2);
-            int bgy = (int)(Renderer.GetScreenHeight() / 2 - tex.GetHeight() / 2);
-            int bgw = (int)tex.GetWidth();
-            int bgh = (int)tex.GetHeight();
+            int bgx = Renderer.GetScreenWidth() / 2 - tex.GetWidth() / 2;
+            int bgy = Renderer.GetScreenHeight() / 2 - tex.GetHeight() / 2;
+            int bgw = tex.GetWidth();
+            int bgh = tex.GetHeight();
             int diff = 0;
             if (bgw < Renderer.GetScreenWidth())
             {
-                diff = (int)(Renderer.GetScreenWidth() - bgw);
+                diff = Renderer.GetScreenWidth() - bgw;
                 bgx -= diff / 2;
                 bgw += diff;
             }
             if (bgh < Renderer.GetScreenHeight())
             {
-                diff = (int)(Renderer.GetScreenHeight() - bgh);
+                diff = Renderer.GetScreenHeight() - bgh;
                 bgy -= diff / 2;
                 bgh += diff;
             }
-            DrawGameTexture(tex, new FloatRect(0, 0, tex.GetWidth(), tex.GetHeight()),
+            DrawGameTexture(tex, GetSourceRect(tex),
                 new FloatRect(bgx + Renderer.GetView().X, bgy + Renderer.GetView().Y, bgw, bgh),
-                new Intersect.Color((int)(alpha * 255f), 255, 255, 255));
+                new Color((int)(alpha * 255f), 255, 255, 255));
         }
 
         public static void DrawFullScreenTextureStretched(GameTexture tex)
         {
-            DrawGameTexture(tex, new FloatRect(0, 0, (int)tex.GetWidth(), (int)tex.GetHeight()),
+            DrawGameTexture(tex, GetSourceRect(tex),
                 new FloatRect(Renderer.GetView().X, Renderer.GetView().Y, Renderer.GetScreenWidth(),
-                    Renderer.GetScreenHeight()), Intersect.Color.White);
+                    Renderer.GetScreenHeight()), Color.White);
+        }
+
+        public static void DrawFullScreenTextureFitWidth(GameTexture tex)
+        {
+            var scale = Renderer.GetScreenWidth() / (float)tex.GetWidth();
+            var scaledHeight = tex.GetHeight() * scale;
+            var offsetY = (Renderer.GetScreenHeight() - tex.GetHeight()) / 2f;
+            DrawGameTexture(tex, GetSourceRect(tex),
+                new FloatRect(
+                    Renderer.GetView().X,
+                    Renderer.GetView().Y + offsetY,
+                    Renderer.GetScreenWidth(),
+                    scaledHeight
+                    ),
+                Color.White);
+        }
+
+        public static void DrawFullScreenTextureFitHeight(GameTexture tex)
+        {
+            var scale = Renderer.GetScreenHeight() / (float)tex.GetHeight();
+            var scaledWidth = tex.GetWidth() * scale;
+            var offsetX = (Renderer.GetScreenWidth() - scaledWidth) / 2f;
+            DrawGameTexture(tex, GetSourceRect(tex),
+                new FloatRect(
+                    Renderer.GetView().X + offsetX,
+                    Renderer.GetView().Y,
+                    scaledWidth,
+                    Renderer.GetScreenHeight()
+                    ),
+                Color.White);
+        }
+
+        public static void DrawFullScreenTextureFitMinimum(GameTexture tex)
+        {
+            if (Renderer.GetScreenWidth() > Renderer.GetScreenHeight())
+            {
+                DrawFullScreenTextureFitHeight(tex);
+            }
+            else
+            {
+                DrawFullScreenTextureFitWidth(tex);
+            }
+        }
+
+        public static void DrawFullScreenTextureFitMaximum(GameTexture tex)
+        {
+            if (Renderer.GetScreenWidth() < Renderer.GetScreenHeight())
+            {
+                DrawFullScreenTextureFitHeight(tex);
+            }
+            else
+            {
+                DrawFullScreenTextureFitWidth(tex);
+            }
         }
 
         private static void UpdateView()
@@ -668,10 +729,7 @@ namespace Intersect_Client.Classes.Core
                 FreeMapTextures.RemoveAt(0);
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         public static void ReleaseMapTexture(GameRenderTexture releaseTex)
@@ -679,10 +737,6 @@ namespace Intersect_Client.Classes.Core
             if (releaseTex.SetActive(false))
             {
                 FreeMapTextures.Add(releaseTex);
-            }
-            else
-            {
-                //Debug.Print("Error!");
             }
         }
 
@@ -693,7 +747,7 @@ namespace Intersect_Client.Classes.Core
             {
                 _darknessTexture = Renderer.CreateRenderTexture(Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
             }
-            _darknessTexture.Clear(Color.Black);
+            _darknessTexture.Clear(IntersectClientExtras.GenericClasses.Color.Black);
         }
 
         private static void GenerateLightMap()
@@ -709,22 +763,22 @@ namespace Intersect_Client.Classes.Core
             {
                 DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(0, 0, _darknessTexture.GetWidth(), _darknessTexture.GetHeight()),
-                    new Intersect.Color((byte)(_brightnessLevel), 255, 255, 255), _darknessTexture, GameBlendModes.Add);
+                    new Color((byte)(_brightnessLevel), 255, 255, 255), _darknessTexture, GameBlendModes.Add);
             }
             else
             {
                 DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(0, 0, _darknessTexture.GetWidth(), _darknessTexture.GetHeight()),
-                    new Intersect.Color(255, 255, 255, 255), _darknessTexture, GameBlendModes.Add);
+                    new Color(255, 255, 255, 255), _darknessTexture, GameBlendModes.Add);
                 DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(0, 0, _darknessTexture.GetWidth(), _darknessTexture.GetHeight()),
-                    new Intersect.Color((int)ClientTime.GetTintColor().A, (int)ClientTime.GetTintColor().R,
+                    new Color((int)ClientTime.GetTintColor().A, (int)ClientTime.GetTintColor().R,
                         (int)ClientTime.GetTintColor().G, (int)ClientTime.GetTintColor().B), _darknessTexture,
                     GameBlendModes.None);
             }
             AddLight((int)Math.Ceiling(Globals.Me.GetCenterPos().X), (int)Math.Ceiling(Globals.Me.GetCenterPos().Y),
                 (int)_playerLightSize, (byte)_playerLightIntensity, _playerLightExpand,
-                Intersect.Color.FromArgb((int)_playerLightColor.A, (int)_playerLightColor.R, (int)_playerLightColor.G,
+                Color.FromArgb((int)_playerLightColor.A, (int)_playerLightColor.R, (int)_playerLightColor.G,
                     (int)_playerLightColor.B));
 
             DrawLights();
@@ -740,7 +794,7 @@ namespace Intersect_Client.Classes.Core
             }
         }
 
-        public static void AddLight(int x, int y, int size, byte intensity, float expand, Intersect.Color color)
+        public static void AddLight(int x, int y, int size, byte intensity, float expand, Color color)
         {
             _lightQueue.Add(new LightBase(0, 0, x, y, intensity, size, expand, color));
             LightsDrawn++;
@@ -756,11 +810,11 @@ namespace Intersect_Client.Classes.Core
                     int x = l.OffsetX - ((int)CurrentView.Left + l.Size);
                     int y = l.OffsetY - ((int)CurrentView.Top + l.Size);
 
-                    radialShader.SetColor("LightColor", new Color(l.Intensity, l.Color.R, l.Color.G, l.Color.B));
+                    radialShader.SetColor("LightColor", new IntersectClientExtras.GenericClasses.Color(l.Intensity, l.Color.R, l.Color.G, l.Color.B));
                     radialShader.SetFloat("Expand", l.Expand / 100f);
 
                     DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                        new FloatRect(x, y, l.Size * 2, l.Size * 2), new Intersect.Color(255, 255, 255, 255),
+                        new FloatRect(x, y, l.Size * 2, l.Size * 2), new Color(255, 255, 255, 255),
                         _darknessTexture, GameBlendModes.Add, radialShader,0,true);
                 }
             }
@@ -971,9 +1025,9 @@ namespace Intersect_Client.Classes.Core
         public static void DrawGameTexture(GameTexture tex, float x, float y, GameRenderTexture renderTarget = null,
             GameBlendModes blendMode = GameBlendModes.None, GameShader shader = null, float rotationDegrees = 0.0f, bool drawImmediate = false)
         {
-            var destRectangle = new FloatRect(x, y, (int)tex.GetWidth(), (int)tex.GetHeight());
-            var srcRectangle = new FloatRect(0, 0, (int)tex.GetWidth(), (int)tex.GetHeight());
-            DrawGameTexture(tex, srcRectangle, destRectangle, Intersect.Color.White, renderTarget, blendMode, shader,
+            var destRectangle = new FloatRect(x, y, tex.GetWidth(), tex.GetHeight());
+            var srcRectangle = new FloatRect(0, 0, tex.GetWidth(), tex.GetHeight());
+            DrawGameTexture(tex, srcRectangle, destRectangle, Color.White, renderTarget, blendMode, shader,
                 rotationDegrees, drawImmediate);
         }
 
@@ -987,12 +1041,12 @@ namespace Intersect_Client.Classes.Core
         /// <param name="renderColor">Color mask to draw with. Default is Color.White</param>
         /// <param name="renderTarget">Where to draw to. If null it this will draw to the game screen.</param>
         /// <param name="blendMode">Which blend mode to use when rendering</param>
-        public static void DrawGameTexture(GameTexture tex, float x, float y, Intersect.Color renderColor,
+        public static void DrawGameTexture(GameTexture tex, float x, float y, Color renderColor,
             GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
             GameShader shader = null, float rotationDegrees = 0.0f, bool drawImmediate = false)
         {
-            var destRectangle = new FloatRect(x, y, (int)tex.GetWidth(), (int)tex.GetHeight());
-            var srcRectangle = new FloatRect(0, 0, (int)tex.GetWidth(), (int)tex.GetHeight());
+            var destRectangle = new FloatRect(x, y, tex.GetWidth(), tex.GetHeight());
+            var srcRectangle = new FloatRect(0, 0, tex.GetWidth(), tex.GetHeight());
             DrawGameTexture(tex, srcRectangle, destRectangle, renderColor, renderTarget, blendMode, shader,
                 rotationDegrees, drawImmediate);
         }
@@ -1016,18 +1070,18 @@ namespace Intersect_Client.Classes.Core
         {
             var destRectangle = new FloatRect(dx, dy, w, h);
             var srcRectangle = new FloatRect(sx, sy, w, h);
-            DrawGameTexture(tex, srcRectangle, destRectangle, Intersect.Color.White, renderTarget, blendMode, shader,
+            DrawGameTexture(tex, srcRectangle, destRectangle, Color.White, renderTarget, blendMode, shader,
                 rotationDegrees, drawImmediate);
         }
 
         public static void DrawGameTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect,
-            Intersect.Color renderColor, GameRenderTexture renderTarget = null,
+            Color renderColor, GameRenderTexture renderTarget = null,
             GameBlendModes blendMode = GameBlendModes.None,
             GameShader shader = null, float rotationDegrees = 0.0f, bool drawImmediate = false)
         {
             if (tex == null) return;
             Renderer.DrawTexture(tex, srcRectangle, targetRect,
-                Color.FromArgb(renderColor.A, renderColor.R, renderColor.G, renderColor.B), renderTarget, blendMode,
+                IntersectClientExtras.GenericClasses.Color.FromArgb(renderColor.A, renderColor.R, renderColor.G, renderColor.B), renderTarget, blendMode,
                 shader,
                 rotationDegrees,false,drawImmediate);
         }

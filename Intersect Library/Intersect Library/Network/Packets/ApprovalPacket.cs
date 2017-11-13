@@ -2,6 +2,9 @@
 using System.Diagnostics;
 using System.Security.Cryptography;
 using Intersect.Memory;
+#if INTERSECT_DIAGNOSTIC
+using Intersect.Logging;
+#endif
 
 namespace Intersect.Network.Packets
 {
