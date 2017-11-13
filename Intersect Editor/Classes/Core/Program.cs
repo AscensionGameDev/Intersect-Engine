@@ -15,16 +15,16 @@ namespace Intersect.Editor.Classes
         [STAThread]
         static void Main()
         {
+            Log.Diagnostic("Starting editor...");
+
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            Log.Diagnostic("Unpacking libraries...");
+
             //Place sqlite3.dll where it's needed.
-            var dllname = "sqlite3x64.dll";
-            if (!Environment.Is64BitProcess)
-            {
-                dllname = "sqlite3x86.dll";
-            }
+            var dllname = Environment.Is64BitProcess ? "sqlite3x64.dll" : "sqlite3x86.dll";
             var resources = Assembly.GetExecutingAssembly().GetManifestResourceNames();
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Intersect.Editor.Resources." + dllname))
             {
@@ -36,8 +36,14 @@ namespace Intersect.Editor.Classes
                 }
             }
 
+            Log.Diagnostic("Libraries unpacked.");
+
+            Log.Diagnostic("Creating forms...");
             Globals.LoginForm = new FrmLogin();
             Globals.MainForm = new frmMain();
+            Log.Diagnostic("Forms created.");
+
+            Log.Diagnostic("Starting application.");
             Application.Run(Globals.LoginForm);
         }
 
