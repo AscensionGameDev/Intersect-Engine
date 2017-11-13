@@ -17,6 +17,7 @@ namespace Intersect.Editor.Forms
 
         public BeginEditorLoop EditorLoopDelegate;
         private string SavedPassword = "";
+        private bool optionsLoaded = false;
 
         public FrmLogin()
         {
@@ -29,6 +30,7 @@ namespace Intersect.Editor.Forms
             GameContentManager.CheckForResources();
             if (Database.LoadOptions())
             {
+                optionsLoaded = true;
                 Strings.Init(Strings.IntersectComponent.Editor, Options.Language);
                 EditorLoopDelegate = EditorLoop.StartLoop;
                 if (Preferences.LoadPreference("username").Trim().Length > 0)
@@ -62,6 +64,7 @@ namespace Intersect.Editor.Forms
 
         private void tmrSocket_Tick(object sender, EventArgs e)
         {
+            if (!optionsLoaded) return;
             EditorNetwork.Update();
             var statusString = Strings.Get("login", "connecting");
             if (EditorNetwork.Connected)
