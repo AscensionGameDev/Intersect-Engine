@@ -37,6 +37,18 @@ namespace Intersect.Server.Classes
                 return;
             }
 
+            foreach (var arg in args)
+            {
+                if (arg.Contains("port="))
+                {
+                    ushort port = Options.ServerPort;
+                    if (ushort.TryParse(arg.Split("=".ToCharArray())[1],out port))
+                    {
+                        Options.ServerPort = port;
+                    }
+                }
+            }
+
             Strings.Init(Strings.IntersectComponent.Server, Options.Language);
             Console.WriteLine(@"  _____       _                          _   ");
             Console.WriteLine(@" |_   _|     | |                        | |  ");
@@ -756,16 +768,19 @@ namespace Intersect.Server.Classes
         private static void ShutDown()
         {
             //Save all online players
-            for (int i = 0; i < Globals.Clients.Count; i++)
+            if (Globals.Clients != null)
             {
-                if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
+                for (int i = 0; i < Globals.Clients.Count; i++)
                 {
-                    Database.SaveCharacter(Globals.Clients[i].Entity);
+                    if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
+                    {
+                        Database.SaveCharacter(Globals.Clients[i].Entity);
+                    }
                 }
             }
 
             Globals.ServerStarted = false;
-            SocketServer.Dispose();
+            if (SocketServer != null) SocketServer.Dispose();
             Environment.Exit(-1);
         }
 
