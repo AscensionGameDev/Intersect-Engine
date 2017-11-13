@@ -873,7 +873,7 @@ Tick timer saved in server config.xml.</string>
         <string id="effect1">Silence</string>
         <string id="effect2">Stun</string>
         <string id="effect3">Snare</string>
-        <string id="effect4">Bind</string>
+        <string id="effect4">Blind</string>
         <string id="effect5">Stealth</string>
         <string id="effect6">Transform</string>
         <string id="transformsprite">Sprite:</string>
