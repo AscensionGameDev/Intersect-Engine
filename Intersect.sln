@@ -87,6 +87,7 @@ Global
 		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Diagnostic|x86.ActiveCfg = Diagnostic|x86
 		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Diagnostic|x86.Build.0 = Diagnostic|x86
 		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Release|Any CPU.ActiveCfg = Release|x86
+		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Release|Any CPU.Build.0 = Release|x86
 		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Release|x86.ActiveCfg = Release|x86
 		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Release|x86.Build.0 = Release|x86
 		{5AC53DF1-8152-466D-B7D0-238657F013F7}.Tespia|Any CPU.ActiveCfg = Tespia|x86
