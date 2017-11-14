@@ -39,6 +39,10 @@ namespace Intersect.Logging
         {
             Write(tag, logLevel, $"Message: {exception?.Message}");
             Write(tag, logLevel, $"Stack Trace: {exception?.StackTrace}");
+            if (exception?.InnerException != null)
+            {
+                Write(tag, logLevel, $"Stack Trace: {exception.InnerException?.StackTrace}");
+            }
             Write(tag, logLevel, $"Time: {DateTime.UtcNow}");
             if (!string.IsNullOrEmpty(message)) Write(tag, logLevel, $"Note: {message}");
             Flush();
