@@ -28,21 +28,15 @@ namespace Intersect.Client
             ExportDependencies();
             Assembly.LoadFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MonoGame.Framework.Client.dll"));
 
-            // Get the type contained in the name string
-            Type type = Type.GetType("Intersect.Client.IntersectGame", true);
-
-            // create an instance of that type
-            object instance = Activator.CreateInstance(type);
-
             try
             {
-                Type[] prms = new Type[0];
-                var methodinfo = type.GetMethod("Run",prms);
-                methodinfo.Invoke(instance, null);
+                var type = Type.GetType("Intersect.Client.IntersectGame", true);
+                var instance = Activator.CreateInstance(type);
+                type.InvokeMember("Run", BindingFlags.InvokeMethod, null, instance, null);
             }
             catch (PlatformNotSupportedException)
             {
-                System.Windows.Forms.MessageBox.Show("OpenGL Initialialization Error! Try updating your graphics drivers!");
+                System.Windows.Forms.MessageBox.Show(@"OpenGL Initialialization Error! Try updating your graphics drivers!");
             }
         }
 
