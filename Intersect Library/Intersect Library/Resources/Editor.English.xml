@@ -873,7 +873,7 @@ Tick timer saved in server config.xml.</string>
         <string id="effect1">Silence</string>
         <string id="effect2">Stun</string>
         <string id="effect3">Snare</string>
-        <string id="effect4">Bind</string>
+        <string id="effect4">Blind</string>
         <string id="effect5">Stealth</string>
         <string id="effect6">Transform</string>
         <string id="transformsprite">Sprite:</string>
@@ -1154,7 +1154,7 @@ Negative values for time to flow backwards.</string>
         <string id="afterd">, After Task: {00}</string>
         <string id="ontask">, On Task: {00}</string>
         <string id="onanytask">, On Any Task</string>
-		<string id="tasknotfound">Not Found</string>
+        <string id="tasknotfound">Not Found</string>
         <string id="questcompleted">Quest is Completed: {00}</string>
         <string id="playerdeath">Player Death</string>
         <string id="nonpcsonmap">No NPCs on the map</string>

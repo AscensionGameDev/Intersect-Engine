@@ -95,22 +95,12 @@ namespace Intersect_Client.Classes.UI.Game
                     spellDesc.AddLineBreak();
                 }
 
-                if (spell.VitalDiff[(int) Vitals.Health] != 0)
+                for (var i = 0; i < (int) Vitals.VitalCount; i++)
                 {
-                    stats = Strings.Get("spelldesc", "vital0",
-                        (spell.VitalDiff[(int) Vitals.Health] < 0
-                            ? Strings.Get("spelldesc", "addsymbol")
-                            : Strings.Get("spelldecs", "removesymbol")), Math.Abs(spell.VitalDiff[(int) Vitals.Health]));
-                    spellDesc.AddText(stats, spellDesc.RenderColor);
-                    spellDesc.AddLineBreak();
-                }
-
-                if (spell.VitalDiff[(int) Vitals.Mana] != 0)
-                {
-                    stats = Strings.Get("spelldesc", "vital1",
-                        (spell.VitalDiff[(int) Vitals.Mana] < 0
-                            ? Strings.Get("spelldesc", "addsymbol")
-                            : Strings.Get("spelldesc", "removesymbol")), Math.Abs(spell.VitalDiff[(int) Vitals.Mana]));
+                    var vitalDiff = spell.VitalDiff?[i] ?? 0;
+                    if (vitalDiff == 0) continue;
+                    var vitalSymbol = Strings.Get("spelldesc", $"{(vitalDiff < 0 ? "add" : "remove")}symbol");
+                    stats = Strings.Get("spelldesc", $"vital{i}", vitalSymbol, Math.Abs(vitalDiff));
                     spellDesc.AddText(stats, spellDesc.RenderColor);
                     spellDesc.AddLineBreak();
                 }

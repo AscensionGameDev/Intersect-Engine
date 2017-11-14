@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Server", "Intersect Server\Intersect Server.csproj", "{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}"
 EndProject
@@ -11,11 +11,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Client", "Interse
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Editor", "Intersect Editor\Intersect Editor.csproj", "{5AC53DF1-8152-466D-B7D0-238657F013F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Migration Tool", "Intersect Migration Tool\Intersect Migration Tool\Intersect Migration Tool.csproj", "{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Migration Tool", "Intersect Migration Tool\Intersect Migration Tool.csproj", "{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Network", "Intersect.Network\Intersect.Network.csproj", "{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Utilities", "Intersect.Utilities\Intersect.Utilities.csproj", "{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntersectClientExtras", "..\Intersect-Client-Extras\IntersectClientExtras\IntersectClientExtras.csproj", "{40973F13-3339-4548-9008-FF76A0C8CD79}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -138,8 +140,27 @@ Global
 		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Tespia|Any CPU.Build.0 = Release|Any CPU
 		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Tespia|x86.ActiveCfg = Tespia|Any CPU
 		{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}.Tespia|x86.Build.0 = Tespia|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Debug|x86.Build.0 = Debug|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Diagnostic|Any CPU.ActiveCfg = Debug|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Diagnostic|Any CPU.Build.0 = Debug|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Diagnostic|x86.ActiveCfg = Debug|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Diagnostic|x86.Build.0 = Debug|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Release|x86.ActiveCfg = Release|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Release|x86.Build.0 = Release|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Tespia|Any CPU.ActiveCfg = Release|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Tespia|Any CPU.Build.0 = Release|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Tespia|x86.ActiveCfg = Release|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Tespia|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {06095334-0BBD-4FDA-A230-272D08AFB221}
 	EndGlobalSection
 EndGlobal

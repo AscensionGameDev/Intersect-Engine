@@ -199,7 +199,7 @@
         <string id="effect">Bonus Effect: {00}% {01}</string>
         <string id="effect0">Cooldown Reduction</string>
         <string id="effect1">Lifesteal</string>
-		<string id="stat0">Attack: {00}</string>
+        <string id="stat0">Attack: {00}</string>
         <string id="stat1">Ability Power: {00}</string>
         <string id="stat2">Defense: {00}</string>
         <string id="stat3">Magic Resist: {00}</string>

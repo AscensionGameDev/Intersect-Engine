@@ -10,6 +10,7 @@ using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Keys = IntersectClientExtras.GenericClasses.Keys;
+using Intersect.Logging;
 
 namespace Intersect_Client_MonoGame.Classes.SFML.Input
 {
@@ -42,7 +43,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
                         }
                         if (key == Keys.Control || key == Keys.LControlKey)
                         {
-                            _keyDictionary.Add(key,Microsoft.Xna.Framework.Input.Keys.LeftControl);
+                            _keyDictionary.Add(key, Microsoft.Xna.Framework.Input.Keys.LeftControl);
                             break;
                         }
                         if (key == Keys.RControlKey)
@@ -150,6 +151,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
                 {
                     if (kbState.IsKeyDown(key.Value) && !lastKeyboardState.IsKeyDown(key.Value))
                     {
+                        Log.Diagnostic($"{key.Key.ToString()} -> {key.Value.ToString()}");
                         Gui.GwenInput.ProcessMessage(new GwenInputMessage(IntersectInput.InputEvent.KeyDown,
                             GetMousePosition(), (int) MouseButtons.None, key.Key));
                         GameInputHandler.OnKeyPressed(key.Key);

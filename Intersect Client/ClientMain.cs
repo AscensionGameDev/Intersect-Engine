@@ -25,59 +25,7 @@ namespace Intersect.Client
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             CosturaUtility.Initialize();
 
-            //Delete any files that exist
-            ClearDlls();
-
-            OperatingSystem os = Environment.OSVersion;
-            PlatformID pid = os.Platform;
-            Console.WriteLine(pid);
-            if (pid == PlatformID.Unix)
-            {
-                string UnixName = ReadProcessOutput("uname");
-                if (UnixName.Contains("Darwin"))
-                {
-                    pid = PlatformID.MacOSX;
-                }
-            }
-            switch (pid)
-            {
-                case PlatformID.Win32NT:
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.WinCE:
-                    if (Environment.Is64BitProcess)
-                    {
-                        ExportDependency("SDL2.dll", "x64");
-                        ExportDependency("soft_oal.dll", "x64");
-                    }
-                    else
-                    {
-                        ExportDependency("SDL2.dll", "x86");
-                        ExportDependency("soft_oal.dll", "x86");
-                    }
-                    break;
-                case PlatformID.MacOSX:
-                    ExportDependency("libopenal.1.dylib", "");
-                    ExportDependency("libSDL2-2.0.0.dylib", "");
-                    ExportDependency("openal32.dll", "");
-                    ExportDependency("MonoGame.Framework.dll.config","", "MonoGame.Framework.Client.dll.config");
-                    break;
-                default:
-                    if (Environment.Is64BitProcess)
-                    {
-                        ExportDependency("libopenal.so.1", "x64");
-                        ExportDependency("libSDL2-2.0.so.0", "x64");
-                    }
-                    else
-                    {
-                        ExportDependency("libopenal.so.1", "x86");
-                        ExportDependency("libSDL2-2.0.so.0", "x86");
-                    }
-                    ExportDependency("MonoGame.Framework.dll.config", "", "MonoGame.Framework.Client.dll.config");
-                    ExportDependency("openal32.dll", "");
-                    break;
-            }
-            ExportDependency("MonoGame.Framework.dll", "", "MonoGame.Framework.Client.dll");
+            ExportDependencies();
             Assembly.LoadFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MonoGame.Framework.Client.dll"));
 
             // Get the type contained in the name string
@@ -137,8 +85,59 @@ namespace Intersect.Client
             }
         }
 
+        private static void ExportDependencies()
+        {
+            // Delete any files that exist
+            ClearDlls();
+
+            var os = Environment.OSVersion;
+            var platformId = os.Platform;
+            if (platformId == PlatformID.Unix)
+            {
+                var unixName = ReadProcessOutput("uname");
+                if (unixName?.Contains("Darwin") ?? false)
+                {
+                    platformId = PlatformID.MacOSX;
+                }
+            }
+
+            var folder = Environment.Is64BitProcess ? "x64" : "x86";
+
+            switch (platformId)
+            {
+                case PlatformID.Win32NT:
+                case PlatformID.Win32S:
+                case PlatformID.Win32Windows:
+                case PlatformID.WinCE:
+                    ExportDependency("SDL2.dll", folder);
+                    ExportDependency("soft_oal.dll", folder);
+                    break;
+
+                case PlatformID.MacOSX:
+                    ExportDependency("libopenal.1.dylib", "");
+                    ExportDependency("libSDL2-2.0.0.dylib", "");
+                    ExportDependency("openal32.dll", "");
+                    ExportDependency("MonoGame.Framework.dll.config", "", "MonoGame.Framework.Client.dll.config");
+                    break;
+
+                default:
+                    ExportDependency("libopenal.so.1", folder);
+                    ExportDependency("libSDL2-2.0.so.0", folder);
+                    ExportDependency("openal32.dll", "");
+                    ExportDependency("MonoGame.Framework.dll.config", "", "MonoGame.Framework.Client.dll.config");
+                    break;
+            }
+
+            ExportDependency("MonoGame.Framework.dll", "", "MonoGame.Framework.Client.dll");
+        }
+
         private static void ExportDependency(string filename, string folder, string nameoverride = null)
         {
+            if (!DeleteIfExists(string.IsNullOrEmpty(nameoverride) ? filename : nameoverride))
+            {
+                /* If it failed it means the file already exists and can't be deleted for whatever reason. */
+                return;
+            }
             var res = "Intersect.Client.Resources." + (string.IsNullOrEmpty(folder) ? "" : folder + ".") + filename;
             if (Assembly.GetExecutingAssembly().GetManifestResourceNames().Contains(res))
             {
@@ -182,10 +181,18 @@ namespace Intersect.Client
             }
         }
 
-        static void DeleteIfExists(string filename)
+        static bool DeleteIfExists(string filename)
         {
-            if (File.Exists(filename))
-                File.Delete(filename);
+            try
+            {
+                if (File.Exists(filename))
+                    File.Delete(filename);
+                return true;
+            }
+            catch (Exception exception)
+            {
+                return false;
+            }
         }
     }
 #endif

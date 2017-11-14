@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Security.Cryptography;
+#if INTERSECT_DIAGNOSTIC
+using Intersect.Logging;
+#endif
 
 namespace Intersect.Network
 {
