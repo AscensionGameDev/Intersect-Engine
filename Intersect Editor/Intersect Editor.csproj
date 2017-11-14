@@ -767,9 +767,7 @@
     <None Include="Resources\1_A Hide.png" />
     <EmbeddedResource Include="Resources\sqlite3x64.dll" />
     <EmbeddedResource Include="Resources\sqlite3x86.dll" />
-    <Content Include="sqlite3.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="sqlite3.dll" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Intersect Library\Intersect Library\Intersect %28Core%29.csproj">
