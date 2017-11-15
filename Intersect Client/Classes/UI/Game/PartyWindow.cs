@@ -125,23 +125,26 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (i < Globals.Me.Party.Count)
                     {
-                        var partyMember = Globals.Entities[Globals.Me.Party[i]];
-                        _barContainer[i].Show();
-                        _lblnames[i].Text = partyMember.MyName;
-
-                        var vitalHP = partyMember.Vital[(int) Vitals.Health];
-                        var vitalMaxHP = partyMember.MaxVital[(int) Vitals.Health];
-                        var ratioHP = ((float) vitalHP) / ((float) vitalMaxHP);
-                        ratioHP = Math.Min(1, Math.Max(0, ratioHP));
-                        _bar[i].SetSize(Convert.ToInt32(ratioHP * _barContainer[i].Width), _barContainer[i].Height);
-                        if (i > 0) _kickButtons[i].Hide();
-
-                        //Only show the kick buttons if its you or you are the party leader
-                        if (Globals.Me.Party[0] == Globals.Me.MyIndex && i > 0)
+                        if (Globals.Entities.ContainsKey(Globals.Me.Party[i]))
                         {
-                            _kickButtons[i].Show();
-                            _kickButtons[i].SetToolTipText(Strings.Get("parties", "kick",
-                                Globals.Entities[Globals.Me.Party[i]].MyName));
+                            var partyMember = Globals.Entities[Globals.Me.Party[i]];
+                            _barContainer[i].Show();
+                            _lblnames[i].Text = partyMember.MyName;
+
+                            var vitalHP = partyMember.Vital[(int) Vitals.Health];
+                            var vitalMaxHP = partyMember.MaxVital[(int) Vitals.Health];
+                            var ratioHP = ((float) vitalHP) / ((float) vitalMaxHP);
+                            ratioHP = Math.Min(1, Math.Max(0, ratioHP));
+                            _bar[i].SetSize(Convert.ToInt32(ratioHP * _barContainer[i].Width), _barContainer[i].Height);
+                            if (i > 0) _kickButtons[i].Hide();
+
+                            //Only show the kick buttons if its you or you are the party leader
+                            if (Globals.Me.Party[0] == Globals.Me.MyIndex && i > 0)
+                            {
+                                _kickButtons[i].Show();
+                                _kickButtons[i].SetToolTipText(Strings.Get("parties", "kick",
+                                    Globals.Entities[Globals.Me.Party[i]].MyName));
+                            }
                         }
                     }
                     else

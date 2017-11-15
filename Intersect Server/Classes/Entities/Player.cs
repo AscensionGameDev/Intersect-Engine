@@ -1001,7 +1001,6 @@ namespace Intersect.Server.Classes.Entities
                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "notimplemented"));
                         return;
                 }
-                AddVital(Vitals.Health, itemBase.Data2);
                 if (itemBase.Animation > -1)
                 {
                     PacketSender.SendAnimationToProximity(itemBase.Animation, 1, MyIndex, CurrentMap,
@@ -2291,7 +2290,7 @@ namespace Intersect.Server.Classes.Entities
         }
 
         public void LeaveParty()
-        {
+        { 
             if (Party.Count > 0 && Party.Contains(this))
             {
                 var oldMember = this;
@@ -2512,7 +2511,7 @@ namespace Intersect.Server.Classes.Entities
                                     var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spell.Projectile);
                                     if (projectileBase != null && projectileBase.Ammo > -1)
                                     {
-                                        TakeItemsBySlot(FindItem(projectileBase.Ammo, projectileBase.AmmoRequired),
+                                        TakeItemsByNum(FindItem(projectileBase.Ammo, projectileBase.AmmoRequired),
                                             projectileBase.AmmoRequired);
                                     }
                                 }

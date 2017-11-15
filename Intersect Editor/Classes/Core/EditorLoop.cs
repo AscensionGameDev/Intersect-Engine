@@ -106,21 +106,29 @@ namespace Intersect.Editor.Classes
                         new Task((() => progressForm.ShowDialog())).Start();
                         while (Globals.MapsToScreenshot.Count > 0)
                         {
-                            var maps = MapInstance.Lookup.IndexValues.ToArray();
-                            foreach (MapInstance map in maps)
+                            try
                             {
-                                if (!myForm.Disposing && progressForm.IsHandleCreated)
-                                    progressForm.BeginInvoke(
-                                        (Action)
-                                        (() =>
-                                            progressForm.SetProgress(
-                                                Globals.MapsToScreenshot.Count + " maps remaining.", -1, false)));
-                                if (map != null)
+                                var maps = MapInstance.Lookup.ValueList.ToArray();
+                                foreach (MapInstance map in maps)
                                 {
-                                    map.Update();
+                                    if (!myForm.Disposing && progressForm.IsHandleCreated)
+                                        progressForm.BeginInvoke(
+                                            (Action)
+                                            (() =>
+                                                progressForm.SetProgress(
+                                                    Globals.MapsToScreenshot.Count + " maps remaining.", -1, false)));
+                                    if (map != null)
+                                    {
+                                        map.Update();
+                                    }
+                                    EditorNetwork.Update();
+                                    Application.DoEvents();
                                 }
-                                EditorNetwork.Update();
-                                Application.DoEvents();
+                            }
+                            catch (Exception ex)
+                            {
+                                Logging.Log.Error(ex,
+                                    "JC's Solution for UpdateMaps collection was modified bug did not work!");
                             }
                             Thread.Sleep(50);
                         }

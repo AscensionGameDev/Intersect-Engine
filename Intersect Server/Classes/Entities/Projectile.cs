@@ -84,6 +84,7 @@ namespace Intersect.Server.Classes.Entities
                             Spawns[_spawnedAmount] = s;
                             _spawnedAmount++;
                             _spawnCount++;
+                            if (CheckForCollision(s)) KillSpawn(s);
                         }
                     }
                 }
