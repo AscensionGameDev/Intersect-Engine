@@ -1001,7 +1001,6 @@ namespace Intersect.Server.Classes.Entities
                         PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "notimplemented"));
                         return;
                 }
-                AddVital(Vitals.Health, itemBase.Data2);
                 if (itemBase.Animation > -1)
                 {
                     PacketSender.SendAnimationToProximity(itemBase.Animation, 1, MyIndex, CurrentMap,
