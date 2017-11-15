@@ -446,7 +446,7 @@ namespace Intersect_Client.Classes.Networking
             }
             map = new MapInstance((int) mapNum);
             MapInstance.Lookup.Set(mapNum, map);
-            lock (map.GetMapLock())
+            lock (map.MapLock)
             {
                 map.Load(mapData);
                 map.LoadTileData(tileData);
@@ -1152,8 +1152,8 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             if (Globals.Me != null)
             {
-                Globals.Me.Experience = bf.ReadInteger();
-                Globals.Me.ExperienceToNextLevel = bf.ReadInteger();
+                Globals.Me.Experience = bf.ReadLong();
+                Globals.Me.ExperienceToNextLevel = bf.ReadLong();
             }
             bf.Dispose();
         }

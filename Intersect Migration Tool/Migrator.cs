@@ -84,7 +84,7 @@ namespace Intersect.Migration
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
-            using (StreamWriter writer = new StreamWriter("resources/migration_errors.log", true))
+            using (var writer = new StreamWriter("resources/migration_errors.log", true))
             {
                 writer.WriteLine("Message :" + ((Exception)e.ExceptionObject).Message + "<br/>" + Environment.NewLine +
                                  "StackTrace :" + ((Exception)e.ExceptionObject).StackTrace +

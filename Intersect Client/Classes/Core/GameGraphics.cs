@@ -374,7 +374,7 @@ namespace Intersect_Client.Classes.Core
                             {
                                 if (!PreRenderedMapLayer)
                                 {
-                                    lock (map.GetMapLock())
+                                    lock (map.MapLock)
                                     {
                                         map.PreRenderMap();
                                     }

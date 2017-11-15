@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Intersect Client Language File - Beta 3 -->
+<Strings>
+    <Main>
+        <string id="gamename">Intersect Client</string>
+    </Main>
+    <General>
+        <!-- Used everywhere. Sounds on map, resource graphics, panoramas, item types, etc. English is None or No Selection. Choose whatever fits best in your language. Try to keep this the same across the client, editor, and server language files as well. -->
+        <string id="none">None</string>
+    </General>
+    <Combat>
+        <string id="exp">Experience</string>
+        <string id="vital0">Health</string>
+        <string id="vital1">Mana</string>
+        <string id="stat0">Attack</string>
+        <string id="stat1">Ability Power</string>
+        <string id="stat2">Defense</string>
+        <string id="stat3">Magic Resist</string>
+        <string id="stat4">Speed</string>
+        <string id="targetoutsiderange">Target too far away!</string>
+    </Combat>
+    <Admin>
+        <string id="title">Administration</string>
+        <string id="name">Name:</string>
+        <string id="warp2me">Warp To Me</string>
+        <string id="warpme2">Warp Me To</string>
+        <string id="kick">Kick</string>
+        <string id="kill">Kill</string>
+        <string id="ban">Ban</string>
+        <string id="noclip">No Clip:</string>
+        <string id="nocliptip">Check to walk through obstacles.</string>
+        <string id="unban">Unban</string>
+        <string id="mute">Mute</string>
+        <string id="unmute">Unmute</string>
+        <string id="sprite">Sprite:</string>
+        <string id="none">None</string>
+        <string id="setsprite">Set Sprite</string>
+        <string id="face">Face:</string>
+        <string id="setface">Set Face</string>
+        <string id="access">Access:</string>
+        <string id="access0">None</string>
+        <string id="access1">Moderator</string>
+        <string id="access2">Admin</string>
+        <string id="setpower">Set Power</string>
+        <string id="maplist">Map List:</string>
+        <string id="chronological">123...</string>
+        <string id="chronologicaltip">Order maps chronologically.</string>
+        <string id="mutecaption">Mute {00}</string>
+        <string id="muteprompt">Muting {00} will not allow them to chat in game for the duration you set!</string>
+        <string id="bancaption">Ban {00}</string>
+        <string id="banprompt">Banning {00} will not allow them to access this game for the duration you set!</string>
+        <string id="unmutecaption">Unute {00}</string>
+        <string id="unmuteprompt">Are you sure that you want to unmute {00}?</string>
+        <string id="unbancaption">Unban {00}</string>
+        <string id="unbanprompt">Are you sure that you want to unban {00}?</string>
+    </Admin>
+    <Bank>
+        <string id="title">Bank</string>
+        <string id="deposititem">Deposit Item</string>
+        <string id="deposititemprompt">How many/much {00} would you like to deposit?</string>
+        <string id="withdrawitem">Withdraw Item</string>
+        <string id="withdrawitemprompt">How many/much {00} would you like to withdraw?</string>
+    </Bank>
+    <Bags>
+        <string id="title">Bag</string>
+        <string id="storeitem">Store Item</string>
+        <string id="storeitemprompt">How many/much {00} would you like to store?</string>
+        <string id="retreiveitem">Retreive Item</string>
+        <string id="retreiveitemprompt">How many/much {00} would you like to retreive?</string>
+    </Bags>
+    <BanMute>
+        <string id="reason">Reason:</string>
+        <string id="duration">Duration:</string>
+        <string id="1day">1 day</string>
+        <string id="2days">2 days</string>
+        <string id="3days">3 days</string>
+        <string id="4days">4 days</string>
+        <string id="5days">5 days</string>
+        <string id="1week">1 week</string>
+        <string id="2weeks">2 weeks</string>
+        <string id="1month">1 month</string>
+        <string id="2months">2 months</string>
+        <string id="6months">6 months</string>
+        <string id="1year">1 year</string>
+        <string id="forever">Indefinitely</string>
+        <string id="ip">Include IP:</string>
+        <string id="ok">Okay:</string>
+        <string id="cancel">Cancel:</string>
+    </BanMute>
+    <Character>
+        <string id="title">Character</string>
+        <string id="name">{00}</string>
+        <string id="levelandclass">Level: {00} {01}</string>
+        <string id="equipment">Equipment:</string>
+        <string id="stats">Stats:</string>
+        <string id="stat0">{00}: {01}</string>
+        <string id="stat1">{00}: {01}</string>
+        <string id="stat2">{00}: {01}</string>
+        <string id="stat3">{00}: {01}</string>
+        <string id="stat4">{00}: {01}</string>
+        <string id="points">Points: {00}</string>
+    </Character>
+    <CharacterCreation>
+        <string id="title">Create Character</string>
+        <string id="name">Char Name:</string>
+        <string id="class">Class:</string>
+        <string id="gender">Gender:</string>
+        <string id="male">Male</string>
+        <string id="female">Female</string>
+        <string id="create">Create</string>
+        <string id="invalidname">Character name is invalid. Please use alphanumeric characters with a length between 2 and 20.</string>
+    </CharacterCreation>
+    <Chatbox>
+        <string id="channel1">local</string>
+        <string id="channel2">global</string>
+        <string id="channel3">party</string>
+        <string id="channeladmin">admin</string>
+        <string id="enterchat">Click here to chat.</string>
+        <string id="enterchat1">Press {00} to chat.</string>
+        <string id="enterchat2">Press {00} or {01} to chat.</string>
+        <string id="send">Send</string>
+    </Chatbox>
+    <CraftingBench>
+        <string id="title">Crafting Bench</string>
+        <string id="recipes">Recipes:</string>
+        <string id="ingredients">Ingredients:</string>
+        <string id="product">Product:</string>
+        <string id="incorrectresources">You do not have the correct resources to craft this item.</string>
+        <string id="craft">Craft</string>
+    </CraftingBench>
+    <Debug>
+        <string id="title">Debug</string>
+        <string id="fps">FPS: {00}</string>
+        <string id="ping">Ping: {00}</string>
+        <string id="draws">Draws: {00}</string>
+        <string id="map">Map: {00}</string>
+        <string id="x">X: {00}</string>
+        <string id="y">Y: {00}</string>
+        <string id="z">Z: {00}</string>
+        <string id="knownentities">Known Entities: {00}</string>
+        <string id="knownmaps">Known Maps: {00}</string>
+        <string id="mapsdrawn">Maps Drawn: {00}</string>
+        <string id="entitiesdrawn">Entities Drawn: {00}</string>
+        <string id="lightsdrawn">Lights Drawn: {00}</string>
+        <string id="time">Time: {00}</string>
+    </Debug>
+    <EntityBox>
+        <string id="vital0">HP:</string>
+        <string id="vital1">MP:</string>
+        <string id="exp">EXP:</string>
+        <string id="vital0val">{00} / {01}</string>
+        <string id="vital1val">{00} / {01}</string>
+        <string id="expval">{00} / {01}</string>
+        <string id="maxlevel">Max Level</string>
+        <string id="level">Level: {00}</string>
+        <string id="trade">Trade</string>
+        <string id="party">Party</string>
+        <string id="tradetip">Request to trade with {00}.</string>
+        <string id="partytip">Invite {00} to your party.</string>
+    </EntityBox>
+    <EventWindow>
+        <string id="continue">Continue</string>
+    </EventWindow>
+    <GameMenu>
+        <string id="items">Inventory</string>
+        <string id="spells">Spell Book</string>
+        <string id="character">Character Info</string>
+        <string id="quest">Quest Log</string>
+        <string id="friends">Friends</string>
+        <string id="party">Party</string>
+        <string id="options">Options</string>
+        <string id="exit">Exit Game</string>
+    </GameMenu>
+    <InputBox>
+        <string id="okay">Okay</string>
+        <string id="cancel">Cancel</string>
+        <string id="yes">Yes</string>
+        <string id="no">No</string>
+    </InputBox>
+    <Inventory>
+        <string id="title">Inventory</string>
+        <string id="dropitem">Drop Item</string>
+        <string id="dropitemprompt">How many/much {00} do you want to drop?</string>
+    </Inventory>
+    <ItemDesc>
+        <string id="quantity">x{00}</string>
+        <string id="itemtype0"></string>
+        <string id="itemtype1">Equipment</string>
+        <string id="itemtype2">Consumable</string>
+        <string id="itemtype3">Currency</string>
+        <string id="itemtype4">Spell</string>
+        <string id="itemtype5">Special</string>
+        <string id="itemtype6">Bag</string>
+        <string id="2hand">2H</string>
+        <string id="desc">Desc: {00}</string>
+        <string id="prereq">Prerequisites:</string>
+        <string id="bonuses">Stat Bonuses:</string>
+        <string id="damage">Base Damage: {00}</string>
+        <string id="effect">Bonus Effect: {00}% {01}</string>
+        <string id="effect0">Cooldown Reduction</string>
+        <string id="effect1">Lifesteal</string>
+        <string id="stat0">Attack: {00}</string>
+        <string id="stat1">Ability Power: {00}</string>
+        <string id="stat2">Defense: {00}</string>
+        <string id="stat3">Magic Resist: {00}</string>
+        <string id="stat4">Speed: {00}</string>
+    </ItemDesc>
+    <Login>
+        <string id="title">Login</string>
+        <string id="username">Username:</string>
+        <string id="password">Password:</string>
+        <string id="savepass">Save Password</string>
+        <string id="login">Login</string>
+        <string id="back">Back</string>
+    </Login>
+    <Credits>
+        <string id="title">Credits</string>
+        <string id="back"></string>
+    </Credits>
+    <MainMenu>
+        <string id="title">Main Menu</string>
+        <string id="login">Login</string>
+        <string id="register">Register</string>
+        <string id="credits">Credits</string>
+        <string id="exit">Exit</string>
+        <string id="options"></string>
+    </MainMenu>
+    <Shop>
+        <string id="sellitem">Sell Item</string>
+        <string id="sellitemprompt">How many/much {00} would you like to sell?</string>
+        <string id="buyitem">Buy Item</string>
+        <string id="buyitemprompt">How many/much {00} would you like to buy?</string>
+        <string id="cannotsell">This shop does not accept that item!</string>
+        <string id="sellsfor">Sells for {00} {01}(s)</string>
+        <string id="costs">Costs {00} {01}(s)</string>
+        <string id="wontbuy">Shop Will Not Buy This Item</string>
+    </Shop>
+    <Trading>
+        <string id="title">Trading with {00}</string>
+        <string id="youroffer">Your offer:</string>
+        <string id="theiroffer">Their offer:</string>
+        <string id="accept">Accept</string>
+        <string id="pending">Pending</string>
+        <string id="value">Value: {00}</string>
+        <string id="offeritem">Offer Item</string>
+        <string id="offeritemprompt">How many/much {00} would you like to offer?</string>
+        <string id="revokeitem">Revoke Item</string>
+        <string id="revokeitemprompt">How many/much {00} would you like to revoke?</string>
+        <string id="traderequest">Party Invite</string>
+        <string id="requestprompt">{00} has invited you to trade items with them. Do you accept?</string>
+    </Trading>
+    <Spells>
+        <string id="title">Spells</string>
+        <string id="forgetspell">Forget Spell</string>
+        <string id="forgetspellprompt">Are you sure you want to forget {00}?</string>
+    </Spells>
+    <SpellDesc>
+        <string id="spelltype0">Combat Spell</string>
+        <string id="spelltype1">Warp - Self Cast</string>
+        <string id="spelltype2">Warp - Self Cast</string>
+        <string id="spelltype3">Dash</string>
+        <string id="spelltype4">Event</string>
+        <string id="desc">Desc: {00}</string>
+        <string id="targettype0">Self Cast</string>
+        <string id="targettype1">Targetted - Range: {00} Tiles</string>
+        <string id="targettype2">AOE - Range: {00} Tiles - Radius: {01} Tiles</string>
+        <string id="targettype3">Projectile - Range: {00} Tiles</string>
+        <string id="casttime">Cast Time: {00} Seconds</string>
+        <string id="cooldowntime">Cooldown: {00} Seconds</string>
+        <string id="prereqs">Prerequisites:</string>
+        <string id="vital0cost">HP Cost: {00}</string>
+        <string id="vital1cost">MP Cost: {00}</string>
+        <string id="effects">Effects:</string>
+        <string id="effect1">Silences Target</string>
+        <string id="effect2">Stuns Target</string>
+        <string id="effect3">Snares Target</string>
+        <string id="effect4">Blinds Target</string>
+        <string id="effect5">Stealths Target</string>
+        <string id="effect6">Transforms Target</string>
+        <string id="vital0">HP: {00}{01}</string>
+        <string id="vital1">MP: {00}{01}</string>
+        <string id="addsymbol">+</string>
+        <string id="removesymbol">-</string>
+        <string id="duration">Duration: {00}s</string>
+    </SpellDesc>
+    <Options>
+        <string id="title">Options</string>
+        <string id="resolution">Resolution:</string>
+        <string id="targetfps">Target FPS:</string>
+        <string id="vsync">V-Sync</string>
+        <string id="30fps">30</string>
+        <string id="60fps">60</string>
+        <string id="90fps">90</string>
+        <string id="120fps">120</string>
+        <string id="unlimitedfps">No Limit</string>
+        <string id="fullscreen">Fullscreen</string>
+        <string id="soundvolume">Sound Volume: {00}%</string>
+        <string id="musicvolume">Music Volume: {00}%</string>
+        <string id="apply">Apply</string>
+        <string id="cancel">Cancel</string>
+    </Options>
+    <Controls>
+        <string id="Title">Controls</string>
+        <string id="Edit">Edit Controls</string>
+        <string id="Listening">Listening</string>
+        <string id="MoveUp">Up:</string>
+        <string id="MoveDown">Down:</string>
+        <string id="MoveLeft">Left:</string>
+        <string id="MoveRight">Right:</string>
+        <string id="AttackInteract">Attack/Interact:</string>
+        <string id="Block">Block:</string>
+        <string id="PickUp">Pick Up:</string>
+        <string id="Enter">Enter:</string>
+        <string id="Hotkey1">Hot Key 1:</string>
+        <string id="Hotkey2">Hot Key 2:</string>
+        <string id="Hotkey3">Hot Key 3:</string>
+        <string id="Hotkey4">Hot Key 4:</string>
+        <string id="Hotkey5">Hot Key 5:</string>
+        <string id="Hotkey6">Hot Key 6:</string>
+        <string id="Hotkey7">Hot Key 7:</string>
+        <string id="Hotkey8">Hot Key 8:</string>
+        <string id="Hotkey9">Hot Key 9:</string>
+        <string id="Hotkey0">Hot Key 0:</string>
+    </Controls>
+    <Keys>
+        <string id="None">None</string>
+        <string id="LButton">Left Mouse</string>
+        <string id="RButton">Right Mouse</string>
+        <string id="Cancel">Cancel</string>
+        <string id="MButton">Middle Mouse</string>
+        <string id="XButton1">XButton1</string>
+        <string id="XButton2">XButton2</string>
+        <string id="Back">Back</string>
+        <string id="Tab">Tab</string>
+        <string id="LineFeed">LineFeed</string>
+        <string id="Clear">Clear</string>
+        <string id="Return">Return</string>
+        <string id="Enter">Enter</string>
+        <string id="ShiftKey">ShiftKey</string>
+        <string id="ControlKey">ControlKey</string>
+        <string id="Menu">Menu</string>
+        <string id="Pause">Pause</string>
+        <string id="CapsLock">CapsLock</string>
+        <string id="Capital">Capital</string>
+        <string id="HanguelMode">HanguelMode</string>
+        <string id="HangulMode">HangulMode</string>
+        <string id="KanaMode">KanaMode</string>
+        <string id="JunjaMode">JunjaMode</string>
+        <string id="FinalMode">FinalMode</string>
+        <string id="KanjiMode">KanjiMode</string>
+        <string id="HanjaMode">HanjaMode</string>
+        <string id="Escape">Escape</string>
+        <string id="IMEConvert">IMEConvert</string>
+        <string id="IMENonconvert">IMENonconvert</string>
+        <string id="IMEAceept">IMEAceept</string>
+        <string id="IMEAccept">IMEAccept</string>
+        <string id="IMEModeChange">IMEModeChange</string>
+        <string id="Space">Space</string>
+        <string id="Prior">Prior</string>
+        <string id="PageUp">Page Up</string>
+        <string id="PageDown">Page Down</string>
+        <string id="Next">Next</string>
+        <string id="End">End</string>
+        <string id="Home">Home</string>
+        <string id="Left">Left</string>
+        <string id="Up">Up</string>
+        <string id="Right">Right</string>
+        <string id="Down">Down</string>
+        <string id="Select">Select</string>
+        <string id="Print">Print</string>
+        <string id="Execute">Execute</string>
+        <string id="Snapshot">Snapshot</string>
+        <string id="PrintScreen">PrintScreen</string>
+        <string id="Insert">Insert</string>
+        <string id="Delete">Delete</string>
+        <string id="Help">Help</string>
+        <string id="D0">0</string>
+        <string id="D1">1</string>
+        <string id="D2">2</string>
+        <string id="D3">3</string>
+        <string id="D4">4</string>
+        <string id="D5">5</string>
+        <string id="D6">6</string>
+        <string id="D7">7</string>
+        <string id="D8">8</string>
+        <string id="D9">9</string>
+        <string id="A">A</string>
+        <string id="B">B</string>
+        <string id="C">C</string>
+        <string id="D">D</string>
+        <string id="E">E</string>
+        <string id="F">F</string>
+        <string id="G">G</string>
+        <string id="H">H</string>
+        <string id="I">I</string>
+        <string id="J">J</string>
+        <string id="K">K</string>
+        <string id="L">L</string>
+        <string id="M">M</string>
+        <string id="N">N</string>
+        <string id="O">O</string>
+        <string id="P">P</string>
+        <string id="Q">Q</string>
+        <string id="R">R</string>
+        <string id="S">S</string>
+        <string id="T">T</string>
+        <string id="U">U</string>
+        <string id="V">V</string>
+        <string id="W">W</string>
+        <string id="X">X</string>
+        <string id="Y">Y</string>
+        <string id="Z">Z</string>
+        <string id="LWin">LWin</string>
+        <string id="RWin">RWin</string>
+        <string id="Apps">Apps</string>
+        <string id="Sleep">Sleep</string>
+        <string id="NumPad0">NumPad 0</string>
+        <string id="NumPad1">NumPad 1</string>
+        <string id="NumPad2">NumPad 2</string>
+        <string id="NumPad3">NumPad 3</string>
+        <string id="NumPad4">NumPad 4</string>
+        <string id="NumPad5">NumPad 5</string>
+        <string id="NumPad6">NumPad 6</string>
+        <string id="NumPad7">NumPad 7</string>
+        <string id="NumPad8">NumPad 8</string>
+        <string id="NumPad9">NumPad 9</string>
+        <string id="Multiply">Multiply</string>
+        <string id="Add">Add</string>
+        <string id="Separator">Separator</string>
+        <string id="Subtract">Subtract</string>
+        <string id="Decimal">Decimal</string>
+        <string id="Divide">Divide</string>
+        <string id="F1">F1</string>
+        <string id="F2">F2</string>
+        <string id="F3">F3</string>
+        <string id="F4">F4</string>
+        <string id="F5">F5</string>
+        <string id="F6">F6</string>
+        <string id="F7">F7</string>
+        <string id="F8">F8</string>
+        <string id="F9">F9</string>
+        <string id="F10">F10</string>
+        <string id="F11">F11</string>
+        <string id="F12">F12</string>
+        <string id="F13">F13</string>
+        <string id="F14">F14</string>
+        <string id="F15">F15</string>
+        <string id="F16">F16</string>
+        <string id="F17">F17</string>
+        <string id="F18">F18</string>
+        <string id="F19">F19</string>
+        <string id="F20">F20</string>
+        <string id="F21">F21</string>
+        <string id="F22">F22</string>
+        <string id="F23">F23</string>
+        <string id="F24">F24</string>
+        <string id="NumLock">NumLock</string>
+        <string id="Scroll">Scroll</string>
+        <string id="LShiftKey">L Shift</string>
+        <string id="RShiftKey">R Shift</string>
+        <string id="LControlKey">L Control</string>
+        <string id="RControlKey">R Control</string>
+        <string id="LMenu">L Menu</string>
+        <string id="RMenu">R Menu</string>
+        <string id="BrowserBack">BrowserBack</string>
+        <string id="BrowserForward">BrowserForward</string>
+        <string id="BrowserRefresh">BrowserRefresh</string>
+        <string id="BrowserStop">BrowserStop</string>
+        <string id="BrowserSearch">BrowserSearch</string>
+        <string id="BrowserFavorites">BrowserFavorites</string>
+        <string id="BrowserHome">BrowserHome</string>
+        <string id="VolumeMute">VolumeMute</string>
+        <string id="VolumeDown">VolumeDown</string>
+        <string id="VolumeUp">VolumeUp</string>
+        <string id="MediaNextTrack">MediaNextTrack</string>
+        <string id="MediaPreviousTrack">MediaPreviousTrack</string>
+        <string id="MediaStop">MediaStop</string>
+        <string id="MediaPlayPause">MediaPlayPause</string>
+        <string id="LaunchMail">LaunchMail</string>
+        <string id="SelectMedia">SelectMedia</string>
+        <string id="LaunchApplication1">LaunchApplication1</string>
+        <string id="LaunchApplication2">LaunchApplication2</string>
+        <string id="OemSemicolon">OemSemicolon</string>
+        <string id="Oem1">1</string>
+        <string id="Oemplus">+</string>
+        <string id="Oemcomma">,</string>
+        <string id="OemMinus">-</string>
+        <string id="OemPeriod">.</string>
+        <string id="OemQuestion">?</string>
+        <string id="Oem2">2</string>
+        <string id="Oemtilde">`</string>
+        <string id="Oem3">3</string>
+        <string id="OemOpenBrackets">[</string>
+        <string id="Oem4">4</string>
+        <string id="OemPipe">|</string>
+        <string id="Oem5">5</string>
+        <string id="Oem6">6</string>
+        <string id="OemCloseBrackets">]</string>
+        <string id="OemQuotes">'</string>
+        <string id="Oem7">7</string>
+        <string id="Oem8">8</string>
+        <string id="OemBackslash">\</string>
+        <string id="Oem102">0</string>
+        <string id="ProcessKey">ProcessKey</string>
+        <string id="Packet">Packet</string>
+        <string id="Attn">Attn</string>
+        <string id="Crsel">Crsel</string>
+        <string id="Exsel">Exsel</string>
+        <string id="EraseEof">EraseEof</string>
+        <string id="Play">Play</string>
+        <string id="Zoom">Zoom</string>
+        <string id="NoName">NoName</string>
+        <string id="Pa1">Pa1</string>
+        <string id="OemClear">OemClear</string>
+        <string id="KeyCode">KeyCode</string>
+        <string id="Shift">Shift</string>
+        <string id="Control">Control</string>
+        <string id="Alt">Alt</string>
+        <string id="Modifiers">Modifiers</string>
+    </Keys>
+    <Parties>
+        <string id="title">Party</string>
+        <string id="leader">Party Leader</string>
+        <string id="kick">Kick {00}</string>
+        <string id="leave">Leave Party</string>
+        <string id="partyinvite">Party Invite</string>
+        <string id="inviteprompt">{00} has invited you to their party. Do you accept?</string>
+    </Parties>
+    <Friends>
+        <string id="title">Friends</string>
+        <string id="removefriend">Remove Friend</string>
+        <string id="removefriendprompt">Do you wish to remove {00} from your friends list?</string>
+        <string id="request">Friend Request</string>
+        <string id="requestprompt">{00} has sent you a friend request. Do you accept?</string>
+    </Friends>
+    <QuestOffer>
+        <string id="title">Quest Offer</string>
+        <string id="accept">Accept</string>
+        <string id="decline">Decline</string>
+    </QuestOffer>
+    <QuestLog>
+        <string id="title">Quest Log</string>
+        <string id="abandon">Abandon</string>
+        <string id="abandontitle">Abandon Quest: {00}</string>
+        <string id="abandonprompt">Are you sure that you want to quit the quest "{00}"?</string>
+        <string id="notstarted">Quest Not Started</string>
+        <string id="inprogress">Quest In Progress</string>
+        <string id="completed">Quest Completed</string>
+        <string id="currenttask">Current Task:</string>
+        <string id="tasknpc">{00}/{01} {02}(s) slain.</string>
+        <string id="taskitem">{00}/{01} {02}(s) gathered.</string>
+    </QuestLog>
+    <Registration>
+        <string id="title">Register</string>
+        <string id="username">Username:</string>
+        <string id="email">Email:</string>
+        <string id="password">Password:</string>
+        <string id="confirmpass">Confirm Password:</string>
+        <string id="register">Register</string>
+        <string id="back">Back</string>
+        <string id="emailinvalid">Email is invalid.</string>
+        <string id="passwordmatch">Passwords didn't match!</string>
+    </Registration>
+    <CharacterSelection>
+        <string id="name">{00}</string>
+        <string id="empty">Empty Character Slot</string>
+        <string id="title">Select a Character</string>
+        <string id="info">Level {00} {01}</string>
+        <string id="play">Use</string>
+        <string id="delete">Delete</string>
+        <string id="new">New Character</string>
+        <string id="deletetitle">Delete {00}</string>
+        <string id="deleteprompt">Are you sure you want to delete {00}? This action is irreversible!</string>
+    </CharacterSelection>
+    <Resources>
+        <string id="failedtoload">Failed to load Resources!</string>
+        <string id="resourceexception">Failed to download client resources.\n\nException Info: {00}\n\nWould you like to try again?</string>
+        <string id="resourcesfatal">Failed to load resources from client directory and Ascension Game Dev server. Cannot launch game!</string>
+        <string id="cancelled">Download was Cancelled!</string>
+    </Resources>
+    <Regex>
+        <string id="email">^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|([a-zA-Z]+[\w-]+\.)+[a-zA-Z]{2,4})$</string>
+        <string id="username">^[a-zA-Z0-9]{2,20}$</string>
+        <string id="password">^[a-zA-Z0-9]{4,20}$</string>
+    </Regex>
+    <Errors>
+        <string id="title">Error!</string>
+        <string id="usernameinvalid">Username is invalid. Please use alphanumeric characters with a length between 2 and 20.</string>
+        <string id="passwordinvalid">Password is invalid. Please use alphanumeric characters with a length between 4 and 20.</string>
+        <string id="notconnected">Not connected to the game server. Is it online?</string>
+        <string id="notsupported">Not Supported!</string>
+        <string id="openglerror">This platform is not supported. Intersect requires OpenGL 3.0 compatible drivers, or either ARB_framebuffer_object or EXT_framebuffer_object extensions. Upgrading your graphic drivers may resolve this problem.</string>
+    </Errors>
+</Strings>

@@ -20,7 +20,7 @@ namespace Intersect.Editor.Classes.Maps
 
         public MapInstance(int mapNum) : base(mapNum, false)
         {
-            lock (GetMapLock())
+            lock (MapLock)
             {
                 Autotiles = new MapAutotiles(this);
             }
@@ -28,7 +28,7 @@ namespace Intersect.Editor.Classes.Maps
 
         public MapInstance(MapBase mapStruct) : base(mapStruct)
         {
-            lock (GetMapLock())
+            lock (MapLock)
             {
                 Autotiles = new MapAutotiles(this);
                 if (typeof(MapInstance) == mapStruct.GetType())
@@ -51,7 +51,7 @@ namespace Intersect.Editor.Classes.Maps
 
         public void Load(byte[] myArr, bool import = false)
         {
-            lock (GetMapLock())
+            lock (MapLock)
             {
                 var up = Up;
                 var down = Down;
@@ -72,7 +72,7 @@ namespace Intersect.Editor.Classes.Maps
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            lock (GetMapLock())
+            lock (MapLock)
             {
                 Layers = new TileArray[Options.LayerCount];
                 for (var i = 0; i < Options.LayerCount; i++)
@@ -271,7 +271,7 @@ namespace Intersect.Editor.Classes.Maps
 
         public void InitAutotiles()
         {
-            lock (GetMapLock())
+            lock (MapLock)
             {
                 Autotiles.InitAutotiles(GenerateAutotileGrid());
             }

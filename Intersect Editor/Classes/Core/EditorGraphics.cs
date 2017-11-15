@@ -198,7 +198,7 @@ namespace Intersect.Editor.Classes
                                     }
                                     if (map != null)
                                     {
-                                        lock (map.GetMapLock())
+                                        lock (map.MapLock)
                                         {
                                             //Draw this map
                                             DrawMap(map, x - Globals.CurrentMap.MapGridX,
@@ -231,7 +231,7 @@ namespace Intersect.Editor.Classes
                                     var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (map != null)
                                     {
-                                        lock (map.GetMapLock())
+                                        lock (map.MapLock)
                                         {
                                             DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
                                                 y - Globals.CurrentMap.MapGridY, false, null, false);
@@ -251,7 +251,7 @@ namespace Intersect.Editor.Classes
                                     var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (map != null)
                                     {
-                                        lock (map.GetMapLock())
+                                        lock (map.MapLock)
                                         {
                                             //Draw this map
                                             DrawMap(map, x - Globals.CurrentMap.MapGridX,
@@ -273,7 +273,7 @@ namespace Intersect.Editor.Classes
                                     var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                                     if (map != null)
                                     {
-                                        lock (map.GetMapLock())
+                                        lock (map.MapLock)
                                         {
                                             DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
                                                 y - Globals.CurrentMap.MapGridY, false, null, true);
@@ -1126,23 +1126,18 @@ namespace Intersect.Editor.Classes
             if (Globals.MapGrid.Contains(Globals.CurrentMap.Index))
             {
                 //Draw The lower maps
-                for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
+                for (var y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; ++y)
                 {
-                    for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                    for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; ++x)
                     {
-                        if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                        if (x < 0 || x >= Globals.MapGrid.GridWidth) continue;
+                        if (y < 0 || y >= Globals.MapGrid.GridHeight) continue;
+                        var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
+                        if (map == null) continue;
+                        lock (map.MapLock)
                         {
-                            var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
-                            if (map != null)
-                            {
-                                lock (map.GetMapLock())
-                                {
-                                    //Draw this map
-                                    DrawMap(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true,
-                                        0,
-                                        _screenShotRenderTexture);
-                                }
-                            }
+                            //Draw this map
+                            DrawMap(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true, 0, _screenShotRenderTexture);
                         }
                     }
                 }
@@ -1157,7 +1152,7 @@ namespace Intersect.Editor.Classes
                             var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                             if (map != null)
                             {
-                                lock (map.GetMapLock())
+                                lock (map.MapLock)
                                 {
                                     DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
                                         y - Globals.CurrentMap.MapGridY,
@@ -1178,7 +1173,7 @@ namespace Intersect.Editor.Classes
                             var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                             if (map != null)
                             {
-                                lock (map.GetMapLock())
+                                lock (map.MapLock)
                                 {
                                     //Draw this map
                                     DrawMap(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true,
@@ -1200,7 +1195,7 @@ namespace Intersect.Editor.Classes
                             var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
                             if (map != null)
                             {
-                                lock (map.GetMapLock())
+                                lock (map.MapLock)
                                 {
                                     DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
                                         y - Globals.CurrentMap.MapGridY,
@@ -1213,7 +1208,7 @@ namespace Intersect.Editor.Classes
             }
             else
             {
-                lock (Globals.CurrentMap.GetMapLock())
+                lock (Globals.CurrentMap.MapLock)
                 {
                     //Draw this map
                     DrawMap(Globals.CurrentMap, 0, 0, true, 0,

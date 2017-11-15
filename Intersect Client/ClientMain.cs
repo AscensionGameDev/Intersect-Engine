@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
-using System.Threading;
 
 namespace Intersect.Client
 {
@@ -20,7 +18,7 @@ namespace Intersect.Client
         ///     The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        public static void Main()
         {
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             CosturaUtility.Initialize();
@@ -28,25 +26,20 @@ namespace Intersect.Client
             ExportDependencies();
             Assembly.LoadFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MonoGame.Framework.Client.dll"));
 
-            // Get the type contained in the name string
-            Type type = Type.GetType("Intersect.Client.IntersectGame", true);
-
-            // create an instance of that type
-            object instance = Activator.CreateInstance(type);
-
             try
             {
-                Type[] prms = new Type[0];
-                var methodinfo = type.GetMethod("Run",prms);
-                methodinfo.Invoke(instance, null);
+                var type = Type.GetType("Intersect.Client.IntersectGame", true);
+                Debug.Assert(type != null, "type != null");
+                var instance = Activator.CreateInstance(type);
+                type.InvokeMember("Run", BindingFlags.InvokeMethod, null, instance, null);
             }
             catch (PlatformNotSupportedException)
             {
-                System.Windows.Forms.MessageBox.Show("OpenGL Initialialization Error! Try updating your graphics drivers!");
+                System.Windows.Forms.MessageBox.Show(@"OpenGL Initialialization Error! Try updating your graphics drivers!");
             }
         }
 
-        public static void ClearDlls()
+        private static void ClearDlls()
         {
             //Delete any files that exist
             DeleteIfExists("libopenal.so.1");
@@ -64,25 +57,27 @@ namespace Intersect.Client
         {
             try
             {
-                Process p = new Process();
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.RedirectStandardOutput = true;
-                p.StartInfo.FileName = name;
+                Debug.Assert(name != null, "name != null");
+                var p = new Process
+                {
+                    StartInfo =
+                    {
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        FileName = name
+                    }
+                };
                 p.Start();
                 // Do not wait for the child process to exit before
                 // reading to the end of its redirected stream.
                 // p.WaitForExit();
                 // Read the output stream first and then wait.
-                string output = p.StandardOutput.ReadToEnd();
+                var output = p.StandardOutput.ReadToEnd();
                 p.WaitForExit();
-                if (output == null) output = "";
                 output = output.Trim();
                 return output;
             }
-            catch
-            {
-                return "";
-            }
+            catch { return ""; }
         }
 
         private static void ExportDependencies()
@@ -120,6 +115,12 @@ namespace Intersect.Client
                     ExportDependency("MonoGame.Framework.dll.config", "", "MonoGame.Framework.Client.dll.config");
                     break;
 
+                case PlatformID.Unix:
+                    break;
+
+                case PlatformID.Xbox:
+                    break;
+
                 default:
                     ExportDependency("libopenal.so.1", folder);
                     ExportDependency("libSDL2-2.0.so.0", folder);
@@ -133,66 +134,65 @@ namespace Intersect.Client
 
         private static void ExportDependency(string filename, string folder, string nameoverride = null)
         {
-            if (!DeleteIfExists(string.IsNullOrEmpty(nameoverride) ? filename : nameoverride))
+            /* If it failed it means the file already exists and can't be deleted for whatever reason. */
+            var path = string.IsNullOrEmpty(nameoverride) ? filename : nameoverride;
+            if (!DeleteIfExists(path)) return;
+
+            Debug.Assert(filename != null, "filename != null");
+
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = $"Intersect.Client.Resources.{(string.IsNullOrEmpty(folder) ? "" : $"{folder}.")}{filename}";
+            if (assembly.GetManifestResourceNames().Contains(resourceName))
             {
-                /* If it failed it means the file already exists and can't be deleted for whatever reason. */
-                return;
-            }
-            var res = "Intersect.Client.Resources." + (string.IsNullOrEmpty(folder) ? "" : folder + ".") + filename;
-            if (Assembly.GetExecutingAssembly().GetManifestResourceNames().Contains(res))
-            {
-                Console.WriteLine("Resource: " + res);
-                var ass = Assembly.GetExecutingAssembly();
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(res))
+                Console.WriteLine($@"Resource: {resourceName}");
+                using (var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
-                    using (var fs = new FileStream(string.IsNullOrEmpty(nameoverride) ? filename : nameoverride, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                    Debug.Assert(resourceStream != null, "resourceStream != null");
+                    using (var fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                     {
-                        var data = new byte[stream.Length];
-                        stream.Read(data, 0, (int) stream.Length);
-                        fs.Write(data, 0, data.Length);
+                        var data = new byte[resourceStream.Length];
+                        resourceStream.Read(data, 0, (int)resourceStream.Length);
+                        fileStream.Write(data, 0, data.Length);
                     }
                 }
             }
             else
             {
-                ResourceSet resources = new ResourceSet(Assembly.GetExecutingAssembly()
-                    .GetManifestResourceStream("Intersect Client.g.resources"));
+                var resourceStream = assembly.GetManifestResourceStream("Intersect Client.g.resources");
+                Debug.Assert(resourceStream != null, "resourceStream != null");
+                var resources = new ResourceSet(resourceStream);
 
-                var path = "resources/" + folder + "/" + filename.Split(".".ToCharArray())[0].Split("-".ToCharArray())[0];
+                // TODO: JC, is there a reason you are doing ".".ToCharArray()?
+                path = "resources/" + folder + "/" + filename.Split(".".ToCharArray())[0]?.Split("-".ToCharArray())[0];
                 path = path.ToLower();
-                IDictionaryEnumerator enumerator =
-                    resources.GetEnumerator();
 
+                var enumerator = resources.GetEnumerator();
                 while (enumerator.MoveNext())
                 {
                     Console.WriteLine(enumerator.Key);
-                    if (enumerator.Key != null && enumerator.Key.ToString().Trim() == path.Trim())
+                    if (enumerator.Key == null || enumerator.Key.ToString().Trim() != path.Trim()) continue;
+                    using (var fs = new FileStream(string.IsNullOrEmpty(nameoverride) ? filename : nameoverride, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                     {
-                        using (var fs = new FileStream(string.IsNullOrEmpty(nameoverride) ? filename : nameoverride, FileMode.OpenOrCreate, FileAccess.ReadWrite))
-                        {
-                            var data = new byte[((System.IO.UnmanagedMemoryStream) enumerator.Value).Length];
-                            ((System.IO.UnmanagedMemoryStream) enumerator.Value).Read(data, 0,
-                                (int) ((System.IO.UnmanagedMemoryStream) enumerator.Value).Length);
-                            fs.Write(data, 0, data.Length);
-                        }
+                        var memoryStream = (UnmanagedMemoryStream) enumerator.Value;
+                        if (memoryStream == null) continue;
+                        var data = new byte[memoryStream.Length];
+                        memoryStream.Read(data, 0, (int) memoryStream.Length);
+                        fs.Write(data, 0, data.Length);
                     }
                 }
 
             }
         }
 
-        static bool DeleteIfExists(string filename)
+        private static bool DeleteIfExists(string filename)
         {
             try
             {
-                if (File.Exists(filename))
-                    File.Delete(filename);
+                Debug.Assert(filename != null, "filename != null");
+                if (File.Exists(filename)) File.Delete(filename);
                 return true;
             }
-            catch (Exception exception)
-            {
-                return false;
-            }
+            catch { return false; }
         }
     }
 #endif
