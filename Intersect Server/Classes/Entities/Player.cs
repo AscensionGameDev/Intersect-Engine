@@ -35,7 +35,7 @@ namespace Intersect.Server.Classes.Entities
         public ConcurrentDictionary<Tuple<int, int, int>, EventInstance> EventLookup = new ConcurrentDictionary<Tuple<int, int, int>, EventInstance>();
         private int EventCounter = 0;
         private int CommonEventLaunches = 0;
-        public long Experience;
+        public int Experience;
         public Player FriendRequester;
         public Dictionary<Player, long> FriendRequests = new Dictionary<Player, long>();
         public Dictionary<int, string> Friends = new Dictionary<int, string>();
@@ -464,7 +464,7 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
-        public void GiveExperience(long amount)
+        public void GiveExperience(int amount)
         {
             Experience += amount;
             if (!CheckLevelUp())
@@ -489,13 +489,13 @@ namespace Intersect.Server.Classes.Entities
             return false;
         }
 
-        public long GetExperienceToNextLevel()
+        public int GetExperienceToNextLevel()
         {
             if (Level >= Options.MaxLevel) return -1;
             var myclass = ClassBase.Lookup.Get<ClassBase>(Class);
             if (myclass != null)
             {
-                return (long)(myclass.BaseExp * Math.Pow(1 + (myclass.ExpIncrease / 100f) / 1, Level - 1));
+                return (int)(myclass.BaseExp * Math.Pow(1 + (myclass.ExpIncrease / 100f) / 1, Level - 1));
             }
             return 1000;
         }

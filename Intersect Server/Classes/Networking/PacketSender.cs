@@ -1144,8 +1144,8 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.Experience);
-            bf.WriteLong(client.Entity.Experience);
-            bf.WriteLong(client.Entity.GetExperienceToNextLevel());
+            bf.WriteInteger(client.Entity.Experience);
+            bf.WriteInteger(client.Entity.GetExperienceToNextLevel());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
