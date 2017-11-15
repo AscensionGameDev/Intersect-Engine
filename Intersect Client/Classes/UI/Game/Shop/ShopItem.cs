@@ -109,7 +109,7 @@ namespace Intersect.Client.Classes.UI.Game.Shop
             var item = ItemBase.Lookup.Get<ItemBase>(Globals.GameShop.SellingItems[_mySlot].CostItemNum);
             if (item != null)
                 _descWindow = new ItemDescWindow(Globals.GameShop.SellingItems[_mySlot].ItemNum, 1, _shopWindow.X - 255,
-                    _shopWindow.Y, null, "",
+                    _shopWindow.Y, item.StatsGiven, "",
                     Strings.Get("shop", "costs", Globals.GameShop.SellingItems[_mySlot].CostItemVal, item.Name));
         }
 
