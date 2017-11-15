@@ -446,7 +446,7 @@ namespace Intersect_Client.Classes.Networking
             }
             map = new MapInstance((int) mapNum);
             MapInstance.Lookup.Set(mapNum, map);
-            lock (map.GetMapLock())
+            lock (map.MapLock)
             {
                 map.Load(mapData);
                 map.LoadTileData(tileData);

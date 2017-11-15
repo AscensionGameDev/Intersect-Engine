@@ -36,7 +36,7 @@ namespace Intersect.GameObjects.Maps
 
         public MapBase(MapBase mapcopy) : base(mapcopy.Index)
         {
-            lock (GetMapLock())
+            lock (MapLock)
             {
                 ByteBuffer bf = new ByteBuffer();
                 Name = mapcopy.Name;
@@ -133,14 +133,11 @@ namespace Intersect.GameObjects.Maps
 
         public override byte[] BinaryData => GetMapData(false);
 
-        public object GetMapLock()
-        {
-            return _mapLock;
-        }
+        public object MapLock => _mapLock;
 
         public override void Load(byte[] packet)
         {
-            lock (GetMapLock())
+            lock (MapLock)
             {
                 var bf = new ByteBuffer();
                 bf.WriteBytes(packet);
