@@ -879,11 +879,7 @@ namespace Intersect.Server.Classes.Entities
                     }
                     else
                     {
-                        int itemIndex = MyPlayer.FindItem(command.Ints[1], command.Ints[2]);
-                        if (itemIndex > -1)
-                        {
-                            success = MyPlayer.TakeItemsBySlot(itemIndex, command.Ints[2]);
-                        }
+                        success = MyPlayer.TakeItemsByNum(command.Ints[1], command.Ints[2]);
                     }
                     if (success)
                     {

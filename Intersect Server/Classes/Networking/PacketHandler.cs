@@ -995,7 +995,7 @@ namespace Intersect.Server.Classes.Networking
                                 }
                                 else
                                 {
-                                    client.Entity.TakeItemsBySlot(item, projectileBase.AmmoRequired);
+                                    client.Entity.TakeItemsByNum(item, projectileBase.AmmoRequired);
                                 }
                             }
                             MapInstance.Lookup.Get<MapInstance>(client.Entity.CurrentMap)

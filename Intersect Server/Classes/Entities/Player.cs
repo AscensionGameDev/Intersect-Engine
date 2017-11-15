@@ -2511,7 +2511,7 @@ namespace Intersect.Server.Classes.Entities
                                     var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spell.Projectile);
                                     if (projectileBase != null && projectileBase.Ammo > -1)
                                     {
-                                        TakeItemsBySlot(FindItem(projectileBase.Ammo, projectileBase.AmmoRequired),
+                                        TakeItemsByNum(FindItem(projectileBase.Ammo, projectileBase.AmmoRequired),
                                             projectileBase.AmmoRequired);
                                     }
                                 }
