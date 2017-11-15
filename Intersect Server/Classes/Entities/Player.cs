@@ -2290,7 +2290,7 @@ namespace Intersect.Server.Classes.Entities
         }
 
         public void LeaveParty()
-        {
+        { 
             if (Party.Count > 0 && Party.Contains(this))
             {
                 var oldMember = this;

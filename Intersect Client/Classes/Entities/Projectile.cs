@@ -119,6 +119,12 @@ namespace Intersect_Client.Classes.Entities
                                 CurrentY + FindProjectileRotationY(Dir, x - 2, y - 2), CurrentZ, CurrentMap, animBase,
                                 _myBase.Animations[Spawn].AutoRotate, _myBase);
                             Spawns[_spawnedAmount] = s;
+                            if (Collided(_spawnedAmount))
+                            {
+                                Spawns[_spawnedAmount].Dispose();
+                                Spawns[_spawnedAmount] = null;
+                                _spawnCount--;
+                            }
                             _spawnedAmount++;
                             _spawnCount++;
                         }
@@ -424,50 +430,8 @@ namespace Intersect_Client.Classes.Entities
                                 }
                             }
 
-                            int tileBlocked =
-                                Globals.Me.IsTileBlocked(Spawns[i].X, Spawns[i].Y, CurrentZ, Spawns[i].Map);
-
-                            if (tileBlocked != -1)
-                            {
-                                if (tileBlocked >= 0 && Globals.Entities.ContainsKey(tileBlocked))
-                                {
-                                    if (Globals.Entities[tileBlocked].GetType() == typeof(Resource))
-                                    {
-                                        if ((((Resource) Globals.Entities[tileBlocked]).IsDead &&
-                                             !Spawns[i].ProjectileBase.IgnoreExhaustedResources) ||
-                                            (!((Resource) Globals.Entities[tileBlocked]).IsDead &&
-                                             !Spawns[i].ProjectileBase.IgnoreActiveResources))
-                                        {
-                                            killSpawn = true;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        killSpawn = true;
-                                    }
-                                }
-                                else
-                                {
-                                    if (tileBlocked == -2)
-                                    {
-                                        if (!Spawns[i].ProjectileBase.IgnoreMapBlocks)
-                                        {
-                                            killSpawn = true;
-                                        }
-                                    }
-                                    else if (tileBlocked == -3)
-                                    {
-                                        if (!Spawns[i].ProjectileBase.IgnoreZDimension)
-                                        {
-                                            killSpawn = true;
-                                        }
-                                    }
-                                    else if (tileBlocked == -5)
-                                    {
-                                        killSpawn = true;
-                                    }
-                                }
-                            }
+                            if (killSpawn == false) killSpawn = Collided(i);
+                            
                             Spawns[i].TransmittionTimer = Globals.System.GetTimeMS() +
                                                           (long) ((float) _myBase.Speed / (float) _myBase.Range);
                             if (Spawns[i].Distance >= _myBase.Range)
@@ -488,6 +452,56 @@ namespace Intersect_Client.Classes.Entities
             {
                 Globals.Entities[MyIndex].Dispose();
             }
+        }
+
+        private bool Collided(int i)
+        {
+            var killSpawn = false;
+            int tileBlocked =
+                Globals.Me.IsTileBlocked(Spawns[i].X, Spawns[i].Y, CurrentZ, Spawns[i].Map);
+
+            if (tileBlocked != -1)
+            {
+                if (tileBlocked >= 0 && Globals.Entities.ContainsKey(tileBlocked))
+                {
+                    if (Globals.Entities[tileBlocked].GetType() == typeof(Resource))
+                    {
+                        if ((((Resource)Globals.Entities[tileBlocked]).IsDead &&
+                             !Spawns[i].ProjectileBase.IgnoreExhaustedResources) ||
+                            (!((Resource)Globals.Entities[tileBlocked]).IsDead &&
+                             !Spawns[i].ProjectileBase.IgnoreActiveResources))
+                        {
+                            killSpawn = true;
+                        }
+                    }
+                    else
+                    {
+                        killSpawn = true;
+                    }
+                }
+                else
+                {
+                    if (tileBlocked == -2)
+                    {
+                        if (!Spawns[i].ProjectileBase.IgnoreMapBlocks)
+                        {
+                            killSpawn = true;
+                        }
+                    }
+                    else if (tileBlocked == -3)
+                    {
+                        if (!Spawns[i].ProjectileBase.IgnoreZDimension)
+                        {
+                            killSpawn = true;
+                        }
+                    }
+                    else if (tileBlocked == -5)
+                    {
+                        killSpawn = true;
+                    }
+                }
+            }
+            return killSpawn;
         }
 
         /// <summary>
