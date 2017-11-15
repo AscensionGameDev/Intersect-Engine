@@ -29,6 +29,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            // TODO: Change this to a long if we expand Ints, otherwise remove this
             _myCommand.Ints[0] = (int) nudExperience.Value;
             _eventEditor.FinishCommandEdit();
         }
