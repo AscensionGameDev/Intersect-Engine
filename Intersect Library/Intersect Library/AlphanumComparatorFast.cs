@@ -70,8 +70,10 @@ namespace Intersect
 
                 if (char.IsDigit(space1[0]) && char.IsDigit(space2[0]))
                 {
-                    int thisNumericChunk = int.Parse(str1);
-                    int thatNumericChunk = int.Parse(str2);
+                    int thisNumericChunk = 0;
+                    int thatNumericChunk = 0;
+                    int.TryParse(str1, out thisNumericChunk);
+                    int.TryParse(str2, out thatNumericChunk);
                     result = thisNumericChunk.CompareTo(thatNumericChunk);
                 }
                 else

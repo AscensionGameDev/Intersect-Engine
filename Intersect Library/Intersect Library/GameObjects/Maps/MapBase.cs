@@ -38,62 +38,65 @@ namespace Intersect.GameObjects.Maps
         {
             lock (MapLock)
             {
-                ByteBuffer bf = new ByteBuffer();
-                Name = mapcopy.Name;
-                Brightness = mapcopy.Brightness;
-                IsIndoors = mapcopy.IsIndoors;
-                if (Layers != null && mapcopy.Layers != null)
+                lock (mapcopy.MapLock)
                 {
-                    if (Layers.Length < Options.LayerCount) Layers = new TileArray[Options.LayerCount];
-                    for (var i = 0; i < Options.LayerCount; i++)
+                    ByteBuffer bf = new ByteBuffer();
+                    Name = mapcopy.Name;
+                    Brightness = mapcopy.Brightness;
+                    IsIndoors = mapcopy.IsIndoors;
+                    if (Layers != null && mapcopy.Layers != null)
                     {
-                        Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
-                        for (var x = 0; x < Options.MapWidth; x++)
+                        if (Layers.Length < Options.LayerCount) Layers = new TileArray[Options.LayerCount];
+                        for (var i = 0; i < Options.LayerCount; i++)
                         {
-                            for (var y = 0; y < Options.MapHeight; y++)
+                            Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
+                            for (var x = 0; x < Options.MapWidth; x++)
                             {
-                                Layers[i].Tiles[x, y] = new Tile
+                                for (var y = 0; y < Options.MapHeight; y++)
                                 {
-                                    TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex,
-                                    X = mapcopy.Layers[i].Tiles[x, y].X,
-                                    Y = mapcopy.Layers[i].Tiles[x, y].Y,
-                                    Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile
+                                    Layers[i].Tiles[x, y] = new Tile
+                                    {
+                                        TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex,
+                                        X = mapcopy.Layers[i].Tiles[x, y].X,
+                                        Y = mapcopy.Layers[i].Tiles[x, y].Y,
+                                        Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile
+                                    };
+                                }
+                            }
+                        }
+                    }
+                    for (var x = 0; x < Options.MapWidth; x++)
+                    {
+                        for (var y = 0; y < Options.MapHeight; y++)
+                        {
+                            if (mapcopy.Attributes[x, y] != null)
+                            {
+                                Attributes[x, y] = new Attribute
+                                {
+                                    value = mapcopy.Attributes[x, y].value,
+                                    data1 = mapcopy.Attributes[x, y].data1,
+                                    data2 = mapcopy.Attributes[x, y].data2,
+                                    data3 = mapcopy.Attributes[x, y].data3,
+                                    data4 = mapcopy.Attributes[x, y].data4
                                 };
                             }
                         }
                     }
-                }
-                for (var x = 0; x < Options.MapWidth; x++)
-                {
-                    for (var y = 0; y < Options.MapHeight; y++)
+                    for (var i = 0; i < mapcopy.Spawns.Count; i++)
                     {
-                        if (mapcopy.Attributes[x, y] != null)
-                        {
-                            Attributes[x, y] = new Attribute
-                            {
-                                value = mapcopy.Attributes[x, y].value,
-                                data1 = mapcopy.Attributes[x, y].data1,
-                                data2 = mapcopy.Attributes[x, y].data2,
-                                data3 = mapcopy.Attributes[x, y].data3,
-                                data4 = mapcopy.Attributes[x, y].data4
-                            };
-                        }
+                        Spawns.Add(new NpcSpawn(mapcopy.Spawns[i]));
                     }
-                }
-                for (var i = 0; i < mapcopy.Spawns.Count; i++)
-                {
-                    Spawns.Add(new NpcSpawn(mapcopy.Spawns[i]));
-                }
-                for (var i = 0; i < mapcopy.Lights.Count; i++)
-                {
-                    Lights.Add(new LightBase(mapcopy.Lights[i]));
-                }
-                EventIndex = mapcopy.EventIndex;
-                foreach (var evt in mapcopy.Events)
-                {
-                    bf.WriteBytes(evt.Value.EventData());
-                    Events.Add(evt.Key, new EventBase(evt.Key, bf));
-                    bf.Clear();
+                    for (var i = 0; i < mapcopy.Lights.Count; i++)
+                    {
+                        Lights.Add(new LightBase(mapcopy.Lights[i]));
+                    }
+                    EventIndex = mapcopy.EventIndex;
+                    foreach (var evt in mapcopy.Events)
+                    {
+                        bf.WriteBytes(evt.Value.EventData());
+                        Events.Add(evt.Key, new EventBase(evt.Key, bf));
+                        bf.Clear();
+                    }
                 }
             }
         }

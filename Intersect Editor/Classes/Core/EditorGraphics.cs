@@ -442,7 +442,13 @@ namespace Intersect.Editor.Classes
                     tmpMap = TilePreviewStruct;
                     if (TilePreviewUpdated || TilePreviewStruct == null)
                     {
-                        TilePreviewStruct = new MapInstance(Globals.CurrentMap);
+                        if (Globals.CurrentMap != null)
+                        {
+                            lock (Globals.CurrentMap.MapLock)
+                            {
+                                TilePreviewStruct = new MapInstance(Globals.CurrentMap);
+                            }
+                        }
                         //Lets Create the Preview
                         //Mimic Mouse Down
                         tmpMap = TilePreviewStruct;
