@@ -1195,7 +1195,7 @@ namespace Intersect_Client.Classes.Networking
                 int dir = bf.ReadInteger();
                 if (Globals.Entities.ContainsKey(entityIndex))
                 {
-                    if (Globals.Entities[entityIndex] != null)
+                    if (Globals.Entities[entityIndex] != null && !Globals.EntitiesToDispose.Contains(entityIndex))
                     {
                         var animBase = AnimationBase.Lookup.Get<AnimationBase>(animNum);
                         if (animBase != null)
