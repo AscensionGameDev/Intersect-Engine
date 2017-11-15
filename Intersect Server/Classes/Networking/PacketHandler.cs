@@ -321,6 +321,7 @@ namespace Intersect.Server.Classes.Networking
                                 if (user.MyAccount.ToLower() == client.MyAccount.ToLower() && user != client &&
                                     user.IsEditor == false)
                                 {
+                                    if (client.Entity != null) Database.SaveCharacter(client.Entity, false);
                                     user.Disconnect();
                                 }
                             }

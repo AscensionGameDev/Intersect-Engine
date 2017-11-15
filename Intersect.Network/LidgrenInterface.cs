@@ -64,13 +64,16 @@ namespace Intersect.Network
             mPeerConfiguration.DisableMessageType(NetIncomingMessageType.DebugMessage);
 #endif
 
-#if INTERSECT_DIAGNOSTIC
-            mPeerConfiguration.ConnectionTimeout = 60;
-            mPeerConfiguration.EnableMessageType(NetIncomingMessageType.VerboseDebugMessage);
-#else
-            mPeerConfiguration.ConnectionTimeout = 60;
-            mPeerConfiguration.DisableMessageType(NetIncomingMessageType.VerboseDebugMessage);
-#endif
+            if (Debugger.IsAttached)
+            {
+                mPeerConfiguration.ConnectionTimeout = 60;
+                mPeerConfiguration.EnableMessageType(NetIncomingMessageType.VerboseDebugMessage);
+            }
+            else
+            {
+                mPeerConfiguration.ConnectionTimeout = 5;
+                mPeerConfiguration.DisableMessageType(NetIncomingMessageType.VerboseDebugMessage);
+            }
 
             mPeerConfiguration.PingInterval = 2.5f;
             mPeerConfiguration.UseMessageRecycling = true;
