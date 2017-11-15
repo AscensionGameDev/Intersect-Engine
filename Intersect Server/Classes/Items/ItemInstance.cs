@@ -28,6 +28,7 @@ namespace Intersect.Server.Classes.Items
                     itemVal = 1;
                     for (int i = 0; i < (int) Stats.StatCount; i++)
                     {
+                        // TODO: What the fuck?
                         StatBoost[i] =
                             Globals.Rand.Next(-1 * ItemBase.Lookup.Get<ItemBase>(ItemNum).StatGrowth,
                                 ItemBase.Lookup.Get<ItemBase>(ItemNum).StatGrowth + 1);
