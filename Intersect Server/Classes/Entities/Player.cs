@@ -896,6 +896,7 @@ namespace Intersect.Server.Classes.Entities
                         switch (itemBase.Data1)
                         {
                             case 0: //Health
+                                AddVital(Vitals.Health, itemBase.Data2);
                                 if (s == Strings.Get("combat", "addsymbol"))
                                 {
                                     PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.Heal);
