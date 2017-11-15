@@ -49,7 +49,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Lidgren.Network, Version=3.6.0.1236, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Lidgren.Network, Version=3.7.0.768, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Lidgren.Network.dll</HintPath>
     </Reference>

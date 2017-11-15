@@ -2514,11 +2514,6 @@
             Creates a comma delimited string from a lite of items
             </summary>
         </member>
-        <member name="M:Lidgren.Network.NetUtility.GetMacAddressBytes">
-            <summary>
-            If available, returns the bytes of the physical (MAC) address for the first usable network interface
-            </summary>
-        </member>
         <member name="M:Lidgren.Network.NetUtility.GetMyAddress(System.Net.IPAddress@)">
             <summary>
             Gets my local IPv4 address (not necessarily external) and subnet mask
