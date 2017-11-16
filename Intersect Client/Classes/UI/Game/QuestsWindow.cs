@@ -291,6 +291,7 @@ namespace Intersect_Client.Classes.UI.Game
                                 _questStatus.SetTextColor(Color.Red, Label.ControlState.Normal);
                                 _questDescLabel.AddText(_selectedQuest.BeforeDesc, Color.White, Alignments.Left,
                                     _questDescTemplateLabel.Font);
+                                _quitButton?.Hide();
                             }
                         }
                     }
