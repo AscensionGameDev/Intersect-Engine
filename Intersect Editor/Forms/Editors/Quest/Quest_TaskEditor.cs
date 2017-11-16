@@ -32,7 +32,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
                     nudItemAmount.Value = _myTask.Data2;
                     break;
                 case 2: //Kill NPCS
-                    cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, _myTask.Data1);
+                    cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Npc, _myTask.Data1);
                     nudNpcQuantity.Value = _myTask.Data2;
                     break;
             }
