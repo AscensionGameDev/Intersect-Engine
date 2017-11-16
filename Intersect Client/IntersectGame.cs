@@ -125,7 +125,7 @@ namespace Intersect.Client
         {
             base.OnExiting(sender, args);
             GameNetwork.Close("quitting");
-            Environment.Exit(-1);
+            base.Dispose();
         }
     }
 }

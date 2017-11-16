@@ -74,7 +74,7 @@ namespace Intersect.Network
             }
             else
             {
-                mPeerConfiguration.ConnectionTimeout = 5;
+                mPeerConfiguration.ConnectionTimeout = 15;
                 mPeerConfiguration.DisableMessageType(NetIncomingMessageType.VerboseDebugMessage);
             }
 
@@ -307,7 +307,12 @@ namespace Intersect.Network
         {
             if (connections == null) return;
             foreach (var connection in connections)
+            {
                 (connection as LidgrenConnection)?.NetConnection?.Disconnect(message);
+                (connection as LidgrenConnection)?.NetConnection?.Peer.FlushSendQueue();
+                (connection as LidgrenConnection)?.NetConnection?.Peer.Shutdown(message);
+                (connection as LidgrenConnection)?.Dispose();
+            }
         }
 
         private NetIncomingMessage TryHandleInboundMessage()
@@ -337,8 +342,10 @@ namespace Intersect.Network
                         case NetConnectionStatus.ReceivedInitiation:
                         case NetConnectionStatus.RespondedAwaitingApproval:
                         case NetConnectionStatus.RespondedConnect:
-                        case NetConnectionStatus.Disconnecting:
                             Log.Diagnostic($"{message.MessageType}: {message} [{connection?.Status}]");
+                            break;
+                        case NetConnectionStatus.Disconnecting:
+                            Log.Debug($"{message.MessageType}: {message} [{connection?.Status}]");
                             break;
 
                         case NetConnectionStatus.Connected:
@@ -420,7 +427,7 @@ namespace Intersect.Network
                         case NetConnectionStatus.Disconnected:
                         {
                             Debug.Assert(connection != null, "connection != null");
-                            Log.Diagnostic($"{message.MessageType}: {message} [{connection.Status}]");
+                            Log.Debug($"{message.MessageType}: {message} [{connection.Status}]");
                             if (!mGuidLookup.TryGetValue(lidgrenId, out Guid guid))
                             {
                                 Log.Debug($"Unknown client disconnected ({lidgrenIdHex}).");
