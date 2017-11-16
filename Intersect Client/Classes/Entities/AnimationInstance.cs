@@ -27,10 +27,12 @@ namespace Intersect_Client.Classes.Entities
         private int upperLoop;
         private long upperTimer;
         private int ZDimension = -1;
+        private Entity _parent;
 
-        public AnimationInstance(AnimationBase animBase, bool loopForever, bool autoRotate = false, int zDimension = -1)
+        public AnimationInstance(AnimationBase animBase, bool loopForever, bool autoRotate = false, int zDimension = -1, Entity parent = null)
         {
             MyBase = animBase;
+            _parent = parent;
             if (MyBase != null)
             {
                 lowerLoop = animBase.LowerAnimLoopCount;
@@ -177,6 +179,15 @@ namespace Intersect_Client.Classes.Entities
         public void Show()
         {
             Hidden = false;
+        }
+
+        public bool ParentGone()
+        {
+            if (_parent != null && _parent.IsDisposed())
+            {
+                return true;
+            }
+            return false;
         }
 
         public void Dispose()

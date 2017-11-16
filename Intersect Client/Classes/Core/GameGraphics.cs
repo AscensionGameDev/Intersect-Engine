@@ -141,6 +141,19 @@ namespace Intersect_Client.Classes.Core
                 GridSwitched = false;
             }
 
+
+            lock (AnimationLock)
+            {
+                var animations = LiveAnimations.ToArray();
+                foreach (AnimationInstance animInstance in animations)
+                {
+                    if (animInstance.ParentGone())
+                    {
+                        animInstance.Dispose();
+                    }
+                }
+            }
+
             ClearDarknessTexture();
             TryPreRendering();
             FixAutotiles();

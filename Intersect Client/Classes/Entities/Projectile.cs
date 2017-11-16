@@ -117,7 +117,7 @@ namespace Intersect_Client.Classes.Entities
                             ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d),
                                 CurrentX + FindProjectileRotationX(Dir, x - 2, y - 2),
                                 CurrentY + FindProjectileRotationY(Dir, x - 2, y - 2), CurrentZ, CurrentMap, animBase,
-                                _myBase.Animations[Spawn].AutoRotate, _myBase);
+                                _myBase.Animations[Spawn].AutoRotate, _myBase,this);
                             Spawns[_spawnedAmount] = s;
                             if (Collided(_spawnedAmount))
                             {
@@ -546,7 +546,7 @@ namespace Intersect_Client.Classes.Entities
         public int Z;
 
         public ProjectileSpawns(int dir, int x, int y, int z, int map, AnimationBase animBase, bool autoRotate,
-            ProjectileBase projectileBase)
+            ProjectileBase projectileBase, Entity parent)
         {
             X = x;
             Y = y;
@@ -556,7 +556,7 @@ namespace Intersect_Client.Classes.Entities
             Map = map;
             SpawnMap = Map;
             Dir = dir;
-            Anim = new AnimationInstance(animBase, true, autoRotate, Z);
+            Anim = new AnimationInstance(animBase, true, autoRotate, Z,parent);
             AutoRotate = autoRotate;
             ProjectileBase = projectileBase;
             TransmittionTimer = Globals.System.GetTimeMS() +
