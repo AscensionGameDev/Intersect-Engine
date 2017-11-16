@@ -326,7 +326,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudQuantity.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudQuantity.Location = new System.Drawing.Point(12, 187);
             this.nudQuantity.Maximum = new decimal(new int[] {
-            5000,
+            2147483647,
             0,
             0,
             0});
