@@ -1201,7 +1201,7 @@ namespace Intersect_Client.Classes.Networking
                         if (animBase != null)
                         {
                             AnimationInstance animInstance = new AnimationInstance(animBase, false,
-                                dir == -1 ? false : true);
+                                dir == -1 ? false : true,-1,Globals.Entities[entityIndex]);
                             if (dir > -1) animInstance.SetDir(dir);
                             Globals.Entities[entityIndex].Animations.Add(animInstance);
                         }
@@ -1225,7 +1225,7 @@ namespace Intersect_Client.Classes.Networking
                             if (animBase != null)
                             {
                                 AnimationInstance animInstance = new AnimationInstance(animBase, false,
-                                    dir == -1 ? true : false);
+                                    dir == -1 ? true : false,-1,map.LocalEntities[entityIndex]);
                                 if (dir > -1) animInstance.SetDir(dir);
                                 map.LocalEntities[entityIndex].Animations.Add(animInstance);
                             }

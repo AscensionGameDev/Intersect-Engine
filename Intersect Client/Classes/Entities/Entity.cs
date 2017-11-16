@@ -277,7 +277,7 @@ namespace Intersect_Client.Classes.Entities
         {
             foreach (var anim in anims)
             {
-                Animations.Add(new AnimationInstance(anim,true));
+                Animations.Add(new AnimationInstance(anim,true,false,-1,this));
             }
         }
 
