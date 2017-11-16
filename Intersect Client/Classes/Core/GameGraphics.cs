@@ -117,7 +117,12 @@ namespace Intersect_Client.Classes.Core
         public static void DrawInGame()
         {
             var currentMap = Globals.Me.MapInstance;
-            if (currentMap == null || Globals.NeedsMaps) return;
+            if (currentMap == null) return;
+            if (Globals.NeedsMaps)
+            {
+                TryPreRendering(false);
+                return;
+            }
             if (GridSwitched)
             {
                 //Brightness
@@ -369,7 +374,7 @@ namespace Intersect_Client.Classes.Core
             Renderer.End();
         }
 
-        private static void TryPreRendering()
+        private static void TryPreRendering(bool takeItEasy = true)
         {
             if (Globals.Database.RenderCaching && Globals.Me != null && Globals.Me.MapInstance != null)
             {
@@ -385,7 +390,7 @@ namespace Intersect_Client.Classes.Core
                             var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
                             if (map != null && !map.MapRendered)
                             {
-                                if (!PreRenderedMapLayer)
+                                if (!PreRenderedMapLayer || !takeItEasy)
                                 {
                                     lock (map.MapLock)
                                     {

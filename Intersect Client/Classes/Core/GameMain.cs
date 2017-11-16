@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
@@ -164,7 +165,8 @@ namespace Intersect_Client.Classes.Core
                                 {
                                     lock (map.MapLock)
                                     {
-                                        map.PreRenderMap();
+                                        while (!map.MapRendered)
+                                            map.PreRenderMap();
                                     }
                                     return;
                                 }
@@ -184,34 +186,7 @@ namespace Intersect_Client.Classes.Core
         }
 
         private static void ProcessGame()
-        {
-            //Update All Entities
-            foreach (var en in Globals.Entities)
-            {
-                if (en.Value == null && en.Value != Globals.Me) continue;
-                en.Value.Update();
-            }
-            if (Globals.Me != null) Globals.Me.Update();
-
-            for (int i = 0; i < Globals.EntitiesToDispose.Count; i++)
-            {
-                if (Globals.Entities.ContainsKey(Globals.EntitiesToDispose[i]))
-                {
-                    if (Globals.EntitiesToDispose[i] == Globals.Me.MyIndex) continue;
-                    Globals.Entities[Globals.EntitiesToDispose[i]].Dispose();
-                    Globals.Entities.Remove(Globals.EntitiesToDispose[i]);
-                }
-            }
-            Globals.EntitiesToDispose.Clear();
-
-            //Update Maps
-            var maps = MapInstance.Lookup.Values.ToArray();
-            foreach (MapInstance map in maps)
-            {
-                if (map == null) continue;
-                map.Update(map.InView());
-            }
-
+        { 
             //If we are waiting on maps, lets see if we have them
             if (Globals.NeedsMaps)
             {
@@ -230,7 +205,7 @@ namespace Intersect_Client.Classes.Core
                                 var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
                                 if (map != null)
                                 {
-                                    if (map.MapLoaded == false)
+                                    if (map.MapLoaded == false || (Globals.Database.RenderCaching && map.MapRendered == false))
                                     {
                                         canShowWorld = false;
                                     }
@@ -273,6 +248,37 @@ namespace Intersect_Client.Classes.Core
                             }
                         }
                     }
+                }
+            }
+
+            if (!Globals.NeedsMaps)
+            {
+
+                //Update All Entities
+                foreach (var en in Globals.Entities)
+                {
+                    if (en.Value == null && en.Value != Globals.Me) continue;
+                    en.Value.Update();
+                }
+                if (Globals.Me != null) Globals.Me.Update();
+
+                for (int i = 0; i < Globals.EntitiesToDispose.Count; i++)
+                {
+                    if (Globals.Entities.ContainsKey(Globals.EntitiesToDispose[i]))
+                    {
+                        if (Globals.EntitiesToDispose[i] == Globals.Me.MyIndex) continue;
+                        Globals.Entities[Globals.EntitiesToDispose[i]].Dispose();
+                        Globals.Entities.Remove(Globals.EntitiesToDispose[i]);
+                    }
+                }
+                Globals.EntitiesToDispose.Clear();
+
+                //Update Maps
+                var maps = MapInstance.Lookup.Values.ToArray();
+                foreach (MapInstance map in maps)
+                {
+                    if (map == null) continue;
+                    map.Update(map.InView());
                 }
             }
 

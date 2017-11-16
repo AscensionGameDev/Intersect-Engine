@@ -1421,8 +1421,8 @@ namespace Intersect_Client.Classes.Networking
                 {
                     ((MapInstance) map.Value).Dispose();
                 }
-                Globals.NeedsMaps = true;
             }
+            Globals.NeedsMaps = true;
             Globals.GridMaps.Clear();
             for (int x = 0; x < Globals.MapGridWidth; x++)
             {

@@ -141,6 +141,7 @@ namespace Intersect_Client.Classes.Maps
             CreateMapSounds();
             MapRendered = false;
             OnMapLoaded += HandleMapLoaded;
+            if (MapRequests.ContainsKey(Index)) MapRequests.Remove(Index);
         }
 
         public void LoadTileData(byte[] packet)

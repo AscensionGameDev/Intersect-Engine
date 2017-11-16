@@ -402,7 +402,6 @@ namespace Intersect.Server.Classes.Networking
             if (map != null)
             {
                 PacketSender.SendMap(client, mapNum);
-                map.SendMapEntitiesTo(client.Entity);
                 if (!client.IsEditor && client.Entity != null && mapNum == client.Entity.CurrentMap)
                 {
                     PacketSender.SendMapGrid(client, MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid);
