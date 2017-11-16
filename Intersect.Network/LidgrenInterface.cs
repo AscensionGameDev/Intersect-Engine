@@ -58,11 +58,14 @@ namespace Intersect.Network
                 mPeerConfiguration.Port = configuration.Port;
             }
 
-#if DEBUG
-            mPeerConfiguration.EnableMessageType(NetIncomingMessageType.DebugMessage);
-#else
-            mPeerConfiguration.DisableMessageType(NetIncomingMessageType.DebugMessage);
-#endif
+            if (Debugger.IsAttached)
+            {
+                mPeerConfiguration.EnableMessageType(NetIncomingMessageType.DebugMessage);
+            }
+            else
+            {
+                mPeerConfiguration.DisableMessageType(NetIncomingMessageType.DebugMessage);
+            }
 
             if (Debugger.IsAttached)
             {
