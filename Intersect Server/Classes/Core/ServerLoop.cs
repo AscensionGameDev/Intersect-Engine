@@ -15,8 +15,10 @@ namespace Intersect.Server.Classes.Core
             long cps = 0;
             while (Globals.ServerStarted)
             {
+                //TODO: If there are no players online then loop slower and save the poor cpu
                 var timeMs = Globals.System.GetTimeMs();
                 var maps = MapInstance.Lookup.Values.ToArray();
+                //TODO: Could be optimized by keeping a list of active maps or something
                 foreach (MapInstance map in maps)
                 {
                     map.Update(timeMs);
