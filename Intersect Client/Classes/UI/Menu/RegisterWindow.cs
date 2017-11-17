@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect;
 using Intersect.Localization;
+using Intersect.Utilities;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.Misc;
 using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Menu
@@ -130,13 +131,13 @@ namespace Intersect_Client.Classes.UI.Menu
             }
             if (GameNetwork.Connected)
             {
-                if (FieldChecking.IsValidName(_usernameTextbox.Text))
+                if (FieldChecking.IsValidUsername(_usernameTextbox.Text))
                 {
                     if (_passwordTextbox.Text == _passwordTextbox2.Text)
                     {
-                        if (FieldChecking.IsValidPass(_passwordTextbox.Text))
+                        if (FieldChecking.IsValidPassword(_passwordTextbox.Text))
                         {
-                            if (FieldChecking.IsEmail(_emailTextbox.Text))
+                            if (FieldChecking.IsWellformedEmailAddress(_emailTextbox.Text))
                             {
                                 GameFade.FadeOut();
                                 Hide();

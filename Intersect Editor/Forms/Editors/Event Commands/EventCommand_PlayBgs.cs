@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Classes.Core;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -40,7 +41,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Strs[0] = cmbSound.Text;
+            _myCommand.Strs[0] = TextUtils.SanitizeNone(cmbSound?.Text);
             _eventEditor.FinishCommandEdit();
         }
 

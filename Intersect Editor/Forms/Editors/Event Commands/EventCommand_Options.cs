@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Classes.Core;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -56,14 +57,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void UpdateFacePreview()
         {
-            if (File.Exists("resources/faces/" + cmbFace.Text))
-            {
-                pnlFace.BackgroundImage = new Bitmap("resources/faces/" + cmbFace.Text);
-            }
-            else
-            {
-                pnlFace.BackgroundImage = null;
-            }
+            if (pnlFace == null) return;
+            pnlFace.BackgroundImage = File.Exists($"resources/faces/{cmbFace?.Text}")
+                    ? new Bitmap($"resources/faces/{cmbFace?.Text}")
+                    : null;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -73,7 +70,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             _myCommand.Strs[2] = txtShowOptionsOpt2.Text;
             _myCommand.Strs[3] = txtShowOptionsOpt3.Text;
             _myCommand.Strs[4] = txtShowOptionsOpt4.Text;
-            _myCommand.Strs[5] = cmbFace.Text;
+            _myCommand.Strs[5] = TextUtils.SanitizeNone(cmbFace.Text);
             if (_myCommand.Ints[0] == 0)
             {
                 for (var i = 0; i < 4; i++)

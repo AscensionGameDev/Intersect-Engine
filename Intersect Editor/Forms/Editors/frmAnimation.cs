@@ -10,6 +10,7 @@ using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
+using Intersect.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Editor.Forms
@@ -176,10 +177,10 @@ namespace Intersect.Editor.Forms
                 pnlContainer.Show();
 
                 txtName.Text = _editorItem.Name;
-                cmbSound.SelectedIndex = cmbSound.FindString(_editorItem.Sound);
+                cmbSound.SelectedIndex = cmbSound.FindString(TextUtils.NullToNone(_editorItem.Sound));
 
                 cmbLowerGraphic.SelectedIndex =
-                    cmbLowerGraphic.FindString(_editorItem.LowerAnimSprite);
+                    cmbLowerGraphic.FindString(TextUtils.NullToNone(_editorItem.LowerAnimSprite));
 
                 nudLowerHorizontalFrames.Value = _editorItem.LowerAnimXFrames;
                 nudLowerVerticalFrames.Value = _editorItem.LowerAnimYFrames;
@@ -191,7 +192,7 @@ namespace Intersect.Editor.Forms
                 nudLowerLoopCount.Value = _editorItem.LowerAnimLoopCount;
 
                 cmbUpperGraphic.SelectedIndex =
-                    cmbUpperGraphic.FindString(_editorItem.UpperAnimSprite);
+                    cmbUpperGraphic.FindString(TextUtils.NullToNone(_editorItem.UpperAnimSprite));
 
                 nudUpperHorizontalFrames.Value = _editorItem.UpperAnimXFrames;
                 nudUpperVerticalFrames.Value = _editorItem.UpperAnimYFrames;
@@ -231,17 +232,17 @@ namespace Intersect.Editor.Forms
 
         private void cmbSound_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Sound = cmbSound.Text;
+            _editorItem.Sound = TextUtils.SanitizeNone(cmbSound?.Text);
         }
 
         private void cmbLowerGraphic_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.LowerAnimSprite = cmbLowerGraphic.Text;
+            _editorItem.LowerAnimSprite = TextUtils.SanitizeNone(cmbLowerGraphic?.Text);
         }
 
         private void cmbUpperGraphic_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.UpperAnimSprite = cmbUpperGraphic.Text;
+            _editorItem.UpperAnimSprite = TextUtils.SanitizeNone(cmbUpperGraphic?.Text);
         }
 
         private void tmrLowerAnimation_Tick(object sender, EventArgs e)

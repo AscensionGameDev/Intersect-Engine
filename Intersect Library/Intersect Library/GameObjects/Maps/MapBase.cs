@@ -5,6 +5,7 @@ using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
 using Intersect.Models;
+using Intersect.Utilities;
 
 namespace Intersect.GameObjects.Maps
 {
@@ -240,11 +241,11 @@ namespace Intersect.GameObjects.Maps
             bf.WriteInteger(Down);
             bf.WriteInteger(Left);
             bf.WriteInteger(Right);
-            bf.WriteString(Music);
-            bf.WriteString(Sound);
+            bf.WriteString(TextUtils.SanitizeNone(Music));
+            bf.WriteString(TextUtils.SanitizeNone(Sound));
             bf.WriteInteger(Convert.ToInt32(IsIndoors));
-            bf.WriteString(Panorama);
-            bf.WriteString(Fog);
+            bf.WriteString(TextUtils.SanitizeNone(Panorama));
+            bf.WriteString(TextUtils.SanitizeNone(Fog));
             bf.WriteInteger(FogXSpeed);
             bf.WriteInteger(FogYSpeed);
             bf.WriteInteger(FogTransparency);
@@ -254,7 +255,7 @@ namespace Intersect.GameObjects.Maps
             bf.WriteInteger(AHue);
             bf.WriteInteger(Brightness);
             bf.WriteByte((byte) ZoneType);
-            bf.WriteString(OverlayGraphic);
+            bf.WriteString(TextUtils.SanitizeNone(OverlayGraphic));
             bf.WriteInteger(PlayerLightSize);
             bf.WriteDouble(PlayerLightExpand);
             bf.WriteByte(PlayerLightIntensity);

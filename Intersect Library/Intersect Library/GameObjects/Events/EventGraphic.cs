@@ -1,4 +1,6 @@
-﻿namespace Intersect.GameObjects.Events
+﻿using Intersect.Utilities;
+
+namespace Intersect.GameObjects.Events
 {
     public class EventGraphic
     {
@@ -32,7 +34,7 @@
         public void Save(ByteBuffer curBuffer)
         {
             curBuffer.WriteInteger(Type);
-            curBuffer.WriteString(Filename);
+            curBuffer.WriteString(TextUtils.SanitizeNone(Filename));
             curBuffer.WriteInteger(X);
             curBuffer.WriteInteger(Y);
             curBuffer.WriteInteger(Width);

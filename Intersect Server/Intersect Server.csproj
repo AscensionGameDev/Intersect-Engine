@@ -246,11 +246,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="FodyWeavers.xml" />
-    <EmbeddedResource Include="resources\sqlite3x86.dll" />
-    <EmbeddedResource Include="resources\sqlite3x64.dll" />
+    <EmbeddedResource Include="Resources\sqlite3x86.dll" />
+    <EmbeddedResource Include="Resources\sqlite3x64.dll" />
     <Content Include="Icon.ico" />
-    <None Include="resources\config.xml" />
-    <None Include="resources\formulas.xml" />
+    <None Include="Resources\config.xml" />
+    <None Include="Resources\formulas.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
