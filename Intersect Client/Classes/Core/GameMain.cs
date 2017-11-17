@@ -166,7 +166,8 @@ namespace Intersect_Client.Classes.Core
                                     lock (map.MapLock)
                                     {
                                         while (!map.MapRendered)
-                                            map.PreRenderMap();
+                                            if (!map.PreRenderMap())
+                                                break;
                                     }
                                     return;
                                 }

@@ -394,7 +394,7 @@ namespace Intersect_Client.Classes.Core
                                 {
                                     lock (map.MapLock)
                                     {
-                                        map.PreRenderMap();
+                                        if (!map.PreRenderMap()) return;
                                     }
                                 }
                             }
