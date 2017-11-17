@@ -1,8 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
-using System.Reflection;
+using Intersect.Logging;
+using Intersect.Utilities;
 
 // TODO: Move or change the namespace?
 // ReSharper disable once CheckNamespace
@@ -16,15 +16,10 @@ namespace Intersect.Server.Classes
             
             //Place sqlite3.dll where it's needed.
             var dllname = Environment.Is64BitProcess? "sqlite3x64.dll" : "sqlite3x86.dll";
-            using (var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Intersect.Server.resources." + dllname))
+            if (!ReflectionUtils.ExtractResource($"Intersect.Server.Resources.{dllname}", "sqlite3.dll"))
             {
-                Debug.Assert(resourceStream != null, "resourceStream != null");
-                using (var fileStream = new FileStream("sqlite3.dll", FileMode.OpenOrCreate, FileAccess.ReadWrite))
-                {
-                    var data = new byte[resourceStream.Length];
-                    resourceStream.Read(data, 0, (int)resourceStream.Length);
-                    fileStream.Write(data,0,data.Length);
-                }
+                Log.Error("Failed to extract sqlite library, terminating startup.");
+                Environment.Exit(-0x1000);
             }
 
             Type.GetType("Intersect.Server.Classes.ServerStart")?.GetMethod("Start")?.Invoke(null, new object[]{args});

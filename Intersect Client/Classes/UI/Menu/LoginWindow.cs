@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using Intersect;
 using Intersect.Localization;
+using Intersect.Utilities;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using IntersectClientExtras.Input;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.Misc;
 using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Menu
@@ -149,7 +150,7 @@ namespace Intersect_Client.Classes.UI.Menu
             }
             if (GameNetwork.Connected)
             {
-                if (FieldChecking.IsValidName(_usernameTextbox.Text))
+                if (FieldChecking.IsValidUsername(_usernameTextbox.Text))
                 {
                     if (_useSavedPass)
                     {
@@ -160,7 +161,7 @@ namespace Intersect_Client.Classes.UI.Menu
                     }
                     else
                     {
-                        if (FieldChecking.IsValidPass(_passwordTextbox.Text))
+                        if (FieldChecking.IsValidPassword(_passwordTextbox.Text))
                         {
                             GameFade.FadeOut();
                             PacketSender.SendLogin(_usernameTextbox.Text,
