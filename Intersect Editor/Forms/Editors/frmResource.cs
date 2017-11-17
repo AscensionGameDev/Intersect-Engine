@@ -9,6 +9,7 @@ using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Classes
 {
@@ -168,9 +169,8 @@ namespace Intersect.Editor.Classes
                 nudMaxHp.Value = _editorItem.MaxHP;
                 chkWalkableBefore.Checked = _editorItem.WalkableBefore;
                 chkWalkableAfter.Checked = _editorItem.WalkableAfter;
-                cmbInitialSprite.SelectedIndex =
-                    cmbInitialSprite.FindString(_editorItem.InitialGraphic);
-                cmbEndSprite.SelectedIndex = cmbEndSprite.FindString(_editorItem.EndGraphic);
+                cmbInitialSprite.SelectedIndex = cmbInitialSprite.FindString(TextUtils.NullToNone(TextUtils.NullToNone(_editorItem.InitialGraphic)));
+                cmbEndSprite.SelectedIndex = cmbEndSprite.FindString(TextUtils.NullToNone(TextUtils.NullToNone(_editorItem.EndGraphic)));
                 nudDropIndex.Value = 1;
                 UpdateDropValues();
                 Render();
@@ -240,7 +240,7 @@ namespace Intersect.Editor.Classes
             }
             else
             {
-                _editorItem.InitialGraphic = Strings.Get("general", "none");
+                _editorItem.InitialGraphic = null;
                 _initialTileset = null;
             }
             Render();
@@ -265,7 +265,7 @@ namespace Intersect.Editor.Classes
             }
             else
             {
-                _editorItem.EndGraphic = Strings.Get("general", "none");
+                _editorItem.EndGraphic = null;
                 _endTileset = null;
             }
             Render();

@@ -10,6 +10,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
+using Intersect.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -483,7 +484,7 @@ namespace Intersect.Editor.Forms
                 tmpMap.Attributes[x, y].data1 = (int) nudSoundDistance.Value;
                 tmpMap.Attributes[x, y].data2 = 0;
                 tmpMap.Attributes[x, y].data3 = 0;
-                tmpMap.Attributes[x, y].data4 = cmbMapAttributeSound.Text;
+                tmpMap.Attributes[x, y].data4 = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
             }
             else if (rbResource.Checked == true)
             {

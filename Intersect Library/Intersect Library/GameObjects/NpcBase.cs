@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Intersect.Enums;
 using Intersect.Models;
+using Intersect.Utilities;
 
 namespace Intersect.GameObjects
 {
@@ -61,7 +62,7 @@ namespace Intersect.GameObjects
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
             Name = myBuffer.ReadString();
-            Sprite = myBuffer.ReadString();
+            Sprite = TextUtils.SanitizeNone(myBuffer.ReadString());
             Level = myBuffer.ReadInteger();
             for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {

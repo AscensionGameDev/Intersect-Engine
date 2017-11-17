@@ -1,6 +1,7 @@
 ﻿using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
 using Intersect.Models;
+using Intersect.Utilities;
 
 namespace Intersect.GameObjects
 {
@@ -121,7 +122,7 @@ namespace Intersect.GameObjects
             myBuffer.WriteString(Desc);
             myBuffer.WriteByte(SpellType);
             myBuffer.WriteInteger(Cost);
-            myBuffer.WriteString(Pic);
+            myBuffer.WriteString(TextUtils.SanitizeNone(Pic));
 
             myBuffer.WriteInteger(CastDuration);
             myBuffer.WriteInteger(CooldownDuration);
@@ -161,7 +162,7 @@ namespace Intersect.GameObjects
             myBuffer.WriteInteger(Data2);
             myBuffer.WriteInteger(Data3);
             myBuffer.WriteInteger(Data4);
-            myBuffer.WriteString(Data5);
+            myBuffer.WriteString(TextUtils.SanitizeNone(Data5));
             return myBuffer.ToArray();
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Intersect.GameObjects.Conditions;
 using Intersect.Localization;
 using Intersect.Models;
+using Intersect.Utilities;
 
 namespace Intersect.GameObjects
 {
@@ -70,8 +71,8 @@ namespace Intersect.GameObjects
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
-            myBuffer.WriteString(InitialGraphic);
-            myBuffer.WriteString(EndGraphic);
+            myBuffer.WriteString(TextUtils.SanitizeNone(InitialGraphic));
+            myBuffer.WriteString(TextUtils.SanitizeNone(EndGraphic));
             myBuffer.WriteInteger(MinHP);
             myBuffer.WriteInteger(MaxHP);
             myBuffer.WriteInteger(Tool);

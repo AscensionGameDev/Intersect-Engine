@@ -8,6 +8,7 @@ using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms
 {
@@ -232,7 +233,7 @@ namespace Intersect.Editor.Forms
                 txtName.Text = _editorItem.Name;
                 txtDesc.Text = _editorItem.Desc;
                 cmbType.SelectedIndex = _editorItem.ItemType;
-                cmbPic.SelectedIndex = cmbPic.FindString(_editorItem.Pic);
+                cmbPic.SelectedIndex = cmbPic.FindString(TextUtils.NullToNone(_editorItem.Pic));
                 nudPrice.Value = _editorItem.Price;
                 nudStr.Value = _editorItem.StatsGiven[0];
                 nudMag.Value = _editorItem.StatsGiven[1];
@@ -253,8 +254,8 @@ namespace Intersect.Editor.Forms
                     cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
                 nudEffectPercent.Value = _editorItem.Data3;
                 chk2Hand.Checked = Convert.ToBoolean(_editorItem.Data4);
-                cmbMalePaperdoll.SelectedIndex = cmbMalePaperdoll.FindString(_editorItem.MalePaperdoll);
-                cmbFemalePaperdoll.SelectedIndex = cmbFemalePaperdoll.FindString(_editorItem.FemalePaperdoll);
+                cmbMalePaperdoll.SelectedIndex = cmbMalePaperdoll.FindString(TextUtils.NullToNone(_editorItem.MalePaperdoll));
+                cmbFemalePaperdoll.SelectedIndex = cmbFemalePaperdoll.FindString(TextUtils.NullToNone(_editorItem.FemalePaperdoll));
                 if (_editorItem.ItemType == (int) ItemTypes.Consumable)
                 {
                     cmbConsume.SelectedIndex = _editorItem.Data1;
@@ -384,7 +385,7 @@ namespace Intersect.Editor.Forms
 
         private void cmbPic_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Pic = cmbPic.SelectedIndex < 1 ? "" : cmbPic.Text;
+            _editorItem.Pic = cmbPic.SelectedIndex < 1 ? null : cmbPic.Text;
             if (cmbPic.SelectedIndex > 0)
             {
                 picItem.BackgroundImage = System.Drawing.Image.FromFile("resources/items/" + cmbPic.Text);
@@ -402,7 +403,7 @@ namespace Intersect.Editor.Forms
 
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.MalePaperdoll = cmbMalePaperdoll.SelectedIndex < 1 ? "" : cmbMalePaperdoll.Text;
+            _editorItem.MalePaperdoll = TextUtils.SanitizeNone(cmbMalePaperdoll.Text);
             if (cmbMalePaperdoll.SelectedIndex > 0)
             {
                 picMalePaperdoll.BackgroundImage =
@@ -459,7 +460,7 @@ namespace Intersect.Editor.Forms
 
         private void cmbFemalePaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.FemalePaperdoll = cmbMalePaperdoll.SelectedIndex < 1 ? "" : cmbFemalePaperdoll.Text;
+            _editorItem.FemalePaperdoll = TextUtils.SanitizeNone(cmbFemalePaperdoll.Text);
             if (cmbFemalePaperdoll.SelectedIndex > 0)
             {
                 picFemalePaperdoll.BackgroundImage =

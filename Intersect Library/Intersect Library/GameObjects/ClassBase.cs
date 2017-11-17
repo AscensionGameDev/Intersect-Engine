@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Intersect.Enums;
 using Intersect.Models;
+using Intersect.Utilities;
 
 namespace Intersect.GameObjects
 {
@@ -180,8 +181,8 @@ namespace Intersect.GameObjects
             myBuffer.WriteInteger(Sprites.Count);
             for (var i = 0; i < Sprites.Count; i++)
             {
-                myBuffer.WriteString(Sprites[i].Sprite);
-                myBuffer.WriteString(Sprites[i].Face);
+                myBuffer.WriteString(TextUtils.SanitizeNone(Sprites[i].Sprite));
+                myBuffer.WriteString(TextUtils.SanitizeNone(Sprites[i].Face));
                 myBuffer.WriteByte(Sprites[i].Gender);
             }
 

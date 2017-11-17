@@ -9,6 +9,7 @@ using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms
 {
@@ -186,7 +187,7 @@ namespace Intersect.Editor.Forms
 
                 txtName.Text = _editorItem.Name;
                 cmbBehavior.SelectedIndex = Math.Min(_editorItem.Behavior,cmbBehavior.Items.Count-1);
-                cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Sprite);
+                cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(_editorItem.Sprite));
                 nudLevel.Value = _editorItem.Level;
                 nudSightRange.Value = _editorItem.SightRange;
                 nudSpawnDuration.Value = _editorItem.SpawnDuration;
@@ -276,14 +277,7 @@ namespace Intersect.Editor.Forms
 
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbSprite.SelectedIndex > 0)
-            {
-                _editorItem.Sprite = cmbSprite.Text;
-            }
-            else
-            {
-                _editorItem.Sprite = "";
-            }
+            _editorItem.Sprite = TextUtils.SanitizeNone(cmbSprite.Text);
             DrawNpcSprite();
         }
 
