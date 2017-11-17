@@ -677,40 +677,31 @@ namespace Intersect_Client.Classes.Maps
         }
 
         //Map Caching (Only used if Options.RenderCaching is true)
-        public void PreRenderMap()
+        public bool PreRenderMap()
         {
-            if (!Globals.HasGameData) return;
+            if (!Globals.HasGameData) return false;
             GameGraphics.PreRenderedMapLayer = true;
             if (_preRenderStage < 3)
             {
                 int i = _preRenderStage;
                 if (LowerTextures[i] == null)
                 {
-                    while (!GameGraphics.GetMapTexture(ref LowerTextures[i]))
-                    {
-                        Thread.Sleep(10);
-                    }
+                    if (!GameGraphics.GetMapTexture(ref LowerTextures[i])) return false;
                 }
                 if (UpperTextures[i] == null)
                 {
-                    while (!GameGraphics.GetMapTexture(ref UpperTextures[i]))
-                    {
-                        Thread.Sleep(10);
-                    }
+                    if (!GameGraphics.GetMapTexture(ref UpperTextures[i])) return false;
                 }
                 if (PeakTextures[i] == null)
                 {
-                    while (!GameGraphics.GetMapTexture(ref PeakTextures[i]))
-                    {
-                        Thread.Sleep(10);
-                    }
+                    if (!GameGraphics.GetMapTexture(ref PeakTextures[i])) return false;
                 }
                 LowerTextures[i].Clear(Color.Transparent);
                 UpperTextures[i].Clear(Color.Transparent);
                 PeakTextures[i].Clear(Color.Transparent);
 
                 _preRenderStage++;
-                return;
+                return true;
             }
             else if (_preRenderStage >= 3 && _preRenderStage < 6)
             {
@@ -722,14 +713,14 @@ namespace Intersect_Client.Classes.Maps
                     LowerTextures[i].Begin();
                     DrawMapLayer(LowerTextures[i], l, i);
                     LowerTextures[i].End();
-                    return;
+                    return true;
                 }
                 else if (l == 3)
                 {
                     UpperTextures[i].Begin();
                     DrawMapLayer(UpperTextures[i], l, i);
                     UpperTextures[i].End();
-                    return;
+                    return true;
                 }
                 else
                 {
@@ -738,11 +729,12 @@ namespace Intersect_Client.Classes.Maps
                     PeakTextures[i].End();
                     _preRenderStage++;
                     _preRenderLayer = 0;
-                    return;
+                    return true;
                 }
             }
 
             MapRendered = true;
+            return true;
         }
 
         //Fogs/Panorama/Overlay
