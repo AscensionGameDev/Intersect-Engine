@@ -12,6 +12,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Localization;
 using Intersect.Logging;
+using Intersect.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using static Intersect.Editor.Classes.Core.GameContentManager;
@@ -1059,7 +1060,7 @@ namespace Intersect.Editor.Classes
                             var resource = ResourceBase.Lookup.Get<ResourceBase>(tmpMap.Attributes[x, y].data1);
                             if (resource != null)
                             {
-                                if (resource.Name != "" & resource.InitialGraphic != Strings.Get("general", "none"))
+                                if (resource.Name != "" & TextUtils.IsNone(resource.InitialGraphic))
                                 {
                                     Texture2D res = GetTexture(TextureType.Resource, resource.InitialGraphic);
                                     if (res != null)
@@ -1277,50 +1278,46 @@ namespace Intersect.Editor.Classes
         {
             float ecTime = Globals.System.GetTimeMs() - _fogUpdateTime;
             _fogUpdateTime = Globals.System.GetTimeMs();
-            if (Globals.CurrentMap.Fog.Length > 0)
+            if (string.IsNullOrWhiteSpace(Globals.CurrentMap.Fog)) return;
+            var fogTex = GetTexture(TextureType.Fog, Globals.CurrentMap.Fog);
+            if (fogTex == null) return;
+            var xCount = Globals.MapEditorWindow.picMap.Width / fogTex.Width + 1;
+            var yCount = Globals.MapEditorWindow.picMap.Height / fogTex.Height + 1;
+
+            _fogCurrentX += (ecTime / 1000f) * Globals.CurrentMap.FogXSpeed * 2;
+            _fogCurrentY += (ecTime / 1000f) * Globals.CurrentMap.FogYSpeed * 2;
+
+            if (_fogCurrentX < fogTex.Width)
             {
-                Texture2D fogTex = GetTexture(TextureType.Fog, Globals.CurrentMap.Fog);
-                if (fogTex != null)
+                _fogCurrentX += fogTex.Width;
+            }
+            if (_fogCurrentX > fogTex.Width)
+            {
+                _fogCurrentX -= fogTex.Width;
+            }
+            if (_fogCurrentY < fogTex.Height)
+            {
+                _fogCurrentY += fogTex.Height;
+            }
+            if (_fogCurrentY > fogTex.Height)
+            {
+                _fogCurrentY -= fogTex.Height;
+            }
+
+            var drawX = (float) Math.Round(_fogCurrentX);
+            var drawY = (float) Math.Round(_fogCurrentY);
+
+            for (var x = -1; x < xCount; x++)
+            {
+                for (var y = -1; y < yCount; y++)
                 {
-                    int xCount = (int) (Globals.MapEditorWindow.picMap.Width / fogTex.Width) + 1;
-                    int yCount = (int) (Globals.MapEditorWindow.picMap.Height / fogTex.Height) + 1;
-
-                    _fogCurrentX += (ecTime / 1000f) * Globals.CurrentMap.FogXSpeed * 2;
-                    _fogCurrentY += (ecTime / 1000f) * Globals.CurrentMap.FogYSpeed * 2;
-
-                    if (_fogCurrentX < fogTex.Width)
-                    {
-                        _fogCurrentX += fogTex.Width;
-                    }
-                    if (_fogCurrentX > fogTex.Width)
-                    {
-                        _fogCurrentX -= fogTex.Width;
-                    }
-                    if (_fogCurrentY < fogTex.Height)
-                    {
-                        _fogCurrentY += fogTex.Height;
-                    }
-                    if (_fogCurrentY > fogTex.Height)
-                    {
-                        _fogCurrentY -= fogTex.Height;
-                    }
-
-                    var drawX = (float) Math.Round(_fogCurrentX);
-                    var drawY = (float) Math.Round(_fogCurrentY);
-
-                    for (int x = -1; x < xCount; x++)
-                    {
-                        for (int y = -1; y < yCount; y++)
-                        {
-                            DrawTexture(fogTex,
-                                new RectangleF(0, 0, fogTex.Width, fogTex.Height),
-                                new RectangleF(x * fogTex.Width + drawX,
-                                    y * fogTex.Height + drawY, fogTex.Width,
-                                    fogTex.Height),
-                                System.Drawing.Color.FromArgb(Globals.CurrentMap.FogTransparency, 255, 255, 255),
-                                target);
-                        }
-                    }
+                    DrawTexture(fogTex,
+                        new RectangleF(0, 0, fogTex.Width, fogTex.Height),
+                        new RectangleF(x * fogTex.Width + drawX,
+                            y * fogTex.Height + drawY, fogTex.Width,
+                            fogTex.Height),
+                        System.Drawing.Color.FromArgb(Globals.CurrentMap.FogTransparency, 255, 255, 255),
+                        target);
                 }
             }
         }

@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Windows.Forms;
 using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
-using Intersect.Localization;
+using Intersect.Utilities;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
@@ -17,7 +15,6 @@ using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
-using Microsoft.Xna.Framework.Graphics;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.Maps
@@ -172,7 +169,7 @@ namespace Intersect_Client.Classes.Maps
             if (isLocal)
             {
                 _lastUpdateTime = Globals.System.GetTimeMS() + 10000;
-                if (BackgroundSound == null && Sound != Strings.Get("general", "none") && Sound != "")
+                if (BackgroundSound == null && !TextUtils.IsNone(Sound))
                 {
                     BackgroundSound = GameAudio.AddMapSound(Sound, -1, -1, Index, true, 10);
                 }
@@ -303,74 +300,58 @@ namespace Intersect_Client.Classes.Maps
         private void CreateMapSounds()
         {
             ClearAttributeSounds();
-            for (int x = 0; x < Options.MapWidth; x++)
+            for (var x = 0; x < Options.MapWidth; ++x)
             {
-                for (int y = 0; y < Options.MapHeight; y++)
+                for (var y = 0; y < Options.MapHeight; ++y)
                 {
-                    if (Attributes[x, y] != null)
-                    {
-                        if (Attributes[x, y].value == (int) MapAttributes.Sound)
-                        {
-                            if (Attributes[x, y].data4 != Strings.Get("general", "none") &&
-                                Attributes[x, y].data4 != "")
-                            {
-                                AttributeSounds.Add(GameAudio.AddMapSound(Attributes[x, y].data4, x, y, Index, true,
-                                    Attributes[x, y].data1));
-                            }
-                        }
-                    }
+                    var attribute = Attributes?[x, y];
+                    if (attribute?.value != (int) MapAttributes.Sound) continue;
+                    if (TextUtils.IsNone(attribute.data4)) continue;
+                    var sound = GameAudio.AddMapSound(attribute.data4, x, y, Index, true, attribute.data1);
+                    AttributeSounds?.Add(sound);
                 }
             }
         }
 
         private void ClearAttributeSounds()
         {
-            for (int i = 0; i < AttributeSounds.Count; i++)
-            {
-                GameAudio.StopSound(AttributeSounds[i]);
-            }
-            AttributeSounds.Clear();
+            AttributeSounds?.ForEach(GameAudio.StopSound);
+            AttributeSounds?.Clear();
         }
 
         //Animations
         public void AddTileAnimation(int animNum, int tileX, int tileY, int dir = -1)
         {
             var animBase = AnimationBase.Lookup.Get<AnimationBase>(animNum);
-            if (animBase != null)
-            {
-                var anim = new MapAnimationInstance(animBase, tileX, tileY, dir);
-                LocalAnimations.Add(anim);
-                anim.SetPosition(GetX() + tileX * Options.TileWidth + Options.TileWidth / 2,
-                    GetY() + tileY * Options.TileHeight + Options.TileHeight / 2, tileX, tileY,
-                    Index, dir);
-            }
+            if (animBase == null) return;
+            var anim = new MapAnimationInstance(animBase, tileX, tileY, dir);
+            LocalAnimations.Add(anim);
+            anim.SetPosition(GetX() + tileX * Options.TileWidth + Options.TileWidth / 2,
+                GetY() + tileY * Options.TileHeight + Options.TileHeight / 2, tileX, tileY,
+                Index, dir);
         }
 
         private void HideActiveAnimations()
         {
-            foreach (Entity en in LocalEntities.Values)
-            {
-                en.ClearAnimations(null);
-            }
-            foreach (MapAnimationInstance anim in LocalAnimations)
-            {
-                anim.Dispose();
-            }
-            LocalAnimations.Clear();
+            LocalEntities?.Values.ToList().ForEach(entity => entity?.ClearAnimations(null));
+            LocalAnimations?.ForEach(animation => animation?.Dispose());
+            LocalAnimations?.Clear();
             ClearMapAttributes();
         }
 
         public void FixAutotiles()
         {
             //If we have autotiles that recalculated then let's redraw them without redrawing the whole map....
-            var autotileUpdates = LowerAutotileRedraws.ToArray();
-            LowerAutotileRedraws.Clear();
+            var autotileUpdates = LowerAutotileRedraws?.ToArray();
+            LowerAutotileRedraws?.Clear();
             RedrawAutotiles(autotileUpdates, LowerTextures, 0);
-            autotileUpdates = UpperAutotileRedraws.ToArray();
-            UpperAutotileRedraws.Clear();
+
+            autotileUpdates = UpperAutotileRedraws?.ToArray();
+            UpperAutotileRedraws?.Clear();
             RedrawAutotiles(autotileUpdates, UpperTextures, 1);
-            autotileUpdates = PeakAutotileRedraws.ToArray();
-            PeakAutotileRedraws.Clear();
+
+            autotileUpdates = PeakAutotileRedraws?.ToArray();
+            PeakAutotileRedraws?.Clear();
             RedrawAutotiles(autotileUpdates, PeakTextures, 2);
         }
 

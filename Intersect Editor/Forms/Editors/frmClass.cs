@@ -12,6 +12,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms
 {
@@ -211,7 +212,7 @@ namespace Intersect.Editor.Forms
                 {
                     lstSprites.SelectedIndex = 0;
                     cmbSprite.SelectedIndex =
-                        cmbSprite.FindString(_editorItem.Sprites[lstSprites.SelectedIndex].Sprite);
+                        cmbSprite.FindString(TextUtils.NullToNone(_editorItem.Sprites[lstSprites.SelectedIndex].Sprite));
                     if (_editorItem.Sprites[lstSprites.SelectedIndex].Gender == 0)
                     {
                         rbMale.Checked = true;
@@ -301,7 +302,7 @@ namespace Intersect.Editor.Forms
             lblY.Text = Strings.Get("warping", "y");
             lblDir.Text = Strings.Get("warping", "direction", "");
             cmbDirection.Items.Clear();
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
                 cmbDirection.Items.Add(Strings.Get("directions", i.ToString()));
             }
@@ -399,8 +400,8 @@ namespace Intersect.Editor.Forms
         {
             if (lstSprites.Items.Count > 0)
             {
-                cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Sprites[lstSprites.SelectedIndex].Sprite);
-                cmbFace.SelectedIndex = cmbFace.FindString(_editorItem.Sprites[lstSprites.SelectedIndex].Face);
+                cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(_editorItem.Sprites[lstSprites.SelectedIndex].Sprite));
+                cmbFace.SelectedIndex = cmbFace.FindString(TextUtils.NullToNone(_editorItem.Sprites[lstSprites.SelectedIndex].Face));
                 if (_editorItem.Sprites[lstSprites.SelectedIndex].Gender == 0)
                 {
                     rbMale.Checked = true;
@@ -436,7 +437,7 @@ namespace Intersect.Editor.Forms
         {
             if (lstSprites.SelectedIndex >= 0)
             {
-                if (cmbSprite.Text != null) _editorItem.Sprites[lstSprites.SelectedIndex].Sprite = cmbSprite.Text;
+                _editorItem.Sprites[lstSprites.SelectedIndex].Sprite = TextUtils.SanitizeNone(cmbSprite?.Text);
 
                 RefreshSpriteList();
             }
@@ -468,8 +469,8 @@ namespace Intersect.Editor.Forms
         {
             var n = new ClassSprite
             {
-                Sprite = Strings.Get("general", "none"),
-                Face = Strings.Get("general", "none"),
+                Sprite = null,
+                Face = null,
                 Gender = 0
             };
 
@@ -477,12 +478,12 @@ namespace Intersect.Editor.Forms
 
             if (n.Gender == 0)
             {
-                lstSprites.Items.Add(Strings.Get("classeditor", "spriteitemmale", _editorItem.Sprites.Count, n.Sprite));
+                lstSprites.Items.Add(Strings.Get("classeditor", "spriteitemmale", _editorItem.Sprites.Count, TextUtils.NullToNone(n.Sprite)));
             }
             else
             {
                 lstSprites.Items.Add(
-                    Strings.Get("classeditor", "spriteitemfemale", _editorItem.Sprites.Count, n.Sprite));
+                    Strings.Get("classeditor", "spriteitemfemale", _editorItem.Sprites.Count, TextUtils.NullToNone(n.Sprite)));
             }
 
             lstSprites.SelectedIndex = lstSprites.Items.Count - 1;
@@ -578,7 +579,7 @@ namespace Intersect.Editor.Forms
         {
             if (lstSprites.SelectedIndex >= 0)
             {
-                _editorItem.Sprites[lstSprites.SelectedIndex].Face = cmbFace.Text;
+                _editorItem.Sprites[lstSprites.SelectedIndex].Face = TextUtils.SanitizeNone(cmbFace?.Text);
 
                 RefreshSpriteList();
             }
