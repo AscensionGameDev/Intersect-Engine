@@ -19,6 +19,7 @@ using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Items;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Spells;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Classes.Networking
 {

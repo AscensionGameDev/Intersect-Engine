@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using Intersect.Localization;
 
-namespace Intersect
+namespace Intersect.Utilities
 {
     public static class FieldChecking
     {

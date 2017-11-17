@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect;
 using Intersect.Client.Classes.Core;
 using Intersect.Client.Classes.MonoGame.Network;
 using Intersect.Localization;
 using Intersect.Logging;
+using Intersect.Utilities;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Gwen.Renderer;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database;

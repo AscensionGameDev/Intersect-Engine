@@ -1,4 +1,4 @@
-﻿namespace Intersect
+﻿namespace Intersect.Utilities
 {
     public static class TextUtils
     {

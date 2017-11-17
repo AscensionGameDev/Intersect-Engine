@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Intersect;
 using Intersect.Localization;
+using Intersect.Utilities;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Core;
