@@ -92,6 +92,7 @@ namespace Intersect.Client.Classes.MonoGame.Network
 
         public override void Dispose()
         {
+            ClientLidgrenNetwork?.Close();
             ClientLidgrenNetwork?.Dispose();
             ClientLidgrenNetwork = null;
         }

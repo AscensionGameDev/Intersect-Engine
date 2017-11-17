@@ -797,6 +797,7 @@ namespace Intersect.Server.Classes.Maps
                 Active = true;
                 //Send Entity Info to Everyone and Everyone to the Entity
                 SendMapEntitiesTo(player);
+                player.MyClient.SentMaps.Clear();
                 PacketSender.SendMapItems(player.MyClient, Index);
                 AddEntity(player);
                 player.LastMapEntered = Index;

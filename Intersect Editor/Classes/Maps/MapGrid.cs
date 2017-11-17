@@ -29,6 +29,7 @@ namespace Intersect.Editor.Classes.Maps
         private bool createTextures;
         private List<Texture2D> freeTextures = new List<Texture2D>();
         public MapGridItem[,] Grid;
+        private List<int> _gridMaps = null;
         public int GridHeight = 50;
         public int GridWidth = 50;
 
@@ -153,6 +154,7 @@ namespace Intersect.Editor.Classes.Maps
                 TileHeight * (GridHeight + 2));
             createTextures = true;
             Loaded = true;
+            _gridMaps = gridMaps;
         }
 
         public void DoubleClick(int x, int y)
@@ -320,19 +322,7 @@ namespace Intersect.Editor.Classes.Maps
         {
             if (Grid != null && Loaded)
             {
-                lock (texLock)
-                {
-                    for (int x = 0; x < GridWidth; x++)
-                    {
-                        for (int y = 0; y < GridHeight; y++)
-                        {
-                            if (Grid[x, y].mapnum == mapNum)
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
+                return _gridMaps.Contains(mapNum);
             }
             return false;
         }

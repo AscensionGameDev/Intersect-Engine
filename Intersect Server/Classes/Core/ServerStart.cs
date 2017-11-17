@@ -781,7 +781,6 @@ namespace Intersect.Server.Classes
 
             Globals.ServerStarted = false;
             if (SocketServer != null) SocketServer.Dispose();
-            Environment.Exit(-1);
         }
 
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
