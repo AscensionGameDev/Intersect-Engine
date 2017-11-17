@@ -215,11 +215,21 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
+        private static void BackupDiskCopy()
+        {
+            File.Copy("resources/intersect.db",
+                "resources/intersect_" + DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss") +
+                ".db");
+        }
+
         //Database setup, version checking
         public static bool InitDatabase()
         {
             SqliteConnection.SetConfig(SQLiteConfig.Serialized);
-            if (!File.Exists(DbFilename)) CreateDatabase();
+
+            if (File.Exists(DbFilename)) BackupDiskCopy();
+            else CreateDatabase();
+            
             if (_dbConnection == null)
             {
                 _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ",Version=3");
