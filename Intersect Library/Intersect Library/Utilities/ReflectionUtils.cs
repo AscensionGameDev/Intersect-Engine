@@ -46,7 +46,7 @@ namespace Intersect.Utilities
         {
             if (string.IsNullOrEmpty(destinationName)) throw new ArgumentNullException(nameof(destinationName));
             using (var desinationStream = new FileStream(destinationName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
-                return ExtractResource(resourceName, destinationName);
+                return ExtractResource(resourceName, desinationStream);
         }
 
         public static bool ExtractResource(string resourceName, Stream destinationStream)
@@ -56,8 +56,8 @@ namespace Intersect.Utilities
 
             try
             {
-                var executingAssembly = Assembly.GetExecutingAssembly();
-                using (var resourceStream = executingAssembly.GetManifestResourceStream(resourceName))
+                var executingAssembly = Assembly.GetEntryAssembly();
+                using (var resourceStream = executingAssembly?.GetManifestResourceStream(resourceName))
                 {
                     if (resourceStream == null) throw new ArgumentNullException(nameof(resourceStream));
                     var data = new byte[resourceStream.Length];
@@ -69,6 +69,7 @@ namespace Intersect.Utilities
             catch (Exception exception)
             {
                 Log.Error(exception);
+                Log.Error($"resourceName: '{resourceName}'");
                 return false;
             }
         }
