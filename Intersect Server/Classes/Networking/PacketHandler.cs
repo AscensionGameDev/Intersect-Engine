@@ -1093,12 +1093,12 @@ namespace Intersect.Server.Classes.Networking
             var password = bf.ReadString();
             var email = bf.ReadString();
             var index = client.EntityIndex;
-            if (!FieldChecking.IsValidName(username))
+            if (!FieldChecking.IsValidUsername(username))
             {
                 PacketSender.SendLoginError(client, Strings.Get("account", "invalidname"));
                 return;
             }
-            if (!FieldChecking.IsEmail(email))
+            if (!FieldChecking.IsWellformedEmailAddress(email))
             {
                 PacketSender.SendLoginError(client, Strings.Get("account", "invalidemail"));
                 return;
@@ -1139,7 +1139,7 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var Name = bf.ReadString();
-            if (!FieldChecking.IsValidName(Name))
+            if (!FieldChecking.IsValidUsername(Name))
             {
                 PacketSender.SendLoginError(client, Strings.Get("account", "invalidname"));
                 return;

@@ -369,7 +369,7 @@ namespace Intersect_Client.Classes.UI.Menu
             {
                 return;
             }
-            if (FieldChecking.IsValidName(_charnameTextbox.Text))
+            if (FieldChecking.IsValidUsername(_charnameTextbox.Text))
             {
                 GameFade.FadeOut();
                 if (_maleChk.IsChecked)

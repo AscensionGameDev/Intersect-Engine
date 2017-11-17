@@ -130,13 +130,13 @@ namespace Intersect_Client.Classes.UI.Menu
             }
             if (GameNetwork.Connected)
             {
-                if (FieldChecking.IsValidName(_usernameTextbox.Text))
+                if (FieldChecking.IsValidUsername(_usernameTextbox.Text))
                 {
                     if (_passwordTextbox.Text == _passwordTextbox2.Text)
                     {
-                        if (FieldChecking.IsValidPass(_passwordTextbox.Text))
+                        if (FieldChecking.IsValidPassword(_passwordTextbox.Text))
                         {
-                            if (FieldChecking.IsEmail(_emailTextbox.Text))
+                            if (FieldChecking.IsWellformedEmailAddress(_emailTextbox.Text))
                             {
                                 GameFade.FadeOut();
                                 Hide();

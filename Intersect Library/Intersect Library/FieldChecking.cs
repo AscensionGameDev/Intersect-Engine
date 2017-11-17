@@ -7,59 +7,57 @@ namespace Intersect_Client.Classes.Misc
     public static class FieldChecking
     {
         //Field Checking
-        public const string MatchEmailPattern =
+        public const string PATTERN_EMAIL_ADDRESS =
                 @"^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|([a-zA-Z]+[\w-]+\.)+[a-zA-Z]{2,4})$"
             ;
 
-        public const string UsernamePattern = @"^[a-zA-Z0-9]{2,20}$";
-        public const string PasswordPattern = @"^[a-zA-Z0-9]{4,20}$";
+        public const string PATTERN_USERNAME = @"^[a-zA-Z0-9]{2,64}$";
+        public const string PATTERN_PASSWORD = @"^[-_=\+`~!@#\$%\^&\*()\[\]{}\\|;\:'"",<\.>/\?a-zA-Z0-9]{4,64}$";
 
-        public static bool IsEmail(string email)
+        public static bool IsWellformedEmailAddress(string email)
         {
-            if (email != null)
+            if (email == null) return false;
+
+            try
             {
-                try
-                {
-                    return Regex.IsMatch(email, Strings.Get("regex", "email"));
-                }
-                catch (ArgumentException)
-                {
-                    return Regex.IsMatch(email, MatchEmailPattern);
-                }
+                var customPattern = Strings.Get("regex", "email");
+                if (string.IsNullOrEmpty(customPattern)) customPattern = PATTERN_EMAIL_ADDRESS;
+                return Regex.IsMatch(email, customPattern);
             }
-            return false;
+            catch (ArgumentException)
+            {
+                return Regex.IsMatch(email, PATTERN_EMAIL_ADDRESS);
+            }
         }
 
-        public static bool IsValidName(string name)
+        public static bool IsValidUsername(string username)
         {
-            if (name != null)
+            if (username == null) return false;
+            try
             {
-                try
-                {
-                    return Regex.IsMatch(name.Trim(), Strings.Get("regex", "username"));
-                }
-                catch (ArgumentException)
-                {
-                    return Regex.IsMatch(name.Trim(), UsernamePattern);
-                }
+                var customPattern = Strings.Get("regex", "username");
+                if (string.IsNullOrEmpty(customPattern)) customPattern = PATTERN_USERNAME;
+                return Regex.IsMatch(username.Trim(), customPattern);
             }
-            return false;
+            catch (ArgumentException)
+            {
+                return Regex.IsMatch(username.Trim(), PATTERN_USERNAME);
+            }
         }
 
-        public static bool IsValidPass(string pass)
+        public static bool IsValidPassword(string password)
         {
-            if (pass != null)
+            if (password == null) return false;
+            try
             {
-                try
-                {
-                    return Regex.IsMatch(pass.Trim(), Strings.Get("regex", "password"));
-                }
-                catch (ArgumentException)
-                {
-                    return Regex.IsMatch(pass.Trim(), PasswordPattern);
-                }
+                var customPattern = Strings.Get("regex", "password");
+                if (string.IsNullOrEmpty(customPattern)) customPattern = PATTERN_PASSWORD;
+                return Regex.IsMatch(password.Trim(), customPattern);
             }
-            return false;
+            catch (ArgumentException)
+            {
+                return Regex.IsMatch(password.Trim(), PATTERN_PASSWORD);
+            }
         }
     }
 }

@@ -149,7 +149,7 @@ namespace Intersect_Client.Classes.UI.Menu
             }
             if (GameNetwork.Connected)
             {
-                if (FieldChecking.IsValidName(_usernameTextbox.Text))
+                if (FieldChecking.IsValidUsername(_usernameTextbox.Text))
                 {
                     if (_useSavedPass)
                     {
@@ -160,7 +160,7 @@ namespace Intersect_Client.Classes.UI.Menu
                     }
                     else
                     {
-                        if (FieldChecking.IsValidPass(_passwordTextbox.Text))
+                        if (FieldChecking.IsValidPassword(_passwordTextbox.Text))
                         {
                             GameFade.FadeOut();
                             PacketSender.SendLogin(_usernameTextbox.Text,
