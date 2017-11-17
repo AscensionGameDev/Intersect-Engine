@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect;
 using Intersect.Localization;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.Misc;
 using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Menu

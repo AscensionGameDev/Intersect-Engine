@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using Intersect.Localization;
 
-namespace Intersect_Client.Classes.Misc
+namespace Intersect
 {
     public static class FieldChecking
     {
@@ -17,7 +17,6 @@ namespace Intersect_Client.Classes.Misc
         public static bool IsWellformedEmailAddress(string email)
         {
             if (email == null) return false;
-
             try
             {
                 var customPattern = Strings.Get("regex", "email");
@@ -59,5 +58,6 @@ namespace Intersect_Client.Classes.Misc
                 return Regex.IsMatch(password.Trim(), PATTERN_PASSWORD);
             }
         }
+
     }
 }
