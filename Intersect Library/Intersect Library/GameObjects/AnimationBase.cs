@@ -1,4 +1,5 @@
 ﻿using Intersect.Models;
+using Intersect.Utilities;
 
 namespace Intersect.GameObjects
 {
@@ -85,10 +86,10 @@ namespace Intersect.GameObjects
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
-            myBuffer.WriteString(Sound);
+            myBuffer.WriteString(TextUtils.SanitizeNone(Sound));
 
             //Lower Animation
-            myBuffer.WriteString(LowerAnimSprite);
+            myBuffer.WriteString(TextUtils.SanitizeNone(LowerAnimSprite));
             myBuffer.WriteInteger(LowerAnimXFrames);
             myBuffer.WriteInteger(LowerAnimYFrames);
             myBuffer.WriteInteger(LowerAnimFrameCount);
@@ -100,7 +101,7 @@ namespace Intersect.GameObjects
             }
 
             //Upper Animation
-            myBuffer.WriteString(UpperAnimSprite);
+            myBuffer.WriteString(TextUtils.SanitizeNone(UpperAnimSprite));
             myBuffer.WriteInteger(UpperAnimXFrames);
             myBuffer.WriteInteger(UpperAnimYFrames);
             myBuffer.WriteInteger(UpperAnimFrameCount);

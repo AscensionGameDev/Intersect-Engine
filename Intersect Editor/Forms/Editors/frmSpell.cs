@@ -11,6 +11,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms
 {
@@ -253,7 +254,7 @@ namespace Intersect.Editor.Forms
                 cmbHitAnimation.SelectedIndex =
                     Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.HitAnimation) + 1;
 
-                cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Pic);
+                cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(_editorItem.Pic));
                 if (cmbSprite.SelectedIndex > 0)
                 {
                     picSpell.BackgroundImage = Image.FromFile("resources/spells/" + cmbSprite.Text);
@@ -421,14 +422,7 @@ namespace Intersect.Editor.Forms
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Pic = cmbSprite.Text;
-            if (cmbSprite.SelectedIndex > 0)
-            {
-                picSpell.BackgroundImage = Image.FromFile("resources/spells/" + cmbSprite.Text);
-            }
-            else
-            {
-                picSpell.BackgroundImage = null;
-            }
+            picSpell.BackgroundImage = cmbSprite.SelectedIndex > 0 ? Image.FromFile("resources/spells/" + cmbSprite.Text) : null;
         }
 
         private void cmbTargetType_SelectedIndexChanged(object sender, EventArgs e)
@@ -461,7 +455,7 @@ namespace Intersect.Editor.Forms
                 cmbTransform.Visible = true;
                 picSprite.Visible = true;
 
-                cmbTransform.SelectedIndex = cmbTransform.FindString(_editorItem.Data5);
+                cmbTransform.SelectedIndex = cmbTransform.FindString(TextUtils.NullToNone(_editorItem.Data5));
                 if (cmbTransform.SelectedIndex > 0)
                 {
                     Bitmap bmp = new Bitmap(picSprite.Width, picSprite.Height);

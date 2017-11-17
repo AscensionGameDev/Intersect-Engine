@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Intersect.GameObjects.Conditions;
+using Intersect.Utilities;
 
 namespace Intersect.GameObjects.Events
 {
@@ -96,7 +97,7 @@ namespace Intersect.GameObjects.Events
             myBuffer.WriteInteger(Trigger);
             myBuffer.WriteInteger(TriggerVal);
             myBuffer.WriteString(TriggerCommand);
-            myBuffer.WriteString(FaceGraphic);
+            myBuffer.WriteString(TextUtils.SanitizeNone(FaceGraphic));
             Graphic.Save(myBuffer);
             myBuffer.WriteInteger(HideName);
             myBuffer.WriteInteger(DisablePreview);

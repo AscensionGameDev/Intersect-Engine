@@ -1,6 +1,7 @@
 ﻿using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
 using Intersect.Models;
+using Intersect.Utilities;
 
 namespace Intersect.GameObjects
 {
@@ -86,7 +87,7 @@ namespace Intersect.GameObjects
             myBuffer.WriteString(Name);
             myBuffer.WriteString(Desc);
             myBuffer.WriteInteger(ItemType);
-            myBuffer.WriteString(Pic);
+            myBuffer.WriteString(TextUtils.SanitizeNone(Pic));
             myBuffer.WriteInteger(Price);
             myBuffer.WriteInteger(Bound);
             myBuffer.WriteInteger(Stackable);
@@ -108,8 +109,8 @@ namespace Intersect.GameObjects
             myBuffer.WriteInteger(ScalingStat);
             myBuffer.WriteInteger(Scaling);
             myBuffer.WriteInteger(Speed);
-            myBuffer.WriteString(MalePaperdoll);
-            myBuffer.WriteString(FemalePaperdoll);
+            myBuffer.WriteString(TextUtils.SanitizeNone(MalePaperdoll));
+            myBuffer.WriteString(TextUtils.SanitizeNone(FemalePaperdoll));
             myBuffer.WriteInteger(Tool);
             myBuffer.WriteInteger(Data1);
             myBuffer.WriteInteger(Data2);

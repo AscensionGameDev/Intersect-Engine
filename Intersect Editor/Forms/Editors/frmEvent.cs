@@ -15,6 +15,7 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms
 {
@@ -651,7 +652,7 @@ namespace Intersect.Editor.Forms
                     lblCommand.Text = Strings.Get("eventeditor", "command");
                 }
             }
-            cmbPreviewFace.SelectedIndex = cmbPreviewFace.Items.IndexOf(CurrentPage.FaceGraphic);
+            cmbPreviewFace.SelectedIndex = cmbPreviewFace.Items.IndexOf(TextUtils.NullToNone(CurrentPage.FaceGraphic));
             if (cmbPreviewFace.SelectedIndex == -1)
             {
                 cmbPreviewFace.SelectedIndex = 0;
@@ -1789,7 +1790,7 @@ namespace Intersect.Editor.Forms
 
         private void cmbPreviewFace_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.FaceGraphic = cmbPreviewFace.Text;
+            CurrentPage.FaceGraphic = TextUtils.SanitizeNone(cmbPreviewFace?.Text);
             UpdateFacePreview();
         }
 

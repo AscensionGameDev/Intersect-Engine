@@ -5,6 +5,7 @@ using Intersect.Editor.Classes.Core;
 using Intersect.Enums;
 using Intersect.GameObjects.Maps;
 using Intersect.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Classes.Maps
 {
@@ -105,16 +106,16 @@ namespace Intersect.Editor.Classes.Maps
                 MusicList.AddRange(GameContentManager.GetMusicNames());
                 if (MusicList.IndexOf(_myMap.Music) <= -1)
                 {
-                    _myMap.Music = Strings.Get("general", "none");
+                    _myMap.Music = null;
                 }
-                return _myMap.Music;
+                return TextUtils.NullToNone(_myMap.Music);
             }
             set
             {
                 if (_myMap.Music != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.Music = value;
+                    _myMap.Music = TextUtils.SanitizeNone(value);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -137,16 +138,16 @@ namespace Intersect.Editor.Classes.Maps
                 SoundList.AddRange(GameContentManager.GetSoundNames());
                 if (SoundList.IndexOf(_myMap.Sound) <= -1)
                 {
-                    _myMap.Sound = Strings.Get("general", "none");
+                    _myMap.Sound = null;
                 }
-                return _myMap.Sound;
+                return TextUtils.NullToNone(_myMap.Sound);
             }
             set
             {
                 if (_myMap.Sound != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.Sound = value;
+                    _myMap.Sound = TextUtils.SanitizeNone(value);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -369,16 +370,16 @@ namespace Intersect.Editor.Classes.Maps
                 FogList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Fog));
                 if (FogList.IndexOf(_myMap.Fog) <= -1)
                 {
-                    _myMap.Fog = Strings.Get("general", "none");
+                    _myMap.Fog = null;
                 }
-                return _myMap.Fog;
+                return TextUtils.NullToNone(_myMap.Fog);
             }
             set
             {
                 if (_myMap.Fog != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.Fog = value;
+                    _myMap.Fog = TextUtils.SanitizeNone(value);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -458,16 +459,16 @@ namespace Intersect.Editor.Classes.Maps
                 ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
                 if (ImageList.IndexOf(_myMap.Panorama) <= -1)
                 {
-                    _myMap.Panorama = Strings.Get("general", "none");
+                    _myMap.Panorama = null;
                 }
-                return _myMap.Panorama;
+                return TextUtils.NullToNone(_myMap.Panorama);
             }
             set
             {
                 if (_myMap.Panorama != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.Panorama = value;
+                    _myMap.Panorama = TextUtils.SanitizeNone(value);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -490,16 +491,16 @@ namespace Intersect.Editor.Classes.Maps
                 ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
                 if (ImageList.IndexOf(_myMap.OverlayGraphic) <= -1)
                 {
-                    _myMap.Panorama = Strings.Get("general", "none");
+                    _myMap.Panorama = null;
                 }
-                return _myMap.OverlayGraphic;
+                return TextUtils.NullToNone(_myMap.OverlayGraphic);
             }
             set
             {
                 if (_myMap.OverlayGraphic != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.OverlayGraphic = value;
+                    _myMap.OverlayGraphic = TextUtils.SanitizeNone(value);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
