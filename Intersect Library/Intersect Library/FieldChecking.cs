@@ -11,7 +11,7 @@ namespace Intersect_Client.Classes.Misc
                 @"^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|([a-zA-Z]+[\w-]+\.)+[a-zA-Z]{2,4})$"
             ;
 
-        public const string PATTERN_USERNAME = @"^[a-zA-Z0-9]{2,64}$";
+        public const string PATTERN_USERNAME = @"^[a-zA-Z0-9]{2,24}$";
         public const string PATTERN_PASSWORD = @"^[-_=\+`~!@#\$%\^&\*()\[\]{}\\|;\:'"",<\.>/\?a-zA-Z0-9]{4,64}$";
 
         public static bool IsWellformedEmailAddress(string email)
