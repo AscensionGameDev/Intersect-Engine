@@ -1053,62 +1053,54 @@ namespace Intersect.Editor.Classes
             {
                 for (var x = x1; x < x2; x++)
                 {
-                    if (tmpMap.Attributes[x, y] != null)
+                    if (tmpMap.Attributes[x, y] == null) continue;
+                    if (tmpMap.Attributes[x, y].value == (int) MapAttributes.Resource && !upper)
                     {
-                        if (tmpMap.Attributes[x, y].value == (int) MapAttributes.Resource && !upper)
+                        var resource = ResourceBase.Lookup.Get<ResourceBase>(tmpMap.Attributes[x, y].data1);
+                        if (resource == null) continue;
+                        if (TextUtils.IsNone(resource.InitialGraphic)) continue;
+                        var res = GetTexture(TextureType.Resource, resource.InitialGraphic);
+                        if (res == null) continue;
+                        float xpos = x * Options.TileWidth + xoffset;
+                        float ypos = y * Options.TileHeight + yoffset;
+                        if (res.Height > Options.TileHeight)
                         {
-                            var resource = ResourceBase.Lookup.Get<ResourceBase>(tmpMap.Attributes[x, y].data1);
-                            if (resource != null)
-                            {
-                                if (resource.Name != "" & TextUtils.IsNone(resource.InitialGraphic))
-                                {
-                                    Texture2D res = GetTexture(TextureType.Resource, resource.InitialGraphic);
-                                    if (res != null)
-                                    {
-                                        float xpos = x * Options.TileWidth + xoffset;
-                                        float ypos = y * Options.TileHeight + yoffset;
-                                        if (res.Height > Options.TileHeight)
-                                        {
-                                            ypos -= ((int) res.Height - Options.TileHeight);
-                                        }
-                                        if (res.Width > Options.TileWidth)
-                                        {
-                                            xpos -= (res.Width - Options.TileWidth) / 2;
-                                        }
-                                        DrawTexture(res, xpos, ypos,
-                                            0, 0, (int) res.Width, (int) res.Height, renderTarget);
-                                    }
-                                }
-                            }
+                            ypos -= ((int) res.Height - Options.TileHeight);
                         }
-                        else if (tmpMap.Attributes[x, y].value == (int) MapAttributes.Animation)
+                        if (res.Width > Options.TileWidth)
                         {
-                            var animation = AnimationBase.Lookup.Get<AnimationBase>(tmpMap.Attributes[x, y].data1);
-                            if (animation != null)
+                            xpos -= (res.Width - Options.TileWidth) / 2;
+                        }
+                        DrawTexture(res, xpos, ypos,
+                            0, 0, (int) res.Width, (int) res.Height, renderTarget);
+                    }
+                    else if (tmpMap.Attributes[x, y].value == (int) MapAttributes.Animation)
+                    {
+                        var animation = AnimationBase.Lookup.Get<AnimationBase>(tmpMap.Attributes[x, y].data1);
+                        if (animation != null)
+                        {
+                            float xpos = x * Options.TileWidth + xoffset + Options.TileWidth / 2;
+                            float ypos = y * Options.TileHeight + yoffset + Options.TileHeight / 2;
+                            var tmpMapOld = tmpMap;
+                            if (tmpMap == TilePreviewStruct)
                             {
-                                float xpos = x * Options.TileWidth + xoffset + Options.TileWidth / 2;
-                                float ypos = y * Options.TileHeight + yoffset + Options.TileHeight / 2;
-                                var tmpMapOld = tmpMap;
-                                if (tmpMap == TilePreviewStruct)
-                                {
-                                    tmpMap = Globals.CurrentMap;
-                                }
-                                if (tmpMap.Attributes[x, y] != null)
-                                {
-                                    var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y],
-                                        animation.Index);
-                                    //Update if the animation isn't right!
-                                    if (animInstance == null || animInstance.myBase != animation)
-                                    {
-                                        tmpMap.SetAttributeAnimation(tmpMap.Attributes[x, y],
-                                            new AnimationInstance(animation, true));
-                                    }
-                                    animInstance.Update();
-                                    animInstance.SetPosition((int) xpos, (int) ypos, 0);
-                                    animInstance.Draw(renderTarget, upper);
-                                }
-                                tmpMap = tmpMapOld;
+                                tmpMap = Globals.CurrentMap;
                             }
+                            if (tmpMap.Attributes[x, y] != null)
+                            {
+                                var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y],
+                                    animation.Index);
+                                //Update if the animation isn't right!
+                                if (animInstance == null || animInstance.myBase != animation)
+                                {
+                                    tmpMap.SetAttributeAnimation(tmpMap.Attributes[x, y],
+                                        new AnimationInstance(animation, true));
+                                }
+                                animInstance.Update();
+                                animInstance.SetPosition((int) xpos, (int) ypos, 0);
+                                animInstance.Draw(renderTarget, upper);
+                            }
+                            tmpMap = tmpMapOld;
                         }
                     }
                 }
