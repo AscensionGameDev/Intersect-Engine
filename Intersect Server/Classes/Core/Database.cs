@@ -240,7 +240,7 @@ namespace Intersect.Server.Classes.Core
                 OpenDatabaseConnection();
             }
             sw.Stop();
-            Log.Info($"Database backup at {DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss")} took  {sw.ElapsedMilliseconds}ms");
+            Log.Info($"Database backup at {DateTime.Now:yyyy-MM-dd hh-mm-ss} took  {sw.ElapsedMilliseconds}ms");
         }
 
         //Database setup, version checking
