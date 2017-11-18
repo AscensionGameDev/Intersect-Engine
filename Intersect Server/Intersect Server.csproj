@@ -173,6 +173,9 @@
     <Reference Include="NCalc">
       <HintPath>.\NCalc.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Open.Nat">
       <HintPath>.\Open.Nat.dll</HintPath>
     </Reference>
@@ -202,7 +205,6 @@
     <Compile Include="Classes\Entities\EventPageInstance.cs" />
     <Compile Include="Classes\Core\Main.cs" />
     <Compile Include="Classes\General\Formulas.cs" />
-    <Compile Include="Classes\General\ServerOptions.cs" />
     <Compile Include="Classes\General\ServerTime.cs" />
     <Compile Include="Classes\Items\BagInstance.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
@@ -256,12 +258,12 @@
     <EmbeddedResource Include="Resources\sqlite3x64.dll" />
     <Content Include="Icon.ico" />
     <None Include="Resources\config.xml" />
-    <None Include="Resources\formulas.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
