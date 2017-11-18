@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +14,8 @@ namespace Intersect.Server.Classes.Core
         {
             long cpsTimer = Globals.System.GetTimeMs() + 1000;
             long cps = 0;
+            long minuteTimer = 0;
+            DateTime lastDbUpdate = DateTime.Now;
             while (Globals.ServerStarted)
             {
                 //TODO: If there are no players online then loop slower and save the poor cpu
@@ -22,6 +25,15 @@ namespace Intersect.Server.Classes.Core
                 foreach (MapInstance map in maps)
                 {
                     map.Update(timeMs);
+                }
+                if (minuteTimer < timeMs)
+                {
+                    if (lastDbUpdate.AddMinutes(1) < DateTime.Now)
+                    {
+                        Task.Run(() => Database.BackupDatabase());
+                        lastDbUpdate = DateTime.Now;
+                    }
+                    minuteTimer = timeMs + 60000;
                 }
                 cps++;
                 if (timeMs >= cpsTimer)
