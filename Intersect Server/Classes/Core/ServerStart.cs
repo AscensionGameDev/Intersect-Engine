@@ -1,7 +1,6 @@
 ﻿#define websockets
 using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -20,6 +19,8 @@ using Open.Nat;
 
 namespace Intersect.Server.Classes
 {
+    using Database = Intersect.Server.Classes.Core.Database;
+
     public class ServerStart
     {
         private static bool _errorHalt = true;

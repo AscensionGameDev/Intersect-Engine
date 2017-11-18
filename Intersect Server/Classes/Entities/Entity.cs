@@ -15,6 +15,8 @@ using Attribute = Intersect.GameObjects.Maps.Attribute;
 
 namespace Intersect.Server.Classes.Entities
 {
+    using Database = Intersect.Server.Classes.Core.Database;
+
     public class Entity
     {
         private int _dir;

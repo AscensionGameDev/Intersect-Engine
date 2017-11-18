@@ -17,6 +17,8 @@ using Intersect.Server.Classes.Spells;
 
 namespace Intersect.Server.Classes.Entities
 {
+    using Database = Intersect.Server.Classes.Core.Database;
+
     public class EventInstance
     {
         public EventBase BaseEvent;
