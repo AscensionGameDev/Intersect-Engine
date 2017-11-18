@@ -62,12 +62,7 @@ namespace Intersect.Server.Classes
             Console.WriteLine(Strings.Get("intro", "support"));
             Console.WriteLine(Strings.Get("intro", "loading"));
             Database.CheckDirectories();
-            if (!Formulas.LoadFormulas())
-            {
-                Console.WriteLine(Strings.Get("formulas", "loadfailed"));
-                Console.ReadKey();
-                return;
-            }
+            Formulas.LoadFormulas();
             if (!Database.InitDatabase())
             {
                 Console.ReadKey();

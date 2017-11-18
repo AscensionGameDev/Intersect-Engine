@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Intersect.Enums;
@@ -6,44 +7,37 @@ using Intersect.Localization;
 using Intersect.Logging;
 using Intersect.Server.Classes.Entities;
 using NCalc;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
 
 namespace Intersect.Server.Classes.General
 {
-    public static class Formulas
+    public class Formulas
     {
-        private static string PhysicalDamage = "";
-        private static string MagicDamage = "";
-        private static string TrueDamage = "";
+        private const string FORMULAS_FILE = "resources/formulas.json";
 
-        public static bool LoadFormulas()
+        [JsonProperty("Formulas")]
+        private static Dictionary<string, string> _formulas = new Dictionary<string, string>()
         {
-            if (!File.Exists(Path.Combine("resources", "formulas.xml")))
-            {
-                File.WriteAllText(Path.Combine("resources", "formulas.xml"), Properties.Resources.formulas);
-                Console.WriteLine(Strings.Get("formulas", "missing"));
-            }
-            var formulas = new XmlDocument();
-            var formulaXml = File.ReadAllText("resources/formulas.xml");
+            { "PhysicalDamage", "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025) * (100 / (100 + V_Defense))"},
+            { "MagicDamage", "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025) * (100 / (100 + V_MagicResist))"},
+            { "TrueDamage", "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025)"},
+        };
+
+        public static void LoadFormulas()
+        {
             try
             {
-                formulas.LoadXml(formulaXml);
-                PhysicalDamage = GetXmlStr(formulas, "//Formulas/PhysicalDamage");
-                MagicDamage = GetXmlStr(formulas, "//Formulas/MagicDamage");
-                TrueDamage = GetXmlStr(formulas, "//Formulas/TrueDamage");
-                return true;
+                if (File.Exists(FORMULAS_FILE))
+                {
+                    JsonConvert.DeserializeObject<Formulas>(File.ReadAllText(FORMULAS_FILE));
+                }  
+                File.WriteAllText(FORMULAS_FILE, JsonConvert.SerializeObject(new Formulas(), Formatting.Indented));
             }
             catch (Exception ex)
             {
-                Log.Trace(ex);
-                Console.WriteLine(Strings.Get("formulas", "syntax"));
-                return false;
+                throw new Exception(Strings.Get("formulas", "missing"), ex);
             }
-        }
-
-        private static string GetXmlStr(XmlDocument xmlDoc, string xmlPath)
-        {
-            var selectSingleNode = xmlDoc.SelectSingleNode(xmlPath);
-            return selectSingleNode.InnerText;
         }
 
         public static int CalculateDamage(int baseDamage, DamageType damageType, Stats scalingStat, int scaling,
@@ -53,16 +47,16 @@ namespace Intersect.Server.Classes.General
             switch (damageType)
             {
                 case DamageType.Physical:
-                    expression = PhysicalDamage;
+                    expression = _formulas["PhysicalDamge"];
                     break;
                 case DamageType.Magic:
-                    expression = MagicDamage;
+                    expression = _formulas["MagicDamage"];
                     break;
                 case DamageType.True:
-                    expression = TrueDamage;
+                    expression = _formulas["TrueDamage"];
                     break;
                 default:
-                    expression = TrueDamage;
+                    expression = _formulas["TrueDamage"];
                     break;
             }
             Expression e = new Expression(expression);
