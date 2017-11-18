@@ -5,6 +5,8 @@ using Intersect.Server.Classes.Core;
 
 namespace Intersect.Server.Classes.Maps
 {
+    using Database = Intersect.Server.Classes.Core.Database;
+
     public class MapGrid
     {
         private readonly int _myIndex;
