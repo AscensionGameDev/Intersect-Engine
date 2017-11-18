@@ -24,6 +24,7 @@ namespace Intersect.Server.Classes.Core
 {
     public static class Database
     {
+        private const string DIRECTORY_BACKUPS = "resources/backups";
         private const int DbVersion = 10;
         private const string DbFilename = "resources/intersect.db";
 
@@ -210,16 +211,17 @@ namespace Intersect.Server.Classes.Core
         public static void CheckDirectories()
         {
             if (!Directory.Exists("resources"))
-            {
                 Directory.CreateDirectory("resources");
-            }
+
+            if (!Directory.Exists(DIRECTORY_BACKUPS))
+                Directory.CreateDirectory(DIRECTORY_BACKUPS);
         }
 
         private static void BackupDiskCopy()
         {
-            File.Copy("resources/intersect.db",
-                "resources/intersect_" + DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss") +
-                ".db");
+            CheckDirectories();
+
+            File.Copy("resources/intersect.db", $"{DIRECTORY_BACKUPS}/intersect_{DateTime.Now:yyyy-MM-dd hh-mm-ss}.db");
         }
 
         //Database setup, version checking
@@ -232,7 +234,7 @@ namespace Intersect.Server.Classes.Core
           
             if (sDbConnection == null)
             {
-                sDbConnection = new SqliteConnection("Data Source=" + DbFilename + ",Version=3");
+                sDbConnection = new SqliteConnection($"Data Source={DbFilename},Version=3");
                 sDbConnection?.Open();
             }
             if (GetDatabaseVersion() != DbVersion)
