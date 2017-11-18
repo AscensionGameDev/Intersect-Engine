@@ -25,7 +25,7 @@ namespace Intersect.Config
 
         public void Validate()
         {
-            if (MapWidth < 10 || MapWidth > 64 || MapHeight < 10 || Options.MapHeight > 64)
+            if (MapWidth < 10 || MapWidth > 64 || MapHeight < 10 || MapHeight > 64)
             {
                 throw new Exception("Config Error: Map size out of bounds! (All values should be > 10 and < 64)");
             }

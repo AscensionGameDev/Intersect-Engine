@@ -69,6 +69,7 @@
     <Compile Include="Collections\ILookup.cs" />
     <Compile Include="Collections\ReadOnlyDictionary.cs" />
     <Compile Include="Compression.cs" />
+    <Compile Include="Config\ClientOptions.cs" />
     <Compile Include="Config\CombatOptions.cs" />
     <Compile Include="Config\EquipmentOptions.cs" />
     <Compile Include="Config\GameObjectOptions.cs" />

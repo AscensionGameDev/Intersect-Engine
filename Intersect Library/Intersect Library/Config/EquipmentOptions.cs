@@ -45,11 +45,11 @@ namespace Intersect.Config
         {
             Slots = new List<string>(Slots.Distinct());
             ToolTypes = new List<string>(ToolTypes.Distinct());
-            if (WeaponSlot < 0 || WeaponSlot > Options.EquipmentSlots.Count - 1)
+            if (WeaponSlot < 0 || WeaponSlot > Slots.Count - 1)
             {
                 throw new Exception("Config Error: (WeaponSlot) was out of bounds!");
             }
-            if (ShieldSlot < 0 || ShieldSlot > Options.EquipmentSlots.Count - 1)
+            if (ShieldSlot < 0 || ShieldSlot > Slots.Count - 1)
             {
                 throw new Exception("Config Error: (ShieldSlot) was out of bounds!");
             }

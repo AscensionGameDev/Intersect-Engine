@@ -43,6 +43,8 @@ namespace Intersect
         public static int MapHeight => _options.MapOpts.MapHeight;
         public static int TileWidth => _options.MapOpts.TileWidth;
         public static int TileHeight => _options.MapOpts.TileHeight;
+
+        public static bool Loaded => _options != null;
         
         //Values that cannot easily be changed:
         public const int LayerCount = 5;
@@ -103,7 +105,7 @@ namespace Intersect
         public static byte[] GetOptionsData()
         {
             var bf = new ByteBuffer();
-            bf.WriteString(JsonConvert.SerializeObject(optionsCompressed));
+            bf.WriteString(optionsCompressed);
             return bf.ToArray();
         }
 
