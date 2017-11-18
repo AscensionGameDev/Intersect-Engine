@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace Intersect.Config
@@ -64,6 +67,10 @@ namespace Intersect.Config
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)
         {
+            Up = new List<string>(Up.Distinct());
+            Down = new List<string>(Down.Distinct());
+            Left = new List<string>(Left.Distinct());
+            Right = new List<string>(Right.Distinct());
             Directions = new List<string>[]
             {
                 Up,
@@ -71,6 +78,21 @@ namespace Intersect.Config
                 Left,
                 Right
             };
+        }
+
+        public void Validate(EquipmentOptions equipment)
+        {
+            foreach (var direction in Directions)
+            {
+                foreach (var item in direction)
+                {
+                    if (!equipment.Slots.Contains(item))
+                    {
+                        throw new Exception($"Config Error: Paperdoll item {item} does not exist in equipment slots!");
+                    }
+                }
+
+            }
         }
     }
 }

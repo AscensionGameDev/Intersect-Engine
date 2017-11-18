@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Intersect.Config
@@ -13,7 +15,7 @@ namespace Intersect.Config
             "Armor",
             "Weapon",
             "Helmet",
-            "Shield"
+            "Shield",
         };
 
         public PaperdollOptions Paperdoll = new PaperdollOptions();
@@ -33,10 +35,25 @@ namespace Intersect.Config
             ToolTypes.Clear();
         }
 
-    public bool Validate()
+        [OnDeserialized]
+        internal void OnDeserializedMethod(StreamingContext context)
         {
-            //TODO Validate loaded input
-            return true;
+            Validate();
+        }
+
+        public void Validate()
+        {
+            Slots = new List<string>(Slots.Distinct());
+            ToolTypes = new List<string>(ToolTypes.Distinct());
+            if (WeaponSlot < 0 || WeaponSlot > Options.EquipmentSlots.Count - 1)
+            {
+                throw new Exception("Config Error: (WeaponSlot) was out of bounds!");
+            }
+            if (ShieldSlot < 0 || ShieldSlot > Options.EquipmentSlots.Count - 1)
+            {
+                throw new Exception("Config Error: (ShieldSlot) was out of bounds!");
+            }
+            Paperdoll.Validate(this);
         }
     }
 }
