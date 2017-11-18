@@ -14,6 +14,8 @@ using Intersect.Server.Classes.Networking;
 
 namespace Intersect.Server.Classes.Maps
 {
+    using Database = Intersect.Server.Classes.Core.Database;
+
     public class MapInstance : MapBase
     {
         private static MapInstances sLookup;
