@@ -27,8 +27,8 @@ namespace Intersect_Client.Classes.Entities
         public int _targetType;
 
         public int Class = -1;
-        public int Experience = 0;
-        public int ExperienceToNextLevel = 0;
+        public long Experience = 0;
+        public long ExperienceToNextLevel = 0;
         public List<FriendInstance> Friends = new List<FriendInstance>();
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
 
@@ -824,7 +824,7 @@ namespace Intersect_Client.Classes.Entities
         }
 
         //Forumlas
-        public int GetNextLevelExperience()
+        public long GetNextLevelExperience()
         {
             return ExperienceToNextLevel;
         }
