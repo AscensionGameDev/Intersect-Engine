@@ -72,7 +72,7 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.ServerConfig);
-            bf.WriteBytes(ServerOptions.GetServerConfig());
+            bf.WriteBytes(Options.GetOptionsData());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

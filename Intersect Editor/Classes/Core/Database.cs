@@ -71,10 +71,10 @@ namespace Intersect.Editor.Classes
                 try
                 {
                     xmlDoc.LoadXml(File.ReadAllText("resources/config.xml"));
-                    Options.Language = "English";
+                    Options._language = "English";
                     if (xmlDoc.SelectSingleNode("//Config/Language") != null)
                     {
-                        Options.Language = xmlDoc.SelectSingleNode("//Config/Language").InnerText;
+                        Options._language = xmlDoc.SelectSingleNode("//Config/Language").InnerText;
                     }
                     Globals.ServerHost = xmlDoc.SelectSingleNode("//Config/Host").InnerText;
                     Globals.ServerPort = int.Parse(xmlDoc.SelectSingleNode("//Config/Port").InnerText);

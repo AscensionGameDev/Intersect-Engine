@@ -1,7 +1,6 @@
 ﻿#define websockets
 using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -30,7 +29,7 @@ namespace Intersect.Server.Classes
             if (RunningOnWindows()) SetConsoleCtrlHandler(new HandlerRoutine(ConsoleCtrlCheck), true);
             Console.CancelKeyPress += Console_CancelKeyPress;
             Thread logicThread;
-            if (!ServerOptions.LoadOptions())
+            if (!Options.LoadFromDisk())
             {
                 Console.WriteLine("Failed to load server options! Press any key to shut down.");
                 Console.ReadKey();

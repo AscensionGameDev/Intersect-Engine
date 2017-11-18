@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib;
 using Intersect.Logging;
 using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib;
 using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects;

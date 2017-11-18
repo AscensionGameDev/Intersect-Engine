@@ -205,7 +205,6 @@
     <Compile Include="Classes\Entities\EventPageInstance.cs" />
     <Compile Include="Classes\Core\Main.cs" />
     <Compile Include="Classes\General\Formulas.cs" />
-    <Compile Include="Classes\General\ServerOptions.cs" />
     <Compile Include="Classes\General\ServerTime.cs" />
     <Compile Include="Classes\Items\BagInstance.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
