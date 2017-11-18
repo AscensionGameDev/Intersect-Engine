@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using Intersect.Enums;
 using Intersect.Localization;
@@ -14,25 +15,24 @@ namespace Intersect.Server.Classes.General
 {
     public class Formulas
     {
+        private static Formulas _formulas;
+
         private const string FORMULAS_FILE = "resources/formulas.json";
 
-        [JsonProperty("Formulas")]
-        private static Dictionary<string, string> _formulas = new Dictionary<string, string>()
-        {
-            { "PhysicalDamage", "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025) * (100 / (100 + V_Defense))"},
-            { "MagicDamage", "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025) * (100 / (100 + V_MagicResist))"},
-            { "TrueDamage", "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025)"},
-        };
+        public string PhysicalDamage = "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025) * (100 / (100 + V_Defense))";
+        public string MagicDamage =  "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025) * (100 / (100 + V_MagicResist))";
+        public string TrueDamage = "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025)";
 
         public static void LoadFormulas()
         {
             try
             {
+                _formulas = new Formulas();
                 if (File.Exists(FORMULAS_FILE))
                 {
-                    JsonConvert.DeserializeObject<Formulas>(File.ReadAllText(FORMULAS_FILE));
-                }  
-                File.WriteAllText(FORMULAS_FILE, JsonConvert.SerializeObject(new Formulas(), Formatting.Indented));
+                    _formulas = JsonConvert.DeserializeObject<Formulas>(File.ReadAllText(FORMULAS_FILE));
+                }
+                File.WriteAllText(FORMULAS_FILE, JsonConvert.SerializeObject(_formulas, Formatting.Indented));
             }
             catch (Exception ex)
             {
@@ -47,16 +47,16 @@ namespace Intersect.Server.Classes.General
             switch (damageType)
             {
                 case DamageType.Physical:
-                    expression = _formulas["PhysicalDamge"];
+                    expression = _formulas.PhysicalDamage;
                     break;
                 case DamageType.Magic:
-                    expression = _formulas["MagicDamage"];
+                    expression = _formulas.MagicDamage;
                     break;
                 case DamageType.True:
-                    expression = _formulas["TrueDamage"];
+                    expression = _formulas.TrueDamage;
                     break;
                 default:
-                    expression = _formulas["TrueDamage"];
+                    expression = _formulas.TrueDamage;
                     break;
             }
             Expression e = new Expression(expression);
