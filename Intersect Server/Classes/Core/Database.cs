@@ -24,6 +24,7 @@ namespace Intersect.Server.Classes.Core
 {
     public static class Database
     {
+        private const string DIRECTORY_BACKUPS = "resources/backups";
         private const int DbVersion = 11;
         private const string DbFilename = "resources/intersect.db";
 
@@ -210,16 +211,35 @@ namespace Intersect.Server.Classes.Core
         public static void CheckDirectories()
         {
             if (!Directory.Exists("resources"))
-            {
                 Directory.CreateDirectory("resources");
-            }
+
+            if (!Directory.Exists(DIRECTORY_BACKUPS))
+                Directory.CreateDirectory(DIRECTORY_BACKUPS);
         }
 
-        private static void BackupDiskCopy()
+        //As of now database writes only occur on player saving & when editors make game changes
+        //Database writes are actually pretty rare. And even player saves are offloaded as tasks so
+        //if delayed it won't matter much.
+        //TODO: Options for saving frequency and number of backups to keep.
+        public static void BackupDatabase()
         {
-            File.Copy("resources/intersect.db",
-                "resources/intersect_" + DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss") +
-                ".db");
+            CheckDirectories();
+            var sw = new Stopwatch();
+            sw.Start();
+            lock (SqlConnectionLock)
+            {
+                var connectionOpen = sDbConnection != null;
+                if (connectionOpen)
+                {
+                    sDbConnection.Close();
+                    sDbConnection.Dispose();
+                    sDbConnection = null;
+                }
+                File.Copy("resources/intersect.db", $"{DIRECTORY_BACKUPS}/intersect_{DateTime.Now:yyyy-MM-dd hh-mm-ss}.db");
+                OpenDatabaseConnection();
+            }
+            sw.Stop();
+            Log.Info($"Database backup at {DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss")} took  {sw.ElapsedMilliseconds}ms");
         }
 
         //Database setup, version checking
@@ -227,14 +247,11 @@ namespace Intersect.Server.Classes.Core
         {
             SqliteConnection.SetConfig(SQLiteConfig.Serialized);
 
-            if (File.Exists(DbFilename)) BackupDiskCopy();
+            if (File.Exists(DbFilename)) BackupDatabase();
             else CreateDatabase();
-          
-            if (sDbConnection == null)
-            {
-                sDbConnection = new SqliteConnection("Data Source=" + DbFilename + ",Version=3");
-                sDbConnection?.Open();
-            }
+
+            OpenDatabaseConnection();
+
             if (GetDatabaseVersion() != DbVersion)
             {
                 Console.WriteLine(Strings.Get("database", "outofdate", GetDatabaseVersion(), DbVersion));
@@ -243,6 +260,15 @@ namespace Intersect.Server.Classes.Core
             LoadAllGameObjects();
             LoadTime();
             return true;
+        }
+
+        private static void OpenDatabaseConnection()
+        {
+            if (sDbConnection == null)
+            {
+                sDbConnection = new SqliteConnection($"Data Source={DbFilename},Version=3");
+                sDbConnection?.Open();
+            }
         }
 
         private static long GetDatabaseVersion()

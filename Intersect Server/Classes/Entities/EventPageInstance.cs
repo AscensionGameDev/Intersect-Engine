@@ -1,4 +1,5 @@
-﻿using Intersect.Enums;
+﻿using System;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Server.Classes.General;
@@ -17,7 +18,35 @@ namespace Intersect.Server.Classes.Entities
         public int DisablePreview;
         public EventPageInstance GlobalClone;
         public int MovementFreq;
-        public int MovementSpeed;
+
+        private int _movementSpeed;
+        public int MovementSpeed
+        {
+            get { return _movementSpeed; }
+            set
+            {
+                _movementSpeed = value;
+                switch (_movementSpeed)
+                {
+                    case 0:
+                        Stat[(int) Stats.Speed].Stat = 5;
+                        break;
+                    case 1:
+                        Stat[(int) Stats.Speed].Stat = 10;
+                        break;
+                    case 2:
+                        Stat[(int) Stats.Speed].Stat = 20;
+                        break;
+                    case 3:
+                        Stat[(int)Stats.Speed].Stat = 30;
+                        break;
+                    case 4:
+                        Stat[(int)Stats.Speed].Stat = 40;
+                        break;
+                }
+            }
+        }
+
         public int MovementType;
         public EventInstance MyEventIndex;
         public EventGraphic MyGraphic = new EventGraphic();

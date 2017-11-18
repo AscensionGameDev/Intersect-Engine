@@ -84,11 +84,11 @@ namespace Intersect.Editor.Classes
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
 
             cmbItem.Items.Clear();
-            cmbItem.Items.Add("None.");
+            cmbItem.Items.Add(Strings.Get("general", "none"));
             cmbItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
 
             cmbSpell.Items.Clear();
-            cmbSpell.Items.Add("None.");
+            cmbSpell.Items.Add(Strings.Get("general", "none"));
             cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
 
             InitLocalization();
