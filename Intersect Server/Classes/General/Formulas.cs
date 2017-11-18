@@ -62,39 +62,46 @@ namespace Intersect.Server.Classes.General
                 baseDamage = Math.Abs(baseDamage);
                 negate = true;
             }
-            e.Parameters["BaseDamage"] = baseDamage;
-            e.Parameters["ScalingStat"] = attacker.Stat[(int) scalingStat].Value();
-            e.Parameters["ScaleFactor"] = scaling / 100f;
-            e.Parameters["CritFactor"] = critMultiplier;
-            e.Parameters["A_Attack"] = attacker.Stat[(int) Stats.Attack].Value();
-            e.Parameters["A_Defense"] = attacker.Stat[(int) Stats.Defense].Value();
-            e.Parameters["A_Speed"] = attacker.Stat[(int) Stats.Speed].Value();
-            e.Parameters["A_AbilityPwr"] = attacker.Stat[(int) Stats.AbilityPower].Value();
-            e.Parameters["A_MagicResist"] = attacker.Stat[(int) Stats.MagicResist].Value();
-            e.Parameters["V_Attack"] = victim.Stat[(int) Stats.Attack].Value();
-            e.Parameters["V_Defense"] = victim.Stat[(int) Stats.Defense].Value();
-            e.Parameters["V_Speed"] = victim.Stat[(int) Stats.Speed].Value();
-            e.Parameters["V_AbilityPwr"] = victim.Stat[(int) Stats.AbilityPower].Value();
-            e.Parameters["V_MagicResist"] = victim.Stat[(int) Stats.MagicResist].Value();
-            e.EvaluateFunction += delegate(string name, FunctionArgs args)
+            try
             {
-                if (name == "Random")
+                e.Parameters["BaseDamage"] = baseDamage;
+                e.Parameters["ScalingStat"] = attacker.Stat[(int) scalingStat].Value();
+                e.Parameters["ScaleFactor"] = scaling / 100f;
+                e.Parameters["CritFactor"] = critMultiplier;
+                e.Parameters["A_Attack"] = attacker.Stat[(int) Stats.Attack].Value();
+                e.Parameters["A_Defense"] = attacker.Stat[(int) Stats.Defense].Value();
+                e.Parameters["A_Speed"] = attacker.Stat[(int) Stats.Speed].Value();
+                e.Parameters["A_AbilityPwr"] = attacker.Stat[(int) Stats.AbilityPower].Value();
+                e.Parameters["A_MagicResist"] = attacker.Stat[(int) Stats.MagicResist].Value();
+                e.Parameters["V_Attack"] = victim.Stat[(int) Stats.Attack].Value();
+                e.Parameters["V_Defense"] = victim.Stat[(int) Stats.Defense].Value();
+                e.Parameters["V_Speed"] = victim.Stat[(int) Stats.Speed].Value();
+                e.Parameters["V_AbilityPwr"] = victim.Stat[(int) Stats.AbilityPower].Value();
+                e.Parameters["V_MagicResist"] = victim.Stat[(int) Stats.MagicResist].Value();
+                e.EvaluateFunction += delegate(string name, FunctionArgs args)
                 {
-                    int left = (int) Math.Round((double) args.Parameters[0].Evaluate());
-                    int right = (int) Math.Round((double) args.Parameters[1].Evaluate());
-                    if (left >= right)
+                    if (name == "Random")
                     {
-                        args.Result = left;
+                        int left = (int) Math.Round((double) args.Parameters[0].Evaluate());
+                        int right = (int) Math.Round((double) args.Parameters[1].Evaluate());
+                        if (left >= right)
+                        {
+                            args.Result = left;
+                        }
+                        else
+                        {
+                            args.Result = Globals.Rand.Next(left, right + 1);
+                        }
                     }
-                    else
-                    {
-                        args.Result = Globals.Rand.Next(left, right + 1);
-                    }
-                }
-            };
-            double result = Convert.ToDouble(e.Evaluate());
-            if (negate) result *= -1;
-            return (int) Math.Round(result);
+                };
+                double result = Convert.ToDouble(e.Evaluate());
+                if (negate) result *= -1;
+                return (int)Math.Round(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to evaluate damage formula", ex);
+            }
         }
     }
 }

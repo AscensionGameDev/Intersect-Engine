@@ -16,9 +16,9 @@ namespace Intersect.Config
         public static string ServerHost => _options._host;
         public static ushort ServerPort => _options._port;
         public static bool RenderCache => _options._renderCache;
+        public static string Font => _options._font;
         public static string MenuMusic => _options._menuMusic;
         public static string MenuBackground => _options._menuBackground;
-        public static string Logo => _options._logo;
         public static List<string> IntroImages => _options._introImages;
 
         [JsonProperty("Language")]
@@ -33,14 +33,14 @@ namespace Intersect.Config
         [JsonProperty("RenderCache")]
         protected bool _renderCache = true;
 
+        [JsonProperty("Font")]
+        protected string _font = "arial";
+
         [JsonProperty("MenuMusic")]
         protected string _menuMusic = "";
 
         [JsonProperty("MenuBackground")]
         protected string _menuBackground = "background.png";
-
-        [JsonProperty("Logo")]
-        protected string _logo = "logo.png";
 
         [JsonProperty("IntroImages")]
         protected List<string> _introImages = new List<string>();

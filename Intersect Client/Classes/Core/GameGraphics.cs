@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect;
+using Intersect.Config;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
@@ -106,8 +107,7 @@ namespace Intersect_Client.Classes.Core
 
         public static void DrawMenu()
         {
-            GameTexture imageTex = contentManager.GetTexture(GameContentManager.TextureType.Gui,
-                Globals.Database.MenuBG);
+            GameTexture imageTex = contentManager.GetTexture(GameContentManager.TextureType.Gui, ClientOptions.MenuBackground);
             if (imageTex != null)
             {
                 DrawFullScreenTexture(imageTex);
