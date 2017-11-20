@@ -65,8 +65,7 @@ namespace Intersect.Client.Classes.UI.Game.Character
                 _descWindow = null;
             }
             if (ItemBase.Lookup.Get<ItemBase>(_currentItem) == null) return;
-            _descWindow = new ItemDescWindow(_currentItem, 1, _characterWindow.X - 255, _characterWindow.Y, _statBoost,
-                "Equipment Slot: " + Options.EquipmentSlots[myindex]);
+            _descWindow = new ItemDescWindow(_currentItem, 1, _characterWindow.X - 255, _characterWindow.Y, _statBoost, ItemBase.GetName(_currentItem));
         }
 
         public FloatRect RenderBounds()
