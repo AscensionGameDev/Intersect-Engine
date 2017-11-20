@@ -10,7 +10,7 @@ Getting started with Intersect couldn't be easier. Make sure you have Visual Stu
 
 ```
 .Net Framework 4.5 (or Mono on Linux/OSX)
-MonoGame 3.6 (Developers only, included in repository)
+MonoGame 3.7 (Developers only, included in repository)
 ```
 
 ### Installing
