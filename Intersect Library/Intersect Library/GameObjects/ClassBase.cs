@@ -10,7 +10,7 @@ namespace Intersect.GameObjects
         public int AttackAnimation = -1;
 
         //Exp Calculations
-        public long BaseExp = 100;
+        public int BaseExp = 100;
 
         public int BasePoints;
         public int[] BaseStat = new int[(int) Stats.StatCount];
@@ -24,7 +24,7 @@ namespace Intersect.GameObjects
         public int Damage;
 
         public int DamageType;
-        public long ExpIncrease = 50;
+        public int ExpIncrease = 50;
 
         //Level Up Info
         public int IncreasePercentage;
@@ -133,8 +133,8 @@ namespace Intersect.GameObjects
             PointIncrease = myBuffer.ReadInteger();
 
             //Exp Info
-            BaseExp = myBuffer.ReadLong();
-            ExpIncrease = myBuffer.ReadLong();
+            BaseExp = myBuffer.ReadInteger();
+            ExpIncrease = myBuffer.ReadInteger();
 
             //Regen
             for (int i = 0; i < (int) Vitals.VitalCount; i++)
@@ -218,8 +218,8 @@ namespace Intersect.GameObjects
             myBuffer.WriteInteger(PointIncrease);
 
             //Exp Info
-            myBuffer.WriteLong(BaseExp);
-            myBuffer.WriteLong(ExpIncrease);
+            myBuffer.WriteInteger(BaseExp);
+            myBuffer.WriteInteger(ExpIncrease);
 
             //Regen
             for (int i = 0; i < (int) Vitals.VitalCount; i++)
