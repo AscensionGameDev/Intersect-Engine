@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.IO.Compression;
+using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib
 {

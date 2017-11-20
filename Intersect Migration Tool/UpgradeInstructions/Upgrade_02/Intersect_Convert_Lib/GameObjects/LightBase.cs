@@ -1,4 +1,6 @@
-﻿namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects
+﻿using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib;
+
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Lib.GameObjects
 {
     public class LightBase
     {

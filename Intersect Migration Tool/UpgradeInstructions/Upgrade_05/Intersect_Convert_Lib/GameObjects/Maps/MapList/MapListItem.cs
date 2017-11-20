@@ -1,4 +1,6 @@
-﻿namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Maps.MapList
+﻿using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib;
+
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Lib.GameObjects.Maps.MapList
 {
     public class MapListItem
     {
