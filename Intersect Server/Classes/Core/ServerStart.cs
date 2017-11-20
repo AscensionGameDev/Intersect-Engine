@@ -20,8 +20,6 @@ using Intersect.Utilities;
 
 namespace Intersect.Server.Classes
 {
-    using Database = Intersect.Server.Classes.Core.Database;
-
     public class ServerStart
     {
         private static bool sErrorHalt = true;

@@ -16,8 +16,6 @@ using Lidgren.Network;
 
 namespace Intersect.Server.Classes.Networking
 {
-    using Database = Intersect.Server.Classes.Core.Database;
-
     public class Client
     {
         private long mConnectionTimeout;

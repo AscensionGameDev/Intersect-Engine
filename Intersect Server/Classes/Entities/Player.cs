@@ -16,8 +16,6 @@ using Intersect.Server.Classes.Spells;
 
 namespace Intersect.Server.Classes.Entities
 {
-    using Database = Intersect.Server.Classes.Core.Database;
-
     public class Player : Entity
     {
         //5 minute timeout before someone can send a trade/party request after it has been declined

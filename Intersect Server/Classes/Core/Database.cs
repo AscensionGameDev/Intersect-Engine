@@ -20,7 +20,6 @@ using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Items;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
-using Intersect.Server.Database;
 using Mono.Data.Sqlite;
 
 namespace Intersect.Server.Classes.Core
@@ -28,8 +27,8 @@ namespace Intersect.Server.Classes.Core
     public static class Database
     {
         private const string DIRECTORY_BACKUPS = "resources/backups";
-        private const int DbVersion = 10;
-        private const string DB_FILENAME = "resources/intersect.db";
+        private const int DbVersion = 11;
+        private const string DbFilename = "resources/intersect.db";
 
         //Database Variables
         private const string INFO_TABLE = "info";
@@ -214,17 +213,12 @@ namespace Intersect.Server.Classes.Core
         public static void CheckDirectories()
         {
             if (!Directory.Exists("resources"))
+            {
                 Directory.CreateDirectory("resources");
-
-            if (!Directory.Exists(DIRECTORY_BACKUPS))
-                Directory.CreateDirectory(DIRECTORY_BACKUPS);
+            }
         }
 
-        //As of now database writes only occur on player saving & when editors make game changes
-        //Database writes are actually pretty rare. And even player saves are offloaded as tasks so
-        //if delayed it won't matter much.
-        //TODO: Options for saving frequency and number of backups to keep.
-        public static void BackupDatabase()
+        private static void BackupDiskCopy()
         {
             var backupsToKeep = 360;
             CheckDirectories();
@@ -282,11 +276,14 @@ namespace Intersect.Server.Classes.Core
         {
             SqliteConnection.SetConfig(SQLiteConfig.Serialized);
 
-            if (File.Exists(DB_FILENAME)) BackupDatabase();
+            if (File.Exists(DbFilename)) BackupDiskCopy();
             else CreateDatabase();
-
-            OpenDatabaseConnection();
-
+          
+            if (sDbConnection == null)
+            {
+                sDbConnection = new SqliteConnection("Data Source=" + DbFilename + ",Version=3");
+                sDbConnection?.Open();
+            }
             if (GetDatabaseVersion() != DbVersion)
             {
                 Console.WriteLine(Strings.Get("database", "outofdate", GetDatabaseVersion(), DbVersion));
@@ -345,26 +342,15 @@ namespace Intersect.Server.Classes.Core
             CreateBagItemsTable();
         }
 
-        private static void CreateTable(TableDescriptor tableDescriptor)
-        {
-            using (var command = sDbConnection?.CreateCommand())
-            {
-                Debug.Assert(command != null, "command != null");
-                command.CommandText = $"CREATE TABLE {tableDescriptor};";
-                ExecuteNonQuery(command);
-            }
-        }
-
         private static void CreateInfoTable()
         {
-            var columns = new List<ColumnDescriptor>()
+            var cmd = $"CREATE TABLE {INFO_TABLE} (" + DB_VERSION + " INTEGER NOT NULL);";
+            using (var createCommand = sDbConnection?.CreateCommand())
             {
-                new ColumnDescriptor(DB_VERSION, DataType.Integer)
-            };
-
-            CreateTable(new TableDescriptor(INFO_TABLE, columns));
-
-            var cmd = $"INSERT into {INFO_TABLE} (" + DB_VERSION + ") VALUES (" + DbVersion + ");";
+                createCommand.CommandText = cmd;
+                ExecuteNonQuery(createCommand);
+            }
+            cmd = $"INSERT into {INFO_TABLE} (" + DB_VERSION + ") VALUES (" + DbVersion + ");";
             using (var createCommand = sDbConnection?.CreateCommand())
             {
                 if (createCommand == null) return;
@@ -375,92 +361,105 @@ namespace Intersect.Server.Classes.Core
 
         private static void CreateLogsTable()
         {
-            var columns = new List<ColumnDescriptor>()
+            var cmd = $"CREATE TABLE {LOG_TABLE} ("
+                      + LOG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + LOG_TIME + " TEXT,"
+                      + LOG_TYPE + " TEXT,"
+                      + LOG_INFO + " TEXT"
+                      + ");";
+            using (var createCommand = sDbConnection?.CreateCommand())
             {
-                new ColumnDescriptor(LOG_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
-                new ColumnDescriptor(LOG_TIME, DataType.Text),
-                new ColumnDescriptor(LOG_TYPE, DataType.Text),
-                new ColumnDescriptor(LOG_INFO, DataType.Text)
-            };
-
-            CreateTable(new TableDescriptor(LOG_TABLE, columns));
+                if (createCommand == null) return;
+                createCommand.CommandText = cmd;
+                ExecuteNonQuery(createCommand);
+            }
         }
 
         private static void CreateMutesTable()
         {
-            var columns = new List<ColumnDescriptor>()
+            var cmd = $"CREATE TABLE {MUTE_TABLE} ("
+                      + MUTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + MUTE_TIME + " TEXT,"
+                      + MUTE_USER + " INTEGER,"
+                      + MUTE_IP + " TEXT,"
+                      + MUTE_DURATION + " INTEGER,"
+                      + MUTE_REASON + " TEXT,"
+                      + MUTE_MUTER + " TEXT"
+                      + ");";
+            using (var createCommand = sDbConnection?.CreateCommand())
             {
-                new ColumnDescriptor(MUTE_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
-                new ColumnDescriptor(MUTE_TIME, DataType.Text),
-                new ColumnDescriptor(MUTE_USER, DataType.Integer),
-                new ColumnDescriptor(MUTE_IP, DataType.Text),
-                new ColumnDescriptor(MUTE_DURATION, DataType.Integer),
-                new ColumnDescriptor(MUTE_REASON, DataType.Text),
-                new ColumnDescriptor(MUTE_MUTER, DataType.Text)
-            };
-
-            CreateTable(new TableDescriptor(MUTE_TABLE, columns));
+                if (createCommand == null) return;
+                createCommand.CommandText = cmd;
+                ExecuteNonQuery(createCommand);
+            }
         }
 
         private static void CreateBansTable()
         {
-            var columns = new List<ColumnDescriptor>()
+            var cmd = $"CREATE TABLE {BAN_TABLE} ("
+                      + BAN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + BAN_TIME + " TEXT,"
+                      + BAN_USER + " INTEGER,"
+                      + BAN_IP + " TEXT,"
+                      + BAN_DURATION + " INTEGER,"
+                      + BAN_REASON + " TEXT,"
+                      + BAN_BANNER + " TEXT"
+                      + ");";
+            using (var createCommand = sDbConnection?.CreateCommand())
             {
-                new ColumnDescriptor(BAN_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
-                new ColumnDescriptor(BAN_TIME, DataType.Text),
-                new ColumnDescriptor(BAN_USER, DataType.Integer),
-                new ColumnDescriptor(BAN_IP, DataType.Text),
-                new ColumnDescriptor(BAN_DURATION, DataType.Integer),
-                new ColumnDescriptor(BAN_REASON, DataType.Text),
-                new ColumnDescriptor(BAN_BANNER, DataType.Text)
-            };
-
-            CreateTable(new TableDescriptor(BAN_TABLE, columns));
+                if (createCommand == null) return;
+                createCommand.CommandText = cmd;
+                ExecuteNonQuery(createCommand);
+            }
         }
 
         private static void CreateUsersTable()
         {
-            var columns = new List<ColumnDescriptor>()
+            var cmd = $"CREATE TABLE {USERS_TABLE} ("
+                      + USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + USER_NAME + " TEXT,"
+                      + USER_PASS + " TEXT,"
+                      + USER_SALT + " TEXT,"
+                      + USER_EMAIL + " TEXT,"
+                      + USER_POWER + " INTEGER"
+                      + ");";
+            using (var createCommand = sDbConnection?.CreateCommand())
             {
-                new ColumnDescriptor(USER_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
-                new ColumnDescriptor(USER_NAME, DataType.Text),
-                new ColumnDescriptor(USER_PASS, DataType.Text),
-                new ColumnDescriptor(USER_SALT, DataType.Text),
-                new ColumnDescriptor(USER_EMAIL, DataType.Text),
-                new ColumnDescriptor(USER_POWER, DataType.Integer)
-            };
-
-            CreateTable(new TableDescriptor(USERS_TABLE, columns));
+                createCommand.CommandText = cmd;
+                ExecuteNonQuery(createCommand);
+            }
         }
 
         private static void CreateCharactersTable()
         {
-            var columns = new List<ColumnDescriptor>()
+            var cmd = $"CREATE TABLE {CHAR_TABLE} ("
+                      + CHAR_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      + CHAR_USER_ID + " INTEGER,"
+                      + CHAR_NAME + " TEXT,"
+                      + CHAR_DELETED + " INTEGER,"
+                      + CHAR_MAP + " INTEGER,"
+                      + CHAR_X + " INTEGER,"
+                      + CHAR_Y + " INTEGER,"
+                      + CHAR_Z + " INTEGER,"
+                      + CHAR_DIR + " INTEGER,"
+                      + CHAR_SPRITE + " TEXT,"
+                      + CHAR_FACE + " TEXT,"
+                      + CHAR_CLASS + " INTEGER,"
+                      + CHAR_GENDER + " INTEGER,"
+                      + CHAR_LEVEL + " INTEGER,"
+                      + CHAR_EXP + " INTEGER,"
+                      + CHAR_VITALS + " TEXT,"
+                      + CHAR_MAX_VITALS + " TEXT,"
+                      + CHAR_STATS + " TEXT,"
+                      + CHAR_STAT_POINTS + " INTEGER,"
+                      + CHAR_EQUIPMENT + " TEXT,"
+                      + CHAR_LAST_ONLINE_TIME + " INTEGER"
+                      + ");";
+            using (var createCommand = sDbConnection?.CreateCommand())
             {
-                new ColumnDescriptor(USER_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
-                new ColumnDescriptor(CHAR_USER_ID, DataType.Integer),
-                new ColumnDescriptor(CHAR_NAME, DataType.Text),
-                new ColumnDescriptor(CHAR_DELETED, DataType.Integer),
-                new ColumnDescriptor(CHAR_MAP, DataType.Integer),
-                new ColumnDescriptor(CHAR_X, DataType.Integer),
-                new ColumnDescriptor(CHAR_Y, DataType.Integer),
-                new ColumnDescriptor(CHAR_Z, DataType.Integer),
-                new ColumnDescriptor(CHAR_DIR, DataType.Integer),
-                new ColumnDescriptor(CHAR_SPRITE, DataType.Text),
-                new ColumnDescriptor(CHAR_FACE, DataType.Text),
-                new ColumnDescriptor(CHAR_CLASS, DataType.Integer),
-                new ColumnDescriptor(CHAR_GENDER, DataType.Integer),
-                new ColumnDescriptor(CHAR_LEVEL, DataType.Integer),
-                new ColumnDescriptor(CHAR_EXP, DataType.Integer),
-                new ColumnDescriptor(CHAR_VITALS, DataType.Text),
-                new ColumnDescriptor(CHAR_MAX_VITALS, DataType.Text),
-                new ColumnDescriptor(CHAR_STATS, DataType.Text),
-                new ColumnDescriptor(CHAR_STAT_POINTS, DataType.Integer),
-                new ColumnDescriptor(CHAR_EQUIPMENT, DataType.Text),
-                new ColumnDescriptor(CHAR_LAST_ONLINE_TIME, DataType.Integer)
-            };
-
-            CreateTable(new TableDescriptor(CHAR_TABLE, columns));
+                createCommand.CommandText = cmd;
+                ExecuteNonQuery(createCommand);
+            }
         }
 
         private static void CreateCharacterInventoryTable()

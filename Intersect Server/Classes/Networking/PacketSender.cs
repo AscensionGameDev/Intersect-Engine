@@ -16,8 +16,6 @@ using Intersect.Server.Classes.Maps;
 
 namespace Intersect.Server.Classes.Networking
 {
-    using Database = Intersect.Server.Classes.Core.Database;
-
     public static class PacketSender
     {
         public static void SendDataToMap(int mapNum, byte[] data, Client except = null)

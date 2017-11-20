@@ -6,8 +6,6 @@ using Intersect.Server.Classes.Maps;
 
 namespace Intersect.Server.Classes.Misc.Pathfinding
 {
-    using Database = Intersect.Server.Classes.Core.Database;
-
     public enum PathfinderResult
     {
         Success,
