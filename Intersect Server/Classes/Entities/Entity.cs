@@ -866,9 +866,6 @@ namespace Intersect.Server.Classes.Entities
                             return;
                         }
                     }
-
-                    //If we took damage lets reset our combat timer
-                    enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
                 }
                 else
                 {
@@ -1068,6 +1065,7 @@ namespace Intersect.Server.Classes.Entities
                                 CustomColors.TrueDamage);
                             break;
                     }
+                    enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
                 }
                 else if (baseDamage < 0)
                 {
@@ -1080,16 +1078,16 @@ namespace Intersect.Server.Classes.Entities
                 secondaryDamage = Formulas.CalculateDamage(secondaryDamage, damageType, scalingStat, scaling,
                     critMultiplier, this, enemy);
                 enemy.Vital[(int) Vitals.Mana] -= (int) baseDamage;
-                if (baseDamage > 0)
+                if (secondaryDamage > 0)
                 {
                     //If we took damage lets reset our combat timer
-                    CombatTimer = Globals.System.GetTimeMs() + 5000;
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int) baseDamage,
+                    enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int)secondaryDamage,
                         CustomColors.RemoveMana);
                 }
-                else if (baseDamage < 0)
+                else if (secondaryDamage < 0)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) Math.Abs(baseDamage),
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) Math.Abs(secondaryDamage),
                         CustomColors.AddMana);
                 }
             }
@@ -1389,8 +1387,8 @@ namespace Intersect.Server.Classes.Entities
             var x1 = CurrentX + (MapInstance.Lookup.Get<MapInstance>(CurrentMap).MapGridX * Options.MapWidth);
             var y1 = CurrentY + (MapInstance.Lookup.Get<MapInstance>(CurrentMap).MapGridY * Options.MapHeight);
             //Calculate world tile of target
-            var x2 = target.CurrentX + (MapInstance.Lookup.Get<MapInstance>(CurrentMap).MapGridX * Options.MapWidth);
-            var y2 = target.CurrentY + (MapInstance.Lookup.Get<MapInstance>(CurrentMap).MapGridY * Options.MapHeight);
+            var x2 = target.CurrentX + (MapInstance.Lookup.Get<MapInstance>(target.CurrentMap).MapGridX * Options.MapWidth);
+            var y2 = target.CurrentY + (MapInstance.Lookup.Get<MapInstance>(target.CurrentMap).MapGridY * Options.MapHeight);
             if (Math.Abs(x1 - x2) > Math.Abs(y1 - y2))
             {
                 //Left or Right

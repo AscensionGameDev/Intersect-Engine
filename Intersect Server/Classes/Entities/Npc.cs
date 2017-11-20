@@ -208,6 +208,7 @@ namespace Intersect.Server.Classes.Entities
                     {
                         var s = Globals.Rand.Next(0, MyBase.Spells.Count); //Pick a random spell
                         var spell = SpellBase.Lookup.Get<SpellBase>((MyBase.Spells[s]));
+                        var range = spell.CastRange;
                         if (spell != null)
                         {
                             var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spell.Projectile);
@@ -215,6 +216,7 @@ namespace Intersect.Server.Classes.Entities
                                 spell.TargetType == (int) SpellTargetTypes.Projectile && projectileBase != null &&
                                 InRangeOf(MyTarget, projectileBase.Range))
                             {
+                                range = projectileBase.Range;
                                 if (DirToEnemy(MyTarget) != Dir)
                                 {
                                     if (LastRandomMove >= Globals.System.GetTimeMs()) return;
@@ -235,7 +237,7 @@ namespace Intersect.Server.Classes.Entities
                                 {
                                     if (Spells[s].SpellCD < Globals.System.GetTimeMs())
                                     {
-                                        if (InRangeOf(MyTarget, spell.CastRange))
+                                        if (InRangeOf(MyTarget, range))
                                         {
                                             Vital[(int) Vitals.Mana] = Vital[(int) Vitals.Mana] -
                                                                        spell.VitalCost[(int) Vitals.Mana];
