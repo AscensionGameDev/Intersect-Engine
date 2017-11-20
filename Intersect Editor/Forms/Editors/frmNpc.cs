@@ -590,7 +590,7 @@ namespace Intersect.Editor.Forms
 
         private void nudExp_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Experience = (long) nudExp.Value;
+            _editorItem.Experience = (int) nudExp.Value;
         }
 
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)
