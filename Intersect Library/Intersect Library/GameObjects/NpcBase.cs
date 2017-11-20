@@ -22,7 +22,7 @@ namespace Intersect.GameObjects
         //Drops
         public List<NPCDrop> Drops = new List<NPCDrop>();
 
-        public int Experience;
+        public long Experience;
         public int Level = 1;
 
         //Vitals & Stats
@@ -72,7 +72,7 @@ namespace Intersect.GameObjects
             {
                 Stat[i] = myBuffer.ReadInteger();
             }
-            Experience = myBuffer.ReadInteger();
+            Experience = myBuffer.ReadLong();
             SpawnDuration = myBuffer.ReadInteger();
             Behavior = myBuffer.ReadByte();
             SightRange = myBuffer.ReadInteger();
@@ -125,7 +125,7 @@ namespace Intersect.GameObjects
             {
                 myBuffer.WriteInteger(Stat[i]);
             }
-            myBuffer.WriteInteger(Experience);
+            myBuffer.WriteLong(Experience);
             myBuffer.WriteInteger(SpawnDuration);
             myBuffer.WriteByte(Behavior);
             myBuffer.WriteInteger(SightRange);
