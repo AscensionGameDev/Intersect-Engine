@@ -81,6 +81,7 @@ namespace Intersect.Server.Classes.Entities
         //Targeting
         public void AssignTarget(Entity en)
         {
+            if (MyBase.Behavior == (int) NpcBehavior.Friendly) return;
             if (en.GetType() == typeof(Projectile))
             {
                 if (((Projectile) en).Owner != this) MyTarget = ((Projectile) en).Owner;

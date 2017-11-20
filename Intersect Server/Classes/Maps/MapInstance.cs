@@ -406,8 +406,8 @@ namespace Intersect.Server.Classes.Maps
                 {
                     for (int n = 0; n < 100; n++)
                     {
-                        X = Globals.Rand.Next(1, Options.MapWidth);
-                        Y = Globals.Rand.Next(1, Options.MapHeight);
+                        X = Globals.Rand.Next(0, Options.MapWidth);
+                        Y = Globals.Rand.Next(0, Options.MapHeight);
                         if (Attributes[X, Y] == null || Attributes[X, Y].value == (int) MapAttributes.Walkable)
                         {
                             break;

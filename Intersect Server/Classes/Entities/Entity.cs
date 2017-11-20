@@ -998,6 +998,7 @@ namespace Intersect.Server.Classes.Entities
             //No Matter what, if we attack the entitiy, make them chase us
             if (enemy.GetType() == typeof(Npc))
             {
+                if (((Npc) enemy).MyBase.Behavior == (int) NpcBehavior.Friendly) return;
                 ((Npc) enemy).AssignTarget(this);
 
                 //Check if there are any guards nearby
