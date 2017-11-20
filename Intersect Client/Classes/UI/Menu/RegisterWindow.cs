@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect;
 using Intersect.Localization;
 using Intersect.Utilities;
 using IntersectClientExtras.Gwen.Control;

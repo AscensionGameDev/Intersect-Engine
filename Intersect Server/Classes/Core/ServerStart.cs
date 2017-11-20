@@ -31,7 +31,7 @@ namespace Intersect.Server.Classes
             if (RunningOnWindows()) SetConsoleCtrlHandler(new HandlerRoutine(ConsoleCtrlCheck), true);
             Console.CancelKeyPress += Console_CancelKeyPress;
             Thread logicThread;
-            if (!Options.LoadFromDisk())
+            if (!ServerOptions.LoadOptions())
             {
                 Console.WriteLine("Failed to load server options! Press any key to shut down.");
                 Console.ReadKey();
@@ -63,7 +63,12 @@ namespace Intersect.Server.Classes
             Console.WriteLine(Strings.Get("intro", "support"));
             Console.WriteLine(Strings.Get("intro", "loading"));
             Database.CheckDirectories();
-            Formulas.LoadFormulas();
+            if (!Formulas.LoadFormulas())
+            {
+                Console.WriteLine(Strings.Get("formulas", "loadfailed"));
+                Console.ReadKey();
+                return;
+            }
             if (!Database.InitDatabase())
             {
                 Console.ReadKey();

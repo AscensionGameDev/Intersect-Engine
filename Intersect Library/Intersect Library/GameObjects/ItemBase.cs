@@ -38,7 +38,7 @@ namespace Intersect.GameObjects
         {
             Name = "New Item";
             Speed = 10; // Set to 10 by default.
-            StatsGiven = new int[(int)Stats.StatCount];
+            StatsGiven = new int[Options.MaxStats];
         }
 
         public override byte[] BinaryData => ItemData();
@@ -60,7 +60,7 @@ namespace Intersect.GameObjects
 
             UseReqs.Load(myBuffer);
 
-            for (var i = 0; i < (int)Stats.StatCount; i++)
+            for (var i = 0; i < Options.MaxStats; i++)
             {
                 StatsGiven[i] = myBuffer.ReadInteger();
             }

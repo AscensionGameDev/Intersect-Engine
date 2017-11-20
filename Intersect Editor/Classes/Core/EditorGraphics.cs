@@ -10,6 +10,7 @@ using Intersect.Editor.Forms;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
+using Intersect.Localization;
 using Intersect.Logging;
 using Intersect.Utilities;
 using Microsoft.Xna.Framework;

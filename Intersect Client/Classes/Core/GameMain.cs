@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Linq;
-using Intersect.Config;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
@@ -26,7 +25,7 @@ namespace Intersect_Client.Classes.Core
 
             //Load Sounds
             GameAudio.Init();
-            GameAudio.PlayMusic(ClientOptions.MenuMusic, 3, 3, true);
+            GameAudio.PlayMusic(Globals.Database.MenuBGM, 3, 3, true);
 
             //Init Network
             GameNetwork.InitNetwork();

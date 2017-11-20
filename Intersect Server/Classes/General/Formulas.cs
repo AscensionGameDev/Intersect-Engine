@@ -1,39 +1,49 @@
 ﻿using System;
 using System.IO;
+using System.Xml;
 using Intersect.Enums;
 using Intersect.Localization;
+using Intersect.Logging;
 using Intersect.Server.Classes.Entities;
 using NCalc;
-using Newtonsoft.Json;
-using Formatting = Newtonsoft.Json.Formatting;
 
 namespace Intersect.Server.Classes.General
 {
-    public class Formulas
+    public static class Formulas
     {
-        private static Formulas _formulas;
+        private static string PhysicalDamage = "";
+        private static string MagicDamage = "";
+        private static string TrueDamage = "";
 
-        private const string FORMULAS_FILE = "resources/formulas.json";
-
-        public string PhysicalDamage = "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025) * (100 / (100 + V_Defense))";
-        public string MagicDamage =  "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025) * (100 / (100 + V_MagicResist))";
-        public string TrueDamage = "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025)";
-
-        public static void LoadFormulas()
+        public static bool LoadFormulas()
         {
+            if (!File.Exists(Path.Combine("resources", "formulas.xml")))
+            {
+                File.WriteAllText(Path.Combine("resources", "formulas.xml"), Properties.Resources.formulas);
+                Console.WriteLine(Strings.Get("formulas", "missing"));
+            }
+            var formulas = new XmlDocument();
+            var formulaXml = File.ReadAllText("resources/formulas.xml");
             try
             {
-                _formulas = new Formulas();
-                if (File.Exists(FORMULAS_FILE))
-                {
-                    _formulas = JsonConvert.DeserializeObject<Formulas>(File.ReadAllText(FORMULAS_FILE));
-                }
-                File.WriteAllText(FORMULAS_FILE, JsonConvert.SerializeObject(_formulas, Formatting.Indented));
+                formulas.LoadXml(formulaXml);
+                PhysicalDamage = GetXmlStr(formulas, "//Formulas/PhysicalDamage");
+                MagicDamage = GetXmlStr(formulas, "//Formulas/MagicDamage");
+                TrueDamage = GetXmlStr(formulas, "//Formulas/TrueDamage");
+                return true;
             }
             catch (Exception ex)
             {
-                throw new Exception(Strings.Get("formulas", "missing"), ex);
+                Log.Trace(ex);
+                Console.WriteLine(Strings.Get("formulas", "syntax"));
+                return false;
             }
+        }
+
+        private static string GetXmlStr(XmlDocument xmlDoc, string xmlPath)
+        {
+            var selectSingleNode = xmlDoc.SelectSingleNode(xmlPath);
+            return selectSingleNode.InnerText;
         }
 
         public static int CalculateDamage(int baseDamage, DamageType damageType, Stats scalingStat, int scaling,
@@ -43,16 +53,16 @@ namespace Intersect.Server.Classes.General
             switch (damageType)
             {
                 case DamageType.Physical:
-                    expression = _formulas.PhysicalDamage;
+                    expression = PhysicalDamage;
                     break;
                 case DamageType.Magic:
-                    expression = _formulas.MagicDamage;
+                    expression = MagicDamage;
                     break;
                 case DamageType.True:
-                    expression = _formulas.TrueDamage;
+                    expression = TrueDamage;
                     break;
                 default:
-                    expression = _formulas.TrueDamage;
+                    expression = TrueDamage;
                     break;
             }
             Expression e = new Expression(expression);
@@ -62,46 +72,39 @@ namespace Intersect.Server.Classes.General
                 baseDamage = Math.Abs(baseDamage);
                 negate = true;
             }
-            try
+            e.Parameters["BaseDamage"] = baseDamage;
+            e.Parameters["ScalingStat"] = attacker.Stat[(int) scalingStat].Value();
+            e.Parameters["ScaleFactor"] = scaling / 100f;
+            e.Parameters["CritFactor"] = critMultiplier;
+            e.Parameters["A_Attack"] = attacker.Stat[(int) Stats.Attack].Value();
+            e.Parameters["A_Defense"] = attacker.Stat[(int) Stats.Defense].Value();
+            e.Parameters["A_Speed"] = attacker.Stat[(int) Stats.Speed].Value();
+            e.Parameters["A_AbilityPwr"] = attacker.Stat[(int) Stats.AbilityPower].Value();
+            e.Parameters["A_MagicResist"] = attacker.Stat[(int) Stats.MagicResist].Value();
+            e.Parameters["V_Attack"] = victim.Stat[(int) Stats.Attack].Value();
+            e.Parameters["V_Defense"] = victim.Stat[(int) Stats.Defense].Value();
+            e.Parameters["V_Speed"] = victim.Stat[(int) Stats.Speed].Value();
+            e.Parameters["V_AbilityPwr"] = victim.Stat[(int) Stats.AbilityPower].Value();
+            e.Parameters["V_MagicResist"] = victim.Stat[(int) Stats.MagicResist].Value();
+            e.EvaluateFunction += delegate(string name, FunctionArgs args)
             {
-                e.Parameters["BaseDamage"] = baseDamage;
-                e.Parameters["ScalingStat"] = attacker.Stat[(int) scalingStat].Value();
-                e.Parameters["ScaleFactor"] = scaling / 100f;
-                e.Parameters["CritFactor"] = critMultiplier;
-                e.Parameters["A_Attack"] = attacker.Stat[(int) Stats.Attack].Value();
-                e.Parameters["A_Defense"] = attacker.Stat[(int) Stats.Defense].Value();
-                e.Parameters["A_Speed"] = attacker.Stat[(int) Stats.Speed].Value();
-                e.Parameters["A_AbilityPwr"] = attacker.Stat[(int) Stats.AbilityPower].Value();
-                e.Parameters["A_MagicResist"] = attacker.Stat[(int) Stats.MagicResist].Value();
-                e.Parameters["V_Attack"] = victim.Stat[(int) Stats.Attack].Value();
-                e.Parameters["V_Defense"] = victim.Stat[(int) Stats.Defense].Value();
-                e.Parameters["V_Speed"] = victim.Stat[(int) Stats.Speed].Value();
-                e.Parameters["V_AbilityPwr"] = victim.Stat[(int) Stats.AbilityPower].Value();
-                e.Parameters["V_MagicResist"] = victim.Stat[(int) Stats.MagicResist].Value();
-                e.EvaluateFunction += delegate(string name, FunctionArgs args)
+                if (name == "Random")
                 {
-                    if (name == "Random")
+                    int left = (int) Math.Round((double) args.Parameters[0].Evaluate());
+                    int right = (int) Math.Round((double) args.Parameters[1].Evaluate());
+                    if (left >= right)
                     {
-                        int left = (int) Math.Round((double) args.Parameters[0].Evaluate());
-                        int right = (int) Math.Round((double) args.Parameters[1].Evaluate());
-                        if (left >= right)
-                        {
-                            args.Result = left;
-                        }
-                        else
-                        {
-                            args.Result = Globals.Rand.Next(left, right + 1);
-                        }
+                        args.Result = left;
                     }
-                };
-                double result = Convert.ToDouble(e.Evaluate());
-                if (negate) result *= -1;
-                return (int)Math.Round(result);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Failed to evaluate damage formula", ex);
-            }
+                    else
+                    {
+                        args.Result = Globals.Rand.Next(left, right + 1);
+                    }
+                }
+            };
+            double result = Convert.ToDouble(e.Evaluate());
+            if (negate) result *= -1;
+            return (int) Math.Round(result);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Intersect.Server.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -62,12 +62,11 @@ namespace Intersect.Server.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///
         ///&lt;!--Config.xml generated automatically by Intersect Server.--&gt;
         ///&lt;Config&gt;
-        ///  &lt;Language&gt;English&lt;/Language&gt;
+        ///	&lt;Language&gt;English&lt;/Language&gt;
         ///  &lt;GameName&gt;Intersect&lt;/GameName&gt;
-        ///  &lt;ServerPort&gt;5400&lt;/ServerPort&gt;
+        ///  &lt;ServerPort&gt;4500&lt;/ServerPort&gt;
         ///  &lt;GameObjects&gt;
         ///    &lt;!--You can increase these if you want, but you shouldn&apos;t unless you need to.--&gt;
         ///    &lt;MaxNpcDrops&gt;10&lt;/MaxNpcDrops&gt;
@@ -77,11 +76,30 @@ namespace Intersect.Server.Properties {
         ///    &lt;MaxLevel&gt;100&lt;/MaxLevel&gt;
         ///    &lt;MaxInventory&gt;35&lt;/MaxInventory&gt;
         ///    &lt;MaxSpells&gt;35&lt;/MaxSpells&gt;
-        ///    [rest of string was truncated]&quot;;.
+        ///    &lt;M [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string config {
             get {
                 return ResourceManager.GetString("config", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;!--formulas.xml generated automatically by Intersect Server.
+        ///
+        ///Here you can modify formulas used in the Intersect Engine. The three main formulas are for calculating Physical, Magical, and True Damage.
+        ///
+        ///The following functions can be used:
+        ///Random(min,max):		Returns an integer value between min and max.
+        ///
+        ///The following variables can be used:
+        ///BaseDamage:					Base damage of weapon or spell used.
+        ///ScalingStat:				Value of stat that was selected in the item/spell ed [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string formulas {
+            get {
+                return ResourceManager.GetString("formulas", resourceCulture);
             }
         }
     }

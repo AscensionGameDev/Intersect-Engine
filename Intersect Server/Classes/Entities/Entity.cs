@@ -154,7 +154,7 @@ namespace Intersect.Server.Classes.Entities
             if (Globals.System.GetTimeMs() > CombatTimer && Globals.System.GetTimeMs() > RegenTimer)
             {
                 ProcessRegen();
-                RegenTimer = Globals.System.GetTimeMs() + Options.RegenTime;
+                RegenTimer = Globals.System.GetTimeMs() + ServerOptions.RegenTime;
             }
             //Status timers
             var statusArray = Statuses.ToArray();

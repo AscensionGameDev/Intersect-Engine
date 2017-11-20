@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using Intersect;
 using Intersect.Localization;
 using Intersect.Utilities;
 using IntersectClientExtras.Gwen.Control;

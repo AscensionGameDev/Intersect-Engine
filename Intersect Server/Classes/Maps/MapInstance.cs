@@ -198,7 +198,7 @@ namespace Intersect.Server.Classes.Maps
                 MapItems.Add(new MapItemInstance(item.ItemNum, item.ItemVal, item.BagId));
                 MapItems[MapItems.Count - 1].X = x;
                 MapItems[MapItems.Count - 1].Y = y;
-                MapItems[MapItems.Count - 1].DespawnTime = Globals.System.GetTimeMs() + Options.ItemDespawnTime;
+                MapItems[MapItems.Count - 1].DespawnTime = Globals.System.GetTimeMs() + ServerOptions.ItemDespawnTime;
                 if (itemBase.ItemType == (int) ItemTypes.Equipment)
                 {
                     MapItems[MapItems.Count - 1].ItemVal = 1;
@@ -253,7 +253,7 @@ namespace Intersect.Server.Classes.Maps
                         ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnX = MapItems[index].AttributeSpawnX;
                         ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnY = MapItems[index].AttributeSpawnY;
                         ItemRespawns[ItemRespawns.Count - 1].RespawnTime = Globals.System.GetTimeMs() +
-                                                                           Options.ItemRepawnTime;
+                                                                           ServerOptions.ItemRespawnTime;
                     }
                 }
                 MapItems[index] = null;
