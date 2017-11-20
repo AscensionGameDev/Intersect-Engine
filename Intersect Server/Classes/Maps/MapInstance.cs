@@ -15,6 +15,8 @@ using EventInstance = Intersect.Server.Classes.Entities.EventInstance;
 
 namespace Intersect.Server.Classes.Maps
 {
+    using Database = Intersect.Server.Classes.Core.Database;
+
     public class MapInstance : MapBase
     {
         private static MapInstances sLookup;

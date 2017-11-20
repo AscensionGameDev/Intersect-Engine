@@ -21,6 +21,8 @@ using Intersect.Utilities;
 
 namespace Intersect.Server.Classes.Networking
 {
+    using Database = Intersect.Server.Classes.Core.Database;
+
     public class PacketHandler
     {
         public bool HandlePacket(IPacket packet)
