@@ -481,6 +481,8 @@ namespace Intersect.Editor.Forms
             if (e.X < EditorGraphics.CurrentView.Left || e.Y < EditorGraphics.CurrentView.Top ||
                 e.X > EditorGraphics.CurrentView.Left + Options.MapWidth * Options.TileWidth ||
                 e.Y > EditorGraphics.CurrentView.Top + Options.MapHeight * Options.TileHeight) return;
+
+
             int oldx = Globals.CurTileX;
             int oldy = Globals.CurTileY;
             Globals.CurTileX = (int) Math.Floor((double) (e.X - EditorGraphics.CurrentView.Left) / Options.TileWidth);
@@ -496,7 +498,9 @@ namespace Intersect.Editor.Forms
             if (Globals.CurTileX >= Options.MapWidth) Globals.CurTileX = Options.MapWidth - 1;
             if (Globals.CurTileY >= Options.MapHeight) Globals.CurTileY = Options.MapHeight - 1;
 
-            if (oldx != Globals.CurTileX || oldy != Globals.CurTileY)
+            if (e.Button == MouseButtons.Middle) return;
+
+                if (oldx != Globals.CurTileX || oldy != Globals.CurTileY)
             {
                 EditorGraphics.TilePreviewUpdated = true;
             }
@@ -669,7 +673,7 @@ namespace Intersect.Editor.Forms
 
         public void picMap_MouseUp(object sender, MouseEventArgs e)
         {
-            if (Globals.EditingLight != null)
+            if (Globals.EditingLight != null || e.Button == MouseButtons.Middle)
             {
                 return;
             }

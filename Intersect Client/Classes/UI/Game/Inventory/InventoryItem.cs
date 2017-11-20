@@ -20,6 +20,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
     public class InventoryItem
     {
         private int _currentItem = -2;
+        private int _currentAmt = 0;
         private ItemDescWindow _descWindow;
 
         //Drag/Drop References
@@ -196,10 +197,11 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                 }
             }
             var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[_mySlot].ItemNum);
-            if (Globals.Me.Inventory[_mySlot].ItemNum != _currentItem || equipped != _isEquipped ||
+            if (Globals.Me.Inventory[_mySlot].ItemNum != _currentItem || Globals.Me.Inventory[_mySlot].ItemVal != _currentAmt || equipped != _isEquipped ||
                 (item == null && texLoaded != "") || (item != null && texLoaded != item.Pic))
             {
                 _currentItem = Globals.Me.Inventory[_mySlot].ItemNum;
+                _currentAmt = Globals.Me.Inventory[_mySlot].ItemVal;
                 _isEquipped = equipped;
                 equipPanel.IsHidden = !_isEquipped;
                 if (item != null)
@@ -226,6 +228,12 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                         pnl.Texture = null;
                     }
                     texLoaded = "";
+                }
+                if (_descWindow != null)
+                {
+                    _descWindow.Dispose();
+                    _descWindow = null;
+                    pnl_HoverEnter(null, null);
                 }
             }
             if (!IsDragging)

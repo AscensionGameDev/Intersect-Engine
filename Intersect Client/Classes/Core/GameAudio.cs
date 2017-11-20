@@ -240,6 +240,7 @@ namespace Intersect_Client.Classes.Core
             {
                 _sound = sound.CreateInstance();
                 _sound.SetLoop(_loop);
+                _sound.SetVolume(0);
                 _sound.Play();
                 Loaded = true;
             }

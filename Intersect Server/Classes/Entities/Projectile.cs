@@ -448,6 +448,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 bf.WriteInteger(Target.MyIndex);
             }
+            bf.WriteInteger(Owner != null ? Owner.MyIndex : -1);
             return bf.ToArray();
         }
 
