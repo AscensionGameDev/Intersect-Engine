@@ -28,7 +28,7 @@ namespace Intersect.Server.Classes.Core
                 }
                 if (minuteTimer < timeMs)
                 {
-                    if (lastDbUpdate.AddMinutes(1) < DateTime.Now)
+                    if (lastDbUpdate.AddMinutes(30) < DateTime.Now)
                     {
                         Task.Run(() => Database.BackupDatabase());
                         lastDbUpdate = DateTime.Now;

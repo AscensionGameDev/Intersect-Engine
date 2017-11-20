@@ -374,6 +374,7 @@ namespace Intersect.Editor.Forms
 
         public void MouseDownHandler(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Middle || e.Button == MouseButtons.None) return;
             if (sender != Globals.MapEditorWindow && sender != Globals.MapEditorWindow.pnlMapContainer &&
                 sender != Globals.MapEditorWindow.picMap)
             {

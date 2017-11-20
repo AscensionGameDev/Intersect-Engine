@@ -603,7 +603,7 @@ namespace Intersect.Server.Classes.Entities
 
             if (weapon != null)
             {
-                base.TryAttack(enemy, weapon.Damage == 0 ? 1 : weapon.Damage, (DamageType)weapon.DamageType,
+                base.TryAttack(enemy, weapon.Damage, (DamageType)weapon.DamageType,
                     (Stats)weapon.ScalingStat,
                     weapon.Scaling, weapon.CritChance, Options.CritMultiplier);
             }
@@ -612,7 +612,7 @@ namespace Intersect.Server.Classes.Entities
                 var classBase = ClassBase.Lookup.Get<ClassBase>(Class);
                 if (classBase != null)
                 {
-                    base.TryAttack(enemy, classBase.Damage == 0 ? 1 : classBase.Damage,
+                    base.TryAttack(enemy, classBase.Damage,
                         (DamageType)classBase.DamageType, (Stats)classBase.ScalingStat,
                         classBase.Scaling, classBase.CritChance, Options.CritMultiplier);
                 }

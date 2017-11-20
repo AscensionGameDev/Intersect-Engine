@@ -201,7 +201,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
                                                                         if (evt != null)
                                                                         {
                                                                             if (evt.PageInstance != null &&
-                                                                                evt.PageInstance.Passable == 0)
+                                                                                evt.PageInstance.Passable == 0 && evt.PageInstance.CurrentX > -1 && evt.PageInstance.CurrentY > -1)
                                                                             {
                                                                                 mapGrid[
                                                                                     ((x + 1) - gridX) * Options
@@ -221,7 +221,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
                                                                 foreach (var evt in playerEvents)
                                                                 {
                                                                     if (evt != null && evt.PageInstance != null &&
-                                                                        evt.PageInstance.Passable == 0)
+                                                                        evt.PageInstance.Passable == 0 && evt.PageInstance.CurrentX > -1 && evt.PageInstance.CurrentY > -1)
                                                                     {
                                                                         mapGrid[
                                                                             ((x + 1) - gridX) * Options.MapWidth +

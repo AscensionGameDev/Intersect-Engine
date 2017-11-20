@@ -14,6 +14,7 @@ namespace Intersect_Client.Classes.Entities
         private int _spawnCount;
         private int _spawnedAmount;
         private int _totalSpawns;
+        private int _owner;
         public int ProjectileNum;
         private int Quantity;
 
@@ -42,6 +43,7 @@ namespace Intersect_Client.Classes.Entities
             ProjectileNum = bf.ReadInteger();
             Dir = bf.ReadInteger();
             Target = bf.ReadInteger();
+            _owner = bf.ReadInteger();
             _myBase = ProjectileBase.Lookup.Get<ProjectileBase>(ProjectileNum);
             if (_myBase != null)
             {
@@ -462,7 +464,7 @@ namespace Intersect_Client.Classes.Entities
 
             if (tileBlocked != -1)
             {
-                if (tileBlocked >= 0 && Globals.Entities.ContainsKey(tileBlocked))
+                if (tileBlocked >= 0 && tileBlocked != _owner && Globals.Entities.ContainsKey(tileBlocked))
                 {
                     if (Globals.Entities[tileBlocked].GetType() == typeof(Resource))
                     {
