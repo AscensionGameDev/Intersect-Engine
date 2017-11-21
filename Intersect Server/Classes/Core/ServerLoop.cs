@@ -16,6 +16,7 @@ namespace Intersect.Server.Classes.Core
             long cps = 0;
             long minuteTimer = 0;
             DateTime lastDbUpdate = DateTime.Now;
+            long dbBackupMinutes = 120;
             while (Globals.ServerStarted)
             {
                 //TODO: If there are no players online then loop slower and save the poor cpu
@@ -28,7 +29,7 @@ namespace Intersect.Server.Classes.Core
                 }
                 if (minuteTimer < timeMs)
                 {
-                    if (lastDbUpdate.AddMinutes(30) < DateTime.Now)
+                    if (lastDbUpdate.AddMinutes(dbBackupMinutes) < DateTime.Now)
                     {
                         Task.Run(() => Database.BackupDatabase());
                         lastDbUpdate = DateTime.Now;
