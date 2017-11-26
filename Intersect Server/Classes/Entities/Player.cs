@@ -835,29 +835,32 @@ namespace Intersect.Server.Classes.Entities
                         return;
                     }
                 }
+
+                if (amount >= Inventory[slot].ItemVal)
+                {
+                    amount = Inventory[slot].ItemVal;
+                }
                 if (itemBase.IsStackable())
                 {
-                    if (amount >= Inventory[slot].ItemVal)
-                    {
-                        amount = Inventory[slot].ItemVal;
-                    }
                     MapInstance.Lookup.Get<MapInstance>(CurrentMap)
                         .SpawnItem(CurrentX, CurrentY, Inventory[slot], amount);
-                    if (amount == Inventory[slot].ItemVal)
-                    {
-                        Inventory[slot] = new ItemInstance(-1, 0, -1);
-                        EquipmentProcessItemLoss(slot);
-                    }
-                    else
-                    {
-                        Inventory[slot].ItemVal -= amount;
-                    }
                 }
                 else
                 {
-                    MapInstance.Lookup.Get<MapInstance>(CurrentMap).SpawnItem(CurrentX, CurrentY, Inventory[slot], 1);
+                    for (int i = 0; i < amount; i++)
+                    {
+                        MapInstance.Lookup.Get<MapInstance>(CurrentMap)
+                            .SpawnItem(CurrentX, CurrentY, Inventory[slot], 1);
+                    }
+                }
+                if (amount == Inventory[slot].ItemVal)
+                {
                     Inventory[slot] = new ItemInstance(-1, 0, -1);
                     EquipmentProcessItemLoss(slot);
+                }
+                else
+                {
+                    Inventory[slot].ItemVal -= amount;
                 }
                 UpdateGatherItemQuests(itemBase.Index);
                 PacketSender.SendInventoryItemUpdate(MyClient, slot);
@@ -1243,29 +1246,27 @@ namespace Intersect.Server.Classes.Entities
                         }
                     }
 
-                    if (itemBase.IsStackable())
+                    if (amount >= Inventory[slot].ItemVal)
                     {
-                        if (amount >= Inventory[slot].ItemVal)
-                        {
-                            amount = Inventory[slot].ItemVal;
-                        }
-                        if (amount == Inventory[slot].ItemVal)
-                        {
-                            //Definitely can get reward.
-                            Inventory[slot] = new ItemInstance(-1, 0, -1);
-                            EquipmentProcessItemLoss(slot);
-                        }
-                        else
-                        {
-                            //check if can get reward
-                            if (!CanGiveItem(new ItemInstance(rewardItemNum, rewardItemVal, -1))) canSellItem = false;
-                            Inventory[slot].ItemVal -= amount;
-                        }
+                        amount = Inventory[slot].ItemVal;
+                    }
+                    if (amount == Inventory[slot].ItemVal)
+                    {
+                        //Definitely can get reward.
+                        Inventory[slot] = new ItemInstance(-1, 0, -1);
+                        EquipmentProcessItemLoss(slot);
                     }
                     else
                     {
-                        Inventory[slot] = new ItemInstance(-1, 0, -1);
-                        EquipmentProcessItemLoss(slot);
+                        //check if can get reward
+                        if (!CanGiveItem(new ItemInstance(rewardItemNum, rewardItemVal, -1)))
+                        {
+                            canSellItem = false;
+                        }
+                        else
+                        {
+                            Inventory[slot].ItemVal -= amount;
+                        }
                     }
                     if (canSellItem)
                     {

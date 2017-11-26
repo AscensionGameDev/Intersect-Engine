@@ -247,7 +247,7 @@ namespace Intersect_Client.Classes.Entities
                 else
                 {
                     InputBox iBox = new InputBox(Strings.Get("shop", "sellitem"), Strings.Get("shop", "cannotsell"),
-                        true, InputBox.InputType.YesNo, null, null, -1);
+                        true, InputBox.InputType.OkayOnly, null, null, -1);
                 }
             }
         }

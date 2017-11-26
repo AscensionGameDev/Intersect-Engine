@@ -102,6 +102,11 @@ namespace Intersect.Editor.Classes.Maps
             }
         }
 
+        public Object GetMapGridLock()
+        {
+            return texLock;
+        }
+
         public void Load(ByteBuffer bf)
         {
             Loaded = false;
