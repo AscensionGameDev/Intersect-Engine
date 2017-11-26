@@ -654,12 +654,12 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Warping
-        public override void Warp(int newMap, int newX, int newY)
+        public override void Warp(int newMap, int newX, int newY, bool adminWarp = false)
         {
-            Warp(newMap, newX, newY, 1);
+            Warp(newMap, newX, newY, 1, adminWarp);
         }
 
-        public override void Warp(int newMap, int newX, int newY, int newDir)
+        public override void Warp(int newMap, int newX, int newY, int newDir, bool adminWarp = false)
         {
             var map = MapInstance.Lookup.Get<MapInstance>(newMap);
             if (map == null)
@@ -690,7 +690,13 @@ namespace Intersect.Server.Classes.Entities
                 map.PlayerEnteredMap(this);
                 PacketSender.SendEntityDataToProximity(this);
                 PacketSender.SendEntityPositionToAll(this);
-                PacketSender.SendMapGrid(MyClient, map.MapGrid);
+
+                //If map grid changed then send the new map grid
+                if (!adminWarp)
+                {
+                    PacketSender.SendMapGrid(MyClient, map.MapGrid, true);
+                }
+
                 var surroundingMaps = map.GetSurroundingMaps(true);
                 foreach (var surrMap in surroundingMaps)
                 {

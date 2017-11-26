@@ -1504,12 +1504,12 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Empty virtual functions for players
-        public virtual void Warp(int newMap, int newX, int newY)
+        public virtual void Warp(int newMap, int newX, int newY, bool adminWarp = false)
         {
-            Warp(newMap, newX, newY, Dir);
+            Warp(newMap, newX, newY, Dir, adminWarp);
         }
 
-        public virtual void Warp(int newMap, int newX, int newY, int newDir)
+        public virtual void Warp(int newMap, int newX, int newY, int newDir, bool adminWarp = false)
         {
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
@@ -16,7 +17,7 @@ namespace Intersect.Client.Classes.MonoGame.Network
     public class IntersectNetworkSocket : GameSocket
     {
         public static ClientNetwork ClientLidgrenNetwork;
-        public static Queue<IPacket> PacketQueue = new Queue<IPacket>();
+        public static ConcurrentQueue<IPacket> PacketQueue = new ConcurrentQueue<IPacket>();
 
         public IntersectNetworkSocket()
         {
@@ -81,7 +82,11 @@ namespace Intersect.Client.Classes.MonoGame.Network
             var packetCount = PacketQueue.Count;
             for (int i = 0; i < packetCount; i++)
             {
-                PacketHandler.HandlePacket(PacketQueue.Dequeue());
+                IPacket dequeued;
+                if (PacketQueue.TryDequeue(out dequeued))
+                {
+                    PacketHandler.HandlePacket(dequeued);
+                }
             }
         }
 

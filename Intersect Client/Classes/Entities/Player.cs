@@ -1134,17 +1134,17 @@ namespace Intersect_Client.Classes.Entities
                 if (type == 1)
                 {
                     base.DrawName(CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder,
-                        CustomColors.PlayerNameModBackground); //blue
+                        CustomColors.PlayerNameModBackground);
                 }
                 else if (type == 2)
                 {
                     base.DrawName(CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder,
-                        CustomColors.PlayerNameAdminBackground); //red
+                        CustomColors.PlayerNameAdminBackground);
                 }
                 else
                 {
                     base.DrawName(CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder,
-                        CustomColors.PlayerNameNormalBackground); //light brown
+                        CustomColors.PlayerNameNormalBackground);
                 }
             }
             else

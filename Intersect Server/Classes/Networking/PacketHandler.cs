@@ -1524,7 +1524,7 @@ namespace Intersect.Server.Classes.Networking
                 case (int) AdminActions.WarpToLoc:
                     if (client.Power > 0)
                     {
-                        client.Entity.Warp(Convert.ToInt32(val1), Convert.ToInt32(val2), Convert.ToInt32(val3));
+                        client.Entity.Warp(Convert.ToInt32(val1), Convert.ToInt32(val2), Convert.ToInt32(val3),0,true);
                     }
                     break;
                 case (int) AdminActions.Kick:
