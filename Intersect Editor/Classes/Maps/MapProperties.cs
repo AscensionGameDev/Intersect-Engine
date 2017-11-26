@@ -491,7 +491,7 @@ namespace Intersect.Editor.Classes.Maps
                 ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
                 if (ImageList.IndexOf(_myMap.OverlayGraphic) <= -1)
                 {
-                    _myMap.Panorama = null;
+                    _myMap.OverlayGraphic = null;
                 }
                 return TextUtils.NullToNone(_myMap.OverlayGraphic);
             }

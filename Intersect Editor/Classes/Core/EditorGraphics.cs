@@ -855,71 +855,76 @@ namespace Intersect.Editor.Classes
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.FromNonPremultiplied(60, 63, 65, 255));
             var rand = new Random();
             var grid = Globals.MapGrid;
-            grid.Update(_mapGridChain.Bounds);
-            for (int x = 0; x < grid.GridWidth + 2; x++)
+            lock (Globals.MapGrid.GetMapGridLock())
             {
-                for (int y = 0; y < grid.GridHeight + 2; y++)
+                grid.Update(_mapGridChain.Bounds);
+                for (int x = 0; x < grid.GridWidth + 2; x++)
                 {
-                    var renderRect = new System.Drawing.Rectangle(grid.ContentRect.X + x * grid.TileWidth,
-                        grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, grid.TileHeight);
-                    if (grid.ViewRect.IntersectsWith(renderRect))
+                    for (int y = 0; y < grid.GridHeight + 2; y++)
                     {
-                        if (x == 0 || y == 0 || x == grid.GridWidth + 1 || y == grid.GridHeight + 1 ||
-                            grid.Grid[x - 1, y - 1].mapnum == -1)
+                        var renderRect = new System.Drawing.Rectangle(grid.ContentRect.X + x * grid.TileWidth,
+                            grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, grid.TileHeight);
+                        if (grid.ViewRect.IntersectsWith(renderRect))
                         {
-                            DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
-                                new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
-                                    grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, grid.TileHeight),
-                                System.Drawing.Color.FromArgb(45, 45, 48), _mapGridChain);
-                        }
-                        else
-                        {
-                            if (grid.Grid[x - 1, y - 1].mapnum > -1)
+                            if (x == 0 || y == 0 || x == grid.GridWidth + 1 || y == grid.GridHeight + 1 ||
+                                grid.Grid[x - 1, y - 1].mapnum == -1)
                             {
-                                if (grid.Grid[x - 1, y - 1].tex != null &&
-                                    grid.Grid[x - 1, y - 1].tex.Width == grid.TileWidth &&
-                                    grid.Grid[x - 1, y - 1].tex.Height == grid.TileHeight)
+                                DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+                                    new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
+                                        grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, grid.TileHeight),
+                                    System.Drawing.Color.FromArgb(45, 45, 48), _mapGridChain);
+                            }
+                            else
+                            {
+                                if (grid.Grid[x - 1, y - 1].mapnum > -1)
                                 {
-                                    DrawTexture(grid.Grid[x - 1, y - 1].tex, grid.ContentRect.X + x * grid.TileWidth,
-                                        grid.ContentRect.Y + y * grid.TileHeight, _mapGridChain);
+                                    if (grid.Grid[x - 1, y - 1].tex != null &&
+                                        grid.Grid[x - 1, y - 1].tex.Width == grid.TileWidth &&
+                                        grid.Grid[x - 1, y - 1].tex.Height == grid.TileHeight)
+                                    {
+                                        DrawTexture(grid.Grid[x - 1, y - 1].tex,
+                                            grid.ContentRect.X + x * grid.TileWidth,
+                                            grid.ContentRect.Y + y * grid.TileHeight, _mapGridChain);
+                                    }
+                                    else
+                                    {
+                                        DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+                                            new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
+                                                grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth,
+                                                grid.TileHeight),
+                                            System.Drawing.Color.Green, _mapGridChain);
+                                    }
                                 }
                                 else
                                 {
                                     DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                                         new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
                                             grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, grid.TileHeight),
-                                        System.Drawing.Color.Green, _mapGridChain);
+                                        System.Drawing.Color.Gray, _mapGridChain);
                                 }
                             }
-                            else
+                            if (Globals.MapGrid.ShowLines)
                             {
                                 DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                                     new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
-                                        grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, grid.TileHeight),
-                                    System.Drawing.Color.Gray, _mapGridChain);
+                                        grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, 1),
+                                    System.Drawing.Color.DarkGray,
+                                    _mapGridChain);
+                                DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+                                    new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
+                                        grid.ContentRect.Y + y * grid.TileHeight, 1, grid.TileHeight),
+                                    System.Drawing.Color.DarkGray,
+                                    _mapGridChain);
+                                DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+                                    new RectangleF(grid.ContentRect.X + x * grid.TileWidth + grid.TileWidth,
+                                        grid.ContentRect.Y + y * grid.TileHeight, 1, grid.TileHeight),
+                                    System.Drawing.Color.DarkGray,
+                                    _mapGridChain);
+                                DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+                                    new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
+                                        grid.ContentRect.Y + y * grid.TileHeight + grid.TileHeight, grid.TileWidth, 1),
+                                    System.Drawing.Color.DarkGray, _mapGridChain);
                             }
-                        }
-                        if (Globals.MapGrid.ShowLines)
-                        {
-                            DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
-                                new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
-                                    grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, 1),
-                                System.Drawing.Color.DarkGray,
-                                _mapGridChain);
-                            DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
-                                new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
-                                    grid.ContentRect.Y + y * grid.TileHeight, 1, grid.TileHeight),
-                                System.Drawing.Color.DarkGray,
-                                _mapGridChain);
-                            DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
-                                new RectangleF(grid.ContentRect.X + x * grid.TileWidth + grid.TileWidth,
-                                    grid.ContentRect.Y + y * grid.TileHeight, 1, grid.TileHeight),
-                                System.Drawing.Color.DarkGray,
-                                _mapGridChain);
-                            DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
-                                new RectangleF(grid.ContentRect.X + x * grid.TileWidth,
-                                    grid.ContentRect.Y + y * grid.TileHeight + grid.TileHeight, grid.TileWidth, 1),
-                                System.Drawing.Color.DarkGray, _mapGridChain);
                         }
                     }
                 }

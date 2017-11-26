@@ -249,6 +249,7 @@ namespace Intersect_Client.Classes.Entities
                 !Globals.GridMaps.Contains(CurrentMap)) return;
             var y = (int) Math.Ceiling(GetCenterPos().Y);
             var x = (int) Math.Ceiling(GetCenterPos().X);
+            var height = Options.TileHeight;
             switch (GraphicType)
             {
                 case 1: //Sprite
@@ -256,8 +257,7 @@ namespace Intersect_Client.Classes.Entities
                         GraphicFile);
                     if (entityTex != null)
                     {
-                        y -= entityTex.GetHeight() / 4 / 2;
-                        y -= 12;
+                        height = entityTex.GetHeight();
                     }
                     break;
                 case 2: //Tile
@@ -278,13 +278,12 @@ namespace Intersect_Client.Classes.Entities
                     }
                     if (cachedTileset != null)
                     {
-                        y -= ((GraphicHeight + 1) * Options.TileHeight) / 2;
-                        y -= 12;
+                        height = (GraphicHeight + 1) * Options.TileHeight;
                     }
                     break;
             }
 
-            y = (int) GetTopPos() - 4;
+            y = (int) GetTopPos(height) - 12;
             x = (int) Math.Ceiling(GetCenterPos().X);
 
             Pointf textSize = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 1);

@@ -795,7 +795,7 @@ namespace Intersect_Client.Classes.Entities
             return pos;
         }
 
-        public virtual float GetTopPos()
+        public virtual float GetTopPos(int overrideHeight = 0)
         {
             var map = latestMap;
             if (map == null)
@@ -803,10 +803,18 @@ namespace Intersect_Client.Classes.Entities
                 return 0f;
             }
             var y = (int) Math.Ceiling(GetCenterPos().Y);
-            if (Texture != null)
+            if (overrideHeight != 0)
             {
-                y = y - (int) ((Texture.GetHeight() / 8));
+                y = y - (int)((overrideHeight / 8));
                 y -= 12;
+            }
+            else
+            {
+                if (Texture != null)
+                {
+                    y = y - (int) ((Texture.GetHeight() / 8));
+                    y -= 12;
+                }
             }
             if (GetType() != typeof(Event))
             {

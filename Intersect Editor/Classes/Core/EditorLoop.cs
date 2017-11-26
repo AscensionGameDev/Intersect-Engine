@@ -47,7 +47,11 @@ namespace Intersect.Editor.Classes
             {
                 Globals.ResourceEditor.Render();
             }
-            EditorGraphics.Render();
+            if (Globals.MapGrid == null) return;
+            lock (Globals.MapGrid.GetMapGridLock())
+            {
+                EditorGraphics.Render();
+            }
         }
 
         public static void RunFrame()
