@@ -2670,6 +2670,7 @@ namespace Intersect.Server.Classes.Core
         {
             lock (SqlConnectionLock)
             {
+                command.Connection = sDbConnection;
                 using (var transaction = sDbConnection?.BeginTransaction())
                 {
                     var returnVal = command.ExecuteNonQuery();
@@ -2683,6 +2684,7 @@ namespace Intersect.Server.Classes.Core
         {
             lock (SqlConnectionLock)
             {
+                command.Connection = sDbConnection;
                 return command.ExecuteReader();
             }
         }
@@ -2691,6 +2693,7 @@ namespace Intersect.Server.Classes.Core
         {
             lock (SqlConnectionLock)
             {
+                command.Connection = sDbConnection;
                 return command.ExecuteScalar();
             }
         }
