@@ -878,7 +878,7 @@ namespace Intersect.Editor.Forms
 
         private void nudExpIncrease_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.ExpIncrease = (int) nudExpIncrease.Value;
+            _editorItem.ExpIncrease = (long) nudExpIncrease.Value;
         }
 
         private void nudHpIncrease_ValueChanged(object sender, EventArgs e)
@@ -934,7 +934,7 @@ namespace Intersect.Editor.Forms
 
         private void nudBaseExp_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.BaseExp = (int) nudBaseExp.Value;
+            _editorItem.BaseExp = (long) nudBaseExp.Value;
         }
 
         private void nudBaseHP_ValueChanged(object sender, EventArgs e)
