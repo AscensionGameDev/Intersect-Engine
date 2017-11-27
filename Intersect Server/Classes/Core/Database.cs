@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Intersect.Collections;
@@ -224,6 +226,7 @@ namespace Intersect.Server.Classes.Core
         //TODO: Options for saving frequency and number of backups to keep.
         public static void BackupDatabase()
         {
+            var backupsToKeep = 360;
             CheckDirectories();
             var sw = new Stopwatch();
             sw.Start();
@@ -236,11 +239,45 @@ namespace Intersect.Server.Classes.Core
                     sDbConnection.Dispose();
                     sDbConnection = null;
                 }
-                File.Copy("resources/intersect.db", $"{DIRECTORY_BACKUPS}/intersect_{DateTime.Now:yyyy-MM-dd hh-mm-ss}.db");
+                // Get the stream of the source file.
+                var fi = new FileInfo("resources/intersect.db");
+                using (FileStream inFile = fi.OpenRead())
+                {
+                    // Prevent compressing hidden and 
+                    // already compressed files.
+                    if ((File.GetAttributes(fi.FullName)
+                         & FileAttributes.Hidden)
+                        != FileAttributes.Hidden & fi.Extension != ".gz")
+                    {
+                        // Create the compressed file.
+                        using (FileStream outFile =
+                            File.Create($"{DIRECTORY_BACKUPS}/intersect_{DateTime.Now:yyyy-MM-dd hh-mm-ss}.db.gz"))
+                        {
+                            using (GZipStream Compress =
+                                new GZipStream(outFile,
+                                    CompressionMode.Compress))
+                            {
+                                // Copy the source file into 
+                                // the compression stream.
+                                inFile.CopyTo(Compress);
+                            }
+                        }
+                    }
+                }
                 OpenDatabaseConnection();
             }
             sw.Stop();
-            Log.Info($"Database backup at {DateTime.Now:yyyy-MM-dd hh-mm-ss} took  {sw.ElapsedMilliseconds}ms");
+            Log.Info($"Database backup at {DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss")} took  {sw.ElapsedMilliseconds}ms");
+            //Delete backups if we have too many!
+            var last = Directory.EnumerateFiles("resources/backups")
+                .Select(fileName => new FileInfo(fileName))
+                .OrderByDescending(fileInfo => fileInfo.LastWriteTime) // or "CreationTime"
+                .Skip(backupsToKeep)
+                .Select(fileInfo => fileInfo.FullName);
+            foreach (var file in last)
+            {
+                File.Delete(file);
+            }
         }
 
         //Database setup, version checking
@@ -2633,6 +2670,7 @@ namespace Intersect.Server.Classes.Core
         {
             lock (SqlConnectionLock)
             {
+                command.Connection = sDbConnection;
                 using (var transaction = sDbConnection?.BeginTransaction())
                 {
                     var returnVal = command.ExecuteNonQuery();
@@ -2646,6 +2684,7 @@ namespace Intersect.Server.Classes.Core
         {
             lock (SqlConnectionLock)
             {
+                command.Connection = sDbConnection;
                 return command.ExecuteReader();
             }
         }
@@ -2654,6 +2693,7 @@ namespace Intersect.Server.Classes.Core
         {
             lock (SqlConnectionLock)
             {
+                command.Connection = sDbConnection;
                 return command.ExecuteScalar();
             }
         }

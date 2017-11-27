@@ -102,6 +102,11 @@ namespace Intersect.Editor.Classes.Maps
             }
         }
 
+        public Object GetMapGridLock()
+        {
+            return texLock;
+        }
+
         public void Load(ByteBuffer bf)
         {
             Loaded = false;
@@ -163,13 +168,11 @@ namespace Intersect.Editor.Classes.Maps
             {
                 for (int y1 = 1; y1 < GridHeight + 1; y1++)
                 {
-                    if (new Rectangle(ContentRect.X + x1 * TileWidth, ContentRect.Y + y1 * TileHeight, TileWidth,
-                            TileHeight)
-                        .Contains(new System.Drawing.Point(x, y)))
+                    if (new Rectangle(ContentRect.X + x1 * TileWidth, ContentRect.Y + y1 * TileHeight, TileWidth, TileHeight).Contains(new System.Drawing.Point(x, y)))
                     {
                         if (Grid[x1 - 1, y1 - 1].mapnum > -1)
                         {
-                            if (Globals.CurrentMap.Changed() &&
+                            if (Globals.CurrentMap != null && Globals.CurrentMap.Changed() &&
                                 DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"),
                                     Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo,
                                     Properties.Resources.Icon) ==

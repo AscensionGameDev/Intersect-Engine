@@ -454,12 +454,12 @@ namespace Intersect.Editor.Forms
                 if (_editorItem.Sprites[i].Gender == 0)
                 {
                     lstSprites.Items.Add(Strings.Get("classeditor", "spriteitemmale", i + 1,
-                        _editorItem.Sprites[i].Sprite));
+                        TextUtils.NullToNone(_editorItem.Sprites[i].Sprite)));
                 }
                 else
                 {
                     lstSprites.Items.Add(Strings.Get("classeditor", "spriteitemfemale", i + 1,
-                        _editorItem.Sprites[i].Sprite));
+                        TextUtils.NullToNone(_editorItem.Sprites[i].Sprite)));
                 }
             }
             if (saveSpot) lstSprites.SelectedIndex = n;

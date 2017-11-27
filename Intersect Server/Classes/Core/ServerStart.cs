@@ -16,6 +16,7 @@ using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Network;
 using Open.Nat;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Classes
 {
@@ -30,6 +31,16 @@ namespace Intersect.Server.Classes
         {
             if (RunningOnWindows()) SetConsoleCtrlHandler(new HandlerRoutine(ConsoleCtrlCheck), true);
             Console.CancelKeyPress += Console_CancelKeyPress;
+
+            //Place sqlite3.dll where it's needed.
+            var dllname = Environment.Is64BitProcess ? "sqlite3x64.dll" : "sqlite3x86.dll";
+            if (!ReflectionUtils.ExtractResource($"Intersect.Server.Resources.{dllname}", "sqlite3.dll"))
+            {
+                Log.Error("Failed to extract sqlite library, terminating startup.");
+                Environment.Exit(-0x1000);
+            }
+
+
             Thread logicThread;
             if (!ServerOptions.LoadOptions())
             {

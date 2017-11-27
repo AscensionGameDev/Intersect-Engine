@@ -29,10 +29,10 @@ namespace Intersect.Server.Classes.Entities
                 switch (_movementSpeed)
                 {
                     case 0:
-                        Stat[(int) Stats.Speed].Stat = 5;
+                        Stat[(int) Stats.Speed].Stat = 2;
                         break;
                     case 1:
-                        Stat[(int) Stats.Speed].Stat = 10;
+                        Stat[(int) Stats.Speed].Stat = 5;
                         break;
                     case 2:
                         Stat[(int) Stats.Speed].Stat = 20;

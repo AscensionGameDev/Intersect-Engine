@@ -71,6 +71,7 @@ namespace Intersect_Client.Classes.UI.Game
             _durationBox.AddItem(Strings.Get("banmute", "1year")).UserData = "1 year";
             _durationBox.AddItem(Strings.Get("banmute", "forever")).UserData = "Indefinitely";
 
+
             _ipLabel = new Label(_myWindow)
             {
                 Text = Strings.Get("banmute", "ip")
@@ -118,7 +119,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public int GetDuration() //days by default
         {
-            switch (_durationBox.UserData.ToString())
+            switch (_durationBox.SelectedItem.UserData.ToString())
             {
                 case "1 day":
                     return 1;

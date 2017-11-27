@@ -296,36 +296,39 @@ namespace Intersect.Server.Classes.Entities
 
         public bool CheckForCollision(ProjectileSpawns spawn)
         {
-            var killSpawn = false;
+            var killSpawn = MoveFragment(spawn, false);
             //Check Map Entities For Hits
             var map = MapInstance.Lookup.Get<MapInstance>(spawn.Map);
-            Attribute attribute = map.Attributes[spawn.X, spawn.Y];
-            //Check for Z-Dimension
-            if (!spawn.ProjectileBase.IgnoreZDimension)
+            if (!killSpawn && map != null)
             {
-                if (attribute != null && attribute.value == (int) MapAttributes.ZDimension)
+                Attribute attribute = map.Attributes[spawn.X, spawn.Y];
+                //Check for Z-Dimension
+                if (!spawn.ProjectileBase.IgnoreZDimension)
                 {
-                    if (attribute.data1 > 0)
+                    if (attribute != null && attribute.value == (int) MapAttributes.ZDimension)
                     {
-                        spawn.Z = attribute.data1 - 1;
+                        if (attribute.data1 > 0)
+                        {
+                            spawn.Z = attribute.data1 - 1;
+                        }
                     }
                 }
-            }
-            //Check for grapplehooks.
-            if (attribute != null && attribute.value == (int)MapAttributes.GrappleStone &&
-                MyBase.GrappleHook == true)
-            {
-                if (spawn.Dir <= 3) //Don't handle directional projectile grapplehooks
+                //Check for grapplehooks.
+                if (attribute != null && attribute.value == (int) MapAttributes.GrappleStone &&
+                    MyBase.GrappleHook == true)
                 {
-                    Owner.Dir = spawn.Dir;
-                    new DashInstance(Owner, spawn.Distance, Owner.Dir);
+                    if (spawn.Dir <= 3) //Don't handle directional projectile grapplehooks
+                    {
+                        Owner.Dir = spawn.Dir;
+                        new DashInstance(Owner, spawn.Distance, Owner.Dir);
+                        killSpawn = true;
+                    }
+                }
+                if (attribute != null && attribute.value == (int) MapAttributes.Blocked &&
+                    !spawn.ProjectileBase.IgnoreMapBlocks)
+                {
                     killSpawn = true;
                 }
-            }
-            if (attribute != null && attribute.value == (int) MapAttributes.Blocked &&
-                !spawn.ProjectileBase.IgnoreMapBlocks)
-            {
-                killSpawn = true;
             }
 
             if (!killSpawn && map != null)
@@ -356,12 +359,17 @@ namespace Intersect.Server.Classes.Entities
             return killSpawn;
         }
 
-        public bool MoveFragment(ProjectileSpawns spawn)
+        public bool MoveFragment(ProjectileSpawns spawn, bool move = true)
         {
-            spawn.Distance++;
-            int newx = spawn.X + GetRangeX(spawn.Dir, 1);
-            int newy = spawn.Y + GetRangeY(spawn.Dir, 1);
+            int newx = spawn.X;
+            int newy = spawn.Y;
             int newmap = spawn.Map;
+            if (move)
+            {
+                spawn.Distance++;
+                newx = spawn.X + GetRangeX(spawn.Dir, 1);
+                newy = spawn.Y + GetRangeY(spawn.Dir, 1);
+            }
             var killSpawn = false;
             var map = MapInstance.Lookup.Get<MapInstance>(spawn.Map);
 

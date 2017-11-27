@@ -254,8 +254,15 @@ namespace Intersect.Server.Classes.Entities
                         CollisionIndex = en.MyIndex;
                         if (en.GetType() == typeof(Player))
                         {
-                            //Check if this target player is passable....
-                            if (!Options.PlayerPassable[(int) targetMap.ZoneType]) return (int) EntityTypes.Player;
+                            if (this.GetType() == typeof(Player))
+                            {
+                                //Check if this target player is passable....
+                                if (!Options.PlayerPassable[(int) targetMap.ZoneType]) return (int) EntityTypes.Player;
+                            }
+                            else
+                            {
+                                return (int)EntityTypes.Player;
+                            }
                         }
                         else if (en.GetType() == typeof(Npc))
                         {
@@ -1077,7 +1084,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 secondaryDamage = Formulas.CalculateDamage(secondaryDamage, damageType, scalingStat, scaling,
                     critMultiplier, this, enemy);
-                enemy.Vital[(int) Vitals.Mana] -= (int) baseDamage;
+                enemy.Vital[(int) Vitals.Mana] -= (int) secondaryDamage;
                 if (secondaryDamage > 0)
                 {
                     //If we took damage lets reset our combat timer
@@ -1504,12 +1511,12 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Empty virtual functions for players
-        public virtual void Warp(int newMap, int newX, int newY)
+        public virtual void Warp(int newMap, int newX, int newY, bool adminWarp = false)
         {
-            Warp(newMap, newX, newY, Dir);
+            Warp(newMap, newX, newY, Dir, adminWarp);
         }
 
-        public virtual void Warp(int newMap, int newX, int newY, int newDir)
+        public virtual void Warp(int newMap, int newX, int newY, int newDir, bool adminWarp = false)
         {
         }
 
