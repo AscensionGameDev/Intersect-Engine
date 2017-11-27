@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using Intersect.Localization;
+using Intersect.Migration.Localization;
+using Intersect.Logging;
 using Intersect.Migration.UpgradeInstructions.Upgrade_1;
 using Intersect.Migration.UpgradeInstructions.Upgrade_2;
 using Intersect.Migration.UpgradeInstructions.Upgrade_3;
@@ -168,15 +169,15 @@ namespace Intersect.Migration
                         IncrementDatabaseVersion();
                         break;
                     default:
-                        throw new Exception(Strings.Get("upgrade", "noinstructions"));
+                        throw new Exception(Strings.Upgrade.noinstructions);
                 }
                 currentVersion = GetDatabaseVersion();
             }
 
             sDbConnection.Close();
             sDbConnection = null;
-            Console.WriteLine(Strings.Get("upgrade", "updated", currentVersion));
-            Console.WriteLine(Strings.Get("upgrade", "backupinfo", startingVersion, startingVersion,
+            Console.WriteLine(Strings.Upgrade.updated.ToString( currentVersion));
+            Console.WriteLine(Strings.Upgrade.backupinfo.ToString( startingVersion, startingVersion,
                 DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss")));
         }
     }

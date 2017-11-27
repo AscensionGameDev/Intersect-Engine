@@ -438,11 +438,9 @@ namespace Intersect.Server.Classes.Localization
             public static LocalizedString initialized = @"UPnP Service Initialization Succeeded";
         }
 
-
-
         public static void Load(string language)
         {
-            if (File.Exists(Path.Combine("resources","languages", "Server." + language + ".json")))
+            if (File.Exists(Path.Combine("resources", "languages", "Server." + language + ".json")))
             {
                 Dictionary<string, Dictionary<string, object>> strings =
                     new Dictionary<string, Dictionary<string, object>>();
@@ -450,8 +448,10 @@ namespace Intersect.Server.Classes.Localization
                     File.ReadAllText(Path.Combine("resources", "languages", "Server." + language + ".json")));
                 Type type = typeof(Strings);
 
-                var fields = type.GetNestedTypes(System.Reflection.BindingFlags.Static |
-                                                 System.Reflection.BindingFlags.Public);
+                var fields = new List<Type>();
+                fields.AddRange(type.GetNestedTypes(System.Reflection.BindingFlags.Static |
+                                                    System.Reflection.BindingFlags.Public));
+
                 foreach (var p in fields)
                 {
                     if (strings.ContainsKey(p.Name))
@@ -468,11 +468,31 @@ namespace Intersect.Server.Classes.Localization
                                 }
                                 else if (p1.GetValue(null).GetType() == typeof(LocalizedString[]))
                                 {
-                                    string[] values = ((JArray) dict[p1.Name]).ToObject<string[]>();
+                                    string[] values = ((JArray)dict[p1.Name]).ToObject<string[]>();
                                     List<LocalizedString> list = new List<LocalizedString>();
                                     for (int i = 0; i < values.Length; i++)
                                         list.Add(new LocalizedString(values[i]));
                                     p1.SetValue(null, list.ToArray());
+                                }
+                                else if (p1.GetValue(null).GetType() == typeof(Dictionary<int, LocalizedString>))
+                                {
+                                    var dic = new Dictionary<int, LocalizedString>();
+                                    Dictionary<int, string> values = ((JObject)dict[p1.Name]).ToObject<Dictionary<int, string>>();
+                                    foreach (var val in values)
+                                    {
+                                        dic.Add(val.Key, val.Value);
+                                    }
+                                    p1.SetValue(null, dic);
+                                }
+                                else if (p1.GetValue(null).GetType() == typeof(Dictionary<string, LocalizedString>))
+                                {
+                                    var dic = new Dictionary<string, LocalizedString>();
+                                    Dictionary<string, string> values = ((JObject)dict[p1.Name]).ToObject<Dictionary<string, string>>();
+                                    foreach (var val in values)
+                                    {
+                                        dic.Add(val.Key, val.Value);
+                                    }
+                                    p1.SetValue(null, dic);
                                 }
                             }
                         }
@@ -488,7 +508,7 @@ namespace Intersect.Server.Classes.Localization
                 new Dictionary<string, Dictionary<string, object>>();
             Type type = typeof(Strings);
             var fields = type.GetNestedTypes(System.Reflection.BindingFlags.Static |
-                                        System.Reflection.BindingFlags.Public);
+                                             System.Reflection.BindingFlags.Public);
             foreach (var p in fields)
             {
                 var dict = new Dictionary<string, object>();
@@ -501,10 +521,27 @@ namespace Intersect.Server.Classes.Localization
                     }
                     else if (p1.GetValue(null).GetType() == typeof(LocalizedString[]))
                     {
-                        string[] values = ((LocalizedString[]) p1.GetValue(null)).Select(x => x.ToString()).ToArray();
+                        string[] values = ((LocalizedString[])p1.GetValue(null)).Select(x => x.ToString()).ToArray();
                         dict.Add(p1.Name, values);
                     }
-                        
+                    else if (p1.GetValue(null).GetType() == typeof(Dictionary<int, LocalizedString>))
+                    {
+                        var dic = new Dictionary<int, string>();
+                        foreach (var val in (Dictionary<int, LocalizedString>)p1.GetValue(null))
+                        {
+                            dic.Add(val.Key, val.Value.ToString());
+                        }
+                        dict.Add(p1.Name, dic);
+                    }
+                    else if (p1.GetValue(null).GetType() == typeof(Dictionary<string, LocalizedString>))
+                    {
+                        var dic = new Dictionary<string, string>();
+                        foreach (var val in (Dictionary<string, LocalizedString>)p1.GetValue(null))
+                        {
+                            dic.Add(val.Key, val.Value.ToString());
+                        }
+                        dict.Add(p1.Name, dic);
+                    }
                 }
                 strings.Add(p.Name, dict);
             }
@@ -550,4 +587,3 @@ namespace Intersect.Server.Classes.Localization
         }
     }
 }
-
