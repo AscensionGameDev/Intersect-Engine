@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -28,12 +28,12 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             cmbEntities.Items.Clear();
             if (!mEditingEvent.CommonEvent)
             {
-                cmbEntities.Items.Add(Strings.Get("eventwaitforroutecompletion", "player"));
+                cmbEntities.Items.Add(Strings.eventwaitforroutecompletion.player);
                 if (mEditingCommand.Ints[0] == -1) cmbEntities.SelectedIndex = -1;
                 foreach (var evt in mCurrentMap.Events)
                 {
                     cmbEntities.Items.Add(evt.Key == mEditingEvent.Index
-                        ? Strings.Get("eventwaitforroutecompletion", "this") + " "
+                        ? Strings.eventwaitforroutecompletion.This + " "
                         : "" + evt.Value.Name);
                     if (mEditingCommand.Ints[0] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
                 }
@@ -49,10 +49,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpWaitRoute.Text = Strings.Get("eventwaitforroutecompletion", "title");
-            lblEntity.Text = Strings.Get("eventwaitforroutecompletion", "label");
-            btnSave.Text = Strings.Get("eventwaitforroutecompletion", "okay");
-            btnCancel.Text = Strings.Get("eventwaitforroutecompletion", "cancel");
+            grpWaitRoute.Text = Strings.eventwaitforroutecompletion.title;
+            lblEntity.Text = Strings.eventwaitforroutecompletion.label;
+            btnSave.Text = Strings.eventwaitforroutecompletion.okay;
+            btnCancel.Text = Strings.eventwaitforroutecompletion.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

@@ -4,7 +4,7 @@ using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -26,11 +26,11 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpCompleteTask.Text = Strings.Get("eventcompletequesttask", "title");
-            lblQuest.Text = Strings.Get("eventcompletequesttask", "quest");
-            lblTask.Text = Strings.Get("eventcompletequesttask", "task");
-            btnSave.Text = Strings.Get("eventcompletequesttask", "okay");
-            btnCancel.Text = Strings.Get("eventcompletequesttask", "cancel");
+            grpCompleteTask.Text = Strings.eventcompletequesttask.title;
+            lblQuest.Text = Strings.eventcompletequesttask.quest;
+            lblTask.Text = Strings.eventcompletequesttask.task;
+            btnSave.Text = Strings.eventcompletequesttask.okay;
+            btnCancel.Text = Strings.eventcompletequesttask.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

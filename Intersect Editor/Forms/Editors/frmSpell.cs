@@ -11,7 +11,7 @@ using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms
@@ -84,22 +84,22 @@ namespace Intersect.Editor.Forms
             cmbProjectile.Items.Clear();
             cmbProjectile.Items.AddRange(Database.GetGameObjectList(GameObjectType.Projectile));
             cmbCastAnimation.Items.Clear();
-            cmbCastAnimation.Items.Add(Strings.Get("general", "none"));
+            cmbCastAnimation.Items.Add(Strings.general.none);
             cmbCastAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbHitAnimation.Items.Clear();
-            cmbHitAnimation.Items.Add(Strings.Get("general", "none"));
+            cmbHitAnimation.Items.Add(Strings.general.none);
             cmbHitAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbEvent.Items.Clear();
-            cmbEvent.Items.Add(Strings.Get("general", "none"));
+            cmbEvent.Items.Add(Strings.general.none);
             cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObjectType.CommonEvent));
 
             cmbSprite.Items.Clear();
-            cmbSprite.Items.Add(Strings.Get("general", "none"));
+            cmbSprite.Items.Add(Strings.general.none);
             var spellNames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Spell);
             cmbSprite.Items.AddRange(spellNames);
 
             cmbTransform.Items.Clear();
-            cmbTransform.Items.Add(Strings.Get("general", "none"));
+            cmbTransform.Items.Add(Strings.general.none);
             var spriteNames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity);
             cmbTransform.Items.AddRange(spriteNames);
 
@@ -122,120 +122,110 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.Get("spelleditor", "title");
-            toolStripItemNew.Text = Strings.Get("spelleditor", "new");
-            toolStripItemDelete.Text = Strings.Get("spelleditor", "delete");
-            toolStripItemCopy.Text = Strings.Get("spelleditor", "copy");
-            toolStripItemPaste.Text = Strings.Get("spelleditor", "paste");
-            toolStripItemUndo.Text = Strings.Get("spelleditor", "undo");
+            Text = Strings.spelleditor.title;
+            toolStripItemNew.Text = Strings.spelleditor.New;
+            toolStripItemDelete.Text = Strings.spelleditor.delete;
+            toolStripItemCopy.Text = Strings.spelleditor.copy;
+            toolStripItemPaste.Text = Strings.spelleditor.paste;
+            toolStripItemUndo.Text = Strings.spelleditor.undo;
 
-            grpSpells.Text = Strings.Get("spelleditor", "spells");
+            grpSpells.Text = Strings.spelleditor.spells;
 
-            grpGeneral.Text = Strings.Get("spelleditor", "general");
-            lblName.Text = Strings.Get("spelleditor", "name");
-            lblType.Text = Strings.Get("spelleditor", "type");
-
+            grpGeneral.Text = Strings.spelleditor.general;
+            lblName.Text = Strings.spelleditor.name;
+            lblType.Text = Strings.spelleditor.type;
             cmbType.Items.Clear();
-            for (var i = 0; i < 5; i++)
+            for (int i = 0; i < Strings.spelleditor.types.Length; i++)
             {
-                cmbType.Items.Add(Strings.Get("spelleditor", "type" + i));
+                cmbType.Items.Add(Strings.spelleditor.types[i]);
             }
+            lblIcon.Text = Strings.spelleditor.icon;
+            lblDesc.Text = Strings.spelleditor.description;
+            lblCastAnimation.Text = Strings.spelleditor.castanimation;
+            lblHitAnimation.Text = Strings.spelleditor.hitanimation;
 
-            lblIcon.Text = Strings.Get("spelleditor", "icon");
-            lblDesc.Text = Strings.Get("spelleditor", "description");
-            lblCastAnimation.Text = Strings.Get("spelleditor", "castanimation");
-            lblHitAnimation.Text = Strings.Get("spelleditor", "hitanimation");
+            grpRequirements.Text = Strings.spelleditor.requirements;
+            btnDynamicRequirements.Text = Strings.spelleditor.requirementsbutton;
 
-            grpRequirements.Text = Strings.Get("spelleditor", "requirements");
-            btnDynamicRequirements.Text = Strings.Get("spelleditor", "requirementsbutton");
+            grpSpellCost.Text = Strings.spelleditor.cost;
+            lblHPCost.Text = Strings.spelleditor.hpcost;
+            lblMPCost.Text = Strings.spelleditor.manacost;
+            lblCastDuration.Text = Strings.spelleditor.casttime;
+            lblCooldownDuration.Text = Strings.spelleditor.cooldown;
 
-            grpSpellCost.Text = Strings.Get("spelleditor", "cost");
-            lblHPCost.Text = Strings.Get("spelleditor", "hpcost");
-            lblMPCost.Text = Strings.Get("spelleditor", "manacost");
-            lblCastDuration.Text = Strings.Get("spelleditor", "casttime");
-            lblCooldownDuration.Text = Strings.Get("spelleditor", "cooldown");
-
-            grpTargetInfo.Text = Strings.Get("spelleditor", "targetting");
-            lblTargetType.Text = Strings.Get("spelleditor", "targettype");
-
+            grpTargetInfo.Text = Strings.spelleditor.targetting;
+            lblTargetType.Text = Strings.spelleditor.targettype;
             cmbTargetType.Items.Clear();
-            for (var i = 0; i < 4; i++)
+            for (int i = 0; i < Strings.spelleditor.targettypes.Length; i++)
             {
-                cmbTargetType.Items.Add(Strings.Get("spelleditor", "targettype" + i));
+                cmbTargetType.Items.Add(Strings.spelleditor.targettypes[i]);
             }
+            lblCastRange.Text = Strings.spelleditor.castrange;
+            lblProjectile.Text = Strings.spelleditor.projectile;
+            lblHitRadius.Text = Strings.spelleditor.hitradius;
 
-            lblCastRange.Text = Strings.Get("spelleditor", "castrange");
-            lblProjectile.Text = Strings.Get("spelleditor", "projectile");
-            lblHitRadius.Text = Strings.Get("spelleditor", "hitradius");
-
-            grpCombat.Text = Strings.Get("spelleditor", "combatspell");
-            grpDamage.Text = Strings.Get("spelleditor", "damagegroup");
-            lblCritChance.Text = Strings.Get("spelleditor", "critchance");
-            lblDamageType.Text = Strings.Get("spelleditor", "damagetype");
-            lblHPDamage.Text = Strings.Get("spelleditor", "hpdamage");
-            lblManaDamage.Text = Strings.Get("spelleditor", "mpdamage");
-            chkFriendly.Text = Strings.Get("spelleditor", "friendly");
-
+            grpCombat.Text = Strings.spelleditor.combatspell;
+            grpDamage.Text = Strings.spelleditor.damagegroup;
+            lblCritChance.Text = Strings.spelleditor.critchance;
+            lblDamageType.Text = Strings.spelleditor.damagetype;
+            lblHPDamage.Text = Strings.spelleditor.hpdamage;
+            lblManaDamage.Text = Strings.spelleditor.mpdamage;
+            chkFriendly.Text = Strings.spelleditor.friendly;
             cmbDamageType.Items.Clear();
-            for (var i = 0; i < 3; i++)
+            for (int i = 0; i < Strings.combat.damagetypes.Length; i++)
             {
-                cmbDamageType.Items.Add(Strings.Get("spelleditor", "damagetype" + i));
+                cmbDamageType.Items.Add(Strings.combat.damagetypes[i]);
             }
+            lblScalingStat.Text = Strings.spelleditor.scalingstat;
+            lblScaling.Text = Strings.spelleditor.scalingamount;
 
-            lblScalingStat.Text = Strings.Get("spelleditor", "scalingstat");
-            lblScaling.Text = Strings.Get("spelleditor", "scalingamount");
+            grpHotDot.Text = Strings.spelleditor.hotdot;
+            chkHOTDOT.Text = Strings.spelleditor.ishotdot;
+            lblTick.Text = Strings.spelleditor.hotdottick;
 
-            grpHotDot.Text = Strings.Get("spelleditor", "hotdot");
-            chkHOTDOT.Text = Strings.Get("spelleditor", "ishotdot");
-            lblTick.Text = Strings.Get("spelleditor", "hotdottick");
+            grpStats.Text = Strings.spelleditor.stats;
+            lblStr.Text = Strings.spelleditor.attack;
+            lblDef.Text = Strings.spelleditor.defense;
+            lblSpd.Text = Strings.spelleditor.speed;
+            lblMag.Text = Strings.spelleditor.abilitypower;
+            lblMR.Text = Strings.spelleditor.magicresist;
 
-            grpStats.Text = Strings.Get("spelleditor", "stats");
-            lblStr.Text = Strings.Get("spelleditor", "attack");
-            lblDef.Text = Strings.Get("spelleditor", "defense");
-            lblSpd.Text = Strings.Get("spelleditor", "speed");
-            lblMag.Text = Strings.Get("spelleditor", "abilitypower");
-            lblMR.Text = Strings.Get("spelleditor", "magicresist");
-
-            grpEffectDuration.Text = Strings.Get("spelleditor", "boostduration");
-            lblBuffDuration.Text = Strings.Get("spelleditor", "duration");
-            grpEffect.Text = Strings.Get("spelleditor", "effectgroup");
-            lblEffect.Text = Strings.Get("spelleditor", "effectlabel");
-
+            grpEffectDuration.Text = Strings.spelleditor.boostduration;
+            lblBuffDuration.Text = Strings.spelleditor.duration;
+            grpEffect.Text = Strings.spelleditor.effectgroup;
+            lblEffect.Text = Strings.spelleditor.effectlabel;
             cmbExtraEffect.Items.Clear();
-            for (var i = 0; i < 7; i++)
+            for (int i = 0; i < Strings.spelleditor.effects.Length; i++)
             {
-                cmbExtraEffect.Items.Add(Strings.Get("spelleditor", "effect" + i));
+                cmbExtraEffect.Items.Add(Strings.spelleditor.effects[i]);
             }
+            lblSprite.Text = Strings.spelleditor.transformsprite;
 
-            lblSprite.Text = Strings.Get("spelleditor", "transformsprite");
+            grpDash.Text = Strings.spelleditor.dash;
+            lblRange.Text = Strings.spelleditor.dashrange.ToString( scrlRange.Value);
+            grpDashCollisions.Text = Strings.spelleditor.dashcollisions;
+            chkIgnoreMapBlocks.Text = Strings.spelleditor.ignoreblocks;
+            chkIgnoreActiveResources.Text = Strings.spelleditor.ignoreactiveresources;
+            chkIgnoreInactiveResources.Text = Strings.spelleditor.ignoreinactiveresources;
+            chkIgnoreZDimensionBlocks.Text = Strings.spelleditor.ignorezdimension;
 
-            grpDash.Text = Strings.Get("spelleditor", "dash");
-            lblRange.Text = Strings.Get("spelleditor", "dashrange", scrlRange.Value);
-            grpDashCollisions.Text = Strings.Get("spelleditor", "dashcollisions");
-            chkIgnoreMapBlocks.Text = Strings.Get("spelleditor", "ignoreblocks");
-            chkIgnoreActiveResources.Text = Strings.Get("spelleditor", "ignoreactiveresources");
-            chkIgnoreInactiveResources.Text = Strings.Get("spelleditor", "ignoreinactiveresources");
-            chkIgnoreZDimensionBlocks.Text = Strings.Get("spelleditor", "ignorezdimension");
-
-            grpWarp.Text = Strings.Get("spelleditor", "warptomap");
-            lblMap.Text = Strings.Get("warping", "map", "");
-            lblX.Text = Strings.Get("warping", "x", "");
-            lblY.Text = Strings.Get("warping", "y", "");
-            lblWarpDir.Text = Strings.Get("warping", "direction", "");
-
+            grpWarp.Text = Strings.spelleditor.warptomap;
+            lblMap.Text = Strings.warping.map.ToString( "");
+            lblX.Text = Strings.warping.x.ToString( "");
+            lblY.Text = Strings.warping.y.ToString( "");
+            lblWarpDir.Text = Strings.warping.direction.ToString( "");
             cmbDirection.Items.Clear();
             for (var i = -1; i < 4; i++)
             {
-                cmbDirection.Items.Add(Strings.Get("directions", i.ToString()));
+                cmbDirection.Items.Add(Strings.directions.dir[i]);
             }
+            btnVisualMapSelector.Text = Strings.warping.visual;
 
-            btnVisualMapSelector.Text = Strings.Get("warping", "visual");
+            grpEvent.Text = Strings.spelleditor.Event;
+            lblEvent.Text = Strings.spelleditor.eventlabel;
 
-            grpEvent.Text = Strings.Get("spelleditor", "event");
-            lblEvent.Text = Strings.Get("spelleditor", "eventlabel");
-
-            btnSave.Text = Strings.Get("spelleditor", "save");
-            btnCancel.Text = Strings.Get("spelleditor", "cancel");
+            btnSave.Text = Strings.spelleditor.save;
+            btnCancel.Text = Strings.spelleditor.cancel;
         }
 
         public void InitEditor()
@@ -355,7 +345,7 @@ namespace Intersect.Editor.Forms
             {
                 grpDash.Show();
                 scrlRange.Value = mEditorItem.CastRange;
-                lblRange.Text = Strings.Get("spelleditor", "dashrange", scrlRange.Value);
+                lblRange.Text = Strings.spelleditor.dashrange.ToString(scrlRange.Value);
                 chkIgnoreMapBlocks.Checked = Convert.ToBoolean(mEditorItem.Data1);
                 chkIgnoreActiveResources.Checked = Convert.ToBoolean(mEditorItem.Data2);
                 chkIgnoreInactiveResources.Checked = Convert.ToBoolean(mEditorItem.Data3);
@@ -496,7 +486,7 @@ namespace Intersect.Editor.Forms
 
         private void scrlRange_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblRange.Text = Strings.Get("spelleditor", "dashrange", scrlRange.Value);
+            lblRange.Text = Strings.spelleditor.dashrange.ToString( scrlRange.Value);
             mEditorItem.CastRange = scrlRange.Value;
         }
 
@@ -551,8 +541,8 @@ namespace Intersect.Editor.Forms
         {
             if (mEditorItem != null && lstSpells.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("spelleditor", "deleteprompt"),
-                        Strings.Get("spelleditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(Strings.spelleditor.deleteprompt,
+                        Strings.spelleditor.deletetitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -582,8 +572,8 @@ namespace Intersect.Editor.Forms
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("spelleditor", "undoprompt"),
-                        Strings.Get("spelleditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(Strings.spelleditor.undoprompt,
+                        Strings.spelleditor.undotitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();

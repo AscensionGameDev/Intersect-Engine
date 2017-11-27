@@ -7,7 +7,7 @@ using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -68,33 +68,33 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpPlayAnimation.Text = Strings.Get("eventplayanimation", "title");
-            lblAnimation.Text = Strings.Get("eventplayanimation", "animation");
-            lblSpawnType.Text = Strings.Get("eventplayanimation", "spawntype");
+            grpPlayAnimation.Text = Strings.eventplayanimation.title;
+            lblAnimation.Text = Strings.eventplayanimation.animation;
+            lblSpawnType.Text = Strings.eventplayanimation.spawntype;
             cmbConditionType.Items.Clear();
-            cmbConditionType.Items.Add(Strings.Get("eventplayanimation", "spawntype0"));
-            cmbConditionType.Items.Add(Strings.Get("eventplayanimation", "spawntype1"));
+            cmbConditionType.Items.Add(Strings.eventplayanimation.spawntype0);
+            cmbConditionType.Items.Add(Strings.eventplayanimation.spawntype1);
 
-            grpTileSpawn.Text = Strings.Get("eventplayanimation", "spawntype0");
-            grpEntitySpawn.Text = Strings.Get("eventplayanimation", "spawntype1");
+            grpTileSpawn.Text = Strings.eventplayanimation.spawntype0;
+            grpEntitySpawn.Text = Strings.eventplayanimation.spawntype1;
 
-            lblMap.Text = Strings.Get("warping", "map", "");
-            lblX.Text = Strings.Get("warping", "x", "");
-            lblY.Text = Strings.Get("warping", "y", "");
-            lblDir.Text = Strings.Get("warping", "direction", "");
+            lblMap.Text = Strings.warping.map.ToString( "");
+            lblX.Text = Strings.warping.x.ToString( "");
+            lblY.Text = Strings.warping.y.ToString( "");
+            lblDir.Text = Strings.warping.direction.ToString( "");
             cmbDirection.Items.Clear();
             for (int i = 0; i < 4; i++)
             {
-                cmbDirection.Items.Add(Strings.Get("directions", i.ToString()));
+                cmbDirection.Items.Add(Strings.directions.dir[i]);
             }
 
-            lblEntity.Text = Strings.Get("eventplayanimation", "entity");
-            lblRelativeLocation.Text = Strings.Get("eventplayanimation", "relativelocation");
-            chkRelativeLocation.Text = Strings.Get("eventplayanimation", "spawnrelative");
-            chkRotateDirection.Text = Strings.Get("eventplayanimation", "rotaterelative");
+            lblEntity.Text = Strings.eventplayanimation.entity;
+            lblRelativeLocation.Text = Strings.eventplayanimation.relativelocation;
+            chkRelativeLocation.Text = Strings.eventplayanimation.spawnrelative;
+            chkRotateDirection.Text = Strings.eventplayanimation.rotaterelative;
 
-            btnSave.Text = Strings.Get("eventplayanimation", "okay");
-            btnCancel.Text = Strings.Get("eventplayanimation", "cancel");
+            btnSave.Text = Strings.eventplayanimation.okay;
+            btnCancel.Text = Strings.eventplayanimation.cancel;
         }
 
         private void UpdateFormElements()
@@ -122,7 +122,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 case 1: //On/Around Entity Spawn
                     grpEntitySpawn.Show();
                     cmbEntities.Items.Clear();
-                    cmbEntities.Items.Add(Strings.Get("eventplayanimation", "player"));
+                    cmbEntities.Items.Add(Strings.eventplayanimation.player);
                     cmbEntities.SelectedIndex = 0;
 
                     if (!mEditingEvent.CommonEvent)
@@ -130,7 +130,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                         foreach (var evt in mCurrentMap.Events)
                         {
                             cmbEntities.Items.Add(evt.Key == mEditingEvent.Index
-                                ? Strings.Get("eventplayanimation", "this") + " "
+                                ? Strings.eventplayanimation.This + " "
                                 : "" + evt.Value.Name);
                             if (mMyCommand.Ints[2] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
                         }

@@ -13,7 +13,7 @@ using Intersect.Editor.Forms.DockingElements;
 using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect.Editor.Forms
@@ -98,83 +98,83 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            fileToolStripMenuItem.Text = Strings.Get("mainform", "file");
-            saveMapToolStripMenuItem.Text = Strings.Get("mainform", "savemap");
-            toolStripBtnSaveMap.Text = Strings.Get("mainform", "savemap");
-            newMapToolStripMenuItem.Text = Strings.Get("mainform", "newmap");
-            toolStripBtnNewMap.Text = Strings.Get("mainform", "newmap");
-            importMapToolStripMenuItem.Text = Strings.Get("mainform", "importmap");
-            exportMapToolStripMenuItem.Text = Strings.Get("mainform", "exportmap");
-            optionsToolStripMenuItem.Text = Strings.Get("mainform", "options");
-            exitToolStripMenuItem.Text = Strings.Get("mainform", "exit");
+            fileToolStripMenuItem.Text = Strings.mainform.file;
+            saveMapToolStripMenuItem.Text = Strings.mainform.savemap;
+            toolStripBtnSaveMap.Text = Strings.mainform.savemap;
+            newMapToolStripMenuItem.Text = Strings.mainform.newmap;
+            toolStripBtnNewMap.Text = Strings.mainform.newmap;
+            importMapToolStripMenuItem.Text = Strings.mainform.importmap;
+            exportMapToolStripMenuItem.Text = Strings.mainform.exportmap;
+            optionsToolStripMenuItem.Text = Strings.mainform.options;
+            exitToolStripMenuItem.Text = Strings.mainform.exit;
 
-            editToolStripMenuItem.Text = Strings.Get("mainform", "edit");
-            undoToolStripMenuItem.Text = Strings.Get("mainform", "undo");
-            redoToolStripMenuItem.Text = Strings.Get("mainform", "redo");
-            cutToolStripMenuItem.Text = Strings.Get("mainform", "cut");
-            copyToolStripMenuItem.Text = Strings.Get("mainform", "copy");
-            pasteToolStripMenuItem.Text = Strings.Get("mainform", "paste");
-            toolStripBtnUndo.Text = Strings.Get("mainform", "undo");
-            toolStripBtnRedo.Text = Strings.Get("mainform", "redo");
-            toolStripBtnCut.Text = Strings.Get("mainform", "cut");
-            toolStripBtnCopy.Text = Strings.Get("mainform", "copy");
-            toolStripBtnPaste.Text = Strings.Get("mainform", "paste");
+            editToolStripMenuItem.Text = Strings.mainform.edit;
+            undoToolStripMenuItem.Text = Strings.mainform.undo;
+            redoToolStripMenuItem.Text = Strings.mainform.redo;
+            cutToolStripMenuItem.Text = Strings.mainform.cut;
+            copyToolStripMenuItem.Text = Strings.mainform.copy;
+            pasteToolStripMenuItem.Text = Strings.mainform.paste;
+            toolStripBtnUndo.Text = Strings.mainform.undo;
+            toolStripBtnRedo.Text = Strings.mainform.redo;
+            toolStripBtnCut.Text = Strings.mainform.cut;
+            toolStripBtnCopy.Text = Strings.mainform.copy;
+            toolStripBtnPaste.Text = Strings.mainform.paste;
 
-            fillToolStripMenuItem.Text = Strings.Get("mainform", "fill");
-            toolStripBtnFill.Text = Strings.Get("mainform", "fill");
-            eraseLayerToolStripMenuItem.Text = Strings.Get("mainform", "erase");
-            toolStripBtnErase.Text = Strings.Get("mainform", "erase");
+            fillToolStripMenuItem.Text = Strings.mainform.fill;
+            toolStripBtnFill.Text = Strings.mainform.fill;
+            eraseLayerToolStripMenuItem.Text = Strings.mainform.erase;
+            toolStripBtnErase.Text = Strings.mainform.erase;
 
-            selectToolStripMenuItem.Text = Strings.Get("mainform", "selectlayers");
-            allLayersToolStripMenuItem.Text = Strings.Get("mainform", "alllayers");
-            currentLayerOnlyToolStripMenuItem.Text = Strings.Get("mainform", "currentonly");
+            selectToolStripMenuItem.Text = Strings.mainform.selectlayers;
+            allLayersToolStripMenuItem.Text = Strings.mainform.alllayers;
+            currentLayerOnlyToolStripMenuItem.Text = Strings.mainform.currentonly;
 
-            viewToolStripMenuItem.Text = Strings.Get("mainform", "view");
-            hideDarknessToolStripMenuItem.Text = Strings.Get("mainform", "darkness");
-            hideFogToolStripMenuItem.Text = Strings.Get("mainform", "fog");
-            hideOverlayToolStripMenuItem.Text = Strings.Get("mainform", "overlay");
-            hideResourcesToolStripMenuItem.Text = Strings.Get("mainform", "resources");
-            hideTilePreviewToolStripMenuItem.Text = Strings.Get("mainform", "tilepreview");
-            mapGridToolStripMenuItem.Text = Strings.Get("mainform", "grid");
+            viewToolStripMenuItem.Text = Strings.mainform.view;
+            hideDarknessToolStripMenuItem.Text = Strings.mainform.darkness;
+            hideFogToolStripMenuItem.Text = Strings.mainform.fog;
+            hideOverlayToolStripMenuItem.Text = Strings.mainform.overlay;
+            hideResourcesToolStripMenuItem.Text = Strings.mainform.resources;
+            hideTilePreviewToolStripMenuItem.Text = Strings.mainform.tilepreview;
+            mapGridToolStripMenuItem.Text = Strings.mainform.grid;
 
-            contentEditorsToolStripMenuItem.Text = Strings.Get("mainform", "editors");
-            animationEditorToolStripMenuItem.Text = Strings.Get("mainform", "animationeditor");
-            classEditorToolStripMenuItem.Text = Strings.Get("mainform", "classeditor");
-            commonEventEditorToolStripMenuItem.Text = Strings.Get("mainform", "commoneventeditor");
-            craftingEditorToolStripMenuItem.Text = Strings.Get("mainform", "craftingbencheditor");
-            itemEditorToolStripMenuItem.Text = Strings.Get("mainform", "itemeditor");
-            npcEditorToolStripMenuItem.Text = Strings.Get("mainform", "npceditor");
-            projectileEditorToolStripMenuItem.Text = Strings.Get("mainform", "projectileeditor");
-            questEditorToolStripMenuItem.Text = Strings.Get("mainform", "questeditor");
-            resourceEditorToolStripMenuItem.Text = Strings.Get("mainform", "resourceeditor");
-            shopEditorToolStripMenuItem.Text = Strings.Get("mainform", "shopeditor");
-            spellEditorToolStripMenuItem.Text = Strings.Get("mainform", "spelleditor");
-            switchVariableEditorToolStripMenuItem.Text = Strings.Get("mainform", "switchvariableeditor");
-            timeEditorToolStripMenuItem.Text = Strings.Get("mainform", "timeeditor");
+            contentEditorsToolStripMenuItem.Text = Strings.mainform.editors;
+            animationEditorToolStripMenuItem.Text = Strings.mainform.animationeditor;
+            classEditorToolStripMenuItem.Text = Strings.mainform.classeditor;
+            commonEventEditorToolStripMenuItem.Text = Strings.mainform.commoneventeditor;
+            craftingEditorToolStripMenuItem.Text = Strings.mainform.craftingbencheditor;
+            itemEditorToolStripMenuItem.Text = Strings.mainform.itemeditor;
+            npcEditorToolStripMenuItem.Text = Strings.mainform.npceditor;
+            projectileEditorToolStripMenuItem.Text = Strings.mainform.projectileeditor;
+            questEditorToolStripMenuItem.Text = Strings.mainform.questeditor;
+            resourceEditorToolStripMenuItem.Text = Strings.mainform.resourceeditor;
+            shopEditorToolStripMenuItem.Text = Strings.mainform.shopeditor;
+            spellEditorToolStripMenuItem.Text = Strings.mainform.spelleditor;
+            switchVariableEditorToolStripMenuItem.Text = Strings.mainform.switchvariableeditor;
+            timeEditorToolStripMenuItem.Text = Strings.mainform.timeeditor;
 
-            externalToolsToolStripMenuItem.Text = Strings.Get("mainform", "externaltools");
+            externalToolsToolStripMenuItem.Text = Strings.mainform.externaltools;
 
-            helpToolStripMenuItem.Text = Strings.Get("mainform", "help");
-            postQuestionToolStripMenuItem.Text = Strings.Get("mainform", "postquestion");
-            toolStripButtonQuestion.Text = Strings.Get("mainform", "postquestion");
-            reportBugToolStripMenuItem.Text = Strings.Get("mainform", "reportbug");
-            toolStripButtonBug.Text = Strings.Get("mainform", "reportbug");
-            aboutToolStripMenuItem.Text = Strings.Get("mainform", "about");
-            toolStripButtonDonate.Text = Strings.Get("mainform", "donate");
+            helpToolStripMenuItem.Text = Strings.mainform.help;
+            postQuestionToolStripMenuItem.Text = Strings.mainform.postquestion;
+            toolStripButtonQuestion.Text = Strings.mainform.postquestion;
+            reportBugToolStripMenuItem.Text = Strings.mainform.reportbug;
+            toolStripButtonBug.Text = Strings.mainform.reportbug;
+            aboutToolStripMenuItem.Text = Strings.mainform.about;
+            toolStripButtonDonate.Text = Strings.mainform.donate;
 
-            toolStripBtnPen.Text = Strings.Get("mainform", "pen");
-            toolStripBtnSelect.Text = Strings.Get("mainform", "selection");
-            toolStripBtnRect.Text = Strings.Get("mainform", "rectangle");
-            toolStripBtnEyeDrop.Text = Strings.Get("mainform", "droppler");
-            toolStripTimeButton.Text = Strings.Get("mainform", "lighting");
-            toolStripBtnScreenshot.Text = Strings.Get("mainform", "screenshot");
-            toolStripBtnRun.Text = Strings.Get("mainform", "run");
+            toolStripBtnPen.Text = Strings.mainform.pen;
+            toolStripBtnSelect.Text = Strings.mainform.selection;
+            toolStripBtnRect.Text = Strings.mainform.rectangle;
+            toolStripBtnEyeDrop.Text = Strings.mainform.droppler;
+            toolStripTimeButton.Text = Strings.mainform.lighting;
+            toolStripBtnScreenshot.Text = Strings.mainform.screenshot;
+            toolStripBtnRun.Text = Strings.mainform.run;
         }
 
         private void InitExternalTools()
         {
             var foundTools = false;
-            if (Directory.Exists(Strings.Get("mainform", "toolsdir")))
+            if (Directory.Exists(Strings.mainform.toolsdir))
             {
                 var childDirs = Directory.GetDirectories("tools");
                 for (int i = 0; i < childDirs.Length; i++)
@@ -387,11 +387,11 @@ namespace Intersect.Editor.Forms
         {
             if (Globals.CurrentMap != null)
             {
-                toolStripLabelCoords.Text = Strings.Get("mainform", "loc", Globals.CurTileX, Globals.CurTileY);
-                toolStripLabelRevision.Text = Strings.Get("mainform", "revision", Globals.CurrentMap.Revision);
-                if (Text != Strings.Get("mainform", "title", Globals.CurrentMap.Name))
+                toolStripLabelCoords.Text = Strings.mainform.loc.ToString( Globals.CurTileX, Globals.CurTileY);
+                toolStripLabelRevision.Text = Strings.mainform.revision.ToString( Globals.CurrentMap.Revision);
+                if (Text != Strings.mainform.title.ToString( Globals.CurrentMap.Name))
                 {
-                    Text = Strings.Get("mainform", "title", Globals.CurrentMap.Name);
+                    Text = Strings.mainform.title.ToString( Globals.CurrentMap.Name);
                 }
             }
 
@@ -758,8 +758,8 @@ namespace Intersect.Editor.Forms
                 if (Globals.CurrentMap != null)
                 {
                     if (
-                        DarkMessageBox.ShowError(Strings.Get("errors", "disconnectedsave"),
-                            Strings.Get("errors", "disconnectedsavecaption"), DarkDialogButton.YesNo,
+                        DarkMessageBox.ShowError(Strings.errors.disconnectedsave,
+                            Strings.errors.disconnectedsavecaption, DarkDialogButton.YesNo,
                             Properties.Resources.Icon) == DialogResult.Yes)
                     {
                         exportMapToolStripMenuItem_Click(null, null);
@@ -772,8 +772,8 @@ namespace Intersect.Editor.Forms
                 }
                 else
                 {
-                    DarkMessageBox.ShowError(Strings.Get("errors", "disconnectedclosing"),
-                        Strings.Get("errors", "disconnected"), DarkDialogButton.Ok, Properties.Resources.Icon);
+                    DarkMessageBox.ShowError(Strings.errors.disconnectedclosing,
+                        Strings.errors.disconnected, DarkDialogButton.Ok, Properties.Resources.Icon);
                     Application.Exit();
                 }
             }
@@ -783,8 +783,8 @@ namespace Intersect.Editor.Forms
         private void saveMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (Globals.CurrentMap.Changed() &&
-                DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialoguesure"),
-                    Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                DarkMessageBox.ShowInformation(Strings.mapping.savemapdialoguesure,
+                    Strings.mapping.savemap, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                 DialogResult.Yes)
             {
                 SaveMap();
@@ -809,11 +809,11 @@ namespace Intersect.Editor.Forms
         private void NewMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (
-                DarkMessageBox.ShowWarning(Strings.Get("mapping", "newmap"), Strings.Get("mapping", "newmapcaption"),
+                DarkMessageBox.ShowWarning(Strings.mapping.newmap, Strings.mapping.newmapcaption,
                     DarkDialogButton.YesNo, Properties.Resources.Icon) != DialogResult.Yes) return;
             if (Globals.CurrentMap.Changed() &&
-                DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"),
-                    Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                DarkMessageBox.ShowInformation(Strings.mapping.savemapdialogue,
+                    Strings.mapping.savemap, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                 DialogResult.Yes)
             {
                 SaveMap();
@@ -826,7 +826,7 @@ namespace Intersect.Editor.Forms
             SaveFileDialog fileDialog = new SaveFileDialog()
             {
                 Filter = "Intersect Map|*.imap",
-                Title = Strings.Get("mainform", "exportmap")
+                Title = Strings.mainform.exportmap
             };
             fileDialog.ShowDialog();
             var buff = new ByteBuffer();
@@ -844,7 +844,7 @@ namespace Intersect.Editor.Forms
             OpenFileDialog fileDialog = new OpenFileDialog()
             {
                 Filter = "Intersect Map|*.imap",
-                Title = Strings.Get("mainform", "importmap")
+                Title = Strings.mainform.importmap
             };
             fileDialog.ShowDialog();
 
@@ -861,8 +861,8 @@ namespace Intersect.Editor.Forms
                 }
                 else
                 {
-                    DarkMessageBox.ShowError(Strings.Get("errors", "importfailed"),
-                        Strings.Get("errors", "importfailedcaption"), DarkDialogButton.Ok, Properties.Resources.Icon);
+                    DarkMessageBox.ShowError(Strings.errors.importfailed,
+                        Strings.errors.importfailedcaption, DarkDialogButton.Ok, Properties.Resources.Icon);
                 }
             }
         }
@@ -1113,7 +1113,7 @@ namespace Intersect.Editor.Forms
             SaveFileDialog fileDialog = new SaveFileDialog()
             {
                 Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif",
-                Title = Strings.Get("mainform", "screenshot")
+                Title = Strings.mainform.screenshot
             };
             fileDialog.ShowDialog();
 
@@ -1220,7 +1220,7 @@ namespace Intersect.Editor.Forms
             toolStripTimeButton.DropDownItems.Clear();
             var time = new DateTime(2000, 1, 1, 0, 0, 0);
             var x = 0;
-            ToolStripDropDownButton btn = new ToolStripDropDownButton(Strings.Get("general", "none"))
+            ToolStripDropDownButton btn = new ToolStripDropDownButton(Strings.general.none)
             {
                 Tag = null
             };
@@ -1401,22 +1401,12 @@ namespace Intersect.Editor.Forms
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (Globals.ClosingEditor) return;
-
-            if (Globals.CurrentMap?.Changed() ?? false)
+            if (!Globals.ClosingEditor && Globals.CurrentMap != null && Globals.CurrentMap.Changed() &&
+                DarkMessageBox.ShowWarning(Strings.mapping.savemapdialogue, Strings.mapping.savemap,
+                    DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
             {
-                var dialogCaption = Strings.Get("mapping", "savemap");
-                var dialogMessage = Strings.Get("mapping", "savemapdialogue");
-                var dialogResult = DarkMessageBox.ShowWarning(dialogMessage, dialogCaption, DarkDialogButton.YesNo, Properties.Resources.Icon);
-
-                Globals.SavingOnClose = false;
-                if (dialogResult == DialogResult.Yes)
-                {
-                    Globals.SavingOnClose = true;
-                    SaveMap();
-                }
+                SaveMap();
             }
-
             Globals.ClosingEditor = true;
         }
     }

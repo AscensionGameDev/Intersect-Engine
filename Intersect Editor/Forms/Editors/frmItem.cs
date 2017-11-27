@@ -7,7 +7,7 @@ using Intersect.Editor.Classes.Core;
 using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms
@@ -84,13 +84,13 @@ namespace Intersect.Editor.Forms
         private void frmItem_Load(object sender, EventArgs e)
         {
             cmbPic.Items.Clear();
-            cmbPic.Items.Add(Strings.Get("general", "none"));
+            cmbPic.Items.Add(Strings.general.none);
 
             var itemnames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Item);
             cmbPic.Items.AddRange(itemnames);
 
             cmbAttackAnimation.Items.Clear();
-            cmbAttackAnimation.Items.Add(Strings.Get("general", "none"));
+            cmbAttackAnimation.Items.Add(Strings.general.none);
             cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbScalingStat.Items.Clear();
             for (int x = 0; x < Options.MaxStats; x++)
@@ -99,18 +99,18 @@ namespace Intersect.Editor.Forms
             }
 
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add(Strings.Get("general", "none"));
+            cmbAnimation.Items.Add(Strings.general.none);
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbTeachSpell.Items.Clear();
-            cmbTeachSpell.Items.Add(Strings.Get("general", "none"));
+            cmbTeachSpell.Items.Add(Strings.general.none);
             cmbTeachSpell.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
             cmbEvent.Items.Clear();
-            cmbEvent.Items.Add(Strings.Get("general", "none"));
+            cmbEvent.Items.Add(Strings.general.none);
             cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObjectType.CommonEvent));
             cmbMalePaperdoll.Items.Clear();
-            cmbMalePaperdoll.Items.Add(Strings.Get("general", "none"));
+            cmbMalePaperdoll.Items.Add(Strings.general.none);
             cmbFemalePaperdoll.Items.Clear();
-            cmbFemalePaperdoll.Items.Add(Strings.Get("general", "none"));
+            cmbFemalePaperdoll.Items.Add(Strings.general.none);
             string[] paperdollnames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Paperdoll);
             for (var i = 0; i < paperdollnames.Length; i++)
             {
@@ -130,86 +130,86 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.Get("itemeditor", "title");
-            toolStripItemNew.Text = Strings.Get("itemeditor", "new");
-            toolStripItemDelete.Text = Strings.Get("itemeditor", "delete");
-            toolStripItemCopy.Text = Strings.Get("itemeditor", "copy");
-            toolStripItemPaste.Text = Strings.Get("itemeditor", "paste");
-            toolStripItemUndo.Text = Strings.Get("itemeditor", "undo");
+            Text = Strings.itemeditor.title;
+            toolStripItemNew.Text = Strings.itemeditor.New;
+            toolStripItemDelete.Text = Strings.itemeditor.delete;
+            toolStripItemCopy.Text = Strings.itemeditor.copy;
+            toolStripItemPaste.Text = Strings.itemeditor.paste;
+            toolStripItemUndo.Text = Strings.itemeditor.undo;
 
-            grpItems.Text = Strings.Get("itemeditor", "items");
-            grpGeneral.Text = Strings.Get("itemeditor", "general");
-            lblName.Text = Strings.Get("itemeditor", "name");
-            lblType.Text = Strings.Get("itemeditor", "type");
+            grpItems.Text = Strings.itemeditor.items;
+            grpGeneral.Text = Strings.itemeditor.general;
+            lblName.Text = Strings.itemeditor.name;
+            lblType.Text = Strings.itemeditor.type;
             cmbType.Items.Clear();
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < Strings.itemeditor.types.Length; i++)
             {
-                cmbType.Items.Add(Strings.Get("itemeditor", "type" + i));
+                cmbType.Items.Add(Strings.itemeditor.types[i]);
             }
-            lblDesc.Text = Strings.Get("itemeditor", "description");
-            lblPic.Text = Strings.Get("itemeditor", "picture");
-            lblPrice.Text = Strings.Get("itemeditor", "price");
-            lblAnim.Text = Strings.Get("itemeditor", "animation");
-            chkBound.Text = Strings.Get("itemeditor", "bound");
-            chkStackable.Text = Strings.Get("itemeditor", "stackable");
-            btnEditRequirements.Text = Strings.Get("itemeditor", "requirements");
+            lblDesc.Text = Strings.itemeditor.description;
+            lblPic.Text = Strings.itemeditor.picture;
+            lblPrice.Text = Strings.itemeditor.price;
+            lblAnim.Text = Strings.itemeditor.animation;
+            chkBound.Text = Strings.itemeditor.bound;
+            chkStackable.Text = Strings.itemeditor.stackable;
+            btnEditRequirements.Text = Strings.itemeditor.requirements;
 
-            grpEquipment.Text = Strings.Get("itemeditor", "equipment");
-            lblEquipmentSlot.Text = Strings.Get("itemeditor", "slot");
-            grpStatBonuses.Text = Strings.Get("itemeditor", "bonuses");
-            lblStr.Text = Strings.Get("itemeditor", "attackbonus");
-            lblDef.Text = Strings.Get("itemeditor", "defensebonus");
-            lblSpd.Text = Strings.Get("itemeditor", "speedbonus");
-            lblMag.Text = Strings.Get("itemeditor", "abilitypowerbonus");
-            lblMR.Text = Strings.Get("itemeditor", "magicresistbonus");
-            lblRange.Text = Strings.Get("itemeditor", "bonusrange");
-            lblBonusEffect.Text = Strings.Get("itemeditor", "bonuseffect");
-            lblEffectPercent.Text = Strings.Get("itemeditor", "bonusamount");
+            grpEquipment.Text = Strings.itemeditor.equipment;
+            lblEquipmentSlot.Text = Strings.itemeditor.slot;
+            grpStatBonuses.Text = Strings.itemeditor.bonuses;
+            lblStr.Text = Strings.itemeditor.attackbonus;
+            lblDef.Text = Strings.itemeditor.defensebonus;
+            lblSpd.Text = Strings.itemeditor.speedbonus;
+            lblMag.Text = Strings.itemeditor.abilitypowerbonus;
+            lblMR.Text = Strings.itemeditor.magicresistbonus;
+            lblRange.Text = Strings.itemeditor.bonusrange;
+            lblBonusEffect.Text = Strings.itemeditor.bonuseffect;
+            lblEffectPercent.Text = Strings.itemeditor.bonusamount;
             cmbEquipmentBonus.Items.Clear();
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < Strings.itemeditor.bonuseffects.Length; i++)
             {
-                cmbEquipmentBonus.Items.Add(Strings.Get("itemeditor", "bonuseffect" + i));
+                cmbEquipmentBonus.Items.Add(Strings.itemeditor.bonuseffects[i]);
             }
 
-            grpWeaponProperties.Text = Strings.Get("itemeditor", "weaponproperties");
-            chk2Hand.Text = Strings.Get("itemeditor", "twohanded");
-            lblDamage.Text = Strings.Get("itemeditor", "basedamage");
-            lblCritChance.Text = Strings.Get("itemeditor", "critchance");
-            lblDamageType.Text = Strings.Get("itemeditor", "damagetype");
+            grpWeaponProperties.Text = Strings.itemeditor.weaponproperties;
+            chk2Hand.Text = Strings.itemeditor.twohanded;
+            lblDamage.Text = Strings.itemeditor.basedamage;
+            lblCritChance.Text = Strings.itemeditor.critchance;
+            lblDamageType.Text = Strings.itemeditor.damagetype;
             cmbDamageType.Items.Clear();
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < Strings.combat.damagetypes.Length; i++)
             {
-                cmbDamageType.Items.Add(Strings.Get("itemeditor", "damagetype" + i));
+                cmbDamageType.Items.Add(Strings.combat.damagetypes[i]);
             }
-            lblScalingStat.Text = Strings.Get("itemeditor", "scalingstat");
-            lblScalingAmount.Text = Strings.Get("itemeditor", "scalingamount");
-            lblAttackAnimation.Text = Strings.Get("itemeditor", "attackanimation");
-            lblProjectile.Text = Strings.Get("itemeditor", "projectile");
-            lblToolType.Text = Strings.Get("itemeditor", "tooltype");
+            lblScalingStat.Text = Strings.itemeditor.scalingstat;
+            lblScalingAmount.Text = Strings.itemeditor.scalingamount;
+            lblAttackAnimation.Text = Strings.itemeditor.attackanimation;
+            lblProjectile.Text = Strings.itemeditor.projectile;
+            lblToolType.Text = Strings.itemeditor.tooltype;
 
-            lblMalePaperdoll.Text = Strings.Get("itemeditor", "malepaperdoll");
-            lblFemalePaperdoll.Text = Strings.Get("itemeditor", "femalepaperdoll");
+            lblMalePaperdoll.Text = Strings.itemeditor.malepaperdoll;
+            lblFemalePaperdoll.Text = Strings.itemeditor.femalepaperdoll;
 
-            grpBags.Text = Strings.Get("itemeditor", "bagpanel");
-            lblBag.Text = Strings.Get("itemeditor", "bagslots");
+            grpBags.Text = Strings.itemeditor.bagpanel;
+            lblBag.Text = Strings.itemeditor.bagslots;
 
-            grpSpell.Text = Strings.Get("itemeditor", "spellpanel");
-            lblSpell.Text = Strings.Get("itemeditor", "spell");
+            grpSpell.Text = Strings.itemeditor.spellpanel;
+            lblSpell.Text = Strings.itemeditor.spell;
 
-            grpEvent.Text = Strings.Get("itemeditor", "eventpanel");
-            lblEvent.Text = Strings.Get("itemeditor", "event");
+            grpEvent.Text = Strings.itemeditor.eventpanel;
+            lblEvent.Text = Strings.itemeditor.Event;
 
-            grpConsumable.Text = Strings.Get("itemeditor", "consumeablepanel");
-            lblVital.Text = Strings.Get("itemeditor", "vital");
-            lblInterval.Text = Strings.Get("itemeditor", "consumeinterval");
+            grpConsumable.Text = Strings.itemeditor.consumeablepanel;
+            lblVital.Text = Strings.itemeditor.vital;
+            lblInterval.Text = Strings.itemeditor.consumeinterval;
             cmbConsume.Items.Clear();
             for (int i = 0; i < 2; i++)
             {
-                cmbConsume.Items.Add(Strings.Get("combat", "vital" + i));
+                cmbConsume.Items.Add(Strings.combat.vitals[i]);
             }
 
-            btnSave.Text = Strings.Get("itemeditor", "save");
-            btnCancel.Text = Strings.Get("itemeditor", "cancel");
+            btnSave.Text = Strings.itemeditor.save;
+            btnCancel.Text = Strings.itemeditor.cancel;
         }
 
         public void InitEditor()
@@ -219,15 +219,15 @@ namespace Intersect.Editor.Forms
             cmbEquipmentSlot.Items.Clear();
             cmbEquipmentSlot.Items.AddRange(Options.EquipmentSlots.ToArray());
             cmbToolType.Items.Clear();
-            cmbToolType.Items.Add(Strings.Get("general", "none"));
+            cmbToolType.Items.Add(Strings.general.none);
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
             cmbEquipmentBonus.Items.Clear();
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < Strings.itemeditor.bonuseffects.Length; i++)
             {
-                cmbEquipmentBonus.Items.Add(Strings.Get("itemeditor", "bonuseffect" + i));
+                cmbEquipmentBonus.Items.Add(Strings.itemeditor.bonuseffects[i]);
             }
             cmbProjectile.Items.Clear();
-            cmbProjectile.Items.Add(Strings.Get("general", "none"));
+            cmbProjectile.Items.Add(Strings.general.none);
             cmbProjectile.Items.AddRange(Database.GetGameObjectList(GameObjectType.Projectile));
         }
 
@@ -488,8 +488,8 @@ namespace Intersect.Editor.Forms
         {
             if (mEditorItem != null && lstItems.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("itemeditor", "deleteprompt"),
-                        Strings.Get("itemeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(Strings.itemeditor.deleteprompt,
+                        Strings.itemeditor.deletetitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -519,8 +519,8 @@ namespace Intersect.Editor.Forms
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("itemeditor", "undoprompt"),
-                        Strings.Get("itemeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(Strings.itemeditor.undoprompt,
+                        Strings.itemeditor.undotitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();

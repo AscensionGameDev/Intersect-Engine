@@ -9,7 +9,7 @@ using Hjg.Pngcs;
 using Intersect.Editor.Classes.General;
 using Intersect.Editor.Forms;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Editor.Classes.Maps
@@ -173,8 +173,8 @@ namespace Intersect.Editor.Classes.Maps
                         if (Grid[x1 - 1, y1 - 1].Mapnum > -1)
                         {
                             if (Globals.CurrentMap != null && Globals.CurrentMap.Changed() &&
-                                DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"),
-                                    Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo,
+                                DarkMessageBox.ShowInformation(Strings.mapping.savemapdialogue,
+                                    Strings.mapping.savemap, DarkDialogButton.YesNo,
                                     Properties.Resources.Icon) ==
                                 DialogResult.Yes)
                             {
@@ -207,20 +207,20 @@ namespace Intersect.Editor.Classes.Maps
             SaveFileDialog fileDialog = new SaveFileDialog()
             {
                 Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif",
-                Title = Strings.Get("mapgrid", "savescreenshotdialogue")
+                Title = Strings.mapgrid.savescreenshotdialogue
             };
             fileDialog.ShowDialog();
             if (fileDialog.FileName != "")
             {
                 if (
-                    DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "savescreenshotconfirm"),
-                        Strings.Get("mapgrid", "savescreenshottitle"), DarkDialogButton.YesNo,
+                    DarkMessageBox.ShowWarning(Strings.mapgrid.savescreenshotconfirm,
+                        Strings.mapgrid.savescreenshottitle, DarkDialogButton.YesNo,
                         Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     FetchMissingPreviews(false);
                     Globals.PreviewProgressForm = new FrmProgress();
-                    Globals.PreviewProgressForm.SetTitle(Strings.Get("mapgrid", "savingscreenshot"));
+                    Globals.PreviewProgressForm.SetTitle(Strings.mapgrid.savingscreenshot);
                     Thread screenShotThread = new Thread(() => ScreenshotWorld(fileDialog.FileName));
                     screenShotThread.Start();
                     Globals.PreviewProgressForm.ShowDialog();
@@ -313,7 +313,7 @@ namespace Intersect.Editor.Classes.Maps
                     }
                 }
                 png.WriteRowByte(row, y);
-                Globals.PreviewProgressForm.SetProgress(Strings.Get("mapgrid", "savingrow", y, rows),
+                Globals.PreviewProgressForm.SetProgress(Strings.mapgrid.savingrow.ToString( y, rows),
                     (int) ((y / (float) rows) * 100), false);
                 Application.DoEvents();
             }
@@ -345,12 +345,12 @@ namespace Intersect.Editor.Classes.Maps
             if (clearAllFirst)
             {
                 if (
-                    DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "clearandfetch"),
-                        Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) !=
+                    DarkMessageBox.ShowWarning(Strings.mapgrid.clearandfetch,
+                        Strings.mapgrid.fetchcaption, DarkDialogButton.YesNo, Properties.Resources.Icon) !=
                     DialogResult.Yes) return;
                 if (
-                    DarkMessageBox.ShowInformation(Strings.Get("mapgrid", "keepmapcache"),
-                        Strings.Get("mapgrid", "mapcachecaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DarkMessageBox.ShowInformation(Strings.mapgrid.keepmapcache,
+                        Strings.mapgrid.mapcachecaption, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     Database.GridHideOverlay = EditorGraphics.HideOverlay;
@@ -394,14 +394,14 @@ namespace Intersect.Editor.Classes.Maps
             if (maps.Count > 0)
             {
                 if (clearAllFirst ||
-                    DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "justfetch"),
-                        Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DarkMessageBox.ShowWarning(Strings.mapgrid.justfetch,
+                        Strings.mapgrid.fetchcaption, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     Globals.FetchingMapPreviews = true;
                     Globals.PreviewProgressForm = new FrmProgress();
-                    Globals.PreviewProgressForm.SetTitle(Strings.Get("mapgrid", "fetchingmaps"));
-                    Globals.PreviewProgressForm.SetProgress(Strings.Get("mapgrid", "fetchingprogress", 0, maps.Count),
+                    Globals.PreviewProgressForm.SetTitle(Strings.mapgrid.fetchingmaps);
+                    Globals.PreviewProgressForm.SetProgress(Strings.mapgrid.fetchingprogress.ToString(0, maps.Count),
                         0,
                         false);
                     Globals.FetchCount = maps.Count;
@@ -494,8 +494,8 @@ namespace Intersect.Editor.Classes.Maps
             if (mContextMap != null && mContextMap.Mapnum > -1)
             {
                 if (
-                    DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "unlinkprompt", mContextMap.Name),
-                        Strings.Get("mapgrid", "unlinkcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DarkMessageBox.ShowWarning(Strings.mapgrid.unlinkprompt.ToString( mContextMap.name),
+                        Strings.mapgrid.unlinkcaption, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                     PacketSender.SendUnlinkMap(mContextMap.Mapnum);
             }

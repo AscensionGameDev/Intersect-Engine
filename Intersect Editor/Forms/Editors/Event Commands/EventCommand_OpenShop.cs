@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -25,10 +25,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpShop.Text = Strings.Get("eventopenshop", "title");
-            lblShop.Text = Strings.Get("eventopenshop", "label");
-            btnSave.Text = Strings.Get("eventopenshop", "okay");
-            btnCancel.Text = Strings.Get("eventopenshop", "cancel");
+            grpShop.Text = Strings.eventopenshop.title;
+            lblShop.Text = Strings.eventopenshop.label;
+            btnSave.Text = Strings.eventopenshop.okay;
+            btnCancel.Text = Strings.eventopenshop.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

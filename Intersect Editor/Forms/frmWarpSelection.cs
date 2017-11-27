@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.Maps;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms
 {
@@ -43,18 +43,18 @@ namespace Intersect.Editor.Forms
             if (!tileSelection)
             {
                 mTileSelection = false;
-                Text = Strings.Get("warpselection", "mapselectiontitle");
+                Text = Strings.warpselection.mapselectiontitle;
             }
         }
 
         private void InitLocalization()
         {
-            Text = Strings.Get("warpselection", "title");
-            chkChronological.Text = Strings.Get("warpselection", "chronological");
-            btnOk.Text = Strings.Get("warpselection", "okay");
-            btnCancel.Text = Strings.Get("warpselection", "cancel");
-            grpMapList.Text = Strings.Get("warpselection", "maplist");
-            grpMapPreview.Text = Strings.Get("warpselection", "mappreview");
+            Text = Strings.warpselection.title;
+            chkChronological.Text = Strings.warpselection.chronological;
+            btnOk.Text = Strings.warpselection.okay;
+            btnCancel.Text = Strings.warpselection.cancel;
+            grpMapList.Text = Strings.warpselection.maplist;
+            grpMapPreview.Text = Strings.warpselection.mappreview;
         }
 
         private void NodeDoubleClick(object sender, TreeViewEventArgs e)

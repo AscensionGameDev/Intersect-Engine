@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Intersect.Editor.Classes.Core;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms
 {
@@ -30,11 +30,11 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.Get("options", "title");
-            btnTileHeader.Text = Strings.Get("options", "generaltab", Application.ProductVersion);
-            chkSuppressTilesetWarning.Text = Strings.Get("options", "tilesetwarning");
-            grpClientPath.Text = Strings.Get("options", "pathgroup");
-            btnBrowseClient.Text = Strings.Get("options", "browsebtn");
+            Text = Strings.options.title;
+            btnTileHeader.Text = Strings.options.generaltab.ToString( Application.ProductVersion);
+            chkSuppressTilesetWarning.Text = Strings.options.tilesetwarning;
+            grpClientPath.Text = Strings.options.pathgroup;
+            btnBrowseClient.Text = Strings.options.browsebtn;
         }
 
         private void frmOptions_FormClosing(object sender, FormClosingEventArgs e)
@@ -47,11 +47,11 @@ namespace Intersect.Editor.Forms
         {
             OpenFileDialog dialogue = new OpenFileDialog()
             {
-                Title = Strings.Get("options", "dialogueheader"),
+                Title = Strings.options.dialogueheader,
                 CheckFileExists = true,
                 CheckPathExists = true,
                 DefaultExt = "exe",
-                Filter = "(*.exe)|*.exe|" + Strings.Get("options", "dialogueallfiles") + "(*.*)|*.*",
+                Filter = "(*.exe)|*.exe|" + Strings.options.dialogueallfiles + "(*.*)|*.*",
                 RestoreDirectory = true,
                 ReadOnlyChecked = true,
                 ShowReadOnly = true

@@ -1,6 +1,6 @@
 ﻿using DarkUI.Controls;
 using Intersect.Editor.Forms.Controls;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms
 {

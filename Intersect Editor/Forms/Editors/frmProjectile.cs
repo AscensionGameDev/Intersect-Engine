@@ -7,7 +7,7 @@ using DarkUI.Forms;
 using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Classes
 {
@@ -80,15 +80,15 @@ namespace Intersect.Editor.Classes
         {
             mDirectionGrid = new Bitmap("resources/misc/directions.png");
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add(Strings.Get("general", "none"));
+            cmbAnimation.Items.Add(Strings.general.none);
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
 
             cmbItem.Items.Clear();
-            cmbItem.Items.Add(Strings.Get("general", "none"));
+            cmbItem.Items.Add(Strings.general.none);
             cmbItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
 
             cmbSpell.Items.Clear();
-            cmbSpell.Items.Add(Strings.Get("general", "none"));
+            cmbSpell.Items.Add(Strings.general.none);
             cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
 
             InitLocalization();
@@ -97,46 +97,46 @@ namespace Intersect.Editor.Classes
 
         private void InitLocalization()
         {
-            Text = Strings.Get("projectileeditor", "title");
-            toolStripItemNew.Text = Strings.Get("projectileeditor", "new");
-            toolStripItemDelete.Text = Strings.Get("projectileeditor", "delete");
-            toolStripItemCopy.Text = Strings.Get("projectileeditor", "copy");
-            toolStripItemPaste.Text = Strings.Get("projectileeditor", "paste");
-            toolStripItemUndo.Text = Strings.Get("projectileeditor", "undo");
+            Text = Strings.projectileeditor.title;
+            toolStripItemNew.Text = Strings.projectileeditor.New;
+            toolStripItemDelete.Text = Strings.projectileeditor.delete;
+            toolStripItemCopy.Text = Strings.projectileeditor.copy;
+            toolStripItemPaste.Text = Strings.projectileeditor.paste;
+            toolStripItemUndo.Text = Strings.projectileeditor.undo;
 
-            grpProjectiles.Text = Strings.Get("projectileeditor", "projectiles");
+            grpProjectiles.Text = Strings.projectileeditor.projectiles;
 
-            grpProperties.Text = Strings.Get("projectileeditor", "properties");
-            lblName.Text = Strings.Get("projectileeditor", "name");
-            lblSpeed.Text = Strings.Get("projectileeditor", "speed");
-            lblSpawn.Text = Strings.Get("projectileeditor", "spawndelay");
-            lblAmount.Text = Strings.Get("projectileeditor", "quantity");
-            lblRange.Text = Strings.Get("projectileeditor", "range");
-            lblKnockback.Text = Strings.Get("projectileeditor", "knockback");
-            lblSpell.Text = Strings.Get("projectileeditor", "spell");
-            chkGrapple.Text = Strings.Get("projectileeditor", "grapple");
-            chkHoming.Text = Strings.Get("projectileeditor", "homing");
+            grpProperties.Text = Strings.projectileeditor.properties;
+            lblName.Text = Strings.projectileeditor.name;
+            lblSpeed.Text = Strings.projectileeditor.speed;
+            lblSpawn.Text = Strings.projectileeditor.spawndelay;
+            lblAmount.Text = Strings.projectileeditor.quantity;
+            lblRange.Text = Strings.projectileeditor.range;
+            lblKnockback.Text = Strings.projectileeditor.knockback;
+            lblSpell.Text = Strings.projectileeditor.spell;
+            chkGrapple.Text = Strings.projectileeditor.grapple;
+            chkHoming.Text = Strings.projectileeditor.homing;
 
-            grpSpawns.Text = Strings.Get("projectileeditor", "spawns");
+            grpSpawns.Text = Strings.projectileeditor.spawns;
 
-            grpAnimations.Text = Strings.Get("projectileeditor", "animations");
-            lblAnimation.Text = Strings.Get("projectileeditor", "animation");
-            chkRotation.Text = Strings.Get("projectileeditor", "autorotate");
-            btnAdd.Text = Strings.Get("projectileeditor", "addanimation");
-            btnRemove.Text = Strings.Get("projectileeditor", "removeanimation");
+            grpAnimations.Text = Strings.projectileeditor.animations;
+            lblAnimation.Text = Strings.projectileeditor.animation;
+            chkRotation.Text = Strings.projectileeditor.autorotate;
+            btnAdd.Text = Strings.projectileeditor.addanimation;
+            btnRemove.Text = Strings.projectileeditor.removeanimation;
 
-            grpCollisions.Text = Strings.Get("projectileeditor", "collisions");
-            chkIgnoreMapBlocks.Text = Strings.Get("projectileeditor", "ignoreblocks");
-            chkIgnoreActiveResources.Text = Strings.Get("projectileeditor", "ignoreactiveresources");
-            chkIgnoreInactiveResources.Text = Strings.Get("projectileeditor", "ignoreinactiveresources");
-            chkIgnoreZDimensionBlocks.Text = Strings.Get("projectileeditor", "ignorezdimension");
+            grpCollisions.Text = Strings.projectileeditor.collisions;
+            chkIgnoreMapBlocks.Text = Strings.projectileeditor.ignoreblocks;
+            chkIgnoreActiveResources.Text = Strings.projectileeditor.ignoreactiveresources;
+            chkIgnoreInactiveResources.Text = Strings.projectileeditor.ignoreinactiveresources;
+            chkIgnoreZDimensionBlocks.Text = Strings.projectileeditor.ignorezdimension;
 
-            grpAmmo.Text = Strings.Get("projectileeditor", "ammo");
-            lblAmmoItem.Text = Strings.Get("projectileeditor", "ammoitem");
-            lblAmmoAmount.Text = Strings.Get("projectileeditor", "ammoamount");
+            grpAmmo.Text = Strings.projectileeditor.ammo;
+            lblAmmoItem.Text = Strings.projectileeditor.ammoitem;
+            lblAmmoAmount.Text = Strings.projectileeditor.ammoamount;
 
-            btnSave.Text = Strings.Get("projectileeditor", "save");
-            btnCancel.Text = Strings.Get("projectileeditor", "cancel");
+            btnSave.Text = Strings.projectileeditor.save;
+            btnCancel.Text = Strings.projectileeditor.cancel;
         }
 
         public void InitEditor()
@@ -228,14 +228,14 @@ namespace Intersect.Editor.Classes
             {
                 if (mEditorItem.Animations[i].Animation != -1)
                 {
-                    lstAnimations.Items.Add(Strings.Get("projectileeditor", "animationline", n,
+                    lstAnimations.Items.Add(Strings.projectileeditor.animationline.ToString(n,
                         mEditorItem.Animations[i].SpawnRange,
                         AnimationBase.GetName(mEditorItem.Animations[i].Animation)));
                 }
                 else
                 {
-                    lstAnimations.Items.Add(Strings.Get("projectileeditor", "animationline", n,
-                        mEditorItem.Animations[i].SpawnRange, Strings.Get("general", "none")));
+                    lstAnimations.Items.Add(Strings.projectileeditor.animationline.ToString(n,
+                        mEditorItem.Animations[i].SpawnRange, Strings.general.none));
                 }
                 n = mEditorItem.Animations[i].SpawnRange + 1;
             }
@@ -247,13 +247,13 @@ namespace Intersect.Editor.Classes
 
             if (lstAnimations.SelectedIndex > 0)
             {
-                lblSpawnRange.Text = Strings.Get("projectileeditor", "spawnrange",
+                lblSpawnRange.Text = Strings.projectileeditor.spawnrange.ToString(
                     (mEditorItem.Animations[lstAnimations.SelectedIndex - 1].SpawnRange + 1),
                     mEditorItem.Animations[lstAnimations.SelectedIndex].SpawnRange);
             }
             else
             {
-                lblSpawnRange.Text = Strings.Get("projectileeditor", "spawnrange", 1,
+                lblSpawnRange.Text = Strings.projectileeditor.spawnrange.ToString(1,
                     mEditorItem.Animations[lstAnimations.SelectedIndex].SpawnRange);
             }
         }
@@ -500,8 +500,8 @@ namespace Intersect.Editor.Classes
         {
             if (mEditorItem != null && lstProjectiles.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("projectileeditor", "deleteprompt"),
-                        Strings.Get("projectileeditor", "deletetitle"), DarkDialogButton.YesNo,
+                if (DarkMessageBox.ShowWarning(Strings.projectileeditor.deleteprompt,
+                        Strings.projectileeditor.deletetitle, DarkDialogButton.YesNo,
                         Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -531,8 +531,8 @@ namespace Intersect.Editor.Classes
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("projectileeditor", "undoprompt"),
-                        Strings.Get("projectileeditor", "undotitle"), DarkDialogButton.YesNo,
+                if (DarkMessageBox.ShowWarning(Strings.projectileeditor.undoprompt,
+                        Strings.projectileeditor.undotitle, DarkDialogButton.YesNo,
                         Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {

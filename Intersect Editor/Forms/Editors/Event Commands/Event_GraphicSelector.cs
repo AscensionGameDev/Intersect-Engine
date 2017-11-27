@@ -6,7 +6,7 @@ using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.Core;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -47,16 +47,16 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpSelector.Text = Strings.Get("eventgraphic", "title");
-            lblType.Text = Strings.Get("eventgraphic", "type");
+            grpSelector.Text = Strings.eventgraphic.title;
+            lblType.Text = Strings.eventgraphic.type;
             cmbGraphicType.Items.Clear();
-            cmbGraphicType.Items.Add(Strings.Get("eventgraphic", "graphictype0"));
-            cmbGraphicType.Items.Add(Strings.Get("eventgraphic", "graphictype1"));
-            cmbGraphicType.Items.Add(Strings.Get("eventgraphic", "graphictype2"));
-            lblGraphic.Text = Strings.Get("eventgraphic", "graphic");
-            grpPreview.Text = Strings.Get("eventgraphic", "preview");
-            btnOk.Text = Strings.Get("eventgraphic", "okay");
-            btnCancel.Text = Strings.Get("eventgraphic", "cancel");
+            cmbGraphicType.Items.Add(Strings.eventgraphic.graphictype0);
+            cmbGraphicType.Items.Add(Strings.eventgraphic.graphictype1);
+            cmbGraphicType.Items.Add(Strings.eventgraphic.graphictype2);
+            lblGraphic.Text = Strings.eventgraphic.graphic;
+            grpPreview.Text = Strings.eventgraphic.preview;
+            btnOk.Text = Strings.eventgraphic.okay;
+            btnCancel.Text = Strings.eventgraphic.cancel;
         }
 
         private void GraphicTypeUpdated()

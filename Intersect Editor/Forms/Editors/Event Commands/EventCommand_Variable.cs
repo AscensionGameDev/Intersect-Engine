@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -34,19 +34,19 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpSetVariable.Text = Strings.Get("eventsetvariable", "title");
-            grpVariableSelection.Text = Strings.Get("eventsetvariable", "label");
-            lblVariable.Text = Strings.Get("eventsetvariable", "label");
-            rdoGlobalVariable.Text = Strings.Get("eventsetvariable", "global");
-            rdoPlayerVariable.Text = Strings.Get("eventsetvariable", "player");
-            optSet.Text = Strings.Get("eventsetvariable", "set");
-            optAdd.Text = Strings.Get("eventsetvariable", "add");
-            optSubtract.Text = Strings.Get("eventsetvariable", "subtract");
-            optRandom.Text = Strings.Get("eventsetvariable", "random");
-            lblRandomLow.Text = Strings.Get("eventsetvariable", "randomlow");
-            lblRandomHigh.Text = Strings.Get("eventsetvariable", "randomhigh");
-            btnSave.Text = Strings.Get("eventsetvariable", "okay");
-            btnCancel.Text = Strings.Get("eventsetvariable", "cancel");
+            grpSetVariable.Text = Strings.eventsetvariable.title;
+            grpVariableSelection.Text = Strings.eventsetvariable.label;
+            lblVariable.Text = Strings.eventsetvariable.label;
+            rdoGlobalVariable.Text = Strings.eventsetvariable.global;
+            rdoPlayerVariable.Text = Strings.eventsetvariable.player;
+            optSet.Text = Strings.eventsetvariable.set;
+            optAdd.Text = Strings.eventsetvariable.add;
+            optSubtract.Text = Strings.eventsetvariable.subtract;
+            optRandom.Text = Strings.eventsetvariable.random;
+            lblRandomLow.Text = Strings.eventsetvariable.randomlow;
+            lblRandomHigh.Text = Strings.eventsetvariable.randomhigh;
+            btnSave.Text = Strings.eventsetvariable.okay;
+            btnCancel.Text = Strings.eventsetvariable.cancel;
         }
 
         private void InitEditor()

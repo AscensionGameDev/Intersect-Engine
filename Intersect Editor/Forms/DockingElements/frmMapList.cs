@@ -4,7 +4,7 @@ using DarkUI.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.General;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect.Editor.Forms
@@ -25,8 +25,8 @@ namespace Intersect.Editor.Forms
             if (e.Node.Tag.GetType() == typeof(MapListMap))
             {
                 if (Globals.CurrentMap != null && Globals.CurrentMap.Changed() &&
-                    DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"),
-                        Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DarkMessageBox.ShowInformation(Strings.mapping.savemapdialogue,
+                        Strings.mapping.savemap, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     SaveMap();
@@ -56,17 +56,17 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.Get("maplist", "title");
-            btnChronological.Text = Strings.Get("maplist", "chronological");
-            toolSelectMap.Text = Strings.Get("maplist", "selectcurrent");
-            btnNewMap.Text = Strings.Get("maplist", "newmap");
-            btnNewFolder.Text = Strings.Get("maplist", "newfolder");
-            btnRename.Text = Strings.Get("maplist", "rename");
-            btnDelete.Text = Strings.Get("maplist", "delete");
-            newMapToolStripMenuItem.Text = Strings.Get("maplist", "newmap");
-            renameToolStripMenuItem.Text = Strings.Get("maplist", "rename");
-            newFolderToolStripMenuItem.Text = Strings.Get("maplist", "newfolder");
-            deleteToolStripMenuItem.Text = Strings.Get("maplist", "delete");
+            Text = Strings.maplist.title;
+            btnChronological.Text = Strings.maplist.chronological;
+            toolSelectMap.Text = Strings.maplist.selectcurrent;
+            btnNewMap.Text = Strings.maplist.newmap;
+            btnNewFolder.Text = Strings.maplist.newfolder;
+            btnRename.Text = Strings.maplist.rename;
+            btnDelete.Text = Strings.maplist.delete;
+            newMapToolStripMenuItem.Text = Strings.maplist.newmap;
+            renameToolStripMenuItem.Text = Strings.maplist.rename;
+            newFolderToolStripMenuItem.Text = Strings.maplist.newfolder;
+            deleteToolStripMenuItem.Text = Strings.maplist.delete;
         }
 
         private void btnRefreshList_Click(object sender, EventArgs e)
@@ -90,7 +90,7 @@ namespace Intersect.Editor.Forms
         {
             if (mapTreeList.list.SelectedNode == null)
             {
-                DarkMessageBox.ShowError(Strings.Get("maplist", "selecttorename"), Strings.Get("maplist", "rename"),
+                DarkMessageBox.ShowError(Strings.maplist.selecttorename, Strings.maplist.rename,
                     DarkDialogButton.Ok, Properties.Resources.Icon);
             }
             else
@@ -103,15 +103,15 @@ namespace Intersect.Editor.Forms
         {
             if (mapTreeList.list.SelectedNode == null)
             {
-                DarkMessageBox.ShowError(Strings.Get("maplist", "selecttodelete"), Strings.Get("maplist", "delete"),
+                DarkMessageBox.ShowError(Strings.maplist.selecttodelete, Strings.maplist.delete,
                     DarkDialogButton.Ok, Properties.Resources.Icon);
             }
             else
             {
                 if (
                     DarkMessageBox.ShowWarning(
-                        Strings.Get("maplist", "deleteconfirm", ((MapListItem) mapTreeList.list.SelectedNode.Tag).Name),
-                        Strings.Get("maplist", "delete"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                        Strings.maplist.deleteconfirm.ToString( ((MapListItem) mapTreeList.list.SelectedNode.Tag).Name),
+                        Strings.maplist.delete, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDelete((MapListItem) mapTreeList.list.SelectedNode.Tag);
@@ -129,11 +129,11 @@ namespace Intersect.Editor.Forms
         private void btnNewMap_Click(object sender, EventArgs e)
         {
             if (
-                DarkMessageBox.ShowWarning(Strings.Get("mapping", "newmap"), Strings.Get("mapping", "newmapcaption"),
+                DarkMessageBox.ShowWarning(Strings.mapping.newmap, Strings.mapping.newmapcaption,
                     DarkDialogButton.YesNo, Properties.Resources.Icon) != DialogResult.Yes) return;
             if (Globals.CurrentMap.Changed() &&
-                DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"),
-                    Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                DarkMessageBox.ShowInformation(Strings.mapping.savemapdialogue,
+                    Strings.mapping.savemap, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                 DialogResult.Yes)
             {
                 SaveMap();

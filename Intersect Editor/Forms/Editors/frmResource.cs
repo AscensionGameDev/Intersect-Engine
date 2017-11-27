@@ -8,7 +8,7 @@ using Intersect.Editor.Classes.Core;
 using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 using Intersect.Utilities;
 
 namespace Intersect.Editor.Classes
@@ -90,8 +90,8 @@ namespace Intersect.Editor.Classes
             mEndBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
             cmbInitialSprite.Items.Clear();
             cmbEndSprite.Items.Clear();
-            cmbInitialSprite.Items.Add(Strings.Get("general", "none"));
-            cmbEndSprite.Items.Add(Strings.Get("general", "none"));
+            cmbInitialSprite.Items.Add(Strings.general.none);
+            cmbEndSprite.Items.Add(Strings.general.none);
             string[] resources = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Resource);
             for (int i = 0; i < resources.Length; i++)
             {
@@ -99,10 +99,10 @@ namespace Intersect.Editor.Classes
                 cmbEndSprite.Items.Add(resources[i]);
             }
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add(Strings.Get("general", "none"));
+            cmbAnimation.Items.Add(Strings.general.none);
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbItem.Items.Clear();
-            cmbItem.Items.Add(Strings.Get("general", "none"));
+            cmbItem.Items.Add(Strings.general.none);
             cmbItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
             InitLocalization();
             UpdateEditor();
@@ -110,38 +110,38 @@ namespace Intersect.Editor.Classes
 
         private void InitLocalization()
         {
-            Text = Strings.Get("resourceeditor", "title");
-            toolStripItemNew.Text = Strings.Get("resourceeditor", "new");
-            toolStripItemDelete.Text = Strings.Get("resourceeditor", "delete");
-            toolStripItemCopy.Text = Strings.Get("resourceeditor", "copy");
-            toolStripItemPaste.Text = Strings.Get("resourceeditor", "paste");
-            toolStripItemUndo.Text = Strings.Get("resourceeditor", "undo");
+            Text = Strings.resourceeditor.title;
+            toolStripItemNew.Text = Strings.resourceeditor.New;
+            toolStripItemDelete.Text = Strings.resourceeditor.delete;
+            toolStripItemCopy.Text = Strings.resourceeditor.copy;
+            toolStripItemPaste.Text = Strings.resourceeditor.paste;
+            toolStripItemUndo.Text = Strings.resourceeditor.undo;
 
-            grpResources.Text = Strings.Get("resourceeditor", "resources");
+            grpResources.Text = Strings.resourceeditor.resources;
 
-            grpGeneral.Text = Strings.Get("resourceeditor", "general");
-            lblName.Text = Strings.Get("resourceeditor", "name");
-            lblToolType.Text = Strings.Get("resourceeditor", "tooltype");
-            lblHP.Text = Strings.Get("resourceeditor", "minhp");
-            lblMaxHp.Text = Strings.Get("resourceeditor", "maxhp");
-            lblSpawnDuration.Text = Strings.Get("resourceeditor", "spawnduration");
-            lblAnimation.Text = Strings.Get("resourceeditor", "animation");
-            chkWalkableBefore.Text = Strings.Get("resourceeditor", "walkablebefore");
-            chkWalkableAfter.Text = Strings.Get("resourceeditor", "walkableafter");
-            btnRequirements.Text = Strings.Get("resourceeditor", "requirements");
+            grpGeneral.Text = Strings.resourceeditor.general;
+            lblName.Text = Strings.resourceeditor.name;
+            lblToolType.Text = Strings.resourceeditor.tooltype;
+            lblHP.Text = Strings.resourceeditor.minhp;
+            lblMaxHp.Text = Strings.resourceeditor.maxhp;
+            lblSpawnDuration.Text = Strings.resourceeditor.spawnduration;
+            lblAnimation.Text = Strings.resourceeditor.animation;
+            chkWalkableBefore.Text = Strings.resourceeditor.walkablebefore;
+            chkWalkableAfter.Text = Strings.resourceeditor.walkableafter;
+            btnRequirements.Text = Strings.resourceeditor.requirements;
 
-            grpDrops.Text = Strings.Get("resourceeditor", "drops");
-            lblDropIndex.Text = Strings.Get("resourceeditor", "dropindex");
-            lblDropItem.Text = Strings.Get("resourceeditor", "dropitem");
-            lblDropAmount.Text = Strings.Get("resourceeditor", "dropamount");
-            lblDropChance.Text = Strings.Get("resourceeditor", "dropchance");
+            grpDrops.Text = Strings.resourceeditor.drops;
+            lblDropIndex.Text = Strings.resourceeditor.dropindex;
+            lblDropItem.Text = Strings.resourceeditor.dropitem;
+            lblDropAmount.Text = Strings.resourceeditor.dropamount;
+            lblDropChance.Text = Strings.resourceeditor.dropchance;
 
-            grpGraphics.Text = Strings.Get("resourceeditor", "graphics");
-            lblPic.Text = Strings.Get("resourceeditor", "initialgraphic");
-            lblPic2.Text = Strings.Get("resourceeditor", "exhaustedgraphic");
+            grpGraphics.Text = Strings.resourceeditor.graphics;
+            lblPic.Text = Strings.resourceeditor.initialgraphic;
+            lblPic2.Text = Strings.resourceeditor.exhaustedgraphic;
 
-            btnSave.Text = Strings.Get("resourceeditor", "save");
-            btnCancel.Text = Strings.Get("resourceeditor", "cancel");
+            btnSave.Text = Strings.resourceeditor.save;
+            btnCancel.Text = Strings.resourceeditor.cancel;
         }
 
         public void InitEditor()
@@ -149,7 +149,7 @@ namespace Intersect.Editor.Classes
             lstResources.Items.Clear();
             lstResources.Items.AddRange(Database.GetGameObjectList(GameObjectType.Resource));
             cmbToolType.Items.Clear();
-            cmbToolType.Items.Add(Strings.Get("general", "none"));
+            cmbToolType.Items.Add(Strings.general.none);
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
         }
 
@@ -329,8 +329,8 @@ namespace Intersect.Editor.Classes
         {
             if (mEditorItem != null && lstResources.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("resourceeditor", "deleteprompt"),
-                        Strings.Get("resourceeditor", "deletetitle"), DarkDialogButton.YesNo,
+                if (DarkMessageBox.ShowWarning(Strings.resourceeditor.deleteprompt,
+                        Strings.resourceeditor.deletetitle, DarkDialogButton.YesNo,
                         Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
@@ -361,8 +361,8 @@ namespace Intersect.Editor.Classes
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("resourceeditor", "undoprompt"),
-                        Strings.Get("resourceeditor", "undotitle"), DarkDialogButton.YesNo,
+                if (DarkMessageBox.ShowWarning(Strings.resourceeditor.undoprompt,
+                        Strings.resourceeditor.undotitle, DarkDialogButton.YesNo,
                         Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {

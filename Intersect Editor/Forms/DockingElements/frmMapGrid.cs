@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.Maps;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -38,15 +38,15 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void InitLocalization()
         {
-            Text = Strings.Get("mapgrid", "title");
-            btnScreenshotWorld.Text = Strings.Get("mapgrid", "screenshotworld");
-            btnGridView.Text = Strings.Get("mapgrid", "gridlines");
-            btnFetchPreview.Text = Strings.Get("mapgrid", "preview");
-            downloadMissingPreviewsToolStripMenuItem.Text = Strings.Get("mapgrid", "downloadmissing");
-            reDownloadAllPreviewsToolStripMenuItem.Text = Strings.Get("mapgrid", "downloadall");
-            unlinkMapToolStripMenuItem.Text = Strings.Get("mapgrid", "unlink");
-            linkMapToolStripMenuItem.Text = Strings.Get("mapgrid", "link");
-            recacheMapToolStripMenuItem.Text = Strings.Get("mapgrid", "recache");
+            Text = Strings.mapgrid.title;
+            btnScreenshotWorld.Text = Strings.mapgrid.screenshotworld;
+            btnGridView.Text = Strings.mapgrid.gridlines;
+            btnFetchPreview.Text = Strings.mapgrid.preview;
+            downloadMissingPreviewsToolStripMenuItem.Text = Strings.mapgrid.downloadmissing;
+            reDownloadAllPreviewsToolStripMenuItem.Text = Strings.mapgrid.downloadall;
+            unlinkMapToolStripMenuItem.Text = Strings.mapgrid.unlink;
+            linkMapToolStripMenuItem.Text = Strings.mapgrid.link;
+            recacheMapToolStripMenuItem.Text = Strings.mapgrid.recache;
         }
 
         public void InitGridWindow()

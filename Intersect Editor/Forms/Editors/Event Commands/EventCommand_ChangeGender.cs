@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -21,15 +21,15 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpChangeGender.Text = Strings.Get("eventchangegender", "title");
+            grpChangeGender.Text = Strings.eventchangegender.title;
             cmbGender.Items.Clear();
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < Strings.eventchangegender.genders.Length; i++)
             {
-                cmbGender.Items.Add(Strings.Get("eventchangegender", "gender" + i));
+                cmbGender.Items.Add(Strings.eventchangegender.genders[i]);
             }
-            lblGender.Text = Strings.Get("eventchangegender", "label");
-            btnSave.Text = Strings.Get("eventchangegender", "okay");
-            btnCancel.Text = Strings.Get("eventchangegender", "cancel");
+            lblGender.Text = Strings.eventchangegender.label;
+            btnSave.Text = Strings.eventchangegender.okay;
+            btnCancel.Text = Strings.eventchangegender.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

@@ -7,7 +7,7 @@ using Intersect.Editor.Forms;
 using Intersect.Editor.Forms.DockingElements;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Classes
 {
@@ -125,7 +125,7 @@ namespace Intersect.Editor.Classes
 
         public static string GetColorName(Color.ChatColor color)
         {
-            return Strings.Get("colors", ((int) color).ToString());
+            return Strings.colors.presets[(int) color];
         }
 
         public static string GetStatName(int statnum)

@@ -9,7 +9,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 using Intersect.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
@@ -360,7 +360,7 @@ namespace Intersect.Editor.Forms
             HideAttributeMenus();
             grpSound.Visible = true;
             cmbMapAttributeSound.Items.Clear();
-            cmbMapAttributeSound.Items.Add(Strings.Get("general", "none"));
+            cmbMapAttributeSound.Items.Add(Strings.general.none);
             cmbMapAttributeSound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
             cmbMapAttributeSound.SelectedIndex = 0;
         }
@@ -711,116 +711,116 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.Get("maplayers", "title");
-            btnTileHeader.Text = Strings.Get("maplayers", "tiles");
-            btnAttributeHeader.Text = Strings.Get("maplayers", "attributes");
-            btnEventsHeader.Text = Strings.Get("maplayers", "events");
-            btnLightsHeader.Text = Strings.Get("maplayers", "lights");
-            btnNpcsHeader.Text = Strings.Get("maplayers", "npcs");
+            Text = Strings.maplayers.title;
+            btnTileHeader.Text = Strings.maplayers.tiles;
+            btnAttributeHeader.Text = Strings.maplayers.attributes;
+            btnEventsHeader.Text = Strings.maplayers.events;
+            btnLightsHeader.Text = Strings.maplayers.lights;
+            btnNpcsHeader.Text = Strings.maplayers.npcs;
 
             //Tiles Panel
-            lblLayer.Text = Strings.Get("tiles", "layer");
-            lblTileset.Text = Strings.Get("tiles", "tileset");
-            lblTileType.Text = Strings.Get("tiles", "tiletype");
+            lblLayer.Text = Strings.tiles.layer;
+            lblTileset.Text = Strings.tiles.tileset;
+            lblTileType.Text = Strings.tiles.tiletype;
             cmbAutotile.Items.Clear();
-            cmbAutotile.Items.Add(Strings.Get("tiles", "normal"));
-            cmbAutotile.Items.Add(Strings.Get("tiles", "autotile"));
-            cmbAutotile.Items.Add(Strings.Get("tiles", "fake"));
-            cmbAutotile.Items.Add(Strings.Get("tiles", "animated"));
-            cmbAutotile.Items.Add(Strings.Get("tiles", "cliff"));
-            cmbAutotile.Items.Add(Strings.Get("tiles", "waterfall"));
-            cmbAutotile.Items.Add(Strings.Get("tiles", "autotilexp"));
-            cmbAutotile.Items.Add(Strings.Get("tiles", "animatedxp"));
+            cmbAutotile.Items.Add(Strings.tiles.normal);
+            cmbAutotile.Items.Add(Strings.tiles.autotile);
+            cmbAutotile.Items.Add(Strings.tiles.fake);
+            cmbAutotile.Items.Add(Strings.tiles.animated);
+            cmbAutotile.Items.Add(Strings.tiles.cliff);
+            cmbAutotile.Items.Add(Strings.tiles.waterfall);
+            cmbAutotile.Items.Add(Strings.tiles.autotilexp);
+            cmbAutotile.Items.Add(Strings.tiles.animatedxp);
 
             //Attributes Panel
-            rbBlocked.Text = Strings.Get("attributes", "blocked");
-            rbZDimension.Text = Strings.Get("attributes", "zdimension");
-            rbNPCAvoid.Text = Strings.Get("attributes", "npcavoid");
-            rbWarp.Text = Strings.Get("attributes", "warp");
-            rbItem.Text = Strings.Get("attributes", "itemspawn");
-            rbSound.Text = Strings.Get("attributes", "mapsound");
-            rbResource.Text = Strings.Get("attributes", "resourcespawn");
-            rbAnimation.Text = Strings.Get("attributes", "mapanimation");
-            rbGrappleStone.Text = Strings.Get("attributes", "grapple");
-            rbSlide.Text = Strings.Get("attributes", "slide");
+            rbBlocked.Text = Strings.attributes.blocked;
+            rbZDimension.Text = Strings.attributes.zdimension;
+            rbNPCAvoid.Text = Strings.attributes.npcavoid;
+            rbWarp.Text = Strings.attributes.warp;
+            rbItem.Text = Strings.attributes.itemspawn;
+            rbSound.Text = Strings.attributes.mapsound;
+            rbResource.Text = Strings.attributes.resourcespawn;
+            rbAnimation.Text = Strings.attributes.mapanimation;
+            rbGrappleStone.Text = Strings.attributes.grapple;
+            rbSlide.Text = Strings.attributes.slide;
 
             //Map Animation Groupbox
-            grpAnimation.Text = Strings.Get("attributes", "mapanimation");
-            lblAnimation.Text = Strings.Get("attributes", "mapanimation");
+            grpAnimation.Text = Strings.attributes.mapanimation;
+            lblAnimation.Text = Strings.attributes.mapanimation;
 
             //Slide Groupbox
-            grpSlide.Text = Strings.Get("attributes", "slide");
-            lblSlideDir.Text = Strings.Get("attributes", "dir");
+            grpSlide.Text = Strings.attributes.slide;
+            lblSlideDir.Text = Strings.attributes.dir;
             cmbSlideDir.Items.Clear();
             for (int i = -1; i < 4; i++)
             {
-                cmbSlideDir.Items.Add(Strings.Get("directions", i.ToString()));
+                cmbSlideDir.Items.Add(Strings.directions.dir[i]);
             }
 
             //Map Sound
-            grpSound.Text = Strings.Get("attributes", "mapsound");
-            lblMapSound.Text = Strings.Get("attributes", "sound");
-            lblSoundDistance.Text = Strings.Get("attributes", "distance");
+            grpSound.Text = Strings.attributes.mapsound;
+            lblMapSound.Text = Strings.attributes.sound;
+            lblSoundDistance.Text = Strings.attributes.distance;
 
             //Map Item
-            grpItem.Text = Strings.Get("attributes", "itemspawn");
-            lblMapItem.Text = Strings.Get("attributes", "item");
-            lblMaxItemAmount.Text = Strings.Get("attributes", "quantity");
+            grpItem.Text = Strings.attributes.itemspawn;
+            lblMapItem.Text = Strings.attributes.item;
+            lblMaxItemAmount.Text = Strings.attributes.quantity;
 
             //Z-Dimension
-            grpZDimension.Text = Strings.Get("attributes", "zdimension");
-            grpGateway.Text = Strings.Get("attributes", "zgateway");
-            grpDimBlock.Text = Strings.Get("attributes", "zBlock");
-            rbGatewayNone.Text = Strings.Get("attributes", "znone");
-            rbGateway1.Text = Strings.Get("attributes", "zlevel1");
-            rbGateway2.Text = Strings.Get("attributes", "zlevel2");
-            rbBlockNone.Text = Strings.Get("attributes", "znone");
-            rbBlock1.Text = Strings.Get("attributes", "zlevel1");
-            rbBlock2.Text = Strings.Get("attributes", "zlevel2");
+            grpZDimension.Text = Strings.attributes.zdimension;
+            grpGateway.Text = Strings.attributes.zgateway;
+            grpDimBlock.Text = Strings.attributes.zblock;
+            rbGatewayNone.Text = Strings.attributes.znone;
+            rbGateway1.Text = Strings.attributes.zlevel1;
+            rbGateway2.Text = Strings.attributes.zlevel2;
+            rbBlockNone.Text = Strings.attributes.znone;
+            rbBlock1.Text = Strings.attributes.zlevel1;
+            rbBlock2.Text = Strings.attributes.zlevel2;
 
             //Warp
-            grpWarp.Text = Strings.Get("attributes", "warp");
-            lblMap.Text = Strings.Get("warping", "map", "");
-            lblX.Text = Strings.Get("warping", "x", "");
-            lblY.Text = Strings.Get("warping", "y", "");
-            lblWarpDir.Text = Strings.Get("warping", "direction", "");
+            grpWarp.Text = Strings.attributes.warp;
+            lblMap.Text = Strings.warping.map.ToString( "");
+            lblX.Text = Strings.warping.x.ToString( "");
+            lblY.Text = Strings.warping.y.ToString( "");
+            lblWarpDir.Text = Strings.warping.direction.ToString( "");
             cmbDirection.Items.Clear();
             for (int i = -1; i < 4; i++)
             {
-                cmbDirection.Items.Add(Strings.Get("directions", i.ToString()));
+                cmbDirection.Items.Add(Strings.directions.dir[i]);
             }
-            btnVisualMapSelector.Text = Strings.Get("warping", "visual");
+            btnVisualMapSelector.Text = Strings.warping.visual;
 
             //Resource
-            grpResource.Text = Strings.Get("attributes", "resourcespawn");
-            lblResource.Text = Strings.Get("attributes", "resource");
-            grpZResource.Text = Strings.Get("attributes", "zdimension");
-            rbLevel1.Text = Strings.Get("attributes", "zlevel1");
-            rbLevel2.Text = Strings.Get("attributes", "zlevel2");
+            grpResource.Text = Strings.attributes.resourcespawn;
+            lblResource.Text = Strings.attributes.resource;
+            grpZResource.Text = Strings.attributes.zdimension;
+            rbLevel1.Text = Strings.attributes.zlevel1;
+            rbLevel2.Text = Strings.attributes.zlevel2;
 
             //NPCS Tab
             grpSpawnLoc.Text = rbDeclared.Checked
-                ? Strings.Get("npcspawns", "spawndeclared")
-                : Strings.Get("npcspawns", "spawnrandom");
-            rbDeclared.Text = Strings.Get("npcspawns", "declaredlocation");
-            rbRandom.Text = Strings.Get("npcspawns", "randomlocation");
-            lblDir.Text = Strings.Get("npcspawns", "direction");
+                ? Strings.npcspawns.spawndeclared
+                : Strings.npcspawns.spawnrandom;
+            rbDeclared.Text = Strings.npcspawns.declaredlocation;
+            rbRandom.Text = Strings.npcspawns.randomlocation;
+            lblDir.Text = Strings.npcspawns.direction;
             cmbDir.Items.Clear();
-            cmbDir.Items.Add(Strings.Get("npcspawns", "randomdirection"));
+            cmbDir.Items.Add(Strings.npcspawns.randomdirection);
             for (int i = 0; i < 4; i++)
             {
-                cmbDir.Items.Add(Strings.Get("directions", i.ToString()));
+                cmbDir.Items.Add(Strings.directions.dir[i]);
             }
-            grpNpcList.Text = Strings.Get("npcspawns", "addremove");
-            btnAddMapNpc.Text = Strings.Get("npcspawns", "add");
-            btnRemoveMapNpc.Text = Strings.Get("npcspawns", "remove");
+            grpNpcList.Text = Strings.npcspawns.addremove;
+            btnAddMapNpc.Text = Strings.npcspawns.add;
+            btnRemoveMapNpc.Text = Strings.npcspawns.remove;
 
-            lblEventInstructions.Text = Strings.Get("maplayers", "eventinstructions");
-            lblLightInstructions.Text = Strings.Get("maplayers", "lightinstructions");
+            lblEventInstructions.Text = Strings.maplayers.eventinstructions;
+            lblLightInstructions.Text = Strings.maplayers.lightinstructions;
 
             for (int i = 0; i < mMapLayers.Count; i++)
             {
-                mMapLayers[i].Text = Strings.Get("tiles", "layer" + i);
+                mMapLayers[i].Text = Strings.tiles.layers[i];
             }
         }
 
@@ -968,7 +968,7 @@ namespace Intersect.Editor.Forms
         private void picMapLayer_MouseHover(object sender, EventArgs e)
         {
             ToolTip tt = new ToolTip();
-            tt.SetToolTip((PictureBox) sender, Strings.Get("tiles", "layer" + mMapLayers.IndexOf((PictureBox) sender)));
+            tt.SetToolTip((PictureBox) sender, Strings.tiles.layers[mMapLayers.IndexOf((PictureBox) sender)]);
         }
     }
 }

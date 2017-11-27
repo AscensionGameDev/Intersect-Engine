@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Classes.Core;
 using Intersect.Editor.Classes.Maps;
 using Intersect.Editor.Forms;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Classes
 {
@@ -89,7 +89,7 @@ namespace Intersect.Editor.Classes
             if (sFpsTime < Globals.System.GetTimeMs())
             {
                 sFps = sFpsCount;
-                sMyForm.toolStripLabelFPS.Text = Strings.Get("mainform", "fps", sFps);
+                sMyForm.toolStripLabelFPS.Text = Strings.mainform.fps.ToString(sFps);
                 sFpsCount = 0;
                 sFpsTime = Globals.System.GetTimeMs() + 1000;
             }

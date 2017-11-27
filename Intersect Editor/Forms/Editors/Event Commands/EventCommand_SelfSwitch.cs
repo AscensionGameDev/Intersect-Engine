@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -22,18 +22,18 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpSelfSwitch.Text = Strings.Get("eventselfswitch", "title");
-            lblSelfSwitch.Text = Strings.Get("eventselfswitch", "label");
+            grpSelfSwitch.Text = Strings.eventselfswitch.title;
+            lblSelfSwitch.Text = Strings.eventselfswitch.label;
             cmbSetSwitch.Items.Clear();
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < Strings.eventselfswitch.selfswitches.Length; i++)
             {
-                cmbSetSwitch.Items.Add(Strings.Get("eventselfswitch", "selfswitch" + i));
+                cmbSetSwitch.Items.Add(Strings.eventselfswitch.selfswitches[i]);
             }
             cmbSetSwitchVal.Items.Clear();
-            cmbSetSwitchVal.Items.Add(Strings.Get("eventselfswitch", "false"));
-            cmbSetSwitchVal.Items.Add(Strings.Get("eventselfswitch", "true"));
-            btnSave.Text = Strings.Get("eventselfswitch", "okay");
-            btnCancel.Text = Strings.Get("eventselfswitch", "cancel");
+            cmbSetSwitchVal.Items.Add(Strings.eventselfswitch.False);
+            cmbSetSwitchVal.Items.Add(Strings.eventselfswitch.True);
+            btnSave.Text = Strings.eventselfswitch.okay;
+            btnCancel.Text = Strings.eventselfswitch.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -21,10 +21,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpGiveExperience.Text = Strings.Get("eventgiveexperience", "title");
-            lblExperience.Text = Strings.Get("eventgiveexperience", "label");
-            btnSave.Text = Strings.Get("eventgiveexperience", "okay");
-            btnCancel.Text = Strings.Get("eventgiveexperience", "cancel");
+            grpGiveExperience.Text = Strings.eventgiveexperience.title;
+            lblExperience.Text = Strings.eventgiveexperience.label;
+            btnSave.Text = Strings.eventgiveexperience.okay;
+            btnCancel.Text = Strings.eventgiveexperience.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

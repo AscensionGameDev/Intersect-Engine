@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using Intersect.Editor.Classes;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Controls
 {
@@ -39,16 +39,16 @@ namespace Intersect.Editor.Forms.Controls
 
         private void InitLocalization()
         {
-            grpLightEditor.Text = Strings.Get("lighteditor", "title");
-            lblOffsetX.Text = Strings.Get("lighteditor", "xoffset");
-            lblOffsetY.Text = Strings.Get("lighteditor", "yoffset");
-            lblColor.Text = Strings.Get("lighteditor", "color");
-            btnSelectLightColor.Text = Strings.Get("lighteditor", "selectcolor");
-            lblIntensity.Text = Strings.Get("lighteditor", "intensity");
-            lblSize.Text = Strings.Get("lighteditor", "size");
-            lblExpandAmt.Text = Strings.Get("lighteditor", "expandamt");
-            btnOkay.Text = Strings.Get("lighteditor", "save");
-            btnCancel.Text = Strings.Get("lighteditor", "revert");
+            grpLightEditor.Text = Strings.lighteditor.title;
+            lblOffsetX.Text = Strings.lighteditor.xoffset;
+            lblOffsetY.Text = Strings.lighteditor.yoffset;
+            lblColor.Text = Strings.lighteditor.color;
+            btnSelectLightColor.Text = Strings.lighteditor.selectcolor;
+            lblIntensity.Text = Strings.lighteditor.intensity;
+            lblSize.Text = Strings.lighteditor.size;
+            lblExpandAmt.Text = Strings.lighteditor.expandamt;
+            btnOkay.Text = Strings.lighteditor.save;
+            btnCancel.Text = Strings.lighteditor.revert;
         }
 
         //Lights Tab
