@@ -38,15 +38,15 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void InitLocalization()
         {
-            Text = Strings.mapgrid.title;
-            btnScreenshotWorld.Text = Strings.mapgrid.screenshotworld;
-            btnGridView.Text = Strings.mapgrid.gridlines;
-            btnFetchPreview.Text = Strings.mapgrid.preview;
-            downloadMissingPreviewsToolStripMenuItem.Text = Strings.mapgrid.downloadmissing;
-            reDownloadAllPreviewsToolStripMenuItem.Text = Strings.mapgrid.downloadall;
-            unlinkMapToolStripMenuItem.Text = Strings.mapgrid.unlink;
-            linkMapToolStripMenuItem.Text = Strings.mapgrid.link;
-            recacheMapToolStripMenuItem.Text = Strings.mapgrid.recache;
+            Text = Strings.MapGrid.title;
+            btnScreenshotWorld.Text = Strings.MapGrid.screenshotworld;
+            btnGridView.Text = Strings.MapGrid.gridlines;
+            btnFetchPreview.Text = Strings.MapGrid.preview;
+            downloadMissingPreviewsToolStripMenuItem.Text = Strings.MapGrid.downloadmissing;
+            reDownloadAllPreviewsToolStripMenuItem.Text = Strings.MapGrid.downloadall;
+            unlinkMapToolStripMenuItem.Text = Strings.MapGrid.unlink;
+            linkMapToolStripMenuItem.Text = Strings.MapGrid.link;
+            recacheMapToolStripMenuItem.Text = Strings.MapGrid.recache;
         }
 
         public void InitGridWindow()

@@ -20,7 +20,7 @@ namespace Intersect.Editor.Classes
         private const string MAP_CACHE_DATA = "data";
 
         //Options Constants
-        private const string OPTION_TABLE = "options";
+        private const string OPTION_TABLE = "Options";
 
         private const string OPTION_ID = "id";
         private const string OPTION_NAME = "name";

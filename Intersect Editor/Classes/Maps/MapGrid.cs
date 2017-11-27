@@ -173,8 +173,8 @@ namespace Intersect.Editor.Classes.Maps
                         if (Grid[x1 - 1, y1 - 1].Mapnum > -1)
                         {
                             if (Globals.CurrentMap != null && Globals.CurrentMap.Changed() &&
-                                DarkMessageBox.ShowInformation(Strings.mapping.savemapdialogue,
-                                    Strings.mapping.savemap, DarkDialogButton.YesNo,
+                                DarkMessageBox.ShowInformation(Strings.Mapping.savemapdialogue,
+                                    Strings.Mapping.savemap, DarkDialogButton.YesNo,
                                     Properties.Resources.Icon) ==
                                 DialogResult.Yes)
                             {
@@ -207,20 +207,20 @@ namespace Intersect.Editor.Classes.Maps
             SaveFileDialog fileDialog = new SaveFileDialog()
             {
                 Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif",
-                Title = Strings.mapgrid.savescreenshotdialogue
+                Title = Strings.MapGrid.savescreenshotdialogue
             };
             fileDialog.ShowDialog();
             if (fileDialog.FileName != "")
             {
                 if (
-                    DarkMessageBox.ShowWarning(Strings.mapgrid.savescreenshotconfirm,
-                        Strings.mapgrid.savescreenshottitle, DarkDialogButton.YesNo,
+                    DarkMessageBox.ShowWarning(Strings.MapGrid.savescreenshotconfirm,
+                        Strings.MapGrid.savescreenshottitle, DarkDialogButton.YesNo,
                         Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     FetchMissingPreviews(false);
                     Globals.PreviewProgressForm = new FrmProgress();
-                    Globals.PreviewProgressForm.SetTitle(Strings.mapgrid.savingscreenshot);
+                    Globals.PreviewProgressForm.SetTitle(Strings.MapGrid.savingscreenshot);
                     Thread screenShotThread = new Thread(() => ScreenshotWorld(fileDialog.FileName));
                     screenShotThread.Start();
                     Globals.PreviewProgressForm.ShowDialog();
@@ -313,7 +313,7 @@ namespace Intersect.Editor.Classes.Maps
                     }
                 }
                 png.WriteRowByte(row, y);
-                Globals.PreviewProgressForm.SetProgress(Strings.mapgrid.savingrow.ToString( y, rows),
+                Globals.PreviewProgressForm.SetProgress(Strings.MapGrid.savingrow.ToString( y, rows),
                     (int) ((y / (float) rows) * 100), false);
                 Application.DoEvents();
             }
@@ -345,12 +345,12 @@ namespace Intersect.Editor.Classes.Maps
             if (clearAllFirst)
             {
                 if (
-                    DarkMessageBox.ShowWarning(Strings.mapgrid.clearandfetch,
-                        Strings.mapgrid.fetchcaption, DarkDialogButton.YesNo, Properties.Resources.Icon) !=
+                    DarkMessageBox.ShowWarning(Strings.MapGrid.clearandfetch,
+                        Strings.MapGrid.fetchcaption, DarkDialogButton.YesNo, Properties.Resources.Icon) !=
                     DialogResult.Yes) return;
                 if (
-                    DarkMessageBox.ShowInformation(Strings.mapgrid.keepmapcache,
-                        Strings.mapgrid.mapcachecaption, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DarkMessageBox.ShowInformation(Strings.MapGrid.keepmapcache,
+                        Strings.MapGrid.mapcachecaption, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     Database.GridHideOverlay = EditorGraphics.HideOverlay;
@@ -394,14 +394,14 @@ namespace Intersect.Editor.Classes.Maps
             if (maps.Count > 0)
             {
                 if (clearAllFirst ||
-                    DarkMessageBox.ShowWarning(Strings.mapgrid.justfetch,
-                        Strings.mapgrid.fetchcaption, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                    DarkMessageBox.ShowWarning(Strings.MapGrid.justfetch,
+                        Strings.MapGrid.fetchcaption, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     Globals.FetchingMapPreviews = true;
                     Globals.PreviewProgressForm = new FrmProgress();
-                    Globals.PreviewProgressForm.SetTitle(Strings.mapgrid.fetchingmaps);
-                    Globals.PreviewProgressForm.SetProgress(Strings.mapgrid.fetchingprogress.ToString(0, maps.Count),
+                    Globals.PreviewProgressForm.SetTitle(Strings.MapGrid.fetchingmaps);
+                    Globals.PreviewProgressForm.SetProgress(Strings.MapGrid.fetchingprogress.ToString( 0, maps.Count),
                         0,
                         false);
                     Globals.FetchCount = maps.Count;
@@ -495,7 +495,7 @@ namespace Intersect.Editor.Classes.Maps
             {
                 if (
                     DarkMessageBox.ShowWarning(Strings.mapgrid.unlinkprompt.ToString( mContextMap.name),
-                        Strings.mapgrid.unlinkcaption, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                        Strings.MapGrid.unlinkcaption, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                     PacketSender.SendUnlinkMap(mContextMap.Mapnum);
             }

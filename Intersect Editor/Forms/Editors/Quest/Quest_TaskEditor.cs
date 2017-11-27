@@ -40,30 +40,30 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void InitLocalization()
         {
-            grpEditor.Text = Strings.taskeditor.editor;
+            grpEditor.Text = Strings.TaskEditor.editor;
 
-            lblType.Text = Strings.taskeditor.type;
+            lblType.Text = Strings.TaskEditor.type;
             cmbTaskType.Items.Clear();
-            for (int i = 0; i < Strings.taskeditor.types.Length; i++)
+            for (int i = 0; i < Strings.TaskEditor.types.Length; i++)
             {
-                cmbTaskType.Items.Add(Strings.taskeditor.types[i]);
+                cmbTaskType.Items.Add(Strings.TaskEditor.types[i]);
             }
 
-            lblDesc.Text = Strings.taskeditor.desc;
+            lblDesc.Text = Strings.TaskEditor.desc;
 
-            grpKillNpcs.Text = Strings.taskeditor.killnpcs;
-            lblNpc.Text = Strings.taskeditor.npc;
-            lblNpcQuantity.Text = Strings.taskeditor.npcamount;
+            grpKillNpcs.Text = Strings.TaskEditor.killnpcs;
+            lblNpc.Text = Strings.TaskEditor.npc;
+            lblNpcQuantity.Text = Strings.TaskEditor.npcamount;
 
-            grpGatherItems.Text = Strings.taskeditor.gatheritems;
-            lblItem.Text = Strings.taskeditor.item;
-            lblItemQuantity.Text = Strings.taskeditor.gatheramount;
+            grpGatherItems.Text = Strings.TaskEditor.gatheritems;
+            lblItem.Text = Strings.TaskEditor.item;
+            lblItemQuantity.Text = Strings.TaskEditor.gatheramount;
 
-            lblEventDriven.Text = Strings.taskeditor.eventdriven;
+            lblEventDriven.Text = Strings.TaskEditor.eventdriven;
 
-            btnEditTaskEvent.Text = Strings.taskeditor.editcompletionevent;
-            btnSave.Text = Strings.taskeditor.ok;
-            btnCancel.Text = Strings.taskeditor.cancel;
+            btnEditTaskEvent.Text = Strings.TaskEditor.editcompletionevent;
+            btnSave.Text = Strings.TaskEditor.ok;
+            btnCancel.Text = Strings.TaskEditor.cancel;
         }
 
         private void UpdateFormElements()
@@ -127,7 +127,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void btnEditTaskEvent_Click(object sender, EventArgs e)
         {
-            mMyTask.CompletionEvent.Name = Strings.taskeditor.completionevent;
+            mMyTask.CompletionEvent.Name = Strings.TaskEditor.completionevent;
             FrmEvent editor = new FrmEvent(null)
             {
                 MyEvent = mMyTask.CompletionEvent

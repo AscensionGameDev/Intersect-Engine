@@ -39,16 +39,16 @@ namespace Intersect.Editor.Forms.Controls
 
         private void InitLocalization()
         {
-            grpLightEditor.Text = Strings.lighteditor.title;
-            lblOffsetX.Text = Strings.lighteditor.xoffset;
-            lblOffsetY.Text = Strings.lighteditor.yoffset;
-            lblColor.Text = Strings.lighteditor.color;
-            btnSelectLightColor.Text = Strings.lighteditor.selectcolor;
-            lblIntensity.Text = Strings.lighteditor.intensity;
-            lblSize.Text = Strings.lighteditor.size;
-            lblExpandAmt.Text = Strings.lighteditor.expandamt;
-            btnOkay.Text = Strings.lighteditor.save;
-            btnCancel.Text = Strings.lighteditor.revert;
+            grpLightEditor.Text = Strings.LightEditor.title;
+            lblOffsetX.Text = Strings.LightEditor.xoffset;
+            lblOffsetY.Text = Strings.LightEditor.yoffset;
+            lblColor.Text = Strings.LightEditor.color;
+            btnSelectLightColor.Text = Strings.LightEditor.selectcolor;
+            lblIntensity.Text = Strings.LightEditor.intensity;
+            lblSize.Text = Strings.LightEditor.size;
+            lblExpandAmt.Text = Strings.LightEditor.expandamt;
+            btnOkay.Text = Strings.LightEditor.save;
+            btnCancel.Text = Strings.LightEditor.revert;
         }
 
         //Lights Tab

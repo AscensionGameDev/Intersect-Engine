@@ -35,26 +35,26 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             scrlY.Maximum = Options.MapHeight - 1;
             scrlX.Value = mMyCommand.Ints[1];
             scrlY.Value = mMyCommand.Ints[2];
-            lblX.Text = Strings.warping.x.ToString( scrlX.Value);
-            lblY.Text = Strings.warping.y.ToString( scrlY.Value);
+            lblX.Text = Strings.Warping.x.ToString(scrlX.Value);
+            lblY.Text = Strings.Warping.y.ToString(scrlY.Value);
             cmbDirection.SelectedIndex = mMyCommand.Ints[3];
         }
 
         private void InitLocalization()
         {
-            grpWarp.Text = Strings.eventwarp.title;
-            lblMap.Text = Strings.warping.map.ToString( "");
-            lblX.Text = Strings.warping.x.ToString( scrlX.Value);
-            lblY.Text = Strings.warping.y.ToString( scrlY.Value);
-            lblDir.Text = Strings.warping.direction.ToString( "");
-            btnVisual.Text = Strings.warping.visual;
+            grpWarp.Text = Strings.EventWarp.title;
+            lblMap.Text = Strings.Warping.map.ToString( "");
+            lblX.Text = Strings.Warping.x.ToString( scrlX.Value);
+            lblY.Text = Strings.Warping.y.ToString( scrlY.Value);
+            lblDir.Text = Strings.Warping.direction.ToString( "");
+            btnVisual.Text = Strings.Warping.visual;
             cmbDirection.Items.Clear();
             for (int i = -1; i < 4; i++)
             {
-                cmbDirection.Items.Add(Strings.directions.dir[i]);
+                cmbDirection.Items.Add(Strings.Directions.dir[i]);
             }
-            btnSave.Text = Strings.eventwarp.okay;
-            btnCancel.Text = Strings.eventwarp.cancel;
+            btnSave.Text = Strings.EventWarp.okay;
+            btnCancel.Text = Strings.EventWarp.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -73,12 +73,12 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void scrlX_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblX.Text = Strings.warping.x.ToString( scrlX.Value);
+            lblX.Text = Strings.Warping.x.ToString( scrlX.Value);
         }
 
         private void scrlY_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblY.Text = Strings.warping.y.ToString( scrlY.Value);
+            lblY.Text = Strings.Warping.y.ToString( scrlY.Value);
         }
 
         private void btnVisual_Click(object sender, EventArgs e)
@@ -99,8 +99,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 }
                 scrlX.Value = frmWarpSelection.GetX();
                 scrlY.Value = frmWarpSelection.GetY();
-                lblX.Text = Strings.warping.x.ToString( scrlX.Value);
-                lblY.Text = Strings.warping.y.ToString( scrlY.Value);
+                lblX.Text = Strings.Warping.x.ToString( scrlX.Value);
+                lblY.Text = Strings.Warping.y.ToString( scrlY.Value);
             }
         }
 

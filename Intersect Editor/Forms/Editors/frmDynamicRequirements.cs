@@ -35,38 +35,38 @@ namespace Intersect.Editor.Forms.Editors
 
         private void InitLocalization(RequirementType type)
         {
-            Text = Strings.dynamicrequirements.title;
-            grpConditionLists.Text = Strings.dynamicrequirements.conditionlists;
+            Text = Strings.DynamicRequirements.title;
+            grpConditionLists.Text = Strings.DynamicRequirements.conditionlists;
             switch (type)
             {
                 case RequirementType.Item:
-                    lblInstructions.Text = Strings.dynamicrequirements.instructionsitem;
+                    lblInstructions.Text = Strings.DynamicRequirements.instructionsitem;
                     break;
                 case RequirementType.Resource:
-                    lblInstructions.Text = Strings.dynamicrequirements.instructionsresource;
+                    lblInstructions.Text = Strings.DynamicRequirements.instructionsresource;
                     break;
                 case RequirementType.Spell:
-                    lblInstructions.Text = Strings.dynamicrequirements.instructionsspell;
+                    lblInstructions.Text = Strings.DynamicRequirements.instructionsspell;
                     break;
                 case RequirementType.Event:
-                    lblInstructions.Text = Strings.dynamicrequirements.instructionsevent;
+                    lblInstructions.Text = Strings.DynamicRequirements.instructionsevent;
                     break;
                 case RequirementType.Quest:
-                    lblInstructions.Text = Strings.dynamicrequirements.instructionsquest;
+                    lblInstructions.Text = Strings.DynamicRequirements.instructionsquest;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
-            btnAddList.Text = Strings.dynamicrequirements.addlist;
-            btnRemoveList.Text = Strings.dynamicrequirements.removelist;
-            btnSave.Text = Strings.dynamicrequirements.savelists;
-            btnCancel.Text = Strings.dynamicrequirements.cancellists;
-            grpConditionList.Text = Strings.dynamicrequirements.conditionlist;
-            lblListName.Text = Strings.dynamicrequirements.listname;
-            btnAddCondition.Text = Strings.dynamicrequirements.addcondition;
-            btnRemoveCondition.Text = Strings.dynamicrequirements.removecondition;
-            btnConditionsOkay.Text = Strings.dynamicrequirements.saveconditions;
-            btnConditionsCancel.Text = Strings.dynamicrequirements.cancelconditions;
+            btnAddList.Text = Strings.DynamicRequirements.addlist;
+            btnRemoveList.Text = Strings.DynamicRequirements.removelist;
+            btnSave.Text = Strings.DynamicRequirements.savelists;
+            btnCancel.Text = Strings.DynamicRequirements.cancellists;
+            grpConditionList.Text = Strings.DynamicRequirements.conditionlist;
+            lblListName.Text = Strings.DynamicRequirements.listname;
+            btnAddCondition.Text = Strings.DynamicRequirements.addcondition;
+            btnRemoveCondition.Text = Strings.DynamicRequirements.removecondition;
+            btnConditionsOkay.Text = Strings.DynamicRequirements.saveconditions;
+            btnConditionsCancel.Text = Strings.DynamicRequirements.cancelconditions;
         }
 
         private void UpdateLists()
@@ -158,7 +158,7 @@ namespace Intersect.Editor.Forms.Editors
             var cmdWindow = new EventCommandConditionalBranch(cmd, null, null);
             var frm = new Form
             {
-                Text = Strings.dynamicrequirements.conditioneditor,
+                Text = Strings.DynamicRequirements.conditioneditor,
                 FormBorderStyle = FormBorderStyle.FixedSingle,
                 Size = new Size(0, 0),
                 AutoSize = true,

@@ -24,24 +24,24 @@ namespace Intersect.Editor.Forms.Editors
 
         private void InitLocalization()
         {
-            Text = Strings.switchvariableeditor.title;
-            grpTypes.Text = Strings.switchvariableeditor.type;
-            grpList.Text = Strings.switchvariableeditor.list;
-            rdoPlayerSwitch.Text = Strings.switchvariableeditor.playerswitches;
-            rdoPlayerVariables.Text = Strings.switchvariableeditor.playervariables;
-            rdoGlobalSwitches.Text = Strings.switchvariableeditor.globalswitches;
-            rdoGlobalVariables.Text = Strings.switchvariableeditor.globalvariables;
-            grpEditor.Text = Strings.switchvariableeditor.editor;
-            lblName.Text = Strings.switchvariableeditor.name;
-            lblValue.Text = Strings.switchvariableeditor.value;
+            Text = Strings.SwitchVariableEditor.title;
+            grpTypes.Text = Strings.SwitchVariableEditor.type;
+            grpList.Text = Strings.SwitchVariableEditor.list;
+            rdoPlayerSwitch.Text = Strings.SwitchVariableEditor.playerswitches;
+            rdoPlayerVariables.Text = Strings.SwitchVariableEditor.playervariables;
+            rdoGlobalSwitches.Text = Strings.SwitchVariableEditor.globalswitches;
+            rdoGlobalVariables.Text = Strings.SwitchVariableEditor.globalvariables;
+            grpEditor.Text = Strings.SwitchVariableEditor.editor;
+            lblName.Text = Strings.SwitchVariableEditor.name;
+            lblValue.Text = Strings.SwitchVariableEditor.value;
             cmbSwitchValue.Items.Clear();
-            cmbSwitchValue.Items.Add(Strings.switchvariableeditor.False);
-            cmbSwitchValue.Items.Add(Strings.switchvariableeditor.True);
-            btnNew.Text = Strings.switchvariableeditor.New;
-            btnDelete.Text = Strings.switchvariableeditor.delete;
-            btnUndo.Text = Strings.switchvariableeditor.undo;
-            btnSave.Text = Strings.switchvariableeditor.save;
-            btnCancel.Text = Strings.switchvariableeditor.cancel;
+            cmbSwitchValue.Items.Add(Strings.SwitchVariableEditor.False);
+            cmbSwitchValue.Items.Add(Strings.SwitchVariableEditor.True);
+            btnNew.Text = Strings.SwitchVariableEditor.New;
+            btnDelete.Text = Strings.SwitchVariableEditor.delete;
+            btnUndo.Text = Strings.SwitchVariableEditor.undo;
+            btnSave.Text = Strings.SwitchVariableEditor.save;
+            btnCancel.Text = Strings.SwitchVariableEditor.cancel;
         }
 
         protected override void GameObjectUpdatedDelegate(GameObjectType type)
@@ -118,8 +118,8 @@ namespace Intersect.Editor.Forms.Editors
             if (mEditorItem != null)
             {
                 if (
-                    DarkMessageBox.ShowWarning(Strings.switchvariableeditor.deleteprompt,
-                        Strings.switchvariableeditor.deletecaption, DarkDialogButton.YesNo,
+                    DarkMessageBox.ShowWarning(Strings.SwitchVariableEditor.deleteprompt,
+                        Strings.SwitchVariableEditor.deletecaption, DarkDialogButton.YesNo,
                         Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -271,19 +271,19 @@ namespace Intersect.Editor.Forms.Editors
                 lblValue.Hide();
                 if (rdoPlayerSwitch.Checked)
                 {
-                    lblObject.Text = Strings.switchvariableeditor.playerswitch;
+                    lblObject.Text = Strings.SwitchVariableEditor.playerswitch;
                     txtObjectName.Text = ((PlayerSwitchBase) mEditorItem).Name;
                     lblId.Text = mEditorItem.Index.ToString();
                 }
                 else if (rdoPlayerVariables.Checked)
                 {
-                    lblObject.Text = Strings.switchvariableeditor.playervariable;
+                    lblObject.Text = Strings.SwitchVariableEditor.playervariable;
                     txtObjectName.Text = ((PlayerVariableBase) mEditorItem).Name;
                     lblId.Text = mEditorItem.Index.ToString();
                 }
                 else if (rdoGlobalSwitches.Checked)
                 {
-                    lblObject.Text = Strings.switchvariableeditor.globalswitch;
+                    lblObject.Text = Strings.SwitchVariableEditor.globalswitch;
                     txtObjectName.Text = ((ServerSwitchBase) mEditorItem).Name;
                     cmbSwitchValue.Show();
                     cmbSwitchValue.SelectedIndex =
@@ -292,7 +292,7 @@ namespace Intersect.Editor.Forms.Editors
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
-                    lblObject.Text = Strings.switchvariableeditor.globalvariable;
+                    lblObject.Text = Strings.SwitchVariableEditor.globalvariable;
                     txtObjectName.Text = ((ServerVariableBase) mEditorItem).Name;
                     txtVariableVal.Show();
                     txtVariableVal.Text = ((ServerVariableBase) mEditorItem).Value.ToString();

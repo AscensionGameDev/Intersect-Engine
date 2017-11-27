@@ -30,45 +30,45 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.questeditor.title;
-            toolStripItemNew.Text = Strings.questeditor.New;
-            toolStripItemDelete.Text = Strings.questeditor.delete;
-            toolStripItemCopy.Text = Strings.questeditor.copy;
-            toolStripItemPaste.Text = Strings.questeditor.paste;
-            toolStripItemUndo.Text = Strings.questeditor.undo;
+            Text = Strings.QuestEditor.title;
+            toolStripItemNew.Text = Strings.QuestEditor.New;
+            toolStripItemDelete.Text = Strings.QuestEditor.delete;
+            toolStripItemCopy.Text = Strings.QuestEditor.copy;
+            toolStripItemPaste.Text = Strings.QuestEditor.paste;
+            toolStripItemUndo.Text = Strings.QuestEditor.undo;
 
-            grpQuests.Text = Strings.questeditor.quests;
-            grpGeneral.Text = Strings.questeditor.general;
-            lblName.Text = Strings.questeditor.name;
+            grpQuests.Text = Strings.QuestEditor.quests;
+            grpGeneral.Text = Strings.QuestEditor.general;
+            lblName.Text = Strings.QuestEditor.name;
 
-            grpLogOptions.Text = Strings.questeditor.logoptions;
-            chkLogAfterComplete.Text = Strings.questeditor.showafter;
-            chkLogBeforeOffer.Text = Strings.questeditor.showbefore;
+            grpLogOptions.Text = Strings.QuestEditor.logoptions;
+            chkLogAfterComplete.Text = Strings.QuestEditor.showafter;
+            chkLogBeforeOffer.Text = Strings.QuestEditor.showbefore;
 
-            grpProgessionOptions.Text = Strings.questeditor.options;
-            chkRepeatable.Text = Strings.questeditor.repeatable;
-            chkQuittable.Text = Strings.questeditor.quit;
+            grpProgessionOptions.Text = Strings.QuestEditor.options;
+            chkRepeatable.Text = Strings.QuestEditor.repeatable;
+            chkQuittable.Text = Strings.QuestEditor.quit;
 
-            lblBeforeOffer.Text = Strings.questeditor.beforeofferdesc;
-            lblOffer.Text = Strings.questeditor.offerdesc;
-            lblInProgress.Text = Strings.questeditor.inprogressdesc;
-            lblCompleted.Text = Strings.questeditor.completeddesc;
+            lblBeforeOffer.Text = Strings.QuestEditor.beforeofferdesc;
+            lblOffer.Text = Strings.QuestEditor.offerdesc;
+            lblInProgress.Text = Strings.QuestEditor.inprogressdesc;
+            lblCompleted.Text = Strings.QuestEditor.completeddesc;
 
-            grpQuestReqs.Text = Strings.questeditor.requirements;
-            btnEditRequirements.Text = Strings.questeditor.editrequirements;
+            grpQuestReqs.Text = Strings.QuestEditor.requirements;
+            btnEditRequirements.Text = Strings.QuestEditor.editrequirements;
 
-            grpQuestTasks.Text = Strings.questeditor.tasks;
-            btnAddTask.Text = Strings.questeditor.addtask;
-            btnRemoveTask.Text = Strings.questeditor.removetask;
+            grpQuestTasks.Text = Strings.QuestEditor.tasks;
+            btnAddTask.Text = Strings.QuestEditor.addtask;
+            btnRemoveTask.Text = Strings.QuestEditor.removetask;
 
-            grpActions.Text = Strings.questeditor.actions;
-            lblOnStart.Text = Strings.questeditor.onstart;
-            btnEditStartEvent.Text = Strings.questeditor.editstartevent;
-            lblOnEnd.Text = Strings.questeditor.onend;
-            btnEditCompletionEvent.Text = Strings.questeditor.editendevent;
+            grpActions.Text = Strings.QuestEditor.actions;
+            lblOnStart.Text = Strings.QuestEditor.onstart;
+            btnEditStartEvent.Text = Strings.QuestEditor.editstartevent;
+            lblOnEnd.Text = Strings.QuestEditor.onend;
+            btnEditCompletionEvent.Text = Strings.QuestEditor.editendevent;
 
-            btnSave.Text = Strings.questeditor.save;
-            btnCancel.Text = Strings.questeditor.cancel;
+            btnSave.Text = Strings.QuestEditor.save;
+            btnCancel.Text = Strings.QuestEditor.cancel;
         }
 
         protected override void GameObjectUpdatedDelegate(GameObjectType type)
@@ -185,13 +185,13 @@ namespace Intersect.Editor.Forms
 
         private void btnEditStartEvent_Click(object sender, EventArgs e)
         {
-            mEditorItem.StartEvent.Name = Strings.questeditor.startevent.ToString(mEditorItem.Name);
+            mEditorItem.StartEvent.Name = Strings.QuestEditor.startevent.ToString(mEditorItem.Name);
             OpenQuestEvent(mEditorItem.StartEvent);
         }
 
         private void btnEditCompletionEvent_Click(object sender, EventArgs e)
         {
-            mEditorItem.EndEvent.Name = Strings.questeditor.endevent.ToString(mEditorItem.Name);
+            mEditorItem.EndEvent.Name = Strings.QuestEditor.endevent.ToString(mEditorItem.Name);
             OpenQuestEvent(mEditorItem.EndEvent);
         }
 
@@ -229,7 +229,7 @@ namespace Intersect.Editor.Forms
             var cmdWindow = new QuestTaskEditor(task);
             var frm = new Form
             {
-                Text = Strings.taskeditor.title
+                Text = Strings.TaskEditor.title
             };
             frm.Controls.Add(cmdWindow);
             frm.Size = new Size(0, 0);
@@ -328,8 +328,8 @@ namespace Intersect.Editor.Forms
         {
             if (mEditorItem != null && lstQuests.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.questeditor.deleteprompt,
-                        Strings.questeditor.deletetitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(Strings.QuestEditor.deleteprompt,
+                        Strings.QuestEditor.deletetitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -359,8 +359,8 @@ namespace Intersect.Editor.Forms
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.questeditor.undoprompt,
-                        Strings.questeditor.undotitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(Strings.QuestEditor.undoprompt,
+                        Strings.QuestEditor.undotitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();

@@ -23,9 +23,9 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.about.title;
-            lblVersion.Text = Strings.about.version.ToString( Application.ProductVersion);
-            lblWebsite.Text = Strings.about.site;
+            Text = Strings.About.title;
+            lblVersion.Text = Strings.About.version.ToString( Application.ProductVersion);
+            lblWebsite.Text = Strings.About.site;
         }
     }
 }

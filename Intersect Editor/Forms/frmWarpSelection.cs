@@ -43,18 +43,18 @@ namespace Intersect.Editor.Forms
             if (!tileSelection)
             {
                 mTileSelection = false;
-                Text = Strings.warpselection.mapselectiontitle;
+                Text = Strings.WarpSelection.mapselectiontitle;
             }
         }
 
         private void InitLocalization()
         {
-            Text = Strings.warpselection.title;
-            chkChronological.Text = Strings.warpselection.chronological;
-            btnOk.Text = Strings.warpselection.okay;
-            btnCancel.Text = Strings.warpselection.cancel;
-            grpMapList.Text = Strings.warpselection.maplist;
-            grpMapPreview.Text = Strings.warpselection.mappreview;
+            Text = Strings.WarpSelection.title;
+            chkChronological.Text = Strings.WarpSelection.chronological;
+            btnOk.Text = Strings.WarpSelection.okay;
+            btnCancel.Text = Strings.WarpSelection.cancel;
+            grpMapList.Text = Strings.WarpSelection.maplist;
+            grpMapPreview.Text = Strings.WarpSelection.mappreview;
         }
 
         private void NodeDoubleClick(object sender, TreeViewEventArgs e)

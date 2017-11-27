@@ -17,15 +17,15 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             mEventEditor = editor;
             InitLocalization();
             nudWait.Value = mMyCommand.Ints[0];
-            lblWait.Text = Strings.eventwait.label;
+            lblWait.Text = Strings.EventWait.label;
         }
 
         private void InitLocalization()
         {
-            grpWait.Text = Strings.eventwait.title;
-            lblWait.Text = Strings.eventwait.label;
-            btnSave.Text = Strings.eventwait.okay;
-            btnCancel.Text = Strings.eventwait.cancel;
+            grpWait.Text = Strings.EventWait.title;
+            lblWait.Text = Strings.EventWait.label;
+            btnSave.Text = Strings.EventWait.okay;
+            btnCancel.Text = Strings.EventWait.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

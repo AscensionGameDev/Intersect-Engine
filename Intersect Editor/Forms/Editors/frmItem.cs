@@ -84,13 +84,13 @@ namespace Intersect.Editor.Forms
         private void frmItem_Load(object sender, EventArgs e)
         {
             cmbPic.Items.Clear();
-            cmbPic.Items.Add(Strings.general.none);
+            cmbPic.Items.Add(Strings.General.none);
 
             var itemnames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Item);
             cmbPic.Items.AddRange(itemnames);
 
             cmbAttackAnimation.Items.Clear();
-            cmbAttackAnimation.Items.Add(Strings.general.none);
+            cmbAttackAnimation.Items.Add(Strings.General.none);
             cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbScalingStat.Items.Clear();
             for (int x = 0; x < Options.MaxStats; x++)
@@ -99,18 +99,18 @@ namespace Intersect.Editor.Forms
             }
 
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add(Strings.general.none);
+            cmbAnimation.Items.Add(Strings.General.none);
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbTeachSpell.Items.Clear();
-            cmbTeachSpell.Items.Add(Strings.general.none);
+            cmbTeachSpell.Items.Add(Strings.General.none);
             cmbTeachSpell.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
             cmbEvent.Items.Clear();
-            cmbEvent.Items.Add(Strings.general.none);
+            cmbEvent.Items.Add(Strings.General.none);
             cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObjectType.CommonEvent));
             cmbMalePaperdoll.Items.Clear();
-            cmbMalePaperdoll.Items.Add(Strings.general.none);
+            cmbMalePaperdoll.Items.Add(Strings.General.none);
             cmbFemalePaperdoll.Items.Clear();
-            cmbFemalePaperdoll.Items.Add(Strings.general.none);
+            cmbFemalePaperdoll.Items.Add(Strings.General.none);
             string[] paperdollnames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Paperdoll);
             for (var i = 0; i < paperdollnames.Length; i++)
             {
@@ -130,86 +130,86 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.itemeditor.title;
-            toolStripItemNew.Text = Strings.itemeditor.New;
-            toolStripItemDelete.Text = Strings.itemeditor.delete;
-            toolStripItemCopy.Text = Strings.itemeditor.copy;
-            toolStripItemPaste.Text = Strings.itemeditor.paste;
-            toolStripItemUndo.Text = Strings.itemeditor.undo;
+            Text = Strings.ItemEditor.title;
+            toolStripItemNew.Text = Strings.ItemEditor.New;
+            toolStripItemDelete.Text = Strings.ItemEditor.delete;
+            toolStripItemCopy.Text = Strings.ItemEditor.copy;
+            toolStripItemPaste.Text = Strings.ItemEditor.paste;
+            toolStripItemUndo.Text = Strings.ItemEditor.undo;
 
-            grpItems.Text = Strings.itemeditor.items;
-            grpGeneral.Text = Strings.itemeditor.general;
-            lblName.Text = Strings.itemeditor.name;
-            lblType.Text = Strings.itemeditor.type;
+            grpItems.Text = Strings.ItemEditor.items;
+            grpGeneral.Text = Strings.ItemEditor.general;
+            lblName.Text = Strings.ItemEditor.name;
+            lblType.Text = Strings.ItemEditor.type;
             cmbType.Items.Clear();
-            for (int i = 0; i < Strings.itemeditor.types.Length; i++)
+            for (int i = 0; i < Strings.ItemEditor.types.Length; i++)
             {
-                cmbType.Items.Add(Strings.itemeditor.types[i]);
+                cmbType.Items.Add(Strings.ItemEditor.types[i]);
             }
-            lblDesc.Text = Strings.itemeditor.description;
-            lblPic.Text = Strings.itemeditor.picture;
-            lblPrice.Text = Strings.itemeditor.price;
-            lblAnim.Text = Strings.itemeditor.animation;
-            chkBound.Text = Strings.itemeditor.bound;
-            chkStackable.Text = Strings.itemeditor.stackable;
-            btnEditRequirements.Text = Strings.itemeditor.requirements;
+            lblDesc.Text = Strings.ItemEditor.description;
+            lblPic.Text = Strings.ItemEditor.picture;
+            lblPrice.Text = Strings.ItemEditor.price;
+            lblAnim.Text = Strings.ItemEditor.animation;
+            chkBound.Text = Strings.ItemEditor.bound;
+            chkStackable.Text = Strings.ItemEditor.stackable;
+            btnEditRequirements.Text = Strings.ItemEditor.requirements;
 
-            grpEquipment.Text = Strings.itemeditor.equipment;
-            lblEquipmentSlot.Text = Strings.itemeditor.slot;
-            grpStatBonuses.Text = Strings.itemeditor.bonuses;
-            lblStr.Text = Strings.itemeditor.attackbonus;
-            lblDef.Text = Strings.itemeditor.defensebonus;
-            lblSpd.Text = Strings.itemeditor.speedbonus;
-            lblMag.Text = Strings.itemeditor.abilitypowerbonus;
-            lblMR.Text = Strings.itemeditor.magicresistbonus;
-            lblRange.Text = Strings.itemeditor.bonusrange;
-            lblBonusEffect.Text = Strings.itemeditor.bonuseffect;
-            lblEffectPercent.Text = Strings.itemeditor.bonusamount;
+            grpEquipment.Text = Strings.ItemEditor.equipment;
+            lblEquipmentSlot.Text = Strings.ItemEditor.slot;
+            grpStatBonuses.Text = Strings.ItemEditor.bonuses;
+            lblStr.Text = Strings.ItemEditor.attackbonus;
+            lblDef.Text = Strings.ItemEditor.defensebonus;
+            lblSpd.Text = Strings.ItemEditor.speedbonus;
+            lblMag.Text = Strings.ItemEditor.abilitypowerbonus;
+            lblMR.Text = Strings.ItemEditor.magicresistbonus;
+            lblRange.Text = Strings.ItemEditor.bonusrange;
+            lblBonusEffect.Text = Strings.ItemEditor.bonuseffect;
+            lblEffectPercent.Text = Strings.ItemEditor.bonusamount;
             cmbEquipmentBonus.Items.Clear();
-            for (int i = 0; i < Strings.itemeditor.bonuseffects.Length; i++)
+            for (int i = 0; i < Strings.ItemEditor.bonuseffects.Length; i++)
             {
-                cmbEquipmentBonus.Items.Add(Strings.itemeditor.bonuseffects[i]);
+                cmbEquipmentBonus.Items.Add(Strings.ItemEditor.bonuseffects[i]);
             }
 
-            grpWeaponProperties.Text = Strings.itemeditor.weaponproperties;
-            chk2Hand.Text = Strings.itemeditor.twohanded;
-            lblDamage.Text = Strings.itemeditor.basedamage;
-            lblCritChance.Text = Strings.itemeditor.critchance;
-            lblDamageType.Text = Strings.itemeditor.damagetype;
+            grpWeaponProperties.Text = Strings.ItemEditor.weaponproperties;
+            chk2Hand.Text = Strings.ItemEditor.twohanded;
+            lblDamage.Text = Strings.ItemEditor.basedamage;
+            lblCritChance.Text = Strings.ItemEditor.critchance;
+            lblDamageType.Text = Strings.ItemEditor.damagetype;
             cmbDamageType.Items.Clear();
-            for (int i = 0; i < Strings.combat.damagetypes.Length; i++)
+            for (int i = 0; i < Strings.Combat.damagetypes.Length; i++)
             {
-                cmbDamageType.Items.Add(Strings.combat.damagetypes[i]);
+                cmbDamageType.Items.Add(Strings.Combat.damagetypes[i]);
             }
-            lblScalingStat.Text = Strings.itemeditor.scalingstat;
-            lblScalingAmount.Text = Strings.itemeditor.scalingamount;
-            lblAttackAnimation.Text = Strings.itemeditor.attackanimation;
-            lblProjectile.Text = Strings.itemeditor.projectile;
-            lblToolType.Text = Strings.itemeditor.tooltype;
+            lblScalingStat.Text = Strings.ItemEditor.scalingstat;
+            lblScalingAmount.Text = Strings.ItemEditor.scalingamount;
+            lblAttackAnimation.Text = Strings.ItemEditor.attackanimation;
+            lblProjectile.Text = Strings.ItemEditor.projectile;
+            lblToolType.Text = Strings.ItemEditor.tooltype;
 
-            lblMalePaperdoll.Text = Strings.itemeditor.malepaperdoll;
-            lblFemalePaperdoll.Text = Strings.itemeditor.femalepaperdoll;
+            lblMalePaperdoll.Text = Strings.ItemEditor.malepaperdoll;
+            lblFemalePaperdoll.Text = Strings.ItemEditor.femalepaperdoll;
 
-            grpBags.Text = Strings.itemeditor.bagpanel;
-            lblBag.Text = Strings.itemeditor.bagslots;
+            grpBags.Text = Strings.ItemEditor.bagpanel;
+            lblBag.Text = Strings.ItemEditor.bagslots;
 
-            grpSpell.Text = Strings.itemeditor.spellpanel;
-            lblSpell.Text = Strings.itemeditor.spell;
+            grpSpell.Text = Strings.ItemEditor.spellpanel;
+            lblSpell.Text = Strings.ItemEditor.spell;
 
-            grpEvent.Text = Strings.itemeditor.eventpanel;
-            lblEvent.Text = Strings.itemeditor.Event;
+            grpEvent.Text = Strings.ItemEditor.eventpanel;
+            lblEvent.Text = Strings.ItemEditor.Event;
 
-            grpConsumable.Text = Strings.itemeditor.consumeablepanel;
-            lblVital.Text = Strings.itemeditor.vital;
-            lblInterval.Text = Strings.itemeditor.consumeinterval;
+            grpConsumable.Text = Strings.ItemEditor.consumeablepanel;
+            lblVital.Text = Strings.ItemEditor.vital;
+            lblInterval.Text = Strings.ItemEditor.consumeinterval;
             cmbConsume.Items.Clear();
             for (int i = 0; i < 2; i++)
             {
-                cmbConsume.Items.Add(Strings.combat.vitals[i]);
+                cmbConsume.Items.Add(Strings.Combat.vitals[i]);
             }
 
-            btnSave.Text = Strings.itemeditor.save;
-            btnCancel.Text = Strings.itemeditor.cancel;
+            btnSave.Text = Strings.ItemEditor.save;
+            btnCancel.Text = Strings.ItemEditor.cancel;
         }
 
         public void InitEditor()
@@ -219,15 +219,15 @@ namespace Intersect.Editor.Forms
             cmbEquipmentSlot.Items.Clear();
             cmbEquipmentSlot.Items.AddRange(Options.EquipmentSlots.ToArray());
             cmbToolType.Items.Clear();
-            cmbToolType.Items.Add(Strings.general.none);
+            cmbToolType.Items.Add(Strings.General.none);
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
             cmbEquipmentBonus.Items.Clear();
-            for (int i = 0; i < Strings.itemeditor.bonuseffects.Length; i++)
+            for (int i = 0; i < Strings.ItemEditor.bonuseffects.Length; i++)
             {
-                cmbEquipmentBonus.Items.Add(Strings.itemeditor.bonuseffects[i]);
+                cmbEquipmentBonus.Items.Add(Strings.ItemEditor.bonuseffects[i]);
             }
             cmbProjectile.Items.Clear();
-            cmbProjectile.Items.Add(Strings.general.none);
+            cmbProjectile.Items.Add(Strings.General.none);
             cmbProjectile.Items.AddRange(Database.GetGameObjectList(GameObjectType.Projectile));
         }
 
@@ -488,8 +488,8 @@ namespace Intersect.Editor.Forms
         {
             if (mEditorItem != null && lstItems.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.itemeditor.deleteprompt,
-                        Strings.itemeditor.deletetitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(Strings.ItemEditor.deleteprompt,
+                        Strings.ItemEditor.deletetitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -519,8 +519,8 @@ namespace Intersect.Editor.Forms
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.itemeditor.undoprompt,
-                        Strings.itemeditor.undotitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(Strings.ItemEditor.undoprompt,
+                        Strings.ItemEditor.undotitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();

@@ -17,7 +17,7 @@ namespace Intersect.Editor.Classes.Maps
 
         protected override string GetLocalizedString(string value)
         {
-            return Strings.mapproperties.categories[value];
+            return Strings.MapProperties.categories[value];
         }
     }
 
@@ -27,7 +27,7 @@ namespace Intersect.Editor.Classes.Maps
         {
         }
 
-        public override string DisplayName => Strings.mapproperties.displaynames[DisplayNameValue];
+        public override string DisplayName => Strings.MapProperties.displaynames[DisplayNameValue];
     }
 
     class CustomDescription : DescriptionAttribute
@@ -36,7 +36,7 @@ namespace Intersect.Editor.Classes.Maps
         {
         }
 
-        public override string Description => Strings.mapproperties.descriptions[DescriptionValue];
+        public override string Description => Strings.MapProperties.descriptions[DescriptionValue];
     }
 
     class MapProperties
@@ -48,7 +48,7 @@ namespace Intersect.Editor.Classes.Maps
             mMyMap = map;
         }
 
-        [CustomCategory("general"),
+        [CustomCategory("General"),
          CustomDescription("namedesc"),
          CustomDisplayName("name"),
          DefaultValue("New Map")]
@@ -66,7 +66,7 @@ namespace Intersect.Editor.Classes.Maps
             }
         }
 
-        [CustomCategory("general"),
+        [CustomCategory("General"),
          CustomDescription("zonedesc"),
          CustomDisplayName("zonetype"),
          DefaultValue("Normal"),
@@ -74,13 +74,13 @@ namespace Intersect.Editor.Classes.Maps
          Browsable(true)]
         public string ZoneType
         {
-            get { return Strings.mapproperties.zones[(int) mMyMap.ZoneType); }
+            get { return Strings.MapProperties.zones[(int) mMyMap.ZoneType); }
             set
             {
                 Globals.MapEditorWindow.PrepUndoState();
                 for (byte i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
                 {
-                    if (Strings.mapproperties.zones[i] == value)
+                    if (Strings.MapProperties.zones[i] == value)
                     {
                         mMyMap.ZoneType = (MapZones) i;
                     }
@@ -101,7 +101,7 @@ namespace Intersect.Editor.Classes.Maps
             {
                 List<string> musicList = new List<string>
                 {
-                    Strings.general.none
+                    Strings.General.none
                 };
                 musicList.AddRange(GameContentManager.SmartSortedMusicNames);
                 if (musicList.IndexOf(mMyMap.Music) <= -1)
@@ -133,7 +133,7 @@ namespace Intersect.Editor.Classes.Maps
             {
                 List<string> soundList = new List<string>
                 {
-                    Strings.general.none
+                    Strings.General.none
                 };
                 soundList.AddRange(GameContentManager.SmartSortedSoundNames);
                 if (soundList.IndexOf(mMyMap.Sound) <= -1)
@@ -365,7 +365,7 @@ namespace Intersect.Editor.Classes.Maps
             {
                 List<string> fogList = new List<string>
                 {
-                    Strings.general.none
+                    Strings.General.none
                 };
                 fogList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Fog));
                 if (fogList.IndexOf(mMyMap.Fog) <= -1)
@@ -454,7 +454,7 @@ namespace Intersect.Editor.Classes.Maps
             {
                 List<string> imageList = new List<string>
                 {
-                    Strings.general.none
+                    Strings.General.none
                 };
                 imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
                 if (imageList.IndexOf(mMyMap.Panorama) <= -1)
@@ -486,7 +486,7 @@ namespace Intersect.Editor.Classes.Maps
             {
                 List<string> imageList = new List<string>
                 {
-                    Strings.general.none
+                    Strings.General.none
                 };
                 imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
                 if (imageList.IndexOf(mMyMap.OverlayGraphic) <= -1)
@@ -527,7 +527,7 @@ namespace Intersect.Editor.Classes.Maps
         {
             List<string> musicList = new List<string>
             {
-                Strings.general.none
+                Strings.General.none
             };
             musicList.AddRange(GameContentManager.SmartSortedMusicNames);
             return new StandardValuesCollection(musicList.ToArray());
@@ -554,7 +554,7 @@ namespace Intersect.Editor.Classes.Maps
         {
             List<string> soundList = new List<string>
             {
-                Strings.general.none
+                Strings.General.none
             };
             soundList.AddRange(GameContentManager.SmartSortedSoundNames);
             return new StandardValuesCollection(soundList.ToArray());
@@ -581,7 +581,7 @@ namespace Intersect.Editor.Classes.Maps
         {
             List<string> fogList = new List<string>
             {
-                Strings.general.none
+                Strings.General.none
             };
             fogList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Fog));
             return new StandardValuesCollection(fogList.ToArray());
@@ -608,7 +608,7 @@ namespace Intersect.Editor.Classes.Maps
         {
             var imageList = new List<string>
             {
-                Strings.general.none
+                Strings.General.none
             };
             imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
             return new StandardValuesCollection(imageList.ToArray());

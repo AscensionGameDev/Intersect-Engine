@@ -28,16 +28,16 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpChangeSpells.Text = Strings.eventchangespells.title;
+            grpChangeSpells.Text = Strings.EventChangeSpells.title;
             cmbAction.Items.Clear();
-            for (int i = 0; i < Strings.eventchangespells.actions.Length; i++)
+            for (int i = 0; i < Strings.EventChangeSpells.actions.Length; i++)
             {
-                cmbAction.Items.Add(Strings.eventchangespells.actions[i]);
+                cmbAction.Items.Add(Strings.EventChangeSpells.actions[i]);
             }
-            lblAction.Text = Strings.eventchangespells.action;
-            lblSpell.Text = Strings.eventchangespells.spell;
-            btnSave.Text = Strings.eventchangespells.okay;
-            btnCancel.Text = Strings.eventchangespells.cancel;
+            lblAction.Text = Strings.EventChangeSpells.action;
+            lblSpell.Text = Strings.EventChangeSpells.spell;
+            btnSave.Text = Strings.EventChangeSpells.okay;
+            btnCancel.Text = Strings.EventChangeSpells.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

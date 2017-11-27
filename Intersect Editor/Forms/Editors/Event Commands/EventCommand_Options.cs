@@ -28,7 +28,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             txtShowOptionsOpt3.Text = mMyCommand.Strs[3];
             txtShowOptionsOpt4.Text = mMyCommand.Strs[4];
             cmbFace.Items.Clear();
-            cmbFace.Items.Add(Strings.general.none);
+            cmbFace.Items.Add(Strings.General.none);
             cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
             if (cmbFace.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Strs[5])) > -1)
             {
@@ -43,16 +43,16 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpOptions.Text = Strings.eventshowoptions.title;
-            lblText.Text = Strings.eventshowoptions.text;
-            lblFace.Text = Strings.eventshowoptions.face;
-            lblCommands.Text = Strings.eventshowoptions.commands;
-            lblOpt1.Text = Strings.eventshowoptions.option1;
-            lblOpt2.Text = Strings.eventshowoptions.option2;
-            lblOpt3.Text = Strings.eventshowoptions.option3;
-            lblOpt4.Text = Strings.eventshowoptions.option4;
-            btnSave.Text = Strings.eventshowoptions.okay;
-            btnCancel.Text = Strings.eventshowoptions.cancel;
+            grpOptions.Text = Strings.EventShowOptions.title;
+            lblText.Text = Strings.EventShowOptions.text;
+            lblFace.Text = Strings.EventShowOptions.face;
+            lblCommands.Text = Strings.EventShowOptions.commands;
+            lblOpt1.Text = Strings.EventShowOptions.option1;
+            lblOpt2.Text = Strings.EventShowOptions.option2;
+            lblOpt3.Text = Strings.EventShowOptions.option3;
+            lblOpt4.Text = Strings.EventShowOptions.option4;
+            btnSave.Text = Strings.EventShowOptions.okay;
+            btnCancel.Text = Strings.EventShowOptions.cancel;
         }
 
         private void UpdateFacePreview()

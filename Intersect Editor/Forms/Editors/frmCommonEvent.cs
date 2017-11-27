@@ -19,10 +19,10 @@ namespace Intersect.Editor.Forms.Editors
 
         private void InitLocalization()
         {
-            Text = Strings.commoneventeditor.title;
-            grpCommonEvents.Text = Strings.commoneventeditor.events;
-            btnNew.Text = Strings.commoneventeditor.New;
-            btnDelete.Text = Strings.commoneventeditor.delete;
+            Text = Strings.CommoneEventEditor.title;
+            grpCommonEvents.Text = Strings.CommoneEventEditor.events;
+            btnNew.Text = Strings.CommoneEventEditor.New;
+            btnDelete.Text = Strings.CommoneEventEditor.delete;
         }
 
         protected override void GameObjectUpdatedDelegate(GameObjectType type)

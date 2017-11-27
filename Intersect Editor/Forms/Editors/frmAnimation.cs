@@ -91,18 +91,18 @@ namespace Intersect.Editor.Forms
         {
             //Animation Sound
             cmbSound.Items.Clear();
-            cmbSound.Items.Add(Strings.general.none);
+            cmbSound.Items.Add(Strings.General.none);
             cmbSound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
 
             //Lower Animation Graphic
             cmbLowerGraphic.Items.Clear();
-            cmbLowerGraphic.Items.Add(Strings.general.none);
+            cmbLowerGraphic.Items.Add(Strings.General.none);
             cmbLowerGraphic.Items.AddRange(
                 GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Animation));
 
             //Upper Animation Graphic
             cmbUpperGraphic.Items.Clear();
-            cmbUpperGraphic.Items.Add(Strings.general.none);
+            cmbUpperGraphic.Items.Add(Strings.General.none);
             cmbUpperGraphic.Items.AddRange(
                 GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Animation));
 
@@ -119,49 +119,49 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.animationeditor.title;
-            toolStripItemNew.Text = Strings.animationeditor.New;
-            toolStripItemDelete.Text = Strings.animationeditor.delete;
-            toolStripItemCopy.Text = Strings.animationeditor.copy;
-            toolStripItemPaste.Text = Strings.animationeditor.paste;
-            toolStripItemUndo.Text = Strings.animationeditor.undo;
+            Text = Strings.AnimationEditor.title;
+            toolStripItemNew.Text = Strings.AnimationEditor.New;
+            toolStripItemDelete.Text = Strings.AnimationEditor.delete;
+            toolStripItemCopy.Text = Strings.AnimationEditor.copy;
+            toolStripItemPaste.Text = Strings.AnimationEditor.paste;
+            toolStripItemUndo.Text = Strings.AnimationEditor.undo;
 
-            grpAnimations.Text = Strings.animationeditor.animations;
+            grpAnimations.Text = Strings.AnimationEditor.animations;
 
-            grpGeneral.Text = Strings.animationeditor.general;
-            lblName.Text = Strings.animationeditor.name;
-            lblSound.Text = Strings.animationeditor.sound;
-            labelDarkness.Text = Strings.animationeditor.simulatedarkness.ToString( scrlDarkness.Value);
-            btnSwap.Text = Strings.animationeditor.swap;
+            grpGeneral.Text = Strings.AnimationEditor.general;
+            lblName.Text = Strings.AnimationEditor.name;
+            lblSound.Text = Strings.AnimationEditor.sound;
+            labelDarkness.Text = Strings.AnimationEditor.simulatedarkness.ToString( scrlDarkness.Value);
+            btnSwap.Text = Strings.AnimationEditor.swap;
 
-            grpLower.Text = Strings.animationeditor.lowergroup;
-            lblLowerGraphic.Text = Strings.animationeditor.lowergraphic;
-            lblLowerHorizontalFrames.Text = Strings.animationeditor.lowerhorizontalframes;
-            lblLowerVerticalFrames.Text = Strings.animationeditor.lowerverticalframes;
-            lblLowerFrameCount.Text = Strings.animationeditor.lowerframecount;
-            lblLowerFrameDuration.Text = Strings.animationeditor.lowerframeduration;
-            lblLowerLoopCount.Text = Strings.animationeditor.lowerloopcount;
-            grpLowerPlayback.Text = Strings.animationeditor.lowerplayback;
-            lblLowerFrame.Text = Strings.animationeditor.lowerframe.ToString( scrlLowerFrame.Value);
-            btnPlayLower.Text = Strings.animationeditor.lowerplay;
-            grpLowerFrameOpts.Text = Strings.animationeditor.lowerframeoptions;
-            btnLowerClone.Text = Strings.animationeditor.lowerclone;
+            grpLower.Text = Strings.AnimationEditor.lowergroup;
+            lblLowerGraphic.Text = Strings.AnimationEditor.lowergraphic;
+            lblLowerHorizontalFrames.Text = Strings.AnimationEditor.lowerhorizontalframes;
+            lblLowerVerticalFrames.Text = Strings.AnimationEditor.lowerverticalframes;
+            lblLowerFrameCount.Text = Strings.AnimationEditor.lowerframecount;
+            lblLowerFrameDuration.Text = Strings.AnimationEditor.lowerframeduration;
+            lblLowerLoopCount.Text = Strings.AnimationEditor.lowerloopcount;
+            grpLowerPlayback.Text = Strings.AnimationEditor.lowerplayback;
+            lblLowerFrame.Text = Strings.AnimationEditor.lowerframe.ToString( scrlLowerFrame.Value);
+            btnPlayLower.Text = Strings.AnimationEditor.lowerplay;
+            grpLowerFrameOpts.Text = Strings.AnimationEditor.lowerframeoptions;
+            btnLowerClone.Text = Strings.AnimationEditor.lowerclone;
 
-            grpUpper.Text = Strings.animationeditor.uppergroup;
-            lblUpperGraphic.Text = Strings.animationeditor.uppergraphic;
-            lblUpperHorizontalFrames.Text = Strings.animationeditor.upperhorizontalframes;
-            lblUpperVerticalFrames.Text = Strings.animationeditor.upperverticalframes;
-            lblUpperFrameCount.Text = Strings.animationeditor.upperframecount;
-            lblUpperFrameDuration.Text = Strings.animationeditor.upperframeduration;
-            lblUpperLoopCount.Text = Strings.animationeditor.upperloopcount;
-            grpUpperPlayback.Text = Strings.animationeditor.upperplayback;
-            lblUpperFrame.Text = Strings.animationeditor.upperframe.ToString( scrlUpperFrame.Value);
-            btnPlayUpper.Text = Strings.animationeditor.upperplay;
-            grpUpperFrameOpts.Text = Strings.animationeditor.upperframeoptions;
-            btnUpperClone.Text = Strings.animationeditor.upperclone;
+            grpUpper.Text = Strings.AnimationEditor.uppergroup;
+            lblUpperGraphic.Text = Strings.AnimationEditor.uppergraphic;
+            lblUpperHorizontalFrames.Text = Strings.AnimationEditor.upperhorizontalframes;
+            lblUpperVerticalFrames.Text = Strings.AnimationEditor.upperverticalframes;
+            lblUpperFrameCount.Text = Strings.AnimationEditor.upperframecount;
+            lblUpperFrameDuration.Text = Strings.AnimationEditor.upperframeduration;
+            lblUpperLoopCount.Text = Strings.AnimationEditor.upperloopcount;
+            grpUpperPlayback.Text = Strings.AnimationEditor.upperplayback;
+            lblUpperFrame.Text = Strings.AnimationEditor.upperframe.ToString( scrlUpperFrame.Value);
+            btnPlayUpper.Text = Strings.AnimationEditor.upperplay;
+            grpUpperFrameOpts.Text = Strings.AnimationEditor.upperframeoptions;
+            btnUpperClone.Text = Strings.AnimationEditor.upperclone;
 
-            btnSave.Text = Strings.animationeditor.save;
-            btnCancel.Text = Strings.animationeditor.cancel;
+            btnSave.Text = Strings.AnimationEditor.save;
+            btnCancel.Text = Strings.AnimationEditor.cancel;
         }
 
         public void InitEditor()
@@ -414,7 +414,7 @@ namespace Intersect.Editor.Forms
 
         private void scrlLowerFrame_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblLowerFrame.Text = Strings.animationeditor.lowerframe.ToString( scrlLowerFrame.Value);
+            lblLowerFrame.Text = Strings.AnimationEditor.lowerframe.ToString( scrlLowerFrame.Value);
             LoadLowerLight();
             DrawLowerFrame();
         }
@@ -433,7 +433,7 @@ namespace Intersect.Editor.Forms
 
         private void scrlUpperFrame_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblUpperFrame.Text = Strings.animationeditor.upperframe.ToString( scrlUpperFrame.Value);
+            lblUpperFrame.Text = Strings.AnimationEditor.upperframe.ToString( scrlUpperFrame.Value);
             LoadUpperLight();
             DrawUpperFrame();
         }
@@ -443,11 +443,11 @@ namespace Intersect.Editor.Forms
             mPlayLower = !mPlayLower;
             if (mPlayLower)
             {
-                btnPlayLower.Text = Strings.animationeditor.lowerstop;
+                btnPlayLower.Text = Strings.AnimationEditor.lowerstop;
             }
             else
             {
-                btnPlayLower.Text = Strings.animationeditor.lowerplay;
+                btnPlayLower.Text = Strings.AnimationEditor.lowerplay;
             }
         }
 
@@ -467,11 +467,11 @@ namespace Intersect.Editor.Forms
             mPlayUpper = !mPlayUpper;
             if (mPlayUpper)
             {
-                btnPlayUpper.Text = Strings.animationeditor.upperstop;
+                btnPlayUpper.Text = Strings.AnimationEditor.upperstop;
             }
             else
             {
-                btnPlayUpper.Text = Strings.animationeditor.upperplay;
+                btnPlayUpper.Text = Strings.AnimationEditor.upperplay;
             }
         }
 
@@ -488,7 +488,7 @@ namespace Intersect.Editor.Forms
 
         private void scrlDarkness_Scroll(object sender, ScrollValueEventArgs e)
         {
-            labelDarkness.Text = Strings.animationeditor.simulatedarkness.ToString( scrlDarkness.Value);
+            labelDarkness.Text = Strings.AnimationEditor.simulatedarkness.ToString( scrlDarkness.Value);
         }
 
         private void btnSwap_Click(object sender, EventArgs e)
@@ -531,8 +531,8 @@ namespace Intersect.Editor.Forms
         {
             if (mEditorItem != null && lstAnimations.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.animationeditor.deleteprompt,
-                        Strings.animationeditor.deletetitle, DarkDialogButton.YesNo,
+                if (DarkMessageBox.ShowWarning(Strings.AnimationEditor.deleteprompt,
+                        Strings.AnimationEditor.deletetitle, DarkDialogButton.YesNo,
                         Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
@@ -563,8 +563,8 @@ namespace Intersect.Editor.Forms
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.animationeditor.undoprompt,
-                        Strings.animationeditor.undotitle, DarkDialogButton.YesNo,
+                if (DarkMessageBox.ShowWarning(Strings.AnimationEditor.undoprompt,
+                        Strings.AnimationEditor.undotitle, DarkDialogButton.YesNo,
                         Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {

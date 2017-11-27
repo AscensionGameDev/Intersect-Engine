@@ -30,18 +30,18 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpChatboxText.Text = Strings.eventchatboxtext.title;
-            lblText.Text = Strings.eventchatboxtext.text;
-            lblColor.Text = Strings.eventchatboxtext.color;
-            lblChannel.Text = Strings.eventchatboxtext.channel;
-            lblCommands.Text = Strings.eventchatboxtext.commands;
+            grpChatboxText.Text = Strings.EventChatboxText.title;
+            lblText.Text = Strings.EventChatboxText.text;
+            lblColor.Text = Strings.EventChatboxText.color;
+            lblChannel.Text = Strings.EventChatboxText.channel;
+            lblCommands.Text = Strings.EventChatboxText.commands;
             cmbChannel.Items.Clear();
-            for (int i = 0; i < Strings.eventchatboxtext.channels.Length; i++)
+            for (int i = 0; i < Strings.EventChatboxText.channels.Length; i++)
             {
-                cmbChannel.Items.Add(Strings.eventchatboxtext.channels[i]);
+                cmbChannel.Items.Add(Strings.EventChatboxText.channels[i]);
             }
-            btnSave.Text = Strings.eventchatboxtext.okay;
-            btnCancel.Text = Strings.eventchatboxtext.cancel;
+            btnSave.Text = Strings.EventChatboxText.okay;
+            btnCancel.Text = Strings.EventChatboxText.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

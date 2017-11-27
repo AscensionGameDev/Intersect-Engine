@@ -30,16 +30,16 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpSetSwitch.Text = Strings.eventsetswitch.title;
-            lblSwitch.Text = Strings.eventsetswitch.label;
-            rdoGlobalSwitch.Text = Strings.eventsetswitch.global;
-            rdoPlayerSwitch.Text = Strings.eventsetswitch.player;
-            lblTo.Text = Strings.eventsetswitch.to;
+            grpSetSwitch.Text = Strings.EventSetSwitch.title;
+            lblSwitch.Text = Strings.EventSetSwitch.label;
+            rdoGlobalSwitch.Text = Strings.EventSetSwitch.global;
+            rdoPlayerSwitch.Text = Strings.EventSetSwitch.player;
+            lblTo.Text = Strings.EventSetSwitch.to;
             cmbSetSwitchVal.Items.Clear();
-            cmbSetSwitchVal.Items.Add(Strings.eventsetswitch.False);
-            cmbSetSwitchVal.Items.Add(Strings.eventsetswitch.True);
-            btnSave.Text = Strings.eventsetswitch.okay;
-            btnCancel.Text = Strings.eventsetswitch.cancel;
+            cmbSetSwitchVal.Items.Add(Strings.EventSetSwitch.False);
+            cmbSetSwitchVal.Items.Add(Strings.EventSetSwitch.True);
+            btnSave.Text = Strings.EventSetSwitch.okay;
+            btnCancel.Text = Strings.EventSetSwitch.cancel;
         }
 
         private void InitEditor()

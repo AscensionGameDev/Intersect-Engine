@@ -117,118 +117,118 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpConditional.Text = Strings.eventconditional.title;
-            lblType.Text = Strings.eventconditional.type;
+            grpConditional.Text = Strings.EventConditional.title;
+            lblType.Text = Strings.EventConditional.type;
 
             cmbConditionType.Items.Clear();
-            for (int i = 0; i < Strings.eventconditional.conditions.Length; i++)
+            for (int i = 0; i < Strings.EventConditional.conditions.Length; i++)
             {
-                cmbConditionType.Items.Add(Strings.eventconditional.conditions[i]);
+                cmbConditionType.Items.Add(Strings.EventConditional.conditions[i]);
             }
 
             //Player Switch
-            grpSwitch.Text = Strings.eventconditional.playerswitch;
-            lblSwitch.Text = Strings.eventconditional.Switch;
-            lblSwitchIs.Text = Strings.eventconditional.switchis;
+            grpSwitch.Text = Strings.EventConditional.playerswitch;
+            lblSwitch.Text = Strings.EventConditional.Switch;
+            lblSwitchIs.Text = Strings.EventConditional.switchis;
             cmbSwitchVal.Items.Clear();
-            cmbSwitchVal.Items.Add(Strings.eventconditional.False);
-            cmbSwitchVal.Items.Add(Strings.eventconditional.True);
+            cmbSwitchVal.Items.Add(Strings.EventConditional.False);
+            cmbSwitchVal.Items.Add(Strings.EventConditional.True);
 
             //Player Variable
-            grpPlayerVariable.Text = Strings.eventconditional.playervariable;
-            lblVariable.Text = Strings.eventconditional.variable;
-            lblComparator.Text = Strings.eventconditional.comparator;
-            lblVariableValue.Text = Strings.eventconditional.value;
+            grpPlayerVariable.Text = Strings.EventConditional.playervariable;
+            lblVariable.Text = Strings.EventConditional.variable;
+            lblComparator.Text = Strings.EventConditional.comparator;
+            lblVariableValue.Text = Strings.EventConditional.value;
             cmbVariableMod.Items.Clear();
-            for (int i = 0; i < Strings.eventconditional.comparators.Length; i++)
+            for (int i = 0; i < Strings.EventConditional.comparators.Length; i++)
             {
-                cmbVariableMod.Items.Add(Strings.eventconditional.comparators[i]);
+                cmbVariableMod.Items.Add(Strings.EventConditional.comparators[i]);
             }
 
             //Has Item
-            grpHasItem.Text = Strings.eventconditional.hasitem;
-            lblItemQuantity.Text = Strings.eventconditional.hasatleast;
-            lblItem.Text = Strings.eventconditional.item;
+            grpHasItem.Text = Strings.EventConditional.hasitem;
+            lblItemQuantity.Text = Strings.EventConditional.hasatleast;
+            lblItem.Text = Strings.EventConditional.item;
 
             //Class is
-            grpClass.Text = Strings.eventconditional.classis;
-            lblClass.Text = Strings.eventconditional.Class;
+            grpClass.Text = Strings.EventConditional.classis;
+            lblClass.Text = Strings.EventConditional.Class;
 
             //Knows Spell
-            grpSpell.Text = Strings.eventconditional.knowsspell;
-            lblSpell.Text = Strings.eventconditional.spell;
+            grpSpell.Text = Strings.EventConditional.knowsspell;
+            lblSpell.Text = Strings.EventConditional.spell;
 
             //Level or Stat is
-            grpLevelStat.Text = Strings.eventconditional.levelorstat;
-            lblLvlStatValue.Text = Strings.eventconditional.levelstatvalue;
-            lblLevelComparator.Text = Strings.eventconditional.comparator;
-            lblLevelOrStat.Text = Strings.eventconditional.levelstatitem;
+            grpLevelStat.Text = Strings.EventConditional.levelorstat;
+            lblLvlStatValue.Text = Strings.EventConditional.levelstatvalue;
+            lblLevelComparator.Text = Strings.EventConditional.comparator;
+            lblLevelOrStat.Text = Strings.EventConditional.levelstatitem;
             cmbLevelStat.Items.Clear();
-            cmbLevelStat.Items.Add(Strings.eventconditional.level);
+            cmbLevelStat.Items.Add(Strings.EventConditional.level);
             for (int i = 0; i < (int)Stats.StatCount; i++)
             {
-                cmbLevelStat.Items.Add(Strings.combat.stats[i]);
+                cmbLevelStat.Items.Add(Strings.Combat.stats[i]);
             }
             cmbLevelComparator.Items.Clear();
-            for (int i = 0; i < Strings.eventconditional.comparators.Length; i++)
+            for (int i = 0; i < Strings.EventConditional.comparators.Length; i++)
             {
-                cmbLevelComparator.Items.Add(Strings.eventconditional.comparators[i]);
+                cmbLevelComparator.Items.Add(Strings.EventConditional.comparators[i]);
             }
 
             //Self Switch Is
-            grpSelfSwitch.Text = Strings.eventconditional.selfswitchis;
-            lblSelfSwitch.Text = Strings.eventconditional.selfswitch;
-            lblSelfSwitchIs.Text = Strings.eventconditional.switchis;
+            grpSelfSwitch.Text = Strings.EventConditional.selfswitchis;
+            lblSelfSwitch.Text = Strings.EventConditional.selfswitch;
+            lblSelfSwitchIs.Text = Strings.EventConditional.switchis;
             cmbSelfSwitch.Items.Clear();
             for (int i = 0; i < 4; i++)
             {
-                cmbSelfSwitch.Items.Add(Strings.eventconditional.selfswitches[i]);
+                cmbSelfSwitch.Items.Add(Strings.EventConditional.selfswitches[i]);
             }
             cmbSelfSwitchVal.Items.Clear();
-            cmbSelfSwitchVal.Items.Add(Strings.eventconditional.False);
-            cmbSelfSwitchVal.Items.Add(Strings.eventconditional.True);
+            cmbSelfSwitchVal.Items.Add(Strings.EventConditional.False);
+            cmbSelfSwitchVal.Items.Add(Strings.EventConditional.True);
 
             //Power Is
-            grpPowerIs.Text = Strings.eventconditional.poweris;
-            lblPower.Text = Strings.eventconditional.power;
+            grpPowerIs.Text = Strings.EventConditional.poweris;
+            lblPower.Text = Strings.EventConditional.power;
             cmbPower.Items.Clear();
-            cmbPower.Items.Add(Strings.eventconditional.power0);
-            cmbPower.Items.Add(Strings.eventconditional.power1);
+            cmbPower.Items.Add(Strings.EventConditional.power0);
+            cmbPower.Items.Add(Strings.EventConditional.power1);
 
             //Time Is
-            grpTime.Text = Strings.eventconditional.time;
-            lblStartRange.Text = Strings.eventconditional.startrange;
-            lblEndRange.Text = Strings.eventconditional.endrange;
-            lblAnd.Text = Strings.eventconditional.and;
+            grpTime.Text = Strings.EventConditional.time;
+            lblStartRange.Text = Strings.EventConditional.startrange;
+            lblEndRange.Text = Strings.EventConditional.endrange;
+            lblAnd.Text = Strings.EventConditional.and;
 
             //Can Start Quest
-            grpStartQuest.Text = Strings.eventconditional.canstartquest;
-            lblStartQuest.Text = Strings.eventconditional.startquest;
+            grpStartQuest.Text = Strings.EventConditional.canstartquest;
+            lblStartQuest.Text = Strings.EventConditional.startquest;
 
             //Quest In Progress
-            grpQuestInProgress.Text = Strings.eventconditional.questinprogress;
-            lblQuestProgress.Text = Strings.eventconditional.questprogress;
-            lblQuestIs.Text = Strings.eventconditional.questis;
+            grpQuestInProgress.Text = Strings.EventConditional.questinprogress;
+            lblQuestProgress.Text = Strings.EventConditional.questprogress;
+            lblQuestIs.Text = Strings.EventConditional.questis;
             cmbTaskModifier.Items.Clear();
-            for (int i = 0; i < Strings.eventconditional.questcomparators.Length; i++)
+            for (int i = 0; i < Strings.EventConditional.questcomparators.Length; i++)
             {
-                cmbTaskModifier.Items.Add(Strings.eventconditional.questcomparators[i]);
+                cmbTaskModifier.Items.Add(Strings.EventConditional.questcomparators[i]);
             }
-            lblQuestTask.Text = Strings.eventconditional.task;
+            lblQuestTask.Text = Strings.EventConditional.task;
 
             //Quest Completed
-            grpQuestCompleted.Text = Strings.eventconditional.questcompleted;
-            lblQuestCompleted.Text = Strings.eventconditional.questcompletedlabel;
+            grpQuestCompleted.Text = Strings.EventConditional.questcompleted;
+            lblQuestCompleted.Text = Strings.EventConditional.questcompletedlabel;
 
             //Gender is
-            grpGender.Text = Strings.eventconditional.genderis;
-            lblGender.Text = Strings.eventconditional.gender;
+            grpGender.Text = Strings.EventConditional.genderis;
+            lblGender.Text = Strings.EventConditional.gender;
             cmbGender.Items.Clear();
-            cmbGender.Items.Add(Strings.eventconditional.male);
-            cmbGender.Items.Add(Strings.eventconditional.female);
+            cmbGender.Items.Add(Strings.EventConditional.male);
+            cmbGender.Items.Add(Strings.EventConditional.female);
 
-            btnSave.Text = Strings.eventconditional.okay;
-            btnCancel.Text = Strings.eventconditional.cancel;
+            btnSave.Text = Strings.EventConditional.okay;
+            btnCancel.Text = Strings.EventConditional.cancel;
         }
 
         private void UpdateFormElements()
@@ -249,7 +249,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             switch (cmbConditionType.SelectedIndex)
             {
                 case 0: //Player Switch
-                    grpSwitch.Text = Strings.eventconditional.playerswitch;
+                    grpSwitch.Text = Strings.EventConditional.playerswitch;
                     grpSwitch.Show();
                     cmbSwitch.Items.Clear();
                     cmbSwitch.Items.AddRange(Database.GetGameObjectList(GameObjectType.PlayerSwitch));
@@ -257,7 +257,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     cmbSwitchVal.SelectedIndex = 0;
                     break;
                 case 1: //Player Variables
-                    grpPlayerVariable.Text = Strings.eventconditional.playervariable;
+                    grpPlayerVariable.Text = Strings.EventConditional.playervariable;
                     grpPlayerVariable.Show();
                     cmbVariable.Items.Clear();
                     cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObjectType.PlayerVariable));
@@ -266,7 +266,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     txtVariableVal.Text = @"0";
                     break;
                 case 2: //Global Switch
-                    grpPlayerVariable.Text = Strings.eventconditional.globalswitch;
+                    grpPlayerVariable.Text = Strings.EventConditional.globalswitch;
                     grpSwitch.Show();
                     cmbSwitch.Items.Clear();
                     cmbSwitch.Items.AddRange(Database.GetGameObjectList(GameObjectType.ServerSwitch));
@@ -274,7 +274,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     cmbSwitchVal.SelectedIndex = 0;
                     break;
                 case 3: //Global Variables
-                    grpPlayerVariable.Text = Strings.eventconditional.globalvariable;
+                    grpPlayerVariable.Text = Strings.EventConditional.globalvariable;
                     grpPlayerVariable.Show();
                     cmbVariable.Items.Clear();
                     cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObjectType.ServerVariable));
@@ -323,7 +323,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     var time = new DateTime(2000, 1, 1, 0, 0, 0);
                     for (int i = 0; i < 1440; i += TimeBase.GetTimeBase().RangeInterval)
                     {
-                        var addRange = time.ToString("h:mm:ss tt") + " " + Strings.eventconditional.to + " ";
+                        var addRange = time.ToString("h:mm:ss tt") + " " + Strings.EventConditional.to + " ";
                         time = time.AddMinutes(TimeBase.GetTimeBase().RangeInterval);
                         addRange += time.ToString("h:mm:ss tt");
                         cmbTime1.Items.Add(addRange);

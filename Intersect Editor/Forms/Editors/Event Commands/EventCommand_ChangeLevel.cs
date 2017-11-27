@@ -23,10 +23,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpChangeLevel.Text = Strings.eventchangelevel.title;
-            lblLevel.Text = Strings.eventchangelevel.label;
-            btnSave.Text = Strings.eventchangelevel.okay;
-            btnCancel.Text = Strings.eventchangelevel.cancel;
+            grpChangeLevel.Text = Strings.EventChangeLevel.title;
+            lblLevel.Text = Strings.EventChangeLevel.label;
+            btnSave.Text = Strings.EventChangeLevel.okay;
+            btnCancel.Text = Strings.EventChangeLevel.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

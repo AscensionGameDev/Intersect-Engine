@@ -98,83 +98,83 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            fileToolStripMenuItem.Text = Strings.mainform.file;
-            saveMapToolStripMenuItem.Text = Strings.mainform.savemap;
-            toolStripBtnSaveMap.Text = Strings.mainform.savemap;
-            newMapToolStripMenuItem.Text = Strings.mainform.newmap;
-            toolStripBtnNewMap.Text = Strings.mainform.newmap;
-            importMapToolStripMenuItem.Text = Strings.mainform.importmap;
-            exportMapToolStripMenuItem.Text = Strings.mainform.exportmap;
-            optionsToolStripMenuItem.Text = Strings.mainform.options;
-            exitToolStripMenuItem.Text = Strings.mainform.exit;
+            fileToolStripMenuItem.Text = Strings.MainForm.file;
+            saveMapToolStripMenuItem.Text = Strings.MainForm.savemap;
+            toolStripBtnSaveMap.Text = Strings.MainForm.savemap;
+            newMapToolStripMenuItem.Text = Strings.MainForm.newmap;
+            toolStripBtnNewMap.Text = Strings.MainForm.newmap;
+            importMapToolStripMenuItem.Text = Strings.MainForm.importmap;
+            exportMapToolStripMenuItem.Text = Strings.MainForm.exportmap;
+            optionsToolStripMenuItem.Text = Strings.MainForm.options;
+            exitToolStripMenuItem.Text = Strings.MainForm.exit;
 
-            editToolStripMenuItem.Text = Strings.mainform.edit;
-            undoToolStripMenuItem.Text = Strings.mainform.undo;
-            redoToolStripMenuItem.Text = Strings.mainform.redo;
-            cutToolStripMenuItem.Text = Strings.mainform.cut;
-            copyToolStripMenuItem.Text = Strings.mainform.copy;
-            pasteToolStripMenuItem.Text = Strings.mainform.paste;
-            toolStripBtnUndo.Text = Strings.mainform.undo;
-            toolStripBtnRedo.Text = Strings.mainform.redo;
-            toolStripBtnCut.Text = Strings.mainform.cut;
-            toolStripBtnCopy.Text = Strings.mainform.copy;
-            toolStripBtnPaste.Text = Strings.mainform.paste;
+            editToolStripMenuItem.Text = Strings.MainForm.edit;
+            undoToolStripMenuItem.Text = Strings.MainForm.undo;
+            redoToolStripMenuItem.Text = Strings.MainForm.redo;
+            cutToolStripMenuItem.Text = Strings.MainForm.cut;
+            copyToolStripMenuItem.Text = Strings.MainForm.copy;
+            pasteToolStripMenuItem.Text = Strings.MainForm.paste;
+            toolStripBtnUndo.Text = Strings.MainForm.undo;
+            toolStripBtnRedo.Text = Strings.MainForm.redo;
+            toolStripBtnCut.Text = Strings.MainForm.cut;
+            toolStripBtnCopy.Text = Strings.MainForm.copy;
+            toolStripBtnPaste.Text = Strings.MainForm.paste;
 
-            fillToolStripMenuItem.Text = Strings.mainform.fill;
-            toolStripBtnFill.Text = Strings.mainform.fill;
-            eraseLayerToolStripMenuItem.Text = Strings.mainform.erase;
-            toolStripBtnErase.Text = Strings.mainform.erase;
+            fillToolStripMenuItem.Text = Strings.MainForm.fill;
+            toolStripBtnFill.Text = Strings.MainForm.fill;
+            eraseLayerToolStripMenuItem.Text = Strings.MainForm.erase;
+            toolStripBtnErase.Text = Strings.MainForm.erase;
 
-            selectToolStripMenuItem.Text = Strings.mainform.selectlayers;
-            allLayersToolStripMenuItem.Text = Strings.mainform.alllayers;
-            currentLayerOnlyToolStripMenuItem.Text = Strings.mainform.currentonly;
+            selectToolStripMenuItem.Text = Strings.MainForm.selectlayers;
+            allLayersToolStripMenuItem.Text = Strings.MainForm.alllayers;
+            currentLayerOnlyToolStripMenuItem.Text = Strings.MainForm.currentonly;
 
-            viewToolStripMenuItem.Text = Strings.mainform.view;
-            hideDarknessToolStripMenuItem.Text = Strings.mainform.darkness;
-            hideFogToolStripMenuItem.Text = Strings.mainform.fog;
-            hideOverlayToolStripMenuItem.Text = Strings.mainform.overlay;
-            hideResourcesToolStripMenuItem.Text = Strings.mainform.resources;
-            hideTilePreviewToolStripMenuItem.Text = Strings.mainform.tilepreview;
-            mapGridToolStripMenuItem.Text = Strings.mainform.grid;
+            viewToolStripMenuItem.Text = Strings.MainForm.view;
+            hideDarknessToolStripMenuItem.Text = Strings.MainForm.darkness;
+            hideFogToolStripMenuItem.Text = Strings.MainForm.fog;
+            hideOverlayToolStripMenuItem.Text = Strings.MainForm.overlay;
+            hideResourcesToolStripMenuItem.Text = Strings.MainForm.resources;
+            hideTilePreviewToolStripMenuItem.Text = Strings.MainForm.tilepreview;
+            mapGridToolStripMenuItem.Text = Strings.MainForm.grid;
 
-            contentEditorsToolStripMenuItem.Text = Strings.mainform.editors;
-            animationEditorToolStripMenuItem.Text = Strings.mainform.animationeditor;
-            classEditorToolStripMenuItem.Text = Strings.mainform.classeditor;
-            commonEventEditorToolStripMenuItem.Text = Strings.mainform.commoneventeditor;
-            craftingEditorToolStripMenuItem.Text = Strings.mainform.craftingbencheditor;
-            itemEditorToolStripMenuItem.Text = Strings.mainform.itemeditor;
-            npcEditorToolStripMenuItem.Text = Strings.mainform.npceditor;
-            projectileEditorToolStripMenuItem.Text = Strings.mainform.projectileeditor;
-            questEditorToolStripMenuItem.Text = Strings.mainform.questeditor;
-            resourceEditorToolStripMenuItem.Text = Strings.mainform.resourceeditor;
-            shopEditorToolStripMenuItem.Text = Strings.mainform.shopeditor;
-            spellEditorToolStripMenuItem.Text = Strings.mainform.spelleditor;
-            switchVariableEditorToolStripMenuItem.Text = Strings.mainform.switchvariableeditor;
-            timeEditorToolStripMenuItem.Text = Strings.mainform.timeeditor;
+            contentEditorsToolStripMenuItem.Text = Strings.MainForm.editors;
+            animationEditorToolStripMenuItem.Text = Strings.MainForm.animationeditor;
+            classEditorToolStripMenuItem.Text = Strings.MainForm.classeditor;
+            commonEventEditorToolStripMenuItem.Text = Strings.MainForm.commoneventeditor;
+            craftingEditorToolStripMenuItem.Text = Strings.MainForm.craftingbencheditor;
+            itemEditorToolStripMenuItem.Text = Strings.MainForm.itemeditor;
+            npcEditorToolStripMenuItem.Text = Strings.MainForm.npceditor;
+            projectileEditorToolStripMenuItem.Text = Strings.MainForm.projectileeditor;
+            questEditorToolStripMenuItem.Text = Strings.MainForm.questeditor;
+            resourceEditorToolStripMenuItem.Text = Strings.MainForm.resourceeditor;
+            shopEditorToolStripMenuItem.Text = Strings.MainForm.shopeditor;
+            spellEditorToolStripMenuItem.Text = Strings.MainForm.spelleditor;
+            switchVariableEditorToolStripMenuItem.Text = Strings.MainForm.switchvariableeditor;
+            timeEditorToolStripMenuItem.Text = Strings.MainForm.timeeditor;
 
-            externalToolsToolStripMenuItem.Text = Strings.mainform.externaltools;
+            externalToolsToolStripMenuItem.Text = Strings.MainForm.externaltools;
 
-            helpToolStripMenuItem.Text = Strings.mainform.help;
-            postQuestionToolStripMenuItem.Text = Strings.mainform.postquestion;
-            toolStripButtonQuestion.Text = Strings.mainform.postquestion;
-            reportBugToolStripMenuItem.Text = Strings.mainform.reportbug;
-            toolStripButtonBug.Text = Strings.mainform.reportbug;
-            aboutToolStripMenuItem.Text = Strings.mainform.about;
-            toolStripButtonDonate.Text = Strings.mainform.donate;
+            helpToolStripMenuItem.Text = Strings.MainForm.help;
+            postQuestionToolStripMenuItem.Text = Strings.MainForm.postquestion;
+            toolStripButtonQuestion.Text = Strings.MainForm.postquestion;
+            reportBugToolStripMenuItem.Text = Strings.MainForm.reportbug;
+            toolStripButtonBug.Text = Strings.MainForm.reportbug;
+            aboutToolStripMenuItem.Text = Strings.MainForm.about;
+            toolStripButtonDonate.Text = Strings.MainForm.donate;
 
-            toolStripBtnPen.Text = Strings.mainform.pen;
-            toolStripBtnSelect.Text = Strings.mainform.selection;
-            toolStripBtnRect.Text = Strings.mainform.rectangle;
-            toolStripBtnEyeDrop.Text = Strings.mainform.droppler;
-            toolStripTimeButton.Text = Strings.mainform.lighting;
-            toolStripBtnScreenshot.Text = Strings.mainform.screenshot;
-            toolStripBtnRun.Text = Strings.mainform.run;
+            toolStripBtnPen.Text = Strings.MainForm.pen;
+            toolStripBtnSelect.Text = Strings.MainForm.selection;
+            toolStripBtnRect.Text = Strings.MainForm.rectangle;
+            toolStripBtnEyeDrop.Text = Strings.MainForm.droppler;
+            toolStripTimeButton.Text = Strings.MainForm.lighting;
+            toolStripBtnScreenshot.Text = Strings.MainForm.screenshot;
+            toolStripBtnRun.Text = Strings.MainForm.run;
         }
 
         private void InitExternalTools()
         {
             var foundTools = false;
-            if (Directory.Exists(Strings.mainform.toolsdir))
+            if (Directory.Exists(Strings.MainForm.toolsdir))
             {
                 var childDirs = Directory.GetDirectories("tools");
                 for (int i = 0; i < childDirs.Length; i++)
@@ -387,11 +387,11 @@ namespace Intersect.Editor.Forms
         {
             if (Globals.CurrentMap != null)
             {
-                toolStripLabelCoords.Text = Strings.mainform.loc.ToString( Globals.CurTileX, Globals.CurTileY);
-                toolStripLabelRevision.Text = Strings.mainform.revision.ToString( Globals.CurrentMap.Revision);
-                if (Text != Strings.mainform.title.ToString( Globals.CurrentMap.Name))
+                toolStripLabelCoords.Text = Strings.MainForm.loc.ToString( Globals.CurTileX, Globals.CurTileY);
+                toolStripLabelRevision.Text = Strings.MainForm.revision.ToString( Globals.CurrentMap.Revision);
+                if (Text != Strings.MainForm.title.ToString( Globals.CurrentMap.Name))
                 {
-                    Text = Strings.mainform.title.ToString( Globals.CurrentMap.Name);
+                    Text = Strings.MainForm.title.ToString( Globals.CurrentMap.Name);
                 }
             }
 
@@ -758,8 +758,8 @@ namespace Intersect.Editor.Forms
                 if (Globals.CurrentMap != null)
                 {
                     if (
-                        DarkMessageBox.ShowError(Strings.errors.disconnectedsave,
-                            Strings.errors.disconnectedsavecaption, DarkDialogButton.YesNo,
+                        DarkMessageBox.ShowError(Strings.Errors.disconnectedsave,
+                            Strings.Errors.disconnectedsavecaption, DarkDialogButton.YesNo,
                             Properties.Resources.Icon) == DialogResult.Yes)
                     {
                         exportMapToolStripMenuItem_Click(null, null);
@@ -772,8 +772,8 @@ namespace Intersect.Editor.Forms
                 }
                 else
                 {
-                    DarkMessageBox.ShowError(Strings.errors.disconnectedclosing,
-                        Strings.errors.disconnected, DarkDialogButton.Ok, Properties.Resources.Icon);
+                    DarkMessageBox.ShowError(Strings.Errors.disconnectedclosing,
+                        Strings.Errors.disconnected, DarkDialogButton.Ok, Properties.Resources.Icon);
                     Application.Exit();
                 }
             }
@@ -783,8 +783,8 @@ namespace Intersect.Editor.Forms
         private void saveMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (Globals.CurrentMap.Changed() &&
-                DarkMessageBox.ShowInformation(Strings.mapping.savemapdialoguesure,
-                    Strings.mapping.savemap, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                DarkMessageBox.ShowInformation(Strings.Mapping.savemapdialoguesure,
+                    Strings.Mapping.savemap, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                 DialogResult.Yes)
             {
                 SaveMap();
@@ -809,11 +809,11 @@ namespace Intersect.Editor.Forms
         private void NewMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (
-                DarkMessageBox.ShowWarning(Strings.mapping.newmap, Strings.mapping.newmapcaption,
+                DarkMessageBox.ShowWarning(Strings.Mapping.newmap, Strings.Mapping.newmapcaption,
                     DarkDialogButton.YesNo, Properties.Resources.Icon) != DialogResult.Yes) return;
             if (Globals.CurrentMap.Changed() &&
-                DarkMessageBox.ShowInformation(Strings.mapping.savemapdialogue,
-                    Strings.mapping.savemap, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                DarkMessageBox.ShowInformation(Strings.Mapping.savemapdialogue,
+                    Strings.Mapping.savemap, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                 DialogResult.Yes)
             {
                 SaveMap();
@@ -826,7 +826,7 @@ namespace Intersect.Editor.Forms
             SaveFileDialog fileDialog = new SaveFileDialog()
             {
                 Filter = "Intersect Map|*.imap",
-                Title = Strings.mainform.exportmap
+                Title = Strings.MainForm.exportmap
             };
             fileDialog.ShowDialog();
             var buff = new ByteBuffer();
@@ -844,7 +844,7 @@ namespace Intersect.Editor.Forms
             OpenFileDialog fileDialog = new OpenFileDialog()
             {
                 Filter = "Intersect Map|*.imap",
-                Title = Strings.mainform.importmap
+                Title = Strings.MainForm.importmap
             };
             fileDialog.ShowDialog();
 
@@ -861,8 +861,8 @@ namespace Intersect.Editor.Forms
                 }
                 else
                 {
-                    DarkMessageBox.ShowError(Strings.errors.importfailed,
-                        Strings.errors.importfailedcaption, DarkDialogButton.Ok, Properties.Resources.Icon);
+                    DarkMessageBox.ShowError(Strings.Errors.importfailed,
+                        Strings.Errors.importfailedcaption, DarkDialogButton.Ok, Properties.Resources.Icon);
                 }
             }
         }
@@ -1113,7 +1113,7 @@ namespace Intersect.Editor.Forms
             SaveFileDialog fileDialog = new SaveFileDialog()
             {
                 Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif",
-                Title = Strings.mainform.screenshot
+                Title = Strings.MainForm.screenshot
             };
             fileDialog.ShowDialog();
 
@@ -1220,7 +1220,7 @@ namespace Intersect.Editor.Forms
             toolStripTimeButton.DropDownItems.Clear();
             var time = new DateTime(2000, 1, 1, 0, 0, 0);
             var x = 0;
-            ToolStripDropDownButton btn = new ToolStripDropDownButton(Strings.general.none)
+            ToolStripDropDownButton btn = new ToolStripDropDownButton(Strings.General.none)
             {
                 Tag = null
             };
@@ -1402,7 +1402,7 @@ namespace Intersect.Editor.Forms
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (!Globals.ClosingEditor && Globals.CurrentMap != null && Globals.CurrentMap.Changed() &&
-                DarkMessageBox.ShowWarning(Strings.mapping.savemapdialogue, Strings.mapping.savemap,
+                DarkMessageBox.ShowWarning(Strings.Mapping.savemapdialogue, Strings.Mapping.savemap,
                     DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
             {
                 SaveMap();

@@ -21,14 +21,14 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpSetAccess.Text = Strings.eventsetaccess.title;
-            lblAccess.Text = Strings.eventsetaccess.label;
+            grpSetAccess.Text = Strings.EventSetAccess.title;
+            lblAccess.Text = Strings.EventSetAccess.label;
             cmbAccess.Items.Clear();
-            cmbAccess.Items.Add(Strings.eventsetaccess.access0);
-            cmbAccess.Items.Add(Strings.eventsetaccess.access1);
-            cmbAccess.Items.Add(Strings.eventsetaccess.access2);
-            btnSave.Text = Strings.eventsetaccess.okay;
-            btnCancel.Text = Strings.eventsetaccess.cancel;
+            cmbAccess.Items.Add(Strings.EventSetAccess.access0);
+            cmbAccess.Items.Add(Strings.EventSetAccess.access1);
+            cmbAccess.Items.Add(Strings.EventSetAccess.access2);
+            btnSave.Text = Strings.EventSetAccess.okay;
+            btnCancel.Text = Strings.EventSetAccess.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

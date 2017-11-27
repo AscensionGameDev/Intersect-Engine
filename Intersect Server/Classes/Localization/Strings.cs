@@ -80,12 +80,19 @@ namespace Intersect.Server.Classes.Localization
 
         public struct Combat
         {
+            public static LocalizedString exp = @"Experience";
             public static LocalizedString addsymbol = @"+";
             public static LocalizedString blocked = @"BLOCKED!";
             public static LocalizedString channeling = @"You are currently channeling another skill.";
             public static LocalizedString channelingnoattack = @"You are currently channeling a spell, you cannot attack.";
             public static LocalizedString cooldown = @"This skill is on cooldown.";
             public static LocalizedString critical = @"CRITICAL HIT!";
+            public static LocalizedString[] damagetypes = new LocalizedString[]
+            {
+                @"Physical",
+                @"Magic",
+                @"True",
+            };
             public static LocalizedString dash = @"DASH!";
             public static LocalizedString dynamicreq = @"You do not meet the requirements to cast the spell!";
             public static LocalizedString levelreq = @"You are not a high enough level to use this ability.";
@@ -98,6 +105,14 @@ namespace Intersect.Server.Classes.Localization
             public static LocalizedString resourcereqs = @"You do not meet the requirements to harvest this resource!";
             public static LocalizedString silenced = @"You cannot cast this ability whilst silenced.";
             public static LocalizedString statreq = @"You do not possess the correct combat stats to use this ability.";
+            public static LocalizedString[] stats = new LocalizedString[]
+            {
+                @"Attack",
+                @"Ability Power",
+                @"Defense",
+                @"Magic Resist",
+                @"Speed",
+            };
             public static LocalizedString[] status =
             {
                 @"NONE!",
@@ -113,6 +128,11 @@ namespace Intersect.Server.Classes.Localization
             public static LocalizedString stunned = @"You cannot cast this ability whilst stunned.";
             public static LocalizedString targetoutsiderange = @"Target is out of range!";
             public static LocalizedString toolrequired = @"You require a {00} to interact with this resource!";
+            public static LocalizedString[] vitals = new LocalizedString[]
+            {
+                @"Health",
+                @"Mana",
+            };
         }
 
         public struct Commandoutput

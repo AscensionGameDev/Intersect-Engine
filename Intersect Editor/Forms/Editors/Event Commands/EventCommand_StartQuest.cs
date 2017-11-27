@@ -28,11 +28,11 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpStartQuest.Text = Strings.eventstartquest.title;
-            lblQuest.Text = Strings.eventstartquest.label;
-            chkShowOfferWindow.Text = Strings.eventstartquest.showwindow;
-            btnSave.Text = Strings.eventstartquest.okay;
-            btnCancel.Text = Strings.eventstartquest.cancel;
+            grpStartQuest.Text = Strings.EventStartQuest.title;
+            lblQuest.Text = Strings.EventStartQuest.label;
+            chkShowOfferWindow.Text = Strings.EventStartQuest.showwindow;
+            btnSave.Text = Strings.EventStartQuest.okay;
+            btnCancel.Text = Strings.EventStartQuest.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

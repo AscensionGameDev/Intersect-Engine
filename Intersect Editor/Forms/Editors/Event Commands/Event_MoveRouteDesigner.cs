@@ -64,13 +64,13 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 if (mEditingCommand != null)
                 {
-                    cmbTarget.Items.Add(Strings.eventmoveroute.player);
+                    cmbTarget.Items.Add(Strings.EventMoveRoute.player);
                     if (mEditingCommand.Route.Target == -1) cmbTarget.SelectedIndex = 0;
                 }
                 foreach (var evt in mCurrentMap.Events)
                 {
                     cmbTarget.Items.Add(evt.Key == mEditingEvent.Index
-                        ? Strings.eventmoveroute.thisevent.ToString()
+                        ? Strings.EventMoveRoute.thisevent.ToString()
                         : "" + evt.Value.Name);
                     if (mEditingCommand != null)
                     {
@@ -95,18 +95,18 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpMoveRoute.Text = Strings.eventmoveroute.title;
-            grpCommands.Text = Strings.eventmoveroute.command;
-            chkIgnoreIfBlocked.Text = Strings.eventmoveroute.ignoreblocked;
-            chkRepeatRoute.Text = Strings.eventmoveroute.repeatroute;
-            btnOkay.Text = Strings.eventmoveroute.okay;
-            btnCancel.Text = Strings.eventmoveroute.cancel;
+            grpMoveRoute.Text = Strings.EventMoveRoute.title;
+            grpCommands.Text = Strings.EventMoveRoute.command;
+            chkIgnoreIfBlocked.Text = Strings.EventMoveRoute.ignoreblocked;
+            chkRepeatRoute.Text = Strings.EventMoveRoute.repeatroute;
+            btnOkay.Text = Strings.EventMoveRoute.okay;
+            btnCancel.Text = Strings.EventMoveRoute.cancel;
             for (int i = 0; i < lstCommands.Nodes.Count; i++)
             {
-                lstCommands.Nodes[i].Text = Strings.eventmoveroute.commands[lstCommands.Nodes[i].Name];
+                lstCommands.Nodes[i].Text = Strings.EventMoveRoute.commands[lstCommands.Nodes[i].Name];
                 for (int x = 0; x < lstCommands.Nodes[i].Nodes.Count; x++)
                 {
-                    lstCommands.Nodes[i].Nodes[x].Text = Strings.eventmoveroute.commands[lstCommands.Nodes[i].Nodes[x].Name];
+                    lstCommands.Nodes[i].Nodes[x].Text = Strings.EventMoveRoute.commands[lstCommands.Nodes[i].Nodes[x].Name];
                 }
             }
         }
@@ -122,7 +122,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     {
                         if (Convert.ToInt32(lstCommands.Nodes[i].Nodes[x].Tag) == (int) action.Type)
                         {
-                            lstActions.Items.Add(Strings.eventmoveroute.commands[lstCommands.Nodes[i].Nodes[x].Name]);
+                            lstActions.Items.Add(Strings.EventMoveRoute.commands[lstCommands.Nodes[i].Nodes[x].Name]);
                         }
                     }
                 }

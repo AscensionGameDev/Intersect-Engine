@@ -25,10 +25,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpShop.Text = Strings.eventopenshop.title;
-            lblShop.Text = Strings.eventopenshop.label;
-            btnSave.Text = Strings.eventopenshop.okay;
-            btnCancel.Text = Strings.eventopenshop.cancel;
+            grpShop.Text = Strings.EventOpenShop.title;
+            lblShop.Text = Strings.EventOpenShop.label;
+            btnSave.Text = Strings.EventOpenShop.okay;
+            btnCancel.Text = Strings.EventOpenShop.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

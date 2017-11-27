@@ -47,16 +47,16 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpSelector.Text = Strings.eventgraphic.title;
-            lblType.Text = Strings.eventgraphic.type;
+            grpSelector.Text = Strings.EventGraphic.title;
+            lblType.Text = Strings.EventGraphic.type;
             cmbGraphicType.Items.Clear();
-            cmbGraphicType.Items.Add(Strings.eventgraphic.graphictype0);
-            cmbGraphicType.Items.Add(Strings.eventgraphic.graphictype1);
-            cmbGraphicType.Items.Add(Strings.eventgraphic.graphictype2);
-            lblGraphic.Text = Strings.eventgraphic.graphic;
-            grpPreview.Text = Strings.eventgraphic.preview;
-            btnOk.Text = Strings.eventgraphic.okay;
-            btnCancel.Text = Strings.eventgraphic.cancel;
+            cmbGraphicType.Items.Add(Strings.EventGraphic.graphictype0);
+            cmbGraphicType.Items.Add(Strings.EventGraphic.graphictype1);
+            cmbGraphicType.Items.Add(Strings.EventGraphic.graphictype2);
+            lblGraphic.Text = Strings.EventGraphic.graphic;
+            grpPreview.Text = Strings.EventGraphic.preview;
+            btnOk.Text = Strings.EventGraphic.okay;
+            btnCancel.Text = Strings.EventGraphic.cancel;
         }
 
         private void GraphicTypeUpdated()

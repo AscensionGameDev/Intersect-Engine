@@ -22,18 +22,18 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpSelfSwitch.Text = Strings.eventselfswitch.title;
-            lblSelfSwitch.Text = Strings.eventselfswitch.label;
+            grpSelfSwitch.Text = Strings.EventSelfSwitch.title;
+            lblSelfSwitch.Text = Strings.EventSelfSwitch.label;
             cmbSetSwitch.Items.Clear();
-            for (int i = 0; i < Strings.eventselfswitch.selfswitches.Length; i++)
+            for (int i = 0; i < Strings.EventSelfSwitch.selfswitches.Length; i++)
             {
-                cmbSetSwitch.Items.Add(Strings.eventselfswitch.selfswitches[i]);
+                cmbSetSwitch.Items.Add(Strings.EventSelfSwitch.selfswitches[i]);
             }
             cmbSetSwitchVal.Items.Clear();
-            cmbSetSwitchVal.Items.Add(Strings.eventselfswitch.False);
-            cmbSetSwitchVal.Items.Add(Strings.eventselfswitch.True);
-            btnSave.Text = Strings.eventselfswitch.okay;
-            btnCancel.Text = Strings.eventselfswitch.cancel;
+            cmbSetSwitchVal.Items.Add(Strings.EventSelfSwitch.False);
+            cmbSetSwitchVal.Items.Add(Strings.EventSelfSwitch.True);
+            btnSave.Text = Strings.EventSelfSwitch.okay;
+            btnCancel.Text = Strings.EventSelfSwitch.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

@@ -125,7 +125,7 @@ namespace Intersect.Editor.Classes
 
         public static string GetColorName(Color.ChatColor color)
         {
-            return Strings.colors.presets[(int) color];
+            return Strings.Colors.presets[(int) color];
         }
 
         public static string GetStatName(int statnum)

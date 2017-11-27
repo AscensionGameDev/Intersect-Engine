@@ -24,10 +24,10 @@ namespace Intersect.Editor.Forms.Editors
             lstCrafts.LostFocus += itemList_FocusChanged;
             lstCrafts.GotFocus += itemList_FocusChanged;
             cmbResult.Items.Clear();
-            cmbResult.Items.Add(Strings.general.none);
+            cmbResult.Items.Add(Strings.General.none);
             cmbResult.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
             cmbIngredient.Items.Clear();
-            cmbIngredient.Items.Add(Strings.general.none);
+            cmbIngredient.Items.Add(Strings.General.none);
             cmbIngredient.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
         }
 
@@ -116,13 +116,13 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     if (mCurrentCraft.Ingredients[i].Item > -1)
                     {
-                        lstIngredients.Items.Add(Strings.craftingeditor.ingredientlistitem.ToString(
+                        lstIngredients.Items.Add(Strings.CraftingEditor.ingredientlistitem.ToString(
                             ItemBase.GetName(mCurrentCraft.Ingredients[i].Item),
                             mCurrentCraft.Ingredients[i].Quantity));
                     }
                     else
                     {
-                        lstIngredients.Items.Add(Strings.craftingeditor.ingredientlistitem.ToString(
+                        lstIngredients.Items.Add(Strings.CraftingEditor.ingredientlistitem.ToString(
                             Strings.craftingeditor.ingredientnone, mCurrentCraft.Ingredients[i].Quantity));
                     }
                 }
@@ -158,13 +158,13 @@ namespace Intersect.Editor.Forms.Editors
                 mCurrentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity = (int) nudQuantity.Value;
                 if (cmbIngredient.SelectedIndex > 0)
                 {
-                    lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.craftingeditor.ingredientlistitem.ToString(
+                    lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.CraftingEditor.ingredientlistitem.ToString(
                         ItemBase.GetName(mCurrentCraft.Ingredients[lstIngredients.SelectedIndex].Item),
                         nudQuantity.Value);
                 }
                 else
                 {
-                    lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.craftingeditor.ingredientlistitem.ToString( Strings.craftingeditor.ingredientnone, nudQuantity.Value);
+                    lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.CraftingEditor.ingredientlistitem.ToString( Strings.CraftingEditor.ingredientnone, nudQuantity.Value);
                 }
             }
         }
@@ -177,7 +177,7 @@ namespace Intersect.Editor.Forms.Editors
         private void btnAdd_Click(object sender, EventArgs e)
         {
             mCurrentCraft.Ingredients.Add(new CraftIngredient(-1, 1));
-            lstIngredients.Items.Add(Strings.general.none);
+            lstIngredients.Items.Add(Strings.General.none);
             lstIngredients.SelectedIndex = lstIngredients.Items.Count - 1;
         }
 
@@ -225,7 +225,7 @@ namespace Intersect.Editor.Forms.Editors
         private void btnNewCraft_Click(object sender, EventArgs e)
         {
             mEditorItem.Crafts.Add(new Craft());
-            lstCompositions.Items.Add(Strings.general.none);
+            lstCompositions.Items.Add(Strings.General.none);
         }
 
         private void btnDeleteCraft_Click(object sender, EventArgs e)
@@ -247,8 +247,8 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mEditorItem != null && lstCrafts.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.craftingeditor.deleteprompt,
-                        Strings.craftingeditor.deletetitle, DarkDialogButton.YesNo,
+                if (DarkMessageBox.ShowWarning(Strings.CraftingEditor.deleteprompt,
+                        Strings.CraftingEditor.deletetitle, DarkDialogButton.YesNo,
                         Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
@@ -279,8 +279,8 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.craftingeditor.undoprompt,
-                        Strings.craftingeditor.undotitle, DarkDialogButton.YesNo,
+                if (DarkMessageBox.ShowWarning(Strings.CraftingEditor.undoprompt,
+                        Strings.CraftingEditor.undotitle, DarkDialogButton.YesNo,
                         Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
@@ -404,7 +404,7 @@ namespace Intersect.Editor.Forms.Editors
                 }
                 else
                 {
-                    lstCompositions.Items[lstCompositions.SelectedIndex] = Strings.general.none;
+                    lstCompositions.Items[lstCompositions.SelectedIndex] = Strings.General.none;
                 }
             }
         }
@@ -417,13 +417,13 @@ namespace Intersect.Editor.Forms.Editors
                     Database.GameObjectIdFromList(GameObjectType.Item, cmbIngredient.SelectedIndex - 1);
                 if (cmbIngredient.SelectedIndex > 0)
                 {
-                    lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.craftingeditor.ingredientlistitem.ToString(
+                    lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.CraftingEditor.ingredientlistitem.ToString(
                         ItemBase.GetName(mCurrentCraft.Ingredients[lstIngredients.SelectedIndex].Item),
                         nudQuantity.Value);
                 }
                 else
                 {
-                    lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.craftingeditor.ingredientlistitem.ToString( Strings.craftingeditor.ingredientnone, nudQuantity.Value);
+                    lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.CraftingEditor.ingredientlistitem.ToString( Strings.CraftingEditor.ingredientnone, nudQuantity.Value);
                 }
             }
         }
@@ -435,33 +435,33 @@ namespace Intersect.Editor.Forms.Editors
 
         private void InitLocalization()
         {
-            Text = Strings.craftingeditor.title;
-            toolStripItemNew.Text = Strings.craftingeditor.New;
-            toolStripItemDelete.Text = Strings.craftingeditor.delete;
-            toolStripItemCopy.Text = Strings.craftingeditor.copy;
-            toolStripItemPaste.Text = Strings.craftingeditor.paste;
-            toolStripItemUndo.Text = Strings.craftingeditor.undo;
+            Text = Strings.CraftingEditor.title;
+            toolStripItemNew.Text = Strings.CraftingEditor.New;
+            toolStripItemDelete.Text = Strings.CraftingEditor.delete;
+            toolStripItemCopy.Text = Strings.CraftingEditor.copy;
+            toolStripItemPaste.Text = Strings.CraftingEditor.paste;
+            toolStripItemUndo.Text = Strings.CraftingEditor.undo;
 
-            grpBenches.Text = Strings.craftingeditor.benches;
-            grpCrafts.Text = Strings.craftingeditor.crafts;
-            btnNewCraft.Text = Strings.craftingeditor.newcraft;
-            btnDeleteCraft.Text = Strings.craftingeditor.deletecraft;
-            btnDupCraft.Text = Strings.craftingeditor.duplicatecraft;
+            grpBenches.Text = Strings.CraftingEditor.benches;
+            grpCrafts.Text = Strings.CraftingEditor.crafts;
+            btnNewCraft.Text = Strings.CraftingEditor.newcraft;
+            btnDeleteCraft.Text = Strings.CraftingEditor.deletecraft;
+            btnDupCraft.Text = Strings.CraftingEditor.duplicatecraft;
 
-            grpCraft.Text = Strings.craftingeditor.general;
-            lblName.Text = Strings.craftingeditor.name;
-            lblItem.Text = Strings.craftingeditor.item;
-            lblSpeed.Text = Strings.craftingeditor.time;
+            grpCraft.Text = Strings.CraftingEditor.general;
+            lblName.Text = Strings.CraftingEditor.name;
+            lblItem.Text = Strings.CraftingEditor.item;
+            lblSpeed.Text = Strings.CraftingEditor.time;
 
-            grpIngredients.Text = Strings.craftingeditor.ingredients;
-            lblIngredient.Text = Strings.craftingeditor.ingredientitem;
-            lblQuantity.Text = Strings.craftingeditor.ingredientquantity;
-            btnAdd.Text = Strings.craftingeditor.newingredient;
-            btnRemove.Text = Strings.craftingeditor.deleteingredient;
-            btnDupIngredient.Text = Strings.craftingeditor.duplicateingredient;
+            grpIngredients.Text = Strings.CraftingEditor.ingredients;
+            lblIngredient.Text = Strings.CraftingEditor.ingredientitem;
+            lblQuantity.Text = Strings.CraftingEditor.ingredientquantity;
+            btnAdd.Text = Strings.CraftingEditor.newingredient;
+            btnRemove.Text = Strings.CraftingEditor.deleteingredient;
+            btnDupIngredient.Text = Strings.CraftingEditor.duplicateingredient;
 
-            btnSave.Text = Strings.craftingeditor.save;
-            btnCancel.Text = Strings.craftingeditor.cancel;
+            btnSave.Text = Strings.CraftingEditor.save;
+            btnCancel.Text = Strings.CraftingEditor.cancel;
         }
     }
 }

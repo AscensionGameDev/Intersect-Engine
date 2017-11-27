@@ -88,7 +88,7 @@ namespace Intersect.Editor.Forms
         private void UpdateDropValues()
         {
             int index = scrlDropIndex.Value;
-            lblDropIndex.Text = Strings.classeditor.itemindex.ToString( index + 1);
+            lblDropIndex.Text = Strings.ClassEditor.itemindex.ToString( index + 1);
             cmbItem.SelectedIndex =
                 Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.Items[index].ItemNum) + 1;
             nudItemAmount.Value = mEditorItem.Items[index].Amount;
@@ -109,7 +109,7 @@ namespace Intersect.Editor.Forms
             lstSpells.Items.Clear();
             for (int i = 0; i < mEditorItem.Spells.Count; i++)
             {
-                lstSpells.Items.Add(Strings.classeditor.spellitem.ToString( i + 1,
+                lstSpells.Items.Add(Strings.ClassEditor.spellitem.ToString(i + 1,
                     SpellBase.GetName(mEditorItem.Spells[i].SpellNum), mEditorItem.Spells[i].Level));
             }
             if (keepIndex) lstSpells.SelectedIndex = n;
@@ -258,19 +258,19 @@ namespace Intersect.Editor.Forms
         private void frmClass_Load(object sender, EventArgs e)
         {
             cmbSprite.Items.Clear();
-            cmbSprite.Items.Add(Strings.general.none);
+            cmbSprite.Items.Add(Strings.General.none);
             cmbSprite.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity));
             cmbFace.Items.Clear();
-            cmbFace.Items.Add(Strings.general.none);
+            cmbFace.Items.Add(Strings.General.none);
             cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
             cmbItem.Items.Clear();
-            cmbItem.Items.Add(Strings.general.none);
+            cmbItem.Items.Add(Strings.General.none);
             cmbItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
             cmbSpell.Items.Clear();
             cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
             nudLevel.Maximum = Options.MaxLevel;
             cmbAttackAnimation.Items.Clear();
-            cmbAttackAnimation.Items.Add(Strings.general.none);
+            cmbAttackAnimation.Items.Add(Strings.General.none);
             cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbScalingStat.Items.Clear();
             for (int x = 0; x < Options.MaxStats; x++)
@@ -288,104 +288,104 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.classeditor.title;
-            toolStripItemNew.Text = Strings.classeditor.New;
-            toolStripItemDelete.Text = Strings.classeditor.delete;
-            toolStripItemCopy.Text = Strings.classeditor.copy;
-            toolStripItemPaste.Text = Strings.classeditor.paste;
-            toolStripItemUndo.Text = Strings.classeditor.undo;
+            Text = Strings.ClassEditor.title;
+            toolStripItemNew.Text = Strings.ClassEditor.New;
+            toolStripItemDelete.Text = Strings.ClassEditor.delete;
+            toolStripItemCopy.Text = Strings.ClassEditor.copy;
+            toolStripItemPaste.Text = Strings.ClassEditor.paste;
+            toolStripItemUndo.Text = Strings.ClassEditor.undo;
 
-            grpClasses.Text = Strings.classeditor.classes;
+            grpClasses.Text = Strings.ClassEditor.classes;
 
-            grpGeneral.Text = Strings.classeditor.general;
-            lblName.Text = Strings.classeditor.name;
-            chkLocked.Text = Strings.classeditor.locked;
+            grpGeneral.Text = Strings.ClassEditor.general;
+            lblName.Text = Strings.ClassEditor.name;
+            chkLocked.Text = Strings.ClassEditor.locked;
 
-            grpSpawnPoint.Text = Strings.classeditor.spawnpoint;
-            lblMap.Text = Strings.warping.map.ToString( "");
-            lblX.Text = Strings.warping.x.ToString( "");
-            lblY.Text = Strings.warping.y;
-            lblDir.Text = Strings.warping.direction.ToString( "");
+            grpSpawnPoint.Text = Strings.ClassEditor.spawnpoint;
+            lblMap.Text = Strings.Warping.map.ToString( "");
+            lblX.Text = Strings.Warping.x.ToString( "");
+            lblY.Text = Strings.Warping.y;
+            lblDir.Text = Strings.Warping.direction.ToString( "");
             cmbDirection.Items.Clear();
             for (var i = 0; i < 4; i++)
             {
-                cmbDirection.Items.Add(Strings.directions.dir[i]);
+                cmbDirection.Items.Add(Strings.Directions.dir[i]);
             }
-            btnVisualMapSelector.Text = Strings.warping.visual;
+            btnVisualMapSelector.Text = Strings.Warping.visual;
 
-            grpSprite.Text = Strings.classeditor.spriteface;
-            lblSpriteOptions.Text = Strings.classeditor.spriteoptions;
-            btnAdd.Text = Strings.classeditor.addicon;
-            btnRemove.Text = Strings.classeditor.removeicon;
-            grpGender.Text = Strings.classeditor.gender;
-            rbMale.Text = Strings.classeditor.male;
-            rbFemale.Text = Strings.classeditor.female;
-            lblSprite.Text = Strings.classeditor.sprite;
-            lblFace.Text = Strings.classeditor.face;
+            grpSprite.Text = Strings.ClassEditor.spriteface;
+            lblSpriteOptions.Text = Strings.ClassEditor.spriteoptions;
+            btnAdd.Text = Strings.ClassEditor.addicon;
+            btnRemove.Text = Strings.ClassEditor.removeicon;
+            grpGender.Text = Strings.ClassEditor.gender;
+            rbMale.Text = Strings.ClassEditor.male;
+            rbFemale.Text = Strings.ClassEditor.female;
+            lblSprite.Text = Strings.ClassEditor.sprite;
+            lblFace.Text = Strings.ClassEditor.face;
 
-            grpItems.Text = Strings.classeditor.items;
-            lblDropIndex.Text = Strings.classeditor.itemindex.ToString( scrlDropIndex.Value + 1);
-            lblDropItem.Text = Strings.classeditor.item;
-            lblDropAmount.Text = Strings.classeditor.amount;
+            grpItems.Text = Strings.ClassEditor.items;
+            lblDropIndex.Text = Strings.ClassEditor.itemindex.ToString( scrlDropIndex.Value + 1);
+            lblDropItem.Text = Strings.ClassEditor.item;
+            lblDropAmount.Text = Strings.ClassEditor.amount;
 
-            grpBaseStats.Text = Strings.classeditor.basestats;
-            lblHP.Text = Strings.classeditor.basehp;
-            lblMana.Text = Strings.classeditor.basemp;
-            lblAttack.Text = Strings.classeditor.baseattack;
-            lblDef.Text = Strings.classeditor.basearmor;
-            lblSpd.Text = Strings.classeditor.basespeed;
-            lblMag.Text = Strings.classeditor.baseabilitypower;
-            lblMR.Text = Strings.classeditor.basemagicresist;
-            lblPoints.Text = Strings.classeditor.basepoints;
+            grpBaseStats.Text = Strings.ClassEditor.basestats;
+            lblHP.Text = Strings.ClassEditor.basehp;
+            lblMana.Text = Strings.ClassEditor.basemp;
+            lblAttack.Text = Strings.ClassEditor.baseattack;
+            lblDef.Text = Strings.ClassEditor.basearmor;
+            lblSpd.Text = Strings.ClassEditor.basespeed;
+            lblMag.Text = Strings.ClassEditor.baseabilitypower;
+            lblMR.Text = Strings.ClassEditor.basemagicresist;
+            lblPoints.Text = Strings.ClassEditor.basepoints;
 
-            grpSpells.Text = Strings.classeditor.learntspells;
-            lblSpellNum.Text = Strings.classeditor.spell;
-            lblLevel.Text = Strings.classeditor.spelllevel;
-            btnAddSpell.Text = Strings.classeditor.addspell;
-            btnRemoveSpell.Text = Strings.classeditor.removespell;
+            grpSpells.Text = Strings.ClassEditor.learntspells;
+            lblSpellNum.Text = Strings.ClassEditor.spell;
+            lblLevel.Text = Strings.ClassEditor.spelllevel;
+            btnAddSpell.Text = Strings.ClassEditor.addspell;
+            btnRemoveSpell.Text = Strings.ClassEditor.removespell;
 
-            grpRegen.Text = Strings.classeditor.regen;
-            lblHpRegen.Text = Strings.classeditor.hpregen;
-            lblManaRegen.Text = Strings.classeditor.mpregen;
-            lblRegenHint.Text = Strings.classeditor.regenhint;
+            grpRegen.Text = Strings.ClassEditor.regen;
+            lblHpRegen.Text = Strings.ClassEditor.hpregen;
+            lblManaRegen.Text = Strings.ClassEditor.mpregen;
+            lblRegenHint.Text = Strings.ClassEditor.regenhint;
 
-            grpCombat.Text = Strings.classeditor.combat;
-            lblDamage.Text = Strings.classeditor.basedamage;
-            lblCritChance.Text = Strings.classeditor.critchance;
-            lblDamageType.Text = Strings.classeditor.damagetype;
+            grpCombat.Text = Strings.ClassEditor.combat;
+            lblDamage.Text = Strings.ClassEditor.basedamage;
+            lblCritChance.Text = Strings.ClassEditor.critchance;
+            lblDamageType.Text = Strings.ClassEditor.damagetype;
             cmbDamageType.Items.Clear();
-            for (int i = 0; i < Strings.combat.damagetypes.Length; i++)
+            for (int i = 0; i < Strings.Combat.damagetypes.Length; i++)
             {
-                cmbDamageType.Items.Add(Strings.combat.damagetypes[i]);
+                cmbDamageType.Items.Add(Strings.Combat.damagetypes[i]);
             }
-            lblScalingStat.Text = Strings.classeditor.scalingstat;
-            lblScalingAmount.Text = Strings.classeditor.scalingamount;
-            lblAttackAnimation.Text = Strings.classeditor.attackanimation;
+            lblScalingStat.Text = Strings.ClassEditor.scalingstat;
+            lblScalingAmount.Text = Strings.ClassEditor.scalingamount;
+            lblAttackAnimation.Text = Strings.ClassEditor.attackanimation;
 
-            grpLeveling.Text = Strings.classeditor.leveling;
-            lblBaseExp.Text = Strings.classeditor.levelexp;
-            lblExpIncrease.Text = Strings.classeditor.levelexpscale;
-            grpLevelBoosts.Text = Strings.classeditor.levelboosts;
-            rdoStaticIncrease.Text = Strings.classeditor.staticboost;
-            rdoPercentageIncrease.Text = Strings.classeditor.percentageboost;
-            lblHpIncrease.Text = Strings.classeditor.hpboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.classeditor.boostpercent.ToString());
-            lblMpIncrease.Text = Strings.classeditor.mpboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.classeditor.boostpercent.ToString());
-            lblStrengthIncrease.Text = Strings.classeditor.attackboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.classeditor.boostpercent.ToString());
-            lblArmorIncrease.Text = Strings.classeditor.armorboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.classeditor.boostpercent.ToString());
-            lblSpeedIncrease.Text = Strings.classeditor.speedboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.classeditor.boostpercent.ToString());
-            lblMagicIncrease.Text = Strings.classeditor.abilitypowerboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.classeditor.boostpercent.ToString());
-            lblMagicResistIncrease.Text = Strings.classeditor.magicresistboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.classeditor.boostpercent.ToString());
-            lblPointsIncrease.Text = Strings.classeditor.pointsboost;
+            grpLeveling.Text = Strings.ClassEditor.leveling;
+            lblBaseExp.Text = Strings.ClassEditor.levelexp;
+            lblExpIncrease.Text = Strings.ClassEditor.levelexpscale;
+            grpLevelBoosts.Text = Strings.ClassEditor.levelboosts;
+            rdoStaticIncrease.Text = Strings.ClassEditor.staticboost;
+            rdoPercentageIncrease.Text = Strings.ClassEditor.percentageboost;
+            lblHpIncrease.Text = Strings.ClassEditor.hpboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+            lblMpIncrease.Text = Strings.ClassEditor.mpboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+            lblStrengthIncrease.Text = Strings.ClassEditor.attackboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+            lblArmorIncrease.Text = Strings.ClassEditor.armorboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+            lblSpeedIncrease.Text = Strings.ClassEditor.speedboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+            lblMagicIncrease.Text = Strings.ClassEditor.abilitypowerboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+            lblMagicResistIncrease.Text = Strings.ClassEditor.magicresistboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+            lblPointsIncrease.Text = Strings.ClassEditor.pointsboost;
 
-            btnSave.Text = Strings.classeditor.save;
-            btnCancel.Text = Strings.classeditor.cancel;
+            btnSave.Text = Strings.ClassEditor.save;
+            btnCancel.Text = Strings.ClassEditor.cancel;
         }
 
         public void InitEditor()
@@ -458,12 +458,12 @@ namespace Intersect.Editor.Forms
             {
                 if (mEditorItem.Sprites[i].Gender == 0)
                 {
-                    lstSprites.Items.Add(Strings.classeditor.spriteitemmale.ToString( i + 1,
+                    lstSprites.Items.Add(Strings.ClassEditor.spriteitemmale.ToString( i + 1,
                         TextUtils.NullToNone(mEditorItem.Sprites[i].Sprite)));
                 }
                 else
                 {
-                    lstSprites.Items.Add(Strings.classeditor.spriteitemfemale.ToString( i + 1,
+                    lstSprites.Items.Add(Strings.ClassEditor.spriteitemfemale.ToString( i + 1,
                         TextUtils.NullToNone(mEditorItem.Sprites[i].Sprite)));
                 }
             }
@@ -483,12 +483,12 @@ namespace Intersect.Editor.Forms
 
             if (n.Gender == 0)
             {
-                lstSprites.Items.Add(Strings.classeditor.spriteitemmale.ToString(mEditorItem.Sprites.Count, TextUtils.NullToNone(n.Sprite)));
+                lstSprites.Items.Add(Strings.ClassEditor.spriteitemmale.ToString(mEditorItem.Sprites.Count, TextUtils.NullToNone(n.Sprite)));
             }
             else
             {
                 lstSprites.Items.Add(
-                    Strings.classeditor.spriteitemfemale.ToString(mEditorItem.Sprites.Count, TextUtils.NullToNone(n.Sprite)));
+                    Strings.ClassEditor.spriteitemfemale.ToString(mEditorItem.Sprites.Count, TextUtils.NullToNone(n.Sprite)));
             }
 
             lstSprites.SelectedIndex = lstSprites.Items.Count - 1;
@@ -631,20 +631,20 @@ namespace Intersect.Editor.Forms
                 mEditorItem.StatIncrease[(int) Stats.MagicResist]);
             nudSpeedIncrease.Value = Math.Min(nudSpeedIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.Speed]);
 
-            lblHpIncrease.Text = Strings.classeditor.hpboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.classeditor.boostpercent.ToString());
-            lblMpIncrease.Text = Strings.classeditor.mpboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.classeditor.boostpercent.ToString());
-            lblStrengthIncrease.Text = Strings.classeditor.attackboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.classeditor.boostpercent.ToString());
-            lblArmorIncrease.Text = Strings.classeditor.armorboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.classeditor.boostpercent.ToString());
-            lblSpeedIncrease.Text = Strings.classeditor.speedboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.classeditor.boostpercent.ToString());
-            lblMagicIncrease.Text = Strings.classeditor.abilitypowerboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.classeditor.boostpercent.ToString());
-            lblMagicResistIncrease.Text = Strings.classeditor.magicresistboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.classeditor.boostpercent.ToString());
+            lblHpIncrease.Text = Strings.ClassEditor.hpboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+            lblMpIncrease.Text = Strings.ClassEditor.mpboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+            lblStrengthIncrease.Text = Strings.ClassEditor.attackboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+            lblArmorIncrease.Text = Strings.ClassEditor.armorboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+            lblSpeedIncrease.Text = Strings.ClassEditor.speedboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+            lblMagicIncrease.Text = Strings.ClassEditor.abilitypowerboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+            lblMagicResistIncrease.Text = Strings.ClassEditor.magicresistboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
 
             nudPointsIncrease.Value = mEditorItem.PointIncrease;
         }
@@ -670,8 +670,8 @@ namespace Intersect.Editor.Forms
         {
             if (mEditorItem != null && lstClasses.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.classeditor.deleteprompt,
-                        Strings.classeditor.deletetitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(Strings.ClassEditor.deleteprompt,
+                        Strings.ClassEditor.deletetitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -701,8 +701,8 @@ namespace Intersect.Editor.Forms
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.classeditor.undoprompt,
-                        Strings.classeditor.undotitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(Strings.ClassEditor.undoprompt,
+                        Strings.ClassEditor.undotitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();

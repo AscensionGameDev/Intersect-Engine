@@ -19,7 +19,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             mEventEditor = editor;
             InitLocalization();
             cmbSound.Items.Clear();
-            cmbSound.Items.Add(Strings.general.none);
+            cmbSound.Items.Add(Strings.General.none);
             cmbSound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
             if (cmbSound.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Strs[0])) > -1)
             {
@@ -33,10 +33,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpPlayBGS.Text = Strings.eventplaybgs.title;
-            lblSound.Text = Strings.eventplaybgs.label;
-            btnSave.Text = Strings.eventplaybgs.okay;
-            btnCancel.Text = Strings.eventplaybgs.cancel;
+            grpPlayBGS.Text = Strings.EventPlayBgs.title;
+            lblSound.Text = Strings.EventPlayBgs.label;
+            btnSave.Text = Strings.EventPlayBgs.okay;
+            btnCancel.Text = Strings.EventPlayBgs.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

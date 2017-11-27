@@ -18,7 +18,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             InitializeComponent();
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add(Strings.general.none);
+            cmbAnimation.Items.Add(Strings.General.none);
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             if (!newAction)
             {
@@ -32,10 +32,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpSetAnimation.Text = Strings.eventsetanimation.title;
-            lblAnimation.Text = Strings.eventsetanimation.label;
-            btnOkay.Text = Strings.eventsetanimation.okay;
-            btnCancel.Text = Strings.eventsetanimation.cancel;
+            grpSetAnimation.Text = Strings.EventSetAnimation.title;
+            lblAnimation.Text = Strings.EventSetAnimation.label;
+            btnOkay.Text = Strings.EventSetAnimation.okay;
+            btnCancel.Text = Strings.EventSetAnimation.cancel;
         }
 
         private void btnOkay_Click(object sender, EventArgs e)

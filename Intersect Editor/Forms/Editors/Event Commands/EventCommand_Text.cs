@@ -22,7 +22,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             InitLocalization();
             txtShowText.Text = mMyCommand.Strs[0];
             cmbFace.Items.Clear();
-            cmbFace.Items.Add(Strings.general.none);
+            cmbFace.Items.Add(Strings.General.none);
             cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
             if (cmbFace.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Strs[1])) > -1)
             {
@@ -37,12 +37,12 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpShowText.Text = Strings.eventshowtext.title;
-            lblText.Text = Strings.eventshowtext.text;
-            lblFace.Text = Strings.eventshowtext.face;
-            lblCommands.Text = Strings.eventshowtext.commands;
-            btnSave.Text = Strings.eventshowtext.okay;
-            btnCancel.Text = Strings.eventshowtext.cancel;
+            grpShowText.Text = Strings.EventShowText.title;
+            lblText.Text = Strings.EventShowText.text;
+            lblFace.Text = Strings.EventShowText.face;
+            lblCommands.Text = Strings.EventShowText.commands;
+            btnSave.Text = Strings.EventShowText.okay;
+            btnCancel.Text = Strings.EventShowText.cancel;
         }
 
         private void UpdateFacePreview()

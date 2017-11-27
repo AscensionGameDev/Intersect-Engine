@@ -21,10 +21,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpGiveExperience.Text = Strings.eventgiveexperience.title;
-            lblExperience.Text = Strings.eventgiveexperience.label;
-            btnSave.Text = Strings.eventgiveexperience.okay;
-            btnCancel.Text = Strings.eventgiveexperience.cancel;
+            grpGiveExperience.Text = Strings.EventGiveExperience.title;
+            lblExperience.Text = Strings.EventGiveExperience.label;
+            btnSave.Text = Strings.EventGiveExperience.okay;
+            btnCancel.Text = Strings.EventGiveExperience.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

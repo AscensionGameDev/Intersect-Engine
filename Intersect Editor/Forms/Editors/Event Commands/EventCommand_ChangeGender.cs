@@ -21,15 +21,15 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpChangeGender.Text = Strings.eventchangegender.title;
+            grpChangeGender.Text = Strings.EventChangeGender.title;
             cmbGender.Items.Clear();
-            for (int i = 0; i < Strings.eventchangegender.genders.Length; i++)
+            for (int i = 0; i < Strings.EventChangeGender.genders.Length; i++)
             {
-                cmbGender.Items.Add(Strings.eventchangegender.genders[i]);
+                cmbGender.Items.Add(Strings.EventChangeGender.genders[i]);
             }
-            lblGender.Text = Strings.eventchangegender.label;
-            btnSave.Text = Strings.eventchangegender.okay;
-            btnCancel.Text = Strings.eventchangegender.cancel;
+            lblGender.Text = Strings.EventChangeGender.label;
+            btnSave.Text = Strings.EventChangeGender.okay;
+            btnCancel.Text = Strings.EventChangeGender.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

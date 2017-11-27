@@ -32,20 +32,20 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 nudGiveTakeAmount.Value = mMyCommand.Ints[2];
             }
-            lblAmount.Text = Strings.eventchangeitems.amount;
+            lblAmount.Text = Strings.EventChangeItems.amount;
         }
 
         private void InitLocalization()
         {
-            grpChangeItems.Text = Strings.eventchangeitems.title;
-            lblAction.Text = Strings.eventchangeitems.action;
+            grpChangeItems.Text = Strings.EventChangeItems.title;
+            lblAction.Text = Strings.EventChangeItems.action;
             cmbAction.Items.Clear();
-            for (int i = 0; i < Strings.eventchangeitems.actions.Length; i++)
+            for (int i = 0; i < Strings.EventChangeItems.actions.Length; i++)
             {
-                cmbAction.Items.Add(Strings.eventchangeitems.actions[i]);
+                cmbAction.Items.Add(Strings.EventChangeItems.actions[i]);
             }
-            btnSave.Text = Strings.eventchangeitems.okay;
-            btnCancel.Text = Strings.eventchangeitems.cancel;
+            btnSave.Text = Strings.EventChangeItems.okay;
+            btnCancel.Text = Strings.EventChangeItems.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

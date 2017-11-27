@@ -30,11 +30,11 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.options.title;
-            btnTileHeader.Text = Strings.options.generaltab.ToString( Application.ProductVersion);
-            chkSuppressTilesetWarning.Text = Strings.options.tilesetwarning;
-            grpClientPath.Text = Strings.options.pathgroup;
-            btnBrowseClient.Text = Strings.options.browsebtn;
+            Text = Strings.Options.title;
+            btnTileHeader.Text = Strings.Options.generaltab.ToString( Application.ProductVersion);
+            chkSuppressTilesetWarning.Text = Strings.Options.tilesetwarning;
+            grpClientPath.Text = Strings.Options.pathgroup;
+            btnBrowseClient.Text = Strings.Options.browsebtn;
         }
 
         private void frmOptions_FormClosing(object sender, FormClosingEventArgs e)
@@ -47,11 +47,11 @@ namespace Intersect.Editor.Forms
         {
             OpenFileDialog dialogue = new OpenFileDialog()
             {
-                Title = Strings.options.dialogueheader,
+                Title = Strings.Options.dialogueheader,
                 CheckFileExists = true,
                 CheckPathExists = true,
                 DefaultExt = "exe",
-                Filter = "(*.exe)|*.exe|" + Strings.options.dialogueallfiles + "(*.*)|*.*",
+                Filter = "(*.exe)|*.exe|" + Strings.Options.dialogueallfiles + "(*.*)|*.*",
                 RestoreDirectory = true,
                 ReadOnlyChecked = true,
                 ShowReadOnly = true

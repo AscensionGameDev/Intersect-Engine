@@ -19,7 +19,7 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            btnCancel.Text = Strings.progressform.cancel;
+            btnCancel.Text = Strings.ProgressForm.cancel;
         }
 
         public void SetTitle(string title)
