@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
+using Intersect.Config;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.Core;
 using Intersect.Localization;
@@ -29,26 +30,19 @@ namespace Intersect.Editor.Forms
         {
             AppDomain.CurrentDomain.UnhandledException += Program.CurrentDomain_UnhandledException;
             GameContentManager.CheckForResources();
-            if (Database.LoadOptions())
+            Database.LoadOptions();
+            optionsLoaded = true;
+            Strings.Init(Strings.IntersectComponent.Editor, ClientOptions.Language);
+            EditorLoopDelegate = EditorLoop.StartLoop;
+            if (Preferences.LoadPreference("username").Trim().Length > 0)
             {
-                mOptionsLoaded = true;
-                Strings.Init(Strings.IntersectComponent.Editor, Options.Language);
-                EditorLoopDelegate = EditorLoop.StartLoop;
-                if (Preferences.LoadPreference("username").Trim().Length > 0)
-                {
-                    txtUsername.Text = Preferences.LoadPreference("Username");
-                    txtPassword.Text = "*****";
-                    mSavedPassword = Preferences.LoadPreference("Password");
-                    chkRemember.Checked = true;
-                }
-                Database.InitMapCache();
-                InitLocalization();
+                txtUsername.Text = Preferences.LoadPreference("Username");
+                txtPassword.Text = "*****";
+                SavedPassword = Preferences.LoadPreference("Password");
+                chkRemember.Checked = true;
             }
-            else
-            {
-                MessageBox.Show("Failed to load config.xml. Does it exist?  Path(Resources/config.xml)");
-                Application.Exit();
-            }
+            Database.InitMapCache();
+            InitLocalization();
         }
 
         private void InitLocalization()

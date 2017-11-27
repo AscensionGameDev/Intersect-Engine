@@ -51,6 +51,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net35\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
@@ -69,6 +72,13 @@
     <Compile Include="Collections\ILookup.cs" />
     <Compile Include="Collections\ReadOnlyDictionary.cs" />
     <Compile Include="Compression.cs" />
+    <Compile Include="Config\ClientOptions.cs" />
+    <Compile Include="Config\CombatOptions.cs" />
+    <Compile Include="Config\EquipmentOptions.cs" />
+    <Compile Include="Config\GameObjectOptions.cs" />
+    <Compile Include="Config\MapOptions.cs" />
+    <Compile Include="Config\PaperdollOptions.cs" />
+    <Compile Include="Config\PassabilityOptions.cs" />
     <Compile Include="Crypto\RsaUtils.cs" />
     <Compile Include="CustomColors.cs" />
     <Compile Include="DatabaseObject.cs" />
@@ -93,6 +103,7 @@
     <Compile Include="Enums\TargetTypes.cs" />
     <Compile Include="Enums\Vitals.cs" />
     <Compile Include="Extensions\GameObjectInfoAttribute.cs" />
+    <Compile Include="Config\PlayerOptions.cs" />
     <Compile Include="Utilities\AlphanumComparator.cs" />
     <Compile Include="Utilities\FieldChecking.cs" />
     <Compile Include="GameObjects\AnimationBase.cs" />
@@ -178,7 +189,7 @@
     <Compile Include="Network\PacketType.cs" />
     <Compile Include="Network\ReflectablePacketFactory.cs" />
     <Compile Include="Network\TransmissionMode.cs" />
-    <Compile Include="Options.cs" />
+    <Compile Include="Config\Options.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

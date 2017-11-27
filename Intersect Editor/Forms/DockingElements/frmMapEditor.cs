@@ -1803,6 +1803,7 @@ namespace Intersect.Editor.Forms
 
         private void pnlMapContainer_Resize(object sender, EventArgs e)
         {
+            if (!Options.Loaded) return;
             picMap.Size = pnlMapContainer.ClientSize;
             picMap.MinimumSize = new Size((Options.MapWidth + 2) * Options.TileWidth,
                 (Options.MapHeight + 2) * Options.TileHeight);

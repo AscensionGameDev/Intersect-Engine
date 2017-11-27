@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
+using Intersect.Config;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Crypto;
@@ -21,7 +22,7 @@ namespace Intersect.Editor.Classes
             if (EditorLidgrenNetwork == null)
             {
                 Log.Global.AddOutput(new ConsoleOutput());
-                var config = new NetworkConfiguration(Globals.ServerHost, (ushort) Globals.ServerPort);
+                var config = new NetworkConfiguration(ClientOptions.ServerHost, ClientOptions.ServerPort);
                 var assembly = Assembly.GetExecutingAssembly();
                 using (var stream = assembly.GetManifestResourceStream("Intersect.Editor.public-intersect.bek"))
                 {

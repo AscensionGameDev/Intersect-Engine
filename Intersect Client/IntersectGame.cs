@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using Intersect.Client.Classes.Core;
 using Intersect.Client.Classes.MonoGame.Network;
+using Intersect.Config;
 using Intersect.Localization;
 using Intersect.Logging;
 using Intersect.Utilities;
@@ -38,10 +40,21 @@ namespace Intersect.Client
             IsMouseVisible = true;
             Globals.ContentManager = new MonoContentManager();
             Globals.Database = new MonoDatabase();
-            Globals.Database.LoadConfig();
+            
+            //Load ClientOptions
+            if (File.Exists("resources/config.json"))
+            {
+                ClientOptions.Load(File.ReadAllText("resources/config.json"));
+            }
+            else
+            {
+                ClientOptions.Load(null);
+            }
+            File.WriteAllText("resources/config.json", ClientOptions.GetJson());
+
             Globals.Database.LoadPreferences();
-            Strings.Init(Strings.IntersectComponent.Client, Globals.Database.Language);
-            Gui.ActiveFont = TextUtils.StripToLower(Globals.Database.Font);
+            Strings.Init(Strings.IntersectComponent.Client,ClientOptions.Language);
+            Gui.ActiveFont = TextUtils.StripToLower(ClientOptions.Font);
             Globals.InputManager = new MonoInput(this);
 
             var renderer = new MonoRenderer(mGraphics, Content, this);

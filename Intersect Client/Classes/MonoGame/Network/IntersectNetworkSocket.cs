@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
+using Intersect.Config;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Crypto;
@@ -32,8 +33,7 @@ namespace Intersect.Client.Classes.MonoGame.Network
             }
             if (ClientLidgrenNetwork == null)
             {
-                var config = new NetworkConfiguration(Globals.Database.ServerHost,
-                    (ushort)Globals.Database.ServerPort);
+                var config = new NetworkConfiguration(ClientOptions.ServerHost, ClientOptions.ServerPort);
                 var assembly = Assembly.GetExecutingAssembly();
                 using (var stream = assembly.GetManifestResourceStream("Intersect.Client.public-intersect.bek"))
                 {

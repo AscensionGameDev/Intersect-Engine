@@ -72,8 +72,8 @@ namespace Intersect.Server.Classes.Networking
         public static void SendServerConfig(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ServerPackets.ServerConfig);
-            bf.WriteBytes(ServerOptions.GetServerConfig());
+            bf.WriteLong((int) ServerPackets.ServerConfig);
+            bf.WriteBytes(Options.GetOptionsData());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
