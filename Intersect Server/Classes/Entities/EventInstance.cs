@@ -7,7 +7,8 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Server.Classes.Localization;
+using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Items;
 using Intersect.Server.Classes.Maps;
@@ -508,39 +509,39 @@ namespace Intersect.Server.Classes.Entities
         {
             if (MyClient != null && MyClient.Entity != null)
             {
-                input = input.Replace(Strings.Get("events", "playernamecommand"), MyClient.Entity.MyName);
-                input = input.Replace(Strings.Get("events", "eventnamecommand"), PageInstance.MyName);
-                input = input.Replace(Strings.Get("events", "commandparameter"), PageInstance.Param);
-                if (input.Contains(Strings.Get("events", "onlinelistcommand")) ||
-                    input.Contains(Strings.Get("events", "onlinecountcommand")))
+                input = input.Replace(Strings.Events.playernamecommand, MyClient.Entity.MyName);
+                input = input.Replace(Strings.Events.eventnamecommand, PageInstance.MyName);
+                input = input.Replace(Strings.Events.commandparameter, PageInstance.Param);
+                if (input.Contains(Strings.Events.onlinelistcommand) ||
+                    input.Contains(Strings.Events.onlinecountcommand))
                 {
                     var onlineList = Globals.GetOnlineList();
-                    input = input.Replace(Strings.Get("events", "onlinecountcommand"), onlineList.Count.ToString());
+                    input = input.Replace(Strings.Events.onlinecountcommand, onlineList.Count.ToString());
                     var sb = new StringBuilder();
                     for (int i = 0; i < onlineList.Count; i++)
                     {
                         sb.Append(onlineList[i].MyName + (i != onlineList.Count - 1 ? ", " : ""));
                     }
-                    input = input.Replace(Strings.Get("events", "onlinelistcommand"), sb.ToString());
+                    input = input.Replace(Strings.Events.onlinelistcommand, sb.ToString());
                 }
 
                 //Time Stuff
-                input = input.Replace(Strings.Get("events", "timehour"), ServerTime.GetTime().ToString("%h"));
-                input = input.Replace(Strings.Get("events", "militaryhour"), ServerTime.GetTime().ToString("HH"));
-                input = input.Replace(Strings.Get("events", "timeminute"), ServerTime.GetTime().ToString("mm"));
-                input = input.Replace(Strings.Get("events", "timesecond"), ServerTime.GetTime().ToString("ss"));
+                input = input.Replace(Strings.Events.timehour, ServerTime.GetTime().ToString("%h"));
+                input = input.Replace(Strings.Events.militaryhour, ServerTime.GetTime().ToString("HH"));
+                input = input.Replace(Strings.Events.timeminute, ServerTime.GetTime().ToString("mm"));
+                input = input.Replace(Strings.Events.timesecond, ServerTime.GetTime().ToString("ss"));
                 if (ServerTime.GetTime().Hour >= 12)
                 {
-                    input = input.Replace(Strings.Get("events", "timeperiod"), Strings.Get("events", "periodevening"));
+                    input = input.Replace(Strings.Events.timeperiod, Strings.Events.periodevening);
                 }
                 else
                 {
-                    input = input.Replace(Strings.Get("events", "timeperiod"), Strings.Get("events", "periodmorning"));
+                    input = input.Replace(Strings.Events.timeperiod, Strings.Events.periodmorning);
                 }
 
                 //Have to accept a numeric parameter after each of the following (player switch/var and server switch/var)
                 MatchCollection matches = Regex.Matches(input,
-                    Regex.Escape(Strings.Get("events", "playervar")) + " ([0-9]+)");
+                    Regex.Escape(Strings.Events.playervar) + " ([0-9]+)");
                 foreach (Match m in matches)
                 {
                     if (m.Success)
@@ -548,17 +549,17 @@ namespace Intersect.Server.Classes.Entities
                         int id = Convert.ToInt32(m.Groups[1].Value);
                         if (MyPlayer.Variables.ContainsKey(id))
                         {
-                            input = input.Replace(Strings.Get("events", "playervar") + " " + m.Groups[1].Value,
+                            input = input.Replace(Strings.Events.playervar + " " + m.Groups[1].Value,
                                 MyPlayer.Variables[id].ToString());
                         }
                         else
                         {
-                            input = input.Replace(Strings.Get("events", "playervar") + " " + m.Groups[1].Value,
+                            input = input.Replace(Strings.Events.playervar + " " + m.Groups[1].Value,
                                 0.ToString());
                         }
                     }
                 }
-                matches = Regex.Matches(input, Regex.Escape(Strings.Get("events", "playerswitch")) + " ([0-9]+)");
+                matches = Regex.Matches(input, Regex.Escape(Strings.Events.playerswitch) + " ([0-9]+)");
                 foreach (Match m in matches)
                 {
                     if (m.Success)
@@ -566,17 +567,17 @@ namespace Intersect.Server.Classes.Entities
                         int id = Convert.ToInt32(m.Groups[1].Value);
                         if (MyPlayer.Switches.ContainsKey(id))
                         {
-                            input = input.Replace(Strings.Get("events", "playerswitch") + " " + m.Groups[1].Value,
+                            input = input.Replace(Strings.Events.playerswitch + " " + m.Groups[1].Value,
                                 MyPlayer.Switches[id].ToString());
                         }
                         else
                         {
-                            input = input.Replace(Strings.Get("events", "playerswitch") + " " + m.Groups[1].Value,
+                            input = input.Replace(Strings.Events.playerswitch + " " + m.Groups[1].Value,
                                 false.ToString());
                         }
                     }
                 }
-                matches = Regex.Matches(input, Regex.Escape(Strings.Get("events", "globalvar")) + " ([0-9]+)");
+                matches = Regex.Matches(input, Regex.Escape(Strings.Events.globalvar) + " ([0-9]+)");
                 foreach (Match m in matches)
                 {
                     if (m.Success)
@@ -585,17 +586,17 @@ namespace Intersect.Server.Classes.Entities
                         var globalvar = ServerVariableBase.Lookup.Get<ServerVariableBase>(id);
                         if (globalvar != null)
                         {
-                            input = input.Replace(Strings.Get("events", "globalvar") + " " + m.Groups[1].Value,
+                            input = input.Replace(Strings.Events.globalvar + " " + m.Groups[1].Value,
                                 globalvar.Value.ToString());
                         }
                         else
                         {
-                            input = input.Replace(Strings.Get("events", "globalvar") + " " + m.Groups[1].Value,
+                            input = input.Replace(Strings.Events.globalvar + " " + m.Groups[1].Value,
                                 0.ToString());
                         }
                     }
                 }
-                matches = Regex.Matches(input, Regex.Escape(Strings.Get("events", "globalswitch")) + " ([0-9]+)");
+                matches = Regex.Matches(input, Regex.Escape(Strings.Events.globalswitch) + " ([0-9]+)");
                 foreach (Match m in matches)
                 {
                     if (m.Success)
@@ -604,12 +605,12 @@ namespace Intersect.Server.Classes.Entities
                         var globalswitch = ServerSwitchBase.Lookup.Get<ServerSwitchBase>(id);
                         if (globalswitch != null)
                         {
-                            input = input.Replace(Strings.Get("events", "globalswitch") + " " + m.Groups[1].Value,
+                            input = input.Replace(Strings.Events.globalswitch + " " + m.Groups[1].Value,
                                 globalswitch.Value.ToString());
                         }
                         else
                         {
-                            input = input.Replace(Strings.Get("events", "globalswitch") + " " + m.Groups[1].Value,
+                            input = input.Replace(Strings.Events.globalswitch + " " + m.Groups[1].Value,
                                 false.ToString());
                         }
                     }
@@ -925,7 +926,7 @@ namespace Intersect.Server.Classes.Entities
                 case EventCommandType.SetAccess:
                     MyPlayer.MyClient.Power = command.Ints[0];
                     PacketSender.SendEntityDataToProximity(MyPlayer);
-                    PacketSender.SendPlayerMsg(MyPlayer.MyClient, Strings.Get("player", "powerchanged"), Color.Red);
+                    PacketSender.SendPlayerMsg(MyPlayer.MyClient, Strings.Player.powerchanged, Color.Red);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.WarpPlayer:

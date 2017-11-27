@@ -211,6 +211,7 @@
     <Compile Include="Classes\General\ServerTime.cs" />
     <Compile Include="Classes\Items\BagInstance.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
+    <Compile Include="Classes\Localization\Strings.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Classes\Maps\MapItemInstance.cs" />
     <Compile Include="Classes\Maps\MapItemSpawn.cs" />

@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Server.Classes.Localization;
+using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Items;
 using Intersect.Server.Classes.Maps;
@@ -444,7 +445,7 @@ namespace Intersect.Server.Classes.Entities
                                 spellInstance.SpellNum = spell.SpellNum;
                                 if (TryTeachSpell(spellInstance, true))
                                 {
-                                    spellMsgs.Add(Strings.Get("player","spelltaughtlevelup",SpellBase.GetName(spellInstance.SpellNum)));
+                                    spellMsgs.Add(Strings.Player.spelltaughtlevelup.ToString(SpellBase.GetName(spellInstance.SpellNum)));
                                 }
                             }
                         }
@@ -453,15 +454,15 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
 
-            PacketSender.SendPlayerMsg(MyClient, Strings.Get("player", "levelup", Level), CustomColors.LevelUp, MyName);
-            PacketSender.SendActionMsg(this, Strings.Get("combat", "levelup"), CustomColors.LevelUp);
+            PacketSender.SendPlayerMsg(MyClient, Strings.Player.levelup.ToString( Level), CustomColors.LevelUp, MyName);
+            PacketSender.SendActionMsg(this, Strings.Combat.levelup, CustomColors.LevelUp);
             foreach (var msg in spellMsgs)
             {
                 PacketSender.SendPlayerMsg(MyClient, msg, CustomColors.Info, MyName);
             }
             if (StatPoints > 0)
             {
-                PacketSender.SendPlayerMsg(MyClient, Strings.Get("player", "statpoints", StatPoints),
+                PacketSender.SendPlayerMsg(MyClient, Strings.Player.statpoints.ToString( StatPoints),
                     CustomColors.StatPoints, MyName);
             }
             PacketSender.SendExperience(MyClient);
@@ -558,7 +559,7 @@ namespace Intersect.Server.Classes.Entities
                                         Quests[questId] = questProg;
                                         PacketSender.SendQuestProgress(this, quest.Index);
                                         PacketSender.SendPlayerMsg(MyClient,
-                                            Strings.Get("quests", "npctask", quest.Name, questProg.TaskProgress,
+                                            Strings.Quests.npctask.ToString( quest.Name, questProg.taskProgress,
                                                 questTask.Data2, NpcBase.GetName(questTask.Data1)));
                                     }
                                 }
@@ -600,7 +601,7 @@ namespace Intersect.Server.Classes.Entities
         {
             if (CastTime >= Globals.System.GetTimeMs())
             {
-                PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "channelingnoattack"));
+                PacketSender.SendPlayerMsg(MyClient, Strings.Combat.channelingnoattack);
                 return;
             }
 
@@ -626,7 +627,7 @@ namespace Intersect.Server.Classes.Entities
                 //Check Dynamic Requirements
                 if (!EventInstance.MeetsConditionLists(resource.HarvestingReqs, this, null))
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "resourcereqs"));
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Combat.resourcereqs);
                     return;
                 }
                 if (resource.Tool > -1 && resource.Tool < Options.ToolTypes.Count)
@@ -634,7 +635,7 @@ namespace Intersect.Server.Classes.Entities
                     if (weapon == null || resource.Tool != weapon.Tool)
                     {
                         PacketSender.SendPlayerMsg(MyClient,
-                            Strings.Get("combat", "toolrequired", Options.ToolTypes[resource.Tool]));
+                            Strings.Combat.toolrequired.ToString( Options.ToolTypes[resource.Tool]));
                         return;
                     }
                 }
@@ -864,14 +865,14 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (itemBase.Bound > 0)
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "bound"), CustomColors.ItemBound);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Items.bound, CustomColors.ItemBound);
                     return;
                 }
                 for (var i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
                     if (Equipment[i] == slot)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "equipped"), CustomColors.ItemBound);
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Items.equipped, CustomColors.ItemBound);
                         return;
                     }
                 }
@@ -920,14 +921,14 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (status.Type == (int)StatusTypes.Stun)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "stunned"));
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Items.stunned);
                         return;
                     }
                 }
 
                 if (!EventInstance.MeetsConditionLists(itemBase.UseReqs, this, null))
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "dynamicreq"));
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Items.dynamicreq);
                     return;
                 }
 
@@ -935,20 +936,20 @@ namespace Intersect.Server.Classes.Entities
                 {
                     case (int)ItemTypes.None:
                     case (int)ItemTypes.Currency:
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "cannotuse"));
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Items.cannotuse);
                         return;
                     case (int)ItemTypes.Consumable:
                         var s = "";
                         if (itemBase.Data2 > 0)
                         {
-                            s = Strings.Get("combat", "addsymbol");
+                            s = Strings.Combat.addsymbol;
                         }
 
                         switch (itemBase.Data1)
                         {
                             case 0: //Health
                                 AddVital(Vitals.Health, itemBase.Data2);
-                                if (s == Strings.Get("combat", "addsymbol"))
+                                if (s == Strings.Combat.addsymbol)
                                 {
                                     PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.Heal);
                                 }
@@ -1038,7 +1039,7 @@ namespace Intersect.Server.Classes.Entities
                         TakeItemsBySlot(slot, 1);
                         break;
                     case (int)ItemTypes.Bag:
-                        //Bags will never, ever, be stackable. Going to use the value property for the bag id in the database.
+                        //Bags will never, ever, be stackable. Going to use the value property for the bag id in the Database.
                         if (itemInstance.BagId == -1)
                         {
                             //Create the Bag
@@ -1050,7 +1051,7 @@ namespace Intersect.Server.Classes.Entities
                         OpenBag(itemInstance);
                         break;
                     default:
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "notimplemented"));
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Items.notimplemented);
                         return;
                 }
                 if (itemBase.Animation > -1)
@@ -1241,7 +1242,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (itemBase.Bound > 0)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("shops", "bound"), CustomColors.ItemBound);
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Shops.bound, CustomColors.ItemBound);
                         return;
                     }
 
@@ -1252,7 +1253,7 @@ namespace Intersect.Server.Classes.Entities
                         {
                             if (!Database.BagEmpty(Inventory[slot].BagId))
                             {
-                                PacketSender.SendPlayerMsg(MyClient, Strings.Get("bags", "onlysellempty"),
+                                PacketSender.SendPlayerMsg(MyClient, Strings.Bags.onlysellempty,
                                     CustomColors.Error);
                                 return;
                             }
@@ -1265,7 +1266,7 @@ namespace Intersect.Server.Classes.Entities
                         {
                             if (!shop.BuyingWhitelist)
                             {
-                                PacketSender.SendPlayerMsg(MyClient, Strings.Get("shops", "doesnotaccept"),
+                                PacketSender.SendPlayerMsg(MyClient, Strings.Shops.doesnotaccept,
                                     CustomColors.Error);
                                 return;
                             }
@@ -1281,7 +1282,7 @@ namespace Intersect.Server.Classes.Entities
                     {
                         if (shop.BuyingWhitelist)
                         {
-                            PacketSender.SendPlayerMsg(MyClient, Strings.Get("shops", "doesnotaccept"),
+                            PacketSender.SendPlayerMsg(MyClient, Strings.Shops.doesnotaccept,
                                 CustomColors.Error);
                             return;
                         }
@@ -1372,14 +1373,14 @@ namespace Intersect.Server.Classes.Entities
                                 }
                                 else
                                 {
-                                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("shops", "inventoryfull"),
+                                    PacketSender.SendPlayerMsg(MyClient, Strings.Shops.inventoryfull,
                                         CustomColors.Error, MyName);
                                 }
                             }
                         }
                         else
                         {
-                            PacketSender.SendPlayerMsg(MyClient, Strings.Get("shops", "cantafford"),
+                            PacketSender.SendPlayerMsg(MyClient, Strings.Shops.cantafford,
                                 CustomColors.Error, MyName);
                         }
                     }
@@ -1474,7 +1475,7 @@ namespace Intersect.Server.Classes.Entities
                 if (TryGiveItem(new ItemInstance(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item, 1, -1)))
                 {
                     PacketSender.SendPlayerMsg(MyClient,
-                        Strings.Get("crafting", "crafted",
+                        Strings.Crafting.crafted.ToString(
                             ItemBase.GetName(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item)),
                         CustomColors.Crafted);
                 }
@@ -1483,7 +1484,7 @@ namespace Intersect.Server.Classes.Entities
                     Inventory = invbackup;
                     PacketSender.SendInventory(MyClient);
                     PacketSender.SendPlayerMsg(MyClient,
-                        Strings.Get("crafting", "nospace",
+                        Strings.Crafting.nospace.ToString(
                             ItemBase.GetName(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item)),
                         CustomColors.Error);
                 }
@@ -1625,11 +1626,11 @@ namespace Intersect.Server.Classes.Entities
                             return;
                         }
                     }
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("banks", "banknospace"), CustomColors.Error);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Banks.banknospace, CustomColors.Error);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("banks", "depositinvalid"), CustomColors.Error);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Banks.depositinvalid, CustomColors.Error);
                 }
             }
         }
@@ -1687,13 +1688,13 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
 
-                /* If we don't have a slot send an error. */
-                if (inventorySlot < 0)
-                {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("banks", "inventorynospace"),
-                        CustomColors.Error);
-                    return; //Panda forgot this :P
-                }
+                    /* If we don't have a slot send an error. */
+                    if (inventorySlot < 0)
+                    {
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Banks.inventorynospace,
+                            CustomColors.Error);
+                        return; //Panda forgot this :P
+                    }
 
                 /* Move the items to the inventory */
                 Debug.Assert(Inventory[inventorySlot] != null, "Inventory[inventorySlot] != null");
@@ -1716,12 +1717,13 @@ namespace Intersect.Server.Classes.Entities
                     bankSlotItem.ItemVal -= amount;
                 }
 
-                PacketSender.SendInventoryItemUpdate(MyClient, inventorySlot);
-                PacketSender.SendBankUpdate(MyClient, slot);
-            }
-            else
-            {
-                PacketSender.SendPlayerMsg(MyClient, Strings.Get("banks", "withdrawinvalid"), CustomColors.Error);
+                    PacketSender.SendInventoryItemUpdate(MyClient, inventorySlot);
+                    PacketSender.SendBankUpdate(MyClient, slot);
+                }
+                else
+                {
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Banks.withdrawinvalid, CustomColors.Error);
+                }
             }
         }
 
@@ -1813,7 +1815,7 @@ namespace Intersect.Server.Classes.Entities
                     //Make Sure we are not Storing a Bag inside of itself
                     if (Inventory[slot].BagId == InBag)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("bags", "baginself"), CustomColors.Error);
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Bags.baginself, CustomColors.Error);
                         return;
                     }
 
@@ -1868,11 +1870,11 @@ namespace Intersect.Server.Classes.Entities
                             return;
                         }
                     }
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("bags", "bagnospace"), CustomColors.Error);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Bags.bagnospace, CustomColors.Error);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("bags", "depositinvalid"), CustomColors.Error);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Bags.depositinvalid, CustomColors.Error);
                 }
             }
         }
@@ -1929,7 +1931,7 @@ namespace Intersect.Server.Classes.Entities
                     /* If we don't have a slot send an error. */
                     if (inventorySlot < 0)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("bags", "inventorynospace"),
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Bags.inventorynospace,
                             CustomColors.Error);
                         return; //Panda forgot this :P
                     }
@@ -1959,7 +1961,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("bags", "withdrawinvalid"), CustomColors.Error);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Bags.withdrawinvalid, CustomColors.Error);
                 }
             }
         }
@@ -2005,12 +2007,12 @@ namespace Intersect.Server.Classes.Entities
                 {
                     FriendRequester = fromPlayer;
                     PacketSender.SendFriendRequest(MyClient, fromPlayer);
-                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Get("friends", "sent"),
+                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Friends.sent,
                         CustomColors.RequestSent);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Get("friends", "busy", MyName),
+                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Friends.busy.ToString( MyName),
                         CustomColors.Error);
                 }
             }
@@ -2025,7 +2027,7 @@ namespace Intersect.Server.Classes.Entities
             }
             if (TradeRequests.ContainsKey(fromPlayer) && TradeRequests[fromPlayer] > Globals.System.GetTimeMs())
             {
-                PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Get("trading", "alreadydenied"),
+                PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Trading.alreadydenied,
                     CustomColors.Error);
             }
             else
@@ -2037,7 +2039,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Get("trading", "busy", MyName),
+                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Trading.busy.ToString( MyName),
                         CustomColors.Error);
                 }
             }
@@ -2070,7 +2072,7 @@ namespace Intersect.Server.Classes.Entities
                         {
                             if (!Database.BagEmpty(Inventory[slot].BagId))
                             {
-                                PacketSender.SendPlayerMsg(MyClient, Strings.Get("bags", "onlytradeempty"),
+                                PacketSender.SendPlayerMsg(MyClient, Strings.Bags.onlytradeempty,
                                     CustomColors.Error);
                                 return;
                             }
@@ -2128,11 +2130,11 @@ namespace Intersect.Server.Classes.Entities
                             return;
                         }
                     }
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading", "tradenosapce"), CustomColors.Error);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Trading.tradenospace, CustomColors.Error);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading", "offerinvalid"), CustomColors.Error);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Trading.offerinvalid, CustomColors.Error);
                 }
             }
         }
@@ -2149,7 +2151,7 @@ namespace Intersect.Server.Classes.Entities
 
             if (Trade[slot] == null || Trade[slot].ItemNum < 0)
             {
-                PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading", "revokeinvalid"), CustomColors.Error);
+                PacketSender.SendPlayerMsg(MyClient, Strings.Trading.revokeinvalid, CustomColors.Error);
                 return;
             }
 
@@ -2184,7 +2186,7 @@ namespace Intersect.Server.Classes.Entities
             /* If we don't have a slot send an error. */
             if (inventorySlot < 0)
             {
-                PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading", "inventorynosapce"), CustomColors.Error);
+                PacketSender.SendPlayerMsg(MyClient, Strings.Trading.inventorynospace, CustomColors.Error);
             }
 
             /* Move the items to the inventory */
@@ -2223,7 +2225,7 @@ namespace Intersect.Server.Classes.Entities
                     {
                         MapInstance.Lookup.Get<MapInstance>(CurrentMap)
                             .SpawnItem(CurrentX, CurrentY, Trade[i], Trade[i].ItemVal);
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading", "itemsdropped"),
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Trading.itemsdropped,
                             CustomColors.Error);
                     }
                     Trade[i].ItemNum = 0;
@@ -2238,9 +2240,9 @@ namespace Intersect.Server.Classes.Entities
             if (Trading < 0) return;
             ReturnTradeItems();
             ((Player)Globals.Entities[Trading]).ReturnTradeItems();
-            PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading", "declined"), CustomColors.Error);
+            PacketSender.SendPlayerMsg(MyClient, Strings.Trading.declined, CustomColors.Error);
             PacketSender.SendPlayerMsg(((Player)Globals.Entities[Trading]).MyClient,
-                Strings.Get("trading", "declined"),
+                Strings.Trading.declined,
                 CustomColors.Error);
             PacketSender.SendTradeClose(((Player)Globals.Entities[Trading]).MyClient);
             PacketSender.SendTradeClose(MyClient);
@@ -2257,7 +2259,7 @@ namespace Intersect.Server.Classes.Entities
             }
             if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Globals.System.GetTimeMs())
             {
-                PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Get("parties", "alreadydenied"),
+                PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Parties.alreadydenied,
                     CustomColors.Error);
             }
             else
@@ -2269,7 +2271,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Get("parties", "busy", MyName),
+                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Parties.busy.ToString( MyName),
                         CustomColors.Error);
                 }
             }
@@ -2286,7 +2288,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (Party[0] != this)
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("parties", "leaderinvonly"), CustomColors.Error);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Parties.leaderinvonly, CustomColors.Error);
                     return;
                 }
 
@@ -2309,13 +2311,13 @@ namespace Intersect.Server.Classes.Entities
                 {
                     Party[i].Party = Party;
                     PacketSender.SendParty(Party[i].MyClient);
-                    PacketSender.SendPlayerMsg(Party[i].MyClient, Strings.Get("parties", "joined", target.MyName),
+                    PacketSender.SendPlayerMsg(Party[i].MyClient, Strings.Parties.joined.ToString( target.MyName),
                         CustomColors.Accepted);
                 }
             }
             else
             {
-                PacketSender.SendPlayerMsg(MyClient, Strings.Get("parties", "limitreached"), CustomColors.Error);
+                PacketSender.SendPlayerMsg(MyClient, Strings.Parties.limitreached, CustomColors.Error);
             }
         }
 
@@ -2328,7 +2330,7 @@ namespace Intersect.Server.Classes.Entities
                     var oldMember = Party[target];
                     oldMember.Party = new List<Player>();
                     PacketSender.SendParty(oldMember.MyClient);
-                    PacketSender.SendPlayerMsg(oldMember.MyClient, Strings.Get("parties", "kicked"),
+                    PacketSender.SendPlayerMsg(oldMember.MyClient, Strings.Parties.kicked,
                         CustomColors.Error);
                     Party.RemoveAt(target);
 
@@ -2340,7 +2342,7 @@ namespace Intersect.Server.Classes.Entities
                             Party[i].Party = Party;
                             PacketSender.SendParty(Party[i].MyClient);
                             PacketSender.SendPlayerMsg(Party[i].MyClient,
-                                Strings.Get("parties", "memberkicked", oldMember.MyName), CustomColors.Error);
+                                Strings.Parties.memberkicked.ToString( oldMember.MyName), CustomColors.Error);
                         }
                     }
                     else if (Party.Count > 0) //Check if anyone is left on their own
@@ -2348,7 +2350,7 @@ namespace Intersect.Server.Classes.Entities
                         var remainder = Party[0];
                         remainder.Party.Clear();
                         PacketSender.SendParty(remainder.MyClient);
-                        PacketSender.SendPlayerMsg(remainder.MyClient, Strings.Get("parties", "disbanded"),
+                        PacketSender.SendPlayerMsg(remainder.MyClient, Strings.Parties.disbanded,
                             CustomColors.Error);
                     }
                 }
@@ -2370,7 +2372,7 @@ namespace Intersect.Server.Classes.Entities
                         Party[i].Party = Party;
                         PacketSender.SendParty(Party[i].MyClient);
                         PacketSender.SendPlayerMsg(Party[i].MyClient,
-                            Strings.Get("parties", "memberleft", oldMember.MyName), CustomColors.Error);
+                            Strings.Parties.memberleft.ToString( oldMember.MyName), CustomColors.Error);
                     }
                 }
                 else if (Party.Count > 0) //Check if anyone is left on their own
@@ -2378,13 +2380,13 @@ namespace Intersect.Server.Classes.Entities
                     var remainder = Party[0];
                     remainder.Party.Clear();
                     PacketSender.SendParty(remainder.MyClient);
-                    PacketSender.SendPlayerMsg(remainder.MyClient, Strings.Get("parties", "disbanded"),
+                    PacketSender.SendPlayerMsg(remainder.MyClient, Strings.Parties.disbanded,
                         CustomColors.Error);
                 }
             }
             Party.Clear();
             PacketSender.SendParty(MyClient);
-            PacketSender.SendPlayerMsg(MyClient, Strings.Get("parties", "left"), CustomColors.Error);
+            PacketSender.SendPlayerMsg(MyClient, Strings.Parties.left, CustomColors.Error);
         }
 
         public bool InParty(Player member)
@@ -2512,7 +2514,7 @@ namespace Intersect.Server.Classes.Entities
 
                 if (!EventInstance.MeetsConditionLists(spell.CastingReqs, this, null))
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "dynamicreq"));
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Combat.dynamicreq);
                     return;
                 }
 
@@ -2522,12 +2524,12 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (status.Type == (int)StatusTypes.Silence)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "silenced"));
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Combat.silenced);
                         return;
                     }
                     if (status.Type == (int)StatusTypes.Stun)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "stunned"));
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Combat.stunned);
                         return;
                     }
                 }
@@ -2543,7 +2545,7 @@ namespace Intersect.Server.Classes.Entities
                         if (FindItem(projectileBase.Ammo, projectileBase.AmmoRequired) == -1)
                         {
                             PacketSender.SendPlayerMsg(MyClient,
-                                Strings.Get("items", "notenough", ItemBase.GetName(projectileBase.Ammo)),
+                                Strings.Items.notenough.ToString( ItemBase.GetName(projectileBase.Ammo)),
                                 CustomColors.Error);
                             return;
                         }
@@ -2554,7 +2556,7 @@ namespace Intersect.Server.Classes.Entities
                     ((spell.SpellType == (int)SpellTypes.CombatSpell &&
                       spell.TargetType == (int)SpellTargetTypes.Single) || spell.SpellType == (int)SpellTypes.WarpTo))
                 {
-                    PacketSender.SendActionMsg(this, Strings.Get("combat", "notarget"), CustomColors.NoTarget);
+                    PacketSender.SendActionMsg(this, Strings.Combat.notarget, CustomColors.NoTarget);
                     return;
                 }
 
@@ -2564,7 +2566,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (!InRangeOf(Target, spell.CastRange))
                     {
-                        PacketSender.SendActionMsg(this, Strings.Get("combat", "targetoutsiderange"),
+                        PacketSender.SendActionMsg(this, Strings.Combat.targetoutsiderange,
                             CustomColors.NoTarget);
                         return;
                     }
@@ -2611,22 +2613,22 @@ namespace Intersect.Server.Classes.Entities
                             }
                             else
                             {
-                                PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "channeling"));
+                                PacketSender.SendPlayerMsg(MyClient, Strings.Combat.channeling);
                             }
                         }
                         else
                         {
-                            PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "cooldown"));
+                            PacketSender.SendPlayerMsg(MyClient, Strings.Combat.cooldown);
                         }
                     }
                     else
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "lowhealth"));
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Combat.lowhealth);
                     }
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "lowmana"));
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Combat.lowmana);
                 }
             }
         }
@@ -2842,7 +2844,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     StartCommonEvent(quest.StartEvent);
                 }
-                PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests", "started", quest.Name),
+                PacketSender.SendPlayerMsg(MyClient, Strings.Quests.started.ToString( quest.Name),
                     CustomColors.QuestStarted);
                 PacketSender.SendQuestProgress(this, quest.Index);
             }
@@ -2893,7 +2895,7 @@ namespace Intersect.Server.Classes.Entities
                 lock (mEventLock)
                 {
                     QuestOffers.Remove(questId);
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests", "declined", QuestBase.GetName(questId)),
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Quests.declined.ToString( QuestBase.GetName(questId)),
                         CustomColors.QuestDeclined);
                     foreach (var evt in EventLookup.Values)
                     {
@@ -2936,7 +2938,7 @@ namespace Intersect.Server.Classes.Entities
                         questProgress.TaskProgress = -1;
                         Quests[questId] = questProgress;
                         PacketSender.SendPlayerMsg(MyClient,
-                            Strings.Get("quests", "abandoned", QuestBase.GetName(questId)), Color.Red);
+                            Strings.Quests.abandoned.ToString( QuestBase.GetName(questId)), Color.Red);
                         PacketSender.SendQuestProgress(this, questId);
                     }
                 }
@@ -2958,7 +2960,7 @@ namespace Intersect.Server.Classes.Entities
                         {
                             if (quest.Tasks[i].Id == taskId)
                             {
-                                PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests", "taskcompleted"));
+                                PacketSender.SendPlayerMsg(MyClient, Strings.Quests.taskcompleted);
                                 if (i == quest.Tasks.Count - 1)
                                 {
                                     //Complete Quest
@@ -2974,7 +2976,7 @@ namespace Intersect.Server.Classes.Entities
                                     {
                                         StartCommonEvent(quest.EndEvent);
                                     }
-                                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests", "completed", quest.Name),
+                                    PacketSender.SendPlayerMsg(MyClient, Strings.Quests.completed.ToString( quest.Name),
                                         Color.Green);
                                 }
                                 else
@@ -2991,7 +2993,7 @@ namespace Intersect.Server.Classes.Entities
                                     {
                                         UpdateGatherItemQuests(quest.Tasks[i + 1].Data1);
                                     }
-                                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests", "updated", quest.Name),
+                                    PacketSender.SendPlayerMsg(MyClient, Strings.Quests.updated.ToString( quest.Name),
                                         CustomColors.TaskUpdated);
                                 }
                             }
@@ -3035,7 +3037,7 @@ namespace Intersect.Server.Classes.Entities
                                             Quests[questId] = questProg;
                                             PacketSender.SendQuestProgress(this, quest.Index);
                                             PacketSender.SendPlayerMsg(MyClient,
-                                                Strings.Get("quests", "itemtask", quest.Name, questProg.TaskProgress,
+                                                Strings.Quests.itemtask.ToString( quest.Name, questProg.taskProgress,
                                                     questTask.Data2, ItemBase.GetName(questTask.Data1)));
                                         }
                                     }

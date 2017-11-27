@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Intersect.Enums;
-using Intersect.Localization;
+using Intersect.Server.Classes.Localization;
 using Intersect.Server.Classes.Entities;
 using NCalc;
 using Newtonsoft.Json;
@@ -32,7 +32,7 @@ namespace Intersect.Server.Classes.General
             }
             catch (Exception ex)
             {
-                throw new Exception(Strings.Get("formulas", "missing"), ex);
+                throw new Exception(Strings.Formulas.missing, ex);
             }
         }
 

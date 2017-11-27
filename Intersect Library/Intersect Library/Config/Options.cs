@@ -98,7 +98,6 @@ namespace Intersect
             }
             File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(_options,Formatting.Indented));
             optionsCompressed = JsonConvert.SerializeObject(_options);
-            //TODO Validation
             return true;
         }
 

@@ -5,7 +5,8 @@ using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Server.Classes.Localization;
+using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Items;
 using Intersect.Server.Classes.Maps;
@@ -817,22 +818,22 @@ namespace Intersect.Server.Classes.Entities
 
                 if (enemy.Dir == (int) Directions.Left && d == (int) Directions.Right)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), CustomColors.Blocked);
+                    PacketSender.SendActionMsg(enemy, Strings.Combat.blocked, CustomColors.Blocked);
                     return;
                 }
                 else if (enemy.Dir == (int) Directions.Right && d == (int) Directions.Left)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), CustomColors.Blocked);
+                    PacketSender.SendActionMsg(enemy, Strings.Combat.blocked, CustomColors.Blocked);
                     return;
                 }
                 else if (enemy.Dir == (int) Directions.Up && d == (int) Directions.Down)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), CustomColors.Blocked);
+                    PacketSender.SendActionMsg(enemy, Strings.Combat.blocked, CustomColors.Blocked);
                     return;
                 }
                 else if (enemy.Dir == (int) Directions.Down && d == (int) Directions.Up)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "blocked"), CustomColors.Blocked);
+                    PacketSender.SendActionMsg(enemy, Strings.Combat.blocked, CustomColors.Blocked);
                     return;
                 }
             }
@@ -968,17 +969,16 @@ namespace Intersect.Server.Classes.Entities
                     statBuffTime = spellBase.Data2 * 100;
             }
 
-            //Handle other status effects
-            if (spellBase.Data3 > 0)
-            {
-                new StatusInstance(enemy, spellBase, spellBase.Data3, (spellBase.Data2 * 100), spellBase.Data5);
-                PacketSender.SendActionMsg(enemy, Strings.Get("combat", "status" + spellBase.Data3),
-                    CustomColors.Status);
-            }
-            else
-            {
-                if (statBuffTime > -1) new StatusInstance(enemy, spellBase, -1, statBuffTime, "");
-            }
+                //Handle other status effects
+                if (spellBase.Data3 > 0)
+                {
+                    new StatusInstance(enemy, spellBase, spellBase.Data3, (spellBase.Data2 * 100), spellBase.Data5);
+                    PacketSender.SendActionMsg(enemy, Strings.Combat.status[spellBase.Data3], CustomColors.Status);
+                }
+                else
+                {
+                    if (statBuffTime > -1) new StatusInstance(enemy, spellBase, -1, statBuffTime, "");
+                }
 
             //Handle DoT/HoT spells]
             if (spellBase.Data1 > 0)
@@ -1038,7 +1038,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (status.Type == (int) StatusTypes.Stun || status.Type == (int) StatusTypes.Blind)
                     {
-                        PacketSender.SendActionMsg(this, Strings.Get("combat", "miss"), CustomColors.Missed);
+                        PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Missed);
                         PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, CurrentMap,
                             CalculateAttackTime());
                         return;
@@ -1105,7 +1105,7 @@ namespace Intersect.Server.Classes.Entities
             }
             else
             {
-                PacketSender.SendActionMsg(enemy, Strings.Get("combat", "critical"), CustomColors.Critical);
+                PacketSender.SendActionMsg(enemy, Strings.Combat.critical, CustomColors.Critical);
             }
 
             //Calculate Damages
@@ -1120,15 +1120,15 @@ namespace Intersect.Server.Classes.Entities
                     switch (damageType)
                     {
                         case DamageType.Physical:
-                            PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int) baseDamage,
+                            PacketSender.SendActionMsg(enemy, Strings.Combat.removesymbol + (int) baseDamage,
                                 CustomColors.PhysicalDamage);
                             break;
                         case DamageType.Magic:
-                            PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int) baseDamage,
+                            PacketSender.SendActionMsg(enemy, Strings.Combat.removesymbol + (int) baseDamage,
                                 CustomColors.MagicDamage);
                             break;
                         case DamageType.True:
-                            PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int) baseDamage,
+                            PacketSender.SendActionMsg(enemy, Strings.Combat.removesymbol + (int) baseDamage,
                                 CustomColors.TrueDamage);
                             break;
                     }
@@ -1137,7 +1137,7 @@ namespace Intersect.Server.Classes.Entities
                 else if (baseDamage < 0 && enemy.Vital[(int)Vitals.Health] < enemy.MaxVital[(int)Vitals.Health])
                 {
                     enemy.Vital[(int)Vitals.Health] -= (int)baseDamage;
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) Math.Abs(baseDamage),
+                    PacketSender.SendActionMsg(enemy, Strings.Combat.addsymbol + (int) Math.Abs(baseDamage),
                         CustomColors.Heal);
                 }
             }
@@ -1150,12 +1150,14 @@ namespace Intersect.Server.Classes.Entities
                     //If we took damage lets reset our combat timer
                     enemy.Vital[(int)Vitals.Mana] -= (int)secondaryDamage;
                     enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int)secondaryDamage, CustomColors.RemoveMana);
+                    PacketSender.SendActionMsg(enemy, Strings.Combat.removesymbol + (int)secondaryDamage,
+                        CustomColors.RemoveMana);
                 }
                 else if (secondaryDamage < 0 && enemy.Vital[(int)Vitals.Mana] < enemy.MaxVital[(int)Vitals.Mana])
                 {
                     enemy.Vital[(int)Vitals.Mana] -= (int)secondaryDamage;
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) Math.Abs(secondaryDamage), CustomColors.AddMana);
+                    PacketSender.SendActionMsg(enemy, Strings.Combat.addsymbol + (int) Math.Abs(secondaryDamage),
+                        CustomColors.AddMana);
                 }
             }
 
@@ -1285,7 +1287,7 @@ namespace Intersect.Server.Classes.Entities
                         HandleAoESpell(spellNum, spellBase.CastRange, CurrentMap, CurrentX, CurrentY, CastTarget);
                         break;
                     case (int) SpellTypes.Dash:
-                        PacketSender.SendActionMsg(this, Strings.Get("combat", "dash"), CustomColors.Dash);
+                        PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Dash);
                         var dash = new DashInstance(this, spellBase.CastRange, Dir, Convert.ToBoolean(spellBase.Data1),
                             Convert.ToBoolean(spellBase.Data2), Convert.ToBoolean(spellBase.Data3),
                             Convert.ToBoolean(spellBase.Data4));
