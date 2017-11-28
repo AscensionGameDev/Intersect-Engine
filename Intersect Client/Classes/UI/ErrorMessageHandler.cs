@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.UI.Game;
@@ -31,7 +31,7 @@ namespace Intersect_Client.Classes.UI
                 mErrors.Add(new GuiError(mGameCanvas, mMenuCanvas, Gui.MsgboxErrors[0].Value,
                     !string.IsNullOrEmpty(Gui.MsgboxErrors[0].Key)
                         ? Gui.MsgboxErrors[0].Key
-                        : Strings.Get("errors", "title")));
+                        : Strings.Errors.title.ToString()));
                 Gui.MsgboxErrors.RemoveAt(0);
             }
             for (int i = 0; i < mErrors.Count; i++)

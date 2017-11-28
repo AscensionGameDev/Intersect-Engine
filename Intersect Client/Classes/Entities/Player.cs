@@ -5,7 +5,7 @@ using Intersect.Client.Classes.Core;
 using Intersect.Client.Classes.Entities;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
@@ -175,8 +175,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Inventory[index].ItemVal > 1)
                 {
-                    InputBox iBox = new InputBox(Strings.Get("inventory", "dropitem"),
-                        Strings.Get("inventory", "dropitemprompt",
+                    InputBox iBox = new InputBox(Strings.Inventory.dropitem,
+                        Strings.Inventory.dropitemprompt.ToString(
                             ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name),
                         true, InputBox.InputType.TextInput, DropItemInputBoxOkay, null, index);
                 }
@@ -246,8 +246,8 @@ namespace Intersect_Client.Classes.Entities
                 {
                     if (Inventory[index].ItemVal > 1)
                     {
-                        InputBox iBox = new InputBox(Strings.Get("shop", "sellitem"),
-                            Strings.Get("shop", "sellitemprompt",
+                        InputBox iBox = new InputBox(Strings.Shop.sellitem,
+                            Strings.Shop.sellitemprompt.ToString(
                                 ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
                             InputBox.InputType.TextInput,
                             SellItemInputBoxOkay, null, index);
@@ -259,7 +259,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 else
                 {
-                    InputBox iBox = new InputBox(Strings.Get("shop", "sellitem"), Strings.Get("shop", "cannotsell"),
+                    InputBox iBox = new InputBox(Strings.Shop.sellitem, Strings.Shop.cannotsell,
                         true, InputBox.InputType.OkayOnly, null, null, -1);
                 }
             }
@@ -281,8 +281,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Inventory[index].ItemVal > 1)
                 {
-                    InputBox iBox = new InputBox(Strings.Get("bank", "deposititem"),
-                        Strings.Get("bank", "deposititemprompt",
+                    InputBox iBox = new InputBox(Strings.Bank.deposititem,
+                        Strings.Bank.deposititemprompt.ToString(
                             ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
                         InputBox.InputType.TextInput,
                         DepositItemInputBoxOkay, null, index);
@@ -309,8 +309,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Globals.Bank[index].ItemVal > 1)
                 {
-                    InputBox iBox = new InputBox(Strings.Get("bank", "withdrawitem"),
-                        Strings.Get("bank", "withdrawitemprompt",
+                    InputBox iBox = new InputBox(Strings.Bank.withdrawitem,
+                        Strings.Bank.withdrawitemprompt.ToString(
                             ItemBase.Lookup.Get<ItemBase>(Globals.Bank[index].ItemNum).Name),
                         true, InputBox.InputType.TextInput, WithdrawItemInputBoxOkay, null, index);
                 }
@@ -337,8 +337,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Inventory[index].ItemVal > 1)
                 {
-                    InputBox iBox = new InputBox(Strings.Get("bags", "storeitem"),
-                        Strings.Get("bags", "storeitemprompt",
+                    InputBox iBox = new InputBox(Strings.Bags.storeitem,
+                        Strings.Bags.storeitemprompt.ToString(
                             ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
                         InputBox.InputType.TextInput,
                         StoreBagItemInputBoxOkay, null, index);
@@ -365,8 +365,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Globals.Bag[index].ItemVal > 1)
                 {
-                    InputBox iBox = new InputBox(Strings.Get("bags", "retreiveitem"),
-                        Strings.Get("bags", "retreiveitemprompt",
+                    InputBox iBox = new InputBox(Strings.Bags.retreiveitem,
+                        Strings.Bags.retreiveitemprompt.ToString(
                             ItemBase.Lookup.Get<ItemBase>(Globals.Bag[index].ItemNum).Name),
                         true, InputBox.InputType.TextInput, RetreiveBagItemInputBoxOkay, null, index);
                 }
@@ -393,8 +393,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Inventory[index].ItemVal > 1)
                 {
-                    InputBox iBox = new InputBox(Strings.Get("trading", "offeritem"),
-                        Strings.Get("trading", "offeritemprompt",
+                    InputBox iBox = new InputBox(Strings.Trading.offeritem,
+                        Strings.Trading.offeritemprompt.ToString(
                             ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true,
                         InputBox.InputType.TextInput,
                         TradeItemInputBoxOkay, null, index);
@@ -422,8 +422,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Globals.Trade[0, index].ItemVal > 1)
                 {
-                    InputBox iBox = new InputBox(Strings.Get("trading", "revokeitem"),
-                        Strings.Get("trading", "revokeitemprompt",
+                    InputBox iBox = new InputBox(Strings.Trading.revokeitem,
+                        Strings.Trading.revokeitemprompt.ToString(
                             ItemBase.Lookup.Get<ItemBase>(Globals.Trade[0, index].ItemNum).Name), true,
                         InputBox.InputType.TextInput, RevokeItemInputBoxOkay, null,
                         index);
@@ -456,8 +456,8 @@ namespace Intersect_Client.Classes.Entities
         {
             if (SpellBase.Lookup.Get<SpellBase>(Spells[index].SpellNum) != null)
             {
-                InputBox iBox = new InputBox(Strings.Get("spells", "forgetspell"),
-                    Strings.Get("spells", "forgetspellprompt",
+                InputBox iBox = new InputBox(Strings.Spells.forgetspell,
+                    Strings.Spells.forgetspellprompt.ToString(
                         SpellBase.Lookup.Get<SpellBase>(Spells[index].SpellNum).Name), true, InputBox.InputType.YesNo,
                     ForgetSpellInputBoxOkay, null, index);
             }

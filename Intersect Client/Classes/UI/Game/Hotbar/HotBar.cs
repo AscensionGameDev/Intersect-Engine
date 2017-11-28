@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Intersect;
 using Intersect.Client.Classes.Core;
 using Intersect.Client.Classes.UI.Game.Hotbar;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
@@ -34,8 +34,7 @@ namespace Intersect_Client.Classes.UI.Game
                 Items.Add(new HotbarItem(i, HotbarWindow));
                 Items[i].Pnl = new ImagePanel(HotbarWindow, "HotbarContainer" + i);
                 Items[i].KeyLabel = new Label(Items[i].Pnl, "HotbarLabel" + i);
-                Items[i].KeyLabel.SetText(Strings.Get("keys",
-                    Enum.GetName(typeof(Keys), GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + i].Key1)));
+                Items[i].KeyLabel.SetText(Strings.Keys.keydict[Enum.GetName(typeof(Keys), GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + i].Key1).ToLower()]);
                 Items[i].Setup();
             }
         }

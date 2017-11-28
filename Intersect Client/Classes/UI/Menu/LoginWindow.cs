@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using Intersect.Utilities;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -51,13 +51,13 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Menu Header
             mLoginHeader = new Label(mLoginWindow, "LoginHeader");
-            mLoginHeader.SetText(Strings.Get("login", "title"));
+            mLoginHeader.SetText(Strings.Login.title);
 
             mUsernameBackground = new ImagePanel(mLoginWindow, "UsernamePanel");
 
             //Login Username Label
             mUsernameLabel = new Label(mUsernameBackground, "UsernameLabel");
-            mUsernameLabel.SetText(Strings.Get("login", "username"));
+            mUsernameLabel.SetText(Strings.Login.username);
 
             //Login Username Textbox
             mUsernameTextbox = new TextBox(mUsernameBackground, "UsernameField");
@@ -68,7 +68,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Login Password Label
             mPasswordLabel = new Label(mPasswordBackground, "PasswordLabel");
-            mPasswordLabel.SetText(Strings.Get("login", "password"));
+            mPasswordLabel.SetText(Strings.Login.password);
 
             //Login Password Textbox
             mPasswordTextbox = new TextBoxPassword(mPasswordBackground, "PasswordField");
@@ -77,16 +77,16 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Login Save Pass Checkbox
             mSavePassChk =
-                new LabeledCheckBox(mLoginWindow, "SavePassCheckbox") {Text = Strings.Get("login", "savepass")};
+                new LabeledCheckBox(mLoginWindow, "SavePassCheckbox") {Text = Strings.Login.savepass};
 
             //Login - Send Login Button
             mLoginBtn = new Button(mLoginWindow, "LoginButton");
-            mLoginBtn.SetText(Strings.Get("login", "login"));
+            mLoginBtn.SetText(Strings.Login.login);
             mLoginBtn.Clicked += LoginBtn_Clicked;
 
             //Login - Back Button
             mBackBtn = new Button(mLoginWindow, "BackButton");
-            mBackBtn.SetText(Strings.Get("login", "back"));
+            mBackBtn.SetText(Strings.Login.back);
             mBackBtn.Clicked += BackBtn_Clicked;
 
             LoadCredentials();
@@ -149,7 +149,7 @@ namespace Intersect_Client.Classes.UI.Menu
             }
             if (GameNetwork.Connected)
             {
-                if (FieldChecking.IsValidUsername(mUsernameTextbox.Text))
+                if (FieldChecking.IsValidUsername(mUsernameTextbox.Text, Strings.Regex.username))
                 {
                     if (mUseSavedPass)
                     {
@@ -160,7 +160,7 @@ namespace Intersect_Client.Classes.UI.Menu
                     }
                     else
                     {
-                        if (FieldChecking.IsValidPassword(mPasswordTextbox.Text))
+                        if (FieldChecking.IsValidPassword(mPasswordTextbox.Text, Strings.Regex.password))
                         {
                             GameFade.FadeOut();
                             PacketSender.SendLogin(mUsernameTextbox.Text,
@@ -173,19 +173,19 @@ namespace Intersect_Client.Classes.UI.Menu
                         else
                         {
                             Gui.MsgboxErrors.Add(
-                                new KeyValuePair<string, string>("", Strings.Get("errors", "passwordinvalid")));
+                                new KeyValuePair<string, string>("", Strings.Errors.passwordinvalid));
                         }
                     }
                 }
                 else
                 {
                     Gui.MsgboxErrors.Add(
-                        new KeyValuePair<string, string>("", Strings.Get("errors", "usernameinvalid")));
+                        new KeyValuePair<string, string>("", Strings.Errors.usernameinvalid));
                 }
             }
             else
             {
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("errors", "notconnected")));
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
             }
         }
 

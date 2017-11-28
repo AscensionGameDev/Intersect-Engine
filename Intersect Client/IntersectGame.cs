@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using Intersect.Client.Classes.Core;
 using Intersect.Client.Classes.MonoGame.Network;
 using Intersect.Config;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using Intersect.Logging;
 using Intersect.Utilities;
 using IntersectClientExtras.Gwen.Input;
@@ -53,7 +53,8 @@ namespace Intersect.Client
             File.WriteAllText("resources/config.json", ClientOptions.GetJson());
 
             Globals.Database.LoadPreferences();
-            Strings.Init(Strings.IntersectComponent.Client,ClientOptions.Language);
+            Strings.Load(ClientOptions.Language);
+            
             Gui.ActiveFont = TextUtils.StripToLower(ClientOptions.Font);
             Globals.InputManager = new MonoInput(this);
 

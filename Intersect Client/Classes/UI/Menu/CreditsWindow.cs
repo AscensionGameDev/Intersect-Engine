@@ -1,5 +1,5 @@
 ﻿using Intersect.Client.Classes.UI.Menu;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
@@ -34,7 +34,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Menu Header
             mCreditsHeader = new Label(mCreditsWindow, "CreditsHeader");
-            mCreditsHeader.SetText(Strings.Get("credits", "title"));
+            mCreditsHeader.SetText(Strings.Credits.title);
 
             mCreditsContent = new ScrollControl(mCreditsWindow, "CreditsScrollview");
             mCreditsContent.EnableScroll(false, true);
@@ -57,7 +57,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Back Button
             mBackBtn = new Button(mCreditsWindow, "BackButton");
-            mBackBtn.SetText(Strings.Get("credits", "back"));
+            mBackBtn.SetText(Strings.Credits.back);
             mBackBtn.Clicked += BackBtn_Clicked;
         }
 

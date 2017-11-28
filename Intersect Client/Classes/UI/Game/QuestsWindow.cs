@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
@@ -31,7 +31,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public QuestsWindow(Canvas gameCanvas)
         {
-            mQuestsWindow = new WindowControl(gameCanvas, Strings.Get("questlog", "title"), false, "QuestsWindow");
+            mQuestsWindow = new WindowControl(gameCanvas, Strings.QuestLog.title, false, "QuestsWindow");
             mQuestsWindow.DisableResizing();
 
             mQuestList = new ListBox(mQuestsWindow, "QuestList");
@@ -53,7 +53,7 @@ namespace Intersect_Client.Classes.UI.Game
             mBackButton.Clicked += _backButton_Clicked;
 
             mQuitButton = new Button(mQuestsWindow, "AbandonQuestButton");
-            mQuitButton.SetText(Strings.Get("questlog", "abandon"));
+            mQuitButton.SetText(Strings.QuestLog.abandon);
             mQuitButton.Clicked += _quitButton_Clicked;
         }
 
@@ -61,8 +61,8 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (mSelectedQuest != null)
             {
-                new InputBox(Strings.Get("questlog", "abandontitle", mSelectedQuest.Name),
-                    Strings.Get("questlog", "abandonprompt", mSelectedQuest.Name), true, InputBox.InputType.YesNo,
+                new InputBox(Strings.QuestLog.abandontitle.ToString(mSelectedQuest.Name),
+                    Strings.QuestLog.abandonprompt.ToString(mSelectedQuest.Name), true, InputBox.InputType.YesNo,
                     AbandonQuest, null,
                     mSelectedQuest.Index);
             }
@@ -223,7 +223,7 @@ namespace Intersect_Client.Classes.UI.Game
                     if (Globals.Me.QuestProgress[mSelectedQuest.Index].Task != -1)
                     {
                         //In Progress
-                        mQuestStatus.SetText(Strings.Get("questlog", "inprogress"));
+                        mQuestStatus.SetText(Strings.QuestLog.inprogress);
                         mQuestStatus.SetTextColor(Color.Yellow, Label.ControlState.Normal);
                         if (mSelectedQuest.InProgressDesc.Length > 0)
                         {
@@ -232,7 +232,7 @@ namespace Intersect_Client.Classes.UI.Game
                             mQuestDescLabel.AddLineBreak();
                             mQuestDescLabel.AddLineBreak();
                         }
-                        mQuestDescLabel.AddText(Strings.Get("questlog", "currenttask"), Color.White, Alignments.Left,
+                        mQuestDescLabel.AddText(Strings.QuestLog.currenttask, Color.White, Alignments.Left,
                             mQuestDescTemplateLabel.Font);
                         mQuestDescLabel.AddLineBreak();
                         for (int i = 0; i < mSelectedQuest.Tasks.Count; i++)
@@ -248,7 +248,7 @@ namespace Intersect_Client.Classes.UI.Game
                                 }
                                 if (mSelectedQuest.Tasks[i].Objective == 1) //Gather Items
                                 {
-                                    mQuestDescLabel.AddText(Strings.Get("questlog", "taskitem",
+                                    mQuestDescLabel.AddText(Strings.QuestLog.taskitem.ToString(
                                             Globals.Me.QuestProgress[mSelectedQuest.Index].TaskProgress,
                                             mSelectedQuest.Tasks[i].Data2,
                                             ItemBase.GetName(mSelectedQuest.Tasks[i].Data1)),
@@ -256,7 +256,7 @@ namespace Intersect_Client.Classes.UI.Game
                                 }
                                 else if (mSelectedQuest.Tasks[i].Objective == 2) //Kill Npcs
                                 {
-                                    mQuestDescLabel.AddText(Strings.Get("questlog", "tasknpc",
+                                    mQuestDescLabel.AddText(Strings.QuestLog.tasknpc.ToString(
                                             Globals.Me.QuestProgress[mSelectedQuest.Index].TaskProgress,
                                             mSelectedQuest.Tasks[i].Data2,
                                             NpcBase.GetName(mSelectedQuest.Tasks[i].Data1)),
@@ -276,7 +276,7 @@ namespace Intersect_Client.Classes.UI.Game
                             //Completed
                             if (mSelectedQuest.LogAfterComplete == 1)
                             {
-                                mQuestStatus.SetText(Strings.Get("questlog", "completed"));
+                                mQuestStatus.SetText(Strings.QuestLog.completed);
                                 mQuestStatus.SetTextColor(Color.Green, Label.ControlState.Normal);
                                 mQuestDescLabel.AddText(mSelectedQuest.EndDesc, Color.White, Alignments.Left,
                                     mQuestDescTemplateLabel.Font);
@@ -287,7 +287,7 @@ namespace Intersect_Client.Classes.UI.Game
                             //Not Started
                             if (mSelectedQuest.LogBeforeOffer == 1)
                             {
-                                mQuestStatus.SetText(Strings.Get("questlog", "notstarted"));
+                                mQuestStatus.SetText(Strings.QuestLog.notstarted);
                                 mQuestStatus.SetTextColor(Color.Red, Label.ControlState.Normal);
                                 mQuestDescLabel.AddText(mSelectedQuest.BeforeDesc, Color.White, Alignments.Left,
                                     mQuestDescTemplateLabel.Font);
@@ -301,7 +301,7 @@ namespace Intersect_Client.Classes.UI.Game
                     //Not Started
                     if (mSelectedQuest.LogBeforeOffer == 1)
                     {
-                        mQuestStatus.SetText(Strings.Get("questlog", "notstarted"));
+                        mQuestStatus.SetText(Strings.QuestLog.notstarted);
                         mQuestStatus.SetTextColor(Color.Red, Label.ControlState.Normal);
                         mQuestDescLabel.AddText(mSelectedQuest.BeforeDesc, Color.White, Alignments.Left,
                             mQuestDescTemplateLabel.Font);

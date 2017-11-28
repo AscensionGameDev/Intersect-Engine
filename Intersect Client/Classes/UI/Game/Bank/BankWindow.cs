@@ -2,7 +2,7 @@
 using Intersect;
 using Intersect.Client.Classes.UI.Game.Bank;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
@@ -32,7 +32,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public BankWindow(Canvas gameCanvas)
         {
-            mBankWindow = new WindowControl(gameCanvas, Strings.Get("bank", "title"), false, "BankWindow");
+            mBankWindow = new WindowControl(gameCanvas, Strings.Bank.title, false, "BankWindow");
             mBankWindow.DisableResizing();
             Gui.InputBlockingElements.Add(mBankWindow);
 

@@ -1,5 +1,5 @@
 ﻿using System;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -56,15 +56,15 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             mYesButton = new Button(mMyWindow, "YesButton");
-            mYesButton.SetText(Strings.Get("inputbox", "okay"));
+            mYesButton.SetText(Strings.InputBox.okay);
             mYesButton.Clicked += okayBtn_Clicked;
 
             mNoButton = new Button(mMyWindow, "NoButton");
-            mNoButton.SetText(Strings.Get("inputbox", "cancel"));
+            mNoButton.SetTextStrings.InputBox.cancel);
             mNoButton.Clicked += cancelBtn_Clicked;
 
             mOkayButton = new Button(mMyWindow, "OkayButton");
-            mOkayButton.SetText(Strings.Get("inputbox", "okay"));
+            mOkayButton.SetText(Strings.InputBox.okay);
             mOkayButton.Clicked += okayBtn_Clicked;
 
             mPromptLabel = new Label(mMyWindow, "PromptLabel");
@@ -93,8 +93,8 @@ namespace Intersect_Client.Classes.UI.Game
                 switch (mInputType)
                 {
                     case InputType.YesNo:
-                        mYesButton.Text = Strings.Get("inputbox", "yes");
-                        mNoButton.Text = Strings.Get("inputbox", "no");
+                        mYesButton.Text = Strings.InputBox.yes;
+                        mNoButton.Text = Strings.InputBox.no;
                         mOkayButton.Hide();
                         mYesButton.Show();
                         mNoButton.Show();

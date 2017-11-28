@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -52,15 +52,15 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Menu Header
             mCharacterSelectionHeader = new Label(mCharacterSelectionPanel, "CharacterSelectionHeader");
-            mCharacterSelectionHeader.SetText(Strings.Get("CharacterSelection", "title"));
+            mCharacterSelectionHeader.SetText(Strings.CharacterSelection.title);
 
             //Character Name
             mCharnameLabel = new Label(mCharacterSelectionPanel, "CharacterNameLabel");
-            mCharnameLabel.SetText(Strings.Get("CharacterSelection", "nochar"));
+            mCharnameLabel.SetText(Strings.CharacterSelection.empty);
 
             //Character Info
             mInfoLabel = new Label(mCharacterSelectionPanel, "CharacterInfoLabel");
-            mInfoLabel.SetText(Strings.Get("CharacterSelection", "new"));
+            mInfoLabel.SetText(Strings.CharacterSelection.New);
 
             //Character Container
             mCharacterContainer = new ImagePanel(mCharacterSelectionPanel, "CharacterContainer");
@@ -79,19 +79,19 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Play Button
             mPlayButton = new Button(mCharacterSelectionPanel, "PlayButton");
-            mPlayButton.SetText(Strings.Get("CharacterSelection", "play"));
+            mPlayButton.SetText(Strings.CharacterSelection.play);
             mPlayButton.Clicked += _playButton_Clicked;
             mPlayButton.Hide();
 
             //Delete Button
             mDeleteButton = new Button(mCharacterSelectionPanel, "DeleteButton");
-            mDeleteButton.SetText(Strings.Get("CharacterSelection", "delete"));
+            mDeleteButton.SetText(Strings.CharacterSelection.delete);
             mDeleteButton.Clicked += _deleteButton_Clicked;
             mDeleteButton.Hide();
 
             //Create new char Button
             mNewButton = new Button(mCharacterSelectionPanel, "NewButton");
-            mNewButton.SetText(Strings.Get("CharacterSelection", "new"));
+            mNewButton.SetText(Strings.CharacterSelection.New);
             mNewButton.Clicked += _newButton_Clicked;
         }
 
@@ -100,7 +100,7 @@ namespace Intersect_Client.Classes.UI.Menu
         {
             var isFace = true;
 
-            //Show and hide options based on the character count
+            //Show and hide Options based on the character count
             if (Characters.Count > 1)
             {
                 mNextCharButton.Show();
@@ -130,8 +130,8 @@ namespace Intersect_Client.Classes.UI.Menu
 
             if (Characters[mSelectedChar].Id > -1)
             {
-                mCharnameLabel.SetText(Strings.Get("CharacterSelection", "name", Characters[mSelectedChar].Name));
-                mInfoLabel.SetText(Strings.Get("CharacterSelection", "info", Characters[mSelectedChar].Level,
+                mCharnameLabel.SetText(Strings.CharacterSelection.name.ToString(Characters[mSelectedChar].Name));
+                mInfoLabel.SetText(Strings.CharacterSelection.info.ToString(Characters[mSelectedChar].Level,
                     Characters[mSelectedChar].Class));
                 mInfoLabel.Show();
                 mPlayButton.Show();
@@ -194,7 +194,7 @@ namespace Intersect_Client.Classes.UI.Menu
                 mDeleteButton.Hide();
                 mNewButton.Show();
 
-                mCharnameLabel.SetText(Strings.Get("CharacterSelection", "empty"));
+                mCharnameLabel.SetText(Strings.CharacterSelection.empty);
                 mInfoLabel.Hide();
 
                 mCharacterPortrait.Texture = null;
@@ -241,8 +241,8 @@ namespace Intersect_Client.Classes.UI.Menu
         private void _deleteButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             InputBox iBox =
-                new InputBox(Strings.Get("characterselection", "deletetitle", Characters[mSelectedChar].Name),
-                    Strings.Get("characterselection", "deleteprompt", Characters[mSelectedChar].Name),
+                new InputBox(Strings.CharacterSelection.deletetitle.ToString( Characters[mSelectedChar].Name),
+                    Strings.CharacterSelection.deleteprompt.ToString( Characters[mSelectedChar].Name),
                     true, InputBox.InputType.YesNo, DeleteCharacter, null, Characters[mSelectedChar].Id,
                     mCharacterSelectionPanel.Parent, "MainMenu.xml");
         }

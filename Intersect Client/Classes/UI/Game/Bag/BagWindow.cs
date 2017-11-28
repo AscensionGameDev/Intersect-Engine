@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Intersect.Client.Classes.UI.Game.Bag;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
@@ -25,7 +25,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public BagWindow(Canvas gameCanvas)
         {
-            mBagWindow = new WindowControl(gameCanvas, Strings.Get("bags", "title"), false, "BagWindow");
+            mBagWindow = new WindowControl(gameCanvas, Strings.Bags.title, false, "BagWindow");
             mBagWindow.DisableResizing();
             Gui.InputBlockingElements.Add(mBagWindow);
 

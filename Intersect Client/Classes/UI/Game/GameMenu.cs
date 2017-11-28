@@ -1,4 +1,4 @@
-﻿using Intersect.Localization;
+﻿using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
@@ -61,43 +61,43 @@ namespace Intersect_Client.Classes.UI.Game
 
             mInventoryBackground = new ImagePanel(mMenuContainer, "InventoryContainer");
             mInventoryButton = new Button(mInventoryBackground, "InventoryButton");
-            mInventoryButton.SetToolTipText(Strings.Get("gamemenu", "items"));
+            mInventoryButton.SetToolTipText(Strings.GameMenu.items);
             mInventoryButton.Clicked += InventoryButton_Clicked;
 
             mSpellsBackground = new ImagePanel(mMenuContainer, "SpellsContainer");
             mSpellsButton = new Button(mSpellsBackground, "SpellsButton");
-            mSpellsButton.SetToolTipText(Strings.Get("gamemenu", "spells"));
+            mSpellsButton.SetToolTipText(Strings.GameMenu.spells);
             mSpellsButton.Clicked += SpellsButton_Clicked;
 
             mCharacterBackground = new ImagePanel(mMenuContainer, "CharacterContainer");
             mCharacterButton = new Button(mCharacterBackground, "CharacterButton");
-            mCharacterButton.SetToolTipText(Strings.Get("gamemenu", "character"));
+            mCharacterButton.SetToolTipText(Strings.GameMenu.character);
             mCharacterButton.Clicked += CharacterButton_Clicked;
 
             mQuestsBackground = new ImagePanel(mMenuContainer, "QuestsContainer");
             mQuestsButton = new Button(mQuestsBackground, "QuestsButton");
-            mQuestsButton.SetToolTipText(Strings.Get("gamemenu", "quest"));
+            mQuestsButton.SetToolTipText(Strings.GameMenu.quest);
             mQuestsButton.Clicked += QuestBtn_Clicked;
 
             mFriendsBackground = new ImagePanel(mMenuContainer, "FriendsContainer");
             mFriendsButton = new Button(mFriendsBackground, "FriendsButton");
-            mFriendsButton.SetToolTipText(Strings.Get("gamemenu", "friends"));
+            mFriendsButton.SetToolTipText(Strings.GameMenu.friends);
             mFriendsButton.Clicked += FriendsBtn_Clicked;
 
             mPartyBackground = new ImagePanel(mMenuContainer, "PartyContainer");
             mPartyButton = new Button(mPartyBackground, "PartyButton");
-            mPartyButton.SetToolTipText(Strings.Get("gamemenu", "party"));
+            mPartyButton.SetToolTipText(Strings.GameMenu.party);
             mPartyButton.Clicked += PartyBtn_Clicked;
 
             mOptionsBackground = new ImagePanel(mMenuContainer, "OptionsContainer");
             mOptionsButton = new Button(mOptionsBackground, "OptionsButton");
-            mOptionsButton.SetToolTipText(Strings.Get("gamemenu", "options"));
+            mOptionsButton.SetToolTipText(Strings.GameMenu.options);
             mOptionsButton.Clicked += OptionBtn_Clicked;
 
             //Go in reverse order from the right
             mCloseBackground = new ImagePanel(mMenuContainer, "ExitGameContainer");
             mCloseButton = new Button(mCloseBackground, "ExitGameButton");
-            mCloseButton.SetToolTipText(Strings.Get("gamemenu", "exit"));
+            mCloseButton.SetToolTipText(Strings.GameMenu.exit);
             mCloseButton.Clicked += CloseBtn_Clicked;
 
             //Assign Window References

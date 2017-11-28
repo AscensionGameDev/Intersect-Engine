@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using Intersect.Utilities;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
@@ -64,14 +64,14 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Menu Header
             mCharCreationHeader = new Label(mCharCreationPanel, "CharacterCreationHeader");
-            mCharCreationHeader.SetText(Strings.Get("charactercreation", "title"));
+            mCharCreationHeader.SetText(Strings.CharacterCreation.title);
 
             //Character Name Background
             mCharacterNameBackground = new ImagePanel(mCharCreationPanel, "CharacterNamePanel");
 
             //Character name Label
             mCharnameLabel = new Label(mCharacterNameBackground, "CharacterNameLabel");
-            mCharnameLabel.SetText(Strings.Get("charactercreation", "name"));
+            mCharnameLabel.SetText(Strings.CharacterCreation.name);
 
             //Character name Textbox
             mCharnameTextbox = new TextBox(mCharacterNameBackground, "CharacterNameField");
@@ -82,7 +82,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Class Label
             mClassLabel = new Label(mClassBackground, "ClassLabel");
-            mClassLabel.SetText(Strings.Get("charactercreation", "class"));
+            mClassLabel.SetText(Strings.CharacterCreation.Class);
 
             //Class Combobox
             mClassCombobox = new ComboBox(mClassBackground, "ClassCombobox");
@@ -108,12 +108,12 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Gender Label
             mGenderLabel = new Label(mGenderBackground, "GenderLabel");
-            mGenderLabel.SetText(Strings.Get("charactercreation", "gender"));
+            mGenderLabel.SetText(Strings.CharacterCreation.gender);
 
             //Male Checkbox
             mMaleChk = new LabeledCheckBox(mGenderBackground, "MaleCheckbox")
             {
-                Text = Strings.Get("charactercreation", "male")
+                Text = Strings.CharacterCreation.male
             };
             mMaleChk.IsChecked = true;
             mMaleChk.Checked += maleChk_Checked;
@@ -123,14 +123,14 @@ namespace Intersect_Client.Classes.UI.Menu
             mFemaleChk =
                 new LabeledCheckBox(mGenderBackground, "FemaleCheckbox")
                 {
-                    Text = Strings.Get("charactercreation", "female")
+                    Text = Strings.CharacterCreation.female
                 };
             mFemaleChk.Checked += femaleChk_Checked;
             mFemaleChk.UnChecked += maleChk_Checked;
 
             //Register - Send Registration Button
             mCreateButton = new Button(mCharCreationPanel, "CreateButton");
-            mCreateButton.SetText(Strings.Get("charactercreation", "create"));
+            mCreateButton.SetText(Strings.CharacterCreation.create);
             mCreateButton.Clicked += CreateButton_Clicked;
         }
 
@@ -370,7 +370,7 @@ namespace Intersect_Client.Classes.UI.Menu
             {
                 return;
             }
-            if (FieldChecking.IsValidUsername(mCharnameTextbox.Text))
+            if (FieldChecking.IsValidUsername(mCharnameTextbox.Text, Strings.Regex.username))
             {
                 GameFade.FadeOut();
                 if (mMaleChk.IsChecked)
@@ -388,7 +388,7 @@ namespace Intersect_Client.Classes.UI.Menu
             else
             {
                 Gui.MsgboxErrors.Add(
-                    new KeyValuePair<string, string>("", Strings.Get("charactercreation", "invalidname")));
+                    new KeyValuePair<string, string>("", Strings.CharacterCreation.invalidname));
             }
         }
 

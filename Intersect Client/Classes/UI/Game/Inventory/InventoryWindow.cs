@@ -2,7 +2,7 @@
 using Intersect;
 using Intersect.Client.Classes.UI.Game.Inventory;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
@@ -27,7 +27,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public InventoryWindow(Canvas gameCanvas)
         {
-            mInventoryWindow = new WindowControl(gameCanvas, Strings.Get("inventory", "title"), false,
+            mInventoryWindow = new WindowControl(gameCanvas, Strings.Inventory.title, false,
                 "InventoryWindow");
             mInventoryWindow.DisableResizing();
 

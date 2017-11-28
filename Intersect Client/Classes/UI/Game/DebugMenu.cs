@@ -1,4 +1,4 @@
-﻿using Intersect.Localization;
+﻿using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
@@ -30,7 +30,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public DebugMenu(Canvas gameCanvas)
         {
-            mDebugWindow = new WindowControl(gameCanvas, Strings.Get("debug", "title"));
+            mDebugWindow = new WindowControl(gameCanvas, Strings.Debug.title);
             mDebugWindow.SetSize(200, 212);
             mDebugWindow.SetPosition(0, 150);
             mDebugWindow.DisableResizing();
@@ -80,28 +80,28 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Update()
         {
-            mFpsLabel.Text = Strings.Get("debug", "fps", GameGraphics.Renderer.GetFps());
-            mPingLabel.Text = Strings.Get("debug", "ping", GameNetwork.Ping);
-            mDrawsLabel.Text = Strings.Get("debug", "draws", GameGraphics.DrawCalls);
+            mFpsLabel.Text = Strings.Debug.fps.ToString( GameGraphics.Renderer.GetFps());
+            mPingLabel.Text = Strings.Debug.ping.ToString( GameNetwork.Ping);
+            mDrawsLabel.Text = Strings.Debug.draws.ToString( GameGraphics.DrawCalls);
             if (MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
             {
-                mMapLabel.Text = Strings.Get("debug", "map",
+                mMapLabel.Text = Strings.Debug.map.ToString(
                     MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).Name);
-                mXLabel.Text = Strings.Get("debug", "x", Globals.Me.CurrentX);
-                mYLabel.Text = Strings.Get("debug", "y", Globals.Me.CurrentY);
-                mZLabel.Text = Strings.Get("debug", "z", Globals.Me.CurrentZ);
+                mXLabel.Text = Strings.Debug.x.ToString( Globals.Me.CurrentX);
+                mYLabel.Text = Strings.Debug.y.ToString( Globals.Me.CurrentY);
+                mZLabel.Text = Strings.Debug.z.ToString( Globals.Me.CurrentZ);
             }
             int entityCount = Globals.Entities.Count;
             foreach (MapInstance map in MapInstance.Lookup.IndexValues)
             {
                 if (map != null) entityCount += map.LocalEntities.Count;
             }
-            mEntitiesLabel.Text = Strings.Get("debug", "knownentities", Globals.Entities.Count);
-            mMapsLoadedLabel.Text = Strings.Get("debug", "knownmaps", MapInstance.Lookup.Count);
-            mMapsDrawnLabel.Text = Strings.Get("debug", "mapsdrawn", GameGraphics.MapsDrawn);
-            mEntitiesDrawnLabel.Text = Strings.Get("debug", "entitiesdrawn", +GameGraphics.EntitiesDrawn);
-            mLightsDrawnLabel.Text = Strings.Get("debug", "lightsdrawn", GameGraphics.LightsDrawn);
-            mTimeLabel.Text = Strings.Get("debug", "time", ClientTime.GetTime());
+            mEntitiesLabel.Text = Strings.Debug.knownentities.ToString( Globals.Entities.Count);
+            mMapsLoadedLabel.Text = Strings.Debug.knownmaps.ToString( MapInstance.Lookup.Count);
+            mMapsDrawnLabel.Text = Strings.Debug.mapsdrawn.ToString( GameGraphics.MapsDrawn);
+            mEntitiesDrawnLabel.Text = Strings.Debug.entitiesdrawn.ToString( +GameGraphics.EntitiesDrawn);
+            mLightsDrawnLabel.Text = Strings.Debug.lightsdrawn.ToString( GameGraphics.LightsDrawn);
+            mTimeLabel.Text = Strings.Debug.time.ToString( ClientTime.GetTime());
         }
 
         public void Show()

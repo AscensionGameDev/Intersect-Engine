@@ -1,5 +1,5 @@
 ﻿using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
@@ -24,7 +24,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public QuestOfferWindow(Canvas gameCanvas)
         {
-            mQuestOfferWindow = new WindowControl(gameCanvas, Strings.Get("questoffer", "title"), false,
+            mQuestOfferWindow = new WindowControl(gameCanvas, Strings.QuestOffer.title, false,
                 "QuestOfferWindow");
             mQuestOfferWindow.DisableResizing();
             mQuestOfferWindow.IsClosable = false;
@@ -40,12 +40,12 @@ namespace Intersect_Client.Classes.UI.Game
 
             //Accept Button
             mAcceptButton = new Button(mQuestOfferWindow, "AcceptButton");
-            mAcceptButton.SetText(Strings.Get("questoffer", "accept"));
+            mAcceptButton.SetText(Strings.QuestOffer.title,
             mAcceptButton.Clicked += _acceptButton_Clicked;
 
             //Decline Button
             mDeclineButton = new Button(mQuestOfferWindow, "DeclineButton");
-            mDeclineButton.SetText(Strings.Get("questoffer", "decline"));
+            mDeclineButton.SetText(trings.QuestOffer.decline);
             mDeclineButton.Clicked += _declineButton_Clicked;
 
             Gui.LoadRootUiData(mQuestOfferWindow, "InGame.xml");

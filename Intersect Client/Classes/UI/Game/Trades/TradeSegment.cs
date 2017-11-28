@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
@@ -36,7 +36,7 @@ namespace Intersect.Client.Classes.UI.Game.Trades
 
             GoldValue = new Label(tradeWindow, xmlPrefix + "GoldValue")
             {
-                Text = Strings.Get("trading", "value", 0)
+                Text = Strings.Trading.value.ToString( 0)
             };
         }
 

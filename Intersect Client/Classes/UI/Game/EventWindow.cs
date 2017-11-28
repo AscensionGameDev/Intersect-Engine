@@ -1,4 +1,4 @@
-﻿using Intersect.Localization;
+﻿using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
@@ -141,7 +141,7 @@ namespace Intersect_Client.Classes.UI.Game
                     if (responseCount == 0)
                     {
                         mEventResponse1.Show();
-                        mEventResponse1.SetText(Strings.Get("eventwindow", "continue"));
+                        mEventResponse1.SetText(Strings.EventWindow.Continue);
                         mEventResponse2.Hide();
                         mEventResponse3.Hide();
                         mEventResponse4.Hide();

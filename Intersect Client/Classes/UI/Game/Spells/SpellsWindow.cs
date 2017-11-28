@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Intersect;
 using Intersect.Client.Classes.UI.Game.Spells;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
@@ -33,7 +33,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public SpellsWindow(Canvas gameCanvas)
         {
-            mSpellWindow = new WindowControl(gameCanvas, Strings.Get("spells", "title"), false, "SpellsWindow");
+            mSpellWindow = new WindowControl(gameCanvas, Strings.Spells.title, false, "SpellsWindow");
             mSpellWindow.DisableResizing();
 
             mItemContainer = new ScrollControl(mSpellWindow, "SpellsContainer");

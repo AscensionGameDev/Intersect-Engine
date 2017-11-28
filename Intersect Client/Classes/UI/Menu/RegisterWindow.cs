@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using Intersect.Utilities;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -50,14 +50,14 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Menu Header
             mRegistrationHeader = new Label(mRegistrationPanel, "RegistrationLabel");
-            mRegistrationHeader.SetText(Strings.Get("registration", "title"));
+            mRegistrationHeader.SetText(Strings.Registration.title);
 
             //Register Username Background
             mUsernameBackground = new ImagePanel(mRegistrationPanel, "UsernamePanel");
 
             //Register Username Label
             mUsernameLabel = new Label(mUsernameBackground, "UsernameLabel");
-            mUsernameLabel.SetText(Strings.Get("registration", "username"));
+            mUsernameLabel.SetText(Strings.Registration.username);
 
             //Register Username Textbox
             mUsernameTextbox = new TextBox(mUsernameBackground, "UsernameField");
@@ -68,7 +68,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Register Email Label
             mEmailLabel = new Label(mEmailBackground, "EmailLabel");
-            mEmailLabel.SetText(Strings.Get("registration", "email"));
+            mEmailLabel.SetText(Strings.Registration.email);
 
             //Register Email Textbox
             mEmailTextbox = new TextBox(mEmailBackground, "EmailField");
@@ -79,7 +79,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Register Password Label
             mPasswordLabel = new Label(mPasswordBackground, "Password1Label");
-            mPasswordLabel.SetText(Strings.Get("registration", "password"));
+            mPasswordLabel.SetText(Strings.Registration.password);
 
             //Register Password Textbox
             mPasswordTextbox = new TextBoxPassword(mPasswordBackground, "Password1Field");
@@ -90,7 +90,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Register Password Label2
             mPasswordLabel2 = new Label(mPasswordBackground2, "Password2Label");
-            mPasswordLabel2.SetText(Strings.Get("registration", "confirmpass"));
+            mPasswordLabel2.SetText(Strings.Registration.confirmpass);
 
             //Register Password Textbox2
             mPasswordTextbox2 = new TextBoxPassword(mPasswordBackground2, "Password2Field");
@@ -98,12 +98,12 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Register - Send Registration Button
             mRegisterBtn = new Button(mRegistrationPanel, "RegisterButton");
-            mRegisterBtn.SetText(Strings.Get("registration", "register"));
+            mRegisterBtn.SetText(Strings.Registration.register);
             mRegisterBtn.Clicked += RegisterBtn_Clicked;
 
             //Register - Back Button
             mBackBtn = new Button(mRegistrationPanel, "BackButton");
-            mBackBtn.SetText(Strings.Get("registration", "back"));
+            mBackBtn.SetText(Strings.Registration.back);
             mBackBtn.Clicked += BackBtn_Clicked;
         }
 
@@ -130,13 +130,13 @@ namespace Intersect_Client.Classes.UI.Menu
             }
             if (GameNetwork.Connected)
             {
-                if (FieldChecking.IsValidUsername(mUsernameTextbox.Text))
+                if (FieldChecking.IsValidUsername(mUsernameTextbox.Text, Strings.Regex.username))
                 {
                     if (mPasswordTextbox.Text == mPasswordTextbox2.Text)
                     {
-                        if (FieldChecking.IsValidPassword(mPasswordTextbox.Text))
+                        if (FieldChecking.IsValidPassword(mPasswordTextbox.Text, Strings.Regex.password))
                         {
-                            if (FieldChecking.IsWellformedEmailAddress(mEmailTextbox.Text))
+                            if (FieldChecking.IsWellformedEmailAddress(mEmailTextbox.Text, Strings.Regex.email))
                             {
                                 GameFade.FadeOut();
                                 Hide();
@@ -147,30 +147,30 @@ namespace Intersect_Client.Classes.UI.Menu
                             else
                             {
                                 Gui.MsgboxErrors.Add(
-                                    new KeyValuePair<string, string>("", Strings.Get("registration", "emailinvalid")));
+                                    new KeyValuePair<string, string>("", Strings.Registration.emailinvalid));
                             }
                         }
                         else
                         {
                             Gui.MsgboxErrors.Add(
-                                new KeyValuePair<string, string>("", Strings.Get("errors", "passwordinvalid")));
+                                new KeyValuePair<string, string>("", Strings.Errors.passwordinvalid));
                         }
                     }
                     else
                     {
                         Gui.MsgboxErrors.Add(
-                            new KeyValuePair<string, string>("", Strings.Get("registration", "passwordmatch")));
+                            new KeyValuePair<string, string>("", Strings.Registration.passwordmatch));
                     }
                 }
                 else
                 {
                     Gui.MsgboxErrors.Add(
-                        new KeyValuePair<string, string>("", Strings.Get("errors", "usernameinvalid")));
+                        new KeyValuePair<string, string>("", Strings.Errors.usernameinvalid));
                 }
             }
             else
             {
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Get("errors", "notconnected")));
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
             }
         }
 

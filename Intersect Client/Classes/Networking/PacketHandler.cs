@@ -9,7 +9,7 @@ using Intersect.Collections;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Reflectable;
@@ -1495,8 +1495,8 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             string leader = bf.ReadString();
             int leaderId = bf.ReadInteger();
-            InputBox iBox = new InputBox(Strings.Get("parties", "partyinvite"),
-                Strings.Get("parties", "inviteprompt", leader), true, InputBox.InputType.YesNo,
+            InputBox iBox = new InputBox(Strings.Parties.partyinvite,
+                Strings.Parties.inviteprompt.ToString( leader), true, InputBox.InputType.YesNo,
                 PacketSender.SendPartyAccept,
                 PacketSender.SendPartyDecline, leaderId);
             bf.Dispose();
@@ -1647,8 +1647,8 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             string partner = bf.ReadString();
             int partnerId = bf.ReadInteger();
-            InputBox iBox = new InputBox(Strings.Get("trading", "traderequest"),
-                Strings.Get("trading", "requestprompt", partner), true, InputBox.InputType.YesNo,
+            InputBox iBox = new InputBox(Strings.Trading.traderequest,
+                Strings.Trading.requestprompt.ToString( partner), true, InputBox.InputType.YesNo,
                 PacketSender.SendTradeRequestAccept,
                 PacketSender.SendTradeRequestDecline, partnerId);
             bf.Dispose();
@@ -1773,8 +1773,8 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             string partner = bf.ReadString();
             int partnerId = bf.ReadInteger();
-            InputBox iBox = new InputBox(Strings.Get("friends", "request"),
-                Strings.Get("friends", "requestprompt", partner), true, InputBox.InputType.YesNo,
+            InputBox iBox = new InputBox(Strings.Friends.request,
+                Strings.Friends.requestprompt.ToString( partner), true, InputBox.InputType.YesNo,
                 PacketSender.SendFriendRequestAccept,
                 PacketSender.SendFriendRequestDecline, partnerId);
             bf.Dispose();
