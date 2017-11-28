@@ -150,8 +150,6 @@
     <Compile Include="GameObjects\TimeBase.cs" />
     <Compile Include="Logging\ConsoleOutput.cs" />
     <Compile Include="Memory\IBuffer.cs" />
-    <Compile Include="Localization\Language.cs" />
-    <Compile Include="Localization\Strings.cs" />
     <Compile Include="Logging\FileOutput.cs" />
     <Compile Include="Logging\ILogOutput.cs" />
     <Compile Include="Logging\Log.cs" />

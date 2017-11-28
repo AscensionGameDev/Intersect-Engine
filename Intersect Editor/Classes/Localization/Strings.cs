@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -660,7 +662,7 @@ Tick timer saved in server config.xml.";
         public struct EventConditionDesc
         {
             public static LocalizedString admin = @"Admin";
-            public static LocalizedString afterd = @", After Task: {00}";
+            public static LocalizedString aftertask = @", After Task: {00}";
             public static LocalizedString beforetask = @", Before Task: {00}";
             public static LocalizedString Class = @"Player's class is {00}";
             public static LocalizedString equal = @"is equal to {00}";
@@ -690,10 +692,13 @@ Tick timer saved in server config.xml.";
             public static LocalizedString questcompleted = @"Quest is Completed: {00}";
             public static LocalizedString questinprogress = @"Quest In Progress: {00} {01}";
             public static LocalizedString selfswitch = @"Self Switch {00} is {01}";
-            public static LocalizedString selfswitch0 = @"A";
-            public static LocalizedString selfswitch1 = @"B";
-            public static LocalizedString selfswitch2 = @"C";
-            public static LocalizedString selfswitch3 = @"D";
+            public static LocalizedString[] selfswitches = new LocalizedString[]
+            {
+                @"A",
+                @"B",
+                @"C",
+                @"D",
+            };
             public static LocalizedString startquest = @"Can Start Quest: {00}";
             public static LocalizedString tasknotfound = @"Not Found";
             public static LocalizedString time = @"Time is between {00} and {01}";
@@ -1893,6 +1898,199 @@ Negative values for time to flow backwards.";
             public static LocalizedString title = @"Warp Tile Selection";
         }
 
+        public static string GetEventConditionalDesc(EventCommand cmd)
+        {
+            if (cmd.Type != EventCommandType.ConditionalBranch) return "";
+            switch (cmd.Ints[0])
+            {
+                case 0: //Player Switch
+                    var pValue = Strings.EventConditionDesc.False;
+                    if (Convert.ToBoolean(cmd.Ints[2])) pValue = Strings.EventConditionDesc.True;
+                    return Strings.EventConditionDesc.playerswitch.ToString( PlayerSwitchBase.GetName(cmd.Ints[1]), pValue);
+                case 1: //Player Variables
+                    var pVar = "";
+                    switch (cmd.Ints[2])
+                    {
+                        case 0:
+                            pVar = Strings.EventConditionDesc.equal.ToString( cmd.Ints[3]);
+                            break;
+                        case 1:
+                            pVar = Strings.EventConditionDesc.greaterequal.ToString( cmd.Ints[3]);
+                            break;
+                        case 2:
+                            pVar = Strings.EventConditionDesc.lessthanequal.ToString( cmd.Ints[3]);
+                            break;
+                        case 3:
+                            pVar = Strings.EventConditionDesc.greater.ToString( cmd.Ints[3]);
+                            break;
+                        case 4:
+                            pVar = Strings.EventConditionDesc.lessthan.ToString( cmd.Ints[3]);
+                            break;
+                        case 5:
+                            pVar = Strings.EventConditionDesc.notequal.ToString( cmd.Ints[3]);
+                            break;
+                    }
+                    return Strings.EventConditionDesc.playervariable.ToString( PlayerVariableBase.GetName(cmd.Ints[1]),
+                        pVar);
+                case 2: //Global Switch
+                    var gValue = Strings.EventConditionDesc.False;
+                    if (Convert.ToBoolean(cmd.Ints[2])) gValue = Strings.EventConditionDesc.True;
+                    return Strings.EventConditionDesc.globalswitch.ToString( ServerSwitchBase.GetName(cmd.Ints[1]), gValue);
+                case 3: //Global Variables
+                    var gVar = "";
+                    switch (cmd.Ints[2])
+                    {
+                        case 0:
+                            gVar = Strings.EventConditionDesc.equal.ToString( cmd.Ints[3]);
+                            break;
+                        case 1:
+                            gVar = Strings.EventConditionDesc.greaterequal.ToString( cmd.Ints[3]);
+                            break;
+                        case 2:
+                            gVar = Strings.EventConditionDesc.lessthanequal.ToString( cmd.Ints[3]);
+                            break;
+                        case 3:
+                            gVar = Strings.EventConditionDesc.greater.ToString( cmd.Ints[3]);
+                            break;
+                        case 4:
+                            gVar = Strings.EventConditionDesc.lessthan.ToString( cmd.Ints[3]);
+                            break;
+                        case 5:
+                            gVar = Strings.EventConditionDesc.notequal.ToString( cmd.Ints[3]);
+                            break;
+                    }
+                    return Strings.EventConditionDesc.globalvariable.ToString( ServerVariableBase.GetName(cmd.Ints[1]),
+                        gVar);
+                case 4: //Has Item
+                    return Strings.EventConditionDesc.hasitem.ToString( cmd.Ints[2], ItemBase.GetName(cmd.Ints[1]));
+                case 5: //Class Is
+                    return Strings.EventConditionDesc.Class.ToString( ClassBase.GetName(cmd.Ints[1]));
+                case 6: //Knows spell
+                    return Strings.EventConditionDesc.knowsspell.ToString( SpellBase.GetName(cmd.Ints[1]));
+                case 7: //Level or Stat is
+                    var pLvl = "";
+                    switch (cmd.Ints[1])
+                    {
+                        case 0:
+                            pLvl = Strings.EventConditionDesc.equal.ToString( cmd.Ints[2]);
+                            break;
+                        case 1:
+                            pLvl = Strings.EventConditionDesc.greaterequal.ToString( cmd.Ints[2]);
+                            break;
+                        case 2:
+                            pLvl = Strings.EventConditionDesc.lessthanequal.ToString( cmd.Ints[2]);
+                            break;
+                        case 3:
+                            pLvl = Strings.EventConditionDesc.greater.ToString( cmd.Ints[2]);
+                            break;
+                        case 4:
+                            pLvl = Strings.EventConditionDesc.lessthan.ToString( cmd.Ints[2]);
+                            break;
+                        case 5:
+                            pLvl = Strings.EventConditionDesc.notequal.ToString( cmd.Ints[2]);
+                            break;
+                    }
+                    var lvlorstat = "";
+                    switch (cmd.Ints[3])
+                    {
+                        case 0:
+                            lvlorstat = Strings.EventConditionDesc.level;
+                            break;
+                        default:
+                            lvlorstat = Strings.Combat.stats[cmd.Ints[3] - 1];
+                            break;
+                    }
+                    return Strings.EventConditionDesc.levelorstat.ToString( lvlorstat, pLvl);
+                case 8: //Self Switch
+                    var sValue = Strings.EventConditionDesc.False;
+                    if (Convert.ToBoolean(cmd.Ints[2])) sValue = Strings.EventConditionDesc.True;
+                    return Strings.EventConditionDesc.selfswitch.ToString(
+                        Strings.EventConditionDesc.selfswitches[cmd.Ints[1]], sValue);
+                case 9: //Power is
+                    if (cmd.Ints[1] == 0)
+                    {
+                        return Strings.EventConditionDesc.power.ToString(
+                            Strings.EventConditionDesc.modadmin);
+                    }
+                    else
+                    {
+                        return Strings.EventConditionDesc.power.ToString( Strings.EventConditionDesc.admin);
+                    }
+                case 10: //Time is between
+                    var timeRanges = new List<string>();
+                    var time = new DateTime(2000, 1, 1, 0, 0, 0);
+                    for (int i = 0; i < 1440; i += TimeBase.GetTimeBase().RangeInterval)
+                    {
+                        var addRange = time.ToString("h:mm:ss tt") + " to ";
+                        time = time.AddMinutes(TimeBase.GetTimeBase().RangeInterval);
+                        addRange += time.ToString("h:mm:ss tt");
+                        timeRanges.Add(addRange);
+                    }
+                    var time1 = "";
+                    var time2 = "";
+                    if (cmd.Ints[1] > -1 && cmd.Ints[1] < timeRanges.Count)
+                    {
+                        time1 = timeRanges[cmd.Ints[1]];
+                    }
+                    else
+                    {
+                        time1 = Strings.EventConditionDesc.timeinvalid;
+                    }
+                    if (cmd.Ints[2] > -1 && cmd.Ints[2] < timeRanges.Count)
+                    {
+                        time2 = timeRanges[cmd.Ints[2]];
+                    }
+                    else
+                    {
+                        time2 = Strings.EventConditionDesc.timeinvalid;
+                    }
+                    return Strings.EventConditionDesc.time.ToString( time1, time2);
+                case 11: //Can Start Quest...
+                    return Strings.EventConditionDesc.startquest.ToString( QuestBase.GetName(cmd.Ints[1]));
+                case 12: //Quest In Progress...
+                    var quest = QuestBase.Lookup.Get<QuestBase>(cmd.Ints[1]);
+                    if (quest != null)
+                    {
+                        QuestBase.QuestTask task = null;
+                        foreach (var tsk in quest.Tasks)
+                        {
+                            if (tsk.Id == cmd.Ints[3])
+                            {
+                                task = tsk;
+                            }
+                        }
+                        var taskName = task != null ? task.GetTaskString() : Strings.EventConditionDesc.tasknotfound.ToString();
+                        switch (cmd.Ints[2])
+                        {
+                            case 1:
+                                return Strings.EventConditionDesc.questinprogress.ToString( QuestBase.GetName(cmd.Ints[1]),
+                                    Strings.EventConditionDesc.beforetask.ToString( taskName));
+                            case 2:
+                                return Strings.EventConditionDesc.questinprogress.ToString( QuestBase.GetName(cmd.Ints[1]),
+                                    Strings.EventConditionDesc.aftertask.ToString( taskName));
+                            case 3:
+                                return Strings.EventConditionDesc.questinprogress.ToString( QuestBase.GetName(cmd.Ints[1]),
+                                    Strings.EventConditionDesc.ontask.ToString( taskName));
+                            default:
+                                return Strings.EventConditionDesc.questinprogress.ToString( QuestBase.GetName(cmd.Ints[1]),
+                                    Strings.EventConditionDesc.onanytask);
+                        }
+                    }
+                    return Strings.EventConditionDesc.questinprogress.ToString( QuestBase.GetName(cmd.Ints[1]));
+                case 13: //Quest Completed
+                    return Strings.EventConditionDesc.questcompleted.ToString( QuestBase.GetName(cmd.Ints[1]));
+                case 14: //Player death
+                    return Strings.EventConditionDesc.playerdeath;
+                case 15: //No NPCs on map
+                    return Strings.EventConditionDesc.nonpcsonmap;
+                case 16: //Gender Is
+                    return Strings.EventConditionDesc.gender.ToString(
+                        (cmd.Ints[1] == 0
+                            ? Strings.EventConditionDesc.male
+                            : Strings.EventConditionDesc.female));
+            }
+            return "";
+        }
 
 
         public static void Load(string language)

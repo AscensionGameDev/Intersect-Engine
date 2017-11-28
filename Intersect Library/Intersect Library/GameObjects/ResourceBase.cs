@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.GameObjects.Conditions;
-using Intersect.Localization;
 using Intersect.Models;
 using Intersect.Utilities;
 
@@ -14,12 +13,12 @@ namespace Intersect.GameObjects
         // Drops
         public List<ResourceDrop> Drops = new List<ResourceDrop>();
 
-        public string EndGraphic = Strings.Get("general", "none");
+        public string EndGraphic = null;
 
         public ConditionLists HarvestingReqs = new ConditionLists();
 
         // Graphics
-        public string InitialGraphic = Strings.Get("general", "none");
+        public string InitialGraphic = null;
 
         public int MaxHp;
 

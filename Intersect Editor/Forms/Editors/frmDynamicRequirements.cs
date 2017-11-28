@@ -93,7 +93,7 @@ namespace Intersect.Editor.Forms.Editors
             txtListName.Text = list.Name;
             for (int i = 0; i < list.Conditions.Count; i++)
             {
-                lstConditions.Items.Add(list.Conditions[i].GetConditionalDesc());
+                lstConditions.Items.Add(Strings.GetEventConditionalDesc(list.Conditions[i]));
             }
         }
 

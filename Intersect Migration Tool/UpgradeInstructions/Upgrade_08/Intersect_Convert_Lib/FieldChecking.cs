@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using Intersect.Localization;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Lib
 {

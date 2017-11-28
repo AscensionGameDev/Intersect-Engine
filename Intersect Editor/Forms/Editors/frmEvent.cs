@@ -1104,7 +1104,7 @@ namespace Intersect.Editor.Forms
                     }
                     return Strings.EventCommandList.selfswitch.ToString(Strings.EventCommandList.selfswitches[command.Ints[0]], selfvalue);
                 case EventCommandType.ConditionalBranch:
-                    return Strings.EventCommandList.conditionalbranch.ToString( command.GetConditionalDesc());
+                    return Strings.EventCommandList.conditionalbranch.ToString(Strings.GetEventConditionalDesc(command));
                 case EventCommandType.ExitEventProcess:
                     return Strings.EventCommandList.exitevent;
                 case EventCommandType.Label:
