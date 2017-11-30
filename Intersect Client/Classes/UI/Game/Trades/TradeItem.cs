@@ -50,12 +50,7 @@ namespace Intersect.Client.Classes.UI.Game.Trades
 
         public void Setup()
         {
-            var xmlPrefix = "Your";
-            if (mMySide == 1)
-            {
-                xmlPrefix = "Their";
-            }
-            Pnl = new ImagePanel(Container, xmlPrefix + "TradeIcon");
+            Pnl = new ImagePanel(Container, "TradeIcon");
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
             Pnl.RightClicked += pnl_RightClicked;

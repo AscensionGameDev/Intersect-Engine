@@ -1360,15 +1360,16 @@ Tick timer saved in server config.xml.";
         {
             public static Dictionary<string, string> categories = new Dictionary<string, string>()
             {
-                {"General", @"General"},
+                {"general", @"General"},
                 {"lighting", @"Lighting"},
                 {"misc", @"Misc"},
                 {"overlay", @"Overlay"},
+                {"fog", @"Fog"},
+                {"audio", @"Audio"},
             };
             public static Dictionary<string, string> displaynames = new Dictionary<string, string>()
             {
                 {"ahue", @"AHue"},
-                {"audio", @"Audio"},
                 {"bhue", @"BHue"},
                 {"brightness", @"Brightness"},
                 {"fog", @"Fog"},

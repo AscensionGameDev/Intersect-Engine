@@ -3,6 +3,7 @@ using Intersect;
 using Intersect.Client.Classes.UI.Game.Inventory;
 using Intersect.GameObjects;
 using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
@@ -33,6 +34,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             mItemContainer = new ScrollControl(mInventoryWindow, "ItemsContainer");
             mItemContainer.EnableScroll(false, true);
+            mInventoryWindow.LoadJsonUi(GameContentManager.UI.InGame);
         }
 
         //Location
@@ -95,22 +97,18 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < Options.MaxInvItems; i++)
             {
                 Items.Add(new InventoryItem(this, i));
-                Items[i].Container = new ImagePanel(mItemContainer, "InventoryItemContainer");
+                Items[i].Container = new ImagePanel(mItemContainer, "InventoryItem");
                 Items[i].Setup();
 
                 mValues.Add(new Label(Items[i].Container, "InventoryItemValue"));
                 mValues[i].Text = "";
 
-                //TODO Made this more efficient.
-                Gui.LoadRootUiData(Items[i].Container, "InGame.xml");
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
 
                 var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
                 var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;
-                Items[i].Container.SetPosition(
-                    (i % (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Width + xPadding) + xPadding,
-                    (i / (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Height + yPadding) + yPadding);
+                Items[i].Container.SetPosition( (i % (mItemContainer.Width / (Items[i].Container.Width + xPadding))) * (Items[i].Container.Width + xPadding) + xPadding,
+                    (i / (mItemContainer.Width / (Items[i].Container.Width + xPadding))) * (Items[i].Container.Height + yPadding) + yPadding);
             }
         }
 

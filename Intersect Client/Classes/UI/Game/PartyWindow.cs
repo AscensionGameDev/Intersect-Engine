@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Intersect.Enums;
 using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
@@ -98,6 +99,8 @@ namespace Intersect_Client.Classes.UI.Game
             mLeaveButton = new Button(mPartyWindow, "LeavePartyButton");
             mLeaveButton.SetToolTipText(Strings.Parties.leave);
             mLeaveButton.Clicked += leave_Clicked;
+
+            mPartyWindow.LoadJsonUi(GameContentManager.UI.InGame);
         }
 
         //Methods

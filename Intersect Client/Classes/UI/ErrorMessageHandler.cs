@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.UI.Game;
@@ -50,14 +51,14 @@ namespace Intersect_Client.Classes.UI
 
         public GuiError(Canvas gameCanvas, Canvas menuCanvas, string error, string header)
         {
-            CreateErrorWindow(gameCanvas, error, header, "InGame.xml");
-            CreateErrorWindow(menuCanvas, error, header, "MainMenu.xml");
+            CreateErrorWindow(gameCanvas, error, header, GameContentManager.UI.InGame);
+            CreateErrorWindow(menuCanvas, error, header, GameContentManager.UI.Menu);
         }
 
-        private void CreateErrorWindow(Canvas canvas, string error, string header, string uiDataFile)
+        private void CreateErrorWindow(Canvas canvas, string error, string header, GameContentManager.UI stage)
         {
             var window = new InputBox(header, error, false, InputBox.InputType.OkayOnly, OkayClicked, null, -1, canvas,
-                uiDataFile);
+                stage);
             mErrorWindows.Add(window);
         }
 

@@ -3,6 +3,7 @@ using Intersect;
 using Intersect.Client.Classes.UI.Game.Trades;
 using Intersect.GameObjects;
 using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -59,7 +60,7 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 TradeSegment.Add(new TradeSegment(this, mTradeWindow, i));
             }
-            Gui.LoadRootUiData(mTradeWindow, "InGame.xml");
+            mTradeWindow.LoadJsonUi(GameContentManager.UI.InGame);
 
             for (int i = 0; i < 2; i++)
             {

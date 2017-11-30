@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
@@ -25,16 +26,16 @@ namespace Intersect.Client.Classes.UI.Game.Trades
             MyIndex = index;
             mParent = parent;
 
-            var xmlPrefix = "Your";
+            var prefix = "Your";
             if (MyIndex == 1)
             {
-                xmlPrefix = "Their";
+                prefix = "Their";
             }
 
-            ItemContainer = new ScrollControl(tradeWindow, xmlPrefix + "ItemContainer");
+            ItemContainer = new ScrollControl(tradeWindow, prefix + "ItemContainer");
             ItemContainer.EnableScroll(false, true);
 
-            GoldValue = new Label(tradeWindow, xmlPrefix + "GoldValue")
+            GoldValue = new Label(tradeWindow, prefix + "GoldValue")
             {
                 Text = Strings.Trading.value.ToString( 0)
             };
@@ -42,22 +43,16 @@ namespace Intersect.Client.Classes.UI.Game.Trades
 
         public void InitItemContainer(int index)
         {
-            var xmlPrefix = "Your";
-            if (MyIndex == 1)
-            {
-                xmlPrefix = "Their";
-            }
             for (int i = 0; i < Options.MaxInvItems; i++)
             {
-                Items.Add(new TradeItem(mParent, i, index));
-                Items[i].Container = new ImagePanel(ItemContainer, xmlPrefix + "TradeContainer");
+                Items.Add(new TradeItem(Parent, i, index));
+                Items[i].Container = new ImagePanel(ItemContainer, "TradeItem");
                 Items[i].Setup();
 
-                Values.Add(new Label(Items[i].Container, xmlPrefix + "TradeValue"));
+                Values.Add(new Label(Items[i].Container, "TradeValue"));
                 Values[i].Text = "";
 
-                //TODO Made this more efficient.
-                Gui.LoadRootUiData(Items[i].Container, "InGame.xml");
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
 
                 var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
                 var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;

@@ -45,8 +45,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         //Initialization
         private bool mInitialized = false;
-
-        private ImagePanel mItemTemplate;
+        
         Label mMagicRstLabel;
         public ImagePanel[] PaperdollPanels;
         public string[] PaperdollTextures;
@@ -93,9 +92,6 @@ namespace Intersect_Client.Classes.UI.Game
             mEquipmentContainer = new ScrollControl(mCharacterWindow, "EquipmentContainer");
             mEquipmentContainer.EnableScroll(true, false);
 
-            mItemTemplate = new ImagePanel(mEquipmentContainer, "EquipmentBox");
-            new ImagePanel(mItemTemplate, "EquipmentIcon");
-
             Label statsLabel = new Label(mCharacterWindow, "StatsLabel");
             statsLabel.SetText(Strings.Character.stats);
 
@@ -121,6 +117,8 @@ namespace Intersect_Client.Classes.UI.Game
             mAddMagicResistBtn.Clicked += _addMagicResistBtn_Clicked;
 
             mPointsLabel = new Label(mCharacterWindow, "PointsLabel");
+
+            mCharacterWindow.LoadJsonUi(GameContentManager.UI.InGame);
         }
 
         //Update Button Event Handlers
@@ -157,15 +155,13 @@ namespace Intersect_Client.Classes.UI.Game
                 Items[i].Pnl = new ImagePanel(mEquipmentContainer, "EquipmentBox");
                 Items[i].Setup();
 
-                //TODO Made this more efficient.
-                Gui.LoadRootUiData(Items[i].Pnl, "InGame.xml");
+                Items[i].pnl.LoadJsonUi(GameContentManager.UI.InGame);
 
                 Items[i].Pnl
                     .SetPosition(
                         Items[i].Pnl.Padding.Left + (i * (Items[i].Pnl.Padding.Left + Items[i].Pnl.Padding.Right +
                                                           Items[i].Pnl.Width)), Items[i].Pnl.Padding.Top);
             }
-            mItemTemplate.Hide();
         }
 
         //Methods

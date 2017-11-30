@@ -30,11 +30,6 @@ namespace Intersect_Client.Classes.UI.Game
             if (item != null)
             {
                 ImagePanel icon = new ImagePanel(mDescWindow, "ItemIcon");
-                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
-                if (itemTex != null)
-                {
-                    icon.Texture = itemTex;
-                }
 
                 Label itemName = new Label(mDescWindow, "ItemNameLabel");
                 itemName.Text = title;
@@ -60,8 +55,8 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                 }
                 RichLabel itemDesc = new RichLabel(mDescWindow, "ItemDescription");
-                Gui.LoadRootUiData(mDescWindow,
-                    "InGame.xml"); //Load this up now so we know what color to make the text when filling out the desc
+                //Load this up now so we know what color to make the text when filling out the desc
+                mDescWindow.LoadJsonUi(GameContentManager.UI.InGame);
                 if (item.Desc.Length > 0)
                 {
                     itemDesc.AddText(Strings.ItemDesc.desc.ToString( item.Desc), itemDesc.RenderColor);
@@ -98,7 +93,12 @@ namespace Intersect_Client.Classes.UI.Game
                             Strings.ItemDesc.effects[item.Data2 - 1]), itemDesc.RenderColor);
                 }
                 //Load Again for positioning purposes.
-                Gui.LoadRootUiData(mDescWindow, "InGame.xml");
+                mDescWindow.LoadJsonUi(GameContentManager.UI.InGame);
+                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
+                if (itemTex != null)
+                {
+                    icon.Texture = itemTex;
+                }
                 itemDesc.SizeToChildren(false, true);
                 mDescWindow.SetPosition(x, y);
             }

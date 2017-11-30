@@ -99,48 +99,7 @@ namespace Intersect_Client.Classes.UI
                 MenuUi = null;
             }
 
-            if (GameUi == null) LoadRootUiData(sMenuCanvas, "MainMenu.xml");
-            if (MenuUi == null)
-            {
-                LoadRootUiData(sGameCanvas, "InGame.xml");
-            }
-
             GwenInitialized = true;
-        }
-
-        public static void SaveRootUiData(IntersectClientExtras.Gwen.Control.Base control, string xmlname,
-            bool bounds = false)
-        {
-            //Create XML Doc with UI 
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.NewLineOnAttributes = true;
-
-            using (XmlWriter writer = XmlWriter.Create(Path.Combine("resources", "gui", xmlname), settings))
-            {
-                writer.WriteStartDocument();
-                control.WriteBaseUiXml(writer, bounds);
-                writer.WriteEndDocument();
-            }
-        }
-
-        public static void LoadRootUiData(IntersectClientExtras.Gwen.Control.Base control, string xmlname)
-        {
-            XmlReaderSettings readerSettings = new XmlReaderSettings();
-            readerSettings.IgnoreWhitespace = true;
-            readerSettings.IgnoreComments = true;
-            if (!File.Exists(Path.Combine("resources", "gui", xmlname))) return;
-            using (XmlReader reader = XmlReader.Create(Path.Combine("resources", "gui", xmlname), readerSettings))
-            {
-                while (reader.Read())
-                {
-                    if (reader.Name == control.Name)
-                    {
-                        control.LoadUiXml(reader);
-                        control.ProcessAlignments();
-                    }
-                }
-            }
         }
 
         public static void DestroyGwen()

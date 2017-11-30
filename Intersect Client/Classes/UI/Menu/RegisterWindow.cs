@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Intersect.Client.Classes.Localization;
 using Intersect.Utilities;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Core;
@@ -105,6 +106,8 @@ namespace Intersect_Client.Classes.UI.Menu
             mBackBtn = new Button(mRegistrationPanel, "BackButton");
             mBackBtn.SetText(Strings.Registration.back);
             mBackBtn.Clicked += BackBtn_Clicked;
+
+            mRegistrationPanel.LoadJsonUi(GameContentManager.UI.Menu);
         }
 
         //Methods

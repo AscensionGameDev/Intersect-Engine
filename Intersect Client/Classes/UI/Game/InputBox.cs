@@ -1,5 +1,6 @@
 ﻿using System;
 using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -25,20 +26,20 @@ namespace Intersect_Client.Classes.UI.Game
         private Label mPromptLabel;
         private TextBoxNumeric mTextbox;
         private ImagePanel mTextboxBg;
-        private string mUiDataFile;
+        private GameContentManager.UI _uiStage;
         private Button mYesButton;
         public int UserData;
         public float Value;
 
         public InputBox(string title, string prompt, bool modal, InputType inputtype, EventHandler okayYesSubmitClicked,
-            EventHandler cancelClicked, int userData, Base parent = null, string uiDataFile = "InGame.xml")
+            EventHandler cancelClicked, int userData, Base parent = null, GameContentManager.UI stage = GameContentManager.UI.InGame)
         {
             if (parent == null) parent = Gui.GameUi.GameCanvas;
             OkayEventHandler = okayYesSubmitClicked;
             CancelEventHandler = cancelClicked;
             this.UserData = userData;
             mInputType = inputtype;
-            mUiDataFile = uiDataFile;
+            _uiStage = stage;
             mPrompt = prompt;
 
             mMyWindow = new WindowControl(parent, title, modal, "InputBox");
@@ -74,7 +75,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (!mInitialized)
             {
-                Gui.LoadRootUiData(mMyWindow, mUiDataFile);
+                mMyWindow.LoadJsonUi(_uiStage, true);
                 var text = Gui.WrapText(mPrompt, mPromptLabel.Width, mPromptLabel.Font);
                 int y = mPromptLabel.Y;
                 foreach (string s in text)

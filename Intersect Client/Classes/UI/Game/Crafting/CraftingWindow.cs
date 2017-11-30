@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Intersect.Client.Classes.UI.Game.Crafting;
 using Intersect.GameObjects;
 using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -74,7 +75,7 @@ namespace Intersect_Client.Classes.UI.Game
             mCraft.SetText(Strings.CraftingBench.craft);
             mCraft.Clicked += craft_Clicked;
 
-            Gui.LoadRootUiData(mCraftWindow, "InGame.xml");
+            mCraftWindow.LoadJsonUi(GameContentManager.UI.InGame);
 
             Gui.InputBlockingElements.Add(mCraftWindow);
 
@@ -118,8 +119,8 @@ namespace Intersect_Client.Classes.UI.Game
             };
             mCombinedItem.Setup("CraftedItemIcon");
 
-            //TODO Made this more efficient.
-            Gui.LoadRootUiData(mCombinedItem.Container, "InGame.xml");
+            mCombinedItem.Container.LoadJsonUi(GameContentManager.UI.InGame);
+            mCombinedItem.LoadItem();
 
             for (int i = 0; i < mItems.Count; i++)
             {
@@ -153,7 +154,7 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < craft.Ingredients.Count; i++)
             {
                 mItems.Add(new RecipeItem(this, craft.Ingredients[i]));
-                mItems[i].Container = new ImagePanel(mItemContainer, "IngredientItemContainer");
+                mItems[i].Container = new ImagePanel(mItemContainer, "CraftingIngredient");
                 mItems[i].Setup("IngredientItemIcon");
 
                 Label lblTemp = new Label(mItems[i].Container, "IngredientItemValue");
@@ -166,8 +167,8 @@ namespace Intersect_Client.Classes.UI.Game
                 lblTemp.Text = onHand + "/" + craft.Ingredients[i].Quantity;
                 mValues.Add(lblTemp);
 
-                //TODO Made this more efficient.
-                Gui.LoadRootUiData(mItems[i].Container, "InGame.xml");
+                mItems[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
+                mItems[i].LoadItem();
 
                 var xPadding = mItems[i].Container.Padding.Left + mItems[i].Container.Padding.Right;
                 var yPadding = mItems[i].Container.Padding.Top + mItems[i].Container.Padding.Bottom;

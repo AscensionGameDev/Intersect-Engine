@@ -93,6 +93,8 @@ namespace Intersect_Client.Classes.UI.Menu
             mNewButton = new Button(mCharacterSelectionPanel, "NewButton");
             mNewButton.SetText(Strings.CharacterSelection.New);
             mNewButton.Clicked += _newButton_Clicked;
+
+            mCharacterSelectionPanel.LoadJsonUi(GameContentManager.UI.Menu);
         }
 
         //Methods
@@ -244,7 +246,7 @@ namespace Intersect_Client.Classes.UI.Menu
                 new InputBox(Strings.CharacterSelection.deletetitle.ToString( Characters[mSelectedChar].Name),
                     Strings.CharacterSelection.deleteprompt.ToString( Characters[mSelectedChar].Name),
                     true, InputBox.InputType.YesNo, DeleteCharacter, null, Characters[mSelectedChar].Id,
-                    mCharacterSelectionPanel.Parent, "MainMenu.xml");
+                    mCharacterSelectionPanel.Parent, GameContentManager.UI.Menu);
         }
 
         private void DeleteCharacter(Object sender, EventArgs e)

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using Intersect;
 using Intersect.GameObjects;
 using Intersect.Client.Classes.Localization;
 using Intersect.Utilities;
@@ -104,7 +106,7 @@ namespace Intersect_Client.Classes.UI.Menu
             mPrevSpriteButton.Clicked += _prevSpriteButton_Clicked;
 
             //Class Background
-            mGenderBackground = new ImagePanel(mCharCreationPanel, "GeneralPanel");
+            mGenderBackground = new ImagePanel(mCharCreationPanel, "GenderPanel");
 
             //Gender Label
             mGenderLabel = new Label(mGenderBackground, "GenderLabel");
@@ -132,6 +134,8 @@ namespace Intersect_Client.Classes.UI.Menu
             mCreateButton = new Button(mCharCreationPanel, "CreateButton");
             mCreateButton.SetText(Strings.CharacterCreation.create);
             mCreateButton.Clicked += CreateButton_Clicked;
+
+            mCharCreationPanel.LoadJsonUi(GameContentManager.UI.Menu);
         }
 
         public void Init()

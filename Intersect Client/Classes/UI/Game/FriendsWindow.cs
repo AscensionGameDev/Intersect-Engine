@@ -1,5 +1,6 @@
 ﻿using System;
 using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -39,6 +40,8 @@ namespace Intersect_Client.Classes.UI.Game
             mAddButton.Clicked += addButton_Clicked;
 
             UpdateList();
+
+            mFriendsWindow.LoadJsonUi(GameContentManager.UI.InGame);
         }
 
         //Methods

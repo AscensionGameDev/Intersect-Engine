@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Intersect.Client.Classes.Core;
 using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
@@ -68,7 +69,7 @@ namespace Intersect_Client.Classes.UI
             mMainMenu = mainMenu;
 
             //Main Menu Window
-            mOptionsPanel = new ImagePanel(parent, "OptionsPanel");
+            mOptionsPanel = new ImagePanel(parent, "OptionsWindow");
             mOptionsPanel.IsHidden = true;
             Gui.InputBlockingElements.Add(mOptionsPanel);
 
@@ -185,6 +186,15 @@ namespace Intersect_Client.Classes.UI
 
             GameInputHandler.KeyDown += OnKeyDown;
             GameInputHandler.MouseDown += OnKeyDown;
+
+            if (mainMenu == null)
+            {
+                _optionsPanel.LoadJsonUi(GameContentManager.UI.InGame);
+            }
+            else
+            {
+                _optionsPanel.LoadJsonUi(GameContentManager.UI.Menu);
+            }
         }
 
         private void Key2_Clicked(Base sender, ClickedEventArgs arguments)

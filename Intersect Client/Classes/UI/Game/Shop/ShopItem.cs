@@ -48,6 +48,10 @@ namespace Intersect.Client.Classes.UI.Game.Shop
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
             Pnl.DoubleClicked += Pnl_DoubleClicked;
+        }
+
+        public void LoadItem()
+        {
             var item = ItemBase.Lookup.Get<ItemBase>(Globals.GameShop.SellingItems[mMySlot].ItemNum);
             if (item != null)
             {

@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Intersect.Client.Classes.Localization;
 using Intersect.Utilities;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using IntersectClientExtras.Input;
@@ -90,6 +91,8 @@ namespace Intersect_Client.Classes.UI.Menu
             mBackBtn.Clicked += BackBtn_Clicked;
 
             LoadCredentials();
+
+            _loginWindow.LoadJsonUi(GameContentManager.UI.Menu);
         }
 
         private void _usernameTextbox_Clicked(Base sender, ClickedEventArgs arguments)

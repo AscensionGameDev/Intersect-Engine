@@ -1,5 +1,6 @@
 ﻿using Intersect.GameObjects;
 using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
@@ -48,7 +49,7 @@ namespace Intersect_Client.Classes.UI.Game
             mDeclineButton.SetText(trings.QuestOffer.decline);
             mDeclineButton.Clicked += _declineButton_Clicked;
 
-            Gui.LoadRootUiData(mQuestOfferWindow, "InGame.xml");
+            mQuestOfferWindow.LoadJsonUi(GameContentManager.UI.InGame);
             Gui.InputBlockingElements.Add(mQuestOfferWindow);
         }
 

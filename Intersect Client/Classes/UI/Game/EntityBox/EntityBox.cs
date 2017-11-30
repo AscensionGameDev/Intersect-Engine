@@ -58,8 +58,6 @@ namespace Intersect_Client.Classes.UI.Game
         public ImagePanel[] PaperdollPanels;
         public string[] PaperdollTextures;
 
-        private ImagePanel mStatusTemplate;
-
         //Spell List
         public List<SpellStatus> Items = new List<SpellStatus>();
 
@@ -139,23 +137,11 @@ namespace Intersect_Client.Classes.UI.Game
 
             EntityStatusPanel = new ImagePanel(EntityWindow, "StatusArea");
 
-            if (PlayerBox)
-            {
-                mStatusTemplate = new ImagePanel(EntityStatusPanel, "PlayerStatusTemplate");
-            }
-            else
-            {
-                mStatusTemplate = new ImagePanel(EntityStatusPanel, "TargetStatusTemplate");
-            }
-
-            var itemIcon = new ImagePanel(mStatusTemplate, "StatusIcon");
-
             UpdateSpellStatus();
 
             SetEntity(myEntity);
 
-            //TODO: Make this more efficient
-            if (!PlayerBox) Gui.LoadRootUiData(EntityWindow, "InGame.xml");
+            EntityWindow.LoadJsonUi(GameContentManager.UI.InGame);
 
             mLastUpdateTime = Globals.System.GetTimeMs();
         }
@@ -294,16 +280,15 @@ namespace Intersect_Client.Classes.UI.Game
                 Items.Add(new SpellStatus(this, i));
                 if (PlayerBox)
                 {
-                    Items[i].Container = new ImagePanel(EntityStatusPanel, "PlayerStatusTemplate");
+                    Items[i].Container = new ImagePanel(EntityStatusPanel, "PlayerStatusIcon");
                 }
                 else
                 {
-                    Items[i].Container = new ImagePanel(EntityStatusPanel, "TargetStatusTemplate");
+                    Items[i].Container = new ImagePanel(EntityStatusPanel, "TargetStatusIcon");
                 }
                 Items[i].Setup();
-
-                //TODO Made this more efficient.
-                Gui.LoadRootUiData(Items[i].Container, "InGame.xml");
+                
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
                 Items[i].Container.Name = "";
 
                 var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
@@ -314,7 +299,6 @@ namespace Intersect_Client.Classes.UI.Game
                     (i / ((float)EntityStatusPanel.Width / (float)(Items[i].Container.Width + xPadding))) *
                     (Items[i].Container.Height + yPadding) + yPadding);
             }
-            mStatusTemplate.Hide();
         }
 
         private void UpdateLevel()

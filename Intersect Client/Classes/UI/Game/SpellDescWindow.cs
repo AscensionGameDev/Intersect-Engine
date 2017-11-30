@@ -23,7 +23,6 @@ namespace Intersect_Client.Classes.UI.Game
             mDescWindow = new ImagePanel(Gui.GameUi.GameCanvas, "SpellDescWindow");
 
             ImagePanel icon = new ImagePanel(mDescWindow, "SpellIcon");
-            icon.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Pic);
 
             Label spellName = new Label(mDescWindow, "SpellName");
             spellName.Text = spell.Name;
@@ -32,8 +31,8 @@ namespace Intersect_Client.Classes.UI.Game
             spellType.Text = Strings.SpellDesc.spelltypes[spell.SpellType];
 
             RichLabel spellDesc = new RichLabel(mDescWindow, "SpellDesc");
-            Gui.LoadRootUiData(mDescWindow,
-                "InGame.xml"); //Load this up now so we know what color to make the text when filling out the desc
+            //Load this up now so we know what color to make the text when filling out the desc
+            mDescWindow.LoadJsonUi(GameContentManager.UI.InGame);
             if (spell.Desc.Length > 0)
             {
                 spellDesc.AddText(Strings.SpellDesc.desc.ToString( spell.Desc), spellDesc.RenderColor);
@@ -121,7 +120,8 @@ namespace Intersect_Client.Classes.UI.Game
                 }
             }
             //Load Again for positioning purposes.
-            Gui.LoadRootUiData(mDescWindow, "InGame.xml");
+            mDescWindow.LoadJsonUi(GameContentManager.UI.InGame);
+            icon.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Pic);
             spellDesc.SizeToChildren(false, true);
             mDescWindow.SetPosition(x, y);
         }

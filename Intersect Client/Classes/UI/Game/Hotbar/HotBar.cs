@@ -4,6 +4,7 @@ using Intersect;
 using Intersect.Client.Classes.Core;
 using Intersect.Client.Classes.UI.Game.Hotbar;
 using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
@@ -24,6 +25,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             HotbarWindow = new ImagePanel(gameCanvas, "HotbarWindow");
             InitHotbarItems();
+            _hotbarWindow.LoadJsonUi(GameContentManager.UI.InGame);
         }
 
         private void InitHotbarItems()

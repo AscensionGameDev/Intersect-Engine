@@ -59,6 +59,8 @@ namespace Intersect_Client.Classes.UI.Menu
             mBackBtn = new Button(mCreditsWindow, "BackButton");
             mBackBtn.SetText(Strings.Credits.back);
             mBackBtn.Clicked += BackBtn_Clicked;
+
+            mCreditsWindow.LoadJsonUi(GameContentManager.UI.Menu);
         }
 
         private void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)

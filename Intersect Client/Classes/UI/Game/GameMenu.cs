@@ -1,4 +1,5 @@
 ﻿using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
@@ -99,6 +100,8 @@ namespace Intersect_Client.Classes.UI.Game
             mCloseButton = new Button(mCloseBackground, "ExitGameButton");
             mCloseButton.SetToolTipText(Strings.GameMenu.exit);
             mCloseButton.Clicked += CloseBtn_Clicked;
+
+            _menuContainer.LoadJsonUi(GameContentManager.UI.InGame);
 
             //Assign Window References
             mOptionsWindow = new OptionsWindow(gameCanvas, null, null);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Intersect.GameObjects;
 using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
@@ -55,6 +56,8 @@ namespace Intersect_Client.Classes.UI.Game
             mQuitButton = new Button(mQuestsWindow, "AbandonQuestButton");
             mQuitButton.SetText(Strings.QuestLog.abandon);
             mQuitButton.Clicked += _quitButton_Clicked;
+
+            mQuestsWindow.LoadJsonUi(GameContentManager.UI.InGame);
         }
 
         private void _quitButton_Clicked(Base sender, ClickedEventArgs arguments)

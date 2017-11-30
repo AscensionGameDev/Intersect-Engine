@@ -1,6 +1,7 @@
 ﻿using System;
 using Intersect.Client.Classes.Core;
 using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -58,6 +59,8 @@ namespace Intersect_Client.Classes.UI.Game
             mChatboxSendButton = new Button(mChatboxWindow, "ChatboxSendButton");
             mChatboxSendButton.Text = Strings.Chatbox.send;
             mChatboxSendButton.Clicked += ChatBoxSendBtn_Clicked;
+
+            mChatboxWindow.LoadJsonUi(GameContentManager.UI.InGame);
         }
 
         //Update

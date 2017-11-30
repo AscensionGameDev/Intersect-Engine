@@ -48,7 +48,7 @@ namespace Intersect.Editor.Classes.Maps
             mMyMap = map;
         }
 
-        [CustomCategory("General"),
+        [CustomCategory("general"),
          CustomDescription("namedesc"),
          CustomDisplayName("name"),
          DefaultValue("New Map")]
@@ -66,7 +66,7 @@ namespace Intersect.Editor.Classes.Maps
             }
         }
 
-        [CustomCategory("General"),
+        [CustomCategory("general"),
          CustomDescription("zonedesc"),
          CustomDisplayName("zonetype"),
          DefaultValue("Normal"),
