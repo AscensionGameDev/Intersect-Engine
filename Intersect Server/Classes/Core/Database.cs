@@ -470,7 +470,7 @@ namespace Intersect.Server.Classes.Core
         {
             var columns = new List<ColumnDescriptor>()
             {
-                new ColumnDescriptor(CHAR_INV_CHAR_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
+                new ColumnDescriptor(CHAR_INV_CHAR_ID, DataType.Integer),
                 new ColumnDescriptor(CHAR_INV_SLOT, DataType.Integer),
                 new ColumnDescriptor(CHAR_INV_ITEM_NUM, DataType.Integer),
                 new ColumnDescriptor(CHAR_INV_ITEM_VAL, DataType.Integer),
@@ -485,7 +485,7 @@ namespace Intersect.Server.Classes.Core
         {
             var columns = new List<ColumnDescriptor>()
             {
-                new ColumnDescriptor(CHAR_SPELL_CHAR_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
+                new ColumnDescriptor(CHAR_SPELL_CHAR_ID, DataType.Integer),
                 new ColumnDescriptor(CHAR_SPELL_SLOT, DataType.Integer),
                 new ColumnDescriptor(CHAR_SPELL_NUM, DataType.Integer),
                 new ColumnDescriptor(CHAR_SPELL_CD, DataType.Integer)
@@ -498,7 +498,7 @@ namespace Intersect.Server.Classes.Core
         {
             var columns = new List<ColumnDescriptor>()
             {
-                new ColumnDescriptor(CHAR_HOTBAR_CHAR_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
+                new ColumnDescriptor(CHAR_HOTBAR_CHAR_ID, DataType.Integer),
                 new ColumnDescriptor(CHAR_HOTBAR_SLOT, DataType.Integer),
                 new ColumnDescriptor(CHAR_HOTBAR_TYPE, DataType.Integer),
                 new ColumnDescriptor(CHAR_HOTBAR_ITEMSLOT, DataType.Integer)
@@ -511,7 +511,7 @@ namespace Intersect.Server.Classes.Core
         {
             var columns = new List<ColumnDescriptor>()
             {
-                new ColumnDescriptor(CHAR_BANK_CHAR_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
+                new ColumnDescriptor(CHAR_BANK_CHAR_ID, DataType.Integer),
                 new ColumnDescriptor(CHAR_BANK_SLOT, DataType.Integer),
                 new ColumnDescriptor(CHAR_BANK_ITEM_NUM, DataType.Integer),
                 new ColumnDescriptor(CHAR_BANK_ITEM_VAL, DataType.Integer),
@@ -526,7 +526,7 @@ namespace Intersect.Server.Classes.Core
         {
             var columns = new List<ColumnDescriptor>()
             {
-                new ColumnDescriptor(CHAR_SWITCH_CHAR_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
+                new ColumnDescriptor(CHAR_SWITCH_CHAR_ID, DataType.Integer),
                 new ColumnDescriptor(CHAR_SWITCH_SLOT, DataType.Integer),
                 new ColumnDescriptor(CHAR_SWITCH_VAL, DataType.Integer)
             };
@@ -538,7 +538,7 @@ namespace Intersect.Server.Classes.Core
         {
             var columns = new List<ColumnDescriptor>()
             {
-                new ColumnDescriptor(CHAR_VARIABLE_CHAR_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
+                new ColumnDescriptor(CHAR_VARIABLE_CHAR_ID, DataType.Integer),
                 new ColumnDescriptor(CHAR_VARIABLE_SLOT, DataType.Integer),
                 new ColumnDescriptor(CHAR_VARIABLE_VAL, DataType.Integer)
             };
@@ -550,7 +550,7 @@ namespace Intersect.Server.Classes.Core
         {
             var columns = new List<ColumnDescriptor>()
             {
-                new ColumnDescriptor(CHAR_QUEST_CHAR_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
+                new ColumnDescriptor(CHAR_QUEST_CHAR_ID, DataType.Integer),
                 new ColumnDescriptor(CHAR_QUEST_ID, DataType.Integer),
                 new ColumnDescriptor(CHAR_QUEST_TASK, DataType.Integer),
                 new ColumnDescriptor(CHAR_QUEST_TASK_PROGRESS, DataType.Integer),
@@ -564,7 +564,7 @@ namespace Intersect.Server.Classes.Core
         {
             var columns = new List<ColumnDescriptor>()
             {
-                new ColumnDescriptor(CHAR_FRIEND_CHAR_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
+                new ColumnDescriptor(CHAR_FRIEND_CHAR_ID, DataType.Integer),
                 new ColumnDescriptor(CHAR_FRIEND_ID, DataType.Integer)
             };
 
@@ -586,7 +586,7 @@ namespace Intersect.Server.Classes.Core
         {
             var columns = new List<ColumnDescriptor>()
             {
-                new ColumnDescriptor(BAG_ITEM_CONTAINER_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
+                new ColumnDescriptor(BAG_ITEM_CONTAINER_ID, DataType.Integer),
                 new ColumnDescriptor(BAG_ITEM_SLOT, DataType.Integer),
                 new ColumnDescriptor(BAG_ITEM_NUM, DataType.Integer),
                 new ColumnDescriptor(BAG_ITEM_VAL, DataType.Integer),
