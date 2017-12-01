@@ -692,7 +692,7 @@ namespace Intersect.Server.Classes.Entities
                 PacketSender.SendEntityPositionToAll(this);
 
                 //If map grid changed then send the new map grid
-                if (!adminWarp)
+                if (!adminWarp && !oldMap.SurroundingMaps.Contains(newMap))
                 {
                     PacketSender.SendMapGrid(MyClient, map.MapGrid, true);
                 }
@@ -1342,11 +1342,14 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Crafting
-        public bool OpenCraftingBench(int index)
+        public bool OpenCraftingBench(BenchBase bench)
         {
             if (IsBusy()) return false;
-            InCraft = index;
-            PacketSender.SendOpenCraftingBench(MyClient, index);
+            if (bench != null)
+            {
+                InCraft = bench.Index;
+                PacketSender.SendOpenCraftingBench(MyClient, bench);
+            }
             return true;
         }
 

@@ -102,6 +102,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Prev Sprite Button
             _prevSpriteButton = new Button(_characterContainer, "PreviousSpriteButton");
+            _prevSpriteButton.Clicked += _prevSpriteButton_Clicked;
 
             //Class Background
             _genderBackground = new ImagePanel(_charCreationPanel, "GeneralPanel");

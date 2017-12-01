@@ -30,9 +30,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             cmbFace.Items.Clear();
             cmbFace.Items.Add(Strings.Get("general", "none"));
             cmbFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
-            if (cmbFace.Items.IndexOf(_myCommand.Strs[5]) > -1)
+            if (cmbFace.Items.IndexOf(TextUtils.NullToNone(_myCommand.Strs[5])) > -1)
             {
-                cmbFace.SelectedIndex = cmbFace.Items.IndexOf(_myCommand.Strs[5]);
+                cmbFace.SelectedIndex = cmbFace.Items.IndexOf(TextUtils.NullToNone(_myCommand.Strs[5]));
             }
             else
             {

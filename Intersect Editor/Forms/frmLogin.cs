@@ -27,6 +27,7 @@ namespace Intersect.Editor.Forms
 
         private void frmLogin_Load(object sender, EventArgs e)
         {
+            AppDomain.CurrentDomain.UnhandledException += Program.CurrentDomain_UnhandledException;
             GameContentManager.CheckForResources();
             if (Database.LoadOptions())
             {

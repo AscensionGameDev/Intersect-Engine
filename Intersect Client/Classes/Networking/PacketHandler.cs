@@ -1581,6 +1581,7 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             int index = bf.ReadInteger();
 
+            Globals.Trade = new ItemInstance[2, Options.MaxInvItems];
             //Gotta initialize the trade values
             for (int x = 0; x < 2; x++)
             {

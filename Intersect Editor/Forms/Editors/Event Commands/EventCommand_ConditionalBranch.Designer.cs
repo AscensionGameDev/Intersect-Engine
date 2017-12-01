@@ -32,6 +32,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventCommand_ConditionalBranch));
             this.grpConditional = new DarkUI.Controls.DarkGroupBox();
+            this.grpGender = new DarkUI.Controls.DarkGroupBox();
+            this.cmbGender = new DarkUI.Controls.DarkComboBox();
+            this.lblGender = new System.Windows.Forms.Label();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.cmbConditionType = new DarkUI.Controls.DarkComboBox();
             this.lblType = new System.Windows.Forms.Label();
@@ -79,9 +82,6 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbTime2 = new DarkUI.Controls.DarkComboBox();
             this.cmbTime1 = new DarkUI.Controls.DarkComboBox();
             this.lblAnd = new System.Windows.Forms.Label();
-            this.grpGender = new DarkUI.Controls.DarkGroupBox();
-            this.cmbGender = new DarkUI.Controls.DarkComboBox();
-            this.lblGender = new System.Windows.Forms.Label();
             this.grpPowerIs = new DarkUI.Controls.DarkGroupBox();
             this.cmbPower = new DarkUI.Controls.DarkComboBox();
             this.lblPower = new System.Windows.Forms.Label();
@@ -97,6 +97,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbClass = new DarkUI.Controls.DarkComboBox();
             this.lblClass = new System.Windows.Forms.Label();
             this.grpConditional.SuspendLayout();
+            this.grpGender.SuspendLayout();
             this.grpHasItem.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudItemAmount)).BeginInit();
             this.grpSwitch.SuspendLayout();
@@ -107,7 +108,6 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpLevelStat.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudLevelStatValue)).BeginInit();
             this.grpTime.SuspendLayout();
-            this.grpGender.SuspendLayout();
             this.grpPowerIs.SuspendLayout();
             this.grpSelfSwitch.SuspendLayout();
             this.grpSpell.SuspendLayout();
@@ -118,6 +118,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             // 
             this.grpConditional.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpConditional.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpConditional.Controls.Add(this.grpLevelStat);
             this.grpConditional.Controls.Add(this.grpGender);
             this.grpConditional.Controls.Add(this.btnSave);
             this.grpConditional.Controls.Add(this.cmbConditionType);
@@ -129,7 +130,6 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpConditional.Controls.Add(this.grpQuestCompleted);
             this.grpConditional.Controls.Add(this.grpQuestInProgress);
             this.grpConditional.Controls.Add(this.grpStartQuest);
-            this.grpConditional.Controls.Add(this.grpLevelStat);
             this.grpConditional.Controls.Add(this.grpTime);
             this.grpConditional.Controls.Add(this.grpPowerIs);
             this.grpConditional.Controls.Add(this.grpSelfSwitch);
@@ -142,6 +142,50 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpConditional.TabIndex = 17;
             this.grpConditional.TabStop = false;
             this.grpConditional.Text = "Conditional";
+            // 
+            // grpGender
+            // 
+            this.grpGender.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpGender.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGender.Controls.Add(this.cmbGender);
+            this.grpGender.Controls.Add(this.lblGender);
+            this.grpGender.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpGender.Location = new System.Drawing.Point(10, 42);
+            this.grpGender.Name = "grpGender";
+            this.grpGender.Size = new System.Drawing.Size(236, 51);
+            this.grpGender.TabIndex = 33;
+            this.grpGender.TabStop = false;
+            this.grpGender.Text = "Gender Is...";
+            // 
+            // cmbGender
+            // 
+            this.cmbGender.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbGender.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbGender.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbGender.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbGender.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbGender.ButtonIcon")));
+            this.cmbGender.DrawDropdownHoverOutline = false;
+            this.cmbGender.DrawFocusRectangle = false;
+            this.cmbGender.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbGender.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbGender.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbGender.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbGender.FormattingEnabled = true;
+            this.cmbGender.Location = new System.Drawing.Point(79, 17);
+            this.cmbGender.Name = "cmbGender";
+            this.cmbGender.Size = new System.Drawing.Size(141, 21);
+            this.cmbGender.TabIndex = 1;
+            this.cmbGender.Text = null;
+            this.cmbGender.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // lblGender
+            // 
+            this.lblGender.AutoSize = true;
+            this.lblGender.Location = new System.Drawing.Point(7, 20);
+            this.lblGender.Name = "lblGender";
+            this.lblGender.Size = new System.Drawing.Size(45, 13);
+            this.lblGender.TabIndex = 0;
+            this.lblGender.Text = "Gender:";
             // 
             // btnSave
             // 
@@ -241,6 +285,11 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.nudItemAmount.Name = "nudItemAmount";
             this.nudItemAmount.Size = new System.Drawing.Size(116, 20);
             this.nudItemAmount.TabIndex = 4;
+            this.nudItemAmount.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // cmbItem
             // 
@@ -697,6 +746,11 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.nudLevelStatValue.Name = "nudLevelStatValue";
             this.nudLevelStatValue.Size = new System.Drawing.Size(152, 20);
             this.nudLevelStatValue.TabIndex = 8;
+            this.nudLevelStatValue.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // cmbLevelStat
             // 
@@ -723,7 +777,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbLevelStat.Name = "cmbLevelStat";
             this.cmbLevelStat.Size = new System.Drawing.Size(151, 21);
             this.cmbLevelStat.TabIndex = 7;
-            this.cmbLevelStat.Text = null;
+            this.cmbLevelStat.Text = "Level";
             this.cmbLevelStat.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblLevelOrStat
@@ -860,50 +914,6 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.lblAnd.Size = new System.Drawing.Size(26, 13);
             this.lblAnd.TabIndex = 2;
             this.lblAnd.Text = "And";
-            // 
-            // grpGender
-            // 
-            this.grpGender.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.grpGender.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpGender.Controls.Add(this.cmbGender);
-            this.grpGender.Controls.Add(this.lblGender);
-            this.grpGender.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpGender.Location = new System.Drawing.Point(10, 42);
-            this.grpGender.Name = "grpGender";
-            this.grpGender.Size = new System.Drawing.Size(236, 51);
-            this.grpGender.TabIndex = 33;
-            this.grpGender.TabStop = false;
-            this.grpGender.Text = "Gender Is...";
-            // 
-            // cmbGender
-            // 
-            this.cmbGender.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbGender.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbGender.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbGender.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbGender.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbGender.ButtonIcon")));
-            this.cmbGender.DrawDropdownHoverOutline = false;
-            this.cmbGender.DrawFocusRectangle = false;
-            this.cmbGender.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbGender.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbGender.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbGender.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbGender.FormattingEnabled = true;
-            this.cmbGender.Location = new System.Drawing.Point(79, 17);
-            this.cmbGender.Name = "cmbGender";
-            this.cmbGender.Size = new System.Drawing.Size(141, 21);
-            this.cmbGender.TabIndex = 1;
-            this.cmbGender.Text = null;
-            this.cmbGender.TextPadding = new System.Windows.Forms.Padding(2);
-            // 
-            // lblGender
-            // 
-            this.lblGender.AutoSize = true;
-            this.lblGender.Location = new System.Drawing.Point(7, 20);
-            this.lblGender.Name = "lblGender";
-            this.lblGender.Size = new System.Drawing.Size(45, 13);
-            this.lblGender.TabIndex = 0;
-            this.lblGender.Text = "Gender:";
             // 
             // grpPowerIs
             // 
@@ -1124,6 +1134,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.Size = new System.Drawing.Size(262, 208);
             this.grpConditional.ResumeLayout(false);
             this.grpConditional.PerformLayout();
+            this.grpGender.ResumeLayout(false);
+            this.grpGender.PerformLayout();
             this.grpHasItem.ResumeLayout(false);
             this.grpHasItem.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudItemAmount)).EndInit();
@@ -1142,8 +1154,6 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             ((System.ComponentModel.ISupportInitialize)(this.nudLevelStatValue)).EndInit();
             this.grpTime.ResumeLayout(false);
             this.grpTime.PerformLayout();
-            this.grpGender.ResumeLayout(false);
-            this.grpGender.PerformLayout();
             this.grpPowerIs.ResumeLayout(false);
             this.grpPowerIs.PerformLayout();
             this.grpSelfSwitch.ResumeLayout(false);

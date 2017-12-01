@@ -1270,12 +1270,15 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendOpenCraftingBench(Client client, int benchNum)
+        public static void SendOpenCraftingBench(Client client, BenchBase bench)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.OpenCraftingBench);
-            bf.WriteBytes(BenchBase.Lookup.Get<BenchBase>(benchNum).CraftData());
-            client.SendPacket(bf.ToArray());
+            if (bench != null)
+            {
+                bf.WriteBytes(bench.CraftData());
+                client.SendPacket(bf.ToArray());
+            }
             bf.Dispose();
         }
 

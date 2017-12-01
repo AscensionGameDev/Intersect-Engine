@@ -117,6 +117,13 @@ namespace Intersect.Editor.Forms
                 cmbMalePaperdoll.Items.Add(paperdollnames[i]);
                 cmbFemalePaperdoll.Items.Add(paperdollnames[i]);
             }
+
+            nudStr.Maximum = Options.MaxStatValue;
+            nudMag.Maximum = Options.MaxStatValue;
+            nudDef.Maximum = Options.MaxStatValue;
+            nudMR.Maximum = Options.MaxStatValue;
+            nudSpd.Maximum = Options.MaxStatValue;
+
             InitLocalization();
             UpdateEditor();
         }

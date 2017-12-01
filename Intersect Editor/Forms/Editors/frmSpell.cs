@@ -113,6 +113,11 @@ namespace Intersect.Editor.Forms
                 cmbWarpMap.Items.Add(MapList.GetOrderedMaps()[i].Name);
             }
             cmbWarpMap.SelectedIndex = 0;
+            nudStr.Maximum = Options.MaxStatValue;
+            nudMag.Maximum = Options.MaxStatValue;
+            nudDef.Maximum = Options.MaxStatValue;
+            nudMR.Maximum = Options.MaxStatValue;
+            nudSpd.Maximum = Options.MaxStatValue;
             InitLocalization();
             UpdateEditor();
         }
