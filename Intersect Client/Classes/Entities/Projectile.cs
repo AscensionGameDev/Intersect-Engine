@@ -460,23 +460,13 @@ namespace Intersect_Client.Classes.Entities
         {
             var killSpawn = false;
             int tileBlocked =
-                Globals.Me.IsTileBlocked(Spawns[i].X, Spawns[i].Y, CurrentZ, Spawns[i].Map);
+                Globals.Me.IsTileBlocked(Spawns[i].X, Spawns[i].Y, CurrentZ, Spawns[i].Map, Spawns[i].ProjectileBase.IgnoreActiveResources, Spawns[i].ProjectileBase.IgnoreExhaustedResources);
 
             if (tileBlocked != -1)
             {
                 if (tileBlocked >= 0 && tileBlocked != _owner && Globals.Entities.ContainsKey(tileBlocked))
                 {
                     if (Globals.Entities[tileBlocked].GetType() == typeof(Resource))
-                    {
-                        if ((((Resource)Globals.Entities[tileBlocked]).IsDead &&
-                             !Spawns[i].ProjectileBase.IgnoreExhaustedResources) ||
-                            (!((Resource)Globals.Entities[tileBlocked]).IsDead &&
-                             !Spawns[i].ProjectileBase.IgnoreActiveResources))
-                        {
-                            killSpawn = true;
-                        }
-                    }
-                    else
                     {
                         killSpawn = true;
                     }

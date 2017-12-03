@@ -501,8 +501,7 @@ namespace Intersect.Server.Classes.Entities
                     if (Parent.Owner != Parent.Target)
                     {
                         Parent.Owner.TryAttack(TargetEntity, Parent.MyBase, Parent.Spell, Parent.Item, Dir);
-                        if (Dir <= 3 && Parent.MyBase.GrappleHook == true
-                        ) //Don't handle directional projectile grapplehooks
+                        if (Dir <= 3 && Parent.MyBase.GrappleHook) //Don't handle directional projectile grapplehooks
                         {
                             Parent.Owner.Dir = Dir;
                             new DashInstance(Parent.Owner, Distance, Parent.Owner.Dir);
@@ -517,17 +516,16 @@ namespace Intersect.Server.Classes.Entities
                         (!((Resource) TargetEntity).IsDead &&
                          !ProjectileBase.IgnoreActiveResources))
                     {
-                        if (Parent.Owner.GetType() == typeof(Player))
+                        if (Parent.Owner.GetType() == typeof(Player) && !((Resource)TargetEntity).IsDead)
                         {
                             Parent.Owner.TryAttack(TargetEntity, Parent.MyBase, Parent.Spell, Parent.Item, Dir);
-                            if (Dir <= 3 && Parent.MyBase.GrappleHook == true
-                            ) //Don't handle directional projectile grapplehooks
+                            if (Dir <= 3 && Parent.MyBase.GrappleHook) //Don't handle directional projectile grapplehooks
                             {
                                 Parent.Owner.Dir = Dir;
                                 new DashInstance(Parent.Owner, Distance, Parent.Owner.Dir);
                             }
-                            return true;
                         }
+                        return true;
                     }
                 }
                 else //Any other Parent.Target
@@ -536,8 +534,7 @@ namespace Intersect.Server.Classes.Entities
                     if (OwnerNpc == null || OwnerNpc.CanNpcCombat(TargetEntity))
                     {
                         Parent.Owner.TryAttack(TargetEntity, Parent.MyBase, Parent.Spell, Parent.Item, Dir);
-                        if (Dir <= 3 && Parent.MyBase.GrappleHook == true
-                        ) //Don't handle directional projectile grapplehooks
+                        if (Dir <= 3 && Parent.MyBase.GrappleHook) //Don't handle directional projectile grapplehooks
                         {
                             Parent.Owner.Dir = Dir;
                             new DashInstance(Parent.Owner, Distance, Parent.Owner.Dir);

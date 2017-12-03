@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Keys = IntersectClientExtras.GenericClasses.Keys;
 using Intersect.Logging;
+using Intersect_Client.Classes.General;
 
 namespace Intersect_Client_MonoGame.Classes.SFML.Input
 {
@@ -113,6 +114,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
 
         private void CheckMouseButton(ButtonState bs, MouseButtons mb)
         {
+            if (Globals.GameState == GameStates.Intro) return; //No mouse input allowed while showing intro slides
             if (bs == ButtonState.Pressed && !MouseButtonDown(mb))
             {
                 Gui.GwenInput.ProcessMessage(new GwenInputMessage(IntersectInput.InputEvent.MouseDown,

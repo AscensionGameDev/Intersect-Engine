@@ -557,6 +557,33 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
+        public override void TryAttack(Entity enemy, ProjectileBase projectile, SpellBase parentSpell, ItemBase parentItem, int projectileDir)
+        {
+            //If Entity is resource, check for the correct tool and make sure its not a spell cast.
+            if (enemy.GetType() == typeof(Resource))
+            {
+                if (((Resource)enemy).IsDead) return;
+                // Check that a resource is actually required.
+                var resource = ((Resource)enemy).MyBase;
+                //Check Dynamic Requirements
+                if (!EventInstance.MeetsConditionLists(resource.HarvestingReqs, this, null))
+                {
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "resourcereqs"));
+                    return;
+                }
+                if (resource.Tool > -1 && resource.Tool < Options.ToolTypes.Count)
+                {
+                    if (parentItem == null || resource.Tool != parentItem.Tool)
+                    {
+                        PacketSender.SendPlayerMsg(MyClient,
+                            Strings.Get("combat", "toolrequired", Options.ToolTypes[resource.Tool]));
+                        return;
+                    }
+                }
+            }
+            base.TryAttack(enemy, projectile, parentSpell, parentItem, projectileDir);
+        }
+
         public override void TryAttack(Entity enemy)
         {
             if (CastTime >= Globals.System.GetTimeMs())

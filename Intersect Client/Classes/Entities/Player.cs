@@ -996,7 +996,7 @@ namespace Intersect_Client.Classes.Entities
         ///     Returns any value zero or greater matching the entity index that is in the way.
         /// </summary>
         /// <returns></returns>
-        public int IsTileBlocked(int x, int y, int z, int map)
+        public int IsTileBlocked(int x, int y, int z, int map, bool ignoreAliveResources = true, bool ignoreDeadResources = true)
         {
             var mapInstance = MapInstance.Lookup.Get<MapInstance>(map);
             if (mapInstance == null) return -2;
@@ -1074,6 +1074,8 @@ namespace Intersect_Client.Classes.Entities
                                     var resourceBase = ((Resource) en.Value).GetResourceBase();
                                     if (resourceBase != null)
                                     {
+                                        if (!ignoreAliveResources && !((Resource) en.Value).IsDead) return en.Key;
+                                        if (!ignoreDeadResources && ((Resource) en.Value).IsDead) return en.Key;
                                         if ((resourceBase.WalkableAfter && ((Resource) en.Value).IsDead) ||
                                             (resourceBase.WalkableBefore && !((Resource) en.Value).IsDead))
                                         {
