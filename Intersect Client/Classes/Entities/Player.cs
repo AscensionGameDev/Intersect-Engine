@@ -117,6 +117,15 @@ namespace Intersect_Client.Classes.Entities
                 {
                     ProcessDirectionalInput();
                 }
+                if (GameControls.KeyDown(Controls.AttackInteract))
+                {
+                    if (!Globals.Me.TryAttack())
+                    {
+                        if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
+                            Globals.Me.AttackTimer = Globals.System.GetTimeMS() +
+                                                     Globals.Me.CalculateAttackTime();
+                    }
+                }
             }
             if (_targetBox != null)
             {
