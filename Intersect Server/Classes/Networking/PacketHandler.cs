@@ -983,25 +983,41 @@ namespace Intersect.Server.Classes.Networking
 
                         if (projectileBase != null)
                         {
-                            if (projectileBase.Ammo <= -1)
+                            if (projectileBase.Ammo > -1)
                             {
-#if DEBUG
+                                var itemSlot = client.Entity.FindItem(projectileBase.Ammo, projectileBase.AmmoRequired);
+                                if (itemSlot == -1)
+                                {
+                                    PacketSender.SendPlayerMsg(client,
+                                        Strings.Get("items", "notenough", ItemBase.GetName(projectileBase.Ammo)),
+                                        CustomColors.NoAmmo);
+                                    return;
+                                }
+#if INTERSECT_DIAGNOSTIC
+                                PacketSender.SendPlayerMsg(client,
+                                    Strings.Get("items", "notenough", $"REGISTERED_AMMO ({projectileBase.Ammo}:'{ItemBase.GetName(projectileBase.Ammo)}':{projectileBase.AmmoRequired})"),
+                                    CustomColors.NoAmmo);
+#endif
+                                if (!client.Entity.TakeItemsByNum(projectileBase.Ammo, projectileBase.AmmoRequired))
+                                {
+#if INTERSECT_DIAGNOSTIC
+                                    PacketSender.SendPlayerMsg(client,
+                                        Strings.Get("items", "notenough", "FAILED_TO_DEDUCT_AMMO"),
+                                        CustomColors.NoAmmo);
+                                    PacketSender.SendPlayerMsg(client,
+                                        Strings.Get("items", "notenough", $"FAILED_TO_DEDUCT_AMMO {client.Entity.CountItemInstances(projectileBase.Ammo)}"),
+                                        CustomColors.NoAmmo);
+#endif
+                                }
+                            }
+#if INTERSECT_DIAGNOSTIC
+                            else
+                            {
                                 PacketSender.SendPlayerMsg(client,
                                     Strings.Get("items", "notenough", "NO_REGISTERED_AMMO"),
                                     CustomColors.NoAmmo);
+                            }
 #endif
-                                return;
-                            }
-
-                            var item = client.Entity.FindItem(projectileBase.Ammo, projectileBase.AmmoRequired);
-                            if (item == -1)
-                            {
-                                PacketSender.SendPlayerMsg(client,
-                                    Strings.Get("items", "notenough", ItemBase.GetName(projectileBase.Ammo)),
-                                    CustomColors.NoAmmo);
-                                return;
-                            }
-                            client.Entity.TakeItemsByNum(item, projectileBase.AmmoRequired);
                             MapInstance.Lookup.Get<MapInstance>(client.Entity.CurrentMap)
                                 .SpawnMapProjectile(client.Entity, projectileBase, null, WeaponItem,
                                     client.Entity.CurrentMap,
@@ -1009,7 +1025,7 @@ namespace Intersect.Server.Classes.Networking
                                     client.Entity.Dir, null);
                             return;
                         }
-#if DEBUG
+#if INTERSECT_DIAGNOSTIC
                         else
                         {
                             PacketSender.SendPlayerMsg(client,
@@ -1022,7 +1038,7 @@ namespace Intersect.Server.Classes.Networking
                     else
                     {
                         UnequippedAttack = true;
-#if DEBUG
+#if INTERSECT_DIAGNOSTIC
                         PacketSender.SendPlayerMsg(client,
                             Strings.Get("items", "notenough", "NO_WEAPON"),
                             CustomColors.NoAmmo);
