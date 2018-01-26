@@ -976,29 +976,32 @@ namespace Intersect.Server.Classes.Networking
                             PacketSender.SendAnimationToProximity(attackAnim.Index, -1, -1, attackingTile.GetMap(),attackingTile.GetX(),attackingTile.GetY(),client.Entity.Dir);
                         }
 
-                        var projectileBase =
-                            ProjectileBase.Lookup.Get<ProjectileBase>(
-                                ItemBase.Lookup.Get<ItemBase>(
-                                        client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum)
-                                    .Projectile);
+                        var weaponInvSlot = client.Entity.Equipment[Options.WeaponIndex];
+                        var invItem = client.Entity.Inventory[weaponInvSlot];
+                        var weapon = ItemBase.Lookup.Get<ItemBase>(invItem?.ItemNum ?? -1);
+                        var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(weapon?.Projectile ?? -1);
 
                         if (projectileBase != null)
                         {
-                            if (projectileBase.Ammo > -1)
+                            if (projectileBase.Ammo <= -1)
                             {
-                                int item = client.Entity.FindItem(projectileBase.Ammo, projectileBase.AmmoRequired);
-                                if (item == -1)
-                                {
-                                    PacketSender.SendPlayerMsg(client,
-                                        Strings.Get("items", "notenough", ItemBase.GetName(projectileBase.Ammo)),
-                                        CustomColors.NoAmmo);
-                                    return;
-                                }
-                                else
-                                {
-                                    client.Entity.TakeItemsByNum(item, projectileBase.AmmoRequired);
-                                }
+#if DEBUG
+                                PacketSender.SendPlayerMsg(client,
+                                    Strings.Get("items", "notenough", "NO_REGISTERED_AMMO"),
+                                    CustomColors.NoAmmo);
+#endif
+                                return;
                             }
+
+                            var item = client.Entity.FindItem(projectileBase.Ammo, projectileBase.AmmoRequired);
+                            if (item == -1)
+                            {
+                                PacketSender.SendPlayerMsg(client,
+                                    Strings.Get("items", "notenough", ItemBase.GetName(projectileBase.Ammo)),
+                                    CustomColors.NoAmmo);
+                                return;
+                            }
+                            client.Entity.TakeItemsByNum(item, projectileBase.AmmoRequired);
                             MapInstance.Lookup.Get<MapInstance>(client.Entity.CurrentMap)
                                 .SpawnMapProjectile(client.Entity, projectileBase, null, WeaponItem,
                                     client.Entity.CurrentMap,
@@ -1006,14 +1009,28 @@ namespace Intersect.Server.Classes.Networking
                                     client.Entity.Dir, null);
                             return;
                         }
+#if DEBUG
+                        else
+                        {
+                            PacketSender.SendPlayerMsg(client,
+                                Strings.Get("items", "notenough", "NONPROJECTILE"),
+                                CustomColors.NoAmmo);
+                            return;
+                        }
+#endif
                     }
                     else
                     {
                         UnequippedAttack = true;
+#if DEBUG
+                        PacketSender.SendPlayerMsg(client,
+                            Strings.Get("items", "notenough", "NO_WEAPON"),
+                            CustomColors.NoAmmo);
+#endif
                     }
                 }
 
-                if (UnequippedAttack == true)
+                if (UnequippedAttack)
                 {
                     var classBase = ClassBase.Lookup.Get<ClassBase>(client.Entity.Class);
                     if (classBase != null)
