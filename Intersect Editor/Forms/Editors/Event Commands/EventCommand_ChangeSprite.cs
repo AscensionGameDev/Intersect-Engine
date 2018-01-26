@@ -20,7 +20,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             _eventEditor = editor;
             InitLocalization();
             cmbSprite.Items.Clear();
-            cmbSprite.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
+            cmbSprite.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity));
             if (cmbSprite.Items.IndexOf(_myCommand.Strs[0]) > -1)
             {
                 cmbSprite.SelectedIndex = cmbSprite.Items.IndexOf(_myCommand.Strs[0]);

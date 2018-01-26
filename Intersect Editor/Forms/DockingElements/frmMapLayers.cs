@@ -361,7 +361,7 @@ namespace Intersect.Editor.Forms
             grpSound.Visible = true;
             cmbMapAttributeSound.Items.Clear();
             cmbMapAttributeSound.Items.Add(Strings.Get("general", "none"));
-            cmbMapAttributeSound.Items.AddRange(GameContentManager.GetSoundNames());
+            cmbMapAttributeSound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
             cmbMapAttributeSound.SelectedIndex = 0;
         }
 

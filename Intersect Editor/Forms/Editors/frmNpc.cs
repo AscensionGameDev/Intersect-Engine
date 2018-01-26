@@ -79,7 +79,7 @@ namespace Intersect.Editor.Forms
         {
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add(Strings.Get("general", "none"));
-            cmbSprite.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
+            cmbSprite.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity));
             cmbSpell.Items.Clear();
             cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
             cmbHostileNPC.Items.Clear();

@@ -565,7 +565,7 @@ namespace Intersect.Editor.Forms
             }
             cmbPreviewFace.Items.Clear();
             cmbPreviewFace.Items.Add(Strings.Get("general", "none"));
-            cmbPreviewFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
+            cmbPreviewFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.Get("general", "none"));
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));

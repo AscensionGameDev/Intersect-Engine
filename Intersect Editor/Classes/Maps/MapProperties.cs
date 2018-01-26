@@ -103,7 +103,7 @@ namespace Intersect.Editor.Classes.Maps
                 {
                     Strings.Get("general", "none")
                 };
-                MusicList.AddRange(GameContentManager.GetMusicNames());
+                MusicList.AddRange(GameContentManager.SmartSortedMusicNames);
                 if (MusicList.IndexOf(_myMap.Music) <= -1)
                 {
                     _myMap.Music = null;
@@ -135,7 +135,7 @@ namespace Intersect.Editor.Classes.Maps
                 {
                     Strings.Get("general", "none")
                 };
-                SoundList.AddRange(GameContentManager.GetSoundNames());
+                SoundList.AddRange(GameContentManager.SmartSortedSoundNames);
                 if (SoundList.IndexOf(_myMap.Sound) <= -1)
                 {
                     _myMap.Sound = null;
@@ -367,7 +367,7 @@ namespace Intersect.Editor.Classes.Maps
                 {
                     Strings.Get("general", "none")
                 };
-                FogList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Fog));
+                FogList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Fog));
                 if (FogList.IndexOf(_myMap.Fog) <= -1)
                 {
                     _myMap.Fog = null;
@@ -456,7 +456,7 @@ namespace Intersect.Editor.Classes.Maps
                 {
                     Strings.Get("general", "none")
                 };
-                ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
+                ImageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
                 if (ImageList.IndexOf(_myMap.Panorama) <= -1)
                 {
                     _myMap.Panorama = null;
@@ -488,7 +488,7 @@ namespace Intersect.Editor.Classes.Maps
                 {
                     Strings.Get("general", "none")
                 };
-                ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
+                ImageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
                 if (ImageList.IndexOf(_myMap.OverlayGraphic) <= -1)
                 {
                     _myMap.OverlayGraphic = null;
@@ -529,7 +529,7 @@ namespace Intersect.Editor.Classes.Maps
             {
                 Strings.Get("general", "none")
             };
-            MusicList.AddRange(GameContentManager.GetMusicNames());
+            MusicList.AddRange(GameContentManager.SmartSortedMusicNames);
             return new StandardValuesCollection(MusicList.ToArray());
         }
     }
@@ -556,7 +556,7 @@ namespace Intersect.Editor.Classes.Maps
             {
                 Strings.Get("general", "none")
             };
-            SoundList.AddRange(GameContentManager.GetSoundNames());
+            SoundList.AddRange(GameContentManager.SmartSortedSoundNames);
             return new StandardValuesCollection(SoundList.ToArray());
         }
     }
@@ -583,7 +583,7 @@ namespace Intersect.Editor.Classes.Maps
             {
                 Strings.Get("general", "none")
             };
-            FogList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Fog));
+            FogList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Fog));
             return new StandardValuesCollection(FogList.ToArray());
         }
     }
@@ -606,11 +606,11 @@ namespace Intersect.Editor.Classes.Maps
         public override StandardValuesCollection
             GetStandardValues(ITypeDescriptorContext context)
         {
-            List<string> ImageList = new List<string>
+            var ImageList = new List<string>
             {
                 Strings.Get("general", "none")
             };
-            ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
+            ImageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
             return new StandardValuesCollection(ImageList.ToArray());
         }
     }

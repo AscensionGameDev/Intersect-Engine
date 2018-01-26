@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Intersect
@@ -11,22 +12,22 @@ namespace Intersect
         {
             if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y)) return 0;
 
-            int len1 = x.Length;
-            int len2 = y.Length;
-            int marker1 = 0;
-            int marker2 = 0;
+            var len1 = x.Length;
+            var len2 = y.Length;
+            var marker1 = 0;
+            var marker2 = 0;
 
             // Walk through two the strings with two markers.
             while (marker1 < len1 && marker2 < len2)
             {
-                char ch1 = x[marker1];
-                char ch2 = y[marker2];
+                var ch1 = x[marker1];
+                var ch2 = y[marker2];
 
                 // Some buffers we can build up characters in for each chunk.
-                char[] space1 = new char[len1];
-                int loc1 = 0;
-                char[] space2 = new char[len2];
-                int loc2 = 0;
+                var space1 = new char[len1];
+                var loc1 = 0;
+                var space2 = new char[len2];
+                var loc2 = 0;
 
                 // Walk through all following characters that are digits or
                 // characters in BOTH strings starting at the appropriate marker.
@@ -63,22 +64,22 @@ namespace Intersect
 
                 // If we have collected numbers, compare them numerically.
                 // Otherwise, if we have strings, compare them alphabetically.
-                string str1 = new string(space1);
-                string str2 = new string(space2);
+                var str1 = new string(space1);
+                var str2 = new string(space2);
 
                 int result;
 
                 if (char.IsDigit(space1[0]) && char.IsDigit(space2[0]))
                 {
-                    int thisNumericChunk = 0;
-                    int thatNumericChunk = 0;
+                    var thisNumericChunk = 0;
+                    var thatNumericChunk = 0;
                     int.TryParse(str1, out thisNumericChunk);
                     int.TryParse(str2, out thatNumericChunk);
                     result = thisNumericChunk.CompareTo(thatNumericChunk);
                 }
                 else
                 {
-                    result = str1.CompareTo(str2);
+                    result = string.Compare(str1, str2, StringComparison.Ordinal);
                 }
 
                 if (result != 0)

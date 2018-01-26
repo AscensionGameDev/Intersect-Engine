@@ -13,6 +13,7 @@ using Intersect.Editor.Forms;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Logging;
+using Intersect.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -503,6 +504,8 @@ namespace Intersect.Editor.Classes.Core
             return soundDict.TryGetValue(name.ToLower(), out object sound) ? sound : null;
         }
 
+        public static string[] GetSmartSortedTextureNames(TextureType type) => SmartSort(GetTextureNames(type));
+
         //Getting Filenames
         public static string[] GetTextureNames(TextureType type)
         {
@@ -552,14 +555,25 @@ namespace Intersect.Editor.Classes.Core
             var keys = textureDict?.Keys.ToArray();
             if (keys != null)
             {
-                Array.Sort(keys,new AlphanumComparatorFast());
+                Array.Sort(keys, new AlphanumComparatorFast());
             }
             return textureDict?.Keys.ToArray();
         }
 
-        public static string[] GetMusicNames() => musicDict?.Keys.ToArray();
+        public static string[] MusicNames => musicDict?.Keys.ToArray();
 
-        public static string[] GetSoundNames() => soundDict?.Keys.ToArray();
+        public static string[] SmartSortedMusicNames => SmartSort(MusicNames);
+
+        public static string[] SoundNames => soundDict?.Keys.ToArray();
+
+        public static string[] SmartSortedSoundNames => SmartSort(SoundNames);
+
+        private static string[] SmartSort(string[] strings)
+        {
+            var sortedStrings = strings ?? new string[] { };
+            Array.Sort(sortedStrings, new AlphanumComparator());
+            return sortedStrings;
+        }
     }
 
     internal class DummyGraphicsDeviceManager : IGraphicsDeviceService

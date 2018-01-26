@@ -79,7 +79,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 cmbGraphic.Show();
                 lblGraphic.Show();
                 cmbGraphic.Items.Clear();
-                cmbGraphic.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
+                cmbGraphic.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity));
                 if (cmbGraphic.Items.Count > 0) cmbGraphic.SelectedIndex = 0;
             }
             else if (cmbGraphicType.SelectedIndex == 2) //Tileset
@@ -116,7 +116,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 cmbGraphic.Show();
                 lblGraphic.Show();
-                cmbGraphic.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
+                cmbGraphic.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity));
                 if (cmbGraphic.Items.Count > 0) cmbGraphic.SelectedIndex = 0;
             }
             else if (cmbGraphicType.SelectedIndex == 2) //Tileset

@@ -86,7 +86,7 @@ namespace Intersect.Editor.Forms
             cmbPic.Items.Clear();
             cmbPic.Items.Add(Strings.Get("general", "none"));
 
-            string[] itemnames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Item);
+            var itemnames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Item);
             cmbPic.Items.AddRange(itemnames);
 
             cmbAttackAnimation.Items.Clear();
@@ -111,7 +111,7 @@ namespace Intersect.Editor.Forms
             cmbMalePaperdoll.Items.Add(Strings.Get("general", "none"));
             cmbFemalePaperdoll.Items.Clear();
             cmbFemalePaperdoll.Items.Add(Strings.Get("general", "none"));
-            string[] paperdollnames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Paperdoll);
+            string[] paperdollnames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Paperdoll);
             for (var i = 0; i < paperdollnames.Length; i++)
             {
                 cmbMalePaperdoll.Items.Add(paperdollnames[i]);

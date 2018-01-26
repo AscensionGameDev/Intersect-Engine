@@ -20,7 +20,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             InitLocalization();
             cmbSound.Items.Clear();
             cmbSound.Items.Add(Strings.Get("general", "none"));
-            cmbSound.Items.AddRange(GameContentManager.GetSoundNames());
+            cmbSound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
             if (cmbSound.Items.IndexOf(TextUtils.NullToNone(_myCommand.Strs[0])) > -1)
             {
                 cmbSound.SelectedIndex = cmbSound.Items.IndexOf(TextUtils.NullToNone(_myCommand.Strs[0]));

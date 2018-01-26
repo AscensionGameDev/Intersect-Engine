@@ -259,10 +259,10 @@ namespace Intersect.Editor.Forms
         {
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add(Strings.Get("general", "none"));
-            cmbSprite.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
+            cmbSprite.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity));
             cmbFace.Items.Clear();
             cmbFace.Items.Add(Strings.Get("general", "none"));
-            cmbFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
+            cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
             cmbItem.Items.Clear();
             cmbItem.Items.Add(Strings.Get("general", "none"));
             cmbItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));

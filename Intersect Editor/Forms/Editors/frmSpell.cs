@@ -93,14 +93,14 @@ namespace Intersect.Editor.Forms
             cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObjectType.CommonEvent));
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add(Strings.Get("general", "none"));
-            string[] spellNames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Spell);
+            string[] spellNames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Spell);
             for (int i = 0; i < spellNames.Length; i++)
             {
                 cmbSprite.Items.Add(spellNames[i]);
             }
             cmbTransform.Items.Clear();
             cmbTransform.Items.Add(Strings.Get("general", "none"));
-            string[] spriteNames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity);
+            string[] spriteNames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity);
             for (int i = 0; i < spriteNames.Length; i++)
             {
                 cmbTransform.Items.Add(spriteNames[i]);

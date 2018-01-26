@@ -92,7 +92,7 @@ namespace Intersect.Editor.Classes
             cmbEndSprite.Items.Clear();
             cmbInitialSprite.Items.Add(Strings.Get("general", "none"));
             cmbEndSprite.Items.Add(Strings.Get("general", "none"));
-            string[] resources = GameContentManager.GetTextureNames(GameContentManager.TextureType.Resource);
+            string[] resources = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Resource);
             for (int i = 0; i < resources.Length; i++)
             {
                 cmbInitialSprite.Items.Add(resources[i]);

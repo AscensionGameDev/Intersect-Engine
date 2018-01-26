@@ -90,6 +90,7 @@
     <Compile Include="Enums\TargetTypes.cs" />
     <Compile Include="Enums\Vitals.cs" />
     <Compile Include="Extensions\GameObjectInfoAttribute.cs" />
+    <Compile Include="Utilities\AlphanumComparator.cs" />
     <Compile Include="Utilities\FieldChecking.cs" />
     <Compile Include="GameObjects\AnimationBase.cs" />
     <Compile Include="GameObjects\ClassBase.cs" />
