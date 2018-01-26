@@ -239,27 +239,24 @@ namespace Intersect.Server.Classes.Core
                     sDbConnection.Dispose();
                     sDbConnection = null;
                 }
+
                 // Get the stream of the source file.
                 var fi = new FileInfo("resources/intersect.db");
-                using (FileStream inFile = fi.OpenRead())
+                using (var inFile = fi.OpenRead())
                 {
-                    // Prevent compressing hidden and 
-                    // already compressed files.
-                    if ((File.GetAttributes(fi.FullName)
-                         & FileAttributes.Hidden)
-                        != FileAttributes.Hidden & fi.Extension != ".gz")
+                    // Prevent compressing hidden and already compressed files.
+                    if ((File.GetAttributes(fi.FullName) & FileAttributes.Hidden) != FileAttributes.Hidden & fi.Extension != ".gz")
                     {
                         // Create the compressed file.
-                        using (FileStream outFile =
+                        using (var outFile =
                             File.Create($"{DIRECTORY_BACKUPS}/intersect_{DateTime.Now:yyyy-MM-dd hh-mm-ss}.db.gz"))
                         {
-                            using (GZipStream Compress =
+                            using (var compressionStream =
                                 new GZipStream(outFile,
                                     CompressionMode.Compress))
                             {
-                                // Copy the source file into 
-                                // the compression stream.
-                                inFile.CopyTo(Compress);
+                                // Copy the source file into the compression stream.
+                                inFile.CopyTo(compressionStream);
                             }
                         }
                     }
@@ -1051,7 +1048,8 @@ namespace Intersect.Server.Classes.Core
                     }
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_ITEM_STATS, stats));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_ITEM_BAG_ID, player.Inventory[i].BagId));
-                    ExecuteNonQuery(cmd);
+                    var result = ExecuteNonQuery(cmd);
+                    Log.Diagnostic($"Saving inventory slot {player.MyId}-{i}: {result} row(s) updated.");
                 }
             }
         }
