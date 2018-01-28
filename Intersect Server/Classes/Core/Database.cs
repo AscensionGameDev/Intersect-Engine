@@ -1725,12 +1725,15 @@ namespace Intersect.Server.Classes.Core
 
         public static void DeleteCharacterFriend(Player player, int key)
         {
-            var insertQuery = "DELETE FROM " + CHAR_FRIENDS_TABLE + " WHERE " + CHAR_FRIEND_ID + "=@" + CHAR_FRIEND_ID +
-                              " AND " + CHAR_ID + " = @" + CHAR_ID + ";";
+            if (player == null) return;
+
+            const string insertQuery = "DELETE FROM " + CHAR_FRIENDS_TABLE + " WHERE " + CHAR_FRIEND_ID + "=@" + CHAR_FRIEND_ID +
+                                       " AND " + CHAR_FRIEND_CHAR_ID + " = @" + CHAR_FRIEND_CHAR_ID + ";";
             using (var cmd = new SqliteCommand(insertQuery, sDbConnection))
             {
+                Debug.Assert(cmd.Parameters != null, "cmd.Parameters != null");
                 cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FRIEND_ID, key));
-                cmd.Parameters.Add(new SqliteParameter("@" + CHAR_ID, player.MyId));
+                cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FRIEND_CHAR_ID, player.MyId));
                 ExecuteNonQuery(cmd);
             }
         }
