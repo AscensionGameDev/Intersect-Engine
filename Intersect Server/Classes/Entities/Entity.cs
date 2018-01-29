@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -739,15 +740,32 @@ namespace Intersect.Server.Classes.Entities
         //Vitals
         public void RestoreVital(Vitals vital)
         {
-            Vital[(int)vital] = MaxVital[(int)vital];
+            Debug.Assert(Vital != null, "Vital != null");
+            Debug.Assert(MaxVital != null, "MaxVital != null");
+
+            var vitalId = (int)vital;
+            Vital[vitalId] = MaxVital[vitalId];
             PacketSender.SendEntityVitals(this);
         }
 
         public void AddVital(Vitals vital, int amount)
         {
-            Vital[(int)vital] += amount;
-            if (Vital[(int)vital] < 0) Vital[(int)vital] = 0;
-            if (Vital[(int)vital] > MaxVital[(int)vital]) Vital[(int)vital] = MaxVital[(int)vital];
+            Debug.Assert(Vital != null, "Vital != null");
+            Debug.Assert(MaxVital != null, "MaxVital != null");
+
+            if (vital >= Vitals.VitalCount) return;
+
+            var vitalId = (int)vital;
+            var maxVitalValue = MaxVital[vitalId];
+            var safeAmount = Math.Min(amount, int.MaxValue - maxVitalValue);
+            Vital[vitalId] += safeAmount;
+
+            if (Vital[vitalId] < 0)
+                Vital[vitalId] = 0;
+
+            if (Vital[vitalId] > maxVitalValue)
+                Vital[vitalId] = maxVitalValue;
+
             PacketSender.SendEntityVitals(this);
         }
 

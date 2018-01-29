@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Intersect.Enums;
@@ -342,17 +343,26 @@ namespace Intersect.Server.Classes.Entities
 
         public override void ProcessRegen()
         {
-            var myclass = ClassBase.Lookup.Get<ClassBase>(Class);
-            if (myclass != null)
+            Debug.Assert(ClassBase.Lookup != null, "ClassBase.Lookup != null");
+
+            var playerClass = ClassBase.Lookup.Get<ClassBase>(Class);
+            if (playerClass?.VitalRegen == null) return; ;
+
+            foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
             {
-                foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
-                {
-                    if ((int)vital < (int)Vitals.VitalCount && Vital[(int)vital] != MaxVital[(int)vital])
-                    {
-                        AddVital(vital,
-                            (int)((float)MaxVital[(int)vital] * (myclass.VitalRegen[(int)vital] / 100f)));
-                    }
-                }
+                Debug.Assert(Vital != null, "Vital != null");
+                Debug.Assert(MaxVital != null, "MaxVital != null");
+
+                if (vital >= Vitals.VitalCount) continue;
+
+                var vitalId = (int)vital;
+                var vitalValue = Vital[vitalId];
+                var maxVitalValue = MaxVital[vitalId];
+                if (vitalValue >= maxVitalValue) continue;
+
+                var vitalRegenRate = playerClass.VitalRegen[vitalId] / 100f;
+                var regenValue = (int)Math.Max(1, maxVitalValue * vitalRegenRate) * Math.Abs(Math.Sign(vitalRegenRate));
+                AddVital(vital, regenValue);
             }
         }
 

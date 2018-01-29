@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Intersect.Enums;
@@ -530,10 +531,18 @@ namespace Intersect.Server.Classes.Entities
             //For now give npcs/resources 10% health back every regen tick... in the future we should put per-npc and per-resource regen settings into their respective editors.
             foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
             {
-                if ((int)vital < (int)Vitals.VitalCount && Vital[(int)vital] != MaxVital[(int)vital])
-                {
-                    AddVital(vital, (int)((float)MaxVital[(int)vital] * .1f));
-                }
+                Debug.Assert(Vital != null, "Vital != null");
+                Debug.Assert(MaxVital != null, "MaxVital != null");
+
+                if (vital >= Vitals.VitalCount) continue;
+
+                var vitalId = (int)vital;
+                var vitalValue = Vital[vitalId];
+                var maxVitalValue = MaxVital[vitalId];
+                if (vitalValue >= maxVitalValue) continue;
+
+                var regenValue = (int)Math.Max(1, maxVitalValue * .1f);
+                AddVital(vital, regenValue);
             }
         }
     }
