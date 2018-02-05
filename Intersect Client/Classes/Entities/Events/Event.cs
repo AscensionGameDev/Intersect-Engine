@@ -343,5 +343,10 @@ namespace Intersect_Client.Classes.Entities
             }
             return pos;
         }
+
+        ~Event()
+        {
+            Dispose();
+        }
     }
 }

@@ -974,7 +974,7 @@ namespace Intersect_Client.Classes.Maps
         //Events
         public void AddEvent(Event evt)
         {
-            if (!LocalEntities.ContainsKey(evt.MyIndex) || LocalEntities[evt.MyIndex].SpawnTime != evt.SpawnTime)
+            if (MapLoaded && (!LocalEntities.ContainsKey(evt.MyIndex) || LocalEntities[evt.MyIndex].SpawnTime != evt.SpawnTime))
             {
                 mEvents.Add(evt);
                 if (LocalEntities.ContainsKey(evt.MyIndex))
@@ -986,6 +986,10 @@ namespace Intersect_Client.Classes.Maps
                 {
                     LocalEntities.Add(evt.MyIndex, evt);
                 }
+            }
+            else
+            {
+                evt.Dispose();
             }
         }
 
@@ -1012,6 +1016,8 @@ namespace Intersect_Client.Classes.Maps
                 ReleaseRenderTextures();
             }
 
+            MapLoaded = false;
+
             foreach (var evt in mEvents)
             {
                 evt.Dispose();
@@ -1033,7 +1039,6 @@ namespace Intersect_Client.Classes.Maps
                 }
             }
             MapRendered = false;
-            MapLoaded = false;
             HideActiveAnimations();
             ClearMapAttributes();
             Delete();

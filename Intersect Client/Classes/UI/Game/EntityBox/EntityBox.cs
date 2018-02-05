@@ -435,7 +435,6 @@ namespace Intersect_Client.Classes.UI.Game
                 targetExpWidth = 1f;
                 _expLbl.Text = Strings.Get("entitybox", "maxlevel");
             }
-            _expLbl.X = _expBackground.X + _expBackground.Width / 2 - _expLbl.Width / 2;
             targetExpWidth *= _expBackground.Width;
             if ((int) targetExpWidth != _curEXPWidth)
             {
