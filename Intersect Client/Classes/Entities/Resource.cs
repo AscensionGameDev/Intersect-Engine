@@ -46,7 +46,7 @@ namespace Intersect_Client.Classes.Entities
             HideName = 1;
             if (IsDead)
             {
-                MySprite = _baseResource.EndGraphic;
+                MySprite = _baseResource?.EndGraphic;
             }
         }
 
