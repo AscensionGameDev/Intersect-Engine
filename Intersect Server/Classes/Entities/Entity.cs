@@ -1477,18 +1477,21 @@ namespace Intersect.Server.Classes.Entities
             if (dropitems > 0)
             {
                 // Drop items
-                for (int n = 0; n < Inventory.Count; n++)
+                for (var n = 0; n < Inventory.Count; n++)
                 {
-                    ItemInstance item = Inventory[n];
-                    if (ItemBase.Lookup.Get<ItemBase>(item.ItemNum) != null && Globals.Rand.Next(1, 101) < dropitems)
-                    {
-                        MapInstance.Lookup.Get<MapInstance>(CurrentMap)
-                            .SpawnItem(CurrentX, CurrentY, item, item.ItemVal);
-                        if (GetType() == typeof(Player))
-                        {
-                            ((Player) this).TakeItemsBySlot(n, item.ItemVal);
-                        }
-                    }
+                    var item = Inventory[n];
+                    if (item == null) continue;
+
+                    var itemBase = ItemBase.Lookup.Get<ItemBase>(item.ItemNum);
+                    if (itemBase == null) continue;
+
+                    if (Globals.Rand.Next(1, 101) >= dropitems) continue;
+
+                    var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+                    map?.SpawnItem(CurrentX, CurrentY, item, item.ItemVal);
+
+                    var player = this as Player;
+                    player?.TakeItemsBySlot(n, item.ItemVal);
                 }
             }
 
@@ -1496,7 +1499,7 @@ namespace Intersect.Server.Classes.Entities
             if (currentMap != null)
             {
                 currentMap.ClearEntityTargetsOf(this);
-                currentMap.GetSurroundingMaps(false)?.ForEach(map => map?.ClearEntityTargetsOf(this));
+                currentMap.GetSurroundingMaps()?.ForEach(map => map?.ClearEntityTargetsOf(this));
             }
 
             DoT?.Clear();

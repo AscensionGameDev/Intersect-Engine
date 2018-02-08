@@ -457,10 +457,11 @@ namespace Intersect.Server.Classes.Maps
                 };
 
                 //Give NPC Drops
-                for (int n = 0; n < Options.MaxNpcDrops; n++)
+                for (var n = 0; n < Options.MaxNpcDrops; n++)
                 {
                     if (Globals.Rand.Next(1, 101) <= npcBase.Drops[n].Chance)
                     {
+                        // TODO: Shouldn't this be added to the NPC constructor?
                         Globals.Entities[index].Inventory.Add(new ItemInstance(npcBase.Drops[n].ItemNum,
                             npcBase.Drops[n].Amount, -1));
                     }

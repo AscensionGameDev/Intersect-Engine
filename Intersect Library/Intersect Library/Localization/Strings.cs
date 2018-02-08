@@ -68,11 +68,11 @@ namespace Intersect.Localization
             var argStrings = args?.Select(arg => arg?.ToString());
             if (SelectedLanguage != null && SelectedLanguage.IsLoaded && SelectedLanguage.HasString(section, id))
             {
-                return SelectedLanguage.GetString(section, id, argStrings);
+                return SelectedLanguage.GetString(section, id, argStrings?.Cast<object>().ToArray() ?? new object[] { });
             }
             if (DefaultLanguage != null && DefaultLanguage.IsLoaded && DefaultLanguage.HasString(section, id))
             {
-                return DefaultLanguage.GetString(section, id, argStrings);
+                return DefaultLanguage.GetString(section, id, argStrings?.Cast<object>().ToArray() ?? new object[]{});
             }
             return $"//{section}/{id} ({string.Join(",", argStrings?.ToArray() ?? new string[]{})})";
         }
