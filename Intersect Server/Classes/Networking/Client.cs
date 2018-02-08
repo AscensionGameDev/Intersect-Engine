@@ -215,9 +215,10 @@ namespace Intersect.Server.Classes.Networking
         public static void RemoveBeta4Client(IConnection connection)
         {
             if (connection == null) return;
-            var client = FindBeta4Client(connection);
 
-            Debug.Assert(client != null, "client != null");
+            var client = FindBeta4Client(connection);
+            if (client == null) return;
+
             lock (Globals.ClientLock)
             {
                 Globals.Clients.Remove(client);

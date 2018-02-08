@@ -1472,6 +1472,8 @@ namespace Intersect.Server.Classes.Entities
         //Spawning/Dying
         public virtual void Die(int dropitems = 0, Entity killer = null)
         {
+            if (Inventory == null) return;
+
             if (dropitems > 0)
             {
                 // Drop items
@@ -1489,25 +1491,18 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
             }
+
             var currentMap = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
             if (currentMap != null)
             {
                 currentMap.ClearEntityTargetsOf(this);
-                foreach (var mapNum in currentMap.SurroundingMaps)
-                {
-                    var surroundingMap = MapInstance.Lookup.Get<MapInstance>(mapNum);
-                    if (surroundingMap != null)
-                    {
-                        surroundingMap.ClearEntityTargetsOf(this);
-                    }
-                }
+                currentMap.GetSurroundingMaps(false)?.ForEach(map => map?.ClearEntityTargetsOf(this));
             }
-            DoT.Clear();
-            Statuses.Clear();
-            for (int i = 0; i < (int) Stats.StatCount; i++)
-            {
-                Stat[i].Reset();
-            }
+
+            DoT?.Clear();
+            Statuses?.Clear();
+            Stat?.ToList().ForEach(stat => stat?.Reset());
+
             PacketSender.SendEntityVitals(this);
             Dead = true;
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
@@ -91,33 +92,30 @@ namespace Intersect.Editor.Forms
             cmbEvent.Items.Clear();
             cmbEvent.Items.Add(Strings.Get("general", "none"));
             cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObjectType.CommonEvent));
+
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add(Strings.Get("general", "none"));
-            string[] spellNames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Spell);
-            for (int i = 0; i < spellNames.Length; i++)
-            {
-                cmbSprite.Items.Add(spellNames[i]);
-            }
+            var spellNames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Spell);
+            cmbSprite.Items.AddRange(spellNames);
+
             cmbTransform.Items.Clear();
             cmbTransform.Items.Add(Strings.Get("general", "none"));
-            string[] spriteNames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity);
-            for (int i = 0; i < spriteNames.Length; i++)
-            {
-                cmbTransform.Items.Add(spriteNames[i]);
-            }
+            var spriteNames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity);
+            cmbTransform.Items.AddRange(spriteNames);
+
             nudWarpX.Maximum = (int) Options.MapWidth;
             nudWarpY.Maximum = (int) Options.MapHeight;
+
             cmbWarpMap.Items.Clear();
-            for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
-            {
-                cmbWarpMap.Items.Add(MapList.GetOrderedMaps()[i].Name);
-            }
+            cmbWarpMap.Items.AddRange(MapList.GetOrderedMaps().Select(map => map?.Name).ToArray());
             cmbWarpMap.SelectedIndex = 0;
+
             nudStr.Maximum = Options.MaxStatValue;
             nudMag.Maximum = Options.MaxStatValue;
             nudDef.Maximum = Options.MaxStatValue;
             nudMR.Maximum = Options.MaxStatValue;
             nudSpd.Maximum = Options.MaxStatValue;
+
             InitLocalization();
             UpdateEditor();
         }
@@ -136,11 +134,13 @@ namespace Intersect.Editor.Forms
             grpGeneral.Text = Strings.Get("spelleditor", "general");
             lblName.Text = Strings.Get("spelleditor", "name");
             lblType.Text = Strings.Get("spelleditor", "type");
+
             cmbType.Items.Clear();
-            for (int i = 0; i < 5; i++)
+            for (var i = 0; i < 5; i++)
             {
                 cmbType.Items.Add(Strings.Get("spelleditor", "type" + i));
             }
+
             lblIcon.Text = Strings.Get("spelleditor", "icon");
             lblDesc.Text = Strings.Get("spelleditor", "description");
             lblCastAnimation.Text = Strings.Get("spelleditor", "castanimation");
@@ -157,11 +157,13 @@ namespace Intersect.Editor.Forms
 
             grpTargetInfo.Text = Strings.Get("spelleditor", "targetting");
             lblTargetType.Text = Strings.Get("spelleditor", "targettype");
+
             cmbTargetType.Items.Clear();
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
                 cmbTargetType.Items.Add(Strings.Get("spelleditor", "targettype" + i));
             }
+
             lblCastRange.Text = Strings.Get("spelleditor", "castrange");
             lblProjectile.Text = Strings.Get("spelleditor", "projectile");
             lblHitRadius.Text = Strings.Get("spelleditor", "hitradius");
@@ -173,11 +175,13 @@ namespace Intersect.Editor.Forms
             lblHPDamage.Text = Strings.Get("spelleditor", "hpdamage");
             lblManaDamage.Text = Strings.Get("spelleditor", "mpdamage");
             chkFriendly.Text = Strings.Get("spelleditor", "friendly");
+
             cmbDamageType.Items.Clear();
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 cmbDamageType.Items.Add(Strings.Get("spelleditor", "damagetype" + i));
             }
+
             lblScalingStat.Text = Strings.Get("spelleditor", "scalingstat");
             lblScaling.Text = Strings.Get("spelleditor", "scalingamount");
 
@@ -196,11 +200,13 @@ namespace Intersect.Editor.Forms
             lblBuffDuration.Text = Strings.Get("spelleditor", "duration");
             grpEffect.Text = Strings.Get("spelleditor", "effectgroup");
             lblEffect.Text = Strings.Get("spelleditor", "effectlabel");
+
             cmbExtraEffect.Items.Clear();
-            for (int i = 0; i < 7; i++)
+            for (var i = 0; i < 7; i++)
             {
                 cmbExtraEffect.Items.Add(Strings.Get("spelleditor", "effect" + i));
             }
+
             lblSprite.Text = Strings.Get("spelleditor", "transformsprite");
 
             grpDash.Text = Strings.Get("spelleditor", "dash");
@@ -216,11 +222,13 @@ namespace Intersect.Editor.Forms
             lblX.Text = Strings.Get("warping", "x", "");
             lblY.Text = Strings.Get("warping", "y", "");
             lblWarpDir.Text = Strings.Get("warping", "direction", "");
+
             cmbDirection.Items.Clear();
-            for (int i = -1; i < 4; i++)
+            for (var i = -1; i < 4; i++)
             {
                 cmbDirection.Items.Add(Strings.Get("directions", i.ToString()));
             }
+
             btnVisualMapSelector.Text = Strings.Get("warping", "visual");
 
             grpEvent.Text = Strings.Get("spelleditor", "event");
@@ -235,7 +243,7 @@ namespace Intersect.Editor.Forms
             lstSpells.Items.Clear();
             lstSpells.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
             cmbScalingStat.Items.Clear();
-            for (int i = 0; i < Options.MaxStats; i++)
+            for (var i = 0; i < Options.MaxStats; i++)
             {
                 cmbScalingStat.Items.Add(Globals.GetStatName(i));
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Intersect.Enums;
@@ -11,6 +12,7 @@ using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Items;
 using Intersect.Server.Classes.Networking;
+using EventInstance = Intersect.Server.Classes.Entities.EventInstance;
 
 namespace Intersect.Server.Classes.Maps
 {
@@ -729,56 +731,50 @@ namespace Intersect.Server.Classes.Maps
             }
         }
 
-        public List<MapInstance> GetSurroundingMaps(bool includingSelf)
+        public List<MapInstance> GetSurroundingMaps(bool includingSelf = false)
         {
-            var maps = new List<MapInstance>();
+            Debug.Assert(Lookup != null, "Lookup != null");
+            var maps = SurroundingMaps?.Select(mapNum => Lookup.Get<MapInstance>(mapNum)).Where(map => map != null).ToList() ?? new List<MapInstance>();
             if (includingSelf) maps.Add(this);
-            for (int i = 0; i < SurroundingMaps.Count; i++)
-            {
-                var map = Lookup.Get<MapInstance>(SurroundingMaps[i]);
-                if (map != null) maps.Add(map);
-            }
             return maps;
         }
 
         private bool CheckActive()
         {
-            if (GetPlayersOnMap().Count > 0)
+            if (GetPlayersOnMap()?.Count > 0)
             {
                 return true;
             }
-            else
+
+            var surroundingMaps = GetSurroundingMaps(true);
+            if (surroundingMaps?.Count > 0)
             {
-                var surroundingMaps = GetSurroundingMaps(true);
-                if (surroundingMaps.Count > 0)
+                foreach (var t in surroundingMaps)
                 {
-                    foreach (var t in surroundingMaps)
+                    var map = t;
+                    if (map == null) continue;
+
+                    if (Monitor.TryEnter(map.GetMapLock(), new TimeSpan(0, 0, 0, 0, 1)))
                     {
-                        var map = t;
-                        if (map != null)
+                        try
                         {
-                            if (Monitor.TryEnter(map.GetMapLock(), new TimeSpan(0, 0, 0, 0, 1)))
-                            {
-                                try
-                                {
-                                    if (map.GetPlayersOnMap().Count > 0)
-                                    {
-                                        return true;
-                                    }
-                                }
-                                finally
-                                {
-                                    Monitor.Exit(map.GetMapLock());
-                                }
-                            }
-                            else
+                            if (map.GetPlayersOnMap()?.Count > 0)
                             {
                                 return true;
                             }
                         }
+                        finally
+                        {
+                            Monitor.Exit(map.GetMapLock());
+                        }
+                    }
+                    else
+                    {
+                        return true;
                     }
                 }
             }
+
             Active = false;
             return false;
         }

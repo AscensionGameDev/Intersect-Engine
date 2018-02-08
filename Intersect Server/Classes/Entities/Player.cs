@@ -1633,85 +1633,90 @@ namespace Intersect.Server.Classes.Entities
         public void WithdrawItem(int slot, int amount)
         {
             if (!InBank) return;
-            var itemBase = ItemBase.Lookup.Get<ItemBase>(Bank[slot].ItemNum);
+
+            Debug.Assert(ItemBase.Lookup != null, "ItemBase.Lookup != null");
+            Debug.Assert(Bank != null, "Bank != null");
+            Debug.Assert(Inventory != null, "Inventory != null");
+
+            var bankSlotItem = Bank[slot];
+            Debug.Assert(bankSlotItem != null, "bankSlotItem != null");
+
+            var itemBase = ItemBase.Lookup.Get<ItemBase>(bankSlotItem.ItemNum);
             var inventorySlot = -1;
-            if (itemBase != null)
+            if (itemBase == null) return;
+            if (bankSlotItem.ItemNum > -1)
             {
-                if (Bank[slot] != null && Bank[slot].ItemNum > -1)
+                if (itemBase.IsStackable())
                 {
-                    if (itemBase.IsStackable())
+                    if (amount >= bankSlotItem.ItemVal)
                     {
-                        if (amount >= Bank[slot].ItemVal)
-                        {
-                            amount = Bank[slot].ItemVal;
-                        }
+                        amount = bankSlotItem.ItemVal;
                     }
-                    else
-                    {
-                        amount = 1;
-                    }
-
-                    //Find a spot in the inventory for it!
-                    if (itemBase.IsStackable())
-                    {
-                        /* Find an existing stack */
-                        for (var i = 0; i < Options.MaxInvItems; i++)
-                        {
-                            if (Inventory[i] != null && Inventory[i].ItemNum == Bank[slot].ItemNum)
-                            {
-                                inventorySlot = i;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (inventorySlot < 0)
-                    {
-                        /* Find a free slot if we don't have one already */
-                        for (var j = 0; j < Options.MaxInvItems; j++)
-                        {
-                            if (Inventory[j] == null || Inventory[j].ItemNum == -1)
-                            {
-                                inventorySlot = j;
-                                break;
-                            }
-                        }
-                    }
-
-                    /* If we don't have a slot send an error. */
-                    if (inventorySlot < 0)
-                    {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("banks", "inventorynospace"),
-                            CustomColors.Error);
-                        return; //Panda forgot this :P
-                    }
-
-                    /* Move the items to the inventory */
-                    amount = Math.Min(amount, int.MaxValue - Inventory[inventorySlot].ItemVal);
-
-                    if (Inventory[inventorySlot] == null || Inventory[inventorySlot].ItemNum == -1 ||
-                        Inventory[inventorySlot].ItemVal < 0)
-                    {
-                        Inventory[inventorySlot] = new ItemInstance(Bank[slot].ItemNum, 0, -1);
-                    }
-
-                    Inventory[inventorySlot].ItemVal += amount;
-                    if (amount >= Bank[slot].ItemVal)
-                    {
-                        Bank[slot] = null;
-                    }
-                    else
-                    {
-                        Bank[slot].ItemVal -= amount;
-                    }
-
-                    PacketSender.SendInventoryItemUpdate(MyClient, inventorySlot);
-                    PacketSender.SendBankUpdate(MyClient, slot);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("banks", "withdrawinvalid"), CustomColors.Error);
+                    amount = 1;
                 }
+
+                //Find a spot in the inventory for it!
+                if (itemBase.IsStackable())
+                {
+                    /* Find an existing stack */
+                    for (var i = 0; i < Options.MaxInvItems; i++)
+                    {
+                        var inventorySlotItem = Inventory[i];
+                        if (inventorySlotItem == null) continue;
+                        if (inventorySlotItem.ItemNum == bankSlotItem.ItemNum) continue;
+                        inventorySlot = i;
+                        break;
+                    }
+                }
+
+                if (inventorySlot < 0)
+                {
+                    /* Find a free slot if we don't have one already */
+                    for (var j = 0; j < Options.MaxInvItems; j++)
+                    {
+                        if (Inventory[j] != null && Inventory[j].ItemNum != -1) continue;
+                        inventorySlot = j;
+                        break;
+                    }
+                }
+
+                /* If we don't have a slot send an error. */
+                if (inventorySlot < 0)
+                {
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("banks", "inventorynospace"),
+                        CustomColors.Error);
+                    return; //Panda forgot this :P
+                }
+
+                /* Move the items to the inventory */
+                Debug.Assert(Inventory[inventorySlot] != null, "Inventory[inventorySlot] != null");
+                amount = Math.Min(amount, int.MaxValue - Inventory[inventorySlot].ItemVal);
+
+                if (Inventory[inventorySlot] == null || Inventory[inventorySlot].ItemNum == -1 ||
+                    Inventory[inventorySlot].ItemVal < 0)
+                {
+                    Inventory[inventorySlot] = new ItemInstance(bankSlotItem.ItemNum, 0, -1);
+                }
+
+                Inventory[inventorySlot].ItemVal += amount;
+                if (amount >= bankSlotItem.ItemVal)
+                {
+                    Bank[slot] = null;
+                }
+                else
+                {
+                    bankSlotItem.ItemVal -= amount;
+                }
+
+                PacketSender.SendInventoryItemUpdate(MyClient, inventorySlot);
+                PacketSender.SendBankUpdate(MyClient, slot);
+            }
+            else
+            {
+                PacketSender.SendPlayerMsg(MyClient, Strings.Get("banks", "withdrawinvalid"), CustomColors.Error);
             }
         }
 
