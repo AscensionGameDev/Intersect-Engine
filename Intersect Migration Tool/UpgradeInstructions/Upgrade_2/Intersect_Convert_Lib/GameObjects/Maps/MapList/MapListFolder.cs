@@ -11,7 +11,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
             : base()
         {
             Name = "New Folder";
-            type = 0;
+            Type = 0;
         }
 
         public void GetData(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps)

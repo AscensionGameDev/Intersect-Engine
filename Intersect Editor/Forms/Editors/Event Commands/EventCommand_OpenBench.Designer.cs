@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_OpenBench
+    partial class EventCommandOpenBench
     {
         /// <summary> 
         /// Required designer variable.
@@ -104,7 +104,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpBench);
-            this.Name = "EventCommand_OpenBench";
+            this.Name = "EventCommandOpenBench";
             this.Size = new System.Drawing.Size(182, 132);
             this.grpBench.ResumeLayout(false);
             this.grpBench.PerformLayout();

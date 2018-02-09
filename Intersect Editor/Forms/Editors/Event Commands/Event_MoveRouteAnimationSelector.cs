@@ -7,13 +7,13 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class Event_MoveRouteAnimationSelector : UserControl
+    public partial class EventMoveRouteAnimationSelector : UserControl
     {
-        private MoveRouteAction _myAction;
-        private bool _newAction;
-        private Event_MoveRouteDesigner _routeDesigner;
+        private MoveRouteAction mMyAction;
+        private bool mNewAction;
+        private EventMoveRouteDesigner mRouteDesigner;
 
-        public Event_MoveRouteAnimationSelector(Event_MoveRouteDesigner moveRouteDesigner, MoveRouteAction action,
+        public EventMoveRouteAnimationSelector(EventMoveRouteDesigner moveRouteDesigner, MoveRouteAction action,
             bool newAction = false)
         {
             InitializeComponent();
@@ -25,9 +25,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 cmbAnimation.SelectedIndex =
                     Database.GameObjectListIndex(GameObjectType.Animation, action.AnimationIndex);
             }
-            _newAction = newAction;
-            _routeDesigner = moveRouteDesigner;
-            _myAction = action;
+            mNewAction = newAction;
+            mRouteDesigner = moveRouteDesigner;
+            mMyAction = action;
             InitLocalization();
         }
 
@@ -41,15 +41,15 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnOkay_Click(object sender, EventArgs e)
         {
-            _myAction.AnimationIndex =
+            mMyAction.AnimationIndex =
                 Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex);
-            _routeDesigner.Controls.Remove(this);
+            mRouteDesigner.Controls.Remove(this);
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _routeDesigner.RemoveLastAction();
-            _routeDesigner.Controls.Remove(this);
+            mRouteDesigner.RemoveLastAction();
+            mRouteDesigner.Controls.Remove(this);
         }
     }
 }

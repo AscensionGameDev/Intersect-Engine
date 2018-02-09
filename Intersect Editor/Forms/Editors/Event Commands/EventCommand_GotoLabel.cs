@@ -5,18 +5,18 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_GotoLabel : UserControl
+    public partial class EventCommandGotoLabel : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventCommand mMyCommand;
 
-        public EventCommand_GotoLabel(EventCommand refCommand, FrmEvent editor)
+        public EventCommandGotoLabel(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
             InitLocalization();
-            txtGotoLabel.Text = _myCommand.Strs[0];
+            txtGotoLabel.Text = mMyCommand.Strs[0];
         }
 
         private void InitLocalization()
@@ -29,13 +29,13 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Strs[0] = txtGotoLabel.Text;
-            _eventEditor.FinishCommandEdit();
+            mMyCommand.Strs[0] = txtGotoLabel.Text;
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
     }
 }

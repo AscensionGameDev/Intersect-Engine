@@ -9,24 +9,24 @@ using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_Text : UserControl
+    public partial class EventCommandText : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventCommand mMyCommand;
 
-        public EventCommand_Text(EventCommand refCommand, FrmEvent editor)
+        public EventCommandText(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
             InitLocalization();
-            txtShowText.Text = _myCommand.Strs[0];
+            txtShowText.Text = mMyCommand.Strs[0];
             cmbFace.Items.Clear();
             cmbFace.Items.Add(Strings.Get("general", "none"));
             cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
-            if (cmbFace.Items.IndexOf(TextUtils.NullToNone(_myCommand.Strs[1])) > -1)
+            if (cmbFace.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Strs[1])) > -1)
             {
-                cmbFace.SelectedIndex = cmbFace.Items.IndexOf(TextUtils.NullToNone(_myCommand.Strs[1]));
+                cmbFace.SelectedIndex = cmbFace.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Strs[1]));
             }
             else
             {
@@ -59,14 +59,14 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Strs[0] = txtShowText.Text;
-            _myCommand.Strs[1] = TextUtils.SanitizeNone(cmbFace?.Text);
-            _eventEditor.FinishCommandEdit();
+            mMyCommand.Strs[0] = txtShowText.Text;
+            mMyCommand.Strs[1] = TextUtils.SanitizeNone(cmbFace?.Text);
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
 
         private void cmbFace_SelectedIndexChanged(object sender, EventArgs e)

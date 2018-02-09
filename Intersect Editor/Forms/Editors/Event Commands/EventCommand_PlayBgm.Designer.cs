@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_PlayBgm
+    partial class EventCommandPlayBgm
     {
         /// <summary> 
         /// Required designer variable.
@@ -105,7 +105,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpBGM);
-            this.Name = "EventCommand_PlayBgm";
+            this.Name = "EventCommandPlayBgm";
             this.Size = new System.Drawing.Size(182, 132);
             this.grpBGM.ResumeLayout(false);
             this.grpBGM.PerformLayout();

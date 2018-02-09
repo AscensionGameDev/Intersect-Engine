@@ -7,27 +7,27 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class ShopWindow
     {
-        private static int ItemXPadding = 4;
-        private static int ItemYPadding = 4;
+        private static int sItemXPadding = 4;
+        private static int sItemYPadding = 4;
 
-        private ScrollControl _itemContainer;
+        private ScrollControl mItemContainer;
 
         //Controls
-        private WindowControl _shopWindow;
+        private WindowControl mShopWindow;
 
         public List<ShopWindowItem> Items = new List<ShopWindowItem>();
 
         //Init
-        public ShopWindow(Canvas _gameCanvas)
+        public ShopWindow(Canvas gameCanvas)
         {
-            _shopWindow = new WindowControl(_gameCanvas, Globals.GameShop.Name, false, "ShopWindow");
-            _shopWindow.DisableResizing();
-            Gui.InputBlockingElements.Add(_shopWindow);
+            mShopWindow = new WindowControl(gameCanvas, Globals.GameShop.Name, false, "ShopWindow");
+            mShopWindow.DisableResizing();
+            Gui.InputBlockingElements.Add(mShopWindow);
 
-            _itemContainer = new ScrollControl(_shopWindow, "ItemContainer");
-            _itemContainer.EnableScroll(false, true);
+            mItemContainer = new ScrollControl(mShopWindow, "ItemContainer");
+            mItemContainer.EnableScroll(false, true);
 
-            Gui.LoadRootUIData(_shopWindow, "InGame.xml");
+            Gui.LoadRootUiData(mShopWindow, "InGame.xml");
 
             InitItemContainer();
         }
@@ -35,27 +35,27 @@ namespace Intersect_Client.Classes.UI.Game
         //Location
         public int X
         {
-            get { return _shopWindow.X; }
+            get { return mShopWindow.X; }
         }
 
         public int Y
         {
-            get { return _shopWindow.Y; }
+            get { return mShopWindow.Y; }
         }
 
         public void Close()
         {
-            _shopWindow.Close();
+            mShopWindow.Close();
         }
 
         public bool IsVisible()
         {
-            return !_shopWindow.IsHidden;
+            return !mShopWindow.IsHidden;
         }
 
         public void Hide()
         {
-            _shopWindow.IsHidden = true;
+            mShopWindow.IsHidden = true;
         }
 
         private void InitItemContainer()
@@ -63,19 +63,19 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < Globals.GameShop.SellingItems.Count; i++)
             {
                 Items.Add(new ShopWindowItem(this, i));
-                Items[i].container = new ImagePanel(_itemContainer, "ShopItemContainer");
+                Items[i].Container = new ImagePanel(mItemContainer, "ShopItemContainer");
                 Items[i].Setup();
 
                 //TODO Made this more efficient.
-                Gui.LoadRootUIData(Items[i].container, "InGame.xml");
+                Gui.LoadRootUiData(Items[i].Container, "InGame.xml");
 
-                var xPadding = Items[i].container.Padding.Left + Items[i].container.Padding.Right;
-                var yPadding = Items[i].container.Padding.Top + Items[i].container.Padding.Bottom;
-                Items[i].container.SetPosition(
-                    (i % (_itemContainer.Width / (Items[i].container.Width + xPadding))) *
-                    (Items[i].container.Width + xPadding) + xPadding,
-                    (i / (_itemContainer.Width / (Items[i].container.Width + xPadding))) *
-                    (Items[i].container.Height + yPadding) + yPadding);
+                var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
+                var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;
+                Items[i].Container.SetPosition(
+                    (i % (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
+                    (Items[i].Container.Width + xPadding) + xPadding,
+                    (i / (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
+                    (Items[i].Container.Height + yPadding) + yPadding);
             }
         }
     }

@@ -11,78 +11,78 @@ namespace Intersect.Client.Classes.UI.Game.EntityBox
 {
     public class SpellStatus
     {
-        private SpellDescWindow _descWindow;
+        private SpellDescWindow mDescWindow;
 
         //Drag/Drop References
-        private Intersect_Client.Classes.UI.Game.EntityBox _entityBox;
+        private Intersect_Client.Classes.UI.Game.EntityBox mEntityBox;
 
-        public ImagePanel container;
-        private int currentSpell = -1;
+        public ImagePanel Container;
+        private int mCurrentSpell = -1;
 
-        private int myindex;
-        public ImagePanel pnl;
+        private int mYindex;
+        public ImagePanel Pnl;
 
-        private string texLoaded = "";
-        public Label timeLabel;
+        private string mTexLoaded = "";
+        public Label TimeLabel;
 
         public SpellStatus(Intersect_Client.Classes.UI.Game.EntityBox entityBox, int index)
         {
-            _entityBox = entityBox;
-            myindex = index;
+            mEntityBox = entityBox;
+            mYindex = index;
         }
 
         public void Setup()
         {
-            pnl = new ImagePanel(container, "StatusIcon");
-            pnl.HoverEnter += pnl_HoverEnter;
-            pnl.HoverLeave += pnl_HoverLeave;
+            Pnl = new ImagePanel(Container, "StatusIcon");
+            Pnl.HoverEnter += pnl_HoverEnter;
+            Pnl.HoverLeave += pnl_HoverLeave;
         }
 
         public void pnl_HoverLeave(Base sender, EventArgs arguments)
         {
-            if (_descWindow != null)
+            if (mDescWindow != null)
             {
-                _descWindow.Dispose();
-                _descWindow = null;
+                mDescWindow.Dispose();
+                mDescWindow = null;
             }
         }
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
-            if (myindex >= _entityBox._myEntity.Status.Count)
+            if (mYindex >= mEntityBox.MyEntity.Status.Count)
             {
                 return;
             }
-            if (_descWindow != null)
+            if (mDescWindow != null)
             {
-                _descWindow.Dispose();
-                _descWindow = null;
+                mDescWindow.Dispose();
+                mDescWindow = null;
             }
-            _descWindow = new SpellDescWindow(_entityBox._myEntity.Status[myindex].SpellNum,
-                _entityBox._entityWindow.X + 316, _entityBox._entityWindow.Y);
+            mDescWindow = new SpellDescWindow(mEntityBox.MyEntity.Status[mYindex].SpellNum,
+                mEntityBox.EntityWindow.X + 316, mEntityBox.EntityWindow.Y);
         }
 
         public FloatRect RenderBounds()
         {
             FloatRect rect = new FloatRect()
             {
-                X = pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X,
-                Y = pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y,
-                Width = pnl.Width,
-                Height = pnl.Height
+                X = Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X,
+                Y = Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y,
+                Width = Pnl.Width,
+                Height = Pnl.Height
             };
             return rect;
         }
 
         public void Update()
         {
-            var spell = SpellBase.Lookup.Get<SpellBase>(_entityBox._myEntity.Status[myindex].SpellNum);
-            var timeDiff = Globals.System.GetTimeMS() - _entityBox._myEntity.Status[myindex].TimeRecevied;
-            var remaining = _entityBox._myEntity.Status[myindex].TimeRemaining - timeDiff;
-            var fraction = (float) ((float) remaining / (float) _entityBox._myEntity.Status[myindex].TotalDuration);
-            pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color((int) (fraction * 255f), 255, 255, 255);
-            if ((texLoaded != "" && spell == null) || (spell != null && texLoaded != spell.Pic) ||
-                currentSpell != _entityBox._myEntity.Status[myindex].SpellNum)
+            var spell = SpellBase.Lookup.Get<SpellBase>(mEntityBox.MyEntity.Status[mYindex].SpellNum);
+            var timeDiff = Globals.System.GetTimeMs() - mEntityBox.MyEntity.Status[mYindex].TimeRecevied;
+            var remaining = mEntityBox.MyEntity.Status[mYindex].TimeRemaining - timeDiff;
+            var fraction = (float) ((float) remaining / (float) mEntityBox.MyEntity.Status[mYindex].TotalDuration);
+            Pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color((int) (fraction * 255f), 255, 255, 255);
+            if ((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Pic) ||
+                mCurrentSpell != mEntityBox.MyEntity.Status[mYindex].SpellNum)
             {
                 if (spell != null)
                 {
@@ -90,26 +90,26 @@ namespace Intersect.Client.Classes.UI.Game.EntityBox
                         Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Pic);
                     if (spellTex != null)
                     {
-                        pnl.Texture = spellTex;
-                        pnl.IsHidden = false;
+                        Pnl.Texture = spellTex;
+                        Pnl.IsHidden = false;
                     }
                     else
                     {
-                        if (pnl.Texture != null)
+                        if (Pnl.Texture != null)
                         {
-                            pnl.Texture = null;
+                            Pnl.Texture = null;
                         }
                     }
-                    texLoaded = spell.Pic;
-                    currentSpell = _entityBox._myEntity.Status[myindex].SpellNum;
+                    mTexLoaded = spell.Pic;
+                    mCurrentSpell = mEntityBox.MyEntity.Status[mYindex].SpellNum;
                 }
                 else
                 {
-                    if (pnl.Texture != null)
+                    if (Pnl.Texture != null)
                     {
-                        pnl.Texture = null;
+                        Pnl.Texture = null;
                     }
-                    texLoaded = "";
+                    mTexLoaded = "";
                 }
             }
         }

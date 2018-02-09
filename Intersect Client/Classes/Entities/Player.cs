@@ -20,11 +20,11 @@ namespace Intersect_Client.Classes.Entities
     {
         public delegate void InventoryUpdated();
         public InventoryUpdated InventoryUpdatedDelegate;
-        private ItemDescWindow _itemTargetBox;
-        public EntityBox _targetBox;
+        private ItemDescWindow mItemTargetBox;
+        public EntityBox TargetBox;
 
-        public int _targetIndex = -1;
-        public int _targetType;
+        public int TargetIndex = -1;
+        public int TargetType;
 
         public int Class = -1;
         public int Experience = 0;
@@ -44,7 +44,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 Hotbar[i] = new HotbarInstance();
             }
-            _renderPriority = 2;
+            mRenderPriority = 2;
         }
 
         public List<int> Party
@@ -121,15 +121,15 @@ namespace Intersect_Client.Classes.Entities
                 {
                     if (!Globals.Me.TryAttack())
                     {
-                        if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
-                            Globals.Me.AttackTimer = Globals.System.GetTimeMS() +
+                        if (Globals.Me.AttackTimer < Globals.System.GetTimeMs())
+                            Globals.Me.AttackTimer = Globals.System.GetTimeMs() +
                                                      Globals.Me.CalculateAttackTime();
                     }
                 }
             }
-            if (_targetBox != null)
+            if (TargetBox != null)
             {
-                _targetBox.Update();
+                TargetBox.Update();
             }
             return returnval;
         }
@@ -466,9 +466,9 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryUseSpell(int index)
         {
-            if (Spells[index].SpellNum >= 0 && Spells[index].SpellCD < Globals.System.GetTimeMS())
+            if (Spells[index].SpellNum >= 0 && Spells[index].SpellCd < Globals.System.GetTimeMs())
             {
-                PacketSender.SendUseSpell(index, _targetIndex);
+                PacketSender.SendUseSpell(index, TargetIndex);
             }
         }
 
@@ -490,14 +490,14 @@ namespace Intersect_Client.Classes.Entities
                     if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) != null &&
                         MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY] != null)
                     {
-                        if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY].value ==
+                        if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY].Value ==
                             (int) MapAttributes.ZDimension)
                         {
-                            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY].data1 >
+                            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY].Data1 >
                                 0)
                             {
                                 CurrentZ = MapInstance.Lookup.Get<MapInstance>(CurrentMap)
-                                               .Attributes[CurrentX, CurrentY].data1 - 1;
+                                               .Attributes[CurrentX, CurrentY].Data1 - 1;
                             }
                         }
                     }
@@ -554,7 +554,7 @@ namespace Intersect_Client.Classes.Entities
 
         public bool TryBlock()
         {
-            if (AttackTimer > Globals.System.GetTimeMS())
+            if (AttackTimer > Globals.System.GetTimeMs())
             {
                 return false;
             }
@@ -580,13 +580,13 @@ namespace Intersect_Client.Classes.Entities
             {
                 Blocking = false;
                 PacketSender.SendBlock(0);
-                AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+                AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
             }
         }
 
         public bool TryAttack()
         {
-            if (AttackTimer > Globals.System.GetTimeMS() || Blocking)
+            if (AttackTimer > Globals.System.GetTimeMs() || Blocking)
             {
                 return false;
             }
@@ -620,7 +620,7 @@ namespace Intersect_Client.Classes.Entities
                         {
                             //ATTACKKKKK!!!
                             PacketSender.SendAttack(en.Key);
-                            AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+                            AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
                             return true;
                         }
                     }
@@ -637,7 +637,7 @@ namespace Intersect_Client.Classes.Entities
                         {
                             //Talk to Event
                             PacketSender.SendActivateEvent(en.Value.CurrentMap, en.Key);
-                            AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+                            AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
                             return true;
                         }
                     }
@@ -646,7 +646,7 @@ namespace Intersect_Client.Classes.Entities
 
             //Projectile/empty swing for animations
             PacketSender.SendAttack(-1);
-            AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+            AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
             return true;
         }
 
@@ -726,26 +726,26 @@ namespace Intersect_Client.Classes.Entities
                                     if (en.Value.GetType() != typeof(Projectile) &&
                                         en.Value.GetType() != typeof(Resource))
                                     {
-                                        if (_targetBox != null)
+                                        if (TargetBox != null)
                                         {
-                                            _targetBox.Dispose();
-                                            _targetBox = null;
+                                            TargetBox.Dispose();
+                                            TargetBox = null;
                                         }
                                         if (en.Value != Globals.Me)
                                         {
                                             if (en.Value.GetType() == typeof(Player))
                                             {
-                                                _targetBox =
-                                                    new EntityBox(Gui.GameUI.GameCanvas, EntityTypes.Player, en.Value);
+                                                TargetBox =
+                                                    new EntityBox(Gui.GameUi.GameCanvas, EntityTypes.Player, en.Value);
                                             }
                                             else
                                             {
-                                                _targetBox =
-                                                    new EntityBox(Gui.GameUI.GameCanvas, EntityTypes.GlobalEntity,
+                                                TargetBox =
+                                                    new EntityBox(Gui.GameUi.GameCanvas, EntityTypes.GlobalEntity,
                                                         en.Value);
                                             }
                                         }
-                                        if (_targetType == 0 && _targetIndex == en.Value.MyIndex)
+                                        if (TargetType == 0 && TargetIndex == en.Value.MyIndex)
                                         {
                                             ClearTarget();
                                             return true;
@@ -753,13 +753,13 @@ namespace Intersect_Client.Classes.Entities
                                         if (en.Value.GetType() == typeof(Player))
                                         {
                                             //Select in admin window if open
-                                            if (Gui.GameUI.AdminWindowOpen())
+                                            if (Gui.GameUi.AdminWindowOpen())
                                             {
-                                                Gui.GameUI.AdminWindowSelectName(en.Value.MyName);
+                                                Gui.GameUi.AdminWindowSelectName(en.Value.MyName);
                                             }
                                         }
-                                        _targetType = 0;
-                                        _targetIndex = en.Value.MyIndex;
+                                        TargetType = 0;
+                                        TargetIndex = en.Value.MyIndex;
                                         return true;
                                     }
                                 }
@@ -773,19 +773,19 @@ namespace Intersect_Client.Classes.Entities
                                         en.Value.CurrentY == y && ((Event) en.Value).DisablePreview == 0 &&
                                         !en.Value.IsStealthed())
                                     {
-                                        if (_targetBox != null)
+                                        if (TargetBox != null)
                                         {
-                                            _targetBox.Dispose();
-                                            _targetBox = null;
+                                            TargetBox.Dispose();
+                                            TargetBox = null;
                                         }
-                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas, EntityTypes.Event, en.Value);
-                                        if (_targetType == 1 && _targetIndex == en.Value.MyIndex)
+                                        TargetBox = new EntityBox(Gui.GameUi.GameCanvas, EntityTypes.Event, en.Value);
+                                        if (TargetType == 1 && TargetIndex == en.Value.MyIndex)
                                         {
                                             ClearTarget();
                                             return true;
                                         }
-                                        _targetType = 1;
-                                        _targetIndex = en.Value.MyIndex;
+                                        TargetType = 1;
+                                        TargetIndex = en.Value.MyIndex;
                                         return true;
                                     }
                                 }
@@ -800,17 +800,17 @@ namespace Intersect_Client.Classes.Entities
 
         private void ClearTarget()
         {
-            if (_targetBox != null)
+            if (TargetBox != null)
             {
-                _targetBox.Dispose();
-                _targetBox = null;
+                TargetBox.Dispose();
+                TargetBox = null;
             }
-            _targetIndex = -1;
-            _targetType = -1;
-            if (_itemTargetBox != null)
+            TargetIndex = -1;
+            TargetType = -1;
+            if (mItemTargetBox != null)
             {
-                _itemTargetBox.Dispose();
-                _itemTargetBox = null;
+                mItemTargetBox.Dispose();
+                mItemTargetBox = null;
             }
         }
 
@@ -860,7 +860,7 @@ namespace Intersect_Client.Classes.Entities
             }
 
             //Check if the player is dashing, if so don't let them move.
-            if (Dashing != null || DashQueue.Count > 0 || DashTimer > Globals.System.GetTimeMS())
+            if (Dashing != null || DashQueue.Count > 0 || DashTimer > Globals.System.GetTimeMs())
             {
                 return;
             }
@@ -868,7 +868,7 @@ namespace Intersect_Client.Classes.Entities
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
             {
                 //Try to move if able and not casting spells.
-                if (!IsMoving && MoveTimer < Globals.System.GetTimeMS() && CastTime < Globals.System.GetTimeMS())
+                if (!IsMoving && MoveTimer < Globals.System.GetTimeMs() && CastTime < Globals.System.GetTimeMs())
                 {
                     switch (MoveDir)
                     {
@@ -920,7 +920,7 @@ namespace Intersect_Client.Classes.Entities
 
                     if (IsMoving)
                     {
-                        MoveTimer = Globals.System.GetTimeMS() + GetMovementTime();
+                        MoveTimer = Globals.System.GetTimeMs() + GetMovementTime();
                         didMove = true;
                         if (CurrentX < 0 || CurrentY < 0 || CurrentX > (Options.MapWidth - 1) ||
                             CurrentY > (Options.MapHeight - 1))
@@ -1045,13 +1045,13 @@ namespace Intersect_Client.Classes.Entities
                 {
                     if (gameMap.Attributes[tmpX, tmpY] != null)
                     {
-                        if (gameMap.Attributes[tmpX, tmpY].value == (int) MapAttributes.Blocked && !NoClip)
+                        if (gameMap.Attributes[tmpX, tmpY].Value == (int) MapAttributes.Blocked && !NoClip)
                         {
                             return -2;
                         }
-                        else if (gameMap.Attributes[tmpX, tmpY].value == (int) MapAttributes.ZDimension && !NoClip)
+                        else if (gameMap.Attributes[tmpX, tmpY].Value == (int) MapAttributes.ZDimension && !NoClip)
                         {
-                            if (gameMap.Attributes[tmpX, tmpY].data2 - 1 == z)
+                            if (gameMap.Attributes[tmpX, tmpY].Data2 - 1 == z)
                             {
                                 return -3;
                             }
@@ -1142,12 +1142,12 @@ namespace Intersect_Client.Classes.Entities
         {
             if (textColor == null)
             {
-                if (type == 1)
+                if (Type == 1)
                 {
                     base.DrawName(CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder,
                         CustomColors.PlayerNameModBackground);
                 }
-                else if (type == 2)
+                else if (Type == 2)
                 {
                     base.DrawName(CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder,
                         CustomColors.PlayerNameAdminBackground);
@@ -1173,7 +1173,7 @@ namespace Intersect_Client.Classes.Entities
                 {
                     if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
                     {
-                        if (_targetType == 0 && _targetIndex == en.Value.MyIndex)
+                        if (TargetType == 0 && TargetIndex == en.Value.MyIndex)
                         {
                             en.Value.DrawTarget((int) TargetTypes.Selected);
                         }
@@ -1188,7 +1188,7 @@ namespace Intersect_Client.Classes.Entities
                     if (en.Value.CurrentMap == eventMap.Index && ((Event) en.Value).DisablePreview == 0 &&
                         !en.Value.IsStealthed())
                     {
-                        if (_targetType == 1 && _targetIndex == en.Value.MyIndex)
+                        if (TargetType == 1 && TargetIndex == en.Value.MyIndex)
                         {
                             en.Value.DrawTarget((int) TargetTypes.Selected);
                         }
@@ -1225,7 +1225,7 @@ namespace Intersect_Client.Classes.Entities
                                     if (en.Value.GetType() != typeof(Projectile) &&
                                         en.Value.GetType() != typeof(Resource))
                                     {
-                                        if (_targetType != 0 || _targetIndex != en.Value.MyIndex)
+                                        if (TargetType != 0 || TargetIndex != en.Value.MyIndex)
                                         {
                                             en.Value.DrawTarget((int) TargetTypes.Hover);
                                         }
@@ -1241,7 +1241,7 @@ namespace Intersect_Client.Classes.Entities
                                         en.Value.CurrentY == y && ((Event) en.Value).DisablePreview == 0 &&
                                         !en.Value.IsStealthed())
                                     {
-                                        if (_targetType != 1 || _targetIndex != en.Value.MyIndex)
+                                        if (TargetType != 1 || TargetIndex != en.Value.MyIndex)
                                         {
                                             en.Value.DrawTarget((int) TargetTypes.Hover);
                                         }
@@ -1258,9 +1258,9 @@ namespace Intersect_Client.Classes.Entities
 
     public class FriendInstance
     {
-        public string map;
-        public string name;
-        public bool online = false;
+        public string Map;
+        public string Name;
+        public bool Online = false;
     }
 
     public class HotbarInstance

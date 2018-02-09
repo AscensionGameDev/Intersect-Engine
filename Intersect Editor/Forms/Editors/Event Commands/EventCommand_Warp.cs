@@ -7,22 +7,22 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_Warp : UserControl
+    public partial class EventCommandWarp : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventCommand mMyCommand;
 
-        public EventCommand_Warp(EventCommand refCommand, FrmEvent editor)
+        public EventCommandWarp(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
             InitLocalization();
             cmbMap.Items.Clear();
             for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
             {
                 cmbMap.Items.Add(MapList.GetOrderedMaps()[i].Name);
-                if (MapList.GetOrderedMaps()[i].MapNum == _myCommand.Ints[0])
+                if (MapList.GetOrderedMaps()[i].MapNum == mMyCommand.Ints[0])
                 {
                     cmbMap.SelectedIndex = i;
                 }
@@ -33,11 +33,11 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             }
             scrlX.Maximum = Options.MapWidth - 1;
             scrlY.Maximum = Options.MapHeight - 1;
-            scrlX.Value = _myCommand.Ints[1];
-            scrlY.Value = _myCommand.Ints[2];
+            scrlX.Value = mMyCommand.Ints[1];
+            scrlY.Value = mMyCommand.Ints[2];
             lblX.Text = Strings.Get("warping", "x", scrlX.Value);
             lblY.Text = Strings.Get("warping", "y", scrlY.Value);
-            cmbDirection.SelectedIndex = _myCommand.Ints[3];
+            cmbDirection.SelectedIndex = mMyCommand.Ints[3];
         }
 
         private void InitLocalization()
@@ -59,16 +59,16 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum;
-            _myCommand.Ints[1] = scrlX.Value;
-            _myCommand.Ints[2] = scrlY.Value;
-            _myCommand.Ints[3] = cmbDirection.SelectedIndex;
-            _eventEditor.FinishCommandEdit();
+            mMyCommand.Ints[0] = MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum;
+            mMyCommand.Ints[1] = scrlX.Value;
+            mMyCommand.Ints[2] = scrlY.Value;
+            mMyCommand.Ints[3] = cmbDirection.SelectedIndex;
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
 
         private void scrlX_Scroll(object sender, ScrollValueEventArgs e)
@@ -83,7 +83,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnVisual_Click(object sender, EventArgs e)
         {
-            frmWarpSelection frmWarpSelection = new frmWarpSelection();
+            FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
             frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum, scrlX.Value,
                 scrlY.Value);
             frmWarpSelection.ShowDialog();

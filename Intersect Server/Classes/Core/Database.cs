@@ -29,7 +29,7 @@ namespace Intersect.Server.Classes.Core
     {
         private const string DIRECTORY_BACKUPS = "resources/backups";
         private const int DbVersion = 10;
-        private const string DbFilename = "resources/intersect.db";
+        private const string DB_FILENAME = "resources/intersect.db";
 
         //Database Variables
         private const string INFO_TABLE = "info";
@@ -282,7 +282,7 @@ namespace Intersect.Server.Classes.Core
         {
             SqliteConnection.SetConfig(SQLiteConfig.Serialized);
 
-            if (File.Exists(DbFilename)) BackupDatabase();
+            if (File.Exists(DB_FILENAME)) BackupDatabase();
             else CreateDatabase();
 
             OpenDatabaseConnection();
@@ -301,7 +301,7 @@ namespace Intersect.Server.Classes.Core
         {
             if (sDbConnection == null)
             {
-                sDbConnection = new SqliteConnection($"Data Source={DbFilename},Version=3");
+                sDbConnection = new SqliteConnection($"Data Source={DB_FILENAME},Version=3");
                 sDbConnection?.Open();
             }
         }
@@ -321,7 +321,7 @@ namespace Intersect.Server.Classes.Core
 
         private static void CreateDatabase()
         {
-            sDbConnection = new SqliteConnection($"Data Source={DbFilename},Version=3,New=True");
+            sDbConnection = new SqliteConnection($"Data Source={DB_FILENAME},Version=3,New=True");
             sDbConnection?.Open();
             CreateInfoTable();
             CreateUsersTable();
@@ -1068,8 +1068,8 @@ namespace Intersect.Server.Classes.Core
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_SLOT, i));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_NUM, player.Spells[i].SpellNum));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_CD,
-                        (player.Spells[i].SpellCD > Globals.System.GetTimeMs()
-                            ? Globals.System.GetTimeMs() - player.Spells[i].SpellCD
+                        (player.Spells[i].SpellCd > Globals.System.GetTimeMs()
+                            ? Globals.System.GetTimeMs() - player.Spells[i].SpellCd
                             : 0)));
                     ExecuteNonQuery(cmd);
                 }
@@ -1188,11 +1188,11 @@ namespace Intersect.Server.Classes.Core
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_CHAR_ID, player.MyId));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_ID, playerQuest.Key));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_TASK,
-                        Convert.ToInt32(playerQuest.Value.task)));
+                        Convert.ToInt32(playerQuest.Value.Task)));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_TASK_PROGRESS,
-                        Convert.ToInt32(playerQuest.Value.taskProgress)));
+                        Convert.ToInt32(playerQuest.Value.TaskProgress)));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_COMPLETED,
-                        Convert.ToInt32(playerQuest.Value.completed)));
+                        Convert.ToInt32(playerQuest.Value.Completed)));
                     ExecuteNonQuery(cmd);
                 }
             }
@@ -1485,12 +1485,12 @@ namespace Intersect.Server.Classes.Core
                             if (slot >= 0 && slot < Options.MaxPlayerSkills)
                             {
                                 player.Spells[slot].SpellNum = Convert.ToInt32(dataReader[CHAR_SPELL_NUM]);
-                                player.Spells[slot].SpellCD = Globals.System.GetTimeMs() +
+                                player.Spells[slot].SpellCd = Globals.System.GetTimeMs() +
                                                               Convert.ToInt32(dataReader[CHAR_SPELL_CD]);
                                 if (SpellBase.Lookup.Get<SpellBase>(player.Spells[slot].SpellNum) == null)
                                 {
                                     player.Spells[slot].SpellNum = -1;
-                                    player.Spells[slot].SpellCD = -1;
+                                    player.Spells[slot].SpellCd = -1;
                                 }
                             }
                         }
@@ -1667,18 +1667,18 @@ namespace Intersect.Server.Classes.Core
                             if (player.Quests.ContainsKey(id))
                             {
                                 var questProgress = player.Quests[id];
-                                questProgress.task = Convert.ToInt32(dataReader[CHAR_QUEST_TASK]);
-                                questProgress.taskProgress = Convert.ToInt32(dataReader[CHAR_QUEST_TASK_PROGRESS]);
-                                questProgress.completed = Convert.ToInt32(dataReader[CHAR_QUEST_COMPLETED]);
+                                questProgress.Task = Convert.ToInt32(dataReader[CHAR_QUEST_TASK]);
+                                questProgress.TaskProgress = Convert.ToInt32(dataReader[CHAR_QUEST_TASK_PROGRESS]);
+                                questProgress.Completed = Convert.ToInt32(dataReader[CHAR_QUEST_COMPLETED]);
                                 player.Quests[id] = questProgress;
                             }
                             else
                             {
                                 var questProgress = new QuestProgressStruct()
                                 {
-                                    task = Convert.ToInt32(dataReader[CHAR_QUEST_TASK]),
-                                    taskProgress = Convert.ToInt32(dataReader[CHAR_QUEST_TASK_PROGRESS]),
-                                    completed = Convert.ToInt32(dataReader[CHAR_QUEST_COMPLETED])
+                                    Task = Convert.ToInt32(dataReader[CHAR_QUEST_TASK]),
+                                    TaskProgress = Convert.ToInt32(dataReader[CHAR_QUEST_TASK_PROGRESS]),
+                                    Completed = Convert.ToInt32(dataReader[CHAR_QUEST_COMPLETED])
                                 };
                                 player.Quests.Add(id, questProgress);
                             }

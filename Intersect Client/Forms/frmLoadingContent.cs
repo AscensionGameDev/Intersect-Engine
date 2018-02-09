@@ -2,9 +2,9 @@
 
 namespace Intersect_Client.Classes
 {
-    public partial class frmLoadingContent : Form
+    public partial class FrmLoadingContent : Form
     {
-        public frmLoadingContent()
+        public FrmLoadingContent()
         {
             InitializeComponent();
         }

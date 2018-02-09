@@ -7,12 +7,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
     public static class FieldChecking
     {
         //Field Checking
-        public const string MatchEmailPattern =
+        public const string MATCH_EMAIL_PATTERN =
                 @"^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|([a-zA-Z]+[\w-]+\.)+[a-zA-Z]{2,4})$"
             ;
 
-        public const string UsernamePattern = @"^[a-zA-Z0-9]{2,20}$";
-        public const string PasswordPattern = @"^[a-zA-Z0-9]{4,20}$";
+        public const string USERNAME_PATTERN = @"^[a-zA-Z0-9]{2,20}$";
+        public const string PASSWORD_PATTERN = @"^[a-zA-Z0-9]{4,20}$";
 
         public static bool IsEmail(string email)
         {
@@ -24,7 +24,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
                 }
                 catch (ArgumentException)
                 {
-                    return Regex.IsMatch(email, MatchEmailPattern);
+                    return Regex.IsMatch(email, MATCH_EMAIL_PATTERN);
                 }
             }
             return false;
@@ -40,7 +40,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
                 }
                 catch (ArgumentException)
                 {
-                    return Regex.IsMatch(name.Trim(), UsernamePattern);
+                    return Regex.IsMatch(name.Trim(), USERNAME_PATTERN);
                 }
             }
             return false;
@@ -56,7 +56,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
                 }
                 catch (ArgumentException)
                 {
-                    return Regex.IsMatch(pass.Trim(), PasswordPattern);
+                    return Regex.IsMatch(pass.Trim(), PASSWORD_PATTERN);
                 }
             }
             return false;

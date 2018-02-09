@@ -5,7 +5,7 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms
 {
-    partial class frmMapLayers
+    partial class FrmMapLayers
     {
         /// <summary>
         /// Required designer variable.
@@ -33,7 +33,7 @@ namespace Intersect.Editor.Forms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMapLayers));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMapLayers));
 			this.lblLayer = new System.Windows.Forms.Label();
 			this.lblTileType = new System.Windows.Forms.Label();
 			this.lblTileset = new System.Windows.Forms.Label();
@@ -1307,7 +1307,7 @@ namespace Intersect.Editor.Forms
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.HideOnClose = true;
 			this.MinimumSize = new System.Drawing.Size(314, 250);
-			this.Name = "frmMapLayers";
+			this.Name = "FrmMapLayers";
 			this.Text = "Map Layers";
 			this.DockStateChanged += new System.EventHandler(this.frmMapLayers_DockStateChanged);
 			this.Load += new System.EventHandler(this.frmMapLayers_Load);

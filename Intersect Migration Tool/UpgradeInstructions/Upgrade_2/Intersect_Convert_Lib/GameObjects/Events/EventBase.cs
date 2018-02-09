@@ -7,7 +7,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
     {
         public new const string DATABASE_TABLE = "events";
         public new const GameObject OBJECT_TYPE = GameObject.CommonEvent;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        protected static Dictionary<int, DatabaseObject> sObjects = new Dictionary<int, DatabaseObject>();
 
         public EventBase(int index, int x, int y, bool isCommon = false, byte isGlobal = 0) : base(index)
         {
@@ -79,18 +79,18 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
 
         public static EventBase GetEvent(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return (EventBase) Objects[index];
+                return (EventBase) sObjects[index];
             }
             return null;
         }
 
         public static string GetName(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return ((EventBase) Objects[index]).MyName;
+                return ((EventBase) sObjects[index]).MyName;
             }
             return "Deleted";
         }
@@ -112,37 +112,37 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2.Intersect_Convert_Li
 
         public static DatabaseObject Get(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return Objects[index];
+                return sObjects[index];
             }
             return null;
         }
 
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            sObjects.Remove(GetId());
         }
 
         public static void ClearObjects()
         {
-            Objects.Clear();
+            sObjects.Clear();
         }
 
         public static void AddObject(int index, DatabaseObject obj)
         {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
+            sObjects.Remove(index);
+            sObjects.Add(index, obj);
         }
 
         public static int ObjectCount()
         {
-            return Objects.Count;
+            return sObjects.Count;
         }
 
         public static Dictionary<int, EventBase> GetObjects()
         {
-            Dictionary<int, EventBase> objects = Objects.ToDictionary(k => k.Key, v => (EventBase) v.Value);
+            Dictionary<int, EventBase> objects = sObjects.ToDictionary(k => k.Key, v => (EventBase) v.Value);
             return objects;
         }
     }

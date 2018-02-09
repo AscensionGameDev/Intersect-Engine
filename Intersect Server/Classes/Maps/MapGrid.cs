@@ -9,10 +9,10 @@ namespace Intersect.Server.Classes.Maps
 
     public class MapGrid
     {
-        private readonly int _myIndex;
-        private Point _botRight = new Point(0, 0);
-        private int[] _tmpMaps;
-        private Point _topLeft = new Point(0, 0);
+        private readonly int mMyIndex;
+        private Point mBotRight = new Point(0, 0);
+        private int[] mTmpMaps;
+        private Point mTopLeft = new Point(0, 0);
         public long Height;
         public int[,] MyGrid;
         public List<int> MyMaps = new List<int>();
@@ -24,21 +24,21 @@ namespace Intersect.Server.Classes.Maps
 
         public MapGrid(int startMap, int myGridIndex)
         {
-            _myIndex = myGridIndex;
+            mMyIndex = myGridIndex;
             MapInstance.Lookup.Get<MapInstance>(startMap).MapGrid = myGridIndex;
             MapInstance.Lookup.Get<MapInstance>(startMap).MapGridX = 0;
             MapInstance.Lookup.Get<MapInstance>(startMap).MapGridY = 0;
             MyMaps.Clear();
             CalculateBounds(MapInstance.Lookup.Get<MapInstance>(startMap), 0, 0);
 
-            Width = _botRight.X - _topLeft.X + 1;
-            Height = _botRight.Y - _topLeft.Y + 1;
-            int xoffset = _topLeft.X;
-            int yoffset = _topLeft.Y;
-            XMin = _topLeft.X - xoffset;
-            YMin = _topLeft.Y - yoffset;
-            XMax = _botRight.X - xoffset + 1;
-            YMax = _botRight.Y - yoffset + 1;
+            Width = mBotRight.X - mTopLeft.X + 1;
+            Height = mBotRight.Y - mTopLeft.Y + 1;
+            int xoffset = mTopLeft.X;
+            int yoffset = mTopLeft.Y;
+            XMin = mTopLeft.X - xoffset;
+            YMin = mTopLeft.Y - yoffset;
+            XMax = mBotRight.X - xoffset + 1;
+            YMax = mBotRight.Y - yoffset + 1;
             MyGrid = new int[Width, Height];
             List<int> tmpMaps = new List<int>();
             tmpMaps.AddRange(MyMaps.ToArray());
@@ -49,8 +49,8 @@ namespace Intersect.Server.Classes.Maps
                     MyGrid[x, y] = -1;
                     for (int i = 0; i < tmpMaps.Count; i++)
                     {
-                        if (MapInstance.Lookup.Get<MapInstance>(tmpMaps[i]).MapGridX + Math.Abs(_topLeft.X) == x &&
-                            MapInstance.Lookup.Get<MapInstance>(tmpMaps[i]).MapGridY + Math.Abs(_topLeft.Y) == y)
+                        if (MapInstance.Lookup.Get<MapInstance>(tmpMaps[i]).MapGridX + Math.Abs(mTopLeft.X) == x &&
+                            MapInstance.Lookup.Get<MapInstance>(tmpMaps[i]).MapGridY + Math.Abs(mTopLeft.Y) == y)
                         {
                             MyGrid[x, y] = tmpMaps[i];
                             MapInstance.Lookup.Get<MapInstance>(tmpMaps[i]).MapGrid = myGridIndex;
@@ -77,21 +77,21 @@ namespace Intersect.Server.Classes.Maps
             MyMaps.Add(map.Index);
             map.MapGridX = x;
             map.MapGridY = y;
-            if (x < _topLeft.X)
+            if (x < mTopLeft.X)
             {
-                _topLeft.X = x;
+                mTopLeft.X = x;
             }
-            if (y < _topLeft.Y)
+            if (y < mTopLeft.Y)
             {
-                _topLeft.Y = y;
+                mTopLeft.Y = y;
             }
-            if (x > _botRight.X)
+            if (x > mBotRight.X)
             {
-                _botRight.X = x;
+                mBotRight.X = x;
             }
-            if (y > _botRight.Y)
+            if (y > mBotRight.Y)
             {
-                _botRight.Y = y;
+                mBotRight.Y = y;
             }
             if (MapInstance.Lookup.IndexKeys.Contains(map.Up) &&
                 MapInstance.Lookup.Get<MapInstance>(map.Up).Down == map.Index)

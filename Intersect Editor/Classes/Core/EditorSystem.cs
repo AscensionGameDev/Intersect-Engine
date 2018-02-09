@@ -4,16 +4,16 @@ namespace Intersect.Editor.Classes.Core
 {
     public class EditorSystem
     {
-        public Stopwatch stopWatch = new Stopwatch();
+        public Stopwatch StopWatch = new Stopwatch();
 
         public EditorSystem()
         {
-            stopWatch.Start();
+            StopWatch.Start();
         }
 
         public long GetTimeMs()
         {
-            return stopWatch.ElapsedMilliseconds;
+            return StopWatch.ElapsedMilliseconds;
         }
     }
 }

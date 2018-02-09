@@ -8,28 +8,28 @@ namespace Intersect.Editor.Classes.Entities
 {
     public class AnimationInstance
     {
-        private int _renderDir;
-        private float _renderX;
-        private float _renderY;
-        private bool infiniteLoop;
-        private int lowerFrame;
-        private int lowerLoop;
-        private long lowerTimer;
-        public AnimationBase myBase;
-        private bool showLower = true;
-        private bool showUpper = true;
-        private int upperFrame;
-        private int upperLoop;
-        private long upperTimer;
+        private int mRenderDir;
+        private float mRenderX;
+        private float mRenderY;
+        private bool mInfiniteLoop;
+        private int mLowerFrame;
+        private int mLowerLoop;
+        private long mLowerTimer;
+        public AnimationBase MyBase;
+        private bool mShowLower = true;
+        private bool mShowUpper = true;
+        private int mUpperFrame;
+        private int mUpperLoop;
+        private long mUpperTimer;
 
         public AnimationInstance(AnimationBase animBase, bool loopForever)
         {
-            myBase = animBase;
-            lowerLoop = animBase.LowerAnimLoopCount;
-            upperLoop = animBase.UpperAnimLoopCount;
-            lowerTimer = Globals.System.GetTimeMs() + animBase.LowerAnimFrameSpeed;
-            upperTimer = Globals.System.GetTimeMs() + animBase.UpperAnimFrameSpeed;
-            infiniteLoop = loopForever;
+            MyBase = animBase;
+            mLowerLoop = animBase.LowerAnimLoopCount;
+            mUpperLoop = animBase.UpperAnimLoopCount;
+            mLowerTimer = Globals.System.GetTimeMs() + animBase.LowerAnimFrameSpeed;
+            mUpperTimer = Globals.System.GetTimeMs() + animBase.UpperAnimFrameSpeed;
+            mInfiniteLoop = loopForever;
         }
 
         public void Draw(RenderTarget2D target, bool upper = false)
@@ -38,116 +38,116 @@ namespace Intersect.Editor.Classes.Entities
             {
                 //Draw Lower
                 Texture2D tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
-                    myBase.LowerAnimSprite);
-                if (showLower)
+                    MyBase.LowerAnimSprite);
+                if (mShowLower)
                 {
-                    if (lowerFrame >= myBase.LowerAnimFrameCount) return;
+                    if (mLowerFrame >= MyBase.LowerAnimFrameCount) return;
                     if (tex != null)
                     {
-                        if (myBase.LowerAnimXFrames > 0 && myBase.LowerAnimYFrames > 0)
+                        if (MyBase.LowerAnimXFrames > 0 && MyBase.LowerAnimYFrames > 0)
                         {
-                            int frameWidth = (int) tex.Width / myBase.LowerAnimXFrames;
-                            int frameHeight = (int) tex.Height / myBase.LowerAnimYFrames;
+                            int frameWidth = (int) tex.Width / MyBase.LowerAnimXFrames;
+                            int frameHeight = (int) tex.Height / MyBase.LowerAnimYFrames;
                             EditorGraphics.DrawTexture(tex,
-                                new RectangleF((lowerFrame % myBase.LowerAnimXFrames) * frameWidth,
-                                    (float) Math.Floor((double) lowerFrame / myBase.LowerAnimXFrames) * frameHeight,
+                                new RectangleF((mLowerFrame % MyBase.LowerAnimXFrames) * frameWidth,
+                                    (float) Math.Floor((double) mLowerFrame / MyBase.LowerAnimXFrames) * frameHeight,
                                     frameWidth,
                                     frameHeight),
-                                new RectangleF(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth,
+                                new RectangleF(mRenderX - frameWidth / 2, mRenderY - frameHeight / 2, frameWidth,
                                     frameHeight),
                                 System.Drawing.Color.White, target, BlendState.NonPremultiplied);
                         }
                     }
                     EditorGraphics.AddLight(
-                        Options.MapWidth * Options.TileWidth + (int) _renderX + myBase.LowerLights[lowerFrame].OffsetX,
-                        Options.MapHeight * Options.TileHeight + (int) _renderY +
-                        myBase.LowerLights[lowerFrame].OffsetY,
-                        myBase.LowerLights[lowerFrame]);
+                        Options.MapWidth * Options.TileWidth + (int) mRenderX + MyBase.LowerLights[mLowerFrame].OffsetX,
+                        Options.MapHeight * Options.TileHeight + (int) mRenderY +
+                        MyBase.LowerLights[mLowerFrame].OffsetY,
+                        MyBase.LowerLights[mLowerFrame]);
                 }
             }
             else
             {
                 //Draw Upper
                 Texture2D tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
-                    myBase.UpperAnimSprite);
-                if (showUpper)
+                    MyBase.UpperAnimSprite);
+                if (mShowUpper)
                 {
-                    if (upperFrame >= myBase.UpperAnimFrameCount) return;
+                    if (mUpperFrame >= MyBase.UpperAnimFrameCount) return;
                     if (tex != null)
                     {
-                        if (myBase.UpperAnimXFrames > 0 && myBase.UpperAnimYFrames > 0)
+                        if (MyBase.UpperAnimXFrames > 0 && MyBase.UpperAnimYFrames > 0)
                         {
-                            int frameWidth = (int) tex.Width / myBase.UpperAnimXFrames;
-                            int frameHeight = (int) tex.Height / myBase.UpperAnimYFrames;
+                            int frameWidth = (int) tex.Width / MyBase.UpperAnimXFrames;
+                            int frameHeight = (int) tex.Height / MyBase.UpperAnimYFrames;
                             EditorGraphics.DrawTexture(tex,
-                                new RectangleF((upperFrame % myBase.UpperAnimXFrames) * frameWidth,
-                                    (float) Math.Floor((double) upperFrame / myBase.UpperAnimXFrames) * frameHeight,
+                                new RectangleF((mUpperFrame % MyBase.UpperAnimXFrames) * frameWidth,
+                                    (float) Math.Floor((double) mUpperFrame / MyBase.UpperAnimXFrames) * frameHeight,
                                     frameWidth,
                                     frameHeight),
-                                new RectangleF(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth,
+                                new RectangleF(mRenderX - frameWidth / 2, mRenderY - frameHeight / 2, frameWidth,
                                     frameHeight),
                                 System.Drawing.Color.White, target, BlendState.NonPremultiplied);
                         }
                     }
                     EditorGraphics.AddLight(
-                        Options.MapWidth * Options.TileWidth + (int) _renderX + myBase.UpperLights[upperFrame].OffsetX,
-                        Options.MapHeight * Options.TileHeight + (int) _renderY +
-                        myBase.UpperLights[upperFrame].OffsetY,
-                        myBase.UpperLights[upperFrame]);
+                        Options.MapWidth * Options.TileWidth + (int) mRenderX + MyBase.UpperLights[mUpperFrame].OffsetX,
+                        Options.MapHeight * Options.TileHeight + (int) mRenderY +
+                        MyBase.UpperLights[mUpperFrame].OffsetY,
+                        MyBase.UpperLights[mUpperFrame]);
                 }
             }
         }
 
         public void SetPosition(float x, float y, int dir)
         {
-            _renderX = x;
-            _renderY = y;
-            _renderDir = dir;
+            mRenderX = x;
+            mRenderY = y;
+            mRenderDir = dir;
         }
 
         public void Update()
         {
-            if (lowerTimer < Globals.System.GetTimeMs() && showLower)
+            if (mLowerTimer < Globals.System.GetTimeMs() && mShowLower)
             {
-                lowerFrame++;
-                if (lowerFrame >= myBase.LowerAnimFrameCount)
+                mLowerFrame++;
+                if (mLowerFrame >= MyBase.LowerAnimFrameCount)
                 {
-                    lowerLoop--;
-                    lowerFrame = 0;
-                    if (lowerLoop < 0)
+                    mLowerLoop--;
+                    mLowerFrame = 0;
+                    if (mLowerLoop < 0)
                     {
-                        if (infiniteLoop)
+                        if (mInfiniteLoop)
                         {
-                            lowerLoop = myBase.LowerAnimLoopCount;
+                            mLowerLoop = MyBase.LowerAnimLoopCount;
                         }
                         else
                         {
-                            showLower = false;
+                            mShowLower = false;
                         }
                     }
                 }
-                lowerTimer = Globals.System.GetTimeMs() + myBase.LowerAnimFrameSpeed;
+                mLowerTimer = Globals.System.GetTimeMs() + MyBase.LowerAnimFrameSpeed;
             }
-            if (upperTimer < Globals.System.GetTimeMs() && showUpper)
+            if (mUpperTimer < Globals.System.GetTimeMs() && mShowUpper)
             {
-                upperFrame++;
-                if (upperFrame >= myBase.UpperAnimFrameCount)
+                mUpperFrame++;
+                if (mUpperFrame >= MyBase.UpperAnimFrameCount)
                 {
-                    upperLoop--;
-                    upperFrame = 0;
-                    if (upperLoop < 0)
+                    mUpperLoop--;
+                    mUpperFrame = 0;
+                    if (mUpperLoop < 0)
                     {
-                        if (infiniteLoop)
+                        if (mInfiniteLoop)
                         {
-                            upperLoop = myBase.UpperAnimLoopCount;
+                            mUpperLoop = MyBase.UpperAnimLoopCount;
                         }
                         else
                         {
-                            showUpper = false;
+                            mShowUpper = false;
                         }
                     }
                 }
-                upperTimer = Globals.System.GetTimeMs() + myBase.UpperAnimFrameSpeed;
+                mUpperTimer = Globals.System.GetTimeMs() + MyBase.UpperAnimFrameSpeed;
             }
         }
     }

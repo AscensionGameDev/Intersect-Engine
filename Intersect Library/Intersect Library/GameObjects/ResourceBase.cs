@@ -21,9 +21,9 @@ namespace Intersect.GameObjects
         // Graphics
         public string InitialGraphic = Strings.Get("general", "none");
 
-        public int MaxHP;
+        public int MaxHp;
 
-        public int MinHP;
+        public int MinHp;
         public int SpawnDuration;
         public int Tool = -1;
         public bool WalkableAfter;
@@ -47,8 +47,8 @@ namespace Intersect.GameObjects
             Name = myBuffer.ReadString();
             InitialGraphic = myBuffer.ReadString();
             EndGraphic = myBuffer.ReadString();
-            MinHP = myBuffer.ReadInteger();
-            MaxHP = myBuffer.ReadInteger();
+            MinHp = myBuffer.ReadInteger();
+            MaxHp = myBuffer.ReadInteger();
             Tool = myBuffer.ReadInteger();
             SpawnDuration = myBuffer.ReadInteger();
             Animation = myBuffer.ReadInteger();
@@ -73,8 +73,8 @@ namespace Intersect.GameObjects
             myBuffer.WriteString(Name);
             myBuffer.WriteString(TextUtils.SanitizeNone(InitialGraphic));
             myBuffer.WriteString(TextUtils.SanitizeNone(EndGraphic));
-            myBuffer.WriteInteger(MinHP);
-            myBuffer.WriteInteger(MaxHP);
+            myBuffer.WriteInteger(MinHp);
+            myBuffer.WriteInteger(MaxHp);
             myBuffer.WriteInteger(Tool);
             myBuffer.WriteInteger(SpawnDuration);
             myBuffer.WriteInteger(Animation);

@@ -65,7 +65,7 @@ namespace Intersect.Enums
         TradeUpdate,
         TradeClose,
         TradeRequest,
-        NPCAggression,
+        NpcAggression,
         PlayerDeath,
         EntityZDimension,
         OpenBag,

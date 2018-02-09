@@ -8,181 +8,181 @@ namespace Intersect_Client.Classes.UI.Menu
 {
     public class MainMenu
     {
-        private CreateCharacterWindow _createCharacterWindow;
-        private Button _creditsButton;
-        private CreditsWindow _creditsWindow;
-        private Button _exitButton;
+        private CreateCharacterWindow mCreateCharacterWindow;
+        private Button mCreditsButton;
+        private CreditsWindow mCreditsWindow;
+        private Button mExitButton;
 
-        private Button _loginButton;
-        private LoginWindow _loginWindow;
-        private Label _menuHeader;
-        private ImagePanel _menuWindow;
-        private Button _optionsButton;
+        private Button mLoginButton;
+        private LoginWindow mLoginWindow;
+        private Label mMenuHeader;
+        private ImagePanel mMenuWindow;
+        private Button mOptionsButton;
 
-        private OptionsWindow _optionsWindow;
-        private Button _registerButton;
-        private RegisterWindow _registerWindow;
-        private SelectCharacterWindow _selectCharacterWindow;
-        private bool _shouldOpenCharacterCreation;
-        private bool _shouldOpenCharacterSelection;
+        private OptionsWindow mOptionsWindow;
+        private Button mRegisterButton;
+        private RegisterWindow mRegisterWindow;
+        private SelectCharacterWindow mSelectCharacterWindow;
+        private bool mShouldOpenCharacterCreation;
+        private bool mShouldOpenCharacterSelection;
 
         //Character creation feild check
-        private bool HasMadeCharacterCreation;
+        private bool mHasMadeCharacterCreation;
 
         //Controls
-        private Canvas MenuCanvas;
+        private Canvas mMenuCanvas;
 
         //Init
-        public MainMenu(Canvas _menuCanvas)
+        public MainMenu(Canvas menuCanvas)
         {
-            MenuCanvas = _menuCanvas;
+            mMenuCanvas = menuCanvas;
 
-            new ImagePanel(_menuCanvas, "Logo");
+            new ImagePanel(menuCanvas, "Logo");
 
             //Main Menu Window
-            _menuWindow = new ImagePanel(_menuCanvas, "MenuWindow");
+            mMenuWindow = new ImagePanel(menuCanvas, "MenuWindow");
 
             //Menu Header
-            _menuHeader = new Label(_menuWindow, "Title");
-            _menuHeader.SetText(Strings.Get("mainmenu", "title"));
+            mMenuHeader = new Label(mMenuWindow, "Title");
+            mMenuHeader.SetText(Strings.Get("mainmenu", "title"));
 
             //Login Button
-            _loginButton = new Button(_menuWindow, "LoginButton");
-            _loginButton.SetText(Strings.Get("mainmenu", "login"));
-            _loginButton.Clicked += LoginButton_Clicked;
+            mLoginButton = new Button(mMenuWindow, "LoginButton");
+            mLoginButton.SetText(Strings.Get("mainmenu", "login"));
+            mLoginButton.Clicked += LoginButton_Clicked;
 
             //Register Button
-            _registerButton = new Button(_menuWindow, "RegisterButton");
-            _registerButton.SetText(Strings.Get("mainmenu", "register"));
-            _registerButton.Clicked += RegisterButton_Clicked;
+            mRegisterButton = new Button(mMenuWindow, "RegisterButton");
+            mRegisterButton.SetText(Strings.Get("mainmenu", "register"));
+            mRegisterButton.Clicked += RegisterButton_Clicked;
 
             //Credits Button
-            _creditsButton = new Button(_menuWindow, "CreditsButton");
-            _creditsButton.SetText(Strings.Get("mainmenu", "credits"));
-            _creditsButton.Clicked += CreditsButton_Clicked;
+            mCreditsButton = new Button(mMenuWindow, "CreditsButton");
+            mCreditsButton.SetText(Strings.Get("mainmenu", "credits"));
+            mCreditsButton.Clicked += CreditsButton_Clicked;
 
             //Exit Button
-            _exitButton = new Button(_menuWindow, "ExitButton");
-            _exitButton.SetText(Strings.Get("mainmenu", "exit"));
-            _exitButton.Clicked += ExitButton_Clicked;
+            mExitButton = new Button(mMenuWindow, "ExitButton");
+            mExitButton.SetText(Strings.Get("mainmenu", "exit"));
+            mExitButton.Clicked += ExitButton_Clicked;
 
             //Options Button
-            _optionsButton = new Button(_menuWindow, "OptionsButton");
-            _optionsButton.Clicked += OptionsButton_Clicked;
-            _optionsButton.SetText(Strings.Get("mainmenu", "options"));
+            mOptionsButton = new Button(mMenuWindow, "OptionsButton");
+            mOptionsButton.Clicked += OptionsButton_Clicked;
+            mOptionsButton.SetText(Strings.Get("mainmenu", "options"));
             if (!string.IsNullOrEmpty(Strings.Get("mainmenu", "options")))
-                _optionsButton.SetToolTipText(Strings.Get("mainmenu", "options"));
+                mOptionsButton.SetToolTipText(Strings.Get("mainmenu", "options"));
 
             //Options Controls
-            _optionsWindow = new OptionsWindow(_menuCanvas, this, _menuWindow);
+            mOptionsWindow = new OptionsWindow(menuCanvas, this, mMenuWindow);
             //Login Controls
-            _loginWindow = new LoginWindow(_menuCanvas, this, _menuWindow);
+            mLoginWindow = new LoginWindow(menuCanvas, this, mMenuWindow);
             //Register Controls
-            _registerWindow = new RegisterWindow(_menuCanvas, this, _menuWindow);
+            mRegisterWindow = new RegisterWindow(menuCanvas, this, mMenuWindow);
             //Character Creation Controls
-            _createCharacterWindow = new CreateCharacterWindow(MenuCanvas, this, _menuWindow);
+            mCreateCharacterWindow = new CreateCharacterWindow(mMenuCanvas, this, mMenuWindow);
             //Character Selection Controls
-            _selectCharacterWindow = new SelectCharacterWindow(MenuCanvas, this, _menuWindow);
+            mSelectCharacterWindow = new SelectCharacterWindow(mMenuCanvas, this, mMenuWindow);
             //Credits Controls
-            _creditsWindow = new CreditsWindow(MenuCanvas, this);
+            mCreditsWindow = new CreditsWindow(mMenuCanvas, this);
         }
 
         //Methods
         public void Update()
         {
-            if (_shouldOpenCharacterSelection)
+            if (mShouldOpenCharacterSelection)
             {
                 CreateCharacterSelection();
             }
-            if (_shouldOpenCharacterCreation)
+            if (mShouldOpenCharacterCreation)
             {
                 CreateCharacterCreation();
             }
-            _optionsWindow.Update();
+            mOptionsWindow.Update();
         }
 
         public void Reset()
         {
-            _loginWindow.Hide();
-            _registerWindow.Hide();
-            _optionsWindow.Hide();
-            _creditsWindow.Hide();
-            if (_createCharacterWindow != null) _createCharacterWindow.Hide();
-            if (_selectCharacterWindow != null) _selectCharacterWindow.Hide();
-            _menuWindow.Show();
-            _optionsButton.Show();
+            mLoginWindow.Hide();
+            mRegisterWindow.Hide();
+            mOptionsWindow.Hide();
+            mCreditsWindow.Hide();
+            if (mCreateCharacterWindow != null) mCreateCharacterWindow.Hide();
+            if (mSelectCharacterWindow != null) mSelectCharacterWindow.Hide();
+            mMenuWindow.Show();
+            mOptionsButton.Show();
         }
 
         public void Show()
         {
-            _menuWindow.IsHidden = false;
-            _optionsButton.IsHidden = false;
+            mMenuWindow.IsHidden = false;
+            mOptionsButton.IsHidden = false;
         }
 
         public void Hide()
         {
-            _menuWindow.IsHidden = true;
-            _optionsButton.IsHidden = true;
+            mMenuWindow.IsHidden = true;
+            mOptionsButton.IsHidden = true;
         }
 
-        public void NotifyOpenCharacterSelection(List<Character> Characters)
+        public void NotifyOpenCharacterSelection(List<Character> characters)
         {
-            _shouldOpenCharacterSelection = true;
-            _selectCharacterWindow.Characters = Characters;
+            mShouldOpenCharacterSelection = true;
+            mSelectCharacterWindow.Characters = characters;
         }
 
         public void CreateCharacterSelection()
         {
             Hide();
-            _loginWindow.Hide();
-            _registerWindow.Hide();
-            _optionsWindow.Hide();
-            _createCharacterWindow.Hide();
-            _selectCharacterWindow.Show();
-            _shouldOpenCharacterSelection = false;
+            mLoginWindow.Hide();
+            mRegisterWindow.Hide();
+            mOptionsWindow.Hide();
+            mCreateCharacterWindow.Hide();
+            mSelectCharacterWindow.Show();
+            mShouldOpenCharacterSelection = false;
         }
 
         public void NotifyOpenCharacterCreation()
         {
-            _shouldOpenCharacterCreation = true;
+            mShouldOpenCharacterCreation = true;
         }
 
         public void CreateCharacterCreation()
         {
             Hide();
-            _loginWindow.Hide();
-            _registerWindow.Hide();
-            _optionsWindow.Hide();
-            _selectCharacterWindow.Hide();
-            _createCharacterWindow.Show();
-            _createCharacterWindow.Init();
-            HasMadeCharacterCreation = true;
-            _shouldOpenCharacterCreation = false;
+            mLoginWindow.Hide();
+            mRegisterWindow.Hide();
+            mOptionsWindow.Hide();
+            mSelectCharacterWindow.Hide();
+            mCreateCharacterWindow.Show();
+            mCreateCharacterWindow.Init();
+            mHasMadeCharacterCreation = true;
+            mShouldOpenCharacterCreation = false;
         }
 
         //Input Handlers
         void LoginButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Hide();
-            _loginWindow.Show();
+            mLoginWindow.Show();
         }
 
         void RegisterButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Hide();
-            _registerWindow.Show();
+            mRegisterWindow.Show();
         }
 
         void CreditsButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Hide();
-            _creditsWindow.Show();
+            mCreditsWindow.Show();
         }
 
         void OptionsButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Hide();
-            _optionsWindow.Show();
+            mOptionsWindow.Show();
         }
 
         void ExitButton_Clicked(Base sender, ClickedEventArgs arguments)

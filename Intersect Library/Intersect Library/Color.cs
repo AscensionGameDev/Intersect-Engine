@@ -19,7 +19,7 @@ namespace Intersect
             Pink,
         }
 
-        private const float RANGE_2X = 2 * 255;
+        private const float RANGE__2_X = 2 * 255;
 
         public Color() : this(0)
         {
@@ -73,9 +73,9 @@ namespace Intersect
                 var min = Math.Min(Math.Min(R, G), B);
                 if (max == min) return 0;
 
-                float delta = max - min, lightness = (max + min) / RANGE_2X;
+                float delta = max - min, lightness = (max + min) / RANGE__2_X;
 
-                return lightness > 0.5 ? delta / (RANGE_2X - max - min) : delta / (max + min);
+                return lightness > 0.5 ? delta / (RANGE__2_X - max - min) : delta / (max + min);
             }
         }
 
@@ -85,7 +85,7 @@ namespace Intersect
             {
                 var max = Math.Max(Math.Max(R, G), B);
                 var min = Math.Min(Math.Min(R, G), B);
-                return (max + min) / RANGE_2X;
+                return (max + min) / RANGE__2_X;
             }
         }
 

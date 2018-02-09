@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Intersect.Collections;
 using Intersect.Enums;
+using JetBrains.Annotations;
 
 namespace Intersect.Models
 {
@@ -13,19 +14,19 @@ namespace Intersect.Models
         {
         }
 
-        protected DatabaseObject(Guid id) : this(id, Lookup?.NextIndex ?? -1)
+        protected DatabaseObject(Guid id) : this(id, Lookup.NextIndex)
         {
         }
 
         protected DatabaseObject(Guid id, int index)
         {
-            //if (index < 0)throw new ArgumentOutOfRangeException();
+            // if (index < 0) throw new ArgumentOutOfRangeException();
 
             Guid = id;
             Index = index;
         }
 
-        public static DatabaseObjectLookup Lookup => LookupUtils.GetLookup(typeof(TObject));
+        [NotNull] public static DatabaseObjectLookup Lookup => LookupUtils.GetLookup(typeof(TObject));
 
         public GameObjectType Type => LookupUtils.GetGameObjectType(typeof(TObject));
 
@@ -49,12 +50,11 @@ namespace Intersect.Models
         }
 
         public abstract byte[] BinaryData { get; }
-        public virtual void Delete() => Lookup?.Delete((TObject) this);
+        public virtual void Delete() => Lookup.Delete((TObject) this);
 
-        public static string GetName(int index) =>
-            Lookup?.Get(index)?.Name ?? "ERR_DELETED";
+        public static string GetName(int index) => Lookup.Get(index)?.Name ?? "ERR_DELETED";
 
         public static string[] GetNameList() =>
-            Lookup?.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
+            Lookup.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
     }
 }

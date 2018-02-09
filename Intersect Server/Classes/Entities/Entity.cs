@@ -20,7 +20,7 @@ namespace Intersect.Server.Classes.Entities
 
     public class Entity
     {
-        private int _dir;
+        private int mDir;
 
         //Active Animations -- for events mainly
         public List<int> Animations = new List<int>();
@@ -116,8 +116,8 @@ namespace Intersect.Server.Classes.Entities
 
         public int Dir
         {
-            get => _dir;
-            set => _dir = (value + 4) % 4;
+            get => mDir;
+            set => mDir = (value + 4) % 4;
         }
 
         public bool IsDisposed { get; private set; }
@@ -229,11 +229,11 @@ namespace Intersect.Server.Classes.Entities
                     .Attributes[tile.GetX(), tile.GetY()];
                 if (tileAttribute != null)
                 {
-                    if (tileAttribute.value == (int) MapAttributes.Blocked) return -2;
-                    if (tileAttribute.value == (int) MapAttributes.NPCAvoid && GetType() == typeof(Npc)) return -2;
-                    if (tileAttribute.value == (int) MapAttributes.ZDimension && tileAttribute.data2 > 0 &&
-                        tileAttribute.data2 - 1 == CurrentZ) return -3;
-                    if (tileAttribute.value == (int) MapAttributes.Slide) return -4;
+                    if (tileAttribute.Value == (int) MapAttributes.Blocked) return -2;
+                    if (tileAttribute.Value == (int) MapAttributes.NpcAvoid && GetType() == typeof(Npc)) return -2;
+                    if (tileAttribute.Value == (int) MapAttributes.ZDimension && tileAttribute.Data2 > 0 &&
+                        tileAttribute.Data2 - 1 == CurrentZ) return -3;
+                    if (tileAttribute.Value == (int) MapAttributes.Slide) return -4;
                 }
             }
             else
@@ -501,7 +501,7 @@ namespace Intersect.Server.Classes.Entities
             return EntityTypes.GlobalEntity;
         }
 
-        public virtual void Move(int moveDir, Client client, bool DontUpdate = false, bool correction = false)
+        public virtual void Move(int moveDir, Client client, bool dontUpdate = false, bool correction = false)
         {
             var xOffset = 0;
             var yOffset = 0;
@@ -553,7 +553,7 @@ namespace Intersect.Server.Classes.Entities
                         if (newMap != null) newMap.AddEntity(this);
                     }
                     CurrentMap = tile.GetMap();
-                    if (DontUpdate == false)
+                    if (dontUpdate == false)
                     {
                         if (GetType() == typeof(EventPageInstance))
                         {
@@ -600,7 +600,7 @@ namespace Intersect.Server.Classes.Entities
                         }
                         MoveTimer = Globals.System.GetTimeMs() + (long) GetMovementTime();
                     }
-                    if (TryToChangeDimension() && DontUpdate == true)
+                    if (TryToChangeDimension() && dontUpdate == true)
                     {
                         PacketSender.UpdateEntityZDimension(MyIndex, CurrentZ);
                     }
@@ -638,11 +638,11 @@ namespace Intersect.Server.Classes.Entities
                 {
                     Attribute attribute = MapInstance.Lookup.Get<MapInstance>(CurrentMap)
                         .Attributes[CurrentX, CurrentY];
-                    if (attribute != null && attribute.value == (int) MapAttributes.ZDimension)
+                    if (attribute != null && attribute.Value == (int) MapAttributes.ZDimension)
                     {
-                        if (attribute.data1 > 0)
+                        if (attribute.Data1 > 0)
                         {
-                            CurrentZ = attribute.data1 - 1;
+                            CurrentZ = attribute.Data1 - 1;
                             return true;
                         }
                     }
@@ -938,16 +938,16 @@ namespace Intersect.Server.Classes.Entities
                 //Handle DoT/HoT spells]
                 if (spellBase.Data1 > 0)
                 {
-                    bool DoTFound = false;
+                    bool doTFound = false;
                     for (int i = 0; i < enemy.DoT.Count; i++)
                     {
                         if (enemy.DoT[i].SpellBase.Index == spellBase.Index ||
                             enemy.DoT[i].OwnerId == MyIndex)
                         {
-                            DoTFound = true;
+                            doTFound = true;
                         }
                     }
-                    if (DoTFound == false) //no duplicate DoT/HoT spells.
+                    if (doTFound == false) //no duplicate DoT/HoT spells.
                     {
                         enemy.DoT.Add(new DoTInstance(MyIndex, spellBase.Index, enemy));
                     }
@@ -1183,9 +1183,9 @@ namespace Intersect.Server.Classes.Entities
         {
         }
 
-        public virtual void CastSpell(int SpellNum, int SpellSlot = -1)
+        public virtual void CastSpell(int spellNum, int spellSlot = -1)
         {
-            var spellBase = SpellBase.Lookup.Get<SpellBase>(SpellNum);
+            var spellBase = SpellBase.Lookup.Get<SpellBase>(spellNum);
             if (spellBase != null)
             {
                 switch (spellBase.SpellType)
@@ -1206,7 +1206,7 @@ namespace Intersect.Server.Classes.Entities
                                 if (CastTarget == null) return;
                                 if (spellBase.HitRadius > 0) //Single target spells with AoE hit radius'
                                 {
-                                    HandleAoESpell(SpellNum, spellBase.HitRadius, CastTarget.CurrentMap,
+                                    HandleAoESpell(spellNum, spellBase.HitRadius, CastTarget.CurrentMap,
                                         CastTarget.CurrentX, CastTarget.CurrentY, null);
                                 }
                                 else
@@ -1215,7 +1215,7 @@ namespace Intersect.Server.Classes.Entities
                                 }
                                 break;
                             case (int) SpellTargetTypes.AoE:
-                                HandleAoESpell(SpellNum, spellBase.HitRadius, CurrentMap, CurrentX, CurrentY, null);
+                                HandleAoESpell(spellNum, spellBase.HitRadius, CurrentMap, CurrentX, CurrentY, null);
                                 break;
                             case (int) SpellTargetTypes.Projectile:
                                 var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spellBase.Projectile);
@@ -1240,7 +1240,7 @@ namespace Intersect.Server.Classes.Entities
                     case (int) SpellTypes.WarpTo:
                         if (GetType() == typeof(Player))
                         {
-                            HandleAoESpell(SpellNum, spellBase.CastRange, CurrentMap, CurrentX, CurrentY, CastTarget);
+                            HandleAoESpell(spellNum, spellBase.CastRange, CurrentMap, CurrentX, CurrentY, CastTarget);
                         }
                         break;
                     case (int) SpellTypes.Dash:
@@ -1255,29 +1255,29 @@ namespace Intersect.Server.Classes.Entities
                     default:
                         break;
                 }
-                if (SpellSlot >= 0 && SpellSlot < Options.MaxPlayerSkills)
+                if (spellSlot >= 0 && spellSlot < Options.MaxPlayerSkills)
                 {
-                    Spells[SpellSlot].SpellCD = Globals.System.GetTimeMs() +
+                    Spells[spellSlot].SpellCd = Globals.System.GetTimeMs() +
                                                 (spellBase.CooldownDuration * 100);
                     if (GetType() == typeof(Player))
                     {
-                        PacketSender.SendSpellCooldown(((Player) this).MyClient, SpellSlot);
+                        PacketSender.SendSpellCooldown(((Player) this).MyClient, spellSlot);
                     }
                 }
             }
         }
 
-        private void HandleAoESpell(int SpellNum, int Range, int StartMap, int StartX, int StartY, Entity spellTarget)
+        private void HandleAoESpell(int spellNum, int range, int startMap, int startX, int startY, Entity spellTarget)
         {
-            var spellBase = SpellBase.Lookup.Get<SpellBase>(SpellNum);
+            var spellBase = SpellBase.Lookup.Get<SpellBase>(spellNum);
             var targetsHit = new List<Entity>();
             if (spellBase != null)
             {
-                for (int x = StartX - Range; x <= StartX + Range; x++)
+                for (int x = startX - range; x <= startX + range; x++)
                 {
-                    for (int y = StartY - Range; y <= StartY + Range; y++)
+                    for (int y = startY - range; y <= startY + range; y++)
                     {
-                        var tempMap = MapInstance.Lookup.Get<MapInstance>(StartMap);
+                        var tempMap = MapInstance.Lookup.Get<MapInstance>(startMap);
                         int x2 = x;
                         int y2 = y;
 
@@ -1358,7 +1358,7 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //These functions only work when one block away.
-        protected bool isFacingTarget(Entity target)
+        protected bool IsFacingTarget(Entity target)
         {
             if (IsOneBlockAway(target))
             {
@@ -1397,10 +1397,10 @@ namespace Intersect.Server.Classes.Entities
             return 9999;
         }
 
-        protected bool InRangeOf(Entity target, int Range)
+        protected bool InRangeOf(Entity target, int range)
         {
             var dist = GetDistanceTo(target);
-            if (dist <= Range) return true;
+            if (dist <= range) return true;
             return false;
         }
 
@@ -1563,7 +1563,7 @@ namespace Intersect.Server.Classes.Entities
             bf.WriteInteger(statuses.Count());
             foreach (var status in statuses)
             {
-                bf.WriteInteger(status.Value._spell.Index);
+                bf.WriteInteger(status.Value.Spell.Index);
                 bf.WriteInteger(status.Value.Type);
                 bf.WriteString(status.Value.Data);
                 bf.WriteInteger((int) (status.Value.Duration - Globals.System.GetTimeMs()));
@@ -1598,8 +1598,8 @@ namespace Intersect.Server.Classes.Entities
 
     public class EntityStat
     {
-        private Player _player;
-        private int _statType;
+        private Player mPlayer;
+        private int mStatType;
         private Dictionary<SpellBase, EntityBuff> mBuff = new Dictionary<SpellBase, EntityBuff>();
         private bool mChanged;
         public int Stat;
@@ -1607,8 +1607,8 @@ namespace Intersect.Server.Classes.Entities
         public EntityStat(int stat, int statType, Player owner = null)
         {
             Stat = stat;
-            _player = owner;
-            _statType = statType;
+            mPlayer = owner;
+            mStatType = statType;
         }
 
         public int Value()
@@ -1621,20 +1621,20 @@ namespace Intersect.Server.Classes.Entities
                 s += buff.Buff;
             }
 
-            if (_player != null)
+            if (mPlayer != null)
             {
                 //Add up player equipment values
                 for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
-                    if (_player.Equipment[i] >= 0 && _player.Equipment[i] < Options.MaxInvItems)
+                    if (mPlayer.Equipment[i] >= 0 && mPlayer.Equipment[i] < Options.MaxInvItems)
                     {
-                        if (_player.Inventory[_player.Equipment[i]].ItemNum > -1)
+                        if (mPlayer.Inventory[mPlayer.Equipment[i]].ItemNum > -1)
                         {
-                            var item = ItemBase.Lookup.Get<ItemBase>(_player.Inventory[_player.Equipment[i]].ItemNum);
+                            var item = ItemBase.Lookup.Get<ItemBase>(mPlayer.Inventory[mPlayer.Equipment[i]].ItemNum);
                             if (item != null)
                             {
-                                s += _player.Inventory[_player.Equipment[i]].StatBoost[_statType] +
-                                     item.StatsGiven[_statType];
+                                s += mPlayer.Inventory[mPlayer.Equipment[i]].StatBoost[mStatType] +
+                                     item.StatsGiven[mStatType];
                             }
                         }
                     }
@@ -1757,17 +1757,17 @@ namespace Intersect.Server.Classes.Entities
 
     public class StatusInstance
     {
-        public SpellBase _spell;
+        public SpellBase Spell;
         public string Data = "";
         public long Duration;
-        private Entity entity;
+        private Entity mEntity;
         public long StartTime;
         public int Type;
 
         public StatusInstance(Entity en, SpellBase spell, int type, int duration, string data)
         {
-            entity = en;
-            _spell = spell;
+            mEntity = en;
+            Spell = spell;
             Type = type;
             Duration = Globals.System.GetTimeMs() + duration;
             StartTime = Globals.System.GetTimeMs();
@@ -1778,9 +1778,9 @@ namespace Intersect.Server.Classes.Entities
             }
             else
             {
-                en.Statuses.Add(_spell, this);
+                en.Statuses.Add(Spell, this);
             }
-            PacketSender.SendEntityVitals(entity);
+            PacketSender.SendEntityVitals(mEntity);
         }
 
         public void TryRemoveStatus()
@@ -1793,8 +1793,8 @@ namespace Intersect.Server.Classes.Entities
 
         public void RemoveStatus()
         {
-            entity.Statuses.Remove(_spell);
-            PacketSender.SendEntityVitals(entity);
+            mEntity.Statuses.Remove(Spell);
+            PacketSender.SendEntityVitals(mEntity);
         }
     }
 

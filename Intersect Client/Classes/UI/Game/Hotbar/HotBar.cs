@@ -14,15 +14,15 @@ namespace Intersect_Client.Classes.UI.Game
     public class HotBarWindow
     {
         //Controls
-        public ImagePanel _hotbarWindow;
+        public ImagePanel HotbarWindow;
 
         //Item List
         public List<HotbarItem> Items = new List<HotbarItem>();
 
         //Init
-        public HotBarWindow(Canvas _gameCanvas)
+        public HotBarWindow(Canvas gameCanvas)
         {
-            _hotbarWindow = new ImagePanel(_gameCanvas, "HotbarWindow");
+            HotbarWindow = new ImagePanel(gameCanvas, "HotbarWindow");
             InitHotbarItems();
         }
 
@@ -31,11 +31,11 @@ namespace Intersect_Client.Classes.UI.Game
             int x = 12;
             for (int i = 0; i < Options.MaxHotbar; i++)
             {
-                Items.Add(new HotbarItem(i, _hotbarWindow));
-                Items[i].pnl = new ImagePanel(_hotbarWindow, "HotbarContainer" + i);
-                Items[i].keyLabel = new Label(Items[i].pnl, "HotbarLabel" + i);
-                Items[i].keyLabel.SetText(Strings.Get("keys",
-                    Enum.GetName(typeof(Keys), GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + i].key1)));
+                Items.Add(new HotbarItem(i, HotbarWindow));
+                Items[i].Pnl = new ImagePanel(HotbarWindow, "HotbarContainer" + i);
+                Items[i].KeyLabel = new Label(Items[i].Pnl, "HotbarLabel" + i);
+                Items[i].KeyLabel.SetText(Strings.Get("keys",
+                    Enum.GetName(typeof(Keys), GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + i].Key1)));
                 Items[i].Setup();
             }
         }
@@ -56,10 +56,10 @@ namespace Intersect_Client.Classes.UI.Game
         {
             FloatRect rect = new FloatRect()
             {
-                X = _hotbarWindow.LocalPosToCanvas(new Point(0, 0)).X,
-                Y = _hotbarWindow.LocalPosToCanvas(new Point(0, 0)).Y,
-                Width = _hotbarWindow.Width,
-                Height = _hotbarWindow.Height
+                X = HotbarWindow.LocalPosToCanvas(new Point(0, 0)).X,
+                Y = HotbarWindow.LocalPosToCanvas(new Point(0, 0)).Y,
+                Width = HotbarWindow.Width,
+                Height = HotbarWindow.Height
             };
             return rect;
         }

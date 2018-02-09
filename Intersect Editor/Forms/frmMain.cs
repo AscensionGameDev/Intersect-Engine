@@ -18,7 +18,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect.Editor.Forms
 {
-    public partial class frmMain : Form
+    public partial class FrmMain : Form
     {
         public delegate void HandleDisconnect();
         [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -30,43 +30,43 @@ namespace Intersect.Editor.Forms
         public delegate void UpdateTimeList();
 
         //Editor References
-        private frmAnimation _animationEditor;
+        private FrmAnimation mAnimationEditor;
 
-        private frmClass _classEditor;
-        private frmCommonEvent _commonEventEditor;
-        private frmCrafting _craftEditor;
-        private FrmItem _itemEditor;
-        private frmNpc _npcEditor;
-        private frmProjectile _projectileEditor;
-        private frmQuest _questEditor;
-        private frmResource _resourceEditor;
-        private frmShop _shopEditor;
-        private frmSpell _spellEditor;
-        private frmSwitchVariable _switchVariableEditor;
+        private FrmClass mClassEditor;
+        private FrmCommonEvent mCommonEventEditor;
+        private FrmCrafting mCraftEditor;
+        private FrmItem mItemEditor;
+        private FrmNpc mNpcEditor;
+        private FrmProjectile mProjectileEditor;
+        private FrmQuest mQuestEditor;
+        private FrmResource mResourceEditor;
+        private FrmShop mShopEditor;
+        private FrmSpell mSpellEditor;
+        private FrmSwitchVariable mSwitchVariableEditor;
 
-        private frmTime _timeEditor;
+        private FrmTime mTimeEditor;
 
         //General Editting Variables
-        bool _tMouseDown;
+        bool mTMouseDown;
 
         public HandleDisconnect DisconnectDelegate;
         public TryOpenEditor EditorDelegate;
         public UpdateTimeList TimeDelegate;
 
         //Initialization & Setup Functions
-        public frmMain()
+        public FrmMain()
         {
             InitializeComponent();
             dockLeft.Theme = new VS2015DarkTheme();
-            Globals.MapListWindow = new frmMapList();
+            Globals.MapListWindow = new FrmMapList();
             Globals.MapListWindow.Show(dockLeft, DockState.DockRight);
-            Globals.MapLayersWindow = new frmMapLayers();
+            Globals.MapLayersWindow = new FrmMapLayers();
             Globals.MapLayersWindow.Show(dockLeft, DockState.DockLeft);
 
-            Globals.MapEditorWindow = new frmMapEditor();
+            Globals.MapEditorWindow = new FrmMapEditor();
             Globals.MapEditorWindow.Show(dockLeft, DockState.Document);
 
-            Globals.MapGridWindowNew = new frmMapGrid();
+            Globals.MapGridWindowNew = new FrmMapGrid();
             Globals.MapGridWindowNew.Show(dockLeft, DockState.Document);
         }
 
@@ -298,7 +298,7 @@ namespace Intersect.Editor.Forms
         private void InitMapProperties()
         {
             DockPane unhiddenPane = dockLeft.Panes[0];
-            Globals.MapPropertiesWindow = new frmMapProperties();
+            Globals.MapPropertiesWindow = new FrmMapProperties();
             Globals.MapPropertiesWindow.Show(unhiddenPane, DockAlignment.Bottom, .4);
             Globals.MapPropertiesWindow.Init(Globals.CurrentMap);
             Globals.MapEditorWindow.DockPanel.Focus();
@@ -869,7 +869,7 @@ namespace Intersect.Editor.Forms
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var optionsForm = new frmOptions();
+            var optionsForm = new FrmOptions();
             optionsForm.ShowDialog();
             UpdateRunState();
         }
@@ -1051,7 +1051,7 @@ namespace Intersect.Editor.Forms
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmAbout aboutfrm = new frmAbout();
+            FrmAbout aboutfrm = new FrmAbout();
             aboutfrm.ShowDialog();
         }
 
@@ -1290,106 +1290,106 @@ namespace Intersect.Editor.Forms
                 switch (type)
                 {
                     case GameObjectType.Animation:
-                        if (_animationEditor == null || _animationEditor.Visible == false)
+                        if (mAnimationEditor == null || mAnimationEditor.Visible == false)
                         {
-                            _animationEditor = new frmAnimation();
-                            _animationEditor.InitEditor();
-                            _animationEditor.Show();
+                            mAnimationEditor = new FrmAnimation();
+                            mAnimationEditor.InitEditor();
+                            mAnimationEditor.Show();
                         }
                         break;
                     case GameObjectType.Item:
-                        if (_itemEditor == null || _itemEditor.Visible == false)
+                        if (mItemEditor == null || mItemEditor.Visible == false)
                         {
-                            _itemEditor = new FrmItem();
-                            _itemEditor.InitEditor();
-                            _itemEditor.Show();
+                            mItemEditor = new FrmItem();
+                            mItemEditor.InitEditor();
+                            mItemEditor.Show();
                         }
                         break;
                     case GameObjectType.Npc:
-                        if (_npcEditor == null || _npcEditor.Visible == false)
+                        if (mNpcEditor == null || mNpcEditor.Visible == false)
                         {
-                            _npcEditor = new frmNpc();
-                            _npcEditor.InitEditor();
-                            _npcEditor.Show();
+                            mNpcEditor = new FrmNpc();
+                            mNpcEditor.InitEditor();
+                            mNpcEditor.Show();
                         }
                         break;
                     case GameObjectType.Resource:
-                        if (_resourceEditor == null || _resourceEditor.Visible == false)
+                        if (mResourceEditor == null || mResourceEditor.Visible == false)
                         {
-                            _resourceEditor = new frmResource();
-                            _resourceEditor.InitEditor();
-                            _resourceEditor.Show();
+                            mResourceEditor = new FrmResource();
+                            mResourceEditor.InitEditor();
+                            mResourceEditor.Show();
                         }
                         break;
                     case GameObjectType.Spell:
-                        if (_spellEditor == null || _spellEditor.Visible == false)
+                        if (mSpellEditor == null || mSpellEditor.Visible == false)
                         {
-                            _spellEditor = new frmSpell();
-                            _spellEditor.InitEditor();
-                            _spellEditor.Show();
+                            mSpellEditor = new FrmSpell();
+                            mSpellEditor.InitEditor();
+                            mSpellEditor.Show();
                         }
                         break;
                     case GameObjectType.Bench:
-                        if (_craftEditor == null || _craftEditor.Visible == false)
+                        if (mCraftEditor == null || mCraftEditor.Visible == false)
                         {
-                            _craftEditor = new frmCrafting();
-                            _craftEditor.InitEditor();
-                            _craftEditor.Show();
+                            mCraftEditor = new FrmCrafting();
+                            mCraftEditor.InitEditor();
+                            mCraftEditor.Show();
                         }
                         break;
                     case GameObjectType.Class:
-                        if (_classEditor == null || _classEditor.Visible == false)
+                        if (mClassEditor == null || mClassEditor.Visible == false)
                         {
-                            _classEditor = new frmClass();
-                            _classEditor.InitEditor();
-                            _classEditor.Show();
+                            mClassEditor = new FrmClass();
+                            mClassEditor.InitEditor();
+                            mClassEditor.Show();
                         }
                         break;
                     case GameObjectType.Quest:
-                        if (_questEditor == null || _questEditor.Visible == false)
+                        if (mQuestEditor == null || mQuestEditor.Visible == false)
                         {
-                            _questEditor = new frmQuest();
-                            _questEditor.InitEditor();
-                            _questEditor.Show();
+                            mQuestEditor = new FrmQuest();
+                            mQuestEditor.InitEditor();
+                            mQuestEditor.Show();
                         }
                         break;
                     case GameObjectType.Projectile:
-                        if (_projectileEditor == null || _projectileEditor.Visible == false)
+                        if (mProjectileEditor == null || mProjectileEditor.Visible == false)
                         {
-                            _projectileEditor = new frmProjectile();
-                            _projectileEditor.InitEditor();
-                            _projectileEditor.Show();
+                            mProjectileEditor = new FrmProjectile();
+                            mProjectileEditor.InitEditor();
+                            mProjectileEditor.Show();
                         }
                         break;
                     case GameObjectType.CommonEvent:
-                        if (_commonEventEditor == null || _commonEventEditor.Visible == false)
+                        if (mCommonEventEditor == null || mCommonEventEditor.Visible == false)
                         {
-                            _commonEventEditor = new frmCommonEvent();
-                            _commonEventEditor.Show();
+                            mCommonEventEditor = new FrmCommonEvent();
+                            mCommonEventEditor.Show();
                         }
                         break;
                     case GameObjectType.PlayerSwitch:
-                        if (_switchVariableEditor == null || _switchVariableEditor.Visible == false)
+                        if (mSwitchVariableEditor == null || mSwitchVariableEditor.Visible == false)
                         {
-                            _switchVariableEditor = new frmSwitchVariable();
-                            _switchVariableEditor.InitEditor();
-                            _switchVariableEditor.Show();
+                            mSwitchVariableEditor = new FrmSwitchVariable();
+                            mSwitchVariableEditor.InitEditor();
+                            mSwitchVariableEditor.Show();
                         }
                         break;
                     case GameObjectType.Shop:
-                        if (_shopEditor == null || _shopEditor.Visible == false)
+                        if (mShopEditor == null || mShopEditor.Visible == false)
                         {
-                            _shopEditor = new frmShop();
-                            _shopEditor.InitEditor();
-                            _shopEditor.Show();
+                            mShopEditor = new FrmShop();
+                            mShopEditor.InitEditor();
+                            mShopEditor.Show();
                         }
                         break;
                     case GameObjectType.Time:
-                        if (_timeEditor == null || _timeEditor.Visible == false)
+                        if (mTimeEditor == null || mTimeEditor.Visible == false)
                         {
-                            _timeEditor = new frmTime();
-                            _timeEditor.InitEditor(TimeBase.GetTimeBase());
-                            _timeEditor.Show();
+                            mTimeEditor = new FrmTime();
+                            mTimeEditor.InitEditor(TimeBase.GetTimeBase());
+                            mTimeEditor.Show();
                         }
                         break;
                     default:

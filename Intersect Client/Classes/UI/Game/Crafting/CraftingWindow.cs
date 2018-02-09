@@ -14,124 +14,124 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class CraftingWindow
     {
-        private static int ItemXPadding = 4;
-        private static int ItemYPadding = 4;
-        private ImagePanel _bar;
+        private static int sItemXPadding = 4;
+        private static int sItemYPadding = 4;
+        private ImagePanel mBar;
 
-        private ImagePanel _barContainer;
+        private ImagePanel mBarContainer;
 
-        private RecipeItem _CombinedItem;
-        private Button _craft;
-        private ImagePanel _craftedItemTemplate;
+        private RecipeItem mCombinedItem;
+        private Button mCraft;
+        private ImagePanel mCraftedItemTemplate;
 
         //Controls
-        private WindowControl _craftWindow;
+        private WindowControl mCraftWindow;
 
-        private bool _initialized = false;
-        private ScrollControl _itemContainer;
-        private List<RecipeItem> _items = new List<RecipeItem>();
-        private ImagePanel _itemTemplate;
-        private Label _lblIngredients;
-        private Label _lblProduct;
-        private Label _lblRecipes;
+        private bool mInitialized = false;
+        private ScrollControl mItemContainer;
+        private List<RecipeItem> mItems = new List<RecipeItem>();
+        private ImagePanel mItemTemplate;
+        private Label mLblIngredients;
+        private Label mLblProduct;
+        private Label mLblRecipes;
 
         //Objects
-        private ListBox _Recipes;
+        private ListBox mRecipes;
 
-        private List<Label> _values = new List<Label>();
+        private List<Label> mValues = new List<Label>();
 
-        private long BarTimer;
-        private int craftIndex;
-        public bool crafting;
+        private long mBarTimer;
+        private int mCraftIndex;
+        public bool Crafting;
 
-        public CraftingWindow(Canvas _gameCanvas)
+        public CraftingWindow(Canvas gameCanvas)
         {
-            _craftWindow = new WindowControl(_gameCanvas, Strings.Get("craftingbench", "title"), false,
+            mCraftWindow = new WindowControl(gameCanvas, Strings.Get("craftingbench", "title"), false,
                 "CraftingWindow");
-            _craftWindow.DisableResizing();
+            mCraftWindow.DisableResizing();
 
-            _itemContainer = new ScrollControl(_craftWindow, "IngredientsContainer");
+            mItemContainer = new ScrollControl(mCraftWindow, "IngredientsContainer");
 
             //Labels
-            _lblRecipes = new Label(_craftWindow, "RecipesTitle");
-            _lblRecipes.Text = Strings.Get("craftingbench", "recipes");
+            mLblRecipes = new Label(mCraftWindow, "RecipesTitle");
+            mLblRecipes.Text = Strings.Get("craftingbench", "recipes");
 
-            _lblIngredients = new Label(_craftWindow, "IngredientsTitle");
-            _lblIngredients.Text = Strings.Get("craftingbench", "ingredients");
+            mLblIngredients = new Label(mCraftWindow, "IngredientsTitle");
+            mLblIngredients.Text = Strings.Get("craftingbench", "ingredients");
 
-            _lblProduct = new Label(_craftWindow, "ProductLabel");
-            _lblProduct.Text = Strings.Get("craftingbench", "product");
+            mLblProduct = new Label(mCraftWindow, "ProductLabel");
+            mLblProduct.Text = Strings.Get("craftingbench", "product");
 
             //Recepie list
-            _Recipes = new ListBox(_craftWindow, "RecipesList");
+            mRecipes = new ListBox(mCraftWindow, "RecipesList");
 
             //Progress Bar
-            _barContainer = new ImagePanel(_craftWindow, "ProgressBarContainer");
-            _bar = new ImagePanel(_barContainer, "ProgressBar");
+            mBarContainer = new ImagePanel(mCraftWindow, "ProgressBarContainer");
+            mBar = new ImagePanel(mBarContainer, "ProgressBar");
 
             //Load the craft button
-            _craft = new Button(_craftWindow, "CraftButton");
-            _craft.SetText(Strings.Get("craftingbench", "craft"));
-            _craft.Clicked += craft_Clicked;
+            mCraft = new Button(mCraftWindow, "CraftButton");
+            mCraft.SetText(Strings.Get("craftingbench", "craft"));
+            mCraft.Clicked += craft_Clicked;
 
-            Gui.LoadRootUIData(_craftWindow, "InGame.xml");
+            Gui.LoadRootUiData(mCraftWindow, "InGame.xml");
 
-            Gui.InputBlockingElements.Add(_craftWindow);
+            Gui.InputBlockingElements.Add(mCraftWindow);
 
             Globals.Me.InventoryUpdatedDelegate = () =>
             {
                 //Refresh crafting window items
-                LoadCraftItems(craftIndex);
+                LoadCraftItems(mCraftIndex);
             };
         }
 
         //Location
         public int X
         {
-            get { return _craftWindow.X; }
+            get { return mCraftWindow.X; }
         }
 
         public int Y
         {
-            get { return _craftWindow.Y; }
+            get { return mCraftWindow.Y; }
         }
 
         private void LoadCraftItems(int index)
         {
             //Combined item
-            craftIndex = index;
-            if (_CombinedItem != null)
+            mCraftIndex = index;
+            if (mCombinedItem != null)
             {
-                _craftWindow.Children.Remove(_CombinedItem.container);
+                mCraftWindow.Children.Remove(mCombinedItem.Container);
             }
             //Clear the old item description box
-            if (_CombinedItem != null && _CombinedItem._descWindow != null)
+            if (mCombinedItem != null && mCombinedItem.DescWindow != null)
             {
-                _CombinedItem._descWindow.Dispose();
+                mCombinedItem.DescWindow.Dispose();
             }
             var craft = Globals.GameBench.Crafts[index];
             if (craft == null) return;
 
-            _CombinedItem = new RecipeItem(this, new CraftIngredient(craft.Item, 0))
+            mCombinedItem = new RecipeItem(this, new CraftIngredient(craft.Item, 0))
             {
-                container = new ImagePanel(_craftWindow, "CraftedItemContainer")
+                Container = new ImagePanel(mCraftWindow, "CraftedItemContainer")
             };
-            _CombinedItem.Setup("CraftedItemIcon");
+            mCombinedItem.Setup("CraftedItemIcon");
 
             //TODO Made this more efficient.
-            Gui.LoadRootUIData(_CombinedItem.container, "InGame.xml");
+            Gui.LoadRootUiData(mCombinedItem.Container, "InGame.xml");
 
-            for (int i = 0; i < _items.Count; i++)
+            for (int i = 0; i < mItems.Count; i++)
             {
                 //Clear the old item description box
-                if (_items[i]._descWindow != null)
+                if (mItems[i].DescWindow != null)
                 {
-                    _items[craftIndex]._descWindow.Dispose();
+                    mItems[mCraftIndex].DescWindow.Dispose();
                 }
-                _itemContainer.RemoveChild(_items[i].container, true);
+                mItemContainer.RemoveChild(mItems[i].Container, true);
             }
-            _items.Clear();
-            _values.Clear();
+            mItems.Clear();
+            mValues.Clear();
 
             //Quickly Look through the inventory and create a catalog of what items we have, and how many
             Dictionary<int, int> itemdict = new Dictionary<int, int>();
@@ -152,38 +152,38 @@ namespace Intersect_Client.Classes.UI.Game
 
             for (int i = 0; i < craft.Ingredients.Count; i++)
             {
-                _items.Add(new RecipeItem(this, craft.Ingredients[i]));
-                _items[i].container = new ImagePanel(_itemContainer, "IngredientItemContainer");
-                _items[i].Setup("IngredientItemIcon");
+                mItems.Add(new RecipeItem(this, craft.Ingredients[i]));
+                mItems[i].Container = new ImagePanel(mItemContainer, "IngredientItemContainer");
+                mItems[i].Setup("IngredientItemIcon");
 
-                Label _lblTemp = new Label(_items[i].container, "IngredientItemValue");
+                Label lblTemp = new Label(mItems[i].Container, "IngredientItemValue");
 
                 int onHand = 0;
                 if (itemdict.ContainsKey(craft.Ingredients[i].Item))
                 {
                     onHand = itemdict[craft.Ingredients[i].Item];
                 }
-                _lblTemp.Text = onHand + "/" + craft.Ingredients[i].Quantity;
-                _values.Add(_lblTemp);
+                lblTemp.Text = onHand + "/" + craft.Ingredients[i].Quantity;
+                mValues.Add(lblTemp);
 
                 //TODO Made this more efficient.
-                Gui.LoadRootUIData(_items[i].container, "InGame.xml");
+                Gui.LoadRootUiData(mItems[i].Container, "InGame.xml");
 
-                var xPadding = _items[i].container.Padding.Left + _items[i].container.Padding.Right;
-                var yPadding = _items[i].container.Padding.Top + _items[i].container.Padding.Bottom;
-                _items[i].container.SetPosition(
-                    (i % ((_itemContainer.Width - _itemContainer.GetVerticalScrollBar().Width) /
-                          (_items[i].container.Width + xPadding))) * (_items[i].container.Width + xPadding) + xPadding,
-                    (i / ((_itemContainer.Width - _itemContainer.GetVerticalScrollBar().Width) /
-                          (_items[i].container.Width + xPadding))) * (_items[i].container.Height + yPadding) +
+                var xPadding = mItems[i].Container.Padding.Left + mItems[i].Container.Padding.Right;
+                var yPadding = mItems[i].Container.Padding.Top + mItems[i].Container.Padding.Bottom;
+                mItems[i].Container.SetPosition(
+                    (i % ((mItemContainer.Width - mItemContainer.GetVerticalScrollBar().Width) /
+                          (mItems[i].Container.Width + xPadding))) * (mItems[i].Container.Width + xPadding) + xPadding,
+                    (i / ((mItemContainer.Width - mItemContainer.GetVerticalScrollBar().Width) /
+                          (mItems[i].Container.Width + xPadding))) * (mItems[i].Container.Height + yPadding) +
                     yPadding);
             }
 
             //If crafting & we no longer have the items for the craft then stop!
-            if (crafting)
+            if (Crafting)
             {
                 var cancraft = true;
-                foreach (CraftIngredient c in Globals.GameBench.Crafts[craftIndex].Ingredients)
+                foreach (CraftIngredient c in Globals.GameBench.Crafts[mCraftIndex].Ingredients)
                 {
                     if (itemdict.ContainsKey(c.Item))
                     {
@@ -206,9 +206,9 @@ namespace Intersect_Client.Classes.UI.Game
 
                 if (!cancraft)
                 {
-                    crafting = false;
-                    _craftWindow.IsClosable = true;
-                    _bar.Width = 0;
+                    Crafting = false;
+                    mCraftWindow.IsClosable = true;
+                    mBar.Width = 0;
                     ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Get("craftingbench", "incorrectresources"),
                         Color.Red));
                     return;
@@ -218,29 +218,29 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Close()
         {
-            if (crafting == false)
+            if (Crafting == false)
             {
-                _craftWindow.Close();
+                mCraftWindow.Close();
             }
         }
 
         public bool IsVisible()
         {
-            return !_craftWindow.IsHidden;
+            return !mCraftWindow.IsHidden;
         }
 
         public void Hide()
         {
-            if (crafting == false)
+            if (Crafting == false)
             {
-                _craftWindow.IsHidden = true;
+                mCraftWindow.IsHidden = true;
             }
         }
 
         //Load new recepie
         void tmpNode_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
-            if (crafting == false)
+            if (Crafting == false)
             {
                 LoadCraftItems(Convert.ToInt32(((ListBoxRow) sender).UserData));
             }
@@ -268,7 +268,7 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             var cancraft = true;
-            foreach (CraftIngredient c in Globals.GameBench.Crafts[craftIndex].Ingredients)
+            foreach (CraftIngredient c in Globals.GameBench.Crafts[mCraftIndex].Ingredients)
             {
                 if (itemdict.ContainsKey(c.Item))
                 {
@@ -296,21 +296,21 @@ namespace Intersect_Client.Classes.UI.Game
                 return;
             }
 
-            crafting = true;
-            BarTimer = Globals.System.GetTimeMS();
-            PacketSender.SendCraftItem(craftIndex);
-            _craftWindow.IsClosable = false;
+            Crafting = true;
+            mBarTimer = Globals.System.GetTimeMs();
+            PacketSender.SendCraftItem(mCraftIndex);
+            mCraftWindow.IsClosable = false;
         }
 
         //Update the crafting bar
         public void Update()
         {
-            if (!_initialized)
+            if (!mInitialized)
             {
                 ListBoxRow tmpRow;
                 for (int i = 0; i < Globals.GameBench.Crafts.Count; i++)
                 {
-                    tmpRow = _Recipes.AddRow((i + 1) + ") " + ItemBase.GetName(Globals.GameBench.Crafts[i].Item));
+                    tmpRow = mRecipes.AddRow((i + 1) + ") " + ItemBase.GetName(Globals.GameBench.Crafts[i].Item));
                     tmpRow.UserData = i;
                     tmpRow.DoubleClicked += tmpNode_DoubleClicked;
                     tmpRow.Clicked += tmpNode_DoubleClicked;
@@ -319,21 +319,21 @@ namespace Intersect_Client.Classes.UI.Game
 
                 //Load the craft data
                 LoadCraftItems(0);
-                _initialized = true;
+                mInitialized = true;
             }
-            if (crafting == true)
+            if (Crafting == true)
             {
-                long i = Globals.System.GetTimeMS() - BarTimer;
-                if (i > Globals.GameBench.Crafts[craftIndex].Time)
+                long i = Globals.System.GetTimeMs() - mBarTimer;
+                if (i > Globals.GameBench.Crafts[mCraftIndex].Time)
                 {
-                    i = Globals.GameBench.Crafts[craftIndex].Time;
-                    crafting = false;
-                    _craftWindow.IsClosable = true;
-                    LoadCraftItems(craftIndex);
+                    i = Globals.GameBench.Crafts[mCraftIndex].Time;
+                    Crafting = false;
+                    mCraftWindow.IsClosable = true;
+                    LoadCraftItems(mCraftIndex);
                 }
-                decimal width = Convert.ToDecimal(i) / Convert.ToDecimal(Globals.GameBench.Crafts[craftIndex].Time) *
-                                _barContainer.Width;
-                _bar.Width = Convert.ToInt32(width);
+                decimal width = Convert.ToDecimal(i) / Convert.ToDecimal(Globals.GameBench.Crafts[mCraftIndex].Time) *
+                                mBarContainer.Width;
+                mBar.Width = Convert.ToInt32(width);
             }
         }
     }

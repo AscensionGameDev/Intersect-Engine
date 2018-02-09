@@ -6,16 +6,16 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.System
 {
     public class MonoSystem : GameSystem
     {
-        public Stopwatch stopWatch = new Stopwatch();
+        public Stopwatch StopWatch = new Stopwatch();
 
         public MonoSystem()
         {
-            stopWatch.Start();
+            StopWatch.Start();
         }
 
-        public override long GetTimeMS()
+        public override long GetTimeMs()
         {
-            return stopWatch.ElapsedMilliseconds;
+            return StopWatch.ElapsedMilliseconds;
         }
 
         public override void Log(string msg)

@@ -10,38 +10,38 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class Event_GraphicSelector : UserControl
+    public partial class EventGraphicSelector : UserControl
     {
-        private EventGraphic _editingGraphic;
-        private FrmEvent _eventEditor;
-        private bool _loading;
+        private EventGraphic mEditingGraphic;
+        private FrmEvent mEventEditor;
+        private bool mLoading;
 
-        private bool _mouseDown;
-        private bool _newRouteAction;
-        private Event_MoveRouteDesigner _routeDesigner;
-        private int _spriteHeight;
+        private bool mMouseDown;
+        private bool mNewRouteAction;
+        private EventMoveRouteDesigner mRouteDesigner;
+        private int mSpriteHeight;
 
-        private int _spriteWidth;
-        private EventGraphic _tmpGraphic = new EventGraphic();
+        private int mSpriteWidth;
+        private EventGraphic mTmpGraphic = new EventGraphic();
 
-        public Event_GraphicSelector(EventGraphic editingGraphic, FrmEvent eventEditor,
-            Event_MoveRouteDesigner moveRouteDesigner = null, bool newMoveRouteAction = false)
+        public EventGraphicSelector(EventGraphic editingGraphic, FrmEvent eventEditor,
+            EventMoveRouteDesigner moveRouteDesigner = null, bool newMoveRouteAction = false)
         {
             InitializeComponent();
-            _editingGraphic = editingGraphic;
-            _eventEditor = eventEditor;
-            _loading = true;
+            mEditingGraphic = editingGraphic;
+            mEventEditor = eventEditor;
+            mLoading = true;
             UpdateGraphicList();
-            if (cmbGraphic.Items.IndexOf(_editingGraphic.Filename) > -1)
+            if (cmbGraphic.Items.IndexOf(mEditingGraphic.Filename) > -1)
             {
-                cmbGraphic.SelectedIndex = cmbGraphic.Items.IndexOf(_editingGraphic.Filename);
+                cmbGraphic.SelectedIndex = cmbGraphic.Items.IndexOf(mEditingGraphic.Filename);
             }
-            _routeDesigner = moveRouteDesigner;
-            _newRouteAction = newMoveRouteAction;
-            _loading = false;
+            mRouteDesigner = moveRouteDesigner;
+            mNewRouteAction = newMoveRouteAction;
+            mLoading = false;
             InitLocalization();
-            cmbGraphicType.SelectedIndex = _editingGraphic.Type;
-            _tmpGraphic.CopyFrom(_editingGraphic);
+            cmbGraphicType.SelectedIndex = mEditingGraphic.Type;
+            mTmpGraphic.CopyFrom(mEditingGraphic);
             UpdatePreview();
         }
 
@@ -61,12 +61,12 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void GraphicTypeUpdated()
         {
-            _tmpGraphic.Filename = "";
-            _tmpGraphic.Type = 0;
-            _tmpGraphic.X = 0;
-            _tmpGraphic.Y = 0;
-            _tmpGraphic.Width = -1;
-            _tmpGraphic.Height = -1;
+            mTmpGraphic.Filename = "";
+            mTmpGraphic.Type = 0;
+            mTmpGraphic.X = 0;
+            mTmpGraphic.Y = 0;
+            mTmpGraphic.Width = -1;
+            mTmpGraphic.Height = -1;
             if (cmbGraphicType.SelectedIndex == 0) //No Graphic
             {
                 cmbGraphic.Hide();
@@ -75,7 +75,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             }
             else if (cmbGraphicType.SelectedIndex == 1) //Sprite
             {
-                _tmpGraphic.Type = 1;
+                mTmpGraphic.Type = 1;
                 cmbGraphic.Show();
                 lblGraphic.Show();
                 cmbGraphic.Items.Clear();
@@ -84,9 +84,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             }
             else if (cmbGraphicType.SelectedIndex == 2) //Tileset
             {
-                _tmpGraphic.Type = 2;
-                _tmpGraphic.Width = 0;
-                _tmpGraphic.Height = 0;
+                mTmpGraphic.Type = 2;
+                mTmpGraphic.Width = 0;
+                mTmpGraphic.Height = 0;
                 lblGraphic.Show();
                 cmbGraphic.Show();
                 cmbGraphic.Items.Clear();
@@ -145,8 +145,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             if (cmbGraphicType.SelectedIndex == 1) //Sprite
             {
                 sourceBitmap = new Bitmap("resources/entities/" + cmbGraphic.Text);
-                _spriteWidth = sourceBitmap.Width / 4;
-                _spriteHeight = sourceBitmap.Height / 4;
+                mSpriteWidth = sourceBitmap.Width / 4;
+                mSpriteHeight = sourceBitmap.Height / 4;
             }
             else if (cmbGraphicType.SelectedIndex == 2) //Tileset
             {
@@ -164,15 +164,15 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 if (cmbGraphicType.SelectedIndex == 1)
                 {
                     graphics.DrawRectangle(new Pen(System.Drawing.Color.White, 2f),
-                        new Rectangle(_tmpGraphic.X * sourceBitmap.Width / 4, _tmpGraphic.Y * sourceBitmap.Height / 4,
+                        new Rectangle(mTmpGraphic.X * sourceBitmap.Width / 4, mTmpGraphic.Y * sourceBitmap.Height / 4,
                             sourceBitmap.Width / 4, sourceBitmap.Height / 4));
                 }
                 else if (cmbGraphicType.SelectedIndex == 2)
                 {
-                    var selX = _tmpGraphic.X;
-                    var selY = _tmpGraphic.Y;
-                    var selW = _tmpGraphic.Width;
-                    var selH = _tmpGraphic.Height;
+                    var selX = mTmpGraphic.X;
+                    var selY = mTmpGraphic.Y;
+                    var selW = mTmpGraphic.Width;
+                    var selH = mTmpGraphic.Height;
                     if (selW < 0)
                     {
                         selX -= Math.Abs(selW);
@@ -200,12 +200,12 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void cmbGraphicType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!_loading) GraphicTypeUpdated();
+            if (!mLoading) GraphicTypeUpdated();
         }
 
         private void cmbGraphic_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _tmpGraphic.Filename = cmbGraphic.Text;
+            mTmpGraphic.Filename = cmbGraphic.Text;
             UpdatePreview();
         }
 
@@ -217,24 +217,24 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             }
             if (cmbGraphicType.SelectedIndex == 1)
             {
-                _tmpGraphic.X = (int) Math.Floor((double) e.X / _spriteWidth);
-                _tmpGraphic.Y = (int) Math.Floor((double) e.Y / _spriteHeight);
+                mTmpGraphic.X = (int) Math.Floor((double) e.X / mSpriteWidth);
+                mTmpGraphic.Y = (int) Math.Floor((double) e.Y / mSpriteHeight);
             }
             else
             {
-                _mouseDown = true;
-                _tmpGraphic.X = (int) Math.Floor((double) e.X / Options.TileWidth);
-                _tmpGraphic.Y = (int) Math.Floor((double) e.Y / Options.TileHeight);
+                mMouseDown = true;
+                mTmpGraphic.X = (int) Math.Floor((double) e.X / Options.TileWidth);
+                mTmpGraphic.Y = (int) Math.Floor((double) e.Y / Options.TileHeight);
             }
-            _tmpGraphic.Width = 0;
-            _tmpGraphic.Height = 0;
-            if (_tmpGraphic.X < 0)
+            mTmpGraphic.Width = 0;
+            mTmpGraphic.Height = 0;
+            if (mTmpGraphic.X < 0)
             {
-                _tmpGraphic.X = 0;
+                mTmpGraphic.X = 0;
             }
-            if (_tmpGraphic.Y < 0)
+            if (mTmpGraphic.Y < 0)
             {
-                _tmpGraphic.Y = 0;
+                mTmpGraphic.Y = 0;
             }
             UpdatePreview();
         }
@@ -246,10 +246,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 return;
             }
             if (cmbGraphicType.SelectedIndex != 2) return;
-            var selX = _tmpGraphic.X;
-            var selY = _tmpGraphic.Y;
-            var selW = _tmpGraphic.Width;
-            var selH = _tmpGraphic.Height;
+            var selX = mTmpGraphic.X;
+            var selY = mTmpGraphic.Y;
+            var selW = mTmpGraphic.Width;
+            var selH = mTmpGraphic.Height;
             if (selW < 0)
             {
                 selX -= Math.Abs(selW);
@@ -260,11 +260,11 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 selY -= Math.Abs(selH);
                 selH = Math.Abs(selH);
             }
-            _tmpGraphic.X = selX;
-            _tmpGraphic.Y = selY;
-            _tmpGraphic.Width = selW;
-            _tmpGraphic.Height = selH;
-            _mouseDown = false;
+            mTmpGraphic.X = selX;
+            mTmpGraphic.Y = selY;
+            mTmpGraphic.Width = selW;
+            mTmpGraphic.Height = selH;
+            mMouseDown = false;
             UpdatePreview();
         }
 
@@ -275,26 +275,26 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 return;
             }
             if (cmbGraphicType.SelectedIndex != 2) return;
-            if (_mouseDown)
+            if (mMouseDown)
             {
                 var tmpX = (int) Math.Floor((double) e.X / Options.TileWidth);
                 var tmpY = (int) Math.Floor((double) e.Y / Options.TileHeight);
-                _tmpGraphic.Width = tmpX - _tmpGraphic.X;
-                _tmpGraphic.Height = tmpY - _tmpGraphic.Y;
+                mTmpGraphic.Width = tmpX - mTmpGraphic.X;
+                mTmpGraphic.Height = tmpY - mTmpGraphic.Y;
             }
             UpdatePreview();
         }
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            _editingGraphic.CopyFrom(_tmpGraphic);
-            _eventEditor.CloseGraphicSelector(this);
+            mEditingGraphic.CopyFrom(mTmpGraphic);
+            mEventEditor.CloseGraphicSelector(this);
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if (_routeDesigner != null && _newRouteAction) _routeDesigner.RemoveLastAction();
-            _eventEditor.CloseGraphicSelector(this);
+            if (mRouteDesigner != null && mNewRouteAction) mRouteDesigner.RemoveLastAction();
+            mEventEditor.CloseGraphicSelector(this);
         }
     }
 }

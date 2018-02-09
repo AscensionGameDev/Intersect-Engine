@@ -27,7 +27,7 @@ namespace Intersect_Client.Classes.Core
             {
                 if (key == Keys.F11)
                 {
-                    Gui.HideUI = !Gui.HideUI;
+                    Gui.HideUi = !Gui.HideUi;
                     return;
                 }
                 if (GameControls.ControlHasKey(Controls.PickUp, key))
@@ -69,14 +69,14 @@ namespace Intersect_Client.Classes.Core
                 else if (key == Keys.F2)
                 {
                     if (Globals.GameState != GameStates.InGame) return;
-                    Gui.GameUI.ShowHideDebug();
+                    Gui.GameUi.ShowHideDebug();
                 }
                 else if (GameControls.ControlHasKey(Controls.Enter, key))
                 {
                     if (Globals.GameState != GameStates.InGame) return;
                     if (!Gui.HasInputFocus())
                     {
-                        Gui.GameUI.FocusChat = true;
+                        Gui.GameUi.FocusChat = true;
                     }
                 }
                 if (Globals.GameState != GameStates.InGame) return;
@@ -84,14 +84,14 @@ namespace Intersect_Client.Classes.Core
                 {
                     if (GameControls.ControlHasKey(Controls.Hotkey0, key))
                     {
-                        Gui.GameUI.Hotbar.Items[9].Activate();
+                        Gui.GameUi.Hotbar.Items[9].Activate();
                     }
                     for (var i = Controls.Hotkey1; i <= Controls.Hotkey9; i++)
                     {
                         if (GameControls.ControlHasKey(i, key))
                         {
                             var index = (int) (i - Controls.Hotkey1);
-                            Gui.GameUI.Hotbar.Items[index].Activate();
+                            Gui.GameUi.Hotbar.Items[index].Activate();
                         }
                     }
                 }
@@ -129,7 +129,7 @@ namespace Intersect_Client.Classes.Core
             {
                 if (Globals.GameState == GameStates.InGame && Globals.Me != null)
                 {
-                    if (!Gui.MouseHitGUI())
+                    if (!Gui.MouseHitGui())
                     {
                         if (Globals.Me != null)
                         {
@@ -143,8 +143,8 @@ namespace Intersect_Client.Classes.Core
                                 {
                                     return;
                                 }
-                                if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
-                                    Globals.Me.AttackTimer = Globals.System.GetTimeMS() +
+                                if (Globals.Me.AttackTimer < Globals.System.GetTimeMs())
+                                    Globals.Me.AttackTimer = Globals.System.GetTimeMs() +
                                                              Globals.Me.CalculateAttackTime();
                             }
                             if (GameControls.ControlHasKey(Controls.Block, key))

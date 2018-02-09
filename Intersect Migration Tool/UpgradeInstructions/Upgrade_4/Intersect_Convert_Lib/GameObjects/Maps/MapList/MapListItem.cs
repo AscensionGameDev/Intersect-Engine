@@ -3,11 +3,11 @@
     public class MapListItem
     {
         public string Name = "";
-        public int type = -1; //0 for directory, 1 for map
+        public int Type = -1; //0 for directory, 1 for map
 
         public void GetData(ByteBuffer myBuffer)
         {
-            myBuffer.WriteInteger(type);
+            myBuffer.WriteInteger(Type);
             myBuffer.WriteString(Name);
         }
 

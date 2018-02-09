@@ -237,7 +237,7 @@
         Blocked,
         Item,
         ZDimension,
-        NPCAvoid,
+        NpcAvoid,
         Warp,
         Sound,
         Resource,

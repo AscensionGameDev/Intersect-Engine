@@ -25,29 +25,29 @@ namespace Intersect.Editor.Forms
         Npcs
     }
 
-    public partial class frmMapLayers : DockContent
+    public partial class FrmMapLayers : DockContent
     {
         //MonoGame Swap Chain
-        private SwapChainRenderTarget _chain;
+        private SwapChainRenderTarget mChain;
 
-        private int _lastTileLayer;
-        private List<PictureBox> _mapLayers = new List<PictureBox>();
-        private bool _tMouseDown;
+        private int mLastTileLayer;
+        private List<PictureBox> mMapLayers = new List<PictureBox>();
+        private bool mTMouseDown;
         public LayerTabs CurrentTab = LayerTabs.Tiles;
         public List<bool> LayerVisibility = new List<bool>();
 
-        public frmMapLayers()
+        public FrmMapLayers()
         {
             InitializeComponent();
-            _mapLayers.Add(picGround);
+            mMapLayers.Add(picGround);
             LayerVisibility.Add(true);
-            _mapLayers.Add(picMask);
+            mMapLayers.Add(picMask);
             LayerVisibility.Add(true);
-            _mapLayers.Add(picMask2);
+            mMapLayers.Add(picMask2);
             LayerVisibility.Add(true);
-            _mapLayers.Add(picFringe);
+            mMapLayers.Add(picFringe);
             LayerVisibility.Add(true);
-            _mapLayers.Add(picFringe2);
+            mMapLayers.Add(picFringe2);
             LayerVisibility.Add(true);
         }
 
@@ -76,7 +76,7 @@ namespace Intersect.Editor.Forms
             {
                 return;
             }
-            _tMouseDown = true;
+            mTMouseDown = true;
             Globals.CurSelX = (int) Math.Floor((double) e.X / Options.TileWidth);
             Globals.CurSelY = (int) Math.Floor((double) e.Y / Options.TileHeight);
             Globals.CurSelW = 0;
@@ -125,7 +125,7 @@ namespace Intersect.Editor.Forms
             {
                 return;
             }
-            if (_tMouseDown && Globals.Autotilemode == 0)
+            if (mTMouseDown && Globals.Autotilemode == 0)
             {
                 var tmpX = (int) Math.Floor((double) e.X / Options.TileWidth);
                 var tmpY = (int) Math.Floor((double) e.Y / Options.TileHeight);
@@ -154,7 +154,7 @@ namespace Intersect.Editor.Forms
             Globals.CurSelY = selY;
             Globals.CurSelW = selW;
             Globals.CurSelH = selH;
-            _tMouseDown = false;
+            mTMouseDown = false;
             Globals.MapEditorWindow.DockPanel.Focus();
         }
 
@@ -263,18 +263,18 @@ namespace Intersect.Editor.Forms
             Globals.CurrentLayer = index;
             if (index < Options.LayerCount)
             {
-                for (int i = 0; i < _mapLayers.Count; i++)
+                for (int i = 0; i < mMapLayers.Count; i++)
                 {
                     if (i == index)
                     {
                         if (!LayerVisibility[i])
                         {
-                            _mapLayers[i].BackgroundImage =
+                            mMapLayers[i].BackgroundImage =
                                 (Bitmap) Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_A_Hide");
                         }
                         else
                         {
-                            _mapLayers[i].BackgroundImage =
+                            mMapLayers[i].BackgroundImage =
                                 (Bitmap) Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_A");
                         }
                     }
@@ -282,17 +282,17 @@ namespace Intersect.Editor.Forms
                     {
                         if (!LayerVisibility[i])
                         {
-                            _mapLayers[i].BackgroundImage =
+                            mMapLayers[i].BackgroundImage =
                                 (Bitmap) Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_B_Hide");
                         }
                         else
                         {
-                            _mapLayers[i].BackgroundImage =
+                            mMapLayers[i].BackgroundImage =
                                 (Bitmap) Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_B");
                         }
                     }
                 }
-                _lastTileLayer = index;
+                mLastTileLayer = index;
             }
             else
             {
@@ -304,7 +304,7 @@ namespace Intersect.Editor.Forms
         /// <summary>
         ///     A method that hides all of the extra group boxes for tile data related to the map attributes.
         /// </summary>
-        private void hideAttributeMenus()
+        private void HideAttributeMenus()
         {
             grpItem.Visible = false;
             grpZDimension.Visible = false;
@@ -317,7 +317,7 @@ namespace Intersect.Editor.Forms
 
         private void rbItem_CheckedChanged(object sender, EventArgs e)
         {
-            hideAttributeMenus();
+            HideAttributeMenus();
             grpItem.Visible = true;
             cmbItemAttribute.Items.Clear();
             cmbItemAttribute.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
@@ -326,23 +326,23 @@ namespace Intersect.Editor.Forms
 
         private void rbBlocked_CheckedChanged(object sender, EventArgs e)
         {
-            hideAttributeMenus();
+            HideAttributeMenus();
         }
 
         private void rbNPCAvoid_CheckedChanged(object sender, EventArgs e)
         {
-            hideAttributeMenus();
+            HideAttributeMenus();
         }
 
         private void rbZDimension_CheckedChanged(object sender, EventArgs e)
         {
-            hideAttributeMenus();
+            HideAttributeMenus();
             grpZDimension.Visible = true;
         }
 
         private void rbWarp_CheckedChanged(object sender, EventArgs e)
         {
-            hideAttributeMenus();
+            HideAttributeMenus();
             grpWarp.Visible = true;
             nudWarpX.Maximum = Options.MapWidth;
             nudWarpY.Maximum = Options.MapHeight;
@@ -357,7 +357,7 @@ namespace Intersect.Editor.Forms
 
         private void rbSound_CheckedChanged(object sender, EventArgs e)
         {
-            hideAttributeMenus();
+            HideAttributeMenus();
             grpSound.Visible = true;
             cmbMapAttributeSound.Items.Clear();
             cmbMapAttributeSound.Items.Add(Strings.Get("general", "none"));
@@ -367,7 +367,7 @@ namespace Intersect.Editor.Forms
 
         private void rbResource_CheckedChanged(object sender, EventArgs e)
         {
-            hideAttributeMenus();
+            HideAttributeMenus();
             grpResource.Visible = true;
             cmbResourceAttribute.Items.Clear();
             cmbResourceAttribute.Items.AddRange(Database.GetGameObjectList(GameObjectType.Resource));
@@ -417,7 +417,7 @@ namespace Intersect.Editor.Forms
             }
             else if (rbNPCAvoid.Checked == true)
             {
-                return (int) MapAttributes.NPCAvoid;
+                return (int) MapAttributes.NpcAvoid;
             }
             else if (rbWarp.Checked == true)
             {
@@ -451,75 +451,75 @@ namespace Intersect.Editor.Forms
             tmpMap.Attributes[x, y] = new GameObjects.Maps.Attribute();
             if (rbBlocked.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int) MapAttributes.Blocked;
+                tmpMap.Attributes[x, y].Value = (int) MapAttributes.Blocked;
             }
             else if (rbItem.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int) MapAttributes.Item;
-                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObjectType.Item,
+                tmpMap.Attributes[x, y].Value = (int) MapAttributes.Item;
+                tmpMap.Attributes[x, y].Data1 = Database.GameObjectIdFromList(GameObjectType.Item,
                     cmbItemAttribute.SelectedIndex);
-                tmpMap.Attributes[x, y].data2 = (int) nudItemQuantity.Value;
+                tmpMap.Attributes[x, y].Data2 = (int) nudItemQuantity.Value;
             }
             else if (rbZDimension.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int) MapAttributes.ZDimension;
-                tmpMap.Attributes[x, y].data1 = GetEditorDimensionGateway();
-                tmpMap.Attributes[x, y].data2 = GetEditorDimensionBlock();
+                tmpMap.Attributes[x, y].Value = (int) MapAttributes.ZDimension;
+                tmpMap.Attributes[x, y].Data1 = GetEditorDimensionGateway();
+                tmpMap.Attributes[x, y].Data2 = GetEditorDimensionBlock();
             }
             else if (rbNPCAvoid.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int) MapAttributes.NPCAvoid;
+                tmpMap.Attributes[x, y].Value = (int) MapAttributes.NpcAvoid;
             }
             else if (rbWarp.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int) MapAttributes.Warp;
-                tmpMap.Attributes[x, y].data1 = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum;
-                tmpMap.Attributes[x, y].data2 = (int) nudWarpX.Value;
-                tmpMap.Attributes[x, y].data3 = (int) nudWarpY.Value;
-                tmpMap.Attributes[x, y].data4 = (cmbDirection.SelectedIndex - 1).ToString();
+                tmpMap.Attributes[x, y].Value = (int) MapAttributes.Warp;
+                tmpMap.Attributes[x, y].Data1 = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum;
+                tmpMap.Attributes[x, y].Data2 = (int) nudWarpX.Value;
+                tmpMap.Attributes[x, y].Data3 = (int) nudWarpY.Value;
+                tmpMap.Attributes[x, y].Data4 = (cmbDirection.SelectedIndex - 1).ToString();
             }
             else if (rbSound.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int) MapAttributes.Sound;
-                tmpMap.Attributes[x, y].data1 = (int) nudSoundDistance.Value;
-                tmpMap.Attributes[x, y].data2 = 0;
-                tmpMap.Attributes[x, y].data3 = 0;
-                tmpMap.Attributes[x, y].data4 = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
+                tmpMap.Attributes[x, y].Value = (int) MapAttributes.Sound;
+                tmpMap.Attributes[x, y].Data1 = (int) nudSoundDistance.Value;
+                tmpMap.Attributes[x, y].Data2 = 0;
+                tmpMap.Attributes[x, y].Data3 = 0;
+                tmpMap.Attributes[x, y].Data4 = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
             }
             else if (rbResource.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int) MapAttributes.Resource;
-                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObjectType.Resource,
+                tmpMap.Attributes[x, y].Value = (int) MapAttributes.Resource;
+                tmpMap.Attributes[x, y].Data1 = Database.GameObjectIdFromList(GameObjectType.Resource,
                     cmbResourceAttribute.SelectedIndex);
                 if (rbLevel1.Checked == true)
                 {
-                    tmpMap.Attributes[x, y].data2 = 0;
+                    tmpMap.Attributes[x, y].Data2 = 0;
                 }
                 else
                 {
-                    tmpMap.Attributes[x, y].data2 = 1;
+                    tmpMap.Attributes[x, y].Data2 = 1;
                 }
             }
             else if (rbAnimation.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int) MapAttributes.Animation;
-                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObjectType.Animation,
+                tmpMap.Attributes[x, y].Value = (int) MapAttributes.Animation;
+                tmpMap.Attributes[x, y].Data1 = Database.GameObjectIdFromList(GameObjectType.Animation,
                     cmbAnimationAttribute.SelectedIndex);
             }
             else if (rbGrappleStone.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int) MapAttributes.GrappleStone;
+                tmpMap.Attributes[x, y].Value = (int) MapAttributes.GrappleStone;
             }
             else if (rbSlide.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int) MapAttributes.Slide;
-                tmpMap.Attributes[x, y].data1 = cmbSlideDir.SelectedIndex;
+                tmpMap.Attributes[x, y].Value = (int) MapAttributes.Slide;
+                tmpMap.Attributes[x, y].Data1 = cmbSlideDir.SelectedIndex;
             }
         }
 
         public bool RemoveAttribute(MapBase tmpMap, int x, int y)
         {
-            if (tmpMap.Attributes[x, y] != null && tmpMap.Attributes[x, y].value > 0)
+            if (tmpMap.Attributes[x, y] != null && tmpMap.Attributes[x, y].Value > 0)
             {
                 tmpMap.Attributes[x, y] = null;
                 return true;
@@ -667,7 +667,7 @@ namespace Intersect.Editor.Forms
 
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
-            frmWarpSelection frmWarpSelection = new frmWarpSelection();
+            FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
             frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum, (int) nudWarpX.Value,
                 (int) nudWarpY.Value);
             frmWarpSelection.ShowDialog();
@@ -693,7 +693,7 @@ namespace Intersect.Editor.Forms
 
         private void rbAnimation_CheckedChanged(object sender, EventArgs e)
         {
-            hideAttributeMenus();
+            HideAttributeMenus();
             grpAnimation.Visible = true;
             cmbAnimationAttribute.Items.Clear();
             cmbAnimationAttribute.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
@@ -818,9 +818,9 @@ namespace Intersect.Editor.Forms
             lblEventInstructions.Text = Strings.Get("maplayers", "eventinstructions");
             lblLightInstructions.Text = Strings.Get("maplayers", "lightinstructions");
 
-            for (int i = 0; i < _mapLayers.Count; i++)
+            for (int i = 0; i < mMapLayers.Count; i++)
             {
-                _mapLayers[i].Text = Strings.Get("tiles", "layer" + i);
+                mMapLayers[i].Text = Strings.Get("tiles", "layer" + i);
             }
         }
 
@@ -833,28 +833,28 @@ namespace Intersect.Editor.Forms
         {
             if (!Globals.ClosingEditor)
             {
-                if (_chain != null)
+                if (mChain != null)
                 {
-                    _chain.Dispose();
+                    mChain.Dispose();
                 }
                 if (EditorGraphics.GetGraphicsDevice() != null)
                 {
-                    _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), picTileset.Handle,
+                    mChain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), picTileset.Handle,
                         picTileset.Width, picTileset.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 0,
                         RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
-                    EditorGraphics.SetTilesetChain(_chain);
+                    EditorGraphics.SetTilesetChain(mChain);
                 }
             }
         }
 
         private void rbGrappleStone_CheckedChanged(object sender, EventArgs e)
         {
-            hideAttributeMenus();
+            HideAttributeMenus();
         }
 
         private void rbSlide_CheckedChanged(object sender, EventArgs e)
         {
-            hideAttributeMenus();
+            HideAttributeMenus();
             grpSlide.Visible = true;
             cmbSlideDir.SelectedIndex = 0;
         }
@@ -886,7 +886,7 @@ namespace Intersect.Editor.Forms
         {
             Globals.CurrentTool = Globals.SavedTool;
             ChangeTab();
-            SetLayer(_lastTileLayer);
+            SetLayer(mLastTileLayer);
             EditorGraphics.TilePreviewUpdated = true;
             btnTileHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Tiles;
@@ -951,11 +951,11 @@ namespace Intersect.Editor.Forms
         {
             if (e.Button == MouseButtons.Left)
             {
-                SetLayer(_mapLayers.IndexOf((PictureBox) sender));
+                SetLayer(mMapLayers.IndexOf((PictureBox) sender));
             }
             else
             {
-                ToggleLayerVisibility(_mapLayers.IndexOf((PictureBox) sender));
+                ToggleLayerVisibility(mMapLayers.IndexOf((PictureBox) sender));
             }
         }
 
@@ -968,7 +968,7 @@ namespace Intersect.Editor.Forms
         private void picMapLayer_MouseHover(object sender, EventArgs e)
         {
             ToolTip tt = new ToolTip();
-            tt.SetToolTip((PictureBox) sender, Strings.Get("tiles", "layer" + _mapLayers.IndexOf((PictureBox) sender)));
+            tt.SetToolTip((PictureBox) sender, Strings.Get("tiles", "layer" + mMapLayers.IndexOf((PictureBox) sender)));
         }
     }
 }

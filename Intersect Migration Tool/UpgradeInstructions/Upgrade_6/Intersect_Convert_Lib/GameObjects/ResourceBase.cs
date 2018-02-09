@@ -10,7 +10,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
         public new const string DATABASE_TABLE = "resources";
 
         public new const GameObject OBJECT_TYPE = GameObject.Resource;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        protected static Dictionary<int, DatabaseObject> sObjects = new Dictionary<int, DatabaseObject>();
         public int Animation;
 
         // Drops
@@ -21,8 +21,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
         // Graphics
         public string InitialGraphic = "None";
 
-        public int MaxHP;
-        public int MinHP;
+        public int MaxHp;
+        public int MinHp;
 
         public string Name = "New Resource";
         public int SpawnDuration;
@@ -45,8 +45,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
             Name = myBuffer.ReadString();
             InitialGraphic = myBuffer.ReadString();
             EndGraphic = myBuffer.ReadString();
-            MinHP = myBuffer.ReadInteger();
-            MaxHP = myBuffer.ReadInteger();
+            MinHp = myBuffer.ReadInteger();
+            MaxHp = myBuffer.ReadInteger();
             Tool = myBuffer.ReadInteger();
             SpawnDuration = myBuffer.ReadInteger();
             Animation = myBuffer.ReadInteger();
@@ -69,8 +69,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
             myBuffer.WriteString(Name);
             myBuffer.WriteString(InitialGraphic);
             myBuffer.WriteString(EndGraphic);
-            myBuffer.WriteInteger(MinHP);
-            myBuffer.WriteInteger(MaxHP);
+            myBuffer.WriteInteger(MinHp);
+            myBuffer.WriteInteger(MaxHp);
             myBuffer.WriteInteger(Tool);
             myBuffer.WriteInteger(SpawnDuration);
             myBuffer.WriteInteger(Animation);
@@ -89,18 +89,18 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
 
         public static ResourceBase GetResource(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return (ResourceBase) Objects[index];
+                return (ResourceBase) sObjects[index];
             }
             return null;
         }
 
         public static string GetName(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return ((ResourceBase) Objects[index]).Name;
+                return ((ResourceBase) sObjects[index]).Name;
             }
             return "Deleted";
         }
@@ -122,37 +122,37 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
 
         public static DatabaseObject Get(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return Objects[index];
+                return sObjects[index];
             }
             return null;
         }
 
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            sObjects.Remove(GetId());
         }
 
         public static void ClearObjects()
         {
-            Objects.Clear();
+            sObjects.Clear();
         }
 
         public static void AddObject(int index, DatabaseObject obj)
         {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
+            sObjects.Remove(index);
+            sObjects.Add(index, obj);
         }
 
         public static int ObjectCount()
         {
-            return Objects.Count;
+            return sObjects.Count;
         }
 
         public static Dictionary<int, ResourceBase> GetObjects()
         {
-            Dictionary<int, ResourceBase> objects = Objects.ToDictionary(k => k.Key, v => (ResourceBase) v.Value);
+            Dictionary<int, ResourceBase> objects = sObjects.ToDictionary(k => k.Key, v => (ResourceBase) v.Value);
             return objects;
         }
 

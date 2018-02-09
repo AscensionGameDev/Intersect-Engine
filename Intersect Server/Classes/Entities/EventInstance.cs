@@ -33,7 +33,7 @@ namespace Intersect.Server.Classes.Entities
         public Client MyClient;
         public int MyIndex;
         public Player MyPlayer;
-        public bool NPCDeathTriggerd;
+        public bool NpcDeathTriggerd;
         public int PageIndex;
         public EventPageInstance PageInstance;
 
@@ -169,7 +169,7 @@ namespace Intersect.Server.Classes.Entities
                                 if (CallStack.Count == 0)
                                 {
                                     PlayerHasDied = false;
-                                    NPCDeathTriggerd = true;
+                                    NpcDeathTriggerd = true;
                                     break;
                                 }
                             }
@@ -235,53 +235,53 @@ namespace Intersect.Server.Classes.Entities
             return MeetsConditionLists(eventStruct.MyPages[pageIndex].ConditionLists, MyPlayer, this);
         }
 
-        public static bool MeetsConditionLists(ConditionLists lists, Player MyPlayer, EventInstance EventInstance,
-            bool SingleList = true, QuestBase questBase = null)
+        public static bool MeetsConditionLists(ConditionLists lists, Player myPlayer, EventInstance eventInstance,
+            bool singleList = true, QuestBase questBase = null)
         {
-            if (MyPlayer == null) return false;
+            if (myPlayer == null) return false;
             //If no condition lists then this passes
             if (lists.Lists.Count == 0)
                 return true;
 
             for (int i = 0; i < lists.Lists.Count; i++)
             {
-                if (MeetsConditionList(lists.Lists[i], MyPlayer, EventInstance,questBase))
+                if (MeetsConditionList(lists.Lists[i], myPlayer, eventInstance,questBase))
                     //Checks to see if all conditions in this list are met
                 {
                     //If all conditions are met.. and we only need a single list to pass then return true
-                    if (SingleList)
+                    if (singleList)
                         return true;
 
                     continue;
                 }
 
                 //If not.. and we need all lists to pass then return false
-                if (!SingleList)
+                if (!singleList)
                     return false;
             }
             //There were condition lists. If single list was true then we failed every single list and should return false.
             //If single list was false (meaning we needed to pass all lists) then we've made it.. return true.
-            return !SingleList;
+            return !singleList;
         }
 
-        public static bool MeetsConditionList(ConditionList list, Player MyPlayer, EventInstance EventInstance, QuestBase questBase)
+        public static bool MeetsConditionList(ConditionList list, Player myPlayer, EventInstance eventInstance, QuestBase questBase)
         {
             for (int i = 0; i < list.Conditions.Count; i++)
             {
-                if (!MeetsCondition(list.Conditions[i], MyPlayer, EventInstance, questBase)) return false;
+                if (!MeetsCondition(list.Conditions[i], myPlayer, eventInstance, questBase)) return false;
             }
             return true;
         }
 
-        public static bool MeetsCondition(EventCommand conditionCommand, Player MyPlayer, EventInstance EventInstance, QuestBase questBase)
+        public static bool MeetsCondition(EventCommand conditionCommand, Player myPlayer, EventInstance eventInstance, QuestBase questBase)
         {
             //For instance use PageInstance
             switch (conditionCommand.Ints[0])
             {
                 case 0: //Player Switch
                     var switchVal = false;
-                    if (MyPlayer.Switches.ContainsKey(conditionCommand.Ints[1]))
-                        switchVal = MyPlayer.Switches[conditionCommand.Ints[1]];
+                    if (myPlayer.Switches.ContainsKey(conditionCommand.Ints[1]))
+                        switchVal = myPlayer.Switches[conditionCommand.Ints[1]];
                     if (switchVal == Convert.ToBoolean(conditionCommand.Ints[2]))
                     {
                         return true;
@@ -289,8 +289,8 @@ namespace Intersect.Server.Classes.Entities
                     break;
                 case 1: //Player Variable
                     var varVal = 0;
-                    if (MyPlayer.Variables.ContainsKey(conditionCommand.Ints[1]))
-                        varVal = MyPlayer.Variables[conditionCommand.Ints[1]];
+                    if (myPlayer.Variables.ContainsKey(conditionCommand.Ints[1]))
+                        varVal = myPlayer.Variables[conditionCommand.Ints[1]];
                     switch (conditionCommand.Ints[2]) //Comparator
                     {
                         case 0: //Equal to
@@ -359,19 +359,19 @@ namespace Intersect.Server.Classes.Entities
                     }
                     break;
                 case 4: //Has Item
-                    if (MyPlayer.FindItem(conditionCommand.Ints[1], conditionCommand.Ints[2]) > -1)
+                    if (myPlayer.FindItem(conditionCommand.Ints[1], conditionCommand.Ints[2]) > -1)
                     {
                         return true;
                     }
                     break;
                 case 5: //Class Is
-                    if (MyPlayer.Class == conditionCommand.Ints[1])
+                    if (myPlayer.Class == conditionCommand.Ints[1])
                     {
                         return true;
                     }
                     break;
                 case 6: //Knows spell
-                    if (MyPlayer.KnowsSpell(conditionCommand.Ints[1]))
+                    if (myPlayer.KnowsSpell(conditionCommand.Ints[1]))
                     {
                         return true;
                     }
@@ -380,11 +380,11 @@ namespace Intersect.Server.Classes.Entities
                     var lvlStat = 0;
                     if (conditionCommand.Ints[3] == 0)
                     {
-                        lvlStat = MyPlayer.Level;
+                        lvlStat = myPlayer.Level;
                     }
                     else
                     {
-                        lvlStat = MyPlayer.Stat[conditionCommand.Ints[3] - 1].Stat;
+                        lvlStat = myPlayer.Stat[conditionCommand.Ints[3] - 1].Stat;
                     }
                     switch (conditionCommand.Ints[1])
                     {
@@ -409,15 +409,15 @@ namespace Intersect.Server.Classes.Entities
                     }
                     break;
                 case 8: //Self Switch
-                    if (EventInstance != null)
+                    if (eventInstance != null)
                     {
-                        if (EventInstance.IsGlobal)
+                        if (eventInstance.IsGlobal)
                         {
-                            var evts = MapInstance.Lookup.Get<MapInstance>(EventInstance.MapNum).GlobalEventInstances
+                            var evts = MapInstance.Lookup.Get<MapInstance>(eventInstance.MapNum).GlobalEventInstances
                                 .Values.ToList();
                             for (int i = 0; i < evts.Count; i++)
                             {
-                                if (evts[i] != null && evts[i].BaseEvent == EventInstance.BaseEvent)
+                                if (evts[i] != null && evts[i].BaseEvent == eventInstance.BaseEvent)
                                 {
                                     if (evts[i].SelfSwitch[conditionCommand.Ints[1]] ==
                                         Convert.ToBoolean(conditionCommand.Ints[2]))
@@ -427,14 +427,14 @@ namespace Intersect.Server.Classes.Entities
                         }
                         else
                         {
-                            if (EventInstance.SelfSwitch[conditionCommand.Ints[1]] ==
+                            if (eventInstance.SelfSwitch[conditionCommand.Ints[1]] ==
                                 Convert.ToBoolean(conditionCommand.Ints[2]))
                                 return true;
                         }
                     }
                     return false;
                 case 9: //Power Is
-                    if (MyPlayer.MyClient.Power > conditionCommand.Ints[1]) return true;
+                    if (myPlayer.MyClient.Power > conditionCommand.Ints[1]) return true;
                     return false;
                 case 10: //Time is between
                     if (conditionCommand.Ints[1] > -1 && conditionCommand.Ints[2] > -1 &&
@@ -457,14 +457,14 @@ namespace Intersect.Server.Classes.Entities
                     }
                     if (startQuest != null)
                     {
-                        return MyPlayer.CanStartQuest(startQuest);
+                        return myPlayer.CanStartQuest(startQuest);
                     }
                     break;
                 case 12: //Quest In Progress
                     var questInProgress = QuestBase.Lookup.Get<QuestBase>(conditionCommand.Ints[1]);
                     if (questInProgress != null)
                     {
-                        return MyPlayer.QuestInProgress(questInProgress, (QuestProgress) conditionCommand.Ints[2],
+                        return myPlayer.QuestInProgress(questInProgress, (QuestProgress) conditionCommand.Ints[2],
                             conditionCommand.Ints[3]);
                     }
                     break;
@@ -472,20 +472,20 @@ namespace Intersect.Server.Classes.Entities
                     var questCompleted = QuestBase.Lookup.Get<QuestBase>(conditionCommand.Ints[1]);
                     if (questCompleted != null)
                     {
-                        return MyPlayer.QuestCompleted(questCompleted);
+                        return myPlayer.QuestCompleted(questCompleted);
                     }
                     break;
                 case 14: //Player death
-                    if (EventInstance != null)
+                    if (eventInstance != null)
                     {
-                        return EventInstance.PlayerHasDied;
+                        return eventInstance.PlayerHasDied;
                     }
                     return false;
                 case 15: //no NPCs on the map (used for boss fights)
-                    if (EventInstance != null)
+                    if (eventInstance != null)
                     {
-                        if (EventInstance.NPCDeathTriggerd == true) return false; //Only call it once
-                        MapInstance m = MapInstance.Lookup.Get<MapInstance>(EventInstance.MapNum);
+                        if (eventInstance.NpcDeathTriggerd == true) return false; //Only call it once
+                        MapInstance m = MapInstance.Lookup.Get<MapInstance>(eventInstance.MapNum);
                         for (int i = 0; i < m.Spawns.Count; i++)
                         {
                             if (m.NpcSpawnInstances.ContainsKey(m.Spawns[i]))
@@ -500,7 +500,7 @@ namespace Intersect.Server.Classes.Entities
                     }
                     break;
                 case 16: //Gender is
-                    return MyPlayer.Gender == conditionCommand.Ints[1];
+                    return myPlayer.Gender == conditionCommand.Ints[1];
             }
             return false;
         }

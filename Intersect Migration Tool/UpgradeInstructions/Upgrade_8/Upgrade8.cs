@@ -46,12 +46,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
 
         private const string TIME_DATA = "data";
 
-        private SqliteConnection _dbConnection;
-        private object _dbLock = new object();
+        private SqliteConnection mDbConnection;
+        private object mDbLock = new object();
 
         public Upgrade8(SqliteConnection connection)
         {
-            _dbConnection = connection;
+            mDbConnection = connection;
         }
 
         public void Upgrade()
@@ -258,14 +258,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
         public void LoadGameObjects(GameObjectType gameObjectType)
         {
             var nullIssues = "";
-            lock (_dbLock)
+            lock (mDbLock)
             {
                 var tableName = gameObjectType.GetTable();
                 ClearGameObjects(gameObjectType);
                 var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" +
                             GAME_OBJECT_DELETED +
                             ";";
-                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                using (SqliteCommand cmd = new SqliteCommand(query, mDbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
                     using (var dataReader = cmd.ExecuteReader())
@@ -300,12 +300,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                 Log.Error("Attempted to persist null game object to the database.");
             }
 
-            lock (_dbLock)
+            lock (mDbLock)
             {
                 var insertQuery = "UPDATE " + gameObject.DatabaseTable + " set " + GAME_OBJECT_DELETED + "=@" +
                                   GAME_OBJECT_DELETED + "," + GAME_OBJECT_DATA + "=@" + GAME_OBJECT_DATA + " WHERE " +
                                   GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
-                using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+                using (SqliteCommand cmd = new SqliteCommand(insertQuery, mDbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.Index));
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
@@ -339,7 +339,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                       + CHAR_FRIEND_ID + " INTEGER,"
                       + " unique('" + CHAR_FRIEND_CHAR_ID + "','" + CHAR_FRIEND_ID + "')"
                       + ");";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
@@ -350,7 +350,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
         {
             var cmd = "CREATE TABLE " + MAP_TILES_TABLE + " (" + MAP_TILES_MAP_ID + " INTEGER UNIQUE, " +
                       MAP_TILES_DATA + " BLOB NOT NULL);";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
@@ -362,7 +362,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
             if (data == null) return;
             var query = "INSERT OR REPLACE into " + MAP_TILES_TABLE + " (" + MAP_TILES_MAP_ID + "," + MAP_TILES_DATA +
                         ")" + " VALUES " + " (@" + MAP_TILES_MAP_ID + ",@" + MAP_TILES_DATA + ")";
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            using (SqliteCommand cmd = new SqliteCommand(query, mDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_TILES_MAP_ID, index));
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_TILES_DATA, data));
@@ -373,14 +373,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
         private void AddDeletedColumnToCharacters()
         {
             var cmd = "ALTER TABLE " + CHAR_TABLE + " ADD " + CHAR_DELETED + " INTEGER;";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
 
             cmd = "UPDATE " + CHAR_TABLE + " set " + CHAR_DELETED + " = @" + CHAR_DELETED + ";";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.Parameters.Add(new SqliteParameter("@" + CHAR_DELETED, 0));
                 createCommand.CommandText = cmd;
@@ -391,14 +391,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
         private void AddLastOnlineColumnToCharacters()
         {
             var cmd = "ALTER TABLE " + CHAR_TABLE + " ADD " + CHAR_LAST_ONLINE_TIME + " INTEGER;";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
 
             cmd = "UPDATE " + CHAR_TABLE + " set " + CHAR_LAST_ONLINE_TIME + " = @" + CHAR_LAST_ONLINE_TIME + ";";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.Parameters.Add(
                     new SqliteParameter("@" + CHAR_LAST_ONLINE_TIME, DateTime.UtcNow.ToBinary()));
@@ -414,11 +414,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
             {
                 var type = (GameObjectType) value;
                 if (type == GameObjectType.Time) continue;
-                using (SqliteTransaction transaction = _dbConnection.BeginTransaction())
+                using (SqliteTransaction transaction = mDbConnection.BeginTransaction())
                 {
                     //Rename Table to Old
                     var query = "ALTER TABLE " + type.GetTable() + " RENAME TO " + type.GetTable() + "_old;";
-                    using (var cmd = _dbConnection.CreateCommand())
+                    using (var cmd = mDbConnection.CreateCommand())
                     {
                         cmd.CommandText = query;
                         cmd.ExecuteNonQuery();
@@ -429,7 +429,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                             + GAME_OBJECT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                             + GAME_OBJECT_DELETED + " INTEGER NOT NULL DEFAULT 0,"
                             + GAME_OBJECT_DATA + " BLOB NOT NULL" + ");";
-                    using (var cmd = _dbConnection.CreateCommand())
+                    using (var cmd = mDbConnection.CreateCommand())
                     {
                         cmd.CommandText = query;
                         cmd.ExecuteNonQuery();
@@ -441,7 +441,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                             + GAME_OBJECT_DELETED + ","
                             + GAME_OBJECT_DATA + ") SELECT " + GAME_OBJECT_ID + "," + GAME_OBJECT_DELETED + "," +
                             GAME_OBJECT_DATA + " FROM " + type.GetTable() + "_old ORDER BY " + GAME_OBJECT_ID + " ASC;";
-                    using (var cmd = _dbConnection.CreateCommand())
+                    using (var cmd = mDbConnection.CreateCommand())
                     {
                         cmd.CommandText = query;
                         cmd.ExecuteNonQuery();
@@ -449,7 +449,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
 
                     //Delete backup table
                     query = "DROP TABLE " + type.GetTable() + "_old;";
-                    using (var cmd = _dbConnection.CreateCommand())
+                    using (var cmd = mDbConnection.CreateCommand())
                     {
                         cmd.CommandText = query;
                         cmd.ExecuteNonQuery();
@@ -462,11 +462,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
 
         private void FixSimpleTable(string tablename, string datacol)
         {
-            using (SqliteTransaction transaction = _dbConnection.BeginTransaction())
+            using (SqliteTransaction transaction = mDbConnection.BeginTransaction())
             {
                 //Rename Table to Old
                 var query = "ALTER TABLE " + tablename + " RENAME TO " + tablename + "_old;";
-                using (var cmd = _dbConnection.CreateCommand())
+                using (var cmd = mDbConnection.CreateCommand())
                 {
                     cmd.CommandText = query;
                     cmd.ExecuteNonQuery();
@@ -475,7 +475,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                 //Create new table
                 query = "CREATE TABLE " + tablename + " ("
                         + datacol + " BLOB NOT NULL" + ");";
-                using (var cmd = _dbConnection.CreateCommand())
+                using (var cmd = mDbConnection.CreateCommand())
                 {
                     cmd.CommandText = query;
                     cmd.ExecuteNonQuery();
@@ -484,7 +484,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                 //Import from old table
                 query = "INSERT INTO " + tablename + " ("
                         + datacol + ") SELECT " + datacol + " FROM " + tablename + "_old;";
-                using (var cmd = _dbConnection.CreateCommand())
+                using (var cmd = mDbConnection.CreateCommand())
                 {
                     cmd.CommandText = query;
                     cmd.ExecuteNonQuery();
@@ -492,7 +492,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
 
                 //Delete backup table
                 query = "DROP TABLE " + tablename + "_old;";
-                using (var cmd = _dbConnection.CreateCommand())
+                using (var cmd = mDbConnection.CreateCommand())
                 {
                     cmd.CommandText = query;
                     cmd.ExecuteNonQuery();

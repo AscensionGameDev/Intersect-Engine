@@ -1,6 +1,6 @@
 ﻿namespace Intersect.Editor.Forms
 {
-    partial class frmLoadingContent
+    partial class FrmLoadingContent
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmLoadingContent));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmLoadingContent));
             this.lblStatus = new System.Windows.Forms.Label();
             this.picLogo = new System.Windows.Forms.PictureBox();
             this.lblProgress = new System.Windows.Forms.Label();
@@ -79,7 +79,7 @@
             this.Controls.Add(this.lblProgress);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "frmLoadingContent";
+            this.Name = "FrmLoadingContent";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "frmLoadingContent";
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();

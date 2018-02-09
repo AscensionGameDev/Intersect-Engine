@@ -4,7 +4,7 @@ namespace Intersect_Client.Classes.Spells
 {
     public class SpellInstance
     {
-        public long SpellCD;
+        public long SpellCd;
         public int SpellNum = -1;
 
         public SpellInstance Clone()
@@ -12,7 +12,7 @@ namespace Intersect_Client.Classes.Spells
             SpellInstance newSpell = new SpellInstance()
             {
                 SpellNum = SpellNum,
-                SpellCD = SpellCD
+                SpellCd = SpellCd
             };
             return newSpell;
         }

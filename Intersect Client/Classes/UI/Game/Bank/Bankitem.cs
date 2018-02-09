@@ -15,60 +15,60 @@ namespace Intersect.Client.Classes.UI.Game.Bank
 {
     public class BankItem
     {
-        private static int ItemXPadding = 4;
-        private static int ItemYPadding = 4;
+        private static int sItemXPadding = 4;
+        private static int sItemYPadding = 4;
 
         //Drag/Drop References
-        private BankWindow _bankWindow;
+        private BankWindow mBankWindow;
 
-        private int _currentItem = -2;
-        private ItemDescWindow _descWindow;
+        private int mCurrentItem = -2;
+        private ItemDescWindow mDescWindow;
 
         //Slot info
-        private int _mySlot;
+        private int mMySlot;
 
         //Dragging
-        private bool CanDrag;
+        private bool mCanDrag;
 
-        private long ClickTime;
-        public ImagePanel container;
-        private Draggable dragIcon;
+        private long mClickTime;
+        public ImagePanel Container;
+        private Draggable mDragIcon;
         public bool IsDragging;
 
         //Mouse Event Variables
-        private bool MouseOver;
+        private bool mMouseOver;
 
-        private int MouseX = -1;
-        private int MouseY = -1;
-        public ImagePanel pnl;
+        private int mMouseX = -1;
+        private int mMouseY = -1;
+        public ImagePanel Pnl;
 
         public BankItem(BankWindow bankWindow, int index)
         {
-            _bankWindow = bankWindow;
-            _mySlot = index;
+            mBankWindow = bankWindow;
+            mMySlot = index;
         }
 
         public void Setup()
         {
-            pnl = new ImagePanel(container, "BankItemIcon");
-            pnl.HoverEnter += pnl_HoverEnter;
-            pnl.HoverLeave += pnl_HoverLeave;
-            pnl.RightClicked += pnl_RightClicked;
-            pnl.DoubleClicked += Pnl_DoubleClicked;
-            pnl.Clicked += pnl_Clicked;
+            Pnl = new ImagePanel(Container, "BankItemIcon");
+            Pnl.HoverEnter += pnl_HoverEnter;
+            Pnl.HoverLeave += pnl_HoverLeave;
+            Pnl.RightClicked += pnl_RightClicked;
+            Pnl.DoubleClicked += Pnl_DoubleClicked;
+            Pnl.Clicked += pnl_Clicked;
         }
 
         private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
             if (Globals.InBank)
             {
-                Globals.Me.TryWithdrawItem(_mySlot);
+                Globals.Me.TryWithdrawItem(mMySlot);
             }
         }
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            ClickTime = Globals.System.GetTimeMS() + 500;
+            mClickTime = Globals.System.GetTimeMs() + 500;
         }
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
@@ -77,34 +77,34 @@ namespace Intersect.Client.Classes.UI.Game.Bank
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
         {
-            MouseOver = false;
-            MouseX = -1;
-            MouseY = -1;
-            if (_descWindow != null)
+            mMouseOver = false;
+            mMouseX = -1;
+            mMouseY = -1;
+            if (mDescWindow != null)
             {
-                _descWindow.Dispose();
-                _descWindow = null;
+                mDescWindow.Dispose();
+                mDescWindow = null;
             }
         }
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
-            MouseOver = true;
-            CanDrag = true;
+            mMouseOver = true;
+            mCanDrag = true;
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
             {
-                CanDrag = false;
+                mCanDrag = false;
                 return;
             }
-            if (_descWindow != null)
+            if (mDescWindow != null)
             {
-                _descWindow.Dispose();
-                _descWindow = null;
+                mDescWindow.Dispose();
+                mDescWindow = null;
             }
-            if (Globals.Bank[_mySlot] != null)
+            if (Globals.Bank[mMySlot] != null)
             {
-                _descWindow = new ItemDescWindow(Globals.Bank[_mySlot].ItemNum, Globals.Bank[_mySlot].ItemVal,
-                    _bankWindow.X - 255, _bankWindow.Y, Globals.Bank[_mySlot].StatBoost);
+                mDescWindow = new ItemDescWindow(Globals.Bank[mMySlot].ItemNum, Globals.Bank[mMySlot].ItemVal,
+                    mBankWindow.X - 255, mBankWindow.Y, Globals.Bank[mMySlot].StatBoost);
             }
         }
 
@@ -112,88 +112,88 @@ namespace Intersect.Client.Classes.UI.Game.Bank
         {
             FloatRect rect = new FloatRect()
             {
-                X = pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X,
-                Y = pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y,
-                Width = pnl.Width,
-                Height = pnl.Height
+                X = Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X,
+                Y = Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y,
+                Width = Pnl.Width,
+                Height = Pnl.Height
             };
             return rect;
         }
 
         public void Update()
         {
-            if (Globals.Bank[_mySlot].ItemNum != _currentItem)
+            if (Globals.Bank[mMySlot].ItemNum != mCurrentItem)
             {
-                _currentItem = Globals.Bank[_mySlot].ItemNum;
-                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Bank[_mySlot].ItemNum);
+                mCurrentItem = Globals.Bank[mMySlot].ItemNum;
+                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Bank[mMySlot].ItemNum);
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
                         item.Pic);
                     if (itemTex != null)
                     {
-                        pnl.Texture = itemTex;
+                        Pnl.Texture = itemTex;
                     }
                     else
                     {
-                        if (pnl.Texture != null)
+                        if (Pnl.Texture != null)
                         {
-                            pnl.Texture = null;
+                            Pnl.Texture = null;
                         }
                     }
                 }
                 else
                 {
-                    if (pnl.Texture != null)
+                    if (Pnl.Texture != null)
                     {
-                        pnl.Texture = null;
+                        Pnl.Texture = null;
                     }
                 }
             }
             if (!IsDragging)
             {
-                if (MouseOver)
+                if (mMouseOver)
                 {
                     if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
                     {
-                        CanDrag = true;
-                        MouseX = -1;
-                        MouseY = -1;
-                        if (Globals.System.GetTimeMS() < ClickTime)
+                        mCanDrag = true;
+                        mMouseX = -1;
+                        mMouseY = -1;
+                        if (Globals.System.GetTimeMs() < mClickTime)
                         {
                             //Globals.Me.TryUseItem(_mySlot);
-                            ClickTime = 0;
+                            mClickTime = 0;
                         }
                     }
                     else
                     {
-                        if (CanDrag)
+                        if (mCanDrag)
                         {
-                            if (MouseX == -1 || MouseY == -1)
+                            if (mMouseX == -1 || mMouseY == -1)
                             {
-                                MouseX = InputHandler.MousePosition.X -
-                                         pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X;
-                                MouseY = InputHandler.MousePosition.Y -
-                                         pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y;
+                                mMouseX = InputHandler.MousePosition.X -
+                                         Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X;
+                                mMouseY = InputHandler.MousePosition.Y -
+                                         Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y;
                             }
                             else
                             {
-                                int xdiff = MouseX -
+                                int xdiff = mMouseX -
                                             (InputHandler.MousePosition.X -
-                                             pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
+                                             Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
                                                  .X);
-                                int ydiff = MouseY -
+                                int ydiff = mMouseY -
                                             (InputHandler.MousePosition.Y -
-                                             pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
+                                             Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
                                                  .Y);
                                 if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                 {
                                     IsDragging = true;
-                                    dragIcon = new Draggable(
-                                        pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X +
-                                        MouseX,
-                                        pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X +
-                                        MouseY, pnl.Texture);
+                                    mDragIcon = new Draggable(
+                                        Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X +
+                                        mMouseX,
+                                        Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X +
+                                        mMouseY, Pnl.Texture);
                                 }
                             }
                         }
@@ -202,45 +202,45 @@ namespace Intersect.Client.Classes.UI.Game.Bank
             }
             else
             {
-                if (dragIcon.Update())
+                if (mDragIcon.Update())
                 {
                     //Drug the item and now we stopped
                     IsDragging = false;
-                    FloatRect dragRect = new FloatRect(dragIcon.X - ItemXPadding / 2, dragIcon.Y - ItemYPadding / 2,
-                        ItemXPadding / 2 + 32, ItemYPadding / 2 + 32);
+                    FloatRect dragRect = new FloatRect(mDragIcon.X - sItemXPadding / 2, mDragIcon.Y - sItemYPadding / 2,
+                        sItemXPadding / 2 + 32, sItemYPadding / 2 + 32);
 
                     float bestIntersect = 0;
                     int bestIntersectIndex = -1;
                     //So we picked up an item and then dropped it. Lets see where we dropped it to.
                     //Check inventory first.
-                    if (_bankWindow.RenderBounds().IntersectsWith(dragRect))
+                    if (mBankWindow.RenderBounds().IntersectsWith(dragRect))
                     {
                         for (int i = 0; i < Options.MaxBankSlots; i++)
                         {
-                            if (_bankWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
+                            if (mBankWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
-                                if (FloatRect.Intersect(_bankWindow.Items[i].RenderBounds(), dragRect).Width *
-                                    FloatRect.Intersect(_bankWindow.Items[i].RenderBounds(), dragRect).Height >
+                                if (FloatRect.Intersect(mBankWindow.Items[i].RenderBounds(), dragRect).Width *
+                                    FloatRect.Intersect(mBankWindow.Items[i].RenderBounds(), dragRect).Height >
                                     bestIntersect)
                                 {
                                     bestIntersect =
-                                        FloatRect.Intersect(_bankWindow.Items[i].RenderBounds(), dragRect).Width *
-                                        FloatRect.Intersect(_bankWindow.Items[i].RenderBounds(), dragRect).Height;
+                                        FloatRect.Intersect(mBankWindow.Items[i].RenderBounds(), dragRect).Width *
+                                        FloatRect.Intersect(mBankWindow.Items[i].RenderBounds(), dragRect).Height;
                                     bestIntersectIndex = i;
                                 }
                             }
                         }
                         if (bestIntersectIndex > -1)
                         {
-                            if (_mySlot != bestIntersectIndex)
+                            if (mMySlot != bestIntersectIndex)
                             {
                                 //Try to swap....
-                                PacketSender.SendMoveBankItems(bestIntersectIndex, _mySlot);
+                                PacketSender.SendMoveBankItems(bestIntersectIndex, mMySlot);
                                 //Globals.Me.SwapItems(bestIntersectIndex, _mySlot);
                             }
                         }
                     }
-                    dragIcon.Dispose();
+                    mDragIcon.Dispose();
                 }
             }
         }

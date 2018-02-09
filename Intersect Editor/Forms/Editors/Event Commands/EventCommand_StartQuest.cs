@@ -7,18 +7,18 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_StartQuest : UserControl
+    public partial class EventCommandStartQuest : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventPage _currentPage;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventPage mCurrentPage;
+        private EventCommand mMyCommand;
 
-        public EventCommand_StartQuest(EventCommand refCommand, EventPage page, FrmEvent editor)
+        public EventCommandStartQuest(EventCommand refCommand, EventPage page, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _currentPage = page;
-            _eventEditor = editor;
+            mMyCommand = refCommand;
+            mCurrentPage = page;
+            mEventEditor = editor;
             InitLocalization();
             cmbQuests.Items.Clear();
             cmbQuests.Items.AddRange(Database.GetGameObjectList(GameObjectType.Quest));
@@ -37,23 +37,23 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Quest, cmbQuests.SelectedIndex);
-            _myCommand.Ints[1] = Convert.ToInt32(chkShowOfferWindow.Checked);
-            if (_myCommand.Ints[4] == 0)
+            mMyCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Quest, cmbQuests.SelectedIndex);
+            mMyCommand.Ints[1] = Convert.ToInt32(chkShowOfferWindow.Checked);
+            if (mMyCommand.Ints[4] == 0)
                 // command.Ints[4, and 5] are reserved for when the action succeeds or fails
             {
                 for (var i = 0; i < 2; i++)
                 {
-                    _currentPage.CommandLists.Add(new CommandList());
-                    _myCommand.Ints[4 + i] = _currentPage.CommandLists.Count - 1;
+                    mCurrentPage.CommandLists.Add(new CommandList());
+                    mMyCommand.Ints[4 + i] = mCurrentPage.CommandLists.Count - 1;
                 }
             }
-            _eventEditor.FinishCommandEdit();
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
     }
 }

@@ -20,14 +20,14 @@ namespace Intersect.Migration
     public static class Database
     {
         public const int DbVersion = 10;
-        private const string DbFilename = "resources/intersect.db";
+        private const string DB_FILENAME = "resources/intersect.db";
 
         //Database Variables
         private const string INFO_TABLE = "info";
 
         private const string DB_VERSION = "dbversion";
-        private static SqliteConnection _dbConnection;
-        private static object _dbLock = new object();
+        private static SqliteConnection sDbConnection;
+        private static object sDbLock = new object();
 
         //Config Info
         public static string GetLanguageFromConfig()
@@ -35,10 +35,10 @@ namespace Intersect.Migration
             if (File.Exists("resources/config.xml"))
             {
                 var options = new XmlDocument();
-                var ConfigXml = File.ReadAllText("resources/config.xml");
+                var configXml = File.ReadAllText("resources/config.xml");
                 try
                 {
-                    options.LoadXml(ConfigXml);
+                    options.LoadXml(configXml);
                     return GetXmlStr(options, "//Config/Language");
                 }
                 catch (Exception exception)
@@ -66,12 +66,12 @@ namespace Intersect.Migration
         //Database setup, version checking
         public static bool InitDatabase()
         {
-            lock (_dbLock)
+            lock (sDbLock)
             {
-                if (_dbConnection == null)
+                if (sDbConnection == null)
                 {
-                    _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ";Version=3");
-                    _dbConnection.Open();
+                    sDbConnection = new SqliteConnection("Data Source=" + DB_FILENAME + ";Version=3");
+                    sDbConnection.Open();
                 }
                 return true;
             }
@@ -81,7 +81,7 @@ namespace Intersect.Migration
         {
             long version = -1;
             var cmd = "SELECT " + DB_VERSION + " from " + INFO_TABLE + ";";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = sDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 version = (long) createCommand.ExecuteScalar();
@@ -93,7 +93,7 @@ namespace Intersect.Migration
         {
             long version = GetDatabaseVersion();
             var cmd = "UPDATE " + INFO_TABLE + " SET " + DB_VERSION + " = " + (version + 1) + ";";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = sDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
@@ -105,12 +105,12 @@ namespace Intersect.Migration
             File.Copy("resources/intersect.db",
                 "resources/intersect_v" + GetDatabaseVersion() + "_" + DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss") +
                 ".db");
-            if (_dbConnection != null)
+            if (sDbConnection != null)
             {
-                _dbConnection.Close();
-                _dbConnection = null;
-                _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ";Version=3");
-                _dbConnection.Open();
+                sDbConnection.Close();
+                sDbConnection = null;
+                sDbConnection = new SqliteConnection("Data Source=" + DB_FILENAME + ";Version=3");
+                sDbConnection.Open();
             }
             var startingVersion = GetDatabaseVersion();
             var currentVersion = GetDatabaseVersion();
@@ -119,51 +119,51 @@ namespace Intersect.Migration
                 switch (currentVersion)
                 {
                     case 1:
-                        var upgrade1 = new Upgrade1(_dbConnection);
+                        var upgrade1 = new Upgrade1(sDbConnection);
                         upgrade1.Upgrade();
                         IncrementDatabaseVersion();
                         break;
                     case 2:
-                        var upgrade2 = new Upgrade2(_dbConnection);
+                        var upgrade2 = new Upgrade2(sDbConnection);
                         upgrade2.Upgrade();
                         IncrementDatabaseVersion();
                         break;
                     case 3:
-                        var upgrade3 = new Upgrade3(_dbConnection);
+                        var upgrade3 = new Upgrade3(sDbConnection);
                         upgrade3.Upgrade();
                         IncrementDatabaseVersion();
                         break;
                     case 4:
-                        var upgrade4 = new Upgrade4(_dbConnection);
+                        var upgrade4 = new Upgrade4(sDbConnection);
                         upgrade4.Upgrade();
                         IncrementDatabaseVersion();
                         break;
                     case 5:
-                        var upgrade5 = new Upgrade5(_dbConnection);
+                        var upgrade5 = new Upgrade5(sDbConnection);
                         upgrade5.Upgrade();
                         currentVersion++;
                         IncrementDatabaseVersion();
                         break;
                     case 6:
-                        var upgrade6 = new Upgrade6(_dbConnection);
+                        var upgrade6 = new Upgrade6(sDbConnection);
                         upgrade6.Upgrade();
                         currentVersion++;
                         IncrementDatabaseVersion();
                         break;
                     case 7:
-                        var upgrade7 = new Upgrade7(_dbConnection);
+                        var upgrade7 = new Upgrade7(sDbConnection);
                         upgrade7.Upgrade();
                         currentVersion++;
                         IncrementDatabaseVersion();
                         break;
                     case 8:
-                        var upgrade8 = new Upgrade8(_dbConnection);
+                        var upgrade8 = new Upgrade8(sDbConnection);
                         upgrade8.Upgrade();
                         currentVersion++;
                         IncrementDatabaseVersion();
                         break;
                     case 9:
-                        var upgrade9 = new Upgrade9(_dbConnection);
+                        var upgrade9 = new Upgrade9(sDbConnection);
                         upgrade9.Upgrade();
                         currentVersion++;
                         IncrementDatabaseVersion();
@@ -174,8 +174,8 @@ namespace Intersect.Migration
                 currentVersion = GetDatabaseVersion();
             }
 
-            _dbConnection.Close();
-            _dbConnection = null;
+            sDbConnection.Close();
+            sDbConnection = null;
             Console.WriteLine(Strings.Get("upgrade", "updated", currentVersion));
             Console.WriteLine(Strings.Get("upgrade", "backupinfo", startingVersion, startingVersion,
                 DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss")));

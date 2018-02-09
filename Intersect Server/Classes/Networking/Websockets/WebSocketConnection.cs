@@ -8,16 +8,16 @@ namespace Intersect.Server.Classes.Networking.Websockets
 {
     public class WebSocketConnection : AbstractConnection
     {
-        private readonly WebSocketBehavior behavior;
-        private readonly WebSocketContext context;
-        private ByteBuffer buffer = new ByteBuffer();
-        private object bufferLock = new Object();
-        private bool clientRemoved;
-        private PacketHandler packetHandler = new PacketHandler();
+        private readonly WebSocketBehavior mBehavior;
+        private readonly WebSocketContext mContext;
+        private ByteBuffer mBuffer = new ByteBuffer();
+        private object mBufferLock = new Object();
+        private bool mClientRemoved;
+        private PacketHandler mPacketHandler = new PacketHandler();
 
         public WebSocketConnection(WebSocketContext context, WebSocketBehavior behavior)
         {
-            this.context = context;
+            this.mContext = context;
             context.WebSocket.OnMessage += WebSocket_OnMessage;
             context.WebSocket.OnClose += WebSocket_OnClose;
             context.WebSocket.OnError += WebSocket_OnError;
@@ -26,39 +26,39 @@ namespace Intersect.Server.Classes.Networking.Websockets
 
         public override string Ip
         {
-            get { return this.context.UserEndPoint.Address.ToString(); }
+            get { return this.mContext.UserEndPoint.Address.ToString(); }
         }
 
         public override int Port
         {
-            get { return this.context.UserEndPoint.Port; }
+            get { return this.mContext.UserEndPoint.Port; }
         }
 
         private void WebSocket_OnError(object sender, WebSocketSharp.ErrorEventArgs e)
         {
-            if (!clientRemoved)
+            if (!mClientRemoved)
             {
-                clientRemoved = true;
+                mClientRemoved = true;
                 Client.RemoveBeta4Client(this);
             }
         }
 
         private void WebSocket_OnClose(object sender, WebSocketSharp.CloseEventArgs e)
         {
-            if (!clientRemoved)
+            if (!mClientRemoved)
             {
-                clientRemoved = true;
+                mClientRemoved = true;
                 Client.RemoveBeta4Client(this);
             }
         }
 
         private void WebSocket_OnMessage(object sender, WebSocketSharp.MessageEventArgs e)
         {
-            if (e.IsBinary && !clientRemoved)
+            if (e.IsBinary && !mClientRemoved)
             {
-                lock (bufferLock)
+                lock (mBufferLock)
                 {
-                    buffer.WriteBytes(e.RawData);
+                    mBuffer.WriteBytes(e.RawData);
                     ParseData();
                 }
             }
@@ -67,33 +67,33 @@ namespace Intersect.Server.Classes.Networking.Websockets
         private void ParseData()
         {
             int packetLen;
-            if (clientRemoved) return;
-            lock (bufferLock)
+            if (mClientRemoved) return;
+            lock (mBufferLock)
             {
-                while (buffer.Length() >= 4)
+                while (mBuffer.Length() >= 4)
                 {
-                    packetLen = buffer.ReadInteger(false);
+                    packetLen = mBuffer.ReadInteger(false);
                     if (packetLen == 0)
                     {
                         break;
                     }
-                    if (buffer.Length() >= packetLen + 4)
+                    if (mBuffer.Length() >= packetLen + 4)
                     {
-                        buffer.ReadInteger();
-                        var data = buffer.ReadBytes(packetLen);
+                        mBuffer.ReadInteger();
+                        var data = mBuffer.ReadBytes(packetLen);
                         var bf = new ByteBuffer();
                         bf.WriteBytes(data);
                         var packet = new BinaryPacket(this) {Buffer = bf};
-                        packetHandler.HandlePacket(packet);
+                        mPacketHandler.HandlePacket(packet);
                     }
                     else
                     {
                         break;
                     }
                 }
-                if (buffer.Length() == 0)
+                if (mBuffer.Length() == 0)
                 {
-                    buffer.Clear();
+                    mBuffer.Clear();
                 }
             }
         }
@@ -108,7 +108,7 @@ namespace Intersect.Server.Classes.Networking.Websockets
                     var bf = new ByteBuffer();
                     bf.WriteInteger(bpacket.Buffer.ToArray().Length);
                     bf.WriteBytes(bpacket.Buffer.ToArray());
-                    context.WebSocket.SendAsync(bf.ToArray(), null);
+                    mContext.WebSocket.SendAsync(bf.ToArray(), null);
                     return true;
                 }
                 else

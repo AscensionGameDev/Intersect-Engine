@@ -4,12 +4,13 @@ using System.Linq;
 using Intersect.Collections;
 using Intersect.Enums;
 using Intersect.Logging;
+using JetBrains.Annotations;
 
 namespace Intersect.Models
 {
     public static class LookupUtils
     {
-        private const string sLock = "";
+        private const string LOCK = "";
 
         private static Dictionary<Type, DatabaseObjectLookup> sLookupMap;
         private static Dictionary<Type, GameObjectType> sEnumMap;
@@ -20,20 +21,18 @@ namespace Intersect.Models
         public static Dictionary<Type, GameObjectType> EnumMap => (sEnumMap =
             (sEnumMap ?? new Dictionary<Type, GameObjectType>()));
 
-        public static DatabaseObjectLookup GetLookup(Type type)
+        [NotNull] public static DatabaseObjectLookup GetLookup(Type type)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
             if (LookupMap == null) throw new ArgumentNullException(nameof(LookupMap));
 
-            lock (sLock)
+            lock (LOCK)
             {
-                DatabaseObjectLookup lookup;
                 try
                 {
                     if (!LookupMap.ContainsKey(type))
                     {
-                        lookup = new DatabaseObjectLookup();
-                        LookupMap[type] = lookup;
+                        LookupMap[type] = new DatabaseObjectLookup();
                     }
                 }
                 catch (Exception exception)

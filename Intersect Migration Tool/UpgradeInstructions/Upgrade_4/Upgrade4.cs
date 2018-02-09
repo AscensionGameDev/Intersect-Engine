@@ -27,12 +27,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
         private const string TIME_TABLE = "time";
 
         private const string TIME_DATA = "data";
-        private SqliteConnection _dbConnection;
-        private object _dbLock = new object();
+        private SqliteConnection mDbConnection;
+        private object mDbLock = new object();
 
         public Upgrade4(SqliteConnection connection)
         {
-            _dbConnection = connection;
+            mDbConnection = connection;
         }
 
         public void Upgrade()
@@ -286,14 +286,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
         public void LoadGameObjects(GameObject type)
         {
             var nullIssues = "";
-            lock (_dbLock)
+            lock (mDbLock)
             {
                 var tableName = GetGameObjectTable(type);
                 ClearGameObjects(type);
                 var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" +
                             GAME_OBJECT_DELETED +
                             ";";
-                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                using (SqliteCommand cmd = new SqliteCommand(query, mDbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
                     using (var dataReader = cmd.ExecuteReader())
@@ -328,12 +328,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
                 Log.Error("Attempted to persist null game object to the database.");
             }
 
-            lock (_dbLock)
+            lock (mDbLock)
             {
                 var insertQuery = "UPDATE " + gameObject.GetTable() + " set " + GAME_OBJECT_DELETED + "=@" +
                                   GAME_OBJECT_DELETED + "," + GAME_OBJECT_DATA + "=@" + GAME_OBJECT_DATA + " WHERE " +
                                   GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
-                using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+                using (SqliteCommand cmd = new SqliteCommand(insertQuery, mDbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.GetId()));
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
@@ -355,7 +355,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
         private void LoadMapFolders()
         {
             var query = "SELECT * from " + MAP_LIST_TABLE + ";";
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            using (SqliteCommand cmd = new SqliteCommand(query, mDbConnection))
             {
                 using (var dataReader = cmd.ExecuteReader())
                 {
@@ -380,7 +380,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
         public void SaveMapFolders()
         {
             var query = "UPDATE " + MAP_LIST_TABLE + " set " + MAP_LIST_DATA + "=@" + MAP_LIST_DATA + ";";
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            using (SqliteCommand cmd = new SqliteCommand(query, mDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_LIST_DATA,
                     MapList.GetList().Data(MapBase.GetObjects())));
@@ -392,7 +392,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
         private void LoadTime()
         {
             var query = "SELECT * from " + TIME_TABLE + ";";
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            using (SqliteCommand cmd = new SqliteCommand(query, mDbConnection))
             {
                 using (var dataReader = cmd.ExecuteReader())
                 {
@@ -415,7 +415,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
         public void SaveTime()
         {
             var query = "UPDATE " + TIME_TABLE + " set " + TIME_DATA + "=@" + TIME_DATA + ";";
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            using (SqliteCommand cmd = new SqliteCommand(query, mDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + TIME_DATA,
                     TimeBase.GetTimeBase().SaveTimeBase()));

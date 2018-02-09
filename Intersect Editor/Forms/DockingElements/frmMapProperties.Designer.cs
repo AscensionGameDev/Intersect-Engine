@@ -1,6 +1,6 @@
 ﻿namespace Intersect.Editor.Forms
 {
-    partial class frmMapProperties
+    partial class FrmMapProperties
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMapProperties));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMapProperties));
             this.gridMapProperties = new System.Windows.Forms.PropertyGrid();
             this.SuspendLayout();
             // 
@@ -66,7 +66,7 @@
             this.Controls.Add(this.gridMapProperties);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "frmMapProperties";
+            this.Name = "FrmMapProperties";
             this.Text = "Map Properties";
             this.ResumeLayout(false);
 

@@ -7,7 +7,7 @@ namespace Intersect.Localization
 {
     class Language
     {
-        private Dictionary<string, Dictionary<string, string>> loadedStrings =
+        private Dictionary<string, Dictionary<string, string>> mLoadedStrings =
             new Dictionary<string, Dictionary<string, string>>();
 
         public Language(string data, bool isRaw)
@@ -34,26 +34,26 @@ namespace Intersect.Localization
             {
                 if (node.NodeType != XmlNodeType.Comment)
                 {
-                    if (!loadedStrings.ContainsKey(node.Name.ToLower()))
+                    if (!mLoadedStrings.ContainsKey(node.Name.ToLower()))
                     {
-                        loadedStrings.Add(node.Name.ToLower(), new Dictionary<string, string>());
+                        mLoadedStrings.Add(node.Name.ToLower(), new Dictionary<string, string>());
                     }
                     foreach (XmlNode childNode in node.ChildNodes)
                     {
                         if (childNode.NodeType != XmlNodeType.Comment)
                         {
                             if (
-                                !loadedStrings[node.Name.ToLower()].ContainsKey(
+                                !mLoadedStrings[node.Name.ToLower()].ContainsKey(
                                     childNode.Attributes["id"].Value.ToLower()))
                             {
                                 if (childNode.FirstChild == null)
                                 {
-                                    loadedStrings[node.Name.ToLower()].Add(
+                                    mLoadedStrings[node.Name.ToLower()].Add(
                                         childNode.Attributes["id"].Value.ToLower(), "");
                                 }
                                 else
                                 {
-                                    loadedStrings[node.Name.ToLower()].Add(
+                                    mLoadedStrings[node.Name.ToLower()].Add(
                                         childNode.Attributes["id"].Value.ToLower(),
                                         childNode.FirstChild.Value);
                                 }
@@ -68,15 +68,15 @@ namespace Intersect.Localization
 
         public bool HasString(string section, string id)
         {
-            return loadedStrings.ContainsKey(section.ToLower()) &&
-                   loadedStrings[section.ToLower()].ContainsKey(id.ToLower());
+            return mLoadedStrings.ContainsKey(section.ToLower()) &&
+                   mLoadedStrings[section.ToLower()].ContainsKey(id.ToLower());
         }
 
         public string GetString(string section, string id, params object[] args)
         {
             try
             {
-                return string.Format(loadedStrings[section.ToLower()][id.ToLower()], args);
+                return string.Format(mLoadedStrings[section.ToLower()][id.ToLower()], args);
             }
             catch (FormatException)
             {
@@ -86,7 +86,7 @@ namespace Intersect.Localization
 
         public string GetString(string section, string id)
         {
-            return loadedStrings[section.ToLower()][id.ToLower()];
+            return mLoadedStrings[section.ToLower()][id.ToLower()];
         }
     }
 }

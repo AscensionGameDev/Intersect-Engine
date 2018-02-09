@@ -10,14 +10,14 @@ using Intersect.Models;
 
 namespace Intersect.Editor.Forms.Editors
 {
-    public partial class frmCrafting : EditorForm
+    public partial class FrmCrafting : EditorForm
     {
-        private List<BenchBase> _changed = new List<BenchBase>();
-        private byte[] _copiedItem;
-        private Craft _currentCraft;
-        private BenchBase _editorItem;
+        private List<BenchBase> mChanged = new List<BenchBase>();
+        private byte[] mCopiedItem;
+        private Craft mCurrentCraft;
+        private BenchBase mEditorItem;
 
-        public frmCrafting()
+        public FrmCrafting()
         {
             ApplyHooks();
             InitializeComponent();
@@ -36,9 +36,9 @@ namespace Intersect.Editor.Forms.Editors
             if (type == GameObjectType.Bench)
             {
                 InitEditor();
-                if (_editorItem != null && !DatabaseObject<BenchBase>.Lookup.Values.Contains(_editorItem))
+                if (mEditorItem != null && !DatabaseObject<BenchBase>.Lookup.Values.Contains(mEditorItem))
                 {
-                    _editorItem = null;
+                    mEditorItem = null;
                     UpdateEditor();
                 }
             }
@@ -52,8 +52,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void lstCrafts_Click(object sender, EventArgs e)
         {
-            if (changingName) return;
-            _editorItem =
+            if (mChangingName) return;
+            mEditorItem =
                 BenchBase.Lookup.Get<BenchBase>(
                     Database.GameObjectIdFromList(GameObjectType.Bench, lstCrafts.SelectedIndex));
             UpdateEditor();
@@ -61,25 +61,25 @@ namespace Intersect.Editor.Forms.Editors
 
         private void UpdateEditor()
         {
-            if (_editorItem != null)
+            if (mEditorItem != null)
             {
                 pnlContainer.Show();
 
                 lstCompositions.Items.Clear();
-                foreach (var i in _editorItem.Crafts)
+                foreach (var i in mEditorItem.Crafts)
                 {
                     lstCompositions.Items.Add(ItemBase.GetName(i.Item));
                 }
                 if (lstCompositions.Items.Count > 0) lstCompositions.SelectedIndex = 0;
 
-                txtName.Text = _editorItem.Name;
+                txtName.Text = mEditorItem.Name;
 
                 UpdateCraft();
 
-                if (_changed.IndexOf(_editorItem) == -1)
+                if (mChanged.IndexOf(mEditorItem) == -1)
                 {
-                    _changed.Add(_editorItem);
-                    _editorItem.MakeBackup();
+                    mChanged.Add(mEditorItem);
+                    mEditorItem.MakeBackup();
                 }
             }
             else
@@ -97,10 +97,10 @@ namespace Intersect.Editor.Forms.Editors
             {
                 grpIngredients.Show();
                 grpCraft.Show();
-                _currentCraft = _editorItem.Crafts[lstCompositions.SelectedIndex];
+                mCurrentCraft = mEditorItem.Crafts[lstCompositions.SelectedIndex];
 
-                nudSpeed.Value = _currentCraft.Time;
-                cmbResult.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, _currentCraft.Item) + 1;
+                nudSpeed.Value = mCurrentCraft.Time;
+                cmbResult.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mCurrentCraft.Item) + 1;
 
                 if (lstCrafts.SelectedIndex < 0)
                 {
@@ -112,26 +112,26 @@ namespace Intersect.Editor.Forms.Editors
                 nudQuantity.Hide();
                 lblQuantity.Hide();
                 lblIngredient.Hide();
-                for (int i = 0; i < _currentCraft.Ingredients.Count; i++)
+                for (int i = 0; i < mCurrentCraft.Ingredients.Count; i++)
                 {
-                    if (_currentCraft.Ingredients[i].Item > -1)
+                    if (mCurrentCraft.Ingredients[i].Item > -1)
                     {
                         lstIngredients.Items.Add(Strings.Get("craftingeditor", "ingredientlistitem",
-                            ItemBase.GetName(_currentCraft.Ingredients[i].Item),
-                            _currentCraft.Ingredients[i].Quantity));
+                            ItemBase.GetName(mCurrentCraft.Ingredients[i].Item),
+                            mCurrentCraft.Ingredients[i].Quantity));
                     }
                     else
                     {
                         lstIngredients.Items.Add(Strings.Get("craftingeditor", "ingredientlistitem",
-                            Strings.Get("craftingeditor", "ingredientnone"), _currentCraft.Ingredients[i].Quantity));
+                            Strings.Get("craftingeditor", "ingredientnone"), mCurrentCraft.Ingredients[i].Quantity));
                     }
                 }
                 if (lstIngredients.Items.Count > 0)
                 {
                     lstIngredients.SelectedIndex = 0;
                     cmbIngredient.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item,
-                                                      _currentCraft.Ingredients[lstIngredients.SelectedIndex].Item) + 1;
-                    nudQuantity.Value = _currentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity;
+                                                      mCurrentCraft.Ingredients[lstIngredients.SelectedIndex].Item) + 1;
+                    nudQuantity.Value = mCurrentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity;
                 }
             }
             else
@@ -142,25 +142,25 @@ namespace Intersect.Editor.Forms.Editors
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
-            changingName = true;
-            _editorItem.Name = txtName.Text;
+            mChangingName = true;
+            mEditorItem.Name = txtName.Text;
             if (lstCrafts.SelectedIndex > -1)
             {
                 lstCrafts.Items[lstCrafts.SelectedIndex] = txtName.Text;
             }
-            changingName = false;
+            mChangingName = false;
         }
 
         private void nudQuantity_ValueChanged(object sender, EventArgs e)
         {
             if (lstIngredients.SelectedIndex > -1)
             {
-                _currentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity = (int) nudQuantity.Value;
+                mCurrentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity = (int) nudQuantity.Value;
                 if (cmbIngredient.SelectedIndex > 0)
                 {
                     lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.Get("craftingeditor",
                         "ingredientlistitem",
-                        ItemBase.GetName(_currentCraft.Ingredients[lstIngredients.SelectedIndex].Item),
+                        ItemBase.GetName(mCurrentCraft.Ingredients[lstIngredients.SelectedIndex].Item),
                         nudQuantity.Value);
                 }
                 else
@@ -173,12 +173,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudSpeed_ValueChanged(object sender, EventArgs e)
         {
-            _currentCraft.Time = (int) nudSpeed.Value;
+            mCurrentCraft.Time = (int) nudSpeed.Value;
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            _currentCraft.Ingredients.Add(new CraftIngredient(-1, 1));
+            mCurrentCraft.Ingredients.Add(new CraftIngredient(-1, 1));
             lstIngredients.Items.Add(Strings.Get("general", "none"));
             lstIngredients.SelectedIndex = lstIngredients.Items.Count - 1;
         }
@@ -187,14 +187,14 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstIngredients.Items.Count > 0)
             {
-                _currentCraft.Ingredients.RemoveAt(lstIngredients.SelectedIndex);
+                mCurrentCraft.Ingredients.RemoveAt(lstIngredients.SelectedIndex);
                 UpdateCraft();
             }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            foreach (var item in _changed)
+            foreach (var item in mChanged)
             {
                 item.RestoreBackup();
                 item.DeleteBackup();
@@ -208,7 +208,7 @@ namespace Intersect.Editor.Forms.Editors
         private void btnSave_Click(object sender, EventArgs e)
         {
             //Send Changed items
-            foreach (var item in _changed)
+            foreach (var item in mChanged)
             {
                 PacketSender.SendSaveObject(item);
                 item.DeleteBackup();
@@ -226,15 +226,15 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnNewCraft_Click(object sender, EventArgs e)
         {
-            _editorItem.Crafts.Add(new Craft());
+            mEditorItem.Crafts.Add(new Craft());
             lstCompositions.Items.Add(Strings.Get("general", "none"));
         }
 
         private void btnDeleteCraft_Click(object sender, EventArgs e)
         {
-            if (_editorItem.Crafts.Count > 1)
+            if (mEditorItem.Crafts.Count > 1)
             {
-                _editorItem.Crafts.RemoveAt(lstCompositions.SelectedIndex);
+                mEditorItem.Crafts.RemoveAt(lstCompositions.SelectedIndex);
                 lstCompositions.Items.RemoveAt(lstCompositions.SelectedIndex);
                 lstCompositions.SelectedIndex = 0;
             }
@@ -247,46 +247,46 @@ namespace Intersect.Editor.Forms.Editors
 
         private void toolStripItemDelete_Click(object sender, EventArgs e)
         {
-            if (_editorItem != null && lstCrafts.Focused)
+            if (mEditorItem != null && lstCrafts.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("craftingeditor", "deleteprompt"),
                         Strings.Get("craftingeditor", "deletetitle"), DarkDialogButton.YesNo,
                         Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
-                    PacketSender.SendDeleteObject(_editorItem);
+                    PacketSender.SendDeleteObject(mEditorItem);
                 }
             }
         }
 
         private void toolStripItemCopy_Click(object sender, EventArgs e)
         {
-            if (_editorItem != null && lstCrafts.Focused)
+            if (mEditorItem != null && lstCrafts.Focused)
             {
-                _copiedItem = _editorItem.BinaryData;
+                mCopiedItem = mEditorItem.BinaryData;
                 toolStripItemPaste.Enabled = true;
             }
         }
 
         private void toolStripItemPaste_Click(object sender, EventArgs e)
         {
-            if (_editorItem != null && _copiedItem != null && lstCrafts.Focused)
+            if (mEditorItem != null && mCopiedItem != null && lstCrafts.Focused)
             {
-                _editorItem.Load(_copiedItem);
+                mEditorItem.Load(mCopiedItem);
                 UpdateEditor();
             }
         }
 
         private void toolStripItemUndo_Click(object sender, EventArgs e)
         {
-            if (_changed.Contains(_editorItem) && _editorItem != null)
+            if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("craftingeditor", "undoprompt"),
                         Strings.Get("craftingeditor", "undotitle"), DarkDialogButton.YesNo,
                         Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
-                    _editorItem.RestoreBackup();
+                    mEditorItem.RestoreBackup();
                     UpdateEditor();
                 }
             }
@@ -320,10 +320,10 @@ namespace Intersect.Editor.Forms.Editors
 
         private void UpdateToolStripItems()
         {
-            toolStripItemCopy.Enabled = _editorItem != null && lstCrafts.Focused;
-            toolStripItemPaste.Enabled = _editorItem != null && _copiedItem != null && lstCrafts.Focused;
-            toolStripItemDelete.Enabled = _editorItem != null && lstCrafts.Focused;
-            toolStripItemUndo.Enabled = _editorItem != null && lstCrafts.Focused;
+            toolStripItemCopy.Enabled = mEditorItem != null && lstCrafts.Focused;
+            toolStripItemPaste.Enabled = mEditorItem != null && mCopiedItem != null && lstCrafts.Focused;
+            toolStripItemDelete.Enabled = mEditorItem != null && lstCrafts.Focused;
+            toolStripItemUndo.Enabled = mEditorItem != null && lstCrafts.Focused;
         }
 
         private void itemList_FocusChanged(object sender, EventArgs e)
@@ -355,8 +355,8 @@ namespace Intersect.Editor.Forms.Editors
                 lblQuantity.Show();
                 lblIngredient.Show();
                 cmbIngredient.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item,
-                                                  _currentCraft.Ingredients[lstIngredients.SelectedIndex].Item) + 1;
-                nudQuantity.Value = _currentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity;
+                                                  mCurrentCraft.Ingredients[lstIngredients.SelectedIndex].Item) + 1;
+                nudQuantity.Value = mCurrentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity;
             }
             else
             {
@@ -371,23 +371,23 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstIngredients.SelectedIndex > -1)
             {
-                _currentCraft.Ingredients.Insert(lstIngredients.SelectedIndex,
-                    new CraftIngredient(_currentCraft.Ingredients[lstIngredients.SelectedIndex].Item,
-                        _currentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity));
+                mCurrentCraft.Ingredients.Insert(lstIngredients.SelectedIndex,
+                    new CraftIngredient(mCurrentCraft.Ingredients[lstIngredients.SelectedIndex].Item,
+                        mCurrentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity));
                 UpdateCraft();
             }
         }
 
         private void btnDupCraft_Click(object sender, EventArgs e)
         {
-            if (lstCompositions.SelectedIndex > -1 && _currentCraft != null)
+            if (lstCompositions.SelectedIndex > -1 && mCurrentCraft != null)
             {
                 var bf = new ByteBuffer();
                 var craft = new Craft();
-                bf.WriteBytes(_currentCraft.Data());
+                bf.WriteBytes(mCurrentCraft.Data());
                 craft.Load(bf);
                 var nextIndex = lstCompositions.SelectedIndex + 1;
-                _editorItem.Crafts.Insert(nextIndex, craft);
+                mEditorItem.Crafts.Insert(nextIndex, craft);
                 UpdateEditor();
                 // TODO: Fix this so that when the selected index changes the editor actually updates
                 //lstCompositions.SelectedIndex = nextIndex;
@@ -396,13 +396,13 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbResult_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _currentCraft.Item = Database.GameObjectIdFromList(GameObjectType.Item, cmbResult.SelectedIndex - 1);
+            mCurrentCraft.Item = Database.GameObjectIdFromList(GameObjectType.Item, cmbResult.SelectedIndex - 1);
 
             if (lstCompositions.SelectedIndex > -1)
             {
                 if (cmbResult.SelectedIndex > 0)
                 {
-                    lstCompositions.Items[lstCompositions.SelectedIndex] = ItemBase.GetName(_currentCraft.Item);
+                    lstCompositions.Items[lstCompositions.SelectedIndex] = ItemBase.GetName(mCurrentCraft.Item);
                 }
                 else
                 {
@@ -415,13 +415,13 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstIngredients.SelectedIndex > -1)
             {
-                _currentCraft.Ingredients[lstIngredients.SelectedIndex].Item =
+                mCurrentCraft.Ingredients[lstIngredients.SelectedIndex].Item =
                     Database.GameObjectIdFromList(GameObjectType.Item, cmbIngredient.SelectedIndex - 1);
                 if (cmbIngredient.SelectedIndex > 0)
                 {
                     lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.Get("craftingeditor",
                         "ingredientlistitem",
-                        ItemBase.GetName(_currentCraft.Ingredients[lstIngredients.SelectedIndex].Item),
+                        ItemBase.GetName(mCurrentCraft.Ingredients[lstIngredients.SelectedIndex].Item),
                         nudQuantity.Value);
                 }
                 else

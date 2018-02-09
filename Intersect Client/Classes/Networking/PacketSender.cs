@@ -37,11 +37,11 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
             if (MapInstance.MapRequests.ContainsKey(mapNum))
             {
-                MapInstance.MapRequests[mapNum] = Globals.System.GetTimeMS() + 3000;
+                MapInstance.MapRequests[mapNum] = Globals.System.GetTimeMs() + 3000;
             }
             else
             {
-                MapInstance.MapRequests.Add(mapNum, Globals.System.GetTimeMS() + 3000);
+                MapInstance.MapRequests.Add(mapNum, Globals.System.GetTimeMs() + 3000);
             }
         }
 
@@ -128,13 +128,13 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendCreateCharacter(string Name, int Class, int Sprite)
+        public static void SendCreateCharacter(string name, int Class, int sprite)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.CreateCharacter);
-            bf.WriteString(Name.Trim());
+            bf.WriteString(name.Trim());
             bf.WriteInteger(Class);
-            bf.WriteInteger(Sprite);
+            bf.WriteInteger(sprite);
             GameNetwork.SendPacket(bf.ToArray());
         }
 

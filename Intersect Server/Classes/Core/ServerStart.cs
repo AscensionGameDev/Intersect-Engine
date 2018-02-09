@@ -24,7 +24,7 @@ namespace Intersect.Server.Classes
 
     public class ServerStart
     {
-        private static bool _errorHalt = true;
+        private static bool sErrorHalt = true;
         public static ServerNetwork SocketServer;
 
         public static void Start(string[] args)
@@ -113,9 +113,9 @@ namespace Intersect.Server.Classes
             }
 
             Console.WriteLine();
-            UPnP.ConnectNatDevice().Wait(5000);
-            UPnP.OpenServerPort(Options.ServerPort, Protocol.Tcp).Wait(5000);
-            UPnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
+            UpnP.ConnectNatDevice().Wait(5000);
+            UpnP.OpenServerPort(Options.ServerPort, Protocol.Tcp).Wait(5000);
+            UpnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
 
             Console.WriteLine();
 
@@ -143,7 +143,7 @@ namespace Intersect.Server.Classes
                     Console.WriteLine(Strings.Get("portchecking", "checkantivirus"));
                     Console.WriteLine(Strings.Get("portchecking", "screwed"));
                     Console.WriteLine();
-                    if (!UPnP.ForwardingSucceeded())
+                    if (!UpnP.ForwardingSucceeded())
                         Console.WriteLine(Strings.Get("portchecking", "checkrouterupnp"));
                 }
             }
@@ -158,7 +158,7 @@ namespace Intersect.Server.Classes
             logicThread.Start();
             if (args.Contains("nohalt"))
             {
-                _errorHalt = false;
+                sErrorHalt = false;
             }
             if (!args.Contains("noconsole"))
             {
@@ -367,7 +367,7 @@ namespace Intersect.Server.Classes
                                                 }
                                                 if (commandsplit[3] == Strings.Get("commands", "true"))
                                                 {
-                                                    ip = Globals.Clients[i].GetIP();
+                                                    ip = Globals.Clients[i].GetIp();
                                                 }
                                                 Database.AddBan(Globals.Clients[i],
                                                     Convert.ToInt32(commandsplit[2]),
@@ -478,7 +478,7 @@ namespace Intersect.Server.Classes
                                                 }
                                                 if (commandsplit[3] == Strings.Get("commands", "true"))
                                                 {
-                                                    ip = Globals.Clients[i].GetIP();
+                                                    ip = Globals.Clients[i].GetIp();
                                                 }
                                                 Database.AddMute(Globals.Clients[i],
                                                     Convert.ToInt32(commandsplit[2]),
@@ -486,7 +486,7 @@ namespace Intersect.Server.Classes
                                                 Globals.Clients[i].Muted = true; //Cut out their tongues!
                                                 Globals.Clients[i].MuteReason =
                                                     Database.CheckMute(Globals.Clients[i].MyAccount,
-                                                        Globals.Clients[i].GetIP());
+                                                        Globals.Clients[i].GetIp());
                                                 PacketSender.SendGlobalMsg(Strings.Get("account", "muted",
                                                     Globals.Clients[i].Entity.MyName));
                                                 Console.WriteLine(@"    " +
@@ -653,15 +653,15 @@ namespace Intersect.Server.Classes
                             }
                             else if (commandsplit[1] == Strings.Get("commands", "cpslock"))
                             {
-                                Globals.CPSLock = true;
+                                Globals.CpsLock = true;
                             }
                             else if (commandsplit[1] == Strings.Get("commands", "cpsunlock"))
                             {
-                                Globals.CPSLock = false;
+                                Globals.CpsLock = false;
                             }
                             else if (commandsplit[1] == Strings.Get("commands", "cpsstatus"))
                             {
-                                if (Globals.CPSLock)
+                                if (Globals.CpsLock)
                                 {
                                     Console.WriteLine(Strings.Get("commandoutput", "cpslocked"));
                                 }
@@ -678,7 +678,7 @@ namespace Intersect.Server.Classes
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Get("commandoutput", "cps", Globals.CPS));
+                            Console.WriteLine(Strings.Get("commandoutput", "cps", Globals.Cps));
                         }
                     }
                     else if (commandsplit[0] == Strings.Get("commands", "exit")) //Exit Command
@@ -839,7 +839,7 @@ namespace Intersect.Server.Classes
             Log.Error((Exception)e?.ExceptionObject);
             if (e.IsTerminating)
             {
-                if (_errorHalt)
+                if (sErrorHalt)
                 {
                     Console.WriteLine(Strings.Get("errors", "errorservercrash"));
                     Console.ReadKey();
@@ -876,20 +876,20 @@ namespace Intersect.Server.Classes
             // Put your own handler here
             switch (ctrlType)
             {
-                case CtrlTypes.CTRL_C_EVENT:
+                case CtrlTypes.CtrlCEvent:
                     //Handled Elsewhere
                     break;
 
-                case CtrlTypes.CTRL_BREAK_EVENT:
+                case CtrlTypes.CtrlBreakEvent:
                     //Handled Elsewhere
                     break;
 
-                case CtrlTypes.CTRL_CLOSE_EVENT:
+                case CtrlTypes.CtrlCloseEvent:
                     ShutDown();
                     break;
 
-                case CtrlTypes.CTRL_LOGOFF_EVENT:
-                case CtrlTypes.CTRL_SHUTDOWN_EVENT:
+                case CtrlTypes.CtrlLogoffEvent:
+                case CtrlTypes.CtrlShutdownEvent:
                     ShutDown();
                     break;
 
@@ -902,21 +902,21 @@ namespace Intersect.Server.Classes
         // as external and receiving a delegate.
 
         [DllImport("Kernel32")]
-        public static extern bool SetConsoleCtrlHandler(HandlerRoutine Handler, bool Add);
+        public static extern bool SetConsoleCtrlHandler(HandlerRoutine handler, bool add);
 
         // A delegate type to be used as the handler routine
         // for SetConsoleCtrlHandler.
-        public delegate bool HandlerRoutine(CtrlTypes CtrlType);
+        public delegate bool HandlerRoutine(CtrlTypes ctrlType);
 
         // An enumerated type for the control messages
         // sent to the handler routine.
         public enum CtrlTypes
         {
-            CTRL_C_EVENT = 0,
-            CTRL_BREAK_EVENT,
-            CTRL_CLOSE_EVENT,
-            CTRL_LOGOFF_EVENT = 5,
-            CTRL_SHUTDOWN_EVENT
+            CtrlCEvent = 0,
+            CtrlBreakEvent,
+            CtrlCloseEvent,
+            CtrlLogoffEvent = 5,
+            CtrlShutdownEvent
         }
 
         #endregion

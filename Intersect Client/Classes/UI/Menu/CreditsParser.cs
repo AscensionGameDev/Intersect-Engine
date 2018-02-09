@@ -42,22 +42,22 @@ namespace Intersect.Client.Classes.UI.Menu
                     switch (alignment)
                     {
                         case "center":
-                            cl.alignment = Alignments.CenterH;
+                            cl.Alignment = Alignments.CenterH;
                             break;
                         case "right":
-                            cl.alignment = Alignments.Right;
+                            cl.Alignment = Alignments.Right;
                             break;
                         default:
-                            cl.alignment = Alignments.Left;
+                            cl.Alignment = Alignments.Left;
                             break;
                     }
-                    cl.font = reader.GetAttribute("font");
-                    cl.size = int.Parse(reader.GetAttribute("size"));
+                    cl.Font = reader.GetAttribute("font");
+                    cl.Size = int.Parse(reader.GetAttribute("size"));
                     var colors = reader.GetAttribute("color").Split(',');
-                    cl.clr = new Color(int.Parse(colors[0]), int.Parse(colors[1]), int.Parse(colors[2]),
+                    cl.Clr = new Color(int.Parse(colors[0]), int.Parse(colors[1]), int.Parse(colors[2]),
                         int.Parse(colors[3]));
                     reader.Read();
-                    cl.text = reader.Value;
+                    cl.Text = reader.Value;
                     Credits.Add(cl);
                 }
             }
@@ -65,11 +65,11 @@ namespace Intersect.Client.Classes.UI.Menu
 
         public struct CreditsLine
         {
-            public string text;
-            public string font;
-            public int size;
-            public Alignments alignment;
-            public Color clr;
+            public string Text;
+            public string Font;
+            public int Size;
+            public Alignments Alignment;
+            public Color Clr;
         }
     }
 }

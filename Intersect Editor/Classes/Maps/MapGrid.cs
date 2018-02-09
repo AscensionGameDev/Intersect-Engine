@@ -16,86 +16,86 @@ namespace Intersect.Editor.Classes.Maps
 {
     public class MapGrid
     {
-        private MapGridItem _contextMap;
-        private ContextMenuStrip _contextMenu;
+        private MapGridItem mContextMap;
+        private ContextMenuStrip mContextMenu;
 
-        private int _currentCellX = -1;
-        private int _currentCellY = -1;
+        private int mCurrentCellX = -1;
+        private int mCurrentCellY = -1;
 
-        private ToolStripMenuItem _dropDownLinkItem;
-        private ToolStripMenuItem _dropDownUnlinkItem;
-        private ToolStripMenuItem _recacheMapItem;
+        private ToolStripMenuItem mDropDownLinkItem;
+        private ToolStripMenuItem mDropDownUnlinkItem;
+        private ToolStripMenuItem mRecacheMapItem;
         public Rectangle ContentRect;
-        private bool createTextures;
-        private List<Texture2D> freeTextures = new List<Texture2D>();
+        private bool mCreateTextures;
+        private List<Texture2D> mFreeTextures = new List<Texture2D>();
         public MapGridItem[,] Grid;
-        private List<int> _gridMaps = null;
+        private List<int> mGridMaps = null;
         public int GridHeight = 50;
         public int GridWidth = 50;
 
-        private List<int> LinkMaps = new List<int>();
+        private List<int> mLinkMaps = new List<int>();
         public bool Loaded;
 
-        private float MaxZoom = 1f;
-        private float MinZoom;
+        private float mMaxZoom = 1f;
+        private float mMinZoom;
         public bool ShowLines = true;
-        private bool sizeChanged = true;
+        private bool mSizeChanged = true;
 
-        private object texLock = new object();
-        private List<Texture2D> textures = new List<Texture2D>();
+        private object mTexLock = new object();
+        private List<Texture2D> mTextures = new List<Texture2D>();
         public int TileHeight;
         public int TileWidth;
-        private List<MapGridItem> toLoad = new List<MapGridItem>();
+        private List<MapGridItem> mToLoad = new List<MapGridItem>();
         public Rectangle ViewRect;
-        private Thread workerThread;
+        private Thread mWorkerThread;
 
         public float Zoom = 1;
 
         public MapGrid(ToolStripMenuItem dropDownItem, ToolStripMenuItem dropDownUnlink, ToolStripMenuItem recacheItem,
             ContextMenuStrip contextMenu)
         {
-            workerThread = new Thread(AsyncLoadingThread);
-            workerThread.Start();
-            _dropDownLinkItem = dropDownItem;
-            _dropDownLinkItem.Click += LinkMapItem_Click;
-            _contextMenu = contextMenu;
-            _dropDownUnlinkItem = dropDownUnlink;
-            _dropDownUnlinkItem.Click += UnlinkMapItem_Click;
-            _recacheMapItem = recacheItem;
-            _recacheMapItem.Click += _recacheMapItem_Click;
+            mWorkerThread = new Thread(AsyncLoadingThread);
+            mWorkerThread.Start();
+            mDropDownLinkItem = dropDownItem;
+            mDropDownLinkItem.Click += LinkMapItem_Click;
+            mContextMenu = contextMenu;
+            mDropDownUnlinkItem = dropDownUnlink;
+            mDropDownUnlinkItem.Click += UnlinkMapItem_Click;
+            mRecacheMapItem = recacheItem;
+            mRecacheMapItem.Click += _recacheMapItem_Click;
         }
 
         private void AsyncLoadingThread()
         {
             while (!Globals.ClosingEditor)
             {
-                lock (texLock)
+                lock (mTexLock)
                 {
-                    if (toLoad.Count > 0 && freeTextures.Count > 0)
+                    if (mToLoad.Count > 0 && mFreeTextures.Count > 0)
                     {
-                        var itm = toLoad[0];
-                        toLoad.RemoveAt(0);
-                        var tex = freeTextures[0];
-                        freeTextures.RemoveAt(0);
+                        var itm = mToLoad[0];
+                        mToLoad.RemoveAt(0);
+                        var tex = mFreeTextures[0];
+                        mFreeTextures.RemoveAt(0);
 
-                        var texData = Database.LoadMapCache(itm.mapnum, itm.revision, TileWidth, TileHeight);
+                        var texData = Database.LoadMapCache(itm.Mapnum, itm.Revision, TileWidth, TileHeight);
                         try
                         {
                             if (texData != null)
                             {
                                 tex.SetData(texData);
-                                itm.tex = tex;
+                                itm.Tex = tex;
                             }
                             else
                             {
-                                freeTextures.Add(tex);
+                                mFreeTextures.Add(tex);
                             }
                         }
                         catch (Exception ex)
                         {
                             //Ignore errors that are likely caused by timing issues.
-                            freeTextures.Add(tex);
-                            toLoad.Add(itm);
+                            mFreeTextures.Add(tex);
+                            mToLoad.Add(itm);
                         }
                     }
                 }
@@ -104,7 +104,7 @@ namespace Intersect.Editor.Classes.Maps
 
         public Object GetMapGridLock()
         {
-            return texLock;
+            return mTexLock;
         }
 
         public void Load(ByteBuffer bf)
@@ -114,7 +114,7 @@ namespace Intersect.Editor.Classes.Maps
             GridWidth = (int) bf.ReadLong();
             GridHeight = (int) bf.ReadLong();
             bf.ReadBoolean();
-            lock (texLock)
+            lock (mTexLock)
             {
                 UnloadTextures();
                 Grid = new MapGridItem[GridWidth, GridHeight];
@@ -136,30 +136,30 @@ namespace Intersect.Editor.Classes.Maps
                         else
                         {
                             Grid[x, y] = new MapGridItem(num, bf.ReadString(), bf.ReadInteger());
-                            gridMaps.Add(Grid[x, y].mapnum);
+                            gridMaps.Add(Grid[x, y].Mapnum);
                         }
                     }
                 }
             }
             //Get a list of maps -- if they are not in this grid.
-            LinkMaps.Clear();
+            mLinkMaps.Clear();
             for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
             {
                 if (!gridMaps.Contains(MapList.GetOrderedMaps()[i].MapNum))
                 {
-                    LinkMaps.Add(MapList.GetOrderedMaps()[i].MapNum);
+                    mLinkMaps.Add(MapList.GetOrderedMaps()[i].MapNum);
                 }
             }
-            MaxZoom = 1f; //Real Size
-            Zoom = MinZoom;
+            mMaxZoom = 1f; //Real Size
+            Zoom = mMinZoom;
             TileWidth = (int) (Options.TileWidth * Options.MapWidth * Zoom);
             TileHeight = (int) (Options.TileHeight * Options.MapHeight * Zoom);
             ContentRect = new Rectangle(ViewRect.Width / 2 - (TileWidth * (GridWidth + 2)) / 2,
                 ViewRect.Height / 2 - (TileHeight * (GridHeight + 2)) / 2, TileWidth * (GridWidth + 2),
                 TileHeight * (GridHeight + 2));
-            createTextures = true;
+            mCreateTextures = true;
             Loaded = true;
-            _gridMaps = gridMaps;
+            mGridMaps = gridMaps;
         }
 
         public void DoubleClick(int x, int y)
@@ -170,7 +170,7 @@ namespace Intersect.Editor.Classes.Maps
                 {
                     if (new Rectangle(ContentRect.X + x1 * TileWidth, ContentRect.Y + y1 * TileHeight, TileWidth, TileHeight).Contains(new System.Drawing.Point(x, y)))
                     {
-                        if (Grid[x1 - 1, y1 - 1].mapnum > -1)
+                        if (Grid[x1 - 1, y1 - 1].Mapnum > -1)
                         {
                             if (Globals.CurrentMap != null && Globals.CurrentMap.Changed() &&
                                 DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"),
@@ -180,7 +180,7 @@ namespace Intersect.Editor.Classes.Maps
                             {
                                 SaveMap();
                             }
-                            Globals.MainForm.EnterMap(Grid[x1 - 1, y1 - 1].mapnum);
+                            Globals.MainForm.EnterMap(Grid[x1 - 1, y1 - 1].Mapnum);
                             Globals.MapEditorWindow.Select();
                         }
                     }
@@ -219,7 +219,7 @@ namespace Intersect.Editor.Classes.Maps
                     DialogResult.Yes)
                 {
                     FetchMissingPreviews(false);
-                    Globals.PreviewProgressForm = new frmProgress();
+                    Globals.PreviewProgressForm = new FrmProgress();
                     Globals.PreviewProgressForm.SetTitle(Strings.Get("mapgrid", "savingscreenshot"));
                     Thread screenShotThread = new Thread(() => ScreenshotWorld(fileDialog.FileName));
                     screenShotThread.Start();
@@ -259,20 +259,20 @@ namespace Intersect.Editor.Classes.Maps
                     int gridCol = x;
 
                     MapGridItem item = Grid[gridCol, gridRow];
-                    if (item.mapnum >= 0)
+                    if (item.Mapnum >= 0)
                     {
                         Bitmap reader = null;
-                        if (pngReaderDict.ContainsKey(item.mapnum))
+                        if (pngReaderDict.ContainsKey(item.Mapnum))
                         {
-                            reader = pngReaderDict[item.mapnum];
+                            reader = pngReaderDict[item.Mapnum];
                         }
                         else
                         {
-                            var data = Database.LoadMapCacheRaw(item.mapnum, item.revision);
+                            var data = Database.LoadMapCacheRaw(item.Mapnum, item.Revision);
                             if (data != null)
                             {
                                 reader = new Bitmap(new MemoryStream(data));
-                                pngReaderDict.Add(item.mapnum, reader);
+                                pngReaderDict.Add(item.Mapnum, reader);
                             }
                         }
 
@@ -325,17 +325,17 @@ namespace Intersect.Editor.Classes.Maps
         {
             if (Grid != null && Loaded)
             {
-                return _gridMaps.Contains(mapNum);
+                return mGridMaps.Contains(mapNum);
             }
             return false;
         }
 
         public void ResetForm()
         {
-            lock (texLock)
+            lock (mTexLock)
             {
                 UnloadTextures();
-                createTextures = true;
+                mCreateTextures = true;
             }
         }
 
@@ -384,10 +384,10 @@ namespace Intersect.Editor.Classes.Maps
             {
                 for (int y = 0; y < GridHeight; y++)
                 {
-                    if (Grid[x, y].mapnum > -1 && Database.LoadMapCacheLegacy(Grid[x, y].mapnum,
-                            Grid[x, y].revision) == null)
+                    if (Grid[x, y].Mapnum > -1 && Database.LoadMapCacheLegacy(Grid[x, y].Mapnum,
+                            Grid[x, y].Revision) == null)
                     {
-                        maps.Add(Grid[x, y].mapnum);
+                        maps.Add(Grid[x, y].Mapnum);
                     }
                 }
             }
@@ -399,7 +399,7 @@ namespace Intersect.Editor.Classes.Maps
                     DialogResult.Yes)
                 {
                     Globals.FetchingMapPreviews = true;
-                    Globals.PreviewProgressForm = new frmProgress();
+                    Globals.PreviewProgressForm = new FrmProgress();
                     Globals.PreviewProgressForm.SetTitle(Strings.Get("mapgrid", "fetchingmaps"));
                     Globals.PreviewProgressForm.SetProgress(Strings.Get("mapgrid", "fetchingprogress", 0, maps.Count),
                         0,
@@ -425,59 +425,59 @@ namespace Intersect.Editor.Classes.Maps
                             TileHeight)
                         .Contains(new System.Drawing.Point(x, y)))
                     {
-                        _currentCellX = x1;
-                        _currentCellY = y1;
-                        if (_currentCellX >= 0 && _currentCellY >= 0)
+                        mCurrentCellX = x1;
+                        mCurrentCellY = y1;
+                        if (mCurrentCellX >= 0 && mCurrentCellY >= 0)
                         {
-                            if (_currentCellX >= 0 && _currentCellY >= 0 && _currentCellX - 1 <= GridWidth &&
-                                _currentCellY - 1 <= GridHeight)
+                            if (mCurrentCellX >= 0 && mCurrentCellY >= 0 && mCurrentCellX - 1 <= GridWidth &&
+                                mCurrentCellY - 1 <= GridHeight)
                             {
-                                if (_currentCellX == 0 || _currentCellY == 0 || _currentCellX - 1 == GridWidth ||
-                                    _currentCellY - 1 == GridHeight ||
-                                    Grid[_currentCellX - 1, _currentCellY - 1].mapnum <= -1)
+                                if (mCurrentCellX == 0 || mCurrentCellY == 0 || mCurrentCellX - 1 == GridWidth ||
+                                    mCurrentCellY - 1 == GridHeight ||
+                                    Grid[mCurrentCellX - 1, mCurrentCellY - 1].Mapnum <= -1)
                                 {
                                     int adjacentMap = -1;
                                     //Check Left
-                                    if (_currentCellX > 1 && _currentCellY != 0 && _currentCellY - 1 < GridHeight)
+                                    if (mCurrentCellX > 1 && mCurrentCellY != 0 && mCurrentCellY - 1 < GridHeight)
                                     {
-                                        if (Grid[_currentCellX - 2, _currentCellY - 1].mapnum > -1)
-                                            adjacentMap = Grid[_currentCellX - 2, _currentCellY - 1].mapnum;
+                                        if (Grid[mCurrentCellX - 2, mCurrentCellY - 1].Mapnum > -1)
+                                            adjacentMap = Grid[mCurrentCellX - 2, mCurrentCellY - 1].Mapnum;
                                     }
                                     //Check Right
-                                    if (_currentCellX < GridWidth && _currentCellY != 0 &&
-                                        _currentCellY - 1 < GridHeight)
+                                    if (mCurrentCellX < GridWidth && mCurrentCellY != 0 &&
+                                        mCurrentCellY - 1 < GridHeight)
                                     {
-                                        if (Grid[_currentCellX, _currentCellY - 1].mapnum > -1)
-                                            adjacentMap = Grid[_currentCellX, _currentCellY - 1].mapnum;
+                                        if (Grid[mCurrentCellX, mCurrentCellY - 1].Mapnum > -1)
+                                            adjacentMap = Grid[mCurrentCellX, mCurrentCellY - 1].Mapnum;
                                     }
                                     //Check Up
-                                    if (_currentCellX != 0 && _currentCellY > 1 && _currentCellX - 1 < GridWidth)
+                                    if (mCurrentCellX != 0 && mCurrentCellY > 1 && mCurrentCellX - 1 < GridWidth)
                                     {
-                                        if (Grid[_currentCellX - 1, _currentCellY - 2].mapnum > -1)
-                                            adjacentMap = Grid[_currentCellX - 1, _currentCellY - 2].mapnum;
+                                        if (Grid[mCurrentCellX - 1, mCurrentCellY - 2].Mapnum > -1)
+                                            adjacentMap = Grid[mCurrentCellX - 1, mCurrentCellY - 2].Mapnum;
                                     }
                                     //Check Down
-                                    if (_currentCellX != 0 && _currentCellY < GridHeight &&
-                                        _currentCellX - 1 < GridWidth)
+                                    if (mCurrentCellX != 0 && mCurrentCellY < GridHeight &&
+                                        mCurrentCellX - 1 < GridWidth)
                                     {
-                                        if (Grid[_currentCellX - 1, _currentCellY].mapnum > -1)
-                                            adjacentMap = Grid[_currentCellX - 1, _currentCellY].mapnum;
+                                        if (Grid[mCurrentCellX - 1, mCurrentCellY].Mapnum > -1)
+                                            adjacentMap = Grid[mCurrentCellX - 1, mCurrentCellY].Mapnum;
                                     }
                                     if (adjacentMap > -1)
                                     {
-                                        _contextMenu.Show(mapGridView, new System.Drawing.Point(x, y));
-                                        _dropDownUnlinkItem.Visible = false;
-                                        _dropDownLinkItem.Visible = true;
-                                        _recacheMapItem.Visible = false;
+                                        mContextMenu.Show(mapGridView, new System.Drawing.Point(x, y));
+                                        mDropDownUnlinkItem.Visible = false;
+                                        mDropDownLinkItem.Visible = true;
+                                        mRecacheMapItem.Visible = false;
                                     }
                                 }
                                 else
                                 {
-                                    _contextMap = Grid[_currentCellX - 1, _currentCellY - 1];
-                                    _contextMenu.Show(mapGridView, new System.Drawing.Point(x, y));
-                                    _dropDownUnlinkItem.Visible = true;
-                                    _recacheMapItem.Visible = true;
-                                    _dropDownLinkItem.Visible = false;
+                                    mContextMap = Grid[mCurrentCellX - 1, mCurrentCellY - 1];
+                                    mContextMenu.Show(mapGridView, new System.Drawing.Point(x, y));
+                                    mDropDownUnlinkItem.Visible = true;
+                                    mRecacheMapItem.Visible = true;
+                                    mDropDownLinkItem.Visible = false;
                                 }
                             }
                         }
@@ -485,39 +485,39 @@ namespace Intersect.Editor.Classes.Maps
                     }
                 }
             }
-            _currentCellX = -1;
-            _currentCellY = -1;
+            mCurrentCellX = -1;
+            mCurrentCellY = -1;
         }
 
         private void UnlinkMapItem_Click(object sender, EventArgs e)
         {
-            if (_contextMap != null && _contextMap.mapnum > -1)
+            if (mContextMap != null && mContextMap.Mapnum > -1)
             {
                 if (
-                    DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "unlinkprompt", _contextMap.name),
+                    DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "unlinkprompt", mContextMap.Name),
                         Strings.Get("mapgrid", "unlinkcaption"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
-                    PacketSender.SendUnlinkMap(_contextMap.mapnum);
+                    PacketSender.SendUnlinkMap(mContextMap.Mapnum);
             }
         }
 
         private void _recacheMapItem_Click(object sender, EventArgs e)
         {
-            if (_contextMap != null && _contextMap.mapnum > -1)
+            if (mContextMap != null && mContextMap.Mapnum > -1)
             {
                 //Fetch and screenshot this singular map
-                Database.SaveMapCache(_contextMap.mapnum, _contextMap.revision, null);
-                if (MapInstance.Lookup.Get<MapInstance>(_contextMap.mapnum) != null)
-                    MapInstance.Lookup.Get<MapInstance>(_contextMap.mapnum).Delete();
-                Globals.MapsToFetch = new List<int>() {_contextMap.mapnum};
-                PacketSender.SendNeedMap(_contextMap.mapnum);
+                Database.SaveMapCache(mContextMap.Mapnum, mContextMap.Revision, null);
+                if (MapInstance.Lookup.Get<MapInstance>(mContextMap.Mapnum) != null)
+                    MapInstance.Lookup.Get<MapInstance>(mContextMap.Mapnum).Delete();
+                Globals.MapsToFetch = new List<int>() {mContextMap.Mapnum};
+                PacketSender.SendNeedMap(mContextMap.Mapnum);
             }
         }
 
         private void LinkMapItem_Click(object sender, EventArgs e)
         {
-            frmWarpSelection frmWarpSelection = new frmWarpSelection();
-            frmWarpSelection.InitForm(false, LinkMaps);
+            FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
+            frmWarpSelection.InitForm(false, mLinkMaps);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
@@ -525,67 +525,67 @@ namespace Intersect.Editor.Classes.Maps
                 int linkMap = frmWarpSelection.GetMap();
                 int adjacentMap = -1;
                 //Check Left
-                if (_currentCellX > 1 && _currentCellY != 0 && _currentCellY - 1 < GridHeight)
+                if (mCurrentCellX > 1 && mCurrentCellY != 0 && mCurrentCellY - 1 < GridHeight)
                 {
-                    if (Grid[_currentCellX - 2, _currentCellY - 1].mapnum > -1)
-                        adjacentMap = Grid[_currentCellX - 2, _currentCellY - 1].mapnum;
+                    if (Grid[mCurrentCellX - 2, mCurrentCellY - 1].Mapnum > -1)
+                        adjacentMap = Grid[mCurrentCellX - 2, mCurrentCellY - 1].Mapnum;
                 }
                 //Check Right
-                if (_currentCellX < GridWidth && _currentCellY != 0 && _currentCellY - 1 < GridHeight)
+                if (mCurrentCellX < GridWidth && mCurrentCellY != 0 && mCurrentCellY - 1 < GridHeight)
                 {
-                    if (Grid[_currentCellX, _currentCellY - 1].mapnum > -1)
-                        adjacentMap = Grid[_currentCellX, _currentCellY - 1].mapnum;
+                    if (Grid[mCurrentCellX, mCurrentCellY - 1].Mapnum > -1)
+                        adjacentMap = Grid[mCurrentCellX, mCurrentCellY - 1].Mapnum;
                 }
                 //Check Up
-                if (_currentCellX != 0 && _currentCellY > 1 && _currentCellX - 1 < GridWidth)
+                if (mCurrentCellX != 0 && mCurrentCellY > 1 && mCurrentCellX - 1 < GridWidth)
                 {
-                    if (Grid[_currentCellX - 1, _currentCellY - 2].mapnum > -1)
-                        adjacentMap = Grid[_currentCellX - 1, _currentCellY - 2].mapnum;
+                    if (Grid[mCurrentCellX - 1, mCurrentCellY - 2].Mapnum > -1)
+                        adjacentMap = Grid[mCurrentCellX - 1, mCurrentCellY - 2].Mapnum;
                 }
                 //Check Down
-                if (_currentCellX != 0 && _currentCellY < GridHeight && _currentCellX - 1 < GridWidth)
+                if (mCurrentCellX != 0 && mCurrentCellY < GridHeight && mCurrentCellX - 1 < GridWidth)
                 {
-                    if (Grid[_currentCellX - 1, _currentCellY].mapnum > -1)
-                        adjacentMap = Grid[_currentCellX - 1, _currentCellY].mapnum;
+                    if (Grid[mCurrentCellX - 1, mCurrentCellY].Mapnum > -1)
+                        adjacentMap = Grid[mCurrentCellX - 1, mCurrentCellY].Mapnum;
                 }
                 if (adjacentMap != -1)
                 {
-                    PacketSender.SendLinkMap(adjacentMap, linkMap, _currentCellX - 1, _currentCellY - 1);
+                    PacketSender.SendLinkMap(adjacentMap, linkMap, mCurrentCellX - 1, mCurrentCellY - 1);
                 }
             }
         }
 
         public void Update(Microsoft.Xna.Framework.Rectangle panelBounds)
         {
-            MinZoom =
+            mMinZoom =
                 Math.Min(panelBounds.Width / (float) (Options.TileWidth * Options.MapWidth * (GridWidth + 2)),
                     panelBounds.Height / (float) (Options.TileHeight * Options.MapHeight * (GridHeight + 2))) / 2f;
             //Gotta calculate 
-            if (Zoom < MinZoom)
+            if (Zoom < mMinZoom)
             {
-                Zoom = MinZoom * 2;
+                Zoom = mMinZoom * 2;
                 TileWidth = (int) (Options.TileWidth * Options.MapWidth * Zoom);
                 TileHeight = (int) (Options.TileHeight * Options.MapHeight * Zoom);
                 ContentRect = new Rectangle(0, 0, TileWidth * (GridWidth + 2), TileHeight * (GridHeight + 2));
-                lock (texLock)
+                lock (mTexLock)
                 {
                     UnloadTextures();
                 }
-                createTextures = true;
+                mCreateTextures = true;
             }
             ViewRect = new Rectangle(panelBounds.Left, panelBounds.Top, panelBounds.Width, panelBounds.Height);
             if (ContentRect.X + TileWidth > ViewRect.Width) ContentRect.X = ViewRect.Width - TileWidth;
             if (ContentRect.X + ContentRect.Width < TileWidth) ContentRect.X = -ContentRect.Width + TileWidth;
             if (ContentRect.Y + TileHeight > ViewRect.Height) ContentRect.Y = ViewRect.Height - TileHeight;
             if (ContentRect.Y + ContentRect.Height < TileHeight) ContentRect.Y = -ContentRect.Height + TileHeight;
-            if (createTextures)
+            if (mCreateTextures)
             {
                 CreateTextures(panelBounds);
-                createTextures = false;
+                mCreateTextures = false;
             }
             if (Grid != null)
             {
-                lock (texLock)
+                lock (mTexLock)
                 {
                     for (int x = 0; x < GridWidth; x++)
                     {
@@ -597,20 +597,20 @@ namespace Intersect.Editor.Classes.Maps
                                     TileHeight).IntersectsWith(ViewRect) && Grid[x, y] != null)
                             {
                                 //if not loaded, add it to the queue
-                                if ((Grid[x, y].tex == null || Grid[x, y].tex.IsDisposed) && Grid[x, y].mapnum != -1 &&
-                                    !toLoad.Contains(Grid[x, y]))
+                                if ((Grid[x, y].Tex == null || Grid[x, y].Tex.IsDisposed) && Grid[x, y].Mapnum != -1 &&
+                                    !mToLoad.Contains(Grid[x, y]))
                                 {
-                                    toLoad.Add(Grid[x, y]);
+                                    mToLoad.Add(Grid[x, y]);
                                 }
                             }
                             else
                             {
                                 //If loaded, kick it to the curb
-                                if (toLoad.Contains(Grid[x, y])) toLoad.Remove(Grid[x, y]);
-                                if (Grid[x, y].tex != null)
+                                if (mToLoad.Contains(Grid[x, y])) mToLoad.Remove(Grid[x, y]);
+                                if (Grid[x, y].Tex != null)
                                 {
-                                    freeTextures.Add(Grid[x, y].tex);
-                                    Grid[x, y].tex = null;
+                                    mFreeTextures.Add(Grid[x, y].Tex);
+                                    Grid[x, y].Tex = null;
                                 }
                             }
                         }
@@ -623,7 +623,7 @@ namespace Intersect.Editor.Classes.Maps
         {
             if (Loaded)
             {
-                lock (texLock)
+                lock (mTexLock)
                 {
                     for (int x = 0; x < GridWidth; x++)
                     {
@@ -646,35 +646,35 @@ namespace Intersect.Editor.Classes.Maps
 
         private void CreateTextures(Microsoft.Xna.Framework.Rectangle panelBounds)
         {
-            lock (texLock)
+            lock (mTexLock)
             {
                 int hCount = (int) Math.Ceiling((float) panelBounds.Width / TileWidth) + 2;
                 int wCount = (int) Math.Ceiling((float) panelBounds.Height / TileHeight) + 2;
                 for (int i = 0; i < hCount * wCount && i < GridWidth * GridHeight; i++)
                 {
-                    textures.Add(new Texture2D(EditorGraphics.GetGraphicsDevice(), TileWidth, TileHeight));
+                    mTextures.Add(new Texture2D(EditorGraphics.GetGraphicsDevice(), TileWidth, TileHeight));
                 }
-                freeTextures.AddRange(textures.ToArray());
+                mFreeTextures.AddRange(mTextures.ToArray());
             }
         }
 
         private void UnloadTextures()
         {
-            lock (texLock)
+            lock (mTexLock)
             {
-                for (int i = 0; i < textures.Count; i++)
+                for (int i = 0; i < mTextures.Count; i++)
                 {
-                    textures[i].Dispose();
+                    mTextures[i].Dispose();
                 }
-                textures.Clear();
-                freeTextures.Clear();
+                mTextures.Clear();
+                mFreeTextures.Clear();
                 if (Grid != null && Loaded)
                 {
                     for (int x = 0; x < GridWidth; x++)
                     {
                         for (int y = 0; y < GridHeight; y++)
                         {
-                            Grid[x, y].tex = null;
+                            Grid[x, y].Tex = null;
                         }
                     }
                 }
@@ -702,14 +702,14 @@ namespace Intersect.Editor.Classes.Maps
             Zoom += .05f * amt;
             if (prevZoom != Zoom)
             {
-                lock (texLock)
+                lock (mTexLock)
                 {
                     UnloadTextures();
                 }
-                createTextures = true;
+                mCreateTextures = true;
             }
-            if (Zoom < MinZoom) Zoom = MinZoom;
-            if (Zoom > MaxZoom) Zoom = MaxZoom;
+            if (Zoom < mMinZoom) Zoom = mMinZoom;
+            if (Zoom > mMaxZoom) Zoom = mMaxZoom;
             TileWidth = (int) (Options.TileWidth * Options.MapWidth * Zoom);
             TileHeight = (int) (Options.TileHeight * Options.MapHeight * Zoom);
             //were gonna get the X/Y of where the content rect would need so that the grid location that the mouse is hovering over would be center of the viewing rect
@@ -729,14 +729,14 @@ namespace Intersect.Editor.Classes.Maps
     {
         public MapGridItem(int num, string name = "", int revision = 0)
         {
-            mapnum = num;
-            this.name = name;
-            this.revision = revision;
+            Mapnum = num;
+            this.Name = name;
+            this.Revision = revision;
         }
 
-        public string name { get; set; }
-        public int revision { get; set; }
-        public int mapnum { get; set; }
-        public Texture2D tex { get; set; }
+        public string Name { get; set; }
+        public int Revision { get; set; }
+        public int Mapnum { get; set; }
+        public Texture2D Tex { get; set; }
     }
 }

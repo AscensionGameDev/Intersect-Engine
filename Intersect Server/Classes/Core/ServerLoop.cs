@@ -39,13 +39,13 @@ namespace Intersect.Server.Classes.Core
                 cps++;
                 if (timeMs >= cpsTimer)
                 {
-                    Globals.CPS = cps;
+                    Globals.Cps = cps;
                     cps = 0;
                     cpsTimer = timeMs + 1000;
                 }
                 ServerTime.Update();
                 var currentTime = Globals.System.GetTimeMs();
-                if (Globals.CPSLock && currentTime < timeMs + 10)
+                if (Globals.CpsLock && currentTime < timeMs + 10)
                 {
                     int waitTime = (int) ((timeMs + 10) - currentTime);
                     Thread.Sleep(waitTime);

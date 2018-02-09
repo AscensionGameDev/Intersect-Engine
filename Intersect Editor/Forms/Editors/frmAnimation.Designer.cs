@@ -4,7 +4,7 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms
 {
-    partial class frmAnimation
+    partial class FrmAnimation
     {
         /// <summary>
         /// Required designer variable.
@@ -33,7 +33,7 @@ namespace Intersect.Editor.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmAnimation));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmAnimation));
             this.grpAnimations = new DarkUI.Controls.DarkGroupBox();
             this.lstAnimations = new System.Windows.Forms.ListBox();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
@@ -1028,7 +1028,7 @@ namespace Intersect.Editor.Forms
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.MaximizeBox = false;
-            this.Name = "frmAnimation";
+            this.Name = "FrmAnimation";
             this.Text = "Animation Editor";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmAnimation_FormClosed);
             this.Load += new System.EventHandler(this.frmAnimation_Load);

@@ -20,7 +20,7 @@ namespace Intersect.GameObjects
         public int DamageType;
 
         //Drops
-        public List<NPCDrop> Drops = new List<NPCDrop>();
+        public List<NpcDrop> Drops = new List<NpcDrop>();
 
         public int Experience;
         public int Level = 1;
@@ -51,7 +51,7 @@ namespace Intersect.GameObjects
             Name = "New Npc";
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
-                Drops.Add(new NPCDrop());
+                Drops.Add(new NpcDrop());
             }
         }
 
@@ -163,7 +163,7 @@ namespace Intersect.GameObjects
         }
     }
 
-    public class NPCDrop
+    public class NpcDrop
     {
         public int Amount;
         public int Chance;

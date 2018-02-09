@@ -8,20 +8,20 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect.Editor.Forms.DockingElements
 {
-    public partial class frmMapGrid : DockContent
+    public partial class FrmMapGrid : DockContent
     {
         //MonoGame Swap Chain
-        private SwapChainRenderTarget _chain;
+        private SwapChainRenderTarget mChain;
 
-        private bool _dragging;
-        private int _dragX;
-        private int _dragY;
-        private int _posX;
-        private int _posY;
-        private ToolTip _toolTip = new ToolTip();
-        private MapGridItem _toolTipItem;
+        private bool mDragging;
+        private int mDragX;
+        private int mDragY;
+        private int mPosX;
+        private int mPosY;
+        private ToolTip mToolTip = new ToolTip();
+        private MapGridItem mToolTipItem;
 
-        public frmMapGrid()
+        public FrmMapGrid()
         {
             InitializeComponent();
             pnlMapGrid.MouseWheel += PnlMapGrid_MouseWheel;
@@ -58,9 +58,9 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (!Globals.ClosingEditor)
             {
-                if (_chain != null)
+                if (mChain != null)
                 {
-                    _chain.Dispose();
+                    mChain.Dispose();
                 }
                 if (EditorGraphics.GetGraphicsDevice() != null)
                 {
@@ -68,11 +68,11 @@ namespace Intersect.Editor.Forms.DockingElements
                     {
                         if (pnlMapGrid.Width > 0 && pnlMapGrid.Height > 0)
                         {
-                            _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(),
+                            mChain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(),
                                 pnlMapGrid.Handle,
                                 pnlMapGrid.Width, pnlMapGrid.Height, false, SurfaceFormat.Color,
                                 DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
-                            EditorGraphics.SetMapGridChain(_chain);
+                            EditorGraphics.SetMapGridChain(mChain);
                         }
                     }
                 }
@@ -96,28 +96,28 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void pnlMapGrid_MouseMove(object sender, MouseEventArgs e)
         {
-            _posX = e.X;
-            _posY = e.Y;
-            if (_dragging)
+            mPosX = e.X;
+            mPosY = e.Y;
+            if (mDragging)
             {
-                Globals.MapGrid.Move(_dragX - e.X, _dragY - e.Y);
-                _dragX = e.X;
-                _dragY = e.Y;
+                Globals.MapGrid.Move(mDragX - e.X, mDragY - e.Y);
+                mDragX = e.X;
+                mDragY = e.Y;
             }
-            if (_toolTip.Active && _toolTipItem != null)
+            if (mToolTip.Active && mToolTipItem != null)
             {
-                if (Globals.MapGrid.GetItemAt(_posX, _posY) != _toolTipItem)
+                if (Globals.MapGrid.GetItemAt(mPosX, mPosY) != mToolTipItem)
                 {
-                    _toolTip.Hide(pnlMapGrid);
-                    _toolTipItem = null;
+                    mToolTip.Hide(pnlMapGrid);
+                    mToolTipItem = null;
                 }
             }
             else
             {
-                _toolTipItem = Globals.MapGrid.GetItemAt(_posX, _posY);
-                if (_toolTipItem != null)
+                mToolTipItem = Globals.MapGrid.GetItemAt(mPosX, mPosY);
+                if (mToolTipItem != null)
                 {
-                    _toolTip.Show(_toolTipItem.name, pnlMapGrid);
+                    mToolTip.Show(mToolTipItem.Name, pnlMapGrid);
                 }
             }
         }
@@ -126,9 +126,9 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Middle)
             {
-                _dragging = true;
-                _dragX = e.X;
-                _dragY = e.Y;
+                mDragging = true;
+                mDragX = e.X;
+                mDragY = e.Y;
             }
             else if (e.Button == MouseButtons.Right)
             {
@@ -138,15 +138,15 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void pnlMapGrid_MouseUp(object sender, MouseEventArgs e)
         {
-            _dragging = false;
+            mDragging = false;
         }
 
         private void pnlMapGrid_MouseLeave(object sender, EventArgs e)
         {
-            if (_toolTip.Active)
+            if (mToolTip.Active)
             {
-                _toolTip.Hide(pnlMapGrid);
-                _toolTipItem = null;
+                mToolTip.Hide(pnlMapGrid);
+                mToolTipItem = null;
             }
         }
 
@@ -183,12 +183,12 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (e.KeyCode == Keys.Oemplus || e.KeyCode == Keys.Add)
             {
-                MouseEventArgs args = new MouseEventArgs(MouseButtons.None, 0, _posX, _posY, 120);
+                MouseEventArgs args = new MouseEventArgs(MouseButtons.None, 0, mPosX, mPosY, 120);
                 PnlMapGrid_MouseWheel(null, args);
             }
             else if (e.KeyCode == Keys.OemMinus || e.KeyCode == Keys.Subtract)
             {
-                MouseEventArgs args = new MouseEventArgs(MouseButtons.None, 0, _posX, _posY, -120);
+                MouseEventArgs args = new MouseEventArgs(MouseButtons.None, 0, mPosX, mPosY, -120);
                 PnlMapGrid_MouseWheel(null, args);
             }
             var xDiff = 0;

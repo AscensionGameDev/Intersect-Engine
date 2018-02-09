@@ -65,7 +65,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_9.Intersect_Convert_Li
         TradeUpdate,
         TradeClose,
         TradeRequest,
-        NPCAggression,
+        NpcAggression,
         PlayerDeath,
         EntityZDimension,
         OpenBag,

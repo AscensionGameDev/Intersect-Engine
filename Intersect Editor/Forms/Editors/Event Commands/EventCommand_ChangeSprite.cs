@@ -8,22 +8,22 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_ChangeSprite : UserControl
+    public partial class EventCommandChangeSprite : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventCommand mMyCommand;
 
-        public EventCommand_ChangeSprite(EventCommand refCommand, FrmEvent editor)
+        public EventCommandChangeSprite(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
             InitLocalization();
             cmbSprite.Items.Clear();
             cmbSprite.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity));
-            if (cmbSprite.Items.IndexOf(_myCommand.Strs[0]) > -1)
+            if (cmbSprite.Items.IndexOf(mMyCommand.Strs[0]) > -1)
             {
-                cmbSprite.SelectedIndex = cmbSprite.Items.IndexOf(_myCommand.Strs[0]);
+                cmbSprite.SelectedIndex = cmbSprite.Items.IndexOf(mMyCommand.Strs[0]);
             }
             else
             {
@@ -60,13 +60,13 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Strs[0] = cmbSprite.Text;
-            _eventEditor.FinishCommandEdit();
+            mMyCommand.Strs[0] = cmbSprite.Text;
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
 
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)

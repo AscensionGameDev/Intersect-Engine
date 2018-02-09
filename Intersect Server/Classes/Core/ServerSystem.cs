@@ -4,16 +4,16 @@ namespace Intersect.Server.Classes.Core
 {
     public class ServerSystem
     {
-        public Stopwatch stopWatch = new Stopwatch();
+        public Stopwatch StopWatch = new Stopwatch();
 
         public ServerSystem()
         {
-            stopWatch.Start();
+            StopWatch.Start();
         }
 
         public long GetTimeMs()
         {
-            return stopWatch.ElapsedMilliseconds;
+            return StopWatch.ElapsedMilliseconds;
         }
     }
 }

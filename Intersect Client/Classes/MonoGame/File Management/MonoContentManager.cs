@@ -17,13 +17,13 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
 {
     public class MonoContentManager : GameContentManager
     {
-        private bool downloadCompleted;
-        private string errorString = "";
+        private bool mDownloadCompleted;
+        private string mErrorString = "";
 
-        private frmLoadingContent loadingForm;
+        private FrmLoadingContent mLoadingForm;
 
         //Initial Resource Downloading
-        private string resourceRelayer = "http://ascensiongamedev.com/resources/Intersect/findResources.php";
+        private string mResourceRelayer = "http://ascensiongamedev.com/resources/Intersect/findResources.php";
 
         public MonoContentManager()
         {
@@ -31,13 +31,13 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             Init(this);
             if (!Directory.Exists("resources"))
             {
-                loadingForm = new frmLoadingContent();
-                loadingForm.Show();
-                loadingForm.BringToFront();
+                mLoadingForm = new FrmLoadingContent();
+                mLoadingForm.Show();
+                mLoadingForm.BringToFront();
                 using (WebClient client = new WebClient())
                 {
                     byte[] response =
-                        client.UploadValues(resourceRelayer, new NameValueCollection()
+                        client.UploadValues(mResourceRelayer, new NameValueCollection()
                         {
                             {"version", Assembly.GetExecutingAssembly().GetName().Version.ToString()},
                         });
@@ -51,22 +51,22 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                         {
                             try
                             {
-                                downloadCompleted = false;
-                                errorString = "";
+                                mDownloadCompleted = false;
+                                mErrorString = "";
                                 client.DownloadFileAsync(urlResult, "resources.zip");
-                                while (!downloadCompleted)
+                                while (!mDownloadCompleted)
                                 {
                                     Application.DoEvents();
                                 }
                             }
                             catch (Exception ex)
                             {
-                                errorString = ex.Message;
+                                mErrorString = ex.Message;
                             }
-                            if (errorString != "")
+                            if (mErrorString != "")
                             {
                                 if (
-                                    MessageBox.Show(Strings.Get("resources", "resourceexception", errorString),
+                                    MessageBox.Show(Strings.Get("resources", "resourceexception", mErrorString),
                                         Strings.Get("resources", "failedtoload"),
                                         MessageBoxButtons.YesNo) != DialogResult.Yes)
                                 {
@@ -85,7 +85,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                             Strings.Get("resources", "failedtoload"));
                     }
                 }
-                loadingForm.Close();
+                mLoadingForm.Close();
             }
             if (!Directory.Exists("resources"))
             {
@@ -96,7 +96,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
         private void Client_DownloadFileCompleted(object sender,
             global::System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            downloadCompleted = true;
+            mDownloadCompleted = true;
             if (!e.Cancelled && e.Error == null)
             {
                 try
@@ -107,37 +107,37 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                 }
                 catch (Exception ex)
                 {
-                    errorString = ex.Message;
+                    mErrorString = ex.Message;
                 }
             }
             else
             {
                 if (e.Cancelled)
                 {
-                    errorString = Strings.Get("resources", "cancelled");
+                    mErrorString = Strings.Get("resources", "cancelled");
                 }
                 else
                 {
-                    errorString = e.Error.Message;
+                    mErrorString = e.Error.Message;
                 }
             }
         }
 
         private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            loadingForm.SetProgress(e.ProgressPercentage);
+            mLoadingForm.SetProgress(e.ProgressPercentage);
         }
 
         //Graphic Loading
         public override void LoadTilesets(string[] tilesetnames)
         {
-            tilesetDict.Clear();
+            mTilesetDict.Clear();
             foreach (var t in tilesetnames)
             {
                 if (t != "" && File.Exists(Path.Combine("resources", "tilesets", t)) &&
-                    !tilesetDict.ContainsKey(t.ToLower()))
+                    !mTilesetDict.ContainsKey(t.ToLower()))
                 {
-                    tilesetDict.Add(t.ToLower(),
+                    mTilesetDict.Add(t.ToLower(),
                         GameGraphics.Renderer.LoadTexture(Path.Combine("resources", "tilesets", t)));
                 }
             }
@@ -161,62 +161,62 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
 
         public override void LoadItems()
         {
-            LoadTextureGroup("items", itemDict);
+            LoadTextureGroup("items", mItemDict);
         }
 
         public override void LoadEntities()
         {
-            LoadTextureGroup("entities", entityDict);
+            LoadTextureGroup("entities", mEntityDict);
         }
 
         public override void LoadSpells()
         {
-            LoadTextureGroup("spells", spellDict);
+            LoadTextureGroup("spells", mSpellDict);
         }
 
         public override void LoadAnimations()
         {
-            LoadTextureGroup("animations", animationDict);
+            LoadTextureGroup("animations", mAnimationDict);
         }
 
         public override void LoadFaces()
         {
-            LoadTextureGroup("faces", faceDict);
+            LoadTextureGroup("faces", mFaceDict);
         }
 
         public override void LoadImages()
         {
-            LoadTextureGroup("images", imageDict);
+            LoadTextureGroup("images", mImageDict);
         }
 
         public override void LoadFogs()
         {
-            LoadTextureGroup("fogs", fogDict);
+            LoadTextureGroup("fogs", mFogDict);
         }
 
         public override void LoadResources()
         {
-            LoadTextureGroup("resources", resourceDict);
+            LoadTextureGroup("resources", mResourceDict);
         }
 
         public override void LoadPaperdolls()
         {
-            LoadTextureGroup("paperdolls", paperdollDict);
+            LoadTextureGroup("paperdolls", mPaperdollDict);
         }
 
         public override void LoadGui()
         {
-            LoadTextureGroup("gui", guiDict);
+            LoadTextureGroup("gui", mGuiDict);
         }
 
         public override void LoadMisc()
         {
-            LoadTextureGroup("misc", miscDict);
+            LoadTextureGroup("misc", mIscDict);
         }
 
         public override void LoadFonts()
         {
-            fontDict.Clear();
+            mFontDict.Clear();
             var dir = Path.Combine("resources", "fonts");
             if (!Directory.Exists(dir))
             {
@@ -227,14 +227,14 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             {
                 string filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
                 GameFont font = GameGraphics.Renderer.LoadFont(Path.Combine(dir, filename));
-                if (fontDict.IndexOf(font) == -1)
-                    fontDict.Add(font);
+                if (mFontDict.IndexOf(font) == -1)
+                    mFontDict.Add(font);
             }
         }
 
         public override void LoadShaders()
         {
-            shaderDict.Clear();
+            mShaderDict.Clear();
             var dir = Path.Combine("resources", "shaders");
             if (!Directory.Exists(dir))
             {
@@ -246,7 +246,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                 string filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
                 if (!filename.Contains("_editor"))
                 {
-                    shaderDict.Add(filename.Replace(".xnb", ""),
+                    mShaderDict.Add(filename.Replace(".xnb", ""),
                         GameGraphics.Renderer.LoadShader(Path.Combine(dir, filename)));
                 }
             }
@@ -254,7 +254,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
 
         public override void LoadSounds()
         {
-            soundDict.Clear();
+            mSoundDict.Clear();
             var dir = Path.Combine("resources", "sounds");
             if (!Directory.Exists(dir))
             {
@@ -264,7 +264,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                soundDict.Add(RemoveExtension(filename),
+                mSoundDict.Add(RemoveExtension(filename),
                     new MonoSoundSource(Path.Combine(dir, filename),
                         ((MonoRenderer) GameGraphics.Renderer).GetContentManager()));
             }
@@ -272,7 +272,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
 
         public override void LoadMusic()
         {
-            musicDict.Clear();
+            mUsicDict.Clear();
             var dir = Path.Combine("resources", "music");
             if (!Directory.Exists(dir))
             {
@@ -282,7 +282,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                musicDict.Add(RemoveExtension(filename), new MonoMusicSource(Path.Combine(dir, filename)));
+                mUsicDict.Add(RemoveExtension(filename), new MonoMusicSource(Path.Combine(dir, filename)));
             }
         }
     }

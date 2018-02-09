@@ -10,60 +10,60 @@ namespace Intersect_Client.Classes.UI
     public class ErrorMessageHandler
     {
         //Controls
-        private List<GUIError> _errors = new List<GUIError>();
+        private List<GuiError> mErrors = new List<GuiError>();
 
         //Canvasses
-        private Canvas _gameCanvas;
+        private Canvas mGameCanvas;
 
-        private Canvas _menuCanvas;
+        private Canvas mMenuCanvas;
 
         //Init
         public ErrorMessageHandler(Canvas menuCanvas, Canvas gameCanvas)
         {
-            _gameCanvas = gameCanvas;
-            _menuCanvas = menuCanvas;
+            mGameCanvas = gameCanvas;
+            mMenuCanvas = menuCanvas;
         }
 
         public void Update()
         {
             if (Gui.MsgboxErrors.Count > 0)
             {
-                _errors.Add(new GUIError(_gameCanvas, _menuCanvas, Gui.MsgboxErrors[0].Value,
+                mErrors.Add(new GuiError(mGameCanvas, mMenuCanvas, Gui.MsgboxErrors[0].Value,
                     !string.IsNullOrEmpty(Gui.MsgboxErrors[0].Key)
                         ? Gui.MsgboxErrors[0].Key
                         : Strings.Get("errors", "title")));
                 Gui.MsgboxErrors.RemoveAt(0);
             }
-            for (int i = 0; i < _errors.Count; i++)
+            for (int i = 0; i < mErrors.Count; i++)
             {
-                if (!_errors[i].Update())
+                if (!mErrors[i].Update())
                 {
-                    _errors.RemoveAt(i);
+                    mErrors.RemoveAt(i);
                 }
             }
         }
     }
 
-    class GUIError
+    class GuiError
     {
-        List<InputBox> errorWindows = new List<InputBox>();
+        List<InputBox> mErrorWindows = new List<InputBox>();
 
-        public GUIError(Canvas _gameCanvas, Canvas _menuCanvas, string error, string header)
+        public GuiError(Canvas gameCanvas, Canvas menuCanvas, string error, string header)
         {
-            CreateErrorWindow(_gameCanvas, error, header, "InGame.xml");
-            CreateErrorWindow(_menuCanvas, error, header, "MainMenu.xml");
+            CreateErrorWindow(gameCanvas, error, header, "InGame.xml");
+            CreateErrorWindow(menuCanvas, error, header, "MainMenu.xml");
         }
 
         private void CreateErrorWindow(Canvas canvas, string error, string header, string uiDataFile)
         {
             var window = new InputBox(header, error, false, InputBox.InputType.OkayOnly, OkayClicked, null, -1, canvas,
                 uiDataFile);
-            errorWindows.Add(window);
+            mErrorWindows.Add(window);
         }
 
         private void OkayClicked(Object sender, EventArgs args)
         {
-            foreach (InputBox window in errorWindows)
+            foreach (InputBox window in mErrorWindows)
             {
                 window.Dispose();
             }

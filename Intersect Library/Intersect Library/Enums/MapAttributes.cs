@@ -6,7 +6,7 @@ namespace Intersect.Enums
         Blocked,
         Item,
         ZDimension,
-        NPCAvoid,
+        NpcAvoid,
         Warp,
         Sound,
         Resource,

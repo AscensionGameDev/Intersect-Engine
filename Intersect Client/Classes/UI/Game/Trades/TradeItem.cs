@@ -14,104 +14,104 @@ namespace Intersect.Client.Classes.UI.Game.Trades
 {
     public class TradeItem
     {
-        private static int ItemXPadding = 4;
-        private static int ItemYPadding = 4;
-        private int _currentItem = -2;
-        private ItemDescWindow _descWindow;
-        private int _mySide;
+        private static int sItemXPadding = 4;
+        private static int sItemYPadding = 4;
+        private int mCurrentItem = -2;
+        private ItemDescWindow mDescWindow;
+        private int mMySide;
 
         //Slot info
-        private int _mySlot;
+        private int mMySlot;
 
         //Drag/Drop References
-        private TradingWindow _tradeWindow;
+        private TradingWindow mTradeWindow;
 
         //Dragging
-        private bool CanDrag;
+        private bool mCanDrag;
 
-        private long ClickTime;
-        public ImagePanel container;
-        private Draggable dragIcon;
+        private long mClickTime;
+        public ImagePanel Container;
+        private Draggable mDragIcon;
         public bool IsDragging;
 
         //Mouse Event Variables
-        private bool MouseOver;
+        private bool mMouseOver;
 
-        private int MouseX = -1;
-        private int MouseY = -1;
-        public ImagePanel pnl;
+        private int mMouseX = -1;
+        private int mMouseY = -1;
+        public ImagePanel Pnl;
 
         public TradeItem(TradingWindow tradeWindow, int index, int side)
         {
-            _tradeWindow = tradeWindow;
-            _mySlot = index;
-            _mySide = side;
+            mTradeWindow = tradeWindow;
+            mMySlot = index;
+            mMySide = side;
         }
 
         public void Setup()
         {
             var xmlPrefix = "Your";
-            if (_mySide == 1)
+            if (mMySide == 1)
             {
                 xmlPrefix = "Their";
             }
-            pnl = new ImagePanel(container, xmlPrefix + "TradeIcon");
-            pnl.HoverEnter += pnl_HoverEnter;
-            pnl.HoverLeave += pnl_HoverLeave;
-            pnl.RightClicked += pnl_RightClicked;
-            pnl.DoubleClicked += Pnl_DoubleClicked;
-            pnl.Clicked += pnl_Clicked;
+            Pnl = new ImagePanel(Container, xmlPrefix + "TradeIcon");
+            Pnl.HoverEnter += pnl_HoverEnter;
+            Pnl.HoverLeave += pnl_HoverLeave;
+            Pnl.RightClicked += pnl_RightClicked;
+            Pnl.DoubleClicked += Pnl_DoubleClicked;
+            Pnl.Clicked += pnl_Clicked;
         }
 
         private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
             if (Globals.InTrade)
             {
-                Globals.Me.TryRevokeItem(_mySlot);
+                Globals.Me.TryRevokeItem(mMySlot);
             }
         }
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            ClickTime = Globals.System.GetTimeMS() + 500;
+            mClickTime = Globals.System.GetTimeMs() + 500;
         }
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            Globals.Me.TryRevokeItem(_mySlot);
+            Globals.Me.TryRevokeItem(mMySlot);
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
         {
-            MouseOver = false;
-            MouseX = -1;
-            MouseY = -1;
-            if (_descWindow != null)
+            mMouseOver = false;
+            mMouseX = -1;
+            mMouseY = -1;
+            if (mDescWindow != null)
             {
-                _descWindow.Dispose();
-                _descWindow = null;
+                mDescWindow.Dispose();
+                mDescWindow = null;
             }
         }
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
-            MouseOver = true;
-            CanDrag = true;
+            mMouseOver = true;
+            mCanDrag = true;
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
             {
-                CanDrag = false;
+                mCanDrag = false;
                 return;
             }
-            if (_descWindow != null)
+            if (mDescWindow != null)
             {
-                _descWindow.Dispose();
-                _descWindow = null;
+                mDescWindow.Dispose();
+                mDescWindow = null;
             }
-            if (ItemBase.Lookup.Get<ItemBase>(Globals.Trade[_mySide, _mySlot].ItemNum) != null)
+            if (ItemBase.Lookup.Get<ItemBase>(Globals.Trade[mMySide, mMySlot].ItemNum) != null)
             {
-                _descWindow = new ItemDescWindow(Globals.Trade[_mySide, _mySlot].ItemNum,
-                    Globals.Trade[_mySide, _mySlot].ItemVal, _tradeWindow.X - 255, _tradeWindow.Y,
-                    Globals.Trade[_mySide, _mySlot].StatBoost);
+                mDescWindow = new ItemDescWindow(Globals.Trade[mMySide, mMySlot].ItemNum,
+                    Globals.Trade[mMySide, mMySlot].ItemVal, mTradeWindow.X - 255, mTradeWindow.Y,
+                    Globals.Trade[mMySide, mMySlot].StatBoost);
             }
         }
 
@@ -119,92 +119,92 @@ namespace Intersect.Client.Classes.UI.Game.Trades
         {
             FloatRect rect = new FloatRect()
             {
-                X = pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X,
-                Y = pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y,
-                Width = pnl.Width,
-                Height = pnl.Height
+                X = Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X,
+                Y = Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y,
+                Width = Pnl.Width,
+                Height = Pnl.Height
             };
             return rect;
         }
 
         public void Update()
         {
-            int n = _mySide;
-            if (Globals.Trade[n, _mySlot].ItemNum != _currentItem)
+            int n = mMySide;
+            if (Globals.Trade[n, mMySlot].ItemNum != mCurrentItem)
             {
-                _currentItem = Globals.Trade[n, _mySlot].ItemNum;
-                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Trade[n, _mySlot].ItemNum);
+                mCurrentItem = Globals.Trade[n, mMySlot].ItemNum;
+                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Trade[n, mMySlot].ItemNum);
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
                         item.Pic);
                     if (itemTex != null)
                     {
-                        pnl.Texture = itemTex;
+                        Pnl.Texture = itemTex;
                     }
                     else
                     {
-                        if (pnl.Texture != null)
+                        if (Pnl.Texture != null)
                         {
-                            pnl.Texture = null;
+                            Pnl.Texture = null;
                         }
                     }
                 }
                 else
                 {
-                    if (pnl.Texture != null)
+                    if (Pnl.Texture != null)
                     {
-                        pnl.Texture = null;
+                        Pnl.Texture = null;
                     }
                 }
             }
             if (!IsDragging)
             {
-                if (MouseOver)
+                if (mMouseOver)
                 {
                     if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
                     {
                         if (n == 0)
                         {
-                            CanDrag = true;
+                            mCanDrag = true;
                         } //Only be able to drag your trade box
-                        MouseX = -1;
-                        MouseY = -1;
-                        if (Globals.System.GetTimeMS() < ClickTime)
+                        mMouseX = -1;
+                        mMouseY = -1;
+                        if (Globals.System.GetTimeMs() < mClickTime)
                         {
                             //Globals.Me.TryUseItem(_mySlot);
-                            ClickTime = 0;
+                            mClickTime = 0;
                         }
                     }
                     else
                     {
-                        if (CanDrag)
+                        if (mCanDrag)
                         {
-                            if (MouseX == -1 || MouseY == -1)
+                            if (mMouseX == -1 || mMouseY == -1)
                             {
-                                MouseX = InputHandler.MousePosition.X -
-                                         pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X;
-                                MouseY = InputHandler.MousePosition.Y -
-                                         pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y;
+                                mMouseX = InputHandler.MousePosition.X -
+                                         Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X;
+                                mMouseY = InputHandler.MousePosition.Y -
+                                         Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y;
                             }
                             else
                             {
-                                int xdiff = MouseX -
+                                int xdiff = mMouseX -
                                             (InputHandler.MousePosition.X -
-                                             pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
+                                             Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
                                                  .X);
-                                int ydiff = MouseY -
+                                int ydiff = mMouseY -
                                             (InputHandler.MousePosition.Y -
-                                             pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
+                                             Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
                                                  .Y);
                                 if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                 {
                                     IsDragging = true;
-                                    dragIcon = new Draggable(
-                                        pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X +
-                                        MouseX,
-                                        pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X +
-                                        MouseY, pnl.Texture);
+                                    mDragIcon = new Draggable(
+                                        Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X +
+                                        mMouseX,
+                                        Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X +
+                                        mMouseY, Pnl.Texture);
                                 }
                             }
                         }
@@ -213,33 +213,33 @@ namespace Intersect.Client.Classes.UI.Game.Trades
             }
             else
             {
-                if (dragIcon.Update())
+                if (mDragIcon.Update())
                 {
                     //Drug the item and now we stopped
                     IsDragging = false;
-                    FloatRect dragRect = new FloatRect(dragIcon.X - ItemXPadding / 2, dragIcon.Y - ItemYPadding / 2,
-                        ItemXPadding / 2 + 32, ItemYPadding / 2 + 32);
+                    FloatRect dragRect = new FloatRect(mDragIcon.X - sItemXPadding / 2, mDragIcon.Y - sItemYPadding / 2,
+                        sItemXPadding / 2 + 32, sItemYPadding / 2 + 32);
 
                     float bestIntersect = 0;
                     int bestIntersectIndex = -1;
                     //So we picked up an item and then dropped it. Lets see where we dropped it to.
                     //Check inventory first.
-                    if (_tradeWindow.RenderBounds().IntersectsWith(dragRect))
+                    if (mTradeWindow.RenderBounds().IntersectsWith(dragRect))
                     {
                         for (int i = 0; i < Options.MaxInvItems; i++)
                         {
-                            if (_tradeWindow._tradeSegment[n].Items[i].RenderBounds().IntersectsWith(dragRect))
+                            if (mTradeWindow.TradeSegment[n].Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
                                 if (
-                                    FloatRect.Intersect(_tradeWindow._tradeSegment[n].Items[i].RenderBounds(), dragRect)
+                                    FloatRect.Intersect(mTradeWindow.TradeSegment[n].Items[i].RenderBounds(), dragRect)
                                         .Width *
-                                    FloatRect.Intersect(_tradeWindow._tradeSegment[n].Items[i].RenderBounds(), dragRect)
+                                    FloatRect.Intersect(mTradeWindow.TradeSegment[n].Items[i].RenderBounds(), dragRect)
                                         .Height > bestIntersect)
                                 {
                                     bestIntersect =
-                                        FloatRect.Intersect(_tradeWindow._tradeSegment[n].Items[i].RenderBounds(),
+                                        FloatRect.Intersect(mTradeWindow.TradeSegment[n].Items[i].RenderBounds(),
                                             dragRect).Width *
-                                        FloatRect.Intersect(_tradeWindow._tradeSegment[n].Items[i].RenderBounds(),
+                                        FloatRect.Intersect(mTradeWindow.TradeSegment[n].Items[i].RenderBounds(),
                                             dragRect).Height;
                                     bestIntersectIndex = i;
                                 }
@@ -247,14 +247,14 @@ namespace Intersect.Client.Classes.UI.Game.Trades
                         }
                         if (bestIntersectIndex > -1)
                         {
-                            if (_mySlot != bestIntersectIndex)
+                            if (mMySlot != bestIntersectIndex)
                             {
                                 //Trade
                                 //PacketSender.SendTradeConfirm(bestIntersectIndex);
                             }
                         }
                     }
-                    dragIcon.Dispose();
+                    mDragIcon.Dispose();
                 }
             }
         }

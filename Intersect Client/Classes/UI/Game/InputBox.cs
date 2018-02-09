@@ -15,144 +15,144 @@ namespace Intersect_Client.Classes.UI.Game
             TextInput,
         }
 
-        private bool _initialized = false;
-        private InputType _inputType;
+        private bool mInitialized = false;
+        private InputType mInputType;
 
-        private WindowControl _myWindow;
-        private Button _noButton;
-        private Button _okayButton;
-        private string _prompt = "";
-        private Label _promptLabel;
-        private TextBoxNumeric _textbox;
-        private ImagePanel _textboxBg;
-        private string _uiDataFile;
-        private Button _yesButton;
+        private WindowControl mMyWindow;
+        private Button mNoButton;
+        private Button mOkayButton;
+        private string mPrompt = "";
+        private Label mPromptLabel;
+        private TextBoxNumeric mTextbox;
+        private ImagePanel mTextboxBg;
+        private string mUiDataFile;
+        private Button mYesButton;
         public int UserData;
         public float Value;
 
         public InputBox(string title, string prompt, bool modal, InputType inputtype, EventHandler okayYesSubmitClicked,
             EventHandler cancelClicked, int userData, Base parent = null, string uiDataFile = "InGame.xml")
         {
-            if (parent == null) parent = Gui.GameUI.GameCanvas;
-            _okayEventHandler = okayYesSubmitClicked;
-            _cancelEventHandler = cancelClicked;
+            if (parent == null) parent = Gui.GameUi.GameCanvas;
+            OkayEventHandler = okayYesSubmitClicked;
+            CancelEventHandler = cancelClicked;
             this.UserData = userData;
-            _inputType = inputtype;
-            _uiDataFile = uiDataFile;
-            _prompt = prompt;
+            mInputType = inputtype;
+            mUiDataFile = uiDataFile;
+            mPrompt = prompt;
 
-            _myWindow = new WindowControl(parent, title, modal, "InputBox");
-            _myWindow.BeforeDraw += _myWindow_BeforeDraw;
-            _myWindow.DisableResizing();
-            Gui.InputBlockingElements.Add(_myWindow);
+            mMyWindow = new WindowControl(parent, title, modal, "InputBox");
+            mMyWindow.BeforeDraw += _myWindow_BeforeDraw;
+            mMyWindow.DisableResizing();
+            Gui.InputBlockingElements.Add(mMyWindow);
 
-            _textboxBg = new ImagePanel(_myWindow, "Textbox");
-            _textbox = new TextBoxNumeric(_textboxBg);
-            _textbox.Focus();
+            mTextboxBg = new ImagePanel(mMyWindow, "Textbox");
+            mTextbox = new TextBoxNumeric(mTextboxBg);
+            mTextbox.Focus();
 
             if (inputtype != InputType.TextInput)
             {
-                _textbox.IsHidden = true;
+                mTextbox.IsHidden = true;
             }
 
-            _yesButton = new Button(_myWindow, "YesButton");
-            _yesButton.SetText(Strings.Get("inputbox", "okay"));
-            _yesButton.Clicked += okayBtn_Clicked;
+            mYesButton = new Button(mMyWindow, "YesButton");
+            mYesButton.SetText(Strings.Get("inputbox", "okay"));
+            mYesButton.Clicked += okayBtn_Clicked;
 
-            _noButton = new Button(_myWindow, "NoButton");
-            _noButton.SetText(Strings.Get("inputbox", "cancel"));
-            _noButton.Clicked += cancelBtn_Clicked;
+            mNoButton = new Button(mMyWindow, "NoButton");
+            mNoButton.SetText(Strings.Get("inputbox", "cancel"));
+            mNoButton.Clicked += cancelBtn_Clicked;
 
-            _okayButton = new Button(_myWindow, "OkayButton");
-            _okayButton.SetText(Strings.Get("inputbox", "okay"));
-            _okayButton.Clicked += okayBtn_Clicked;
+            mOkayButton = new Button(mMyWindow, "OkayButton");
+            mOkayButton.SetText(Strings.Get("inputbox", "okay"));
+            mOkayButton.Clicked += okayBtn_Clicked;
 
-            _promptLabel = new Label(_myWindow, "PromptLabel");
+            mPromptLabel = new Label(mMyWindow, "PromptLabel");
         }
 
         private void _myWindow_BeforeDraw(Base sender, EventArgs arguments)
         {
-            if (!_initialized)
+            if (!mInitialized)
             {
-                Gui.LoadRootUIData(_myWindow, _uiDataFile);
-                var text = Gui.WrapText(_prompt, _promptLabel.Width, _promptLabel.Font);
-                int y = _promptLabel.Y;
+                Gui.LoadRootUiData(mMyWindow, mUiDataFile);
+                var text = Gui.WrapText(mPrompt, mPromptLabel.Width, mPromptLabel.Font);
+                int y = mPromptLabel.Y;
                 foreach (string s in text)
                 {
-                    var label = new Label(_myWindow)
+                    var label = new Label(mMyWindow)
                     {
                         Text = s,
-                        TextColorOverride = _promptLabel.TextColor,
-                        Font = _promptLabel.Font
+                        TextColorOverride = mPromptLabel.TextColor,
+                        Font = mPromptLabel.Font
                     };
-                    label.SetPosition(_promptLabel.X, y);
+                    label.SetPosition(mPromptLabel.X, y);
                     y += label.Height;
                     Align.CenterHorizontally(label);
                 }
 
-                switch (_inputType)
+                switch (mInputType)
                 {
                     case InputType.YesNo:
-                        _yesButton.Text = Strings.Get("inputbox", "yes");
-                        _noButton.Text = Strings.Get("inputbox", "no");
-                        _okayButton.Hide();
-                        _yesButton.Show();
-                        _noButton.Show();
-                        _textboxBg.Hide();
+                        mYesButton.Text = Strings.Get("inputbox", "yes");
+                        mNoButton.Text = Strings.Get("inputbox", "no");
+                        mOkayButton.Hide();
+                        mYesButton.Show();
+                        mNoButton.Show();
+                        mTextboxBg.Hide();
                         break;
                     case InputType.OkayOnly:
-                        _okayButton.Show();
-                        _yesButton.Hide();
-                        _noButton.Hide();
-                        _textboxBg.Hide();
+                        mOkayButton.Show();
+                        mYesButton.Hide();
+                        mNoButton.Hide();
+                        mTextboxBg.Hide();
                         break;
                     case InputType.TextInput:
-                        _okayButton.Hide();
-                        _yesButton.Show();
-                        _noButton.Show();
-                        _textboxBg.Show();
+                        mOkayButton.Hide();
+                        mYesButton.Show();
+                        mNoButton.Show();
+                        mTextboxBg.Show();
                         break;
                 }
-                _myWindow.Show();
-                _myWindow.Focus();
-                _initialized = true;
+                mMyWindow.Show();
+                mMyWindow.Focus();
+                mInitialized = true;
             }
         }
 
-        private event EventHandler _okayEventHandler;
-        private event EventHandler _cancelEventHandler;
+        private event EventHandler OkayEventHandler;
+        private event EventHandler CancelEventHandler;
 
         void cancelBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_textbox != null)
+            if (mTextbox != null)
             {
-                Value = _textbox.Value;
+                Value = mTextbox.Value;
             }
-            if (_cancelEventHandler != null)
+            if (CancelEventHandler != null)
             {
-                _cancelEventHandler(this, EventArgs.Empty);
+                CancelEventHandler(this, EventArgs.Empty);
             }
             Dispose();
         }
 
         void okayBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_textbox != null)
+            if (mTextbox != null)
             {
-                Value = _textbox.Value;
+                Value = mTextbox.Value;
             }
-            if (_okayEventHandler != null)
+            if (OkayEventHandler != null)
             {
-                _okayEventHandler(this, EventArgs.Empty);
+                OkayEventHandler(this, EventArgs.Empty);
             }
             Dispose();
         }
 
         public void Dispose()
         {
-            _myWindow.Close();
-            _myWindow.Parent.RemoveChild(_myWindow, false);
-            _myWindow.Dispose();
+            mMyWindow.Close();
+            mMyWindow.Parent.RemoveChild(mMyWindow, false);
+            mMyWindow.Dispose();
         }
     }
 }

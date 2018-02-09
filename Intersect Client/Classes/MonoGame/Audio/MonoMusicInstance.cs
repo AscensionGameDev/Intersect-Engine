@@ -7,18 +7,18 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
 {
     public class MonoMusicInstance : GameAudioInstance
     {
-        private bool _disposed;
-        private Song _song;
-        private int _volume;
+        private bool mDisposed;
+        private Song mSong;
+        private int mVolume;
 
         public MonoMusicInstance(GameAudioSource music) : base(music)
         {
-            _song = ((MonoMusicSource) music).GetSource();
+            mSong = ((MonoMusicSource) music).GetSource();
         }
 
         public override void Play()
         {
-            MediaPlayer.Play(_song);
+            MediaPlayer.Play(mSong);
         }
 
         public override void Pause()
@@ -33,10 +33,10 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
 
         public override void SetVolume(int volume, bool isMusic = false)
         {
-            _volume = volume;
+            mVolume = volume;
             try
             {
-                MediaPlayer.Volume = (_volume * (float) (Globals.Database.MusicVolume / 100f) / 100f);
+                MediaPlayer.Volume = (mVolume * (float) (Globals.Database.MusicVolume / 100f) / 100f);
             }
             catch (NullReferenceException)
             {
@@ -50,7 +50,7 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
 
         public override int GetVolume()
         {
-            return _volume;
+            return mVolume;
         }
 
         public override void SetLoop(bool val)
@@ -60,7 +60,7 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
 
         public override AudioInstanceState GetState()
         {
-            if (_disposed) return AudioInstanceState.Disposed;
+            if (mDisposed) return AudioInstanceState.Disposed;
             if (MediaPlayer.State == MediaState.Playing) return AudioInstanceState.Playing;
             if (MediaPlayer.State == MediaState.Stopped) return AudioInstanceState.Stopped;
             if (MediaPlayer.State == MediaState.Paused) return AudioInstanceState.Paused;
@@ -69,7 +69,7 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
 
         public override void Dispose()
         {
-            _disposed = true;
+            mDisposed = true;
             MediaPlayer.Stop();
         }
     }

@@ -11,56 +11,56 @@ namespace Intersect_Client.Classes.Core
             Out = 2,
         }
 
-        private static FadeType _currentAction;
-        private static float _fadeAmt;
-        private static float _fadeRate = 3000f;
-        private static long _lastUpdate;
+        private static FadeType sCurrentAction;
+        private static float sFadeAmt;
+        private static float sFadeRate = 3000f;
+        private static long sLastUpdate;
 
         public static void FadeIn()
         {
-            _currentAction = FadeType.In;
-            _fadeAmt = 255f;
-            _lastUpdate = Globals.System.GetTimeMS();
+            sCurrentAction = FadeType.In;
+            sFadeAmt = 255f;
+            sLastUpdate = Globals.System.GetTimeMs();
         }
 
         public static void FadeOut()
         {
-            _currentAction = FadeType.Out;
-            _fadeAmt = 0f;
-            _lastUpdate = Globals.System.GetTimeMS();
+            sCurrentAction = FadeType.Out;
+            sFadeAmt = 0f;
+            sLastUpdate = Globals.System.GetTimeMs();
         }
 
         public static bool DoneFading()
         {
-            return (_currentAction == FadeType.None);
+            return (sCurrentAction == FadeType.None);
         }
 
         public static float GetFade()
         {
-            return _fadeAmt;
+            return sFadeAmt;
         }
 
         public static void Update()
         {
-            if (_currentAction == FadeType.In)
+            if (sCurrentAction == FadeType.In)
             {
-                _fadeAmt -= ((Globals.System.GetTimeMS() - _lastUpdate) / _fadeRate) * 255f;
-                if (_fadeAmt <= 0f)
+                sFadeAmt -= ((Globals.System.GetTimeMs() - sLastUpdate) / sFadeRate) * 255f;
+                if (sFadeAmt <= 0f)
                 {
-                    _currentAction = FadeType.None;
-                    _fadeAmt = 0f;
+                    sCurrentAction = FadeType.None;
+                    sFadeAmt = 0f;
                 }
             }
-            else if (_currentAction == FadeType.Out)
+            else if (sCurrentAction == FadeType.Out)
             {
-                _fadeAmt += ((Globals.System.GetTimeMS() - _lastUpdate) / _fadeRate) * 255f;
-                if (_fadeAmt >= 255f)
+                sFadeAmt += ((Globals.System.GetTimeMs() - sLastUpdate) / sFadeRate) * 255f;
+                if (sFadeAmt >= 255f)
                 {
-                    _currentAction = FadeType.None;
-                    _fadeAmt = 255f;
+                    sCurrentAction = FadeType.None;
+                    sFadeAmt = 255f;
                 }
             }
-            _lastUpdate = Globals.System.GetTimeMS();
+            sLastUpdate = Globals.System.GetTimeMs();
         }
     }
 }

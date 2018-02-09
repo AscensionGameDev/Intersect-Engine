@@ -10,11 +10,11 @@ namespace Intersect.Utilities
 {
     class Program
     {
-        private static readonly IDictionary<string, Script> mScripts;
+        private static readonly IDictionary<string, Script> Scripts;
 
         static Program()
         {
-            mScripts = new Dictionary<string, Script>();
+            Scripts = new Dictionary<string, Script>();
             RegisterScript(new Exit());
             RegisterScript(new Help());
             RegisterScript(new GenRsa());
@@ -22,12 +22,12 @@ namespace Intersect.Utilities
 
         static void RegisterScript(Script script)
         {
-            mScripts.Add(script.Name, script);
+            Scripts.Add(script.Name, script);
         }
 
         static void Main(string[] args)
         {
-            if (mScripts.Count < 1)
+            if (Scripts.Count < 1)
             {
                 Environment.Exit(-1);
             }
@@ -40,9 +40,9 @@ namespace Intersect.Utilities
                 if (line == null) break;
                 if (string.IsNullOrWhiteSpace(line)) continue;
 
-                var match = Script.COMMAND_REGEX.Match(line);
+                var match = Script.CommandRegex.Match(line);
                 var scriptName = match.Groups[1].Value;
-                if (!mScripts.TryGetValue(scriptName, out Script script))
+                if (!Scripts.TryGetValue(scriptName, out Script script))
                 {
                     Console.Error?.WriteLine($"No available script with name '{scriptName}'.");
                     continue;

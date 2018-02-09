@@ -10,16 +10,16 @@ namespace Intersect_Client.Classes.Networking
     {
         public static GameSocket MySocket;
 
-        private static bool _connected;
+        private static bool sConnected;
         public static bool Connecting;
 
-        private static int mPing;
-        public static bool Connected => MySocket?.IsConnected() ?? _connected;
+        private static int sPing;
+        public static bool Connected => MySocket?.IsConnected() ?? sConnected;
 
         public static int Ping
         {
-            get { return MySocket?.Ping() ?? mPing; }
-            set { mPing = value; }
+            get { return MySocket?.Ping() ?? sPing; }
+            set { sPing = value; }
         }
 
         public static void InitNetwork()
@@ -34,13 +34,13 @@ namespace Intersect_Client.Classes.Networking
 
         private static void TryConnect()
         {
-            _connected = false;
+            sConnected = false;
             MySocket.Connect(Globals.Database.ServerHost, Globals.Database.ServerPort);
         }
 
         private static void MySocket_OnConnectionFailed()
         {
-            _connected = false;
+            sConnected = false;
             TryConnect();
         }
 
@@ -76,7 +76,7 @@ namespace Intersect_Client.Classes.Networking
         private static void MySocket_OnDisconnected()
         {
             //Not sure how to handle this yet!
-            _connected = false;
+            sConnected = false;
             if (Globals.GameState == GameStates.InGame || Globals.GameState == GameStates.Loading)
             {
                 Globals.IsRunning = false;
@@ -92,14 +92,14 @@ namespace Intersect_Client.Classes.Networking
         private static void MySocket_OnConnected()
         {
             //Not sure how to handle this yet!
-            _connected = true;
+            sConnected = true;
         }
 
         public static void Close(string reason)
         {
             try
             {
-                _connected = false;
+                sConnected = false;
                 Connecting = false;
                 MySocket.Disconnect(reason);
                 MySocket.Dispose();

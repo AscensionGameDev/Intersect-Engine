@@ -7,24 +7,24 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_Switch : UserControl
+    public partial class EventCommandSwitch : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private bool _loading;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private bool mLoading;
+        private EventCommand mMyCommand;
 
-        public EventCommand_Switch(EventCommand refCommand, FrmEvent editor)
+        public EventCommandSwitch(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
-            _loading = true;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
+            mLoading = true;
             InitLocalization();
-            if (_myCommand.Ints[0] == (int) SwitchVariableTypes.ServerSwitch)
+            if (mMyCommand.Ints[0] == (int) SwitchVariableTypes.ServerSwitch)
             {
                 rdoGlobalSwitch.Checked = true;
             }
-            _loading = false;
+            mLoading = false;
             InitEditor();
         }
 
@@ -50,52 +50,52 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 cmbSetSwitch.Items.AddRange(Database.GetGameObjectList(GameObjectType.PlayerSwitch));
                 cmbSetSwitch.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.PlayerSwitch, _myCommand.Ints[1]);
+                    Database.GameObjectListIndex(GameObjectType.PlayerSwitch, mMyCommand.Ints[1]);
             }
             else
             {
                 cmbSetSwitch.Items.AddRange(Database.GetGameObjectList(GameObjectType.ServerSwitch));
                 cmbSetSwitch.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.ServerSwitch, _myCommand.Ints[1]);
+                    Database.GameObjectListIndex(GameObjectType.ServerSwitch, mMyCommand.Ints[1]);
             }
-            cmbSetSwitchVal.SelectedIndex = _myCommand.Ints[2];
+            cmbSetSwitchVal.SelectedIndex = mMyCommand.Ints[2];
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (rdoPlayerSwitch.Checked)
             {
-                _myCommand.Ints[0] = (int) SwitchVariableTypes.PlayerSwitch;
-                _myCommand.Ints[1] =
+                mMyCommand.Ints[0] = (int) SwitchVariableTypes.PlayerSwitch;
+                mMyCommand.Ints[1] =
                     Database.GameObjectIdFromList(GameObjectType.PlayerSwitch, cmbSetSwitch.SelectedIndex);
             }
             if (rdoGlobalSwitch.Checked)
             {
-                _myCommand.Ints[0] = (int) SwitchVariableTypes.ServerSwitch;
-                _myCommand.Ints[1] =
+                mMyCommand.Ints[0] = (int) SwitchVariableTypes.ServerSwitch;
+                mMyCommand.Ints[1] =
                     Database.GameObjectIdFromList(GameObjectType.ServerSwitch, cmbSetSwitch.SelectedIndex);
             }
-            _myCommand.Ints[2] = cmbSetSwitchVal.SelectedIndex;
-            _eventEditor.FinishCommandEdit();
+            mMyCommand.Ints[2] = cmbSetSwitchVal.SelectedIndex;
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
 
         private void rdoPlayerSwitch_CheckedChanged(object sender, EventArgs e)
         {
             InitEditor();
-            if (!_loading && cmbSetSwitch.Items.Count > 0) cmbSetSwitch.SelectedIndex = 0;
-            if (!_loading) cmbSetSwitchVal.SelectedIndex = 0;
+            if (!mLoading && cmbSetSwitch.Items.Count > 0) cmbSetSwitch.SelectedIndex = 0;
+            if (!mLoading) cmbSetSwitchVal.SelectedIndex = 0;
         }
 
         private void rdoGlobalSwitch_CheckedChanged(object sender, EventArgs e)
         {
             InitEditor();
-            if (!_loading && cmbSetSwitch.Items.Count > 0) cmbSetSwitch.SelectedIndex = 0;
-            if (!_loading) cmbSetSwitchVal.SelectedIndex = 0;
+            if (!mLoading && cmbSetSwitch.Items.Count > 0) cmbSetSwitch.SelectedIndex = 0;
+            if (!mLoading) cmbSetSwitchVal.SelectedIndex = 0;
         }
     }
 }

@@ -14,90 +14,90 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class TradingWindow
     {
-        private static int ItemXPadding = 4;
-        private static int ItemYPadding = 4;
-        private Label _theirOffer;
+        private static int sItemXPadding = 4;
+        private static int sItemYPadding = 4;
+        private Label mTheirOffer;
 
         //Trade button
-        private Button _trade;
+        private Button mTrade;
 
-        public List<TradeSegment> _tradeSegment = new List<TradeSegment>();
+        public List<TradeSegment> TradeSegment = new List<TradeSegment>();
 
-        private WindowControl _tradeWindow;
+        private WindowControl mTradeWindow;
 
         //Name tags
-        private Label _yourOffer;
+        private Label mYourOffer;
 
         //Trader
-        public int EntityID;
+        public int EntityId;
 
         //Init
-        public TradingWindow(Canvas _gameCanvas, int entityID)
+        public TradingWindow(Canvas gameCanvas, int entityId)
         {
-            EntityID = entityID;
+            EntityId = entityId;
 
-            _tradeWindow = new WindowControl(_gameCanvas,
-                Strings.Get("trading", "title", Globals.Entities[EntityID].MyName), false, "TradeWindow");
-            _tradeWindow.DisableResizing();
-            Gui.InputBlockingElements.Add(_tradeWindow);
+            mTradeWindow = new WindowControl(gameCanvas,
+                Strings.Get("trading", "title", Globals.Entities[EntityId].MyName), false, "TradeWindow");
+            mTradeWindow.DisableResizing();
+            Gui.InputBlockingElements.Add(mTradeWindow);
 
-            _yourOffer = new Label(_tradeWindow, "YourOfferLabel")
+            mYourOffer = new Label(mTradeWindow, "YourOfferLabel")
             {
                 Text = Strings.Get("trading", "youroffer")
             };
 
-            _theirOffer = new Label(_tradeWindow, "TheirOfferLabel")
+            mTheirOffer = new Label(mTradeWindow, "TheirOfferLabel")
             {
                 Text = Strings.Get("trading", "theiroffer")
             };
 
-            _trade = new Button(_tradeWindow, "TradeButton");
-            _trade.SetText(Strings.Get("trading", "accept"));
-            _trade.Clicked += trade_Clicked;
+            mTrade = new Button(mTradeWindow, "TradeButton");
+            mTrade.SetText(Strings.Get("trading", "accept"));
+            mTrade.Clicked += trade_Clicked;
 
             for (int i = 0; i < 2; i++)
             {
-                _tradeSegment.Add(new TradeSegment(this, _tradeWindow, i));
+                TradeSegment.Add(new TradeSegment(this, mTradeWindow, i));
             }
-            Gui.LoadRootUIData(_tradeWindow, "InGame.xml");
+            Gui.LoadRootUiData(mTradeWindow, "InGame.xml");
 
             for (int i = 0; i < 2; i++)
             {
-                _tradeSegment[i].InitItemContainer(i);
+                TradeSegment[i].InitItemContainer(i);
             }
         }
 
         //Location
         public int X
         {
-            get { return _tradeWindow.X; }
+            get { return mTradeWindow.X; }
         }
 
         public int Y
         {
-            get { return _tradeWindow.Y; }
+            get { return mTradeWindow.Y; }
         }
 
         public void Close()
         {
-            _tradeWindow.Close();
+            mTradeWindow.Close();
         }
 
         public bool IsVisible()
         {
-            return !_tradeWindow.IsHidden;
+            return !mTradeWindow.IsHidden;
         }
 
         public void Hide()
         {
-            _tradeWindow.IsHidden = true;
+            mTradeWindow.IsHidden = true;
         }
 
         public void Update()
         {
             int g = 0;
 
-            if (_tradeWindow.IsHidden == true)
+            if (mTradeWindow.IsHidden == true)
             {
                 return;
             }
@@ -111,37 +111,37 @@ namespace Intersect_Client.Classes.UI.Game
                         if (item != null)
                         {
                             g += (item.Price * Globals.Trade[n, i].ItemVal);
-                            _tradeSegment[n].Items[i].pnl.IsHidden = false;
+                            TradeSegment[n].Items[i].Pnl.IsHidden = false;
                             if (item.IsStackable())
                             {
-                                _tradeSegment[n].Values[i].IsHidden = false;
-                                _tradeSegment[n].Values[i].Text = Globals.Trade[n, i].ItemVal.ToString();
+                                TradeSegment[n].Values[i].IsHidden = false;
+                                TradeSegment[n].Values[i].Text = Globals.Trade[n, i].ItemVal.ToString();
                             }
                             else
                             {
-                                _tradeSegment[n].Values[i].IsHidden = true;
+                                TradeSegment[n].Values[i].IsHidden = true;
                             }
 
-                            if (_tradeSegment[n].Items[i].IsDragging)
+                            if (TradeSegment[n].Items[i].IsDragging)
                             {
-                                _tradeSegment[n].Items[i].pnl.IsHidden = true;
-                                _tradeSegment[n].Values[i].IsHidden = true;
+                                TradeSegment[n].Items[i].Pnl.IsHidden = true;
+                                TradeSegment[n].Values[i].IsHidden = true;
                             }
-                            _tradeSegment[n].Items[i].Update();
+                            TradeSegment[n].Items[i].Update();
                         }
                     }
                     else
                     {
-                        _tradeSegment[n].Items[i].pnl.IsHidden = true;
-                        _tradeSegment[n].Values[i].IsHidden = true;
+                        TradeSegment[n].Items[i].Pnl.IsHidden = true;
+                        TradeSegment[n].Values[i].IsHidden = true;
                     }
                 }
-                _tradeSegment[n].GoldValue.Text = Strings.Get("trading", "value", g);
-                _tradeSegment[n].GoldValue.SetPosition(
+                TradeSegment[n].GoldValue.Text = Strings.Get("trading", "value", g);
+                TradeSegment[n].GoldValue.SetPosition(
                     4 +
-                    (((2 * n) + 1) * (_tradeWindow.Width - _tradeWindow.Padding.Left -
-                                      _tradeWindow.Padding.Right) / 4) -
-                    (_tradeSegment[n].GoldValue.Width / 2), 294);
+                    (((2 * n) + 1) * (mTradeWindow.Width - mTradeWindow.Padding.Left -
+                                      mTradeWindow.Padding.Right) / 4) -
+                    (TradeSegment[n].GoldValue.Width / 2), 294);
                 g = 0;
             }
         }
@@ -150,10 +150,10 @@ namespace Intersect_Client.Classes.UI.Game
         {
             FloatRect rect = new FloatRect()
             {
-                X = _tradeWindow.LocalPosToCanvas(new Point(0, 0)).X - ItemXPadding / 2,
-                Y = _tradeWindow.LocalPosToCanvas(new Point(0, 0)).Y - ItemYPadding / 2,
-                Width = _tradeWindow.Width + ItemXPadding,
-                Height = _tradeWindow.Height + ItemYPadding
+                X = mTradeWindow.LocalPosToCanvas(new Point(0, 0)).X - sItemXPadding / 2,
+                Y = mTradeWindow.LocalPosToCanvas(new Point(0, 0)).Y - sItemYPadding / 2,
+                Width = mTradeWindow.Width + sItemXPadding,
+                Height = mTradeWindow.Height + sItemYPadding
             };
             return rect;
         }
@@ -161,7 +161,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Trade the item
         void trade_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            _trade.Text = Strings.Get("trading", "pending");
+            mTrade.Text = Strings.Get("trading", "pending");
             PacketSender.SendAcceptTrade();
         }
     }

@@ -7,30 +7,30 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_ChangeItems : UserControl
+    public partial class EventCommandChangeItems : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventPage _currentPage;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventPage mCurrentPage;
+        private EventCommand mMyCommand;
 
-        public EventCommand_ChangeItems(EventCommand refCommand, EventPage refPage, FrmEvent editor)
+        public EventCommandChangeItems(EventCommand refCommand, EventPage refPage, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
-            _currentPage = refPage;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
+            mCurrentPage = refPage;
             InitLocalization();
             cmbItem.Items.Clear();
             cmbItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
-            cmbAction.SelectedIndex = _myCommand.Ints[0];
-            cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, _myCommand.Ints[1]);
-            if (_myCommand.Ints[2] < 1)
+            cmbAction.SelectedIndex = mMyCommand.Ints[0];
+            cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mMyCommand.Ints[1]);
+            if (mMyCommand.Ints[2] < 1)
             {
                 nudGiveTakeAmount.Value = 1;
             }
             else
             {
-                nudGiveTakeAmount.Value = _myCommand.Ints[2];
+                nudGiveTakeAmount.Value = mMyCommand.Ints[2];
             }
             lblAmount.Text = Strings.Get("eventchangeitems", "amount");
         }
@@ -50,24 +50,24 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = cmbAction.SelectedIndex;
-            _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObjectType.Item, cmbItem.SelectedIndex);
-            _myCommand.Ints[2] = (int) nudGiveTakeAmount.Value;
-            if (_myCommand.Ints[4] == 0)
+            mMyCommand.Ints[0] = cmbAction.SelectedIndex;
+            mMyCommand.Ints[1] = Database.GameObjectIdFromList(GameObjectType.Item, cmbItem.SelectedIndex);
+            mMyCommand.Ints[2] = (int) nudGiveTakeAmount.Value;
+            if (mMyCommand.Ints[4] == 0)
                 // command.Ints[4, and 5] are reserved for when the action succeeds or fails
             {
                 for (var i = 0; i < 2; i++)
                 {
-                    _currentPage.CommandLists.Add(new CommandList());
-                    _myCommand.Ints[4 + i] = _currentPage.CommandLists.Count - 1;
+                    mCurrentPage.CommandLists.Add(new CommandList());
+                    mMyCommand.Ints[4 + i] = mCurrentPage.CommandLists.Count - 1;
                 }
             }
-            _eventEditor.FinishCommandEdit();
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
     }
 }

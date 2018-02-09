@@ -11,35 +11,35 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
     {
         public const string DATABASE_TABLE = "";
         public const GameObject OBJECT_TYPE = GameObject.Animation;
-        private int _id = -1;
-        private byte[] backup;
+        private int mId = -1;
+        private byte[] mBackup;
 
         protected DatabaseObject(int id)
         {
-            _id = id;
+            mId = id;
         }
 
         public virtual int GetId()
         {
-            return _id;
+            return mId;
         }
 
         public abstract void Load(byte[] packet);
 
         public virtual void MakeBackup()
         {
-            backup = GetData();
+            mBackup = GetData();
         }
 
         public virtual void RestoreBackup()
         {
-            if (backup != null)
-                Load(backup);
+            if (mBackup != null)
+                Load(mBackup);
         }
 
         public virtual void DeleteBackup()
         {
-            backup = null;
+            mBackup = null;
         }
 
         public abstract void Delete();

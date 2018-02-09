@@ -7,9 +7,9 @@ namespace Intersect.Server.Classes.Maps
 
     public class TileHelper
     {
-        private int _mapNum;
-        private int _tileX;
-        private int _tileY;
+        private int mMapNum;
+        private int mTileX;
+        private int mTileY;
 
         /// <summary>
         ///     Creates a new tile helper instance in a position given.
@@ -19,9 +19,9 @@ namespace Intersect.Server.Classes.Maps
         /// <param name="tileY"></param>
         public TileHelper(int mapNum, int tileX, int tileY)
         {
-            _mapNum = mapNum;
-            _tileX = tileX;
-            _tileY = tileY;
+            mMapNum = mapNum;
+            mTileX = tileX;
+            mTileY = tileY;
         }
 
         /// <summary>
@@ -33,18 +33,18 @@ namespace Intersect.Server.Classes.Maps
         /// <returns></returns>
         public bool Translate(int xOffset, int yOffset)
         {
-            _tileX += xOffset;
-            _tileY += yOffset;
+            mTileX += xOffset;
+            mTileY += yOffset;
             return TryFix();
         }
 
         public bool TryFix()
         {
-            int oldTileX = _tileX;
-            int oldTileY = _tileY;
+            int oldTileX = mTileX;
+            int oldTileY = mTileY;
             if (Fix()) return true;
-            _tileX = oldTileX;
-            _tileY = oldTileY;
+            mTileX = oldTileX;
+            mTileY = oldTileY;
             return false;
         }
 
@@ -56,43 +56,43 @@ namespace Intersect.Server.Classes.Maps
 
         private bool TransitionMaps(int direction)
         {
-            if (!MapInstance.Lookup.IndexKeys.Contains(_mapNum)) return false;
-            int Grid = MapInstance.Lookup.Get<MapInstance>(_mapNum).MapGrid;
-            int GridX = MapInstance.Lookup.Get<MapInstance>(_mapNum).MapGridX;
-            int GridY = MapInstance.Lookup.Get<MapInstance>(_mapNum).MapGridY;
+            if (!MapInstance.Lookup.IndexKeys.Contains(mMapNum)) return false;
+            int grid = MapInstance.Lookup.Get<MapInstance>(mMapNum).MapGrid;
+            int gridX = MapInstance.Lookup.Get<MapInstance>(mMapNum).MapGridX;
+            int gridY = MapInstance.Lookup.Get<MapInstance>(mMapNum).MapGridY;
             switch (direction)
             {
                 case (int) Directions.Up:
-                    if (GridY > 0 && Database.MapGrids[Grid].MyGrid[GridX, GridY - 1] > -1)
+                    if (gridY > 0 && Database.MapGrids[grid].MyGrid[gridX, gridY - 1] > -1)
                     {
-                        _mapNum = Database.MapGrids[Grid].MyGrid[GridX, GridY - 1];
-                        _tileY += Options.MapHeight;
+                        mMapNum = Database.MapGrids[grid].MyGrid[gridX, gridY - 1];
+                        mTileY += Options.MapHeight;
                         return true;
                     }
                     return false;
                 case (int) Directions.Down:
-                    if (GridY + 1 < Database.MapGrids[Grid].Height &&
-                        Database.MapGrids[Grid].MyGrid[GridX, GridY + 1] > -1)
+                    if (gridY + 1 < Database.MapGrids[grid].Height &&
+                        Database.MapGrids[grid].MyGrid[gridX, gridY + 1] > -1)
                     {
-                        _mapNum = Database.MapGrids[Grid].MyGrid[GridX, GridY + 1];
-                        _tileY -= Options.MapHeight;
+                        mMapNum = Database.MapGrids[grid].MyGrid[gridX, gridY + 1];
+                        mTileY -= Options.MapHeight;
                         return true;
                     }
                     return false;
                 case (int) Directions.Left:
-                    if (GridX > 0 && Database.MapGrids[Grid].MyGrid[GridX - 1, GridY] > -1)
+                    if (gridX > 0 && Database.MapGrids[grid].MyGrid[gridX - 1, gridY] > -1)
                     {
-                        _mapNum = Database.MapGrids[Grid].MyGrid[GridX - 1, GridY];
-                        _tileX += Options.MapWidth;
+                        mMapNum = Database.MapGrids[grid].MyGrid[gridX - 1, gridY];
+                        mTileX += Options.MapWidth;
                         return true;
                     }
                     return false;
                 case (int) Directions.Right:
-                    if (GridX + 1 < Database.MapGrids[Grid].Width &&
-                        Database.MapGrids[Grid].MyGrid[GridX + 1, GridY] > -1)
+                    if (gridX + 1 < Database.MapGrids[grid].Width &&
+                        Database.MapGrids[grid].MyGrid[gridX + 1, gridY] > -1)
                     {
-                        _mapNum = Database.MapGrids[Grid].MyGrid[GridX + 1, GridY];
-                        _tileX -= Options.MapWidth;
+                        mMapNum = Database.MapGrids[grid].MyGrid[gridX + 1, gridY];
+                        mTileX -= Options.MapWidth;
                         return true;
                     }
                     return false;
@@ -103,21 +103,21 @@ namespace Intersect.Server.Classes.Maps
 
         private bool Fix()
         {
-            if (!MapInstance.Lookup.IndexKeys.Contains(_mapNum)) return false;
-            MapInstance curMap = MapInstance.Lookup.Get<MapInstance>(_mapNum);
-            while (_tileX < 0)
+            if (!MapInstance.Lookup.IndexKeys.Contains(mMapNum)) return false;
+            MapInstance curMap = MapInstance.Lookup.Get<MapInstance>(mMapNum);
+            while (mTileX < 0)
             {
                 if (!TransitionMaps((int) Directions.Left)) return false;
             }
-            while (_tileY < 0)
+            while (mTileY < 0)
             {
                 if (!TransitionMaps((int) Directions.Up)) return false;
             }
-            while (_tileX >= Options.MapWidth)
+            while (mTileX >= Options.MapWidth)
             {
                 if (!TransitionMaps((int) Directions.Right)) return false;
             }
-            while (_tileY >= Options.MapHeight)
+            while (mTileY >= Options.MapHeight)
             {
                 if (!TransitionMaps((int) Directions.Down)) return false;
             }
@@ -126,17 +126,17 @@ namespace Intersect.Server.Classes.Maps
 
         public int GetMap()
         {
-            return _mapNum;
+            return mMapNum;
         }
 
         public int GetX()
         {
-            return _tileX;
+            return mTileX;
         }
 
         public int GetY()
         {
-            return _tileY;
+            return mTileY;
         }
 
         public static bool IsTileValid(int mapNum, int tileX, int tileY)

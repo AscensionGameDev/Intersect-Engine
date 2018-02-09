@@ -17,18 +17,18 @@ namespace Intersect.Editor.Forms.Editors
         Quest
     }
 
-    public partial class frmDynamicRequirements : Form
+    public partial class FrmDynamicRequirements : Form
     {
-        private ConditionList _edittingList;
-        private ConditionLists _edittingLists;
-        private ConditionList _sourceList;
-        private ConditionLists _sourceLists;
+        private ConditionList mEdittingList;
+        private ConditionLists mEdittingLists;
+        private ConditionList mSourceList;
+        private ConditionLists mSourceLists;
 
-        public frmDynamicRequirements(ConditionLists lists, RequirementType type)
+        public FrmDynamicRequirements(ConditionLists lists, RequirementType type)
         {
             InitializeComponent();
-            _sourceLists = lists;
-            _edittingLists = new ConditionLists(lists.Data());
+            mSourceLists = lists;
+            mEdittingLists = new ConditionLists(lists.Data());
             UpdateLists();
             InitLocalization(type);
         }
@@ -74,9 +74,9 @@ namespace Intersect.Editor.Forms.Editors
             grpConditionLists.Show();
             grpConditionList.Hide();
             lstConditionLists.Items.Clear();
-            for (int i = 0; i < _edittingLists.Lists.Count; i++)
+            for (int i = 0; i < mEdittingLists.Lists.Count; i++)
             {
-                lstConditionLists.Items.Add(_edittingLists.Lists[i].Name);
+                lstConditionLists.Items.Add(mEdittingLists.Lists[i].Name);
             }
         }
 
@@ -85,10 +85,10 @@ namespace Intersect.Editor.Forms.Editors
             grpConditionLists.Hide();
             grpConditionList.Show();
             lstConditions.Items.Clear();
-            if (list != _edittingList)
+            if (list != mEdittingList)
             {
-                _sourceList = list;
-                _edittingList = new ConditionList(_sourceList.Data());
+                mSourceList = list;
+                mEdittingList = new ConditionList(mSourceList.Data());
             }
             txtListName.Text = list.Name;
             for (int i = 0; i < list.Conditions.Count; i++)
@@ -101,14 +101,14 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstConditionLists.SelectedIndex > -1)
             {
-                UpdateConditions(_edittingLists.Lists[lstConditionLists.SelectedIndex]);
+                UpdateConditions(mEdittingLists.Lists[lstConditionLists.SelectedIndex]);
             }
         }
 
         private void btnAddList_Click(object sender, EventArgs e)
         {
             var newList = new ConditionList();
-            _edittingLists.Lists.Add(newList);
+            mEdittingLists.Lists.Add(newList);
             UpdateConditions(newList);
         }
 
@@ -116,7 +116,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstConditionLists.SelectedIndex > -1)
             {
-                _edittingLists.Lists.RemoveAt(lstConditionLists.SelectedIndex);
+                mEdittingLists.Lists.RemoveAt(lstConditionLists.SelectedIndex);
                 UpdateLists();
             }
         }
@@ -125,7 +125,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (txtListName.Text.Trim().Length > 0)
             {
-                _edittingList.Name = txtListName.Text;
+                mEdittingList.Name = txtListName.Text;
             }
         }
 
@@ -133,9 +133,9 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstConditions.SelectedIndex > -1)
             {
-                if (OpenConditionEditor(_edittingList.Conditions[lstConditions.SelectedIndex]))
+                if (OpenConditionEditor(mEdittingList.Conditions[lstConditions.SelectedIndex]))
                 {
-                    UpdateConditions(_edittingList);
+                    UpdateConditions(mEdittingList);
                 }
             }
         }
@@ -148,14 +148,14 @@ namespace Intersect.Editor.Forms.Editors
             };
             if (OpenConditionEditor(evtCommand))
             {
-                _edittingList.Conditions.Add(evtCommand);
-                UpdateConditions(_edittingList);
+                mEdittingList.Conditions.Add(evtCommand);
+                UpdateConditions(mEdittingList);
             }
         }
 
         private bool OpenConditionEditor(EventCommand cmd)
         {
-            var cmdWindow = new EventCommand_ConditionalBranch(cmd, null, null);
+            var cmdWindow = new EventCommandConditionalBranch(cmd, null, null);
             var frm = new Form
             {
                 Text = Strings.Get("dynamicrequirements", "conditioneditor"),
@@ -176,14 +176,14 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstConditions.SelectedIndex > -1)
             {
-                _edittingList.Conditions.RemoveAt(lstConditions.SelectedIndex);
-                UpdateConditions(_edittingList);
+                mEdittingList.Conditions.RemoveAt(lstConditions.SelectedIndex);
+                UpdateConditions(mEdittingList);
             }
         }
 
         private void btnConditionsOkay_Click(object sender, EventArgs e)
         {
-            _sourceList.Load(_edittingList.Data());
+            mSourceList.Load(mEdittingList.Data());
             UpdateLists();
         }
 
@@ -199,7 +199,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _sourceLists.Load(_edittingLists.Data());
+            mSourceLists.Load(mEdittingLists.Data());
             Close();
         }
 

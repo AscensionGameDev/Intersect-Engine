@@ -1,6 +1,6 @@
 ﻿namespace Intersect_Client.Classes
 {
-    partial class frmLoadingContent
+    partial class FrmLoadingContent
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmLoadingContent));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmLoadingContent));
             this.picLogo = new System.Windows.Forms.PictureBox();
             this.lblStatus = new System.Windows.Forms.Label();
             this.lblProgress = new System.Windows.Forms.Label();
@@ -78,7 +78,7 @@
             this.Controls.Add(this.picLogo);
             this.Controls.Add(this.lblProgress);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "frmLoadingContent";
+            this.Name = "FrmLoadingContent";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Downloading Resources";
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();

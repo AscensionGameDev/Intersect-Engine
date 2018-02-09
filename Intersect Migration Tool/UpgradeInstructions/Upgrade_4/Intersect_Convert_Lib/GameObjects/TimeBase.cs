@@ -4,7 +4,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
 {
     public class TimeBase
     {
-        private static TimeBase _timeBase = new TimeBase();
+        private static TimeBase sTimeBase = new TimeBase();
         public Color[] RangeColors;
         public int RangeInterval = 720;
         public float Rate = 1.0f;
@@ -122,7 +122,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
 
         public static TimeBase GetTimeBase()
         {
-            return _timeBase;
+            return sTimeBase;
         }
     }
 }

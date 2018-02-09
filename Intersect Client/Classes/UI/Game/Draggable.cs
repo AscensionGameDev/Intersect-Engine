@@ -8,33 +8,33 @@ namespace Intersect_Client.Classes.UI.Game
 {
     class Draggable
     {
-        ImagePanel pnl;
+        ImagePanel mPnl;
 
         public Draggable(int x, int y, GameTexture tex)
         {
-            pnl = new ImagePanel(Gui.GameUI.GameCanvas, "Draggable");
-            Gui.LoadRootUIData(pnl, "InGame.xml");
-            pnl.SetPosition(InputHandler.MousePosition.X - pnl.Width / 2,
-                InputHandler.MousePosition.Y - pnl.Height / 2);
-            pnl.Texture = tex;
+            mPnl = new ImagePanel(Gui.GameUi.GameCanvas, "Draggable");
+            Gui.LoadRootUiData(mPnl, "InGame.xml");
+            mPnl.SetPosition(InputHandler.MousePosition.X - mPnl.Width / 2,
+                InputHandler.MousePosition.Y - mPnl.Height / 2);
+            mPnl.Texture = tex;
         }
 
         public int X
         {
-            get { return pnl.X; }
-            set { pnl.X = value; }
+            get { return mPnl.X; }
+            set { mPnl.X = value; }
         }
 
         public int Y
         {
-            get { return pnl.Y; }
-            set { pnl.Y = value; }
+            get { return mPnl.Y; }
+            set { mPnl.Y = value; }
         }
 
         public bool Update()
         {
-            pnl.SetPosition(InputHandler.MousePosition.X - pnl.Width / 2,
-                InputHandler.MousePosition.Y - pnl.Height / 2);
+            mPnl.SetPosition(InputHandler.MousePosition.X - mPnl.Width / 2,
+                InputHandler.MousePosition.Y - mPnl.Height / 2);
             if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
             {
                 return true;
@@ -44,7 +44,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Dispose()
         {
-            Gui.GameUI.GameCanvas.RemoveChild(pnl, false);
+            Gui.GameUi.GameCanvas.RemoveChild(mPnl, false);
         }
     }
 }

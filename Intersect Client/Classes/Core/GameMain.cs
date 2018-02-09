@@ -25,7 +25,7 @@ namespace Intersect_Client.Classes.Core
 
             //Load Sounds
             GameAudio.Init();
-            GameAudio.PlayMusic(Globals.Database.MenuBGM, 3, 3, true);
+            GameAudio.PlayMusic(Globals.Database.MenuBgm, 3, 3, true);
 
             //Init Network
             GameNetwork.InitNetwork();
@@ -72,10 +72,10 @@ namespace Intersect_Client.Classes.Core
 
         private static void ProcessIntro()
         {
-            if (Globals.Database.IntroBG.Count > 0)
+            if (Globals.Database.IntroBg.Count > 0)
             {
                 GameTexture imageTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image,
-                    Globals.Database.IntroBG[Globals.IntroIndex]);
+                    Globals.Database.IntroBg[Globals.IntroIndex]);
                 if (imageTex != null)
                 {
                     if (Globals.IntroStartTime == -1)
@@ -84,7 +84,7 @@ namespace Intersect_Client.Classes.Core
                         {
                             if (Globals.IntroComing)
                             {
-                                Globals.IntroStartTime = Globals.System.GetTimeMS();
+                                Globals.IntroStartTime = Globals.System.GetTimeMs();
                             }
                             else
                             {
@@ -96,7 +96,7 @@ namespace Intersect_Client.Classes.Core
                     }
                     else
                     {
-                        if (Globals.System.GetTimeMS() > Globals.IntroStartTime + Globals.IntroDelay)
+                        if (Globals.System.GetTimeMs() > Globals.IntroStartTime + Globals.IntroDelay)
                         {
                             //If we have shown an image long enough, fade to black -- keep track that the image is going
                             GameFade.FadeOut();
@@ -109,7 +109,7 @@ namespace Intersect_Client.Classes.Core
                 {
                     Globals.IntroIndex++;
                 }
-                if (Globals.IntroIndex >= Globals.Database.IntroBG.Count)
+                if (Globals.IntroIndex >= Globals.Database.IntroBg.Count)
                 {
                     Globals.GameState = GameStates.Menu;
                 }
@@ -241,7 +241,7 @@ namespace Intersect_Client.Classes.Core
                                 var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
                                 if (map == null &&
                                     (!MapInstance.MapRequests.ContainsKey(Globals.MapGrid[x, y]) ||
-                                     MapInstance.MapRequests[Globals.MapGrid[x, y]] < Globals.System.GetTimeMS()))
+                                     MapInstance.MapRequests[Globals.MapGrid[x, y]] < Globals.System.GetTimeMs()))
                                 {
                                     //Send for the map
                                     PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
@@ -284,14 +284,14 @@ namespace Intersect_Client.Classes.Core
             }
 
             //Update Game Animations
-            if (_animTimer < Globals.System.GetTimeMS())
+            if (_animTimer < Globals.System.GetTimeMs())
             {
                 Globals.AnimFrame++;
                 if (Globals.AnimFrame == 3)
                 {
                     Globals.AnimFrame = 0;
                 }
-                _animTimer = Globals.System.GetTimeMS() + 500;
+                _animTimer = Globals.System.GetTimeMs() + 500;
             }
 
             //Remove Event Holds If Invalid

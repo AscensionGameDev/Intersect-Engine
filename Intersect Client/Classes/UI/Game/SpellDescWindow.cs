@@ -11,7 +11,7 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class SpellDescWindow
     {
-        ImagePanel _descWindow;
+        ImagePanel mDescWindow;
 
         public SpellDescWindow(int spellnum, int x, int y)
         {
@@ -20,19 +20,19 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 return;
             }
-            _descWindow = new ImagePanel(Gui.GameUI.GameCanvas, "SpellDescWindow");
+            mDescWindow = new ImagePanel(Gui.GameUi.GameCanvas, "SpellDescWindow");
 
-            ImagePanel icon = new ImagePanel(_descWindow, "SpellIcon");
+            ImagePanel icon = new ImagePanel(mDescWindow, "SpellIcon");
             icon.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Pic);
 
-            Label spellName = new Label(_descWindow, "SpellName");
+            Label spellName = new Label(mDescWindow, "SpellName");
             spellName.Text = spell.Name;
 
-            Label spellType = new Label(_descWindow, "SpellType");
+            Label spellType = new Label(mDescWindow, "SpellType");
             spellType.Text = Strings.Get("spelldesc", "spelltype" + spell.SpellType);
 
-            RichLabel spellDesc = new RichLabel(_descWindow, "SpellDesc");
-            Gui.LoadRootUIData(_descWindow,
+            RichLabel spellDesc = new RichLabel(mDescWindow, "SpellDesc");
+            Gui.LoadRootUiData(mDescWindow,
                 "InGame.xml"); //Load this up now so we know what color to make the text when filling out the desc
             if (spell.Desc.Length > 0)
             {
@@ -123,19 +123,19 @@ namespace Intersect_Client.Classes.UI.Game
                 }
             }
             //Load Again for positioning purposes.
-            Gui.LoadRootUIData(_descWindow, "InGame.xml");
+            Gui.LoadRootUiData(mDescWindow, "InGame.xml");
             spellDesc.SizeToChildren(false, true);
-            _descWindow.SetPosition(x, y);
+            mDescWindow.SetPosition(x, y);
         }
 
         public void Dispose()
         {
-            if (_descWindow == null)
+            if (mDescWindow == null)
             {
                 return;
             }
-            Gui.GameUI.GameCanvas.RemoveChild(_descWindow, false);
-            _descWindow.Dispose();
+            Gui.GameUi.GameCanvas.RemoveChild(mDescWindow, false);
+            mDescWindow.Dispose();
         }
     }
 }

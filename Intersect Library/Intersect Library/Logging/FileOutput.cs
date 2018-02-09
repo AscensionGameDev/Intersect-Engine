@@ -8,7 +8,7 @@ namespace Intersect.Logging
     {
         private const string TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.fff";
 
-        private static readonly string SPACER =
+        private static readonly string Spacer =
             Environment.NewLine + new string('-', 80) + Environment.NewLine;
 
         private string mFilename;
@@ -103,7 +103,7 @@ namespace Intersect.Logging
             }
             Write(tag, logLevel, $"Time: {DateTime.UtcNow}");
             if (!string.IsNullOrEmpty(message)) Write(tag, logLevel, $"Note: {message}");
-            Writer?.WriteLine(SPACER);
+            Writer?.WriteLine(Spacer);
             Writer?.Flush();
         }
 

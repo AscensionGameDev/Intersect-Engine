@@ -6,32 +6,32 @@ namespace Intersect.Editor.Classes.Content
 {
     public class GameTexture
     {
-        private int _height = -1;
-        private long _lastAccessTime;
-        private bool _loadError;
-        private string _path = "";
-        private Texture2D _tex;
-        private int _width = -1;
+        private int mHeight = -1;
+        private long mLastAccessTime;
+        private bool mLoadError;
+        private string mPath = "";
+        private Texture2D mTex;
+        private int mWidth = -1;
 
         public GameTexture(string path)
         {
-            _path = path;
+            mPath = path;
             GameContentManager.AllTextures.Add(this);
         }
 
         public void LoadTexture()
         {
-            _loadError = true;
-            if (File.Exists(_path))
+            mLoadError = true;
+            if (File.Exists(mPath))
             {
-                using (var fileStream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var fileStream = new FileStream(mPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    _tex = Texture2D.FromStream(EditorGraphics.GetGraphicsDevice(), fileStream);
-                    if (_tex != null)
+                    mTex = Texture2D.FromStream(EditorGraphics.GetGraphicsDevice(), fileStream);
+                    if (mTex != null)
                     {
-                        _width = _tex.Width;
-                        _height = _tex.Height;
-                        _loadError = false;
+                        mWidth = mTex.Width;
+                        mHeight = mTex.Height;
+                        mLoadError = false;
                     }
                 }
             }
@@ -39,52 +39,52 @@ namespace Intersect.Editor.Classes.Content
 
         public void ResetAccessTime()
         {
-            _lastAccessTime = Globals.System.GetTimeMs() + 15000;
+            mLastAccessTime = Globals.System.GetTimeMs() + 15000;
         }
 
         public int GetWidth()
         {
             ResetAccessTime();
-            if (_width == -1)
+            if (mWidth == -1)
             {
-                if (_tex == null) LoadTexture();
-                if (_loadError)
+                if (mTex == null) LoadTexture();
+                if (mLoadError)
                 {
-                    _width = 0;
+                    mWidth = 0;
                 }
             }
-            return _width;
+            return mWidth;
         }
 
         public int GetHeight()
         {
             ResetAccessTime();
-            if (_height == -1)
+            if (mHeight == -1)
             {
-                if (_tex == null) LoadTexture();
-                if (_loadError)
+                if (mTex == null) LoadTexture();
+                if (mLoadError)
                 {
-                    _height = 0;
+                    mHeight = 0;
                 }
             }
-            return _height;
+            return mHeight;
         }
 
         public Texture2D GetTexture()
         {
             ResetAccessTime();
-            if (_tex == null) LoadTexture();
-            return _tex;
+            if (mTex == null) LoadTexture();
+            return mTex;
         }
 
         public void Update()
         {
-            if (_tex != null)
+            if (mTex != null)
             {
-                if (_lastAccessTime < Globals.System.GetTimeMs())
+                if (mLastAccessTime < Globals.System.GetTimeMs())
                 {
-                    _tex.Dispose();
-                    _tex = null;
+                    mTex.Dispose();
+                    mTex = null;
                 }
             }
         }

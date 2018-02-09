@@ -21,14 +21,14 @@ namespace Intersect.Server.Classes.Networking
 
     public class Client
     {
-        private long _connectionTimeout;
+        private long mConnectionTimeout;
 
-        private long _connectTime;
-        protected long _timeout = 20000; //20 seconds
+        private long mConnectTime;
+        protected long mTimeout = 20000; //20 seconds
         public List<Character> Characters = new List<Character>();
 
         //Network Variables
-        private IConnection connection;
+        private IConnection mConnection;
 
         public int EditorMap = -1;
         public Player Entity;
@@ -50,7 +50,7 @@ namespace Intersect.Server.Classes.Networking
         public string MyPassword = "";
         public string MySalt = "";
         public int Power = 0;
-        private ConcurrentQueue<byte[]> sendQueue = new ConcurrentQueue<byte[]>();
+        private ConcurrentQueue<byte[]> mSendQueue = new ConcurrentQueue<byte[]>();
 
         //Sent Maps
         public Dictionary<int, Tuple<long, int>> SentMaps = new Dictionary<int, Tuple<long, int>>();
@@ -62,9 +62,9 @@ namespace Intersect.Server.Classes.Networking
 
         public Client(int entIndex, IConnection connection = null)
         {
-            this.connection = connection;
-            _connectTime = Globals.System.GetTimeMs();
-            _connectionTimeout = Globals.System.GetTimeMs() + _timeout;
+            this.mConnection = connection;
+            mConnectTime = Globals.System.GetTimeMs();
+            mConnectionTimeout = Globals.System.GetTimeMs() + mTimeout;
             EntityIndex = entIndex;
             if (EntityIndex > -1)
             {
@@ -72,19 +72,19 @@ namespace Intersect.Server.Classes.Networking
             }
         }
 
-        private int packetCount = 0;
-        private bool debugPackets = false;
+        private int mPacketCount = 0;
+        private bool mDebugPackets = false;
         public void SendPacket(byte[] packetData)
         {
             var buff = new ByteBuffer();
             Debug.Assert(packetData != null, "packetData != null");
-            packetCount++;
-            if (debugPackets)
+            mPacketCount++;
+            if (mDebugPackets)
             {
                 var bf = new ByteBuffer();
                 bf.WriteBytes(packetData);
                 var header = (ServerPackets) bf.ReadLong();
-                Console.WriteLine("Sent " + header + " - " + packetCount);
+                Console.WriteLine("Sent " + header + " - " + mPacketCount);
             }
             if (packetData.Length > 800)
             {
@@ -98,13 +98,13 @@ namespace Intersect.Server.Classes.Networking
                 buff.WriteBytes(packetData);
             }
 
-            if (connection != null)
+            if (mConnection != null)
             {
-                connection.Send(new BinaryPacket(null) {Buffer = buff});
+                mConnection.Send(new BinaryPacket(null) {Buffer = buff});
             }
             else
             {
-                sendQueue?.Enqueue(buff.ToArray());
+                mSendQueue?.Enqueue(buff.ToArray());
             }
         }
 
@@ -166,31 +166,31 @@ namespace Intersect.Server.Classes.Networking
 
         public void Pinged()
         {
-            if (connection != null)
+            if (mConnection != null)
             {
-                _connectionTimeout = Globals.System.GetTimeMs() + _timeout;
+                mConnectionTimeout = Globals.System.GetTimeMs() + mTimeout;
             }
         }
 
         public void Disconnect(string reason = "")
         {
-            if (connection != null)
+            if (mConnection != null)
             {
-                connection.Dispose();
+                mConnection.Dispose();
                 return;
             }
         }
 
         public bool IsConnected()
         {
-            return connection.IsConnected;
+            return mConnection.IsConnected;
         }
 
-        public string GetIP()
+        public string GetIp()
         {
             if (!IsConnected()) return "";
 
-            return connection.Ip;
+            return mConnection.Ip;
         }
 
         public static Client CreateBeta4Client(IConnection connection)
@@ -268,7 +268,7 @@ namespace Intersect.Server.Classes.Networking
         {
             lock (Globals.ClientLock)
             {
-                return Globals.Clients.Find(client => client?.connection == connection);
+                return Globals.Clients.Find(client => client?.mConnection == connection);
             }
         }
     }

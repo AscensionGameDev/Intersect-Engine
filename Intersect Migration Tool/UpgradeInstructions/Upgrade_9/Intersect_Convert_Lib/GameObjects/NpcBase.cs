@@ -18,7 +18,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_9.Intersect_Convert_Li
         public int DamageType;
 
         //Drops
-        public List<NPCDrop> Drops = new List<NPCDrop>();
+        public List<NpcDrop> Drops = new List<NpcDrop>();
 
         public int Experience;
         public int Level = 1;
@@ -49,7 +49,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_9.Intersect_Convert_Li
             Name = "New Npc";
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
-                Drops.Add(new NPCDrop());
+                Drops.Add(new NpcDrop());
             }
         }
 
@@ -161,7 +161,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_9.Intersect_Convert_Li
         }
     }
 
-    public class NPCDrop
+    public class NpcDrop
     {
         public int Amount;
         public int Chance;

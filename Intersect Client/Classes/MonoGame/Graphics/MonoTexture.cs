@@ -8,35 +8,35 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 {
     public class MonoTexture : GameTexture
     {
-        private GraphicsDevice _graphicsDevice;
-        private int _height = -1;
-        private long _lastAccessTime;
-        private bool _loadError;
-        private string _name = "";
-        private string _path = "";
-        private Texture2D _tex;
-        private int _width = -1;
+        private GraphicsDevice mGraphicsDevice;
+        private int mHeight = -1;
+        private long mLastAccessTime;
+        private bool mLoadError;
+        private string mName = "";
+        private string mPath = "";
+        private Texture2D mTex;
+        private int mWidth = -1;
 
         public MonoTexture(GraphicsDevice graphicsDevice, string filename)
         {
-            _graphicsDevice = graphicsDevice;
-            _path = filename;
-            _name = Path.GetFileName(filename);
+            mGraphicsDevice = graphicsDevice;
+            mPath = filename;
+            mName = Path.GetFileName(filename);
         }
 
         public void LoadTexture()
         {
-            _loadError = true;
-            if (File.Exists(_path))
+            mLoadError = true;
+            if (File.Exists(mPath))
             {
-                using (var fileStream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var fileStream = new FileStream(mPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    _tex = Texture2D.FromStream(_graphicsDevice, fileStream);
-                    if (_tex != null)
+                    mTex = Texture2D.FromStream(mGraphicsDevice, fileStream);
+                    if (mTex != null)
                     {
-                        _width = _tex.Width;
-                        _height = _tex.Height;
-                        _loadError = false;
+                        mWidth = mTex.Width;
+                        mHeight = mTex.Height;
+                        mLoadError = false;
                     }
                 }
             }
@@ -44,72 +44,72 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public void ResetAccessTime()
         {
-            _lastAccessTime = Globals.System.GetTimeMS() + 15000;
+            mLastAccessTime = Globals.System.GetTimeMs() + 15000;
         }
 
         public override string GetName()
         {
-            return _name;
+            return mName;
         }
 
         public override int GetWidth()
         {
             ResetAccessTime();
-            if (_width == -1)
+            if (mWidth == -1)
             {
-                if (_tex == null) LoadTexture();
-                if (_loadError)
+                if (mTex == null) LoadTexture();
+                if (mLoadError)
                 {
-                    _width = 0;
+                    mWidth = 0;
                 }
             }
-            return _width;
+            return mWidth;
         }
 
         public override int GetHeight()
         {
             ResetAccessTime();
-            if (_height == -1)
+            if (mHeight == -1)
             {
-                if (_tex == null) LoadTexture();
-                if (_loadError)
+                if (mTex == null) LoadTexture();
+                if (mLoadError)
                 {
-                    _height = 0;
+                    mHeight = 0;
                 }
             }
-            return _height;
+            return mHeight;
         }
 
         public override object GetTexture()
         {
             ResetAccessTime();
-            if (_tex == null) LoadTexture();
-            return _tex;
+            if (mTex == null) LoadTexture();
+            return mTex;
         }
 
         public override Color GetPixel(int x1, int y1)
         {
-            if (_tex == null) LoadTexture();
-            if (_loadError)
+            if (mTex == null) LoadTexture();
+            if (mLoadError)
             {
                 return Color.White;
             }
             else
             {
                 Microsoft.Xna.Framework.Color[] pixel = new Microsoft.Xna.Framework.Color[1];
-                _tex.GetData(0, new Microsoft.Xna.Framework.Rectangle(x1, y1, 1, 1), pixel, 0, 1);
+                mTex.GetData(0, new Microsoft.Xna.Framework.Rectangle(x1, y1, 1, 1), pixel, 0, 1);
                 return new Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
             }
         }
 
         public void Update()
         {
-            if (_tex != null)
+            if (mTex != null)
             {
-                if (_lastAccessTime < Globals.System.GetTimeMS())
+                if (mLastAccessTime < Globals.System.GetTimeMs())
                 {
-                    _tex.Dispose();
-                    _tex = null;
+                    mTex.Dispose();
+                    mTex = null;
                 }
             }
         }

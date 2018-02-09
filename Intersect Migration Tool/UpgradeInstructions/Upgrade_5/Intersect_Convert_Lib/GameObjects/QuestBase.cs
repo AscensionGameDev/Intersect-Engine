@@ -14,9 +14,9 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
     public struct QuestProgressStruct
     {
-        public int task;
-        public int completed;
-        public int taskProgress;
+        public int Task;
+        public int Completed;
+        public int TaskProgress;
     }
 
     public class QuestBase : DatabaseObject
@@ -25,7 +25,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
         public new const string DATABASE_TABLE = "quests";
 
         public new const GameObject OBJECT_TYPE = GameObject.Quest;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        protected static Dictionary<int, DatabaseObject> sObjects = new Dictionary<int, DatabaseObject>();
         public string BeforeDesc = "";
         public string EndDesc = "";
         public EventBase EndEvent = new EventBase(-1, 0, 0, true);
@@ -36,7 +36,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
         public string Name = "New Quest";
 
         //Tasks
-        public int NextTaskID;
+        public int NextTaskId;
 
         public byte Quitable;
 
@@ -72,19 +72,19 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
             LogBeforeOffer = myBuffer.ReadByte();
             LogAfterComplete = myBuffer.ReadByte();
 
-            var RequirementCount = myBuffer.ReadInteger();
+            var requirementCount = myBuffer.ReadInteger();
             Requirements.Clear();
-            for (int i = 0; i < RequirementCount; i++)
+            for (int i = 0; i < requirementCount; i++)
             {
                 var cmd = new EventCommand();
                 cmd.Load(myBuffer);
                 Requirements.Add(cmd);
             }
 
-            NextTaskID = myBuffer.ReadInteger();
-            var MaxTasks = myBuffer.ReadInteger();
+            NextTaskId = myBuffer.ReadInteger();
+            var maxTasks = myBuffer.ReadInteger();
             Tasks.Clear();
-            for (int i = 0; i < MaxTasks; i++)
+            for (int i = 0; i < maxTasks; i++)
             {
                 QuestTask task = new QuestTask(myBuffer.ReadInteger())
                 {
@@ -128,7 +128,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
                 Requirements[i].Save(myBuffer);
             }
 
-            myBuffer.WriteInteger(NextTaskID);
+            myBuffer.WriteInteger(NextTaskId);
             myBuffer.WriteInteger(Tasks.Count);
             for (int i = 0; i < Tasks.Count; i++)
             {
@@ -174,18 +174,18 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         public static QuestBase GetQuest(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return (QuestBase) Objects[index];
+                return (QuestBase) sObjects[index];
             }
             return null;
         }
 
         public static string GetName(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return ((QuestBase) Objects[index]).Name;
+                return ((QuestBase) sObjects[index]).Name;
             }
             return "Deleted";
         }
@@ -207,37 +207,37 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         public static DatabaseObject Get(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return Objects[index];
+                return sObjects[index];
             }
             return null;
         }
 
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            sObjects.Remove(GetId());
         }
 
         public static void ClearObjects()
         {
-            Objects.Clear();
+            sObjects.Clear();
         }
 
         public static void AddObject(int index, DatabaseObject obj)
         {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
+            sObjects.Remove(index);
+            sObjects.Add(index, obj);
         }
 
         public static int ObjectCount()
         {
-            return Objects.Count;
+            return sObjects.Count;
         }
 
         public static Dictionary<int, QuestBase> GetObjects()
         {
-            Dictionary<int, QuestBase> objects = Objects.ToDictionary(k => k.Key, v => (QuestBase) v.Value);
+            Dictionary<int, QuestBase> objects = sObjects.ToDictionary(k => k.Key, v => (QuestBase) v.Value);
             return objects;
         }
 

@@ -15,9 +15,9 @@ namespace Intersect_Client.Classes.Entities
 {
     public class Event : Entity
     {
-        private GameTexture cachedTileset;
+        private GameTexture mCachedTileset;
 
-        private string cachedTilesetName;
+        private string mCachedTilesetName;
         public string Desc = "";
         public int DirectionFix;
         public int DisablePreview;
@@ -30,10 +30,10 @@ namespace Intersect_Client.Classes.Entities
         public int GraphicX;
         public int GraphicY;
         public int Layer;
-        private int oldRenderLevel;
+        private int mOldRenderLevel;
 
-        private MapInstance oldRenderMap;
-        private int oldRenderY;
+        private MapInstance mOldRenderMap;
+        private int mOldRenderY;
         public int RenderLevel = 1;
         public int WalkingAnim = 1;
 
@@ -44,7 +44,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 map.AddEvent(this);
             }
-            _renderPriority = 1;
+            mRenderPriority = 1;
         }
 
         public override string ToString()
@@ -138,22 +138,22 @@ namespace Intersect_Client.Classes.Entities
                     }
                     break;
                 case 2: //Tile
-                    if (cachedTilesetName != GraphicFile)
+                    if (mCachedTilesetName != GraphicFile)
                     {
-                        cachedTilesetName = GraphicFile;
-                        cachedTileset = null;
+                        mCachedTilesetName = GraphicFile;
+                        mCachedTileset = null;
                         foreach (var tilesetName in TilesetBase.GetNameList())
                         {
                             if (tilesetName.ToLower() == GraphicFile.ToLower())
                             {
-                                cachedTileset =
+                                mCachedTileset =
                                     Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
                                         GraphicFile);
                                 break;
                             }
                         }
                     }
-                    GameTexture tileset = cachedTileset;
+                    GameTexture tileset = mCachedTileset;
                     if (tileset != null)
                     {
                         srcTexture = tileset;
@@ -209,7 +209,7 @@ namespace Intersect_Client.Classes.Entities
                         {
                             if (RenderLevel == 0) y -= 1;
                             if (RenderLevel == 2) y += 1;
-                            var priority = _renderPriority;
+                            var priority = mRenderPriority;
                             if (CurrentZ != 0)
                             {
                                 priority += 3;
@@ -261,22 +261,22 @@ namespace Intersect_Client.Classes.Entities
                     }
                     break;
                 case 2: //Tile
-                    if (cachedTilesetName != GraphicFile)
+                    if (mCachedTilesetName != GraphicFile)
                     {
-                        cachedTilesetName = GraphicFile;
-                        cachedTileset = null;
+                        mCachedTilesetName = GraphicFile;
+                        mCachedTileset = null;
                         foreach (var tileset in TilesetBase.GetNameList())
                         {
                             if (tileset == GraphicFile)
                             {
-                                cachedTileset =
+                                mCachedTileset =
                                     Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
                                         GraphicFile);
                                 break;
                             }
                         }
                     }
-                    if (cachedTileset != null)
+                    if (mCachedTileset != null)
                     {
                         height = (GraphicHeight + 1) * Options.TileHeight;
                     }
@@ -319,22 +319,22 @@ namespace Intersect_Client.Classes.Entities
                     }
                     break;
                 case 2: //Tile
-                    if (cachedTilesetName != GraphicFile)
+                    if (mCachedTilesetName != GraphicFile)
                     {
-                        cachedTilesetName = GraphicFile;
-                        cachedTileset = null;
+                        mCachedTilesetName = GraphicFile;
+                        mCachedTileset = null;
                         foreach (var tileset in TilesetBase.GetNameList())
                         {
                             if (tileset == GraphicFile)
                             {
-                                cachedTileset =
+                                mCachedTileset =
                                     Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
                                         GraphicFile);
                                 break;
                             }
                         }
                     }
-                    if (cachedTileset != null)
+                    if (mCachedTileset != null)
                     {
                         pos.Y -= ((GraphicHeight + 1) * Options.TileHeight) / 2;
                         pos.Y -= 12;

@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms
 {
-    partial class frmMapEditor
+    partial class FrmMapEditor
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace Intersect.Editor.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMapEditor));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMapEditor));
             this.pnlMapContainer = new System.Windows.Forms.Panel();
             this.picMap = new System.Windows.Forms.PictureBox();
             this.pnlMapContainer.SuspendLayout();
@@ -83,7 +83,7 @@ namespace Intersect.Editor.Forms
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.Name = "frmMapEditor";
+            this.Name = "FrmMapEditor";
             this.Text = "Map Editor";
             this.DockStateChanged += new System.EventHandler(this.frmMapEditor_DockStateChanged);
             this.Load += new System.EventHandler(this.frmMapEditor_Load);

@@ -13,9 +13,9 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class ItemDescWindow
     {
-        ImagePanel _descWindow;
+        ImagePanel mDescWindow;
 
-        public ItemDescWindow(int itemnum, int amount, int x, int y, int[] StatBuffs, string titleOverride = "",
+        public ItemDescWindow(int itemnum, int amount, int x, int y, int[] statBuffs, string titleOverride = "",
             string valueLabel = "")
         {
             string title = "";
@@ -24,19 +24,19 @@ namespace Intersect_Client.Classes.UI.Game
             else
                 title = titleOverride;
 
-            _descWindow = new ImagePanel(Gui.GameUI.GameCanvas, "ItemDescWindow");
+            mDescWindow = new ImagePanel(Gui.GameUi.GameCanvas, "ItemDescWindow");
 
             var item = ItemBase.Lookup.Get<ItemBase>(itemnum);
             if (item != null)
             {
-                ImagePanel icon = new ImagePanel(_descWindow, "ItemIcon");
+                ImagePanel icon = new ImagePanel(mDescWindow, "ItemIcon");
                 GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
                 if (itemTex != null)
                 {
                     icon.Texture = itemTex;
                 }
 
-                Label itemName = new Label(_descWindow, "ItemNameLabel");
+                Label itemName = new Label(mDescWindow, "ItemNameLabel");
                 itemName.Text = title;
 
                 if (amount > 1)
@@ -46,8 +46,8 @@ namespace Intersect_Client.Classes.UI.Game
 
                 itemName.AddAlignment(Alignments.CenterH);
 
-                Label itemType = new Label(_descWindow, "ItemTypeLabel");
-                Label itemValue = new Label(_descWindow, "ItemValueLabel");
+                Label itemType = new Label(mDescWindow, "ItemTypeLabel");
+                Label itemValue = new Label(mDescWindow, "ItemValueLabel");
                 itemType.Text = Strings.Get("itemdesc", "itemtype" + item.ItemType);
                 itemValue.SetText(valueLabel);
 
@@ -59,8 +59,8 @@ namespace Intersect_Client.Classes.UI.Game
                         itemType.Text += " - " + Strings.Get("itemdesc", "2hand");
                     }
                 }
-                RichLabel itemDesc = new RichLabel(_descWindow, "ItemDescription");
-                Gui.LoadRootUIData(_descWindow,
+                RichLabel itemDesc = new RichLabel(mDescWindow, "ItemDescription");
+                Gui.LoadRootUiData(mDescWindow,
                     "InGame.xml"); //Load this up now so we know what color to make the text when filling out the desc
                 if (item.Desc.Length > 0)
                 {
@@ -81,11 +81,11 @@ namespace Intersect_Client.Classes.UI.Game
                         itemDesc.AddText(stats, itemDesc.RenderColor);
                         itemDesc.AddLineBreak();
                     }
-                    if (StatBuffs != null)
+                    if (statBuffs != null)
                     {
                         for (int i = 0; i < Options.MaxStats; i++)
                         {
-                            stats = Strings.Get("itemdesc", "stat" + i, (item.StatsGiven[i] + StatBuffs[i]));
+                            stats = Strings.Get("itemdesc", "stat" + i, (item.StatsGiven[i] + statBuffs[i]));
                             itemDesc.AddText(stats, itemDesc.RenderColor);
                             itemDesc.AddLineBreak();
                         }
@@ -98,16 +98,16 @@ namespace Intersect_Client.Classes.UI.Game
                             Strings.Get("itemdesc", "effect" + (item.Data2 - 1))), itemDesc.RenderColor);
                 }
                 //Load Again for positioning purposes.
-                Gui.LoadRootUIData(_descWindow, "InGame.xml");
+                Gui.LoadRootUiData(mDescWindow, "InGame.xml");
                 itemDesc.SizeToChildren(false, true);
-                _descWindow.SetPosition(x, y);
+                mDescWindow.SetPosition(x, y);
             }
         }
 
         public void Dispose()
         {
-            Gui.GameUI.GameCanvas.RemoveChild(_descWindow, false);
-            _descWindow.Dispose();
+            Gui.GameUi.GameCanvas.RemoveChild(mDescWindow, false);
+            mDescWindow.Dispose();
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Classes
 {
-    partial class frmProjectile
+    partial class FrmProjectile
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace Intersect.Editor.Classes
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmProjectile));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmProjectile));
             this.grpProjectiles = new DarkUI.Controls.DarkGroupBox();
             this.lstProjectiles = new System.Windows.Forms.ListBox();
             this.grpSpawns = new DarkUI.Controls.DarkGroupBox();
@@ -790,7 +790,7 @@ namespace Intersect.Editor.Classes
             this.Controls.Add(this.pnlContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
-            this.Name = "frmProjectile";
+            this.Name = "FrmProjectile";
             this.Text = "Projectile Editor";
             this.Load += new System.EventHandler(this.frmProjectile_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);
