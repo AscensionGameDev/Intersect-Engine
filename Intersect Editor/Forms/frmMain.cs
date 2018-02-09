@@ -445,15 +445,15 @@ namespace Intersect.Editor.Forms
             }
             else if (Globals.CurrentLayer == Options.LayerCount + 1) //Lights
             {
-                Globals.CurrentTool = (int) EdittingTool.Selection;
+                Globals.CurrentTool = (int) EditingTool.Selection;
             }
             else if (Globals.CurrentLayer == Options.LayerCount + 2) //Events
             {
-                Globals.CurrentTool = (int) EdittingTool.Selection;
+                Globals.CurrentTool = (int) EditingTool.Selection;
             }
             else if (Globals.CurrentLayer == Options.LayerCount + 3) //NPCS
             {
-                Globals.CurrentTool = (int) EdittingTool.Selection;
+                Globals.CurrentTool = (int) EditingTool.Selection;
             }
             else
             {
@@ -464,7 +464,7 @@ namespace Intersect.Editor.Forms
 
             switch (Globals.CurrentTool)
             {
-                case (int) EdittingTool.Pen:
+                case (int) EditingTool.Pen:
                     if (!toolStripBtnPen.Checked)
                     {
                         toolStripBtnPen.Checked = true;
@@ -507,7 +507,7 @@ namespace Intersect.Editor.Forms
                         copyToolStripMenuItem.Enabled = false;
                     }
                     break;
-                case (int) EdittingTool.Selection:
+                case (int) EditingTool.Selection:
                     if (toolStripBtnPen.Checked)
                     {
                         toolStripBtnPen.Checked = false;
@@ -550,7 +550,7 @@ namespace Intersect.Editor.Forms
                         copyToolStripMenuItem.Enabled = true;
                     }
                     break;
-                case (int) EdittingTool.Rectangle:
+                case (int) EditingTool.Rectangle:
                     if (toolStripBtnPen.Checked)
                     {
                         toolStripBtnPen.Checked = false;
@@ -593,7 +593,7 @@ namespace Intersect.Editor.Forms
                         copyToolStripMenuItem.Enabled = false;
                     }
                     break;
-                case (int) EdittingTool.Fill:
+                case (int) EditingTool.Fill:
                     if (toolStripBtnPen.Checked)
                     {
                         toolStripBtnPen.Checked = false;
@@ -636,7 +636,7 @@ namespace Intersect.Editor.Forms
                         copyToolStripMenuItem.Enabled = false;
                     }
                     break;
-                case (int) EdittingTool.Erase:
+                case (int) EditingTool.Erase:
                     if (toolStripBtnPen.Checked)
                     {
                         toolStripBtnPen.Checked = false;
@@ -679,7 +679,7 @@ namespace Intersect.Editor.Forms
                         copyToolStripMenuItem.Enabled = false;
                     }
                     break;
-                case (int) EdittingTool.Droppler:
+                case (int) EditingTool.Droppler:
                     if (toolStripBtnPen.Checked)
                     {
                         toolStripBtnPen.Checked = false;
@@ -791,21 +791,22 @@ namespace Intersect.Editor.Forms
             }
         }
 
-        private void SaveMap()
+        private static void SaveMap()
         {
-            if (Globals.CurrentTool == (int) EdittingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.Selection)
             {
-                if (Globals.Dragging == true)
+                if (Globals.Dragging)
                 {
                     //Place the change, we done!
-                    Globals.MapEditorWindow.ProcessSelectionMovement(Globals.CurrentMap, true);
-                    Globals.MapEditorWindow.PlaceSelection();
+                    Globals.MapEditorWindow?.ProcessSelectionMovement(Globals.CurrentMap, true);
+                    Globals.MapEditorWindow?.PlaceSelection();
                 }
             }
+
             PacketSender.SendMap(Globals.CurrentMap);
         }
 
-        private void newMapToolStripMenuItem_Click(object sender, EventArgs e)
+        private void NewMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (
                 DarkMessageBox.ShowWarning(Strings.Get("mapping", "newmap"), Strings.Get("mapping", "newmapcaption"),
@@ -1057,7 +1058,7 @@ namespace Intersect.Editor.Forms
         //ToolStrip Functions
         private void toolStripBtnNewMap_Click(object sender, EventArgs e)
         {
-            newMapToolStripMenuItem_Click(null, null);
+            NewMapToolStripMenuItem_Click(null, null);
         }
 
         private void toolStripBtnSaveMap_Click(object sender, EventArgs e)
@@ -1099,12 +1100,12 @@ namespace Intersect.Editor.Forms
 
         private void toolStripBtnFill_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int) EdittingTool.Fill;
+            Globals.CurrentTool = (int) EditingTool.Fill;
         }
 
         private void toolStripBtnErase_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int) EdittingTool.Erase;
+            Globals.CurrentTool = (int) EditingTool.Erase;
         }
 
         private void toolStripBtnScreenshot_Click(object sender, EventArgs e)
@@ -1128,31 +1129,31 @@ namespace Intersect.Editor.Forms
 
         private void toolStripBtnPen_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int) EdittingTool.Pen;
+            Globals.CurrentTool = (int) EditingTool.Pen;
         }
 
         private void toolStripBtnSelect_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int) EdittingTool.Selection;
+            Globals.CurrentTool = (int) EditingTool.Selection;
         }
 
         private void toolStripBtnRect_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int) EdittingTool.Rectangle;
+            Globals.CurrentTool = (int) EditingTool.Rectangle;
             Globals.CurMapSelX = 0;
             Globals.CurMapSelY = 0;
         }
 
         private void toolStripBtnEyeDrop_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int) EdittingTool.Droppler;
+            Globals.CurrentTool = (int) EditingTool.Droppler;
             Globals.CurMapSelX = 0;
             Globals.CurMapSelY = 0;
         }
 
         private void toolStripBtnCopy_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentTool != (int) EdittingTool.Selection)
+            if (Globals.CurrentTool != (int) EditingTool.Selection)
             {
                 return;
             }
@@ -1170,7 +1171,7 @@ namespace Intersect.Editor.Forms
 
         private void toolStripBtnCut_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentTool != (int) EdittingTool.Selection)
+            if (Globals.CurrentTool != (int) EditingTool.Selection)
             {
                 return;
             }
@@ -1400,12 +1401,22 @@ namespace Intersect.Editor.Forms
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!Globals.ClosingEditor && Globals.CurrentMap != null && Globals.CurrentMap.Changed() &&
-                DarkMessageBox.ShowWarning(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"),
-                    DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+            if (Globals.ClosingEditor) return;
+
+            if (Globals.CurrentMap?.Changed() ?? false)
             {
-                SaveMap();
+                var dialogCaption = Strings.Get("mapping", "savemap");
+                var dialogMessage = Strings.Get("mapping", "savemapdialogue");
+                var dialogResult = DarkMessageBox.ShowWarning(dialogMessage, dialogCaption, DarkDialogButton.YesNo, Properties.Resources.Icon);
+
+                Globals.SavingOnClose = false;
+                if (dialogResult == DialogResult.Yes)
+                {
+                    Globals.SavingOnClose = true;
+                    SaveMap();
+                }
             }
+
             Globals.ClosingEditor = true;
         }
     }

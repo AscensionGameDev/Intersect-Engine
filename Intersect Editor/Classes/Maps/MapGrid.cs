@@ -190,7 +190,7 @@ namespace Intersect.Editor.Classes.Maps
 
         private void SaveMap()
         {
-            if (Globals.CurrentTool == (int) EdittingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.Selection)
             {
                 if (Globals.Dragging == true)
                 {

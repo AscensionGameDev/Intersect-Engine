@@ -563,7 +563,7 @@ namespace Intersect.Editor.Forms
             this.newMapToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.newMapToolStripMenuItem.Text = "New Map";
             this.newMapToolStripMenuItem.ToolTipText = "Create a new, unconnected map.";
-            this.newMapToolStripMenuItem.Click += new System.EventHandler(this.newMapToolStripMenuItem_Click);
+            this.newMapToolStripMenuItem.Click += new System.EventHandler(this.NewMapToolStripMenuItem_Click);
             // 
             // importMapToolStripMenuItem
             // 

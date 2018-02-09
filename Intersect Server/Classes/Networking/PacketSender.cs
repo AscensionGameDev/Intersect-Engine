@@ -120,12 +120,12 @@ namespace Intersect.Server.Classes.Networking
             else
             {
                 bf.WriteInteger(0);
-                byte[] MapData = null;
+                byte[] mapData;
                 if (client.IsEditor)
                 {
-                    MapData = map.GetMapPacket(false);
-                    bf.WriteInteger(MapData.Length);
-                    bf.WriteBytes(MapData);
+                    mapData = map.GetMapPacket(false);
+                    bf.WriteInteger(mapData.Length);
+                    bf.WriteBytes(mapData);
                     var tileData = map.GetTileData(false);
                     bf.WriteInteger(tileData.Length);
                     bf.WriteBytes(tileData);
@@ -140,6 +140,7 @@ namespace Intersect.Server.Classes.Networking
                             client.SentMaps[mapNum].Item2 == map.Revision) return;
                         client.SentMaps.Remove(mapNum);
                     }
+
                     try
                     {
                         client.SentMaps.Add(mapNum,
@@ -150,65 +151,41 @@ namespace Intersect.Server.Classes.Networking
                         Log.Error($"Current Map #: {mapNum}");
                         Log.Error($"# Sent maps: {client.SentMaps.Count}");
                         Log.Error($"# Maps: {MapInstance.Lookup.Count}");
-                        throw exception;
+                        Log.Error(exception);
+                        throw;
                     }
-                    MapData = map.GetMapPacket(true);
-                    bf.WriteInteger(MapData.Length);
-                    bf.WriteBytes(MapData);
+
+                    mapData = map.GetMapPacket(true);
+                    bf.WriteInteger(mapData.Length);
+                    bf.WriteBytes(mapData);
                     var tileData = map.GetTileData();
                     bf.WriteInteger(tileData.Length);
                     bf.WriteBytes(tileData);
                     bf.WriteInteger(map.Revision);
                     bf.WriteInteger(map.MapGridX);
                     bf.WriteInteger(map.MapGridY);
-                    if (Options.GameBorderStyle == 1)
+                    switch (Options.GameBorderStyle)
                     {
-                        bf.WriteInteger(1);
-                        bf.WriteInteger(1);
-                        bf.WriteInteger(1);
-                        bf.WriteInteger(1);
-                    }
-                    else if (Options.GameBorderStyle == 0)
-                    {
-                        if (0 == map.MapGridX)
-                        {
+                        case 1:
                             bf.WriteInteger(1);
-                        }
-                        else
-                        {
-                            bf.WriteInteger(0);
-                        }
-                        if (Database.MapGrids[map.MapGrid].XMax - 1 == map.MapGridX)
-                        {
                             bf.WriteInteger(1);
-                        }
-                        else
-                        {
-                            bf.WriteInteger(0);
-                        }
-                        if (0 == map.MapGridY)
-                        {
                             bf.WriteInteger(1);
-                        }
-                        else
-                        {
-                            bf.WriteInteger(0);
-                        }
-                        if (Database.MapGrids[map.MapGrid].YMax - 1 == map.MapGridY)
-                        {
                             bf.WriteInteger(1);
-                        }
-                        else
-                        {
+                            break;
+
+                        case 0:
+                            bf.WriteInteger(0 == map.MapGridX ? 1 : 0);
+                            bf.WriteInteger(Database.MapGrids[map.MapGrid].XMax - 1 == map.MapGridX ? 1 : 0);
+                            bf.WriteInteger(0 == map.MapGridY ? 1 : 0);
+                            bf.WriteInteger(Database.MapGrids[map.MapGrid].YMax - 1 == map.MapGridY ? 1 : 0);
+                            break;
+
+                        default:
                             bf.WriteInteger(0);
-                        }
-                    }
-                    else
-                    {
-                        bf.WriteInteger(0);
-                        bf.WriteInteger(0);
-                        bf.WriteInteger(0);
-                        bf.WriteInteger(0);
+                            bf.WriteInteger(0);
+                            bf.WriteInteger(0);
+                            bf.WriteInteger(0);
+                            break;
                     }
                 }
                 client.SendPacket(bf.ToArray());

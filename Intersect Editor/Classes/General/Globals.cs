@@ -31,6 +31,8 @@ namespace Intersect.Editor.Classes
         public static bool HasGameData = false;
         public static bool InEditor;
 
+        public static bool SavingOnClose;
+
         public static bool ClosingEditor;
 
         //Animation Frame Variables
@@ -55,8 +57,8 @@ namespace Intersect.Editor.Classes
         public static int MouseButton = -1;
         public static int CurrentLayer = 0;
         public static bool ViewingMapProperties = false;
-        public static int CurrentTool = (int) EdittingTool.Pen;
-        public static int SavedTool = (int) EdittingTool.Pen;
+        public static int CurrentTool = (int) EditingTool.Pen;
+        public static int SavedTool = (int) EditingTool.Pen;
         public static int CurMapSelX;
         public static int CurMapSelY;
         public static int CurMapSelW;

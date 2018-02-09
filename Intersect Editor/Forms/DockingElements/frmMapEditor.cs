@@ -160,7 +160,7 @@ namespace Intersect.Editor.Forms
             {
                 case MouseButtons.Left:
                     Globals.MouseButton = 0;
-                    if (Globals.CurrentTool == (int) EdittingTool.Droppler)
+                    if (Globals.CurrentTool == (int) EditingTool.Droppler)
                     {
                         for (int i = Globals.CurrentLayer; i >= 0; i--)
                         {
@@ -173,12 +173,12 @@ namespace Intersect.Editor.Forms
                                     tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile);
                                 Globals.CurSelX = tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].X;
                                 Globals.CurSelY = tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].Y;
-                                Globals.CurrentTool = (int) EdittingTool.Pen;
+                                Globals.CurrentTool = (int) EditingTool.Pen;
                                 Globals.MapLayersWindow.SetLayer(i);
                                 break;
                             }
                         }
-                        if (Globals.CurrentTool == (int) EdittingTool.Droppler)
+                        if (Globals.CurrentTool == (int) EditingTool.Droppler)
                         {
                             //Could not find a tile from the selected level downward, maybe they didnt opt for a specific layer?
                             for (int i = 4; i >= 0; i--)
@@ -192,7 +192,7 @@ namespace Intersect.Editor.Forms
                                         tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile);
                                     Globals.CurSelX = tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].X;
                                     Globals.CurSelY = tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].Y;
-                                    Globals.CurrentTool = (int) EdittingTool.Pen;
+                                    Globals.CurrentTool = (int) EditingTool.Pen;
                                     Globals.MapLayersWindow.SetLayer(i);
                                     break;
                                 }
@@ -200,7 +200,7 @@ namespace Intersect.Editor.Forms
                         }
                         return;
                     }
-                    else if (Globals.CurrentTool == (int) EdittingTool.Selection)
+                    else if (Globals.CurrentTool == (int) EditingTool.Selection)
                     {
                         if (Globals.Dragging == true)
                         {
@@ -245,14 +245,14 @@ namespace Intersect.Editor.Forms
                             }
                         }
                     }
-                    else if (Globals.CurrentTool == (int) EdittingTool.Rectangle)
+                    else if (Globals.CurrentTool == (int) EditingTool.Rectangle)
                     {
                         Globals.CurMapSelX = Globals.CurTileX;
                         Globals.CurMapSelY = Globals.CurTileY;
                         Globals.CurMapSelW = 0;
                         Globals.CurMapSelH = 0;
                     }
-                    else if (Globals.CurrentTool == (int) EdittingTool.Fill)
+                    else if (Globals.CurrentTool == (int) EditingTool.Fill)
                     {
                         if (Globals.CurrentLayer == Options.LayerCount)
                         {
@@ -263,7 +263,7 @@ namespace Intersect.Editor.Forms
                             Globals.MapEditorWindow.SmartFillLayer(Globals.CurTileX, Globals.CurTileY);
                         }
                     }
-                    else if (Globals.CurrentTool == (int) EdittingTool.Erase)
+                    else if (Globals.CurrentTool == (int) EditingTool.Erase)
                     {
                         if (Globals.CurrentLayer <= Options.LayerCount)
                         {
@@ -343,7 +343,7 @@ namespace Intersect.Editor.Forms
                 case MouseButtons.Right:
                     Globals.MouseButton = 1;
 
-                    if (Globals.CurrentTool == (int) EdittingTool.Selection)
+                    if (Globals.CurrentTool == (int) EditingTool.Selection)
                     {
                         if (Globals.Dragging)
                         {
@@ -352,14 +352,14 @@ namespace Intersect.Editor.Forms
                             PlaceSelection();
                         }
                     }
-                    if (Globals.CurrentTool == (int) EdittingTool.Fill)
+                    if (Globals.CurrentTool == (int) EditingTool.Fill)
                     {
                         if (Globals.CurrentLayer <= Options.LayerCount)
                         {
                             Globals.MapEditorWindow.FillLayer();
                         }
                     }
-                    else if (Globals.CurrentTool == (int) EdittingTool.Erase)
+                    else if (Globals.CurrentTool == (int) EditingTool.Erase)
                     {
                         if (Globals.CurrentLayer <= Options.LayerCount)
                         {
@@ -368,7 +368,7 @@ namespace Intersect.Editor.Forms
                     }
                     else if (Globals.CurrentLayer == Options.LayerCount) //Attributes
                     {
-                        if (Globals.CurrentTool == (int) EdittingTool.Pen)
+                        if (Globals.CurrentTool == (int) EditingTool.Pen)
                         {
                             if (Globals.MapLayersWindow.RemoveAttribute(Globals.CurrentMap, Globals.CurTileX,
                                 Globals.CurTileY))
@@ -376,8 +376,8 @@ namespace Intersect.Editor.Forms
                                 MapChanged = true;
                             }
                         }
-                        else if (Globals.CurrentTool == (int) EdittingTool.Rectangle ||
-                                 Globals.CurrentTool == (int) EdittingTool.Selection)
+                        else if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
+                                 Globals.CurrentTool == (int) EditingTool.Selection)
                         {
                             Globals.CurMapSelX = Globals.CurTileX;
                             Globals.CurMapSelY = Globals.CurTileY;
@@ -409,7 +409,7 @@ namespace Intersect.Editor.Forms
                     }
                     else
                     {
-                        if (Globals.CurrentTool == (int) EdittingTool.Pen)
+                        if (Globals.CurrentTool == (int) EditingTool.Pen)
                         {
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex =
                                 -1;
@@ -417,8 +417,8 @@ namespace Intersect.Editor.Forms
                             tmpMap.InitAutotiles();
                             MapChanged = true;
                         }
-                        else if (Globals.CurrentTool == (int) EdittingTool.Rectangle ||
-                                 Globals.CurrentTool == (int) EdittingTool.Selection)
+                        else if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
+                                 Globals.CurrentTool == (int) EditingTool.Selection)
                         {
                             Globals.CurMapSelX = Globals.CurTileX;
                             Globals.CurMapSelY = Globals.CurTileY;
@@ -510,7 +510,7 @@ namespace Intersect.Editor.Forms
                 var tmpMap = Globals.CurrentMap;
                 if (Globals.MouseButton == 0)
                 {
-                    if (Globals.CurrentTool == (int) EdittingTool.Selection)
+                    if (Globals.CurrentTool == (int) EditingTool.Selection)
                     {
                         if (!Globals.Dragging)
                         {
@@ -518,7 +518,7 @@ namespace Intersect.Editor.Forms
                             Globals.CurMapSelH = Globals.CurTileY - Globals.CurMapSelY;
                         }
                     }
-                    else if (Globals.CurrentTool == (int) EdittingTool.Rectangle)
+                    else if (Globals.CurrentTool == (int) EditingTool.Rectangle)
                     {
                         Globals.CurMapSelW = Globals.CurTileX - Globals.CurMapSelX;
                         Globals.CurMapSelH = Globals.CurTileY - Globals.CurMapSelY;
@@ -615,12 +615,12 @@ namespace Intersect.Editor.Forms
                 }
                 else if (Globals.MouseButton == 1)
                 {
-                    if (Globals.CurrentTool == (int) EdittingTool.Rectangle)
+                    if (Globals.CurrentTool == (int) EditingTool.Rectangle)
                     {
                         Globals.CurMapSelW = Globals.CurTileX - Globals.CurMapSelX;
                         Globals.CurMapSelH = Globals.CurTileY - Globals.CurMapSelY;
                     }
-                    else if (Globals.CurrentTool == (int) EdittingTool.Pen)
+                    else if (Globals.CurrentTool == (int) EditingTool.Pen)
                     {
                         if (Globals.CurrentLayer == Options.LayerCount)
                         {
@@ -628,7 +628,7 @@ namespace Intersect.Editor.Forms
                         }
                         else if (Globals.CurrentLayer < Options.LayerCount)
                         {
-                            if (Globals.CurrentTool == (int) EdittingTool.Pen)
+                            if (Globals.CurrentTool == (int) EditingTool.Pen)
                             {
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY]
                                         .TilesetIndex =
@@ -663,7 +663,7 @@ namespace Intersect.Editor.Forms
             }
             else
             {
-                if (Globals.CurrentTool != (int) EdittingTool.Selection)
+                if (Globals.CurrentTool != (int) EditingTool.Selection)
                 {
                     Globals.CurMapSelX = Globals.CurTileX;
                     Globals.CurMapSelY = Globals.CurTileY;
@@ -678,7 +678,7 @@ namespace Intersect.Editor.Forms
                 return;
             }
             var tmpMap = Globals.CurrentMap;
-            if (Globals.CurrentTool == (int) EdittingTool.Rectangle)
+            if (Globals.CurrentTool == (int) EditingTool.Rectangle)
             {
                 int selX = Globals.CurMapSelX,
                     selY = Globals.CurMapSelY,
@@ -798,7 +798,7 @@ namespace Intersect.Editor.Forms
                 CurrentMapState = tmpMap.SaveInternal();
                 MapChanged = false;
             }
-            if (Globals.CurrentTool != (int) EdittingTool.Selection)
+            if (Globals.CurrentTool != (int) EditingTool.Selection)
             {
                 Globals.CurMapSelX = Globals.CurTileX;
                 Globals.CurMapSelY = Globals.CurTileY;
@@ -1028,7 +1028,7 @@ namespace Intersect.Editor.Forms
 
         private void SaveMap()
         {
-            if (Globals.CurrentTool == (int) EdittingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.Selection)
             {
                 if (Globals.Dragging == true)
                 {
@@ -1386,8 +1386,8 @@ namespace Intersect.Editor.Forms
                 selW = Globals.CurMapSelW,
                 selH = Globals.CurMapSelH;
             int dragxoffset = 0, dragyoffset = 0;
-            if (Globals.CurrentTool == (int) EdittingTool.Rectangle ||
-                Globals.CurrentTool == (int) EdittingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
+                Globals.CurrentTool == (int) EditingTool.Selection)
             {
                 if (selW < 0)
                 {
@@ -1578,8 +1578,8 @@ namespace Intersect.Editor.Forms
                 selW = Globals.CurMapSelW,
                 selH = Globals.CurMapSelH;
             int dragxoffset = 0, dragyoffset = 0;
-            if (Globals.CurrentTool == (int) EdittingTool.Rectangle ||
-                Globals.CurrentTool == (int) EdittingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
+                Globals.CurrentTool == (int) EditingTool.Selection)
             {
                 if (selW < 0)
                 {
@@ -1734,7 +1734,7 @@ namespace Intersect.Editor.Forms
 
         public void Copy()
         {
-            if (Globals.CurrentTool == (int) EdittingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.Selection)
             {
                 Globals.CopySource = new MapInstance(Globals.CurrentMap);
                 Globals.CopyMapSelH = Globals.CurMapSelH;
@@ -1749,7 +1749,7 @@ namespace Intersect.Editor.Forms
         {
             if (Globals.HasCopy && Globals.CopySource != null)
             {
-                Globals.CurrentTool = (int) EdittingTool.Selection;
+                Globals.CurrentTool = (int) EditingTool.Selection;
                 int selX1 = Globals.CurMapSelX,
                     selY1 = Globals.CurMapSelY,
                     selW1 = Globals.CurMapSelW,
