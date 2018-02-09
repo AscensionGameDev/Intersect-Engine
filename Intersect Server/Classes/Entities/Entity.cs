@@ -942,7 +942,7 @@ namespace Intersect.Server.Classes.Entities
                     for (int i = 0; i < enemy.DoT.Count; i++)
                     {
                         if (enemy.DoT[i].SpellBase.Index == spellBase.Index ||
-                            enemy.DoT[i].OwnerID == MyIndex)
+                            enemy.DoT[i].OwnerId == MyIndex)
                         {
                             DoTFound = true;
                         }
@@ -1700,28 +1700,44 @@ namespace Intersect.Server.Classes.Entities
 
     public class DoTInstance
     {
-        public int Count;
-        private long Interval;
-        public int OwnerID = -1;
-        public SpellBase SpellBase;
-        public Entity Target;
+        private long mInterval;
 
-        public DoTInstance(int ownerID, int spellNum, Entity target)
+        public int OwnerId { get; }
+
+        public int Count;
+        public SpellBase SpellBase;
+        public Entity Target { get; }
+
+        public DoTInstance(int ownerId, int spellNum, Entity target)
         {
             SpellBase = SpellBase.Lookup.Get<SpellBase>(spellNum);
-            if (SpellBase != null && SpellBase.Data4 > 0)
-            { 
-                OwnerID = ownerID;
-                Target = target;
-                Interval = Globals.System.GetTimeMs() + (SpellBase.Data4 * 100);
-                Count = (SpellBase.Data2 / SpellBase.Data4) - 1;
-                //Subtract 1 since the first tick always occurs when the spell is cast.
+
+            OwnerId = ownerId;
+            Target = target;
+
+            if (SpellBase == null || SpellBase.Data4 < 1)
+            {
+                Target?.DoT?.Remove(this);
+                return;
             }
+
+            mInterval = Globals.System.GetTimeMs() + SpellBase.Data4 * 100;
+            Count = SpellBase.Data2 / SpellBase.Data4 - 1;
+            //Subtract 1 since the first tick always occurs when the spell is cast.
+        }
+
+        public bool CheckExpired()
+        {
+            if (SpellBase == null || Count > 0) return false;
+            Target?.DoT?.Remove(this);
+            return true;
         }
 
         public void Tick()
         {
-            if (Interval > Globals.System.GetTimeMs()) return;
+            if (CheckExpired()) return;
+
+            if (mInterval > Globals.System.GetTimeMs()) return;
             var deadAnimations = new List<KeyValuePair<int, int>>();
             var aliveAnimations = new List<KeyValuePair<int, int>>();
             if (SpellBase.HitAnimation > -1)
@@ -1729,17 +1745,13 @@ namespace Intersect.Server.Classes.Entities
                 deadAnimations.Add(new KeyValuePair<int, int>(SpellBase.HitAnimation, (int) Directions.Up));
                 aliveAnimations.Add(new KeyValuePair<int, int>(SpellBase.HitAnimation, (int) Directions.Up));
             }
-            if (Globals.Entities[OwnerID] != null)
-                Globals.Entities[OwnerID].Attack(Target, SpellBase.VitalDiff[0], SpellBase.VitalDiff[1],
-                    (DamageType) SpellBase.DamageType, (Stats) SpellBase.ScalingStat, SpellBase.Scaling,
-                    SpellBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
-            Interval = Globals.System.GetTimeMs() + (SpellBase.Data4 * 100);
-            Count--;
 
-            if (Count <= 0 && Target != null)
-            {
-                Target.DoT.Remove(this);
-            }
+            var owner = Globals.Entities[OwnerId];
+            owner?.Attack(Target, SpellBase.VitalDiff[0], SpellBase.VitalDiff[1],
+                (DamageType) SpellBase.DamageType, (Stats) SpellBase.ScalingStat, SpellBase.Scaling,
+                SpellBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
+            mInterval = Globals.System.GetTimeMs() + (SpellBase.Data4 * 100);
+            Count--;
         }
     }
 
