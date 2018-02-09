@@ -211,7 +211,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
 
         public override void LoadMisc()
         {
-            LoadTextureGroup("misc", mIscDict);
+            LoadTextureGroup("misc", mMiscDict);
         }
 
         public override void LoadFonts()
@@ -272,7 +272,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
 
         public override void LoadMusic()
         {
-            mUsicDict.Clear();
+            mMusicDict.Clear();
             var dir = Path.Combine("resources", "music");
             if (!Directory.Exists(dir))
             {
@@ -282,7 +282,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                mUsicDict.Add(RemoveExtension(filename), new MonoMusicSource(Path.Combine(dir, filename)));
+                mMusicDict.Add(RemoveExtension(filename), new MonoMusicSource(Path.Combine(dir, filename)));
             }
         }
     }

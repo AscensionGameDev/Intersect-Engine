@@ -229,14 +229,13 @@ namespace Intersect.Editor.Classes
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].Mapnum);
-                                    if (map != null)
+                                    var mapGridItem = Globals.MapGrid.Grid[x, y];
+                                    var map = MapInstance.Lookup.Get<MapInstance>(mapGridItem.Mapnum);
+                                    if (map == null) continue;
+                                    lock (map.MapLock)
                                     {
-                                        lock (map.MapLock)
-                                        {
-                                            DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
-                                                y - Globals.CurrentMap.MapGridY, false, null, false);
-                                        }
+                                        DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
+                                            y - Globals.CurrentMap.MapGridY, false, null, false);
                                     }
                                 }
                             }

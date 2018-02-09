@@ -88,7 +88,7 @@ namespace Intersect.Server.Classes.Entities
         //Initialization
         public Entity(int index)
         {
-            for (int I = 0; I < (int) Stats.StatCount; I++)
+            for (var I = 0; I < (int) Stats.StatCount; I++)
             {
                 Stat[I] = new EntityStat(0, I);
             }
@@ -140,11 +140,11 @@ namespace Intersect.Server.Classes.Entities
                 CastTarget = null;
             }
             //DoT/HoT timers
-            for (int i = 0; i < DoT.Count; i++)
+            for (var i = 0; i < DoT.Count; i++)
             {
                 DoT[i].Tick();
             }
-            for (int i = 0; i < (int) Stats.StatCount; i++)
+            for (var i = 0; i < (int) Stats.StatCount; i++)
             {
                 if (Stat[i].Update())
                 {
@@ -225,7 +225,7 @@ namespace Intersect.Server.Classes.Entities
 
             if (tile.Translate(xOffset, yOffset))
             {
-                Attribute tileAttribute = MapInstance.Lookup.Get<MapInstance>(tile.GetMap())
+                var tileAttribute = MapInstance.Lookup.Get<MapInstance>(tile.GetMap())
                     .Attributes[tile.GetX(), tile.GetY()];
                 if (tileAttribute != null)
                 {
@@ -245,9 +245,9 @@ namespace Intersect.Server.Classes.Entities
             {
                 var targetMap = MapInstance.Lookup.Get<MapInstance>(tile.GetMap());
                 var mapEntities = MapInstance.Lookup.Get<MapInstance>(tile.GetMap()).GetEntities();
-                for (int i = 0; i < mapEntities.Count; i++)
+                for (var i = 0; i < mapEntities.Count; i++)
                 {
-                    Entity en = mapEntities[i];
+                    var en = mapEntities[i];
                     if (en != null && en.CurrentX == tile.GetX() && en.CurrentY == tile.GetY() && en.CurrentZ == CurrentZ &&
                         en.Passable == 0)
                     {
@@ -636,7 +636,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (CurrentY < Options.MapHeight && CurrentY >= 0)
                 {
-                    Attribute attribute = MapInstance.Lookup.Get<MapInstance>(CurrentMap)
+                    var attribute = MapInstance.Lookup.Get<MapInstance>(CurrentMap)
                         .Attributes[CurrentX, CurrentY];
                     if (attribute != null && attribute.Value == (int) MapAttributes.ZDimension)
                     {
@@ -655,7 +655,7 @@ namespace Intersect.Server.Classes.Entities
         public int GetDirectionTo(Entity target)
         {
             int xDiff = 0, yDiff = 0;
-            int myGrid = MapInstance.Lookup.Get<MapInstance>(CurrentMap).MapGrid;
+            var myGrid = MapInstance.Lookup.Get<MapInstance>(CurrentMap).MapGrid;
             //Loop through surrouding maps to generate a array of open and blocked points.
             for (var x = MapInstance.Lookup.Get<MapInstance>(CurrentMap).MapGridX - 1;
                 x <= MapInstance.Lookup.Get<MapInstance>(CurrentMap).MapGridX + 1;
@@ -778,7 +778,7 @@ namespace Intersect.Server.Classes.Entities
             //Check if the target is blocking facing in the direction against you
             if (enemy.Blocking)
             {
-                int d = Dir;
+                var d = Dir;
 
                 if (projectile != null)
                 {
@@ -861,96 +861,95 @@ namespace Intersect.Server.Classes.Entities
         //Attacking with spell
         public virtual void TryAttack(Entity enemy, SpellBase spellBase)
         {
-            if (enemy.GetType() == typeof(Resource)) return;
-            if (spellBase != null)
+            if (enemy?.GetType() == typeof(Resource)) return;
+            if (spellBase == null) return;
+
+            var deadAnimations = new List<KeyValuePair<int, int>>();
+            var aliveAnimations = new List<KeyValuePair<int, int>>();
+
+            //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
+            if (spellBase.Friendly == 0 && spellBase.TargetType != (int) SpellTargetTypes.Self)
             {
-                List<KeyValuePair<int, int>> deadAnimations = new List<KeyValuePair<int, int>>();
-                List<KeyValuePair<int, int>> aliveAnimations = new List<KeyValuePair<int, int>>();
+                //If about to hit self with an unfriendly spell (maybe aoe?) return
+                if (enemy == this) return;
 
-                //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
-                if (spellBase.Friendly == 0 && spellBase.TargetType != (int) SpellTargetTypes.Self)
+                //Check for parties and safe zones, friendly fire off (unless its healing)
+                if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
                 {
-                    //If about to hit self with an unfriendly spell (maybe aoe?) return
-                    if (enemy == this) return;
+                    if (((Player) this).InParty((Player) enemy) == true) return;
+                }
 
-                    //Check for parties and safe zones, friendly fire off (unless its healing)
-                    if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
+                //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
+                if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
+                {
+                    if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).ZoneType == MapZones.Safe)
                     {
-                        if (((Player) this).InParty((Player) enemy) == true) return;
+                        return;
                     }
-
-                    //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
-                    if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
+                    if (MapInstance.Lookup.Get<MapInstance>(enemy.CurrentMap).ZoneType == MapZones.Safe)
                     {
-                        if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).ZoneType == MapZones.Safe)
-                        {
-                            return;
-                        }
-                        if (MapInstance.Lookup.Get<MapInstance>(enemy.CurrentMap).ZoneType == MapZones.Safe)
-                        {
-                            return;
-                        }
+                        return;
                     }
                 }
-                else
+            }
+            else
+            {
+                //Friendly Spell! Do not attack other players/npcs around us.
+                if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
                 {
-                    //Friendly Spell! Do not attack other players/npcs around us.
-                    if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
+                    if (!((Player) this).InParty((Player) enemy) && this != enemy) return;
+                }
+                if (enemy.GetType() != GetType()) return; //Don't let players aoe heal npcs. Don't let npcs aoe heal players.
+            }
+
+            if (spellBase.HitAnimation > -1)
+            {
+                deadAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimation, (int) Directions.Up));
+                aliveAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimation, (int) Directions.Up));
+            }
+
+            var damageHealth = spellBase.VitalDiff[0];
+            var damageMana = spellBase.VitalDiff[1];
+
+            Attack(enemy, damageHealth, damageMana, (DamageType) spellBase.DamageType,
+                (Stats) spellBase.ScalingStat,
+                spellBase.Scaling, spellBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
+
+            var statBuffTime = -1;
+            for (var i = 0; i < (int) Stats.StatCount; i++)
+            {
+                enemy.Stat[i].AddBuff(new EntityBuff(spellBase, spellBase.StatDiff[i], (spellBase.Data2 * 100)));
+                if (spellBase.StatDiff[i] != 0 && spellBase.Data2 * 100 != null)
+                    statBuffTime = spellBase.Data2 * 100;
+            }
+
+            //Handle other status effects
+            if (spellBase.Data3 > 0)
+            {
+                new StatusInstance(enemy, spellBase, spellBase.Data3, (spellBase.Data2 * 100), spellBase.Data5);
+                PacketSender.SendActionMsg(enemy, Strings.Get("combat", "status" + spellBase.Data3),
+                    CustomColors.Status);
+            }
+            else
+            {
+                if (statBuffTime > -1) new StatusInstance(enemy, spellBase, -1, statBuffTime, "");
+            }
+
+            //Handle DoT/HoT spells]
+            if (spellBase.Data1 > 0)
+            {
+                var doTFound = false;
+                for (var i = 0; i < enemy.DoT.Count; i++)
+                {
+                    if (enemy.DoT[i].SpellBase.Index == spellBase.Index ||
+                        enemy.DoT[i].OwnerId == MyIndex)
                     {
-                        if (!((Player) this).InParty((Player) enemy) && this != enemy) return;
+                        doTFound = true;
                     }
-                    if (enemy.GetType() != GetType()) return; //Don't let players aoe heal npcs. Don't let npcs aoe heal players.
                 }
-
-                if (spellBase.HitAnimation > -1)
+                if (doTFound == false) //no duplicate DoT/HoT spells.
                 {
-                    deadAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimation, (int) Directions.Up));
-                    aliveAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimation, (int) Directions.Up));
-                }
-
-                var damageHealth = spellBase.VitalDiff[0];
-                var damageMana = spellBase.VitalDiff[1];
-
-                Attack(enemy, damageHealth, damageMana, (DamageType) spellBase.DamageType,
-                    (Stats) spellBase.ScalingStat,
-                    spellBase.Scaling, spellBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
-
-                var statBuffTime = -1;
-                for (int i = 0; i < (int) Stats.StatCount; i++)
-                {
-                    enemy.Stat[i].AddBuff(new EntityBuff(spellBase, spellBase.StatDiff[i], (spellBase.Data2 * 100)));
-                    if (spellBase.StatDiff[i] != 0 && spellBase.Data2 * 100 != null)
-                        statBuffTime = spellBase.Data2 * 100;
-                }
-
-                //Handle other status effects
-                if (spellBase.Data3 > 0)
-                {
-                    new StatusInstance(enemy, spellBase, spellBase.Data3, (spellBase.Data2 * 100), spellBase.Data5);
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "status" + spellBase.Data3),
-                        CustomColors.Status);
-                }
-                else
-                {
-                    if (statBuffTime > -1) new StatusInstance(enemy, spellBase, -1, statBuffTime, "");
-                }
-
-                //Handle DoT/HoT spells]
-                if (spellBase.Data1 > 0)
-                {
-                    bool doTFound = false;
-                    for (int i = 0; i < enemy.DoT.Count; i++)
-                    {
-                        if (enemy.DoT[i].SpellBase.Index == spellBase.Index ||
-                            enemy.DoT[i].OwnerId == MyIndex)
-                        {
-                            doTFound = true;
-                        }
-                    }
-                    if (doTFound == false) //no duplicate DoT/HoT spells.
-                    {
-                        enemy.DoT.Add(new DoTInstance(MyIndex, spellBase.Index, enemy));
-                    }
+                    enemy.DoT.Add(new DoTInstance(MyIndex, spellBase.Index, enemy));
                 }
             }
         }
@@ -1024,16 +1023,16 @@ namespace Intersect.Server.Classes.Entities
                 //Check if there are any guards nearby
                 //TODO Loop through CurrentMap - SurroundingMaps Entity List instead of global entity list.
                 var mapEntities = MapInstance.Lookup.Get<MapInstance>(CurrentMap).GetEntities();
-                for (int n = 0; n < mapEntities.Count; n++)
+                for (var n = 0; n < mapEntities.Count; n++)
                 {
                     if (mapEntities[n].GetType() == typeof(Npc))
                     {
                         if (((Npc) mapEntities[n]).Behaviour == 3) // Type guard
                         {
-                            int x = mapEntities[n].CurrentX - ((Npc) mapEntities[n]).Range;
-                            int y = mapEntities[n].CurrentY - ((Npc) mapEntities[n]).Range;
-                            int xMax = mapEntities[n].CurrentX + ((Npc) mapEntities[n]).Range;
-                            int yMax = mapEntities[n].CurrentY + ((Npc) mapEntities[n]).Range;
+                            var x = mapEntities[n].CurrentX - ((Npc) mapEntities[n]).Range;
+                            var y = mapEntities[n].CurrentY - ((Npc) mapEntities[n]).Range;
+                            var xMax = mapEntities[n].CurrentX + ((Npc) mapEntities[n]).Range;
+                            var yMax = mapEntities[n].CurrentY + ((Npc) mapEntities[n]).Range;
 
                             //Check that not going out of the map boundaries
                             if (x < 0) x = 0;
@@ -1273,13 +1272,13 @@ namespace Intersect.Server.Classes.Entities
             var targetsHit = new List<Entity>();
             if (spellBase != null)
             {
-                for (int x = startX - range; x <= startX + range; x++)
+                for (var x = startX - range; x <= startX + range; x++)
                 {
-                    for (int y = startY - range; y <= startY + range; y++)
+                    for (var y = startY - range; y <= startY + range; y++)
                     {
                         var tempMap = MapInstance.Lookup.Get<MapInstance>(startMap);
-                        int x2 = x;
-                        int y2 = y;
+                        var x2 = x;
+                        var y2 = y;
 
                         if (y < 0 && tempMap.Up > -1)
                         {
@@ -1304,9 +1303,9 @@ namespace Intersect.Server.Classes.Entities
                         }
 
                         var mapEntities = tempMap.GetEntities();
-                        for (int i = 0; i < mapEntities.Count; i++)
+                        for (var i = 0; i < mapEntities.Count; i++)
                         {
-                            Entity t = mapEntities[i];
+                            var t = mapEntities[i];
                             if (t == null || targetsHit.Contains(t)) continue;
                             if (t.GetType() == typeof(Player) || t.GetType() == typeof(Npc))
                             {
@@ -1341,8 +1340,8 @@ namespace Intersect.Server.Classes.Entities
         //Check if the target is either up, down, left or right of the target on the correct Z dimension.
         protected bool IsOneBlockAway(Entity target)
         {
-            TileHelper myTile = new TileHelper(CurrentMap, CurrentX, CurrentY);
-            TileHelper enemyTile = new TileHelper(target.CurrentMap, target.CurrentX, target.CurrentY);
+            var myTile = new TileHelper(CurrentMap, CurrentX, CurrentY);
+            var enemyTile = new TileHelper(target.CurrentMap, target.CurrentX, target.CurrentY);
             if (CurrentZ == target.CurrentZ)
             {
                 myTile.Translate(0, -1);
@@ -1362,8 +1361,8 @@ namespace Intersect.Server.Classes.Entities
         {
             if (IsOneBlockAway(target))
             {
-                TileHelper myTile = new TileHelper(CurrentMap, CurrentX, CurrentY);
-                TileHelper enemyTile = new TileHelper(target.CurrentMap, target.CurrentX, target.CurrentY);
+                var myTile = new TileHelper(CurrentMap, CurrentX, CurrentY);
+                var enemyTile = new TileHelper(target.CurrentMap, target.CurrentX, target.CurrentY);
                 myTile.Translate(0, -1);
                 if (myTile.Matches(enemyTile) && Dir == (int) Directions.Up) return true;
                 myTile.Translate(0, 2);
@@ -1550,7 +1549,7 @@ namespace Intersect.Server.Classes.Entities
             bf.WriteInteger(Passable);
             bf.WriteInteger(HideName);
             bf.WriteInteger(Animations.Count);
-            for (int i = 0; i < Animations.Count; i++)
+            for (var i = 0; i < Animations.Count; i++)
             {
                 bf.WriteInteger(Animations[i]);
             }
@@ -1613,7 +1612,7 @@ namespace Intersect.Server.Classes.Entities
 
         public int Value()
         {
-            int s = Stat;
+            var s = Stat;
 
             var buffs = mBuff.Values.ToArray();
             foreach (var buff in buffs)
@@ -1624,7 +1623,7 @@ namespace Intersect.Server.Classes.Entities
             if (mPlayer != null)
             {
                 //Add up player equipment values
-                for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                for (var i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
                     if (mPlayer.Equipment[i] >= 0 && mPlayer.Equipment[i] < Options.MaxInvItems)
                     {
@@ -1837,10 +1836,10 @@ namespace Intersect.Server.Classes.Entities
 
         public void CalculateRange(Entity en, int range)
         {
-            int n = 0;
+            var n = 0;
             en.MoveTimer = 0;
             Range = 0;
-            for (int i = 1; i <= range; i++)
+            for (var i = 1; i <= range; i++)
             {
                 n = en.CanMove(Direction);
                 if (n == -5)
