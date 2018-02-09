@@ -29,7 +29,7 @@
         <string id="cpsunlocked">CPS Unlocked</string>
         <string id="helpheader">List of available commands:</string>
         <string id="helpfooter">Type in any command followed by {00} for parameters and usage information.</string>
-        <string id="notfound">Command not recoginized. Enter help for a list of commands. Remember console commands are case sensitive!</string>
+        <string id="notfound">Command not recognized. Enter help for a list of commands. Remember console commands are case sensitive!</string>
     </CommandOutput>
     <Commands>
         <string id="commandinfo">/?</string>

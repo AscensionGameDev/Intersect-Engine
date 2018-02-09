@@ -164,37 +164,33 @@ namespace Intersect_Client.Classes.Core
 
         public static void StopMusic(float fadeout = 0f)
         {
-            if (_myMusic != null)
+            if (_myMusic == null) return;
+
+            if (Math.Abs(fadeout) < 0.01 || _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped ||
+                _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Paused || _myMusic.GetVolume() == 0)
             {
-                if (fadeout == 0 || _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped ||
-                    _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Paused || _myMusic.GetVolume() == 0)
-                {
-                    _currentSong = "";
-                    _myMusic.Stop();
-                    _myMusic.Dispose();
-                    _myMusic = null;
-                    _fadeTimer = 0;
-                }
-                else
-                {
-                    //Start fadeout
-                    _fadeRate = (float) _myMusic.GetVolume() / fadeout;
-                    _fadeTimer = Globals.System.GetTimeMS() + (long) (_fadeRate / 1000);
-                    _fadingOut = true;
-                }
+                _currentSong = "";
+                _myMusic.Stop();
+                _myMusic.Dispose();
+                _myMusic = null;
+                _fadeTimer = 0;
+            }
+            else
+            {
+                //Start fadeout
+                _fadeRate = (float) _myMusic.GetVolume() / fadeout;
+                _fadeTimer = Globals.System.GetTimeMS() + (long) (_fadeRate / 1000);
+                _fadingOut = true;
             }
         }
 
         //Sounds
         public static MapSound AddMapSound(string filename, int x, int y, int map, bool loop, int distance)
         {
-            if (_gameSounds.Count <= 128)
-            {
-                var sound = new MapSound(filename, x, y, map, loop, distance);
-                _gameSounds.Add(sound);
-                return sound;
-            }
-            return null;
+            if (_gameSounds?.Count > 128) return null;
+            var sound = new MapSound(filename, x, y, map, loop, distance);
+            _gameSounds?.Add(sound);
+            return sound;
         }
 
         public static void StopSound(MapSound sound)
@@ -287,6 +283,7 @@ namespace Intersect_Client.Classes.Core
             }
             else
             {
+                // TODO: 1073
                 if (_distance > 0 && Globals.GridMaps.Contains(_map))
                 {
                     float volume = 100 - ((100 / _distance) * CalculateSoundDistance());

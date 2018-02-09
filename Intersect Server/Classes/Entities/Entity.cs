@@ -1721,26 +1721,24 @@ namespace Intersect.Server.Classes.Entities
 
         public void Tick()
         {
-            if (Interval <= Globals.System.GetTimeMs())
+            if (Interval > Globals.System.GetTimeMs()) return;
+            var deadAnimations = new List<KeyValuePair<int, int>>();
+            var aliveAnimations = new List<KeyValuePair<int, int>>();
+            if (SpellBase.HitAnimation > -1)
             {
-                var deadAnimations = new List<KeyValuePair<int, int>>();
-                var aliveAnimations = new List<KeyValuePair<int, int>>();
-                if (SpellBase.HitAnimation > -1)
-                {
-                    deadAnimations.Add(new KeyValuePair<int, int>(SpellBase.HitAnimation, (int) Directions.Up));
-                    aliveAnimations.Add(new KeyValuePair<int, int>(SpellBase.HitAnimation, (int) Directions.Up));
-                }
-                if (Globals.Entities[OwnerID] != null)
-                    Globals.Entities[OwnerID].Attack(Target, SpellBase.VitalDiff[0], SpellBase.VitalDiff[1],
-                        (DamageType) SpellBase.DamageType, (Stats) SpellBase.ScalingStat, SpellBase.Scaling,
-                        SpellBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
-                Interval = Globals.System.GetTimeMs() + (SpellBase.Data4 * 100);
-                Count--;
+                deadAnimations.Add(new KeyValuePair<int, int>(SpellBase.HitAnimation, (int) Directions.Up));
+                aliveAnimations.Add(new KeyValuePair<int, int>(SpellBase.HitAnimation, (int) Directions.Up));
+            }
+            if (Globals.Entities[OwnerID] != null)
+                Globals.Entities[OwnerID].Attack(Target, SpellBase.VitalDiff[0], SpellBase.VitalDiff[1],
+                    (DamageType) SpellBase.DamageType, (Stats) SpellBase.ScalingStat, SpellBase.Scaling,
+                    SpellBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
+            Interval = Globals.System.GetTimeMs() + (SpellBase.Data4 * 100);
+            Count--;
 
-                if (Count <= 0 && Target != null)
-                {
-                    Target.DoT.Remove(this);
-                }
+            if (Count <= 0 && Target != null)
+            {
+                Target.DoT.Remove(this);
             }
         }
     }

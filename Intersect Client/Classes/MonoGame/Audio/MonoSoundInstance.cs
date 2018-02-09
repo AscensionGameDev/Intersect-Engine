@@ -71,13 +71,11 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
 
         public override void Dispose()
         {
-            if (!_disposed && _instance != null)
-            {
-                _disposed = true;
-                _instance.Stop();
-                _instance.Dispose();
-                _source.ReleaseEffect();
-            }
+            if (_disposed || _instance == null) return;
+            _disposed = true;
+            _instance.Stop();
+            _instance.Dispose();
+            _source?.ReleaseEffect();
         }
 
         ~MonoSoundInstance()
