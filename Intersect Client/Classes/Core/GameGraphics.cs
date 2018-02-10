@@ -85,7 +85,7 @@ namespace Intersect_Client.Classes.Core
 
         public static void InitInGame()
         {
-            RenderingEntities = new HashSet<Entity>[6, Options.MapHeight * 4];
+            RenderingEntities = new HashSet<Entity>[6, Options.MapHeight * 5];
             for (int z = 0; z < 6; z++)
             {
                 for (var i = 0; i < Options.MapHeight * 5; i++)
