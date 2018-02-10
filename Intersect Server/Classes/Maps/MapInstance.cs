@@ -447,8 +447,8 @@ namespace Intersect.Server.Classes.Maps
             var npcBase = NpcBase.Lookup.Get<NpcBase>(npcNum);
             if (npcBase != null)
             {
-                int index = Globals.FindOpenEntity();
-                Globals.Entities[index] = new Npc(index, npcBase, despawnable)
+                int entityIndex = Globals.FindOpenEntity();
+                Globals.Entities[entityIndex] = new Npc(entityIndex, npcBase, despawnable)
                 {
                     CurrentMap = Index,
                     CurrentX = tileX,
@@ -456,20 +456,9 @@ namespace Intersect.Server.Classes.Maps
                     Dir = dir
                 };
 
-                //Give NPC Drops
-                for (var n = 0; n < Options.MaxNpcDrops; n++)
-                {
-                    if (Globals.Rand.Next(1, 101) <= npcBase.Drops[n].Chance)
-                    {
-                        // TODO: Shouldn't this be added to the NPC constructor?
-                        Globals.Entities[index].Inventory.Add(new ItemInstance(npcBase.Drops[n].ItemNum,
-                            npcBase.Drops[n].Amount, -1));
-                    }
-                }
-
-                AddEntity((Npc) Globals.Entities[index]);
-                PacketSender.SendEntityDataToProximity(Globals.Entities[index]);
-                return (Npc) Globals.Entities[index];
+                AddEntity((Npc) Globals.Entities[entityIndex]);
+                PacketSender.SendEntityDataToProximity(Globals.Entities[entityIndex]);
+                return (Npc) Globals.Entities[entityIndex];
             }
             return null;
         }

@@ -168,7 +168,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 {
                     //Open the animation selector
                     EventMoveRouteAnimationSelector animationSelector = new EventMoveRouteAnimationSelector(this,
-                        mTmpMoveRoute.Actions[lstActions.SelectedIndex], true);
+                        mTmpMoveRoute.Actions[lstActions.SelectedIndex], false);
                     Controls.Add(animationSelector);
                     animationSelector.BringToFront();
                     animationSelector.Size = ClientSize;

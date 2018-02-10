@@ -6,6 +6,7 @@ using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
+using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
@@ -192,12 +193,12 @@ namespace Intersect_Client.Classes.Entities
         {
             if (RenderLevel == 1) return base.DetermineRenderOrder(renderList,map);
             renderList?.Remove(this);
-            if (map == null)
+            if (map == null || Globals.Me == null || Globals.Me.MapInstance == null)
             {
                 return null;
             }
-            var gridX = map.MapGridX;
-            var gridY = map.MapGridY;
+            var gridX = Globals.Me.MapInstance.MapGridX;
+            var gridY = Globals.Me.MapInstance.MapGridY;
             for (int x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -207,29 +208,41 @@ namespace Intersect_Client.Classes.Entities
                     {
                         if (Globals.MapGrid[x, y] == CurrentMap)
                         {
-                            if (RenderLevel == 0) y -= 1;
-                            if (RenderLevel == 2) y += 1;
+                            if (RenderLevel == 0) y--;
+                            if (RenderLevel == 2) y++;
                             var priority = mRenderPriority;
                             if (CurrentZ != 0)
                             {
                                 priority += 3;
                             }
-                            if (y == gridY - 1)
+                            if (y == gridY - 2)
                             {
                                 GameGraphics.RenderingEntities[priority, CurrentY].Add(this);
                                 renderList = GameGraphics.RenderingEntities[priority, CurrentY];
                                 return renderList;
                             }
-                            else if (y == gridY)
+                            else if (y == gridY - 1)
                             {
                                 GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY].Add(this);
                                 renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY];
                                 return renderList;
                             }
-                            else
+                            else if (y == gridY)
                             {
                                 GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY].Add(this);
                                 renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY];
+                                return renderList;
+                            }
+                            else if (y == gridY + 1)
+                            {
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 3 + CurrentY].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 3 + CurrentY];
+                                return renderList;
+                            }
+                            else if (y == gridY + 2)
+                            {
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 4 + CurrentY].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 4 + CurrentY];
                                 return renderList;
                             }
                         }

@@ -85,10 +85,10 @@ namespace Intersect_Client.Classes.Core
 
         public static void InitInGame()
         {
-            RenderingEntities = new HashSet<Entity>[6, Options.MapHeight * 3];
+            RenderingEntities = new HashSet<Entity>[6, Options.MapHeight * 4];
             for (int z = 0; z < 6; z++)
             {
-                for (var i = 0; i < Options.MapHeight * 3; i++)
+                for (var i = 0; i < Options.MapHeight * 5; i++)
                 {
                     RenderingEntities[z, i] = new HashSet<Entity>();
                 }
@@ -199,7 +199,7 @@ namespace Intersect_Client.Classes.Core
                 }
             }
             
-            for (int y = 0; y < Options.MapHeight * 3; y++)
+            for (int y = 0; y < Options.MapHeight * 5; y++)
             {
                 for (int x = 0; x < 3; x++)
                 {
@@ -223,7 +223,7 @@ namespace Intersect_Client.Classes.Core
                 }
             }
             
-            for (int y = 0; y < Options.MapHeight * 3; y++)
+            for (int y = 0; y < Options.MapHeight * 5; y++)
             {
                 for (int x = 3; x < 6; x++)
                 {
@@ -279,7 +279,7 @@ namespace Intersect_Client.Classes.Core
 
             DrawDarkness();
             
-            for (int y = 0; y < Options.MapHeight * 3; y++)
+            for (int y = 0; y < Options.MapHeight * 5; y++)
             {
                 for (int x = 0; x < 3; x++)
                 {
@@ -296,7 +296,7 @@ namespace Intersect_Client.Classes.Core
                 }
             }
             
-            for (int y = 0; y < Options.MapHeight * 3; y++)
+            for (int y = 0; y < Options.MapHeight * 5; y++)
             {
                 for (int x = 3; x < 6; x++)
                 {

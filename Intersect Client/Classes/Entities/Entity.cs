@@ -535,20 +535,20 @@ namespace Intersect_Client.Classes.Entities
                             }
                             if (y == gridY - 1)
                             {
-                                GameGraphics.RenderingEntities[priority, CurrentY].Add(this);
-                                renderList = GameGraphics.RenderingEntities[priority, CurrentY];
-                                return renderList;
-                            }
-                            else if (y == gridY)
-                            {
                                 GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY].Add(this);
                                 renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY];
                                 return renderList;
                             }
-                            else
+                            else if (y == gridY)
                             {
                                 GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY].Add(this);
                                 renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY];
+                                return renderList;
+                            }
+                            else
+                            {
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 3 + CurrentY].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 3 + CurrentY];
                                 return renderList;
                             }
                         }

@@ -10,6 +10,7 @@ using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Misc.Pathfinding;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Classes.Spells;
+using Intersect.Server.Classes.Items;
 
 namespace Intersect.Server.Classes.Entities
 {
@@ -57,6 +58,16 @@ namespace Intersect.Server.Classes.Entities
             for (int I = 0; I < MyBase.Spells.Count; I++)
             {
                 Spells.Add(new SpellInstance(MyBase.Spells[I]));
+            }
+
+            //Give NPC Drops
+            for (var n = 0; n < Options.MaxNpcDrops; n++)
+            {
+                if (Globals.Rand.Next(1, 101) <= myBase.Drops[n].Chance)
+                {
+                    Inventory.Add(new ItemInstance(myBase.Drops[n].ItemNum,
+                        myBase.Drops[n].Amount, -1));
+                }
             }
 
             myBase.MaxVital.CopyTo(Vital, 0);

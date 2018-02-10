@@ -74,13 +74,15 @@ namespace Intersect.Localization
 
         public string GetString(string section, string id, params object[] args)
         {
+            var template = "";
             try
             {
-                return string.Format(mLoadedStrings[section.ToLower()][id.ToLower()], args);
+                template = mLoadedStrings[section.ToLower()][id.ToLower()];
+                return string.Format(template, args);
             }
             catch (FormatException)
             {
-                return "Format Exception!";
+                return "Format Exception! - " + template;
             }
         }
 
