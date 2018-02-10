@@ -102,7 +102,7 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            ClickTime = Globals.System.GetTimeMS() + 500;
+            ClickTime = Globals.System.GetTimeMs() + 500;
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -200,10 +200,10 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
             if (Globals.Me.Hotbar[myindex].Type != _currentType || Globals.Me.Hotbar[myindex].Slot != _currentItem ||
                 _texLoaded == false || //Basics
                 (Globals.Me.Hotbar[myindex].Type == 1 && Globals.Me.Hotbar[myindex].Slot > -1 &&
-                 (Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellCD > Globals.System.GetTimeMS()) &&
+                 (Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellCD > Globals.System.GetTimeMs()) &&
                  _isFaded == false) || //Is Spell, on CD and not faded
                 (Globals.Me.Hotbar[myindex].Type == 1 && Globals.Me.Hotbar[myindex].Slot > -1 &&
-                 (Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellCD <= Globals.System.GetTimeMS()) &&
+                 (Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellCD <= Globals.System.GetTimeMs()) &&
                  _isFaded == true) || //Is Spell, not on CD and faded
                 (Globals.Me.Hotbar[myindex].Type == 0 && Globals.Me.Hotbar[myindex].Slot > -1 &&
                  Globals.Me.IsEquipped(_currentItem) != _isEquipped))
@@ -227,7 +227,7 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
                     contentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
                         SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[_currentItem].SpellNum).Pic);
                     equipPanel.IsHidden = true;
-                    _isFaded = Globals.Me.Spells[_currentItem].SpellCD > Globals.System.GetTimeMS();
+                    _isFaded = Globals.Me.Spells[_currentItem].SpellCD > Globals.System.GetTimeMs();
                     if (_isFaded)
                     {
                         contentPanel.RenderColor = new IntersectClientExtras.GenericClasses.Color(100, 255, 255, 255);
@@ -257,7 +257,7 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
                             CanDrag = true;
                             MouseX = -1;
                             MouseY = -1;
-                            if (Globals.System.GetTimeMS() < ClickTime)
+                            if (Globals.System.GetTimeMs() < ClickTime)
                             {
                                 Activate();
                                 ClickTime = 0;

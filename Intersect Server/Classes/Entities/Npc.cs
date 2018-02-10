@@ -237,7 +237,7 @@ namespace Intersect.Server.Classes.Entities
                                 {
                                     if (Spells[s].SpellCD < Globals.System.GetTimeMs())
                                     {
-                                        if (InRangeOf(MyTarget, range))
+                                        if (spell.TargetType == (int)SpellTargetTypes.Self || spell.TargetType == (int)SpellTargetTypes.AoE || InRangeOf(MyTarget, range))
                                         {
                                             Vital[(int) Vitals.Mana] = Vital[(int) Vitals.Mana] -
                                                                        spell.VitalCost[(int) Vitals.Mana];

@@ -61,7 +61,7 @@ namespace Intersect_Client.Classes.Core
         {
             if (_myMusic != null)
             {
-                if (_fadeTimer != 0 && _fadeTimer < Globals.System.GetTimeMS())
+                if (_fadeTimer != 0 && _fadeTimer < Globals.System.GetTimeMs())
                 {
                     if (_fadingOut)
                     {
@@ -77,7 +77,7 @@ namespace Intersect_Client.Classes.Core
                         }
                         else
                         {
-                            _fadeTimer = Globals.System.GetTimeMS() + (long) (_fadeRate / 1000);
+                            _fadeTimer = Globals.System.GetTimeMs() + (long) (_fadeRate / 1000);
                         }
                     }
                     else
@@ -85,7 +85,7 @@ namespace Intersect_Client.Classes.Core
                         _myMusic.SetVolume(_myMusic.GetVolume() + 1, true);
                         if (_myMusic.GetVolume() < 100)
                         {
-                            _fadeTimer = Globals.System.GetTimeMS() + (long) (_fadeRate / 1000);
+                            _fadeTimer = Globals.System.GetTimeMs() + (long) (_fadeRate / 1000);
                         }
                         else
                         {
@@ -132,7 +132,7 @@ namespace Intersect_Client.Classes.Core
                     if (_currentSong.ToLower() != filename.ToLower() || _fadingOut)
                     {
                         _fadeRate = (float) _myMusic.GetVolume() / fadeout;
-                        _fadeTimer = Globals.System.GetTimeMS() + (long) (_fadeRate / 1000);
+                        _fadeTimer = Globals.System.GetTimeMs() + (long) (_fadeRate / 1000);
                         _fadingOut = true;
                         _queuedMusic = filename;
                         _queuedFade = fadein;
@@ -157,7 +157,7 @@ namespace Intersect_Client.Classes.Core
                 _myMusic.Play();
                 _myMusic.SetVolume(0, true);
                 _fadeRate = (float) 100 / fadein;
-                _fadeTimer = Globals.System.GetTimeMS() + (long) (_fadeRate / 1000) + 1;
+                _fadeTimer = Globals.System.GetTimeMs() + (long) (_fadeRate / 1000) + 1;
                 _fadingOut = false;
             }
         }
@@ -179,7 +179,7 @@ namespace Intersect_Client.Classes.Core
                 {
                     //Start fadeout
                     _fadeRate = (float) _myMusic.GetVolume() / fadeout;
-                    _fadeTimer = Globals.System.GetTimeMS() + (long) (_fadeRate / 1000);
+                    _fadeTimer = Globals.System.GetTimeMs() + (long) (_fadeRate / 1000);
                     _fadingOut = true;
                 }
             }

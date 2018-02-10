@@ -119,7 +119,7 @@ namespace Intersect_Client.Classes.UI
             using (XmlWriter writer = XmlWriter.Create(Path.Combine("resources", "gui", xmlname), settings))
             {
                 writer.WriteStartDocument();
-                control.WriteBaseUIXml(writer, bounds);
+                control.WriteBaseUiXml(writer, bounds);
                 writer.WriteEndDocument();
             }
         }
@@ -136,7 +136,7 @@ namespace Intersect_Client.Classes.UI
                 {
                     if (reader.Name == control.Name)
                     {
-                        control.LoadUIXml(reader);
+                        control.LoadUiXml(reader);
                         control.ProcessAlignments();
                     }
                 }

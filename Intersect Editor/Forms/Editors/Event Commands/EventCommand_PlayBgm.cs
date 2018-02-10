@@ -21,9 +21,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             cmbBgm.Items.Clear();
             cmbBgm.Items.Add(Strings.Get("general", "none"));
             cmbBgm.Items.AddRange(GameContentManager.GetMusicNames());
-            if (cmbBgm.Items.IndexOf(_myCommand.Strs[0]) > -1)
+            if (cmbBgm.Items.IndexOf(TextUtils.NullToNone(_myCommand.Strs[0])) > -1)
             {
-                cmbBgm.SelectedIndex = cmbBgm.Items.IndexOf(_myCommand.Strs[0]);
+                cmbBgm.SelectedIndex = cmbBgm.Items.IndexOf(TextUtils.NullToNone(_myCommand.Strs[0]));
             }
             else
             {

@@ -133,7 +133,7 @@ namespace Intersect_Client.Classes.Entities
                     Equipment[i] = -1;
                 }
             }
-            AnimationTimer = Globals.System.GetTimeMS() + Globals.Random.Next(0, 500);
+            AnimationTimer = Globals.System.GetTimeMs() + Globals.Random.Next(0, 500);
             MyIndex = index;
             if (Options.EquipmentSlots.Count == 0) throw new Exception("What the fuck is going on!?!?!?!?!?!");
             Load(bf);
@@ -343,14 +343,14 @@ namespace Intersect_Client.Classes.Entities
             RenderList = DetermineRenderOrder(RenderList, map);
             if (_lastUpdate == 0)
             {
-                _lastUpdate = Globals.System.GetTimeMS();
+                _lastUpdate = Globals.System.GetTimeMs();
             }
-            float ecTime = (float) (Globals.System.GetTimeMS() - _lastUpdate);
+            float ecTime = (float) (Globals.System.GetTimeMs() - _lastUpdate);
             if (Dashing != null)
             {
                 WalkFrame = 1; //Fix the frame whilst dashing
             }
-            else if (_walkTimer < Globals.System.GetTimeMS())
+            else if (_walkTimer < Globals.System.GetTimeMs())
             {
                 if (!IsMoving && DashQueue.Count > 0)
                 {
@@ -358,7 +358,7 @@ namespace Intersect_Client.Classes.Entities
                     Dashing.Start(this);
                     OffsetX = 0;
                     OffsetY = 0;
-                    DashTimer = Globals.System.GetTimeMS() + Options.MaxDashSpeed;
+                    DashTimer = Globals.System.GetTimeMs() + Options.MaxDashSpeed;
                 }
                 else
                 {
@@ -381,7 +381,7 @@ namespace Intersect_Client.Classes.Entities
                             WalkFrame = 0;
                         }
                     }
-                    _walkTimer = Globals.System.GetTimeMS() + 200;
+                    _walkTimer = Globals.System.GetTimeMs() + 200;
                 }
             }
             if (Dashing != null)
@@ -472,13 +472,13 @@ namespace Intersect_Client.Classes.Entities
                     _chatBubbles.Remove(chatbubble);
                 }
             }
-            if (AnimationTimer < Globals.System.GetTimeMS())
+            if (AnimationTimer < Globals.System.GetTimeMs())
             {
-                AnimationTimer = Globals.System.GetTimeMS() + 200;
+                AnimationTimer = Globals.System.GetTimeMs() + 200;
                 AnimationFrame++;
                 if (AnimationFrame >= 4) AnimationFrame = 0;
             }
-            _lastUpdate = Globals.System.GetTimeMS();
+            _lastUpdate = Globals.System.GetTimeMs();
             return true;
         }
 
@@ -642,7 +642,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 else
                 {
-                    if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMS() || Blocking)
+                    if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
                     {
                         srcRectangle = new FloatRect(3 * (int) Texture.GetWidth() / 4,
                             d * (int) Texture.GetHeight() / 4,
@@ -759,7 +759,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.X = (int) Math.Ceiling(destRectangle.X);
                 destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
-                if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMS() || Blocking)
+                if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
                 {
                     srcRectangle = new FloatRect(3 * (int) paperdollTex.GetWidth() / 4,
                         d * (int) paperdollTex.GetHeight() / 4, (int) paperdollTex.GetWidth() / 4,
@@ -950,7 +950,7 @@ namespace Intersect_Client.Classes.Entities
 
         public void DrawCastingBar()
         {
-            if (CastTime < Globals.System.GetTimeMS())
+            if (CastTime < Globals.System.GetTimeMs())
             {
                 return;
             }
@@ -963,7 +963,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 var width = Options.TileWidth;
                 var fillWidth = ((castSpell.CastDuration * 100 -
-                                  (CastTime - Globals.System.GetTimeMS())) /
+                                  (CastTime - Globals.System.GetTimeMs())) /
                                  (float) (castSpell.CastDuration * 100) * width);
                 var y = (int) Math.Ceiling(GetCenterPos().Y);
                 var x = (int) Math.Ceiling(GetCenterPos().X);
@@ -1035,7 +1035,7 @@ namespace Intersect_Client.Classes.Entities
             Data = data;
             TimeRemaining = timeRemaining;
             TotalDuration = totalDuration;
-            TimeRecevied = Globals.System.GetTimeMS();
+            TimeRecevied = Globals.System.GetTimeMs();
         }
     }
 
@@ -1073,7 +1073,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 var startMap = MapInstance.Lookup.Get<MapInstance>(en.CurrentMap);
                 var endMap = MapInstance.Lookup.Get<MapInstance>(_endMap);
-                _startTime = Globals.System.GetTimeMS();
+                _startTime = Globals.System.GetTimeMs();
                 _startXCoord = en.OffsetX;
                 _startYCoord = en.OffsetY;
                 _endXCoord = (endMap.GetX() + _endX * Options.TileWidth) -
@@ -1086,31 +1086,31 @@ namespace Intersect_Client.Classes.Entities
 
         public float GetXOffset()
         {
-            if (Globals.System.GetTimeMS() > _startTime + _dashTime)
+            if (Globals.System.GetTimeMs() > _startTime + _dashTime)
             {
                 return _endXCoord;
             }
             else
             {
-                return (_endXCoord - _startXCoord) * ((Globals.System.GetTimeMS() - _startTime) / (float) _dashTime);
+                return (_endXCoord - _startXCoord) * ((Globals.System.GetTimeMs() - _startTime) / (float) _dashTime);
             }
         }
 
         public float GetYOffset()
         {
-            if (Globals.System.GetTimeMS() > _startTime + _dashTime)
+            if (Globals.System.GetTimeMs() > _startTime + _dashTime)
             {
                 return _endYCoord;
             }
             else
             {
-                return (_endYCoord - _startYCoord) * ((Globals.System.GetTimeMS() - _startTime) / (float) _dashTime);
+                return (_endYCoord - _startYCoord) * ((Globals.System.GetTimeMs() - _startTime) / (float) _dashTime);
             }
         }
 
         public bool Update(Entity en)
         {
-            if (Globals.System.GetTimeMS() > _startTime + _dashTime)
+            if (Globals.System.GetTimeMs() > _startTime + _dashTime)
             {
                 en.Dashing = null;
                 en.OffsetX = 0;

@@ -214,6 +214,7 @@ namespace Intersect.Server.Classes.Networking
 
         public static void RemoveBeta4Client(IConnection connection)
         {
+            if (connection == null) return;
             var client = FindBeta4Client(connection);
 
             Debug.Assert(client != null, "client != null");
@@ -251,15 +252,15 @@ namespace Intersect.Server.Classes.Networking
             }
             client.Entity.SpawnedNpcs.Clear();
 
-            PacketSender.SendEntityLeave(client.Entity.MyIndex, (int) EntityTypes.Player,
-                Globals.Entities[client.EntityIndex].CurrentMap);
+            PacketSender.SendEntityLeave(client.Entity.MyIndex, (int) EntityTypes.Player, client.Entity.CurrentMap);
             if (!client.IsEditor)
             {
                 PacketSender.SendGlobalMsg(Strings.Get("player", "left", client.Entity.MyName, Options.GameName));
             }
             client.Entity.Dispose();
             client.Entity = null;
-            Globals.Entities[client.EntityIndex] = null;
+            if (client.EntityIndex <= Globals.Entities.Count)
+                Globals.Entities[client.EntityIndex] = null;
         }
 
         public static Client FindBeta4Client(IConnection connection)

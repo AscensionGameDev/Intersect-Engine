@@ -20,14 +20,14 @@ namespace Intersect_Client.Classes.Core
         {
             _currentAction = FadeType.In;
             _fadeAmt = 255f;
-            _lastUpdate = Globals.System.GetTimeMS();
+            _lastUpdate = Globals.System.GetTimeMs();
         }
 
         public static void FadeOut()
         {
             _currentAction = FadeType.Out;
             _fadeAmt = 0f;
-            _lastUpdate = Globals.System.GetTimeMS();
+            _lastUpdate = Globals.System.GetTimeMs();
         }
 
         public static bool DoneFading()
@@ -44,7 +44,7 @@ namespace Intersect_Client.Classes.Core
         {
             if (_currentAction == FadeType.In)
             {
-                _fadeAmt -= ((Globals.System.GetTimeMS() - _lastUpdate) / _fadeRate) * 255f;
+                _fadeAmt -= ((Globals.System.GetTimeMs() - _lastUpdate) / _fadeRate) * 255f;
                 if (_fadeAmt <= 0f)
                 {
                     _currentAction = FadeType.None;
@@ -53,14 +53,14 @@ namespace Intersect_Client.Classes.Core
             }
             else if (_currentAction == FadeType.Out)
             {
-                _fadeAmt += ((Globals.System.GetTimeMS() - _lastUpdate) / _fadeRate) * 255f;
+                _fadeAmt += ((Globals.System.GetTimeMs() - _lastUpdate) / _fadeRate) * 255f;
                 if (_fadeAmt >= 255f)
                 {
                     _currentAction = FadeType.None;
                     _fadeAmt = 255f;
                 }
             }
-            _lastUpdate = Globals.System.GetTimeMS();
+            _lastUpdate = Globals.System.GetTimeMs();
         }
     }
 }

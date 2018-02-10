@@ -117,6 +117,15 @@ namespace Intersect_Client.Classes.Entities
                 {
                     ProcessDirectionalInput();
                 }
+                if (GameControls.KeyDown(Controls.AttackInteract))
+                {
+                    if (!Globals.Me.TryAttack())
+                    {
+                        if (Globals.Me.AttackTimer < Globals.System.GetTimeMs())
+                            Globals.Me.AttackTimer = Globals.System.GetTimeMs() +
+                                                     Globals.Me.CalculateAttackTime();
+                    }
+                }
             }
             if (_targetBox != null)
             {
@@ -457,7 +466,7 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryUseSpell(int index)
         {
-            if (Spells[index].SpellNum >= 0 && Spells[index].SpellCD < Globals.System.GetTimeMS())
+            if (Spells[index].SpellNum >= 0 && Spells[index].SpellCD < Globals.System.GetTimeMs())
             {
                 PacketSender.SendUseSpell(index, _targetIndex);
             }
@@ -545,7 +554,7 @@ namespace Intersect_Client.Classes.Entities
 
         public bool TryBlock()
         {
-            if (AttackTimer > Globals.System.GetTimeMS())
+            if (AttackTimer > Globals.System.GetTimeMs())
             {
                 return false;
             }
@@ -571,13 +580,13 @@ namespace Intersect_Client.Classes.Entities
             {
                 Blocking = false;
                 PacketSender.SendBlock(0);
-                AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+                AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
             }
         }
 
         public bool TryAttack()
         {
-            if (AttackTimer > Globals.System.GetTimeMS() || Blocking)
+            if (AttackTimer > Globals.System.GetTimeMs() || Blocking)
             {
                 return false;
             }
@@ -611,7 +620,7 @@ namespace Intersect_Client.Classes.Entities
                         {
                             //ATTACKKKKK!!!
                             PacketSender.SendAttack(en.Key);
-                            AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+                            AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
                             return true;
                         }
                     }
@@ -628,7 +637,7 @@ namespace Intersect_Client.Classes.Entities
                         {
                             //Talk to Event
                             PacketSender.SendActivateEvent(en.Value.CurrentMap, en.Key);
-                            AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+                            AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
                             return true;
                         }
                     }
@@ -637,7 +646,7 @@ namespace Intersect_Client.Classes.Entities
 
             //Projectile/empty swing for animations
             PacketSender.SendAttack(-1);
-            AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+            AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
             return true;
         }
 
@@ -851,7 +860,7 @@ namespace Intersect_Client.Classes.Entities
             }
 
             //Check if the player is dashing, if so don't let them move.
-            if (Dashing != null || DashQueue.Count > 0 || DashTimer > Globals.System.GetTimeMS())
+            if (Dashing != null || DashQueue.Count > 0 || DashTimer > Globals.System.GetTimeMs())
             {
                 return;
             }
@@ -859,7 +868,7 @@ namespace Intersect_Client.Classes.Entities
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
             {
                 //Try to move if able and not casting spells.
-                if (!IsMoving && MoveTimer < Globals.System.GetTimeMS() && CastTime < Globals.System.GetTimeMS())
+                if (!IsMoving && MoveTimer < Globals.System.GetTimeMs() && CastTime < Globals.System.GetTimeMs())
                 {
                     switch (MoveDir)
                     {
@@ -911,7 +920,7 @@ namespace Intersect_Client.Classes.Entities
 
                     if (IsMoving)
                     {
-                        MoveTimer = Globals.System.GetTimeMS() + GetMovementTime();
+                        MoveTimer = Globals.System.GetTimeMs() + GetMovementTime();
                         didMove = true;
                         if (CurrentX < 0 || CurrentY < 0 || CurrentX > (Options.MapWidth - 1) ||
                             CurrentY > (Options.MapHeight - 1))
@@ -996,7 +1005,7 @@ namespace Intersect_Client.Classes.Entities
         ///     Returns any value zero or greater matching the entity index that is in the way.
         /// </summary>
         /// <returns></returns>
-        public int IsTileBlocked(int x, int y, int z, int map)
+        public int IsTileBlocked(int x, int y, int z, int map, bool ignoreAliveResources = true, bool ignoreDeadResources = true)
         {
             var mapInstance = MapInstance.Lookup.Get<MapInstance>(map);
             if (mapInstance == null) return -2;
@@ -1074,6 +1083,8 @@ namespace Intersect_Client.Classes.Entities
                                     var resourceBase = ((Resource) en.Value).GetResourceBase();
                                     if (resourceBase != null)
                                     {
+                                        if (!ignoreAliveResources && !((Resource) en.Value).IsDead) return en.Key;
+                                        if (!ignoreDeadResources && ((Resource) en.Value).IsDead) return en.Key;
                                         if ((resourceBase.WalkableAfter && ((Resource) en.Value).IsDead) ||
                                             (resourceBase.WalkableBefore && !((Resource) en.Value).IsDead))
                                         {

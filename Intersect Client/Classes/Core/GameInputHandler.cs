@@ -30,20 +30,7 @@ namespace Intersect_Client.Classes.Core
                     Gui.HideUI = !Gui.HideUI;
                     return;
                 }
-                if (GameControls.ControlHasKey(Controls.AttackInteract, key))
-                {
-                    if (Globals.Me != null)
-                    {
-                        Globals.Me.TryAttack();
-                        if (GameControls.ControlHasKey(Controls.PickUp, key) && Globals.Me.TryPickupItem())
-                        {
-                            return;
-                        }
-                        if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
-                            Globals.Me.AttackTimer = Globals.System.GetTimeMS() + Globals.Me.CalculateAttackTime();
-                    }
-                }
-                else if (GameControls.ControlHasKey(Controls.PickUp, key))
+                if (GameControls.ControlHasKey(Controls.PickUp, key))
                 {
                     if (Globals.Me != null)
                     {
@@ -150,24 +137,14 @@ namespace Intersect_Client.Classes.Core
                             {
                                 return;
                             }
-                            if (GameControls.ControlHasKey(Controls.AttackInteract, key))
-                            {
-                                if (Globals.Me.TryAttack())
-                                {
-                                    return;
-                                }
-                                if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
-                                    Globals.Me.AttackTimer = Globals.System.GetTimeMS() +
-                                                             Globals.Me.CalculateAttackTime();
-                            }
                             if (GameControls.ControlHasKey(Controls.PickUp, key))
                             {
                                 if (Globals.Me.TryPickupItem())
                                 {
                                     return;
                                 }
-                                if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
-                                    Globals.Me.AttackTimer = Globals.System.GetTimeMS() +
+                                if (Globals.Me.AttackTimer < Globals.System.GetTimeMs())
+                                    Globals.Me.AttackTimer = Globals.System.GetTimeMs() +
                                                              Globals.Me.CalculateAttackTime();
                             }
                             if (GameControls.ControlHasKey(Controls.Block, key))

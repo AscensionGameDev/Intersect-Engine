@@ -3,6 +3,7 @@ using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
+using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -257,7 +258,7 @@ namespace Intersect_Client.Classes.UI.Game
                     IntersectClientExtras.File_Management.GameContentManager.TextureType.Entity, _spriteDropdown.Text);
             if (_spritePanel.Texture != null)
             {
-                _spritePanel.SetUV(0, 0, .25f, .25f);
+                _spritePanel.SetUv(0, 0, .25f, .25f);
                 _spritePanel.SetSize(_spritePanel.Texture.GetWidth() / 4, _spritePanel.Texture.GetHeight() / 4);
                 Align.AlignTop(_spritePanel);
                 Align.CenterHorizontally(_spritePanel);
@@ -288,6 +289,7 @@ namespace Intersect_Client.Classes.UI.Game
             _mapList.SetPosition(4f, 316);
             _mapList.Height = 188;
             _mapList.Width = _adminWindow.Width - 8;
+            _mapList.MaximumSize = new IntersectClientExtras.GenericClasses.Point(4096, 999999);
         }
 
         public void UpdateMapList()

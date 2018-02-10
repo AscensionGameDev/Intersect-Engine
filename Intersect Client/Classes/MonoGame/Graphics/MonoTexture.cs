@@ -44,7 +44,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public void ResetAccessTime()
         {
-            _lastAccessTime = Globals.System.GetTimeMS() + 15000;
+            _lastAccessTime = Globals.System.GetTimeMs() + 15000;
         }
 
         public override string GetName()
@@ -106,7 +106,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         {
             if (_tex != null)
             {
-                if (_lastAccessTime < Globals.System.GetTimeMS())
+                if (_lastAccessTime < Globals.System.GetTimeMs())
                 {
                     _tex.Dispose();
                     _tex = null;

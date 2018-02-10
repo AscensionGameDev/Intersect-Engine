@@ -297,7 +297,7 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             crafting = true;
-            BarTimer = Globals.System.GetTimeMS();
+            BarTimer = Globals.System.GetTimeMs();
             PacketSender.SendCraftItem(craftIndex);
             _craftWindow.IsClosable = false;
         }
@@ -323,7 +323,7 @@ namespace Intersect_Client.Classes.UI.Game
             }
             if (crafting == true)
             {
-                long i = Globals.System.GetTimeMS() - BarTimer;
+                long i = Globals.System.GetTimeMs() - BarTimer;
                 if (i > Globals.GameBench.Crafts[craftIndex].Time)
                 {
                     i = Globals.GameBench.Crafts[craftIndex].Time;

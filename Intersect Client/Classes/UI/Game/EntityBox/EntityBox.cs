@@ -157,7 +157,7 @@ namespace Intersect_Client.Classes.UI.Game
             //TODO: Make this more efficient
             if (!PlayerBox) Gui.LoadRootUIData(_entityWindow, "InGame.xml");
 
-            lastUpdateTime = Globals.System.GetTimeMS();
+            lastUpdateTime = Globals.System.GetTimeMs();
         }
 
         public void SetEntity(Entity entity)
@@ -244,7 +244,7 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             //Time since this window was last updated (for bar animations)
-            float elapsedTime = ((float) (Globals.System.GetTimeMS() - lastUpdateTime)) / 1000.0f;
+            float elapsedTime = ((float) (Globals.System.GetTimeMs() - lastUpdateTime)) / 1000.0f;
 
             //Update the event/entity face.
             UpdateImage();
@@ -274,7 +274,7 @@ namespace Intersect_Client.Classes.UI.Game
                 Items[i].Update();
             }
 
-            lastUpdateTime = Globals.System.GetTimeMS();
+            lastUpdateTime = Globals.System.GetTimeMs();
         }
 
         public void UpdateSpellStatus()

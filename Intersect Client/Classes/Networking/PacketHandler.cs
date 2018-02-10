@@ -398,11 +398,11 @@ namespace Intersect_Client.Classes.Networking
             if (Convert.ToBoolean(bf.ReadInteger()) == true) //request
             {
                 PacketSender.SendPing();
-                PingTime = Globals.System.GetTimeMS();
+                PingTime = Globals.System.GetTimeMs();
             }
             else
             {
-                GameNetwork.Ping = (int) (Globals.System.GetTimeMS() - PingTime) / 2;
+                GameNetwork.Ping = (int) (Globals.System.GetTimeMs() - PingTime) / 2;
             }
         }
 
@@ -576,7 +576,7 @@ namespace Intersect_Client.Classes.Networking
                 en = MapInstance.Lookup.Get<MapInstance>(mapNum).LocalEntities[index];
             }
             if (en == Globals.Me &&
-                (Globals.Me.DashQueue.Count > 0 || Globals.Me.DashTimer > Globals.System.GetTimeMS())) return;
+                (Globals.Me.DashQueue.Count > 0 || Globals.Me.DashTimer > Globals.System.GetTimeMs())) return;
             if (en == Globals.Me && Globals.Me.CurrentMap != mapNum)
             {
                 Globals.Me.CurrentMap = mapNum;
@@ -921,7 +921,7 @@ namespace Intersect_Client.Classes.Networking
 
             if (attackTimer > -1 && en != Globals.Me)
             {
-                en.AttackTimer = Globals.System.GetTimeMS() + attackTimer;
+                en.AttackTimer = Globals.System.GetTimeMs() + attackTimer;
             }
         }
 
@@ -1124,7 +1124,7 @@ namespace Intersect_Client.Classes.Networking
             int SpellNum = bf.ReadInteger();
             if (SpellBase.Lookup.Get<SpellBase>(SpellNum) != null && Globals.Entities.ContainsKey(EntityNum))
             {
-                Globals.Entities[EntityNum].CastTime = Globals.System.GetTimeMS() +
+                Globals.Entities[EntityNum].CastTime = Globals.System.GetTimeMs() +
                                                        SpellBase.Lookup.Get<SpellBase>(SpellNum).CastDuration * 100;
                 Globals.Entities[EntityNum].SpellCast = SpellNum;
             }
@@ -1138,7 +1138,7 @@ namespace Intersect_Client.Classes.Networking
             int SpellSlot = bf.ReadInteger();
             if (SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[SpellSlot].SpellNum) != null)
             {
-                Globals.Me.Spells[SpellSlot].SpellCD = Globals.System.GetTimeMS() +
+                Globals.Me.Spells[SpellSlot].SpellCD = Globals.System.GetTimeMs() +
                                                        (SpellBase.Lookup
                                                             .Get<SpellBase>(Globals.Me.Spells[SpellSlot].SpellNum)
                                                             .CooldownDuration * 100);
@@ -1434,11 +1434,11 @@ namespace Intersect_Client.Classes.Networking
                         Globals.GridMaps.Add(Globals.MapGrid[x, y]);
                         if (MapInstance.MapRequests.ContainsKey(Globals.MapGrid[x, y]))
                         {
-                            MapInstance.MapRequests[Globals.MapGrid[x, y]] = Globals.System.GetTimeMS() + 2000;
+                            MapInstance.MapRequests[Globals.MapGrid[x, y]] = Globals.System.GetTimeMs() + 2000;
                         }
                         else
                         {
-                            MapInstance.MapRequests.Add(Globals.MapGrid[x, y], Globals.System.GetTimeMS() + 2000);
+                            MapInstance.MapRequests.Add(Globals.MapGrid[x, y], Globals.System.GetTimeMs() + 2000);
                         }
                     }
                 }
@@ -1581,6 +1581,7 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             int index = bf.ReadInteger();
 
+            Globals.Trade = new ItemInstance[2, Options.MaxInvItems];
             //Gotta initialize the trade values
             for (int x = 0; x < 2; x++)
             {
