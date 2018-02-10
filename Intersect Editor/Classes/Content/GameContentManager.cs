@@ -412,7 +412,6 @@ namespace Intersect.Editor.Classes.Core
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                Log.Error("Tried to load {0} texture with null name.", Enum.GetName(typeof(TextureType), type));
                 return null;
             }
 

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Forms;
 using Intersect.Editor.Forms;
 using Intersect.Logging;
@@ -21,6 +22,8 @@ namespace Intersect.Editor.Classes
             Log.Diagnostic("Starting editor...");
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            Application.ThreadException += Application_ThreadException;
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
@@ -50,13 +53,17 @@ namespace Intersect.Editor.Classes
             Application.Run(Globals.LoginForm);
         }
 
+        private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            CurrentDomain_UnhandledException(null, new UnhandledExceptionEventArgs(e.Exception, true));
+        }
+
         //Really basic error handler for debugging purposes
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs exception)
+        public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs exception)
         {
             Log.Error((Exception) exception?.ExceptionObject);
-            MessageBox.Show(
-                @"The Intersect Editor has encountered an error and must close. Error information can be found in logs/errors.log");
-            Application.Exit();
+            MessageBox.Show(@"The Intersect Editor has encountered an error and must close. Error information can be found in logs/errors.log");
+            Environment.Exit(1);
         }
     }
 }

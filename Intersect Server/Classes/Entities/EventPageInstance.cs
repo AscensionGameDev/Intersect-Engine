@@ -182,6 +182,10 @@ namespace Intersect.Server.Classes.Entities
             {
                 PacketSender.SendEntityDataTo(Client, this);
             }
+            else
+            {
+                PacketSender.SendEntityDataToProximity(this, null);
+            }
         }
 
         public override EntityTypes GetEntityType()
@@ -574,6 +578,7 @@ namespace Intersect.Server.Classes.Entities
 
         public override int CanMove(int moveDir)
         {
+            if (Client == null && PageNum != 0) return -5;
             switch (moveDir)
             {
                 case (int) Directions.Up:

@@ -358,6 +358,7 @@ namespace Intersect_Client.Classes.Maps
         //Rendering/Drawing Code
         public void Draw(int layer = 0)
         {
+            if (!MapLoaded) return;
             if (_reRenderMap)
             {
                 MapRendered = false;
@@ -1031,10 +1032,10 @@ namespace Intersect_Client.Classes.Maps
                     en.Value.Dispose();
                 }
             }
-            HideActiveAnimations();
-            ClearMapAttributes();
             MapRendered = false;
             MapLoaded = false;
+            HideActiveAnimations();
+            ClearMapAttributes();
             Delete();
         }
 

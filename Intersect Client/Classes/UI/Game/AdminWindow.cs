@@ -3,6 +3,7 @@ using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
+using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -288,6 +289,7 @@ namespace Intersect_Client.Classes.UI.Game
             _mapList.SetPosition(4f, 316);
             _mapList.Height = 188;
             _mapList.Width = _adminWindow.Width - 8;
+            _mapList.MaximumSize = new IntersectClientExtras.GenericClasses.Point(4096, 999999);
         }
 
         public void UpdateMapList()

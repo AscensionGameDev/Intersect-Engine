@@ -663,7 +663,7 @@ namespace Intersect.Server.Classes.Maps
                                     npcSpawnInstance.RespawnTime = Globals.System.GetTimeMs() +
                                                                    ((Npc) npcSpawnInstance.Entity).MyBase
                                                                    .SpawnDuration *
-                                                                   1000;
+                                                                   1000 - (Globals.System.GetTimeMs() - LastUpdateTime);
                                 }
                                 else if (npcSpawnInstance.RespawnTime < Globals.System.GetTimeMs())
                                 {
@@ -704,6 +704,11 @@ namespace Intersect.Server.Classes.Maps
                     var evts = GlobalEventInstances.Values.ToList();
                     for (int i = 0; i < evts.Count; i++)
                     {
+                        //Only do movement processing on the first page.
+                        //This is because global events need to keep all of their pages at the same tile
+                        //Think about a global event moving randomly that needed to turn into a warewolf and back (separate pages)
+                        //If they were in different tiles the transition would make the event jump
+                        //Something like described here: https://www.ascensiongamedev.com/community/bug_tracker/intersect/events-randomly-appearing-and-disappearing-r983/
                         for (int x = 0; x < evts[i].GlobalPageInstance.Length; x++)
                         {
                             //Gotta figure out if any players are interacting with this event.

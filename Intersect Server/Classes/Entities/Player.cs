@@ -557,6 +557,33 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
+        public override void TryAttack(Entity enemy, ProjectileBase projectile, SpellBase parentSpell, ItemBase parentItem, int projectileDir)
+        {
+            //If Entity is resource, check for the correct tool and make sure its not a spell cast.
+            if (enemy.GetType() == typeof(Resource))
+            {
+                if (((Resource)enemy).IsDead) return;
+                // Check that a resource is actually required.
+                var resource = ((Resource)enemy).MyBase;
+                //Check Dynamic Requirements
+                if (!EventInstance.MeetsConditionLists(resource.HarvestingReqs, this, null))
+                {
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "resourcereqs"));
+                    return;
+                }
+                if (resource.Tool > -1 && resource.Tool < Options.ToolTypes.Count)
+                {
+                    if (parentItem == null || resource.Tool != parentItem.Tool)
+                    {
+                        PacketSender.SendPlayerMsg(MyClient,
+                            Strings.Get("combat", "toolrequired", Options.ToolTypes[resource.Tool]));
+                        return;
+                    }
+                }
+            }
+            base.TryAttack(enemy, projectile, parentSpell, parentItem, projectileDir);
+        }
+
         public override void TryAttack(Entity enemy)
         {
             if (CastTime >= Globals.System.GetTimeMs())
@@ -692,7 +719,7 @@ namespace Intersect.Server.Classes.Entities
                 PacketSender.SendEntityPositionToAll(this);
 
                 //If map grid changed then send the new map grid
-                if (!adminWarp)
+                if (!adminWarp && (oldMap == null || !oldMap.SurroundingMaps.Contains(newMap)))
                 {
                     PacketSender.SendMapGrid(MyClient, map.MapGrid, true);
                 }
@@ -1342,11 +1369,14 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Crafting
-        public bool OpenCraftingBench(int index)
+        public bool OpenCraftingBench(BenchBase bench)
         {
             if (IsBusy()) return false;
-            InCraft = index;
-            PacketSender.SendOpenCraftingBench(MyClient, index);
+            if (bench != null)
+            {
+                InCraft = bench.Index;
+                PacketSender.SendOpenCraftingBench(MyClient, bench);
+            }
             return true;
         }
 

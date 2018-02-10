@@ -547,12 +547,15 @@ namespace Intersect.Editor.Forms
             if (lstMapNpcs.Items.Count > 0)
             {
                 lstMapNpcs.SelectedIndex = 0;
-                cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
-                cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Npc,
-                    Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum);
-                if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
+                if (lstMapNpcs.SelectedIndex < Globals.CurrentMap.Spawns.Count)
                 {
-                    rbDeclared.Checked = true;
+                    cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
+                    cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Npc,
+                        Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum);
+                    if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
+                    {
+                        rbDeclared.Checked = true;
+                    }
                 }
             }
         }

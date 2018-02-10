@@ -944,9 +944,7 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Attack using a weapon or unarmed
-        public virtual void TryAttack(Entity enemy, int baseDamage, DamageType damageType, Stats scalingStat,
-            int scaling, int critChance, double critMultiplier, List<KeyValuePair<int, int>> deadAnimations = null,
-            List<KeyValuePair<int, int>> aliveAnimations = null)
+        public virtual void TryAttack(Entity enemy, int baseDamage, DamageType damageType, Stats scalingStat, int scaling, int critChance, double critMultiplier, List<KeyValuePair<int, int>> deadAnimations = null, List<KeyValuePair<int, int>> aliveAnimations = null, ItemBase weapon = null)
         {
             if ((AttackTimer > Globals.System.GetTimeMs() || Blocking)) return;
 

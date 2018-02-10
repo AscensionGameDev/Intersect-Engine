@@ -95,6 +95,11 @@ namespace Intersect.Editor.Forms
             {
                 cmbScalingStat.Items.Add(Globals.GetStatName(x));
             }
+            nudStr.Maximum = Options.MaxStatValue;
+            nudMag.Maximum = Options.MaxStatValue;
+            nudDef.Maximum = Options.MaxStatValue;
+            nudMR.Maximum = Options.MaxStatValue;
+            nudSpd.Maximum = Options.MaxStatValue;
             InitLocalization();
             UpdateEditor();
         }

@@ -29,6 +29,7 @@ namespace Intersect.Server.Classes
 
         public static void Start(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             if (RunningOnWindows()) SetConsoleCtrlHandler(new HandlerRoutine(ConsoleCtrlCheck), true);
             Console.CancelKeyPress += Console_CancelKeyPress;
 
@@ -835,7 +836,7 @@ namespace Intersect.Server.Classes
         //Really basic error handler for debugging purposes
         public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Log.Error((Exception)e.ExceptionObject);
+            Log.Error((Exception)e?.ExceptionObject);
             if (e.IsTerminating)
             {
                 if (_errorHalt)
@@ -847,7 +848,7 @@ namespace Intersect.Server.Classes
                 {
                     Console.WriteLine(Strings.Get("errors", "errorservercrashnohalt"));
                 }
-                Environment.Exit(-1);
+                ShutDown();
             }
             else
             {

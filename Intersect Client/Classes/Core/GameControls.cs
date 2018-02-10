@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Input;
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.UI;
 
 namespace Intersect.Client.Classes.Core
 {
@@ -44,12 +46,12 @@ namespace Intersect.Client.Classes.Core
                 var key2 = Globals.Database.LoadPreference(name + "_key2");
                 if (string.IsNullOrEmpty(key1) || string.IsNullOrEmpty(key2))
                 {
-                    Globals.Database.SavePreference(name + "_key1", ((int) ControlMapping[control].key1).ToString());
-                    Globals.Database.SavePreference(name + "_key2", ((int) ControlMapping[control].key2).ToString());
+                    Globals.Database.SavePreference(name + "_key1", ((int)ControlMapping[control].key1).ToString());
+                    Globals.Database.SavePreference(name + "_key2", ((int)ControlMapping[control].key2).ToString());
                 }
                 else
                 {
-                    CreateControlMap(control, (Keys) Convert.ToInt32(key1), (Keys) Convert.ToInt32(key2));
+                    CreateControlMap(control, (Keys)Convert.ToInt32(key1), (Keys)Convert.ToInt32(key2));
                 }
             }
         }
@@ -90,8 +92,8 @@ namespace Intersect.Client.Classes.Core
             foreach (Controls control in Enum.GetValues(typeof(Controls)))
             {
                 var name = Enum.GetName(typeof(Controls), control);
-                Globals.Database.SavePreference(name + "_key1", ((int) ControlMapping[control].key1).ToString());
-                Globals.Database.SavePreference(name + "_key2", ((int) ControlMapping[control].key2).ToString());
+                Globals.Database.SavePreference(name + "_key1", ((int)ControlMapping[control].key1).ToString());
+                Globals.Database.SavePreference(name + "_key2", ((int)ControlMapping[control].key2).ToString());
             }
         }
 
@@ -162,6 +164,33 @@ namespace Intersect.Client.Classes.Core
         {
             if (key1 != Keys.None && Globals.InputManager.KeyDown(key1)) return true;
             if (key2 != Keys.None && Globals.InputManager.KeyDown(key2)) return true;
+            if (!Gui.MouseHitGUI())
+            {
+                switch (key1)
+                {
+                    case Keys.LButton:
+                        if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)) return true;
+                        break;
+                    case Keys.RButton:
+                        if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Right)) return true;
+                        break;
+                    case Keys.MButton:
+                        if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Middle)) return true;
+                        break;
+                }
+                switch (key2)
+                {
+                    case Keys.LButton:
+                        if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)) return true;
+                        break;
+                    case Keys.RButton:
+                        if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Right)) return true;
+                        break;
+                    case Keys.MButton:
+                        if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Middle)) return true;
+                        break;
+                }
+            }
             return false;
         }
     }

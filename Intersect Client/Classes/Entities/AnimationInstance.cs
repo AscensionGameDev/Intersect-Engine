@@ -1,5 +1,6 @@
 ﻿using System;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Maps;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
