@@ -1085,7 +1085,7 @@ namespace Intersect.Server.Classes.Networking
                     CustomColors.AdminJoined);
             }
             Globals.Entities[index].Warp(Globals.Entities[index].CurrentMap, Globals.Entities[index].CurrentX,
-                Globals.Entities[index].CurrentY, Globals.Entities[index].Dir);
+                Globals.Entities[index].CurrentY, Globals.Entities[index].Dir,false,Globals.Entities[index].CurrentZ);
             PacketSender.SendEntityDataTo(client, client.Entity);
 
             //Search for login activated events and run them

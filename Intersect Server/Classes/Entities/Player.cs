@@ -695,7 +695,7 @@ namespace Intersect.Server.Classes.Entities
             Warp(newMap, newX, newY, 1, adminWarp);
         }
 
-        public override void Warp(int newMap, int newX, int newY, int newDir, bool adminWarp = false)
+        public override void Warp(int newMap, int newX, int newY, int newDir, bool adminWarp = false, int zOverride = 0)
         {
             var map = MapInstance.Lookup.Get<MapInstance>(newMap);
             if (map == null)
@@ -705,7 +705,7 @@ namespace Intersect.Server.Classes.Entities
             }
             CurrentX = newX;
             CurrentY = newY;
-            CurrentZ = 0;
+            CurrentZ = zOverride;
             Dir = newDir;
             foreach (var evt in EventLookup.Values)
             {

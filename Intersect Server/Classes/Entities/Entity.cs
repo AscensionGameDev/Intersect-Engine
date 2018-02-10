@@ -1529,7 +1529,7 @@ namespace Intersect.Server.Classes.Entities
             Warp(newMap, newX, newY, Dir, adminWarp);
         }
 
-        public virtual void Warp(int newMap, int newX, int newY, int newDir, bool adminWarp = false)
+        public virtual void Warp(int newMap, int newX, int newY, int newDir, bool adminWarp = false, int zOverride = 0)
         {
         }
 
