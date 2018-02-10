@@ -168,7 +168,7 @@ namespace Intersect_Client.Classes.Maps
         {
             if (isLocal)
             {
-                _lastUpdateTime = Globals.System.GetTimeMS() + 10000;
+                _lastUpdateTime = Globals.System.GetTimeMs() + 10000;
                 if (BackgroundSound == null && !TextUtils.IsNone(Sound))
                 {
                     BackgroundSound = GameAudio.AddMapSound(Sound, -1, -1, Index, true, 10);
@@ -190,7 +190,7 @@ namespace Intersect_Client.Classes.Maps
             }
             else
             {
-                if (Globals.System.GetTimeMS() > _lastUpdateTime || GameGraphics.FreeMapTextures.Count < 27)
+                if (Globals.System.GetTimeMs() > _lastUpdateTime || GameGraphics.FreeMapTextures.Count < 27)
                 {
                     Dispose();
                 }
@@ -742,8 +742,8 @@ namespace Intersect_Client.Classes.Maps
         public void DrawFog()
         {
             if (Globals.Me == null || Lookup.Get(Globals.Me.CurrentMap) == null) return;
-            float ecTime = Globals.System.GetTimeMS() - _fogUpdateTime;
-            _fogUpdateTime = Globals.System.GetTimeMS();
+            float ecTime = Globals.System.GetTimeMs() - _fogUpdateTime;
+            _fogUpdateTime = Globals.System.GetTimeMs();
             if (Index == Globals.Me.CurrentMap)
             {
                 if (_curFogIntensity != 1)
@@ -838,8 +838,8 @@ namespace Intersect_Client.Classes.Maps
 
         public void DrawPanorama()
         {
-            float ecTime = Globals.System.GetTimeMS() - _panoramaUpdateTime;
-            _panoramaUpdateTime = Globals.System.GetTimeMS();
+            float ecTime = Globals.System.GetTimeMs() - _panoramaUpdateTime;
+            _panoramaUpdateTime = Globals.System.GetTimeMs();
             if (Index == Globals.Me.CurrentMap)
             {
                 if (_panoramaIntensity != 1)
@@ -871,8 +871,8 @@ namespace Intersect_Client.Classes.Maps
 
         public void DrawOverlayGraphic()
         {
-            float ecTime = Globals.System.GetTimeMS() - _overlayUpdateTime;
-            _overlayUpdateTime = Globals.System.GetTimeMS();
+            float ecTime = Globals.System.GetTimeMs() - _overlayUpdateTime;
+            _overlayUpdateTime = Globals.System.GetTimeMs();
             if (Index == Globals.Me.CurrentMap)
             {
                 if (_overlayIntensity != 1)
@@ -960,7 +960,7 @@ namespace Intersect_Client.Classes.Maps
                     (int)
                     Math.Ceiling((GetY() + ActionMsgs[n].Y * Options.TileHeight) -
                                  ((Options.TileHeight * 2) *
-                                  (1000 - (ActionMsgs[n].TransmittionTimer - Globals.System.GetTimeMS())) / 1000));
+                                  (1000 - (ActionMsgs[n].TransmittionTimer - Globals.System.GetTimeMs())) / 1000));
                 var x = (int) Math.Ceiling(GetX() + ActionMsgs[n].X * Options.TileWidth + ActionMsgs[n].xOffset);
                 float textWidth = GameGraphics.Renderer.MeasureText(ActionMsgs[n].msg, GameGraphics.GameFont, 1).X;
                 GameGraphics.Renderer.DrawString(ActionMsgs[n].msg, GameGraphics.GameFont, (int) (x) - textWidth / 2f,
@@ -1083,12 +1083,12 @@ namespace Intersect_Client.Classes.Maps
             msg = message;
             clr = color;
             xOffset = rnd.Next(-30, 30); //+- 16 pixels so action msg's don't overlap!
-            TransmittionTimer = Globals.System.GetTimeMS() + 1000;
+            TransmittionTimer = Globals.System.GetTimeMs() + 1000;
         }
 
         public void TryRemove()
         {
-            if (TransmittionTimer <= Globals.System.GetTimeMS())
+            if (TransmittionTimer <= Globals.System.GetTimeMs())
             {
                 MapInstance.Lookup.Get<MapInstance>(MapNum).ActionMsgs.Remove(this);
             }

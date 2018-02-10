@@ -27,13 +27,13 @@ namespace Intersect_Client.Classes.Entities
         {
             _owner = Owner;
             _sourceText = text;
-            _renderTimer = Globals.System.GetTimeMS() + 5000;
+            _renderTimer = Globals.System.GetTimeMs() + 5000;
             _bubbleTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, "chatbubble.png");
         }
 
         public bool Update()
         {
-            if (_renderTimer < Globals.System.GetTimeMS())
+            if (_renderTimer < Globals.System.GetTimeMs())
             {
                 return false;
             }

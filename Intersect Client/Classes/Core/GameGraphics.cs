@@ -97,7 +97,7 @@ namespace Intersect_Client.Classes.Core
 
         public static void DrawIntro()
         {
-            GameTexture imageTex = contentManager.GetTexture(GameContentManager.TextureType.Image, Globals.Database.IntroBG[Globals.IntroIndex]);
+            GameTexture imageTex = contentManager.GetTexture(GameContentManager.TextureType.Image, Globals.Database.IntroBg[Globals.IntroIndex]);
             if (imageTex != null)
             {
                 DrawFullScreenTextureFitMinimum(imageTex);
@@ -107,7 +107,7 @@ namespace Intersect_Client.Classes.Core
         public static void DrawMenu()
         {
             GameTexture imageTex = contentManager.GetTexture(GameContentManager.TextureType.Gui,
-                Globals.Database.MenuBG);
+                Globals.Database.MenuBg);
             if (imageTex != null)
             {
                 DrawFullScreenTexture(imageTex);
@@ -460,7 +460,7 @@ namespace Intersect_Client.Classes.Core
             var map = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
             if (map != null)
             {
-                float ecTime = Globals.System.GetTimeMS() - _overlayUpdate;
+                float ecTime = Globals.System.GetTimeMs() - _overlayUpdate;
 
                 if (OverlayColor.A != map.AHue ||
                     OverlayColor.R != map.RHue ||
@@ -566,7 +566,7 @@ namespace Intersect_Client.Classes.Core
             }
 
             DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView, OverlayColor, null);
-            _overlayUpdate = Globals.System.GetTimeMS();
+            _overlayUpdate = Globals.System.GetTimeMs();
         }
 
         public static FloatRect GetSourceRect(GameTexture gameTexture)
@@ -845,7 +845,7 @@ namespace Intersect_Client.Classes.Core
             var map = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap);
             if (map != null)
             {
-                float ecTime = Globals.System.GetTimeMS() - _lightUpdate;
+                float ecTime = Globals.System.GetTimeMs() - _lightUpdate;
                 float valChange = (255 * ecTime / 2000f);
                 byte brightnessTarget = (byte)((map.Brightness / 100f) * 255);
                 if (_brightnessLevel < brightnessTarget)
@@ -1023,7 +1023,7 @@ namespace Intersect_Client.Classes.Core
                         _playerLightExpand -= (100f * ecTime / 2000f);
                     }
                 }
-                _lightUpdate = Globals.System.GetTimeMS();
+                _lightUpdate = Globals.System.GetTimeMs();
             }
         }
 

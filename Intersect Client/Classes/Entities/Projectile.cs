@@ -134,7 +134,7 @@ namespace Intersect_Client.Classes.Entities
                 }
             }
             Quantity++;
-            SpawnTime = Globals.System.GetTimeMS() + _myBase.Delay;
+            SpawnTime = Globals.System.GetTimeMs() + _myBase.Delay;
         }
 
         private int FindProjectileRotationX(int direction, int x, int y)
@@ -292,7 +292,7 @@ namespace Intersect_Client.Classes.Entities
         /// <returns>The displacement from the co-ordinates if placed on a Options.TileHeight grid.</returns>
         private float getDisplacement(long spawnTime)
         {
-            long elapsedTime = Globals.System.GetTimeMS() - spawnTime;
+            long elapsedTime = Globals.System.GetTimeMs() - spawnTime;
             float displacementPercent = elapsedTime / (float) _myBase.Speed;
             return displacementPercent * Options.TileHeight * _myBase.Range;
         }
@@ -308,7 +308,7 @@ namespace Intersect_Client.Classes.Entities
             var map = CurrentMap;
             var y = CurrentY;
 
-            if (Quantity < _myBase.Quantity && SpawnTime < Globals.System.GetTimeMS())
+            if (Quantity < _myBase.Quantity && SpawnTime < Globals.System.GetTimeMs())
             {
                 AddProjectileSpawns();
             }
@@ -346,7 +346,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 for (int i = 0; i < _spawnedAmount; i++)
                 {
-                    if (Spawns[i] != null && Globals.System.GetTimeMS() > Spawns[i].TransmittionTimer)
+                    if (Spawns[i] != null && Globals.System.GetTimeMs() > Spawns[i].TransmittionTimer)
                     {
                         var spawnMap = MapInstance.Lookup.Get<MapInstance>(Spawns[i].Map);
                         if (spawnMap != null)
@@ -434,7 +434,7 @@ namespace Intersect_Client.Classes.Entities
 
                             if (killSpawn == false) killSpawn = Collided(i);
                             
-                            Spawns[i].TransmittionTimer = Globals.System.GetTimeMS() +
+                            Spawns[i].TransmittionTimer = Globals.System.GetTimeMs() +
                                                           (long) ((float) _myBase.Speed / (float) _myBase.Range);
                             if (Spawns[i].Distance >= _myBase.Range)
                             {
@@ -529,10 +529,10 @@ namespace Intersect_Client.Classes.Entities
         public float OffsetY;
         public ProjectileBase ProjectileBase;
         public int SpawnMap;
-        public long SpawnTime = Globals.System.GetTimeMS();
+        public long SpawnTime = Globals.System.GetTimeMs();
         public int SpawnX;
         public int SpawnY;
-        public long TransmittionTimer = Globals.System.GetTimeMS();
+        public long TransmittionTimer = Globals.System.GetTimeMs();
         public int X;
         public int Y;
         public int Z;
@@ -551,7 +551,7 @@ namespace Intersect_Client.Classes.Entities
             Anim = new AnimationInstance(animBase, true, autoRotate, Z,parent);
             AutoRotate = autoRotate;
             ProjectileBase = projectileBase;
-            TransmittionTimer = Globals.System.GetTimeMS() +
+            TransmittionTimer = Globals.System.GetTimeMs() +
                                 (long) ((float) ProjectileBase.Speed / (float) ProjectileBase.Range);
         }
 

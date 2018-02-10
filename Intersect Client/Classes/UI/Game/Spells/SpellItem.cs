@@ -55,7 +55,7 @@ namespace Intersect.Client.Classes.UI.Game.Spells
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            ClickTime = Globals.System.GetTimeMS() + 500;
+            ClickTime = Globals.System.GetTimeMs() + 500;
         }
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
@@ -111,7 +111,7 @@ namespace Intersect.Client.Classes.UI.Game.Spells
             if (!IsDragging &&
                 ((texLoaded != "" && spell == null) || (spell != null && texLoaded != spell.Pic) ||
                  currentSpell != Globals.Me.Spells[myindex].SpellNum ||
-                 iconCD != (Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMS())))
+                 iconCD != (Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMs())))
             {
                 if (spell != null)
                 {
@@ -120,7 +120,7 @@ namespace Intersect.Client.Classes.UI.Game.Spells
                     if (spellTex != null)
                     {
                         pnl.Texture = spellTex;
-                        if ((Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMS()))
+                        if ((Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMs()))
                         {
                             pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color(100, 255, 255, 255);
                         }
@@ -138,7 +138,7 @@ namespace Intersect.Client.Classes.UI.Game.Spells
                     }
                     texLoaded = spell.Pic;
                     currentSpell = Globals.Me.Spells[myindex].SpellNum;
-                    iconCD = (Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMS());
+                    iconCD = (Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMs());
                 }
                 else
                 {
@@ -158,7 +158,7 @@ namespace Intersect.Client.Classes.UI.Game.Spells
                         CanDrag = true;
                         MouseX = -1;
                         MouseY = -1;
-                        if (Globals.System.GetTimeMS() < ClickTime)
+                        if (Globals.System.GetTimeMs() < ClickTime)
                         {
                             Globals.Me.TryUseSpell(myindex);
                             ClickTime = 0;

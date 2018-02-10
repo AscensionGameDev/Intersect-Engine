@@ -206,7 +206,7 @@ namespace Intersect_Client.Classes.UI
                 _edittingControl = (Controls) sender.UserData;
                 _edittingButton = sender;
                 Gui.GwenInput.HandleInput = false;
-                _listeningTimer = Globals.System.GetTimeMS() + 5000;
+                _listeningTimer = Globals.System.GetTimeMs() + 5000;
             }
         }
 
@@ -260,7 +260,7 @@ namespace Intersect_Client.Classes.UI
         //Methods
         public void Update()
         {
-            if (_optionsPanel.IsVisible && _edittingButton != null && _listeningTimer < Globals.System.GetTimeMS())
+            if (_optionsPanel.IsVisible && _edittingButton != null && _listeningTimer < Globals.System.GetTimeMs())
             {
                 OnKeyDown(Keys.None);
             }

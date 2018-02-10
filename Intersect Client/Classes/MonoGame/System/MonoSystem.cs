@@ -13,7 +13,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.System
             stopWatch.Start();
         }
 
-        public override long GetTimeMS()
+        public override long GetTimeMs()
         {
             return stopWatch.ElapsedMilliseconds;
         }

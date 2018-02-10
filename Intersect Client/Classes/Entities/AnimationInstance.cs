@@ -38,8 +38,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 lowerLoop = animBase.LowerAnimLoopCount;
                 upperLoop = animBase.UpperAnimLoopCount;
-                lowerTimer = Globals.System.GetTimeMS() + animBase.LowerAnimFrameSpeed;
-                upperTimer = Globals.System.GetTimeMS() + animBase.UpperAnimFrameSpeed;
+                lowerTimer = Globals.System.GetTimeMs() + animBase.LowerAnimFrameSpeed;
+                upperTimer = Globals.System.GetTimeMs() + animBase.UpperAnimFrameSpeed;
                 InfiniteLoop = loopForever;
                 AutoRotate = autoRotate;
                 ZDimension = zDimension;
@@ -224,7 +224,7 @@ namespace Intersect_Client.Classes.Entities
                 {
                     sound.Update();
                 }
-                if (lowerTimer < Globals.System.GetTimeMS() && showLower)
+                if (lowerTimer < Globals.System.GetTimeMs() && showLower)
                 {
                     lowerFrame++;
                     if (lowerFrame >= MyBase.LowerAnimFrameCount)
@@ -243,9 +243,9 @@ namespace Intersect_Client.Classes.Entities
                             }
                         }
                     }
-                    lowerTimer = Globals.System.GetTimeMS() + MyBase.LowerAnimFrameSpeed;
+                    lowerTimer = Globals.System.GetTimeMs() + MyBase.LowerAnimFrameSpeed;
                 }
-                if (upperTimer < Globals.System.GetTimeMS() && showUpper)
+                if (upperTimer < Globals.System.GetTimeMs() && showUpper)
                 {
                     upperFrame++;
                     if (upperFrame >= MyBase.UpperAnimFrameCount)
@@ -264,7 +264,7 @@ namespace Intersect_Client.Classes.Entities
                             }
                         }
                     }
-                    upperTimer = Globals.System.GetTimeMS() + MyBase.UpperAnimFrameSpeed;
+                    upperTimer = Globals.System.GetTimeMs() + MyBase.UpperAnimFrameSpeed;
                 }
                 if (!showLower && !showUpper)
                 {

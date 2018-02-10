@@ -22,20 +22,20 @@ namespace Intersect_Client.Classes.General
 
         public static void Update()
         {
-            if (_updateTime < Globals.System.GetTimeMS())
+            if (_updateTime < Globals.System.GetTimeMs())
             {
                 var ts = new TimeSpan(0, 0, 0, 0, (int) (1000 * _rate));
                 _serverTime = _serverTime.Add(ts);
-                _updateTime = Globals.System.GetTimeMS() + 1000;
+                _updateTime = Globals.System.GetTimeMs() + 1000;
             }
-            float ecTime = Globals.System.GetTimeMS() - _colorUpdate;
+            float ecTime = Globals.System.GetTimeMs() - _colorUpdate;
             float valChange = (255 * ecTime / 10000f);
             _currentColor.A = LerpVal(_currentColor.A, _targetColor.A, valChange);
             _currentColor.R = LerpVal(_currentColor.R, _targetColor.R, valChange);
             _currentColor.G = LerpVal(_currentColor.G, _targetColor.G, valChange);
             _currentColor.B = LerpVal(_currentColor.B, _targetColor.B, valChange);
 
-            _colorUpdate = Globals.System.GetTimeMS();
+            _colorUpdate = Globals.System.GetTimeMs();
         }
 
         private static float LerpVal(float val, float target, float amt)

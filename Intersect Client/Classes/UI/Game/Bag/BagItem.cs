@@ -68,7 +68,7 @@ namespace Intersect.Client.Classes.UI.Game.Bag
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            ClickTime = Globals.System.GetTimeMS() + 500;
+            ClickTime = Globals.System.GetTimeMs() + 500;
         }
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
@@ -159,7 +159,7 @@ namespace Intersect.Client.Classes.UI.Game.Bag
                         CanDrag = true;
                         MouseX = -1;
                         MouseY = -1;
-                        if (Globals.System.GetTimeMS() < ClickTime)
+                        if (Globals.System.GetTimeMs() < ClickTime)
                         {
                             //Globals.Me.TryUseItem(_mySlot);
                             ClickTime = 0;

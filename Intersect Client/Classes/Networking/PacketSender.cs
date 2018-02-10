@@ -37,11 +37,11 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
             if (MapInstance.MapRequests.ContainsKey(mapNum))
             {
-                MapInstance.MapRequests[mapNum] = Globals.System.GetTimeMS() + 3000;
+                MapInstance.MapRequests[mapNum] = Globals.System.GetTimeMs() + 3000;
             }
             else
             {
-                MapInstance.MapRequests.Add(mapNum, Globals.System.GetTimeMS() + 3000);
+                MapInstance.MapRequests.Add(mapNum, Globals.System.GetTimeMs() + 3000);
             }
         }
 

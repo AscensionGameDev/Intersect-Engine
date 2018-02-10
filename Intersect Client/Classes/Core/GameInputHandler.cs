@@ -143,8 +143,8 @@ namespace Intersect_Client.Classes.Core
                                 {
                                     return;
                                 }
-                                if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
-                                    Globals.Me.AttackTimer = Globals.System.GetTimeMS() +
+                                if (Globals.Me.AttackTimer < Globals.System.GetTimeMs())
+                                    Globals.Me.AttackTimer = Globals.System.GetTimeMs() +
                                                              Globals.Me.CalculateAttackTime();
                             }
                             if (GameControls.ControlHasKey(Controls.Block, key))

@@ -125,7 +125,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             _gameWindow.Position = new Microsoft.Xna.Framework.Point((mDisplayWidth - mScreenWidth) / 2,
                 (mDisplayHeight - mScreenHeight) / 2);
             mOldDisplayMode = currentDisplayMode;
-            if (fsChanged) fsChangedTimer = Globals.System.GetTimeMS() + 1000;
+            if (fsChanged) fsChangedTimer = Globals.System.GetTimeMs() + 1000;
         }
 
         public void CreateWhiteTexture()
@@ -138,7 +138,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override bool Begin()
         {
-            if (fsChangedTimer > -1 && fsChangedTimer < Globals.System.GetTimeMS())
+            if (fsChangedTimer > -1 && fsChangedTimer < Globals.System.GetTimeMs())
             {
                 mGraphics.PreferredBackBufferWidth--;
                 mGraphics.ApplyChanges();
@@ -400,11 +400,11 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         {
             EndSpriteBatch();
             _fpsCount++;
-            if (_fpsTimer < Globals.System.GetTimeMS())
+            if (_fpsTimer < Globals.System.GetTimeMs())
             {
                 _fps = _fpsCount;
                 _fpsCount = 0;
-                _fpsTimer = Globals.System.GetTimeMS() + 1000;
+                _fpsTimer = Globals.System.GetTimeMs() + 1000;
                 _gameWindow.Title = Strings.Get("main", "gamename");
             }
             for (int i = 0; i < AllTextures.Count; i++)

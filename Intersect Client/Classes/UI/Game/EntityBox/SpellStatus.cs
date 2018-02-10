@@ -77,7 +77,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityBox
         public void Update()
         {
             var spell = SpellBase.Lookup.Get<SpellBase>(_entityBox._myEntity.Status[myindex].SpellNum);
-            var timeDiff = Globals.System.GetTimeMS() - _entityBox._myEntity.Status[myindex].TimeRecevied;
+            var timeDiff = Globals.System.GetTimeMs() - _entityBox._myEntity.Status[myindex].TimeRecevied;
             var remaining = _entityBox._myEntity.Status[myindex].TimeRemaining - timeDiff;
             var fraction = (float) ((float) remaining / (float) _entityBox._myEntity.Status[myindex].TotalDuration);
             pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color((int) (fraction * 255f), 255, 255, 255);

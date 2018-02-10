@@ -258,7 +258,7 @@ namespace Intersect_Client.Classes.UI.Game
                     IntersectClientExtras.File_Management.GameContentManager.TextureType.Entity, _spriteDropdown.Text);
             if (_spritePanel.Texture != null)
             {
-                _spritePanel.SetUV(0, 0, .25f, .25f);
+                _spritePanel.SetUv(0, 0, .25f, .25f);
                 _spritePanel.SetSize(_spritePanel.Texture.GetWidth() / 4, _spritePanel.Texture.GetHeight() / 4);
                 Align.AlignTop(_spritePanel);
                 Align.CenterHorizontally(_spritePanel);
