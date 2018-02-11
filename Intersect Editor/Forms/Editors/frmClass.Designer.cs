@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms
 {
-    partial class frmClass
+    partial class FrmClass
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace Intersect.Editor.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmClass));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmClass));
             this.grpClasses = new DarkUI.Controls.DarkGroupBox();
             this.lstClasses = new System.Windows.Forms.ListBox();
             this.grpItems = new DarkUI.Controls.DarkGroupBox();
@@ -1791,7 +1791,7 @@ namespace Intersect.Editor.Forms
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "frmClass";
+            this.Name = "FrmClass";
             this.Text = "Class Editor";
             this.Load += new System.EventHandler(this.frmClass_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);

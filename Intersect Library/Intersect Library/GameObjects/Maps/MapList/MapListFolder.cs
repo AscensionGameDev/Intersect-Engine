@@ -11,7 +11,7 @@ namespace Intersect.GameObjects.Maps.MapList
             : base()
         {
             Name = "New Folder";
-            type = 0;
+            Type = 0;
         }
 
         public void GetData(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps)

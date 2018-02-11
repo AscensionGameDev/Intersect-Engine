@@ -11,9 +11,9 @@ namespace Intersect.Server.Classes.General
     public static class Globals
     {
         //Console Variables
-        public static long CPS = 0;
+        public static long Cps = 0;
 
-        public static bool CPSLock = true;
+        public static bool CpsLock = true;
         public static bool ServerStarted = true;
         public static ServerSystem System = new ServerSystem();
 

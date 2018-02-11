@@ -1,6 +1,6 @@
 ﻿namespace Intersect.Editor.Forms.Editors
 {
-    partial class frmDynamicRequirements
+    partial class FrmDynamicRequirements
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmDynamicRequirements));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmDynamicRequirements));
             this.grpConditionLists = new DarkUI.Controls.DarkGroupBox();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
@@ -232,7 +232,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmDynamicRequirements";
+            this.Name = "FrmDynamicRequirements";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Dynamic Requirements";
             this.grpConditionLists.ResumeLayout(false);

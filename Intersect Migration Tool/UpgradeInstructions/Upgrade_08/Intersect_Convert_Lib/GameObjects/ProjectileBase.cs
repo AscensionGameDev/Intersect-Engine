@@ -6,9 +6,9 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 {
     public class ProjectileBase : DatabaseObject<ProjectileBase>
     {
-        public const int SpawnLocationsWidth = 5;
-        public const int SpawnLocationsHeight = 5;
-        public const int MaxProjectileDirections = 8;
+        public const int SPAWN_LOCATIONS_WIDTH = 5;
+        public const int SPAWN_LOCATIONS_HEIGHT = 5;
+        public const int MAX_PROJECTILE_DIRECTIONS = 8;
         public int Ammo = -1;
         public int AmmoRequired = 1;
         public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
@@ -22,7 +22,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         public int Knockback;
         public int Quantity = 1;
         public int Range = 1;
-        public Location[,] SpawnLocations = new Location[SpawnLocationsWidth, SpawnLocationsHeight];
+        public Location[,] SpawnLocations = new Location[SPAWN_LOCATIONS_WIDTH, SPAWN_LOCATIONS_HEIGHT];
 
         public int Speed = 1;
         public int Spell;
@@ -31,9 +31,9 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         public ProjectileBase(int id) : base(id)
         {
             Name = "New Projectile";
-            for (var x = 0; x < SpawnLocationsWidth; x++)
+            for (var x = 0; x < SPAWN_LOCATIONS_WIDTH; x++)
             {
-                for (var y = 0; y < SpawnLocationsHeight; y++)
+                for (var y = 0; y < SPAWN_LOCATIONS_HEIGHT; y++)
                 {
                     SpawnLocations[x, y] = new Location();
                 }
@@ -62,11 +62,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             Ammo = myBuffer.ReadInteger();
             AmmoRequired = myBuffer.ReadInteger();
 
-            for (var x = 0; x < SpawnLocationsWidth; x++)
+            for (var x = 0; x < SPAWN_LOCATIONS_WIDTH; x++)
             {
-                for (var y = 0; y < SpawnLocationsHeight; y++)
+                for (var y = 0; y < SPAWN_LOCATIONS_HEIGHT; y++)
                 {
-                    for (var i = 0; i < MaxProjectileDirections; i++)
+                    for (var i = 0; i < MAX_PROJECTILE_DIRECTIONS; i++)
                     {
                         SpawnLocations[x, y].Directions[i] = Convert.ToBoolean(myBuffer.ReadInteger());
                     }
@@ -110,11 +110,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             myBuffer.WriteInteger(Ammo);
             myBuffer.WriteInteger(AmmoRequired);
 
-            for (var x = 0; x < SpawnLocationsWidth; x++)
+            for (var x = 0; x < SPAWN_LOCATIONS_WIDTH; x++)
             {
-                for (var y = 0; y < SpawnLocationsHeight; y++)
+                for (var y = 0; y < SPAWN_LOCATIONS_HEIGHT; y++)
                 {
-                    for (var i = 0; i < MaxProjectileDirections; i++)
+                    for (var i = 0; i < MAX_PROJECTILE_DIRECTIONS; i++)
                     {
                         myBuffer.WriteInteger(Convert.ToInt32(SpawnLocations[x, y].Directions[i]));
                     }
@@ -136,7 +136,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
     public class Location
     {
-        public bool[] Directions = new bool[ProjectileBase.MaxProjectileDirections];
+        public bool[] Directions = new bool[ProjectileBase.MAX_PROJECTILE_DIRECTIONS];
     }
 
     public class ProjectileAnimation

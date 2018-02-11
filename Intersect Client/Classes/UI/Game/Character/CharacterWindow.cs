@@ -17,41 +17,41 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class CharacterWindow
     {
-        Label _abilityPwrLabel;
-        Button _addAbilityPwrBtn;
-        Button _addAttackBtn;
-        Button _addDefenseBtn;
-        Button _addMagicResistBtn;
-        Button _addSpeedBtn;
+        Label mAbilityPwrLabel;
+        Button mAddAbilityPwrBtn;
+        Button mAddAttackBtn;
+        Button mAddDefenseBtn;
+        Button mAddMagicResistBtn;
+        Button mAddSpeedBtn;
 
         //Stats
-        Label _attackLabel;
+        Label mAttackLabel;
 
-        private ImagePanel _characterContainer;
-        private Label _characterLevelAndClass;
+        private ImagePanel mCharacterContainer;
+        private Label mCharacterLevelAndClass;
 
-        private Label _characterName;
-        private ImagePanel _characterPortrait;
+        private Label mCharacterName;
+        private ImagePanel mCharacterPortrait;
 
-        private string _characterPortraitImg = "";
+        private string mCharacterPortraitImg = "";
 
         //Controls
-        private WindowControl _characterWindow;
+        private WindowControl mCharacterWindow;
 
-        private string _currentSprite = "";
-        Label _defenseLabel;
-        private int[] _emptyStatBoost = new int[Options.MaxStats];
-        private ScrollControl _equipmentContainer;
+        private string mCurrentSprite = "";
+        Label mDefenseLabel;
+        private int[] mEmptyStatBoost = new int[Options.MaxStats];
+        private ScrollControl mEquipmentContainer;
 
         //Initialization
-        private bool _initialized = false;
+        private bool mInitialized = false;
 
-        private ImagePanel _itemTemplate;
-        Label _magicRstLabel;
-        public ImagePanel[] _paperdollPanels;
-        public string[] _paperdollTextures;
-        Label _pointsLabel;
-        Label _speedLabel;
+        private ImagePanel mItemTemplate;
+        Label mMagicRstLabel;
+        public ImagePanel[] PaperdollPanels;
+        public string[] PaperdollTextures;
+        Label mPointsLabel;
+        Label mSpeedLabel;
 
         //Equipment List
         public List<EquipmentItem> Items = new List<EquipmentItem>();
@@ -62,65 +62,65 @@ namespace Intersect_Client.Classes.UI.Game
         public int Y;
 
         //Init
-        public CharacterWindow(Canvas _gameCanvas)
+        public CharacterWindow(Canvas gameCanvas)
         {
-            _characterWindow = new WindowControl(_gameCanvas, Strings.Get("character", "title"), false,
+            mCharacterWindow = new WindowControl(gameCanvas, Strings.Get("character", "title"), false,
                 "CharacterWindow");
-            _characterWindow.DisableResizing();
+            mCharacterWindow.DisableResizing();
 
-            _characterName = new Label(_characterWindow, "CharacterNameLabel");
-            _characterName.SetTextColor(Color.White, Label.ControlState.Normal);
+            mCharacterName = new Label(mCharacterWindow, "CharacterNameLabel");
+            mCharacterName.SetTextColor(Color.White, Label.ControlState.Normal);
 
-            _characterLevelAndClass = new Label(_characterWindow, "ChatacterInfoLabel");
-            _characterLevelAndClass.SetText("");
+            mCharacterLevelAndClass = new Label(mCharacterWindow, "ChatacterInfoLabel");
+            mCharacterLevelAndClass.SetText("");
 
-            _characterContainer = new ImagePanel(_characterWindow, "CharacterContainer");
+            mCharacterContainer = new ImagePanel(mCharacterWindow, "CharacterContainer");
 
-            _characterPortrait = new ImagePanel(_characterContainer);
+            mCharacterPortrait = new ImagePanel(mCharacterContainer);
 
-            _paperdollPanels = new ImagePanel[Options.EquipmentSlots.Count];
-            _paperdollTextures = new string[Options.EquipmentSlots.Count];
+            PaperdollPanels = new ImagePanel[Options.EquipmentSlots.Count];
+            PaperdollTextures = new string[Options.EquipmentSlots.Count];
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                _paperdollPanels[i] = new ImagePanel(_characterContainer);
-                _paperdollTextures[i] = "";
-                _paperdollPanels[i].Hide();
+                PaperdollPanels[i] = new ImagePanel(mCharacterContainer);
+                PaperdollTextures[i] = "";
+                PaperdollPanels[i].Hide();
             }
 
-            Label equipmentLabel = new Label(_characterWindow, "EquipmentLabel");
+            Label equipmentLabel = new Label(mCharacterWindow, "EquipmentLabel");
             equipmentLabel.SetText(Strings.Get("character", "equipment"));
 
-            _equipmentContainer = new ScrollControl(_characterWindow, "EquipmentContainer");
-            _equipmentContainer.EnableScroll(true, false);
+            mEquipmentContainer = new ScrollControl(mCharacterWindow, "EquipmentContainer");
+            mEquipmentContainer.EnableScroll(true, false);
 
-            _itemTemplate = new ImagePanel(_equipmentContainer, "EquipmentBox");
-            new ImagePanel(_itemTemplate, "EquipmentIcon");
+            mItemTemplate = new ImagePanel(mEquipmentContainer, "EquipmentBox");
+            new ImagePanel(mItemTemplate, "EquipmentIcon");
 
-            Label statsLabel = new Label(_characterWindow, "StatsLabel");
+            Label statsLabel = new Label(mCharacterWindow, "StatsLabel");
             statsLabel.SetText(Strings.Get("character", "stats"));
 
-            _attackLabel = new Label(_characterWindow, "AttackLabel");
+            mAttackLabel = new Label(mCharacterWindow, "AttackLabel");
 
-            _addAttackBtn = new Button(_characterWindow, "IncreaseAttackButton");
-            _addAttackBtn.Clicked += _addAttackBtn_Clicked;
+            mAddAttackBtn = new Button(mCharacterWindow, "IncreaseAttackButton");
+            mAddAttackBtn.Clicked += _addAttackBtn_Clicked;
 
-            _defenseLabel = new Label(_characterWindow, "DefenseLabel");
-            _addDefenseBtn = new Button(_characterWindow, "IncreaseDefenseButton");
-            _addDefenseBtn.Clicked += _addDefenseBtn_Clicked;
+            mDefenseLabel = new Label(mCharacterWindow, "DefenseLabel");
+            mAddDefenseBtn = new Button(mCharacterWindow, "IncreaseDefenseButton");
+            mAddDefenseBtn.Clicked += _addDefenseBtn_Clicked;
 
-            _speedLabel = new Label(_characterWindow, "SpeedLabel");
-            _addSpeedBtn = new Button(_characterWindow, "IncreaseSpeedButton");
-            _addSpeedBtn.Clicked += _addSpeedBtn_Clicked;
+            mSpeedLabel = new Label(mCharacterWindow, "SpeedLabel");
+            mAddSpeedBtn = new Button(mCharacterWindow, "IncreaseSpeedButton");
+            mAddSpeedBtn.Clicked += _addSpeedBtn_Clicked;
 
-            _abilityPwrLabel = new Label(_characterWindow, "AbilityPowerLabel");
-            _addAbilityPwrBtn = new Button(_characterWindow, "IncreaseAbilityPowerButton");
-            _addAbilityPwrBtn.Clicked += _addAbilityPwrBtn_Clicked;
+            mAbilityPwrLabel = new Label(mCharacterWindow, "AbilityPowerLabel");
+            mAddAbilityPwrBtn = new Button(mCharacterWindow, "IncreaseAbilityPowerButton");
+            mAddAbilityPwrBtn.Clicked += _addAbilityPwrBtn_Clicked;
 
-            _magicRstLabel = new Label(_characterWindow, "MagicResistLabel");
-            _addMagicResistBtn = new Button(_characterWindow, "IncreaseMagicResistButton");
-            _addMagicResistBtn.Clicked += _addMagicResistBtn_Clicked;
+            mMagicRstLabel = new Label(mCharacterWindow, "MagicResistLabel");
+            mAddMagicResistBtn = new Button(mCharacterWindow, "IncreaseMagicResistButton");
+            mAddMagicResistBtn.Clicked += _addMagicResistBtn_Clicked;
 
-            _pointsLabel = new Label(_characterWindow, "PointsLabel");
+            mPointsLabel = new Label(mCharacterWindow, "PointsLabel");
         }
 
         //Update Button Event Handlers
@@ -153,35 +153,35 @@ namespace Intersect_Client.Classes.UI.Game
         {
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                Items.Add(new EquipmentItem(i, _characterWindow));
-                Items[i].pnl = new ImagePanel(_equipmentContainer, "EquipmentBox");
+                Items.Add(new EquipmentItem(i, mCharacterWindow));
+                Items[i].Pnl = new ImagePanel(mEquipmentContainer, "EquipmentBox");
                 Items[i].Setup();
 
                 //TODO Made this more efficient.
-                Gui.LoadRootUIData(Items[i].pnl, "InGame.xml");
+                Gui.LoadRootUiData(Items[i].Pnl, "InGame.xml");
 
-                Items[i].pnl
+                Items[i].Pnl
                     .SetPosition(
-                        Items[i].pnl.Padding.Left + (i * (Items[i].pnl.Padding.Left + Items[i].pnl.Padding.Right +
-                                                          Items[i].pnl.Width)), Items[i].pnl.Padding.Top);
+                        Items[i].Pnl.Padding.Left + (i * (Items[i].Pnl.Padding.Left + Items[i].Pnl.Padding.Right +
+                                                          Items[i].Pnl.Width)), Items[i].Pnl.Padding.Top);
             }
-            _itemTemplate.Hide();
+            mItemTemplate.Hide();
         }
 
         //Methods
         public void Update()
         {
-            if (!_initialized)
+            if (!mInitialized)
             {
                 InitEquipmentContainer();
-                _initialized = true;
+                mInitialized = true;
             }
-            if (_characterWindow.IsHidden)
+            if (mCharacterWindow.IsHidden)
             {
                 return;
             }
-            _characterName.Text = Globals.Me.MyName;
-            _characterLevelAndClass.Text = Strings.Get("character", "levelandclass", Globals.Me.Level,
+            mCharacterName.Text = Globals.Me.MyName;
+            mCharacterLevelAndClass.Text = Strings.Get("character", "levelandclass", Globals.Me.Level,
                 ClassBase.GetName(Globals.Me.Class));
 
             //Load Portrait
@@ -201,25 +201,25 @@ namespace Intersect_Client.Classes.UI.Game
                  }
              }
              else */
-            if (Globals.Me.MySprite != "" && Globals.Me.MySprite != _currentSprite && entityTex != null)
+            if (Globals.Me.MySprite != "" && Globals.Me.MySprite != mCurrentSprite && entityTex != null)
             {
-                _characterPortrait.Texture = entityTex;
-                _characterPortrait.SetTextureRect(0, 0, entityTex.GetWidth() / 4, entityTex.GetHeight() / 4);
-                _characterPortrait.SizeToContents();
-                Align.Center(_characterPortrait);
-                _characterPortrait.IsHidden = false;
+                mCharacterPortrait.Texture = entityTex;
+                mCharacterPortrait.SetTextureRect(0, 0, entityTex.GetWidth() / 4, entityTex.GetHeight() / 4);
+                mCharacterPortrait.SizeToContents();
+                Align.Center(mCharacterPortrait);
+                mCharacterPortrait.IsHidden = false;
                 for (int z = 0; z < Options.PaperdollOrder[1].Count; z++)
                 {
                     var paperdoll = "";
                     if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1)
                     {
-                        var Equipment = Globals.Me.Equipment;
-                        if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
-                            Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
+                        var equipment = Globals.Me.Equipment;
+                        if (equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
+                            equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
                             Options.MaxInvItems)
                         {
                             var itemNum = Globals.Me.Inventory[
-                                    Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])
+                                    equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])
                                     ]]
                                 .ItemNum;
                             if (ItemBase.Lookup.Get<ItemBase>(itemNum) != null)
@@ -236,62 +236,62 @@ namespace Intersect_Client.Classes.UI.Game
                             }
                         }
                     }
-                    if (paperdoll == "" && _paperdollTextures[z] != "")
+                    if (paperdoll == "" && PaperdollTextures[z] != "")
                     {
-                        _paperdollPanels[z].Texture = null;
-                        _paperdollPanels[z].Hide();
-                        _paperdollTextures[z] = "";
+                        PaperdollPanels[z].Texture = null;
+                        PaperdollPanels[z].Hide();
+                        PaperdollTextures[z] = "";
                     }
-                    else if (paperdoll != "" && paperdoll != _paperdollTextures[z])
+                    else if (paperdoll != "" && paperdoll != PaperdollTextures[z])
                     {
-                        var _paperdollTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll,
+                        var paperdollTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll,
                             paperdoll);
-                        _paperdollPanels[z].Texture = _paperdollTex;
-                        if (_paperdollTex != null)
+                        PaperdollPanels[z].Texture = paperdollTex;
+                        if (paperdollTex != null)
                         {
-                            _paperdollPanels[z].SetTextureRect(0, 0,
-                                _paperdollPanels[z].Texture.GetWidth() / 4,
-                                _paperdollPanels[z].Texture.GetHeight() / 4);
-                            _paperdollPanels[z].SetSize(_paperdollPanels[z].Texture.GetWidth() / 4,
-                                _paperdollPanels[z].Texture.GetHeight() / 4);
-                            _paperdollPanels[z].SetPosition(
-                                _characterContainer.Width / 2 - _paperdollPanels[z].Width / 2,
-                                _characterContainer.Height / 2 - _paperdollPanels[z].Height / 2);
+                            PaperdollPanels[z].SetTextureRect(0, 0,
+                                PaperdollPanels[z].Texture.GetWidth() / 4,
+                                PaperdollPanels[z].Texture.GetHeight() / 4);
+                            PaperdollPanels[z].SetSize(PaperdollPanels[z].Texture.GetWidth() / 4,
+                                PaperdollPanels[z].Texture.GetHeight() / 4);
+                            PaperdollPanels[z].SetPosition(
+                                mCharacterContainer.Width / 2 - PaperdollPanels[z].Width / 2,
+                                mCharacterContainer.Height / 2 - PaperdollPanels[z].Height / 2);
                         }
-                        _paperdollPanels[z].Show();
-                        _paperdollTextures[z] = paperdoll;
+                        PaperdollPanels[z].Show();
+                        PaperdollTextures[z] = paperdoll;
                     }
                 }
             }
-            else if (Globals.Me.MySprite != _currentSprite && Globals.Me.Face != _currentSprite)
+            else if (Globals.Me.MySprite != mCurrentSprite && Globals.Me.Face != mCurrentSprite)
             {
-                _characterPortrait.IsHidden = true;
+                mCharacterPortrait.IsHidden = true;
                 for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
-                    _paperdollPanels[i].Hide();
+                    PaperdollPanels[i].Hide();
                 }
             }
 
-            _attackLabel.SetText(Strings.Get("character", "stat0", Strings.Get("combat", "stat0"),
+            mAttackLabel.SetText(Strings.Get("character", "stat0", Strings.Get("combat", "stat0"),
                 Globals.Me.Stat[(int) Stats.Attack]));
-            _defenseLabel.SetText(Strings.Get("character", "stat2", Strings.Get("combat", "stat2"),
+            mDefenseLabel.SetText(Strings.Get("character", "stat2", Strings.Get("combat", "stat2"),
                 Globals.Me.Stat[(int) Stats.Defense]));
-            _speedLabel.SetText(Strings.Get("character", "stat4", Strings.Get("combat", "stat4"),
+            mSpeedLabel.SetText(Strings.Get("character", "stat4", Strings.Get("combat", "stat4"),
                 Globals.Me.Stat[(int) Stats.Speed]));
-            _abilityPwrLabel.SetText(Strings.Get("character", "stat1", Strings.Get("combat", "stat1"),
+            mAbilityPwrLabel.SetText(Strings.Get("character", "stat1", Strings.Get("combat", "stat1"),
                 Globals.Me.Stat[(int) Stats.AbilityPower]));
-            _magicRstLabel.SetText(Strings.Get("character", "stat3", Strings.Get("combat", "stat3"),
+            mMagicRstLabel.SetText(Strings.Get("character", "stat3", Strings.Get("combat", "stat3"),
                 Globals.Me.Stat[(int) Stats.MagicResist]));
-            _pointsLabel.SetText(Strings.Get("character", "points", Globals.Me.StatPoints));
-            _addAbilityPwrBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
+            mPointsLabel.SetText(Strings.Get("character", "points", Globals.Me.StatPoints));
+            mAddAbilityPwrBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
                                           Globals.Me.Stat[(int) Stats.AbilityPower] == Options.MaxStatValue);
-            _addAttackBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
+            mAddAttackBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
                                       Globals.Me.Stat[(int) Stats.Attack] == Options.MaxStatValue);
-            _addDefenseBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
+            mAddDefenseBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
                                        Globals.Me.Stat[(int) Stats.Defense] == Options.MaxStatValue);
-            _addMagicResistBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
+            mAddMagicResistBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
                                            Globals.Me.Stat[(int) Stats.MagicResist] == Options.MaxStatValue);
-            _addSpeedBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
+            mAddSpeedBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
                                      Globals.Me.Stat[(int) Stats.Speed] == Options.MaxStatValue);
 
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
@@ -305,29 +305,29 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                     else
                     {
-                        Items[i].Update(-1, _emptyStatBoost);
+                        Items[i].Update(-1, mEmptyStatBoost);
                     }
                 }
                 else
                 {
-                    Items[i].Update(-1, _emptyStatBoost);
+                    Items[i].Update(-1, mEmptyStatBoost);
                 }
             }
         }
 
         public void Show()
         {
-            _characterWindow.IsHidden = false;
+            mCharacterWindow.IsHidden = false;
         }
 
         public bool IsVisible()
         {
-            return !_characterWindow.IsHidden;
+            return !mCharacterWindow.IsHidden;
         }
 
         public void Hide()
         {
-            _characterWindow.IsHidden = true;
+            mCharacterWindow.IsHidden = true;
         }
     }
 }

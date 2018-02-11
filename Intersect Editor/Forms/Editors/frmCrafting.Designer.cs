@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors
 {
-    partial class frmCrafting
+    partial class FrmCrafting
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace Intersect.Editor.Forms.Editors
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmCrafting));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmCrafting));
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.grpBenches = new DarkUI.Controls.DarkGroupBox();
@@ -545,7 +545,7 @@ namespace Intersect.Editor.Forms.Editors
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmCrafting";
+            this.Name = "FrmCrafting";
             this.Text = "Crafting Bench Editor";
             this.Load += new System.EventHandler(this.frmCrafting_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);

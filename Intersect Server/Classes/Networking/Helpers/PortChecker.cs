@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
+using WebSocketSharp;
 
 namespace Intersect.Server.Classes.Networking
 {
@@ -11,27 +13,21 @@ namespace Intersect.Server.Classes.Networking
             externalIp = "";
             try
             {
-                WebRequest request =
-                    WebRequest.Create("https://www.ascensiongamedev.com/resources/canyouseeme.php?port=" + port +
-                                      "&time=" + DateTime.Now.ToBinary().ToString());
+                WebRequest request = WebRequest.Create("http://status.freemmorpgmaker.com:5400/?time=" + DateTime.Now.ToBinary().ToString());
+                request.Headers.Add("port",port.ToString());
+                request.Timeout = 4000;
                 HttpWebResponse response = (HttpWebResponse) request.GetResponse();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    Stream data = response.GetResponseStream();
-                    string html = String.Empty;
-                    using (StreamReader sr = new StreamReader(data))
+                    if (response.Headers.HasKeys())
                     {
-                        var serverStatus = sr.ReadToEnd();
-                        if (serverStatus.Contains("/"))
+                        if (response.Headers.AllKeys.Contains("ip"))
                         {
-                            var onlineStatus = serverStatus.Split("/".ToCharArray())[0];
-                            var ip = serverStatus.Split("/".ToCharArray())[1];
-                            IPAddress address;
-                            if (IPAddress.TryParse(ip, out address))
-                            {
-                                externalIp = ip;
-                            }
-                            if (onlineStatus.Contains("Online"))
+                            externalIp = response.Headers["ip"];
+                        }
+                        if (response.Headers.Contains("players"))
+                        {
+                            if (int.Parse(response.Headers["players"]) > -1)
                             {
                                 return true;
                             }

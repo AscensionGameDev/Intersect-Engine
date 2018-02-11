@@ -6,26 +6,26 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_ChatboxText : UserControl
+    public partial class EventCommandChatboxText : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventCommand mMyCommand;
 
-        public EventCommand_ChatboxText(EventCommand refCommand, FrmEvent editor)
+        public EventCommandChatboxText(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
             InitLocalization();
-            txtAddText.Text = _myCommand.Strs[0];
+            txtAddText.Text = mMyCommand.Strs[0];
             cmbColor.Items.Clear();
             foreach (Color.ChatColor color in Enum.GetValues(typeof(Color.ChatColor)))
             {
                 cmbColor.Items.Add(Globals.GetColorName(color));
             }
-            cmbColor.SelectedIndex = cmbColor.Items.IndexOf(_myCommand.Strs[1]);
+            cmbColor.SelectedIndex = cmbColor.Items.IndexOf(mMyCommand.Strs[1]);
             if (cmbColor.SelectedIndex == -1) cmbColor.SelectedIndex = 0;
-            cmbChannel.SelectedIndex = _myCommand.Ints[0];
+            cmbChannel.SelectedIndex = mMyCommand.Ints[0];
         }
 
         private void InitLocalization()
@@ -46,15 +46,15 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Strs[0] = txtAddText.Text;
-            _myCommand.Strs[1] = cmbColor.Text;
-            _myCommand.Ints[0] = cmbChannel.SelectedIndex;
-            _eventEditor.FinishCommandEdit();
+            mMyCommand.Strs[0] = txtAddText.Text;
+            mMyCommand.Strs[1] = cmbColor.Text;
+            mMyCommand.Ints[0] = cmbChannel.SelectedIndex;
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
 
         private void lblCommands_Click(object sender, EventArgs e)

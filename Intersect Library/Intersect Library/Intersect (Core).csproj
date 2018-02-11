@@ -51,6 +51,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -90,6 +93,7 @@
     <Compile Include="Enums\TargetTypes.cs" />
     <Compile Include="Enums\Vitals.cs" />
     <Compile Include="Extensions\GameObjectInfoAttribute.cs" />
+    <Compile Include="Utilities\AlphanumComparator.cs" />
     <Compile Include="Utilities\FieldChecking.cs" />
     <Compile Include="GameObjects\AnimationBase.cs" />
     <Compile Include="GameObjects\ClassBase.cs" />
@@ -196,6 +200,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Resources\Migrator.English.xml" />
   </ItemGroup>
   <ItemGroup>

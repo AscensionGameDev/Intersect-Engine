@@ -8,7 +8,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
         //Game Settings
         public static string GameName = "Intersect";
 
-        public static string MOTD = "Welcome to Intersect!";
+        public static string Motd = "Welcome to Intersect!";
         public static int ServerPort = 4500;
 
         //Maxes

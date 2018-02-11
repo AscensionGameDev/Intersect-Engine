@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_ConditionalBranch
+    partial class EventCommandConditionalBranch
     {
         /// <summary> 
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventCommand_ConditionalBranch));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventCommandConditionalBranch));
             this.grpConditional = new DarkUI.Controls.DarkGroupBox();
             this.grpGender = new DarkUI.Controls.DarkGroupBox();
             this.cmbGender = new DarkUI.Controls.DarkComboBox();
@@ -1130,7 +1130,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpConditional);
-            this.Name = "EventCommand_ConditionalBranch";
+            this.Name = "EventCommandConditionalBranch";
             this.Size = new System.Drawing.Size(262, 208);
             this.grpConditional.ResumeLayout(false);
             this.grpConditional.PerformLayout();

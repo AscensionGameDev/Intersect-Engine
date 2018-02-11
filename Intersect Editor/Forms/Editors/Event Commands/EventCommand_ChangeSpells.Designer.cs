@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_ChangeSpells
+    partial class EventCommandChangeSpells
     {
         /// <summary> 
         /// Required designer variable.
@@ -134,7 +134,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpChangeSpells);
-            this.Name = "EventCommand_ChangeSpells";
+            this.Name = "EventCommandChangeSpells";
             this.Size = new System.Drawing.Size(205, 118);
             this.grpChangeSpells.ResumeLayout(false);
             this.grpChangeSpells.PerformLayout();

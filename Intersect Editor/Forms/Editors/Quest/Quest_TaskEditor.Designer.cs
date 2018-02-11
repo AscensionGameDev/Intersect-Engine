@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Quest
 {
-    partial class Quest_TaskEditor
+    partial class QuestTaskEditor
     {
         /// <summary> 
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Quest_TaskEditor));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(QuestTaskEditor));
             this.grpEditor = new DarkUI.Controls.DarkGroupBox();
             this.btnEditTaskEvent = new DarkUI.Controls.DarkButton();
             this.txtStartDesc = new DarkUI.Controls.DarkTextBox();
@@ -341,7 +341,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpEditor);
-            this.Name = "Quest_TaskEditor";
+            this.Name = "QuestTaskEditor";
             this.Size = new System.Drawing.Size(255, 267);
             this.grpEditor.ResumeLayout(false);
             this.grpEditor.PerformLayout();

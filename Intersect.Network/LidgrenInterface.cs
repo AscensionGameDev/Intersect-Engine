@@ -15,7 +15,7 @@ namespace Intersect.Network
     {
         public delegate void HandleUnconnectedMessage(NetPeer peer, NetIncomingMessage message);
 
-        private static readonly IConnection[] EMPTY_CONNECTIONS = { };
+        private static readonly IConnection[] EmptyConnections = { };
         private readonly IDictionary<long, Guid> mGuidLookup;
 
         private readonly INetwork mNetwork;
@@ -37,7 +37,7 @@ namespace Intersect.Network
 
             mRsa = new RSACryptoServiceProvider();
             mRsa.ImportParameters(rsaParameters);
-            mPeerConfiguration = new NetPeerConfiguration(SharedConstants.VERSION_NAME)
+            mPeerConfiguration = new NetPeerConfiguration(SharedConstants.VersionName)
             {
                 AcceptIncomingConnections = configuration.IsServer
             };
@@ -134,7 +134,7 @@ namespace Intersect.Network
 
                 var connectionRsa = new RSACryptoServiceProvider(2048);
 
-                var hail = new HailPacket(mRsa, handshakeSecret, SharedConstants.VERSION_DATA,
+                var hail = new HailPacket(mRsa, handshakeSecret, SharedConstants.VersionData,
                     connectionRsa.ExportParameters(false));
                 var hailMessage = mPeer.CreateMessage(hail.EstimatedSize);
 
@@ -206,7 +206,7 @@ namespace Intersect.Network
         public bool SendPacket(IPacket packet, IConnection connection = null,
             TransmissionMode transmissionMode = TransmissionMode.All)
         {
-            if (connection == null) return SendPacket(packet, EMPTY_CONNECTIONS, transmissionMode);
+            if (connection == null) return SendPacket(packet, EmptyConnections, transmissionMode);
 
             var lidgrenConnection = connection as LidgrenConnection;
             if (lidgrenConnection == null)
@@ -475,9 +475,9 @@ namespace Intersect.Network
                         break;
                     }
 
-                    Debug.Assert(SharedConstants.VERSION_DATA != null, "SharedConstants.VERSION_DATA != null");
+                    Debug.Assert(SharedConstants.VersionData != null, "SharedConstants.VERSION_DATA != null");
                     Debug.Assert(hail.VersionData != null, "hail.VersionData != null");
-                    if (!SharedConstants.VERSION_DATA.SequenceEqual(hail.VersionData))
+                    if (!SharedConstants.VersionData.SequenceEqual(hail.VersionData))
                     {
                         Log.Error($"Bad version detected, denying connection [{lidgrenIdHex}].");
                         Debug.Assert(connection != null, "connection != null");

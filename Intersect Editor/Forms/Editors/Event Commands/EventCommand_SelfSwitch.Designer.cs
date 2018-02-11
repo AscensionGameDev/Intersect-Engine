@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_SelfSwitch
+    partial class EventCommandSelfSwitch
     {
         /// <summary> 
         /// Required designer variable.
@@ -131,7 +131,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpSelfSwitch);
-            this.Name = "EventCommand_SelfSwitch";
+            this.Name = "EventCommandSelfSwitch";
             this.Size = new System.Drawing.Size(298, 88);
             this.grpSelfSwitch.ResumeLayout(false);
             this.grpSelfSwitch.PerformLayout();

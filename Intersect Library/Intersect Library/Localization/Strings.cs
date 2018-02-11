@@ -14,8 +14,8 @@ namespace Intersect.Localization
             Migrator
         }
 
-        private static Language DefaultLanguage;
-        private static Language SelectedLanguage;
+        private static Language sDefaultLanguage;
+        private static Language sSelectedLanguage;
 
         public static void Init(IntersectComponent component, string language)
         {
@@ -51,44 +51,41 @@ namespace Intersect.Localization
                 //Copy Client.English.xml from resources
                 File.WriteAllText(Path.Combine(langDir, strComponent + ".English.xml"), defaultFile);
             }
-            DefaultLanguage = new Language(Path.Combine(langDir, strComponent + ".English.xml"), false);
+            sDefaultLanguage = new Language(Path.Combine(langDir, strComponent + ".English.xml"), false);
             if (File.Exists(Path.Combine(langDir, strComponent + "." + language + ".xml")))
             {
-                SelectedLanguage = new Language(Path.Combine(langDir, strComponent + "." + language + ".xml"), false);
+                sSelectedLanguage = new Language(Path.Combine(langDir, strComponent + "." + language + ".xml"), false);
             }
         }
 
         public static void Init(string languageXml)
         {
-            SelectedLanguage = new Language(languageXml, true);
+            sSelectedLanguage = new Language(languageXml, true);
         }
 
         public static string Get(string section, string id, params object[] args)
         {
-            for (int i = 0; i < args.Length; i++)
+            var argStrings = args?.Select(arg => arg?.ToString());
+            if (sSelectedLanguage != null && sSelectedLanguage.IsLoaded && sSelectedLanguage.HasString(section, id))
             {
-                args[i] = args[i].ToString();
+                return sSelectedLanguage.GetString(section, id, argStrings?.Cast<object>().ToArray() ?? new object[] { });
             }
-            if (SelectedLanguage != null && SelectedLanguage.IsLoaded && SelectedLanguage.HasString(section, id))
+            if (sDefaultLanguage != null && sDefaultLanguage.IsLoaded && sDefaultLanguage.HasString(section, id))
             {
-                return SelectedLanguage.GetString(section, id, args);
+                return sDefaultLanguage.GetString(section, id, argStrings?.Cast<object>().ToArray() ?? new object[]{});
             }
-            if (DefaultLanguage != null && DefaultLanguage.IsLoaded && DefaultLanguage.HasString(section, id))
-            {
-                return DefaultLanguage.GetString(section, id, args);
-            }
-            return $"//{section}/{id} ({string.Join(",", args.Cast<string>().ToArray())})";
+            return $"//{section}/{id} ({string.Join(",", argStrings?.ToArray() ?? new string[]{})})";
         }
 
         public static string Get(string section, string id)
         {
-            if (SelectedLanguage != null && SelectedLanguage.IsLoaded && SelectedLanguage.HasString(section, id))
+            if (sSelectedLanguage != null && sSelectedLanguage.IsLoaded && sSelectedLanguage.HasString(section, id))
             {
-                return SelectedLanguage.GetString(section, id);
+                return sSelectedLanguage.GetString(section, id);
             }
-            if (DefaultLanguage != null && DefaultLanguage.IsLoaded && DefaultLanguage.HasString(section, id))
+            if (sDefaultLanguage != null && sDefaultLanguage.IsLoaded && sDefaultLanguage.HasString(section, id))
             {
-                return DefaultLanguage.GetString(section, id);
+                return sDefaultLanguage.GetString(section, id);
             }
             return $"//{section}/{id}";
         }

@@ -9,30 +9,30 @@ using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_Options : UserControl
+    public partial class EventCommandOptions : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventPage _currentPage;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventPage mCurrentPage;
+        private EventCommand mMyCommand;
 
-        public EventCommand_Options(EventCommand refCommand, EventPage refPage, FrmEvent editor)
+        public EventCommandOptions(EventCommand refCommand, EventPage refPage, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
-            _currentPage = refPage;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
+            mCurrentPage = refPage;
             InitLocalization();
-            txtShowOptions.Text = _myCommand.Strs[0];
-            txtShowOptionsOpt1.Text = _myCommand.Strs[1];
-            txtShowOptionsOpt2.Text = _myCommand.Strs[2];
-            txtShowOptionsOpt3.Text = _myCommand.Strs[3];
-            txtShowOptionsOpt4.Text = _myCommand.Strs[4];
+            txtShowOptions.Text = mMyCommand.Strs[0];
+            txtShowOptionsOpt1.Text = mMyCommand.Strs[1];
+            txtShowOptionsOpt2.Text = mMyCommand.Strs[2];
+            txtShowOptionsOpt3.Text = mMyCommand.Strs[3];
+            txtShowOptionsOpt4.Text = mMyCommand.Strs[4];
             cmbFace.Items.Clear();
             cmbFace.Items.Add(Strings.Get("general", "none"));
-            cmbFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
-            if (cmbFace.Items.IndexOf(TextUtils.NullToNone(_myCommand.Strs[5])) > -1)
+            cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
+            if (cmbFace.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Strs[5])) > -1)
             {
-                cmbFace.SelectedIndex = cmbFace.Items.IndexOf(TextUtils.NullToNone(_myCommand.Strs[5]));
+                cmbFace.SelectedIndex = cmbFace.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Strs[5]));
             }
             else
             {
@@ -65,26 +65,26 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Strs[0] = txtShowOptions.Text;
-            _myCommand.Strs[1] = txtShowOptionsOpt1.Text;
-            _myCommand.Strs[2] = txtShowOptionsOpt2.Text;
-            _myCommand.Strs[3] = txtShowOptionsOpt3.Text;
-            _myCommand.Strs[4] = txtShowOptionsOpt4.Text;
-            _myCommand.Strs[5] = TextUtils.SanitizeNone(cmbFace.Text);
-            if (_myCommand.Ints[0] == 0)
+            mMyCommand.Strs[0] = txtShowOptions.Text;
+            mMyCommand.Strs[1] = txtShowOptionsOpt1.Text;
+            mMyCommand.Strs[2] = txtShowOptionsOpt2.Text;
+            mMyCommand.Strs[3] = txtShowOptionsOpt3.Text;
+            mMyCommand.Strs[4] = txtShowOptionsOpt4.Text;
+            mMyCommand.Strs[5] = TextUtils.SanitizeNone(cmbFace.Text);
+            if (mMyCommand.Ints[0] == 0)
             {
                 for (var i = 0; i < 4; i++)
                 {
-                    _currentPage.CommandLists.Add(new CommandList());
-                    _myCommand.Ints[i] = _currentPage.CommandLists.Count - 1;
+                    mCurrentPage.CommandLists.Add(new CommandList());
+                    mMyCommand.Ints[i] = mCurrentPage.CommandLists.Count - 1;
                 }
             }
-            _eventEditor.FinishCommandEdit();
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
 
         private void cmbFace_SelectedIndexChanged(object sender, EventArgs e)

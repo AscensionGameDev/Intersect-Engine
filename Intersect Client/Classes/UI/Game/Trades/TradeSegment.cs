@@ -8,22 +8,22 @@ namespace Intersect.Client.Classes.UI.Game.Trades
 {
     public class TradeSegment
     {
-        private static int ItemXPadding = 4;
-        private static int ItemYPadding = 4;
+        private static int sItemXPadding = 4;
+        private static int sItemYPadding = 4;
 
-        public ScrollControl _itemContainer;
-        private ImagePanel _itemTemplate;
+        public ScrollControl ItemContainer;
+        private ImagePanel mItemTemplate;
         public Label GoldValue;
         public List<TradeItem> Items = new List<TradeItem>();
 
         public int MyIndex;
-        private TradingWindow Parent;
+        private TradingWindow mParent;
         public List<Label> Values = new List<Label>();
 
-        public TradeSegment(TradingWindow parent, WindowControl _tradeWindow, int index)
+        public TradeSegment(TradingWindow parent, WindowControl tradeWindow, int index)
         {
             MyIndex = index;
-            Parent = parent;
+            mParent = parent;
 
             var xmlPrefix = "Your";
             if (MyIndex == 1)
@@ -31,10 +31,10 @@ namespace Intersect.Client.Classes.UI.Game.Trades
                 xmlPrefix = "Their";
             }
 
-            _itemContainer = new ScrollControl(_tradeWindow, xmlPrefix + "ItemContainer");
-            _itemContainer.EnableScroll(false, true);
+            ItemContainer = new ScrollControl(tradeWindow, xmlPrefix + "ItemContainer");
+            ItemContainer.EnableScroll(false, true);
 
-            GoldValue = new Label(_tradeWindow, xmlPrefix + "GoldValue")
+            GoldValue = new Label(tradeWindow, xmlPrefix + "GoldValue")
             {
                 Text = Strings.Get("trading", "value", 0)
             };
@@ -49,23 +49,23 @@ namespace Intersect.Client.Classes.UI.Game.Trades
             }
             for (int i = 0; i < Options.MaxInvItems; i++)
             {
-                Items.Add(new TradeItem(Parent, i, index));
-                Items[i].container = new ImagePanel(_itemContainer, xmlPrefix + "TradeContainer");
+                Items.Add(new TradeItem(mParent, i, index));
+                Items[i].Container = new ImagePanel(ItemContainer, xmlPrefix + "TradeContainer");
                 Items[i].Setup();
 
-                Values.Add(new Label(Items[i].container, xmlPrefix + "TradeValue"));
+                Values.Add(new Label(Items[i].Container, xmlPrefix + "TradeValue"));
                 Values[i].Text = "";
 
                 //TODO Made this more efficient.
-                Gui.LoadRootUIData(Items[i].container, "InGame.xml");
+                Gui.LoadRootUiData(Items[i].Container, "InGame.xml");
 
-                var xPadding = Items[i].container.Padding.Left + Items[i].container.Padding.Right;
-                var yPadding = Items[i].container.Padding.Top + Items[i].container.Padding.Bottom;
-                Items[i].container.SetPosition(
-                    (i % (_itemContainer.Width / (Items[i].container.Width + xPadding))) *
-                    (Items[i].container.Width + xPadding) + xPadding,
-                    (i / (_itemContainer.Width / (Items[i].container.Width + xPadding))) *
-                    (Items[i].container.Height + yPadding) + yPadding);
+                var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
+                var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;
+                Items[i].Container.SetPosition(
+                    (i % (ItemContainer.Width / (Items[i].Container.Width + xPadding))) *
+                    (Items[i].Container.Width + xPadding) + xPadding,
+                    (i / (ItemContainer.Width / (Items[i].Container.Width + xPadding))) *
+                    (Items[i].Container.Height + yPadding) + yPadding);
             }
         }
     }

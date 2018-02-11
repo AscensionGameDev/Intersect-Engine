@@ -16,86 +16,86 @@ namespace Intersect_Client.Classes.UI.Menu
 {
     public class LoginWindow
     {
-        private Button _backBtn;
-        private Button _loginBtn;
+        private Button mBackBtn;
+        private Button mLoginBtn;
 
-        private Label _loginHeader;
+        private Label mLoginHeader;
 
         //Controls
-        private ImagePanel _loginWindow;
+        private ImagePanel mLoginWindow;
 
         //Parent
-        private MainMenu _mainMenu;
+        private MainMenu mMainMenu;
 
-        private ImagePanel _passwordBackground;
-        private Label _passwordLabel;
-        private TextBoxPassword _passwordTextbox;
-        private string _savedPass = "";
-        private LabeledCheckBox _savePassChk;
+        private ImagePanel mPasswordBackground;
+        private Label mPasswordLabel;
+        private TextBoxPassword mPasswordTextbox;
+        private string mSavedPass = "";
+        private LabeledCheckBox mSavePassChk;
 
         //Controls
-        private ImagePanel _usernameBackground;
+        private ImagePanel mUsernameBackground;
 
-        private Label _usernameLabel;
-        private TextBox _usernameTextbox;
+        private Label mUsernameLabel;
+        private TextBox mUsernameTextbox;
 
-        private bool _useSavedPass;
+        private bool mUseSavedPass;
 
         //Init
         public LoginWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
         {
             //Assign References
-            _mainMenu = mainMenu;
+            mMainMenu = mainMenu;
 
             //Main Menu Window
-            _loginWindow = new ImagePanel(parent, "LoginWindow");
+            mLoginWindow = new ImagePanel(parent, "LoginWindow");
 
             //Menu Header
-            _loginHeader = new Label(_loginWindow, "LoginHeader");
-            _loginHeader.SetText(Strings.Get("login", "title"));
+            mLoginHeader = new Label(mLoginWindow, "LoginHeader");
+            mLoginHeader.SetText(Strings.Get("login", "title"));
 
-            _usernameBackground = new ImagePanel(_loginWindow, "UsernamePanel");
+            mUsernameBackground = new ImagePanel(mLoginWindow, "UsernamePanel");
 
             //Login Username Label
-            _usernameLabel = new Label(_usernameBackground, "UsernameLabel");
-            _usernameLabel.SetText(Strings.Get("login", "username"));
+            mUsernameLabel = new Label(mUsernameBackground, "UsernameLabel");
+            mUsernameLabel.SetText(Strings.Get("login", "username"));
 
             //Login Username Textbox
-            _usernameTextbox = new TextBox(_usernameBackground, "UsernameField");
-            _usernameTextbox.SubmitPressed += UsernameTextbox_SubmitPressed;
-            _usernameTextbox.Clicked += _usernameTextbox_Clicked;
+            mUsernameTextbox = new TextBox(mUsernameBackground, "UsernameField");
+            mUsernameTextbox.SubmitPressed += UsernameTextbox_SubmitPressed;
+            mUsernameTextbox.Clicked += _usernameTextbox_Clicked;
 
-            _passwordBackground = new ImagePanel(_loginWindow, "PasswordPanel");
+            mPasswordBackground = new ImagePanel(mLoginWindow, "PasswordPanel");
 
             //Login Password Label
-            _passwordLabel = new Label(_passwordBackground, "PasswordLabel");
-            _passwordLabel.SetText(Strings.Get("login", "password"));
+            mPasswordLabel = new Label(mPasswordBackground, "PasswordLabel");
+            mPasswordLabel.SetText(Strings.Get("login", "password"));
 
             //Login Password Textbox
-            _passwordTextbox = new TextBoxPassword(_passwordBackground, "PasswordField");
-            _passwordTextbox.SubmitPressed += PasswordTextbox_SubmitPressed;
-            _passwordTextbox.TextChanged += _passwordTextbox_TextChanged;
+            mPasswordTextbox = new TextBoxPassword(mPasswordBackground, "PasswordField");
+            mPasswordTextbox.SubmitPressed += PasswordTextbox_SubmitPressed;
+            mPasswordTextbox.TextChanged += _passwordTextbox_TextChanged;
 
             //Login Save Pass Checkbox
-            _savePassChk =
-                new LabeledCheckBox(_loginWindow, "SavePassCheckbox") {Text = Strings.Get("login", "savepass")};
+            mSavePassChk =
+                new LabeledCheckBox(mLoginWindow, "SavePassCheckbox") {Text = Strings.Get("login", "savepass")};
 
             //Login - Send Login Button
-            _loginBtn = new Button(_loginWindow, "LoginButton");
-            _loginBtn.SetText(Strings.Get("login", "login"));
-            _loginBtn.Clicked += LoginBtn_Clicked;
+            mLoginBtn = new Button(mLoginWindow, "LoginButton");
+            mLoginBtn.SetText(Strings.Get("login", "login"));
+            mLoginBtn.Clicked += LoginBtn_Clicked;
 
             //Login - Back Button
-            _backBtn = new Button(_loginWindow, "BackButton");
-            _backBtn.SetText(Strings.Get("login", "back"));
-            _backBtn.Clicked += BackBtn_Clicked;
+            mBackBtn = new Button(mLoginWindow, "BackButton");
+            mBackBtn.SetText(Strings.Get("login", "back"));
+            mBackBtn.Clicked += BackBtn_Clicked;
 
             LoadCredentials();
         }
 
         private void _usernameTextbox_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            Globals.InputManager.OpenKeyboard(GameInput.KeyboardType.Normal, _usernameTextbox.Text, false, false,
+            Globals.InputManager.OpenKeyboard(GameInput.KeyboardType.Normal, mUsernameTextbox.Text, false, false,
                 false);
         }
 
@@ -106,24 +106,24 @@ namespace Intersect_Client.Classes.UI.Menu
 
         public void Hide()
         {
-            _loginWindow.IsHidden = true;
+            mLoginWindow.IsHidden = true;
         }
 
         public void Show()
         {
-            _loginWindow.IsHidden = false;
+            mLoginWindow.IsHidden = false;
         }
 
         //Input Handlers
         void _passwordTextbox_TextChanged(Base sender, EventArgs arguments)
         {
-            _useSavedPass = false;
+            mUseSavedPass = false;
         }
 
         void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Hide();
-            _mainMenu.Show();
+            mMainMenu.Show();
         }
 
         void UsernameTextbox_SubmitPressed(Base sender, EventArgs arguments)
@@ -150,23 +150,23 @@ namespace Intersect_Client.Classes.UI.Menu
             }
             if (GameNetwork.Connected)
             {
-                if (FieldChecking.IsValidUsername(_usernameTextbox.Text))
+                if (FieldChecking.IsValidUsername(mUsernameTextbox.Text))
                 {
-                    if (_useSavedPass)
+                    if (mUseSavedPass)
                     {
                         GameFade.FadeOut();
-                        PacketSender.SendLogin(_usernameTextbox.Text, _savedPass);
-                        if (!_savePassChk.IsChecked) SaveCredentials();
+                        PacketSender.SendLogin(mUsernameTextbox.Text, mSavedPass);
+                        if (!mSavePassChk.IsChecked) SaveCredentials();
                         Globals.WaitingOnServer = true;
                     }
                     else
                     {
-                        if (FieldChecking.IsValidPassword(_passwordTextbox.Text))
+                        if (FieldChecking.IsValidPassword(mPasswordTextbox.Text))
                         {
                             GameFade.FadeOut();
-                            PacketSender.SendLogin(_usernameTextbox.Text,
+                            PacketSender.SendLogin(mUsernameTextbox.Text,
                                 BitConverter.ToString(
-                                        sha.ComputeHash(Encoding.UTF8.GetBytes(_passwordTextbox.Text.Trim())))
+                                        sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim())))
                                     .Replace("-", ""));
                             SaveCredentials();
                             Globals.WaitingOnServer = true;
@@ -195,14 +195,14 @@ namespace Intersect_Client.Classes.UI.Menu
             string name = Globals.Database.LoadPreference("Username");
             if (!string.IsNullOrEmpty(name))
             {
-                _usernameTextbox.Text = name;
+                mUsernameTextbox.Text = name;
                 string pass = Globals.Database.LoadPreference("Password");
                 if (!string.IsNullOrEmpty(pass))
                 {
-                    _passwordTextbox.Text = "*********";
-                    _savedPass = pass;
-                    _useSavedPass = true;
-                    _savePassChk.IsChecked = true;
+                    mPasswordTextbox.Text = "*********";
+                    mSavedPass = pass;
+                    mUseSavedPass = true;
+                    mSavePassChk.IsChecked = true;
                 }
             }
         }
@@ -210,11 +210,11 @@ namespace Intersect_Client.Classes.UI.Menu
         private void SaveCredentials()
         {
             var sha = new SHA256Managed();
-            if (_savePassChk.IsChecked)
+            if (mSavePassChk.IsChecked)
             {
-                Globals.Database.SavePreference("Username", _usernameTextbox.Text.Trim());
+                Globals.Database.SavePreference("Username", mUsernameTextbox.Text.Trim());
                 Globals.Database.SavePreference("Password",
-                    BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(_passwordTextbox.Text.Trim())))
+                    BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim())))
                         .Replace("-", ""));
             }
             else

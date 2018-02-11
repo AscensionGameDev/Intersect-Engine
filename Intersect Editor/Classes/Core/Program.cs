@@ -46,7 +46,7 @@ namespace Intersect.Editor.Classes
 
             Log.Diagnostic("Creating forms...");
             Globals.LoginForm = new FrmLogin();
-            Globals.MainForm = new frmMain();
+            Globals.MainForm = new FrmMain();
             Log.Diagnostic("Forms created.");
 
             Log.Diagnostic("Starting application.");

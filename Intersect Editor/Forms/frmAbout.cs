@@ -4,9 +4,9 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms
 {
-    public partial class frmAbout : Form
+    public partial class FrmAbout : Form
     {
-        public frmAbout()
+        public FrmAbout()
         {
             InitializeComponent();
         }

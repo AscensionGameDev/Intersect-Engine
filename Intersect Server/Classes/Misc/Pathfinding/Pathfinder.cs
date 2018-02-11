@@ -240,7 +240,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
                                 }
 
                                 //Optionally, move the along path check down here.. see if each tile is still open before returning success.
-                                //That would be more processor intensive but would also provide ai that recoginize blocks in their path quicker.
+                                //That would be more processor intensive but would also provide ai that recognize blocks in their path quicker.
 
                                 //Finally done.. let's get a path from the pathfinder.
                                 mapGrid[targetX, targetY].IsWall = false;

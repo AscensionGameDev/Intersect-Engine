@@ -12,15 +12,15 @@ namespace Intersect_Client.Classes.UI.Game
     public class SpellsWindow
     {
         //Initialized
-        private bool _initializedSpells;
+        private bool mInitializedSpells;
 
         //Item/Spell Rendering
-        private ScrollControl _itemContainer;
+        private ScrollControl mItemContainer;
 
-        private ImagePanel _itemTemplate;
+        private ImagePanel mItemTemplate;
 
         //Controls
-        private WindowControl _spellWindow;
+        private WindowControl mSpellWindow;
 
         //Spell List
         public List<SpellItem> Items = new List<SpellItem>();
@@ -31,47 +31,47 @@ namespace Intersect_Client.Classes.UI.Game
         public int Y;
 
         //Init
-        public SpellsWindow(Canvas _gameCanvas)
+        public SpellsWindow(Canvas gameCanvas)
         {
-            _spellWindow = new WindowControl(_gameCanvas, Strings.Get("spells", "title"), false, "SpellsWindow");
-            _spellWindow.DisableResizing();
+            mSpellWindow = new WindowControl(gameCanvas, Strings.Get("spells", "title"), false, "SpellsWindow");
+            mSpellWindow.DisableResizing();
 
-            _itemContainer = new ScrollControl(_spellWindow, "SpellsContainer");
-            _itemContainer.EnableScroll(false, true);
+            mItemContainer = new ScrollControl(mSpellWindow, "SpellsContainer");
+            mItemContainer.EnableScroll(false, true);
 
-            _itemTemplate = new ImagePanel(_itemContainer, "SpellContainer");
+            mItemTemplate = new ImagePanel(mItemContainer, "SpellContainer");
 
-            new ImagePanel(_itemTemplate, "SpellIcon");
+            new ImagePanel(mItemTemplate, "SpellIcon");
         }
 
         //Methods
         public void Update()
         {
-            if (!_initializedSpells)
+            if (!mInitializedSpells)
             {
                 InitItemContainer();
-                _initializedSpells = true;
+                mInitializedSpells = true;
             }
-            if (_spellWindow.IsHidden == true)
+            if (mSpellWindow.IsHidden == true)
             {
                 return;
             }
-            X = _spellWindow.X;
-            Y = _spellWindow.Y;
+            X = mSpellWindow.X;
+            Y = mSpellWindow.Y;
             for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 if (Globals.Me.Spells[i].SpellNum > -1)
                 {
-                    Items[i].pnl.IsHidden = false;
+                    Items[i].Pnl.IsHidden = false;
                     Items[i].Update();
                     if (Items[i].IsDragging)
                     {
-                        Items[i].pnl.IsHidden = true;
+                        Items[i].Pnl.IsHidden = true;
                     }
                 }
                 else
                 {
-                    Items[i].pnl.IsHidden = true;
+                    Items[i].Pnl.IsHidden = true;
                 }
             }
         }
@@ -81,48 +81,48 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 Items.Add(new SpellItem(this, i));
-                Items[i].container = new ImagePanel(_itemContainer, "SpellContainer");
+                Items[i].Container = new ImagePanel(mItemContainer, "SpellContainer");
                 Items[i].Setup();
 
                 //TODO Made this more efficient.
-                Gui.LoadRootUIData(Items[i].container, "InGame.xml");
+                Gui.LoadRootUiData(Items[i].Container, "InGame.xml");
 
-                var xPadding = Items[i].container.Padding.Left + Items[i].container.Padding.Right;
-                var yPadding = Items[i].container.Padding.Top + Items[i].container.Padding.Bottom;
-                Items[i].container.SetPosition(
-                    (i % (_itemContainer.Width / (Items[i].container.Width + xPadding))) *
-                    (Items[i].container.Width + xPadding) + xPadding,
-                    (i / (_itemContainer.Width / (Items[i].container.Width + xPadding))) *
-                    (Items[i].container.Height + yPadding) + yPadding);
+                var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
+                var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;
+                Items[i].Container.SetPosition(
+                    (i % (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
+                    (Items[i].Container.Width + xPadding) + xPadding,
+                    (i / (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
+                    (Items[i].Container.Height + yPadding) + yPadding);
             }
-            _itemTemplate.Hide();
+            mItemTemplate.Hide();
         }
 
         public void Show()
         {
-            _spellWindow.IsHidden = false;
+            mSpellWindow.IsHidden = false;
         }
 
         public bool IsVisible()
         {
-            return !_spellWindow.IsHidden;
+            return !mSpellWindow.IsHidden;
         }
 
         public void Hide()
         {
-            _spellWindow.IsHidden = true;
+            mSpellWindow.IsHidden = true;
         }
 
         public FloatRect RenderBounds()
         {
             FloatRect rect = new FloatRect()
             {
-                X = _spellWindow.LocalPosToCanvas(new Point(0, 0)).X -
-                    (Items[0].container.Padding.Left + Items[0].container.Padding.Right) / 2,
-                Y = _spellWindow.LocalPosToCanvas(new Point(0, 0)).Y -
-                    (Items[0].container.Padding.Top + Items[0].container.Padding.Bottom) / 2,
-                Width = _spellWindow.Width + (Items[0].container.Padding.Left + Items[0].container.Padding.Right),
-                Height = _spellWindow.Height + (Items[0].container.Padding.Top + Items[0].container.Padding.Bottom)
+                X = mSpellWindow.LocalPosToCanvas(new Point(0, 0)).X -
+                    (Items[0].Container.Padding.Left + Items[0].Container.Padding.Right) / 2,
+                Y = mSpellWindow.LocalPosToCanvas(new Point(0, 0)).Y -
+                    (Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom) / 2,
+                Width = mSpellWindow.Width + (Items[0].Container.Padding.Left + Items[0].Container.Padding.Right),
+                Height = mSpellWindow.Height + (Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom)
             };
             return rect;
         }

@@ -5,9 +5,9 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect.Editor.Forms
 {
-    public partial class frmMapProperties : DockContent
+    public partial class FrmMapProperties : DockContent
     {
-        public frmMapProperties()
+        public FrmMapProperties()
         {
             InitializeComponent();
         }

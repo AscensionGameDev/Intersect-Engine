@@ -12,92 +12,92 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class Chatbox
     {
-        private ComboBox _channelCombobox;
-        private TextBox _chatboxInput;
-        private ListBox _chatboxMessages;
-        private ScrollBar _chatboxScrollBar;
+        private ComboBox mChannelCombobox;
+        private TextBox mChatboxInput;
+        private ListBox mChatboxMessages;
+        private ScrollBar mChatboxScrollBar;
 
-        private Button _chatboxSendButton;
+        private Button mChatboxSendButton;
 
         //Window Controls
-        private ImagePanel _chatboxWindow;
+        private ImagePanel mChatboxWindow;
 
-        private GameGuiBase _gameUi;
-        private int _messageIndex;
-        private bool _receivedMessage;
+        private GameGuiBase mGameUi;
+        private int mMessageIndex;
+        private bool mReceivedMessage;
 
         //Init
-        public Chatbox(Canvas _gameCanvas, GameGuiBase gameUi)
+        public Chatbox(Canvas gameCanvas, GameGuiBase gameUi)
         {
-            _gameUi = gameUi;
+            mGameUi = gameUi;
 
             //Chatbox Window
-            _chatboxWindow = new ImagePanel(_gameCanvas, "ChatboxWindow");
-            _chatboxMessages = new ListBox(_chatboxWindow, "MessageList");
-            _chatboxMessages.EnableScroll(false, true);
+            mChatboxWindow = new ImagePanel(gameCanvas, "ChatboxWindow");
+            mChatboxMessages = new ListBox(mChatboxWindow, "MessageList");
+            mChatboxMessages.EnableScroll(false, true);
 
-            _chatboxInput = new TextBox(_chatboxWindow, "ChatboxInputField");
-            _chatboxInput.SubmitPressed += ChatBoxInput_SubmitPressed;
-            _chatboxInput.Text = GetDefaultInputText();
-            _chatboxInput.Clicked += ChatBoxInput_Clicked;
-            Gui.FocusElements.Add(_chatboxInput);
+            mChatboxInput = new TextBox(mChatboxWindow, "ChatboxInputField");
+            mChatboxInput.SubmitPressed += ChatBoxInput_SubmitPressed;
+            mChatboxInput.Text = GetDefaultInputText();
+            mChatboxInput.Clicked += ChatBoxInput_Clicked;
+            Gui.FocusElements.Add(mChatboxInput);
 
-            _channelCombobox = new ComboBox(_chatboxWindow, "ChatChannelCombobox");
+            mChannelCombobox = new ComboBox(mChatboxWindow, "ChatChannelCombobox");
             for (int i = 1; i < 4; i++)
             {
-                var menuItem = _channelCombobox.AddItem(Strings.Get("chatbox", "channel" + i));
+                var menuItem = mChannelCombobox.AddItem(Strings.Get("chatbox", "channel" + i));
                 menuItem.UserData = i - 1;
             }
             //Add admin channel only if power > 0.
-            if (Globals.Me.type > 0)
+            if (Globals.Me.Type > 0)
             {
-                var menuItem = _channelCombobox.AddItem(Strings.Get("chatbox", "channeladmin"));
+                var menuItem = mChannelCombobox.AddItem(Strings.Get("chatbox", "channeladmin"));
                 menuItem.UserData = 3;
             }
 
-            _chatboxSendButton = new Button(_chatboxWindow, "ChatboxSendButton");
-            _chatboxSendButton.Text = Strings.Get("chatbox", "send");
-            _chatboxSendButton.Clicked += ChatBoxSendBtn_Clicked;
+            mChatboxSendButton = new Button(mChatboxWindow, "ChatboxSendButton");
+            mChatboxSendButton.Text = Strings.Get("chatbox", "send");
+            mChatboxSendButton.Clicked += ChatBoxSendBtn_Clicked;
         }
 
         //Update
         public void Update()
         {
-            if (_receivedMessage)
+            if (mReceivedMessage)
             {
-                _chatboxMessages.ScrollToBottom();
-                _receivedMessage = false;
+                mChatboxMessages.ScrollToBottom();
+                mReceivedMessage = false;
             }
 
             var msgs = ChatboxMsg.GetMessages();
-            for (var i = _messageIndex; i < msgs.Count; i++)
+            for (var i = mMessageIndex; i < msgs.Count; i++)
             {
                 var msg = msgs[i];
                 var myText = Gui.WrapText(msg.GetMessage(),
-                    _chatboxMessages.Width - _chatboxMessages.GetVerticalScrollBar().Width - 8,
-                    _chatboxWindow.Parent.Skin.DefaultFont);
+                    mChatboxMessages.Width - mChatboxMessages.GetVerticalScrollBar().Width - 8,
+                    mChatboxWindow.Parent.Skin.DefaultFont);
                 foreach (var t in myText)
                 {
-                    var rw = _chatboxMessages.AddRow(t.Trim());
+                    var rw = mChatboxMessages.AddRow(t.Trim());
                     rw.SetTextColor(msg.GetColor());
                     rw.ShouldDrawBackground = false;
                     rw.UserData = msg.GetTarget();
                     rw.Clicked += ChatboxRow_Clicked;
-                    _receivedMessage = true;
+                    mReceivedMessage = true;
 
-                    while (_chatboxMessages.RowCount > 20)
+                    while (mChatboxMessages.RowCount > 20)
                     {
-                        _chatboxMessages.RemoveRow(0);
+                        mChatboxMessages.RemoveRow(0);
                     }
                 }
-                _messageIndex++;
+                mMessageIndex++;
             }
         }
 
         public void SetChatboxText(string msg)
         {
-            _chatboxInput.Text = msg;
-            _chatboxInput.Focus();
+            mChatboxInput.Text = msg;
+            mChatboxInput.Focus();
         }
 
         private void ChatboxRow_Clicked(Base sender, ClickedEventArgs arguments)
@@ -106,9 +106,9 @@ namespace Intersect_Client.Classes.UI.Game
             string target = (string) rw.UserData;
             if (target != "")
             {
-                if (_gameUi.AdminWindowOpen())
+                if (mGameUi.AdminWindowOpen())
                 {
-                    _gameUi.AdminWindowSelectName(target);
+                    mGameUi.AdminWindowSelectName(target);
                 }
             }
         }
@@ -116,10 +116,10 @@ namespace Intersect_Client.Classes.UI.Game
         //Extra Methods
         public void Focus()
         {
-            if (!_chatboxInput.HasFocus)
+            if (!mChatboxInput.HasFocus)
             {
-                _chatboxInput.Focus();
-                _chatboxInput.Text = "";
+                mChatboxInput.Focus();
+                mChatboxInput.Text = "";
             }
         }
 
@@ -127,9 +127,9 @@ namespace Intersect_Client.Classes.UI.Game
         //Chatbox Window
         void ChatBoxInput_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_chatboxInput.Text == GetDefaultInputText())
+            if (mChatboxInput.Text == GetDefaultInputText())
             {
-                _chatboxInput.Text = "";
+                mChatboxInput.Text = "";
             }
         }
 
@@ -145,20 +145,20 @@ namespace Intersect_Client.Classes.UI.Game
 
         void TrySendMessage()
         {
-            if (_chatboxInput.Text.Trim().Length <= 0 || _chatboxInput.Text == GetDefaultInputText())
+            if (mChatboxInput.Text.Trim().Length <= 0 || mChatboxInput.Text == GetDefaultInputText())
             {
-                _chatboxInput.Text = GetDefaultInputText();
+                mChatboxInput.Text = GetDefaultInputText();
                 return;
             }
 
-            PacketSender.SendChatMsg(_chatboxInput.Text.Trim(), (int) _channelCombobox.SelectedItem.UserData);
-            _chatboxInput.Text = GetDefaultInputText();
+            PacketSender.SendChatMsg(mChatboxInput.Text.Trim(), (int) mChannelCombobox.SelectedItem.UserData);
+            mChatboxInput.Text = GetDefaultInputText();
         }
 
         string GetDefaultInputText()
         {
-            var key1 = GameControls.ActiveControls.ControlMapping[Controls.Enter].key1;
-            var key2 = GameControls.ActiveControls.ControlMapping[Controls.Enter].key2;
+            var key1 = GameControls.ActiveControls.ControlMapping[Controls.Enter].Key1;
+            var key2 = GameControls.ActiveControls.ControlMapping[Controls.Enter].Key2;
             if (key1 == Keys.None && key2 != Keys.None)
             {
                 return Strings.Get("chatbox", "enterchat1", Strings.Get("keys", Enum.GetName(typeof(Keys), key2)));

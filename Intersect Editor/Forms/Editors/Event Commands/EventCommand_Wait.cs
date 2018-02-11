@@ -5,18 +5,18 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_Wait : UserControl
+    public partial class EventCommandWait : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventCommand mMyCommand;
 
-        public EventCommand_Wait(EventCommand refCommand, FrmEvent editor)
+        public EventCommandWait(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
             InitLocalization();
-            nudWait.Value = _myCommand.Ints[0];
+            nudWait.Value = mMyCommand.Ints[0];
             lblWait.Text = Strings.Get("eventwait", "label");
         }
 
@@ -30,13 +30,13 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = (int) nudWait.Value;
-            _eventEditor.FinishCommandEdit();
+            mMyCommand.Ints[0] = (int) nudWait.Value;
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
 
         private void nudWait_ValueChanged(object sender, EventArgs e)

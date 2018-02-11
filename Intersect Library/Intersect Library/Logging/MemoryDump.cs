@@ -6,7 +6,7 @@ namespace Intersect.Logging
 {
     public static class MemoryDump
     {
-        private static string mDumpDirectory;
+        private static string sDumpDirectory;
 
         static MemoryDump()
         {
@@ -15,8 +15,8 @@ namespace Intersect.Logging
 
         public static string DumpDirectory
         {
-            get { return Path.Combine(Environment.CurrentDirectory, mDumpDirectory); }
-            set { mDumpDirectory = value; }
+            get { return Path.Combine(Environment.CurrentDirectory, sDumpDirectory); }
+            set { sDumpDirectory = value; }
         }
 
         private static void EnsureDirectory()

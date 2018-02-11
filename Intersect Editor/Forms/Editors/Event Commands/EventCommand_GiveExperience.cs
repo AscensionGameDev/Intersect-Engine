@@ -5,18 +5,18 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_GiveExperience : UserControl
+    public partial class EventCommandGiveExperience : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventCommand mMyCommand;
 
-        public EventCommand_GiveExperience(EventCommand refCommand, FrmEvent editor)
+        public EventCommandGiveExperience(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
             InitLocalization();
-            nudExperience.Value = _myCommand.Ints[0];
+            nudExperience.Value = mMyCommand.Ints[0];
         }
 
         private void InitLocalization()
@@ -29,14 +29,13 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            // TODO: Change this to a long if we expand Ints, otherwise remove this
-            _myCommand.Ints[0] = (int) nudExperience.Value;
-            _eventEditor.FinishCommandEdit();
+            mMyCommand.Ints[0] = (int) nudExperience.Value;
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms
 {
-    partial class frmNpc
+    partial class FrmNpc
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace Intersect.Editor.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmNpc));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmNpc));
             this.grpNpcs = new DarkUI.Controls.DarkGroupBox();
             this.lstNpcs = new System.Windows.Forms.ListBox();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
@@ -1288,7 +1288,7 @@ namespace Intersect.Editor.Forms
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.MaximizeBox = false;
-            this.Name = "frmNpc";
+            this.Name = "FrmNpc";
             this.Text = "NPC Editor";
             this.TopMost = true;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmNpc_FormClosed);

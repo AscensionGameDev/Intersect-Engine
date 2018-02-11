@@ -6,10 +6,10 @@ using Open.Nat;
 
 namespace Intersect.Server.Classes.Networking
 {
-    public static class UPnP
+    public static class UpnP
     {
-        private static NatDevice _device;
-        private static bool _portForwarded;
+        private static NatDevice sDevice;
+        private static bool sPortForwarded;
 
         public static async Task<NatDevice> ConnectNatDevice()
         {
@@ -17,7 +17,7 @@ namespace Intersect.Server.Classes.Networking
             {
                 var nat = new NatDiscoverer();
                 var cts = new CancellationTokenSource(5000);
-                _device = await nat.DiscoverDeviceAsync(PortMapper.Upnp, cts);
+                sDevice = await nat.DiscoverDeviceAsync(PortMapper.Upnp, cts);
                 Console.WriteLine(Strings.Get("upnp", "initialized"));
             }
             catch (Exception ex)
@@ -29,10 +29,10 @@ namespace Intersect.Server.Classes.Networking
 
         public static async Task<NatDevice> OpenServerPort(int port, Protocol protocol)
         {
-            if (_device == null) return null;
+            if (sDevice == null) return null;
             try
             {
-                await _device.CreatePortMapAsync(new Mapping(protocol, port, port));
+                await sDevice.CreatePortMapAsync(new Mapping(protocol, port, port));
                 switch (protocol)
                 {
                     case Protocol.Tcp:
@@ -41,7 +41,7 @@ namespace Intersect.Server.Classes.Networking
 
                     case Protocol.Udp:
                         Console.WriteLine(Strings.Get("upnp", "forwardedudp", port));
-                        _portForwarded = true;
+                        sPortForwarded = true;
                         break;
                 }
             }
@@ -63,7 +63,7 @@ namespace Intersect.Server.Classes.Networking
 
         public static bool ForwardingSucceeded()
         {
-            return _portForwarded;
+            return sPortForwarded;
         }
     }
 }

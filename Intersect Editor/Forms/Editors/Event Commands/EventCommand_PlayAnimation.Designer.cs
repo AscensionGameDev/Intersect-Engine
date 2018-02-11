@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_PlayAnimation
+    partial class EventCommandPlayAnimation
     {
         /// <summary> 
         /// Required designer variable.
@@ -349,7 +349,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpPlayAnimation);
-            this.Name = "EventCommand_PlayAnimation";
+            this.Name = "EventCommandPlayAnimation";
             this.Size = new System.Drawing.Size(267, 413);
             this.grpPlayAnimation.ResumeLayout(false);
             this.grpPlayAnimation.PerformLayout();

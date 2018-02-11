@@ -27,8 +27,8 @@ namespace Intersect.Server.Classes.Networking
             {
                 return;
             }
-            List<Player> Players = MapInstance.Lookup.Get<MapInstance>(mapNum).GetPlayersOnMap();
-            foreach (var player in Players)
+            List<Player> players = MapInstance.Lookup.Get<MapInstance>(mapNum).GetPlayersOnMap();
+            foreach (var player in players)
             {
                 if (player != null && player.MyClient != except) player.MyClient.SendPacket(data);
             }
@@ -120,12 +120,12 @@ namespace Intersect.Server.Classes.Networking
             else
             {
                 bf.WriteInteger(0);
-                byte[] MapData = null;
+                byte[] mapData;
                 if (client.IsEditor)
                 {
-                    MapData = map.GetMapPacket(false);
-                    bf.WriteInteger(MapData.Length);
-                    bf.WriteBytes(MapData);
+                    mapData = map.GetMapPacket(false);
+                    bf.WriteInteger(mapData.Length);
+                    bf.WriteBytes(mapData);
                     var tileData = map.GetTileData(false);
                     bf.WriteInteger(tileData.Length);
                     bf.WriteBytes(tileData);
@@ -140,6 +140,7 @@ namespace Intersect.Server.Classes.Networking
                             client.SentMaps[mapNum].Item2 == map.Revision) return;
                         client.SentMaps.Remove(mapNum);
                     }
+
                     try
                     {
                         client.SentMaps.Add(mapNum,
@@ -150,65 +151,41 @@ namespace Intersect.Server.Classes.Networking
                         Log.Error($"Current Map #: {mapNum}");
                         Log.Error($"# Sent maps: {client.SentMaps.Count}");
                         Log.Error($"# Maps: {MapInstance.Lookup.Count}");
-                        throw exception;
+                        Log.Error(exception);
+                        throw;
                     }
-                    MapData = map.GetMapPacket(true);
-                    bf.WriteInteger(MapData.Length);
-                    bf.WriteBytes(MapData);
+
+                    mapData = map.GetMapPacket(true);
+                    bf.WriteInteger(mapData.Length);
+                    bf.WriteBytes(mapData);
                     var tileData = map.GetTileData();
                     bf.WriteInteger(tileData.Length);
                     bf.WriteBytes(tileData);
                     bf.WriteInteger(map.Revision);
                     bf.WriteInteger(map.MapGridX);
                     bf.WriteInteger(map.MapGridY);
-                    if (Options.GameBorderStyle == 1)
+                    switch (Options.GameBorderStyle)
                     {
-                        bf.WriteInteger(1);
-                        bf.WriteInteger(1);
-                        bf.WriteInteger(1);
-                        bf.WriteInteger(1);
-                    }
-                    else if (Options.GameBorderStyle == 0)
-                    {
-                        if (0 == map.MapGridX)
-                        {
+                        case 1:
                             bf.WriteInteger(1);
-                        }
-                        else
-                        {
-                            bf.WriteInteger(0);
-                        }
-                        if (Database.MapGrids[map.MapGrid].XMax - 1 == map.MapGridX)
-                        {
                             bf.WriteInteger(1);
-                        }
-                        else
-                        {
-                            bf.WriteInteger(0);
-                        }
-                        if (0 == map.MapGridY)
-                        {
                             bf.WriteInteger(1);
-                        }
-                        else
-                        {
-                            bf.WriteInteger(0);
-                        }
-                        if (Database.MapGrids[map.MapGrid].YMax - 1 == map.MapGridY)
-                        {
                             bf.WriteInteger(1);
-                        }
-                        else
-                        {
+                            break;
+
+                        case 0:
+                            bf.WriteInteger(0 == map.MapGridX ? 1 : 0);
+                            bf.WriteInteger(Database.MapGrids[map.MapGrid].XMax - 1 == map.MapGridX ? 1 : 0);
+                            bf.WriteInteger(0 == map.MapGridY ? 1 : 0);
+                            bf.WriteInteger(Database.MapGrids[map.MapGrid].YMax - 1 == map.MapGridY ? 1 : 0);
+                            break;
+
+                        default:
                             bf.WriteInteger(0);
-                        }
-                    }
-                    else
-                    {
-                        bf.WriteInteger(0);
-                        bf.WriteInteger(0);
-                        bf.WriteInteger(0);
-                        bf.WriteInteger(0);
+                            bf.WriteInteger(0);
+                            bf.WriteInteger(0);
+                            bf.WriteInteger(0);
+                            break;
                     }
                 }
                 client.SendPacket(bf.ToArray());
@@ -237,9 +214,9 @@ namespace Intersect.Server.Classes.Networking
             else
             {
                 bf.WriteInteger(0);
-                byte[] MapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetMapPacket(false);
-                bf.WriteInteger(MapData.Length);
-                bf.WriteBytes(MapData);
+                byte[] mapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetMapPacket(false);
+                bf.WriteInteger(mapData.Length);
+                bf.WriteBytes(mapData);
                 var tileData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetTileData(false);
                 bf.WriteInteger(tileData.Length);
                 bf.WriteBytes(tileData);
@@ -417,7 +394,7 @@ namespace Intersect.Server.Classes.Networking
                 return;
             }
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.NPCAggression);
+            bf.WriteLong((int) ServerPackets.NpcAggression);
             bf.WriteInteger(en.MyIndex);
 
             //Declare Aggression state
@@ -676,7 +653,7 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(statuses.Length);
             foreach (var status in statuses)
             {
-                bf.WriteInteger(status._spell.Index);
+                bf.WriteInteger(status.Spell.Index);
                 bf.WriteInteger(status.Type);
                 bf.WriteString(status.Data);
                 bf.WriteInteger((int) (status.Duration - Globals.System.GetTimeMs()));
@@ -726,7 +703,7 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(statuses.Length);
             foreach (var status in statuses)
             {
-                bf.WriteInteger(status._spell.Index);
+                bf.WriteInteger(status.Spell.Index);
                 bf.WriteInteger(status.Type);
                 bf.WriteString(status.Data);
                 bf.WriteInteger((int)(status.Duration - Globals.System.GetTimeMs()));
@@ -1123,21 +1100,21 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendEntityCastTime(Entity en, int SpellNum)
+        public static void SendEntityCastTime(Entity en, int spellNum)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.CastTime);
             bf.WriteInteger(en.MyIndex);
-            bf.WriteInteger(SpellNum);
+            bf.WriteInteger(spellNum);
             SendDataToProximity(en.CurrentMap, bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendSpellCooldown(Client client, int SpellSlot)
+        public static void SendSpellCooldown(Client client, int spellSlot)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.SendSpellCooldown);
-            bf.WriteLong(SpellSlot);
+            bf.WriteLong(spellSlot);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1599,9 +1576,9 @@ namespace Intersect.Server.Classes.Networking
             {
                 bf.WriteInteger(quest.Key);
                 bf.WriteByte(1);
-                bf.WriteInteger(quest.Value.completed);
-                bf.WriteInteger(quest.Value.task);
-                bf.WriteInteger(quest.Value.taskProgress);
+                bf.WriteInteger(quest.Value.Completed);
+                bf.WriteInteger(quest.Value.Task);
+                bf.WriteInteger(quest.Value.TaskProgress);
             }
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
@@ -1616,9 +1593,9 @@ namespace Intersect.Server.Classes.Networking
             if (player.Quests.ContainsKey(questId))
             {
                 bf.WriteByte(1);
-                bf.WriteInteger(player.Quests[questId].completed);
-                bf.WriteInteger(player.Quests[questId].task);
-                bf.WriteInteger(player.Quests[questId].taskProgress);
+                bf.WriteInteger(player.Quests[questId].Completed);
+                bf.WriteInteger(player.Quests[questId].Task);
+                bf.WriteInteger(player.Quests[questId].TaskProgress);
             }
             else
             {

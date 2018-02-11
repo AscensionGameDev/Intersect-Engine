@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms
 {
-    partial class frmOptions
+    partial class FrmOptions
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace Intersect.Editor.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmOptions));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmOptions));
             this.txtGamePath = new DarkUI.Controls.DarkTextBox();
             this.btnBrowseClient = new DarkUI.Controls.DarkButton();
             this.chkSuppressTilesetWarning = new DarkUI.Controls.DarkCheckBox();
@@ -119,7 +119,7 @@ namespace Intersect.Editor.Forms
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.Name = "frmOptions";
+            this.Name = "FrmOptions";
             this.Text = "Options";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmOptions_FormClosing);
             this.pnlGeneral.ResumeLayout(false);

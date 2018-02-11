@@ -10,7 +10,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public MapListMap() : base()
         {
             Name = "New Map";
-            type = 1;
+            Type = 1;
         }
 
         public int CompareTo(MapListMap obj)

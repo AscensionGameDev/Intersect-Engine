@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors
 {
-    partial class frmTime
+    partial class FrmTime
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace Intersect.Editor.Forms.Editors
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTime));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmTime));
             this.lstTimes = new System.Windows.Forms.ListBox();
             this.lblTimes = new System.Windows.Forms.Label();
             this.grpRangeOptions = new DarkUI.Controls.DarkGroupBox();
@@ -277,7 +277,7 @@ namespace Intersect.Editor.Forms.Editors
             this.Controls.Add(this.lblTimes);
             this.Controls.Add(this.lstTimes);
             this.DoubleBuffered = true;
-            this.Name = "frmTime";
+            this.Name = "FrmTime";
             this.Text = "Time Editor (Day/Night Settings)";
             this.grpRangeOptions.ResumeLayout(false);
             this.grpRangeOptions.PerformLayout();

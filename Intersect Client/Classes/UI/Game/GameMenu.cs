@@ -8,123 +8,123 @@ namespace Intersect_Client.Classes.UI.Game
 {
     class GameMenu
     {
-        private ImagePanel _characterBackground;
-        private Button _characterButton;
-        private CharacterWindow _characterWindow;
-        private ImagePanel _closeBackground;
-        private Button _closeButton;
-        private ImagePanel _friendsBackground;
-        private Button _friendsButton;
-        private FriendsWindow _friendsWindow;
+        private ImagePanel mCharacterBackground;
+        private Button mCharacterButton;
+        private CharacterWindow mCharacterWindow;
+        private ImagePanel mCloseBackground;
+        private Button mCloseButton;
+        private ImagePanel mFriendsBackground;
+        private Button mFriendsButton;
+        private FriendsWindow mFriendsWindow;
 
         //Canvas instance
-        Canvas _GameCanvas;
+        Canvas mGameCanvas;
 
-        private ImagePanel _inventoryBackground;
+        private ImagePanel mInventoryBackground;
 
         //Control Variables
-        private Button _inventoryButton;
+        private Button mInventoryButton;
 
-        private InventoryWindow _inventoryWindow;
+        private InventoryWindow mInventoryWindow;
 
         //Menu Container
-        private ImagePanel _menuContainer;
+        private ImagePanel mMenuContainer;
 
-        private ImagePanel _optionsBackground;
-        private Button _optionsButton;
+        private ImagePanel mOptionsBackground;
+        private Button mOptionsButton;
 
         //Window References
-        private OptionsWindow _optionsWindow;
+        private OptionsWindow mOptionsWindow;
 
-        private ImagePanel _partyBackground;
-        private Button _partyButton;
-        private PartyWindow _partyWindow;
-        private ImagePanel _questsBackground;
-        private Button _questsButton;
-        private QuestsWindow _questsWindow;
-        private ImagePanel _spellsBackground;
-        private Button _spellsButton;
-        private SpellsWindow _spellsWindow;
-        private int backgroundHeight = 42;
-        private int backgroundWidth = 42;
-        private int buttonHeight = 34;
-        private int buttonMargin = 8;
+        private ImagePanel mPartyBackground;
+        private Button mPartyButton;
+        private PartyWindow mPartyWindow;
+        private ImagePanel mQuestsBackground;
+        private Button mQuestsButton;
+        private QuestsWindow mQuestsWindow;
+        private ImagePanel mSpellsBackground;
+        private Button mSpellsButton;
+        private SpellsWindow mSpellsWindow;
+        private int mBackgroundHeight = 42;
+        private int mBackgroundWidth = 42;
+        private int mButtonHeight = 34;
+        private int mButtonMargin = 8;
 
-        private int buttonWidth = 34;
+        private int mButtonWidth = 34;
 
         //Init
-        public GameMenu(Canvas _gameCanvas)
+        public GameMenu(Canvas gameCanvas)
         {
-            _GameCanvas = _gameCanvas;
+            mGameCanvas = gameCanvas;
 
-            _menuContainer = new ImagePanel(_gameCanvas, "MenuContainer");
+            mMenuContainer = new ImagePanel(gameCanvas, "MenuContainer");
 
-            _inventoryBackground = new ImagePanel(_menuContainer, "InventoryContainer");
-            _inventoryButton = new Button(_inventoryBackground, "InventoryButton");
-            _inventoryButton.SetToolTipText(Strings.Get("gamemenu", "items"));
-            _inventoryButton.Clicked += InventoryButton_Clicked;
+            mInventoryBackground = new ImagePanel(mMenuContainer, "InventoryContainer");
+            mInventoryButton = new Button(mInventoryBackground, "InventoryButton");
+            mInventoryButton.SetToolTipText(Strings.Get("gamemenu", "items"));
+            mInventoryButton.Clicked += InventoryButton_Clicked;
 
-            _spellsBackground = new ImagePanel(_menuContainer, "SpellsContainer");
-            _spellsButton = new Button(_spellsBackground, "SpellsButton");
-            _spellsButton.SetToolTipText(Strings.Get("gamemenu", "spells"));
-            _spellsButton.Clicked += SpellsButton_Clicked;
+            mSpellsBackground = new ImagePanel(mMenuContainer, "SpellsContainer");
+            mSpellsButton = new Button(mSpellsBackground, "SpellsButton");
+            mSpellsButton.SetToolTipText(Strings.Get("gamemenu", "spells"));
+            mSpellsButton.Clicked += SpellsButton_Clicked;
 
-            _characterBackground = new ImagePanel(_menuContainer, "CharacterContainer");
-            _characterButton = new Button(_characterBackground, "CharacterButton");
-            _characterButton.SetToolTipText(Strings.Get("gamemenu", "character"));
-            _characterButton.Clicked += CharacterButton_Clicked;
+            mCharacterBackground = new ImagePanel(mMenuContainer, "CharacterContainer");
+            mCharacterButton = new Button(mCharacterBackground, "CharacterButton");
+            mCharacterButton.SetToolTipText(Strings.Get("gamemenu", "character"));
+            mCharacterButton.Clicked += CharacterButton_Clicked;
 
-            _questsBackground = new ImagePanel(_menuContainer, "QuestsContainer");
-            _questsButton = new Button(_questsBackground, "QuestsButton");
-            _questsButton.SetToolTipText(Strings.Get("gamemenu", "quest"));
-            _questsButton.Clicked += QuestBtn_Clicked;
+            mQuestsBackground = new ImagePanel(mMenuContainer, "QuestsContainer");
+            mQuestsButton = new Button(mQuestsBackground, "QuestsButton");
+            mQuestsButton.SetToolTipText(Strings.Get("gamemenu", "quest"));
+            mQuestsButton.Clicked += QuestBtn_Clicked;
 
-            _friendsBackground = new ImagePanel(_menuContainer, "FriendsContainer");
-            _friendsButton = new Button(_friendsBackground, "FriendsButton");
-            _friendsButton.SetToolTipText(Strings.Get("gamemenu", "friends"));
-            _friendsButton.Clicked += FriendsBtn_Clicked;
+            mFriendsBackground = new ImagePanel(mMenuContainer, "FriendsContainer");
+            mFriendsButton = new Button(mFriendsBackground, "FriendsButton");
+            mFriendsButton.SetToolTipText(Strings.Get("gamemenu", "friends"));
+            mFriendsButton.Clicked += FriendsBtn_Clicked;
 
-            _partyBackground = new ImagePanel(_menuContainer, "PartyContainer");
-            _partyButton = new Button(_partyBackground, "PartyButton");
-            _partyButton.SetToolTipText(Strings.Get("gamemenu", "party"));
-            _partyButton.Clicked += PartyBtn_Clicked;
+            mPartyBackground = new ImagePanel(mMenuContainer, "PartyContainer");
+            mPartyButton = new Button(mPartyBackground, "PartyButton");
+            mPartyButton.SetToolTipText(Strings.Get("gamemenu", "party"));
+            mPartyButton.Clicked += PartyBtn_Clicked;
 
-            _optionsBackground = new ImagePanel(_menuContainer, "OptionsContainer");
-            _optionsButton = new Button(_optionsBackground, "OptionsButton");
-            _optionsButton.SetToolTipText(Strings.Get("gamemenu", "options"));
-            _optionsButton.Clicked += OptionBtn_Clicked;
+            mOptionsBackground = new ImagePanel(mMenuContainer, "OptionsContainer");
+            mOptionsButton = new Button(mOptionsBackground, "OptionsButton");
+            mOptionsButton.SetToolTipText(Strings.Get("gamemenu", "options"));
+            mOptionsButton.Clicked += OptionBtn_Clicked;
 
             //Go in reverse order from the right
-            _closeBackground = new ImagePanel(_menuContainer, "ExitGameContainer");
-            _closeButton = new Button(_closeBackground, "ExitGameButton");
-            _closeButton.SetToolTipText(Strings.Get("gamemenu", "exit"));
-            _closeButton.Clicked += CloseBtn_Clicked;
+            mCloseBackground = new ImagePanel(mMenuContainer, "ExitGameContainer");
+            mCloseButton = new Button(mCloseBackground, "ExitGameButton");
+            mCloseButton.SetToolTipText(Strings.Get("gamemenu", "exit"));
+            mCloseButton.Clicked += CloseBtn_Clicked;
 
             //Assign Window References
-            _optionsWindow = new OptionsWindow(_gameCanvas, null, null);
-            _partyWindow = new PartyWindow(_gameCanvas);
-            _friendsWindow = new FriendsWindow(_gameCanvas);
-            _inventoryWindow = new InventoryWindow(_gameCanvas);
-            _spellsWindow = new SpellsWindow(_gameCanvas);
-            _characterWindow = new CharacterWindow(_gameCanvas);
-            _questsWindow = new QuestsWindow(_gameCanvas);
+            mOptionsWindow = new OptionsWindow(gameCanvas, null, null);
+            mPartyWindow = new PartyWindow(gameCanvas);
+            mFriendsWindow = new FriendsWindow(gameCanvas);
+            mInventoryWindow = new InventoryWindow(gameCanvas);
+            mSpellsWindow = new SpellsWindow(gameCanvas);
+            mCharacterWindow = new CharacterWindow(gameCanvas);
+            mQuestsWindow = new QuestsWindow(gameCanvas);
         }
 
         //Methods
         public void Update(bool updateQuestLog)
         {
-            _inventoryWindow.Update();
-            _spellsWindow.Update();
-            _characterWindow.Update();
-            _partyWindow.Update();
-            _friendsWindow.Update();
-            _questsWindow.Update(updateQuestLog);
-            _optionsWindow.Update();
+            mInventoryWindow.Update();
+            mSpellsWindow.Update();
+            mCharacterWindow.Update();
+            mPartyWindow.Update();
+            mFriendsWindow.Update();
+            mQuestsWindow.Update(updateQuestLog);
+            mOptionsWindow.Update();
         }
 
         public void UpdateFriendsList()
         {
-            _friendsWindow.updateList();
+            mFriendsWindow.UpdateList();
         }
 
         //Input Handlers
@@ -135,89 +135,89 @@ namespace Intersect_Client.Classes.UI.Game
 
         void OptionBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_optionsWindow.IsVisible())
+            if (mOptionsWindow.IsVisible())
             {
-                _optionsWindow.Hide();
+                mOptionsWindow.Hide();
             }
             else
             {
                 if (!Globals.Me.IsBusy())
                 {
-                    _optionsWindow.Show();
+                    mOptionsWindow.Show();
                 }
             }
         }
 
         void PartyBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_partyWindow.IsVisible())
+            if (mPartyWindow.IsVisible())
             {
-                _partyWindow.Hide();
+                mPartyWindow.Hide();
             }
             else
             {
-                _partyWindow.Show();
+                mPartyWindow.Show();
             }
         }
 
         void FriendsBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_friendsWindow.IsVisible())
+            if (mFriendsWindow.IsVisible())
             {
-                _friendsWindow.Hide();
+                mFriendsWindow.Hide();
             }
             else
             {
-                _friendsWindow.Show();
+                mFriendsWindow.Show();
                 PacketSender.RequestFriends();
             }
         }
 
         void QuestBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_questsWindow.IsVisible())
+            if (mQuestsWindow.IsVisible())
             {
-                _questsWindow.Hide();
+                mQuestsWindow.Hide();
             }
             else
             {
-                _questsWindow.Show();
+                mQuestsWindow.Show();
             }
         }
 
         void InventoryButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_inventoryWindow.IsVisible())
+            if (mInventoryWindow.IsVisible())
             {
-                _inventoryWindow.Hide();
+                mInventoryWindow.Hide();
             }
             else
             {
-                _inventoryWindow.Show();
+                mInventoryWindow.Show();
             }
         }
 
         void SpellsButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_spellsWindow.IsVisible())
+            if (mSpellsWindow.IsVisible())
             {
-                _spellsWindow.Hide();
+                mSpellsWindow.Hide();
             }
             else
             {
-                _spellsWindow.Show();
+                mSpellsWindow.Show();
             }
         }
 
         void CharacterButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_characterWindow.IsVisible())
+            if (mCharacterWindow.IsVisible())
             {
-                _characterWindow.Hide();
+                mCharacterWindow.Hide();
             }
             else
             {
-                _characterWindow.Show();
+                mCharacterWindow.Show();
             }
         }
     }

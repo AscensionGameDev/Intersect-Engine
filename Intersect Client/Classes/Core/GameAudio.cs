@@ -12,46 +12,46 @@ namespace Intersect_Client.Classes.Core
 {
     public static class GameAudio
     {
-        private static bool _isInitialized;
+        private static bool sIsInitialized;
 
         //Music
-        private static string _queuedMusic = "";
+        private static string sQueuedMusic = "";
 
-        private static string _currentSong = "";
-        private static float _fadeRate;
-        private static long _fadeTimer;
-        private static GameAudioInstance _myMusic;
-        private static bool _musicLoop;
-        private static bool _fadingOut;
-        private static bool _queuedLoop;
-        private static float _queuedFade;
+        private static string sCurrentSong = "";
+        private static float sFadeRate;
+        private static long sFadeTimer;
+        private static GameAudioInstance sMyMusic;
+        private static bool sMusicLoop;
+        private static bool sFadingOut;
+        private static bool sQueuedLoop;
+        private static float sQueuedFade;
 
         //Sounds
-        private static List<MapSound> _gameSounds = new List<MapSound>();
+        private static List<MapSound> sGameSounds = new List<MapSound>();
 
         //Init
         public static void Init()
         {
-            if (_isInitialized == true)
+            if (sIsInitialized == true)
             {
                 return;
             }
             Globals.ContentManager.LoadAudio();
-            _isInitialized = true;
+            sIsInitialized = true;
         }
 
         public static void UpdateGlobalVolume()
         {
-            if (_myMusic != null)
+            if (sMyMusic != null)
             {
-                _myMusic.SetVolume(_myMusic.GetVolume(), true);
+                sMyMusic.SetVolume(sMyMusic.GetVolume(), true);
             }
-            for (int i = 0; i < _gameSounds.Count; i++)
+            for (int i = 0; i < sGameSounds.Count; i++)
             {
-                _gameSounds[i].Update();
-                if (!_gameSounds[i].Loaded)
+                sGameSounds[i].Update();
+                if (!sGameSounds[i].Loaded)
                 {
-                    _gameSounds.RemoveAt(i);
+                    sGameSounds.RemoveAt(i);
                 }
             }
         }
@@ -59,57 +59,57 @@ namespace Intersect_Client.Classes.Core
         //Update
         public static void Update()
         {
-            if (_myMusic != null)
+            if (sMyMusic != null)
             {
-                if (_fadeTimer != 0 && _fadeTimer < Globals.System.GetTimeMs())
+                if (sFadeTimer != 0 && sFadeTimer < Globals.System.GetTimeMs())
                 {
-                    if (_fadingOut)
+                    if (sFadingOut)
                     {
-                        _myMusic.SetVolume(_myMusic.GetVolume() - 1, true);
-                        if (_myMusic.GetVolume() <= 1)
+                        sMyMusic.SetVolume(sMyMusic.GetVolume() - 1, true);
+                        if (sMyMusic.GetVolume() <= 1)
                         {
                             StopMusic();
-                            if (_queuedMusic != "")
+                            if (sQueuedMusic != "")
                             {
-                                PlayMusic(_queuedMusic, 0f, _queuedFade, _queuedLoop);
-                                _queuedMusic = "";
+                                PlayMusic(sQueuedMusic, 0f, sQueuedFade, sQueuedLoop);
+                                sQueuedMusic = "";
                             }
                         }
                         else
                         {
-                            _fadeTimer = Globals.System.GetTimeMs() + (long) (_fadeRate / 1000);
+                            sFadeTimer = Globals.System.GetTimeMs() + (long) (sFadeRate / 1000);
                         }
                     }
                     else
                     {
-                        _myMusic.SetVolume(_myMusic.GetVolume() + 1, true);
-                        if (_myMusic.GetVolume() < 100)
+                        sMyMusic.SetVolume(sMyMusic.GetVolume() + 1, true);
+                        if (sMyMusic.GetVolume() < 100)
                         {
-                            _fadeTimer = Globals.System.GetTimeMs() + (long) (_fadeRate / 1000);
+                            sFadeTimer = Globals.System.GetTimeMs() + (long) (sFadeRate / 1000);
                         }
                         else
                         {
-                            _fadeTimer = 0;
+                            sFadeTimer = 0;
                         }
                     }
                 }
                 else
                 {
-                    if (_myMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped)
+                    if (sMyMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped)
                     {
-                        if (_musicLoop)
+                        if (sMusicLoop)
                         {
-                            _myMusic.Play();
+                            sMyMusic.Play();
                         }
                     }
                 }
             }
-            for (int i = 0; i < _gameSounds.Count; i++)
+            for (int i = 0; i < sGameSounds.Count; i++)
             {
-                _gameSounds[i].Update();
-                if (!_gameSounds[i].Loaded)
+                sGameSounds[i].Update();
+                if (!sGameSounds[i].Loaded)
                 {
-                    _gameSounds.RemoveAt(i);
+                    sGameSounds.RemoveAt(i);
                 }
             }
         }
@@ -118,10 +118,10 @@ namespace Intersect_Client.Classes.Core
         public static void PlayMusic(string filename, float fadeout = 0f, float fadein = 0f, bool loop = false)
         {
             filename = GameContentManager.RemoveExtension(filename);
-            if (_myMusic != null)
+            if (sMyMusic != null)
             {
-                if (fadeout == 0 || _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped ||
-                    _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Paused || _myMusic.GetVolume() == 0)
+                if (fadeout == 0 || sMyMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped ||
+                    sMyMusic.GetState() == GameAudioInstance.AudioInstanceState.Paused || sMyMusic.GetVolume() == 0)
                 {
                     StopMusic();
                     StartMusic(filename, fadein);
@@ -129,14 +129,14 @@ namespace Intersect_Client.Classes.Core
                 else
                 {
                     //Start fadeout
-                    if (_currentSong.ToLower() != filename.ToLower() || _fadingOut)
+                    if (sCurrentSong.ToLower() != filename.ToLower() || sFadingOut)
                     {
-                        _fadeRate = (float) _myMusic.GetVolume() / fadeout;
-                        _fadeTimer = Globals.System.GetTimeMs() + (long) (_fadeRate / 1000);
-                        _fadingOut = true;
-                        _queuedMusic = filename;
-                        _queuedFade = fadein;
-                        _queuedLoop = loop;
+                        sFadeRate = (float) sMyMusic.GetVolume() / fadeout;
+                        sFadeTimer = Globals.System.GetTimeMs() + (long) (sFadeRate / 1000);
+                        sFadingOut = true;
+                        sQueuedMusic = filename;
+                        sQueuedFade = fadein;
+                        sQueuedLoop = loop;
                     }
                 }
             }
@@ -144,7 +144,7 @@ namespace Intersect_Client.Classes.Core
             {
                 StartMusic(filename, fadein);
             }
-            _musicLoop = loop;
+            sMusicLoop = loop;
         }
 
         private static void StartMusic(string filename, float fadein = 0f)
@@ -152,49 +152,45 @@ namespace Intersect_Client.Classes.Core
             GameAudioSource music = Globals.ContentManager.GetMusic(filename);
             if (music != null)
             {
-                _myMusic = music.CreateInstance();
-                _currentSong = filename;
-                _myMusic.Play();
-                _myMusic.SetVolume(0, true);
-                _fadeRate = (float) 100 / fadein;
-                _fadeTimer = Globals.System.GetTimeMs() + (long) (_fadeRate / 1000) + 1;
-                _fadingOut = false;
+                sMyMusic = music.CreateInstance();
+                sCurrentSong = filename;
+                sMyMusic.Play();
+                sMyMusic.SetVolume(0, true);
+                sFadeRate = (float) 100 / fadein;
+                sFadeTimer = Globals.System.GetTimeMs() + (long) (sFadeRate / 1000) + 1;
+                sFadingOut = false;
             }
         }
 
         public static void StopMusic(float fadeout = 0f)
         {
-            if (_myMusic != null)
+            if (sMyMusic == null) return;
+
+            if (Math.Abs(fadeout) < 0.01 || sMyMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped ||
+                sMyMusic.GetState() == GameAudioInstance.AudioInstanceState.Paused || sMyMusic.GetVolume() == 0)
             {
-                if (fadeout == 0 || _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped ||
-                    _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Paused || _myMusic.GetVolume() == 0)
-                {
-                    _currentSong = "";
-                    _myMusic.Stop();
-                    _myMusic.Dispose();
-                    _myMusic = null;
-                    _fadeTimer = 0;
-                }
-                else
-                {
-                    //Start fadeout
-                    _fadeRate = (float) _myMusic.GetVolume() / fadeout;
-                    _fadeTimer = Globals.System.GetTimeMs() + (long) (_fadeRate / 1000);
-                    _fadingOut = true;
-                }
+                sCurrentSong = "";
+                sMyMusic.Stop();
+                sMyMusic.Dispose();
+                sMyMusic = null;
+                sFadeTimer = 0;
+            }
+            else
+            {
+                //Start fadeout
+                sFadeRate = (float) sMyMusic.GetVolume() / fadeout;
+                sFadeTimer = Globals.System.GetTimeMs() + (long) (sFadeRate / 1000);
+                sFadingOut = true;
             }
         }
 
         //Sounds
         public static MapSound AddMapSound(string filename, int x, int y, int map, bool loop, int distance)
         {
-            if (_gameSounds.Count <= 128)
-            {
-                var sound = new MapSound(filename, x, y, map, loop, distance);
-                _gameSounds.Add(sound);
-                return sound;
-            }
-            return null;
+            if (sGameSounds?.Count > 128) return null;
+            var sound = new MapSound(filename, x, y, map, loop, distance);
+            sGameSounds?.Add(sound);
+            return sound;
         }
 
         public static void StopSound(MapSound sound)
@@ -204,11 +200,11 @@ namespace Intersect_Client.Classes.Core
 
         public static void StopAllSounds()
         {
-            for (int i = 0; i < _gameSounds.Count; i++)
+            for (int i = 0; i < sGameSounds.Count; i++)
             {
-                if (_gameSounds[i] != null)
+                if (sGameSounds[i] != null)
                 {
-                    _gameSounds[i].Stop();
+                    sGameSounds[i].Stop();
                 }
             }
         }
@@ -216,48 +212,48 @@ namespace Intersect_Client.Classes.Core
 
     public class MapSound
     {
-        private int _distance;
-        private string _filename;
-        private bool _loop;
-        private int _map;
-        private GameAudioInstance _sound;
-        private float _volume;
-        private int _x;
-        private int _y;
+        private int mDistance;
+        private string mFilename;
+        private bool mLoop;
+        private int mMap;
+        private GameAudioInstance mSound;
+        private float mVolume;
+        private int mX;
+        private int mY;
         public bool Loaded;
 
         public MapSound(string filename, int x, int y, int map, bool loop, int distance)
         {
-            _filename = GameContentManager.RemoveExtension(filename).ToLower();
-            _x = x;
-            _y = y;
-            _map = map;
-            _loop = loop;
-            _distance = distance;
-            _map = map;
-            GameAudioSource sound = Globals.ContentManager.GetSound(_filename);
+            mFilename = GameContentManager.RemoveExtension(filename).ToLower();
+            mX = x;
+            mY = y;
+            mMap = map;
+            mLoop = loop;
+            mDistance = distance;
+            mMap = map;
+            GameAudioSource sound = Globals.ContentManager.GetSound(mFilename);
             if (sound != null && Globals.Database.SoundVolume > 0)
             {
-                _sound = sound.CreateInstance();
-                _sound.SetLoop(_loop);
-                _sound.SetVolume(0);
-                _sound.Play();
+                mSound = sound.CreateInstance();
+                mSound.SetLoop(mLoop);
+                mSound.SetVolume(0);
+                mSound.Play();
                 Loaded = true;
             }
         }
 
         public void UpdatePosition(int x, int y, int map)
         {
-            _x = x;
-            _y = y;
-            _map = map;
+            mX = x;
+            mY = y;
+            mMap = map;
         }
 
         public void Update()
         {
             if (Loaded)
             {
-                if (!_loop && _sound.GetState() == GameAudioInstance.AudioInstanceState.Stopped)
+                if (!mLoop && mSound.GetState() == GameAudioInstance.AudioInstanceState.Stopped)
                 {
                     Stop();
                 }
@@ -270,35 +266,36 @@ namespace Intersect_Client.Classes.Core
 
         private void UpdateSoundVolume()
         {
-            if (_map == 0)
+            if (mMap == 0)
             {
-                _sound.SetVolume(0);
+                mSound.SetVolume(0);
                 return;
             }
-            var map = MapInstance.Lookup.Get<MapInstance>(_map);
+            var map = MapInstance.Lookup.Get<MapInstance>(mMap);
             if (map == null)
             {
                 Stop();
                 return;
             }
-            if ((_x == -1 || _y == -1 || _distance == 0) && _map == Globals.Me.CurrentMap)
+            if ((mX == -1 || mY == -1 || mDistance == 0) && mMap == Globals.Me.CurrentMap)
             {
-                _sound.SetVolume(100);
+                mSound.SetVolume(100);
             }
             else
             {
-                if (_distance > 0 && Globals.GridMaps.Contains(_map))
+                // TODO: 1073
+                if (mDistance > 0 && Globals.GridMaps.Contains(mMap))
                 {
-                    float volume = 100 - ((100 / _distance) * CalculateSoundDistance());
+                    float volume = 100 - ((100 / mDistance) * CalculateSoundDistance());
                     if (volume < 0)
                     {
                         volume = 0f;
                     }
-                    _sound.SetVolume((int) volume);
+                    mSound.SetVolume((int) volume);
                 }
                 else
                 {
-                    _sound.SetVolume(0);
+                    mSound.SetVolume(0);
                 }
             }
         }
@@ -310,11 +307,11 @@ namespace Intersect_Client.Classes.Core
             float playery = Globals.Me.GetCenterPos().Y;
             float soundx = 0;
             float soundy = 0;
-            int mapNum = _map;
+            int mapNum = mMap;
             var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
             if (map != null)
             {
-                if (_x == -1 || _y == -1 || _distance == -1)
+                if (mX == -1 || mY == -1 || mDistance == -1)
                 {
                     Point player = new Point()
                     {
@@ -327,8 +324,8 @@ namespace Intersect_Client.Classes.Core
                 }
                 else
                 {
-                    soundx = map.GetX() + _x * Options.TileWidth + 16;
-                    soundy = map.GetY() + _y * Options.TileHeight + 16;
+                    soundx = map.GetX() + mX * Options.TileWidth + 16;
+                    soundy = map.GetY() + mY * Options.TileHeight + 16;
                     distance = (float) Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) / 32f;
                 }
             }
@@ -428,7 +425,7 @@ namespace Intersect_Client.Classes.Core
         {
             if (Loaded)
             {
-                _sound.Dispose();
+                mSound.Dispose();
                 Loaded = false;
             }
         }

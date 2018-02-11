@@ -45,12 +45,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
         private const string CHAR_BANK_TABLE = "char_bank";
 
         private const string CHAR_BANK_ITEM_BAG_ID = "item_bag_id";
-        private SqliteConnection _dbConnection;
-        private object _dbLock = new object();
+        private SqliteConnection mDbConnection;
+        private object mDbLock = new object();
 
         public Upgrade7(SqliteConnection connection)
         {
-            _dbConnection = connection;
+            mDbConnection = connection;
         }
 
         public void Upgrade()
@@ -373,14 +373,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
         public void LoadGameObjects(GameObject type)
         {
             var nullIssues = "";
-            lock (_dbLock)
+            lock (mDbLock)
             {
                 var tableName = GetGameObjectTable(type);
                 ClearGameObjects(type);
                 var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" +
                             GAME_OBJECT_DELETED +
                             ";";
-                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                using (SqliteCommand cmd = new SqliteCommand(query, mDbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
                     using (var dataReader = cmd.ExecuteReader())
@@ -415,12 +415,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
                 Log.Error("Attempted to persist null game object to the database.");
             }
 
-            lock (_dbLock)
+            lock (mDbLock)
             {
                 var insertQuery = "UPDATE " + gameObject.GetTable() + " set " + GAME_OBJECT_DELETED + "=@" +
                                   GAME_OBJECT_DELETED + "," + GAME_OBJECT_DATA + "=@" + GAME_OBJECT_DATA + " WHERE " +
                                   GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
-                using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+                using (SqliteCommand cmd = new SqliteCommand(insertQuery, mDbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.GetId()));
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
@@ -444,7 +444,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
                       + BAG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                       + BAG_SLOT_COUNT + " INTEGER"
                       + ");";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
@@ -462,7 +462,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
                       + BAG_ITEM_BAG_ID + " TEXT,"
                       + " unique('" + BAG_ITEM_CONTAINER_ID + "','" + BAG_ITEM_SLOT + "')"
                       + ");";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
@@ -475,7 +475,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
         {
             var insertQuery = "INSERT into " + BAGS_TABLE + " (" + BAG_SLOT_COUNT + ")" + "VALUES (@" + BAG_SLOT_COUNT +
                               ");";
-            using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+            using (SqliteCommand cmd = new SqliteCommand(insertQuery, mDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + BAG_SLOT_COUNT, slotCount));
                 cmd.ExecuteNonQuery();
@@ -485,14 +485,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
         private void AddBagColumnToBank()
         {
             var cmd = "ALTER TABLE " + CHAR_BANK_TABLE + " ADD " + CHAR_BANK_ITEM_BAG_ID + " INTEGER;";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
 
             cmd = "UPDATE " + CHAR_BANK_TABLE + " set " + CHAR_BANK_ITEM_BAG_ID + " = @" + CHAR_BANK_ITEM_BAG_ID + ";";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_ITEM_BAG_ID, -1));
                 createCommand.CommandText = cmd;
@@ -503,14 +503,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
         private void AddBagColumnToInventory()
         {
             var cmd = "ALTER TABLE " + CHAR_INV_TABLE + " ADD " + CHAR_INV_ITEM_BAG_ID + " INTEGER;";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
             }
 
             cmd = "UPDATE " + CHAR_INV_TABLE + " set " + CHAR_INV_ITEM_BAG_ID + " = @" + CHAR_INV_ITEM_BAG_ID + ";";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.Parameters.Add(new SqliteParameter("@" + CHAR_INV_ITEM_BAG_ID, -1));
                 createCommand.CommandText = cmd;

@@ -12,7 +12,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
         public new const string DATABASE_TABLE = "server_switches";
 
         public new const GameObject OBJECT_TYPE = GameObject.ServerSwitch;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        protected static Dictionary<int, DatabaseObject> sObjects = new Dictionary<int, DatabaseObject>();
 
         public string Name = "New Global Switch";
         public bool Value;
@@ -40,18 +40,18 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
 
         public static ServerSwitchBase GetSwitch(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return (ServerSwitchBase) Objects[index];
+                return (ServerSwitchBase) sObjects[index];
             }
             return null;
         }
 
         public static string GetName(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return ((ServerSwitchBase) Objects[index]).Name;
+                return ((ServerSwitchBase) sObjects[index]).Name;
             }
             return "Deleted";
         }
@@ -73,38 +73,38 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
 
         public static DatabaseObject Get(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return Objects[index];
+                return sObjects[index];
             }
             return null;
         }
 
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            sObjects.Remove(GetId());
         }
 
         public static void ClearObjects()
         {
-            Objects.Clear();
+            sObjects.Clear();
         }
 
         public static void AddObject(int index, DatabaseObject obj)
         {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
+            sObjects.Remove(index);
+            sObjects.Add(index, obj);
         }
 
         public static int ObjectCount()
         {
-            return Objects.Count;
+            return sObjects.Count;
         }
 
         public static Dictionary<int, ServerSwitchBase> GetObjects()
         {
             Dictionary<int, ServerSwitchBase> objects =
-                Objects.ToDictionary(k => k.Key, v => (ServerSwitchBase) v.Value);
+                sObjects.ToDictionary(k => k.Key, v => (ServerSwitchBase) v.Value);
             return objects;
         }
     }

@@ -8,18 +8,18 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class Event_MoveRouteDesigner : UserControl
+    public partial class EventMoveRouteDesigner : UserControl
     {
-        private readonly EventBase _editingEvent;
-        private MapBase _currentMap;
-        private EventCommand _editingCommand;
-        private EventMoveRoute _editingRoute;
-        private FrmEvent _eventEditor;
-        private MoveRouteAction _lastAddedAction;
-        private List<TreeNode> _origItems = new List<TreeNode>();
-        private EventMoveRoute _tmpMoveRoute;
+        private readonly EventBase mEditingEvent;
+        private MapBase mCurrentMap;
+        private EventCommand mEditingCommand;
+        private EventMoveRoute mEditingRoute;
+        private FrmEvent mEventEditor;
+        private MoveRouteAction mLastAddedAction;
+        private List<TreeNode> mOrigItems = new List<TreeNode>();
+        private EventMoveRoute mTmpMoveRoute;
 
-        public Event_MoveRouteDesigner(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent,
+        public EventMoveRouteDesigner(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent,
             EventMoveRoute editingRoute, EventCommand editingCommand = null)
         {
             InitializeComponent();
@@ -41,45 +41,45 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     };
                     parentNode.Nodes.Add(childNode);
                 }
-                _origItems.Add(parentNode);
+                mOrigItems.Add(parentNode);
             }
 
             //Grab event editor reference
-            _eventEditor = eventEditor;
-            _editingEvent = currentEvent;
-            _editingCommand = editingCommand;
-            _currentMap = currentMap;
+            mEventEditor = eventEditor;
+            mEditingEvent = currentEvent;
+            mEditingCommand = editingCommand;
+            mCurrentMap = currentMap;
 
             //Generate temp route to edit
-            _tmpMoveRoute = new EventMoveRoute();
-            _tmpMoveRoute.CopyFrom(editingRoute);
-            _editingRoute = editingRoute;
+            mTmpMoveRoute = new EventMoveRoute();
+            mTmpMoveRoute.CopyFrom(editingRoute);
+            mEditingRoute = editingRoute;
 
             //Setup form
-            chkIgnoreIfBlocked.Checked = _tmpMoveRoute.IgnoreIfBlocked;
-            chkRepeatRoute.Checked = _tmpMoveRoute.RepeatRoute;
+            chkIgnoreIfBlocked.Checked = mTmpMoveRoute.IgnoreIfBlocked;
+            chkRepeatRoute.Checked = mTmpMoveRoute.RepeatRoute;
 
             cmbTarget.Items.Clear();
-            if (!_editingEvent.CommonEvent)
+            if (!mEditingEvent.CommonEvent)
             {
-                if (_editingCommand != null)
+                if (mEditingCommand != null)
                 {
                     cmbTarget.Items.Add(Strings.Get("eventmoveroute", "player"));
-                    if (_editingCommand.Route.Target == -1) cmbTarget.SelectedIndex = 0;
+                    if (mEditingCommand.Route.Target == -1) cmbTarget.SelectedIndex = 0;
                 }
-                foreach (var evt in _currentMap.Events)
+                foreach (var evt in mCurrentMap.Events)
                 {
-                    cmbTarget.Items.Add(evt.Key == _editingEvent.Index
+                    cmbTarget.Items.Add(evt.Key == mEditingEvent.Index
                         ? Strings.Get("eventmoveroute", "thisevent")
                         : "" + evt.Value.Name);
-                    if (_editingCommand != null)
+                    if (mEditingCommand != null)
                     {
-                        if (_editingCommand.Route.Target == evt.Key)
+                        if (mEditingCommand.Route.Target == evt.Key)
                             cmbTarget.SelectedIndex = cmbTarget.Items.Count - 1;
                     }
                     else
                     {
-                        if (_editingRoute.Target == evt.Key || _editingRoute.Target == -1)
+                        if (mEditingRoute.Target == evt.Key || mEditingRoute.Target == -1)
                             cmbTarget.SelectedIndex = cmbTarget.Items.Count - 1;
                     }
                 }
@@ -115,7 +115,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private void ListMoveRoute()
         {
             lstActions.Items.Clear();
-            foreach (MoveRouteAction action in _tmpMoveRoute.Actions)
+            foreach (MoveRouteAction action in mTmpMoveRoute.Actions)
             {
                 for (int i = 0; i < lstCommands.Nodes.Count; i++)
                 {
@@ -136,7 +136,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 if (lstActions.SelectedIndex > -1)
                 {
-                    _tmpMoveRoute.Actions.RemoveAt(lstActions.SelectedIndex);
+                    mTmpMoveRoute.Actions.RemoveAt(lstActions.SelectedIndex);
                     ListMoveRoute();
                 }
             }
@@ -154,21 +154,21 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             if (lstActions.SelectedIndex > -1)
             {
-                if (_tmpMoveRoute.Actions[lstActions.SelectedIndex].Type == MoveRouteEnum.SetGraphic)
+                if (mTmpMoveRoute.Actions[lstActions.SelectedIndex].Type == MoveRouteEnum.SetGraphic)
                 {
                     //Open the graphic editor....
-                    Event_GraphicSelector graphicSelector =
-                        new Event_GraphicSelector(_tmpMoveRoute.Actions[lstActions.SelectedIndex].Graphic, _eventEditor,
+                    EventGraphicSelector graphicSelector =
+                        new EventGraphicSelector(mTmpMoveRoute.Actions[lstActions.SelectedIndex].Graphic, mEventEditor,
                             this, false);
-                    _eventEditor.Controls.Add(graphicSelector);
+                    mEventEditor.Controls.Add(graphicSelector);
                     graphicSelector.BringToFront();
                     graphicSelector.Size = ClientSize;
                 }
-                else if (_tmpMoveRoute.Actions[lstActions.SelectedIndex].Type == MoveRouteEnum.SetAnimation)
+                else if (mTmpMoveRoute.Actions[lstActions.SelectedIndex].Type == MoveRouteEnum.SetAnimation)
                 {
                     //Open the animation selector
-                    Event_MoveRouteAnimationSelector animationSelector = new Event_MoveRouteAnimationSelector(this,
-                        _tmpMoveRoute.Actions[lstActions.SelectedIndex], true);
+                    EventMoveRouteAnimationSelector animationSelector = new EventMoveRouteAnimationSelector(this,
+                        mTmpMoveRoute.Actions[lstActions.SelectedIndex], false);
                     Controls.Add(animationSelector);
                     animationSelector.BringToFront();
                     animationSelector.Size = ClientSize;
@@ -178,52 +178,52 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         public void RemoveLastAction()
         {
-            if (_tmpMoveRoute.Actions.Count > 0)
+            if (mTmpMoveRoute.Actions.Count > 0)
             {
-                _tmpMoveRoute.Actions.Remove(_lastAddedAction);
+                mTmpMoveRoute.Actions.Remove(mLastAddedAction);
                 ListMoveRoute();
             }
         }
 
         private void chkIgnoreIfBlocked_CheckedChanged(object sender, EventArgs e)
         {
-            _tmpMoveRoute.IgnoreIfBlocked = chkIgnoreIfBlocked.Checked;
+            mTmpMoveRoute.IgnoreIfBlocked = chkIgnoreIfBlocked.Checked;
         }
 
         private void chkRepeatRoute_CheckedChanged(object sender, EventArgs e)
         {
-            _tmpMoveRoute.RepeatRoute = chkRepeatRoute.Checked;
+            mTmpMoveRoute.RepeatRoute = chkRepeatRoute.Checked;
         }
 
         private void btnOkay_Click(object sender, EventArgs e)
         {
-            _editingRoute.CopyFrom(_tmpMoveRoute);
-            _editingRoute.Target = -1;
-            if (_editingCommand != null)
+            mEditingRoute.CopyFrom(mTmpMoveRoute);
+            mEditingRoute.Target = -1;
+            if (mEditingCommand != null)
             {
-                if (!_editingEvent.CommonEvent)
+                if (!mEditingEvent.CommonEvent)
                 {
                     if (cmbTarget.SelectedIndex == 0)
                     {
-                        _editingRoute.Target = -1;
+                        mEditingRoute.Target = -1;
                     }
                     else
                     {
-                        _editingRoute.Target = _currentMap.Events.Keys.ToList()[cmbTarget.SelectedIndex - 1];
+                        mEditingRoute.Target = mCurrentMap.Events.Keys.ToList()[cmbTarget.SelectedIndex - 1];
                     }
                 }
-                _eventEditor.FinishCommandEdit(true);
+                mEventEditor.FinishCommandEdit(true);
             }
-            _eventEditor.CloseMoveRouteDesigner(this);
+            mEventEditor.CloseMoveRouteDesigner(this);
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if (_editingCommand != null)
+            if (mEditingCommand != null)
             {
-                _eventEditor.CancelCommandEdit(true);
+                mEventEditor.CancelCommandEdit(true);
             }
-            _eventEditor.CloseMoveRouteDesigner(this);
+            mEventEditor.CloseMoveRouteDesigner(this);
         }
 
         private void lstCommands_SelectedIndexChanged(object sender, EventArgs e)
@@ -244,16 +244,16 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 action.Graphic = new EventGraphic();
                 //Open the graphic editor....
-                Event_GraphicSelector graphicSelector = new Event_GraphicSelector(action.Graphic, _eventEditor, this,
+                EventGraphicSelector graphicSelector = new EventGraphicSelector(action.Graphic, mEventEditor, this,
                     true);
-                _eventEditor.Controls.Add(graphicSelector);
+                mEventEditor.Controls.Add(graphicSelector);
                 graphicSelector.BringToFront();
                 graphicSelector.Size = ClientSize;
             }
             else if (action.Type == MoveRouteEnum.SetAnimation)
             {
                 //Open the animation selector
-                Event_MoveRouteAnimationSelector animationSelector = new Event_MoveRouteAnimationSelector(this, action,
+                EventMoveRouteAnimationSelector animationSelector = new EventMoveRouteAnimationSelector(this, action,
                     true);
                 Controls.Add(animationSelector);
                 animationSelector.BringToFront();
@@ -261,20 +261,20 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             }
             if (lstActions.SelectedIndex == -1)
             {
-                _tmpMoveRoute.Actions.Add(action);
+                mTmpMoveRoute.Actions.Add(action);
             }
             else
             {
-                _tmpMoveRoute.Actions.Insert(lstActions.SelectedIndex, action);
+                mTmpMoveRoute.Actions.Insert(lstActions.SelectedIndex, action);
             }
-            _lastAddedAction = action;
+            mLastAddedAction = action;
             ListMoveRoute();
         }
 
         private void cmbTarget_SelectedIndexChanged(object sender, EventArgs e)
         {
             lstCommands.Nodes.Clear();
-            foreach (var item in _origItems)
+            foreach (var item in mOrigItems)
             {
                 var parentNode = new TreeNode(((TreeNode) item).Text)
                 {
@@ -293,7 +293,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 lstCommands.Nodes.Add(parentNode);
             }
             lstCommands.ExpandAll();
-            if (!_editingEvent.CommonEvent && _editingCommand != null && cmbTarget.SelectedIndex == 0)
+            if (!mEditingEvent.CommonEvent && mEditingCommand != null && cmbTarget.SelectedIndex == 0)
             {
                 var hideNodes = new string[]
                 {

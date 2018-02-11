@@ -8,34 +8,34 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class GameGuiBase
     {
-        private AdminWindow _adminWindow;
-        private BagWindow _bagWindow;
-        private BankWindow _bankWindow;
-        private Chatbox _chatBox;
-        private CraftingWindow _CraftingBenchWindow;
-        private DebugMenu _debugMenu;
+        private AdminWindow mAdminWindow;
+        private BagWindow mBagWindow;
+        private BankWindow mBankWindow;
+        private Chatbox mChatBox;
+        private CraftingWindow mCraftingBenchWindow;
+        private DebugMenu mDebugMenu;
 
-        private EventWindow _eventWindow;
-        public EntityBox _playerBox;
-        private QuestOfferWindow _questOfferWindow;
-        private ShopWindow _shopWindow;
-        private bool _shouldCloseBag;
-        private bool _shouldCloseBank;
-        private bool _shouldCloseCraftingBench;
-        private bool _shouldCloseShop;
-        private bool _shouldCloseTrading;
-        private bool _shouldOpenAdminWindow;
-        private bool _shouldOpenBag;
-        private bool _shouldOpenBank;
-        private bool _shouldOpenCraftingBench;
-        private bool _shouldOpenShop;
-        private bool _shouldOpenTrading;
-        private bool _shouldUpdateQuestLog = true;
-        private int _tradingTarget = -1;
-        private TradingWindow _TradingWindow;
+        private EventWindow mEventWindow;
+        public EntityBox PlayerBox;
+        private QuestOfferWindow mQuestOfferWindow;
+        private ShopWindow mShopWindow;
+        private bool mShouldCloseBag;
+        private bool mShouldCloseBank;
+        private bool mShouldCloseCraftingBench;
+        private bool mShouldCloseShop;
+        private bool mShouldCloseTrading;
+        private bool mShouldOpenAdminWindow;
+        private bool mShouldOpenBag;
+        private bool mShouldOpenBank;
+        private bool mShouldOpenCraftingBench;
+        private bool mShouldOpenShop;
+        private bool mShouldOpenTrading;
+        private bool mShouldUpdateQuestLog = true;
+        private int mTradingTarget = -1;
+        private TradingWindow mTradingWindow;
         public bool FocusChat;
         public Canvas GameCanvas;
-        private GameMenu GameMenu;
+        private GameMenu mGameMenu;
 
         //Public Components - For clicking/dragging
         public HotBarWindow Hotbar;
@@ -48,315 +48,315 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void InitGameGui()
         {
-            _eventWindow = new EventWindow(GameCanvas);
-            _chatBox = new Chatbox(GameCanvas, this);
-            GameMenu = new GameMenu(GameCanvas);
+            mEventWindow = new EventWindow(GameCanvas);
+            mChatBox = new Chatbox(GameCanvas, this);
+            mGameMenu = new GameMenu(GameCanvas);
             Hotbar = new HotBarWindow(GameCanvas);
-            _debugMenu = new DebugMenu(GameCanvas);
-            _questOfferWindow = new QuestOfferWindow(GameCanvas);
-            _playerBox = new EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
+            mDebugMenu = new DebugMenu(GameCanvas);
+            mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
+            PlayerBox = new EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
         }
 
         //Chatbox
         public void SetChatboxText(string msg)
         {
-            _chatBox.SetChatboxText(msg);
+            mChatBox.SetChatboxText(msg);
         }
 
         //Friends Window
         public void UpdateFriendsList()
         {
-            GameMenu.UpdateFriendsList();
+            mGameMenu.UpdateFriendsList();
         }
 
         //Admin Window
         public void NotifyOpenAdminWindow()
         {
-            _shouldOpenAdminWindow = true;
+            mShouldOpenAdminWindow = true;
         }
 
         public void OpenAdminWindow()
         {
-            if (_adminWindow == null)
+            if (mAdminWindow == null)
             {
-                _adminWindow = new AdminWindow(GameCanvas);
+                mAdminWindow = new AdminWindow(GameCanvas);
             }
             else
             {
-                if (_adminWindow.IsVisible())
+                if (mAdminWindow.IsVisible())
                 {
-                    _adminWindow.Hide();
+                    mAdminWindow.Hide();
                 }
                 else
                 {
-                    _adminWindow.Show();
+                    mAdminWindow.Show();
                 }
             }
-            _shouldOpenAdminWindow = false;
+            mShouldOpenAdminWindow = false;
         }
 
         //Shop
         public void NotifyOpenShop()
         {
-            _shouldOpenShop = true;
+            mShouldOpenShop = true;
         }
 
         public void NotifyCloseShop()
         {
-            _shouldCloseShop = true;
+            mShouldCloseShop = true;
         }
 
         public void OpenShop()
         {
-            if (_shopWindow != null) _shopWindow.Close();
-            _shopWindow = new ShopWindow(GameCanvas);
-            _shouldOpenShop = false;
+            if (mShopWindow != null) mShopWindow.Close();
+            mShopWindow = new ShopWindow(GameCanvas);
+            mShouldOpenShop = false;
         }
 
         //Bank
         public void NotifyOpenBank()
         {
-            _shouldOpenBank = true;
+            mShouldOpenBank = true;
         }
 
         public void NotifyCloseBank()
         {
-            _shouldCloseBank = true;
+            mShouldCloseBank = true;
         }
 
         public void OpenBank()
         {
-            if (_bankWindow != null) _bankWindow.Close();
-            _bankWindow = new BankWindow(GameCanvas);
-            _shouldOpenBank = false;
+            if (mBankWindow != null) mBankWindow.Close();
+            mBankWindow = new BankWindow(GameCanvas);
+            mShouldOpenBank = false;
             Globals.InBank = true;
         }
 
         //Bag
         public void NotifyOpenBag()
         {
-            _shouldOpenBag = true;
+            mShouldOpenBag = true;
         }
 
         public void NotifyCloseBag()
         {
-            _shouldCloseBag = true;
+            mShouldCloseBag = true;
         }
 
         public void OpenBag()
         {
-            if (_bagWindow != null) _bagWindow.Close();
-            _bagWindow = new BagWindow(GameCanvas);
-            _shouldOpenBag = false;
+            if (mBagWindow != null) mBagWindow.Close();
+            mBagWindow = new BagWindow(GameCanvas);
+            mShouldOpenBag = false;
             Globals.InBag = true;
         }
 
         //Crafting
         public void NotifyOpenCraftingBench()
         {
-            _shouldOpenCraftingBench = true;
+            mShouldOpenCraftingBench = true;
         }
 
         public void NotifyCloseCraftingBench()
         {
-            _shouldCloseCraftingBench = true;
+            mShouldCloseCraftingBench = true;
         }
 
         public void OpenCraftingBench()
         {
-            if (_CraftingBenchWindow != null) _CraftingBenchWindow.Close();
-            _CraftingBenchWindow = new CraftingWindow(GameCanvas);
-            _shouldOpenCraftingBench = false;
+            if (mCraftingBenchWindow != null) mCraftingBenchWindow.Close();
+            mCraftingBenchWindow = new CraftingWindow(GameCanvas);
+            mShouldOpenCraftingBench = false;
             Globals.InCraft = true;
         }
 
         //Quest Log
         public void NotifyQuestsUpdated()
         {
-            _shouldUpdateQuestLog = true;
+            mShouldUpdateQuestLog = true;
         }
 
         //Trading
         public void NotifyOpenTrading(int index)
         {
-            _shouldOpenTrading = true;
-            _tradingTarget = index;
+            mShouldOpenTrading = true;
+            mTradingTarget = index;
         }
 
         public void NotifyCloseTrading()
         {
-            _shouldCloseTrading = true;
+            mShouldCloseTrading = true;
         }
 
         public void OpenTrading()
         {
-            if (_TradingWindow != null) _TradingWindow.Close();
-            _TradingWindow = new TradingWindow(GameCanvas, _tradingTarget);
-            _shouldOpenTrading = false;
+            if (mTradingWindow != null) mTradingWindow.Close();
+            mTradingWindow = new TradingWindow(GameCanvas, mTradingTarget);
+            mShouldOpenTrading = false;
             Globals.InTrade = true;
         }
 
         public void ShowHideDebug()
         {
-            if (_debugMenu.IsVisible())
+            if (mDebugMenu.IsVisible())
             {
-                _debugMenu.Hide();
+                mDebugMenu.Hide();
             }
             else
             {
-                _debugMenu.Show();
+                mDebugMenu.Show();
             }
         }
 
         public void ShowAdminWindow()
         {
-            if (_adminWindow == null)
+            if (mAdminWindow == null)
             {
-                _adminWindow = new AdminWindow(GameCanvas);
+                mAdminWindow = new AdminWindow(GameCanvas);
             }
-            _adminWindow.Show();
+            mAdminWindow.Show();
         }
 
         public bool AdminWindowOpen()
         {
-            if (_adminWindow != null && _adminWindow.IsVisible()) return true;
+            if (mAdminWindow != null && mAdminWindow.IsVisible()) return true;
             return false;
         }
 
         public void AdminWindowSelectName(string name)
         {
-            _adminWindow.SetName(name);
+            mAdminWindow.SetName(name);
         }
 
         public void Draw()
         {
-            if (Globals.Me != null && _playerBox._myEntity != Globals.Me)
+            if (Globals.Me != null && PlayerBox.MyEntity != Globals.Me)
             {
-                _playerBox.SetEntity(Globals.Me);
+                PlayerBox.SetEntity(Globals.Me);
             }
-            _eventWindow.Update();
-            _chatBox.Update();
-            GameMenu.Update(_shouldUpdateQuestLog);
-            _shouldUpdateQuestLog = false;
+            mEventWindow.Update();
+            mChatBox.Update();
+            mGameMenu.Update(mShouldUpdateQuestLog);
+            mShouldUpdateQuestLog = false;
             Hotbar.Update();
-            _debugMenu.Update();
-            if (_playerBox != null)
+            mDebugMenu.Update();
+            if (PlayerBox != null)
             {
-                _playerBox.Update();
+                PlayerBox.Update();
             }
 
             if (Globals.QuestOffers.Count > 0)
             {
                 var quest = QuestBase.Lookup.Get<QuestBase>(Globals.QuestOffers[0]);
-                _questOfferWindow.Update(quest);
+                mQuestOfferWindow.Update(quest);
             }
             else
             {
-                _questOfferWindow.Hide();
+                mQuestOfferWindow.Hide();
             }
 
             //Admin window update
-            if (_shouldOpenAdminWindow)
+            if (mShouldOpenAdminWindow)
             {
                 OpenAdminWindow();
             }
 
             //Shop Update
-            if (_shouldOpenShop) OpenShop();
-            if (_shopWindow != null && (!_shopWindow.IsVisible() || _shouldCloseShop))
+            if (mShouldOpenShop) OpenShop();
+            if (mShopWindow != null && (!mShopWindow.IsVisible() || mShouldCloseShop))
             {
                 PacketSender.SendCloseShop();
                 Globals.GameShop = null;
-                _shopWindow.Close();
-                _shopWindow = null;
+                mShopWindow.Close();
+                mShopWindow = null;
             }
-            _shouldCloseShop = false;
+            mShouldCloseShop = false;
 
             //Bank Update
-            if (_shouldOpenBank) OpenBank();
-            if (_bankWindow != null)
+            if (mShouldOpenBank) OpenBank();
+            if (mBankWindow != null)
             {
-                if (!_bankWindow.IsVisible() || _shouldCloseBank)
+                if (!mBankWindow.IsVisible() || mShouldCloseBank)
                 {
                     PacketSender.SendCloseBank();
-                    _bankWindow.Close();
-                    _bankWindow = null;
+                    mBankWindow.Close();
+                    mBankWindow = null;
                     Globals.InBank = false;
                 }
                 else
                 {
-                    _bankWindow.Update();
+                    mBankWindow.Update();
                 }
             }
-            _shouldCloseBank = false;
+            mShouldCloseBank = false;
 
             //Bag Update
-            if (_shouldOpenBag) OpenBag();
-            if (_bagWindow != null)
+            if (mShouldOpenBag) OpenBag();
+            if (mBagWindow != null)
             {
-                if (!_bagWindow.IsVisible() || _shouldCloseBag)
+                if (!mBagWindow.IsVisible() || mShouldCloseBag)
                 {
                     PacketSender.SendCloseBag();
-                    _bagWindow.Close();
-                    _bagWindow = null;
+                    mBagWindow.Close();
+                    mBagWindow = null;
                     Globals.InBag = false;
                 }
                 else
                 {
-                    _bagWindow.Update();
+                    mBagWindow.Update();
                 }
             }
-            _shouldCloseBag = false;
+            mShouldCloseBag = false;
 
             //Crafting station update
-            if (_shouldOpenCraftingBench) OpenCraftingBench();
-            if (_CraftingBenchWindow != null)
+            if (mShouldOpenCraftingBench) OpenCraftingBench();
+            if (mCraftingBenchWindow != null)
             {
-                if (!_CraftingBenchWindow.IsVisible() || _shouldCloseCraftingBench)
+                if (!mCraftingBenchWindow.IsVisible() || mShouldCloseCraftingBench)
                 {
                     PacketSender.SendCloseCraftingBench();
-                    _CraftingBenchWindow.Close();
-                    _CraftingBenchWindow = null;
+                    mCraftingBenchWindow.Close();
+                    mCraftingBenchWindow = null;
                     Globals.InCraft = false;
                 }
                 else
                 {
-                    _CraftingBenchWindow.Update();
+                    mCraftingBenchWindow.Update();
                 }
             }
-            _shouldCloseCraftingBench = false;
+            mShouldCloseCraftingBench = false;
 
             //Trading update
-            if (_shouldOpenTrading) OpenTrading();
-            if (_TradingWindow != null)
+            if (mShouldOpenTrading) OpenTrading();
+            if (mTradingWindow != null)
             {
-                if (_shouldCloseTrading)
+                if (mShouldCloseTrading)
                 {
-                    _TradingWindow.Close();
-                    _TradingWindow = null;
+                    mTradingWindow.Close();
+                    mTradingWindow = null;
                     Globals.InTrade = false;
-                    _shouldCloseTrading = false;
+                    mShouldCloseTrading = false;
                 }
                 else
                 {
-                    if (!_TradingWindow.IsVisible())
+                    if (!mTradingWindow.IsVisible())
                     {
                         PacketSender.SendDeclineTrade();
-                        _TradingWindow.Close();
-                        _TradingWindow = null;
+                        mTradingWindow.Close();
+                        mTradingWindow = null;
                         Globals.InTrade = false;
                     }
                     else
                     {
-                        _TradingWindow.Update();
+                        mTradingWindow.Update();
                     }
                 }
             }
-            _shouldCloseTrading = false;
+            mShouldCloseTrading = false;
 
             if (FocusChat)
             {
-                _chatBox.Focus();
+                mChatBox.Focus();
                 FocusChat = false;
             }
             GameCanvas.RenderCanvas();

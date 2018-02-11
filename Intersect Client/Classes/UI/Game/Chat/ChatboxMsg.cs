@@ -5,41 +5,41 @@ namespace Intersect_Client.Classes.UI.Game.Chat
 {
     public class ChatboxMsg
     {
-        private static List<ChatboxMsg> GameMessages = new List<ChatboxMsg>();
-        private string _msg = "";
-        private Color _msgColor;
-        private string _target = "";
+        private static List<ChatboxMsg> sGameMessages = new List<ChatboxMsg>();
+        private string mMsg = "";
+        private Color mMsgColor;
+        private string mTarget = "";
 
         public ChatboxMsg(string msg, Color clr, string target = "")
         {
-            _msg = msg;
-            _msgColor = clr;
-            _target = target;
+            mMsg = msg;
+            mMsgColor = clr;
+            mTarget = target;
         }
 
         public string GetMessage()
         {
-            return _msg;
+            return mMsg;
         }
 
         public Color GetColor()
         {
-            return _msgColor;
+            return mMsgColor;
         }
 
         public string GetTarget()
         {
-            return _target;
+            return mTarget;
         }
 
         public static void AddMessage(ChatboxMsg msg)
         {
-            GameMessages.Add(msg);
+            sGameMessages.Add(msg);
         }
 
         public static List<ChatboxMsg> GetMessages()
         {
-            return GameMessages;
+            return sGameMessages;
         }
     }
 }

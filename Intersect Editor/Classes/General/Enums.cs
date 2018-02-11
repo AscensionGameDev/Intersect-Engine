@@ -24,7 +24,7 @@
         Delete = 3,
     }
 
-    public enum EdittingTool
+    public enum EditingTool
     {
         Pen = 0,
         Selection = 1,

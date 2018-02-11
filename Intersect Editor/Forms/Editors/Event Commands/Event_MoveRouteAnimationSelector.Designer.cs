@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class Event_MoveRouteAnimationSelector
+    partial class EventMoveRouteAnimationSelector
     {
         /// <summary> 
         /// Required designer variable.
@@ -104,7 +104,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpSetAnimation);
-            this.Name = "Event_MoveRouteAnimationSelector";
+            this.Name = "EventMoveRouteAnimationSelector";
             this.Size = new System.Drawing.Size(204, 105);
             this.grpSetAnimation.ResumeLayout(false);
             this.grpSetAnimation.PerformLayout();

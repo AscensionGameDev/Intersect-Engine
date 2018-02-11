@@ -9,10 +9,10 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
     {
         public new const string DATABASE_TABLE = "maps";
         public new const GameObject OBJECT_TYPE = GameObject.Map;
-        protected static Dictionary<int, MapBase> Objects = new Dictionary<int, MapBase>();
+        protected static Dictionary<int, MapBase> sObjects = new Dictionary<int, MapBase>();
 
         //SyncLock
-        protected object _mapLock = new object();
+        protected object mMapLock = new object();
 
         //Client/Editor Only
         public MapAutotiles Autotiles;
@@ -73,11 +73,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
                             {
                                 Attributes[x, y] = new Attribute()
                                 {
-                                    value = mapcopy.Attributes[x, y].value,
-                                    data1 = mapcopy.Attributes[x, y].data1,
-                                    data2 = mapcopy.Attributes[x, y].data2,
-                                    data3 = mapcopy.Attributes[x, y].data3,
-                                    data4 = mapcopy.Attributes[x, y].data4
+                                    Value = mapcopy.Attributes[x, y].Value,
+                                    Data1 = mapcopy.Attributes[x, y].Data1,
+                                    Data2 = mapcopy.Attributes[x, y].Data2,
+                                    Data3 = mapcopy.Attributes[x, y].Data3,
+                                    Data4 = mapcopy.Attributes[x, y].Data4
                                 };
                             }
                         }
@@ -138,7 +138,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         public object GetMapLock()
         {
-            return _mapLock;
+            return mMapLock;
         }
 
         public override void Load(byte[] packet)
@@ -196,11 +196,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
                         {
                             Attributes[x, y] = new Attribute()
                             {
-                                value = attributeType,
-                                data1 = bf.ReadInteger(),
-                                data2 = bf.ReadInteger(),
-                                data3 = bf.ReadInteger(),
-                                data4 = bf.ReadString()
+                                Value = attributeType,
+                                Data1 = bf.ReadInteger(),
+                                Data2 = bf.ReadInteger(),
+                                Data3 = bf.ReadInteger(),
+                                Data4 = bf.ReadString()
                             };
                         }
                         else
@@ -223,14 +223,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
                     var npcCount = bf.ReadInteger();
                     for (var i = 0; i < npcCount; i++)
                     {
-                        var TempNpc = new NpcSpawn()
+                        var tempNpc = new NpcSpawn()
                         {
                             NpcNum = bf.ReadInteger(),
                             X = bf.ReadInteger(),
                             Y = bf.ReadInteger(),
                             Dir = bf.ReadInteger()
                         };
-                        Spawns.Add(TempNpc);
+                        Spawns.Add(tempNpc);
                     }
                     Events.Clear();
                     EventIndex = bf.ReadInteger();
@@ -302,13 +302,13 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
                     }
                     else
                     {
-                        bf.WriteInteger(Attributes[x, y].value);
-                        if (Attributes[x, y].value > 0)
+                        bf.WriteInteger(Attributes[x, y].Value);
+                        if (Attributes[x, y].Value > 0)
                         {
-                            bf.WriteInteger(Attributes[x, y].data1);
-                            bf.WriteInteger(Attributes[x, y].data2);
-                            bf.WriteInteger(Attributes[x, y].data3);
-                            bf.WriteString(Attributes[x, y].data4);
+                            bf.WriteInteger(Attributes[x, y].Data1);
+                            bf.WriteInteger(Attributes[x, y].Data2);
+                            bf.WriteInteger(Attributes[x, y].Data3);
+                            bf.WriteString(Attributes[x, y].Data4);
                         }
                     }
                 }
@@ -346,18 +346,18 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         public static MapBase GetMap(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return (MapBase) Objects[index];
+                return (MapBase) sObjects[index];
             }
             return null;
         }
 
         public static string GetName(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return ((MapBase) Objects[index]).MyName;
+                return ((MapBase) sObjects[index]).MyName;
             }
             return "Deleted";
         }
@@ -379,36 +379,36 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         public static DatabaseObject Get(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return Objects[index];
+                return sObjects[index];
             }
             return null;
         }
 
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            sObjects.Remove(GetId());
         }
 
         public static void ClearObjects()
         {
-            Objects.Clear();
+            sObjects.Clear();
         }
 
         public static void AddObject(int index, DatabaseObject obj)
         {
-            Objects.Add(index, (MapBase) obj);
+            sObjects.Add(index, (MapBase) obj);
         }
 
         public static int ObjectCount()
         {
-            return Objects.Count;
+            return sObjects.Count;
         }
 
         public static Dictionary<int, MapBase> GetObjects()
         {
-            return Objects;
+            return sObjects;
         }
     }
 }

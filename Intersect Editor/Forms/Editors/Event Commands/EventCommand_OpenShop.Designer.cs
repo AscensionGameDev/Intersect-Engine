@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_OpenShop
+    partial class EventCommandOpenShop
     {
         /// <summary> 
         /// Required designer variable.
@@ -104,7 +104,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpShop);
-            this.Name = "EventCommand_OpenShop";
+            this.Name = "EventCommandOpenShop";
             this.Size = new System.Drawing.Size(182, 132);
             this.grpShop.ResumeLayout(false);
             this.grpShop.PerformLayout();

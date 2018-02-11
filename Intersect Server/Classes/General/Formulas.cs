@@ -11,9 +11,9 @@ namespace Intersect.Server.Classes.General
 {
     public static class Formulas
     {
-        private static string PhysicalDamage = "";
-        private static string MagicDamage = "";
-        private static string TrueDamage = "";
+        private static string sPhysicalDamage = "";
+        private static string sMagicDamage = "";
+        private static string sTrueDamage = "";
 
         public static bool LoadFormulas()
         {
@@ -27,9 +27,9 @@ namespace Intersect.Server.Classes.General
             try
             {
                 formulas.LoadXml(formulaXml);
-                PhysicalDamage = GetXmlStr(formulas, "//Formulas/PhysicalDamage");
-                MagicDamage = GetXmlStr(formulas, "//Formulas/MagicDamage");
-                TrueDamage = GetXmlStr(formulas, "//Formulas/TrueDamage");
+                sPhysicalDamage = GetXmlStr(formulas, "//Formulas/PhysicalDamage");
+                sMagicDamage = GetXmlStr(formulas, "//Formulas/MagicDamage");
+                sTrueDamage = GetXmlStr(formulas, "//Formulas/TrueDamage");
                 return true;
             }
             catch (Exception ex)
@@ -53,16 +53,16 @@ namespace Intersect.Server.Classes.General
             switch (damageType)
             {
                 case DamageType.Physical:
-                    expression = PhysicalDamage;
+                    expression = sPhysicalDamage;
                     break;
                 case DamageType.Magic:
-                    expression = MagicDamage;
+                    expression = sMagicDamage;
                     break;
                 case DamageType.True:
-                    expression = TrueDamage;
+                    expression = sTrueDamage;
                     break;
                 default:
-                    expression = TrueDamage;
+                    expression = sTrueDamage;
                     break;
             }
             Expression e = new Expression(expression);

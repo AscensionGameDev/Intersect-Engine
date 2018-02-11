@@ -11,112 +11,112 @@ namespace Intersect_Client.Classes.UI.Game
     class DebugMenu
     {
         //Controls
-        private WindowControl _debugWindow;
+        private WindowControl mDebugWindow;
 
-        private Label _drawsLabel;
-        private Label _entitiesDrawnLabel;
-        private Label _entitiesLabel;
-        private Label _fpsLabel;
-        private Label _lightsDrawnLabel;
-        private Label _mapLabel;
-        private Label _mapsDrawnLabel;
-        private Label _mapsLoadedLabel;
-        private Label _pingLabel;
-        private Label _timeLabel;
-        private Label _xLabel;
-        private Label _yLabel;
-        private Label _zLabel;
+        private Label mDrawsLabel;
+        private Label mEntitiesDrawnLabel;
+        private Label mEntitiesLabel;
+        private Label mFpsLabel;
+        private Label mLightsDrawnLabel;
+        private Label mMapLabel;
+        private Label mMapsDrawnLabel;
+        private Label mMapsLoadedLabel;
+        private Label mPingLabel;
+        private Label mTimeLabel;
+        private Label mXLabel;
+        private Label mYLabel;
+        private Label mZLabel;
 
         //Init
-        public DebugMenu(Canvas _gameCanvas)
+        public DebugMenu(Canvas gameCanvas)
         {
-            _debugWindow = new WindowControl(_gameCanvas, Strings.Get("debug", "title"));
-            _debugWindow.SetSize(200, 212);
-            _debugWindow.SetPosition(0, 150);
-            _debugWindow.DisableResizing();
-            _debugWindow.Margin = Margin.Zero;
-            _debugWindow.Padding = Padding.Zero;
-            _debugWindow.Hide();
+            mDebugWindow = new WindowControl(gameCanvas, Strings.Get("debug", "title"));
+            mDebugWindow.SetSize(200, 212);
+            mDebugWindow.SetPosition(0, 150);
+            mDebugWindow.DisableResizing();
+            mDebugWindow.Margin = Margin.Zero;
+            mDebugWindow.Padding = Padding.Zero;
+            mDebugWindow.Hide();
 
-            _fpsLabel = new Label(_debugWindow);
-            _fpsLabel.SetPosition(4, 4);
+            mFpsLabel = new Label(mDebugWindow);
+            mFpsLabel.SetPosition(4, 4);
 
-            _pingLabel = new Label(_debugWindow);
-            _pingLabel.SetPosition(4, 16);
+            mPingLabel = new Label(mDebugWindow);
+            mPingLabel.SetPosition(4, 16);
 
-            _drawsLabel = new Label(_debugWindow);
-            _drawsLabel.SetPosition(4, 28);
+            mDrawsLabel = new Label(mDebugWindow);
+            mDrawsLabel.SetPosition(4, 28);
 
-            _mapLabel = new Label(_debugWindow);
-            _mapLabel.SetPosition(4, 40);
+            mMapLabel = new Label(mDebugWindow);
+            mMapLabel.SetPosition(4, 40);
 
-            _xLabel = new Label(_debugWindow);
-            _xLabel.SetPosition(4, 52);
+            mXLabel = new Label(mDebugWindow);
+            mXLabel.SetPosition(4, 52);
 
-            _yLabel = new Label(_debugWindow);
-            _yLabel.SetPosition(4, 64);
+            mYLabel = new Label(mDebugWindow);
+            mYLabel.SetPosition(4, 64);
 
-            _zLabel = new Label(_debugWindow);
-            _zLabel.SetPosition(4, 76);
+            mZLabel = new Label(mDebugWindow);
+            mZLabel.SetPosition(4, 76);
 
-            _entitiesLabel = new Label(_debugWindow);
-            _entitiesLabel.SetPosition(4, 88);
+            mEntitiesLabel = new Label(mDebugWindow);
+            mEntitiesLabel.SetPosition(4, 88);
 
-            _mapsLoadedLabel = new Label(_debugWindow);
-            _mapsLoadedLabel.SetPosition(4, 100);
+            mMapsLoadedLabel = new Label(mDebugWindow);
+            mMapsLoadedLabel.SetPosition(4, 100);
 
-            _mapsDrawnLabel = new Label(_debugWindow);
-            _mapsDrawnLabel.SetPosition(4, 112);
+            mMapsDrawnLabel = new Label(mDebugWindow);
+            mMapsDrawnLabel.SetPosition(4, 112);
 
-            _entitiesDrawnLabel = new Label(_debugWindow);
-            _entitiesDrawnLabel.SetPosition(4, 124);
+            mEntitiesDrawnLabel = new Label(mDebugWindow);
+            mEntitiesDrawnLabel.SetPosition(4, 124);
 
-            _lightsDrawnLabel = new Label(_debugWindow);
-            _lightsDrawnLabel.SetPosition(4, 136);
+            mLightsDrawnLabel = new Label(mDebugWindow);
+            mLightsDrawnLabel.SetPosition(4, 136);
 
-            _timeLabel = new Label(_debugWindow);
-            _timeLabel.SetPosition(4, 148);
+            mTimeLabel = new Label(mDebugWindow);
+            mTimeLabel.SetPosition(4, 148);
         }
 
         public void Update()
         {
-            _fpsLabel.Text = Strings.Get("debug", "fps", GameGraphics.Renderer.GetFps());
-            _pingLabel.Text = Strings.Get("debug", "ping", GameNetwork.Ping);
-            _drawsLabel.Text = Strings.Get("debug", "draws", GameGraphics.DrawCalls);
+            mFpsLabel.Text = Strings.Get("debug", "fps", GameGraphics.Renderer.GetFps());
+            mPingLabel.Text = Strings.Get("debug", "ping", GameNetwork.Ping);
+            mDrawsLabel.Text = Strings.Get("debug", "draws", GameGraphics.DrawCalls);
             if (MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
             {
-                _mapLabel.Text = Strings.Get("debug", "map",
+                mMapLabel.Text = Strings.Get("debug", "map",
                     MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).Name);
-                _xLabel.Text = Strings.Get("debug", "x", Globals.Me.CurrentX);
-                _yLabel.Text = Strings.Get("debug", "y", Globals.Me.CurrentY);
-                _zLabel.Text = Strings.Get("debug", "z", Globals.Me.CurrentZ);
+                mXLabel.Text = Strings.Get("debug", "x", Globals.Me.CurrentX);
+                mYLabel.Text = Strings.Get("debug", "y", Globals.Me.CurrentY);
+                mZLabel.Text = Strings.Get("debug", "z", Globals.Me.CurrentZ);
             }
             int entityCount = Globals.Entities.Count;
             foreach (MapInstance map in MapInstance.Lookup.IndexValues)
             {
                 if (map != null) entityCount += map.LocalEntities.Count;
             }
-            _entitiesLabel.Text = Strings.Get("debug", "knownentities", Globals.Entities.Count);
-            _mapsLoadedLabel.Text = Strings.Get("debug", "knownmaps", MapInstance.Lookup.Count);
-            _mapsDrawnLabel.Text = Strings.Get("debug", "mapsdrawn", GameGraphics.MapsDrawn);
-            _entitiesDrawnLabel.Text = Strings.Get("debug", "entitiesdrawn", +GameGraphics.EntitiesDrawn);
-            _lightsDrawnLabel.Text = Strings.Get("debug", "lightsdrawn", GameGraphics.LightsDrawn);
-            _timeLabel.Text = Strings.Get("debug", "time", ClientTime.GetTime());
+            mEntitiesLabel.Text = Strings.Get("debug", "knownentities", Globals.Entities.Count);
+            mMapsLoadedLabel.Text = Strings.Get("debug", "knownmaps", MapInstance.Lookup.Count);
+            mMapsDrawnLabel.Text = Strings.Get("debug", "mapsdrawn", GameGraphics.MapsDrawn);
+            mEntitiesDrawnLabel.Text = Strings.Get("debug", "entitiesdrawn", +GameGraphics.EntitiesDrawn);
+            mLightsDrawnLabel.Text = Strings.Get("debug", "lightsdrawn", GameGraphics.LightsDrawn);
+            mTimeLabel.Text = Strings.Get("debug", "time", ClientTime.GetTime());
         }
 
         public void Show()
         {
-            _debugWindow.IsHidden = false;
+            mDebugWindow.IsHidden = false;
         }
 
         public bool IsVisible()
         {
-            return !_debugWindow.IsHidden;
+            return !mDebugWindow.IsHidden;
         }
 
         public void Hide()
         {
-            _debugWindow.IsHidden = true;
+            mDebugWindow.IsHidden = true;
         }
     }
 }

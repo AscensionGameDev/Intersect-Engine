@@ -26,10 +26,12 @@ namespace Intersect.Editor.Classes
         public static EditorSystem System = new EditorSystem();
 
         public static int MyIndex;
-        public static frmMain MainForm;
+        public static FrmMain MainForm;
         public static FrmLogin LoginForm;
         public static bool HasGameData = false;
         public static bool InEditor;
+
+        public static bool SavingOnClose;
 
         public static bool ClosingEditor;
 
@@ -55,8 +57,8 @@ namespace Intersect.Editor.Classes
         public static int MouseButton = -1;
         public static int CurrentLayer = 0;
         public static bool ViewingMapProperties = false;
-        public static int CurrentTool = (int) EdittingTool.Pen;
-        public static int SavedTool = (int) EdittingTool.Pen;
+        public static int CurrentTool = (int) EditingTool.Pen;
+        public static int SavedTool = (int) EditingTool.Pen;
         public static int CurMapSelX;
         public static int CurMapSelY;
         public static int CurMapSelW;
@@ -85,15 +87,15 @@ namespace Intersect.Editor.Classes
         public static bool IsPaste;
 
         //Game Object Editors
-        public static frmResource ResourceEditor;
+        public static FrmResource ResourceEditor;
 
         //Docking Window References
-        public static frmMapLayers MapLayersWindow;
+        public static FrmMapLayers MapLayersWindow;
 
-        public static frmMapEditor MapEditorWindow;
-        public static frmMapList MapListWindow;
-        public static frmMapProperties MapPropertiesWindow;
-        public static frmMapGrid MapGridWindowNew;
+        public static FrmMapEditor MapEditorWindow;
+        public static FrmMapList MapListWindow;
+        public static FrmMapProperties MapPropertiesWindow;
+        public static FrmMapGrid MapGridWindowNew;
         public static MapGrid MapGrid;
 
         //Preview Fetching Variables
@@ -102,7 +104,7 @@ namespace Intersect.Editor.Classes
         public static List<int> MapsToFetch;
         public static List<int> MapsToScreenshot = new List<int>();
         public static int FetchCount;
-        public static frmProgress PreviewProgressForm;
+        public static FrmProgress PreviewProgressForm;
 
         public static LightBase BackupLight;
         public static LightBase EditingLight;

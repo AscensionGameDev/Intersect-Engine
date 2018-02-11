@@ -16,8 +16,8 @@ namespace Intersect.Editor.Forms
         public delegate void BeginEditorLoop();
 
         public BeginEditorLoop EditorLoopDelegate;
-        private string SavedPassword = "";
-        private bool optionsLoaded = false;
+        private string mSavedPassword = "";
+        private bool mOptionsLoaded = false;
 
         public FrmLogin()
         {
@@ -31,14 +31,14 @@ namespace Intersect.Editor.Forms
             GameContentManager.CheckForResources();
             if (Database.LoadOptions())
             {
-                optionsLoaded = true;
+                mOptionsLoaded = true;
                 Strings.Init(Strings.IntersectComponent.Editor, Options.Language);
                 EditorLoopDelegate = EditorLoop.StartLoop;
                 if (Preferences.LoadPreference("username").Trim().Length > 0)
                 {
                     txtUsername.Text = Preferences.LoadPreference("Username");
                     txtPassword.Text = "*****";
-                    SavedPassword = Preferences.LoadPreference("Password");
+                    mSavedPassword = Preferences.LoadPreference("Password");
                     chkRemember.Checked = true;
                 }
                 Database.InitMapCache();
@@ -65,7 +65,7 @@ namespace Intersect.Editor.Forms
 
         private void tmrSocket_Tick(object sender, EventArgs e)
         {
-            if (!optionsLoaded) return;
+            if (!mOptionsLoaded) return;
             EditorNetwork.Update();
             var statusString = Strings.Get("login", "connecting");
             if (EditorNetwork.Connected)
@@ -99,9 +99,9 @@ namespace Intersect.Editor.Forms
             if (txtUsername.Text.Trim().Length > 0 && txtPassword.Text.Trim().Length > 0)
             {
                 var sha = new SHA256Managed();
-                if (SavedPassword != "")
+                if (mSavedPassword != "")
                 {
-                    PacketSender.SendLogin(txtUsername.Text.Trim(), SavedPassword);
+                    PacketSender.SendLogin(txtUsername.Text.Trim(), mSavedPassword);
                 }
                 else
                 {
@@ -133,9 +133,9 @@ namespace Intersect.Editor.Forms
             if (chkRemember.Checked)
             {
                 Preferences.SavePreference("Username", txtUsername.Text);
-                if (SavedPassword != "")
+                if (mSavedPassword != "")
                 {
-                    Preferences.SavePreference("Password", SavedPassword);
+                    Preferences.SavePreference("Password", mSavedPassword);
                 }
                 else
                 {
@@ -154,9 +154,9 @@ namespace Intersect.Editor.Forms
         private void txtPassword_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Return) return;
-            if (SavedPassword != "")
+            if (mSavedPassword != "")
             {
-                SavedPassword = "";
+                mSavedPassword = "";
                 txtPassword.Text = "";
                 chkRemember.Checked = false;
             }
@@ -165,9 +165,9 @@ namespace Intersect.Editor.Forms
         private void txtUsername_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Return) return;
-            if (SavedPassword != "")
+            if (mSavedPassword != "")
             {
-                SavedPassword = "";
+                mSavedPassword = "";
                 txtUsername.Text = "";
                 txtPassword.Text = "";
                 chkRemember.Checked = false;
@@ -178,7 +178,7 @@ namespace Intersect.Editor.Forms
         {
             if (e.KeyCode == Keys.F1)
             {
-                new frmOptions().ShowDialog();
+                new FrmOptions().ShowDialog();
             }
         }
 

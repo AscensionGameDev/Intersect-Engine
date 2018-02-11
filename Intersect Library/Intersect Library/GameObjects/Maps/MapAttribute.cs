@@ -2,20 +2,20 @@
 {
     public class Attribute
     {
-        public int data1;
-        public int data2;
-        public int data3;
-        public string data4 = "";
-        public int value;
+        public int Data1;
+        public int Data2;
+        public int Data3;
+        public string Data4 = "";
+        public int Value;
 
         public byte[] Data()
         {
             var bf = new ByteBuffer();
-            bf.WriteInteger(value);
-            bf.WriteInteger(data1);
-            bf.WriteInteger(data2);
-            bf.WriteInteger(data3);
-            bf.WriteString(data4);
+            bf.WriteInteger(Value);
+            bf.WriteInteger(Data1);
+            bf.WriteInteger(Data2);
+            bf.WriteInteger(Data3);
+            bf.WriteString(Data4);
             return bf.ToArray();
         }
     }

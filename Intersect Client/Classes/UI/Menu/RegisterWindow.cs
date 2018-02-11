@@ -13,99 +13,99 @@ namespace Intersect_Client.Classes.UI.Menu
 {
     public class RegisterWindow
     {
-        private Button _backBtn;
+        private Button mBackBtn;
 
-        private ImagePanel _emailBackground;
-        private Label _emailLabel;
-        private TextBox _emailTextbox;
+        private ImagePanel mEmailBackground;
+        private Label mEmailLabel;
+        private TextBox mEmailTextbox;
 
         //Parent
-        private MainMenu _mainMenu;
+        private MainMenu mMainMenu;
 
-        private ImagePanel _passwordBackground;
+        private ImagePanel mPasswordBackground;
 
-        private ImagePanel _passwordBackground2;
-        private Label _passwordLabel;
-        private Label _passwordLabel2;
-        private TextBoxPassword _passwordTextbox;
-        private TextBoxPassword _passwordTextbox2;
-        private Button _registerBtn;
+        private ImagePanel mPasswordBackground2;
+        private Label mPasswordLabel;
+        private Label mPasswordLabel2;
+        private TextBoxPassword mPasswordTextbox;
+        private TextBoxPassword mPasswordTextbox2;
+        private Button mRegisterBtn;
 
-        private Label _registrationHeader;
+        private Label mRegistrationHeader;
 
         //Controls
-        private ImagePanel _registrationPanel;
+        private ImagePanel mRegistrationPanel;
 
-        private ImagePanel _usernameBackground;
-        private Label _usernameLabel;
-        private TextBox _usernameTextbox;
+        private ImagePanel mUsernameBackground;
+        private Label mUsernameLabel;
+        private TextBox mUsernameTextbox;
 
         //Init
         public RegisterWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
         {
             //Assign References
-            _mainMenu = mainMenu;
+            mMainMenu = mainMenu;
 
             //Main Menu Window
-            _registrationPanel = new ImagePanel(parent, "RegistrationWindow");
+            mRegistrationPanel = new ImagePanel(parent, "RegistrationWindow");
 
             //Menu Header
-            _registrationHeader = new Label(_registrationPanel, "RegistrationLabel");
-            _registrationHeader.SetText(Strings.Get("registration", "title"));
+            mRegistrationHeader = new Label(mRegistrationPanel, "RegistrationLabel");
+            mRegistrationHeader.SetText(Strings.Get("registration", "title"));
 
             //Register Username Background
-            _usernameBackground = new ImagePanel(_registrationPanel, "UsernamePanel");
+            mUsernameBackground = new ImagePanel(mRegistrationPanel, "UsernamePanel");
 
             //Register Username Label
-            _usernameLabel = new Label(_usernameBackground, "UsernameLabel");
-            _usernameLabel.SetText(Strings.Get("registration", "username"));
+            mUsernameLabel = new Label(mUsernameBackground, "UsernameLabel");
+            mUsernameLabel.SetText(Strings.Get("registration", "username"));
 
             //Register Username Textbox
-            _usernameTextbox = new TextBox(_usernameBackground, "UsernameField");
-            _usernameTextbox.SubmitPressed += UsernameTextbox_SubmitPressed;
+            mUsernameTextbox = new TextBox(mUsernameBackground, "UsernameField");
+            mUsernameTextbox.SubmitPressed += UsernameTextbox_SubmitPressed;
 
             //Register Email Background
-            _emailBackground = new ImagePanel(_registrationPanel, "EmailPanel");
+            mEmailBackground = new ImagePanel(mRegistrationPanel, "EmailPanel");
 
             //Register Email Label
-            _emailLabel = new Label(_emailBackground, "EmailLabel");
-            _emailLabel.SetText(Strings.Get("registration", "email"));
+            mEmailLabel = new Label(mEmailBackground, "EmailLabel");
+            mEmailLabel.SetText(Strings.Get("registration", "email"));
 
             //Register Email Textbox
-            _emailTextbox = new TextBox(_emailBackground, "EmailField");
-            _emailTextbox.SubmitPressed += EmailTextbox_SubmitPressed;
+            mEmailTextbox = new TextBox(mEmailBackground, "EmailField");
+            mEmailTextbox.SubmitPressed += EmailTextbox_SubmitPressed;
 
             //Register Password Background
-            _passwordBackground = new ImagePanel(_registrationPanel, "Password1Panel");
+            mPasswordBackground = new ImagePanel(mRegistrationPanel, "Password1Panel");
 
             //Register Password Label
-            _passwordLabel = new Label(_passwordBackground, "Password1Label");
-            _passwordLabel.SetText(Strings.Get("registration", "password"));
+            mPasswordLabel = new Label(mPasswordBackground, "Password1Label");
+            mPasswordLabel.SetText(Strings.Get("registration", "password"));
 
             //Register Password Textbox
-            _passwordTextbox = new TextBoxPassword(_passwordBackground, "Password1Field");
-            _passwordTextbox.SubmitPressed += PasswordTextbox_SubmitPressed;
+            mPasswordTextbox = new TextBoxPassword(mPasswordBackground, "Password1Field");
+            mPasswordTextbox.SubmitPressed += PasswordTextbox_SubmitPressed;
 
             //Register Password Background
-            _passwordBackground2 = new ImagePanel(_registrationPanel, "Password2Panel");
+            mPasswordBackground2 = new ImagePanel(mRegistrationPanel, "Password2Panel");
 
             //Register Password Label2
-            _passwordLabel2 = new Label(_passwordBackground2, "Password2Label");
-            _passwordLabel2.SetText(Strings.Get("registration", "confirmpass"));
+            mPasswordLabel2 = new Label(mPasswordBackground2, "Password2Label");
+            mPasswordLabel2.SetText(Strings.Get("registration", "confirmpass"));
 
             //Register Password Textbox2
-            _passwordTextbox2 = new TextBoxPassword(_passwordBackground2, "Password2Field");
-            _passwordTextbox2.SubmitPressed += PasswordTextbox2_SubmitPressed;
+            mPasswordTextbox2 = new TextBoxPassword(mPasswordBackground2, "Password2Field");
+            mPasswordTextbox2.SubmitPressed += PasswordTextbox2_SubmitPressed;
 
             //Register - Send Registration Button
-            _registerBtn = new Button(_registrationPanel, "RegisterButton");
-            _registerBtn.SetText(Strings.Get("registration", "register"));
-            _registerBtn.Clicked += RegisterBtn_Clicked;
+            mRegisterBtn = new Button(mRegistrationPanel, "RegisterButton");
+            mRegisterBtn.SetText(Strings.Get("registration", "register"));
+            mRegisterBtn.Clicked += RegisterBtn_Clicked;
 
             //Register - Back Button
-            _backBtn = new Button(_registrationPanel, "BackButton");
-            _backBtn.SetText(Strings.Get("registration", "back"));
-            _backBtn.Clicked += BackBtn_Clicked;
+            mBackBtn = new Button(mRegistrationPanel, "BackButton");
+            mBackBtn.SetText(Strings.Get("registration", "back"));
+            mBackBtn.Clicked += BackBtn_Clicked;
         }
 
         //Methods
@@ -115,12 +115,12 @@ namespace Intersect_Client.Classes.UI.Menu
 
         public void Show()
         {
-            _registrationPanel.Show();
+            mRegistrationPanel.Show();
         }
 
         public void Hide()
         {
-            _registrationPanel.Hide();
+            mRegistrationPanel.Hide();
         }
 
         void TryRegister()
@@ -131,18 +131,18 @@ namespace Intersect_Client.Classes.UI.Menu
             }
             if (GameNetwork.Connected)
             {
-                if (FieldChecking.IsValidUsername(_usernameTextbox.Text))
+                if (FieldChecking.IsValidUsername(mUsernameTextbox.Text))
                 {
-                    if (_passwordTextbox.Text == _passwordTextbox2.Text)
+                    if (mPasswordTextbox.Text == mPasswordTextbox2.Text)
                     {
-                        if (FieldChecking.IsValidPassword(_passwordTextbox.Text))
+                        if (FieldChecking.IsValidPassword(mPasswordTextbox.Text))
                         {
-                            if (FieldChecking.IsWellformedEmailAddress(_emailTextbox.Text))
+                            if (FieldChecking.IsWellformedEmailAddress(mEmailTextbox.Text))
                             {
                                 GameFade.FadeOut();
                                 Hide();
-                                PacketSender.SendCreateAccount(_usernameTextbox.Text, _passwordTextbox.Text,
-                                    _emailTextbox.Text);
+                                PacketSender.SendCreateAccount(mUsernameTextbox.Text, mPasswordTextbox.Text,
+                                    mEmailTextbox.Text);
                                 Globals.WaitingOnServer = true;
                             }
                             else
@@ -204,7 +204,7 @@ namespace Intersect_Client.Classes.UI.Menu
         void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Hide();
-            _mainMenu.Show();
+            mMainMenu.Show();
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             : base()
         {
             Name = "New Folder";
-            type = 0;
+            Type = 0;
         }
 
         public void GetData(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps)

@@ -21,15 +21,15 @@ namespace Intersect.Editor.Forms
 {
     public partial class FrmEvent : Form
     {
-        private readonly List<CommandListProperties> _commandProperties = new List<CommandListProperties>();
-        private readonly MapBase _currentMap;
-        private int _currentCommand = -1;
-        private EventCommand _editingCommand;
-        private ByteBuffer _eventBackup = new ByteBuffer();
-        private bool _isEdit;
-        private bool _isInsert;
-        private ByteBuffer _pageCopy;
-        private List<DarkButton> _pageTabs = new List<DarkButton>();
+        private readonly List<CommandListProperties> mCommandProperties = new List<CommandListProperties>();
+        private readonly MapBase mCurrentMap;
+        private int mCurrentCommand = -1;
+        private EventCommand mEditingCommand;
+        private ByteBuffer mEventBackup = new ByteBuffer();
+        private bool mIsEdit;
+        private bool mIsInsert;
+        private ByteBuffer mPageCopy;
+        private List<DarkButton> mPageTabs = new List<DarkButton>();
         public EventPage CurrentPage;
         public int CurrentPageIndex;
         public EventBase MyEvent;
@@ -56,15 +56,15 @@ namespace Intersect.Editor.Forms
 
         private void lstEventCommands_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _currentCommand = lstEventCommands.SelectedIndex;
+            mCurrentCommand = lstEventCommands.SelectedIndex;
         }
 
         private void lstEventCommands_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode != Keys.Delete) return;
-            if (_currentCommand <= -1) return;
-            if (!_commandProperties[_currentCommand].Editable) return;
-            _commandProperties[_currentCommand].MyList.Commands.Remove(_commandProperties[_currentCommand].Cmd);
+            if (mCurrentCommand <= -1) return;
+            if (!mCommandProperties[mCurrentCommand].Editable) return;
+            mCommandProperties[mCurrentCommand].MyList.Commands.Remove(mCommandProperties[mCurrentCommand].Cmd);
             ListPageCommands();
         }
 
@@ -73,33 +73,33 @@ namespace Intersect.Editor.Forms
             if (e.Button != MouseButtons.Right) return;
             var i = lstEventCommands.IndexFromPoint(e.Location);
             if (i <= -1 || i >= lstEventCommands.Items.Count) return;
-            if (!_commandProperties[i].Editable) return;
+            if (!mCommandProperties[i].Editable) return;
             lstEventCommands.SelectedIndex = i;
             commandMenu.Show((ListBox) sender, e.Location);
             btnEdit.Enabled = true;
-            if (!_commandProperties[_currentCommand].Editable) btnEdit.Enabled = false;
-            if (_commandProperties[_currentCommand].MyList.Commands.Count == 0 ||
-                _commandProperties[_currentCommand].MyIndex >=
-                _commandProperties[_currentCommand].MyList.Commands.Count ||
-                _commandProperties[_currentCommand].MyIndex < 0) btnEdit.Enabled = false;
+            if (!mCommandProperties[mCurrentCommand].Editable) btnEdit.Enabled = false;
+            if (mCommandProperties[mCurrentCommand].MyList.Commands.Count == 0 ||
+                mCommandProperties[mCurrentCommand].MyIndex >=
+                mCommandProperties[mCurrentCommand].MyList.Commands.Count ||
+                mCommandProperties[mCurrentCommand].MyIndex < 0) btnEdit.Enabled = false;
             btnDelete.Enabled = true;
         }
 
         private void lstEventCommands_DoubleClick(object sender, EventArgs e)
         {
-            if (_currentCommand <= -1) return;
-            if (!_commandProperties[_currentCommand].Editable) return;
-            if (_commandProperties[_currentCommand].Type == EventCommandType.Null)
+            if (mCurrentCommand <= -1) return;
+            if (!mCommandProperties[mCurrentCommand].Editable) return;
+            if (mCommandProperties[mCurrentCommand].Type == EventCommandType.Null)
             {
                 grpNewCommands.Show();
                 DisableButtons();
-                _isInsert = false;
+                mIsInsert = false;
             }
             else
             {
                 grpNewCommands.Show();
                 DisableButtons();
-                _isInsert = true;
+                mIsInsert = true;
             }
         }
 
@@ -108,7 +108,7 @@ namespace Intersect.Editor.Forms
         /// </summary>
         private void pnlPreview_DoubleClick(object sender, EventArgs e)
         {
-            Event_GraphicSelector graphicSelector = new Event_GraphicSelector(CurrentPage.Graphic, this);
+            EventGraphicSelector graphicSelector = new EventGraphicSelector(CurrentPage.Graphic, this);
             Controls.Add(graphicSelector);
             graphicSelector.BringToFront();
             graphicSelector.Size = ClientSize;
@@ -171,12 +171,12 @@ namespace Intersect.Editor.Forms
             pnlPreview.BackgroundImage = destBitmap;
         }
 
-        public void CloseMoveRouteDesigner(Event_MoveRouteDesigner moveRouteDesigner)
+        public void CloseMoveRouteDesigner(EventMoveRouteDesigner moveRouteDesigner)
         {
             Controls.Remove(moveRouteDesigner);
         }
 
-        public void CloseGraphicSelector(Event_GraphicSelector graphicSelector)
+        public void CloseGraphicSelector(EventGraphicSelector graphicSelector)
         {
             Controls.Remove(graphicSelector);
             UpdateEventPreview();
@@ -191,11 +191,11 @@ namespace Intersect.Editor.Forms
 
         private void UpdateTabControl()
         {
-            foreach (var page in _pageTabs)
+            foreach (var page in mPageTabs)
             {
                 pnlTabs.Controls.Remove(page);
             }
-            _pageTabs.Clear();
+            mPageTabs.Clear();
             for (int i = 0; i < MyEvent.MyPages.Count; i++)
             {
                 var btn = new DarkButton()
@@ -203,18 +203,18 @@ namespace Intersect.Editor.Forms
                     Text = (i + 1).ToString()
                 };
                 btn.Click += TabBtn_Click;
-                _pageTabs.Add(btn);
+                mPageTabs.Add(btn);
             }
-            pnlTabs.Controls.AddRange(_pageTabs.ToArray());
+            pnlTabs.Controls.AddRange(mPageTabs.ToArray());
             for (int i = 0; i < MyEvent.MyPages.Count; i++)
             {
-                var btn = _pageTabs[i];
+                var btn = mPageTabs[i];
                 btn.Size = new Size(0, 0);
                 btn.MaximumSize = new Size(100, 22);
                 btn.AutoSize = true;
                 if (i > 0)
                 {
-                    btn.Left = _pageTabs[i - 1].Right - 1;
+                    btn.Left = mPageTabs[i - 1].Right - 1;
                 }
                 btn.Top = 0;
                 btn.SendToBack();
@@ -226,7 +226,7 @@ namespace Intersect.Editor.Forms
 
         private void TabBtn_Click(object sender, EventArgs e)
         {
-            LoadPage(_pageTabs.IndexOf((DarkButton) sender));
+            LoadPage(mPageTabs.IndexOf((DarkButton) sender));
         }
 
         private void EnableButtons()
@@ -234,7 +234,7 @@ namespace Intersect.Editor.Forms
             //Enable Actions
             btnNewPage.Enabled = true;
             btnCopyPage.Enabled = true;
-            if (_pageCopy != null)
+            if (mPageCopy != null)
             {
                 btnPastePage.Enabled = true;
             }
@@ -297,17 +297,17 @@ namespace Intersect.Editor.Forms
 
         private void btnCopyPage_Click(object sender, EventArgs e)
         {
-            _pageCopy = new ByteBuffer();
-            CurrentPage.WriteBytes(_pageCopy);
+            mPageCopy = new ByteBuffer();
+            CurrentPage.WriteBytes(mPageCopy);
             EnableButtons();
         }
 
         private void btnPastePage_Click(object sender, EventArgs e)
         {
-            if (_pageCopy != null)
+            if (mPageCopy != null)
             {
-                _pageCopy.Readpos = 0;
-                MyEvent.MyPages[CurrentPageIndex] = new EventPage(_pageCopy);
+                mPageCopy.Readpos = 0;
+                MyEvent.MyPages[CurrentPageIndex] = new EventPage(mPageCopy);
                 LoadPage(CurrentPageIndex);
             }
         }
@@ -393,24 +393,24 @@ namespace Intersect.Editor.Forms
             {
                 tmpCommand.Ints[0] = -1;
             }
-            if (_isInsert)
+            if (mIsInsert)
             {
-                _commandProperties[_currentCommand].MyList.Commands.Insert(
-                    _commandProperties[_currentCommand].MyList.Commands
-                        .IndexOf(_commandProperties[_currentCommand].Cmd),
+                mCommandProperties[mCurrentCommand].MyList.Commands.Insert(
+                    mCommandProperties[mCurrentCommand].MyList.Commands
+                        .IndexOf(mCommandProperties[mCurrentCommand].Cmd),
                     tmpCommand);
             }
             else
             {
-                _commandProperties[_currentCommand].MyList.Commands.Add(tmpCommand);
+                mCommandProperties[mCurrentCommand].MyList.Commands.Add(tmpCommand);
             }
             OpenEditCommand(tmpCommand);
-            _isEdit = false;
+            mIsEdit = false;
         }
 
         private void btnEditConditions_Click(object sender, EventArgs e)
         {
-            var editForm = new frmDynamicRequirements(CurrentPage.ConditionLists, RequirementType.Event);
+            var editForm = new FrmDynamicRequirements(CurrentPage.ConditionLists, RequirementType.Event);
             editForm.ShowDialog();
         }
 
@@ -424,7 +424,7 @@ namespace Intersect.Editor.Forms
         public FrmEvent(MapBase currentMap)
         {
             InitializeComponent();
-            _currentMap = currentMap;
+            mCurrentMap = currentMap;
         }
 
         private void frmEvent_Load(object sender, EventArgs e)
@@ -555,8 +555,8 @@ namespace Intersect.Editor.Forms
         /// </summary>
         public void InitEditor()
         {
-            _eventBackup = new ByteBuffer();
-            _eventBackup.WriteBytes(MyEvent.EventData());
+            mEventBackup = new ByteBuffer();
+            mEventBackup.WriteBytes(MyEvent.EventData());
             txtEventname.Text = MyEvent.Name;
             if (MyEvent.Index < 0)
             {
@@ -565,7 +565,7 @@ namespace Intersect.Editor.Forms
             }
             cmbPreviewFace.Items.Clear();
             cmbPreviewFace.Items.Add(Strings.Get("general", "none"));
-            cmbPreviewFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
+            cmbPreviewFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.Get("general", "none"));
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
@@ -604,15 +604,15 @@ namespace Intersect.Editor.Forms
             Text = Strings.Get("eventeditor", "title", MyEvent.Index, txtEventname.Text);
             CurrentPageIndex = pageNum;
             CurrentPage = MyEvent.MyPages[pageNum];
-            for (int i = 0; i < _pageTabs.Count; i++)
+            for (int i = 0; i < mPageTabs.Count; i++)
             {
                 if (i == CurrentPageIndex)
                 {
-                    _pageTabs[i].BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
+                    mPageTabs[i].BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
                 }
                 else
                 {
-                    _pageTabs[i].BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+                    mPageTabs[i].BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
                 }
             }
             cmbMoveType.SelectedIndex = CurrentPage.MovementType;
@@ -684,7 +684,7 @@ namespace Intersect.Editor.Forms
             }
             else
             {
-                MyEvent.Load(_eventBackup.ToArray());
+                MyEvent.Load(mEventBackup.ToArray());
             }
             Hide();
             Dispose();
@@ -714,7 +714,7 @@ namespace Intersect.Editor.Forms
         private void ListPageCommands()
         {
             lstEventCommands.Items.Clear();
-            _commandProperties.Clear();
+            mCommandProperties.Clear();
             PrintCommandList(CurrentPage.CommandLists[0], " ");
         }
 
@@ -743,7 +743,7 @@ namespace Intersect.Editor.Forms
                                 Cmd = commandList.Commands[i],
                                 Type = commandList.Commands[i].Type
                             };
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
                             for (var x = 1; x < 5; x++)
                             {
                                 if (commandList.Commands[i].Strs[x].Trim().Length <= 0) continue;
@@ -758,7 +758,7 @@ namespace Intersect.Editor.Forms
                                     Type = commandList.Commands[i].Type,
                                     Cmd = commandList.Commands[i]
                                 };
-                                _commandProperties.Add(clp);
+                                mCommandProperties.Add(clp);
                                 PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[x - 1]],
                                     indent + "          ");
                             }
@@ -773,7 +773,7 @@ namespace Intersect.Editor.Forms
                                 Cmd = commandList.Commands[i]
                             };
 
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
                             break;
                         case EventCommandType.ConditionalBranch:
                             lstEventCommands.Items.Add(indent + Strings.Get("eventcommandlist", "linestart") +
@@ -786,7 +786,7 @@ namespace Intersect.Editor.Forms
                                 Cmd = commandList.Commands[i],
                                 Type = commandList.Commands[i].Type
                             };
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
 
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[4]],
                                 indent + "          ");
@@ -801,7 +801,7 @@ namespace Intersect.Editor.Forms
                                 Type = commandList.Commands[i].Type,
                                 Cmd = commandList.Commands[i]
                             };
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
 
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[5]],
                                 indent + "          ");
@@ -817,7 +817,7 @@ namespace Intersect.Editor.Forms
                                 Cmd = commandList.Commands[i]
                             };
 
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
                             break;
                         case EventCommandType.ChangeSpells:
                             lstEventCommands.Items.Add(indent + Strings.Get("eventcommandlist", "linestart") +
@@ -830,7 +830,7 @@ namespace Intersect.Editor.Forms
                                 Cmd = commandList.Commands[i],
                                 Type = commandList.Commands[i].Type
                             };
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
 
                             //When the spell was successfully taught:
                             lstEventCommands.Items.Add(indent + "      : " +
@@ -843,7 +843,7 @@ namespace Intersect.Editor.Forms
                                 Type = commandList.Commands[i].Type,
                                 Cmd = commandList.Commands[i]
                             };
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[4]],
                                 indent + "          ");
 
@@ -858,7 +858,7 @@ namespace Intersect.Editor.Forms
                                 Type = commandList.Commands[i].Type,
                                 Cmd = commandList.Commands[i]
                             };
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[5]],
                                 indent + "          ");
 
@@ -873,7 +873,7 @@ namespace Intersect.Editor.Forms
                                 Cmd = commandList.Commands[i]
                             };
 
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
                             break;
                         case EventCommandType.ChangeItems:
                             lstEventCommands.Items.Add(indent + Strings.Get("eventcommandlist", "linestart") +
@@ -886,7 +886,7 @@ namespace Intersect.Editor.Forms
                                 Cmd = commandList.Commands[i],
                                 Type = commandList.Commands[i].Type
                             };
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
 
                             //When the item(s) were successfully given/taken:
                             lstEventCommands.Items.Add(indent + "      : " +
@@ -899,7 +899,7 @@ namespace Intersect.Editor.Forms
                                 Type = commandList.Commands[i].Type,
                                 Cmd = commandList.Commands[i]
                             };
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[4]],
                                 indent + "          ");
 
@@ -914,7 +914,7 @@ namespace Intersect.Editor.Forms
                                 Type = commandList.Commands[i].Type,
                                 Cmd = commandList.Commands[i]
                             };
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[5]],
                                 indent + "          ");
 
@@ -929,7 +929,7 @@ namespace Intersect.Editor.Forms
                                 Cmd = commandList.Commands[i]
                             };
 
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
                             break;
 
                         case EventCommandType.StartQuest:
@@ -943,7 +943,7 @@ namespace Intersect.Editor.Forms
                                 Cmd = commandList.Commands[i],
                                 Type = commandList.Commands[i].Type
                             };
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
 
                             //When the quest is accepted/started successfully:
                             lstEventCommands.Items.Add(indent + "      : " +
@@ -956,7 +956,7 @@ namespace Intersect.Editor.Forms
                                 Type = commandList.Commands[i].Type,
                                 Cmd = commandList.Commands[i]
                             };
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[4]],
                                 indent + "          ");
 
@@ -971,7 +971,7 @@ namespace Intersect.Editor.Forms
                                 Type = commandList.Commands[i].Type,
                                 Cmd = commandList.Commands[i]
                             };
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
                             PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[5]],
                                 indent + "          ");
 
@@ -986,7 +986,7 @@ namespace Intersect.Editor.Forms
                                 Cmd = commandList.Commands[i]
                             };
 
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
                             break;
                         default:
                             lstEventCommands.Items.Add(indent + Strings.Get("eventcommandlist", "linestart") +
@@ -999,14 +999,14 @@ namespace Intersect.Editor.Forms
                                 Type = commandList.Commands[i].Type,
                                 Cmd = commandList.Commands[i]
                             };
-                            _commandProperties.Add(clp);
+                            mCommandProperties.Add(clp);
                             break;
                     }
                 }
             }
             lstEventCommands.Items.Add(indent + Strings.Get("eventcommandlist", "linestart"));
             clp = new CommandListProperties {Editable = true, MyIndex = -1, MyList = commandList};
-            _commandProperties.Add(clp);
+            mCommandProperties.Add(clp);
         }
 
         /// <summary>
@@ -1412,37 +1412,37 @@ namespace Intersect.Editor.Forms
                 case EventCommandType.Null:
                     break;
                 case EventCommandType.ShowText:
-                    cmdWindow = new EventCommand_Text(command, this);
+                    cmdWindow = new EventCommandText(command, this);
                     break;
                 case EventCommandType.ShowOptions:
-                    cmdWindow = new EventCommand_Options(command, CurrentPage, this);
+                    cmdWindow = new EventCommandOptions(command, CurrentPage, this);
                     break;
                 case EventCommandType.AddChatboxText:
-                    cmdWindow = new EventCommand_ChatboxText(command, this);
+                    cmdWindow = new EventCommandChatboxText(command, this);
                     break;
                 case EventCommandType.SetSwitch:
-                    cmdWindow = new EventCommand_Switch(command, this);
+                    cmdWindow = new EventCommandSwitch(command, this);
                     break;
                 case EventCommandType.SetVariable:
-                    cmdWindow = new EventCommand_Variable(command, this);
+                    cmdWindow = new EventCommandVariable(command, this);
                     break;
                 case EventCommandType.SetSelfSwitch:
-                    cmdWindow = new EventCommand_SelfSwitch(command, this);
+                    cmdWindow = new EventCommandSelfSwitch(command, this);
                     break;
                 case EventCommandType.ConditionalBranch:
-                    cmdWindow = new EventCommand_ConditionalBranch(command, CurrentPage, this);
+                    cmdWindow = new EventCommandConditionalBranch(command, CurrentPage, this);
                     break;
                 case EventCommandType.ExitEventProcess:
                     //No editor
                     break;
                 case EventCommandType.Label:
-                    cmdWindow = new EventCommand_Label(command, this);
+                    cmdWindow = new EventCommandLabel(command, this);
                     break;
                 case EventCommandType.GoToLabel:
-                    cmdWindow = new EventCommand_GotoLabel(command, this);
+                    cmdWindow = new EventCommandGotoLabel(command, this);
                     break;
                 case EventCommandType.StartCommonEvent:
-                    cmdWindow = new EventCommand_StartCommonEvent(command, this);
+                    cmdWindow = new EventCommandStartCommonEvent(command, this);
                     break;
                 case EventCommandType.RestoreHp:
                     //No editor
@@ -1454,99 +1454,99 @@ namespace Intersect.Editor.Forms
                     //No editor
                     break;
                 case EventCommandType.GiveExperience:
-                    cmdWindow = new EventCommand_GiveExperience(command, this);
+                    cmdWindow = new EventCommandGiveExperience(command, this);
                     break;
                 case EventCommandType.ChangeLevel:
-                    cmdWindow = new EventCommand_ChangeLevel(command, this);
+                    cmdWindow = new EventCommandChangeLevel(command, this);
                     break;
                 case EventCommandType.ChangeSpells:
-                    cmdWindow = new EventCommand_ChangeSpells(command, CurrentPage, this);
+                    cmdWindow = new EventCommandChangeSpells(command, CurrentPage, this);
                     break;
                 case EventCommandType.ChangeItems:
-                    cmdWindow = new EventCommand_ChangeItems(command, CurrentPage, this);
+                    cmdWindow = new EventCommandChangeItems(command, CurrentPage, this);
                     break;
                 case EventCommandType.ChangeSprite:
-                    cmdWindow = new EventCommand_ChangeSprite(command, this);
+                    cmdWindow = new EventCommandChangeSprite(command, this);
                     break;
                 case EventCommandType.ChangeFace:
-                    cmdWindow = new EventCommand_ChangeFace(command, this);
+                    cmdWindow = new EventCommandChangeFace(command, this);
                     break;
                 case EventCommandType.ChangeGender:
-                    cmdWindow = new EventCommand_ChangeGender(command, this);
+                    cmdWindow = new EventCommandChangeGender(command, this);
                     break;
                 case EventCommandType.SetAccess:
-                    cmdWindow = new EventCommand_SetAccess(command, this);
+                    cmdWindow = new EventCommandSetAccess(command, this);
                     break;
                 case EventCommandType.WarpPlayer:
-                    cmdWindow = new EventCommand_Warp(command, this);
+                    cmdWindow = new EventCommandWarp(command, this);
                     break;
                 case EventCommandType.SetMoveRoute:
                     if (command.Route == null)
                     {
                         command.Route = new EventMoveRoute();
                     }
-                    cmdWindow = new Event_MoveRouteDesigner(this, _currentMap, MyEvent, command.Route, command);
+                    cmdWindow = new EventMoveRouteDesigner(this, mCurrentMap, MyEvent, command.Route, command);
                     break;
                 case EventCommandType.WaitForRouteCompletion:
-                    cmdWindow = new EventCommand_WaitForRouteCompletion(command, this, _currentMap, MyEvent);
+                    cmdWindow = new EventCommandWaitForRouteCompletion(command, this, mCurrentMap, MyEvent);
                     break;
                 case EventCommandType.HoldPlayer:
                     break;
                 case EventCommandType.ReleasePlayer:
                     break;
                 case EventCommandType.SpawnNpc:
-                    cmdWindow = new EventCommand_SpawnNpc(this, _currentMap, MyEvent, command);
+                    cmdWindow = new EventCommandSpawnNpc(this, mCurrentMap, MyEvent, command);
                     break;
                 case EventCommandType.DespawnNpc:
                     break;
                 case EventCommandType.PlayAnimation:
-                    cmdWindow = new EventCommand_PlayAnimation(this, _currentMap, MyEvent, command);
+                    cmdWindow = new EventCommandPlayAnimation(this, mCurrentMap, MyEvent, command);
                     break;
                 case EventCommandType.PlayBgm:
-                    cmdWindow = new EventCommand_PlayBgm(command, this);
+                    cmdWindow = new EventCommandPlayBgm(command, this);
                     break;
                 case EventCommandType.FadeoutBgm:
                     break;
                 case EventCommandType.PlaySound:
-                    cmdWindow = new EventCommand_PlayBgs(command, this);
+                    cmdWindow = new EventCommandPlayBgs(command, this);
                     break;
                 case EventCommandType.StopSounds:
                     break;
                 case EventCommandType.Wait:
-                    cmdWindow = new EventCommand_Wait(command, this);
+                    cmdWindow = new EventCommandWait(command, this);
                     break;
                 case EventCommandType.OpenBank:
                     break;
                 case EventCommandType.OpenShop:
-                    cmdWindow = new EventCommand_OpenShop(command, this);
+                    cmdWindow = new EventCommandOpenShop(command, this);
                     break;
                 case EventCommandType.OpenCraftingBench:
-                    cmdWindow = new EventCommand_OpenBench(command, this);
+                    cmdWindow = new EventCommandOpenBench(command, this);
                     break;
                 case EventCommandType.SetClass:
-                    cmdWindow = new EventCommand_SetClass(command, this);
+                    cmdWindow = new EventCommandSetClass(command, this);
                     break;
                 case EventCommandType.StartQuest:
-                    cmdWindow = new EventCommand_StartQuest(command, CurrentPage, this);
+                    cmdWindow = new EventCommandStartQuest(command, CurrentPage, this);
                     break;
                 case EventCommandType.CompleteQuestTask:
-                    cmdWindow = new EventCommand_CompleteQuestTask(command, this);
+                    cmdWindow = new EventCommandCompleteQuestTask(command, this);
                     break;
                 case EventCommandType.EndQuest:
-                    cmdWindow = new EventCommand_EndQuest(command, this);
+                    cmdWindow = new EventCommandEndQuest(command, this);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
             if (cmdWindow != null)
             {
-                if (cmdWindow.GetType() == typeof(Event_MoveRouteDesigner))
+                if (cmdWindow.GetType() == typeof(EventMoveRouteDesigner))
                 {
                     Controls.Add(cmdWindow);
                     cmdWindow.Width = ClientSize.Width;
                     cmdWindow.Height = ClientSize.Height;
                     cmdWindow.BringToFront();
-                    _editingCommand = command;
+                    mEditingCommand = command;
                 }
                 else
                 {
@@ -1554,7 +1554,7 @@ namespace Intersect.Editor.Forms
                     grpCreateCommands.Controls.Add(cmdWindow);
                     cmdWindow.Left = (grpCreateCommands.Width / 2) - cmdWindow.Width / 2;
                     cmdWindow.Top = (grpCreateCommands.Height / 2) - cmdWindow.Height / 2;
-                    _editingCommand = command;
+                    mEditingCommand = command;
                     DisableButtons();
                 }
             }
@@ -1585,20 +1585,20 @@ namespace Intersect.Editor.Forms
         /// </summary>
         public void CancelCommandEdit(bool moveRoute = false, bool condition = false)
         {
-            if (_currentCommand > -1 && _commandProperties.Count > _currentCommand && !condition)
+            if (mCurrentCommand > -1 && mCommandProperties.Count > mCurrentCommand && !condition)
             {
-                if (!_isEdit)
+                if (!mIsEdit)
                 {
-                    if (_isInsert)
+                    if (mIsInsert)
                     {
-                        _commandProperties[_currentCommand].MyList.Commands.RemoveAt(
-                            _commandProperties[_currentCommand].MyList.Commands.IndexOf(
-                                _commandProperties[_currentCommand].Cmd) - 1);
+                        mCommandProperties[mCurrentCommand].MyList.Commands.RemoveAt(
+                            mCommandProperties[mCurrentCommand].MyList.Commands.IndexOf(
+                                mCommandProperties[mCurrentCommand].Cmd) - 1);
                     }
                     else
                     {
-                        _commandProperties[_currentCommand].MyList.Commands.RemoveAt(
-                            _commandProperties[_currentCommand].MyList.Commands.Count - 1);
+                        mCommandProperties[mCurrentCommand].MyList.Commands.RemoveAt(
+                            mCommandProperties[mCurrentCommand].MyList.Commands.Count - 1);
                     }
                 }
             }
@@ -1616,37 +1616,37 @@ namespace Intersect.Editor.Forms
         /// </summary>
         private void btnInsert_Click(object sender, EventArgs e)
         {
-            if (_currentCommand <= -1) return;
-            if (!_commandProperties[_currentCommand].Editable) return;
-            if (_commandProperties[_currentCommand].Type == EventCommandType.Null)
+            if (mCurrentCommand <= -1) return;
+            if (!mCommandProperties[mCurrentCommand].Editable) return;
+            if (mCommandProperties[mCurrentCommand].Type == EventCommandType.Null)
             {
                 grpNewCommands.Show();
-                _isInsert = false;
-                _isEdit = false;
+                mIsInsert = false;
+                mIsEdit = false;
             }
             else
             {
                 grpNewCommands.Show();
-                _isInsert = true;
-                _isEdit = false;
+                mIsInsert = true;
+                mIsEdit = false;
             }
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            if (_currentCommand <= -1) return;
-            if (!_commandProperties[_currentCommand].Editable) return;
-            if (_commandProperties[_currentCommand].MyList.Commands.Count == 0) return;
+            if (mCurrentCommand <= -1) return;
+            if (!mCommandProperties[mCurrentCommand].Editable) return;
+            if (mCommandProperties[mCurrentCommand].MyList.Commands.Count == 0) return;
             OpenEditCommand(
-                _commandProperties[_currentCommand].MyList.Commands[_commandProperties[_currentCommand].MyIndex]);
-            _isEdit = true;
+                mCommandProperties[mCurrentCommand].MyList.Commands[mCommandProperties[mCurrentCommand].MyIndex]);
+            mIsEdit = true;
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (_currentCommand <= -1) return;
-            if (!_commandProperties[_currentCommand].Editable) return;
-            _commandProperties[_currentCommand].MyList.Commands.Remove(_commandProperties[_currentCommand].Cmd);
+            if (mCurrentCommand <= -1) return;
+            if (!mCommandProperties[mCurrentCommand].Editable) return;
+            mCommandProperties[mCurrentCommand].MyList.Commands.Remove(mCommandProperties[mCurrentCommand].Cmd);
             ListPageCommands();
         }
 
@@ -1679,7 +1679,7 @@ namespace Intersect.Editor.Forms
 
         private void btnSetRoute_Click(object sender, EventArgs e)
         {
-            Event_MoveRouteDesigner moveRouteDesigner = new Event_MoveRouteDesigner(this, _currentMap, MyEvent,
+            EventMoveRouteDesigner moveRouteDesigner = new EventMoveRouteDesigner(this, mCurrentMap, MyEvent,
                 CurrentPage.MoveRoute);
             Controls.Add(moveRouteDesigner);
             moveRouteDesigner.BringToFront();

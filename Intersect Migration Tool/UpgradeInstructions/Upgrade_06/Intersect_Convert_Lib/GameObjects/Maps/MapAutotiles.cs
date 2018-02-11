@@ -5,29 +5,29 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
     public class MapAutotiles
     {
         // Autotiles
-        public const byte AutoTileInner = 1;
+        public const byte AUTO_TILE_INNER = 1;
 
-        public const byte AutoTileOuter = 2;
-        public const byte AutoTileHorizontal = 3;
-        public const byte AutoTileVertical = 4;
-        public const byte AutoTileFill = 5;
+        public const byte AUTO_TILE_OUTER = 2;
+        public const byte AUTO_TILE_HORIZONTAL = 3;
+        public const byte AUTO_TILE_VERTICAL = 4;
+        public const byte AUTO_TILE_FILL = 5;
 
         // Autotile types
-        public const byte AutotileNone = 0;
+        public const byte AUTOTILE_NONE = 0;
 
-        public const byte AutotileNormal = 1;
-        public const byte AutotileFake = 2;
-        public const byte AutotileAnim = 3;
-        public const byte AutotileCliff = 4;
-        public const byte AutotileWaterfall = 5;
+        public const byte AUTOTILE_NORMAL = 1;
+        public const byte AUTOTILE_FAKE = 2;
+        public const byte AUTOTILE_ANIM = 3;
+        public const byte AUTOTILE_CLIFF = 4;
+        public const byte AUTOTILE_WATERFALL = 5;
 
         // Rendering
-        public const byte RenderStateNone = 0;
+        public const byte RENDER_STATE_NONE = 0;
 
-        public const byte RenderStateNormal = 1;
-        public const byte RenderStateAutotile = 2;
+        public const byte RENDER_STATE_NORMAL = 1;
+        public const byte RENDER_STATE_AUTOTILE = 2;
 
-        private readonly MapBase _myMap;
+        private readonly MapBase mMyMap;
 
         // autotiling
         public PointStruct[] AutoInner = new PointStruct[6];
@@ -40,7 +40,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
 
         public MapAutotiles(MapBase map)
         {
-            _myMap = map;
+            mMyMap = map;
             Autotile = new AutoTileCls[Options.MapWidth, Options.MapHeight];
             for (var x = 0; x < Options.MapWidth; x++)
             {
@@ -260,25 +260,25 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
             }
 
             // check if it needs to be rendered as an autotile
-            if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == AutotileNone ||
-                _myMap.Layers[layerNum].Tiles[x, y].Autotile == AutotileFake)
+            if (mMyMap.Layers[layerNum].Tiles[x, y].Autotile == AUTOTILE_NONE ||
+                mMyMap.Layers[layerNum].Tiles[x, y].Autotile == AUTOTILE_FAKE)
             {
                 // default to... default
-                Autotile[x, y].Layer[layerNum].RenderState = RenderStateNormal;
+                Autotile[x, y].Layer[layerNum].RenderState = RENDER_STATE_NORMAL;
                 //Autotile[x, y].Layer[layerNum].QuarterTile = null;
             }
             else
             {
-                Autotile[x, y].Layer[layerNum].RenderState = RenderStateAutotile;
+                Autotile[x, y].Layer[layerNum].RenderState = RENDER_STATE_AUTOTILE;
                 // cache tileset positioning
                 int quarterNum;
                 for (quarterNum = 1; quarterNum < 5; quarterNum++)
                 {
-                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X = (_myMap.Layers[layerNum].Tiles[x, y].X *
+                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X = (mMyMap.Layers[layerNum].Tiles[x, y].X *
                                                                                 Options.TileWidth) +
                                                                                Autotile[x, y].Layer[layerNum]
                                                                                    .QuarterTile[quarterNum].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y = (_myMap.Layers[layerNum].Tiles[x, y].Y *
+                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y = (mMyMap.Layers[layerNum].Tiles[x, y].Y *
                                                                                 Options.TileHeight) +
                                                                                Autotile[x, y].Layer[layerNum]
                                                                                    .QuarterTile[quarterNum].Y;
@@ -298,17 +298,17 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
             // The situations are "inner", "outer", "horizontal", "vertical" and "fill".
 
             // Exit out if we don//t have an auatotile
-            if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == 0)
+            if (mMyMap.Layers[layerNum].Tiles[x, y].Autotile == 0)
             {
                 return;
             }
 
             // Okay, we have autotiling but which one?
-            switch (_myMap.Layers[layerNum].Tiles[x, y].Autotile)
+            switch (mMyMap.Layers[layerNum].Tiles[x, y].Autotile)
             {
                 // Normal or animated - same difference
-                case AutotileNormal:
-                case AutotileAnim:
+                case AUTOTILE_NORMAL:
+                case AUTOTILE_ANIM:
                     // North West Quarter
                     CalculateNW_Normal(layerNum, x, y, surroundingMaps);
 
@@ -323,7 +323,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
                     break;
 
                 // Cliff
-                case AutotileCliff:
+                case AUTOTILE_CLIFF:
                     // North West Quarter
                     CalculateNW_Cliff(layerNum, x, y, surroundingMaps);
 
@@ -338,7 +338,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
                     break;
 
                 // Waterfalls
-                case AutotileWaterfall:
+                case AUTOTILE_WATERFALL:
                     // North West Quarter
                     CalculateNW_Waterfall(layerNum, x, y, surroundingMaps);
 
@@ -381,45 +381,45 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
             // Calculate Situation - Inner
             if (!tmpTile[2] && !tmpTile[3])
             {
-                situation = AutoTileInner;
+                situation = AUTO_TILE_INNER;
             }
             // Horizontal
             if (!tmpTile[2] && tmpTile[3])
             {
-                situation = AutoTileHorizontal;
+                situation = AUTO_TILE_HORIZONTAL;
             }
             // Vertical
             if (tmpTile[2] && !tmpTile[3])
             {
-                situation = AutoTileVertical;
+                situation = AUTO_TILE_VERTICAL;
             }
             // Outer
             if (!tmpTile[1] && tmpTile[2] && tmpTile[3])
             {
-                situation = AutoTileOuter;
+                situation = AUTO_TILE_OUTER;
             }
             // Fill
             if (tmpTile[1] && tmpTile[2] && tmpTile[3])
             {
-                situation = AutoTileFill;
+                situation = AUTO_TILE_FILL;
             }
 
             // Actually place the subtile
             switch (situation)
             {
-                case AutoTileInner:
+                case AUTO_TILE_INNER:
                     PlaceAutotile(layerNum, x, y, 1, "e");
                     break;
-                case AutoTileOuter:
+                case AUTO_TILE_OUTER:
                     PlaceAutotile(layerNum, x, y, 1, "a");
                     break;
-                case AutoTileHorizontal:
+                case AUTO_TILE_HORIZONTAL:
                     PlaceAutotile(layerNum, x, y, 1, "i");
                     break;
-                case AutoTileVertical:
+                case AUTO_TILE_VERTICAL:
                     PlaceAutotile(layerNum, x, y, 1, "m");
                     break;
-                case AutoTileFill:
+                case AUTO_TILE_FILL:
                     PlaceAutotile(layerNum, x, y, 1, "q");
                     break;
             }
@@ -451,45 +451,45 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
             // Calculate Situation - Inner
             if (!tmpTile[1] && !tmpTile[3])
             {
-                situation = AutoTileInner;
+                situation = AUTO_TILE_INNER;
             }
             // Horizontal
             if (!tmpTile[1] && tmpTile[3])
             {
-                situation = AutoTileHorizontal;
+                situation = AUTO_TILE_HORIZONTAL;
             }
             // Vertical
             if (tmpTile[1] && !tmpTile[3])
             {
-                situation = AutoTileVertical;
+                situation = AUTO_TILE_VERTICAL;
             }
             // Outer
             if (tmpTile[1] && !tmpTile[2] && tmpTile[3])
             {
-                situation = AutoTileOuter;
+                situation = AUTO_TILE_OUTER;
             }
             // Fill
             if (tmpTile[1] && tmpTile[2] && tmpTile[3])
             {
-                situation = AutoTileFill;
+                situation = AUTO_TILE_FILL;
             }
 
             // Actually place the subtile
             switch (situation)
             {
-                case AutoTileInner:
+                case AUTO_TILE_INNER:
                     PlaceAutotile(layerNum, x, y, 2, "j");
                     break;
-                case AutoTileOuter:
+                case AUTO_TILE_OUTER:
                     PlaceAutotile(layerNum, x, y, 2, "b");
                     break;
-                case AutoTileHorizontal:
+                case AUTO_TILE_HORIZONTAL:
                     PlaceAutotile(layerNum, x, y, 2, "f");
                     break;
-                case AutoTileVertical:
+                case AUTO_TILE_VERTICAL:
                     PlaceAutotile(layerNum, x, y, 2, "r");
                     break;
-                case AutoTileFill:
+                case AUTO_TILE_FILL:
                     PlaceAutotile(layerNum, x, y, 2, "n");
                     break;
             }
@@ -521,45 +521,45 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
             // Calculate Situation - Inner
             if (!tmpTile[1] && !tmpTile[3])
             {
-                situation = AutoTileInner;
+                situation = AUTO_TILE_INNER;
             }
             // Horizontal
             if (tmpTile[1] && !tmpTile[3])
             {
-                situation = AutoTileHorizontal;
+                situation = AUTO_TILE_HORIZONTAL;
             }
             // Vertical
             if (!tmpTile[1] && tmpTile[3])
             {
-                situation = AutoTileVertical;
+                situation = AUTO_TILE_VERTICAL;
             }
             // Outer
             if (tmpTile[1] && !tmpTile[2] && tmpTile[3])
             {
-                situation = AutoTileOuter;
+                situation = AUTO_TILE_OUTER;
             }
             // Fill
             if (tmpTile[1] && tmpTile[2] && tmpTile[3])
             {
-                situation = AutoTileFill;
+                situation = AUTO_TILE_FILL;
             }
 
             // Actually place the subtile
             switch (situation)
             {
-                case AutoTileInner:
+                case AUTO_TILE_INNER:
                     PlaceAutotile(layerNum, x, y, 3, "o");
                     break;
-                case AutoTileOuter:
+                case AUTO_TILE_OUTER:
                     PlaceAutotile(layerNum, x, y, 3, "c");
                     break;
-                case AutoTileHorizontal:
+                case AUTO_TILE_HORIZONTAL:
                     PlaceAutotile(layerNum, x, y, 3, "s");
                     break;
-                case AutoTileVertical:
+                case AUTO_TILE_VERTICAL:
                     PlaceAutotile(layerNum, x, y, 3, "g");
                     break;
-                case AutoTileFill:
+                case AUTO_TILE_FILL:
                     PlaceAutotile(layerNum, x, y, 3, "k");
                     break;
             }
@@ -591,45 +591,45 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
             // Calculate Situation - Inner
             if (!tmpTile[1] && !tmpTile[3])
             {
-                situation = AutoTileInner;
+                situation = AUTO_TILE_INNER;
             }
             // Horizontal
             if (!tmpTile[1] && tmpTile[3])
             {
-                situation = AutoTileHorizontal;
+                situation = AUTO_TILE_HORIZONTAL;
             }
             // Vertical
             if (tmpTile[1] && !tmpTile[3])
             {
-                situation = AutoTileVertical;
+                situation = AUTO_TILE_VERTICAL;
             }
             // Outer
             if (tmpTile[1] && !tmpTile[2] && tmpTile[3])
             {
-                situation = AutoTileOuter;
+                situation = AUTO_TILE_OUTER;
             }
             // Fill
             if (tmpTile[1] && tmpTile[2] && tmpTile[3])
             {
-                situation = AutoTileFill;
+                situation = AUTO_TILE_FILL;
             }
 
             // Actually place the subtile
             switch (situation)
             {
-                case AutoTileInner:
+                case AUTO_TILE_INNER:
                     PlaceAutotile(layerNum, x, y, 4, "t");
                     break;
-                case AutoTileOuter:
+                case AUTO_TILE_OUTER:
                     PlaceAutotile(layerNum, x, y, 4, "d");
                     break;
-                case AutoTileHorizontal:
+                case AUTO_TILE_HORIZONTAL:
                     PlaceAutotile(layerNum, x, y, 4, "p");
                     break;
-                case AutoTileVertical:
+                case AUTO_TILE_VERTICAL:
                     PlaceAutotile(layerNum, x, y, 4, "l");
                     break;
-                case AutoTileFill:
+                case AUTO_TILE_FILL:
                     PlaceAutotile(layerNum, x, y, 4, "h");
                     break;
             }
@@ -731,37 +731,37 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
             // Calculate Situation - Horizontal
             if (!tmpTile[2] && tmpTile[3])
             {
-                situation = AutoTileHorizontal;
+                situation = AUTO_TILE_HORIZONTAL;
             }
             // Vertical
             if (tmpTile[2] && !tmpTile[3])
             {
-                situation = AutoTileVertical;
+                situation = AUTO_TILE_VERTICAL;
             }
             // Fill
             if (tmpTile[2] && tmpTile[3])
             {
-                situation = AutoTileFill;
+                situation = AUTO_TILE_FILL;
             }
             // Inner
             if (!tmpTile[2] && !tmpTile[3])
             {
-                situation = AutoTileInner;
+                situation = AUTO_TILE_INNER;
             }
 
             // Actually place the subtile
             switch (situation)
             {
-                case AutoTileInner:
+                case AUTO_TILE_INNER:
                     PlaceAutotile(layerNum, x, y, 1, "e");
                     break;
-                case AutoTileHorizontal:
+                case AUTO_TILE_HORIZONTAL:
                     PlaceAutotile(layerNum, x, y, 1, "i");
                     break;
-                case AutoTileVertical:
+                case AUTO_TILE_VERTICAL:
                     PlaceAutotile(layerNum, x, y, 1, "m");
                     break;
-                case AutoTileFill:
+                case AUTO_TILE_FILL:
                     PlaceAutotile(layerNum, x, y, 1, "q");
                     break;
             }
@@ -793,37 +793,37 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
             // Calculate Situation - Horizontal
             if (!tmpTile[1] && tmpTile[3])
             {
-                situation = AutoTileHorizontal;
+                situation = AUTO_TILE_HORIZONTAL;
             }
             // Vertical
             if (tmpTile[1] && !tmpTile[3])
             {
-                situation = AutoTileVertical;
+                situation = AUTO_TILE_VERTICAL;
             }
             // Fill
             if (tmpTile[1] && tmpTile[3])
             {
-                situation = AutoTileFill;
+                situation = AUTO_TILE_FILL;
             }
             // Inner
             if (!tmpTile[1] && !tmpTile[3])
             {
-                situation = AutoTileInner;
+                situation = AUTO_TILE_INNER;
             }
 
             // Actually place the subtile
             switch (situation)
             {
-                case AutoTileInner:
+                case AUTO_TILE_INNER:
                     PlaceAutotile(layerNum, x, y, 2, "j");
                     break;
-                case AutoTileHorizontal:
+                case AUTO_TILE_HORIZONTAL:
                     PlaceAutotile(layerNum, x, y, 2, "f");
                     break;
-                case AutoTileVertical:
+                case AUTO_TILE_VERTICAL:
                     PlaceAutotile(layerNum, x, y, 2, "r");
                     break;
-                case AutoTileFill:
+                case AUTO_TILE_FILL:
                     PlaceAutotile(layerNum, x, y, 2, "n");
                     break;
             }
@@ -855,37 +855,37 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
             // Calculate Situation - Horizontal
             if (tmpTile[1] && !tmpTile[3])
             {
-                situation = AutoTileHorizontal;
+                situation = AUTO_TILE_HORIZONTAL;
             }
             // Vertical
             if (!tmpTile[1] && tmpTile[3])
             {
-                situation = AutoTileVertical;
+                situation = AUTO_TILE_VERTICAL;
             }
             // Fill
             if (tmpTile[1] && tmpTile[3])
             {
-                situation = AutoTileFill;
+                situation = AUTO_TILE_FILL;
             }
             // Inner
             if (!tmpTile[1] && !tmpTile[3])
             {
-                situation = AutoTileInner;
+                situation = AUTO_TILE_INNER;
             }
 
             // Actually place the subtile
             switch (situation)
             {
-                case AutoTileInner:
+                case AUTO_TILE_INNER:
                     PlaceAutotile(layerNum, x, y, 3, "o");
                     break;
-                case AutoTileHorizontal:
+                case AUTO_TILE_HORIZONTAL:
                     PlaceAutotile(layerNum, x, y, 3, "s");
                     break;
-                case AutoTileVertical:
+                case AUTO_TILE_VERTICAL:
                     PlaceAutotile(layerNum, x, y, 3, "g");
                     break;
-                case AutoTileFill:
+                case AUTO_TILE_FILL:
                     PlaceAutotile(layerNum, x, y, 3, "k");
                     break;
             }
@@ -917,37 +917,37 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
             // Calculate Situation -  Horizontal
             if (!tmpTile[1] && tmpTile[3])
             {
-                situation = AutoTileHorizontal;
+                situation = AUTO_TILE_HORIZONTAL;
             }
             // Vertical
             if (tmpTile[1] && !tmpTile[3])
             {
-                situation = AutoTileVertical;
+                situation = AUTO_TILE_VERTICAL;
             }
             // Fill
             if (tmpTile[1] && tmpTile[3])
             {
-                situation = AutoTileFill;
+                situation = AUTO_TILE_FILL;
             }
             // Inner
             if (!tmpTile[1] && !tmpTile[3])
             {
-                situation = AutoTileInner;
+                situation = AUTO_TILE_INNER;
             }
 
             // Actually place the subtile
             switch (situation)
             {
-                case AutoTileInner:
+                case AUTO_TILE_INNER:
                     PlaceAutotile(layerNum, x, y, 4, "t");
                     break;
-                case AutoTileHorizontal:
+                case AUTO_TILE_HORIZONTAL:
                     PlaceAutotile(layerNum, x, y, 4, "p");
                     break;
-                case AutoTileVertical:
+                case AUTO_TILE_VERTICAL:
                     PlaceAutotile(layerNum, x, y, 4, "l");
                     break;
-                case AutoTileFill:
+                case AUTO_TILE_FILL:
                     PlaceAutotile(layerNum, x, y, 4, "h");
                     break;
             }
@@ -988,10 +988,10 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
             {
                 targetTile = surroundingMaps[gridX + 1, gridY + 1].Layers[layerNum].Tiles[x2, y2];
             }
-            var sourceTile = _myMap.Layers[layerNum].Tiles[x1, y1];
+            var sourceTile = mMyMap.Layers[layerNum].Tiles[x1, y1];
             if (targetTile.X == -1) return true;
             // fakes ALWAYS return true
-            if (targetTile.Autotile == AutotileFake)
+            if (targetTile.Autotile == AUTOTILE_FAKE)
             {
                 return true;
             }

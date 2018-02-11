@@ -11,7 +11,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
         public new const string DATABASE_TABLE = "player_variables";
 
         public new const GameObject OBJECT_TYPE = GameObject.PlayerVariable;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        protected static Dictionary<int, DatabaseObject> sObjects = new Dictionary<int, DatabaseObject>();
 
         public string Name = "New Player Variable";
 
@@ -36,18 +36,18 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         public static PlayerVariableBase GetVariable(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return (PlayerVariableBase) Objects[index];
+                return (PlayerVariableBase) sObjects[index];
             }
             return null;
         }
 
         public static string GetName(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return ((PlayerVariableBase) Objects[index]).Name;
+                return ((PlayerVariableBase) sObjects[index]).Name;
             }
             return "Deleted";
         }
@@ -69,37 +69,37 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         public static DatabaseObject Get(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return Objects[index];
+                return sObjects[index];
             }
             return null;
         }
 
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            sObjects.Remove(GetId());
         }
 
         public static void ClearObjects()
         {
-            Objects.Clear();
+            sObjects.Clear();
         }
 
         public static void AddObject(int index, DatabaseObject obj)
         {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
+            sObjects.Remove(index);
+            sObjects.Add(index, obj);
         }
 
         public static int ObjectCount()
         {
-            return Objects.Count;
+            return sObjects.Count;
         }
 
         public static Dictionary<int, PlayerVariableBase> GetObjects()
         {
-            Dictionary<int, PlayerVariableBase> objects = Objects.ToDictionary(k => k.Key,
+            Dictionary<int, PlayerVariableBase> objects = sObjects.ToDictionary(k => k.Key,
                 v => (PlayerVariableBase) v.Value);
             return objects;
         }

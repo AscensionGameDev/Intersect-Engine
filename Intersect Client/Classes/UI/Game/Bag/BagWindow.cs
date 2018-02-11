@@ -10,29 +10,29 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class BagWindow
     {
-        private static int ItemXPadding = 4;
+        private static int sItemXPadding = 4;
 
-        private static int ItemYPadding = 4;
+        private static int sItemYPadding = 4;
 
         //Controls
-        private WindowControl _bagWindow;
+        private WindowControl mBagWindow;
 
-        private ScrollControl _itemContainer;
-        private List<Label> _values = new List<Label>();
+        private ScrollControl mItemContainer;
+        private List<Label> mValues = new List<Label>();
 
         public List<BagItem> Items = new List<BagItem>();
 
         //Init
-        public BagWindow(Canvas _gameCanvas)
+        public BagWindow(Canvas gameCanvas)
         {
-            _bagWindow = new WindowControl(_gameCanvas, Strings.Get("bags", "title"), false, "BagWindow");
-            _bagWindow.DisableResizing();
-            Gui.InputBlockingElements.Add(_bagWindow);
+            mBagWindow = new WindowControl(gameCanvas, Strings.Get("bags", "title"), false, "BagWindow");
+            mBagWindow.DisableResizing();
+            Gui.InputBlockingElements.Add(mBagWindow);
 
-            _itemContainer = new ScrollControl(_bagWindow, "ItemContainer");
-            _itemContainer.EnableScroll(false, true);
+            mItemContainer = new ScrollControl(mBagWindow, "ItemContainer");
+            mItemContainer.EnableScroll(false, true);
 
-            Gui.LoadRootUIData(_bagWindow, "InGame.xml");
+            Gui.LoadRootUiData(mBagWindow, "InGame.xml");
 
             InitItemContainer();
         }
@@ -41,32 +41,32 @@ namespace Intersect_Client.Classes.UI.Game
         //Location
         public int X
         {
-            get { return _bagWindow.X; }
+            get { return mBagWindow.X; }
         }
 
         public int Y
         {
-            get { return _bagWindow.Y; }
+            get { return mBagWindow.Y; }
         }
 
         public void Close()
         {
-            _bagWindow.Close();
+            mBagWindow.Close();
         }
 
         public bool IsVisible()
         {
-            return !_bagWindow.IsHidden;
+            return !mBagWindow.IsHidden;
         }
 
         public void Hide()
         {
-            _bagWindow.IsHidden = true;
+            mBagWindow.IsHidden = true;
         }
 
         public void Update()
         {
-            if (_bagWindow.IsHidden == true || Globals.Bag == null)
+            if (mBagWindow.IsHidden == true || Globals.Bag == null)
             {
                 return;
             }
@@ -77,30 +77,30 @@ namespace Intersect_Client.Classes.UI.Game
                     var item = ItemBase.Lookup.Get<ItemBase>(Globals.Bag[i].ItemNum);
                     if (item != null)
                     {
-                        Items[i].pnl.IsHidden = false;
+                        Items[i].Pnl.IsHidden = false;
 
                         if (item.IsStackable())
                         {
-                            _values[i].IsHidden = false;
-                            _values[i].Text = Globals.Bag[i].ItemVal.ToString();
+                            mValues[i].IsHidden = false;
+                            mValues[i].Text = Globals.Bag[i].ItemVal.ToString();
                         }
                         else
                         {
-                            _values[i].IsHidden = true;
+                            mValues[i].IsHidden = true;
                         }
 
                         if (Items[i].IsDragging)
                         {
-                            Items[i].pnl.IsHidden = true;
-                            _values[i].IsHidden = true;
+                            Items[i].Pnl.IsHidden = true;
+                            mValues[i].IsHidden = true;
                         }
                         Items[i].Update();
                     }
                 }
                 else
                 {
-                    Items[i].pnl.IsHidden = true;
-                    _values[i].IsHidden = true;
+                    Items[i].Pnl.IsHidden = true;
+                    mValues[i].IsHidden = true;
                 }
             }
         }
@@ -110,22 +110,22 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < Globals.Bag.Length; i++)
             {
                 Items.Add(new BagItem(this, i));
-                Items[i].container = new ImagePanel(_itemContainer, "BagItemContainer");
+                Items[i].Container = new ImagePanel(mItemContainer, "BagItemContainer");
                 Items[i].Setup();
 
-                _values.Add(new Label(Items[i].container, "BagItemValue"));
-                _values[i].Text = "";
+                mValues.Add(new Label(Items[i].Container, "BagItemValue"));
+                mValues[i].Text = "";
 
                 //TODO Made this more efficient.
-                Gui.LoadRootUIData(Items[i].container, "InGame.xml");
+                Gui.LoadRootUiData(Items[i].Container, "InGame.xml");
 
-                var xPadding = Items[i].container.Padding.Left + Items[i].container.Padding.Right;
-                var yPadding = Items[i].container.Padding.Top + Items[i].container.Padding.Bottom;
-                Items[i].container.SetPosition(
-                    (i % (_itemContainer.Width / (Items[i].container.Width + xPadding))) *
-                    (Items[i].container.Width + xPadding) + xPadding,
-                    (i / (_itemContainer.Width / (Items[i].container.Width + xPadding))) *
-                    (Items[i].container.Height + yPadding) + yPadding);
+                var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
+                var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;
+                Items[i].Container.SetPosition(
+                    (i % (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
+                    (Items[i].Container.Width + xPadding) + xPadding,
+                    (i / (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
+                    (Items[i].Container.Height + yPadding) + yPadding);
             }
         }
 
@@ -133,10 +133,10 @@ namespace Intersect_Client.Classes.UI.Game
         {
             FloatRect rect = new FloatRect()
             {
-                X = _bagWindow.LocalPosToCanvas(new Point(0, 0)).X - ItemXPadding / 2,
-                Y = _bagWindow.LocalPosToCanvas(new Point(0, 0)).Y - ItemYPadding / 2,
-                Width = _bagWindow.Width + ItemXPadding,
-                Height = _bagWindow.Height + ItemYPadding
+                X = mBagWindow.LocalPosToCanvas(new Point(0, 0)).X - sItemXPadding / 2,
+                Y = mBagWindow.LocalPosToCanvas(new Point(0, 0)).Y - sItemYPadding / 2,
+                Width = mBagWindow.Width + sItemXPadding,
+                Height = mBagWindow.Height + sItemYPadding
             };
             return rect;
         }

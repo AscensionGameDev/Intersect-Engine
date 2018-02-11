@@ -9,9 +9,9 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect.Editor.Forms
 {
-    public partial class frmMapList : DockContent
+    public partial class FrmMapList : DockContent
     {
-        public frmMapList()
+        public FrmMapList()
         {
             InitializeComponent();
 
@@ -37,7 +37,7 @@ namespace Intersect.Editor.Forms
 
         private void SaveMap()
         {
-            if (Globals.CurrentTool == (int) EdittingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.Selection)
             {
                 if (Globals.Dragging == true)
                 {

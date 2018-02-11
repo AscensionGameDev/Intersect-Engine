@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class Event_MoveRouteDesigner
+    partial class EventMoveRouteDesigner
     {
         /// <summary> 
         /// Required designer variable.
@@ -126,7 +126,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             treeNode48,
             treeNode49,
             treeNode50});
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Event_MoveRouteDesigner));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventMoveRouteDesigner));
             this.grpMoveRoute = new DarkUI.Controls.DarkGroupBox();
             this.btnOkay = new DarkUI.Controls.DarkButton();
             this.btnCancel = new DarkUI.Controls.DarkButton();
@@ -437,7 +437,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpMoveRoute);
-            this.Name = "Event_MoveRouteDesigner";
+            this.Name = "EventMoveRouteDesigner";
             this.Size = new System.Drawing.Size(537, 492);
             this.grpMoveRoute.ResumeLayout(false);
             this.grpMoveRoute.PerformLayout();

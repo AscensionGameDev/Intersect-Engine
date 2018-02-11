@@ -11,22 +11,22 @@ namespace Intersect.Server.Classes.Entities
 {
     public class EventPageInstance : Entity
     {
-        private Pathfinder _pathFinder;
+        private Pathfinder mPathFinder;
         public EventBase BaseEvent;
         public Client Client;
-        private int DirectionFix;
+        private int mDirectionFix;
         public int DisablePreview;
         public EventPageInstance GlobalClone;
         public int MovementFreq;
 
-        private int _movementSpeed;
+        private int mMovementSpeed;
         public int MovementSpeed
         {
-            get { return _movementSpeed; }
+            get { return mMovementSpeed; }
             set
             {
-                _movementSpeed = value;
-                switch (_movementSpeed)
+                mMovementSpeed = value;
+                switch (mMovementSpeed)
                 {
                     case 0:
                         Stat[(int) Stats.Speed].Stat = 2;
@@ -51,11 +51,11 @@ namespace Intersect.Server.Classes.Entities
         public EventInstance MyEventIndex;
         public EventGraphic MyGraphic = new EventGraphic();
         public EventPage MyPage;
-        private int PageNum;
+        private int mPageNum;
         public string Param;
-        private int RenderLevel = 1;
+        private int mRenderLevel = 1;
         public int Trigger;
-        private int WalkingAnim;
+        private int mWalkingAnim;
 
         public EventPageInstance(EventBase myEvent, EventPage myPage, int myIndex, int mapNum, EventInstance eventIndex,
             Client client) : base(myIndex)
@@ -76,7 +76,7 @@ namespace Intersect.Server.Classes.Entities
             MyEventIndex = eventIndex;
             MoveRoute = new EventMoveRoute();
             MoveRoute.CopyFrom(MyPage.MoveRoute);
-            _pathFinder = new Pathfinder(this);
+            mPathFinder = new Pathfinder(this);
             SetMovementSpeed(MyPage.MovementSpeed);
             MyGraphic.Type = MyPage.Graphic.Type;
             MyGraphic.Filename = MyPage.Graphic.Filename;
@@ -85,9 +85,9 @@ namespace Intersect.Server.Classes.Entities
             MyGraphic.Width = MyPage.Graphic.Width;
             MyGraphic.Height = MyPage.Graphic.Height;
             MySprite = MyPage.Graphic.Filename;
-            DirectionFix = MyPage.DirectionFix;
-            WalkingAnim = MyPage.WalkingAnimation;
-            RenderLevel = MyPage.Layer;
+            mDirectionFix = MyPage.DirectionFix;
+            mWalkingAnim = MyPage.WalkingAnimation;
+            mRenderLevel = MyPage.Layer;
             if (MyGraphic.Type == 1)
             {
                 switch (MyGraphic.Y)
@@ -111,7 +111,7 @@ namespace Intersect.Server.Classes.Entities
                 Animations.Add(myPage.Animation);
             }
             Face = MyPage.FaceGraphic;
-            PageNum = BaseEvent.MyPages.IndexOf(MyPage);
+            mPageNum = BaseEvent.MyPages.IndexOf(MyPage);
             Client = client;
             SendToClient();
         }
@@ -136,7 +136,7 @@ namespace Intersect.Server.Classes.Entities
             CurrentMap = mapNum;
             MyEventIndex = eventIndex;
             MoveRoute = globalClone.MoveRoute;
-            _pathFinder = new Pathfinder(this);
+            mPathFinder = new Pathfinder(this);
             SetMovementSpeed(MyPage.MovementSpeed);
             MyGraphic.Type = globalClone.MyGraphic.Type;
             MyGraphic.Filename = globalClone.MyGraphic.Filename;
@@ -145,9 +145,9 @@ namespace Intersect.Server.Classes.Entities
             MyGraphic.Width = globalClone.MyGraphic.Width;
             MyGraphic.Height = globalClone.MyGraphic.Height;
             MySprite = MyPage.Graphic.Filename;
-            DirectionFix = MyPage.DirectionFix;
-            WalkingAnim = MyPage.WalkingAnimation;
-            RenderLevel = MyPage.Layer;
+            mDirectionFix = MyPage.DirectionFix;
+            mWalkingAnim = MyPage.WalkingAnimation;
+            mRenderLevel = MyPage.Layer;
             if (globalClone.MyGraphic.Type == 1)
             {
                 switch (MyPage.Graphic.Y)
@@ -171,7 +171,7 @@ namespace Intersect.Server.Classes.Entities
                 Animations.Add(myPage.Animation);
             }
             Face = MyPage.FaceGraphic;
-            PageNum = BaseEvent.MyPages.IndexOf(MyPage);
+            mPageNum = BaseEvent.MyPages.IndexOf(MyPage);
             Client = client;
             SendToClient();
         }
@@ -198,8 +198,8 @@ namespace Intersect.Server.Classes.Entities
             var bf = new ByteBuffer();
             bf.WriteBytes(base.Data());
             bf.WriteInteger(HideName);
-            bf.WriteInteger(DirectionFix);
-            bf.WriteInteger(WalkingAnim);
+            bf.WriteInteger(mDirectionFix);
+            bf.WriteInteger(mWalkingAnim);
             bf.WriteInteger(DisablePreview);
             bf.WriteString(MyPage.Desc);
             bf.WriteInteger(MyGraphic.Type);
@@ -208,7 +208,7 @@ namespace Intersect.Server.Classes.Entities
             bf.WriteInteger(MyGraphic.Y);
             bf.WriteInteger(MyGraphic.Width);
             bf.WriteInteger(MyGraphic.Height);
-            bf.WriteInteger(RenderLevel);
+            bf.WriteInteger(mRenderLevel);
             return bf.ToArray();
         }
 
@@ -278,18 +278,18 @@ namespace Intersect.Server.Classes.Entities
                             //Pathfinding required.. this will be weird.
                             if (client != null && GlobalClone == null) //Local Event
                             {
-                                if (_pathFinder.GetTarget() == null ||
-                                    _pathFinder.GetTarget().TargetMap != client.Entity.CurrentMap ||
-                                    _pathFinder.GetTarget().TargetX != client.Entity.CurrentX ||
-                                    _pathFinder.GetTarget().TargetY != client.Entity.CurrentY)
+                                if (mPathFinder.GetTarget() == null ||
+                                    mPathFinder.GetTarget().TargetMap != client.Entity.CurrentMap ||
+                                    mPathFinder.GetTarget().TargetX != client.Entity.CurrentX ||
+                                    mPathFinder.GetTarget().TargetY != client.Entity.CurrentY)
                                 {
-                                    _pathFinder.SetTarget(new PathfinderTarget(client.Entity.CurrentMap,
+                                    mPathFinder.SetTarget(new PathfinderTarget(client.Entity.CurrentMap,
                                         client.Entity.CurrentX, client.Entity.CurrentY));
                                 }
                                 //Todo check if next to or on top of player.. if so don't run pathfinder.
-                                if (_pathFinder.Update(timeMs) == PathfinderResult.Success)
+                                if (mPathFinder.Update(timeMs) == PathfinderResult.Success)
                                 {
-                                    var pathDir = _pathFinder.GetMove();
+                                    var pathDir = mPathFinder.GetMove();
                                     if (pathDir > -1)
                                     {
                                         if (CanMove(pathDir) == -1)
@@ -299,7 +299,7 @@ namespace Intersect.Server.Classes.Entities
                                         }
                                         else
                                         {
-                                            _pathFinder.PathFailed(timeMs);
+                                            mPathFinder.PathFailed(timeMs);
                                         }
                                     }
                                 }
@@ -438,21 +438,21 @@ namespace Intersect.Server.Classes.Entities
                             moved = true;
                             break;
                         case MoveRouteEnum.WalkingAnimOn:
-                            WalkingAnim = 1;
+                            mWalkingAnim = 1;
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.WalkingAnimOff:
-                            WalkingAnim = 0;
+                            mWalkingAnim = 0;
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.DirectionFixOn:
-                            DirectionFix = 1;
+                            mDirectionFix = 1;
                             moved = true;
                             break;
                         case MoveRouteEnum.DirectionFixOff:
-                            DirectionFix = 0;
+                            mDirectionFix = 0;
                             moved = true;
                             break;
                         case MoveRouteEnum.WalkthroughOn:
@@ -476,17 +476,17 @@ namespace Intersect.Server.Classes.Entities
                             moved = true;
                             break;
                         case MoveRouteEnum.SetLevelBelow:
-                            RenderLevel = 0;
+                            mRenderLevel = 0;
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.SetLevelNormal:
-                            RenderLevel = 1;
+                            mRenderLevel = 1;
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.SetLevelAbove:
-                            RenderLevel = 2;
+                            mRenderLevel = 2;
                             shouldSendUpdate = true;
                             moved = true;
                             break;
@@ -578,7 +578,7 @@ namespace Intersect.Server.Classes.Entities
 
         public override int CanMove(int moveDir)
         {
-            if (Client == null && PageNum != 0) return -5;
+            if (Client == null && mPageNum != 0) return -5;
             switch (moveDir)
             {
                 case (int) Directions.Up:
@@ -619,7 +619,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (MyEventIndex.CanSpawnPage(i, BaseEvent))
                 {
-                    if (i > PageNum) return true;
+                    if (i > mPageNum) return true;
                 }
             }
             if (GlobalClone != null)

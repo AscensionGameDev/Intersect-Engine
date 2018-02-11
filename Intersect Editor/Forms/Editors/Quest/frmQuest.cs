@@ -13,13 +13,13 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms
 {
-    public partial class frmQuest : EditorForm
+    public partial class FrmQuest : EditorForm
     {
-        private List<QuestBase> _changed = new List<QuestBase>();
-        private byte[] _copiedItem;
-        private QuestBase _editorItem;
+        private List<QuestBase> mChanged = new List<QuestBase>();
+        private byte[] mCopiedItem;
+        private QuestBase mEditorItem;
 
-        public frmQuest()
+        public FrmQuest()
         {
             ApplyHooks();
             InitializeComponent();
@@ -76,9 +76,9 @@ namespace Intersect.Editor.Forms
             if (type == GameObjectType.Quest)
             {
                 InitEditor();
-                if (_editorItem != null && !QuestBase.Lookup.Values.Contains(_editorItem))
+                if (mEditorItem != null && !QuestBase.Lookup.Values.Contains(mEditorItem))
                 {
-                    _editorItem = null;
+                    mEditorItem = null;
                     UpdateEditor();
                 }
             }
@@ -86,13 +86,13 @@ namespace Intersect.Editor.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            foreach (var item in _changed)
+            foreach (var item in mChanged)
             {
                 item.RestoreBackup();
                 item.DeleteBackup();
             }
 
-            _editorItem = null;
+            mEditorItem = null;
             Hide();
             Globals.CurrentEditor = -1;
             Dispose();
@@ -101,13 +101,13 @@ namespace Intersect.Editor.Forms
         private void btnSave_Click(object sender, EventArgs e)
         {
             //Send Changed items
-            foreach (var item in _changed)
+            foreach (var item in mChanged)
             {
                 PacketSender.SendSaveObject(item);
                 item.DeleteBackup();
             }
 
-            _editorItem = null;
+            mEditorItem = null;
             Hide();
             Globals.CurrentEditor = -1;
             Dispose();
@@ -115,8 +115,8 @@ namespace Intersect.Editor.Forms
 
         private void lstQuests_Click(object sender, EventArgs e)
         {
-            if (changingName) return;
-            _editorItem =
+            if (mChangingName) return;
+            mEditorItem =
                 QuestBase.Lookup.Get<QuestBase>(
                     Database.GameObjectIdFromList(GameObjectType.Quest, lstQuests.SelectedIndex));
             UpdateEditor();
@@ -135,27 +135,27 @@ namespace Intersect.Editor.Forms
 
         private void UpdateEditor()
         {
-            if (_editorItem != null)
+            if (mEditorItem != null)
             {
                 pnlContainer.Show();
 
-                txtName.Text = _editorItem.Name;
-                txtBeforeDesc.Text = _editorItem.BeforeDesc;
-                txtStartDesc.Text = _editorItem.StartDesc;
-                txtInProgressDesc.Text = _editorItem.InProgressDesc;
-                txtEndDesc.Text = _editorItem.EndDesc;
+                txtName.Text = mEditorItem.Name;
+                txtBeforeDesc.Text = mEditorItem.BeforeDesc;
+                txtStartDesc.Text = mEditorItem.StartDesc;
+                txtInProgressDesc.Text = mEditorItem.InProgressDesc;
+                txtEndDesc.Text = mEditorItem.EndDesc;
 
-                chkRepeatable.Checked = Convert.ToBoolean(_editorItem.Repeatable);
-                chkQuittable.Checked = Convert.ToBoolean(_editorItem.Quitable);
-                chkLogBeforeOffer.Checked = Convert.ToBoolean(_editorItem.LogBeforeOffer);
-                chkLogAfterComplete.Checked = Convert.ToBoolean(_editorItem.LogAfterComplete);
+                chkRepeatable.Checked = Convert.ToBoolean(mEditorItem.Repeatable);
+                chkQuittable.Checked = Convert.ToBoolean(mEditorItem.Quitable);
+                chkLogBeforeOffer.Checked = Convert.ToBoolean(mEditorItem.LogBeforeOffer);
+                chkLogAfterComplete.Checked = Convert.ToBoolean(mEditorItem.LogAfterComplete);
 
                 ListQuestTasks();
 
-                if (_changed.IndexOf(_editorItem) == -1)
+                if (mChanged.IndexOf(mEditorItem) == -1)
                 {
-                    _changed.Add(_editorItem);
-                    _editorItem.MakeBackup();
+                    mChanged.Add(mEditorItem);
+                    mEditorItem.MakeBackup();
                 }
             }
             else
@@ -167,35 +167,35 @@ namespace Intersect.Editor.Forms
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
-            changingName = true;
-            _editorItem.Name = txtName.Text;
-            lstQuests.Items[Database.GameObjectListIndex(GameObjectType.Quest, _editorItem.Index)] = txtName.Text;
-            changingName = false;
+            mChangingName = true;
+            mEditorItem.Name = txtName.Text;
+            lstQuests.Items[Database.GameObjectListIndex(GameObjectType.Quest, mEditorItem.Index)] = txtName.Text;
+            mChangingName = false;
         }
 
         private void txtStartDesc_TextChanged(object sender, EventArgs e)
         {
-            _editorItem.StartDesc = txtStartDesc.Text;
+            mEditorItem.StartDesc = txtStartDesc.Text;
         }
 
         private void txtEndDesc_TextChanged(object sender, EventArgs e)
         {
-            _editorItem.EndDesc = txtEndDesc.Text;
+            mEditorItem.EndDesc = txtEndDesc.Text;
         }
 
         private void btnEditStartEvent_Click(object sender, EventArgs e)
         {
-            _editorItem.StartEvent.Name = Strings.Get("questeditor", "startevent", _editorItem.Name);
-            openQuestEvent(_editorItem.StartEvent);
+            mEditorItem.StartEvent.Name = Strings.Get("questeditor", "startevent", mEditorItem.Name);
+            OpenQuestEvent(mEditorItem.StartEvent);
         }
 
         private void btnEditCompletionEvent_Click(object sender, EventArgs e)
         {
-            _editorItem.EndEvent.Name = Strings.Get("questeditor", "endevent", _editorItem.Name);
-            openQuestEvent(_editorItem.EndEvent);
+            mEditorItem.EndEvent.Name = Strings.Get("questeditor", "endevent", mEditorItem.Name);
+            OpenQuestEvent(mEditorItem.EndEvent);
         }
 
-        private void openQuestEvent(EventBase evt)
+        private void OpenQuestEvent(EventBase evt)
         {
             FrmEvent editor = new FrmEvent(null) {MyEvent = evt};
             editor.InitEditor();
@@ -206,11 +206,11 @@ namespace Intersect.Editor.Forms
 
         private void btnAddTask_Click(object sender, EventArgs e)
         {
-            var questTask = new QuestBase.QuestTask(_editorItem.NextTaskID);
-            _editorItem.NextTaskID = _editorItem.NextTaskID + 1;
+            var questTask = new QuestBase.QuestTask(mEditorItem.NextTaskId);
+            mEditorItem.NextTaskId = mEditorItem.NextTaskId + 1;
             if (OpenTaskEditor(questTask))
             {
-                _editorItem.Tasks.Add(questTask);
+                mEditorItem.Tasks.Add(questTask);
                 ListQuestTasks();
             }
         }
@@ -218,7 +218,7 @@ namespace Intersect.Editor.Forms
         private void ListQuestTasks()
         {
             lstTasks.Items.Clear();
-            foreach (var task in _editorItem.Tasks)
+            foreach (var task in mEditorItem.Tasks)
             {
                 lstTasks.Items.Add(task.GetTaskString());
             }
@@ -226,7 +226,7 @@ namespace Intersect.Editor.Forms
 
         private bool OpenTaskEditor(QuestBase.QuestTask task)
         {
-            var cmdWindow = new Quest_TaskEditor(task);
+            var cmdWindow = new QuestTaskEditor(task);
             var frm = new Form
             {
                 Text = Strings.Get("taskeditor", "title")
@@ -251,7 +251,7 @@ namespace Intersect.Editor.Forms
         {
             if (lstTasks.SelectedIndex > -1)
             {
-                _editorItem.Tasks.RemoveAt(lstTasks.SelectedIndex);
+                mEditorItem.Tasks.RemoveAt(lstTasks.SelectedIndex);
                 ListQuestTasks();
             }
         }
@@ -260,9 +260,9 @@ namespace Intersect.Editor.Forms
         {
             if (lstTasks.SelectedIndex > 0)
             {
-                var item = _editorItem.Tasks[lstTasks.SelectedIndex];
-                _editorItem.Tasks.RemoveAt(lstTasks.SelectedIndex);
-                _editorItem.Tasks.Insert(lstTasks.SelectedIndex - 1, item);
+                var item = mEditorItem.Tasks[lstTasks.SelectedIndex];
+                mEditorItem.Tasks.RemoveAt(lstTasks.SelectedIndex);
+                mEditorItem.Tasks.Insert(lstTasks.SelectedIndex - 1, item);
                 ListQuestTasks();
             }
         }
@@ -271,33 +271,33 @@ namespace Intersect.Editor.Forms
         {
             if (lstTasks.SelectedIndex > -1 && lstTasks.SelectedIndex != lstTasks.Items.Count - 1)
             {
-                var item = _editorItem.Tasks[lstTasks.SelectedIndex];
-                _editorItem.Tasks.RemoveAt(lstTasks.SelectedIndex);
-                _editorItem.Tasks.Insert(lstTasks.SelectedIndex + 1, item);
+                var item = mEditorItem.Tasks[lstTasks.SelectedIndex];
+                mEditorItem.Tasks.RemoveAt(lstTasks.SelectedIndex);
+                mEditorItem.Tasks.Insert(lstTasks.SelectedIndex + 1, item);
                 ListQuestTasks();
             }
         }
 
         private void txtInProgressDesc_TextChanged(object sender, EventArgs e)
         {
-            _editorItem.InProgressDesc = txtInProgressDesc.Text;
+            mEditorItem.InProgressDesc = txtInProgressDesc.Text;
         }
 
         private void chkRepeatable_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem.Repeatable = Convert.ToByte(chkRepeatable.Checked);
+            mEditorItem.Repeatable = Convert.ToByte(chkRepeatable.Checked);
         }
 
         private void chkQuittable_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem.Quitable = Convert.ToByte(chkQuittable.Checked);
+            mEditorItem.Quitable = Convert.ToByte(chkQuittable.Checked);
         }
 
         private void lstTasks_DoubleClick(object sender, EventArgs e)
         {
-            if (lstTasks.SelectedIndex > -1 && _editorItem.Tasks.Count > lstTasks.SelectedIndex)
+            if (lstTasks.SelectedIndex > -1 && mEditorItem.Tasks.Count > lstTasks.SelectedIndex)
             {
-                if (OpenTaskEditor(_editorItem.Tasks[lstTasks.SelectedIndex]))
+                if (OpenTaskEditor(mEditorItem.Tasks[lstTasks.SelectedIndex]))
                 {
                     ListQuestTasks();
                 }
@@ -306,17 +306,17 @@ namespace Intersect.Editor.Forms
 
         private void txtBeforeDesc_TextChanged(object sender, EventArgs e)
         {
-            _editorItem.BeforeDesc = txtBeforeDesc.Text;
+            mEditorItem.BeforeDesc = txtBeforeDesc.Text;
         }
 
         private void chkLogBeforeOffer_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem.LogBeforeOffer = Convert.ToByte(chkLogBeforeOffer.Checked);
+            mEditorItem.LogBeforeOffer = Convert.ToByte(chkLogBeforeOffer.Checked);
         }
 
         private void chkLogAfterComplete_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem.LogAfterComplete = Convert.ToByte(chkLogAfterComplete.Checked);
+            mEditorItem.LogAfterComplete = Convert.ToByte(chkLogAfterComplete.Checked);
         }
 
         private void toolStripItemNew_Click(object sender, EventArgs e)
@@ -326,44 +326,44 @@ namespace Intersect.Editor.Forms
 
         private void toolStripItemDelete_Click(object sender, EventArgs e)
         {
-            if (_editorItem != null && lstQuests.Focused)
+            if (mEditorItem != null && lstQuests.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("questeditor", "deleteprompt"),
                         Strings.Get("questeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
-                    PacketSender.SendDeleteObject(_editorItem);
+                    PacketSender.SendDeleteObject(mEditorItem);
                 }
             }
         }
 
         private void toolStripItemCopy_Click(object sender, EventArgs e)
         {
-            if (_editorItem != null && lstQuests.Focused)
+            if (mEditorItem != null && lstQuests.Focused)
             {
-                _copiedItem = _editorItem.BinaryData;
+                mCopiedItem = mEditorItem.BinaryData;
                 toolStripItemPaste.Enabled = true;
             }
         }
 
         private void toolStripItemPaste_Click(object sender, EventArgs e)
         {
-            if (_editorItem != null && _copiedItem != null && lstQuests.Focused)
+            if (mEditorItem != null && mCopiedItem != null && lstQuests.Focused)
             {
-                _editorItem.Load(_copiedItem);
+                mEditorItem.Load(mCopiedItem);
                 UpdateEditor();
             }
         }
 
         private void toolStripItemUndo_Click(object sender, EventArgs e)
         {
-            if (_changed.Contains(_editorItem) && _editorItem != null)
+            if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("questeditor", "undoprompt"),
                         Strings.Get("questeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
-                    _editorItem.RestoreBackup();
+                    mEditorItem.RestoreBackup();
                     UpdateEditor();
                 }
             }
@@ -397,10 +397,10 @@ namespace Intersect.Editor.Forms
 
         private void UpdateToolStripItems()
         {
-            toolStripItemCopy.Enabled = _editorItem != null && lstQuests.Focused;
-            toolStripItemPaste.Enabled = _editorItem != null && _copiedItem != null && lstQuests.Focused;
-            toolStripItemDelete.Enabled = _editorItem != null && lstQuests.Focused;
-            toolStripItemUndo.Enabled = _editorItem != null && lstQuests.Focused;
+            toolStripItemCopy.Enabled = mEditorItem != null && lstQuests.Focused;
+            toolStripItemPaste.Enabled = mEditorItem != null && mCopiedItem != null && lstQuests.Focused;
+            toolStripItemDelete.Enabled = mEditorItem != null && lstQuests.Focused;
+            toolStripItemUndo.Enabled = mEditorItem != null && lstQuests.Focused;
         }
 
         private void itemList_FocusChanged(object sender, EventArgs e)
@@ -421,7 +421,7 @@ namespace Intersect.Editor.Forms
 
         private void btnEditRequirements_Click(object sender, EventArgs e)
         {
-            var frm = new frmDynamicRequirements(_editorItem.Requirements, RequirementType.Quest);
+            var frm = new FrmDynamicRequirements(mEditorItem.Requirements, RequirementType.Quest);
             frm.ShowDialog();
         }
     }

@@ -46,25 +46,25 @@ namespace Intersect.Server.Classes.Misc
     /// </summary>
     public class SpatialAStar
     {
-        private static readonly double SQRT_2 = Math.Sqrt(2);
-        private PathNode[,] m_CameFrom;
-        private OpenCloseMap m_ClosedSet;
-        private OpenCloseMap m_OpenSet;
-        private PriorityQueue<PathNode> m_OrderedOpenSet;
-        private OpenCloseMap m_RuntimeGrid;
-        private PathNode[,] m_SearchSpace;
+        private static readonly double Sqrt2 = Math.Sqrt(2);
+        private PathNode[,] mCameFrom;
+        private OpenCloseMap mClosedSet;
+        private OpenCloseMap mOpenSet;
+        private PriorityQueue<PathNode> mOrderedOpenSet;
+        private OpenCloseMap mRuntimeGrid;
+        private PathNode[,] mSearchSpace;
 
         public SpatialAStar(PathNode[,] inGrid)
         {
             SearchSpace = inGrid;
             Width = inGrid.GetLength(0);
             Height = inGrid.GetLength(1);
-            m_SearchSpace = inGrid;
-            m_ClosedSet = new OpenCloseMap(Width, Height);
-            m_OpenSet = new OpenCloseMap(Width, Height);
-            m_CameFrom = new PathNode[Width, Height];
-            m_RuntimeGrid = new OpenCloseMap(Width, Height);
-            m_OrderedOpenSet = new PriorityQueue<PathNode>(PathNode.Comparer);
+            mSearchSpace = inGrid;
+            mClosedSet = new OpenCloseMap(Width, Height);
+            mOpenSet = new OpenCloseMap(Width, Height);
+            mCameFrom = new PathNode[Width, Height];
+            mRuntimeGrid = new OpenCloseMap(Width, Height);
+            mOrderedOpenSet = new PriorityQueue<PathNode>(PathNode.Comparer);
         }
 
         public PathNode[,] SearchSpace { get; private set; }
@@ -85,7 +85,7 @@ namespace Intersect.Server.Classes.Misc
             switch (diffX + diffY)
             {
                 case 1: return 1;
-                case 2: return SQRT_2;
+                case 2: return Sqrt2;
                 case 0: return 0;
                 default:
                     throw new ApplicationException();
@@ -100,8 +100,8 @@ namespace Intersect.Server.Classes.Misc
         /// </summary>
         public LinkedList<PathNode> Search(Point inStartNode, Point inEndNode, PathNode inUserContext)
         {
-            PathNode startNode = m_SearchSpace[inStartNode.X, inStartNode.Y];
-            PathNode endNode = m_SearchSpace[inEndNode.X, inEndNode.Y];
+            PathNode startNode = mSearchSpace[inStartNode.X, inStartNode.Y];
+            PathNode endNode = mSearchSpace[inEndNode.X, inEndNode.Y];
 
             //System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
             //watch.Start();
@@ -111,16 +111,16 @@ namespace Intersect.Server.Classes.Misc
 
             PathNode[] neighborNodes = new PathNode[8];
 
-            m_ClosedSet.Clear();
-            m_OpenSet.Clear();
-            m_RuntimeGrid.Clear();
-            m_OrderedOpenSet.Clear();
+            mClosedSet.Clear();
+            mOpenSet.Clear();
+            mRuntimeGrid.Clear();
+            mOrderedOpenSet.Clear();
 
             for (int x = 0; x < Width; x++)
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    m_CameFrom[x, y] = null;
+                    mCameFrom[x, y] = null;
                 }
             }
 
@@ -128,16 +128,16 @@ namespace Intersect.Server.Classes.Misc
             startNode.H = Heuristic(startNode, endNode);
             startNode.F = startNode.H;
 
-            m_OpenSet.Add(startNode);
-            m_OrderedOpenSet.Push(startNode);
+            mOpenSet.Add(startNode);
+            mOrderedOpenSet.Push(startNode);
 
-            m_RuntimeGrid.Add(startNode);
+            mRuntimeGrid.Add(startNode);
 
             int nodes = 0;
 
-            while (!m_OpenSet.IsEmpty)
+            while (!mOpenSet.IsEmpty)
             {
-                PathNode x = m_OrderedOpenSet.Pop();
+                PathNode x = mOrderedOpenSet.Pop();
 
                 if (x == endNode)
                 {
@@ -145,22 +145,22 @@ namespace Intersect.Server.Classes.Misc
 
                     //elapsed.Add(watch.ElapsedMilliseconds);
 
-                    LinkedList<PathNode> result = ReconstructPath(m_CameFrom, m_CameFrom[endNode.X, endNode.Y]);
+                    LinkedList<PathNode> result = ReconstructPath(mCameFrom, mCameFrom[endNode.X, endNode.Y]);
 
                     result.AddLast(endNode);
 
                     return result;
                 }
 
-                m_OpenSet.Remove(x);
-                m_ClosedSet.Add(x);
+                mOpenSet.Remove(x);
+                mClosedSet.Add(x);
 
                 StoreNeighborNodes(x, neighborNodes);
 
                 for (int i = 0; i < neighborNodes.Length; i++)
                 {
                     PathNode y = neighborNodes[i];
-                    bool tentative_is_better;
+                    bool tentativeIsBetter;
 
                     if (y == null)
                         continue;
@@ -168,44 +168,44 @@ namespace Intersect.Server.Classes.Misc
                     if (y.IsWall)
                         continue;
 
-                    if (m_ClosedSet.Contains(y))
+                    if (mClosedSet.Contains(y))
                         continue;
 
                     nodes++;
 
-                    double tentative_g_score = m_RuntimeGrid[x].G + NeighborDistance(x, y);
+                    double tentativeGScore = mRuntimeGrid[x].G + NeighborDistance(x, y);
                     bool wasAdded = false;
 
-                    if (!m_OpenSet.Contains(y))
+                    if (!mOpenSet.Contains(y))
                     {
-                        m_OpenSet.Add(y);
-                        tentative_is_better = true;
+                        mOpenSet.Add(y);
+                        tentativeIsBetter = true;
                         wasAdded = true;
                     }
-                    else if (tentative_g_score < m_RuntimeGrid[y].G)
+                    else if (tentativeGScore < mRuntimeGrid[y].G)
                     {
-                        tentative_is_better = true;
+                        tentativeIsBetter = true;
                     }
                     else
                     {
-                        tentative_is_better = false;
+                        tentativeIsBetter = false;
                     }
 
-                    if (tentative_is_better)
+                    if (tentativeIsBetter)
                     {
-                        m_CameFrom[y.X, y.Y] = x;
+                        mCameFrom[y.X, y.Y] = x;
 
-                        if (!m_RuntimeGrid.Contains(y))
-                            m_RuntimeGrid.Add(y);
+                        if (!mRuntimeGrid.Contains(y))
+                            mRuntimeGrid.Add(y);
 
-                        m_RuntimeGrid[y].G = tentative_g_score;
-                        m_RuntimeGrid[y].H = Heuristic(y, endNode);
-                        m_RuntimeGrid[y].F = m_RuntimeGrid[y].G + m_RuntimeGrid[y].H;
+                        mRuntimeGrid[y].G = tentativeGScore;
+                        mRuntimeGrid[y].H = Heuristic(y, endNode);
+                        mRuntimeGrid[y].F = mRuntimeGrid[y].G + mRuntimeGrid[y].H;
 
                         if (wasAdded)
-                            m_OrderedOpenSet.Push(y);
+                            mOrderedOpenSet.Push(y);
                         else
-                            m_OrderedOpenSet.Update(y);
+                            mOrderedOpenSet.Update(y);
                     }
                 }
             }
@@ -213,27 +213,27 @@ namespace Intersect.Server.Classes.Misc
             return null;
         }
 
-        private LinkedList<PathNode> ReconstructPath(PathNode[,] came_from, PathNode current_node)
+        private LinkedList<PathNode> ReconstructPath(PathNode[,] cameFrom, PathNode currentNode)
         {
             LinkedList<PathNode> result = new LinkedList<PathNode>();
 
-            ReconstructPathRecursive(came_from, current_node, result);
+            ReconstructPathRecursive(cameFrom, currentNode, result);
 
             return result;
         }
 
-        private void ReconstructPathRecursive(PathNode[,] came_from, PathNode current_node, LinkedList<PathNode> result)
+        private void ReconstructPathRecursive(PathNode[,] cameFrom, PathNode currentNode, LinkedList<PathNode> result)
         {
-            PathNode item = came_from[current_node.X, current_node.Y];
+            PathNode item = cameFrom[currentNode.X, currentNode.Y];
 
             if (item != null)
             {
-                ReconstructPathRecursive(came_from, item, result);
+                ReconstructPathRecursive(cameFrom, item, result);
 
-                result.AddLast(current_node);
+                result.AddLast(currentNode);
             }
             else
-                result.AddLast(current_node);
+                result.AddLast(currentNode);
         }
 
         private void StoreNeighborNodes(PathNode inAround, PathNode[] inNeighbors)
@@ -244,26 +244,26 @@ namespace Intersect.Server.Classes.Misc
             inNeighbors[0] = null;
 
             if (y > 0)
-                inNeighbors[1] = m_SearchSpace[x, y - 1];
+                inNeighbors[1] = mSearchSpace[x, y - 1];
             else
                 inNeighbors[1] = null;
 
             inNeighbors[2] = null;
 
             if (x > 0)
-                inNeighbors[3] = m_SearchSpace[x - 1, y];
+                inNeighbors[3] = mSearchSpace[x - 1, y];
             else
                 inNeighbors[3] = null;
 
             if (x < Width - 1)
-                inNeighbors[4] = m_SearchSpace[x + 1, y];
+                inNeighbors[4] = mSearchSpace[x + 1, y];
             else
                 inNeighbors[4] = null;
 
             inNeighbors[5] = null;
 
             if (y < Height - 1)
-                inNeighbors[6] = m_SearchSpace[x, y + 1];
+                inNeighbors[6] = mSearchSpace[x, y + 1];
             else
                 inNeighbors[6] = null;
 
@@ -272,11 +272,11 @@ namespace Intersect.Server.Classes.Misc
 
         private class OpenCloseMap
         {
-            private PathNode[,] m_Map;
+            private PathNode[,] mMap;
 
             public OpenCloseMap(int inWidth, int inHeight)
             {
-                m_Map = new PathNode[inWidth, inHeight];
+                mMap = new PathNode[inWidth, inHeight];
                 Width = inWidth;
                 Height = inHeight;
             }
@@ -287,12 +287,12 @@ namespace Intersect.Server.Classes.Misc
 
             public PathNode this[int x, int y]
             {
-                get { return m_Map[x, y]; }
+                get { return mMap[x, y]; }
             }
 
-            public PathNode this[PathNode Node]
+            public PathNode this[PathNode node]
             {
-                get { return m_Map[Node.X, Node.Y]; }
+                get { return mMap[node.X, node.Y]; }
             }
 
             public bool IsEmpty
@@ -302,7 +302,7 @@ namespace Intersect.Server.Classes.Misc
 
             public void Add(PathNode inValue)
             {
-                PathNode item = m_Map[inValue.X, inValue.Y];
+                PathNode item = mMap[inValue.X, inValue.Y];
 
 #if DEBUG
                 if (item != null)
@@ -310,12 +310,12 @@ namespace Intersect.Server.Classes.Misc
 #endif
 
                 Count++;
-                m_Map[inValue.X, inValue.Y] = inValue;
+                mMap[inValue.X, inValue.Y] = inValue;
             }
 
             public bool Contains(PathNode inValue)
             {
-                PathNode item = m_Map[inValue.X, inValue.Y];
+                PathNode item = mMap[inValue.X, inValue.Y];
 
                 if (item == null)
                     return false;
@@ -330,7 +330,7 @@ namespace Intersect.Server.Classes.Misc
 
             public void Remove(PathNode inValue)
             {
-                PathNode item = m_Map[inValue.X, inValue.Y];
+                PathNode item = mMap[inValue.X, inValue.Y];
 
 #if DEBUG
                 if (!inValue.Equals(item))
@@ -338,7 +338,7 @@ namespace Intersect.Server.Classes.Misc
 #endif
 
                 Count--;
-                m_Map[inValue.X, inValue.Y] = null;
+                mMap[inValue.X, inValue.Y] = null;
             }
 
             public void Clear()
@@ -349,7 +349,7 @@ namespace Intersect.Server.Classes.Misc
                 {
                     for (int y = 0; y < Height; y++)
                     {
-                        m_Map[x, y] = null;
+                        mMap[x, y] = null;
                     }
                 }
             }

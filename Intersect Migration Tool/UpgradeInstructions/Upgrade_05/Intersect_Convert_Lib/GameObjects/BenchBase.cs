@@ -8,7 +8,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
     {
         public new const string DATABASE_TABLE = "crafts";
         public new const GameObject OBJECT_TYPE = GameObject.Bench;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        protected static Dictionary<int, DatabaseObject> sObjects = new Dictionary<int, DatabaseObject>();
         public List<Bench> Crafts = new List<Bench>();
 
         public string Name = "New Bench";
@@ -69,18 +69,18 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         public static BenchBase GetCraft(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return (BenchBase) Objects[index];
+                return (BenchBase) sObjects[index];
             }
             return null;
         }
 
         public static string GetName(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return ((BenchBase) Objects[index]).Name;
+                return ((BenchBase) sObjects[index]).Name;
             }
             return "Deleted";
         }
@@ -102,38 +102,38 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         public static DatabaseObject Get(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return Objects[index];
+                return sObjects[index];
             }
             return null;
         }
 
         public static int ObjectCount()
         {
-            return Objects.Count;
+            return sObjects.Count;
         }
 
         public static Dictionary<int, BenchBase> GetObjects()
         {
-            Dictionary<int, BenchBase> objects = Objects.ToDictionary(k => k.Key, v => (BenchBase) v.Value);
+            Dictionary<int, BenchBase> objects = sObjects.ToDictionary(k => k.Key, v => (BenchBase) v.Value);
             return objects;
         }
 
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            sObjects.Remove(GetId());
         }
 
         public static void ClearObjects()
         {
-            Objects.Clear();
+            sObjects.Clear();
         }
 
         public static void AddObject(int index, DatabaseObject obj)
         {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
+            sObjects.Remove(index);
+            sObjects.Add(index, obj);
         }
     }
 

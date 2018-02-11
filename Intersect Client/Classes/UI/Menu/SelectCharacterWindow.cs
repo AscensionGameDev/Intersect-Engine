@@ -13,86 +13,86 @@ namespace Intersect_Client.Classes.UI.Menu
 {
     public class SelectCharacterWindow
     {
-        private ImagePanel _characterContainer;
-        private ImagePanel _characterPortrait;
+        private ImagePanel mCharacterContainer;
+        private ImagePanel mCharacterPortrait;
 
         //Image
-        private string _characterPortraitImg = "";
+        private string mCharacterPortraitImg = "";
 
-        private Label _characterSelectionHeader;
-        private ImagePanel _characterSelectionPanel;
-        private Label _charnameLabel;
-        private Button _deleteButton;
-        private Label _infoLabel;
+        private Label mCharacterSelectionHeader;
+        private ImagePanel mCharacterSelectionPanel;
+        private Label mCharnameLabel;
+        private Button mDeleteButton;
+        private Label mInfoLabel;
 
         //Parent
-        private MainMenu _mainMenu;
+        private MainMenu mMainMenu;
 
-        private Button _newButton;
+        private Button mNewButton;
 
         //Controls
-        private Button _nextCharButton;
+        private Button mNextCharButton;
 
-        private ImagePanel[] _paperdollPortraits;
-        private Button _playButton;
-        private Button _prevCharButton;
+        private ImagePanel[] mPaperdollPortraits;
+        private Button mPlayButton;
+        private Button mPrevCharButton;
         public List<Character> Characters = new List<Character>();
 
         //Selected Char
-        private int selectedChar = 0;
+        private int mSelectedChar = 0;
 
         //Init
         public SelectCharacterWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
         {
             //Assign References
-            _mainMenu = mainMenu;
+            mMainMenu = mainMenu;
 
             //Main Menu Window
-            _characterSelectionPanel = new ImagePanel(parent, "CharacterSelectionWindow");
+            mCharacterSelectionPanel = new ImagePanel(parent, "CharacterSelectionWindow");
 
             //Menu Header
-            _characterSelectionHeader = new Label(_characterSelectionPanel, "CharacterSelectionHeader");
-            _characterSelectionHeader.SetText(Strings.Get("CharacterSelection", "title"));
+            mCharacterSelectionHeader = new Label(mCharacterSelectionPanel, "CharacterSelectionHeader");
+            mCharacterSelectionHeader.SetText(Strings.Get("CharacterSelection", "title"));
 
             //Character Name
-            _charnameLabel = new Label(_characterSelectionPanel, "CharacterNameLabel");
-            _charnameLabel.SetText(Strings.Get("CharacterSelection", "nochar"));
+            mCharnameLabel = new Label(mCharacterSelectionPanel, "CharacterNameLabel");
+            mCharnameLabel.SetText(Strings.Get("CharacterSelection", "nochar"));
 
             //Character Info
-            _infoLabel = new Label(_characterSelectionPanel, "CharacterInfoLabel");
-            _infoLabel.SetText(Strings.Get("CharacterSelection", "new"));
+            mInfoLabel = new Label(mCharacterSelectionPanel, "CharacterInfoLabel");
+            mInfoLabel.SetText(Strings.Get("CharacterSelection", "new"));
 
             //Character Container
-            _characterContainer = new ImagePanel(_characterSelectionPanel, "CharacterContainer");
+            mCharacterContainer = new ImagePanel(mCharacterSelectionPanel, "CharacterContainer");
 
             //Character sprite
-            _characterPortrait = new ImagePanel(_characterContainer);
-            _characterPortrait.SetSize(48, 48);
+            mCharacterPortrait = new ImagePanel(mCharacterContainer);
+            mCharacterPortrait.SetSize(48, 48);
 
             //Next char Button
-            _nextCharButton = new Button(_characterContainer, "NextCharacterButton");
-            _nextCharButton.Clicked += _nextCharButton_Clicked;
+            mNextCharButton = new Button(mCharacterContainer, "NextCharacterButton");
+            mNextCharButton.Clicked += _nextCharButton_Clicked;
 
             //Prev Char Button
-            _prevCharButton = new Button(_characterContainer, "PreviousCharacterButton");
-            _prevCharButton.Clicked += _prevCharButton_Clicked;
+            mPrevCharButton = new Button(mCharacterContainer, "PreviousCharacterButton");
+            mPrevCharButton.Clicked += _prevCharButton_Clicked;
 
             //Play Button
-            _playButton = new Button(_characterSelectionPanel, "PlayButton");
-            _playButton.SetText(Strings.Get("CharacterSelection", "play"));
-            _playButton.Clicked += _playButton_Clicked;
-            _playButton.Hide();
+            mPlayButton = new Button(mCharacterSelectionPanel, "PlayButton");
+            mPlayButton.SetText(Strings.Get("CharacterSelection", "play"));
+            mPlayButton.Clicked += _playButton_Clicked;
+            mPlayButton.Hide();
 
             //Delete Button
-            _deleteButton = new Button(_characterSelectionPanel, "DeleteButton");
-            _deleteButton.SetText(Strings.Get("CharacterSelection", "delete"));
-            _deleteButton.Clicked += _deleteButton_Clicked;
-            _deleteButton.Hide();
+            mDeleteButton = new Button(mCharacterSelectionPanel, "DeleteButton");
+            mDeleteButton.SetText(Strings.Get("CharacterSelection", "delete"));
+            mDeleteButton.Clicked += _deleteButton_Clicked;
+            mDeleteButton.Hide();
 
             //Create new char Button
-            _newButton = new Button(_characterSelectionPanel, "NewButton");
-            _newButton.SetText(Strings.Get("CharacterSelection", "new"));
-            _newButton.Clicked += _newButton_Clicked;
+            mNewButton = new Button(mCharacterSelectionPanel, "NewButton");
+            mNewButton.SetText(Strings.Get("CharacterSelection", "new"));
+            mNewButton.Clicked += _newButton_Clicked;
         }
 
         //Methods
@@ -103,86 +103,86 @@ namespace Intersect_Client.Classes.UI.Menu
             //Show and hide options based on the character count
             if (Characters.Count > 1)
             {
-                _nextCharButton.Show();
-                _prevCharButton.Show();
+                mNextCharButton.Show();
+                mPrevCharButton.Show();
             }
 
             if (Characters.Count <= 1)
             {
-                _nextCharButton.Hide();
-                _prevCharButton.Hide();
+                mNextCharButton.Hide();
+                mPrevCharButton.Hide();
             }
 
-            if (_paperdollPortraits == null)
+            if (mPaperdollPortraits == null)
             {
-                _paperdollPortraits = new ImagePanel[Options.EquipmentSlots.Count];
+                mPaperdollPortraits = new ImagePanel[Options.EquipmentSlots.Count];
                 for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
-                    _paperdollPortraits[i] = new ImagePanel(_characterContainer);
+                    mPaperdollPortraits[i] = new ImagePanel(mCharacterContainer);
                 }
-                _nextCharButton.BringToFront();
-                _prevCharButton.BringToFront();
+                mNextCharButton.BringToFront();
+                mPrevCharButton.BringToFront();
             }
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                _paperdollPortraits[i].Hide();
+                mPaperdollPortraits[i].Hide();
             }
 
-            if (Characters[selectedChar].Id > -1)
+            if (Characters[mSelectedChar].Id > -1)
             {
-                _charnameLabel.SetText(Strings.Get("CharacterSelection", "name", Characters[selectedChar].Name));
-                _infoLabel.SetText(Strings.Get("CharacterSelection", "info", Characters[selectedChar].Level,
-                    Characters[selectedChar].Class));
-                _infoLabel.Show();
-                _playButton.Show();
-                _deleteButton.Show();
-                _newButton.Hide();
+                mCharnameLabel.SetText(Strings.Get("CharacterSelection", "name", Characters[mSelectedChar].Name));
+                mInfoLabel.SetText(Strings.Get("CharacterSelection", "info", Characters[mSelectedChar].Level,
+                    Characters[mSelectedChar].Class));
+                mInfoLabel.Show();
+                mPlayButton.Show();
+                mDeleteButton.Show();
+                mNewButton.Hide();
 
-                _characterPortrait.Texture =
+                mCharacterPortrait.Texture =
                     Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face,
-                        Characters[selectedChar].Face);
-                if (_characterPortrait.Texture == null)
+                        Characters[mSelectedChar].Face);
+                if (mCharacterPortrait.Texture == null)
                 {
-                    _characterPortrait.Texture =
+                    mCharacterPortrait.Texture =
                         Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity,
-                            Characters[selectedChar].Sprite);
+                            Characters[mSelectedChar].Sprite);
                     isFace = false;
                 }
 
-                if (_characterPortrait.Texture != null)
+                if (mCharacterPortrait.Texture != null)
                 {
                     if (isFace)
                     {
-                        _characterPortrait.SetTextureRect(0, 0, _characterPortrait.Texture.GetWidth(),
-                            _characterPortrait.Texture.GetHeight());
-                        _characterPortrait.SetSize(64, 64);
-                        _characterPortrait.SetPosition(5, 5);
+                        mCharacterPortrait.SetTextureRect(0, 0, mCharacterPortrait.Texture.GetWidth(),
+                            mCharacterPortrait.Texture.GetHeight());
+                        mCharacterPortrait.SetSize(64, 64);
+                        mCharacterPortrait.SetPosition(5, 5);
                     }
                     else
                     {
-                        _characterPortrait.SetTextureRect(0, 0, _characterPortrait.Texture.GetWidth() / 4,
-                            _characterPortrait.Texture.GetHeight() / 4);
-                        _characterPortrait.SetSize(_characterPortrait.Texture.GetWidth() / 4,
-                            _characterPortrait.Texture.GetHeight() / 4);
-                        _characterPortrait.SetPosition(_characterContainer.Width / 2 - _characterPortrait.Width / 2,
-                            _characterContainer.Height / 2 - _characterPortrait.Height / 2);
+                        mCharacterPortrait.SetTextureRect(0, 0, mCharacterPortrait.Texture.GetWidth() / 4,
+                            mCharacterPortrait.Texture.GetHeight() / 4);
+                        mCharacterPortrait.SetSize(mCharacterPortrait.Texture.GetWidth() / 4,
+                            mCharacterPortrait.Texture.GetHeight() / 4);
+                        mCharacterPortrait.SetPosition(mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2,
+                            mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2);
 
                         for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                         {
-                            _paperdollPortraits[i].Texture =
+                            mPaperdollPortraits[i].Texture =
                                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll,
-                                    Characters[selectedChar].Equipment[i]);
-                            if (_paperdollPortraits[i].Texture != null)
+                                    Characters[mSelectedChar].Equipment[i]);
+                            if (mPaperdollPortraits[i].Texture != null)
                             {
-                                _paperdollPortraits[i].Show();
-                                _paperdollPortraits[i].SetTextureRect(0, 0,
-                                    _paperdollPortraits[i].Texture.GetWidth() / 4,
-                                    _paperdollPortraits[i].Texture.GetHeight() / 4);
-                                _paperdollPortraits[i].SetSize(_paperdollPortraits[i].Texture.GetWidth() / 4,
-                                    _paperdollPortraits[i].Texture.GetHeight() / 4);
-                                _paperdollPortraits[i].SetPosition(
-                                    _characterContainer.Width / 2 - _paperdollPortraits[i].Width / 2,
-                                    _characterContainer.Height / 2 - _paperdollPortraits[i].Height / 2);
+                                mPaperdollPortraits[i].Show();
+                                mPaperdollPortraits[i].SetTextureRect(0, 0,
+                                    mPaperdollPortraits[i].Texture.GetWidth() / 4,
+                                    mPaperdollPortraits[i].Texture.GetHeight() / 4);
+                                mPaperdollPortraits[i].SetSize(mPaperdollPortraits[i].Texture.GetWidth() / 4,
+                                    mPaperdollPortraits[i].Texture.GetHeight() / 4);
+                                mPaperdollPortraits[i].SetPosition(
+                                    mCharacterContainer.Width / 2 - mPaperdollPortraits[i].Width / 2,
+                                    mCharacterContainer.Height / 2 - mPaperdollPortraits[i].Height / 2);
                             }
                         }
                     }
@@ -190,67 +190,67 @@ namespace Intersect_Client.Classes.UI.Menu
             }
             else
             {
-                _playButton.Hide();
-                _deleteButton.Hide();
-                _newButton.Show();
+                mPlayButton.Hide();
+                mDeleteButton.Hide();
+                mNewButton.Show();
 
-                _charnameLabel.SetText(Strings.Get("CharacterSelection", "empty"));
-                _infoLabel.Hide();
+                mCharnameLabel.SetText(Strings.Get("CharacterSelection", "empty"));
+                mInfoLabel.Hide();
 
-                _characterPortrait.Texture = null;
+                mCharacterPortrait.Texture = null;
             }
         }
 
         public void Show()
         {
-            selectedChar = 0;
+            mSelectedChar = 0;
             Update();
-            _characterSelectionPanel.Show();
+            mCharacterSelectionPanel.Show();
         }
 
         public void Hide()
         {
-            _characterSelectionPanel.Hide();
+            mCharacterSelectionPanel.Hide();
         }
 
         private void _prevCharButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            selectedChar--;
-            if (selectedChar < 0)
+            mSelectedChar--;
+            if (mSelectedChar < 0)
             {
-                selectedChar = Characters.Count - 1;
+                mSelectedChar = Characters.Count - 1;
             }
             Update();
         }
 
         private void _nextCharButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            selectedChar++;
-            if (selectedChar >= Characters.Count)
+            mSelectedChar++;
+            if (mSelectedChar >= Characters.Count)
             {
-                selectedChar = 0;
+                mSelectedChar = 0;
             }
             Update();
         }
 
         private void _playButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.PlayGame(Characters[selectedChar].Id);
+            PacketSender.PlayGame(Characters[mSelectedChar].Id);
         }
 
         private void _deleteButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             InputBox iBox =
-                new InputBox(Strings.Get("characterselection", "deletetitle", Characters[selectedChar].Name),
-                    Strings.Get("characterselection", "deleteprompt", Characters[selectedChar].Name),
-                    true, InputBox.InputType.YesNo, DeleteCharacter, null, Characters[selectedChar].Id,
-                    _characterSelectionPanel.Parent, "MainMenu.xml");
+                new InputBox(Strings.Get("characterselection", "deletetitle", Characters[mSelectedChar].Name),
+                    Strings.Get("characterselection", "deleteprompt", Characters[mSelectedChar].Name),
+                    true, InputBox.InputType.YesNo, DeleteCharacter, null, Characters[mSelectedChar].Id,
+                    mCharacterSelectionPanel.Parent, "MainMenu.xml");
         }
 
         private void DeleteCharacter(Object sender, EventArgs e)
         {
             PacketSender.DeleteChar(((InputBox) sender).UserData);
-            selectedChar = 0;
+            mSelectedChar = 0;
             Update();
         }
 

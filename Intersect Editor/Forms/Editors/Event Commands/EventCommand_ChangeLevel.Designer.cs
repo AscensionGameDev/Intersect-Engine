@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_ChangeLevel
+    partial class EventCommandChangeLevel
     {
         /// <summary> 
         /// Required designer variable.
@@ -110,7 +110,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpChangeLevel);
-            this.Name = "EventCommand_ChangeLevel";
+            this.Name = "EventCommandChangeLevel";
             this.Size = new System.Drawing.Size(268, 88);
             this.grpChangeLevel.ResumeLayout(false);
             this.grpChangeLevel.PerformLayout();

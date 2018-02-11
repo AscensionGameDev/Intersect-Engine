@@ -17,12 +17,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5
 
         private const string GAME_OBJECT_DELETED = "deleted";
         private const string GAME_OBJECT_DATA = "data";
-        private SqliteConnection _dbConnection;
-        private object _dbLock = new object();
+        private SqliteConnection mDbConnection;
+        private object mDbLock = new object();
 
         public Upgrade5(SqliteConnection connection)
         {
-            _dbConnection = connection;
+            mDbConnection = connection;
         }
 
         public void Upgrade()
@@ -40,7 +40,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5
                       + GAME_OBJECT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                       + GAME_OBJECT_DELETED + " INTEGER NOT NULL DEFAULT 0,"
                       + GAME_OBJECT_DATA + " BLOB" + ");";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
@@ -298,14 +298,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5
         public void LoadGameObjects(GameObject type)
         {
             var nullIssues = "";
-            lock (_dbLock)
+            lock (mDbLock)
             {
                 var tableName = GetGameObjectTable(type);
                 ClearGameObjects(type);
                 var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" +
                             GAME_OBJECT_DELETED +
                             ";";
-                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                using (SqliteCommand cmd = new SqliteCommand(query, mDbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
                     using (var dataReader = cmd.ExecuteReader())
@@ -340,12 +340,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5
                 Log.Error("Attempted to persist null game object to the database.");
             }
 
-            lock (_dbLock)
+            lock (mDbLock)
             {
                 var insertQuery = "UPDATE " + gameObject.GetTable() + " set " + GAME_OBJECT_DELETED + "=@" +
                                   GAME_OBJECT_DELETED + "," + GAME_OBJECT_DATA + "=@" + GAME_OBJECT_DATA + " WHERE " +
                                   GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
-                using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+                using (SqliteCommand cmd = new SqliteCommand(insertQuery, mDbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.GetId()));
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));

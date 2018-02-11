@@ -9,47 +9,47 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class QuestOfferWindow
     {
-        private Button _acceptButton;
-        private Button _declineButton;
+        private Button mAcceptButton;
+        private Button mDeclineButton;
 
-        private string _questOfferText = "";
+        private string mQuestOfferText = "";
 
         //Controls
-        private WindowControl _questOfferWindow;
+        private WindowControl mQuestOfferWindow;
 
-        private ScrollControl _questPromptArea;
-        private RichLabel _questPromptLabel;
-        private Label _questPromptTemplate;
-        private Label _questTitle;
+        private ScrollControl mQuestPromptArea;
+        private RichLabel mQuestPromptLabel;
+        private Label mQuestPromptTemplate;
+        private Label mQuestTitle;
 
-        public QuestOfferWindow(Canvas _gameCanvas)
+        public QuestOfferWindow(Canvas gameCanvas)
         {
-            _questOfferWindow = new WindowControl(_gameCanvas, Strings.Get("questoffer", "title"), false,
+            mQuestOfferWindow = new WindowControl(gameCanvas, Strings.Get("questoffer", "title"), false,
                 "QuestOfferWindow");
-            _questOfferWindow.DisableResizing();
-            _questOfferWindow.IsClosable = false;
+            mQuestOfferWindow.DisableResizing();
+            mQuestOfferWindow.IsClosable = false;
 
             //Menu Header
-            _questTitle = new Label(_questOfferWindow, "QuestTitle");
+            mQuestTitle = new Label(mQuestOfferWindow, "QuestTitle");
 
-            _questPromptArea = new ScrollControl(_questOfferWindow, "QuestOfferArea");
+            mQuestPromptArea = new ScrollControl(mQuestOfferWindow, "QuestOfferArea");
 
-            _questPromptTemplate = new Label(_questPromptArea, "QuestOfferTemplate");
+            mQuestPromptTemplate = new Label(mQuestPromptArea, "QuestOfferTemplate");
 
-            _questPromptLabel = new RichLabel(_questPromptArea);
+            mQuestPromptLabel = new RichLabel(mQuestPromptArea);
 
             //Accept Button
-            _acceptButton = new Button(_questOfferWindow, "AcceptButton");
-            _acceptButton.SetText(Strings.Get("questoffer", "accept"));
-            _acceptButton.Clicked += _acceptButton_Clicked;
+            mAcceptButton = new Button(mQuestOfferWindow, "AcceptButton");
+            mAcceptButton.SetText(Strings.Get("questoffer", "accept"));
+            mAcceptButton.Clicked += _acceptButton_Clicked;
 
             //Decline Button
-            _declineButton = new Button(_questOfferWindow, "DeclineButton");
-            _declineButton.SetText(Strings.Get("questoffer", "decline"));
-            _declineButton.Clicked += _declineButton_Clicked;
+            mDeclineButton = new Button(mQuestOfferWindow, "DeclineButton");
+            mDeclineButton.SetText(Strings.Get("questoffer", "decline"));
+            mDeclineButton.Clicked += _declineButton_Clicked;
 
-            Gui.LoadRootUIData(_questOfferWindow, "InGame.xml");
-            Gui.InputBlockingElements.Add(_questOfferWindow);
+            Gui.LoadRootUiData(mQuestOfferWindow, "InGame.xml");
+            Gui.InputBlockingElements.Add(mQuestOfferWindow);
         }
 
         private void _declineButton_Clicked(Base sender,
@@ -81,40 +81,40 @@ namespace Intersect_Client.Classes.UI.Game
             else
             {
                 Show();
-                _questTitle.Text = quest.Name;
-                if (_questOfferText != quest.StartDesc)
+                mQuestTitle.Text = quest.Name;
+                if (mQuestOfferText != quest.StartDesc)
                 {
-                    _questPromptLabel.ClearText();
-                    _questPromptLabel.Width = _questPromptArea.Width -
-                                              _questPromptArea.GetVerticalScrollBar().Width;
-                    _questPromptLabel.AddText(quest.StartDesc, _questPromptTemplate.TextColor,
-                        _questPromptTemplate.CurAlignments.Count > 0
-                            ? _questPromptTemplate.CurAlignments[0]
-                            : Alignments.Left, _questPromptTemplate.Font);
-                    _questPromptLabel.SizeToChildren(false, true);
-                    _questOfferText = quest.StartDesc;
+                    mQuestPromptLabel.ClearText();
+                    mQuestPromptLabel.Width = mQuestPromptArea.Width -
+                                              mQuestPromptArea.GetVerticalScrollBar().Width;
+                    mQuestPromptLabel.AddText(quest.StartDesc, mQuestPromptTemplate.TextColor,
+                        mQuestPromptTemplate.CurAlignments.Count > 0
+                            ? mQuestPromptTemplate.CurAlignments[0]
+                            : Alignments.Left, mQuestPromptTemplate.Font);
+                    mQuestPromptLabel.SizeToChildren(false, true);
+                    mQuestOfferText = quest.StartDesc;
                 }
             }
         }
 
         public void Show()
         {
-            _questOfferWindow.IsHidden = false;
+            mQuestOfferWindow.IsHidden = false;
         }
 
         public void Close()
         {
-            _questOfferWindow.Close();
+            mQuestOfferWindow.Close();
         }
 
         public bool IsVisible()
         {
-            return !_questOfferWindow.IsHidden;
+            return !mQuestOfferWindow.IsHidden;
         }
 
         public void Hide()
         {
-            _questOfferWindow.IsHidden = true;
+            mQuestOfferWindow.IsHidden = true;
         }
     }
 }

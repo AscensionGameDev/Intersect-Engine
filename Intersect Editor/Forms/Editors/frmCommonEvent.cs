@@ -7,9 +7,9 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors
 {
-    public partial class frmCommonEvent : EditorForm
+    public partial class FrmCommonEvent : EditorForm
     {
-        public frmCommonEvent()
+        public FrmCommonEvent()
         {
             ApplyHooks();
             InitializeComponent();

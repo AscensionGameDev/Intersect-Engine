@@ -4,7 +4,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
 {
     internal class PriorityQueue<T> where T : IIndexedObject
     {
-        protected List<T> InnerList = new List<T>();
+        protected List<T> mInnerList = new List<T>();
         protected IComparer<T> mComparer;
 
         public PriorityQueue()
@@ -20,27 +20,27 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
         public PriorityQueue(IComparer<T> comparer, int capacity)
         {
             mComparer = comparer;
-            InnerList.Capacity = capacity;
+            mInnerList.Capacity = capacity;
         }
 
         public int Count
         {
-            get { return InnerList.Count; }
+            get { return mInnerList.Count; }
         }
 
         protected void SwitchElements(int i, int j)
         {
-            T h = InnerList[i];
-            InnerList[i] = InnerList[j];
-            InnerList[j] = h;
+            T h = mInnerList[i];
+            mInnerList[i] = mInnerList[j];
+            mInnerList[j] = h;
 
-            InnerList[i].Index = i;
-            InnerList[j].Index = j;
+            mInnerList[i].Index = i;
+            mInnerList[j].Index = j;
         }
 
         protected virtual int OnCompare(int i, int j)
         {
-            return mComparer.Compare(InnerList[i], InnerList[j]);
+            return mComparer.Compare(mInnerList[i], mInnerList[j]);
         }
 
         /// <summary>
@@ -53,9 +53,9 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
         /// </returns>
         public int Push(T item)
         {
-            int p = InnerList.Count, p2;
-            item.Index = InnerList.Count;
-            InnerList.Add(item); // E[p] = O
+            int p = mInnerList.Count, p2;
+            item.Index = mInnerList.Count;
+            mInnerList.Add(item); // E[p] = O
 
             do
             {
@@ -79,13 +79,13 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
         /// <returns>The smallest object</returns>
         public T Pop()
         {
-            T result = InnerList[0];
+            T result = mInnerList[0];
             int p = 0, p1, p2, pn;
 
-            InnerList[0] = InnerList[InnerList.Count - 1];
-            InnerList[0].Index = 0;
+            mInnerList[0] = mInnerList[mInnerList.Count - 1];
+            mInnerList[0].Index = 0;
 
-            InnerList.RemoveAt(InnerList.Count - 1);
+            mInnerList.RemoveAt(mInnerList.Count - 1);
 
             result.Index = -1;
 
@@ -94,9 +94,9 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
                 pn = p;
                 p1 = 2 * p + 1;
                 p2 = 2 * p + 2;
-                if (InnerList.Count > p1 && OnCompare(p, p1) > 0) // links kleiner
+                if (mInnerList.Count > p1 && OnCompare(p, p1) > 0) // links kleiner
                     p = p1;
-                if (InnerList.Count > p2 && OnCompare(p, p2) > 0) // rechts noch kleiner
+                if (mInnerList.Count > p2 && OnCompare(p, p2) > 0) // rechts noch kleiner
                     p = p2;
 
                 if (p == pn)
@@ -113,7 +113,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
         /// </summary>
         public void Update(T item)
         {
-            int count = InnerList.Count;
+            int count = mInnerList.Count;
 
             // usually we only need to switch some elements, since estimation won't change that much.
             while ((item.Index - 1 >= 0) && (OnCompare(item.Index - 1, item.Index) > 0))
@@ -133,14 +133,14 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
         /// <returns>The smallest object</returns>
         public T Peek()
         {
-            if (InnerList.Count > 0)
-                return InnerList[0];
+            if (mInnerList.Count > 0)
+                return mInnerList[0];
             return default(T);
         }
 
         public void Clear()
         {
-            InnerList.Clear();
+            mInnerList.Clear();
         }
     }
 }

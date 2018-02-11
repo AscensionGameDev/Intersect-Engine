@@ -10,12 +10,12 @@ using Intersect.Models;
 
 namespace Intersect.Editor.Forms.Editors
 {
-    public partial class frmSwitchVariable : EditorForm
+    public partial class FrmSwitchVariable : EditorForm
     {
-        private List<IDatabaseObject> _changed = new List<IDatabaseObject>();
-        private IDatabaseObject _editorItem;
+        private List<IDatabaseObject> mChanged = new List<IDatabaseObject>();
+        private IDatabaseObject mEditorItem;
 
-        public frmSwitchVariable()
+        public FrmSwitchVariable()
         {
             ApplyHooks();
             InitializeComponent();
@@ -49,36 +49,36 @@ namespace Intersect.Editor.Forms.Editors
             if (type == GameObjectType.PlayerSwitch)
             {
                 InitEditor();
-                if (_editorItem != null && !PlayerSwitchBase.Lookup.Values.Contains(_editorItem))
+                if (mEditorItem != null && !PlayerSwitchBase.Lookup.Values.Contains(mEditorItem))
                 {
-                    _editorItem = null;
+                    mEditorItem = null;
                     UpdateEditor();
                 }
             }
             else if (type == GameObjectType.PlayerVariable)
             {
                 InitEditor();
-                if (_editorItem != null && !PlayerVariableBase.Lookup.Values.Contains(_editorItem))
+                if (mEditorItem != null && !PlayerVariableBase.Lookup.Values.Contains(mEditorItem))
                 {
-                    _editorItem = null;
+                    mEditorItem = null;
                     UpdateEditor();
                 }
             }
             else if (type == GameObjectType.ServerSwitch)
             {
                 InitEditor();
-                if (_editorItem != null && !ServerSwitchBase.Lookup.Values.Contains(_editorItem))
+                if (mEditorItem != null && !ServerSwitchBase.Lookup.Values.Contains(mEditorItem))
                 {
-                    _editorItem = null;
+                    mEditorItem = null;
                     UpdateEditor();
                 }
             }
             else if (type == GameObjectType.ServerVariable)
             {
                 InitEditor();
-                if (_editorItem != null && !ServerVariableBase.Lookup.Values.Contains(_editorItem))
+                if (mEditorItem != null && !ServerVariableBase.Lookup.Values.Contains(mEditorItem))
                 {
-                    _editorItem = null;
+                    mEditorItem = null;
                     UpdateEditor();
                 }
             }
@@ -106,30 +106,30 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnUndo_Click(object sender, EventArgs e)
         {
-            if (_changed.Contains(_editorItem) && _editorItem != null)
+            if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                _editorItem.RestoreBackup();
+                mEditorItem.RestoreBackup();
                 UpdateEditor();
             }
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (_editorItem != null)
+            if (mEditorItem != null)
             {
                 if (
                     DarkMessageBox.ShowWarning(Strings.Get("switchvariableeditor", "deleteprompt"),
                         Strings.Get("switchvariableeditor", "deletecaption"), DarkDialogButton.YesNo,
                         Properties.Resources.Icon) == DialogResult.Yes)
                 {
-                    PacketSender.SendDeleteObject(_editorItem);
+                    PacketSender.SendDeleteObject(mEditorItem);
                 }
             }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            foreach (var item in _changed)
+            foreach (var item in mChanged)
             {
                 item.RestoreBackup();
                 item.DeleteBackup();
@@ -143,7 +143,7 @@ namespace Intersect.Editor.Forms.Editors
         private void btnSave_Click(object sender, EventArgs e)
         {
             //Send Changed items
-            foreach (var item in _changed)
+            foreach (var item in mChanged)
             {
                 PacketSender.SendSaveObject(item);
                 item.DeleteBackup();
@@ -189,10 +189,10 @@ namespace Intersect.Editor.Forms.Editors
                 }
                 if (obj != null)
                 {
-                    _editorItem = obj;
-                    if (!_changed.Contains(obj))
+                    mEditorItem = obj;
+                    if (!mChanged.Contains(obj))
                     {
-                        _changed.Add(obj);
+                        mChanged.Add(obj);
                         obj.MakeBackup();
                     }
                 }
@@ -241,62 +241,62 @@ namespace Intersect.Editor.Forms.Editors
 
         private void rdoPlayerSwitch_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem = null;
+            mEditorItem = null;
             InitEditor();
         }
 
         private void rdoPlayerVariables_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem = null;
+            mEditorItem = null;
             InitEditor();
         }
 
         private void rdoGlobalSwitches_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem = null;
+            mEditorItem = null;
             InitEditor();
         }
 
         private void rdoGlobalVariables_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem = null;
+            mEditorItem = null;
             InitEditor();
         }
 
         private void UpdateEditor()
         {
-            if (_editorItem != null)
+            if (mEditorItem != null)
             {
                 grpEditor.Show();
                 lblValue.Hide();
                 if (rdoPlayerSwitch.Checked)
                 {
                     lblObject.Text = Strings.Get("switchvariableeditor", "playerswitch");
-                    txtObjectName.Text = ((PlayerSwitchBase) _editorItem).Name;
-                    lblId.Text = _editorItem.Index.ToString();
+                    txtObjectName.Text = ((PlayerSwitchBase) mEditorItem).Name;
+                    lblId.Text = mEditorItem.Index.ToString();
                 }
                 else if (rdoPlayerVariables.Checked)
                 {
                     lblObject.Text = Strings.Get("switchvariableeditor", "playervariable");
-                    txtObjectName.Text = ((PlayerVariableBase) _editorItem).Name;
-                    lblId.Text = _editorItem.Index.ToString();
+                    txtObjectName.Text = ((PlayerVariableBase) mEditorItem).Name;
+                    lblId.Text = mEditorItem.Index.ToString();
                 }
                 else if (rdoGlobalSwitches.Checked)
                 {
                     lblObject.Text = Strings.Get("switchvariableeditor", "globalswitch");
-                    txtObjectName.Text = ((ServerSwitchBase) _editorItem).Name;
+                    txtObjectName.Text = ((ServerSwitchBase) mEditorItem).Name;
                     cmbSwitchValue.Show();
                     cmbSwitchValue.SelectedIndex =
-                        cmbSwitchValue.Items.IndexOf(((ServerSwitchBase) _editorItem).Value.ToString());
-                    lblId.Text = _editorItem.Index.ToString();
+                        cmbSwitchValue.Items.IndexOf(((ServerSwitchBase) mEditorItem).Value.ToString());
+                    lblId.Text = mEditorItem.Index.ToString();
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
                     lblObject.Text = Strings.Get("switchvariableeditor", "globalvariable");
-                    txtObjectName.Text = ((ServerVariableBase) _editorItem).Name;
+                    txtObjectName.Text = ((ServerVariableBase) mEditorItem).Name;
                     txtVariableVal.Show();
-                    txtVariableVal.Text = ((ServerVariableBase) _editorItem).Value.ToString();
-                    lblId.Text = _editorItem.Index.ToString();
+                    txtVariableVal.Text = ((ServerVariableBase) mEditorItem).Value.ToString();
+                    lblId.Text = mEditorItem.Index.ToString();
                 }
             }
             else

@@ -13,10 +13,10 @@ namespace Intersect.Editor.Classes.Maps
         private static MapInstances sLookup;
 
         //Map Attributes
-        private Dictionary<Attribute, AnimationInstance> _attributeAnimInstances =
+        private Dictionary<Attribute, AnimationInstance> mAttributeAnimInstances =
             new Dictionary<Attribute, AnimationInstance>();
 
-        private byte[] loadedData;
+        private byte[] mLoadedData;
 
         public MapInstance(int mapNum) : base(mapNum, false)
         {
@@ -95,7 +95,7 @@ namespace Intersect.Editor.Classes.Maps
 
         public void SaveStateAsUnchanged()
         {
-            loadedData = SaveInternal();
+            mLoadedData = SaveInternal();
         }
 
         public void LoadInternal(byte[] myArr, bool import = false)
@@ -144,14 +144,14 @@ namespace Intersect.Editor.Classes.Maps
 
         public bool Changed()
         {
-            if (loadedData != null)
+            if (mLoadedData != null)
             {
                 var newData = SaveInternal();
-                if (newData.Length == loadedData.Length)
+                if (newData.Length == mLoadedData.Length)
                 {
                     for (int i = 0; i < newData.Length; i++)
                     {
-                        if (newData[i] != loadedData[i])
+                        if (newData[i] != mLoadedData[i])
                         {
                             return true;
                         }
@@ -166,19 +166,19 @@ namespace Intersect.Editor.Classes.Maps
         public AnimationInstance GetAttributeAnimation(Attribute attr, int animNum)
         {
             if (attr == null) return null;
-            if (!_attributeAnimInstances.ContainsKey(attr))
+            if (!mAttributeAnimInstances.ContainsKey(attr))
             {
-                _attributeAnimInstances.Add(attr,
+                mAttributeAnimInstances.Add(attr,
                     new AnimationInstance(AnimationBase.Lookup.Get<AnimationBase>(animNum), true));
             }
-            return _attributeAnimInstances[attr];
+            return mAttributeAnimInstances[attr];
         }
 
         public void SetAttributeAnimation(Attribute attribute, AnimationInstance animationInstance)
         {
-            if (_attributeAnimInstances.ContainsKey(attribute))
+            if (mAttributeAnimInstances.ContainsKey(attribute))
             {
-                _attributeAnimInstances[attribute] = animationInstance;
+                mAttributeAnimInstances[attribute] = animationInstance;
             }
         }
 
@@ -196,9 +196,9 @@ namespace Intersect.Editor.Classes.Maps
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 &&
                                     y < Globals.MapGrid.GridHeight &&
-                                    Globals.MapGrid.Grid[x, y].mapnum > -1)
+                                    Globals.MapGrid.Grid[x, y].Mapnum > -1)
                                 {
-                                    var needMap = Lookup.Get(Globals.MapGrid.Grid[x, y].mapnum);
+                                    var needMap = Lookup.Get(Globals.MapGrid.Grid[x, y].Mapnum);
                                     if (needMap == null) return;
                                 }
                             }
@@ -229,7 +229,7 @@ namespace Intersect.Editor.Classes.Maps
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    if (Globals.MapGrid.Grid[x, y].mapnum == Index) return;
+                                    if (Globals.MapGrid.Grid[x, y].Mapnum == Index) return;
                                 }
                             }
                         }
@@ -259,7 +259,7 @@ namespace Intersect.Editor.Classes.Maps
                             }
                             else
                             {
-                                mapBase[x + 1, y + 1] = Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x1, y1].mapnum);
+                                mapBase[x + 1, y + 1] = Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x1, y1].Mapnum);
                             }
                         }
                     }
@@ -289,7 +289,7 @@ namespace Intersect.Editor.Classes.Maps
                         var y1 = MapGridY + y;
                         if (x1 >= 0 && y1 >= 0 && x1 < Globals.MapGrid.GridWidth && y1 < Globals.MapGrid.GridHeight)
                         {
-                            var map = Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x1, y1].mapnum);
+                            var map = Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x1, y1].Mapnum);
                             if (map != null && map != this) map.InitAutotiles();
                         }
                     }

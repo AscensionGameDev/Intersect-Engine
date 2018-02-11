@@ -5,31 +5,31 @@ namespace Intersect.Editor.Forms.Controls
 {
     public partial class AutoDragPanel : Panel
     {
-        private Timer _dragTimer;
-        private int MaxDragChange = 2;
+        private Timer mDragTimer;
+        private int mMaxDragChange = 2;
 
         public AutoDragPanel()
         {
             InitializeComponent();
-            _dragTimer = new Timer()
+            mDragTimer = new Timer()
             {
                 Interval = 1
             };
-            _dragTimer.Tick += DragTimer_Tick;
+            mDragTimer.Tick += DragTimer_Tick;
             MouseDown += AutoDragPanel_MouseDown;
             MouseUp += AutoDragPanel_MouseUp;
         }
 
         public void AutoDragPanel_MouseUp(object sender, MouseEventArgs e)
         {
-            _dragTimer.Enabled = false;
+            mDragTimer.Enabled = false;
         }
 
         public void AutoDragPanel_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                _dragTimer.Enabled = true;
+                mDragTimer.Enabled = true;
             }
         }
 
@@ -53,8 +53,8 @@ namespace Intersect.Editor.Forms.Controls
                 {
                     var difference = (pos.Y - ClientRectangle.Top) * -1;
 
-                    if (MaxDragChange > 0 && difference > MaxDragChange)
-                        difference = MaxDragChange;
+                    if (mMaxDragChange > 0 && difference > mMaxDragChange)
+                        difference = mMaxDragChange;
                     if (VerticalScroll.Value < difference)
                     {
                         VerticalScroll.Value = 0;
@@ -70,8 +70,8 @@ namespace Intersect.Editor.Forms.Controls
                 {
                     var difference = pos.Y - bottom;
 
-                    if (MaxDragChange > 0 && difference > MaxDragChange)
-                        difference = MaxDragChange;
+                    if (mMaxDragChange > 0 && difference > mMaxDragChange)
+                        difference = mMaxDragChange;
 
                     VerticalScroll.Value = VerticalScroll.Value + difference;
                 }
@@ -84,8 +84,8 @@ namespace Intersect.Editor.Forms.Controls
                 {
                     var difference = (pos.X - ClientRectangle.Left) * -1;
 
-                    if (MaxDragChange > 0 && difference > MaxDragChange)
-                        difference = MaxDragChange;
+                    if (mMaxDragChange > 0 && difference > mMaxDragChange)
+                        difference = mMaxDragChange;
                     if (HorizontalScroll.Value < difference)
                     {
                         HorizontalScroll.Value = 0;
@@ -101,8 +101,8 @@ namespace Intersect.Editor.Forms.Controls
                 {
                     var difference = pos.X - right;
 
-                    if (MaxDragChange > 0 && difference > MaxDragChange)
-                        difference = MaxDragChange;
+                    if (mMaxDragChange > 0 && difference > mMaxDragChange)
+                        difference = mMaxDragChange;
 
                     HorizontalScroll.Value = HorizontalScroll.Value + difference;
                 }

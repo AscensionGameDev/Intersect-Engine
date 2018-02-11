@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_ChatboxText
+    partial class EventCommandChatboxText
     {
         /// <summary> 
         /// Required designer variable.
@@ -175,7 +175,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpChatboxText);
-            this.Name = "EventCommand_ChatboxText";
+            this.Name = "EventCommandChatboxText";
             this.Size = new System.Drawing.Size(268, 287);
             this.grpChatboxText.ResumeLayout(false);
             this.grpChatboxText.PerformLayout();

@@ -161,7 +161,7 @@
         TradeUpdate,
         TradeClose,
         TradeRequest,
-        NPCAggression,
+        NpcAggression,
         PlayerDeath,
         EntityZDimension,
     }
@@ -296,7 +296,7 @@
         Blocked,
         Item,
         ZDimension,
-        NPCAvoid,
+        NpcAvoid,
         Warp,
         Sound,
         Resource,

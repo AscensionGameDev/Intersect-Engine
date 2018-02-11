@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_GiveExperience
+    partial class EventCommandGiveExperience
     {
         /// <summary> 
         /// Required designer variable.
@@ -105,7 +105,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpGiveExperience);
-            this.Name = "EventCommand_GiveExperience";
+            this.Name = "EventCommandGiveExperience";
             this.Size = new System.Drawing.Size(268, 88);
             this.grpGiveExperience.ResumeLayout(false);
             this.grpGiveExperience.PerformLayout();

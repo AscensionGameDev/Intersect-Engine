@@ -5,15 +5,15 @@ namespace Intersect_Client.Classes.Maps
 {
     public class MapAnimationInstance : AnimationInstance
     {
-        private int _dir;
-        private int _tileX;
-        private int _tileY;
+        private int mDir;
+        private int mTileX;
+        private int mTileY;
 
         public MapAnimationInstance(AnimationBase animBase, int tileX, int tileY, int dir) : base(animBase, false)
         {
-            _tileX = tileX;
-            _tileY = tileY;
-            _dir = dir;
+            mTileX = tileX;
+            mTileY = tileY;
+            mDir = dir;
         }
     }
 }

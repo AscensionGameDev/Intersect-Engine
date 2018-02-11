@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_Warp
+    partial class EventCommandWarp
     {
         /// <summary> 
         /// Required designer variable.
@@ -193,7 +193,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpWarp);
-            this.Name = "EventCommand_Warp";
+            this.Name = "EventCommandWarp";
             this.Size = new System.Drawing.Size(188, 201);
             this.grpWarp.ResumeLayout(false);
             this.grpWarp.PerformLayout();

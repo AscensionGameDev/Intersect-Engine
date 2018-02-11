@@ -19,51 +19,51 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class EntityBox
     {
-        private static int StatusXPadding = 2;
-        private static int StatusYPadding = 2;
+        private static int sStatusXPadding = 2;
+        private static int sStatusYPadding = 2;
 
-        public float _curEXPWidth;
+        public float CurExpWidth;
 
-        public float _curHPWidth;
-        public float _curMPWidth;
-        private string _currentSprite = "";
-        public ImagePanel _entityFace;
-        public ImagePanel _entityFaceContainer;
-        public ImagePanel _entityInfoPanel;
-        public Label _entityLevel;
-        public Label _entityName;
-        public ImagePanel _entityStatusPanel;
+        public float CurHpWidth;
+        public float CurMpWidth;
+        private string mCurrentSprite = "";
+        public ImagePanel EntityFace;
+        public ImagePanel EntityFaceContainer;
+        public ImagePanel EntityInfoPanel;
+        public Label EntityLevel;
+        public Label EntityName;
+        public ImagePanel EntityStatusPanel;
 
-        public EntityTypes _entityType;
+        public EntityTypes EntityType;
 
         //Controls
-        public ImagePanel _entityWindow;
+        public ImagePanel EntityWindow;
 
-        public RichLabel _eventDesc;
-        public ImagePanel _expBackground;
-        public ImagePanel _expBar;
-        public Label _expLbl;
-        public Label _expTitle;
-        public ImagePanel _hpBackground;
-        public ImagePanel _hpBar;
-        public Label _hpLbl;
-        public Label _hpTitle;
-        private bool _initialized = false;
-        public ImagePanel _mpBackground;
-        public ImagePanel _mpBar;
-        public Label _mpLbl;
-        public Label _mpTitle;
+        public RichLabel EventDesc;
+        public ImagePanel ExpBackground;
+        public ImagePanel ExpBar;
+        public Label ExpLbl;
+        public Label ExpTitle;
+        public ImagePanel HpBackground;
+        public ImagePanel HpBar;
+        public Label HpLbl;
+        public Label HpTitle;
+        private bool mInitialized = false;
+        public ImagePanel MpBackground;
+        public ImagePanel MpBar;
+        public Label MpLbl;
+        public Label MpTitle;
 
-        public Entity _myEntity;
-        public ImagePanel[] _paperdollPanels;
-        public string[] _paperdollTextures;
+        public Entity MyEntity;
+        public ImagePanel[] PaperdollPanels;
+        public string[] PaperdollTextures;
 
-        private ImagePanel _statusTemplate;
+        private ImagePanel mStatusTemplate;
 
         //Spell List
         public List<SpellStatus> Items = new List<SpellStatus>();
 
-        private long lastUpdateTime;
+        private long mLastUpdateTime;
         public Button PartyLabel;
         public bool PlayerBox;
         public Button TradeLabel;
@@ -71,99 +71,99 @@ namespace Intersect_Client.Classes.UI.Game
         public bool UpdateStatuses = false;
 
         //Init
-        public EntityBox(Canvas _gameCanvas, EntityTypes entityType, Entity myEntity, bool playerBox = false)
+        public EntityBox(Canvas gameCanvas, EntityTypes entityType, Entity myEntity, bool playerBox = false)
         {
-            _myEntity = myEntity;
-            _entityType = entityType;
+            MyEntity = myEntity;
+            EntityType = entityType;
             PlayerBox = playerBox;
             if (playerBox)
             {
-                _entityWindow = new ImagePanel(_gameCanvas, "PlayerBox");
+                EntityWindow = new ImagePanel(gameCanvas, "PlayerBox");
             }
             else
             {
-                _entityWindow = new ImagePanel(_gameCanvas, "TargetBox");
+                EntityWindow = new ImagePanel(gameCanvas, "TargetBox");
             }
 
-            _entityInfoPanel = new ImagePanel(_entityWindow, "EntityInfoPanel");
+            EntityInfoPanel = new ImagePanel(EntityWindow, "EntityInfoPanel");
 
-            _entityName = new Label(_entityInfoPanel, "EntityNameLabel");
-            _entityName.SetText(myEntity.MyName);
+            EntityName = new Label(EntityInfoPanel, "EntityNameLabel");
+            EntityName.SetText(myEntity.MyName);
 
-            _entityFaceContainer = new ImagePanel(_entityInfoPanel, "EntityGraphicContainer");
+            EntityFaceContainer = new ImagePanel(EntityInfoPanel, "EntityGraphicContainer");
 
-            _entityFace = new ImagePanel(_entityFaceContainer);
-            _entityFace.SetSize(64, 64);
-            _entityFace.AddAlignment(Alignments.Center);
+            EntityFace = new ImagePanel(EntityFaceContainer);
+            EntityFace.SetSize(64, 64);
+            EntityFace.AddAlignment(Alignments.Center);
 
-            _paperdollPanels = new ImagePanel[Options.EquipmentSlots.Count];
-            _paperdollTextures = new string[Options.EquipmentSlots.Count];
+            PaperdollPanels = new ImagePanel[Options.EquipmentSlots.Count];
+            PaperdollTextures = new string[Options.EquipmentSlots.Count];
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                _paperdollPanels[i] = new ImagePanel(_entityFaceContainer);
-                _paperdollTextures[i] = "";
-                _paperdollPanels[i].Hide();
+                PaperdollPanels[i] = new ImagePanel(EntityFaceContainer);
+                PaperdollTextures[i] = "";
+                PaperdollPanels[i].Hide();
             }
 
-            _eventDesc = new RichLabel(_entityInfoPanel, "EventDescLabel");
+            EventDesc = new RichLabel(EntityInfoPanel, "EventDescLabel");
 
-            _entityLevel = new Label(_entityInfoPanel, "EntityLevelLabel");
+            EntityLevel = new Label(EntityInfoPanel, "EntityLevelLabel");
 
-            _hpBackground = new ImagePanel(_entityInfoPanel, "HPBarBackground");
-            _hpBar = new ImagePanel(_entityInfoPanel, "HPBar");
-            _hpTitle = new Label(_entityInfoPanel, "HPTitle");
-            _hpTitle.SetText(Strings.Get("entitybox", "vital0"));
-            _hpLbl = new Label(_entityInfoPanel, "HPLabel");
+            HpBackground = new ImagePanel(EntityInfoPanel, "HPBarBackground");
+            HpBar = new ImagePanel(EntityInfoPanel, "HPBar");
+            HpTitle = new Label(EntityInfoPanel, "HPTitle");
+            HpTitle.SetText(Strings.Get("entitybox", "vital0"));
+            HpLbl = new Label(EntityInfoPanel, "HPLabel");
 
-            _mpBackground = new ImagePanel(_entityInfoPanel, "MPBackground");
-            _mpBar = new ImagePanel(_entityInfoPanel, "MPBar");
-            _mpTitle = new Label(_entityInfoPanel, "MPTitle");
-            _mpTitle.SetText(Strings.Get("entitybox", "vital1"));
-            _mpLbl = new Label(_entityInfoPanel, "MPLabel");
+            MpBackground = new ImagePanel(EntityInfoPanel, "MPBackground");
+            MpBar = new ImagePanel(EntityInfoPanel, "MPBar");
+            MpTitle = new Label(EntityInfoPanel, "MPTitle");
+            MpTitle.SetText(Strings.Get("entitybox", "vital1"));
+            MpLbl = new Label(EntityInfoPanel, "MPLabel");
 
-            _expBackground = new ImagePanel(_entityInfoPanel, "EXPBackground");
-            _expBar = new ImagePanel(_entityInfoPanel, "EXPBar");
-            _expTitle = new Label(_entityInfoPanel, "EXPTitle");
-            _expTitle.SetText(Strings.Get("entitybox", "exp"));
-            _expLbl = new Label(_entityInfoPanel, "EXPLabel");
+            ExpBackground = new ImagePanel(EntityInfoPanel, "EXPBackground");
+            ExpBar = new ImagePanel(EntityInfoPanel, "EXPBar");
+            ExpTitle = new Label(EntityInfoPanel, "EXPTitle");
+            ExpTitle.SetText(Strings.Get("entitybox", "exp"));
+            ExpLbl = new Label(EntityInfoPanel, "EXPLabel");
 
-            TradeLabel = new Button(_entityInfoPanel, "TradeButton");
+            TradeLabel = new Button(EntityInfoPanel, "TradeButton");
             TradeLabel.SetText(Strings.Get("entitybox", "trade"));
-            TradeLabel.SetToolTipText(Strings.Get("entitybox", "tradetip", _myEntity.MyName));
+            TradeLabel.SetToolTipText(Strings.Get("entitybox", "tradetip", MyEntity.MyName));
             TradeLabel.Clicked += tradeRequest_Clicked;
 
-            PartyLabel = new Button(_entityInfoPanel, "PartyButton");
+            PartyLabel = new Button(EntityInfoPanel, "PartyButton");
             PartyLabel.SetText(Strings.Get("entitybox", "party"));
-            PartyLabel.SetToolTipText(Strings.Get("entitybox", "partytip", _myEntity.MyName));
+            PartyLabel.SetToolTipText(Strings.Get("entitybox", "partytip", MyEntity.MyName));
             PartyLabel.Clicked += invite_Clicked;
 
-            _entityStatusPanel = new ImagePanel(_entityWindow, "StatusArea");
+            EntityStatusPanel = new ImagePanel(EntityWindow, "StatusArea");
 
             if (PlayerBox)
             {
-                _statusTemplate = new ImagePanel(_entityStatusPanel, "PlayerStatusTemplate");
+                mStatusTemplate = new ImagePanel(EntityStatusPanel, "PlayerStatusTemplate");
             }
             else
             {
-                _statusTemplate = new ImagePanel(_entityStatusPanel, "TargetStatusTemplate");
+                mStatusTemplate = new ImagePanel(EntityStatusPanel, "TargetStatusTemplate");
             }
 
-            var _itemIcon = new ImagePanel(_statusTemplate, "StatusIcon");
+            var itemIcon = new ImagePanel(mStatusTemplate, "StatusIcon");
 
             UpdateSpellStatus();
 
             SetEntity(myEntity);
 
             //TODO: Make this more efficient
-            if (!PlayerBox) Gui.LoadRootUIData(_entityWindow, "InGame.xml");
+            if (!PlayerBox) Gui.LoadRootUiData(EntityWindow, "InGame.xml");
 
-            lastUpdateTime = Globals.System.GetTimeMs();
+            mLastUpdateTime = Globals.System.GetTimeMs();
         }
 
         public void SetEntity(Entity entity)
         {
-            _myEntity = entity;
-            if (_myEntity != null)
+            MyEntity = entity;
+            if (MyEntity != null)
             {
                 SetupEntityElements();
             }
@@ -171,85 +171,85 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void SetupEntityElements()
         {
-            switch (_entityType)
+            switch (EntityType)
             {
                 case EntityTypes.Player:
-                    if (Globals.Me != null && Globals.Me == _myEntity)
+                    if (Globals.Me != null && Globals.Me == MyEntity)
                     {
                         TradeLabel.Hide();
                         PartyLabel.Hide();
                     }
                     else
                     {
-                        _expBackground.Hide();
-                        _expBar.Hide();
-                        _expLbl.Hide();
-                        _expTitle.Hide();
+                        ExpBackground.Hide();
+                        ExpBar.Hide();
+                        ExpLbl.Hide();
+                        ExpTitle.Hide();
                     }
-                    _eventDesc.Hide();
+                    EventDesc.Hide();
                     break;
                 case EntityTypes.GlobalEntity:
-                    _eventDesc.Hide();
-                    _expBackground.Hide();
-                    _expBar.Hide();
-                    _expLbl.Hide();
-                    _expTitle.Hide();
+                    EventDesc.Hide();
+                    ExpBackground.Hide();
+                    ExpBar.Hide();
+                    ExpLbl.Hide();
+                    ExpTitle.Hide();
                     TradeLabel.Hide();
                     PartyLabel.Hide();
                     break;
                 case EntityTypes.Event:
-                    _expBackground.Hide();
-                    _expBar.Hide();
-                    _expLbl.Hide();
-                    _expTitle.Hide();
-                    _mpBackground.Hide();
-                    _mpBar.Hide();
-                    _mpTitle.Hide();
-                    _mpLbl.Hide();
-                    _hpBackground.Hide();
-                    _hpBar.Hide();
-                    _hpLbl.Hide();
-                    _hpTitle.Hide();
+                    ExpBackground.Hide();
+                    ExpBar.Hide();
+                    ExpLbl.Hide();
+                    ExpTitle.Hide();
+                    MpBackground.Hide();
+                    MpBar.Hide();
+                    MpTitle.Hide();
+                    MpLbl.Hide();
+                    HpBackground.Hide();
+                    HpBar.Hide();
+                    HpLbl.Hide();
+                    HpTitle.Hide();
                     TradeLabel.Hide();
                     PartyLabel.Hide();
-                    _entityLevel.Hide();
+                    EntityLevel.Hide();
                     break;
             }
-            _entityName.SetText(_myEntity.MyName);
+            EntityName.SetText(MyEntity.MyName);
         }
 
         //Update
         public void Update()
         {
-            if (_myEntity == null)
+            if (MyEntity == null)
             {
-                if (!_entityWindow.IsHidden) _entityWindow.Hide();
+                if (!EntityWindow.IsHidden) EntityWindow.Hide();
                 return;
             }
             else
             {
-                if (_entityWindow.IsHidden) _entityWindow.Show();
+                if (EntityWindow.IsHidden) EntityWindow.Show();
             }
-            if (_myEntity.IsDisposed()) Dispose();
-            if (!_initialized)
+            if (MyEntity.IsDisposed()) Dispose();
+            if (!mInitialized)
             {
                 SetupEntityElements();
                 UpdateSpellStatus();
-                if (_entityType == EntityTypes.Event)
+                if (EntityType == EntityTypes.Event)
                 {
-                    _eventDesc.AddText(((Event) _myEntity).Desc, Color.White);
-                    _eventDesc.SizeToChildren(false, true);
+                    EventDesc.AddText(((Event) MyEntity).Desc, Color.White);
+                    EventDesc.SizeToChildren(false, true);
                 }
-                _initialized = true;
+                mInitialized = true;
             }
 
             //Time since this window was last updated (for bar animations)
-            float elapsedTime = ((float) (Globals.System.GetTimeMs() - lastUpdateTime)) / 1000.0f;
+            float elapsedTime = ((float) (Globals.System.GetTimeMs() - mLastUpdateTime)) / 1000.0f;
 
             //Update the event/entity face.
             UpdateImage();
 
-            if (_entityType != EntityTypes.Event)
+            if (EntityType != EntityTypes.Event)
             {
                 UpdateLevel();
                 UpdateHpBar(elapsedTime);
@@ -257,7 +257,7 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             //If player draw exp bar
-            if (_myEntity == Globals.Me)
+            if (MyEntity == Globals.Me)
             {
                 UpdateXpBar(elapsedTime);
             }
@@ -274,148 +274,148 @@ namespace Intersect_Client.Classes.UI.Game
                 Items[i].Update();
             }
 
-            lastUpdateTime = Globals.System.GetTimeMs();
+            mLastUpdateTime = Globals.System.GetTimeMs();
         }
 
         public void UpdateSpellStatus()
         {
             foreach (SpellStatus s in Items)
             {
-                s.pnl.Texture = null;
-                s.container.Texture = null;
-                _entityStatusPanel.RemoveChild(s.container, true);
+                s.Pnl.Texture = null;
+                s.Container.Texture = null;
+                EntityStatusPanel.RemoveChild(s.Container, true);
                 s.pnl_HoverLeave(null, null);
             }
             Items.Clear();
 
             //Add all of the spell status effects
-            for (int i = 0; i < _myEntity.Status.Count; i++)
+            for (int i = 0; i < MyEntity.Status.Count; i++)
             {
                 Items.Add(new SpellStatus(this, i));
                 if (PlayerBox)
                 {
-                    Items[i].container = new ImagePanel(_entityStatusPanel, "PlayerStatusTemplate");
+                    Items[i].Container = new ImagePanel(EntityStatusPanel, "PlayerStatusTemplate");
                 }
                 else
                 {
-                    Items[i].container = new ImagePanel(_entityStatusPanel, "TargetStatusTemplate");
+                    Items[i].Container = new ImagePanel(EntityStatusPanel, "TargetStatusTemplate");
                 }
                 Items[i].Setup();
 
                 //TODO Made this more efficient.
-                Gui.LoadRootUIData(Items[i].container, "InGame.xml");
-                Items[i].container.Name = "";
+                Gui.LoadRootUiData(Items[i].Container, "InGame.xml");
+                Items[i].Container.Name = "";
 
-                var xPadding = Items[i].container.Padding.Left + Items[i].container.Padding.Right;
-                var yPadding = Items[i].container.Padding.Top + Items[i].container.Padding.Bottom;
-                Items[i].container.SetPosition(
-                    (i % ((float)_entityStatusPanel.Width / (float)(Items[i].container.Width + xPadding))) *
-                    (Items[i].container.Width + xPadding) + xPadding,
-                    (i / ((float)_entityStatusPanel.Width / (float)(Items[i].container.Width + xPadding))) *
-                    (Items[i].container.Height + yPadding) + yPadding);
+                var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
+                var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;
+                Items[i].Container.SetPosition(
+                    (i % ((float)EntityStatusPanel.Width / (float)(Items[i].Container.Width + xPadding))) *
+                    (Items[i].Container.Width + xPadding) + xPadding,
+                    (i / ((float)EntityStatusPanel.Width / (float)(Items[i].Container.Width + xPadding))) *
+                    (Items[i].Container.Height + yPadding) + yPadding);
             }
-            _statusTemplate.Hide();
+            mStatusTemplate.Hide();
         }
 
         private void UpdateLevel()
         {
-            _entityLevel.SetText(Strings.Get("entitybox", "level", _myEntity.Level));
+            EntityLevel.SetText(Strings.Get("entitybox", "level", MyEntity.Level));
         }
 
         private void UpdateHpBar(float elapsedTime)
         {
-            float targetHPWidth = 0f;
-            if (_myEntity.MaxVital[(int) Vitals.Health] > 0)
+            float targetHpWidth = 0f;
+            if (MyEntity.MaxVital[(int) Vitals.Health] > 0)
             {
-                targetHPWidth = ((float) _myEntity.Vital[(int) Vitals.Health] /
-                                 (float) _myEntity.MaxVital[(int) Vitals.Health]);
-                targetHPWidth = Math.Min(1, Math.Max(0, targetHPWidth));
+                targetHpWidth = ((float) MyEntity.Vital[(int) Vitals.Health] /
+                                 (float) MyEntity.MaxVital[(int) Vitals.Health]);
+                targetHpWidth = Math.Min(1, Math.Max(0, targetHpWidth));
                 //Fix the Labels
-                _hpLbl.Text = Strings.Get("entitybox", "vital0val", _myEntity.Vital[(int) Vitals.Health],
-                    _myEntity.MaxVital[(int) Vitals.Health]);
+                HpLbl.Text = Strings.Get("entitybox", "vital0val", MyEntity.Vital[(int) Vitals.Health],
+                    MyEntity.MaxVital[(int) Vitals.Health]);
                 //Multiply by the width of the bars.
-                targetHPWidth *= _hpBackground.Width;
+                targetHpWidth *= HpBackground.Width;
             }
             else
             {
-                _hpLbl.Text = Strings.Get("entitybox", "vital0val", 0, 0);
-                targetHPWidth = _hpBackground.Width;
+                HpLbl.Text = Strings.Get("entitybox", "vital0val", 0, 0);
+                targetHpWidth = HpBackground.Width;
             }
-            if ((int) targetHPWidth != _curHPWidth)
+            if ((int) targetHpWidth != CurHpWidth)
             {
-                if ((int) targetHPWidth > _curHPWidth)
+                if ((int) targetHpWidth > CurHpWidth)
                 {
-                    _curHPWidth += (100f * elapsedTime);
-                    if (_curHPWidth > (int) targetHPWidth)
+                    CurHpWidth += (100f * elapsedTime);
+                    if (CurHpWidth > (int) targetHpWidth)
                     {
-                        _curHPWidth = targetHPWidth;
+                        CurHpWidth = targetHpWidth;
                     }
                 }
                 else
                 {
-                    _curHPWidth -= (100f * elapsedTime);
-                    if (_curHPWidth < targetHPWidth)
+                    CurHpWidth -= (100f * elapsedTime);
+                    if (CurHpWidth < targetHpWidth)
                     {
-                        _curHPWidth = targetHPWidth;
+                        CurHpWidth = targetHpWidth;
                     }
                 }
-                if (_curHPWidth == 0)
+                if (CurHpWidth == 0)
                 {
-                    _hpBar.IsHidden = true;
+                    HpBar.IsHidden = true;
                 }
                 else
                 {
-                    _hpBar.Width = (int) _curHPWidth;
-                    _hpBar.SetTextureRect(0, 0, (int) _curHPWidth, _hpBar.Height);
-                    _hpBar.IsHidden = false;
+                    HpBar.Width = (int) CurHpWidth;
+                    HpBar.SetTextureRect(0, 0, (int) CurHpWidth, HpBar.Height);
+                    HpBar.IsHidden = false;
                 }
             }
         }
 
         private void UpdateMpBar(float elapsedTime)
         {
-            float targetMPWidth = 0f;
-            if (_myEntity.MaxVital[(int) Vitals.Mana] > 0)
+            float targetMpWidth = 0f;
+            if (MyEntity.MaxVital[(int) Vitals.Mana] > 0)
             {
-                targetMPWidth = ((float) _myEntity.Vital[(int) Vitals.Mana] /
-                                 (float) _myEntity.MaxVital[(int) Vitals.Mana]);
-                targetMPWidth = Math.Min(1, Math.Max(0, targetMPWidth));
-                _mpLbl.Text = Strings.Get("entitybox", "vital1val", _myEntity.Vital[(int) Vitals.Mana],
-                    _myEntity.MaxVital[(int) Vitals.Mana]);
-                targetMPWidth *= _mpBackground.Width;
+                targetMpWidth = ((float) MyEntity.Vital[(int) Vitals.Mana] /
+                                 (float) MyEntity.MaxVital[(int) Vitals.Mana]);
+                targetMpWidth = Math.Min(1, Math.Max(0, targetMpWidth));
+                MpLbl.Text = Strings.Get("entitybox", "vital1val", MyEntity.Vital[(int) Vitals.Mana],
+                    MyEntity.MaxVital[(int) Vitals.Mana]);
+                targetMpWidth *= MpBackground.Width;
             }
             else
             {
-                _mpLbl.Text = Strings.Get("entitybox", "vital1val", 0, 0);
-                targetMPWidth = _mpBackground.Width;
+                MpLbl.Text = Strings.Get("entitybox", "vital1val", 0, 0);
+                targetMpWidth = MpBackground.Width;
             }
-            if ((int) targetMPWidth != _curMPWidth)
+            if ((int) targetMpWidth != CurMpWidth)
             {
-                if ((int) targetMPWidth > _curMPWidth)
+                if ((int) targetMpWidth > CurMpWidth)
                 {
-                    _curMPWidth += (100f * elapsedTime);
-                    if (_curMPWidth > (int) targetMPWidth)
+                    CurMpWidth += (100f * elapsedTime);
+                    if (CurMpWidth > (int) targetMpWidth)
                     {
-                        _curMPWidth = targetMPWidth;
+                        CurMpWidth = targetMpWidth;
                     }
                 }
                 else
                 {
-                    _curMPWidth -= (100f * elapsedTime);
-                    if (_curMPWidth < targetMPWidth)
+                    CurMpWidth -= (100f * elapsedTime);
+                    if (CurMpWidth < targetMpWidth)
                     {
-                        _curMPWidth = targetMPWidth;
+                        CurMpWidth = targetMpWidth;
                     }
                 }
-                if (_curMPWidth == 0)
+                if (CurMpWidth == 0)
                 {
-                    _mpBar.IsHidden = true;
+                    MpBar.IsHidden = true;
                 }
                 else
                 {
-                    _mpBar.Width = (int) _curMPWidth;
-                    _mpBar.SetTextureRect(0, 0, (int) _curMPWidth, _mpBar.Height);
-                    _mpBar.IsHidden = false;
+                    MpBar.Width = (int) CurMpWidth;
+                    MpBar.SetTextureRect(0, 0, (int) CurMpWidth, MpBar.Height);
+                    MpBar.IsHidden = false;
                 }
             }
         }
@@ -423,47 +423,46 @@ namespace Intersect_Client.Classes.UI.Game
         private void UpdateXpBar(float elapsedTime)
         {
             float targetExpWidth = 1;
-            if (((Player) _myEntity).GetNextLevelExperience() > 0)
+            if (((Player) MyEntity).GetNextLevelExperience() > 0)
             {
-                targetExpWidth = (float) ((Player) _myEntity).Experience /
-                                 (float) ((Player) _myEntity).GetNextLevelExperience();
-                _expLbl.Text = Strings.Get("entitybox", "expval", ((Player) _myEntity).Experience,
-                    ((Player) _myEntity).GetNextLevelExperience());
+                targetExpWidth = (float) ((Player) MyEntity).Experience /
+                                 (float) ((Player) MyEntity).GetNextLevelExperience();
+                ExpLbl.Text = Strings.Get("entitybox", "expval", ((Player) MyEntity).Experience,
+                    ((Player) MyEntity).GetNextLevelExperience());
             }
             else
             {
                 targetExpWidth = 1f;
-                _expLbl.Text = Strings.Get("entitybox", "maxlevel");
+                ExpLbl.Text = Strings.Get("entitybox", "maxlevel");
             }
-            _expLbl.X = _expBackground.X + _expBackground.Width / 2 - _expLbl.Width / 2;
-            targetExpWidth *= _expBackground.Width;
-            if ((int) targetExpWidth != _curEXPWidth)
+            targetExpWidth *= ExpBackground.Width;
+            if ((int) targetExpWidth != CurExpWidth)
             {
-                if ((int) targetExpWidth > _curEXPWidth)
+                if ((int) targetExpWidth > CurExpWidth)
                 {
-                    _curEXPWidth += (100f * elapsedTime);
-                    if (_curEXPWidth > (int) targetExpWidth)
+                    CurExpWidth += (100f * elapsedTime);
+                    if (CurExpWidth > (int) targetExpWidth)
                     {
-                        _curEXPWidth = targetExpWidth;
+                        CurExpWidth = targetExpWidth;
                     }
                 }
                 else
                 {
-                    _curEXPWidth -= (100f * elapsedTime);
-                    if (_curEXPWidth < targetExpWidth)
+                    CurExpWidth -= (100f * elapsedTime);
+                    if (CurExpWidth < targetExpWidth)
                     {
-                        _curEXPWidth = targetExpWidth;
+                        CurExpWidth = targetExpWidth;
                     }
                 }
-                if (_curEXPWidth == 0)
+                if (CurExpWidth == 0)
                 {
-                    _expBar.IsHidden = true;
+                    ExpBar.IsHidden = true;
                 }
                 else
                 {
-                    _expBar.Width = (int) _curEXPWidth;
-                    _expBar.SetTextureRect(0, 0, (int) _curEXPWidth, _expBar.Height);
-                    _expBar.IsHidden = false;
+                    ExpBar.Width = (int) CurExpWidth;
+                    ExpBar.SetTextureRect(0, 0, (int) CurExpWidth, ExpBar.Height);
+                    ExpBar.IsHidden = false;
                 }
             }
         }
@@ -471,62 +470,62 @@ namespace Intersect_Client.Classes.UI.Game
         private void UpdateImage()
         {
             GameTexture faceTex =
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, _myEntity.Face);
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, MyEntity.Face);
             GameTexture entityTex =
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, _myEntity.MySprite);
-            if (faceTex != null && faceTex != _entityFace.Texture)
+                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MyEntity.MySprite);
+            if (faceTex != null && faceTex != EntityFace.Texture)
             {
-                _entityFace.Texture = faceTex;
-                _entityFace.SetTextureRect(0, 0, faceTex.GetWidth(), faceTex.GetHeight());
-                _entityFace.SizeToContents();
-                Align.Center(_entityFace);
-                _currentSprite = _myEntity.Face;
-                _entityFace.IsHidden = false;
+                EntityFace.Texture = faceTex;
+                EntityFace.SetTextureRect(0, 0, faceTex.GetWidth(), faceTex.GetHeight());
+                EntityFace.SizeToContents();
+                Align.Center(EntityFace);
+                mCurrentSprite = MyEntity.Face;
+                EntityFace.IsHidden = false;
                 for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
-                    _paperdollPanels[i].Hide();
+                    PaperdollPanels[i].Hide();
                 }
             }
-            else if (entityTex != null && faceTex == null || (faceTex != null && faceTex != _entityFace.Texture))
+            else if (entityTex != null && faceTex == null || (faceTex != null && faceTex != EntityFace.Texture))
             {
-                if (entityTex != _entityFace.Texture)
+                if (entityTex != EntityFace.Texture)
                 {
-                    _entityFace.Texture = entityTex;
-                    _entityFace.SetTextureRect(0, 0, entityTex.GetWidth() / 4, entityTex.GetHeight() / 4);
-                    _entityFace.SizeToContents();
-                    Align.Center(_entityFace);
-                    _currentSprite = _myEntity.MySprite;
-                    _entityFace.IsHidden = false;
+                    EntityFace.Texture = entityTex;
+                    EntityFace.SetTextureRect(0, 0, entityTex.GetWidth() / 4, entityTex.GetHeight() / 4);
+                    EntityFace.SizeToContents();
+                    Align.Center(EntityFace);
+                    mCurrentSprite = MyEntity.MySprite;
+                    EntityFace.IsHidden = false;
                 }
-                var Equipment = _myEntity.Equipment;
+                var equipment = MyEntity.Equipment;
                 for (int z = 0; z < Options.PaperdollOrder[1].Count; z++)
                 {
                     var paperdoll = "";
                     if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1 &&
-                        Equipment.Length == Options.EquipmentSlots.Count)
+                        equipment.Length == Options.EquipmentSlots.Count)
                     {
-                        if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
-                            (_myEntity != Globals.Me ||
-                             Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
+                        if (equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
+                            (MyEntity != Globals.Me ||
+                             equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
                              Options.MaxInvItems))
                         {
                             var itemNum = -1;
-                            if (_myEntity == Globals.Me)
+                            if (MyEntity == Globals.Me)
                             {
                                 itemNum =
                                     Globals.Me.Inventory[
-                                            Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])
+                                            equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])
                                             ]]
                                         .ItemNum;
                             }
                             else
                             {
-                                itemNum = Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])];
+                                itemNum = equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])];
                             }
                             if (ItemBase.Lookup.Get<ItemBase>(itemNum) != null)
                             {
                                 var itemdata = ItemBase.Lookup.Get<ItemBase>(itemNum);
-                                if (_myEntity.Gender == 0)
+                                if (MyEntity.Gender == 0)
                                 {
                                     paperdoll = itemdata.MalePaperdoll;
                                 }
@@ -537,65 +536,65 @@ namespace Intersect_Client.Classes.UI.Game
                             }
                         }
                     }
-                    if (paperdoll == "" && _paperdollTextures[z] != "")
+                    if (paperdoll == "" && PaperdollTextures[z] != "")
                     {
-                        _paperdollPanels[z].Texture = null;
-                        _paperdollPanels[z].Hide();
-                        _paperdollTextures[z] = "";
+                        PaperdollPanels[z].Texture = null;
+                        PaperdollPanels[z].Hide();
+                        PaperdollTextures[z] = "";
                     }
-                    else if (paperdoll != "" && paperdoll != _paperdollTextures[z])
+                    else if (paperdoll != "" && paperdoll != PaperdollTextures[z])
                     {
-                        var _paperdollTex =
+                        var paperdollTex =
                             Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll, paperdoll);
-                        _paperdollPanels[z].Texture = _paperdollTex;
-                        if (_paperdollTex != null)
+                        PaperdollPanels[z].Texture = paperdollTex;
+                        if (paperdollTex != null)
                         {
-                            _paperdollPanels[z].SetTextureRect(0, 0,
-                                _paperdollPanels[z].Texture.GetWidth() / 4,
-                                _paperdollPanels[z].Texture.GetHeight() / 4);
-                            _paperdollPanels[z].SetSize(_paperdollPanels[z].Texture.GetWidth() / 4,
-                                _paperdollPanels[z].Texture.GetHeight() / 4);
-                            _paperdollPanels[z].SetPosition(
-                                _entityFaceContainer.Width / 2 - _paperdollPanels[z].Width / 2,
-                                _entityFaceContainer.Height / 2 - _paperdollPanels[z].Height / 2);
+                            PaperdollPanels[z].SetTextureRect(0, 0,
+                                PaperdollPanels[z].Texture.GetWidth() / 4,
+                                PaperdollPanels[z].Texture.GetHeight() / 4);
+                            PaperdollPanels[z].SetSize(PaperdollPanels[z].Texture.GetWidth() / 4,
+                                PaperdollPanels[z].Texture.GetHeight() / 4);
+                            PaperdollPanels[z].SetPosition(
+                                EntityFaceContainer.Width / 2 - PaperdollPanels[z].Width / 2,
+                                EntityFaceContainer.Height / 2 - PaperdollPanels[z].Height / 2);
                         }
-                        _paperdollPanels[z].Show();
-                        _paperdollTextures[z] = paperdoll;
+                        PaperdollPanels[z].Show();
+                        PaperdollTextures[z] = paperdoll;
                     }
                 }
             }
-            else if (_myEntity.MySprite != _currentSprite && _myEntity.Face != _currentSprite)
+            else if (MyEntity.MySprite != mCurrentSprite && MyEntity.Face != mCurrentSprite)
             {
-                _entityFace.IsHidden = true;
+                EntityFace.IsHidden = true;
                 for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
-                    _paperdollPanels[i].Hide();
+                    PaperdollPanels[i].Hide();
                 }
             }
         }
 
         public void Dispose()
         {
-            _entityWindow.Hide();
-            Gui.GameUI.GameCanvas.RemoveChild(_entityWindow, false);
-            _entityWindow.Dispose();
+            EntityWindow.Hide();
+            Gui.GameUi.GameCanvas.RemoveChild(EntityWindow, false);
+            EntityWindow.Dispose();
         }
 
         //Input Handlers
         void invite_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (Globals.Me._targetIndex != -1 && Globals.Me._targetIndex != Globals.Me.MyIndex)
+            if (Globals.Me.TargetIndex != -1 && Globals.Me.TargetIndex != Globals.Me.MyIndex)
             {
-                PacketSender.SendPartyInvite(Globals.Me._targetIndex);
+                PacketSender.SendPartyInvite(Globals.Me.TargetIndex);
             }
         }
 
         //Input Handlers
         void tradeRequest_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (Globals.Me._targetIndex != -1 && Globals.Me._targetIndex != Globals.Me.MyIndex)
+            if (Globals.Me.TargetIndex != -1 && Globals.Me.TargetIndex != Globals.Me.MyIndex)
             {
-                PacketSender.SendTradeRequest(Globals.Me._targetIndex);
+                PacketSender.SendTradeRequest(Globals.Me.TargetIndex);
             }
         }
     }

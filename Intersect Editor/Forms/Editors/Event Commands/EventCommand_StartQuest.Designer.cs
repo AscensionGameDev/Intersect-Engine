@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_StartQuest
+    partial class EventCommandStartQuest
     {
         /// <summary> 
         /// Required designer variable.
@@ -115,7 +115,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpStartQuest);
-            this.Name = "EventCommand_StartQuest";
+            this.Name = "EventCommandStartQuest";
             this.Size = new System.Drawing.Size(182, 132);
             this.grpStartQuest.ResumeLayout(false);
             this.grpStartQuest.PerformLayout();

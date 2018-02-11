@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_SpawnNpc
+    partial class EventCommandSpawnNpc
     {
         /// <summary> 
         /// Required designer variable.
@@ -353,7 +353,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpSpawnNpc);
-            this.Name = "EventCommand_SpawnNpc";
+            this.Name = "EventCommandSpawnNpc";
             this.Size = new System.Drawing.Size(267, 394);
             this.grpSpawnNpc.ResumeLayout(false);
             this.grpSpawnNpc.PerformLayout();

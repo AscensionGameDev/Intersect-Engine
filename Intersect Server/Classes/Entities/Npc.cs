@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Intersect.Enums;
@@ -9,6 +10,7 @@ using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Misc.Pathfinding;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Classes.Spells;
+using Intersect.Server.Classes.Items;
 
 namespace Intersect.Server.Classes.Entities
 {
@@ -31,9 +33,9 @@ namespace Intersect.Server.Classes.Entities
         public Entity MyTarget;
 
         //Pathfinding
-        private Pathfinder pathFinder;
+        private Pathfinder mPathFinder;
 
-        private Task pathfindingTask;
+        private Task mPathfindingTask;
         public byte Range;
 
         //Respawn/Despawn
@@ -58,11 +60,21 @@ namespace Intersect.Server.Classes.Entities
                 Spells.Add(new SpellInstance(MyBase.Spells[I]));
             }
 
+            //Give NPC Drops
+            for (var n = 0; n < Options.MaxNpcDrops; n++)
+            {
+                if (Globals.Rand.Next(1, 101) <= myBase.Drops[n].Chance)
+                {
+                    Inventory.Add(new ItemInstance(myBase.Drops[n].ItemNum,
+                        myBase.Drops[n].Amount, -1));
+                }
+            }
+
             myBase.MaxVital.CopyTo(Vital, 0);
             myBase.MaxVital.CopyTo(MaxVital, 0);
             Behaviour = myBase.Behavior;
             Range = (byte) myBase.SightRange;
-            pathFinder = new Pathfinder(this);
+            mPathFinder = new Pathfinder(this);
         }
 
         public override EntityTypes GetEntityType()
@@ -128,7 +140,7 @@ namespace Intersect.Server.Classes.Entities
             if (enemy.IsDisposed) return;
             if (!CanAttack(enemy, null)) return;
             if (!IsOneBlockAway(enemy)) return;
-            if (!isFacingTarget(enemy)) return;
+            if (!IsFacingTarget(enemy)) return;
 
             var deadAnimations = new List<KeyValuePair<int, int>>();
             var aliveAnimations = new List<KeyValuePair<int, int>>();
@@ -191,18 +203,18 @@ namespace Intersect.Server.Classes.Entities
             }
             else if (CastFreq < Globals.System.GetTimeMs()) //Try to cast a new spell
             {
-                var CC = false;
+                var cc = false;
                 //Check if the NPC is silenced or stunned
                 foreach (var status in statuses)
                 {
                     if (status.Type == (int) StatusTypes.Silence || status.Type == (int) StatusTypes.Stun)
                     {
-                        CC = true;
+                        cc = true;
                         break;
                     }
                 }
 
-                if (CC == false)
+                if (cc == false)
                 {
                     if (MyBase.Spells.Count > 0)
                     {
@@ -235,7 +247,7 @@ namespace Intersect.Server.Classes.Entities
                             {
                                 if (spell.VitalCost[(int) Vitals.Health] <= Vital[(int) Vitals.Health])
                                 {
-                                    if (Spells[s].SpellCD < Globals.System.GetTimeMs())
+                                    if (Spells[s].SpellCd < Globals.System.GetTimeMs())
                                     {
                                         if (spell.TargetType == (int)SpellTargetTypes.Self || spell.TargetType == (int)SpellTargetTypes.AoE || InRangeOf(MyTarget, range))
                                         {
@@ -397,31 +409,31 @@ namespace Intersect.Server.Classes.Entities
 
                 if (targetMap > -1)
                 {
-                    if (pathFinder.GetTarget() != null)
+                    if (mPathFinder.GetTarget() != null)
                     {
-                        if (targetMap != pathFinder.GetTarget().TargetMap ||
-                            targetX != pathFinder.GetTarget().TargetX ||
-                            targetY != pathFinder.GetTarget().TargetY)
+                        if (targetMap != mPathFinder.GetTarget().TargetMap ||
+                            targetX != mPathFinder.GetTarget().TargetX ||
+                            targetY != mPathFinder.GetTarget().TargetY)
                         {
-                            pathFinder.SetTarget(null);
+                            mPathFinder.SetTarget(null);
                         }
                     }
 
-                    if (pathFinder.GetTarget() == null)
+                    if (mPathFinder.GetTarget() == null)
                     {
-                        pathFinder.SetTarget(new PathfinderTarget(targetMap, targetX, targetY));
+                        mPathFinder.SetTarget(new PathfinderTarget(targetMap, targetX, targetY));
                     }
 
-                    if (pathFinder.GetTarget() != null)
+                    if (mPathFinder.GetTarget() != null)
                     {
                         TryCastSpells();
-                        if (!IsOneBlockAway(pathFinder.GetTarget().TargetMap, pathFinder.GetTarget().TargetX,
-                            pathFinder.GetTarget().TargetY))
+                        if (!IsOneBlockAway(mPathFinder.GetTarget().TargetMap, mPathFinder.GetTarget().TargetX,
+                            mPathFinder.GetTarget().TargetY))
                         {
-                            switch (pathFinder.Update(timeMs))
+                            switch (mPathFinder.Update(timeMs))
                             {
                                 case PathfinderResult.Success:
-                                    var dir = pathFinder.GetMove();
+                                    var dir = mPathFinder.GetMove();
                                     if (dir > -1)
                                     {
                                         if (CanMove(dir) == -1 || CanMove(dir) == -4)
@@ -440,7 +452,7 @@ namespace Intersect.Server.Classes.Entities
                                         }
                                         else
                                         {
-                                            pathFinder.PathFailed(timeMs);
+                                            mPathFinder.PathFailed(timeMs);
                                         }
                                     }
                                     break;
@@ -530,10 +542,18 @@ namespace Intersect.Server.Classes.Entities
             //For now give npcs/resources 10% health back every regen tick... in the future we should put per-npc and per-resource regen settings into their respective editors.
             foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
             {
-                if ((int)vital < (int)Vitals.VitalCount && Vital[(int)vital] != MaxVital[(int)vital])
-                {
-                    AddVital(vital, (int)((float)MaxVital[(int)vital] * .1f));
-                }
+                Debug.Assert(Vital != null, "Vital != null");
+                Debug.Assert(MaxVital != null, "MaxVital != null");
+
+                if (vital >= Vitals.VitalCount) continue;
+
+                var vitalId = (int)vital;
+                var vitalValue = Vital[vitalId];
+                var maxVitalValue = MaxVital[vitalId];
+                if (vitalValue >= maxVitalValue) continue;
+
+                var regenValue = (int)Math.Max(1, maxVitalValue * .1f);
+                AddVital(vital, regenValue);
             }
         }
     }

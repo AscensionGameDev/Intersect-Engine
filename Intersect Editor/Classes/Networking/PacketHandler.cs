@@ -26,14 +26,14 @@ namespace Intersect.Editor.Classes
         public static GameObjectUpdated GameObjectUpdatedDelegate;
         public static MapUpdated MapUpdatedDelegate;
 
-        private static List<ShitMeasurement> measurements = new List<ShitMeasurement>();
+        private static List<ShitMeasurement> sMeasurements = new List<ShitMeasurement>();
 
-        private static int shitstaken;
-        private static long timespentshitting;
-        private static long totalshitsize;
-        private static Stopwatch ShitTimer = new Stopwatch();
+        private static int sHitstaken;
+        private static long sTimespentshitting;
+        private static long sTotalshitsize;
+        private static Stopwatch sShitTimer = new Stopwatch();
 
-        private static TextWriter writer;
+        private static TextWriter sWriter;
 
         public static bool HandlePacket(IPacket packet)
         {
@@ -55,17 +55,17 @@ namespace Intersect.Editor.Classes
             return true;
         }
 
-        private static int packetCount = 0;
-        private static bool debugPackets = false;
+        private static int sPacketCount = 0;
+        private static bool sDebugPackets = false;
         public static void HandlePacket(ByteBuffer bf)
         {
             if (bf == null || bf.Length() == 0) return;
 
             var packetHeader = (ServerPackets) bf.ReadLong();
-            packetCount++;
-            if (debugPackets)
+            sPacketCount++;
+            if (sDebugPackets)
             {
-                Console.WriteLine("Handled packet " + packetHeader + " - " + packetCount);
+                Console.WriteLine("Handled packet " + packetHeader + " - " + sPacketCount);
             }
             switch (packetHeader)
             {
@@ -119,9 +119,9 @@ namespace Intersect.Editor.Classes
 
         private static void HandleShit(byte[] packet)
         {
-            if (writer == null)
+            if (sWriter == null)
             {
-                writer = new StreamWriter(
+                sWriter = new StreamWriter(
                     new FileStream($"shits{DateTime.Now:yyyy-MM-dd_HH-mm-ss-fff}.csv", FileMode.Create,
                         FileAccess.Write), Encoding.UTF8);
             }
@@ -141,7 +141,7 @@ namespace Intersect.Editor.Classes
                         var shitSize = bf.ReadInteger();
                         //Console.WriteLine($"SHIT SIZE: {shitSize} bytes.");
                         //Console.WriteLine($"END PACKET #{packetNum}");
-                        totalshitsize += shitSize;
+                        sTotalshitsize += shitSize;
                     }
                     else
                     {
@@ -149,19 +149,19 @@ namespace Intersect.Editor.Classes
                         if (isStarting)
                         {
                             //Console.WriteLine($"Starting timer...");
-                            ShitTimer.Restart();
+                            sShitTimer.Restart();
                         }
                         else
                         {
-                            ShitTimer.Stop();
+                            sShitTimer.Stop();
                             //Console.WriteLine($"Timer done. {ShitTimer.ElapsedMilliseconds}ms elapsed.");
-                            timespentshitting += ShitTimer.ElapsedTicks;
-                            shitstaken++;
-                            measurements.Add(new ShitMeasurement
+                            sTimespentshitting += sShitTimer.ElapsedTicks;
+                            sHitstaken++;
+                            sMeasurements.Add(new ShitMeasurement
                             {
-                                elapsed = ShitTimer.ElapsedTicks,
-                                taken = 1,
-                                totalsize = 0
+                                Elapsed = sShitTimer.ElapsedTicks,
+                                Taken = 1,
+                                Totalsize = 0
                             });
                         }
                     }
@@ -171,24 +171,24 @@ namespace Intersect.Editor.Classes
                     switch (packetNum)
                     {
                         case -2:
-                            foreach (var m in measurements)
+                            foreach (var m in sMeasurements)
                             {
-                                if (m.taken < 2) continue;
+                                if (m.Taken < 2) continue;
                                 Console.WriteLine(
-                                    $"Shits: {m.taken}, Shitrate: {m.ShitRate}s/s, Datarate: {m.DataRate / 1048576}MiB/s");
+                                    $"Shits: {m.Taken}, Shitrate: {m.ShitRate}s/s, Datarate: {m.DataRate / 1048576}MiB/s");
                             }
                             break;
                         case -3:
-                            writer.Close();
-                            writer.Dispose();
-                            writer = null;
+                            sWriter.Close();
+                            sWriter.Dispose();
+                            sWriter = null;
                             break;
                         default:
                             if (shitting)
                             {
-                                shitstaken = 0;
-                                timespentshitting = 0;
-                                totalshitsize = 0;
+                                sHitstaken = 0;
+                                sTimespentshitting = 0;
+                                sTotalshitsize = 0;
                                 //Console.WriteLine("Starting to shit...");
                             }
                             else
@@ -199,16 +199,16 @@ namespace Intersect.Editor.Classes
                                 //Console.WriteLine($"It took me a total of {timespentshitting / diff}s to shit.");
                                 //Console.WriteLine($"Each shit took {timespentshitting / (diff * shitstaken)}s per shit.");
                                 //Console.WriteLine($"I shit at approximately {(totalshitsize / (timespentshitting / diff)) / 1024}KiB/s.");
-                                measurements.Add(new ShitMeasurement
+                                sMeasurements.Add(new ShitMeasurement
                                 {
-                                    elapsed = timespentshitting,
-                                    taken = shitstaken,
-                                    totalsize = totalshitsize
+                                    Elapsed = sTimespentshitting,
+                                    Taken = sHitstaken,
+                                    Totalsize = sTotalshitsize
                                 });
-                                if (shitstaken > 0)
+                                if (sHitstaken > 0)
                                 {
-                                    writer.WriteLine($"{timespentshitting},{shitstaken},{totalshitsize}");
-                                    writer.Flush();
+                                    sWriter.WriteLine($"{sTimespentshitting},{sHitstaken},{sTotalshitsize}");
+                                    sWriter.Flush();
                                 }
                             }
                             break;
@@ -343,9 +343,9 @@ namespace Intersect.Editor.Classes
                         {
                             if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                             {
-                                var needMap = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
-                                if (needMap == null && Globals.MapGrid.Grid[x, y].mapnum > -1)
-                                    PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                var needMap = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].Mapnum);
+                                if (needMap == null && Globals.MapGrid.Grid[x, y].Mapnum > -1)
+                                    PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].Mapnum);
                             }
                         }
                     }
@@ -407,9 +407,9 @@ namespace Intersect.Editor.Classes
                         {
                             if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                             {
-                                var needMap = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].mapnum);
-                                if (needMap == null && Globals.MapGrid.Grid[x, y].mapnum > -1)
-                                    PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                var needMap = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].Mapnum);
+                                if (needMap == null && Globals.MapGrid.Grid[x, y].Mapnum > -1)
+                                    PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].Mapnum);
                             }
                         }
                     }
@@ -681,12 +681,12 @@ namespace Intersect.Editor.Classes
 
         private struct ShitMeasurement
         {
-            public int taken;
-            public long totalsize;
-            public long elapsed;
+            public int Taken;
+            public long Totalsize;
+            public long Elapsed;
 
-            public double ShitRate => taken / (elapsed / (double) TimeSpan.TicksPerSecond);
-            public double DataRate => totalsize / (elapsed / (double) TimeSpan.TicksPerSecond);
+            public double ShitRate => Taken / (Elapsed / (double) TimeSpan.TicksPerSecond);
+            public double DataRate => Totalsize / (Elapsed / (double) TimeSpan.TicksPerSecond);
         }
     }
 }

@@ -3,7 +3,7 @@ using Intersect.Editor.Forms.Controls;
 
 namespace Intersect.Editor.Forms
 {
-    partial class frmWarpSelection
+    partial class FrmWarpSelection
     {
         /// <summary>
         /// Required designer variable.
@@ -32,7 +32,7 @@ namespace Intersect.Editor.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmWarpSelection));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmWarpSelection));
             this.grpEverything = new DarkUI.Controls.DarkGroupBox();
             this.grpMapPreview = new DarkUI.Controls.DarkGroupBox();
             this.pnlMapContainer = new System.Windows.Forms.Panel();
@@ -189,7 +189,7 @@ namespace Intersect.Editor.Forms
             this.Controls.Add(this.grpEverything);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "frmWarpSelection";
+            this.Name = "FrmWarpSelection";
             this.Text = "Warp Tile Selection";
             this.Load += new System.EventHandler(this.frmWarpSelection_Load);
             this.grpEverything.ResumeLayout(false);

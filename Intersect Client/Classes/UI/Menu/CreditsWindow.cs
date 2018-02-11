@@ -9,62 +9,62 @@ namespace Intersect_Client.Classes.UI.Menu
 {
     public class CreditsWindow
     {
-        private Button _backBtn;
+        private Button mBackBtn;
 
         //Content
-        private ScrollControl _creditsContent;
-        private RichLabel _richLabel;
+        private ScrollControl mCreditsContent;
+        private RichLabel mRichLabel;
 
         //Parent
-        private Label _creditsHeader;
+        private Label mCreditsHeader;
 
         //Controls
-        private ImagePanel _creditsWindow;
+        private ImagePanel mCreditsWindow;
 
-        private MainMenu _mainMenu;
+        private MainMenu mMainMenu;
 
         //Init
         public CreditsWindow(Canvas parent, MainMenu mainMenu)
         {
             //Assign References
-            _mainMenu = mainMenu;
+            mMainMenu = mainMenu;
 
             //Main Menu Window
-            _creditsWindow = new ImagePanel(parent, "CreditsWindow");
+            mCreditsWindow = new ImagePanel(parent, "CreditsWindow");
 
             //Menu Header
-            _creditsHeader = new Label(_creditsWindow, "CreditsHeader");
-            _creditsHeader.SetText(Strings.Get("credits", "title"));
+            mCreditsHeader = new Label(mCreditsWindow, "CreditsHeader");
+            mCreditsHeader.SetText(Strings.Get("credits", "title"));
 
-            _creditsContent = new ScrollControl(_creditsWindow, "CreditsScrollview");
-            _creditsContent.EnableScroll(false, true);
+            mCreditsContent = new ScrollControl(mCreditsWindow, "CreditsScrollview");
+            mCreditsContent.EnableScroll(false, true);
 
             var creditsParser = new CreditsParser();
-            _richLabel = new RichLabel(_creditsContent, "CreditsLabel");
+            mRichLabel = new RichLabel(mCreditsContent, "CreditsLabel");
             foreach (var line in creditsParser.Credits)
             {
-                if (line.text.Trim().Length == 0)
+                if (line.Text.Trim().Length == 0)
                 {
-                    _richLabel.AddLineBreak();
+                    mRichLabel.AddLineBreak();
                 }
                 else
                 {
-                    _richLabel.AddText(line.text, new Color(line.clr.A, line.clr.R, line.clr.G, line.clr.B),
-                        line.alignment, GameContentManager.Current.GetFont(line.font, line.size));
-                    _richLabel.AddLineBreak();
+                    mRichLabel.AddText(line.Text, new Color(line.Clr.A, line.Clr.R, line.Clr.G, line.Clr.B),
+                        line.Alignment, GameContentManager.Current.GetFont(line.Font, line.Size));
+                    mRichLabel.AddLineBreak();
                 }
             }
 
             //Back Button
-            _backBtn = new Button(_creditsWindow, "BackButton");
-            _backBtn.SetText(Strings.Get("credits", "back"));
-            _backBtn.Clicked += BackBtn_Clicked;
+            mBackBtn = new Button(mCreditsWindow, "BackButton");
+            mBackBtn.SetText(Strings.Get("credits", "back"));
+            mBackBtn.Clicked += BackBtn_Clicked;
         }
 
         private void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Hide();
-            _mainMenu.Show();
+            mMainMenu.Show();
         }
 
         //Methods
@@ -74,14 +74,14 @@ namespace Intersect_Client.Classes.UI.Menu
 
         public void Hide()
         {
-            _creditsWindow.IsHidden = true;
+            mCreditsWindow.IsHidden = true;
         }
 
         public void Show()
         {
-            _creditsWindow.IsHidden = false;
-            _richLabel.Width = _creditsContent.Width;
-            _richLabel.SizeToChildren(false, true);
+            mCreditsWindow.IsHidden = false;
+            mRichLabel.Width = mCreditsContent.Width;
+            mRichLabel.SizeToChildren(false, true);
         }
     }
 }

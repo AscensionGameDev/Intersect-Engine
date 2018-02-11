@@ -4,36 +4,36 @@ namespace Intersect_Client.Classes.UI.Menu
 {
     public class MenuGuiBase
     {
-        private readonly Canvas _menuCanvas;
+        private readonly Canvas mMenuCanvas;
 
-        public MainMenu _mainMenu;
-        private bool shouldReset;
+        public MainMenu MainMenu;
+        private bool mShouldReset;
 
         public MenuGuiBase(Canvas myCanvas)
         {
-            _menuCanvas = myCanvas;
+            mMenuCanvas = myCanvas;
             InitMenuGui();
         }
 
         private void InitMenuGui()
         {
-            _mainMenu = new MainMenu(_menuCanvas);
+            MainMenu = new MainMenu(mMenuCanvas);
         }
 
         public void Draw()
         {
-            if (shouldReset)
+            if (mShouldReset)
             {
-                _mainMenu.Reset();
-                shouldReset = false;
+                MainMenu.Reset();
+                mShouldReset = false;
             }
-            _mainMenu.Update();
-            _menuCanvas.RenderCanvas();
+            MainMenu.Update();
+            mMenuCanvas.RenderCanvas();
         }
 
         public void Reset()
         {
-            shouldReset = true;
+            mShouldReset = true;
         }
     }
 }

@@ -17,140 +17,140 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
 {
     public class HotbarItem
     {
-        private static int ItemXPadding = 4;
-        private static int ItemYPadding = 4;
-        private int _currentItem = -1;
+        private static int sItemXPadding = 4;
+        private static int sItemYPadding = 4;
+        private int mCurrentItem = -1;
 
         //Item Info
-        private int _currentType = -1; //0 for item, 1 for spell
+        private int mCurrentType = -1; //0 for item, 1 for spell
 
         //Textures
-        private Base _hotbarWindow;
+        private Base mHotbarWindow;
 
-        private bool _isEquipped;
-        private bool _isFaded;
+        private bool mIsEquipped;
+        private bool mIsFaded;
 
-        private ItemDescWindow _itemDescWindow;
-        private SpellDescWindow _spellDescWindow;
+        private ItemDescWindow mItemDescWindow;
+        private SpellDescWindow mSpellDescWindow;
 
-        private int[] _statBoost = new int[Options.MaxStats];
-        private bool _texLoaded;
+        private int[] mStatBoost = new int[Options.MaxStats];
+        private bool mTexLoaded;
 
         //Dragging
-        private bool CanDrag;
+        private bool mCanDrag;
 
-        private long ClickTime;
+        private long mClickTime;
 
         //pnl is the background iamge
-        private ImagePanel contentPanel;
+        private ImagePanel mContentPanel;
 
-        private Draggable dragIcon;
-        private ImagePanel equipPanel;
-        private Keys hotKey;
+        private Draggable mDragIcon;
+        private ImagePanel mEquipPanel;
+        private Keys mHotKey;
         public bool IsDragging;
-        public Label keyLabel;
+        public Label KeyLabel;
 
         //Mouse Event Variables
-        private bool MouseOver;
+        private bool mMouseOver;
 
-        private int MouseX = -1;
-        private int MouseY = -1;
+        private int mMouseX = -1;
+        private int mMouseY = -1;
 
-        private int myindex;
-        public ImagePanel pnl;
+        private int mYindex;
+        public ImagePanel Pnl;
 
         public HotbarItem(int index, Base hotbarWindow)
         {
-            myindex = index;
-            _hotbarWindow = hotbarWindow;
+            mYindex = index;
+            mHotbarWindow = hotbarWindow;
         }
 
         public void Setup()
         {
-            pnl.HoverEnter += pnl_HoverEnter;
-            pnl.HoverLeave += pnl_HoverLeave;
-            pnl.RightClicked += pnl_RightClicked;
-            pnl.Clicked += pnl_Clicked;
+            Pnl.HoverEnter += pnl_HoverEnter;
+            Pnl.HoverLeave += pnl_HoverLeave;
+            Pnl.RightClicked += pnl_RightClicked;
+            Pnl.Clicked += pnl_Clicked;
 
             //Content Panel is layered on top of the container.
             //Shows the Item or Spell Icon
-            contentPanel = new ImagePanel(pnl, "HotbarIcon" + myindex);
+            mContentPanel = new ImagePanel(Pnl, "HotbarIcon" + mYindex);
 
-            equipPanel = new ImagePanel(contentPanel, "HotbarEquipedIcon" + myindex);
-            equipPanel.Texture = GameGraphics.Renderer.GetWhiteTexture();
+            mEquipPanel = new ImagePanel(mContentPanel, "HotbarEquipedIcon" + mYindex);
+            mEquipPanel.Texture = GameGraphics.Renderer.GetWhiteTexture();
         }
 
         public void Activate()
         {
-            if (_currentType > -1 && _currentItem > -1)
+            if (mCurrentType > -1 && mCurrentItem > -1)
             {
-                if (_currentType == 0)
+                if (mCurrentType == 0)
                 {
-                    Globals.Me.TryUseItem(_currentItem);
+                    Globals.Me.TryUseItem(mCurrentItem);
                 }
-                else if (_currentType == 1)
+                else if (mCurrentType == 1)
                 {
-                    Globals.Me.TryUseSpell(_currentItem);
+                    Globals.Me.TryUseSpell(mCurrentItem);
                 }
             }
         }
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            Globals.Me.AddToHotbar(myindex, -1, -1);
+            Globals.Me.AddToHotbar(mYindex, -1, -1);
         }
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            ClickTime = Globals.System.GetTimeMs() + 500;
+            mClickTime = Globals.System.GetTimeMs() + 500;
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
         {
-            MouseOver = false;
-            MouseX = -1;
-            MouseY = -1;
-            if (_itemDescWindow != null)
+            mMouseOver = false;
+            mMouseX = -1;
+            mMouseY = -1;
+            if (mItemDescWindow != null)
             {
-                _itemDescWindow.Dispose();
-                _itemDescWindow = null;
+                mItemDescWindow.Dispose();
+                mItemDescWindow = null;
             }
-            if (_spellDescWindow != null)
+            if (mSpellDescWindow != null)
             {
-                _spellDescWindow.Dispose();
-                _spellDescWindow = null;
+                mSpellDescWindow.Dispose();
+                mSpellDescWindow = null;
             }
         }
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
-            MouseOver = true;
-            CanDrag = true;
+            mMouseOver = true;
+            mCanDrag = true;
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
             {
                 return;
             }
-            if (_currentType == 0)
+            if (mCurrentType == 0)
             {
-                if (_itemDescWindow != null)
+                if (mItemDescWindow != null)
                 {
-                    _itemDescWindow.Dispose();
-                    _itemDescWindow = null;
+                    mItemDescWindow.Dispose();
+                    mItemDescWindow = null;
                 }
-                _itemDescWindow = new ItemDescWindow(Globals.Me.Inventory[_currentItem].ItemNum, 1,
-                    _hotbarWindow.X + pnl.X + 16 - 255 / 2, _hotbarWindow.Y + _hotbarWindow.Height + 2,
-                    Globals.Me.Inventory[_currentItem].StatBoost,
-                    ItemBase.GetName(Globals.Me.Inventory[_currentItem].ItemNum));
+                mItemDescWindow = new ItemDescWindow(Globals.Me.Inventory[mCurrentItem].ItemNum, 1,
+                    mHotbarWindow.X + Pnl.X + 16 - 255 / 2, mHotbarWindow.Y + mHotbarWindow.Height + 2,
+                    Globals.Me.Inventory[mCurrentItem].StatBoost,
+                    ItemBase.GetName(Globals.Me.Inventory[mCurrentItem].ItemNum));
             }
-            else if (_currentType == 1)
+            else if (mCurrentType == 1)
             {
-                if (_spellDescWindow != null)
+                if (mSpellDescWindow != null)
                 {
-                    _spellDescWindow.Dispose();
-                    _spellDescWindow = null;
+                    mSpellDescWindow.Dispose();
+                    mSpellDescWindow = null;
                 }
-                _spellDescWindow = new SpellDescWindow(Globals.Me.Spells[_currentItem].SpellNum,
-                    _hotbarWindow.X + pnl.X + 16 - 255 / 2, _hotbarWindow.Y + _hotbarWindow.Height + 2);
+                mSpellDescWindow = new SpellDescWindow(Globals.Me.Spells[mCurrentItem].SpellNum,
+                    mHotbarWindow.X + Pnl.X + 16 - 255 / 2, mHotbarWindow.Y + mHotbarWindow.Height + 2);
             }
         }
 
@@ -158,10 +158,10 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
         {
             FloatRect rect = new FloatRect()
             {
-                X = pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X,
-                Y = pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y,
-                Width = pnl.Width,
-                Height = pnl.Height
+                X = Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X,
+                Y = Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y,
+                Width = Pnl.Width,
+                Height = Pnl.Height
             };
             return rect;
         }
@@ -173,127 +173,127 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
                 return;
             }
             //See if Label Should be changed
-            if (hotKey != GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + myindex].key1)
+            if (mHotKey != GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + mYindex].Key1)
             {
-                keyLabel.SetText(Strings.Get("keys",
+                KeyLabel.SetText(Strings.Get("keys",
                     Enum.GetName(typeof(Keys),
-                        GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + myindex].key1)));
-                hotKey = GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + myindex].key1;
+                        GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + mYindex].Key1)));
+                mHotKey = GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + mYindex].Key1;
             }
             //See if we lost our hotbar item
-            if (Globals.Me.Hotbar[myindex].Type == 0)
+            if (Globals.Me.Hotbar[mYindex].Type == 0)
             {
-                if (Globals.Me.Hotbar[myindex].Slot == -1 ||
-                    Globals.Me.Inventory[Globals.Me.Hotbar[myindex].Slot].ItemNum == -1)
+                if (Globals.Me.Hotbar[mYindex].Slot == -1 ||
+                    Globals.Me.Inventory[Globals.Me.Hotbar[mYindex].Slot].ItemNum == -1)
                 {
-                    Globals.Me.AddToHotbar(myindex, -1, -1);
+                    Globals.Me.AddToHotbar(mYindex, -1, -1);
                 }
             }
-            else if (Globals.Me.Hotbar[myindex].Type == 1)
+            else if (Globals.Me.Hotbar[mYindex].Type == 1)
             {
-                if (Globals.Me.Hotbar[myindex].Slot == -1 ||
-                    Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellNum == -1)
+                if (Globals.Me.Hotbar[mYindex].Slot == -1 ||
+                    Globals.Me.Spells[Globals.Me.Hotbar[mYindex].Slot].SpellNum == -1)
                 {
-                    Globals.Me.AddToHotbar(myindex, -1, -1);
+                    Globals.Me.AddToHotbar(mYindex, -1, -1);
                 }
             }
-            if (Globals.Me.Hotbar[myindex].Type != _currentType || Globals.Me.Hotbar[myindex].Slot != _currentItem ||
-                _texLoaded == false || //Basics
-                (Globals.Me.Hotbar[myindex].Type == 1 && Globals.Me.Hotbar[myindex].Slot > -1 &&
-                 (Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellCD > Globals.System.GetTimeMs()) &&
-                 _isFaded == false) || //Is Spell, on CD and not faded
-                (Globals.Me.Hotbar[myindex].Type == 1 && Globals.Me.Hotbar[myindex].Slot > -1 &&
-                 (Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellCD <= Globals.System.GetTimeMs()) &&
-                 _isFaded == true) || //Is Spell, not on CD and faded
-                (Globals.Me.Hotbar[myindex].Type == 0 && Globals.Me.Hotbar[myindex].Slot > -1 &&
-                 Globals.Me.IsEquipped(_currentItem) != _isEquipped))
+            if (Globals.Me.Hotbar[mYindex].Type != mCurrentType || Globals.Me.Hotbar[mYindex].Slot != mCurrentItem ||
+                mTexLoaded == false || //Basics
+                (Globals.Me.Hotbar[mYindex].Type == 1 && Globals.Me.Hotbar[mYindex].Slot > -1 &&
+                 (Globals.Me.Spells[Globals.Me.Hotbar[mYindex].Slot].SpellCd > Globals.System.GetTimeMs()) &&
+                 mIsFaded == false) || //Is Spell, on CD and not faded
+                (Globals.Me.Hotbar[mYindex].Type == 1 && Globals.Me.Hotbar[mYindex].Slot > -1 &&
+                 (Globals.Me.Spells[Globals.Me.Hotbar[mYindex].Slot].SpellCd <= Globals.System.GetTimeMs()) &&
+                 mIsFaded == true) || //Is Spell, not on CD and faded
+                (Globals.Me.Hotbar[mYindex].Type == 0 && Globals.Me.Hotbar[mYindex].Slot > -1 &&
+                 Globals.Me.IsEquipped(mCurrentItem) != mIsEquipped))
             {
-                _currentItem = Globals.Me.Hotbar[myindex].Slot;
-                _currentType = Globals.Me.Hotbar[myindex].Type;
-                if (_currentType == 0 && _currentItem > -1 &&
-                    ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[_currentItem].ItemNum) != null)
+                mCurrentItem = Globals.Me.Hotbar[mYindex].Slot;
+                mCurrentType = Globals.Me.Hotbar[mYindex].Type;
+                if (mCurrentType == 0 && mCurrentItem > -1 &&
+                    ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[mCurrentItem].ItemNum) != null)
                 {
-                    contentPanel.Show();
-                    contentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                        ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[_currentItem].ItemNum).Pic);
-                    equipPanel.IsHidden = !Globals.Me.IsEquipped(_currentItem);
-                    _texLoaded = true;
-                    _isEquipped = Globals.Me.IsEquipped(_currentItem);
+                    mContentPanel.Show();
+                    mContentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
+                        ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[mCurrentItem].ItemNum).Pic);
+                    mEquipPanel.IsHidden = !Globals.Me.IsEquipped(mCurrentItem);
+                    mTexLoaded = true;
+                    mIsEquipped = Globals.Me.IsEquipped(mCurrentItem);
                 }
-                else if (_currentType == 1 && _currentItem > -1 &&
-                         SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[_currentItem].SpellNum) != null)
+                else if (mCurrentType == 1 && mCurrentItem > -1 &&
+                         SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[mCurrentItem].SpellNum) != null)
                 {
-                    contentPanel.Show();
-                    contentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
-                        SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[_currentItem].SpellNum).Pic);
-                    equipPanel.IsHidden = true;
-                    _isFaded = Globals.Me.Spells[_currentItem].SpellCD > Globals.System.GetTimeMs();
-                    if (_isFaded)
+                    mContentPanel.Show();
+                    mContentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
+                        SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[mCurrentItem].SpellNum).Pic);
+                    mEquipPanel.IsHidden = true;
+                    mIsFaded = Globals.Me.Spells[mCurrentItem].SpellCd > Globals.System.GetTimeMs();
+                    if (mIsFaded)
                     {
-                        contentPanel.RenderColor = new IntersectClientExtras.GenericClasses.Color(100, 255, 255, 255);
+                        mContentPanel.RenderColor = new IntersectClientExtras.GenericClasses.Color(100, 255, 255, 255);
                     }
                     else
                     {
-                        contentPanel.RenderColor = IntersectClientExtras.GenericClasses.Color.White;
+                        mContentPanel.RenderColor = IntersectClientExtras.GenericClasses.Color.White;
                     }
-                    _texLoaded = true;
-                    _isEquipped = false;
+                    mTexLoaded = true;
+                    mIsEquipped = false;
                 }
                 else
                 {
-                    contentPanel.Hide();
-                    _texLoaded = true;
-                    _isEquipped = false;
+                    mContentPanel.Hide();
+                    mTexLoaded = true;
+                    mIsEquipped = false;
                 }
             }
-            if (_currentType > -1 && _currentItem > -1)
+            if (mCurrentType > -1 && mCurrentItem > -1)
             {
                 if (!IsDragging)
                 {
-                    if (MouseOver)
+                    if (mMouseOver)
                     {
                         if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
                         {
-                            CanDrag = true;
-                            MouseX = -1;
-                            MouseY = -1;
-                            if (Globals.System.GetTimeMs() < ClickTime)
+                            mCanDrag = true;
+                            mMouseX = -1;
+                            mMouseY = -1;
+                            if (Globals.System.GetTimeMs() < mClickTime)
                             {
                                 Activate();
-                                ClickTime = 0;
+                                mClickTime = 0;
                             }
                         }
                         else
                         {
-                            if (CanDrag)
+                            if (mCanDrag)
                             {
-                                if (MouseX == -1 || MouseY == -1)
+                                if (mMouseX == -1 || mMouseY == -1)
                                 {
-                                    MouseX = InputHandler.MousePosition.X -
-                                             pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
+                                    mMouseX = InputHandler.MousePosition.X -
+                                             Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
                                                  .X;
-                                    MouseY = InputHandler.MousePosition.Y -
-                                             pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
+                                    mMouseY = InputHandler.MousePosition.Y -
+                                             Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
                                                  .Y;
                                 }
                                 else
                                 {
-                                    int xdiff = MouseX -
+                                    int xdiff = mMouseX -
                                                 (InputHandler.MousePosition.X -
-                                                 pnl.LocalPosToCanvas(
+                                                 Pnl.LocalPosToCanvas(
                                                      new IntersectClientExtras.GenericClasses.Point(0, 0)).X);
-                                    int ydiff = MouseY -
+                                    int ydiff = mMouseY -
                                                 (InputHandler.MousePosition.Y -
-                                                 pnl.LocalPosToCanvas(
+                                                 Pnl.LocalPosToCanvas(
                                                      new IntersectClientExtras.GenericClasses.Point(0, 0)).Y);
                                     if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                     {
                                         IsDragging = true;
-                                        dragIcon = new Draggable(
-                                            pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
-                                                .X + MouseX,
-                                            pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
-                                                .X + MouseY, contentPanel.Texture);
+                                        mDragIcon = new Draggable(
+                                            Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
+                                                .X + mMouseX,
+                                            Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0))
+                                                .X + mMouseY, mContentPanel.Texture);
                                         //SOMETHING SHOULD BE RENDERED HERE, RIGHT?
                                     }
                                 }
@@ -303,52 +303,52 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
                 }
                 else
                 {
-                    if (dragIcon.Update())
+                    if (mDragIcon.Update())
                     {
-                        contentPanel.IsHidden = false;
+                        mContentPanel.IsHidden = false;
                         //Drug the item and now we stopped
                         IsDragging = false;
-                        FloatRect dragRect = new FloatRect(dragIcon.X - ItemXPadding / 2, dragIcon.Y - ItemYPadding / 2,
-                            ItemXPadding / 2 + 32, ItemYPadding / 2 + 32);
+                        FloatRect dragRect = new FloatRect(mDragIcon.X - sItemXPadding / 2, mDragIcon.Y - sItemYPadding / 2,
+                            sItemXPadding / 2 + 32, sItemYPadding / 2 + 32);
 
                         float bestIntersect = 0;
                         int bestIntersectIndex = -1;
 
-                        if (Gui.GameUI.Hotbar.RenderBounds().IntersectsWith(dragRect))
+                        if (Gui.GameUi.Hotbar.RenderBounds().IntersectsWith(dragRect))
                         {
                             for (int i = 0; i < Options.MaxHotbar; i++)
                             {
-                                if (Gui.GameUI.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
+                                if (Gui.GameUi.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                                 {
-                                    if (FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Width *
-                                        FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(),
+                                    if (FloatRect.Intersect(Gui.GameUi.Hotbar.Items[i].RenderBounds(), dragRect).Width *
+                                        FloatRect.Intersect(Gui.GameUi.Hotbar.Items[i].RenderBounds(),
                                             dragRect).Height >
                                         bestIntersect)
                                     {
                                         bestIntersect =
-                                            FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect)
+                                            FloatRect.Intersect(Gui.GameUi.Hotbar.Items[i].RenderBounds(), dragRect)
                                                 .Width *
-                                            FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect)
+                                            FloatRect.Intersect(Gui.GameUi.Hotbar.Items[i].RenderBounds(), dragRect)
                                                 .Height;
                                         bestIntersectIndex = i;
                                     }
                                 }
                             }
-                            if (bestIntersectIndex > -1 && bestIntersectIndex != myindex)
+                            if (bestIntersectIndex > -1 && bestIntersectIndex != mYindex)
                             {
                                 //Swap Hotbar Items
                                 int tmpType = Globals.Me.Hotbar[bestIntersectIndex].Type;
                                 int tmpSlot = Globals.Me.Hotbar[bestIntersectIndex].Slot;
-                                Globals.Me.AddToHotbar(bestIntersectIndex, _currentType, _currentItem);
-                                Globals.Me.AddToHotbar(myindex, tmpType, tmpSlot);
+                                Globals.Me.AddToHotbar(bestIntersectIndex, mCurrentType, mCurrentItem);
+                                Globals.Me.AddToHotbar(mYindex, tmpType, tmpSlot);
                             }
                         }
 
-                        dragIcon.Dispose();
+                        mDragIcon.Dispose();
                     }
                     else
                     {
-                        contentPanel.IsHidden = true;
+                        mContentPanel.IsHidden = true;
                     }
                 }
             }

@@ -13,21 +13,21 @@ using Intersect.Utilities;
 
 namespace Intersect.Editor.Classes
 {
-    public partial class frmResource : EditorForm
+    public partial class FrmResource : EditorForm
     {
-        private List<ResourceBase> _changed = new List<ResourceBase>();
-        private byte[] _copiedItem;
-        private ResourceBase _editorItem;
-        private Bitmap _endBitmap;
-        private Bitmap _endTileset;
-        private Bitmap _initialBitmap;
+        private List<ResourceBase> mChanged = new List<ResourceBase>();
+        private byte[] mCopiedItem;
+        private ResourceBase mEditorItem;
+        private Bitmap mEndBitmap;
+        private Bitmap mEndTileset;
+        private Bitmap mInitialBitmap;
 
-        private Bitmap _initialTileset;
+        private Bitmap mInitialTileset;
 
         //General Editting Variables
-        bool _tMouseDown;
+        bool mTMouseDown;
 
-        public frmResource()
+        public FrmResource()
         {
             ApplyHooks();
             InitializeComponent();
@@ -40,9 +40,9 @@ namespace Intersect.Editor.Classes
             if (type == GameObjectType.Resource)
             {
                 InitEditor();
-                if (_editorItem != null && !ResourceBase.Lookup.Values.Contains(_editorItem))
+                if (mEditorItem != null && !ResourceBase.Lookup.Values.Contains(mEditorItem))
                 {
-                    _editorItem = null;
+                    mEditorItem = null;
                     UpdateEditor();
                 }
             }
@@ -50,7 +50,7 @@ namespace Intersect.Editor.Classes
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            foreach (var item in _changed)
+            foreach (var item in mChanged)
             {
                 item.RestoreBackup();
                 item.DeleteBackup();
@@ -64,7 +64,7 @@ namespace Intersect.Editor.Classes
         private void btnSave_Click(object sender, EventArgs e)
         {
             //Send Changed items
-            foreach (var item in _changed)
+            foreach (var item in mChanged)
             {
                 PacketSender.SendSaveObject(item);
                 item.DeleteBackup();
@@ -77,8 +77,8 @@ namespace Intersect.Editor.Classes
 
         private void lstResources_Click(object sender, EventArgs e)
         {
-            if (changingName) return;
-            _editorItem =
+            if (mChangingName) return;
+            mEditorItem =
                 ResourceBase.Lookup.Get<ResourceBase>(
                     Database.GameObjectIdFromList(GameObjectType.Resource, lstResources.SelectedIndex));
             UpdateEditor();
@@ -86,13 +86,13 @@ namespace Intersect.Editor.Classes
 
         private void frmResource_Load(object sender, EventArgs e)
         {
-            _initialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
-            _endBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
+            mInitialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
+            mEndBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
             cmbInitialSprite.Items.Clear();
             cmbEndSprite.Items.Clear();
             cmbInitialSprite.Items.Add(Strings.Get("general", "none"));
             cmbEndSprite.Items.Add(Strings.Get("general", "none"));
-            string[] resources = GameContentManager.GetTextureNames(GameContentManager.TextureType.Resource);
+            string[] resources = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Resource);
             for (int i = 0; i < resources.Length; i++)
             {
                 cmbInitialSprite.Items.Add(resources[i]);
@@ -155,29 +155,29 @@ namespace Intersect.Editor.Classes
 
         private void UpdateEditor()
         {
-            if (_editorItem != null)
+            if (mEditorItem != null)
             {
                 pnlContainer.Show();
 
-                txtName.Text = _editorItem.Name;
-                cmbToolType.SelectedIndex = _editorItem.Tool + 1;
-                nudSpawnDuration.Value = _editorItem.SpawnDuration;
+                txtName.Text = mEditorItem.Name;
+                cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
+                nudSpawnDuration.Value = mEditorItem.SpawnDuration;
                 cmbAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.Animation) +
+                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.Animation) +
                     1;
-                nudMinHp.Value = _editorItem.MinHP;
-                nudMaxHp.Value = _editorItem.MaxHP;
-                chkWalkableBefore.Checked = _editorItem.WalkableBefore;
-                chkWalkableAfter.Checked = _editorItem.WalkableAfter;
-                cmbInitialSprite.SelectedIndex = cmbInitialSprite.FindString(TextUtils.NullToNone(TextUtils.NullToNone(_editorItem.InitialGraphic)));
-                cmbEndSprite.SelectedIndex = cmbEndSprite.FindString(TextUtils.NullToNone(TextUtils.NullToNone(_editorItem.EndGraphic)));
+                nudMinHp.Value = mEditorItem.MinHp;
+                nudMaxHp.Value = mEditorItem.MaxHp;
+                chkWalkableBefore.Checked = mEditorItem.WalkableBefore;
+                chkWalkableAfter.Checked = mEditorItem.WalkableAfter;
+                cmbInitialSprite.SelectedIndex = cmbInitialSprite.FindString(TextUtils.NullToNone(TextUtils.NullToNone(mEditorItem.InitialGraphic)));
+                cmbEndSprite.SelectedIndex = cmbEndSprite.FindString(TextUtils.NullToNone(TextUtils.NullToNone(mEditorItem.EndGraphic)));
                 nudDropIndex.Value = 1;
                 UpdateDropValues();
                 Render();
-                if (_changed.IndexOf(_editorItem) == -1)
+                if (mChanged.IndexOf(mEditorItem) == -1)
                 {
-                    _changed.Add(_editorItem);
-                    _editorItem.MakeBackup();
+                    mChanged.Add(mEditorItem);
+                    mEditorItem.MakeBackup();
                 }
             }
             else
@@ -191,57 +191,57 @@ namespace Intersect.Editor.Classes
         {
             int index = (int) nudDropIndex.Value - 1;
             cmbItem.SelectedIndex =
-                Database.GameObjectListIndex(GameObjectType.Item, _editorItem.Drops[index].ItemNum) + 1;
-            nudDropAmount.Value = _editorItem.Drops[index].Amount;
-            nudDropChance.Value = _editorItem.Drops[index].Chance;
+                Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.Drops[index].ItemNum) + 1;
+            nudDropAmount.Value = mEditorItem.Drops[index].Amount;
+            nudDropChance.Value = mEditorItem.Drops[index].Chance;
         }
 
         private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.SpawnDuration = (int) nudSpawnDuration.Value;
+            mEditorItem.SpawnDuration = (int) nudSpawnDuration.Value;
         }
 
         private void nudDropChance_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[(int) nudDropIndex.Value - 1].Chance = (int) nudDropChance.Value;
+            mEditorItem.Drops[(int) nudDropIndex.Value - 1].Chance = (int) nudDropChance.Value;
         }
 
         private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Tool = cmbToolType.SelectedIndex - 1;
+            mEditorItem.Tool = cmbToolType.SelectedIndex - 1;
         }
 
         private void chkWalkableBefore_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem.WalkableBefore = chkWalkableBefore.Checked;
+            mEditorItem.WalkableBefore = chkWalkableBefore.Checked;
         }
 
         private void chkWalkableAfter_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem.WalkableAfter = chkWalkableAfter.Checked;
+            mEditorItem.WalkableAfter = chkWalkableAfter.Checked;
         }
 
         private void cmbInitialSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbInitialSprite.SelectedIndex > 0)
             {
-                _editorItem.InitialGraphic = cmbInitialSprite.Text;
+                mEditorItem.InitialGraphic = cmbInitialSprite.Text;
                 if (File.Exists("resources/resources/" + cmbInitialSprite.Text))
                 {
-                    _initialTileset = (Bitmap) Image.FromFile("resources/resources/" + cmbInitialSprite.Text);
-                    picInitialResource.Width = _initialTileset.Width;
-                    picInitialResource.Height = _initialTileset.Height;
-                    _initialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
+                    mInitialTileset = (Bitmap) Image.FromFile("resources/resources/" + cmbInitialSprite.Text);
+                    picInitialResource.Width = mInitialTileset.Width;
+                    picInitialResource.Height = mInitialTileset.Height;
+                    mInitialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
                 }
                 else
                 {
-                    _initialTileset = null;
+                    mInitialTileset = null;
                 }
             }
             else
             {
-                _editorItem.InitialGraphic = null;
-                _initialTileset = null;
+                mEditorItem.InitialGraphic = null;
+                mInitialTileset = null;
             }
             Render();
         }
@@ -250,23 +250,23 @@ namespace Intersect.Editor.Classes
         {
             if (cmbEndSprite.SelectedIndex > 0)
             {
-                _editorItem.EndGraphic = cmbEndSprite.Text;
+                mEditorItem.EndGraphic = cmbEndSprite.Text;
                 if (File.Exists("resources/resources/" + cmbEndSprite.Text))
                 {
-                    _endTileset = (Bitmap) Image.FromFile("resources/resources/" + cmbEndSprite.Text);
-                    picEndResource.Width = _endTileset.Width;
-                    picEndResource.Height = _endTileset.Height;
-                    _endBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
+                    mEndTileset = (Bitmap) Image.FromFile("resources/resources/" + cmbEndSprite.Text);
+                    picEndResource.Width = mEndTileset.Width;
+                    picEndResource.Height = mEndTileset.Height;
+                    mEndBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
                 }
                 else
                 {
-                    _endTileset = null;
+                    mEndTileset = null;
                 }
             }
             else
             {
-                _editorItem.EndGraphic = null;
-                _endTileset = null;
+                mEditorItem.EndGraphic = null;
+                mEndTileset = null;
             }
             Render();
         }
@@ -276,38 +276,38 @@ namespace Intersect.Editor.Classes
             Pen whitePen = new Pen(System.Drawing.Color.Red, 1);
 
             // Initial Sprite
-            var gfx = Graphics.FromImage(_initialBitmap);
+            var gfx = Graphics.FromImage(mInitialBitmap);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picInitialResource.Width, picInitialResource.Height));
-            if (cmbInitialSprite.SelectedIndex > 0 && _initialTileset != null)
+            if (cmbInitialSprite.SelectedIndex > 0 && mInitialTileset != null)
             {
-                gfx.DrawImage(_initialTileset, new Rectangle(0, 0, _initialTileset.Width, _initialTileset.Height),
-                    new Rectangle(0, 0, _initialTileset.Width, _initialTileset.Height), GraphicsUnit.Pixel);
+                gfx.DrawImage(mInitialTileset, new Rectangle(0, 0, mInitialTileset.Width, mInitialTileset.Height),
+                    new Rectangle(0, 0, mInitialTileset.Width, mInitialTileset.Height), GraphicsUnit.Pixel);
             }
             gfx.Dispose();
             gfx = picInitialResource.CreateGraphics();
-            gfx.DrawImageUnscaled(_initialBitmap, new System.Drawing.Point(0, 0));
+            gfx.DrawImageUnscaled(mInitialBitmap, new System.Drawing.Point(0, 0));
             gfx.Dispose();
 
             // End Sprite
-            gfx = Graphics.FromImage(_endBitmap);
+            gfx = Graphics.FromImage(mEndBitmap);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picEndResource.Width, picEndResource.Height));
-            if (cmbEndSprite.SelectedIndex > 0 && _endTileset != null)
+            if (cmbEndSprite.SelectedIndex > 0 && mEndTileset != null)
             {
-                gfx.DrawImage(_endTileset, new Rectangle(0, 0, _endTileset.Width, _endTileset.Height),
-                    new Rectangle(0, 0, _endTileset.Width, _endTileset.Height), GraphicsUnit.Pixel);
+                gfx.DrawImage(mEndTileset, new Rectangle(0, 0, mEndTileset.Width, mEndTileset.Height),
+                    new Rectangle(0, 0, mEndTileset.Width, mEndTileset.Height), GraphicsUnit.Pixel);
             }
             gfx.Dispose();
             gfx = picEndResource.CreateGraphics();
-            gfx.DrawImageUnscaled(_endBitmap, new System.Drawing.Point(0, 0));
+            gfx.DrawImageUnscaled(mEndBitmap, new System.Drawing.Point(0, 0));
             gfx.Dispose();
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
-            changingName = true;
-            _editorItem.Name = txtName.Text;
+            mChangingName = true;
+            mEditorItem.Name = txtName.Text;
             lstResources.Items[lstResources.SelectedIndex] = txtName.Text;
-            changingName = false;
+            mChangingName = false;
         }
 
         private void frmResource_FormClosed(object sender, FormClosedEventArgs e)
@@ -327,46 +327,46 @@ namespace Intersect.Editor.Classes
 
         private void toolStripItemDelete_Click(object sender, EventArgs e)
         {
-            if (_editorItem != null && lstResources.Focused)
+            if (mEditorItem != null && lstResources.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("resourceeditor", "deleteprompt"),
                         Strings.Get("resourceeditor", "deletetitle"), DarkDialogButton.YesNo,
                         Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
-                    PacketSender.SendDeleteObject(_editorItem);
+                    PacketSender.SendDeleteObject(mEditorItem);
                 }
             }
         }
 
         private void toolStripItemCopy_Click(object sender, EventArgs e)
         {
-            if (_editorItem != null && lstResources.Focused)
+            if (mEditorItem != null && lstResources.Focused)
             {
-                _copiedItem = _editorItem.BinaryData;
+                mCopiedItem = mEditorItem.BinaryData;
                 toolStripItemPaste.Enabled = true;
             }
         }
 
         private void toolStripItemPaste_Click(object sender, EventArgs e)
         {
-            if (_editorItem != null && _copiedItem != null && lstResources.Focused)
+            if (mEditorItem != null && mCopiedItem != null && lstResources.Focused)
             {
-                _editorItem.Load(_copiedItem);
+                mEditorItem.Load(mCopiedItem);
                 UpdateEditor();
             }
         }
 
         private void toolStripItemUndo_Click(object sender, EventArgs e)
         {
-            if (_changed.Contains(_editorItem) && _editorItem != null)
+            if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("resourceeditor", "undoprompt"),
                         Strings.Get("resourceeditor", "undotitle"), DarkDialogButton.YesNo,
                         Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
-                    _editorItem.RestoreBackup();
+                    mEditorItem.RestoreBackup();
                     UpdateEditor();
                 }
             }
@@ -400,10 +400,10 @@ namespace Intersect.Editor.Classes
 
         private void UpdateToolStripItems()
         {
-            toolStripItemCopy.Enabled = _editorItem != null && lstResources.Focused;
-            toolStripItemPaste.Enabled = _editorItem != null && _copiedItem != null && lstResources.Focused;
-            toolStripItemDelete.Enabled = _editorItem != null && lstResources.Focused;
-            toolStripItemUndo.Enabled = _editorItem != null && lstResources.Focused;
+            toolStripItemCopy.Enabled = mEditorItem != null && lstResources.Focused;
+            toolStripItemPaste.Enabled = mEditorItem != null && mCopiedItem != null && lstResources.Focused;
+            toolStripItemDelete.Enabled = mEditorItem != null && lstResources.Focused;
+            toolStripItemUndo.Enabled = mEditorItem != null && lstResources.Focused;
         }
 
         private void itemList_FocusChanged(object sender, EventArgs e)
@@ -424,35 +424,35 @@ namespace Intersect.Editor.Classes
 
         private void btnRequirements_Click(object sender, EventArgs e)
         {
-            var frm = new frmDynamicRequirements(_editorItem.HarvestingReqs, RequirementType.Resource);
+            var frm = new FrmDynamicRequirements(mEditorItem.HarvestingReqs, RequirementType.Resource);
             frm.ShowDialog();
         }
 
         private void cmbItem_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[(int) nudDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item,
+            mEditorItem.Drops[(int) nudDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item,
                 cmbItem.SelectedIndex - 1);
         }
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Animation =
+            mEditorItem.Animation =
                 Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
         }
 
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Drops[(int) nudDropIndex.Value - 1].Amount = (int) nudDropAmount.Value;
+            mEditorItem.Drops[(int) nudDropIndex.Value - 1].Amount = (int) nudDropAmount.Value;
         }
 
         private void nudMinHp_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.MinHP = (int) nudMinHp.Value;
+            mEditorItem.MinHp = (int) nudMinHp.Value;
         }
 
         private void nudMaxHp_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.MaxHP = (int) nudMaxHp.Value;
+            mEditorItem.MaxHp = (int) nudMaxHp.Value;
         }
 
         private void nudDropIndex_ValueChanged(object sender, EventArgs e)
