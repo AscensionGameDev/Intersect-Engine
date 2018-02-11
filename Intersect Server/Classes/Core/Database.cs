@@ -1314,7 +1314,7 @@ namespace Intersect.Server.Classes.Core
                             en.Class = Convert.ToInt32(dataReader[CHAR_CLASS]);
                             en.Gender = Convert.ToInt32(dataReader[CHAR_GENDER]);
                             en.Level = Convert.ToInt32(dataReader[CHAR_LEVEL]);
-                            en.Experience = Convert.ToInt32(dataReader[CHAR_EXP]);
+                            en.Experience = Convert.ToInt64(dataReader[CHAR_EXP]);
                             var vitalString = dataReader[CHAR_VITALS].ToString();
                             var vitals = vitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
                             for (var i = 0; i < (int) Vitals.VitalCount && i < vitals.Length; i++)
