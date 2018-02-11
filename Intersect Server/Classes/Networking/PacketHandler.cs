@@ -691,7 +691,7 @@ namespace Intersect.Server.Classes.Networking
             }
             foreach (var player in players)
             {
-                player.Warp(player.CurrentMap, player.CurrentX, player.CurrentY);
+                player.Warp(player.CurrentMap, player.CurrentX, player.CurrentY,player.Dir,false,player.CurrentZ,true);
                 PacketSender.SendMap(player.MyClient, (int) mapNum);
             }
             PacketSender.SendMap(client, (int) mapNum, true); //Sends map to everyone/everything in proximity

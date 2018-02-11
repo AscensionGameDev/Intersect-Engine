@@ -17,6 +17,7 @@ namespace Intersect.Server.Classes.Entities
         public ProjectileBase MyBase;
         public Entity Owner;
         private int mQuantity;
+        public bool HasGrappled;
 
         // Individual Spawns
         public ProjectileSpawns[] Spawns;
@@ -315,12 +316,13 @@ namespace Intersect.Server.Classes.Entities
                 }
                 //Check for grapplehooks.
                 if (attribute != null && attribute.Value == (int) MapAttributes.GrappleStone &&
-                    MyBase.GrappleHook == true)
+                    MyBase.GrappleHook == true && !spawn.Parent.HasGrappled)
                 {
                     if (spawn.Dir <= 3) //Don't handle directional projectile grapplehooks
                     {
+                        spawn.Parent.HasGrappled = true;
                         Owner.Dir = spawn.Dir;
-                        new DashInstance(Owner, spawn.Distance, Owner.Dir);
+                        new DashInstance(Owner, spawn.Distance, Owner.Dir,MyBase.IgnoreMapBlocks,MyBase.IgnoreActiveResources,MyBase.IgnoreExhaustedResources, MyBase.IgnoreZDimension);
                         killSpawn = true;
                     }
                 }
@@ -501,10 +503,11 @@ namespace Intersect.Server.Classes.Entities
                     if (Parent.Owner != Parent.Target)
                     {
                         Parent.Owner.TryAttack(targetEntity, Parent.MyBase, Parent.Spell, Parent.Item, Dir);
-                        if (Dir <= 3 && Parent.MyBase.GrappleHook) //Don't handle directional projectile grapplehooks
+                        if (Dir <= 3 && Parent.MyBase.GrappleHook && !Parent.HasGrappled) //Don't handle directional projectile grapplehooks
                         {
+                            Parent.HasGrappled = true;
                             Parent.Owner.Dir = Dir;
-                            new DashInstance(Parent.Owner, Distance, Parent.Owner.Dir);
+                            new DashInstance(Parent.Owner, Distance, Parent.Owner.Dir, Parent.MyBase.IgnoreMapBlocks, Parent.MyBase.IgnoreActiveResources, Parent.MyBase.IgnoreExhaustedResources, Parent.MyBase.IgnoreZDimension);
                         }
                         return true;
                     }
@@ -519,10 +522,11 @@ namespace Intersect.Server.Classes.Entities
                         if (Parent.Owner.GetType() == typeof(Player) && !((Resource)targetEntity).IsDead)
                         {
                             Parent.Owner.TryAttack(targetEntity, Parent.MyBase, Parent.Spell, Parent.Item, Dir);
-                            if (Dir <= 3 && Parent.MyBase.GrappleHook) //Don't handle directional projectile grapplehooks
+                            if (Dir <= 3 && Parent.MyBase.GrappleHook && !Parent.HasGrappled) //Don't handle directional projectile grapplehooks
                             {
+                                Parent.HasGrappled = true;
                                 Parent.Owner.Dir = Dir;
-                                new DashInstance(Parent.Owner, Distance, Parent.Owner.Dir);
+                                new DashInstance(Parent.Owner, Distance, Parent.Owner.Dir, Parent.MyBase.IgnoreMapBlocks, Parent.MyBase.IgnoreActiveResources, Parent.MyBase.IgnoreExhaustedResources, Parent.MyBase.IgnoreZDimension);
                             }
                         }
                         return true;
@@ -534,10 +538,11 @@ namespace Intersect.Server.Classes.Entities
                     if (ownerNpc == null || ownerNpc.CanNpcCombat(targetEntity))
                     {
                         Parent.Owner.TryAttack(targetEntity, Parent.MyBase, Parent.Spell, Parent.Item, Dir);
-                        if (Dir <= 3 && Parent.MyBase.GrappleHook) //Don't handle directional projectile grapplehooks
+                        if (Dir <= 3 && Parent.MyBase.GrappleHook && !Parent.HasGrappled) //Don't handle directional projectile grapplehooks
                         {
+                            Parent.HasGrappled = true;
                             Parent.Owner.Dir = Dir;
-                            new DashInstance(Parent.Owner, Distance, Parent.Owner.Dir);
+                            new DashInstance(Parent.Owner, Distance, Parent.Owner.Dir, Parent.MyBase.IgnoreMapBlocks, Parent.MyBase.IgnoreActiveResources, Parent.MyBase.IgnoreExhaustedResources, Parent.MyBase.IgnoreZDimension);
                         }
                         return true;
                     }

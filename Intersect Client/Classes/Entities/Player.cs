@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Intersect;
 using Intersect.Client.Classes.Core;
+using Intersect.Client.Classes.Entities;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Localization;
@@ -32,7 +33,7 @@ namespace Intersect_Client.Classes.Entities
         public List<FriendInstance> Friends = new List<FriendInstance>();
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
 
-        private List<int> mParty;
+        private List<PartyMember> mParty;
 
         public bool NoClip = false;
         public Dictionary<int, QuestProgressStruct> QuestProgress = new Dictionary<int, QuestProgressStruct>();
@@ -47,13 +48,13 @@ namespace Intersect_Client.Classes.Entities
             mRenderPriority = 2;
         }
 
-        public List<int> Party
+        public List<PartyMember> Party
         {
             get
             {
                 if (mParty == null)
                 {
-                    mParty = new List<int>();
+                    mParty = new List<PartyMember>();
                 }
 
                 return mParty;
@@ -93,7 +94,10 @@ namespace Intersect_Client.Classes.Entities
         {
             if (EntityTypes.Player == entity.GetEntityType())
             {
-                return Party.Contains(entity.MyIndex);
+                foreach (var member in Party)
+                {
+                    if (member.Index == entity.MyIndex) return true;
+                }
             }
 
             return false;
@@ -721,7 +725,7 @@ namespace Intersect_Client.Classes.Entities
                             {
                                 if (en.Value == null) continue;
                                 if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y &&
-                                    !en.Value.IsStealthed())
+                                    (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
                                 {
                                     if (en.Value.GetType() != typeof(Projectile) &&
                                         en.Value.GetType() != typeof(Resource))
@@ -771,7 +775,7 @@ namespace Intersect_Client.Classes.Entities
                                     if (en.Value == null) continue;
                                     if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x &&
                                         en.Value.CurrentY == y && ((Event) en.Value).DisablePreview == 0 &&
-                                        !en.Value.IsStealthed())
+                                        (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
                                     {
                                         if (TargetBox != null)
                                         {
@@ -1169,7 +1173,7 @@ namespace Intersect_Client.Classes.Entities
             foreach (var en in Globals.Entities)
             {
                 if (en.Value == null) continue;
-                if (!en.Value.IsStealthed())
+                if (!en.Value.IsStealthed() ||  Globals.Me.IsInMyParty(en.Value))
                 {
                     if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
                     {
@@ -1179,6 +1183,11 @@ namespace Intersect_Client.Classes.Entities
                         }
                     }
                 }
+                else
+                {
+                    //TODO: Completely wipe the stealthed player from memory and have server re-send once stealth ends.
+                    ClearTarget();
+                }
             }
             foreach (MapInstance eventMap in MapInstance.Lookup.Values)
             {
@@ -1186,7 +1195,7 @@ namespace Intersect_Client.Classes.Entities
                 {
                     if (en.Value == null) continue;
                     if (en.Value.CurrentMap == eventMap.Index && ((Event) en.Value).DisablePreview == 0 &&
-                        !en.Value.IsStealthed())
+                        (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
                     {
                         if (TargetType == 1 && TargetIndex == en.Value.MyIndex)
                         {

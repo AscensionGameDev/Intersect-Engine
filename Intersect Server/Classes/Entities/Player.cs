@@ -692,10 +692,10 @@ namespace Intersect.Server.Classes.Entities
         //Warping
         public override void Warp(int newMap, int newX, int newY, bool adminWarp = false)
         {
-            Warp(newMap, newX, newY, 1, adminWarp);
+            Warp(newMap, newX, newY, 1, adminWarp,0,false);
         }
 
-        public override void Warp(int newMap, int newX, int newY, int newDir, bool adminWarp = false, int zOverride = 0)
+        public override void Warp(int newMap, int newX, int newY, int newDir, bool adminWarp = false, int zOverride = 0, bool mapSave = false)
         {
             var map = MapInstance.Lookup.Get<MapInstance>(newMap);
             if (map == null)
@@ -709,7 +709,7 @@ namespace Intersect.Server.Classes.Entities
             Dir = newDir;
             foreach (var evt in EventLookup.Values)
             {
-                if (evt.MapNum > -1 && evt.MapNum != newMap)
+                if (evt.MapNum > -1 && (evt.MapNum != newMap || mapSave))
                 {
                     EventLookup.TryRemove(new Tuple<int, int, int>(evt.MapNum, evt.BaseEvent.SpawnX, evt.BaseEvent.SpawnY), out EventInstance z);
                 }
@@ -1698,7 +1698,8 @@ namespace Intersect.Server.Classes.Entities
                 if (Inventory[inventorySlot] == null || Inventory[inventorySlot].ItemNum == -1 ||
                     Inventory[inventorySlot].ItemVal < 0)
                 {
-                    Inventory[inventorySlot] = new ItemInstance(bankSlotItem.ItemNum, 0, -1);
+                    Inventory[inventorySlot] = bankSlotItem.Clone();
+                    Inventory[inventorySlot].ItemVal = 0;
                 }
 
                 Inventory[inventorySlot].ItemVal += amount;
@@ -2415,6 +2416,22 @@ namespace Intersect.Server.Classes.Entities
                 PacketSender.StartTrade(target.MyClient, MyIndex);
                 PacketSender.StartTrade(MyClient, target.MyIndex);
             }
+        }
+
+        public byte[] PartyData()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteInteger(MyIndex);
+            bf.WriteString(MyName);
+            for (int i = 0; i < (int)Vitals.VitalCount; i++)
+            {
+                bf.WriteInteger(Vital[i]);
+            }
+            for (int i = 0; i < (int)Vitals.VitalCount; i++)
+            {
+                bf.WriteInteger(MaxVital[i]);
+            }
+            return bf.ToArray();
         }
 
         //Spells

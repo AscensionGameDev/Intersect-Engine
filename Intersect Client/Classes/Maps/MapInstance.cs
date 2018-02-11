@@ -1028,7 +1028,7 @@ namespace Intersect_Client.Classes.Maps
             {
                 foreach (var en in Globals.Entities)
                 {
-                    if (en.Value.CurrentMap == Index && !Globals.Me.Party.Contains(en.Key))
+                    if (en.Value.CurrentMap == Index)
                     {
                         Globals.EntitiesToDispose.Add(en.Key);
                     }

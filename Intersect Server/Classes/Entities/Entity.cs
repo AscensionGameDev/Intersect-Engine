@@ -1100,9 +1100,9 @@ namespace Intersect.Server.Classes.Entities
                 baseDamage = Formulas.CalculateDamage(baseDamage, damageType, scalingStat, scaling, critMultiplier,
                     this,
                     enemy);
-                enemy.Vital[(int) Vitals.Health] -= (int) baseDamage;
-                if (baseDamage > 0)
+                if (baseDamage > 0 && enemy.Vital[(int)Vitals.Health] > 0)
                 {
+                    enemy.Vital[(int)Vitals.Health] -= (int)baseDamage;
                     switch (damageType)
                     {
                         case DamageType.Physical:
@@ -1120,8 +1120,9 @@ namespace Intersect.Server.Classes.Entities
                     }
                     enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
                 }
-                else if (baseDamage < 0)
+                else if (baseDamage < 0 && enemy.Vital[(int)Vitals.Health] < enemy.MaxVital[(int)Vitals.Health])
                 {
+                    enemy.Vital[(int)Vitals.Health] -= (int)baseDamage;
                     PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) Math.Abs(baseDamage),
                         CustomColors.Heal);
                 }
@@ -1130,18 +1131,17 @@ namespace Intersect.Server.Classes.Entities
             {
                 secondaryDamage = Formulas.CalculateDamage(secondaryDamage, damageType, scalingStat, scaling,
                     critMultiplier, this, enemy);
-                enemy.Vital[(int) Vitals.Mana] -= (int) secondaryDamage;
-                if (secondaryDamage > 0)
+                if (secondaryDamage > 0 && enemy.Vital[(int) Vitals.Mana] > 0)
                 {
                     //If we took damage lets reset our combat timer
+                    enemy.Vital[(int)Vitals.Mana] -= (int)secondaryDamage;
                     enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int)secondaryDamage,
-                        CustomColors.RemoveMana);
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int)secondaryDamage, CustomColors.RemoveMana);
                 }
-                else if (secondaryDamage < 0)
+                else if (secondaryDamage < 0 && enemy.Vital[(int)Vitals.Mana] < enemy.MaxVital[(int)Vitals.Mana])
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) Math.Abs(secondaryDamage),
-                        CustomColors.AddMana);
+                    enemy.Vital[(int)Vitals.Mana] -= (int)secondaryDamage;
+                    PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) Math.Abs(secondaryDamage), CustomColors.AddMana);
                 }
             }
 
@@ -1560,7 +1560,7 @@ namespace Intersect.Server.Classes.Entities
             Warp(newMap, newX, newY, Dir, adminWarp);
         }
 
-        public virtual void Warp(int newMap, int newX, int newY, int newDir, bool adminWarp = false, int zOverride = 0)
+        public virtual void Warp(int newMap, int newX, int newY, int newDir, bool adminWarp = false, int zOverride = 0, bool mapSave = false)
         {
         }
 
@@ -1830,16 +1830,11 @@ namespace Intersect.Server.Classes.Entities
 
     public class DashInstance
     {
-        public bool ActiveResourcePass;
-
-        public bool BlockPass;
-        public bool DeadResourcePass;
         public int Direction;
         public int DistanceTraveled;
         public int Facing;
         public int Range;
         public long TransmittionTimer;
-        public bool ZDimensionPass;
 
         public DashInstance(Entity en, int range, int direction, bool blockPass = false,
             bool activeResourcePass = false,
@@ -1849,12 +1844,7 @@ namespace Intersect.Server.Classes.Entities
             Direction = direction;
             Facing = en.Dir;
 
-            BlockPass = blockPass;
-            ActiveResourcePass = activeResourcePass;
-            DeadResourcePass = deadResourcePass;
-            ZDimensionPass = zdimensionPass;
-
-            CalculateRange(en, range);
+            CalculateRange(en, range, blockPass,activeResourcePass,deadResourcePass,zdimensionPass);
             if (Range <= 0)
             {
                 return;
@@ -1865,7 +1855,7 @@ namespace Intersect.Server.Classes.Entities
             en.MoveTimer = Globals.System.GetTimeMs() + Options.MaxDashSpeed;
         }
 
-        public void CalculateRange(Entity en, int range)
+        public void CalculateRange(Entity en, int range, bool blockPass = false, bool activeResourcePass = false, bool deadResourcePass = false, bool zdimensionPass = false)
         {
             var n = 0;
             en.MoveTimer = 0;
@@ -1877,19 +1867,19 @@ namespace Intersect.Server.Classes.Entities
                 {
                     return;
                 } //Check for out of bounds
-                if (n == -2 && BlockPass == false)
+                if (n == -2 && blockPass == false)
                 {
                     return;
                 } //Check for blocks
-                if (n == -3 && ZDimensionPass == false)
+                if (n == -3 && zdimensionPass == false)
                 {
                     return;
                 } //Check for ZDimensionTiles
-                if (n == (int) EntityTypes.Resource && ActiveResourcePass == false)
+                if (n == (int) EntityTypes.Resource && activeResourcePass == false)
                 {
                     return;
                 } //Check for active resources
-                if (n == (int) EntityTypes.Resource && DeadResourcePass == false)
+                if (n == (int) EntityTypes.Resource && deadResourcePass == false)
                 {
                     return;
                 } //Check for dead resources

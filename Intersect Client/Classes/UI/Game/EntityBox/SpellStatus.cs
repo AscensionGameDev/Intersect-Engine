@@ -76,22 +76,34 @@ namespace Intersect.Client.Classes.UI.Game.EntityBox
 
         public void Update()
         {
-            var spell = SpellBase.Lookup.Get<SpellBase>(mEntityBox.MyEntity.Status[mYindex].SpellNum);
-            var timeDiff = Globals.System.GetTimeMs() - mEntityBox.MyEntity.Status[mYindex].TimeRecevied;
-            var remaining = mEntityBox.MyEntity.Status[mYindex].TimeRemaining - timeDiff;
-            var fraction = (float) ((float) remaining / (float) mEntityBox.MyEntity.Status[mYindex].TotalDuration);
-            Pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color((int) (fraction * 255f), 255, 255, 255);
-            if ((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Pic) ||
-                mCurrentSpell != mEntityBox.MyEntity.Status[mYindex].SpellNum)
+            if (mYindex < mEntityBox.MyEntity.Status.Count && mEntityBox.MyEntity.Status[mYindex] != null)
             {
-                if (spell != null)
+                var spell = SpellBase.Lookup.Get<SpellBase>(mEntityBox.MyEntity.Status[mYindex].SpellNum);
+                var timeDiff = Globals.System.GetTimeMs() - mEntityBox.MyEntity.Status[mYindex].TimeRecevied;
+                var remaining = mEntityBox.MyEntity.Status[mYindex].TimeRemaining - timeDiff;
+                var fraction = (float)((float)remaining / (float)mEntityBox.MyEntity.Status[mYindex].TotalDuration);
+                Pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color((int)(fraction * 255f), 255, 255, 255);
+                if ((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Pic) ||
+                    mCurrentSpell != mEntityBox.MyEntity.Status[mYindex].SpellNum)
                 {
-                    GameTexture spellTex =
-                        Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Pic);
-                    if (spellTex != null)
+                    if (spell != null)
                     {
-                        Pnl.Texture = spellTex;
-                        Pnl.IsHidden = false;
+                        GameTexture spellTex =
+                            Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Pic);
+                        if (spellTex != null)
+                        {
+                            Pnl.Texture = spellTex;
+                            Pnl.IsHidden = false;
+                        }
+                        else
+                        {
+                            if (Pnl.Texture != null)
+                            {
+                                Pnl.Texture = null;
+                            }
+                        }
+                        mTexLoaded = spell.Pic;
+                        mCurrentSpell = mEntityBox.MyEntity.Status[mYindex].SpellNum;
                     }
                     else
                     {
@@ -99,9 +111,8 @@ namespace Intersect.Client.Classes.UI.Game.EntityBox
                         {
                             Pnl.Texture = null;
                         }
+                        mTexLoaded = "";
                     }
-                    mTexLoaded = spell.Pic;
-                    mCurrentSpell = mEntityBox.MyEntity.Status[mYindex].SpellNum;
                 }
                 else
                 {

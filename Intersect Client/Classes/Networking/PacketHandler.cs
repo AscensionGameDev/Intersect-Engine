@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Intersect;
+using Intersect.Client.Classes.Entities;
 using Intersect.Collections;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -223,6 +224,9 @@ namespace Intersect_Client.Classes.Networking
                         break;
                     case ServerPackets.PartyData:
                         HandleParty(bf.ReadBytes(bf.Length()));
+                        break;
+                    case ServerPackets.PartyUpdate:
+                        HandlePartyUpdate(bf.ReadBytes(bf.Length()));
                         break;
                     case ServerPackets.PartyInvite:
                         HandlePartyInvite(bf.ReadBytes(bf.Length()));
@@ -1467,9 +1471,21 @@ namespace Intersect_Client.Classes.Networking
             Globals.Me.Party.Clear();
             for (int i = 0; i < count; i++)
             {
-                Globals.Me.Party.Add(bf.ReadInteger());
+                Globals.Me.Party.Add(new PartyMember(bf));
             }
 
+            bf.Dispose();
+        }
+
+        private static void HandlePartyUpdate(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int index = bf.ReadInteger();
+            if (index < Globals.Me.Party.Count)
+            {
+                Globals.Me.Party[index] = new PartyMember(bf);
+            }
             bf.Dispose();
         }
 
