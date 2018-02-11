@@ -3254,16 +3254,6 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
 
-            //Check for slide tiles
-            if (attribute != null && attribute.Value == (int)MapAttributes.Slide)
-            {
-                if (attribute.Data1 > 0)
-                {
-                    Globals.Entities[index].Dir = attribute.Data1 - 1;
-                } //If sets direction, set it.
-                var dash = new DashInstance(this, 1, Dir);
-            }
-
             foreach (var evt in EventLookup.Values)
             {
                 if (evt.MapNum == CurrentMap)

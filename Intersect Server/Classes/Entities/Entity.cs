@@ -233,7 +233,25 @@ namespace Intersect.Server.Classes.Entities
                     if (tileAttribute.Value == (int) MapAttributes.NpcAvoid && GetType() == typeof(Npc)) return -2;
                     if (tileAttribute.Value == (int) MapAttributes.ZDimension && tileAttribute.Data2 > 0 &&
                         tileAttribute.Data2 - 1 == CurrentZ) return -3;
-                    if (tileAttribute.Value == (int) MapAttributes.Slide) return -4;
+                    if (tileAttribute.Value == (int) MapAttributes.Slide)
+                    {
+                        if (this.GetType() == typeof(EventPageInstance)) return -4;
+                        switch (tileAttribute.Data1)
+                        {
+                            case 1:
+                                if (moveDir == 1) return -4;
+                                break;
+                            case 2:
+                                if (moveDir == 0) return -4;
+                                break;
+                            case 3:
+                                if (moveDir == 3) return -4;
+                                break;
+                            case 4:
+                                if (moveDir == 2) return -4;
+                                break;
+                        }
+                    }
                 }
             }
             else
@@ -603,6 +621,19 @@ namespace Intersect.Server.Classes.Entities
                     if (TryToChangeDimension() && dontUpdate == true)
                     {
                         PacketSender.UpdateEntityZDimension(MyIndex, CurrentZ);
+                    }
+                    var attribute = MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY];
+                    if (this.GetType() != typeof(EventPageInstance))
+                    {
+                        //Check for slide tiles
+                        if (attribute != null && attribute.Value == (int)MapAttributes.Slide)
+                        {
+                            if (attribute.Data1 > 0)
+                            {
+                                Dir = attribute.Data1 - 1;
+                            } //If sets direction, set it.
+                            var dash = new DashInstance(this, 1, Dir);
+                        }
                     }
                 }
             }
