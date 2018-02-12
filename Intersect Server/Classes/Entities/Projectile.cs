@@ -535,7 +535,7 @@ namespace Intersect.Server.Classes.Entities
                 else //Any other Parent.Target
                 {
                     var ownerNpc = Parent.Owner as Npc;
-                    if (ownerNpc == null || ownerNpc.CanNpcCombat(targetEntity))
+                    if (ownerNpc == null || ownerNpc.CanNpcCombat(targetEntity, Parent.Spell != null && Parent.Spell.Friendly == 1))
                     {
                         Parent.Owner.TryAttack(targetEntity, Parent.MyBase, Parent.Spell, Parent.Item, Dir);
                         if (Dir <= 3 && Parent.MyBase.GrappleHook && !Parent.HasGrappled) //Don't handle directional projectile grapplehooks

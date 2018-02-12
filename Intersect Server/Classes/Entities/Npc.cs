@@ -100,7 +100,21 @@ namespace Intersect.Server.Classes.Entities
             }
             else
             {
-                if (this != en) MyTarget = en;
+                if (en.GetType() == typeof(Npc))
+                {
+                    if (((Npc)en).MyBase == MyBase)
+                    {
+                        if (MyBase.AttackAllies == false) return;
+                    }
+                }
+                if (en.GetType() == typeof(Player))
+                {
+                    if (this != en) MyTarget = en;
+                }
+                else
+                {
+                    if (this != en) MyTarget = en;
+                }
             }
             PacketSender.SendNpcAggressionToProximity(this);
         }
@@ -130,7 +144,7 @@ namespace Intersect.Server.Classes.Entities
             }
             else if (en.GetType() == typeof(Npc))
             {
-                return CanNpcCombat(en) || en == this;
+                return CanNpcCombat(en, spell != null && spell.Friendly == 1) || en == this;
             }
             return true;
         }
@@ -159,28 +173,42 @@ namespace Intersect.Server.Classes.Entities
             PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
         }
 
-        public bool CanNpcCombat(Entity enemy)
+        public bool CanNpcCombat(Entity enemy, bool friendly = false)
         {
             //Check for NpcVsNpc Combat, both must be enabled and the attacker must have it as an enemy or attack all types of npc.
-            if (enemy != null && enemy.GetType() == typeof(Npc) && MyBase != null)
+            if (!friendly)
             {
-                if (((Npc) enemy).MyBase.NpcVsNpcEnabled == false || ((Npc) enemy).MyBase.NpcVsNpcEnabled == false)
-                    return false;
-
-                if (MyBase.AttackAllies == true) return true;
-
-                for (int i = 0; i < MyBase.AggroList.Count; i++)
+                if (enemy != null && enemy.GetType() == typeof(Npc) && MyBase != null)
                 {
-                    if (NpcBase.Lookup.Get<NpcBase>(MyBase.AggroList[i]) == ((Npc) enemy).MyBase)
+                    if (((Npc) enemy).MyBase.NpcVsNpcEnabled == false)
+                        return false;
+
+                    if (MyBase.AttackAllies && ((Npc) enemy).MyBase == MyBase) return true;
+
+                    for (int i = 0; i < MyBase.AggroList.Count; i++)
                     {
-                        return true;
+                        if (NpcBase.Lookup.Get<NpcBase>(MyBase.AggroList[i]) == ((Npc) enemy).MyBase)
+                        {
+                            return true;
+                        }
                     }
+                    return false;
                 }
-                return false;
+                else if (enemy != null && enemy.GetType() == typeof(Player))
+                {
+                    return true;
+                }
             }
-            else if (enemy.GetType() == typeof(Player))
+            else
             {
-                return true;
+                if (enemy != null && enemy.GetType() == typeof(Npc) && MyBase != null && ((Npc)enemy).MyBase == MyBase && MyBase.AttackAllies == false)
+                {
+                    return true;
+                }
+                else if (enemy != null && enemy.GetType() == typeof(Player))
+                {
+                    return false;
+                }
             }
             return false;
         }
@@ -346,36 +374,7 @@ namespace Intersect.Server.Classes.Entities
                     if (Behaviour == (int) NpcBehavior.AttackOnSight || MyBase.AggroList.Count > -1)
                         // Check if attack on sight or have other npc's to target
                     {
-                        var maps = MapInstance.Lookup.Get<MapInstance>(CurrentMap).GetSurroundingMaps(true);
-                        var possibleTargets = new List<Entity>();
-                        int closestRange = Range + 1; //If the range is out of range we didn't find anything.
-                        int closestIndex = -1;
-                        foreach (var map in maps)
-                        {
-                            foreach (var entity in map.GetEntities())
-                            {
-                                if (entity != null && entity.IsDead() == false && entity != this)
-                                {
-                                    if ((entity.GetType() == typeof(Player)) &&
-                                        Behaviour == (int) NpcBehavior.AttackOnSight ||
-                                        (entity.GetType() == typeof(Npc) &&
-                                         MyBase.AggroList.Contains(((Npc) entity).MyBase.Index)))
-                                    {
-                                        var dist = GetDistanceTo(entity);
-                                        if (dist <= Range && dist < closestRange)
-                                        {
-                                            possibleTargets.Add(entity);
-                                            closestIndex = possibleTargets.Count - 1;
-                                            closestRange = dist;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if (closestIndex != -1)
-                        {
-                            AssignTarget(possibleTargets[closestIndex]);
-                        }
+                        TryFindNewTarget();
                     }
                 }
 
@@ -457,15 +456,16 @@ namespace Intersect.Server.Classes.Entities
                                     }
                                     break;
                                 case PathfinderResult.OutOfRange:
-                                    MyTarget = null;
+                                    RemoveTarget();
                                     targetMap = -1;
                                     break;
                                 case PathfinderResult.NoPathToTarget:
+                                    TryFindNewTarget((MyTarget != null ? MyTarget.MyIndex : -1));
                                     targetMap = -1;
                                     break;
                                 case PathfinderResult.Failure:
                                     targetMap = -1;
-                                    MyTarget = null;
+                                    RemoveTarget();
                                     break;
                                 case PathfinderResult.Wait:
                                     targetMap = -1;
@@ -534,6 +534,40 @@ namespace Intersect.Server.Classes.Entities
                 {
                     MapInstance.Lookup.Get<MapInstance>(CurrentMap).AddEntity(this);
                 }
+            }
+        }
+
+        private void TryFindNewTarget(int avoidIndex = -1)
+        {
+            var maps = MapInstance.Lookup.Get<MapInstance>(CurrentMap).GetSurroundingMaps(true);
+            var possibleTargets = new List<Entity>();
+            int closestRange = Range + 1; //If the range is out of range we didn't find anything.
+            int closestIndex = -1;
+            foreach (var map in maps)
+            {
+                foreach (var entity in map.GetEntities())
+                {
+                    if (entity != null && entity.IsDead() == false && entity != this && entity.MyIndex != avoidIndex)
+                    {
+                        if ((entity.GetType() == typeof(Player)) &&
+                            Behaviour == (int)NpcBehavior.AttackOnSight ||
+                            (entity.GetType() == typeof(Npc) &&
+                             MyBase.AggroList.Contains(((Npc)entity).MyBase.Index)))
+                        {
+                            var dist = GetDistanceTo(entity);
+                            if (dist <= Range && dist < closestRange)
+                            {
+                                possibleTargets.Add(entity);
+                                closestIndex = possibleTargets.Count - 1;
+                                closestRange = dist;
+                            }
+                        }
+                    }
+                }
+            }
+            if (closestIndex != -1)
+            {
+                AssignTarget(possibleTargets[closestIndex]);
             }
         }
 

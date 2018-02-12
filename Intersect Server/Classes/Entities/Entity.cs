@@ -910,6 +910,14 @@ namespace Intersect.Server.Classes.Entities
                     if (((Player) this).InParty((Player) enemy) == true) return;
                 }
 
+                if (enemy.GetType() == typeof(Npc) && GetType() == typeof(Npc))
+                {
+                    if (!((Npc) this).CanNpcCombat(enemy, spellBase.Friendly == 1))
+                    {
+                        return;
+                    }
+                }
+
                 //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
                 if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
                 {
@@ -929,6 +937,13 @@ namespace Intersect.Server.Classes.Entities
                 if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
                 {
                     if (!((Player) this).InParty((Player) enemy) && this != enemy) return;
+                }
+                if (enemy.GetType() == typeof(Npc) && GetType() == typeof(Npc))
+                {
+                    if (!((Npc)this).CanNpcCombat(enemy, spellBase.Friendly == 1))
+                    {
+                        return;
+                    }
                 }
                 if (enemy.GetType() != GetType()) return; //Don't let players aoe heal npcs. Don't let npcs aoe heal players.
             }
@@ -1471,26 +1486,32 @@ namespace Intersect.Server.Classes.Entities
         //Check if the target is either up, down, left or right of the target on the correct Z dimension.
         protected bool IsOneBlockAway(int map, int x, int y, int z = 0)
         {
+            //Calculate World Tile of Me
+            var x1 = CurrentX + (MapInstance.Lookup.Get<MapInstance>(CurrentMap).MapGridX * Options.MapWidth);
+            var y1 = CurrentY + (MapInstance.Lookup.Get<MapInstance>(CurrentMap).MapGridY * Options.MapHeight);
+            //Calculate world tile of target
+            var x2 = x + (MapInstance.Lookup.Get<MapInstance>(map).MapGridX * Options.MapWidth);
+            var y2 = y + (MapInstance.Lookup.Get<MapInstance>(map).MapGridY * Options.MapHeight);
             if (z == CurrentZ)
             {
-                if (y == CurrentY)
+                if (y1 == y2)
                 {
-                    if (x == CurrentX - 1)
+                    if (x1 == x2 - 1)
                     {
                         return true;
                     }
-                    else if (x == CurrentX + 1)
+                    else if (x1 == x2 + 1)
                     {
                         return true;
                     }
                 }
-                if (x == CurrentX)
+                if (x1 == x2)
                 {
-                    if (y == CurrentY - 1)
+                    if (y1 == y2 - 1)
                     {
                         return true;
                     }
-                    else if (y == CurrentY + 1)
+                    else if (y1 == y2 + 1)
                     {
                         return true;
                     }
