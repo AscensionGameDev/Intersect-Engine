@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Ascension Game Dev")]
 [assembly: AssemblyProduct("Intersect Game Engine")]
-[assembly: AssemblyCopyright("Copyright ©  2017 Ascension Game Dev")]
+[assembly: AssemblyCopyright("Copyright ©  2018 Ascension Game Dev")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
