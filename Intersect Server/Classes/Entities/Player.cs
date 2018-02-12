@@ -1639,7 +1639,7 @@ namespace Intersect.Server.Classes.Entities
             Debug.Assert(Inventory != null, "Inventory != null");
 
             var bankSlotItem = Bank[slot];
-            Debug.Assert(bankSlotItem != null, "bankSlotItem != null");
+            if (bankSlotItem == null) return;
 
             var itemBase = ItemBase.Lookup.Get<ItemBase>(bankSlotItem.ItemNum);
             var inventorySlot = -1;

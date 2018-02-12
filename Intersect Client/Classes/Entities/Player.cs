@@ -113,7 +113,6 @@ namespace Intersect_Client.Classes.Entities
 
         public override bool Update()
         {
-            bool returnval = base.Update();
             HandleInput();
             if (!IsBusy())
             {
@@ -135,6 +134,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 TargetBox.Update();
             }
+            bool returnval = base.Update();
             return returnval;
         }
 
