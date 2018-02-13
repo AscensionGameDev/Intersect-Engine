@@ -49,7 +49,7 @@ namespace Intersect_Client.Classes.UI.Game
                 mLblnames.Add(new Label(mPartyWindow, "MemberName" + i));
                 if (i < Globals.Me.Party.Count)
                 {
-                    mLblnames[i].Text = Globals.Entities[Globals.Me.Party[i]].MyName;
+                    mLblnames[i].Text = Globals.Me.Party[i].Name;
                 }
                 else
                 {
@@ -75,8 +75,7 @@ namespace Intersect_Client.Classes.UI.Game
                     mKickButtons[i].Clicked += kick_Clicked;
                     if (i < Globals.Me.Party.Count)
                     {
-                        mKickButtons[i].SetToolTipText(Strings.Get("parties", "kick",
-                            Globals.Entities[Globals.Me.Party[i]].MyName));
+                        mKickButtons[i].SetToolTipText(Strings.Get("parties", "kick", Globals.Me.Party[i].Name));
                     }
                     else
                     {
@@ -87,7 +86,7 @@ namespace Intersect_Client.Classes.UI.Game
                     //Only show the kick buttons if its you or you are the party leader
                     if (i < Globals.Me.Party.Count)
                     {
-                        if (Globals.Me.Party[0] == Globals.Me.MyIndex)
+                        if (Globals.Me.Party[0].Index == Globals.Me.MyIndex)
                         {
                             mKickButtons[i].Show();
                         }
@@ -125,26 +124,21 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (i < Globals.Me.Party.Count)
                     {
-                        if (Globals.Entities.ContainsKey(Globals.Me.Party[i]))
+                        mBarContainer[i].Show();
+                        mLblnames[i].Text = Globals.Me.Party[i].Name;
+
+                        var vitalHp = Globals.Me.Party[i].Vital[(int)Vitals.Health];
+                        var vitalMaxHp = Globals.Me.Party[i].MaxVital[(int)Vitals.Health];
+                        var ratioHp = ((float)vitalHp) / ((float)vitalMaxHp);
+                        ratioHp = Math.Min(1, Math.Max(0, ratioHp));
+                        mBar[i].SetSize(Convert.ToInt32(ratioHp * mBarContainer[i].Width), mBarContainer[i].Height);
+                        if (i > 0) mKickButtons[i].Hide();
+
+                        //Only show the kick buttons if its you or you are the party leader
+                        if (Globals.Me.Party[0].Index == Globals.Me.MyIndex && i > 0)
                         {
-                            var partyMember = Globals.Entities[Globals.Me.Party[i]];
-                            mBarContainer[i].Show();
-                            mLblnames[i].Text = partyMember.MyName;
-
-                            var vitalHp = partyMember.Vital[(int) Vitals.Health];
-                            var vitalMaxHp = partyMember.MaxVital[(int) Vitals.Health];
-                            var ratioHp = ((float) vitalHp) / ((float) vitalMaxHp);
-                            ratioHp = Math.Min(1, Math.Max(0, ratioHp));
-                            mBar[i].SetSize(Convert.ToInt32(ratioHp * mBarContainer[i].Width), mBarContainer[i].Height);
-                            if (i > 0) mKickButtons[i].Hide();
-
-                            //Only show the kick buttons if its you or you are the party leader
-                            if (Globals.Me.Party[0] == Globals.Me.MyIndex && i > 0)
-                            {
-                                mKickButtons[i].Show();
-                                mKickButtons[i].SetToolTipText(Strings.Get("parties", "kick",
-                                    Globals.Entities[Globals.Me.Party[i]].MyName));
-                            }
+                            mKickButtons[i].Show();
+                            mKickButtons[i].SetToolTipText(Strings.Get("parties", "kick", Globals.Me.Party[i].Name));
                         }
                     }
                     else

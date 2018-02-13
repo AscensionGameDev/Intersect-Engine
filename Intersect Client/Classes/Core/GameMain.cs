@@ -258,10 +258,9 @@ namespace Intersect_Client.Classes.Core
                 //Update All Entities
                 foreach (var en in Globals.Entities)
                 {
-                    if (en.Value == null && en.Value != Globals.Me) continue;
+                    if (en.Value == null) continue;
                     en.Value.Update();
                 }
-                if (Globals.Me != null) Globals.Me.Update();
 
                 for (int i = 0; i < Globals.EntitiesToDispose.Count; i++)
                 {

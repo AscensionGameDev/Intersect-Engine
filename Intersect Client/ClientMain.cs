@@ -162,7 +162,7 @@ namespace Intersect.Client
                 Debug.Assert(resourceStream != null, "resourceStream != null");
                 var resources = new ResourceSet(resourceStream);
 
-                // TODO: JC, is there a reason you are doing ".".ToCharArray()?
+                // TODO: JC, is there a reason you are doing ".".ToCharArray()? -- Because it works? :P
                 path = "resources/" + folder + "/" + filename.Split(".".ToCharArray())[0]?.Split("-".ToCharArray())[0];
                 path = path.ToLower();
 

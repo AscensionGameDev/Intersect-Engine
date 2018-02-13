@@ -277,7 +277,30 @@ namespace Intersect_Client.Classes.Core
                 Stop();
                 return;
             }
-            if ((mX == -1 || mY == -1 || mDistance == 0) && mMap == Globals.Me.CurrentMap)
+
+            var inGrid = mMap == Globals.Me.CurrentMap;
+            if (!inGrid)
+            {
+                var gridX = Globals.Me.MapInstance.MapGridX;
+                var gridY = Globals.Me.MapInstance.MapGridY;
+                for (int x = gridX - 1; x <= gridX + 1; x++)
+                {
+                    for (int y = gridY - 1; y <= gridY + 1; y++)
+                    {
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                            Globals.MapGrid[x, y] != -1)
+                        {
+                            if (Globals.MapGrid[x, y] == mMap)
+                            {
+                                inGrid = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ((mX == -1 || mY == -1 || mDistance <= 0) && inGrid)
             {
                 mSound.SetVolume(100);
             }

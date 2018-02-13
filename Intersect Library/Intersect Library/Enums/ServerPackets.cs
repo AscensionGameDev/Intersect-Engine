@@ -56,6 +56,7 @@ namespace Intersect.Enums
         TimeBase,
         Time,
         PartyData,
+        PartyUpdate,
         PartyInvite,
         ChatBubble,
         MapEntities,

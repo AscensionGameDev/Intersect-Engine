@@ -32,6 +32,7 @@ namespace Intersect_Client.Classes.Entities
         private long mWalkTimer;
         protected byte mRenderPriority = 1;
         public int AnimationFrame;
+        public float elapsedtime; //to be removed
 
         //Entity Animations
         public List<AnimationInstance> Animations = new List<AnimationInstance>();
@@ -333,8 +334,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
                 LatestMap = map;
-                if ((map == null || !map.InView()) &&
-                    !Globals.Me.Party.Contains(MyIndex))
+                if ((map == null || !map.InView()))
                 {
                     Globals.EntitiesToDispose.Add(MyIndex);
                     return false;
@@ -346,6 +346,7 @@ namespace Intersect_Client.Classes.Entities
                 mLastUpdate = Globals.System.GetTimeMs();
             }
             float ecTime = (float) (Globals.System.GetTimeMs() - mLastUpdate);
+            elapsedtime = ecTime;
             if (Dashing != null)
             {
                 WalkFrame = 1; //Fix the frame whilst dashing
@@ -580,7 +581,7 @@ namespace Intersect_Client.Classes.Entities
                 //If unit is stealthed, don't render unless the entity is the player.
                 if (Status[n].Type == (int) StatusTypes.Stealth)
                 {
-                    if (this != Globals.Me)
+                    if (this != Globals.Me && !Globals.Me.IsInMyParty(this))
                     {
                         return;
                     }
@@ -871,7 +872,7 @@ namespace Intersect_Client.Classes.Entities
                 //If unit is stealthed, don't render unless the entity is the player.
                 if (Status[n].Type == (int) StatusTypes.Stealth)
                 {
-                    if (this != Globals.Me)
+                    if (this != Globals.Me && !Globals.Me.IsInMyParty(this))
                     {
                         return;
                     }
@@ -917,7 +918,7 @@ namespace Intersect_Client.Classes.Entities
                 //If unit is stealthed, don't render unless the entity is the player.
                 if (Status[n].Type == (int) StatusTypes.Stealth)
                 {
-                    if (this != Globals.Me)
+                    if (this != Globals.Me && !Globals.Me.IsInMyParty(this))
                     {
                         return;
                     }
