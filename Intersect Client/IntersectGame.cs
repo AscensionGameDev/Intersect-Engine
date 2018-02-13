@@ -26,13 +26,13 @@ namespace Intersect.Client
     /// </summary>
     public class IntersectGame : Game
     {
-        GraphicsDeviceManager graphics;
+        GraphicsDeviceManager mGraphics;
 
         public IntersectGame()
         {
             //Setup an error handler
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            graphics = new GraphicsDeviceManager(this);
+            mGraphics = new GraphicsDeviceManager(this);
 
             Content.RootDirectory = "";
             IsMouseVisible = true;
@@ -44,7 +44,7 @@ namespace Intersect.Client
             Gui.ActiveFont = TextUtils.StripToLower(Globals.Database.Font);
             Globals.InputManager = new MonoInput(this);
 
-            var renderer = new MonoRenderer(graphics, Content, this);
+            var renderer = new MonoRenderer(mGraphics, Content, this);
             GameGraphics.Renderer = renderer;
             if (renderer == null) throw new NullReferenceException("No renderer.");
 

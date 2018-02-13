@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_Text
+    partial class EventCommandText
     {
         /// <summary> 
         /// Required designer variable.
@@ -156,7 +156,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpShowText);
-            this.Name = "EventCommand_Text";
+            this.Name = "EventCommandText";
             this.Size = new System.Drawing.Size(268, 287);
             this.grpShowText.ResumeLayout(false);
             this.grpShowText.PerformLayout();

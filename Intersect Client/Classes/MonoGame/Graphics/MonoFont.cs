@@ -9,7 +9,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 {
     public class MonoFont : GameFont
     {
-        private SpriteFont font;
+        private SpriteFont mFont;
 
         public MonoFont(string fontName, string fileName, int fontSize, ContentManager contentManager)
             : base(fontName, fontSize)
@@ -17,7 +17,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             try
             {
                 fileName = GameContentManager.RemoveExtension(fileName);
-                font = contentManager.Load<SpriteFont>(fileName);
+                mFont = contentManager.Load<SpriteFont>(fileName);
             }
             catch (Exception ex)
             {
@@ -27,7 +27,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override object GetFont()
         {
-            return font;
+            return mFont;
         }
     }
 }

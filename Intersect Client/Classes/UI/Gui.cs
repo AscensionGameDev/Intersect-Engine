@@ -22,16 +22,16 @@ namespace Intersect_Client.Classes.UI
 
         public static InputBase GwenInput;
         public static Base GwenRenderer;
-        private static Canvas _gameCanvas;
-        private static Canvas _menuCanvas;
-        private static TexturedBase _gwenSkin;
+        private static Canvas sGameCanvas;
+        private static Canvas sMenuCanvas;
+        private static TexturedBase sGwenSkin;
         public static List<KeyValuePair<string, string>> MsgboxErrors = new List<KeyValuePair<string, string>>();
         public static bool SetupHandlers;
-        public static GameGuiBase GameUI;
-        public static MenuGuiBase MenuUI;
+        public static GameGuiBase GameUi;
+        public static MenuGuiBase MenuUi;
         public static ErrorMessageHandler ErrorMsgHandler;
         public static string ActiveFont = "arial";
-        public static bool HideUI;
+        public static bool HideUi;
 
         //Input Handling
         public static List<IntersectClientExtras.Gwen.Control.Base> FocusElements;
@@ -44,71 +44,71 @@ namespace Intersect_Client.Classes.UI
         public static void InitGwen()
         {
             //TODO: Make it easier to modify skin.
-            _gwenSkin = new TexturedBase(GwenRenderer,
+            sGwenSkin = new TexturedBase(GwenRenderer,
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
             {
                 DefaultFont = Globals.ContentManager.GetFont(ActiveFont, 10)
             };
-            var _gameSkin = new TexturedBase(GwenRenderer,
+            var gameSkin = new TexturedBase(GwenRenderer,
                 Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
             {
                 DefaultFont = Globals.ContentManager.GetFont(ActiveFont, 10)
             };
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)
-            _menuCanvas = new Canvas(_gwenSkin, "MainMenu")
+            sMenuCanvas = new Canvas(sGwenSkin, "MainMenu")
             {
                 Scale = 1f //(GameGraphics.Renderer.GetScreenWidth()/1920f);
             };
-            _menuCanvas.SetSize((int) (GameGraphics.Renderer.GetScreenWidth() / _menuCanvas.Scale),
-                (int) (GameGraphics.Renderer.GetScreenHeight() / _menuCanvas.Scale));
-            _menuCanvas.ShouldDrawBackground = false;
-            _menuCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
-            _menuCanvas.KeyboardInputEnabled = true;
+            sMenuCanvas.SetSize((int) (GameGraphics.Renderer.GetScreenWidth() / sMenuCanvas.Scale),
+                (int) (GameGraphics.Renderer.GetScreenHeight() / sMenuCanvas.Scale));
+            sMenuCanvas.ShouldDrawBackground = false;
+            sMenuCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
+            sMenuCanvas.KeyboardInputEnabled = true;
 
             // Create the game Canvas (it's root, on which all other GWEN controls are created)
-            _gameCanvas = new Canvas(_gameSkin, "InGame");
+            sGameCanvas = new Canvas(gameSkin, "InGame");
             //_gameCanvas.Scale = (GameGraphics.Renderer.GetScreenWidth() / 1920f);
-            _gameCanvas.SetSize((int) (GameGraphics.Renderer.GetScreenWidth() / _gameCanvas.Scale),
-                (int) (GameGraphics.Renderer.GetScreenHeight() / _gameCanvas.Scale));
-            _gameCanvas.ShouldDrawBackground = false;
-            _gameCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
-            _gameCanvas.KeyboardInputEnabled = true;
+            sGameCanvas.SetSize((int) (GameGraphics.Renderer.GetScreenWidth() / sGameCanvas.Scale),
+                (int) (GameGraphics.Renderer.GetScreenHeight() / sGameCanvas.Scale));
+            sGameCanvas.ShouldDrawBackground = false;
+            sGameCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
+            sGameCanvas.KeyboardInputEnabled = true;
 
             // Create GWEN input processor
             if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
             {
-                GwenInput.Initialize(_menuCanvas);
+                GwenInput.Initialize(sMenuCanvas);
             }
             else
             {
-                GwenInput.Initialize(_gameCanvas);
+                GwenInput.Initialize(sGameCanvas);
             }
 
             FocusElements = new List<IntersectClientExtras.Gwen.Control.Base>();
             InputBlockingElements = new List<IntersectClientExtras.Gwen.Control.Base>();
-            ErrorMsgHandler = new ErrorMessageHandler(_menuCanvas, _gameCanvas);
+            ErrorMsgHandler = new ErrorMessageHandler(sMenuCanvas, sGameCanvas);
             if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
             {
-                MenuUI = new MenuGuiBase(_menuCanvas);
-                GameUI = null;
+                MenuUi = new MenuGuiBase(sMenuCanvas);
+                GameUi = null;
             }
             else
             {
-                GameUI = new GameGuiBase(_gameCanvas);
-                MenuUI = null;
+                GameUi = new GameGuiBase(sGameCanvas);
+                MenuUi = null;
             }
 
-            if (GameUI == null) LoadRootUIData(_menuCanvas, "MainMenu.xml");
-            if (MenuUI == null)
+            if (GameUi == null) LoadRootUiData(sMenuCanvas, "MainMenu.xml");
+            if (MenuUi == null)
             {
-                LoadRootUIData(_gameCanvas, "InGame.xml");
+                LoadRootUiData(sGameCanvas, "InGame.xml");
             }
 
             GwenInitialized = true;
         }
 
-        public static void SaveRootUIData(IntersectClientExtras.Gwen.Control.Base control, string xmlname,
+        public static void SaveRootUiData(IntersectClientExtras.Gwen.Control.Base control, string xmlname,
             bool bounds = false)
         {
             //Create XML Doc with UI 
@@ -124,7 +124,7 @@ namespace Intersect_Client.Classes.UI
             }
         }
 
-        public static void LoadRootUIData(IntersectClientExtras.Gwen.Control.Base control, string xmlname)
+        public static void LoadRootUiData(IntersectClientExtras.Gwen.Control.Base control, string xmlname)
         {
             XmlReaderSettings readerSettings = new XmlReaderSettings();
             readerSettings.IgnoreWhitespace = true;
@@ -146,13 +146,13 @@ namespace Intersect_Client.Classes.UI
         public static void DestroyGwen()
         {
             //The canvases dispose of all of their children.
-            if (_menuCanvas == null)
+            if (sMenuCanvas == null)
             {
                 return;
             }
-            _menuCanvas.Dispose();
-            _gameCanvas.Dispose();
-            _gwenSkin.Dispose();
+            sMenuCanvas.Dispose();
+            sGameCanvas.Dispose();
+            sGwenSkin.Dispose();
             GwenInitialized = false;
         }
 
@@ -185,22 +185,22 @@ namespace Intersect_Client.Classes.UI
         {
             if (!GwenInitialized) InitGwen();
             ErrorMsgHandler.Update();
-            _gameCanvas.RestrictToParent = false;
+            sGameCanvas.RestrictToParent = false;
             if (Globals.GameState == GameStates.Menu)
             {
-                MenuUI.Draw();
+                MenuUi.Draw();
             }
-            else if (Globals.GameState == GameStates.InGame && !HideUI)
+            else if (Globals.GameState == GameStates.InGame && !HideUi)
             {
-                GameUI.Draw();
+                GameUi.Draw();
             }
         }
 
-        public static bool MouseHitGUI()
+        public static bool MouseHitGui()
         {
-            for (int i = 0; i < _gameCanvas.Children.Count; i++)
+            for (int i = 0; i < sGameCanvas.Children.Count; i++)
             {
-                if (MouseHitBase(_gameCanvas.Children[i]))
+                if (MouseHitBase(sGameCanvas.Children[i]))
                 {
                     return true;
                 }

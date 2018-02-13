@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class Event_GraphicSelector
+    partial class EventGraphicSelector
     {
         /// <summary> 
         /// Required designer variable.
@@ -185,7 +185,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpPreview);
             this.Controls.Add(this.grpSelector);
-            this.Name = "Event_GraphicSelector";
+            this.Name = "EventGraphicSelector";
             this.Size = new System.Drawing.Size(625, 519);
             this.grpSelector.ResumeLayout(false);
             this.grpSelector.PerformLayout();

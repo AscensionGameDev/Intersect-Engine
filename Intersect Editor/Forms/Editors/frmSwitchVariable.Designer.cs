@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors
 {
-    partial class frmSwitchVariable
+    partial class FrmSwitchVariable
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace Intersect.Editor.Forms.Editors
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSwitchVariable));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSwitchVariable));
             this.grpTypes = new DarkUI.Controls.DarkGroupBox();
             this.rdoGlobalVariables = new DarkUI.Controls.DarkRadioButton();
             this.rdoGlobalSwitches = new DarkUI.Controls.DarkRadioButton();
@@ -315,7 +315,7 @@ namespace Intersect.Editor.Forms.Editors
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.Name = "frmSwitchVariable";
+            this.Name = "FrmSwitchVariable";
             this.Text = "Switch and Variable Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmSwitchVariable_FormClosing);
             this.grpTypes.ResumeLayout(false);

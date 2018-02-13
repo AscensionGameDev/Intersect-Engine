@@ -14,42 +14,42 @@ namespace Intersect.Client.Classes.UI.Game.Character
 {
     public class EquipmentItem
     {
-        private WindowControl _characterWindow;
-        private int _currentItem = -1;
-        private ItemDescWindow _descWindow;
-        private int[] _statBoost = new int[Options.MaxStats];
-        private bool _texLoaded;
-        public ImagePanel contentPanel;
-        private int myindex;
-        public ImagePanel pnl;
+        private WindowControl mCharacterWindow;
+        private int mCurrentItem = -1;
+        private ItemDescWindow mDescWindow;
+        private int[] mStatBoost = new int[Options.MaxStats];
+        private bool mTexLoaded;
+        public ImagePanel ContentPanel;
+        private int mYindex;
+        public ImagePanel Pnl;
 
         public EquipmentItem(int index, WindowControl characterWindow)
         {
-            myindex = index;
-            _characterWindow = characterWindow;
+            mYindex = index;
+            mCharacterWindow = characterWindow;
         }
 
         public void Setup()
         {
-            pnl.HoverEnter += pnl_HoverEnter;
-            pnl.HoverLeave += pnl_HoverLeave;
-            pnl.RightClicked += pnl_RightClicked;
+            Pnl.HoverEnter += pnl_HoverEnter;
+            Pnl.HoverLeave += pnl_HoverLeave;
+            Pnl.RightClicked += pnl_RightClicked;
 
-            contentPanel = new ImagePanel(pnl, "EquipmentIcon");
-            pnl.SetToolTipText(Options.EquipmentSlots[myindex]);
+            ContentPanel = new ImagePanel(Pnl, "EquipmentIcon");
+            Pnl.SetToolTipText(Options.EquipmentSlots[mYindex]);
         }
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.SendUnequipItem(myindex);
+            PacketSender.SendUnequipItem(mYindex);
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
         {
-            if (_descWindow != null)
+            if (mDescWindow != null)
             {
-                _descWindow.Dispose();
-                _descWindow = null;
+                mDescWindow.Dispose();
+                mDescWindow = null;
             }
         }
 
@@ -59,53 +59,53 @@ namespace Intersect.Client.Classes.UI.Game.Character
             {
                 return;
             }
-            if (_descWindow != null)
+            if (mDescWindow != null)
             {
-                _descWindow.Dispose();
-                _descWindow = null;
+                mDescWindow.Dispose();
+                mDescWindow = null;
             }
-            if (ItemBase.Lookup.Get<ItemBase>(_currentItem) == null) return;
-            _descWindow = new ItemDescWindow(_currentItem, 1, _characterWindow.X - 255, _characterWindow.Y, _statBoost, ItemBase.GetName(_currentItem));
+            if (ItemBase.Lookup.Get<ItemBase>(mCurrentItem) == null) return;
+            mDescWindow = new ItemDescWindow(mCurrentItem, 1, mCharacterWindow.X - 255, mCharacterWindow.Y, mStatBoost, ItemBase.GetName(mCurrentItem));
         }
 
         public FloatRect RenderBounds()
         {
             FloatRect rect = new FloatRect()
             {
-                X = pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X,
-                Y = pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y,
-                Width = pnl.Width,
-                Height = pnl.Height
+                X = Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X,
+                Y = Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y,
+                Width = Pnl.Width,
+                Height = Pnl.Height
             };
             return rect;
         }
 
         public void Update(int currentItem, int[] statBoost)
         {
-            if (currentItem != _currentItem || !_texLoaded)
+            if (currentItem != mCurrentItem || !mTexLoaded)
             {
-                _currentItem = currentItem;
-                _statBoost = statBoost;
-                var item = ItemBase.Lookup.Get<ItemBase>(_currentItem);
+                mCurrentItem = currentItem;
+                mStatBoost = statBoost;
+                var item = ItemBase.Lookup.Get<ItemBase>(mCurrentItem);
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
                         item.Pic);
                     if (itemTex != null)
                     {
-                        contentPanel.Show();
-                        contentPanel.Texture = itemTex;
+                        ContentPanel.Show();
+                        ContentPanel.Texture = itemTex;
                     }
                     else
                     {
-                        contentPanel.Hide();
+                        ContentPanel.Hide();
                     }
                 }
                 else
                 {
-                    contentPanel.Hide();
+                    ContentPanel.Hide();
                 }
-                _texLoaded = true;
+                mTexLoaded = true;
             }
         }
     }

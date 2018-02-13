@@ -7,35 +7,35 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_WaitForRouteCompletion : UserControl
+    public partial class EventCommandWaitForRouteCompletion : UserControl
     {
-        private readonly EventBase _editingEvent;
-        private MapBase _currentMap;
-        private EventCommand _editingCommand;
-        private FrmEvent _eventEditor;
+        private readonly EventBase mEditingEvent;
+        private MapBase mCurrentMap;
+        private EventCommand mEditingCommand;
+        private FrmEvent mEventEditor;
 
-        public EventCommand_WaitForRouteCompletion(EventCommand refCommand, FrmEvent eventEditor, MapBase currentMap,
+        public EventCommandWaitForRouteCompletion(EventCommand refCommand, FrmEvent eventEditor, MapBase currentMap,
             EventBase currentEvent)
         {
             InitializeComponent();
 
             //Grab event editor reference
-            _eventEditor = eventEditor;
-            _editingEvent = currentEvent;
-            _editingCommand = refCommand;
-            _currentMap = currentMap;
+            mEventEditor = eventEditor;
+            mEditingEvent = currentEvent;
+            mEditingCommand = refCommand;
+            mCurrentMap = currentMap;
             InitLocalization();
             cmbEntities.Items.Clear();
-            if (!_editingEvent.CommonEvent)
+            if (!mEditingEvent.CommonEvent)
             {
                 cmbEntities.Items.Add(Strings.Get("eventwaitforroutecompletion", "player"));
-                if (_editingCommand.Ints[0] == -1) cmbEntities.SelectedIndex = -1;
-                foreach (var evt in _currentMap.Events)
+                if (mEditingCommand.Ints[0] == -1) cmbEntities.SelectedIndex = -1;
+                foreach (var evt in mCurrentMap.Events)
                 {
-                    cmbEntities.Items.Add(evt.Key == _editingEvent.Index
+                    cmbEntities.Items.Add(evt.Key == mEditingEvent.Index
                         ? Strings.Get("eventwaitforroutecompletion", "this") + " "
                         : "" + evt.Value.Name);
-                    if (_editingCommand.Ints[0] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
+                    if (mEditingCommand.Ints[0] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
                 }
             }
             if (cmbEntities.SelectedIndex == -1 && cmbEntities.Items.Count > 0)
@@ -43,8 +43,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 cmbEntities.SelectedIndex = 0;
             }
 
-            _editingCommand = refCommand;
-            _eventEditor = eventEditor;
+            mEditingCommand = refCommand;
+            mEventEditor = eventEditor;
         }
 
         private void InitLocalization()
@@ -57,23 +57,23 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (!_editingEvent.CommonEvent)
+            if (!mEditingEvent.CommonEvent)
             {
                 if (cmbEntities.SelectedIndex == 0)
                 {
-                    _editingCommand.Ints[0] = -1;
+                    mEditingCommand.Ints[0] = -1;
                 }
                 else
                 {
-                    _editingCommand.Ints[0] = _currentMap.Events.Keys.ToList()[cmbEntities.SelectedIndex - 1];
+                    mEditingCommand.Ints[0] = mCurrentMap.Events.Keys.ToList()[cmbEntities.SelectedIndex - 1];
                 }
             }
-            _eventEditor.FinishCommandEdit();
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
     }
 }

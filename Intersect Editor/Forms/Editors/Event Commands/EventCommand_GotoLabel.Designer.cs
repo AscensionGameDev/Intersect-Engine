@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_GotoLabel
+    partial class EventCommandGotoLabel
     {
         /// <summary> 
         /// Required designer variable.
@@ -102,7 +102,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpGotoLabel);
-            this.Name = "EventCommand_GotoLabel";
+            this.Name = "EventCommandGotoLabel";
             this.Size = new System.Drawing.Size(268, 88);
             this.grpGotoLabel.ResumeLayout(false);
             this.grpGotoLabel.PerformLayout();

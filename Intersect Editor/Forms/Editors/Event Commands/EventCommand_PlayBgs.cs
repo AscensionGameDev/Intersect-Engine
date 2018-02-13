@@ -7,23 +7,23 @@ using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_PlayBgs : UserControl
+    public partial class EventCommandPlayBgs : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventCommand mMyCommand;
 
-        public EventCommand_PlayBgs(EventCommand refCommand, FrmEvent editor)
+        public EventCommandPlayBgs(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
             InitLocalization();
             cmbSound.Items.Clear();
             cmbSound.Items.Add(Strings.Get("general", "none"));
-            cmbSound.Items.AddRange(GameContentManager.GetSoundNames());
-            if (cmbSound.Items.IndexOf(TextUtils.NullToNone(_myCommand.Strs[0])) > -1)
+            cmbSound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
+            if (cmbSound.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Strs[0])) > -1)
             {
-                cmbSound.SelectedIndex = cmbSound.Items.IndexOf(TextUtils.NullToNone(_myCommand.Strs[0]));
+                cmbSound.SelectedIndex = cmbSound.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Strs[0]));
             }
             else
             {
@@ -41,13 +41,13 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Strs[0] = TextUtils.SanitizeNone(cmbSound?.Text);
-            _eventEditor.FinishCommandEdit();
+            mMyCommand.Strs[0] = TextUtils.SanitizeNone(cmbSound?.Text);
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
 
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)

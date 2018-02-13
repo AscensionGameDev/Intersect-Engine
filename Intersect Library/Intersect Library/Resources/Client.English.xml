@@ -590,5 +590,12 @@
         <string id="notconnected">Not connected to the game server. Is it online?</string>
         <string id="notsupported">Not Supported!</string>
         <string id="openglerror">This platform is not supported. Intersect requires OpenGL 3.0 compatible drivers, or either ARB_framebuffer_object or EXT_framebuffer_object extensions. Upgrading your graphic drivers may resolve this problem.</string>
+        <string id="loadfile">Failed to load a {00}. Please send the game administrator a copy of your errors log file in the logs directory.</string>
     </Errors>
+    <Words>
+      <string id="lcase_sound">sound</string>
+      <string id="lcase_music">soundtrack</string>
+      <string id="lcase_sprite">sprite</string>
+      <string id="lcase_animation">animation</string>
+    </Words>
 </Strings>

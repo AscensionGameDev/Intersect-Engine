@@ -15,9 +15,9 @@ namespace Intersect.GameObjects
 
     public struct QuestProgressStruct
     {
-        public int task;
-        public int completed;
-        public int taskProgress;
+        public int Task;
+        public int Completed;
+        public int TaskProgress;
     }
 
     public class QuestBase : DatabaseObject<QuestBase>
@@ -30,7 +30,7 @@ namespace Intersect.GameObjects
         public byte LogBeforeOffer;
 
         //Tasks
-        public int NextTaskID;
+        public int NextTaskId;
 
         public byte Quitable;
 
@@ -70,10 +70,10 @@ namespace Intersect.GameObjects
 
             Requirements.Load(myBuffer);
 
-            NextTaskID = myBuffer.ReadInteger();
-            var MaxTasks = myBuffer.ReadInteger();
+            NextTaskId = myBuffer.ReadInteger();
+            var maxTasks = myBuffer.ReadInteger();
             Tasks.Clear();
-            for (int i = 0; i < MaxTasks; i++)
+            for (int i = 0; i < maxTasks; i++)
             {
                 QuestTask task = new QuestTask(myBuffer.ReadInteger())
                 {
@@ -114,7 +114,7 @@ namespace Intersect.GameObjects
 
             Requirements.Save(myBuffer);
 
-            myBuffer.WriteInteger(NextTaskID);
+            myBuffer.WriteInteger(NextTaskId);
             myBuffer.WriteInteger(Tasks.Count);
             for (int i = 0; i < Tasks.Count; i++)
             {

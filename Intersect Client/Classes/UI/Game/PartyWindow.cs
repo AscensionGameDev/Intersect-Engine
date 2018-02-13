@@ -11,148 +11,142 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class PartyWindow
     {
-        private List<ImagePanel> _bar = new List<ImagePanel>();
-        private List<ImagePanel> _barContainer = new List<ImagePanel>();
-        private List<Button> _kickButtons = new List<Button>();
+        private List<ImagePanel> mBar = new List<ImagePanel>();
+        private List<ImagePanel> mBarContainer = new List<ImagePanel>();
+        private List<Button> mKickButtons = new List<Button>();
 
-        private List<Label> _lblnames = new List<Label>();
-        private ImagePanel _leader;
+        private List<Label> mLblnames = new List<Label>();
+        private ImagePanel mLeader;
 
-        private Button _leaveButton;
+        private Button mLeaveButton;
 
         //Controls
-        private WindowControl _partyWindow;
+        private WindowControl mPartyWindow;
 
         //Init
-        public PartyWindow(Canvas _gameCanvas)
+        public PartyWindow(Canvas gameCanvas)
         {
-            _partyWindow = new WindowControl(_gameCanvas, Strings.Get("parties", "title"), false, "PartyWindow");
-            _partyWindow.DisableResizing();
+            mPartyWindow = new WindowControl(gameCanvas, Strings.Get("parties", "title"), false, "PartyWindow");
+            mPartyWindow.DisableResizing();
 
             //Add the icon representing party leader (ALWAYS member 1 in the party list)
-            _leader = new ImagePanel(_partyWindow, "LeaderIcon");
-            _leader.SetToolTipText(Strings.Get("parties", "leader"));
-            _leader.Hide();
+            mLeader = new ImagePanel(mPartyWindow, "LeaderIcon");
+            mLeader.SetToolTipText(Strings.Get("parties", "leader"));
+            mLeader.Hide();
             if (Globals.Me.Party.Count > 0)
             {
-                _leader.Show();
+                mLeader.Show();
             }
 
-            _lblnames.Clear();
-            _kickButtons.Clear();
-            _barContainer.Clear();
-            _bar.Clear();
+            mLblnames.Clear();
+            mKickButtons.Clear();
+            mBarContainer.Clear();
+            mBar.Clear();
 
             for (int i = 0; i < 4; i++)
             {
                 //Labels
-                _lblnames.Add(new Label(_partyWindow, "MemberName" + i));
+                mLblnames.Add(new Label(mPartyWindow, "MemberName" + i));
                 if (i < Globals.Me.Party.Count)
                 {
-                    _lblnames[i].Text = Globals.Entities[Globals.Me.Party[i]].MyName;
+                    mLblnames[i].Text = Globals.Me.Party[i].Name;
                 }
                 else
                 {
-                    _lblnames[i].Text = "";
+                    mLblnames[i].Text = "";
                 }
 
                 //Health bars
-                _barContainer.Add(new ImagePanel(_partyWindow, "HealthBarContainer" + i));
-                _barContainer[i].Hide();
+                mBarContainer.Add(new ImagePanel(mPartyWindow, "HealthBarContainer" + i));
+                mBarContainer[i].Hide();
                 if (i < Globals.Me.Party.Count)
                 {
-                    _barContainer[i].Show();
+                    mBarContainer[i].Show();
                 }
-                _bar.Add(new ImagePanel(_barContainer[i], "HealthBar" + i));
+                mBar.Add(new ImagePanel(mBarContainer[i], "HealthBar" + i));
 
                 if (i == 0)
                 {
-                    _kickButtons.Add(null);
+                    mKickButtons.Add(null);
                 }
                 else
                 {
-                    _kickButtons.Add(new Button(_partyWindow, "KickButton" + i));
-                    _kickButtons[i].Clicked += kick_Clicked;
+                    mKickButtons.Add(new Button(mPartyWindow, "KickButton" + i));
+                    mKickButtons[i].Clicked += kick_Clicked;
                     if (i < Globals.Me.Party.Count)
                     {
-                        _kickButtons[i].SetToolTipText(Strings.Get("parties", "kick",
-                            Globals.Entities[Globals.Me.Party[i]].MyName));
+                        mKickButtons[i].SetToolTipText(Strings.Get("parties", "kick", Globals.Me.Party[i].Name));
                     }
                     else
                     {
-                        _kickButtons[i].SetToolTipText("");
+                        mKickButtons[i].SetToolTipText("");
                     }
-                    _kickButtons[i].Hide();
+                    mKickButtons[i].Hide();
 
                     //Only show the kick buttons if its you or you are the party leader
                     if (i < Globals.Me.Party.Count)
                     {
-                        if (Globals.Me.Party[0] == Globals.Me.MyIndex)
+                        if (Globals.Me.Party[0].Index == Globals.Me.MyIndex)
                         {
-                            _kickButtons[i].Show();
+                            mKickButtons[i].Show();
                         }
                     }
                 }
             }
 
-            _leaveButton = new Button(_partyWindow, "LeavePartyButton");
-            _leaveButton.SetToolTipText(Strings.Get("parties", "leave"));
-            _leaveButton.Clicked += leave_Clicked;
+            mLeaveButton = new Button(mPartyWindow, "LeavePartyButton");
+            mLeaveButton.SetToolTipText(Strings.Get("parties", "leave"));
+            mLeaveButton.Clicked += leave_Clicked;
         }
 
         //Methods
         public void Update()
         {
-            if (_partyWindow.IsHidden)
+            if (mPartyWindow.IsHidden)
             {
                 return;
             }
 
-            _leader.Hide();
-            _leaveButton.Hide();
+            mLeader.Hide();
+            mLeaveButton.Hide();
             for (int i = 0; i < 4; i++)
             {
-                _barContainer[i].Hide();
-                _lblnames[i].Text = "";
-                if (i > 0) _kickButtons[i].Hide();
+                mBarContainer[i].Hide();
+                mLblnames[i].Text = "";
+                if (i > 0) mKickButtons[i].Hide();
             }
             if (Globals.Me.IsInParty())
             {
-                _leader.Show();
-                _leaveButton.Show();
+                mLeader.Show();
+                mLeaveButton.Show();
 
                 for (int i = 0; i < 4; i++)
                 {
                     if (i < Globals.Me.Party.Count)
                     {
-                        if (Globals.Entities.ContainsKey(Globals.Me.Party[i]))
+                        mBarContainer[i].Show();
+                        mLblnames[i].Text = Globals.Me.Party[i].Name;
+
+                        var vitalHp = Globals.Me.Party[i].Vital[(int)Vitals.Health];
+                        var vitalMaxHp = Globals.Me.Party[i].MaxVital[(int)Vitals.Health];
+                        var ratioHp = ((float)vitalHp) / ((float)vitalMaxHp);
+                        ratioHp = Math.Min(1, Math.Max(0, ratioHp));
+                        mBar[i].SetSize(Convert.ToInt32(ratioHp * mBarContainer[i].Width), mBarContainer[i].Height);
+                        if (i > 0) mKickButtons[i].Hide();
+
+                        //Only show the kick buttons if its you or you are the party leader
+                        if (Globals.Me.Party[0].Index == Globals.Me.MyIndex && i > 0)
                         {
-                            var partyMember = Globals.Entities[Globals.Me.Party[i]];
-                            _barContainer[i].Show();
-                            _lblnames[i].Text = partyMember.MyName;
-
-                            var vitalHP = partyMember.Vital[(int) Vitals.Health];
-                            var vitalMaxHP = partyMember.MaxVital[(int) Vitals.Health];
-                            var ratioHP = ((float) vitalHP) / ((float) vitalMaxHP);
-                            ratioHP = Math.Min(1, Math.Max(0, ratioHP));
-                            _bar[i].SetSize(Convert.ToInt32(ratioHP * _barContainer[i].Width), _barContainer[i].Height);
-                            if (i > 0) _kickButtons[i].Hide();
-
-                            //Only show the kick buttons if its you or you are the party leader
-                            if (Globals.Me.Party[0] == Globals.Me.MyIndex && i > 0)
-                            {
-                                _kickButtons[i].Show();
-                                _kickButtons[i].SetToolTipText(Strings.Get("parties", "kick",
-                                    Globals.Entities[Globals.Me.Party[i]].MyName));
-                            }
+                            mKickButtons[i].Show();
+                            mKickButtons[i].SetToolTipText(Strings.Get("parties", "kick", Globals.Me.Party[i].Name));
                         }
                     }
                     else
                     {
-                        if (i > 0) _kickButtons[i].SetToolTipText("");
-                        _lblnames[i].Text = "";
-                        _bar[i].SetSize(0, _barContainer[i].Height);
-                        _barContainer[i].Hide();
+                        if (i > 0) mKickButtons[i].SetToolTipText("");
+                        mLblnames[i].Text = "";
+                        mBar[i].SetSize(0, mBarContainer[i].Height);
+                        mBarContainer[i].Hide();
                     }
                 }
             }
@@ -160,17 +154,17 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Show()
         {
-            _partyWindow.IsHidden = false;
+            mPartyWindow.IsHidden = false;
         }
 
         public bool IsVisible()
         {
-            return !_partyWindow.IsHidden;
+            return !mPartyWindow.IsHidden;
         }
 
         public void Hide()
         {
-            _partyWindow.IsHidden = true;
+            mPartyWindow.IsHidden = true;
         }
 
         //Input Handlers
@@ -178,7 +172,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             for (int i = 1; i < Globals.Me.Party.Count; i++)
             {
-                if (_kickButtons[i] == sender)
+                if (mKickButtons[i] == sender)
                 {
                     PacketSender.SendPartyKick(i);
                     return;

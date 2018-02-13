@@ -6,19 +6,19 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
 {
     public class MapList
     {
-        private static MapList _mapList = new MapList();
-        private static List<MapListMap> _orderedMaps = new List<MapListMap>();
+        private static MapList sMapList = new MapList();
+        private static List<MapListMap> sOrderedMaps = new List<MapListMap>();
         public List<MapListItem> Items = new List<MapListItem>();
-        private Random rand = new Random();
+        private Random mRand = new Random();
 
         public static MapList GetList()
         {
-            return _mapList;
+            return sMapList;
         }
 
         public static List<MapListMap> GetOrderedMaps()
         {
-            return _orderedMaps;
+            return sOrderedMaps;
         }
 
         public byte[] Data(Dictionary<int, MapBase> gameMaps)
@@ -42,7 +42,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
         public bool Load(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps, bool isServer = true,
             bool isTopLevel = false)
         {
-            if (isTopLevel) _orderedMaps.Clear();
+            if (isTopLevel) sOrderedMaps.Clear();
             Items.Clear();
             int count = myBuffer.ReadInteger();
             int type = -1;
@@ -72,7 +72,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
                         if (gameMaps.ContainsKey(tmpMap.MapNum) || !isServer)
                         {
                             Items.Add(tmpMap);
-                            _orderedMaps.Add(tmpMap);
+                            sOrderedMaps.Add(tmpMap);
                         }
                     }
                     else
@@ -81,7 +81,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
                     }
                 }
             }
-            _orderedMaps.Sort();
+            sOrderedMaps.Sort();
             return result;
         }
 
@@ -102,14 +102,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
             {
                 Name = folderName,
                 FolderId =
-                    int.Parse("" + rand.Next(1, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) +
-                              rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10))
+                    int.Parse("" + mRand.Next(1, 10) + mRand.Next(0, 10) + mRand.Next(0, 10) + mRand.Next(0, 10) +
+                              mRand.Next(0, 10) + mRand.Next(0, 10) + mRand.Next(0, 10) + mRand.Next(0, 10))
             };
-            while (_mapList.FindFolderParent(tmp.FolderId, null) != null)
+            while (sMapList.FindFolderParent(tmp.FolderId, null) != null)
             {
                 tmp.FolderId =
-                    int.Parse("" + rand.Next(1, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) +
-                              rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10));
+                    int.Parse("" + mRand.Next(1, 10) + mRand.Next(0, 10) + mRand.Next(0, 10) + mRand.Next(0, 10) +
+                              mRand.Next(0, 10) + mRand.Next(0, 10) + mRand.Next(0, 10) + mRand.Next(0, 10));
             }
             Items.Add(tmp);
         }
@@ -118,7 +118,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
         {
             for (int i = 0; i < Items.Count; i++)
             {
-                if (Items[i].type == 0)
+                if (Items[i].Type == 0)
                 {
                     if (((MapListFolder) Items[i]).FolderId == folderId)
                     {
@@ -137,7 +137,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
         {
             for (int i = 0; i < Items.Count; i++)
             {
-                if (Items[i].type == 0)
+                if (Items[i].Type == 0)
                 {
                     if (((MapListFolder) Items[i]).Children.FindMap(mapNum) != null)
                     {
@@ -210,7 +210,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
                 destParent = FindFolderParent(destId, null);
                 if (destParent == null)
                 {
-                    targetList = _mapList;
+                    targetList = sMapList;
                 }
                 else
                 {
@@ -223,7 +223,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
                 destParent = FindMapParent(destId, null);
                 if (destParent == null)
                 {
-                    targetList = _mapList;
+                    targetList = sMapList;
                 }
                 else
                 {
@@ -236,7 +236,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
                 sourceParent = FindFolderParent(srcId, null);
                 if (sourceParent == null)
                 {
-                    sourceList = _mapList;
+                    sourceList = sMapList;
                 }
                 else
                 {
@@ -249,7 +249,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
                 sourceParent = FindMapParent(srcId, null);
                 if (sourceParent == null)
                 {
-                    sourceList = _mapList;
+                    sourceList = sMapList;
                 }
                 else
                 {
@@ -289,8 +289,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
             MapListFolder self = FindDir(folderid);
             if (parent == null)
             {
-                _mapList.Items.AddRange(self.Children.Items);
-                _mapList.Items.Remove(self);
+                sMapList.Items.AddRange(self.Children.Items);
+                sMapList.Items.Remove(self);
             }
             else
             {
@@ -305,7 +305,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
             MapListMap self = FindMap(mapNum);
             if (parent == null)
             {
-                _mapList.Items.Remove(self);
+                sMapList.Items.Remove(self);
             }
             else
             {
@@ -316,9 +316,9 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
         public int FindFirstMap()
         {
             int lowestMap = -1;
-            if (_orderedMaps.Count > 0)
+            if (sOrderedMaps.Count > 0)
             {
-                lowestMap = _orderedMaps[0].MapNum;
+                lowestMap = sOrderedMaps[0].MapNum;
             }
             return lowestMap;
         }

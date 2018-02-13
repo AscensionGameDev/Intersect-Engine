@@ -4,14 +4,14 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms
 {
-    public partial class frmProgress : Form
+    public partial class FrmProgress : Form
     {
-        private int progressVal;
-        private bool shouldClose;
-        private bool showCancelBtn;
-        private string statusText;
+        private int mProgressVal;
+        private bool mShouldClose;
+        private bool mShowCancelBtn;
+        private string mStatusText;
 
-        public frmProgress()
+        public FrmProgress()
         {
             InitializeComponent();
             InitLocalization();
@@ -29,36 +29,36 @@ namespace Intersect.Editor.Forms
 
         public void SetProgress(string label, int progress, bool showCancel)
         {
-            statusText = label;
+            mStatusText = label;
             if (progress < 0)
             {
-                progressVal = 0;
+                mProgressVal = 0;
                 progressBar.Style = ProgressBarStyle.Marquee;
             }
             else
             {
-                progressVal = progress;
+                mProgressVal = progress;
                 progressBar.Style = ProgressBarStyle.Blocks;
             }
 
-            showCancelBtn = showCancel;
+            mShowCancelBtn = showCancel;
             tmrUpdater_Tick(null, null);
             Application.DoEvents();
         }
 
         public void NotifyClose()
         {
-            shouldClose = true;
+            mShouldClose = true;
         }
 
         private void tmrUpdater_Tick(object sender, EventArgs e)
         {
             if (!InvokeRequired)
             {
-                lblStatus.Text = statusText;
-                progressBar.Value = progressVal;
-                btnCancel.Visible = showCancelBtn;
-                if (shouldClose)
+                lblStatus.Text = mStatusText;
+                progressBar.Value = mProgressVal;
+                btnCancel.Visible = mShowCancelBtn;
+                if (mShouldClose)
                 {
                     Close();
                 }

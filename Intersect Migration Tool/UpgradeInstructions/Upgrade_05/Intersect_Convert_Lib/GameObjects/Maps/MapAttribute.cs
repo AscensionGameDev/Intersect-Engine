@@ -2,10 +2,10 @@
 {
     public class Attribute
     {
-        public int data1;
-        public int data2;
-        public int data3;
-        public string data4 = "";
-        public int value;
+        public int Data1;
+        public int Data2;
+        public int Data3;
+        public string Data4 = "";
+        public int Value;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms
 {
-    partial class frmProgress
+    partial class FrmProgress
     {
         /// <summary>
         /// Required designer variable.
@@ -82,7 +82,7 @@ namespace Intersect.Editor.Forms
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.lblStatus);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Name = "frmProgress";
+            this.Name = "FrmProgress";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Doing Work";
             this.ResumeLayout(false);

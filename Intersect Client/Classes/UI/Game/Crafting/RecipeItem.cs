@@ -13,95 +13,95 @@ namespace Intersect.Client.Classes.UI.Game.Crafting
     public class RecipeItem
     {
         //References
-        private CraftingWindow _craftingBenchWindow;
+        private CraftingWindow mCraftingBenchWindow;
 
-        public ItemDescWindow _descWindow;
+        public ItemDescWindow DescWindow;
 
         //Slot info
-        CraftIngredient _ingredient;
+        CraftIngredient mIngredient;
 
         //Dragging
-        private bool CanDrag;
+        private bool mCanDrag;
 
-        public ImagePanel container;
-        private Draggable dragIcon;
+        public ImagePanel Container;
+        private Draggable mDragIcon;
         public bool IsDragging;
 
         //Mouse Event Variables
-        private bool MouseOver;
+        private bool mMouseOver;
 
-        private int MouseX = -1;
-        private int MouseY = -1;
-        public ImagePanel pnl;
+        private int mMouseX = -1;
+        private int mMouseY = -1;
+        public ImagePanel Pnl;
 
         public RecipeItem(CraftingWindow craftingBenchWindow, CraftIngredient ingredient)
         {
-            _craftingBenchWindow = craftingBenchWindow;
-            _ingredient = ingredient;
+            mCraftingBenchWindow = craftingBenchWindow;
+            mIngredient = ingredient;
         }
 
         public void Setup(string name)
         {
-            pnl = new ImagePanel(container, name);
-            pnl.HoverEnter += pnl_HoverEnter;
-            pnl.HoverLeave += pnl_HoverLeave;
+            Pnl = new ImagePanel(Container, name);
+            Pnl.HoverEnter += pnl_HoverEnter;
+            Pnl.HoverLeave += pnl_HoverLeave;
 
-            var item = ItemBase.Lookup.Get<ItemBase>(_ingredient.Item);
+            var item = ItemBase.Lookup.Get<ItemBase>(mIngredient.Item);
 
             if (item != null)
             {
                 GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
                 if (itemTex != null)
                 {
-                    pnl.Texture = itemTex;
+                    Pnl.Texture = itemTex;
                 }
                 else
                 {
-                    if (pnl.Texture != null)
+                    if (Pnl.Texture != null)
                     {
-                        pnl.Texture = null;
+                        Pnl.Texture = null;
                     }
                 }
             }
             else
             {
-                if (pnl.Texture != null)
+                if (Pnl.Texture != null)
                 {
-                    pnl.Texture = null;
+                    Pnl.Texture = null;
                 }
             }
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
         {
-            MouseOver = false;
-            MouseX = -1;
-            MouseY = -1;
-            if (_descWindow != null)
+            mMouseOver = false;
+            mMouseX = -1;
+            mMouseY = -1;
+            if (DescWindow != null)
             {
-                _descWindow.Dispose();
-                _descWindow = null;
+                DescWindow.Dispose();
+                DescWindow = null;
             }
         }
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
-            MouseOver = true;
-            CanDrag = true;
+            mMouseOver = true;
+            mCanDrag = true;
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
             {
-                CanDrag = false;
+                mCanDrag = false;
                 return;
             }
-            if (_descWindow != null)
+            if (DescWindow != null)
             {
-                _descWindow.Dispose();
-                _descWindow = null;
+                DescWindow.Dispose();
+                DescWindow = null;
             }
-            if (_ingredient != null)
+            if (mIngredient != null)
             {
-                _descWindow = new ItemDescWindow(_ingredient.Item, _ingredient.Quantity, _craftingBenchWindow.X - 255,
-                    _craftingBenchWindow.Y, new int[(int) Stats.StatCount]);
+                DescWindow = new ItemDescWindow(mIngredient.Item, mIngredient.Quantity, mCraftingBenchWindow.X - 255,
+                    mCraftingBenchWindow.Y, new int[(int) Stats.StatCount]);
             }
         }
     }

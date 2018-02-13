@@ -10,18 +10,18 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 {
     public class MonoShader : GameShader
     {
-        private Effect shader;
-        private bool valuesChanged = false;
+        private Effect mShader;
+        private bool mValuesChanged = false;
 
         public MonoShader(string shaderName, ContentManager content) : base(shaderName)
         {
-            shader = content.Load<Effect>(GameContentManager.RemoveExtension(shaderName));
+            mShader = content.Load<Effect>(GameContentManager.RemoveExtension(shaderName));
         }
 
         public override void SetFloat(string key, float val)
         {
-            shader.Parameters[key].SetValue(val);
-            valuesChanged = true;
+            mShader.Parameters[key].SetValue(val);
+            mValuesChanged = true;
         }
 
         public override void SetInt(string key, int val)
@@ -32,8 +32,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         public override void SetColor(string key, Color val)
         {
             var vec = new Vector4(val.R / 255f, val.G / 255f, val.B / 255f, val.A / 255f);
-            shader.Parameters[key].SetValue(vec);
-            valuesChanged = true;
+            mShader.Parameters[key].SetValue(vec);
+            mValuesChanged = true;
         }
 
         public override void SetVector2(string key, Pointf val)
@@ -43,17 +43,17 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override bool ValuesChanged()
         {
-            return valuesChanged;
+            return mValuesChanged;
         }
 
         public override void ResetChanged()
         {
-            valuesChanged = false;
+            mValuesChanged = false;
         }
 
         public override object GetShader()
         {
-            return shader;
+            return mShader;
         }
     }
 }

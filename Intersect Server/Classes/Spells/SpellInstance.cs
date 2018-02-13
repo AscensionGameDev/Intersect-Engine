@@ -2,7 +2,7 @@
 {
     public class SpellInstance
     {
-        public long SpellCD;
+        public long SpellCd;
         public int SpellNum = -1;
 
         public SpellInstance()
@@ -19,7 +19,7 @@
             SpellInstance newSpell = new SpellInstance()
             {
                 SpellNum = SpellNum,
-                SpellCD = SpellCD
+                SpellCd = SpellCd
             };
             return newSpell;
         }

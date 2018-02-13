@@ -12,7 +12,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
         //Config XML String
         public static string ConfigXml = "";
 
-        private static bool ConfigFailed;
+        private static bool sConfigFailed;
 
         //Misc
         public static int ItemDespawnTime = 15000; //15 seconds
@@ -201,12 +201,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                     {
                         Console.WriteLine(
                             "MapWidth and/or MapHeight are out of bounds. Must be between 10 and 64. The client loads 9 maps at a time, having large map sizes really hurts performance.");
-                        ConfigFailed = true;
+                        sConfigFailed = true;
                     }
                     Intersect_Convert_Lib.Options.TileWidth = GetXmlInt(options, "//Config/Map/TileWidth");
                     Intersect_Convert_Lib.Options.TileHeight = GetXmlInt(options, "//Config/Map/TileHeight");
 
-                    if (ConfigFailed)
+                    if (sConfigFailed)
                     {
                         return false;
                     }
@@ -217,7 +217,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                     return false;
                 }
             }
-            return !ConfigFailed;
+            return !sConfigFailed;
         }
 
         public static byte[] GetServerConfig()
@@ -296,7 +296,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                 if (required)
                 {
                     Console.WriteLine("Path does not exist in config.xml  (Path: " + xmlPath + ")");
-                    ConfigFailed = true;
+                    sConfigFailed = true;
                 }
             }
             else if (!int.TryParse(selectSingleNode.InnerText, out returnVal))
@@ -304,7 +304,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                 if (required)
                 {
                     Console.WriteLine("Failed to load value from config.xml  (Path: " + xmlPath + ")");
-                    ConfigFailed = true;
+                    sConfigFailed = true;
                 }
             }
             return returnVal;
@@ -319,7 +319,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
                 if (required)
                 {
                     Console.WriteLine("Path does not exist in config.xml  (Path: " + xmlPath + ")");
-                    ConfigFailed = true;
+                    sConfigFailed = true;
                 }
             }
             else

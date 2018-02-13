@@ -7,20 +7,20 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_Variable : UserControl
+    public partial class EventCommandVariable : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private bool _loading;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private bool mLoading;
+        private EventCommand mMyCommand;
 
-        public EventCommand_Variable(EventCommand refCommand, FrmEvent editor)
+        public EventCommandVariable(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
-            _loading = true;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
+            mLoading = true;
             InitLocalization();
-            if (_myCommand.Ints[0] == (int) SwitchVariableTypes.ServerVariable)
+            if (mMyCommand.Ints[0] == (int) SwitchVariableTypes.ServerVariable)
             {
                 rdoGlobalVariable.Checked = true;
             }
@@ -28,7 +28,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 rdoPlayerVariable.Checked = true;
             }
-            _loading = false;
+            mLoading = false;
             InitEditor();
         }
 
@@ -57,32 +57,32 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObjectType.PlayerVariable));
                 cmbVariable.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.PlayerVariable, _myCommand.Ints[1]);
+                    Database.GameObjectListIndex(GameObjectType.PlayerVariable, mMyCommand.Ints[1]);
             }
             else
             {
                 cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObjectType.ServerVariable));
                 cmbVariable.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.ServerVariable, _myCommand.Ints[1]);
+                    Database.GameObjectListIndex(GameObjectType.ServerVariable, mMyCommand.Ints[1]);
             }
-            switch (_myCommand.Ints[2])
+            switch (mMyCommand.Ints[2])
             {
                 case 0:
                     optSet.Checked = true;
-                    nudSet.Value = _myCommand.Ints[3];
+                    nudSet.Value = mMyCommand.Ints[3];
                     break;
                 case 1:
                     optAdd.Checked = true;
-                    nudAdd.Value = _myCommand.Ints[3];
+                    nudAdd.Value = mMyCommand.Ints[3];
                     break;
                 case 2:
                     optSubtract.Checked = true;
-                    nudSubtract.Value = _myCommand.Ints[3];
+                    nudSubtract.Value = mMyCommand.Ints[3];
                     break;
                 case 3:
                     optRandom.Checked = true;
-                    nudLow.Value = _myCommand.Ints[3];
-                    nudHigh.Value = _myCommand.Ints[4];
+                    nudLow.Value = mMyCommand.Ints[3];
+                    nudHigh.Value = mMyCommand.Ints[4];
                     break;
             }
             UpdateFormElements();
@@ -102,49 +102,49 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             int n;
             if (rdoPlayerVariable.Checked)
             {
-                _myCommand.Ints[0] = (int) SwitchVariableTypes.PlayerVariable;
-                _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObjectType.PlayerVariable,
+                mMyCommand.Ints[0] = (int) SwitchVariableTypes.PlayerVariable;
+                mMyCommand.Ints[1] = Database.GameObjectIdFromList(GameObjectType.PlayerVariable,
                     cmbVariable.SelectedIndex);
             }
             if (rdoGlobalVariable.Checked)
             {
-                _myCommand.Ints[0] = (int) SwitchVariableTypes.ServerVariable;
-                _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObjectType.ServerVariable,
+                mMyCommand.Ints[0] = (int) SwitchVariableTypes.ServerVariable;
+                mMyCommand.Ints[1] = Database.GameObjectIdFromList(GameObjectType.ServerVariable,
                     cmbVariable.SelectedIndex);
             }
             if (optSet.Checked)
             {
-                _myCommand.Ints[2] = 0;
-                _myCommand.Ints[3] = (int) nudSet.Value;
+                mMyCommand.Ints[2] = 0;
+                mMyCommand.Ints[3] = (int) nudSet.Value;
             }
             else if (optAdd.Checked)
             {
-                _myCommand.Ints[2] = 1;
-                _myCommand.Ints[3] = (int) nudAdd.Value;
+                mMyCommand.Ints[2] = 1;
+                mMyCommand.Ints[3] = (int) nudAdd.Value;
             }
             else if (optSubtract.Checked)
             {
-                _myCommand.Ints[2] = 2;
-                _myCommand.Ints[3] = (int) nudSubtract.Value;
+                mMyCommand.Ints[2] = 2;
+                mMyCommand.Ints[3] = (int) nudSubtract.Value;
             }
             else if (optRandom.Checked)
             {
-                _myCommand.Ints[2] = 3;
-                _myCommand.Ints[3] = (int) nudLow.Value;
-                _myCommand.Ints[4] = (int) nudHigh.Value;
-                if (_myCommand.Ints[4] < _myCommand.Ints[3])
+                mMyCommand.Ints[2] = 3;
+                mMyCommand.Ints[3] = (int) nudLow.Value;
+                mMyCommand.Ints[4] = (int) nudHigh.Value;
+                if (mMyCommand.Ints[4] < mMyCommand.Ints[3])
                 {
-                    n = _myCommand.Ints[3];
-                    _myCommand.Ints[3] = _myCommand.Ints[4];
-                    _myCommand.Ints[4] = n;
+                    n = mMyCommand.Ints[3];
+                    mMyCommand.Ints[3] = mMyCommand.Ints[4];
+                    mMyCommand.Ints[4] = n;
                 }
             }
-            _eventEditor.FinishCommandEdit();
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
 
         private void optSet_CheckedChanged(object sender, EventArgs e)
@@ -170,17 +170,17 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private void rdoPlayerVariable_CheckedChanged(object sender, EventArgs e)
         {
             InitEditor();
-            if (!_loading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
-            if (!_loading) optSet.Checked = true;
-            if (!_loading) nudSet.Value = 0;
+            if (!mLoading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
+            if (!mLoading) optSet.Checked = true;
+            if (!mLoading) nudSet.Value = 0;
         }
 
         private void rdoGlobalVariable_CheckedChanged(object sender, EventArgs e)
         {
             InitEditor();
-            if (!_loading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
-            if (!_loading) optSet.Checked = true;
-            if (!_loading) nudSet.Value = 0;
+            if (!mLoading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
+            if (!mLoading) optSet.Checked = true;
+            if (!mLoading) nudSet.Value = 0;
         }
     }
 }

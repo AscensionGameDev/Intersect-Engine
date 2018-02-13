@@ -11,15 +11,15 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Classes
 {
-    public partial class frmProjectile : EditorForm
+    public partial class FrmProjectile : EditorForm
     {
-        private List<ProjectileBase> _changed = new List<ProjectileBase>();
-        private byte[] _copiedItem;
+        private List<ProjectileBase> mChanged = new List<ProjectileBase>();
+        private byte[] mCopiedItem;
 
-        private Bitmap _directionGrid;
-        private ProjectileBase _editorItem;
+        private Bitmap mDirectionGrid;
+        private ProjectileBase mEditorItem;
 
-        public frmProjectile()
+        public FrmProjectile()
         {
             ApplyHooks();
             InitializeComponent();
@@ -32,9 +32,9 @@ namespace Intersect.Editor.Classes
             if (type == GameObjectType.Projectile)
             {
                 InitEditor();
-                if (_editorItem != null && !ProjectileBase.Lookup.Values.Contains(_editorItem))
+                if (mEditorItem != null && !ProjectileBase.Lookup.Values.Contains(mEditorItem))
                 {
-                    _editorItem = null;
+                    mEditorItem = null;
                     UpdateEditor();
                 }
             }
@@ -42,7 +42,7 @@ namespace Intersect.Editor.Classes
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            foreach (var item in _changed)
+            foreach (var item in mChanged)
             {
                 item.RestoreBackup();
                 item.DeleteBackup();
@@ -56,7 +56,7 @@ namespace Intersect.Editor.Classes
         private void btnSave_Click(object sender, EventArgs e)
         {
             //Send Changed items
-            foreach (var item in _changed)
+            foreach (var item in mChanged)
             {
                 PacketSender.SendSaveObject(item);
                 item.DeleteBackup();
@@ -69,8 +69,8 @@ namespace Intersect.Editor.Classes
 
         private void lstProjectiles_Click(object sender, EventArgs e)
         {
-            if (changingName) return;
-            _editorItem =
+            if (mChangingName) return;
+            mEditorItem =
                 ProjectileBase.Lookup.Get<ProjectileBase>(Database.GameObjectIdFromList(GameObjectType.Projectile,
                     lstProjectiles.SelectedIndex));
             UpdateEditor();
@@ -78,7 +78,7 @@ namespace Intersect.Editor.Classes
 
         private void frmProjectile_Load(object sender, EventArgs e)
         {
-            _directionGrid = new Bitmap("resources/misc/directions.png");
+            mDirectionGrid = new Bitmap("resources/misc/directions.png");
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.Get("general", "none"));
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
@@ -147,38 +147,38 @@ namespace Intersect.Editor.Classes
 
         private void UpdateEditor()
         {
-            if (_editorItem != null)
+            if (mEditorItem != null)
             {
                 pnlContainer.Show();
 
-                txtName.Text = _editorItem.Name;
-                nudSpeed.Value = _editorItem.Speed;
-                nudSpawn.Value = _editorItem.Delay;
-                nudAmount.Value = _editorItem.Quantity;
-                nudRange.Value = _editorItem.Range;
-                cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell, _editorItem.Spell) + 1;
-                nudKnockback.Value = _editorItem.Knockback;
-                chkIgnoreMapBlocks.Checked = _editorItem.IgnoreMapBlocks;
-                chkIgnoreActiveResources.Checked = _editorItem.IgnoreActiveResources;
-                chkIgnoreInactiveResources.Checked = _editorItem.IgnoreExhaustedResources;
-                chkIgnoreZDimensionBlocks.Checked = _editorItem.IgnoreZDimension;
-                chkHoming.Checked = _editorItem.Homing;
-                chkGrapple.Checked = _editorItem.GrappleHook;
-                cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, _editorItem.Ammo) + 1;
-                nudConsume.Value = _editorItem.AmmoRequired;
+                txtName.Text = mEditorItem.Name;
+                nudSpeed.Value = mEditorItem.Speed;
+                nudSpawn.Value = mEditorItem.Delay;
+                nudAmount.Value = mEditorItem.Quantity;
+                nudRange.Value = mEditorItem.Range;
+                cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell, mEditorItem.Spell) + 1;
+                nudKnockback.Value = mEditorItem.Knockback;
+                chkIgnoreMapBlocks.Checked = mEditorItem.IgnoreMapBlocks;
+                chkIgnoreActiveResources.Checked = mEditorItem.IgnoreActiveResources;
+                chkIgnoreInactiveResources.Checked = mEditorItem.IgnoreExhaustedResources;
+                chkIgnoreZDimensionBlocks.Checked = mEditorItem.IgnoreZDimension;
+                chkHoming.Checked = mEditorItem.Homing;
+                chkGrapple.Checked = mEditorItem.GrappleHook;
+                cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.Ammo) + 1;
+                nudConsume.Value = mEditorItem.AmmoRequired;
 
                 if (lstAnimations.SelectedIndex < 0)
                 {
                     lstAnimations.SelectedIndex = 0;
                 }
-                updateAnimationData(0);
+                UpdateAnimationData(0);
                 lstAnimations.SelectedIndex = 0;
 
                 Render();
-                if (_changed.IndexOf(_editorItem) == -1)
+                if (mChanged.IndexOf(mEditorItem) == -1)
                 {
-                    _changed.Add(_editorItem);
-                    _editorItem.MakeBackup();
+                    mChanged.Add(mEditorItem);
+                    mEditorItem.MakeBackup();
                 }
             }
             else
@@ -188,25 +188,25 @@ namespace Intersect.Editor.Classes
             UpdateToolStripItems();
         }
 
-        private void updateAnimationData(int index)
+        private void UpdateAnimationData(int index)
         {
-            updateAnimations(true);
+            UpdateAnimations(true);
             cmbAnimation.SelectedIndex =
-                Database.GameObjectListIndex(GameObjectType.Animation, _editorItem.Animations[index].Animation) + 1;
-            scrlSpawnRange.Value = Math.Min(_editorItem.Animations[index].SpawnRange, scrlSpawnRange.Maximum);
-            chkRotation.Checked = _editorItem.Animations[index].AutoRotate;
-            updateAnimations(true);
+                Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.Animations[index].Animation) + 1;
+            scrlSpawnRange.Value = Math.Min(mEditorItem.Animations[index].SpawnRange, scrlSpawnRange.Maximum);
+            chkRotation.Checked = mEditorItem.Animations[index].AutoRotate;
+            UpdateAnimations(true);
         }
 
-        private void updateAnimations(bool SaveIndex = true)
+        private void UpdateAnimations(bool saveIndex = true)
         {
             int n = 1;
             int selectedIndex = 0;
 
             // if there are no animations, add one by default.
-            if (_editorItem.Animations.Count == 0)
+            if (mEditorItem.Animations.Count == 0)
             {
-                _editorItem.Animations.Add(new ProjectileAnimation(-1, _editorItem.Quantity, false));
+                mEditorItem.Animations.Add(new ProjectileAnimation(-1, mEditorItem.Quantity, false));
             }
 
             //Update the spawn range maximum
@@ -217,27 +217,27 @@ namespace Intersect.Editor.Classes
             scrlSpawnRange.Maximum = (int) nudAmount.Value;
 
             //Save the index
-            if (SaveIndex == true)
+            if (saveIndex == true)
             {
                 selectedIndex = lstAnimations.SelectedIndex;
             }
 
             // Add the animations to the list
             lstAnimations.Items.Clear();
-            for (int i = 0; i < _editorItem.Animations.Count; i++)
+            for (int i = 0; i < mEditorItem.Animations.Count; i++)
             {
-                if (_editorItem.Animations[i].Animation != -1)
+                if (mEditorItem.Animations[i].Animation != -1)
                 {
                     lstAnimations.Items.Add(Strings.Get("projectileeditor", "animationline", n,
-                        _editorItem.Animations[i].SpawnRange,
-                        AnimationBase.GetName(_editorItem.Animations[i].Animation)));
+                        mEditorItem.Animations[i].SpawnRange,
+                        AnimationBase.GetName(mEditorItem.Animations[i].Animation)));
                 }
                 else
                 {
                     lstAnimations.Items.Add(Strings.Get("projectileeditor", "animationline", n,
-                        _editorItem.Animations[i].SpawnRange, Strings.Get("general", "none")));
+                        mEditorItem.Animations[i].SpawnRange, Strings.Get("general", "none")));
                 }
-                n = _editorItem.Animations[i].SpawnRange + 1;
+                n = mEditorItem.Animations[i].SpawnRange + 1;
             }
             lstAnimations.SelectedIndex = selectedIndex;
             if (lstAnimations.SelectedIndex < 0)
@@ -248,13 +248,13 @@ namespace Intersect.Editor.Classes
             if (lstAnimations.SelectedIndex > 0)
             {
                 lblSpawnRange.Text = Strings.Get("projectileeditor", "spawnrange",
-                    (_editorItem.Animations[lstAnimations.SelectedIndex - 1].SpawnRange + 1),
-                    _editorItem.Animations[lstAnimations.SelectedIndex].SpawnRange);
+                    (mEditorItem.Animations[lstAnimations.SelectedIndex - 1].SpawnRange + 1),
+                    mEditorItem.Animations[lstAnimations.SelectedIndex].SpawnRange);
             }
             else
             {
                 lblSpawnRange.Text = Strings.Get("projectileeditor", "spawnrange", 1,
-                    _editorItem.Animations[lstAnimations.SelectedIndex].SpawnRange);
+                    mEditorItem.Animations[lstAnimations.SelectedIndex].SpawnRange);
             }
         }
 
@@ -273,17 +273,17 @@ namespace Intersect.Editor.Classes
             var gfx = Graphics.FromImage(img);
             gfx.FillRectangle(Brushes.White, new Rectangle(0, 0, picSpawns.Width, picSpawns.Height));
 
-            for (var x = 0; x < ProjectileBase.SpawnLocationsWidth; x++)
+            for (var x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)
             {
-                for (var y = 0; y < ProjectileBase.SpawnLocationsHeight; y++)
+                for (var y = 0; y < ProjectileBase.SPAWN_LOCATIONS_HEIGHT; y++)
                 {
-                    gfx.DrawImage(_directionGrid, new Rectangle(x * 32, y * 32, 32, 32), new Rectangle(0, 0, 32, 32),
+                    gfx.DrawImage(mDirectionGrid, new Rectangle(x * 32, y * 32, 32, 32), new Rectangle(0, 0, 32, 32),
                         GraphicsUnit.Pixel);
-                    for (var i = 0; i < ProjectileBase.MaxProjectileDirections; i++)
+                    for (var i = 0; i < ProjectileBase.MAX_PROJECTILE_DIRECTIONS; i++)
                     {
-                        if (_editorItem.SpawnLocations[x, y].Directions[i] == true)
+                        if (mEditorItem.SpawnLocations[x, y].Directions[i] == true)
                         {
-                            gfx.DrawImage(_directionGrid,
+                            gfx.DrawImage(mDirectionGrid,
                                 new Rectangle((x * 32) + DirectionOffsetX(i), (y * 32) + DirectionOffsetY(i),
                                     (32 - 2) / 3, (32 - 2) / 3),
                                 new Rectangle(32 + DirectionOffsetX(i), DirectionOffsetY(i), (32 - 2) / 3,
@@ -294,7 +294,7 @@ namespace Intersect.Editor.Classes
                 }
             }
 
-            gfx.DrawImage(_directionGrid,
+            gfx.DrawImage(mDirectionGrid,
                 new Rectangle((picSpawns.Width / 2) - (((32 - 2) / 3) / 2),
                     (picSpawns.Height / 2) - (((32 - 2) / 3) / 2), (32 - 2) / 3, (32 - 2) / 3),
                 new Rectangle(43, 11, (32 - 2) / 3, (32 - 2) / 3), GraphicsUnit.Pixel);
@@ -302,9 +302,9 @@ namespace Intersect.Editor.Classes
             picSpawns.Refresh();
         }
 
-        private int DirectionOffsetX(int Dir)
+        private int DirectionOffsetX(int dir)
         {
-            switch (Dir)
+            switch (dir)
             {
                 case 0: //Up
                     return 10;
@@ -327,9 +327,9 @@ namespace Intersect.Editor.Classes
             }
         }
 
-        private int DirectionOffsetY(int Dir)
+        private int DirectionOffsetY(int dir)
         {
-            switch (Dir)
+            switch (dir)
             {
                 case 0: //Up
                     return 1;
@@ -394,21 +394,21 @@ namespace Intersect.Editor.Classes
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
-            changingName = true;
-            _editorItem.Name = txtName.Text;
-            lstProjectiles.Items[Database.GameObjectListIndex(GameObjectType.Projectile, _editorItem.Index)] =
+            mChangingName = true;
+            mEditorItem.Name = txtName.Text;
+            lstProjectiles.Items[Database.GameObjectListIndex(GameObjectType.Projectile, mEditorItem.Index)] =
                 txtName.Text;
-            changingName = false;
+            mChangingName = false;
         }
 
         private void chkHoming_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem.Homing = chkHoming.Checked;
+            mEditorItem.Homing = chkHoming.Checked;
         }
 
         private void chkRotation_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem.Animations[lstAnimations.SelectedIndex].AutoRotate = chkRotation.Checked;
+            mEditorItem.Animations[lstAnimations.SelectedIndex].AutoRotate = chkRotation.Checked;
         }
 
         private void picSpawns_MouseDown(object sender, MouseEventArgs e)
@@ -426,68 +426,68 @@ namespace Intersect.Editor.Classes
             i = Math.Floor(i);
             j = Math.Floor(j);
 
-            _editorItem.SpawnLocations[(int) x, (int) y].Directions[FindDirection((int) i, (int) j)] =
-                !_editorItem.SpawnLocations[(int) x, (int) y].Directions[FindDirection((int) i, (int) j)];
+            mEditorItem.SpawnLocations[(int) x, (int) y].Directions[FindDirection((int) i, (int) j)] =
+                !mEditorItem.SpawnLocations[(int) x, (int) y].Directions[FindDirection((int) i, (int) j)];
 
             Render();
         }
 
         private void chkIgnoreMapBlocks_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem.IgnoreMapBlocks = chkIgnoreMapBlocks.Checked;
+            mEditorItem.IgnoreMapBlocks = chkIgnoreMapBlocks.Checked;
         }
 
         private void chkIgnoreActiveResources_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem.IgnoreActiveResources = chkIgnoreActiveResources.Checked;
+            mEditorItem.IgnoreActiveResources = chkIgnoreActiveResources.Checked;
         }
 
         private void chkIgnoreInactiveResources_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem.IgnoreExhaustedResources = chkIgnoreInactiveResources.Checked;
+            mEditorItem.IgnoreExhaustedResources = chkIgnoreInactiveResources.Checked;
         }
 
         private void chkIgnoreZDimensionBlocks_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem.IgnoreZDimension = chkIgnoreZDimensionBlocks.Checked;
+            mEditorItem.IgnoreZDimension = chkIgnoreZDimensionBlocks.Checked;
         }
 
         private void chkGrapple_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem.GrappleHook = chkGrapple.Checked;
+            mEditorItem.GrappleHook = chkGrapple.Checked;
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
             //Clone the previous animation to save time, set the end point to always be the quantity of spawns.
-            _editorItem.Animations.Add(
-                new ProjectileAnimation(_editorItem.Animations[_editorItem.Animations.Count - 1].Animation,
-                    _editorItem.Quantity,
-                    _editorItem.Animations[_editorItem.Animations.Count - 1].AutoRotate));
-            updateAnimations();
+            mEditorItem.Animations.Add(
+                new ProjectileAnimation(mEditorItem.Animations[mEditorItem.Animations.Count - 1].Animation,
+                    mEditorItem.Quantity,
+                    mEditorItem.Animations[mEditorItem.Animations.Count - 1].AutoRotate));
+            UpdateAnimations();
         }
 
         private void btnRemove_Click(object sender, EventArgs e)
         {
-            if (_editorItem.Animations.Count > 1)
+            if (mEditorItem.Animations.Count > 1)
             {
-                _editorItem.Animations.RemoveAt(_editorItem.Animations.Count - 1);
+                mEditorItem.Animations.RemoveAt(mEditorItem.Animations.Count - 1);
                 lstAnimations.SelectedIndex = 0;
-                updateAnimations(false);
+                UpdateAnimations(false);
             }
         }
 
         private void scrlSpawnRange_Scroll(object sender, ScrollValueEventArgs e)
         {
-            _editorItem.Animations[lstAnimations.SelectedIndex].SpawnRange = scrlSpawnRange.Value;
-            updateAnimations();
+            mEditorItem.Animations[lstAnimations.SelectedIndex].SpawnRange = scrlSpawnRange.Value;
+            UpdateAnimations();
         }
 
         private void lstAnimations_Click(object sender, EventArgs e)
         {
             if (lstAnimations.SelectedIndex > -1)
             {
-                updateAnimationData(lstAnimations.SelectedIndex);
+                UpdateAnimationData(lstAnimations.SelectedIndex);
             }
         }
 
@@ -498,45 +498,45 @@ namespace Intersect.Editor.Classes
 
         private void toolStripItemDelete_Click(object sender, EventArgs e)
         {
-            if (_editorItem != null && lstProjectiles.Focused)
+            if (mEditorItem != null && lstProjectiles.Focused)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("projectileeditor", "deleteprompt"),
                         Strings.Get("projectileeditor", "deletetitle"), DarkDialogButton.YesNo,
                         Properties.Resources.Icon) == DialogResult.Yes)
                 {
-                    PacketSender.SendDeleteObject(_editorItem);
+                    PacketSender.SendDeleteObject(mEditorItem);
                 }
             }
         }
 
         private void toolStripItemCopy_Click(object sender, EventArgs e)
         {
-            if (_editorItem != null && lstProjectiles.Focused)
+            if (mEditorItem != null && lstProjectiles.Focused)
             {
-                _copiedItem = _editorItem.BinaryData;
+                mCopiedItem = mEditorItem.BinaryData;
                 toolStripItemPaste.Enabled = true;
             }
         }
 
         private void toolStripItemPaste_Click(object sender, EventArgs e)
         {
-            if (_editorItem != null && _copiedItem != null && lstProjectiles.Focused)
+            if (mEditorItem != null && mCopiedItem != null && lstProjectiles.Focused)
             {
-                _editorItem.Load(_copiedItem);
+                mEditorItem.Load(mCopiedItem);
                 UpdateEditor();
             }
         }
 
         private void toolStripItemUndo_Click(object sender, EventArgs e)
         {
-            if (_changed.Contains(_editorItem) && _editorItem != null)
+            if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
                 if (DarkMessageBox.ShowWarning(Strings.Get("projectileeditor", "undoprompt"),
                         Strings.Get("projectileeditor", "undotitle"), DarkDialogButton.YesNo,
                         Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
-                    _editorItem.RestoreBackup();
+                    mEditorItem.RestoreBackup();
                     UpdateEditor();
                 }
             }
@@ -570,10 +570,10 @@ namespace Intersect.Editor.Classes
 
         private void UpdateToolStripItems()
         {
-            toolStripItemCopy.Enabled = _editorItem != null && lstProjectiles.Focused;
-            toolStripItemPaste.Enabled = _editorItem != null && _copiedItem != null && lstProjectiles.Focused;
-            toolStripItemDelete.Enabled = _editorItem != null && lstProjectiles.Focused;
-            toolStripItemUndo.Enabled = _editorItem != null && lstProjectiles.Focused;
+            toolStripItemCopy.Enabled = mEditorItem != null && lstProjectiles.Focused;
+            toolStripItemPaste.Enabled = mEditorItem != null && mCopiedItem != null && lstProjectiles.Focused;
+            toolStripItemDelete.Enabled = mEditorItem != null && lstProjectiles.Focused;
+            toolStripItemUndo.Enabled = mEditorItem != null && lstProjectiles.Focused;
         }
 
         private void itemList_FocusChanged(object sender, EventArgs e)
@@ -594,56 +594,56 @@ namespace Intersect.Editor.Classes
 
         private void cmbItem_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Ammo = Database.GameObjectIdFromList(GameObjectType.Item, cmbItem.SelectedIndex - 1);
+            mEditorItem.Ammo = Database.GameObjectIdFromList(GameObjectType.Item, cmbItem.SelectedIndex - 1);
         }
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Animations[lstAnimations.SelectedIndex].Animation =
+            mEditorItem.Animations[lstAnimations.SelectedIndex].Animation =
                 Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
-            updateAnimations();
+            UpdateAnimations();
         }
 
         private void nudSpeed_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Speed = (int) nudSpeed.Value;
+            mEditorItem.Speed = (int) nudSpeed.Value;
         }
 
         private void nudSpawnDelay_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Delay = (int) nudSpawn.Value;
+            mEditorItem.Delay = (int) nudSpawn.Value;
         }
 
         private void nudAmount_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Quantity = (int) nudAmount.Value;
-            updateAnimations();
+            mEditorItem.Quantity = (int) nudAmount.Value;
+            UpdateAnimations();
         }
 
         private void nudRange_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Range = (int) nudRange.Value;
+            mEditorItem.Range = (int) nudRange.Value;
         }
 
         private void nudKnockback_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.Knockback = (int) nudKnockback.Value;
+            mEditorItem.Knockback = (int) nudKnockback.Value;
         }
 
         private void nudConsume_ValueChanged(object sender, EventArgs e)
         {
-            _editorItem.AmmoRequired = (int) nudConsume.Value;
+            mEditorItem.AmmoRequired = (int) nudConsume.Value;
         }
 
         private void cmbSpell_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbSpell.SelectedIndex > 0)
             {
-                _editorItem.Spell = Database.GameObjectIdFromList(GameObjectType.Spell, cmbSpell.SelectedIndex - 1);
+                mEditorItem.Spell = Database.GameObjectIdFromList(GameObjectType.Spell, cmbSpell.SelectedIndex - 1);
             }
             else
             {
-                _editorItem.Spell = -1;
+                mEditorItem.Spell = -1;
             }
         }
     }

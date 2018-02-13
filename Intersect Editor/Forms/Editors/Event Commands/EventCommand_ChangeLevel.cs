@@ -5,19 +5,19 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_ChangeLevel : UserControl
+    public partial class EventCommandChangeLevel : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventCommand mMyCommand;
 
-        public EventCommand_ChangeLevel(EventCommand refCommand, FrmEvent editor)
+        public EventCommandChangeLevel(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
-            if (_myCommand.Ints[0] <= 0 || _myCommand.Ints[0] > Options.MaxLevel) _myCommand.Ints[0] = 1;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
+            if (mMyCommand.Ints[0] <= 0 || mMyCommand.Ints[0] > Options.MaxLevel) mMyCommand.Ints[0] = 1;
             nudLevel.Maximum = Options.MaxLevel;
-            nudLevel.Value = _myCommand.Ints[0];
+            nudLevel.Value = mMyCommand.Ints[0];
             InitLocalization();
         }
 
@@ -31,13 +31,13 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = (int) nudLevel.Value;
-            _eventEditor.FinishCommandEdit();
+            mMyCommand.Ints[0] = (int) nudLevel.Value;
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
     }
 }

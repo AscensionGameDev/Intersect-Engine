@@ -77,6 +77,7 @@
     <Compile Include="Classes\Entities\Events\Event.cs" />
     <Compile Include="Classes\Entities\Events\EventDialog.cs" />
     <Compile Include="Classes\Entities\Events\EventHold.cs" />
+    <Compile Include="Classes\Entities\PartyMember.cs" />
     <Compile Include="Classes\Entities\Player.cs" />
     <Compile Include="Classes\Entities\Projectile.cs" />
     <Compile Include="Classes\Entities\Resource.cs" />
@@ -174,6 +175,9 @@
     <Reference Include="Costura, Version=1.6.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.1.6.2\lib\dotnet\Costura.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="Lidgren.Network, Version=3.6.0.1271, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

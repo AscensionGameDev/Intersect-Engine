@@ -46,8 +46,8 @@ namespace Intersect.Client.Classes.Core
                 var key2 = Globals.Database.LoadPreference(name + "_key2");
                 if (string.IsNullOrEmpty(key1) || string.IsNullOrEmpty(key2))
                 {
-                    Globals.Database.SavePreference(name + "_key1", ((int)ControlMapping[control].key1).ToString());
-                    Globals.Database.SavePreference(name + "_key2", ((int)ControlMapping[control].key2).ToString());
+                    Globals.Database.SavePreference(name + "_key1", ((int)ControlMapping[control].Key1).ToString());
+                    Globals.Database.SavePreference(name + "_key2", ((int)ControlMapping[control].Key2).ToString());
                 }
                 else
                 {
@@ -61,7 +61,7 @@ namespace Intersect.Client.Classes.Core
             ControlMapping.Clear();
             foreach (var mapping in copyFrom.ControlMapping)
             {
-                CreateControlMap(mapping.Key, mapping.Value.key1, mapping.Value.key2);
+                CreateControlMap(mapping.Key, mapping.Value.Key1, mapping.Value.Key2);
             }
         }
 
@@ -92,8 +92,8 @@ namespace Intersect.Client.Classes.Core
             foreach (Controls control in Enum.GetValues(typeof(Controls)))
             {
                 var name = Enum.GetName(typeof(Controls), control);
-                Globals.Database.SavePreference(name + "_key1", ((int)ControlMapping[control].key1).ToString());
-                Globals.Database.SavePreference(name + "_key2", ((int)ControlMapping[control].key2).ToString());
+                Globals.Database.SavePreference(name + "_key1", ((int)ControlMapping[control].Key1).ToString());
+                Globals.Database.SavePreference(name + "_key2", ((int)ControlMapping[control].Key2).ToString());
             }
         }
 
@@ -115,8 +115,8 @@ namespace Intersect.Client.Classes.Core
         {
             if (ActiveControls.ControlMapping.ContainsKey(control))
             {
-                if (ActiveControls.ControlMapping[control].key1 == key ||
-                    ActiveControls.ControlMapping[control].key2 == key)
+                if (ActiveControls.ControlMapping[control].Key1 == key ||
+                    ActiveControls.ControlMapping[control].Key2 == key)
                 {
                     return true;
                 }
@@ -128,11 +128,11 @@ namespace Intersect.Client.Classes.Core
         {
             if (keyNum == 1)
             {
-                ControlMapping[control].key1 = key;
+                ControlMapping[control].Key1 = key;
             }
             else
             {
-                ControlMapping[control].key2 = key;
+                ControlMapping[control].Key2 = key;
             }
         }
 
@@ -151,22 +151,22 @@ namespace Intersect.Client.Classes.Core
 
     public class ControlMap
     {
-        public Keys key1;
-        public Keys key2;
+        public Keys Key1;
+        public Keys Key2;
 
         public ControlMap(Controls control, Keys key1, Keys key2)
         {
-            this.key1 = key1;
-            this.key2 = key2;
+            this.Key1 = key1;
+            this.Key2 = key2;
         }
 
         public bool KeyDown()
         {
-            if (key1 != Keys.None && Globals.InputManager.KeyDown(key1)) return true;
-            if (key2 != Keys.None && Globals.InputManager.KeyDown(key2)) return true;
-            if (!Gui.MouseHitGUI())
+            if (Key1 != Keys.None && Globals.InputManager.KeyDown(Key1)) return true;
+            if (Key2 != Keys.None && Globals.InputManager.KeyDown(Key2)) return true;
+            if (!Gui.MouseHitGui())
             {
-                switch (key1)
+                switch (Key1)
                 {
                     case Keys.LButton:
                         if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)) return true;
@@ -178,7 +178,7 @@ namespace Intersect.Client.Classes.Core
                         if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Middle)) return true;
                         break;
                 }
-                switch (key2)
+                switch (Key2)
                 {
                     case Keys.LButton:
                         if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)) return true;

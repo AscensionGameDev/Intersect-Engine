@@ -5,7 +5,7 @@ using Intersect.Editor.Forms.Controls;
 
 namespace Intersect.Editor.Forms
 {
-    partial class frmMapList
+    partial class FrmMapList
     {
         /// <summary>
         /// Required designer variable.
@@ -34,7 +34,7 @@ namespace Intersect.Editor.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMapList));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMapList));
             this.toolStrip1 = new DarkUI.Controls.DarkToolStrip();
             this.btnChronological = new ToolStripButton();
             this.toolSelectMap = new ToolStripButton();
@@ -212,7 +212,7 @@ namespace Intersect.Editor.Forms
             this.Controls.Add(this.toolStrip1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "frmMapList";
+            this.Name = "FrmMapList";
             this.Text = "Map List";
             this.Load += new System.EventHandler(this.frmMapList_Load);
             this.toolStrip1.ResumeLayout(false);

@@ -1,18 +1,34 @@
 ﻿using System;
+using Intersect.Localization;
+using Intersect.Logging;
 using IntersectClientExtras.Audio;
+using IntersectClientExtras.GenericClasses;
+using Intersect_Client.Classes.UI.Game.Chat;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
 
 namespace Intersect_MonoGameDx.Classes.SFML.Audio
 {
     public class MonoMusicSource : GameAudioSource
     {
-        private string _path;
-        private Song _song;
+        private string mPath;
+        private readonly Song mSong;
 
         public MonoMusicSource(string path)
         {
-            _path = path;
-            _song = Song.FromUri(path, new Uri(path, UriKind.Relative));
+            mPath = path;
+
+            if (mPath == null) return;
+
+            try
+            {
+                mSong = Song.FromUri(path, new Uri(path, UriKind.Relative));
+            }
+            catch (Exception exception)
+            {
+                Log.Error($"Error loading '{path}'.", exception);
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Get("errors", "loadfile", Strings.Get("words", "lcase_sound")), new Color(0xBF, 0x0, 0x0)));
+            }
         }
 
         public override GameAudioInstance CreateInstance()
@@ -22,7 +38,7 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
 
         public Song GetSource()
         {
-            return _song;
+            return mSong;
         }
     }
 }

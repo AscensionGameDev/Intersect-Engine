@@ -44,12 +44,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2
         private const string MAP_LIST_TABLE = "map_list";
 
         private const string MAP_LIST_DATA = "data";
-        private SqliteConnection _dbConnection;
-        private object _dbLock = new object();
+        private SqliteConnection mDbConnection;
+        private object mDbLock = new object();
 
         public Upgrade2(SqliteConnection connection)
         {
-            _dbConnection = connection;
+            mDbConnection = connection;
         }
 
         public void Upgrade()
@@ -292,14 +292,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2
         public void LoadGameObjects(GameObject type)
         {
             var nullIssues = "";
-            lock (_dbLock)
+            lock (mDbLock)
             {
                 var tableName = GetGameObjectTable(type);
                 ClearGameObjects(type);
                 var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" +
                             GAME_OBJECT_DELETED +
                             ";";
-                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                using (SqliteCommand cmd = new SqliteCommand(query, mDbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
                     using (var dataReader = cmd.ExecuteReader())
@@ -334,12 +334,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2
                 Log.Error("Attempted to persist null game object to the database.");
             }
 
-            lock (_dbLock)
+            lock (mDbLock)
             {
                 var insertQuery = "UPDATE " + gameObject.GetTable() + " set " + GAME_OBJECT_DELETED + "=@" +
                                   GAME_OBJECT_DELETED + "," + GAME_OBJECT_DATA + "=@" + GAME_OBJECT_DATA + " WHERE " +
                                   GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
-                using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+                using (SqliteCommand cmd = new SqliteCommand(insertQuery, mDbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.GetId()));
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
@@ -360,7 +360,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2
         private void FixMutesTable()
         {
             var cmd = "DROP TABLE " + MUTE_TABLE;
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
@@ -374,7 +374,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2
                   + MUTE_REASON + " TEXT,"
                   + MUTE_MUTER + " TEXT"
                   + ");";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
@@ -384,7 +384,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2
         private void FixBansTable()
         {
             var cmd = "DROP TABLE " + BAN_TABLE;
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
@@ -398,7 +398,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_2
                   + BAN_REASON + " TEXT,"
                   + BAN_BANNER + " TEXT"
                   + ");";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = mDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();

@@ -41,11 +41,11 @@ namespace Intersect.Editor.Classes.Maps
 
     class MapProperties
     {
-        private MapBase _myMap;
+        private MapBase mMyMap;
 
         public MapProperties(MapBase map)
         {
-            _myMap = map;
+            mMyMap = map;
         }
 
         [CustomCategory("general"),
@@ -54,13 +54,13 @@ namespace Intersect.Editor.Classes.Maps
          DefaultValue("New Map")]
         public string Name
         {
-            get { return _myMap.Name; }
+            get { return mMyMap.Name; }
             set
             {
-                if (_myMap.Name != value)
+                if (mMyMap.Name != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.Name = value;
+                    mMyMap.Name = value;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -74,7 +74,7 @@ namespace Intersect.Editor.Classes.Maps
          Browsable(true)]
         public string ZoneType
         {
-            get { return Strings.Get("mapproperties", "zone" + (int) _myMap.ZoneType); }
+            get { return Strings.Get("mapproperties", "zone" + (int) mMyMap.ZoneType); }
             set
             {
                 Globals.MapEditorWindow.PrepUndoState();
@@ -82,7 +82,7 @@ namespace Intersect.Editor.Classes.Maps
                 {
                     if (Strings.Get("mapproperties", "zone" + i) == value)
                     {
-                        _myMap.ZoneType = (MapZones) i;
+                        mMyMap.ZoneType = (MapZones) i;
                     }
                 }
                 Globals.MapEditorWindow.AddUndoState();
@@ -99,23 +99,23 @@ namespace Intersect.Editor.Classes.Maps
         {
             get
             {
-                List<string> MusicList = new List<string>
+                List<string> musicList = new List<string>
                 {
                     Strings.Get("general", "none")
                 };
-                MusicList.AddRange(GameContentManager.GetMusicNames());
-                if (MusicList.IndexOf(_myMap.Music) <= -1)
+                musicList.AddRange(GameContentManager.SmartSortedMusicNames);
+                if (musicList.IndexOf(mMyMap.Music) <= -1)
                 {
-                    _myMap.Music = null;
+                    mMyMap.Music = null;
                 }
-                return TextUtils.NullToNone(_myMap.Music);
+                return TextUtils.NullToNone(mMyMap.Music);
             }
             set
             {
-                if (_myMap.Music != value)
+                if (mMyMap.Music != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.Music = TextUtils.SanitizeNone(value);
+                    mMyMap.Music = TextUtils.SanitizeNone(value);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -131,23 +131,23 @@ namespace Intersect.Editor.Classes.Maps
         {
             get
             {
-                List<string> SoundList = new List<string>
+                List<string> soundList = new List<string>
                 {
                     Strings.Get("general", "none")
                 };
-                SoundList.AddRange(GameContentManager.GetSoundNames());
-                if (SoundList.IndexOf(_myMap.Sound) <= -1)
+                soundList.AddRange(GameContentManager.SmartSortedSoundNames);
+                if (soundList.IndexOf(mMyMap.Sound) <= -1)
                 {
-                    _myMap.Sound = null;
+                    mMyMap.Sound = null;
                 }
-                return TextUtils.NullToNone(_myMap.Sound);
+                return TextUtils.NullToNone(mMyMap.Sound);
             }
             set
             {
-                if (_myMap.Sound != value)
+                if (mMyMap.Sound != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.Sound = TextUtils.SanitizeNone(value);
+                    mMyMap.Sound = TextUtils.SanitizeNone(value);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -159,13 +159,13 @@ namespace Intersect.Editor.Classes.Maps
          DefaultValue(false)]
         public bool IsIndoors
         {
-            get { return _myMap.IsIndoors; }
+            get { return mMyMap.IsIndoors; }
             set
             {
-                if (_myMap.IsIndoors != value)
+                if (mMyMap.IsIndoors != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.IsIndoors = value;
+                    mMyMap.IsIndoors = value;
                     EditorGraphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
@@ -178,14 +178,14 @@ namespace Intersect.Editor.Classes.Maps
          DefaultValue(100)]
         public int Brightness
         {
-            get { return _myMap.Brightness; }
+            get { return mMyMap.Brightness; }
             set
             {
-                if (_myMap.Brightness != value)
+                if (mMyMap.Brightness != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.Brightness = Math.Max(value, 0);
-                    _myMap.Brightness = Math.Min(_myMap.Brightness, 100);
+                    mMyMap.Brightness = Math.Max(value, 0);
+                    mMyMap.Brightness = Math.Min(mMyMap.Brightness, 100);
                     EditorGraphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
@@ -198,14 +198,14 @@ namespace Intersect.Editor.Classes.Maps
          DefaultValue(300)]
         public int PlayerLightSize
         {
-            get { return _myMap.PlayerLightSize; }
+            get { return mMyMap.PlayerLightSize; }
             set
             {
-                if (_myMap.PlayerLightSize != value)
+                if (mMyMap.PlayerLightSize != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.PlayerLightSize = Math.Max(value, 0);
-                    _myMap.PlayerLightSize = Math.Min(_myMap.PlayerLightSize, 1000);
+                    mMyMap.PlayerLightSize = Math.Max(value, 0);
+                    mMyMap.PlayerLightSize = Math.Min(mMyMap.PlayerLightSize, 1000);
                     EditorGraphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
@@ -218,14 +218,14 @@ namespace Intersect.Editor.Classes.Maps
          DefaultValue(0)]
         public float PlayerLightExpand
         {
-            get { return _myMap.PlayerLightExpand; }
+            get { return mMyMap.PlayerLightExpand; }
             set
             {
-                if (_myMap.PlayerLightExpand != value)
+                if (mMyMap.PlayerLightExpand != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.PlayerLightExpand = Math.Max(value, 0f);
-                    _myMap.PlayerLightExpand = Math.Min(_myMap.PlayerLightExpand, 1f);
+                    mMyMap.PlayerLightExpand = Math.Max(value, 0f);
+                    mMyMap.PlayerLightExpand = Math.Min(mMyMap.PlayerLightExpand, 1f);
                     EditorGraphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
@@ -238,14 +238,14 @@ namespace Intersect.Editor.Classes.Maps
          DefaultValue(255)]
         public byte PlayerLightIntensity
         {
-            get { return _myMap.PlayerLightIntensity; }
+            get { return mMyMap.PlayerLightIntensity; }
             set
             {
-                if (_myMap.PlayerLightIntensity != value)
+                if (mMyMap.PlayerLightIntensity != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.PlayerLightIntensity = Math.Max(value, (byte) 0);
-                    _myMap.PlayerLightIntensity = Math.Min(_myMap.PlayerLightIntensity, (byte) 255);
+                    mMyMap.PlayerLightIntensity = Math.Max(value, (byte) 0);
+                    mMyMap.PlayerLightIntensity = Math.Min(mMyMap.PlayerLightIntensity, (byte) 255);
                     EditorGraphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
@@ -260,17 +260,17 @@ namespace Intersect.Editor.Classes.Maps
         {
             get
             {
-                return System.Drawing.Color.FromArgb(_myMap.PlayerLightColor.A, _myMap.PlayerLightColor.R,
-                    _myMap.PlayerLightColor.G,
-                    _myMap.PlayerLightColor.B);
+                return System.Drawing.Color.FromArgb(mMyMap.PlayerLightColor.A, mMyMap.PlayerLightColor.R,
+                    mMyMap.PlayerLightColor.G,
+                    mMyMap.PlayerLightColor.B);
             }
             set
             {
-                if (_myMap.PlayerLightColor.A != value.A || _myMap.PlayerLightColor.R != value.R ||
-                    _myMap.PlayerLightColor.G != value.G || _myMap.PlayerLightColor.B != value.B)
+                if (mMyMap.PlayerLightColor.A != value.A || mMyMap.PlayerLightColor.R != value.R ||
+                    mMyMap.PlayerLightColor.G != value.G || mMyMap.PlayerLightColor.B != value.B)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.PlayerLightColor = Color.FromArgb(value.A, value.R, value.G, value.B);
+                    mMyMap.PlayerLightColor = Color.FromArgb(value.A, value.R, value.G, value.B);
                     EditorGraphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
@@ -283,14 +283,14 @@ namespace Intersect.Editor.Classes.Maps
          DefaultValue(0)]
         public int RHue
         {
-            get { return _myMap.RHue; }
+            get { return mMyMap.RHue; }
             set
             {
-                if (_myMap.RHue != value)
+                if (mMyMap.RHue != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.RHue = Math.Max(value, 0);
-                    _myMap.RHue = Math.Min(_myMap.RHue, 255);
+                    mMyMap.RHue = Math.Max(value, 0);
+                    mMyMap.RHue = Math.Min(mMyMap.RHue, 255);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -302,14 +302,14 @@ namespace Intersect.Editor.Classes.Maps
          DefaultValue(0)]
         public int GHue
         {
-            get { return _myMap.GHue; }
+            get { return mMyMap.GHue; }
             set
             {
-                if (_myMap.GHue != value)
+                if (mMyMap.GHue != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.GHue = Math.Max(value, 0);
-                    _myMap.GHue = Math.Min(_myMap.GHue, 255);
+                    mMyMap.GHue = Math.Max(value, 0);
+                    mMyMap.GHue = Math.Min(mMyMap.GHue, 255);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -321,14 +321,14 @@ namespace Intersect.Editor.Classes.Maps
          DefaultValue(0)]
         public int BHue
         {
-            get { return _myMap.BHue; }
+            get { return mMyMap.BHue; }
             set
             {
-                if (_myMap.BHue != value)
+                if (mMyMap.BHue != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.BHue = Math.Max(value, 0);
-                    _myMap.BHue = Math.Min(_myMap.BHue, 255);
+                    mMyMap.BHue = Math.Max(value, 0);
+                    mMyMap.BHue = Math.Min(mMyMap.BHue, 255);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -340,14 +340,14 @@ namespace Intersect.Editor.Classes.Maps
          DefaultValue(0)]
         public int AHue
         {
-            get { return _myMap.AHue; }
+            get { return mMyMap.AHue; }
             set
             {
-                if (_myMap.AHue != value)
+                if (mMyMap.AHue != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.AHue = Math.Max(value, 0);
-                    _myMap.AHue = Math.Min(_myMap.AHue, 255);
+                    mMyMap.AHue = Math.Max(value, 0);
+                    mMyMap.AHue = Math.Min(mMyMap.AHue, 255);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -363,23 +363,23 @@ namespace Intersect.Editor.Classes.Maps
         {
             get
             {
-                List<string> FogList = new List<string>
+                List<string> fogList = new List<string>
                 {
                     Strings.Get("general", "none")
                 };
-                FogList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Fog));
-                if (FogList.IndexOf(_myMap.Fog) <= -1)
+                fogList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Fog));
+                if (fogList.IndexOf(mMyMap.Fog) <= -1)
                 {
-                    _myMap.Fog = null;
+                    mMyMap.Fog = null;
                 }
-                return TextUtils.NullToNone(_myMap.Fog);
+                return TextUtils.NullToNone(mMyMap.Fog);
             }
             set
             {
-                if (_myMap.Fog != value)
+                if (mMyMap.Fog != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.Fog = TextUtils.SanitizeNone(value);
+                    mMyMap.Fog = TextUtils.SanitizeNone(value);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -391,14 +391,14 @@ namespace Intersect.Editor.Classes.Maps
          DefaultValue(0)]
         public int FogXSpeed
         {
-            get { return _myMap.FogXSpeed; }
+            get { return mMyMap.FogXSpeed; }
             set
             {
-                if (_myMap.FogXSpeed != value)
+                if (mMyMap.FogXSpeed != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.FogXSpeed = Math.Max(value, -5);
-                    _myMap.FogXSpeed = Math.Min(_myMap.FogXSpeed, 5);
+                    mMyMap.FogXSpeed = Math.Max(value, -5);
+                    mMyMap.FogXSpeed = Math.Min(mMyMap.FogXSpeed, 5);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -410,14 +410,14 @@ namespace Intersect.Editor.Classes.Maps
          DefaultValue(0)]
         public int FogYSpeed
         {
-            get { return _myMap.FogYSpeed; }
+            get { return mMyMap.FogYSpeed; }
             set
             {
-                if (_myMap.FogYSpeed != value)
+                if (mMyMap.FogYSpeed != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.FogYSpeed = Math.Max(value, -5);
-                    _myMap.FogYSpeed = Math.Min(_myMap.FogYSpeed, 5);
+                    mMyMap.FogYSpeed = Math.Max(value, -5);
+                    mMyMap.FogYSpeed = Math.Min(mMyMap.FogYSpeed, 5);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -429,14 +429,14 @@ namespace Intersect.Editor.Classes.Maps
          DefaultValue(0)]
         public int FogAlpha
         {
-            get { return _myMap.FogTransparency; }
+            get { return mMyMap.FogTransparency; }
             set
             {
-                if (_myMap.FogTransparency != value)
+                if (mMyMap.FogTransparency != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.FogTransparency = Math.Max(value, 0);
-                    _myMap.FogTransparency = Math.Min(_myMap.FogTransparency, 255);
+                    mMyMap.FogTransparency = Math.Max(value, 0);
+                    mMyMap.FogTransparency = Math.Min(mMyMap.FogTransparency, 255);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -452,23 +452,23 @@ namespace Intersect.Editor.Classes.Maps
         {
             get
             {
-                List<string> ImageList = new List<string>
+                List<string> imageList = new List<string>
                 {
                     Strings.Get("general", "none")
                 };
-                ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
-                if (ImageList.IndexOf(_myMap.Panorama) <= -1)
+                imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
+                if (imageList.IndexOf(mMyMap.Panorama) <= -1)
                 {
-                    _myMap.Panorama = null;
+                    mMyMap.Panorama = null;
                 }
-                return TextUtils.NullToNone(_myMap.Panorama);
+                return TextUtils.NullToNone(mMyMap.Panorama);
             }
             set
             {
-                if (_myMap.Panorama != value)
+                if (mMyMap.Panorama != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.Panorama = TextUtils.SanitizeNone(value);
+                    mMyMap.Panorama = TextUtils.SanitizeNone(value);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -484,23 +484,23 @@ namespace Intersect.Editor.Classes.Maps
         {
             get
             {
-                List<string> ImageList = new List<string>
+                List<string> imageList = new List<string>
                 {
                     Strings.Get("general", "none")
                 };
-                ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
-                if (ImageList.IndexOf(_myMap.OverlayGraphic) <= -1)
+                imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
+                if (imageList.IndexOf(mMyMap.OverlayGraphic) <= -1)
                 {
-                    _myMap.OverlayGraphic = null;
+                    mMyMap.OverlayGraphic = null;
                 }
-                return TextUtils.NullToNone(_myMap.OverlayGraphic);
+                return TextUtils.NullToNone(mMyMap.OverlayGraphic);
             }
             set
             {
-                if (_myMap.OverlayGraphic != value)
+                if (mMyMap.OverlayGraphic != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.OverlayGraphic = TextUtils.SanitizeNone(value);
+                    mMyMap.OverlayGraphic = TextUtils.SanitizeNone(value);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -525,12 +525,12 @@ namespace Intersect.Editor.Classes.Maps
         public override StandardValuesCollection
             GetStandardValues(ITypeDescriptorContext context)
         {
-            List<string> MusicList = new List<string>
+            List<string> musicList = new List<string>
             {
                 Strings.Get("general", "none")
             };
-            MusicList.AddRange(GameContentManager.GetMusicNames());
-            return new StandardValuesCollection(MusicList.ToArray());
+            musicList.AddRange(GameContentManager.SmartSortedMusicNames);
+            return new StandardValuesCollection(musicList.ToArray());
         }
     }
 
@@ -552,12 +552,12 @@ namespace Intersect.Editor.Classes.Maps
         public override StandardValuesCollection
             GetStandardValues(ITypeDescriptorContext context)
         {
-            List<string> SoundList = new List<string>
+            List<string> soundList = new List<string>
             {
                 Strings.Get("general", "none")
             };
-            SoundList.AddRange(GameContentManager.GetSoundNames());
-            return new StandardValuesCollection(SoundList.ToArray());
+            soundList.AddRange(GameContentManager.SmartSortedSoundNames);
+            return new StandardValuesCollection(soundList.ToArray());
         }
     }
 
@@ -579,12 +579,12 @@ namespace Intersect.Editor.Classes.Maps
         public override StandardValuesCollection
             GetStandardValues(ITypeDescriptorContext context)
         {
-            List<string> FogList = new List<string>
+            List<string> fogList = new List<string>
             {
                 Strings.Get("general", "none")
             };
-            FogList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Fog));
-            return new StandardValuesCollection(FogList.ToArray());
+            fogList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Fog));
+            return new StandardValuesCollection(fogList.ToArray());
         }
     }
 
@@ -606,12 +606,12 @@ namespace Intersect.Editor.Classes.Maps
         public override StandardValuesCollection
             GetStandardValues(ITypeDescriptorContext context)
         {
-            List<string> ImageList = new List<string>
+            var imageList = new List<string>
             {
                 Strings.Get("general", "none")
             };
-            ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
-            return new StandardValuesCollection(ImageList.ToArray());
+            imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
+            return new StandardValuesCollection(imageList.ToArray());
         }
     }
 

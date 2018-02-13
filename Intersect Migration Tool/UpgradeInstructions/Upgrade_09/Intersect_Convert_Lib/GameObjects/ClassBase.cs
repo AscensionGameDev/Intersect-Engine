@@ -70,9 +70,9 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_9.Intersect_Convert_Li
         public override void Load(byte[] packet)
         {
             var spriteCount = 0;
-            ClassSprite TempSprite = new ClassSprite();
+            ClassSprite tempSprite = new ClassSprite();
             var spellCount = 0;
-            ClassSpell TempSpell = new ClassSpell();
+            ClassSpell tempSpell = new ClassSpell();
 
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
@@ -90,13 +90,13 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_9.Intersect_Convert_Li
             spriteCount = myBuffer.ReadInteger();
             for (var i = 0; i < spriteCount; i++)
             {
-                TempSprite = new ClassSprite
+                tempSprite = new ClassSprite
                 {
                     Sprite = myBuffer.ReadString(),
                     Face = myBuffer.ReadString(),
                     Gender = myBuffer.ReadByte()
                 };
-                Sprites.Add(TempSprite);
+                Sprites.Add(tempSprite);
             }
 
             //Base Info
@@ -152,12 +152,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_9.Intersect_Convert_Li
             spellCount = myBuffer.ReadInteger();
             for (var i = 0; i < spellCount; i++)
             {
-                TempSpell = new ClassSpell
+                tempSpell = new ClassSpell
                 {
                     SpellNum = myBuffer.ReadInteger(),
                     Level = myBuffer.ReadInteger()
                 };
-                Spells.Add(TempSpell);
+                Spells.Add(tempSpell);
             }
 
             myBuffer.Dispose();

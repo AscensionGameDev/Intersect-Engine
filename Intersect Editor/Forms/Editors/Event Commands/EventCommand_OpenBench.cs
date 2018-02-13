@@ -7,20 +7,20 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_OpenBench : UserControl
+    public partial class EventCommandOpenBench : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventCommand mMyCommand;
 
-        public EventCommand_OpenBench(EventCommand refCommand, FrmEvent editor)
+        public EventCommandOpenBench(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
             InitLocalization();
             cmbbench.Items.Clear();
             cmbbench.Items.AddRange(Database.GetGameObjectList(GameObjectType.Bench));
-            cmbbench.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Bench, _myCommand.Ints[0]);
+            cmbbench.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Bench, mMyCommand.Ints[0]);
         }
 
         private void InitLocalization()
@@ -34,13 +34,13 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (cmbbench.SelectedIndex > -1)
-                _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Bench, cmbbench.SelectedIndex);
-            _eventEditor.FinishCommandEdit();
+                mMyCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Bench, cmbbench.SelectedIndex);
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
     }
 }

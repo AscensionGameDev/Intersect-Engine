@@ -12,29 +12,29 @@ namespace Intersect.Editor.Classes
 {
     public static class EditorLoop
     {
-        private static int _fps;
-        private static int _fpsCount;
-        private static long _fpsTime;
-        private static frmMain myForm;
-        private static long animationTimer = Globals.System.GetTimeMs();
-        private static long waterfallTimer = Globals.System.GetTimeMs();
-        private static Thread mapThread;
-        private static frmProgress progressForm;
+        private static int sFps;
+        private static int sFpsCount;
+        private static long sFpsTime;
+        private static FrmMain sMyForm;
+        private static long sAnimationTimer = Globals.System.GetTimeMs();
+        private static long sWaterfallTimer = Globals.System.GetTimeMs();
+        private static Thread sMapThread;
+        private static FrmProgress sProgressForm;
 
         public static void StartLoop()
         {
             AppDomain.CurrentDomain.UnhandledException += Program.CurrentDomain_UnhandledException;
             Globals.MainForm.Visible = true;
             Globals.MainForm.EnterMap(Globals.CurrentMap == null ? 0 : Globals.CurrentMap.Index);
-            myForm = Globals.MainForm;
+            sMyForm = Globals.MainForm;
 
-            if (mapThread == null)
+            if (sMapThread == null)
 
             {
-                mapThread = new Thread(UpdateMaps);
-                mapThread.Start();
+                sMapThread = new Thread(UpdateMaps);
+                sMapThread.Start();
                 // drawing loop
-                while (myForm.Visible) // loop while the window is open
+                while (sMyForm.Visible) // loop while the window is open
                 {
                     RunFrame();
                 }
@@ -59,25 +59,25 @@ namespace Intersect.Editor.Classes
         {
             //Shooting for 30fps
             var startTime = Globals.System.GetTimeMs();
-            myForm.Update();
+            sMyForm.Update();
 
-            if (waterfallTimer < Globals.System.GetTimeMs())
+            if (sWaterfallTimer < Globals.System.GetTimeMs())
             {
                 Globals.WaterfallFrame++;
                 if (Globals.WaterfallFrame == 3)
                 {
                     Globals.WaterfallFrame = 0;
                 }
-                waterfallTimer = Globals.System.GetTimeMs() + 500;
+                sWaterfallTimer = Globals.System.GetTimeMs() + 500;
             }
-            if (animationTimer < Globals.System.GetTimeMs())
+            if (sAnimationTimer < Globals.System.GetTimeMs())
             {
                 Globals.AutotileFrame++;
                 if (Globals.AutotileFrame == 3)
                 {
                     Globals.AutotileFrame = 0;
                 }
-                animationTimer = Globals.System.GetTimeMs() + 600;
+                sAnimationTimer = Globals.System.GetTimeMs() + 600;
             }
 
             DrawFrame();
@@ -86,13 +86,13 @@ namespace Intersect.Editor.Classes
             EditorNetwork.Update();
             Application.DoEvents(); // handle form events
 
-            _fpsCount++;
-            if (_fpsTime < Globals.System.GetTimeMs())
+            sFpsCount++;
+            if (sFpsTime < Globals.System.GetTimeMs())
             {
-                _fps = _fpsCount;
-                myForm.toolStripLabelFPS.Text = Strings.Get("mainform", "fps", _fps);
-                _fpsCount = 0;
-                _fpsTime = Globals.System.GetTimeMs() + 1000;
+                sFps = sFpsCount;
+                sMyForm.toolStripLabelFPS.Text = Strings.Get("mainform", "fps", sFps);
+                sFpsCount = 0;
+                sFpsTime = Globals.System.GetTimeMs() + 1000;
             }
             Thread.Sleep(Math.Max(1, (int) (1000 / 60f - (Globals.System.GetTimeMs() - startTime))));
         }
@@ -101,14 +101,14 @@ namespace Intersect.Editor.Classes
         {
             while (!Globals.ClosingEditor)
             {
-                if (Globals.MapsToScreenshot.Count > 0 && Globals.FetchingMapPreviews == false && myForm.InvokeRequired)
+                if (Globals.MapsToScreenshot.Count > 0 && Globals.FetchingMapPreviews == false && sMyForm.InvokeRequired)
                 {
-                    if (progressForm == null || progressForm.IsDisposed ||
-                        progressForm.Visible == false)
+                    if (sProgressForm == null || sProgressForm.IsDisposed ||
+                        sProgressForm.Visible == false)
                     {
-                        progressForm = new frmProgress();
-                        progressForm.SetTitle("Saving Map Cache");
-                        new Task((() => progressForm.ShowDialog())).Start();
+                        sProgressForm = new FrmProgress();
+                        sProgressForm.SetTitle("Saving Map Cache");
+                        new Task((() => sProgressForm.ShowDialog())).Start();
                         while (Globals.MapsToScreenshot.Count > 0)
                         {
                             try
@@ -116,11 +116,11 @@ namespace Intersect.Editor.Classes
                                 var maps = MapInstance.Lookup.ValueList.ToArray();
                                 foreach (MapInstance map in maps)
                                 {
-                                    if (!myForm.Disposing && progressForm.IsHandleCreated)
-                                        progressForm.BeginInvoke(
+                                    if (!sMyForm.Disposing && sProgressForm.IsHandleCreated)
+                                        sProgressForm.BeginInvoke(
                                             (Action)
                                             (() =>
-                                                progressForm.SetProgress(
+                                                sProgressForm.SetProgress(
                                                     Globals.MapsToScreenshot.Count + " maps remaining.", -1, false)));
                                     if (map != null)
                                     {
@@ -138,7 +138,7 @@ namespace Intersect.Editor.Classes
                             Thread.Sleep(50);
                         }
                         Globals.MapGrid.ResetForm();
-                        progressForm.BeginInvoke(new Action(() => progressForm.Close()));
+                        sProgressForm.BeginInvoke(new Action(() => sProgressForm.Close()));
                     }
                 }
                 Thread.Sleep(100);

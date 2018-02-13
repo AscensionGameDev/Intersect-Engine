@@ -5,19 +5,19 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_SelfSwitch : UserControl
+    public partial class EventCommandSelfSwitch : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventCommand mMyCommand;
 
-        public EventCommand_SelfSwitch(EventCommand refCommand, FrmEvent editor)
+        public EventCommandSelfSwitch(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
             InitLocalization();
-            cmbSetSwitch.SelectedIndex = _myCommand.Ints[0];
-            cmbSetSwitchVal.SelectedIndex = _myCommand.Ints[1];
+            cmbSetSwitch.SelectedIndex = mMyCommand.Ints[0];
+            cmbSetSwitchVal.SelectedIndex = mMyCommand.Ints[1];
         }
 
         private void InitLocalization()
@@ -38,14 +38,14 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = cmbSetSwitch.SelectedIndex;
-            _myCommand.Ints[1] = cmbSetSwitchVal.SelectedIndex;
-            _eventEditor.FinishCommandEdit();
+            mMyCommand.Ints[0] = cmbSetSwitch.SelectedIndex;
+            mMyCommand.Ints[1] = cmbSetSwitchVal.SelectedIndex;
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
     }
 }

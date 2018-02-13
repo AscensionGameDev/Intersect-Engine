@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_Wait
+    partial class EventCommandWait
     {
         /// <summary> 
         /// Required designer variable.
@@ -106,7 +106,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpWait);
-            this.Name = "EventCommand_Wait";
+            this.Name = "EventCommandWait";
             this.Size = new System.Drawing.Size(259, 106);
             this.grpWait.ResumeLayout(false);
             this.grpWait.PerformLayout();

@@ -5,13 +5,13 @@ namespace Intersect.Server.Classes.Networking
 {
     public static class WebSocketNetwork
     {
-        private static WebSocketSharp.Server.WebSocketServer _listener;
+        private static WebSocketSharp.Server.WebSocketServer sListener;
 
         public static void Init(int port)
         {
-            _listener = new WebSocketSharp.Server.WebSocketServer(port);
-            _listener.AddWebSocketService<SharpServerService>("/Intersect");
-            _listener.Start();
+            sListener = new WebSocketSharp.Server.WebSocketServer(port);
+            sListener.AddWebSocketService<SharpServerService>("/Intersect");
+            sListener.Start();
         }
 
         public static void Stop()

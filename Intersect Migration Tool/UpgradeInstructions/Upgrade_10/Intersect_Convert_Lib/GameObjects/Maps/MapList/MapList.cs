@@ -118,7 +118,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         {
             for (int i = 0; i < Items.Count; i++)
             {
-                if (Items[i].type == 0)
+                if (Items[i].Type == 0)
                 {
                     if (((MapListFolder) Items[i]).FolderId == folderId)
                     {
@@ -137,7 +137,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         {
             for (int i = 0; i < Items.Count; i++)
             {
-                if (Items[i].type == 0)
+                if (Items[i].Type == 0)
                 {
                     if (((MapListFolder) Items[i]).Children.FindMap(mapNum) != null)
                     {

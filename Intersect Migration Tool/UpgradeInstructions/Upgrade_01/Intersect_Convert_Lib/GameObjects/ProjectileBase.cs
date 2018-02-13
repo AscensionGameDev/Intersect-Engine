@@ -10,10 +10,10 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
         public new const string DATABASE_TABLE = "projectiles";
         public new const GameObject OBJECT_TYPE = GameObject.Projectile;
 
-        public const int SpawnLocationsWidth = 5;
-        public const int SpawnLocationsHeight = 5;
-        public const int MaxProjectileDirections = 8;
-        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        public const int SPAWN_LOCATIONS_WIDTH = 5;
+        public const int SPAWN_LOCATIONS_HEIGHT = 5;
+        public const int MAX_PROJECTILE_DIRECTIONS = 8;
+        protected static Dictionary<int, DatabaseObject> sObjects = new Dictionary<int, DatabaseObject>();
         public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
         public int Delay = 1;
         public bool GrappleHook;
@@ -26,16 +26,16 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
         public string Name = "New Projectile";
         public int Quantity = 1;
         public int Range = 1;
-        public Location[,] SpawnLocations = new Location[SpawnLocationsWidth, SpawnLocationsHeight];
+        public Location[,] SpawnLocations = new Location[SPAWN_LOCATIONS_WIDTH, SPAWN_LOCATIONS_HEIGHT];
         public int Speed = 1;
         public int Spell;
 
         //Init
         public ProjectileBase(int id) : base(id)
         {
-            for (var x = 0; x < SpawnLocationsWidth; x++)
+            for (var x = 0; x < SPAWN_LOCATIONS_WIDTH; x++)
             {
-                for (var y = 0; y < SpawnLocationsHeight; y++)
+                for (var y = 0; y < SPAWN_LOCATIONS_HEIGHT; y++)
                 {
                     SpawnLocations[x, y] = new Location();
                 }
@@ -59,11 +59,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
             Homing = Convert.ToBoolean(myBuffer.ReadInteger());
             GrappleHook = Convert.ToBoolean(myBuffer.ReadInteger());
 
-            for (var x = 0; x < SpawnLocationsWidth; x++)
+            for (var x = 0; x < SPAWN_LOCATIONS_WIDTH; x++)
             {
-                for (var y = 0; y < SpawnLocationsHeight; y++)
+                for (var y = 0; y < SPAWN_LOCATIONS_HEIGHT; y++)
                 {
-                    for (var i = 0; i < MaxProjectileDirections; i++)
+                    for (var i = 0; i < MAX_PROJECTILE_DIRECTIONS; i++)
                     {
                         SpawnLocations[x, y].Directions[i] = Convert.ToBoolean(myBuffer.ReadInteger());
                     }
@@ -104,11 +104,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
             myBuffer.WriteInteger(Convert.ToInt32(Homing));
             myBuffer.WriteInteger(Convert.ToInt32(GrappleHook));
 
-            for (var x = 0; x < SpawnLocationsWidth; x++)
+            for (var x = 0; x < SPAWN_LOCATIONS_WIDTH; x++)
             {
-                for (var y = 0; y < SpawnLocationsHeight; y++)
+                for (var y = 0; y < SPAWN_LOCATIONS_HEIGHT; y++)
                 {
-                    for (var i = 0; i < MaxProjectileDirections; i++)
+                    for (var i = 0; i < MAX_PROJECTILE_DIRECTIONS; i++)
                     {
                         myBuffer.WriteInteger(Convert.ToInt32(SpawnLocations[x, y].Directions[i]));
                     }
@@ -129,18 +129,18 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
 
         public static ProjectileBase GetProjectile(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return (ProjectileBase) Objects[index];
+                return (ProjectileBase) sObjects[index];
             }
             return null;
         }
 
         public static string GetName(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return ((ProjectileBase) Objects[index]).Name;
+                return ((ProjectileBase) sObjects[index]).Name;
             }
             return "Deleted";
         }
@@ -162,44 +162,44 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
 
         public static DatabaseObject Get(int index)
         {
-            if (Objects.ContainsKey(index))
+            if (sObjects.ContainsKey(index))
             {
-                return Objects[index];
+                return sObjects[index];
             }
             return null;
         }
 
         public override void Delete()
         {
-            Objects.Remove(GetId());
+            sObjects.Remove(GetId());
         }
 
         public static void ClearObjects()
         {
-            Objects.Clear();
+            sObjects.Clear();
         }
 
         public static void AddObject(int index, DatabaseObject obj)
         {
-            Objects.Remove(index);
-            Objects.Add(index, obj);
+            sObjects.Remove(index);
+            sObjects.Add(index, obj);
         }
 
         public static int ObjectCount()
         {
-            return Objects.Count;
+            return sObjects.Count;
         }
 
         public static Dictionary<int, ProjectileBase> GetObjects()
         {
-            Dictionary<int, ProjectileBase> objects = Objects.ToDictionary(k => k.Key, v => (ProjectileBase) v.Value);
+            Dictionary<int, ProjectileBase> objects = sObjects.ToDictionary(k => k.Key, v => (ProjectileBase) v.Value);
             return objects;
         }
     }
 
     public class Location
     {
-        public bool[] Directions = new bool[ProjectileBase.MaxProjectileDirections];
+        public bool[] Directions = new bool[ProjectileBase.MAX_PROJECTILE_DIRECTIONS];
     }
 
     public class ProjectileAnimation

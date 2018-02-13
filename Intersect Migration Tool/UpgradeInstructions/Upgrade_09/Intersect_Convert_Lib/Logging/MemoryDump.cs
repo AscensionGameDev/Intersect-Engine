@@ -6,7 +6,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_9.Intersect_Convert_Li
 {
     public static class MemoryDump
     {
-        private static string mDumpDirectory;
+        private static string sDumpDirectory;
 
         static MemoryDump()
         {
@@ -15,8 +15,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_9.Intersect_Convert_Li
 
         public static string DumpDirectory
         {
-            get { return Path.Combine(Environment.CurrentDirectory, mDumpDirectory); }
-            set { mDumpDirectory = value; }
+            get { return Path.Combine(Environment.CurrentDirectory, sDumpDirectory); }
+            set { sDumpDirectory = value; }
         }
 
         private static void EnsureDirectory()

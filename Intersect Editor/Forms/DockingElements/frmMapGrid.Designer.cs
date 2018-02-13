@@ -3,7 +3,7 @@ using DarkUI.Renderers;
 
 namespace Intersect.Editor.Forms.DockingElements
 {
-    partial class frmMapGrid
+    partial class FrmMapGrid
     {
         /// <summary>
         /// Required designer variable.
@@ -32,7 +32,7 @@ namespace Intersect.Editor.Forms.DockingElements
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMapGrid));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMapGrid));
             this.pnlMapGrid = new System.Windows.Forms.Panel();
             this.toolStrip1 = new DarkUI.Controls.DarkToolStrip();
             this.btnFetchPreview = new System.Windows.Forms.ToolStripDropDownButton();
@@ -180,7 +180,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.Name = "frmMapGrid";
+            this.Name = "FrmMapGrid";
             this.Text = "Map Grid";
             this.DockStateChanged += new System.EventHandler(this.frmMapGrid_DockStateChanged);
             this.Load += new System.EventHandler(this.frmMapGrid_Load);

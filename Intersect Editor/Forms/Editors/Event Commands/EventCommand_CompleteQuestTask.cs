@@ -8,16 +8,16 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_CompleteQuestTask : UserControl
+    public partial class EventCommandCompleteQuestTask : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventCommand mMyCommand;
 
-        public EventCommand_CompleteQuestTask(EventCommand refCommand, FrmEvent editor)
+        public EventCommandCompleteQuestTask(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
             InitLocalization();
             cmbQuests.Items.Clear();
             cmbQuests.Items.AddRange(Database.GetGameObjectList(GameObjectType.Quest));
@@ -35,8 +35,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Quest, cmbQuests.SelectedIndex);
-            _myCommand.Ints[1] = -1;
+            mMyCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Quest, cmbQuests.SelectedIndex);
+            mMyCommand.Ints[1] = -1;
             if (cmbQuests.SelectedIndex > -1)
             {
                 var quest = QuestBase.Lookup.Get<QuestBase>(
@@ -49,17 +49,17 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                         i++;
                         if (i == cmbQuestTask.SelectedIndex)
                         {
-                            _myCommand.Ints[1] = task.Id;
+                            mMyCommand.Ints[1] = task.Id;
                         }
                     }
                 }
             }
-            _eventEditor.FinishCommandEdit();
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
 
         private void cmbQuests_SelectedIndexChanged(object sender, EventArgs e)
@@ -78,7 +78,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     foreach (var task in quest.Tasks)
                     {
                         cmbQuestTask.Items.Add(task.GetTaskString());
-                        if (task.Id == _myCommand.Ints[1])
+                        if (task.Id == mMyCommand.Ints[1])
                         {
                             cmbQuestTask.SelectedIndex = cmbQuestTask.Items.Count - 1;
                         }

@@ -27,8 +27,8 @@ namespace Intersect.Server.Classes.Networking
             {
                 return;
             }
-            List<Player> Players = MapInstance.Lookup.Get<MapInstance>(mapNum).GetPlayersOnMap();
-            foreach (var player in Players)
+            List<Player> players = MapInstance.Lookup.Get<MapInstance>(mapNum).GetPlayersOnMap();
+            foreach (var player in players)
             {
                 if (player != null && player.MyClient != except) player.MyClient.SendPacket(data);
             }
@@ -63,7 +63,7 @@ namespace Intersect.Server.Classes.Networking
             if (client != null)
             {
                 var bf = new ByteBuffer();
-                bf.WriteLong((int) ServerPackets.Ping);
+                bf.WriteLong((int)ServerPackets.Ping);
                 bf.WriteInteger(Convert.ToInt32(request));
                 client.SendPacket(bf.ToArray());
                 bf.Dispose();
@@ -73,7 +73,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendServerConfig(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.ServerConfig);
+            bf.WriteLong((int)ServerPackets.ServerConfig);
             bf.WriteBytes(ServerOptions.GetServerConfig());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -82,7 +82,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendJoinGame(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.JoinGame);
+            bf.WriteLong((int)ServerPackets.JoinGame);
             SendEntityDataTo(client, client.Entity);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -102,7 +102,7 @@ namespace Intersect.Server.Classes.Networking
             }
 
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.MapData);
+            bf.WriteLong((int)ServerPackets.MapData);
             bf.WriteLong(mapNum);
             var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
             if (map == null)
@@ -120,12 +120,12 @@ namespace Intersect.Server.Classes.Networking
             else
             {
                 bf.WriteInteger(0);
-                byte[] MapData = null;
+                byte[] mapData;
                 if (client.IsEditor)
                 {
-                    MapData = map.GetMapPacket(false);
-                    bf.WriteInteger(MapData.Length);
-                    bf.WriteBytes(MapData);
+                    mapData = map.GetMapPacket(false);
+                    bf.WriteInteger(mapData.Length);
+                    bf.WriteBytes(mapData);
                     var tileData = map.GetTileData(false);
                     bf.WriteInteger(tileData.Length);
                     bf.WriteBytes(tileData);
@@ -140,6 +140,7 @@ namespace Intersect.Server.Classes.Networking
                             client.SentMaps[mapNum].Item2 == map.Revision) return;
                         client.SentMaps.Remove(mapNum);
                     }
+
                     try
                     {
                         client.SentMaps.Add(mapNum,
@@ -150,65 +151,41 @@ namespace Intersect.Server.Classes.Networking
                         Log.Error($"Current Map #: {mapNum}");
                         Log.Error($"# Sent maps: {client.SentMaps.Count}");
                         Log.Error($"# Maps: {MapInstance.Lookup.Count}");
-                        throw exception;
+                        Log.Error(exception);
+                        throw;
                     }
-                    MapData = map.GetMapPacket(true);
-                    bf.WriteInteger(MapData.Length);
-                    bf.WriteBytes(MapData);
+
+                    mapData = map.GetMapPacket(true);
+                    bf.WriteInteger(mapData.Length);
+                    bf.WriteBytes(mapData);
                     var tileData = map.GetTileData();
                     bf.WriteInteger(tileData.Length);
                     bf.WriteBytes(tileData);
                     bf.WriteInteger(map.Revision);
                     bf.WriteInteger(map.MapGridX);
                     bf.WriteInteger(map.MapGridY);
-                    if (Options.GameBorderStyle == 1)
+                    switch (Options.GameBorderStyle)
                     {
-                        bf.WriteInteger(1);
-                        bf.WriteInteger(1);
-                        bf.WriteInteger(1);
-                        bf.WriteInteger(1);
-                    }
-                    else if (Options.GameBorderStyle == 0)
-                    {
-                        if (0 == map.MapGridX)
-                        {
+                        case 1:
                             bf.WriteInteger(1);
-                        }
-                        else
-                        {
-                            bf.WriteInteger(0);
-                        }
-                        if (Database.MapGrids[map.MapGrid].XMax - 1 == map.MapGridX)
-                        {
                             bf.WriteInteger(1);
-                        }
-                        else
-                        {
-                            bf.WriteInteger(0);
-                        }
-                        if (0 == map.MapGridY)
-                        {
                             bf.WriteInteger(1);
-                        }
-                        else
-                        {
-                            bf.WriteInteger(0);
-                        }
-                        if (Database.MapGrids[map.MapGrid].YMax - 1 == map.MapGridY)
-                        {
                             bf.WriteInteger(1);
-                        }
-                        else
-                        {
+                            break;
+
+                        case 0:
+                            bf.WriteInteger(0 == map.MapGridX ? 1 : 0);
+                            bf.WriteInteger(Database.MapGrids[map.MapGrid].XMax - 1 == map.MapGridX ? 1 : 0);
+                            bf.WriteInteger(0 == map.MapGridY ? 1 : 0);
+                            bf.WriteInteger(Database.MapGrids[map.MapGrid].YMax - 1 == map.MapGridY ? 1 : 0);
+                            break;
+
+                        default:
                             bf.WriteInteger(0);
-                        }
-                    }
-                    else
-                    {
-                        bf.WriteInteger(0);
-                        bf.WriteInteger(0);
-                        bf.WriteInteger(0);
-                        bf.WriteInteger(0);
+                            bf.WriteInteger(0);
+                            bf.WriteInteger(0);
+                            bf.WriteInteger(0);
+                            break;
                     }
                 }
                 client.SendPacket(bf.ToArray());
@@ -228,7 +205,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendMapToEditors(int mapNum)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.MapData);
+            bf.WriteLong((int)ServerPackets.MapData);
             bf.WriteLong(mapNum);
             if (MapInstance.Lookup.Get<MapInstance>(mapNum) == null)
             {
@@ -237,9 +214,9 @@ namespace Intersect.Server.Classes.Networking
             else
             {
                 bf.WriteInteger(0);
-                byte[] MapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetMapPacket(false);
-                bf.WriteInteger(MapData.Length);
-                bf.WriteBytes(MapData);
+                byte[] mapData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetMapPacket(false);
+                bf.WriteInteger(mapData.Length);
+                bf.WriteBytes(mapData);
                 var tileData = MapInstance.Lookup.Get<MapInstance>(mapNum).GetTileData(false);
                 bf.WriteInteger(tileData.Length);
                 bf.WriteBytes(tileData);
@@ -253,7 +230,7 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong(en.SpawnTime);
             bf.WriteLong(en.MyIndex);
-            bf.WriteInteger((int) en.GetEntityType());
+            bf.WriteInteger((int)en.GetEntityType());
             bf.WriteBytes(en.Data());
 
             if (en.GetType() == typeof(Player))
@@ -278,10 +255,10 @@ namespace Intersect.Server.Classes.Networking
                 return;
             }
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityData);
+            bf.WriteLong((int)ServerPackets.EntityData);
             bf.WriteLong(en.SpawnTime);
             bf.WriteLong(en.MyIndex);
-            bf.WriteInteger((int) en.GetEntityType());
+            bf.WriteInteger((int)en.GetEntityType());
             bf.WriteBytes(en.Data());
 
             if (en == client.Entity)
@@ -305,14 +282,14 @@ namespace Intersect.Server.Classes.Networking
             //If a player, send equipment to all (for paperdolls)
             if (en.GetType() == typeof(Player))
             {
-                SendPlayerEquipmentTo(client, (Player) en);
+                SendPlayerEquipmentTo(client, (Player)en);
             }
         }
 
         public static void SendMapEntitiesTo(Client client, List<Entity> entities)
         {
             var buff = new ByteBuffer();
-            buff.WriteLong((long) ServerPackets.MapEntities);
+            buff.WriteLong((long)ServerPackets.MapEntities);
             var sendEntities = new List<Entity>();
             for (int i = 0; i < entities.Count; i++)
             {
@@ -340,7 +317,7 @@ namespace Intersect.Server.Classes.Networking
                     //If a player, send equipment to all (for paperdolls)
                     if (entities[i].GetType() == typeof(Player) && client.Entity != entities[i])
                     {
-                        SendPlayerEquipmentTo(client, (Player) entities[i]);
+                        SendPlayerEquipmentTo(client, (Player)entities[i]);
                     }
                 }
             }
@@ -353,10 +330,10 @@ namespace Intersect.Server.Classes.Networking
                 return;
             }
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityData);
+            bf.WriteLong((int)ServerPackets.EntityData);
             bf.WriteLong(en.SpawnTime);
             bf.WriteLong(en.MyIndex);
-            bf.WriteInteger((int) en.GetEntityType());
+            bf.WriteInteger((int)en.GetEntityType());
             bf.WriteBytes(en.Data());
             SendDataToProximity(en.CurrentMap, bf.ToArray(), except);
             bf.Dispose();
@@ -366,7 +343,7 @@ namespace Intersect.Server.Classes.Networking
             //If a player, send equipment to all (for paperdolls)
             if (en.GetType() == typeof(Player))
             {
-                SendPlayerEquipmentToProximity((Player) en);
+                SendPlayerEquipmentToProximity((Player)en);
             }
         }
 
@@ -377,9 +354,9 @@ namespace Intersect.Server.Classes.Networking
                 return;
             }
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityPosition);
+            bf.WriteLong((int)ServerPackets.EntityPosition);
             bf.WriteLong(en.MyIndex);
-            bf.WriteInteger((int) en.GetEntityType());
+            bf.WriteInteger((int)en.GetEntityType());
             bf.WriteInteger(en.CurrentMap);
             bf.WriteInteger(en.CurrentX);
             bf.WriteInteger(en.CurrentY);
@@ -397,9 +374,9 @@ namespace Intersect.Server.Classes.Networking
                 return;
             }
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityPosition);
+            bf.WriteLong((int)ServerPackets.EntityPosition);
             bf.WriteLong(en.MyIndex);
-            bf.WriteInteger((int) en.GetEntityType());
+            bf.WriteInteger((int)en.GetEntityType());
             bf.WriteInteger(en.CurrentMap);
             bf.WriteInteger(en.CurrentX);
             bf.WriteInteger(en.CurrentY);
@@ -417,7 +394,7 @@ namespace Intersect.Server.Classes.Networking
                 return;
             }
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.NPCAggression);
+            bf.WriteLong((int)ServerPackets.NpcAggression);
             bf.WriteInteger(en.MyIndex);
 
             //Declare Aggression state
@@ -437,7 +414,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendEntityLeave(int entityIndex, int type, int mapNum)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityLeave);
+            bf.WriteLong((int)ServerPackets.EntityLeave);
             bf.WriteLong(entityIndex);
             bf.WriteInteger(type);
             bf.WriteInteger(mapNum);
@@ -448,7 +425,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendEntityLeaveTo(Client client, int entityIndex, int type, int map)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityLeave);
+            bf.WriteLong((int)ServerPackets.EntityLeave);
             bf.WriteLong(entityIndex);
             bf.WriteInteger(type);
             bf.WriteInteger(map);
@@ -486,7 +463,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendPlayerMsg(Client client, string message, Color clr, string target = "")
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.ChatMessage);
+            bf.WriteLong((int)ServerPackets.ChatMessage);
             bf.WriteString(message);
             bf.WriteByte(clr.A);
             bf.WriteByte(clr.R);
@@ -502,18 +479,18 @@ namespace Intersect.Server.Classes.Networking
             //Send massive amounts of game data
             foreach (var val in Enum.GetValues(typeof(GameObjectType)))
             {
-                if ((GameObjectType) val == GameObjectType.Map) continue;
-                if (((GameObjectType) val == GameObjectType.Shop ||
-                     (GameObjectType) val == GameObjectType.CommonEvent ||
-                     (GameObjectType) val == GameObjectType.PlayerSwitch ||
-                     (GameObjectType) val == GameObjectType.PlayerVariable ||
-                     (GameObjectType) val == GameObjectType.ServerSwitch ||
-                     (GameObjectType) val == GameObjectType.ServerVariable) && !client.IsEditor) continue;
-                SendGameObjects(client, (GameObjectType) val);
+                if ((GameObjectType)val == GameObjectType.Map) continue;
+                if (((GameObjectType)val == GameObjectType.Shop ||
+                     (GameObjectType)val == GameObjectType.CommonEvent ||
+                     (GameObjectType)val == GameObjectType.PlayerSwitch ||
+                     (GameObjectType)val == GameObjectType.PlayerVariable ||
+                     (GameObjectType)val == GameObjectType.ServerSwitch ||
+                     (GameObjectType)val == GameObjectType.ServerVariable) && !client.IsEditor) continue;
+                SendGameObjects(client, (GameObjectType)val);
             }
             //Let the client/editor know they have everything now
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.GameData);
+            bf.WriteLong((int)ServerPackets.GameData);
             bf.WriteBytes(CustomColors.GetData());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -527,7 +504,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendGlobalMsg(string message, Color clr, string target = "")
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.ChatMessage);
+            bf.WriteLong((int)ServerPackets.ChatMessage);
             bf.WriteString(message);
             bf.WriteByte(clr.A);
             bf.WriteByte(clr.R);
@@ -546,7 +523,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendProximityMsg(string message, int centerMap, Color clr, string target = "")
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.ChatMessage);
+            bf.WriteLong((int)ServerPackets.ChatMessage);
             bf.WriteString(message);
             bf.WriteByte(clr.A);
             bf.WriteByte(clr.R);
@@ -622,7 +599,7 @@ namespace Intersect.Server.Classes.Networking
         internal static void SendRemoveProjectileSpawn(int map, int baseEntityIndex, int spawnIndex)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.ProjectileSpawnDead);
+            bf.WriteLong((int)ServerPackets.ProjectileSpawnDead);
             bf.WriteLong(baseEntityIndex);
             bf.WriteLong(spawnIndex);
             SendDataToProximity(map, bf.ToArray());
@@ -632,9 +609,9 @@ namespace Intersect.Server.Classes.Networking
         public static void SendEntityMove(Entity en, bool correction = false)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityMove);
+            bf.WriteLong((int)ServerPackets.EntityMove);
             bf.WriteLong(en.MyIndex);
-            bf.WriteInteger((int) en.GetEntityType());
+            bf.WriteInteger((int)en.GetEntityType());
             bf.WriteInteger(en.CurrentMap);
             bf.WriteInteger(en.CurrentX);
             bf.WriteInteger(en.CurrentY);
@@ -647,9 +624,9 @@ namespace Intersect.Server.Classes.Networking
         public static void SendEntityMoveTo(Client client, Entity en, bool correction = false)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityMove);
+            bf.WriteLong((int)ServerPackets.EntityMove);
             bf.WriteLong(en.MyIndex);
-            bf.WriteInteger((int) en.GetEntityType());
+            bf.WriteInteger((int)en.GetEntityType());
             bf.WriteInteger(en.CurrentMap);
             bf.WriteInteger(en.CurrentX);
             bf.WriteInteger(en.CurrentY);
@@ -663,11 +640,11 @@ namespace Intersect.Server.Classes.Networking
         {
             if (en == null) return;
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityVitals);
+            bf.WriteLong((int)ServerPackets.EntityVitals);
             bf.WriteLong(en.MyIndex);
-            bf.WriteInteger((int) en.GetEntityType());
+            bf.WriteInteger((int)en.GetEntityType());
             bf.WriteInteger(en.CurrentMap);
-            for (var i = 0; i < (int) Vitals.VitalCount; i++)
+            for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {
                 bf.WriteInteger(en.MaxVital[i]);
                 bf.WriteInteger(en.Vital[i]);
@@ -676,18 +653,18 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(statuses.Length);
             foreach (var status in statuses)
             {
-                bf.WriteInteger(status._spell.Index);
+                bf.WriteInteger(status.Spell.Index);
                 bf.WriteInteger(status.Type);
                 bf.WriteString(status.Data);
-                bf.WriteInteger((int) (status.Duration - Globals.System.GetTimeMs()));
-                bf.WriteInteger((int) (status.Duration - status.StartTime));
+                bf.WriteInteger((int)(status.Duration - Globals.System.GetTimeMs()));
+                bf.WriteInteger((int)(status.Duration - status.StartTime));
             }
             //If player and in party send vitals to party just in case party members are not in the proximity
             if (en.GetType() == typeof(Player))
             {
-                for (var i = 0; i < ((Player) en).Party.Count; i++)
+                for (var i = 0; i < ((Player)en).Party.Count; i++)
                 {
-                    SendEntityVitalsTo(((Player) en).Party[i].MyClient, en);
+                    SendPartyUpdateTo(((Player)en).Party[i].MyClient, (Player)en);
                 }
             }
             SendDataToProximity(en.CurrentMap, bf.ToArray());
@@ -698,11 +675,11 @@ namespace Intersect.Server.Classes.Networking
         {
             if (en == null) return;
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityStats);
+            bf.WriteLong((int)ServerPackets.EntityStats);
             bf.WriteLong(en.MyIndex);
-            bf.WriteInteger((int) en.GetEntityType());
+            bf.WriteInteger((int)en.GetEntityType());
             bf.WriteInteger(en.CurrentMap);
-            for (var i = 0; i < (int) Stats.StatCount; i++)
+            for (var i = 0; i < (int)Stats.StatCount; i++)
             {
                 bf.WriteInteger(en.Stat[i].Value());
             }
@@ -713,11 +690,11 @@ namespace Intersect.Server.Classes.Networking
         public static void SendEntityVitalsTo(Client client, Entity en)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityVitals);
+            bf.WriteLong((int)ServerPackets.EntityVitals);
             bf.WriteLong(en.MyIndex);
-            bf.WriteInteger((int) en.GetEntityType());
+            bf.WriteInteger((int)en.GetEntityType());
             bf.WriteInteger(en.CurrentMap);
-            for (var i = 0; i < (int) Vitals.VitalCount; i++)
+            for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {
                 bf.WriteInteger(en.MaxVital[i]);
                 bf.WriteInteger(en.Vital[i]);
@@ -726,7 +703,7 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(statuses.Length);
             foreach (var status in statuses)
             {
-                bf.WriteInteger(status._spell.Index);
+                bf.WriteInteger(status.Spell.Index);
                 bf.WriteInteger(status.Type);
                 bf.WriteString(status.Data);
                 bf.WriteInteger((int)(status.Duration - Globals.System.GetTimeMs()));
@@ -739,11 +716,11 @@ namespace Intersect.Server.Classes.Networking
         public static void SendEntityStatsTo(Client client, Entity en)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityStats);
+            bf.WriteLong((int)ServerPackets.EntityStats);
             bf.WriteLong(en.MyIndex);
-            bf.WriteInteger((int) en.GetEntityType());
+            bf.WriteInteger((int)en.GetEntityType());
             bf.WriteInteger(en.CurrentMap);
-            for (var i = 0; i < (int) Stats.StatCount; i++)
+            for (var i = 0; i < (int)Stats.StatCount; i++)
             {
                 bf.WriteInteger(en.Stat[i].Value());
             }
@@ -754,7 +731,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendEntityDir(int entityIndex, int type, int dir, int map)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityDir);
+            bf.WriteLong((int)ServerPackets.EntityDir);
             bf.WriteLong(entityIndex);
             bf.WriteInteger(type);
             bf.WriteInteger(map);
@@ -766,7 +743,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendEntityAttack(Entity en, int type, int map, int attackTime)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityAttack);
+            bf.WriteLong((int)ServerPackets.EntityAttack);
             bf.WriteLong(en.MyIndex);
             bf.WriteInteger(type);
             bf.WriteInteger(map);
@@ -778,7 +755,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendEntityDirTo(Client client, int entityIndex, int type, int dir, int map)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityDir);
+            bf.WriteLong((int)ServerPackets.EntityDir);
             bf.WriteLong(entityIndex);
             bf.WriteInteger(type);
             bf.WriteInteger(map);
@@ -790,7 +767,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendEventDialog(Client client, string prompt, string face, int mapNum, int eventIndex)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EventDialog);
+            bf.WriteLong((int)ServerPackets.EventDialog);
             bf.WriteString(prompt);
             bf.WriteString(face);
             bf.WriteInteger(0);
@@ -804,7 +781,7 @@ namespace Intersect.Server.Classes.Networking
             string opt4, string face, int mapNum, int eventIndex)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EventDialog);
+            bf.WriteLong((int)ServerPackets.EventDialog);
             bf.WriteString(prompt);
             bf.WriteString(face);
             bf.WriteInteger(1);
@@ -823,7 +800,7 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             DatabaseObjectLookup gameMaps = new DatabaseObjectLookup();
             foreach (var pair in MapInstance.Lookup.IndexClone) gameMaps.Set(pair.Key, pair.Value);
-            bf.WriteLong((int) ServerPackets.MapList);
+            bf.WriteLong((int)ServerPackets.MapList);
             bf.WriteBytes(MapList.GetList().Data(gameMaps));
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -834,7 +811,7 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             DatabaseObjectLookup gameMaps = new DatabaseObjectLookup();
             foreach (var pair in MapInstance.Lookup.IndexClone) gameMaps.Set(pair.Key, pair.Value);
-            bf.WriteLong((int) ServerPackets.MapList);
+            bf.WriteLong((int)ServerPackets.MapList);
             bf.WriteBytes(MapList.GetList().Data(gameMaps));
             SendDataToAll(bf.ToArray());
             bf.Dispose();
@@ -843,7 +820,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendLoginError(Client client, string error, string header = "")
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.LoginError);
+            bf.WriteLong((int)ServerPackets.LoginError);
             bf.WriteString(error);
             bf.WriteString(header);
             client.SendPacket(bf.ToArray());
@@ -853,7 +830,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendMapItems(Client client, int mapNum)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.MapItems);
+            bf.WriteLong((int)ServerPackets.MapItems);
             bf.WriteInteger(mapNum);
             bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).MapItems.Count);
             for (int i = 0; i < MapInstance.Lookup.Get<MapInstance>(mapNum).MapItems.Count; i++)
@@ -875,7 +852,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendMapItemsToProximity(int mapNum)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.MapItems);
+            bf.WriteLong((int)ServerPackets.MapItems);
             bf.WriteInteger(mapNum);
             bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapNum).MapItems.Count);
             for (int i = 0; i < MapInstance.Lookup.Get<MapInstance>(mapNum).MapItems.Count; i++)
@@ -889,7 +866,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendMapItemUpdate(int mapNum, int index)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.MapItemUpdate);
+            bf.WriteLong((int)ServerPackets.MapItemUpdate);
             bf.WriteInteger(mapNum);
             bf.WriteInteger(index);
             if (MapInstance.Lookup.Get<MapInstance>(mapNum).MapItems[index] == null ||
@@ -917,7 +894,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendInventoryItemUpdate(Client client, int slot)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.InventoryUpdate);
+            bf.WriteLong((int)ServerPackets.InventoryUpdate);
             bf.WriteInteger(slot);
             bf.WriteBytes(client.Entity.Inventory[slot].Data());
             SendDataTo(client, bf.ToArray());
@@ -935,7 +912,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendPlayerSpellUpdate(Client client, int slot)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.SpellUpdate);
+            bf.WriteLong((int)ServerPackets.SpellUpdate);
             bf.WriteInteger(slot);
             bf.WriteBytes(client.Entity.Spells[slot].Data());
             SendDataTo(client, bf.ToArray());
@@ -945,7 +922,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendPlayerEquipmentTo(Client client, Player en)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.PlayerEquipment);
+            bf.WriteLong((int)ServerPackets.PlayerEquipment);
             bf.WriteInteger(en.MyClient.EntityIndex);
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
@@ -972,7 +949,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendPlayerEquipmentToProximity(Player en)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.PlayerEquipment);
+            bf.WriteLong((int)ServerPackets.PlayerEquipment);
             bf.WriteInteger(en.MyClient.EntityIndex);
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
@@ -993,7 +970,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendPointsTo(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.StatPoints);
+            bf.WriteLong((int)ServerPackets.StatPoints);
             bf.WriteInteger(client.Entity.StatPoints);
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
@@ -1002,7 +979,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendHotbarSlots(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.HotbarSlots);
+            bf.WriteLong((int)ServerPackets.HotbarSlots);
             for (int i = 0; i < Options.MaxHotbar; i++)
             {
                 bf.WriteInteger(client.Entity.Hotbar[i].Type);
@@ -1015,7 +992,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendCreateCharacter(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.CreateCharacter);
+            bf.WriteLong((int)ServerPackets.CreateCharacter);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1023,7 +1000,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendPlayerCharacters(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.PlayerCharacters);
+            bf.WriteLong((int)ServerPackets.PlayerCharacters);
             if (client.Characters.Count < Options.MaxCharacters)
             {
                 bf.WriteInteger(client.Characters.Count + 1);
@@ -1057,7 +1034,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendOpenAdminWindow(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.OpenAdminWindow);
+            bf.WriteLong((int)ServerPackets.OpenAdminWindow);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1092,7 +1069,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendMapGrid(Client client, int gridIndex, bool clearKnownMaps = false)
         {
             ByteBuffer bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.MapGrid);
+            bf.WriteLong((int)ServerPackets.MapGrid);
             bf.WriteLong(Database.MapGrids[gridIndex].Width);
             bf.WriteLong(Database.MapGrids[gridIndex].Height);
             bf.WriteBoolean(clearKnownMaps);
@@ -1123,21 +1100,21 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendEntityCastTime(Entity en, int SpellNum)
+        public static void SendEntityCastTime(Entity en, int spellNum)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.CastTime);
+            bf.WriteLong((int)ServerPackets.CastTime);
             bf.WriteInteger(en.MyIndex);
-            bf.WriteInteger(SpellNum);
+            bf.WriteInteger(spellNum);
             SendDataToProximity(en.CurrentMap, bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendSpellCooldown(Client client, int SpellSlot)
+        public static void SendSpellCooldown(Client client, int spellSlot)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.SendSpellCooldown);
-            bf.WriteLong(SpellSlot);
+            bf.WriteLong((int)ServerPackets.SendSpellCooldown);
+            bf.WriteLong(spellSlot);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1155,7 +1132,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendAlert(Client client, string title, string message)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.SendAlert);
+            bf.WriteLong((int)ServerPackets.SendAlert);
             bf.WriteString(title);
             bf.WriteString(message);
             client.SendPacket(bf.ToArray());
@@ -1166,7 +1143,7 @@ namespace Intersect.Server.Classes.Networking
             int direction)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.SendPlayAnimation);
+            bf.WriteLong((int)ServerPackets.SendPlayAnimation);
             bf.WriteInteger(animNum);
             bf.WriteInteger(targetType);
             bf.WriteInteger(entityIndex);
@@ -1181,7 +1158,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendHoldPlayer(Client client, int eventMap, int eventIndex)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.HoldPlayer);
+            bf.WriteLong((int)ServerPackets.HoldPlayer);
             bf.WriteInteger(eventMap);
             bf.WriteInteger(eventIndex);
             client.SendPacket(bf.ToArray());
@@ -1191,7 +1168,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendReleasePlayer(Client client, int eventMap, int eventIndex)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.ReleasePlayer);
+            bf.WriteLong((int)ServerPackets.ReleasePlayer);
             bf.WriteInteger(eventMap);
             bf.WriteInteger(eventIndex);
             client.SendPacket(bf.ToArray());
@@ -1201,7 +1178,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendPlayMusic(Client client, string bgm)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.PlayMusic);
+            bf.WriteLong((int)ServerPackets.PlayMusic);
             bf.WriteString(bgm);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -1210,7 +1187,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendFadeMusic(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.FadeMusic);
+            bf.WriteLong((int)ServerPackets.FadeMusic);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1218,7 +1195,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendPlaySound(Client client, string sound)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.PlaySound);
+            bf.WriteLong((int)ServerPackets.PlaySound);
             bf.WriteString(sound);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -1227,7 +1204,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendStopSounds(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.StopSounds);
+            bf.WriteLong((int)ServerPackets.StopSounds);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1236,7 +1213,7 @@ namespace Intersect.Server.Classes.Networking
         {
             if (ShopBase.Lookup.Get<ShopBase>(shopNum) == null) return;
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.OpenShop);
+            bf.WriteLong((int)ServerPackets.OpenShop);
             bf.WriteBytes(ShopBase.Lookup.Get<ShopBase>(shopNum).ShopData());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -1245,7 +1222,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendCloseShop(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.CloseShop);
+            bf.WriteLong((int)ServerPackets.CloseShop);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1257,7 +1234,7 @@ namespace Intersect.Server.Classes.Networking
                 SendBankUpdate(client, i);
             }
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.OpenBank);
+            bf.WriteLong((int)ServerPackets.OpenBank);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1265,7 +1242,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendCloseBank(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.CloseBank);
+            bf.WriteLong((int)ServerPackets.CloseBank);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1273,7 +1250,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendOpenCraftingBench(Client client, BenchBase bench)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.OpenCraftingBench);
+            bf.WriteLong((int)ServerPackets.OpenCraftingBench);
             if (bench != null)
             {
                 bf.WriteBytes(bench.CraftData());
@@ -1285,7 +1262,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendCloseCraftingBench(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.CloseCraftingBench);
+            bf.WriteLong((int)ServerPackets.CloseCraftingBench);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1293,7 +1270,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendBankUpdate(Client client, int slot)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.BankUpdate);
+            bf.WriteLong((int)ServerPackets.BankUpdate);
             bf.WriteInteger(slot);
             if (client.Entity.Bank[slot] == null || client.Entity.Bank[slot].ItemNum < 0 ||
                 client.Entity.Bank[slot].ItemVal <= 0)
@@ -1391,8 +1368,8 @@ namespace Intersect.Server.Classes.Networking
         {
             if (client == null) return;
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.GameObject);
-            bf.WriteInteger((int) obj.Type);
+            bf.WriteLong((int)ServerPackets.GameObject);
+            bf.WriteInteger((int)obj.Type);
             bf.WriteInteger(obj.Index);
             bf.WriteInteger(Convert.ToInt32(another));
             bf.WriteInteger(Convert.ToInt32(deleted));
@@ -1410,8 +1387,8 @@ namespace Intersect.Server.Classes.Networking
         public static void SendOpenEditor(Client client, GameObjectType type)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.GameObjectEditor);
-            bf.WriteInteger((int) type);
+            bf.WriteLong((int)ServerPackets.GameObjectEditor);
+            bf.WriteInteger((int)type);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1419,7 +1396,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendEntityDash(Entity en, int endMap, int endX, int endY, int dashTime, int direction)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EntityDash);
+            bf.WriteLong((int)ServerPackets.EntityDash);
             bf.WriteLong(en.MyIndex);
             bf.WriteInteger(endMap);
             bf.WriteInteger(endX);
@@ -1433,7 +1410,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendActionMsg(Entity en, string message, Color color)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.ActionMsg);
+            bf.WriteLong((int)ServerPackets.ActionMsg);
             bf.WriteInteger(en.CurrentMap);
             bf.WriteInteger(en.CurrentX);
             bf.WriteInteger(en.CurrentY);
@@ -1449,7 +1426,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendEnterMap(Client client, int mapNum)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.EnterMap);
+            bf.WriteLong((int)ServerPackets.EnterMap);
             bf.WriteLong(mapNum);
             var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
             if (!(map.MapGridX == -1 || map.MapGridY == -1))
@@ -1481,7 +1458,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendTimeBaseTo(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((long) ServerPackets.TimeBase);
+            bf.WriteLong((long)ServerPackets.TimeBase);
             bf.WriteBytes(TimeBase.GetTimeBase().SaveTimeBase());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -1490,7 +1467,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendTimeBaseToAllEditors()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((long) ServerPackets.TimeBase);
+            bf.WriteLong((long)ServerPackets.TimeBase);
             bf.WriteBytes(TimeBase.GetTimeBase().SaveTimeBase());
             SendDataToEditors(bf.ToArray());
             bf.Dispose();
@@ -1499,7 +1476,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendTimeToAll()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((long) ServerPackets.Time);
+            bf.WriteLong((long)ServerPackets.Time);
             bf.WriteLong(ServerTime.GetTime().ToBinary());
             if (TimeBase.GetTimeBase().SyncTime)
             {
@@ -1507,7 +1484,7 @@ namespace Intersect.Server.Classes.Networking
             }
             else
             {
-                bf.WriteDouble((double) TimeBase.GetTimeBase().Rate);
+                bf.WriteDouble((double)TimeBase.GetTimeBase().Rate);
             }
             //Write the color tint the clients should be using when outdoors
             var clr = ServerTime.GetTimeColor();
@@ -1522,7 +1499,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendTimeTo(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((long) ServerPackets.Time);
+            bf.WriteLong((long)ServerPackets.Time);
             bf.WriteLong(ServerTime.GetTime().ToBinary());
             if (TimeBase.GetTimeBase().SyncTime)
             {
@@ -1530,7 +1507,7 @@ namespace Intersect.Server.Classes.Networking
             }
             else
             {
-                bf.WriteDouble((double) TimeBase.GetTimeBase().Rate);
+                bf.WriteDouble((double)TimeBase.GetTimeBase().Rate);
             }
             //Write the color tint the clients should be using when outdoors
             var clr = ServerTime.GetTimeColor();
@@ -1545,16 +1522,33 @@ namespace Intersect.Server.Classes.Networking
         public static void SendParty(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((long) ServerPackets.PartyData);
+            bf.WriteLong((long)ServerPackets.PartyData);
             bf.WriteInteger(client.Entity.Party.Count);
             for (int i = 0; i < client.Entity.Party.Count; i++)
             {
-                bf.WriteInteger(client.Entity.Party[i].MyIndex);
+                bf.WriteBytes(client.Entity.Party[i].PartyData());
             }
             client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendPartyUpdateTo(Client client, Player entity)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((long)ServerPackets.PartyUpdate);
+            var partyIndex = -1;
             for (int i = 0; i < client.Entity.Party.Count; i++)
             {
-                SendEntityDataTo(client, client.Entity.Party[i]);
+                if (client.Entity.Party[i] == entity)
+                {
+                    partyIndex = i;
+                }
+            }
+            if (partyIndex > -1)
+            {
+                bf.WriteInteger(partyIndex);
+                bf.WriteBytes(entity.PartyData());
+                client.SendPacket(bf.ToArray());
             }
             bf.Dispose();
         }
@@ -1562,7 +1556,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendPartyInvite(Client client, Player leader)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((long) ServerPackets.PartyInvite);
+            bf.WriteLong((long)ServerPackets.PartyInvite);
             bf.WriteString(leader.MyName);
             bf.WriteInteger(leader.MyIndex);
             client.SendPacket(bf.ToArray());
@@ -1572,7 +1566,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendChatBubble(int entityIndex, int type, string text, int map)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.ChatBubble);
+            bf.WriteLong((int)ServerPackets.ChatBubble);
             bf.WriteLong(entityIndex);
             bf.WriteInteger(type);
             bf.WriteInteger(map);
@@ -1584,7 +1578,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendQuestOffer(Player player, int questId)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.QuestOffer);
+            bf.WriteLong((int)ServerPackets.QuestOffer);
             bf.WriteInteger(questId);
             SendDataTo(player.MyClient, bf.ToArray());
             bf.Dispose();
@@ -1593,15 +1587,15 @@ namespace Intersect.Server.Classes.Networking
         public static void SendQuestsProgress(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.QuestProgress);
+            bf.WriteLong((int)ServerPackets.QuestProgress);
             bf.WriteInteger(client.Entity.Quests.Count);
             foreach (var quest in client.Entity.Quests)
             {
                 bf.WriteInteger(quest.Key);
                 bf.WriteByte(1);
-                bf.WriteInteger(quest.Value.completed);
-                bf.WriteInteger(quest.Value.task);
-                bf.WriteInteger(quest.Value.taskProgress);
+                bf.WriteInteger(quest.Value.Completed);
+                bf.WriteInteger(quest.Value.Task);
+                bf.WriteInteger(quest.Value.TaskProgress);
             }
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
@@ -1610,15 +1604,15 @@ namespace Intersect.Server.Classes.Networking
         public static void SendQuestProgress(Player player, int questId)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.QuestProgress);
+            bf.WriteLong((int)ServerPackets.QuestProgress);
             bf.WriteInteger(1);
             bf.WriteInteger(questId);
             if (player.Quests.ContainsKey(questId))
             {
                 bf.WriteByte(1);
-                bf.WriteInteger(player.Quests[questId].completed);
-                bf.WriteInteger(player.Quests[questId].task);
-                bf.WriteInteger(player.Quests[questId].taskProgress);
+                bf.WriteInteger(player.Quests[questId].Completed);
+                bf.WriteInteger(player.Quests[questId].Task);
+                bf.WriteInteger(player.Quests[questId].TaskProgress);
             }
             else
             {
@@ -1631,7 +1625,7 @@ namespace Intersect.Server.Classes.Networking
         public static void StartTrade(Client client, int target)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((long) ServerPackets.TradeStart);
+            bf.WriteLong((long)ServerPackets.TradeStart);
             bf.WriteInteger(target);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -1640,19 +1634,19 @@ namespace Intersect.Server.Classes.Networking
         public static void SendTradeUpdate(Client client, int index, int slot)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((long) ServerPackets.TradeUpdate);
+            bf.WriteLong((long)ServerPackets.TradeUpdate);
             bf.WriteInteger(index);
             bf.WriteInteger(slot);
-            if (((Player) Globals.Entities[index]).Trade[slot] == null ||
-                ((Player) Globals.Entities[index]).Trade[slot].ItemNum < 0 ||
-                ((Player) Globals.Entities[index]).Trade[slot].ItemVal <= 0)
+            if (((Player)Globals.Entities[index]).Trade[slot] == null ||
+                ((Player)Globals.Entities[index]).Trade[slot].ItemNum < 0 ||
+                ((Player)Globals.Entities[index]).Trade[slot].ItemVal <= 0)
             {
                 bf.WriteInteger(0);
             }
             else
             {
                 bf.WriteInteger(1);
-                bf.WriteBytes(((Player) Globals.Entities[index]).Trade[slot].Data());
+                bf.WriteBytes(((Player)Globals.Entities[index]).Trade[slot].Data());
             }
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -1661,7 +1655,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendTradeClose(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((long) ServerPackets.TradeClose);
+            bf.WriteLong((long)ServerPackets.TradeClose);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1669,7 +1663,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendTradeRequest(Client client, Player partner)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((long) ServerPackets.TradeRequest);
+            bf.WriteLong((long)ServerPackets.TradeRequest);
             bf.WriteString(partner.MyName);
             bf.WriteInteger(partner.MyIndex);
             client.SendPacket(bf.ToArray());
@@ -1679,7 +1673,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendPlayerDeath(Player en)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((long) ServerPackets.PlayerDeath);
+            bf.WriteLong((long)ServerPackets.PlayerDeath);
             bf.WriteLong(en.MyIndex);
             SendDataToProximity(en.CurrentMap, bf.ToArray());
             bf.Dispose();
@@ -1688,7 +1682,7 @@ namespace Intersect.Server.Classes.Networking
         public static void UpdateEntityZDimension(int index, int z)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((long) ServerPackets.EntityZDimension);
+            bf.WriteLong((long)ServerPackets.EntityZDimension);
             bf.WriteLong(index);
             bf.WriteInteger(z);
             SendDataToProximity(Globals.Entities[index].CurrentMap, bf.ToArray());
@@ -1698,7 +1692,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendOpenBag(Client client, int slots, BagInstance bag)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.OpenBag);
+            bf.WriteLong((int)ServerPackets.OpenBag);
             bf.WriteInteger(slots);
             client.SendPacket(bf.ToArray());
             for (int i = 0; i < slots; i++)
@@ -1711,7 +1705,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendBagUpdate(Client client, int slot, ItemInstance item)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.BagUpdate);
+            bf.WriteLong((int)ServerPackets.BagUpdate);
             bf.WriteInteger(slot);
             if (item == null || item.ItemNum < 0 || item.ItemVal <= 0)
             {
@@ -1729,7 +1723,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendCloseBag(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.CloseBag);
+            bf.WriteLong((int)ServerPackets.CloseBag);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1737,7 +1731,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendMoveRouteToggle(Client client, bool routeOn)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ServerPackets.MoveRouteToggle);
+            bf.WriteLong((int)ServerPackets.MoveRouteToggle);
             bf.WriteBoolean(routeOn);
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
@@ -1773,7 +1767,7 @@ namespace Intersect.Server.Classes.Networking
                 }
             }
 
-            bf.WriteLong((int) ServerPackets.SendFriends);
+            bf.WriteLong((int)ServerPackets.SendFriends);
 
             bf.WriteInteger(online.Count);
             for (int i = 0; i < online.Count; i++)
@@ -1795,7 +1789,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendFriendRequest(Client client, Player partner)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((long) ServerPackets.FriendRequest);
+            bf.WriteLong((long)ServerPackets.FriendRequest);
             bf.WriteString(partner.MyName);
             bf.WriteInteger(partner.MyIndex);
             client.SendPacket(bf.ToArray());

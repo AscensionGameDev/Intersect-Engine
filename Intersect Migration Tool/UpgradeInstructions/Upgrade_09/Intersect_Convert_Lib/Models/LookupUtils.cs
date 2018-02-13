@@ -9,7 +9,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_9.Intersect_Convert_Li
 {
     public static class LookupUtils
     {
-        private const string sLock = "";
+        private const string LOCK = "";
 
         private static Dictionary<Type, DatabaseObjectLookup> sLookupMap;
         private static Dictionary<Type, GameObjectType> sEnumMap;
@@ -25,7 +25,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_9.Intersect_Convert_Li
             if (type == null) throw new ArgumentNullException(nameof(type));
             if (LookupMap == null) throw new ArgumentNullException(nameof(LookupMap));
 
-            lock (sLock)
+            lock (LOCK)
             {
                 DatabaseObjectLookup lookup;
                 try

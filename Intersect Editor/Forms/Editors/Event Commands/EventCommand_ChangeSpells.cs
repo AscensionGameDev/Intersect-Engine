@@ -7,23 +7,23 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_ChangeSpells : UserControl
+    public partial class EventCommandChangeSpells : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventPage _currentPage;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventPage mCurrentPage;
+        private EventCommand mMyCommand;
 
-        public EventCommand_ChangeSpells(EventCommand refCommand, EventPage refPage, FrmEvent editor)
+        public EventCommandChangeSpells(EventCommand refCommand, EventPage refPage, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
-            _currentPage = refPage;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
+            mCurrentPage = refPage;
             InitLocalization();
             cmbSpell.Items.Clear();
             cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
-            cmbAction.SelectedIndex = _myCommand.Ints[0];
-            cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell, _myCommand.Ints[1]);
+            cmbAction.SelectedIndex = mMyCommand.Ints[0];
+            cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell, mMyCommand.Ints[1]);
         }
 
         private void InitLocalization()
@@ -42,23 +42,23 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = cmbAction.SelectedIndex;
-            _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObjectType.Spell, cmbSpell.SelectedIndex);
-            if (_myCommand.Ints[4] == 0)
+            mMyCommand.Ints[0] = cmbAction.SelectedIndex;
+            mMyCommand.Ints[1] = Database.GameObjectIdFromList(GameObjectType.Spell, cmbSpell.SelectedIndex);
+            if (mMyCommand.Ints[4] == 0)
                 // command.Ints[4, and 5] are reserved for when the action succeeds or fails
             {
                 for (var i = 0; i < 2; i++)
                 {
-                    _currentPage.CommandLists.Add(new CommandList());
-                    _myCommand.Ints[4 + i] = _currentPage.CommandLists.Count - 1;
+                    mCurrentPage.CommandLists.Add(new CommandList());
+                    mMyCommand.Ints[4 + i] = mCurrentPage.CommandLists.Count - 1;
                 }
             }
-            _eventEditor.FinishCommandEdit();
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
     }
 }

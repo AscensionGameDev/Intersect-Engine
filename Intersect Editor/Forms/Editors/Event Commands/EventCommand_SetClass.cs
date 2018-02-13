@@ -7,20 +7,20 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_SetClass : UserControl
+    public partial class EventCommandSetClass : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private EventCommand _myCommand;
+        private readonly FrmEvent mEventEditor;
+        private EventCommand mMyCommand;
 
-        public EventCommand_SetClass(EventCommand refCommand, FrmEvent editor)
+        public EventCommandSetClass(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            _myCommand = refCommand;
-            _eventEditor = editor;
+            mMyCommand = refCommand;
+            mEventEditor = editor;
             InitLocalization();
             cmbClass.Items.Clear();
             cmbClass.Items.AddRange(Database.GetGameObjectList(GameObjectType.Class));
-            cmbClass.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Class, _myCommand.Ints[0]);
+            cmbClass.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Class, mMyCommand.Ints[0]);
         }
 
         private void InitLocalization()
@@ -34,13 +34,13 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (cmbClass.SelectedIndex > -1)
-                _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Class, cmbClass.SelectedIndex);
-            _eventEditor.FinishCommandEdit();
+                mMyCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Class, cmbClass.SelectedIndex);
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
     }
 }

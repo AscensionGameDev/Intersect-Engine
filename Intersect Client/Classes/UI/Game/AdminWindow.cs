@@ -15,286 +15,286 @@ namespace Intersect_Client.Classes.UI.Game
 {
     class AdminWindow
     {
-        private ComboBox _accessDropdown;
+        private ComboBox mAccessDropdown;
 
-        private Label _accessLabel;
+        private Label mAccessLabel;
 
         //Controls
-        private WindowControl _adminWindow;
+        private WindowControl mAdminWindow;
 
-        private Button _banButton;
+        private Button mBanButton;
 
         //Windows
-        BanMuteBox _banMuteWindow;
+        BanMuteBox mBanMuteWindow;
 
-        private CheckBox _chkChronological;
-        private ComboBox _faceDropdown;
-        private Label _faceLabel;
+        private CheckBox mChkChronological;
+        private ComboBox mFaceDropdown;
+        private Label mFaceLabel;
 
         //Graphics
-        public ImagePanel _facePanel;
+        public ImagePanel FacePanel;
 
         //Player Mod Buttons
-        private Button _kickButton;
+        private Button mKickButton;
 
-        private Button _killButton;
-        private Label _lblChronological;
+        private Button mKillButton;
+        private Label mLblChronological;
 
-        private TreeControl _mapList;
-        private Label _mapListLabel;
-        private Button _muteButton;
+        private TreeControl mMapList;
+        private Label mMapListLabel;
+        private Button mMuteButton;
 
         //Player Mod Labels
-        private Label _nameLabel;
+        private Label mNameLabel;
 
         //Player Mod Textboxes
-        private TextBox _nameTextbox;
+        private TextBox mNameTextbox;
 
-        private CheckBox _noclipCheckBox;
+        private CheckBox mNoclipCheckBox;
 
         //Admin Powers
-        private Label _noclipLabel;
+        private Label mNoclipLabel;
 
-        private Button _setFaceButton;
-        private Button _setPowerButton;
-        private Button _setSpriteButton;
-        public ImagePanel _spriteContainer;
-        private ComboBox _spriteDropdown;
-        private Label _spriteLabel;
-        public ImagePanel _spritePanel;
-        private Button _unbanButton;
-        private Button _unmuteButton;
-        private Button _warpMeToButton;
-        private Button _warpToMeButton;
+        private Button mSetFaceButton;
+        private Button mSetPowerButton;
+        private Button mSetSpriteButton;
+        public ImagePanel SpriteContainer;
+        private ComboBox mSpriteDropdown;
+        private Label mSpriteLabel;
+        public ImagePanel SpritePanel;
+        private Button mUnbanButton;
+        private Button mUnmuteButton;
+        private Button mWarpMeToButton;
+        private Button mWarpToMeButton;
 
         //Init
-        public AdminWindow(Canvas _gameCanvas)
+        public AdminWindow(Canvas gameCanvas)
         {
-            _adminWindow = new WindowControl(_gameCanvas, Strings.Get("admin", "title"));
-            _adminWindow.SetSize(200, 540);
-            _adminWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - _adminWindow.Width / 2,
-                GameGraphics.Renderer.GetScreenHeight() / 2 - _adminWindow.Height / 2);
-            _adminWindow.DisableResizing();
-            _adminWindow.Margin = Margin.Zero;
-            _adminWindow.Padding = Padding.Zero;
+            mAdminWindow = new WindowControl(gameCanvas, Strings.Get("admin", "title"));
+            mAdminWindow.SetSize(200, 540);
+            mAdminWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - mAdminWindow.Width / 2,
+                GameGraphics.Renderer.GetScreenHeight() / 2 - mAdminWindow.Height / 2);
+            mAdminWindow.DisableResizing();
+            mAdminWindow.Margin = Margin.Zero;
+            mAdminWindow.Padding = Padding.Zero;
 
             //Player Mods
-            _nameLabel = new Label(_adminWindow);
-            _nameLabel.SetPosition(6, 4);
-            _nameLabel.Text = Strings.Get("admin", "name");
+            mNameLabel = new Label(mAdminWindow);
+            mNameLabel.SetPosition(6, 4);
+            mNameLabel.Text = Strings.Get("admin", "name");
 
-            _nameTextbox = new TextBox(_adminWindow);
-            _nameTextbox.SetBounds(6, 22, 188, 18);
-            Gui.FocusElements.Add(_nameTextbox);
+            mNameTextbox = new TextBox(mAdminWindow);
+            mNameTextbox.SetBounds(6, 22, 188, 18);
+            Gui.FocusElements.Add(mNameTextbox);
 
-            _warpToMeButton = new Button(_adminWindow)
+            mWarpToMeButton = new Button(mAdminWindow)
             {
                 Text = Strings.Get("admin", "warp2me")
             };
-            _warpToMeButton.SetBounds(6, 44, 80, 18);
-            _warpToMeButton.Clicked += _warpToMeButton_Clicked;
+            mWarpToMeButton.SetBounds(6, 44, 80, 18);
+            mWarpToMeButton.Clicked += _warpToMeButton_Clicked;
 
-            _warpMeToButton = new Button(_adminWindow)
+            mWarpMeToButton = new Button(mAdminWindow)
             {
                 Text = Strings.Get("admin", "warpme2")
             };
-            _warpMeToButton.SetBounds(6, 64, 80, 18);
-            _warpMeToButton.Clicked += _warpMeToButton_Clicked;
+            mWarpMeToButton.SetBounds(6, 64, 80, 18);
+            mWarpMeToButton.Clicked += _warpMeToButton_Clicked;
 
-            _kickButton = new Button(_adminWindow)
+            mKickButton = new Button(mAdminWindow)
             {
                 Text = Strings.Get("admin", "kick")
             };
-            _kickButton.SetBounds(90, 44, 50, 18);
-            _kickButton.Clicked += _kickButton_Clicked;
+            mKickButton.SetBounds(90, 44, 50, 18);
+            mKickButton.Clicked += _kickButton_Clicked;
 
-            _killButton = new Button(_adminWindow)
+            mKillButton = new Button(mAdminWindow)
             {
                 Text = Strings.Get("admin", "kill")
             };
-            _killButton.SetBounds(144, 44, 50, 18);
-            _killButton.Clicked += _killButton_Clicked;
+            mKillButton.SetBounds(144, 44, 50, 18);
+            mKillButton.Clicked += _killButton_Clicked;
 
-            _banButton = new Button(_adminWindow)
+            mBanButton = new Button(mAdminWindow)
             {
                 Text = Strings.Get("admin", "ban")
             };
-            _banButton.SetBounds(90, 64, 50, 18);
-            _banButton.Clicked += _banButton_Clicked;
+            mBanButton.SetBounds(90, 64, 50, 18);
+            mBanButton.Clicked += _banButton_Clicked;
 
-            _noclipLabel = new Label(_adminWindow)
+            mNoclipLabel = new Label(mAdminWindow)
             {
                 Text = Strings.Get("admin", "noclip")
             };
-            _noclipLabel.SetPosition(6, 86);
-            _noclipLabel.SetToolTipText("Check to walk through obstacles.");
+            mNoclipLabel.SetPosition(6, 86);
+            mNoclipLabel.SetToolTipText("Check to walk through obstacles.");
 
-            _noclipCheckBox = new CheckBox(_adminWindow);
-            _noclipCheckBox.SetPosition(16 + _noclipLabel.Width, 86);
-            _noclipCheckBox.IsChecked = Globals.Me.NoClip;
-            _noclipCheckBox.CheckChanged += _noclipCheckBox_CheckChanged;
-            _noclipCheckBox.SetToolTipText(Strings.Get("admin", "nocliptip"));
+            mNoclipCheckBox = new CheckBox(mAdminWindow);
+            mNoclipCheckBox.SetPosition(16 + mNoclipLabel.Width, 86);
+            mNoclipCheckBox.IsChecked = Globals.Me.NoClip;
+            mNoclipCheckBox.CheckChanged += _noclipCheckBox_CheckChanged;
+            mNoclipCheckBox.SetToolTipText(Strings.Get("admin", "nocliptip"));
 
-            _unbanButton = new Button(_adminWindow)
+            mUnbanButton = new Button(mAdminWindow)
             {
                 Text = Strings.Get("admin", "unban")
             };
-            _unbanButton.SetBounds(90, 84, 50, 18);
-            _unbanButton.Clicked += _unbanButton_Clicked;
+            mUnbanButton.SetBounds(90, 84, 50, 18);
+            mUnbanButton.Clicked += _unbanButton_Clicked;
 
-            _muteButton = new Button(_adminWindow)
+            mMuteButton = new Button(mAdminWindow)
             {
                 Text = Strings.Get("admin", "mute")
             };
-            _muteButton.SetBounds(144, 64, 50, 18);
-            _muteButton.Clicked += _muteButton_Clicked;
+            mMuteButton.SetBounds(144, 64, 50, 18);
+            mMuteButton.Clicked += _muteButton_Clicked;
 
-            _unmuteButton = new Button(_adminWindow)
+            mUnmuteButton = new Button(mAdminWindow)
             {
                 Text = Strings.Get("admin", "unmute")
             };
-            _unmuteButton.SetBounds(144, 84, 50, 18);
-            _unmuteButton.Clicked += _unmuteButton_Clicked;
+            mUnmuteButton.SetBounds(144, 84, 50, 18);
+            mUnmuteButton.Clicked += _unmuteButton_Clicked;
 
-            _spriteLabel = new Label(_adminWindow);
-            _spriteLabel.SetPosition(6, 112);
-            _spriteLabel.Text = Strings.Get("admin", "sprite");
+            mSpriteLabel = new Label(mAdminWindow);
+            mSpriteLabel.SetPosition(6, 112);
+            mSpriteLabel.Text = Strings.Get("admin", "sprite");
 
-            _spriteDropdown = new ComboBox(_adminWindow);
-            _spriteDropdown.SetBounds(6, 128, 80, 18);
-            _spriteDropdown.AddItem(Strings.Get("admin", "none"));
+            mSpriteDropdown = new ComboBox(mAdminWindow);
+            mSpriteDropdown.SetBounds(6, 128, 80, 18);
+            mSpriteDropdown.AddItem(Strings.Get("admin", "none"));
             var sprites =
                 Globals.ContentManager.GetTextureNames(
                     IntersectClientExtras.File_Management.GameContentManager.TextureType.Entity);
             Array.Sort(sprites, new AlphanumComparatorFast());
             foreach (var sprite in sprites)
             {
-                _spriteDropdown.AddItem(sprite);
+                mSpriteDropdown.AddItem(sprite);
             }
-            _spriteDropdown.ItemSelected += _spriteDropdown_ItemSelected;
+            mSpriteDropdown.ItemSelected += _spriteDropdown_ItemSelected;
 
-            _setSpriteButton = new Button(_adminWindow)
+            mSetSpriteButton = new Button(mAdminWindow)
             {
                 Text = Strings.Get("admin", "setsprite")
             };
-            _setSpriteButton.SetBounds(6, 148, 80, 18);
-            _setSpriteButton.Clicked += _setSpriteButton_Clicked;
+            mSetSpriteButton.SetBounds(6, 148, 80, 18);
+            mSetSpriteButton.Clicked += _setSpriteButton_Clicked;
 
-            _spriteContainer = new ImagePanel(_adminWindow);
-            _spriteContainer.SetSize(50, 50);
-            _spriteContainer.SetPosition(115, 114);
-            _spritePanel = new ImagePanel(_spriteContainer);
+            SpriteContainer = new ImagePanel(mAdminWindow);
+            SpriteContainer.SetSize(50, 50);
+            SpriteContainer.SetPosition(115, 114);
+            SpritePanel = new ImagePanel(SpriteContainer);
 
-            _faceLabel = new Label(_adminWindow);
-            _faceLabel.SetPosition(6, 172);
-            _faceLabel.Text = Strings.Get("admin", "face");
+            mFaceLabel = new Label(mAdminWindow);
+            mFaceLabel.SetPosition(6, 172);
+            mFaceLabel.Text = Strings.Get("admin", "face");
 
-            _faceDropdown = new ComboBox(_adminWindow);
-            _faceDropdown.SetBounds(6, 188, 80, 18);
-            _faceDropdown.AddItem(Strings.Get("admin", "none"));
+            mFaceDropdown = new ComboBox(mAdminWindow);
+            mFaceDropdown.SetBounds(6, 188, 80, 18);
+            mFaceDropdown.AddItem(Strings.Get("admin", "none"));
             var faces =
                 Globals.ContentManager.GetTextureNames(
                     IntersectClientExtras.File_Management.GameContentManager.TextureType.Face);
             Array.Sort(faces, new AlphanumComparatorFast());
             foreach (var face in faces)
             {
-                _faceDropdown.AddItem(face);
+                mFaceDropdown.AddItem(face);
             }
-            _faceDropdown.ItemSelected += _faceDropdown_ItemSelected;
+            mFaceDropdown.ItemSelected += _faceDropdown_ItemSelected;
 
-            _setFaceButton = new Button(_adminWindow)
+            mSetFaceButton = new Button(mAdminWindow)
             {
                 Text = Strings.Get("admin", "setface")
             };
-            _setFaceButton.SetBounds(6, 208, 80, 18);
-            _setFaceButton.Clicked += _setFaceButton_Clicked;
+            mSetFaceButton.SetBounds(6, 208, 80, 18);
+            mSetFaceButton.Clicked += _setFaceButton_Clicked;
 
-            _facePanel = new ImagePanel(_adminWindow);
-            _facePanel.SetSize(50, 50);
-            _facePanel.SetPosition(115, 174);
+            FacePanel = new ImagePanel(mAdminWindow);
+            FacePanel.SetSize(50, 50);
+            FacePanel.SetPosition(115, 174);
 
-            _accessLabel = new Label(_adminWindow);
-            _accessLabel.SetPosition(6, 232);
-            _accessLabel.Text = Strings.Get("admin", "access");
+            mAccessLabel = new Label(mAdminWindow);
+            mAccessLabel.SetPosition(6, 232);
+            mAccessLabel.Text = Strings.Get("admin", "access");
 
-            _accessDropdown = new ComboBox(_adminWindow);
-            _accessDropdown.SetBounds(6, 248, 80, 18);
-            _accessDropdown.AddItem(Strings.Get("admin", "access0")).UserData = "None";
-            _accessDropdown.AddItem(Strings.Get("admin", "access1")).UserData = "Moderator";
-            _accessDropdown.AddItem(Strings.Get("admin", "access2")).UserData = "Admin";
+            mAccessDropdown = new ComboBox(mAdminWindow);
+            mAccessDropdown.SetBounds(6, 248, 80, 18);
+            mAccessDropdown.AddItem(Strings.Get("admin", "access0")).UserData = "None";
+            mAccessDropdown.AddItem(Strings.Get("admin", "access1")).UserData = "Moderator";
+            mAccessDropdown.AddItem(Strings.Get("admin", "access2")).UserData = "Admin";
 
-            _setPowerButton = new Button(_adminWindow)
+            mSetPowerButton = new Button(mAdminWindow)
             {
                 Text = Strings.Get("admin", "setpower")
             };
-            _setPowerButton.SetBounds(6, 268, 80, 18);
-            _setPowerButton.Clicked += _setPowerButton_Clicked;
+            mSetPowerButton.SetBounds(6, 268, 80, 18);
+            mSetPowerButton.Clicked += _setPowerButton_Clicked;
 
             CreateMapList();
-            _mapListLabel = new Label(_adminWindow)
+            mMapListLabel = new Label(mAdminWindow)
             {
                 Text = Strings.Get("admin", "maplist")
             };
-            _mapListLabel.SetPosition(4f, 294);
+            mMapListLabel.SetPosition(4f, 294);
 
-            _chkChronological = new CheckBox(_adminWindow);
-            _chkChronological.SetToolTipText(Strings.Get("admin", "chronologicaltip"));
-            _chkChronological.SetPosition(_adminWindow.Width - 24, 294);
-            _chkChronological.CheckChanged += _chkChronological_CheckChanged;
+            mChkChronological = new CheckBox(mAdminWindow);
+            mChkChronological.SetToolTipText(Strings.Get("admin", "chronologicaltip"));
+            mChkChronological.SetPosition(mAdminWindow.Width - 24, 294);
+            mChkChronological.CheckChanged += _chkChronological_CheckChanged;
 
-            _lblChronological = new Label(_adminWindow)
+            mLblChronological = new Label(mAdminWindow)
             {
                 Text = Strings.Get("admin", "chronological")
             };
-            _lblChronological.SetPosition(_chkChronological.X - 30, 294);
+            mLblChronological.SetPosition(mChkChronological.X - 30, 294);
 
             UpdateMapList();
         }
 
         private void _spriteDropdown_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
         {
-            _spritePanel.Texture =
+            SpritePanel.Texture =
                 Globals.ContentManager.GetTexture(
-                    IntersectClientExtras.File_Management.GameContentManager.TextureType.Entity, _spriteDropdown.Text);
-            if (_spritePanel.Texture != null)
+                    IntersectClientExtras.File_Management.GameContentManager.TextureType.Entity, mSpriteDropdown.Text);
+            if (SpritePanel.Texture != null)
             {
-                _spritePanel.SetUv(0, 0, .25f, .25f);
-                _spritePanel.SetSize(_spritePanel.Texture.GetWidth() / 4, _spritePanel.Texture.GetHeight() / 4);
-                Align.AlignTop(_spritePanel);
-                Align.CenterHorizontally(_spritePanel);
+                SpritePanel.SetUv(0, 0, .25f, .25f);
+                SpritePanel.SetSize(SpritePanel.Texture.GetWidth() / 4, SpritePanel.Texture.GetHeight() / 4);
+                Align.AlignTop(SpritePanel);
+                Align.CenterHorizontally(SpritePanel);
             }
         }
 
         private void _faceDropdown_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
         {
-            _facePanel.Texture =
+            FacePanel.Texture =
                 Globals.ContentManager.GetTexture(
-                    IntersectClientExtras.File_Management.GameContentManager.TextureType.Face, _faceDropdown.Text);
+                    IntersectClientExtras.File_Management.GameContentManager.TextureType.Face, mFaceDropdown.Text);
         }
 
         void _noclipCheckBox_CheckChanged(Base sender, EventArgs arguments)
         {
-            Globals.Me.NoClip = _noclipCheckBox.IsChecked;
+            Globals.Me.NoClip = mNoclipCheckBox.IsChecked;
         }
 
         //Methods
         public void SetName(string name)
         {
-            _nameTextbox.Text = name;
+            mNameTextbox.Text = name;
         }
 
         private void CreateMapList()
         {
-            _mapList = new TreeControl(_adminWindow);
-            _mapList.SetPosition(4f, 316);
-            _mapList.Height = 188;
-            _mapList.Width = _adminWindow.Width - 8;
-            _mapList.MaximumSize = new IntersectClientExtras.GenericClasses.Point(4096, 999999);
+            mMapList = new TreeControl(mAdminWindow);
+            mMapList.SetPosition(4f, 316);
+            mMapList.Height = 188;
+            mMapList.Width = mAdminWindow.Width - 8;
+            mMapList.MaximumSize = new IntersectClientExtras.GenericClasses.Point(4096, 999999);
         }
 
         public void UpdateMapList()
         {
-            _mapList.Dispose();
+            mMapList.Dispose();
             CreateMapList();
             AddMapListToTree(MapList.GetList(), null);
         }
@@ -302,11 +302,11 @@ namespace Intersect_Client.Classes.UI.Game
         private void AddMapListToTree(MapList mapList, TreeNode parent)
         {
             TreeNode tmpNode;
-            if (_chkChronological.IsChecked)
+            if (mChkChronological.IsChecked)
             {
                 for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
-                    tmpNode = _mapList.AddNode(MapList.GetOrderedMaps()[i].Name);
+                    tmpNode = mMapList.AddNode(MapList.GetOrderedMaps()[i].Name);
                     tmpNode.UserData = (MapList.GetOrderedMaps()[i]).MapNum;
                     tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                     tmpNode.Clicked += tmpNode_DoubleClicked;
@@ -320,7 +320,7 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         if (parent == null)
                         {
-                            tmpNode = _mapList.AddNode(mapList.Items[i].Name);
+                            tmpNode = mMapList.AddNode(mapList.Items[i].Name);
                             tmpNode.UserData = ((MapListFolder) mapList.Items[i]);
                             AddMapListToTree(((MapListFolder) mapList.Items[i]).Children, tmpNode);
                         }
@@ -335,7 +335,7 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         if (parent == null)
                         {
-                            tmpNode = _mapList.AddNode(mapList.Items[i].Name);
+                            tmpNode = mMapList.AddNode(mapList.Items[i].Name);
                             tmpNode.UserData = ((MapListMap) mapList.Items[i]).MapNum;
                             tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                             tmpNode.Clicked += tmpNode_DoubleClicked;
@@ -354,123 +354,123 @@ namespace Intersect_Client.Classes.UI.Game
 
         void _kickButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_nameTextbox.Text.Trim().Length > 0)
+            if (mNameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int) AdminActions.Kick, _nameTextbox.Text);
+                PacketSender.SendAdminAction((int) AdminActions.Kick, mNameTextbox.Text);
             }
         }
 
         void _killButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_nameTextbox.Text.Trim().Length > 0)
+            if (mNameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int) AdminActions.Kill, _nameTextbox.Text);
+                PacketSender.SendAdminAction((int) AdminActions.Kill, mNameTextbox.Text);
             }
         }
 
         void _warpToMeButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_nameTextbox.Text.Trim().Length > 0)
+            if (mNameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int) AdminActions.WarpToMe, _nameTextbox.Text);
+                PacketSender.SendAdminAction((int) AdminActions.WarpToMe, mNameTextbox.Text);
             }
         }
 
         void _warpMeToButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_nameTextbox.Text.Trim().Length > 0)
+            if (mNameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int) AdminActions.WarpMeTo, _nameTextbox.Text);
+                PacketSender.SendAdminAction((int) AdminActions.WarpMeTo, mNameTextbox.Text);
             }
         }
 
         void _muteButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_nameTextbox.Text.Trim().Length > 0)
+            if (mNameTextbox.Text.Trim().Length > 0)
             {
-                _banMuteWindow = new BanMuteBox(Strings.Get("admin", "mutecaption", _nameTextbox.Text),
-                    Strings.Get("admin", "muteprompt", _nameTextbox.Text), true, MuteUser);
+                mBanMuteWindow = new BanMuteBox(Strings.Get("admin", "mutecaption", mNameTextbox.Text),
+                    Strings.Get("admin", "muteprompt", mNameTextbox.Text), true, MuteUser);
             }
         }
 
         void MuteUser(object sender, EventArgs e)
         {
-            PacketSender.SendAdminAction((int) AdminActions.Mute, _nameTextbox.Text,
-                _banMuteWindow.GetDuration().ToString(), _banMuteWindow.GetReason(),
-                Convert.ToString(_banMuteWindow.BanIp()));
-            _banMuteWindow.Dispose();
+            PacketSender.SendAdminAction((int) AdminActions.Mute, mNameTextbox.Text,
+                mBanMuteWindow.GetDuration().ToString(), mBanMuteWindow.GetReason(),
+                Convert.ToString(mBanMuteWindow.BanIp()));
+            mBanMuteWindow.Dispose();
         }
 
         void BanUser(object sender, EventArgs e)
         {
-            PacketSender.SendAdminAction((int) AdminActions.Ban, _nameTextbox.Text,
-                _banMuteWindow.GetDuration().ToString(), _banMuteWindow.GetReason(),
-                Convert.ToString(_banMuteWindow.BanIp()));
-            _banMuteWindow.Dispose();
+            PacketSender.SendAdminAction((int) AdminActions.Ban, mNameTextbox.Text,
+                mBanMuteWindow.GetDuration().ToString(), mBanMuteWindow.GetReason(),
+                Convert.ToString(mBanMuteWindow.BanIp()));
+            mBanMuteWindow.Dispose();
         }
 
         void _banButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_nameTextbox.Text.Trim().Length > 0 &&
-                _nameTextbox.Text.Trim().ToLower() != Globals.Me.MyName.Trim().ToLower())
+            if (mNameTextbox.Text.Trim().Length > 0 &&
+                mNameTextbox.Text.Trim().ToLower() != Globals.Me.MyName.Trim().ToLower())
             {
-                _banMuteWindow = new BanMuteBox(Strings.Get("admin", "bancaption", _nameTextbox.Text),
-                    Strings.Get("admin", "banprompt", _nameTextbox.Text), true, BanUser);
+                mBanMuteWindow = new BanMuteBox(Strings.Get("admin", "bancaption", mNameTextbox.Text),
+                    Strings.Get("admin", "banprompt", mNameTextbox.Text), true, BanUser);
             }
         }
 
         private void _setFaceButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_nameTextbox.Text.Trim().Length > 0)
+            if (mNameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int) AdminActions.SetFace, _nameTextbox.Text, _faceDropdown.Text);
+                PacketSender.SendAdminAction((int) AdminActions.SetFace, mNameTextbox.Text, mFaceDropdown.Text);
             }
         }
 
         void _unmuteButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_nameTextbox.Text.Trim().Length > 0)
+            if (mNameTextbox.Text.Trim().Length > 0)
             {
-                var confirmWindow = new InputBox(Strings.Get("admin", "unmutecaption", _nameTextbox.Text),
-                    Strings.Get("admin", "unmuteprompt", _nameTextbox.Text), true, InputBox.InputType.YesNo, UnmuteUser,
+                var confirmWindow = new InputBox(Strings.Get("admin", "unmutecaption", mNameTextbox.Text),
+                    Strings.Get("admin", "unmuteprompt", mNameTextbox.Text), true, InputBox.InputType.YesNo, UnmuteUser,
                     null, -1);
             }
         }
 
         void _unbanButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_nameTextbox.Text.Trim().Length > 0)
+            if (mNameTextbox.Text.Trim().Length > 0)
             {
-                var confirmWindow = new InputBox(Strings.Get("admin", "unbancaption", _nameTextbox.Text),
-                    Strings.Get("admin", "unbanprompt", _nameTextbox.Text), true, InputBox.InputType.YesNo, UnbanUser,
+                var confirmWindow = new InputBox(Strings.Get("admin", "unbancaption", mNameTextbox.Text),
+                    Strings.Get("admin", "unbanprompt", mNameTextbox.Text), true, InputBox.InputType.YesNo, UnbanUser,
                     null, -1);
             }
         }
 
         void UnmuteUser(object sender, EventArgs e)
         {
-            PacketSender.SendAdminAction((int) AdminActions.UnMute, _nameTextbox.Text);
+            PacketSender.SendAdminAction((int) AdminActions.UnMute, mNameTextbox.Text);
         }
 
         void UnbanUser(object sender, EventArgs e)
         {
-            PacketSender.SendAdminAction((int) AdminActions.UnBan, _nameTextbox.Text);
+            PacketSender.SendAdminAction((int) AdminActions.UnBan, mNameTextbox.Text);
         }
 
         void _setSpriteButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_nameTextbox.Text.Trim().Length > 0)
+            if (mNameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int) AdminActions.SetSprite, _nameTextbox.Text, _spriteDropdown.Text);
+                PacketSender.SendAdminAction((int) AdminActions.SetSprite, mNameTextbox.Text, mSpriteDropdown.Text);
             }
         }
 
         void _setPowerButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_nameTextbox.Text.Trim().Length > 0)
+            if (mNameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int) AdminActions.SetAccess, _nameTextbox.Text,
-                    _accessDropdown.SelectedItem.UserData.ToString());
+                PacketSender.SendAdminAction((int) AdminActions.SetAccess, mNameTextbox.Text,
+                    mAccessDropdown.SelectedItem.UserData.ToString());
             }
         }
 
@@ -490,17 +490,17 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Show()
         {
-            _adminWindow.IsHidden = false;
+            mAdminWindow.IsHidden = false;
         }
 
         public bool IsVisible()
         {
-            return !_adminWindow.IsHidden;
+            return !mAdminWindow.IsHidden;
         }
 
         public void Hide()
         {
-            _adminWindow.IsHidden = true;
+            mAdminWindow.IsHidden = true;
         }
     }
 }

@@ -155,10 +155,10 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
                     }
                     return Strings.Get("eventconditiondesc", "levelorstat", lvlorstat, pLvl);
                 case 8: //Self Switch
-                    var sValue = Strings.Get("eventconditiondesc", "false");
-                    if (Convert.ToBoolean(Ints[2])) sValue = Strings.Get("eventconditiondesc", "true");
+                    var value = Strings.Get("eventconditiondesc", "false");
+                    if (Convert.ToBoolean(Ints[2])) value = Strings.Get("eventconditiondesc", "true");
                     return Strings.Get("eventconditiondesc", "selfswitch",
-                        Strings.Get("eventconditiondesc", "selfswitch" + Ints[1]), sValue);
+                        Strings.Get("eventconditiondesc", "selfswitch" + Ints[1]), value);
                 case 9: //Power is
                     if (Ints[1] == 0)
                     {

@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms
 {
-    partial class frmSpell
+    partial class FrmSpell
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace Intersect.Editor.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSpell));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSpell));
             this.pnlContainer = new System.Windows.Forms.Panel();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
             this.cmbHitAnimation = new DarkUI.Controls.DarkComboBox();
@@ -1701,7 +1701,7 @@ namespace Intersect.Editor.Forms
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.MaximizeBox = false;
-            this.Name = "frmSpell";
+            this.Name = "FrmSpell";
             this.Text = "Spell Editor                       ";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmSpell_FormClosed);
             this.Load += new System.EventHandler(this.frmSpell_Load);

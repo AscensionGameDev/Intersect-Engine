@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Classes
 {
-    partial class frmResource
+    partial class FrmResource
     {
         /// <summary>
         /// Required designer variable.
@@ -31,7 +31,7 @@ namespace Intersect.Editor.Classes
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmResource));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmResource));
             this.grpResources = new DarkUI.Controls.DarkGroupBox();
             this.lstResources = new System.Windows.Forms.ListBox();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
@@ -734,7 +734,7 @@ namespace Intersect.Editor.Classes
             this.Controls.Add(this.pnlContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
-            this.Name = "frmResource";
+            this.Name = "FrmResource";
             this.Text = "Resource Editor";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmResource_FormClosed);
             this.Load += new System.EventHandler(this.frmResource_Load);

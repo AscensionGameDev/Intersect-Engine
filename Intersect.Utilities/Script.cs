@@ -5,7 +5,7 @@ namespace Intersect.Utilities
 {
     public abstract class Script
     {
-        public static Regex COMMAND_REGEX = new Regex(@"^([^ \t'""]+)(?:[ \t]+(""[^""]*""|'[^']*'|[^ \t'""]+))*$");
+        public static Regex CommandRegex = new Regex(@"^([^ \t'""]+)(?:[ \t]+(""[^""]*""|'[^']*'|[^ \t'""]+))*$");
 
         protected Script()
         {

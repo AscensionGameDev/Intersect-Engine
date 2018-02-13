@@ -11,28 +11,28 @@ using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommand_PlayAnimation : UserControl
+    public partial class EventCommandPlayAnimation : UserControl
     {
-        private readonly FrmEvent _eventEditor;
-        private MapBase _currentMap;
-        private EventBase _editingEvent;
-        private EventCommand _myCommand;
-        private int spawnX;
-        private int spawnY;
+        private readonly FrmEvent mEventEditor;
+        private MapBase mCurrentMap;
+        private EventBase mEditingEvent;
+        private EventCommand mMyCommand;
+        private int mSpawnX;
+        private int mSpawnY;
 
-        public EventCommand_PlayAnimation(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent,
+        public EventCommandPlayAnimation(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent,
             EventCommand editingCommand)
         {
             InitializeComponent();
-            _myCommand = editingCommand;
-            _eventEditor = eventEditor;
-            _editingEvent = currentEvent;
-            _currentMap = currentMap;
+            mMyCommand = editingCommand;
+            mEventEditor = eventEditor;
+            mEditingEvent = currentEvent;
+            mCurrentMap = currentMap;
             InitLocalization();
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
-            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, _myCommand.Ints[0]);
-            cmbConditionType.SelectedIndex = _myCommand.Ints[1];
+            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, mMyCommand.Ints[0]);
+            cmbConditionType.SelectedIndex = mMyCommand.Ints[1];
             nudWarpX.Maximum = Options.MapWidth;
             nudWarpY.Maximum = Options.MapHeight;
             UpdateFormElements();
@@ -40,14 +40,14 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 case 0: //Tile spawn
                     //Fill in the map cmb
-                    nudWarpX.Value = _myCommand.Ints[3];
-                    nudWarpY.Value = _myCommand.Ints[4];
-                    cmbDirection.SelectedIndex = _myCommand.Ints[5];
+                    nudWarpX.Value = mMyCommand.Ints[3];
+                    nudWarpY.Value = mMyCommand.Ints[4];
+                    cmbDirection.SelectedIndex = mMyCommand.Ints[5];
                     break;
                 case 1: //On/Around Entity Spawn
-                    spawnX = _myCommand.Ints[3];
-                    spawnY = _myCommand.Ints[4];
-                    switch (_myCommand.Ints[5])
+                    mSpawnX = mMyCommand.Ints[3];
+                    mSpawnY = mMyCommand.Ints[4];
+                    switch (mMyCommand.Ints[5])
                     {
                         //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                         case 1:
@@ -109,7 +109,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                     {
                         cmbMap.Items.Add(MapList.GetOrderedMaps()[i].MapNum + ". " + MapList.GetOrderedMaps()[i].Name);
-                        if (MapList.GetOrderedMaps()[i].MapNum == _myCommand.Ints[2])
+                        if (MapList.GetOrderedMaps()[i].MapNum == mMyCommand.Ints[2])
                         {
                             cmbMap.SelectedIndex = i;
                         }
@@ -125,14 +125,14 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     cmbEntities.Items.Add(Strings.Get("eventplayanimation", "player"));
                     cmbEntities.SelectedIndex = 0;
 
-                    if (!_editingEvent.CommonEvent)
+                    if (!mEditingEvent.CommonEvent)
                     {
-                        foreach (var evt in _currentMap.Events)
+                        foreach (var evt in mCurrentMap.Events)
                         {
-                            cmbEntities.Items.Add(evt.Key == _editingEvent.Index
+                            cmbEntities.Items.Add(evt.Key == mEditingEvent.Index
                                 ? Strings.Get("eventplayanimation", "this") + " "
                                 : "" + evt.Value.Name);
-                            if (_myCommand.Ints[2] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
+                            if (mMyCommand.Ints[2] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
                         }
                     }
                     UpdateSpawnPreview();
@@ -147,7 +147,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             Font renderFont = new Font(new FontFamily("Arial"), 14);
             Graphics g = Graphics.FromImage(destBitmap);
             g.Clear(System.Drawing.Color.White);
-            g.FillRectangle(Brushes.Red, new Rectangle((spawnX + 2) * 32, (spawnY + 2) * 32, 32, 32));
+            g.FillRectangle(Brushes.Red, new Rectangle((mSpawnX + 2) * 32, (mSpawnY + 2) * 32, 32, 32));
             for (int x = 0; x < 5; x++)
             {
                 g.DrawLine(Pens.Black, x * 32, 0, x * 32, 32 * 5);
@@ -164,56 +164,56 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex);
-            _myCommand.Ints[1] = cmbConditionType.SelectedIndex;
-            switch (_myCommand.Ints[1])
+            mMyCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex);
+            mMyCommand.Ints[1] = cmbConditionType.SelectedIndex;
+            switch (mMyCommand.Ints[1])
             {
                 case 0: //Tile Spawn
-                    _myCommand.Ints[2] = MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum;
-                    _myCommand.Ints[3] = (int) nudWarpX.Value;
-                    _myCommand.Ints[4] = (int) nudWarpY.Value;
-                    _myCommand.Ints[5] = cmbDirection.SelectedIndex;
+                    mMyCommand.Ints[2] = MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum;
+                    mMyCommand.Ints[3] = (int) nudWarpX.Value;
+                    mMyCommand.Ints[4] = (int) nudWarpY.Value;
+                    mMyCommand.Ints[5] = cmbDirection.SelectedIndex;
                     break;
                 case 1: //On/Around Entity Spawn
                     if (cmbEntities.SelectedIndex == 0 || cmbEntities.SelectedIndex == -1)
                     {
-                        _myCommand.Ints[2] = -1;
+                        mMyCommand.Ints[2] = -1;
                     }
                     else
                     {
-                        _myCommand.Ints[2] = _currentMap.Events.Keys.ToList()[cmbEntities.SelectedIndex - 1];
+                        mMyCommand.Ints[2] = mCurrentMap.Events.Keys.ToList()[cmbEntities.SelectedIndex - 1];
                     }
-                    _myCommand.Ints[3] = spawnX;
-                    _myCommand.Ints[4] = spawnY;
+                    mMyCommand.Ints[3] = mSpawnX;
+                    mMyCommand.Ints[4] = mSpawnY;
                     if (chkRelativeLocation.Checked && chkRotateDirection.Checked)
                     {
-                        _myCommand.Ints[5] = 3;
+                        mMyCommand.Ints[5] = 3;
                         //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
                     else if (chkRelativeLocation.Checked)
                     {
-                        _myCommand.Ints[5] = 1;
+                        mMyCommand.Ints[5] = 1;
                         //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
                     else if (chkRotateDirection.Checked)
                     {
-                        _myCommand.Ints[5] = 2;
+                        mMyCommand.Ints[5] = 2;
                         //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
                     else
                     {
-                        _myCommand.Ints[5] = 0;
+                        mMyCommand.Ints[5] = 0;
                         //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
                     }
 
                     break;
             }
-            _eventEditor.FinishCommandEdit();
+            mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _eventEditor.CancelCommandEdit();
+            mEventEditor.CancelCommandEdit();
         }
 
         private void cmbConditionType_SelectedIndexChanged(object sender, EventArgs e)
@@ -223,7 +223,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnVisual_Click(object sender, EventArgs e)
         {
-            frmWarpSelection frmWarpSelection = new frmWarpSelection();
+            FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
             frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum, (int) nudWarpX.Value,
                 (int) nudWarpY.Value);
             frmWarpSelection.ShowDialog();
@@ -246,8 +246,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             if (e.X >= 0 && e.Y >= 0 && e.X < pnlSpawnLoc.Width && e.Y < pnlSpawnLoc.Height)
             {
-                spawnX = (int) Math.Floor((double) (e.X) / Options.TileWidth) - 2;
-                spawnY = (int) Math.Floor((double) (e.Y) / Options.TileHeight) - 2;
+                mSpawnX = (int) Math.Floor((double) (e.X) / Options.TileWidth) - 2;
+                mSpawnY = (int) Math.Floor((double) (e.Y) / Options.TileHeight) - 2;
                 UpdateSpawnPreview();
             }
         }

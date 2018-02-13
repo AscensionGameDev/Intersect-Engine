@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_WaitForRouteCompletion
+    partial class EventCommandWaitForRouteCompletion
     {
         /// <summary> 
         /// Required designer variable.
@@ -104,7 +104,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpWaitRoute);
-            this.Name = "EventCommand_WaitForRouteCompletion";
+            this.Name = "EventCommandWaitForRouteCompletion";
             this.Size = new System.Drawing.Size(191, 106);
             this.grpWaitRoute.ResumeLayout(false);
             this.grpWaitRoute.PerformLayout();

@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    partial class EventCommand_StartCommonEvent
+    partial class EventCommandStartCommonEvent
     {
         /// <summary> 
         /// Required designer variable.
@@ -104,7 +104,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpCommonEvent);
-            this.Name = "EventCommand_StartCommonEvent";
+            this.Name = "EventCommandStartCommonEvent";
             this.Size = new System.Drawing.Size(257, 132);
             this.grpCommonEvent.ResumeLayout(false);
             this.grpCommonEvent.PerformLayout();

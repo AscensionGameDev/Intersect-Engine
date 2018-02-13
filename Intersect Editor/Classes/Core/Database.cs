@@ -9,7 +9,7 @@ namespace Intersect.Editor.Classes
 {
     public static class Database
     {
-        private const string DbFilename = "resources/mapcache.db";
+        private const string DB_FILENAME = "resources/mapcache.db";
 
         //Map Table Constants
         private const string MAP_CACHE_TABLE = "mapcache";
@@ -24,7 +24,7 @@ namespace Intersect.Editor.Classes
         private const string OPTION_ID = "id";
         private const string OPTION_NAME = "name";
         private const string OPTION_VALUE = "value";
-        private static SqliteConnection _dbConnection;
+        private static SqliteConnection sDbConnection;
 
         //Grid Variables
         public static bool GridHideDarkness;
@@ -106,11 +106,11 @@ namespace Intersect.Editor.Classes
         {
             if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
             SqliteConnection.SetConfig(SQLiteConfig.Serialized);
-            if (!File.Exists(DbFilename)) CreateDatabase();
-            if (_dbConnection == null)
+            if (!File.Exists(DB_FILENAME)) CreateDatabase();
+            if (sDbConnection == null)
             {
-                _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ",Version=3");
-                _dbConnection.Open();
+                sDbConnection = new SqliteConnection("Data Source=" + DB_FILENAME + ",Version=3");
+                sDbConnection.Open();
             }
             GridHideDarkness = GetOptionBool("HideDarkness");
             GridHideFog = GetOptionBool("HideFog");
@@ -121,8 +121,8 @@ namespace Intersect.Editor.Classes
 
         private static void CreateDatabase()
         {
-            _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ",Version=3,New=True");
-            _dbConnection.Open();
+            sDbConnection = new SqliteConnection("Data Source=" + DB_FILENAME + ",Version=3,New=True");
+            sDbConnection.Open();
             CreateOptionsTable();
             CreateMapCacheTable();
         }
@@ -134,7 +134,7 @@ namespace Intersect.Editor.Classes
                       + OPTION_NAME + " TEXT UNIQUE,"
                       + OPTION_VALUE + " TEXT"
                       + ");";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = sDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
@@ -155,7 +155,7 @@ namespace Intersect.Editor.Classes
             var query = "INSERT OR REPLACE into " + OPTION_TABLE + " (" + OPTION_NAME + "," +
                         OPTION_VALUE + ")" + " VALUES " + " (@" +
                         OPTION_NAME + ",@" + OPTION_VALUE + ");";
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            using (SqliteCommand cmd = new SqliteCommand(query, sDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + OPTION_NAME, name));
                 cmd.Parameters.Add(new SqliteParameter("@" + OPTION_VALUE, value));
@@ -166,7 +166,7 @@ namespace Intersect.Editor.Classes
         public static string GetOptionStr(string name)
         {
             var query = "SELECT * from " + OPTION_TABLE + " WHERE " + OPTION_NAME + "=@" + OPTION_NAME + ";";
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            using (SqliteCommand cmd = new SqliteCommand(query, sDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + OPTION_NAME, name));
                 var dataReader = cmd.ExecuteReader();
@@ -209,7 +209,7 @@ namespace Intersect.Editor.Classes
                       + MAP_CACHE_REVISION + " INTEGER,"
                       + MAP_CACHE_DATA + " BLOB"
                       + ");";
-            using (var createCommand = _dbConnection.CreateCommand())
+            using (var createCommand = sDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
                 createCommand.ExecuteNonQuery();
@@ -281,7 +281,7 @@ namespace Intersect.Editor.Classes
                 query += " AND " + MAP_CACHE_REVISION + "=@" + MAP_CACHE_REVISION;
             }
 
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            using (SqliteCommand cmd = new SqliteCommand(query, sDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id.ToString()));
                 if (revision > -1)
@@ -306,7 +306,7 @@ namespace Intersect.Editor.Classes
             var query = "INSERT OR REPLACE into " + MAP_CACHE_TABLE + " (" + MAP_CACHE_ID + "," +
                         MAP_CACHE_REVISION + "," + MAP_CACHE_DATA + ")" + " VALUES " + " (@" +
                         MAP_CACHE_ID + ",@" + MAP_CACHE_REVISION + ",@" + MAP_CACHE_DATA + ");";
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            using (SqliteCommand cmd = new SqliteCommand(query, sDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id));
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_REVISION, revision));
@@ -326,7 +326,7 @@ namespace Intersect.Editor.Classes
         {
             var query = "UPDATE " + MAP_CACHE_TABLE + " SET " + MAP_CACHE_DATA + " = @" + MAP_CACHE_DATA + " WHERE " +
                         MAP_CACHE_ID + " = @" + MAP_CACHE_ID;
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            using (SqliteCommand cmd = new SqliteCommand(query, sDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id));
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_DATA, null));
@@ -337,7 +337,7 @@ namespace Intersect.Editor.Classes
         public static void ClearAllMapCache()
         {
             var query = "UPDATE " + MAP_CACHE_TABLE + " SET " + MAP_CACHE_DATA + " = @" + MAP_CACHE_DATA;
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            using (SqliteCommand cmd = new SqliteCommand(query, sDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_DATA, null));
                 cmd.ExecuteNonQuery();

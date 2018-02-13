@@ -17,13 +17,13 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
 {
     public class MonoContentManager : GameContentManager
     {
-        private bool downloadCompleted;
-        private string errorString = "";
+        private bool mDownloadCompleted;
+        private string mErrorString = "";
 
-        private frmLoadingContent loadingForm;
+        private FrmLoadingContent mLoadingForm;
 
         //Initial Resource Downloading
-        private string resourceRelayer = "http://ascensiongamedev.com/resources/Intersect/findResources.php";
+        private string mResourceRelayer = "http://ascensiongamedev.com/resources/Intersect/findResources.php";
 
         public MonoContentManager()
         {
@@ -31,13 +31,13 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             Init(this);
             if (!Directory.Exists("resources"))
             {
-                loadingForm = new frmLoadingContent();
-                loadingForm.Show();
-                loadingForm.BringToFront();
+                mLoadingForm = new FrmLoadingContent();
+                mLoadingForm.Show();
+                mLoadingForm.BringToFront();
                 using (WebClient client = new WebClient())
                 {
                     byte[] response =
-                        client.UploadValues(resourceRelayer, new NameValueCollection()
+                        client.UploadValues(mResourceRelayer, new NameValueCollection()
                         {
                             {"version", Assembly.GetExecutingAssembly().GetName().Version.ToString()},
                         });
@@ -51,22 +51,22 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                         {
                             try
                             {
-                                downloadCompleted = false;
-                                errorString = "";
+                                mDownloadCompleted = false;
+                                mErrorString = "";
                                 client.DownloadFileAsync(urlResult, "resources.zip");
-                                while (!downloadCompleted)
+                                while (!mDownloadCompleted)
                                 {
                                     Application.DoEvents();
                                 }
                             }
                             catch (Exception ex)
                             {
-                                errorString = ex.Message;
+                                mErrorString = ex.Message;
                             }
-                            if (errorString != "")
+                            if (mErrorString != "")
                             {
                                 if (
-                                    MessageBox.Show(Strings.Get("resources", "resourceexception", errorString),
+                                    MessageBox.Show(Strings.Get("resources", "resourceexception", mErrorString),
                                         Strings.Get("resources", "failedtoload"),
                                         MessageBoxButtons.YesNo) != DialogResult.Yes)
                                 {
@@ -85,7 +85,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                             Strings.Get("resources", "failedtoload"));
                     }
                 }
-                loadingForm.Close();
+                mLoadingForm.Close();
             }
             if (!Directory.Exists("resources"))
             {
@@ -96,7 +96,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
         private void Client_DownloadFileCompleted(object sender,
             global::System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            downloadCompleted = true;
+            mDownloadCompleted = true;
             if (!e.Cancelled && e.Error == null)
             {
                 try
@@ -107,25 +107,25 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                 }
                 catch (Exception ex)
                 {
-                    errorString = ex.Message;
+                    mErrorString = ex.Message;
                 }
             }
             else
             {
                 if (e.Cancelled)
                 {
-                    errorString = Strings.Get("resources", "cancelled");
+                    mErrorString = Strings.Get("resources", "cancelled");
                 }
                 else
                 {
-                    errorString = e.Error.Message;
+                    mErrorString = e.Error.Message;
                 }
             }
         }
 
         private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            loadingForm.SetProgress(e.ProgressPercentage);
+            mLoadingForm.SetProgress(e.ProgressPercentage);
         }
 
         //Graphic Loading

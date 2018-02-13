@@ -11,30 +11,30 @@ namespace Intersect_Client.Classes.Entities
 {
     public class Resource : Entity
     {
-        public ResourceBase _baseResource;
-        private bool _hasRenderBounds;
+        public ResourceBase BaseResource;
+        private bool mHasRenderBounds;
         public bool IsDead;
-        FloatRect destRectangle = FloatRect.Empty;
-        FloatRect srcRectangle = FloatRect.Empty;
+        FloatRect mDestRectangle = FloatRect.Empty;
+        FloatRect mSrcRectangle = FloatRect.Empty;
 
         public Resource(int index, long spawnTime, ByteBuffer bf) : base(index, spawnTime, bf)
         {
-            _renderPriority = 0;
+            mRenderPriority = 0;
         }
 
         public override string MySprite
         {
-            get { return _mySprite; }
+            get => mMySprite;
             set
             {
-                _mySprite = value;
-                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, _mySprite);
-                _hasRenderBounds = false;
+                mMySprite = value;
+                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, mMySprite);
+                mHasRenderBounds = false;
             }
         }
         public ResourceBase GetResourceBase()
         {
-            return _baseResource;
+            return BaseResource;
         }
 
         public override void Load(ByteBuffer bf)
@@ -42,11 +42,11 @@ namespace Intersect_Client.Classes.Entities
             base.Load(bf);
             IsDead = Convert.ToBoolean(bf.ReadInteger());
             var baseIndex = bf.ReadInteger();
-            _baseResource = ResourceBase.Lookup.Get<ResourceBase>(baseIndex);
+            BaseResource = ResourceBase.Lookup.Get<ResourceBase>(baseIndex);
             HideName = 1;
             if (IsDead)
             {
-                MySprite = _baseResource.EndGraphic;
+                MySprite = BaseResource?.EndGraphic;
             }
         }
 
@@ -57,11 +57,11 @@ namespace Intersect_Client.Classes.Entities
 
         public override bool Update()
         {
-            if (!_hasRenderBounds)
+            if (!mHasRenderBounds)
             {
                 CalculateRenderBounds();
             }
-            if (!GameGraphics.CurrentView.IntersectsWith(destRectangle))
+            if (!GameGraphics.CurrentView.IntersectsWith(mDestRectangle))
             {
                 if (RenderList != null)
                 {
@@ -89,21 +89,21 @@ namespace Intersect_Client.Classes.Entities
             }
             if (Texture != null)
             {
-                srcRectangle.Width = Texture.GetWidth();
-                srcRectangle.Height = Texture.GetHeight();
-                destRectangle.Width = srcRectangle.Width;
-                destRectangle.Height = srcRectangle.Height;
-                destRectangle.Y = (int) (map.GetY() + CurrentY * Options.TileHeight + OffsetY);
-                destRectangle.X = (int) (map.GetX() + CurrentX * Options.TileWidth + OffsetX);
-                if (srcRectangle.Height > Options.TileHeight)
+                mSrcRectangle.Width = Texture.GetWidth();
+                mSrcRectangle.Height = Texture.GetHeight();
+                mDestRectangle.Width = mSrcRectangle.Width;
+                mDestRectangle.Height = mSrcRectangle.Height;
+                mDestRectangle.Y = (int) (map.GetY() + CurrentY * Options.TileHeight + OffsetY);
+                mDestRectangle.X = (int) (map.GetX() + CurrentX * Options.TileWidth + OffsetX);
+                if (mSrcRectangle.Height > Options.TileHeight)
                 {
-                    destRectangle.Y -= srcRectangle.Height - Options.TileHeight;
+                    mDestRectangle.Y -= mSrcRectangle.Height - Options.TileHeight;
                 }
-                if (srcRectangle.Width > Options.TileWidth)
+                if (mSrcRectangle.Width > Options.TileWidth)
                 {
-                    destRectangle.X -= (srcRectangle.Width - Options.TileWidth) / 2;
+                    mDestRectangle.X -= (mSrcRectangle.Width - Options.TileWidth) / 2;
                 }
-                _hasRenderBounds = true;
+                mHasRenderBounds = true;
             }
         }
 
@@ -113,7 +113,7 @@ namespace Intersect_Client.Classes.Entities
             if (MapInstance == null) return;
             if (Texture != null)
             {
-                GameGraphics.DrawGameTexture(Texture, srcRectangle, destRectangle, Intersect.Color.White);
+                GameGraphics.DrawGameTexture(Texture, mSrcRectangle, mDestRectangle, Intersect.Color.White);
             }
         }
     }

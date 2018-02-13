@@ -8,8 +8,8 @@ namespace Intersect.Editor.Forms.Editors
 {
     public class EditorForm : Form
     {
-        private bool closing = false;
-        protected bool changingName = false;
+        private bool mClosing = false;
+        protected bool mChangingName = false;
         protected EditorForm()
         {
             ApplyHooks();
@@ -19,7 +19,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             PacketHandler.GameObjectUpdatedDelegate = type =>
             {
-                if (IsDisposed || closing || Disposing) return;
+                if (IsDisposed || mClosing || Disposing) return;
                 var action = (Action<GameObjectType>) FireGameObjectUpdatedDelegate;
                 try
                 {
@@ -36,12 +36,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void EditorForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            closing = true;
+            mClosing = true;
         }
 
         private void FireGameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (IsDisposed || closing || Disposing) return;
+            if (IsDisposed || mClosing || Disposing) return;
             GameObjectUpdatedDelegate(type);
         }
 
