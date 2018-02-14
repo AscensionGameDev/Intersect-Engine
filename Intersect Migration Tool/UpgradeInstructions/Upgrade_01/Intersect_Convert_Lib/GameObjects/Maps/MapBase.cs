@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Events;
-using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Lib.GameObjects.Maps
 {

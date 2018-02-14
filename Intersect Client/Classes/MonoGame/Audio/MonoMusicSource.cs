@@ -4,7 +4,6 @@ using Intersect.Logging;
 using IntersectClientExtras.Audio;
 using IntersectClientExtras.GenericClasses;
 using Intersect_Client.Classes.UI.Game.Chat;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
 
 namespace Intersect_MonoGameDx.Classes.SFML.Audio

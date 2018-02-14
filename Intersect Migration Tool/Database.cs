@@ -2,7 +2,6 @@
 using System.IO;
 using System.Xml;
 using Intersect.Localization;
-using Intersect.Logging;
 using Intersect.Migration.UpgradeInstructions.Upgrade_1;
 using Intersect.Migration.UpgradeInstructions.Upgrade_2;
 using Intersect.Migration.UpgradeInstructions.Upgrade_3;

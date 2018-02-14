@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib;
 using Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Lib;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_8
