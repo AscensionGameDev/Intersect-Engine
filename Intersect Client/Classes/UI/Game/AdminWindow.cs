@@ -3,7 +3,6 @@ using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
-using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;

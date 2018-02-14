@@ -1,5 +1,4 @@
 ﻿using Intersect.Enums;
-using Intersect.Server.Classes.Core;
 
 namespace Intersect.Server.Classes.Maps
 {

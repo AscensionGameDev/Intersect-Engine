@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Intersect.Server.Classes.Core;
 
 namespace Intersect.Server.Classes.Maps
 {

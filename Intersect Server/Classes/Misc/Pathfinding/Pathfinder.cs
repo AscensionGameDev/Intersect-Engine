@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.Enums;
-using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.Maps;
 

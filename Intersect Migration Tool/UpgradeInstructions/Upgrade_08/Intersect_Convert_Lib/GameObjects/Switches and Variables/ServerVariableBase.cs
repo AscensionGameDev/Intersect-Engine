@@ -1,6 +1,4 @@
-﻿using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib;
-
-namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Lib.GameObjects.Switches_and_Variables
+﻿namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Lib.GameObjects.Switches_and_Variables
 {
     public class ServerVariableBase : DatabaseObject<ServerVariableBase>
     {
