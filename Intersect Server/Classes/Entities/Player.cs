@@ -304,6 +304,9 @@ namespace Intersect.Server.Classes.Entities
         //Spawning/Dying
         private void Respawn()
         {
+            //Remove any damage over time effects
+            DoT.Clear();
+
             var cls = ClassBase.Lookup.Get<ClassBase>(Class);
             if (cls != null)
             {

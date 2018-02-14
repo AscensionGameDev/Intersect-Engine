@@ -445,8 +445,9 @@ namespace Intersect.Server.Classes.Networking
                 Globals.Entities[index].Move(dir, client, false);
                 if (Globals.Entities[index].MoveTimer > Globals.System.GetTimeMs())
                 {
+                    //TODO: Make this based moreso on the players current ping instead of a flat value that can be abused
                     Globals.Entities[index].MoveTimer = Globals.System.GetTimeMs() +
-                                                        (long) (Globals.Entities[index].GetMovementTime() / 2f);
+                                                        (long) (Globals.Entities[index].GetMovementTime() * .75f);
                 }
             }
             else

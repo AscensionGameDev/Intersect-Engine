@@ -989,14 +989,14 @@ namespace Intersect.Server.Classes.Entities
                 for (var i = 0; i < enemy.DoT.Count; i++)
                 {
                     if (enemy.DoT[i].SpellBase.Index == spellBase.Index ||
-                        enemy.DoT[i].OwnerId == MyIndex)
+                        enemy.DoT[i].Target == this)
                     {
                         doTFound = true;
                     }
                 }
                 if (doTFound == false) //no duplicate DoT/HoT spells.
                 {
-                    enemy.DoT.Add(new DoTInstance(MyIndex, spellBase.Index, enemy));
+                    new DoTInstance(this, spellBase.Index, enemy);
                 }
             }
         }
@@ -1284,10 +1284,7 @@ namespace Intersect.Server.Classes.Entities
                         }
                         break;
                     case (int) SpellTypes.WarpTo:
-                        if (GetType() == typeof(Player))
-                        {
-                            HandleAoESpell(spellNum, spellBase.CastRange, CurrentMap, CurrentX, CurrentY, CastTarget);
-                        }
+                        HandleAoESpell(spellNum, spellBase.CastRange, CurrentMap, CurrentX, CurrentY, CastTarget);
                         break;
                     case (int) SpellTypes.Dash:
                         PacketSender.SendActionMsg(this, Strings.Get("combat", "dash"), CustomColors.Dash);
@@ -1754,27 +1751,27 @@ namespace Intersect.Server.Classes.Entities
     {
         private long mInterval;
 
-        public int OwnerId { get; }
+        public Entity Attacker;
 
         public int Count;
         public SpellBase SpellBase;
         public Entity Target { get; }
 
-        public DoTInstance(int ownerId, int spellNum, Entity target)
+        public DoTInstance(Entity attacker, int spellNum, Entity target)
         {
             SpellBase = SpellBase.Lookup.Get<SpellBase>(spellNum);
 
-            OwnerId = ownerId;
+            Attacker = attacker;
             Target = target;
 
             if (SpellBase == null || SpellBase.Data4 < 1)
             {
-                Target?.DoT?.Remove(this);
                 return;
             }
 
             mInterval = Globals.System.GetTimeMs() + SpellBase.Data4 * 100;
             Count = SpellBase.Data2 / SpellBase.Data4 - 1;
+            target.DoT.Add(this);
             //Subtract 1 since the first tick always occurs when the spell is cast.
         }
 
@@ -1798,8 +1795,7 @@ namespace Intersect.Server.Classes.Entities
                 aliveAnimations.Add(new KeyValuePair<int, int>(SpellBase.HitAnimation, (int) Directions.Up));
             }
 
-            var owner = Globals.Entities[OwnerId];
-            owner?.Attack(Target, SpellBase.VitalDiff[0], SpellBase.VitalDiff[1],
+            Attacker?.Attack(Target, SpellBase.VitalDiff[0], SpellBase.VitalDiff[1],
                 (DamageType) SpellBase.DamageType, (Stats) SpellBase.ScalingStat, SpellBase.Scaling,
                 SpellBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
             mInterval = Globals.System.GetTimeMs() + (SpellBase.Data4 * 100);
