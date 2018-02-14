@@ -278,8 +278,9 @@ namespace Intersect_Client.Classes.Core
                 return;
             }
 
-            var inGrid = mMap == Globals.Me.CurrentMap;
-            if (!inGrid)
+            var sameMap = mMap == Globals.Me.CurrentMap;
+            var inGrid = sameMap;
+            if (!inGrid && Globals.Me.MapInstance != null)
             {
                 var gridX = Globals.Me.MapInstance.MapGridX;
                 var gridY = Globals.Me.MapInstance.MapGridY;
@@ -300,13 +301,12 @@ namespace Intersect_Client.Classes.Core
                 }
             }
 
-            if ((mX == -1 || mY == -1 || mDistance <= 0) && inGrid)
+            if ((mX == -1 || mY == -1 || mDistance <= 0) && sameMap)
             {
                 mSound.SetVolume(100);
             }
             else
             {
-                // TODO: 1073
                 if (mDistance > 0 && Globals.GridMaps.Contains(mMap))
                 {
                     float volume = 100 - ((100 / mDistance) * CalculateSoundDistance());
@@ -420,7 +420,7 @@ namespace Intersect_Client.Classes.Core
                 else
                 {
                     // IV
-                    return point.X - rect.X + rect.Width;
+                    return point.X - (rect.X + rect.Width);
                 }
             }
             else
@@ -434,7 +434,7 @@ namespace Intersect_Client.Classes.Core
                 else if (point.Y > rect.Y + rect.Height)
                 {
                     // VI
-                    return point.Y - rect.Y + rect.Height;
+                    return point.Y - (rect.Y + rect.Height);
                 }
                 else
                 {

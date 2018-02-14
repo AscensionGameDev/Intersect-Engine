@@ -127,6 +127,7 @@ namespace Intersect.Server.Classes.Entities
 
         public override bool CanAttack(Entity en, SpellBase spell)
         {
+            if (!base.CanAttack(en, spell)) return false;
             if (en.GetType() == typeof(Npc) && ((Npc) en).MyBase.Behavior == (int) NpcBehavior.Friendly) return false;
             if (en.GetType() == typeof(EventPageInstance)) return false;
             //Check if the attacker is stunned or blinded.

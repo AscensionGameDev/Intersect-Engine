@@ -663,6 +663,7 @@ namespace Intersect.Server.Classes.Entities
 
         public override bool CanAttack(Entity en, SpellBase spell)
         {
+            if (!base.CanAttack(en,spell)) return false;
             if (en.GetType() == typeof(Npc) && ((Npc)en).MyBase.Behavior == (int)NpcBehavior.Friendly) return false;
             if (en.GetType() == typeof(EventPageInstance)) return false;
             //Check if the attacker is stunned or blinded.
@@ -1877,6 +1878,7 @@ namespace Intersect.Server.Classes.Entities
         {
             if (InBag < 0 || !HasBag(InBag)) return;
             var bag = GetBag();
+            if (bag == null || slot > bag.Items.Length || bag.Items[slot] == null) return;
             var itemBase = ItemBase.Lookup.Get<ItemBase>(bag.Items[slot].ItemNum);
             var inventorySlot = -1;
             if (itemBase != null)

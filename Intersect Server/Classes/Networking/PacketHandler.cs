@@ -529,7 +529,7 @@ namespace Intersect.Server.Classes.Networking
                     if (client.Entity.InParty(client.Entity))
                     {
                         PacketSender.SendPartyMsg(client,
-                            Strings.Get("party", "announcement", client.Entity.MyName, msg), CustomColors.PartyChat,
+                            Strings.Get("chat", "party", client.Entity.MyName, msg), CustomColors.PartyChat,
                             client.Entity.MyName);
                     }
                     else

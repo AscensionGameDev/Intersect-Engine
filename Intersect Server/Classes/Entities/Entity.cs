@@ -524,7 +524,7 @@ namespace Intersect.Server.Classes.Entities
             var xOffset = 0;
             var yOffset = 0;
             Dir = moveDir;
-            if (MoveTimer < Globals.System.GetTimeMs())
+            if (MoveTimer < Globals.System.GetTimeMs() && CastTime <= 0)
             {
                 var tile = new TileHelper(CurrentMap, CurrentX, CurrentY);
                 switch (moveDir)
@@ -765,6 +765,7 @@ namespace Intersect.Server.Classes.Entities
 
         public virtual bool CanAttack(Entity en, SpellBase spell)
         {
+            if (CastTime > 0) return false;
             return true;
         }
 

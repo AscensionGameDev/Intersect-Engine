@@ -176,6 +176,7 @@
         <string id="equipped">You cannot drop equipped items.</string>
     </Items>
     <Shops>
+        <string id="bound">You cannot sell this item, it is bound to you!</string>
         <string id="doesnotaccept">This shop does not accept that item!</string>
         <string id="inventoryfull">You do not have space to purchase that item!</string>
         <string id="cantafford">Transaction failed due to insufficent funds.</string>

@@ -1293,7 +1293,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             string sound = bf.ReadString();
-            GameAudio.AddMapSound(sound, -1, -1, Globals.Me.CurrentMap, false, -1);
+            GameAudio.AddMapSound(sound, -1, -1, Globals.Me.CurrentMap, false, 5);
             bf.Dispose();
         }
 
