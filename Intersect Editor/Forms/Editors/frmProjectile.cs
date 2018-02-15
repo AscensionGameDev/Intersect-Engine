@@ -235,7 +235,7 @@ namespace Intersect.Editor.Classes
                 else
                 {
                     lstAnimations.Items.Add(Strings.ProjectileEditor.animationline.ToString(n,
-                        mEditorItem.Animations[i].SpawnRange, Strings.general.none));
+                        mEditorItem.Animations[i].SpawnRange, Strings.General.none));
                 }
                 n = mEditorItem.Animations[i].SpawnRange + 1;
             }

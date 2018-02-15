@@ -74,7 +74,7 @@ namespace Intersect.Editor.Classes.Maps
          Browsable(true)]
         public string ZoneType
         {
-            get { return Strings.MapProperties.zones[(int) mMyMap.ZoneType); }
+            get { return Strings.MapProperties.zones[(int) mMyMap.ZoneType]; }
             set
             {
                 Globals.MapEditorWindow.PrepUndoState();

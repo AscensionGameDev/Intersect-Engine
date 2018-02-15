@@ -61,7 +61,7 @@ namespace Intersect_Client.Classes.UI.Game
             mYesButton.Clicked += okayBtn_Clicked;
 
             mNoButton = new Button(mMyWindow, "NoButton");
-            mNoButton.SetTextStrings.InputBox.cancel);
+            mNoButton.SetText(Strings.InputBox.cancel);
             mNoButton.Clicked += cancelBtn_Clicked;
 
             mOkayButton = new Button(mMyWindow, "OkayButton");

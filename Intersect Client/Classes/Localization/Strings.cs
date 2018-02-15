@@ -241,6 +241,18 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString passwordinvalid = @"Password is invalid. Please use alphanumeric characters with a length between 4 and 20.";
             public static LocalizedString title = @"Error!";
             public static LocalizedString usernameinvalid = @"Username is invalid. Please use alphanumeric characters with a length between 2 and 20.";
+
+            public static LocalizedString LoadFile =
+                    @"Failed to load a {00}. Please send the game administrator a copy of your errors log file in the logs directory."
+                ;
+        }
+
+        public struct Words
+        {
+            public static LocalizedString lcase_sound = @"sound";
+            public static LocalizedString lcase_music = @"soundtrack";
+            public static LocalizedString lcase_sprite = @"sprite";
+            public static LocalizedString lcase_animation = @"animation";
         }
 
         public struct EventWindow

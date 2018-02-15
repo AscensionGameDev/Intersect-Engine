@@ -30,7 +30,7 @@ namespace Intersect_Client.Classes.UI.Game
             mBagWindow.DisableResizing();
             Gui.InputBlockingElements.Add(mBagWindow);
 
-            mItemContainer = new ScrollControl(_bagWindow, "ItemContainer");
+            mItemContainer = new ScrollControl(mBagWindow, "ItemContainer");
             mItemContainer.EnableScroll(false, true);
 
             mBagWindow.LoadJsonUi(GameContentManager.UI.InGame);
@@ -114,9 +114,9 @@ namespace Intersect_Client.Classes.UI.Game
                 Items[i].Container = new ImagePanel(mItemContainer, "BagItem");
                 Items[i].Setup();
 
-                mValues.Add(new Label(Items[i].container, "BagItemValue"));
+                mValues.Add(new Label(Items[i].Container, "BagItemValue"));
                 mValues[i].Text = "";
-                Items[i].container.LoadJsonUi(GameContentManager.UI.InGame);
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
 
                 var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
                 var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;

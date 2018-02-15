@@ -494,7 +494,7 @@ namespace Intersect.Editor.Classes.Maps
             if (mContextMap != null && mContextMap.Mapnum > -1)
             {
                 if (
-                    DarkMessageBox.ShowWarning(Strings.mapgrid.unlinkprompt.ToString( mContextMap.name),
+                    DarkMessageBox.ShowWarning(Strings.MapGrid.unlinkprompt.ToString( mContextMap.Name),
                         Strings.MapGrid.unlinkcaption, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                     PacketSender.SendUnlinkMap(mContextMap.Mapnum);

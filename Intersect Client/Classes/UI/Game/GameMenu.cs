@@ -101,7 +101,7 @@ namespace Intersect_Client.Classes.UI.Game
             mCloseButton.SetToolTipText(Strings.GameMenu.exit);
             mCloseButton.Clicked += CloseBtn_Clicked;
 
-            _menuContainer.LoadJsonUi(GameContentManager.UI.InGame);
+            mMenuContainer.LoadJsonUi(GameContentManager.UI.InGame);
 
             //Assign Window References
             mOptionsWindow = new OptionsWindow(gameCanvas, null, null);

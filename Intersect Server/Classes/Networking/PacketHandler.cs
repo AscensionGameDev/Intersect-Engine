@@ -1166,7 +1166,7 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var Nanameme = bf.ReadString();
+            var name = bf.ReadString();
             if (!FieldChecking.IsValidUsername(name, Strings.Regex.username))
             {
                 PacketSender.SendLoginError(client, Strings.Account.invalidname);

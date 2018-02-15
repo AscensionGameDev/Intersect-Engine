@@ -189,11 +189,11 @@ namespace Intersect_Client.Classes.UI
 
             if (mainMenu == null)
             {
-                _optionsPanel.LoadJsonUi(GameContentManager.UI.InGame);
+                mOptionsPanel.LoadJsonUi(GameContentManager.UI.InGame);
             }
             else
             {
-                _optionsPanel.LoadJsonUi(GameContentManager.UI.Menu);
+                mOptionsPanel.LoadJsonUi(GameContentManager.UI.Menu);
             }
         }
 

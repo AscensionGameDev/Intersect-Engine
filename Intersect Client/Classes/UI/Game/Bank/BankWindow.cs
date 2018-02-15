@@ -106,13 +106,13 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < Options.MaxBankSlots; i++)
             {
                 Items.Add(new BankItem(this, i));
-                Items[i].container = new ImagePanel(mItemContainer, "BankItem");
+                Items[i].Container = new ImagePanel(mItemContainer, "BankItem");
                 Items[i].Setup();
 
                 mValues.Add(new Label(mItemContainer));
                 mValues[i].Text = "";
 
-                Items[i].container.LoadJsonUi(GameContentManager.UI.InGame);
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
 
                 var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
                 var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;

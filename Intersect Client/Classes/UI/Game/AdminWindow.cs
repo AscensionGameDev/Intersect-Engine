@@ -387,7 +387,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (mNameTextbox.Text.Trim().Length > 0)
             {
-                mBanMuteWindow = new BanMuteBox(Strings.Get("admin", "mutecaption", mNameTextbox.Text),
+                mBanMuteWindow = new BanMuteBox(Strings.Admin.mutecaption.ToString(mNameTextbox.Text),
                     Strings.Admin.muteprompt.ToString( mNameTextbox.Text), true, MuteUser);
             }
         }

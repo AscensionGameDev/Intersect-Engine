@@ -321,7 +321,7 @@ namespace Intersect.Server.Classes.Core
 
         private static void CreateDatabase()
         {
-            sDbConnection = new SqliteConnection($"Data Source={DB_FILENAME},Version=3,New=True");
+            sDbConnection = new SqliteConnection($"Data Source={DbFilename},Version=3,New=True");
             sDbConnection?.Open();
             CreateInfoTable();
             CreateUsersTable();

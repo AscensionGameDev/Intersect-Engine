@@ -123,7 +123,7 @@ namespace Intersect.Editor.Forms.Editors
                     else
                     {
                         lstIngredients.Items.Add(Strings.CraftingEditor.ingredientlistitem.ToString(
-                            Strings.craftingeditor.ingredientnone, mCurrentCraft.Ingredients[i].Quantity));
+                            Strings.CraftingEditor.ingredientnone, mCurrentCraft.Ingredients[i].Quantity));
                     }
                 }
                 if (lstIngredients.Items.Count > 0)

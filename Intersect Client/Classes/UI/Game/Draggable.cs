@@ -13,7 +13,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public Draggable(int x, int y, GameTexture tex)
         {
-            mPnl = new ImagePanel(Gui.GameUI.GameCanvas, "Draggable");
+            mPnl = new ImagePanel(Gui.GameUi.GameCanvas, "Draggable");
             mPnl.LoadJsonUi(GameContentManager.UI.InGame);
             mPnl.SetPosition(InputHandler.MousePosition.X - mPnl.Width / 2,
                 InputHandler.MousePosition.Y - mPnl.Height / 2);

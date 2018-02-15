@@ -38,7 +38,7 @@ namespace Intersect_Client.Classes.UI.Game
             EntityId = entityId;
 
             mTradeWindow = new WindowControl(gameCanvas,
-                Strings.Trading.title.ToString(Globals.Entities[EntityID].MyName), false, "TradeWindow");
+                Strings.Trading.title.ToString(Globals.Entities[EntityId].MyName), false, "TradeWindow");
             mTradeWindow.DisableResizing();
             Gui.InputBlockingElements.Add(mTradeWindow);
 

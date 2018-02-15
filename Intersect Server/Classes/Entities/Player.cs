@@ -559,7 +559,7 @@ namespace Intersect.Server.Classes.Entities
                                         Quests[questId] = questProg;
                                         PacketSender.SendQuestProgress(this, quest.Index);
                                         PacketSender.SendPlayerMsg(MyClient,
-                                            Strings.Quests.npctask.ToString( quest.Name, questProg.taskProgress,
+                                            Strings.Quests.npctask.ToString( quest.Name, questProg.TaskProgress,
                                                 questTask.Data2, NpcBase.GetName(questTask.Data1)));
                                     }
                                 }
@@ -581,15 +581,14 @@ namespace Intersect.Server.Classes.Entities
                 //Check Dynamic Requirements
                 if (!EventInstance.MeetsConditionLists(resource.HarvestingReqs, this, null))
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "resourcereqs"));
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Combat.resourcereqs);
                     return;
                 }
                 if (resource.Tool > -1 && resource.Tool < Options.ToolTypes.Count)
                 {
                     if (parentItem == null || resource.Tool != parentItem.Tool)
                     {
-                        PacketSender.SendPlayerMsg(MyClient,
-                            Strings.Get("combat", "toolrequired", Options.ToolTypes[resource.Tool]));
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Combat.toolrequired.ToString( Options.ToolTypes[resource.Tool]));
                         return;
                     }
                 }
@@ -1725,8 +1724,7 @@ namespace Intersect.Server.Classes.Entities
                     PacketSender.SendPlayerMsg(MyClient, Strings.Banks.withdrawinvalid, CustomColors.Error);
                 }
             }
-        }
-
+        
         public void SwapBankItems(int item1, int item2)
         {
             ItemInstance tmpInstance = null;
@@ -3037,7 +3035,7 @@ namespace Intersect.Server.Classes.Entities
                                             Quests[questId] = questProg;
                                             PacketSender.SendQuestProgress(this, quest.Index);
                                             PacketSender.SendPlayerMsg(MyClient,
-                                                Strings.Quests.itemtask.ToString( quest.Name, questProg.taskProgress,
+                                                Strings.Quests.itemtask.ToString( quest.Name, questProg.TaskProgress,
                                                     questTask.Data2, ItemBase.GetName(questTask.Data1)));
                                         }
                                     }

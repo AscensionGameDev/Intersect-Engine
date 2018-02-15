@@ -155,7 +155,7 @@ namespace Intersect_Client.Classes.UI.Game
                 Items[i].Pnl = new ImagePanel(mEquipmentContainer, "EquipmentBox");
                 Items[i].Setup();
 
-                Items[i].pnl.LoadJsonUi(GameContentManager.UI.InGame);
+                Items[i].Pnl.LoadJsonUi(GameContentManager.UI.InGame);
 
                 Items[i].Pnl
                     .SetPosition(

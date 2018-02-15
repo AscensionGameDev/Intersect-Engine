@@ -323,7 +323,7 @@ namespace Intersect_Client.Classes.UI.Game
             else
             {
                 HpLbl.Text = Strings.EntityBox.vital0val.ToString( 0, 0);
-                targetHPWidth = HpBackground.Width;
+                targetHpWidth = HpBackground.Width;
             }
             if ((int) targetHpWidth != CurHpWidth)
             {

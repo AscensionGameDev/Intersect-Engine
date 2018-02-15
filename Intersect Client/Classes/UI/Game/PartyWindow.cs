@@ -77,7 +77,7 @@ namespace Intersect_Client.Classes.UI.Game
                     if (i < Globals.Me.Party.Count)
                     {
                         mKickButtons[i].SetToolTipText(Strings.Parties.kick.ToString(
-                            Globals.Entities[Globals.Me.Party[i]].MyName));
+                            Globals.Entities[Globals.Me.Party[i].Index].MyName));
                     }
                     else
                     {

@@ -41,12 +41,12 @@ namespace Intersect_Client.Classes.UI.Game
 
             //Accept Button
             mAcceptButton = new Button(mQuestOfferWindow, "AcceptButton");
-            mAcceptButton.SetText(Strings.QuestOffer.title,
+            mAcceptButton.SetText(Strings.QuestOffer.title);
             mAcceptButton.Clicked += _acceptButton_Clicked;
 
             //Decline Button
             mDeclineButton = new Button(mQuestOfferWindow, "DeclineButton");
-            mDeclineButton.SetText(trings.QuestOffer.decline);
+            mDeclineButton.SetText(Strings.QuestOffer.decline);
             mDeclineButton.Clicked += _declineButton_Clicked;
 
             mQuestOfferWindow.LoadJsonUi(GameContentManager.UI.InGame);

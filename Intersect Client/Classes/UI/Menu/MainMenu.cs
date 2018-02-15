@@ -76,7 +76,7 @@ namespace Intersect_Client.Classes.UI.Menu
             if (!string.IsNullOrEmpty(Strings.MainMenu.options))
                 mOptionsButton.SetToolTipText(Strings.MainMenu.options);
 
-            _menuWindow.LoadJsonUi(GameContentManager.UI.Menu);
+            mMenuWindow.LoadJsonUi(GameContentManager.UI.Menu);
 
             //Options Controls
             mOptionsWindow = new OptionsWindow(menuCanvas, this, mMenuWindow);

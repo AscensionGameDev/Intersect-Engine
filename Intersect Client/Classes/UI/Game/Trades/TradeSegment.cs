@@ -45,7 +45,7 @@ namespace Intersect.Client.Classes.UI.Game.Trades
         {
             for (int i = 0; i < Options.MaxInvItems; i++)
             {
-                Items.Add(new TradeItem(Parent, i, index));
+                Items.Add(new TradeItem(mParent, i, index));
                 Items[i].Container = new ImagePanel(ItemContainer, "TradeItem");
                 Items[i].Setup();
 

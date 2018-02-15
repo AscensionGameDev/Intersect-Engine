@@ -80,7 +80,7 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         for (int i = 0; i < Options.MaxStats; i++)
                         {
-                            stats = Strings.ItemDesc.stats[i].ToString((item.StatsGiven[i] + StatBuffs[i]));
+                            stats = Strings.ItemDesc.stats[i].ToString((item.StatsGiven[i] + statBuffs[i]));
                             itemDesc.AddText(stats, itemDesc.RenderColor);
                             itemDesc.AddLineBreak();
                         }
