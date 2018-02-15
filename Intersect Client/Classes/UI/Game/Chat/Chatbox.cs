@@ -44,7 +44,7 @@ namespace Intersect_Client.Classes.UI.Game
             Gui.FocusElements.Add(mChatboxInput);
 
             mChannelCombobox = new ComboBox(mChatboxWindow, "ChatChannelCombobox");
-            for (int i = 1; i < 4; i++)
+            for (int i = 0; i < 3; i++)
             {
                 var menuItem = mChannelCombobox.AddItem(Strings.Chatbox.channels[i]);
                 menuItem.UserData = i -1;
