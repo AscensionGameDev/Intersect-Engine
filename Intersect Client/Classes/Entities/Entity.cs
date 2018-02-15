@@ -643,6 +643,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 else
                 {
+                    var attackTime = CalculateAttackTime();
                     if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
                     {
                         srcRectangle = new FloatRect(3 * (int) Texture.GetWidth() / 4,

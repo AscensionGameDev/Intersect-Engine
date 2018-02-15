@@ -15,22 +15,22 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
         public MonoSoundInstance(GameAudioSource music) : base(music)
         {
             mSource = ((MonoSoundSource) music);
-            mInstance = mSource.GetEffect().CreateInstance();
+            mInstance = mSource.GetEffect()?.CreateInstance();
         }
 
         public override void Play()
         {
-            mInstance.Play();
+            mInstance?.Play();
         }
 
         public override void Pause()
         {
-            mInstance.Pause();
+            mInstance?.Pause();
         }
 
         public override void Stop()
         {
-            mInstance.Stop();
+            mInstance?.Stop();
         }
 
         public override void SetVolume(int volume, bool isMusic = false)
@@ -38,7 +38,10 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
             mVolume = volume;
             try
             {
-                mInstance.Volume = (mVolume * (float) (Globals.Database.SoundVolume / 100f) / 100f);
+                if (mInstance != null)
+                {
+                    mInstance.Volume = (mVolume * (float) (Globals.Database.SoundVolume / 100f) / 100f);
+                }
             }
             catch (NullReferenceException)
             {
@@ -57,7 +60,10 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
 
         public override void SetLoop(bool val)
         {
-            mInstance.IsLooped = val;
+            if (mInstance != null)
+            {
+                mInstance.IsLooped = val;
+            }
         }
 
         public override AudioInstanceState GetState()

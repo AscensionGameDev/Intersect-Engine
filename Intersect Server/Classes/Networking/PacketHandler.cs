@@ -443,8 +443,9 @@ namespace Intersect.Server.Classes.Networking
                 Globals.Entities[index].Move(dir, client, false);
                 if (Globals.Entities[index].MoveTimer > Globals.System.GetTimeMs())
                 {
+                    //TODO: Make this based moreso on the players current ping instead of a flat value that can be abused
                     Globals.Entities[index].MoveTimer = Globals.System.GetTimeMs() +
-                                                        (long) (Globals.Entities[index].GetMovementTime() / 2f);
+                                                        (long) (Globals.Entities[index].GetMovementTime() * .75f);
                 }
             }
             else
@@ -527,7 +528,7 @@ namespace Intersect.Server.Classes.Networking
                     if (client.Entity.InParty(client.Entity))
                     {
                         PacketSender.SendPartyMsg(client,
-                            Strings.Get("party", "announcement", client.Entity.MyName, msg), CustomColors.PartyChat,
+                            Strings.Get("chat", "party", client.Entity.MyName, msg), CustomColors.PartyChat,
                             client.Entity.MyName);
                     }
                     else

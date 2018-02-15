@@ -127,6 +127,7 @@ namespace Intersect.Server.Classes.Entities
 
         public override bool CanAttack(Entity en, SpellBase spell)
         {
+            if (!base.CanAttack(en, spell)) return false;
             if (en.GetType() == typeof(Npc) && ((Npc) en).MyBase.Behavior == (int) NpcBehavior.Friendly) return false;
             if (en.GetType() == typeof(EventPageInstance)) return false;
             //Check if the attacker is stunned or blinded.
@@ -167,10 +168,13 @@ namespace Intersect.Server.Classes.Entities
 
             //We were forcing at LEAST 1hp base damage.. but then you can't have guards that won't hurt the player.
             //https://www.ascensiongamedev.com/community/bug_tracker/intersect/npc-set-at-0-attack-damage-still-damages-player-by-1-initially-r915/
-            base.TryAttack(enemy, MyBase.Damage, (DamageType) MyBase.DamageType,
-                (Stats) MyBase.ScalingStat,
-                MyBase.Scaling, MyBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
-            PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
+            if (AttackTimer < Globals.System.GetTimeMs())
+            {
+                base.TryAttack(enemy, MyBase.Damage, (DamageType) MyBase.DamageType,
+                    (Stats) MyBase.ScalingStat,
+                    MyBase.Scaling, MyBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
+                PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
+            }
         }
 
         public bool CanNpcCombat(Entity enemy, bool friendly = false)
@@ -285,7 +289,7 @@ namespace Intersect.Server.Classes.Entities
                                                                          spell.VitalCost[(int) Vitals.Health
                                                                          ];
                                             CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
-                                            if (spell.Friendly == 1)
+                                            if (spell.Friendly == 1 && spell.SpellType != (int)SpellTypes.WarpTo)
                                             {
                                                 CastTarget = this;
                                             }
@@ -588,6 +592,37 @@ namespace Intersect.Server.Classes.Entities
 
                 var regenValue = (int)Math.Max(1, maxVitalValue * .1f);
                 AddVital(vital, regenValue);
+            }
+        }
+
+        public override void Warp(int newMap, int newX, int newY, int newDir, bool adminWarp = false, int zOverride = 0, bool mapSave = false)
+        {
+            var map = MapInstance.Lookup.Get<MapInstance>(newMap);
+            if (map == null)
+            {
+                return;
+            }
+            CurrentX = newX;
+            CurrentY = newY;
+            CurrentZ = zOverride;
+            Dir = newDir;
+            if (newMap != CurrentMap )
+            {
+                var oldMap = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+                if (oldMap != null)
+                {
+                    oldMap.RemoveEntity(this);
+                }
+                PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap);
+                CurrentMap = newMap;
+                PacketSender.SendEntityDataToProximity(this);
+                PacketSender.SendEntityPositionToAll(this);
+            }
+            else
+            {
+                PacketSender.SendEntityPositionToAll(this);
+                PacketSender.SendEntityVitals(this);
+                PacketSender.SendEntityStats(this);
             }
         }
     }

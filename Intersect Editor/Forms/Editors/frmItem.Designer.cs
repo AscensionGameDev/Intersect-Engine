@@ -259,6 +259,11 @@ namespace Intersect.Editor.Forms
             this.nudPrice.Name = "nudPrice";
             this.nudPrice.Size = new System.Drawing.Size(171, 20);
             this.nudPrice.TabIndex = 37;
+            this.nudPrice.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudPrice.ValueChanged += new System.EventHandler(this.nudPrice_ValueChanged);
             // 
             // chkBound
@@ -467,6 +472,11 @@ namespace Intersect.Editor.Forms
             this.nudEffectPercent.Name = "nudEffectPercent";
             this.nudEffectPercent.Size = new System.Drawing.Size(198, 20);
             this.nudEffectPercent.TabIndex = 55;
+            this.nudEffectPercent.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudEffectPercent.ValueChanged += new System.EventHandler(this.nudEffectPercent_ValueChanged);
             // 
             // grpStatBonuses
@@ -501,6 +511,11 @@ namespace Intersect.Editor.Forms
             this.nudRange.Name = "nudRange";
             this.nudRange.Size = new System.Drawing.Size(77, 20);
             this.nudRange.TabIndex = 53;
+            this.nudRange.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudRange.ValueChanged += new System.EventHandler(this.nudRange_ValueChanged);
             // 
             // nudSpd
@@ -516,6 +531,11 @@ namespace Intersect.Editor.Forms
             this.nudSpd.Name = "nudSpd";
             this.nudSpd.Size = new System.Drawing.Size(78, 20);
             this.nudSpd.TabIndex = 52;
+            this.nudSpd.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudSpd.ValueChanged += new System.EventHandler(this.nudSpd_ValueChanged);
             // 
             // nudMR
@@ -531,6 +551,11 @@ namespace Intersect.Editor.Forms
             this.nudMR.Name = "nudMR";
             this.nudMR.Size = new System.Drawing.Size(78, 20);
             this.nudMR.TabIndex = 51;
+            this.nudMR.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudMR.ValueChanged += new System.EventHandler(this.nudMR_ValueChanged);
             // 
             // nudDef
@@ -546,6 +571,11 @@ namespace Intersect.Editor.Forms
             this.nudDef.Name = "nudDef";
             this.nudDef.Size = new System.Drawing.Size(78, 20);
             this.nudDef.TabIndex = 50;
+            this.nudDef.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudDef.ValueChanged += new System.EventHandler(this.nudDef_ValueChanged);
             // 
             // nudMag
@@ -561,6 +591,11 @@ namespace Intersect.Editor.Forms
             this.nudMag.Name = "nudMag";
             this.nudMag.Size = new System.Drawing.Size(78, 20);
             this.nudMag.TabIndex = 49;
+            this.nudMag.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudMag.ValueChanged += new System.EventHandler(this.nudMag_ValueChanged);
             // 
             // nudStr
@@ -576,6 +611,11 @@ namespace Intersect.Editor.Forms
             this.nudStr.Name = "nudStr";
             this.nudStr.Size = new System.Drawing.Size(78, 20);
             this.nudStr.TabIndex = 48;
+            this.nudStr.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudStr.ValueChanged += new System.EventHandler(this.nudStr_ValueChanged);
             // 
             // lblSpd
@@ -835,6 +875,11 @@ namespace Intersect.Editor.Forms
             this.nudScaling.Name = "nudScaling";
             this.nudScaling.Size = new System.Drawing.Size(180, 20);
             this.nudScaling.TabIndex = 55;
+            this.nudScaling.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudScaling.ValueChanged += new System.EventHandler(this.nudScaling_ValueChanged);
             // 
             // nudCritChance
@@ -845,6 +890,11 @@ namespace Intersect.Editor.Forms
             this.nudCritChance.Name = "nudCritChance";
             this.nudCritChance.Size = new System.Drawing.Size(180, 20);
             this.nudCritChance.TabIndex = 54;
+            this.nudCritChance.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudCritChance.ValueChanged += new System.EventHandler(this.nudCritChance_ValueChanged);
             // 
             // nudDamage
@@ -860,6 +910,11 @@ namespace Intersect.Editor.Forms
             this.nudDamage.Name = "nudDamage";
             this.nudDamage.Size = new System.Drawing.Size(180, 20);
             this.nudDamage.TabIndex = 49;
+            this.nudDamage.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudDamage.ValueChanged += new System.EventHandler(this.nudDamage_ValueChanged);
             // 
             // cmbProjectile
@@ -1088,6 +1143,11 @@ namespace Intersect.Editor.Forms
             this.nudInterval.Name = "nudInterval";
             this.nudInterval.Size = new System.Drawing.Size(177, 20);
             this.nudInterval.TabIndex = 37;
+            this.nudInterval.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudInterval.ValueChanged += new System.EventHandler(this.nudInterval_ValueChanged);
             // 
             // lblVital
@@ -1393,8 +1453,8 @@ namespace Intersect.Editor.Forms
             // 
             // FrmItem
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(686, 517);

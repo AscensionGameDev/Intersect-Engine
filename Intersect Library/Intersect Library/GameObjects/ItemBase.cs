@@ -121,7 +121,7 @@ namespace Intersect.GameObjects
 
         public bool IsStackable()
         {
-            return ItemType == (int) ItemTypes.Currency || Stackable > 0;
+            return (ItemType == (int) ItemTypes.Currency || Stackable > 0) && ItemType != (int)ItemTypes.Equipment && ItemType != (int)ItemTypes.Bag;
         }
     }
 }
