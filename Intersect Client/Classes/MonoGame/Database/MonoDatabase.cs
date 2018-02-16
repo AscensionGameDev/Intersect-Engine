@@ -41,15 +41,17 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
 
         public override bool LoadConfig()
         {
-            if (!File.Exists(Path.Combine("resources", "config.xml")))
+            if (!File.Exists(Path.Combine("resources", "config.json")))
             {
-                File.WriteAllText(Path.Combine("resources", "config.xml"), GetDefaultConfig());
-                return LoadConfig();
+                ClientOptions.Load(null);
+                File.WriteAllText(Path.Combine("resources", "config.json"), ClientOptions.GetJson());
+                return true;
             }
             else
             {
-                string xmldata = File.ReadAllText(Path.Combine("resources", "config.xml"));
-                return LoadConfigFromXml(xmldata);
+                string jsonData = File.ReadAllText(Path.Combine("resources", "config.json"));
+                ClientOptions.Load(jsonData);
+                return true;
             }
         }
     }

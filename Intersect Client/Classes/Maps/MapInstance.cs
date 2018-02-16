@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Intersect;
+using Intersect.Config;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -368,7 +369,7 @@ namespace Intersect_Client.Classes.Maps
             }
             if (!MapRendered)
             {
-                if (Globals.Database.RenderCaching) return;
+                if (ClientOptions.RenderCache) return;
                 switch (layer)
                 {
                     case 0:
@@ -507,7 +508,7 @@ namespace Intersect_Client.Classes.Maps
             var addedLower = false;
             for (int layer = 0; layer < 5; layer++)
             {
-                if (Autotiles.UpdateAutoTile(x, y, layer, surroundingMaps) && Globals.Database.RenderCaching)
+                if (Autotiles.UpdateAutoTile(x, y, layer, surroundingMaps) && ClientOptions.RenderCache)
                 {
                     Intersect.Point pnt;
                     pnt.X = x;
@@ -604,7 +605,7 @@ namespace Intersect_Client.Classes.Maps
             int xmax = Options.MapWidth;
             int ymin = 0;
             int ymax = Options.MapHeight;
-            if (!Globals.Database.RenderCaching)
+            if (!ClientOptions.RenderCache)
             {
                 if (GetX() < GameGraphics.CurrentView.Left)
                 {
@@ -1010,7 +1011,7 @@ namespace Intersect_Client.Classes.Maps
         //Dispose
         public void Dispose(bool prep = true, bool killentities = true)
         {
-            if (Globals.Database.RenderCaching)
+            if (ClientOptions.RenderCache)
             {
                 ReleaseRenderTextures();
             }
